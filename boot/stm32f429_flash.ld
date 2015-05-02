@@ -4,6 +4,10 @@ MEMORY {
   CCM (rwx)  : ORIGIN = 0x10000000, LENGTH = 64K
 }
 
+/* We want the code at symbol "reset" to be laid out at the beginning of the
+ * text section */
+ENTRY(_start)
+
 SECTIONS {
   .isr_vector_table ORIGIN(FLASH) : {
     /* We're explicitly asking for the ISR vector table to be at the beginning
@@ -15,6 +19,7 @@ SECTIONS {
     /* CAUTION: The least significant bit of the reset
      * vector should be set to indicate Thumb code */
   } >FLASH
+
 
   .text : {
     . = ALIGN(4);

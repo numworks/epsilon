@@ -1,10 +1,10 @@
-typedef long uint32_t;
+typedef long uint32_t; //FIXME: Extrude this in another file, and assert it
 
 extern const void * _data_segment_start_flash;
 extern const void * _data_segment_start_ram;
 extern const void * _data_segment_end_ram;
 
-void reset(void);
+void _start(void);
 
 /* Interrupt Service Routines are void->void functions */
 typedef void(*ISR)(void);
@@ -21,16 +21,16 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   = {
   0x20010000, //FIXME: This is the stack pointer!
-  reset,
+  _start,
   0,
   0,
   0
 };
 
-void blink(void);
+void main(int argc, char * argv[]);
 
-void reset(void) {
-  // This is where execution start after reset.
+void _start(void) {
+  // This is where execution starts after reset.
   // Many things are not initialized yet so the code here has to pay attention.
 
   /* Copy data segment to RAM
@@ -45,8 +45,5 @@ void reset(void) {
     *ramPointer++ = *flashPointer++;
   }
 
-  blink();
+  main(0, 0x0);
 }
-/*
-void _start(void) {
-}*/

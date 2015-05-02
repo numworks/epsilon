@@ -1,10 +1,14 @@
-long DataSectionTest = 0x1234;
+#include <registers.h>
 
 void sleep(long delay);
 
 int main(int argc, char * argv[]) {
-  for (int i=0; i< DataSectionTest; i++) {
-  }
+  RCC_AHB1ENR->GPIOGEN = 1;
+
+  //RCC_AHB1ENR_t * RCC_AHB1ENR = (RCC_AHB1ENR_t *)0x40023830;
+
+
+  //RCC_AHB1ENR->GPIOGEN = 1;
 
   // We want to blink LEDs connected to GPIO pin G13 and G14
   // (this is documented in our board's PDF)
@@ -24,8 +28,8 @@ int main(int argc, char * argv[]) {
   // (per STM32F429xx datasheet)
   // In other words, we want to enable bit 6 of (0x40023830)
 
-  long * RCCAHB1ENR = (long *)0x40023830;
-  *RCCAHB1ENR |= (1 << 6); // Set 6th bit of RCCAHB1ENR
+  //long * RCCAHB1ENR = (long *)0x40023830;
+  //*RCCAHB1ENR |= (1 << 6); // Set 6th bit of RCCAHB1ENR
 
   // Step 2 : Configure the GPIO pin
   // Set the mode to general purpose output

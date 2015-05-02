@@ -1,0 +1,14 @@
+extern struct {
+  unsigned int GPIOAEN:1;
+  unsigned int GPIOBEN:1;
+  unsigned int GPIOCEN:1;
+  unsigned int GPIODEN:1;
+  unsigned int GPIOEEN:1;
+  unsigned int GPIOFEN:1;
+  unsigned int GPIOGEN:1;
+  unsigned int GPIOHEN:1;
+  unsigned int GPIOIEN:1;
+  unsigned int GPIOJEN:1;
+  unsigned int GPIOKEN:1;
+  unsigned int fill:21;
+} * RCC_AHB1ENR;

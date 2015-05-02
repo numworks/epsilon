@@ -2,9 +2,9 @@ CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld.bfd
 GDB=arm-none-eabi-gdb
 OBJCOPY=arm-none-eabi-objcopy
-CFLAGS=-march=armv7e-m -mcpu=cortex-m4 -mthumb -std=c99 -g
+CFLAGS=-march=armv7e-m -mcpu=cortex-m4 -mthumb -std=c99 -g -Iarch/stm32f429
 
-objs := boot/crt0.o src/blinky.o
+objs := boot/crt0.o src/blinky.o arch/stm32f429/registers.o
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf

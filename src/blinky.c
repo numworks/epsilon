@@ -3,12 +3,6 @@
 void sleep(long delay);
 
 int main(int argc, char * argv[]) {
-  RCC_AHB1ENR->GPIOGEN = 1;
-
-  //RCC_AHB1ENR_t * RCC_AHB1ENR = (RCC_AHB1ENR_t *)0x40023830;
-
-
-  //RCC_AHB1ENR->GPIOGEN = 1;
 
   // We want to blink LEDs connected to GPIO pin G13 and G14
   // (this is documented in our board's PDF)
@@ -21,15 +15,7 @@ int main(int argc, char * argv[]) {
   //
 
   // Step 1 : Enable clock in RCC_AHBxENR
-  // (RCC stands for "Reset and Clock Control)
-  // Per doc (STM32F4 reference manual, page 266), we want to enable
-  //  the 6th bit of RCC_AHB1ENR, which is at offset 0x30
-  // The RCC register boundary address is 0x4002 3800 - 0x4002 3BFF
-  // (per STM32F429xx datasheet)
-  // In other words, we want to enable bit 6 of (0x40023830)
-
-  //long * RCCAHB1ENR = (long *)0x40023830;
-  //*RCCAHB1ENR |= (1 << 6); // Set 6th bit of RCCAHB1ENR
+  RCC_AHB1ENR->GPIOGEN = 1;
 
   // Step 2 : Configure the GPIO pin
   // Set the mode to general purpose output

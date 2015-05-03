@@ -1,0 +1,32 @@
+/* Sample usage : "RCC_AHB1ENR->GPIOAEN = 1;" will enable the clock on GPIOA.*/
+extern struct {
+  unsigned int GPIOAEN:1;
+  unsigned int GPIOBEN:1;
+  unsigned int GPIOCEN:1;
+  unsigned int GPIODEN:1;
+  unsigned int GPIOEEN:1;
+  unsigned int GPIOFEN:1;
+  unsigned int GPIOGEN:1;
+  unsigned int GPIOHEN:1;
+  unsigned int GPIOIEN:1;
+  unsigned int GPIOJEN:1;
+  unsigned int GPIOKEN:1;
+  unsigned int :1;
+  unsigned int CRCEN:1;
+  unsigned int :5;
+  unsigned int BKPSRAMEN:1;
+  unsigned int :1;
+  unsigned int CCMDATARAMEN:1;
+  unsigned int DMA1EN:1;
+  unsigned int DMA2EN:1;
+  unsigned int DMA2DEN:1;
+  unsigned int :1;
+  unsigned int ETHMACEN:1;
+  unsigned int ETHMACTXEN:1;
+  unsigned int ETHMACRXEN:1;
+  unsigned int ETHMACPTPEN:1;
+  unsigned int OTGHSEN:1;
+  unsigned int OTGHSULPIEN:1;
+  unsigned int :1;
+} * RCC_AHB1ENR;
+

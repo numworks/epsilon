@@ -216,3 +216,83 @@ typedef struct {
 } GPIO_BSRR_t;
 
 GPIO_BSRR_t * GPIO_BSRR(GPIO_t gpio);
+
+#pragma mark - GPIO port configuration lock registers
+
+typedef enum {
+  GPIO_LCK_UNLOCKED = 0,
+  GPIO_LCK_LOCKED = 1
+} GPIO_LCK_t;
+
+typedef enum {
+  GPIO_LCK_KEY_INACTIVE = 0,
+  GPIO_LCK_KEY_ACTIVE = 1
+} GPIO_LCK_KEY_t;
+
+typedef struct {
+  GPIO_LCK_t LCK0:1;
+  GPIO_LCK_t LCK1:1;
+  GPIO_LCK_t LCK2:1;
+  GPIO_LCK_t LCK3:1;
+  GPIO_LCK_t LCK4:1;
+  GPIO_LCK_t LCK5:1;
+  GPIO_LCK_t LCK6:1;
+  GPIO_LCK_t LCK7:1;
+  GPIO_LCK_t LCK8:1;
+  GPIO_LCK_t LCK9:1;
+  GPIO_LCK_t LCK10:1;
+  GPIO_LCK_t LCK11:1;
+  GPIO_LCK_t LCK12:1;
+  GPIO_LCK_t LCK13:1;
+  GPIO_LCK_t LCK14:1;
+  GPIO_LCK_t LCK15:1;
+  GPIO_LCK_KEY_t LCKK:1;
+} GPIO_LCKR_t;
+
+GPIO_LCKR_t * GPIO_LCKR(GPIO_t gpio);
+
+#pragma mark - GPIO port alternate function registers
+
+typedef enum {
+  GPIO_AF_AF0 = 0,
+  GPIO_AF_AF1 = 1,
+  GPIO_AF_AF2 = 2,
+  GPIO_AF_AF3 = 3,
+  GPIO_AF_AF4 = 4,
+  GPIO_AF_AF5 = 5,
+  GPIO_AF_AF6 = 6,
+  GPIO_AF_AF7 = 7,
+  GPIO_AF_AF8 = 8,
+  GPIO_AF_AF9 = 9,
+  GPIO_AF_AF10 = 10,
+  GPIO_AF_AF11 = 11,
+  GPIO_AF_AF12 = 12,
+  GPIO_AF_AF13 = 13,
+  GPIO_AF_AF14 = 14,
+  GPIO_AF_AF15 = 15
+} GPIO_AF_t;
+
+typedef struct {
+  GPIO_AF_t AFRL0:4;
+  GPIO_AF_t AFRL1:4;
+  GPIO_AF_t AFRL2:4;
+  GPIO_AF_t AFRL3:4;
+  GPIO_AF_t AFRL4:4;
+  GPIO_AF_t AFRL5:4;
+  GPIO_AF_t AFRL6:4;
+  GPIO_AF_t AFRL7:4;
+} GPIO_AFRL_t;
+
+typedef struct {
+  GPIO_AF_t AFRH0:4;
+  GPIO_AF_t AFRH1:4;
+  GPIO_AF_t AFRH2:4;
+  GPIO_AF_t AFRH3:4;
+  GPIO_AF_t AFRH4:4;
+  GPIO_AF_t AFRH5:4;
+  GPIO_AF_t AFRH6:4;
+  GPIO_AF_t AFRH7:4;
+} GPIO_AFRH_t;
+
+GPIO_AFRL_t * GPIO_AFRL(GPIO_t gpio);
+GPIO_AFRH_t * GPIO_AFRH(GPIO_t gpio);

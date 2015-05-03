@@ -19,6 +19,9 @@
 #define GPIO_IDR_OFFSET     0x10
 #define GPIO_ODR_OFFSET     0x14
 #define GPIO_BSRR_OFFSET    0x18
+#define GPIO_LCKR_OFFSET    0x1C
+#define GPIO_AFRL_OFFSET    0x20
+#define GPIO_AFRH_OFFSET    0x24
 
 char * GPIO_REGISTER_ADDRESS(GPIO_t gpio, int registerOffset) {
   char * gpioBaseAddress[11] = {
@@ -58,3 +61,14 @@ GPIO_BSRR_t * GPIO_BSRR(GPIO_t gpio) {
   return (GPIO_BSRR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_BSRR_OFFSET);
 }
 
+GPIO_LCKR_t * GPIO_LCKR(GPIO_t gpio) {
+  return (GPIO_LCKR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_LCKR_OFFSET);
+}
+
+GPIO_AFRL_t * GPIO_AFRL(GPIO_t gpio) {
+  return (GPIO_AFRL_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_AFRL_OFFSET);
+}
+
+GPIO_AFRH_t * GPIO_AFRH(GPIO_t gpio) {
+  return (GPIO_AFRH_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_AFRH_OFFSET);
+}

@@ -40,18 +40,6 @@ typedef struct {
   GPIO_MODE_t MODER15:2;
 } GPIO_MODER_t;
 
-extern GPIO_MODER_t * GPIOA_MODER;
-extern GPIO_MODER_t * GPIOB_MODER;
-extern GPIO_MODER_t * GPIOC_MODER;
-extern GPIO_MODER_t * GPIOD_MODER;
-extern GPIO_MODER_t * GPIOE_MODER;
-extern GPIO_MODER_t * GPIOF_MODER;
-extern GPIO_MODER_t * GPIOG_MODER;
-extern GPIO_MODER_t * GPIOH_MODER;
-extern GPIO_MODER_t * GPIOI_MODER;
-extern GPIO_MODER_t * GPIOJ_MODER;
-extern GPIO_MODER_t * GPIOK_MODER;
-
 GPIO_MODER_t * GPIO_MODER(GPIO_t gpio);
 
 #pragma mark - GPIO port output type registers
@@ -81,19 +69,7 @@ typedef struct {
   unsigned int :16;
 } GPIO_OTYPER_t;
 
-extern GPIO_OTYPER_t * GPIOA_OTYPER;
-extern GPIO_OTYPER_t * GPIOB_OTYPER;
-extern GPIO_OTYPER_t * GPIOC_OTYPER;
-extern GPIO_OTYPER_t * GPIOD_OTYPER;
-extern GPIO_OTYPER_t * GPIOE_OTYPER;
-extern GPIO_OTYPER_t * GPIOF_OTYPER;
-extern GPIO_OTYPER_t * GPIOG_OTYPER;
-extern GPIO_OTYPER_t * GPIOH_OTYPER;
-extern GPIO_OTYPER_t * GPIOI_OTYPER;
-extern GPIO_OTYPER_t * GPIOJ_OTYPER;
-extern GPIO_OTYPER_t * GPIOK_OTYPER;
-
-GPIO_OTYPER_t * GPIO_OTYPE(GPIO_t gpio);
+GPIO_OTYPER_t * GPIO_OTYPER(GPIO_t gpio);
 
 #pragma mark - GPIO port output speed registers
 
@@ -123,16 +99,58 @@ typedef struct {
   GPIO_OSPEED_t OSPEEDR15:2;
 } GPIO_OSPEEDR_t;
 
-extern GPIO_OSPEEDR_t * GPIOA_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOB_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOC_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOD_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOE_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOF_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOG_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOH_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOI_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOJ_OSPEEDR;
-extern GPIO_OSPEEDR_t * GPIOK_OSPEEDR;
+GPIO_OSPEEDR_t * GPIO_OSPEEDR(GPIO_t gpio);
 
-GPIO_OSPEEDR_t * GPIO_OSPEED(GPIO_t gpio);
+#pragma mark - GPIO port pull-up/pull-down registers
+
+typedef enum {
+  GPIO_PUPD_NONE = 0,
+  GPIO_PUPD_PULL_UP = 1,
+  GPIO_PUPD_PULL_DOWN = 2
+} GPIO_PUPD_t;
+
+typedef struct {
+  GPIO_PUPD_t PUPDR0:2;
+  GPIO_PUPD_t PUPDR1:2;
+  GPIO_PUPD_t PUPDR2:2;
+  GPIO_PUPD_t PUPDR3:2;
+  GPIO_PUPD_t PUPDR4:2;
+  GPIO_PUPD_t PUPDR5:2;
+  GPIO_PUPD_t PUPDR6:2;
+  GPIO_PUPD_t PUPDR7:2;
+  GPIO_PUPD_t PUPDR8:2;
+  GPIO_PUPD_t PUPDR9:2;
+  GPIO_PUPD_t PUPDR10:2;
+  GPIO_PUPD_t PUPDR11:2;
+  GPIO_PUPD_t PUPDR12:2;
+  GPIO_PUPD_t PUPDR13:2;
+  GPIO_PUPD_t PUPDR14:2;
+  GPIO_PUPD_t PUPDR15:2;
+} GPIO_PUPDR_t;
+
+GPIO_PUPDR_t * GPIO_PUPDR(GPIO_t gpio);
+
+#pragma mark - GPIO input data registers
+
+typedef struct {
+  unsigned int IDR0:1;
+  unsigned int IDR1:1;
+  unsigned int IDR2:1;
+  unsigned int IDR3:1;
+  unsigned int IDR4:1;
+  unsigned int IDR5:1;
+  unsigned int IDR6:1;
+  unsigned int IDR7:1;
+  unsigned int IDR8:1;
+  unsigned int IDR9:1;
+  unsigned int IDR10:1;
+  unsigned int IDR11:1;
+  unsigned int IDR12:1;
+  unsigned int IDR13:1;
+  unsigned int IDR14:1;
+  unsigned int IDR15:1;
+  unsigned int :16;
+} GPIO_IDR_t;
+
+GPIO_IDR_t * GPIO_IDR(GPIO_t gpio);
+

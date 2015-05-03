@@ -17,6 +17,7 @@
 #define GPIO_OSPEEDR_OFFSET 0x08
 #define GPIO_PUPDR_OFFSET   0x0C
 #define GPIO_IDR_OFFSET     0x10
+#define GPIO_ODR_OFFSET     0x14
 
 char * GPIO_REGISTER_ADDRESS(GPIO_t gpio, int registerOffset) {
   char * gpioBaseAddress[11] = {
@@ -27,7 +28,6 @@ char * GPIO_REGISTER_ADDRESS(GPIO_t gpio, int registerOffset) {
   };
   return gpioBaseAddress[gpio] + registerOffset;
 }
-
 
 GPIO_MODER_t * GPIO_MODER(GPIO_t gpio) {
   return (GPIO_MODER_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_MODER_OFFSET);
@@ -49,3 +49,6 @@ GPIO_IDR_t * GPIO_IDR(GPIO_t gpio) {
   return (GPIO_IDR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_IDR_OFFSET);
 }
 
+GPIO_ODR_t * GPIO_ODR(GPIO_t gpio) {
+  return (GPIO_ODR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_ODR_OFFSET);
+}

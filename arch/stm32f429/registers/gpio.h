@@ -154,3 +154,27 @@ typedef struct {
 
 GPIO_IDR_t * GPIO_IDR(GPIO_t gpio);
 
+#pragma mark - GPIO output data registers
+
+typedef struct {
+  unsigned int ODR0:1;
+  unsigned int ODR1:1;
+  unsigned int ODR2:1;
+  unsigned int ODR3:1;
+  unsigned int ODR4:1;
+  unsigned int ODR5:1;
+  unsigned int ODR6:1;
+  unsigned int ODR7:1;
+  unsigned int ODR8:1;
+  unsigned int ODR9:1;
+  unsigned int ODR10:1;
+  unsigned int ODR11:1;
+  unsigned int ODR12:1;
+  unsigned int ODR13:1;
+  unsigned int ODR14:1;
+  unsigned int ODR15:1;
+  unsigned int :16;
+} GPIO_ODR_t;
+
+GPIO_ODR_t * GPIO_ODR(GPIO_t gpio);
+

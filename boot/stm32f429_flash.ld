@@ -50,17 +50,30 @@ SECTIONS {
      * This is required because its initial value matters (so it has to be in
      * persistant memory in the first place), but it is a R/W area of memory
      * so it will have to live in RAM upon execution (in linker lingo, that
-     * translate to the data segment having a LMA in Flash and a VMA in RAM).
+     * translate to the data section having a LMA in Flash and a VMA in RAM).
      *
      * This means we'll have to copy it from Flash to RAM on initialization.
-     * To do this, we'll need to know the source location of the data segment
-     * (in Flash), the target location (in RAM), and the size of the segment.
+     * To do this, we'll need to know the source location of the data section
+     * (in Flash), the target location (in RAM), and the size of the section.
      * That's why we're defining three symbols that we'll use in the initial-
      * -ization routine. */
     . = ALIGN(4);
-    _data_segment_start_flash = LOADADDR(.data);
-    _data_segment_start_ram = .;
+    _data_section_start_flash = LOADADDR(.data);
+    _data_section_start_ram = .;
     *(.data)
-    _data_segment_end_ram = .;
+    _data_section_end_ram = .;
   } >RAM AT> FLASH
+
+  .bss : {
+    /* The bss section contains data for all uninitialized variables
+     * So like the .data section, it will go in RAM, but unline the data section
+     * we don't care at all about an initial value.
+     *
+     * Before execution, crt0 will erase that section of memory though, so we'll
+     * need pointers to the beginning and end of this section. */
+    . = ALIGN(4);
+    _bss_section_start_ram = .;
+    *(.bss)
+    _bss_section_end_ram = .;
+  } >RAM
 }

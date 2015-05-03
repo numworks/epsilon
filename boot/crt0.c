@@ -10,7 +10,14 @@ extern const void * _bss_section_end_ram;
 extern const void * _stack_start;
 extern const void * _stack_end;
 
-void _start(void);
+void _ResetServiceRoutine(void);
+void _NMIServiceRoutine(void);
+void _HardFaultServiceRoutine(void);
+void _MemManageServiceRoutine(void);
+void _BusFaultServiceRoutine(void);
+void _SVCallServiceRoutine(void);
+void _PendSVServiceRoutine(void);
+void _SystickServiceRoutine(void);
 
 /* Interrupt Service Routines are void->void functions */
 typedef void(*ISR)(void);
@@ -27,15 +34,24 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   = {
   (ISR)&_stack_start,
-  _start,
-  0,
-  0,
+  _ResetServiceRoutine,
+  _NMIServiceRoutine,
+  _HardFaultServiceRoutine,
+  _MemManageServiceRoutine,
+  _BusFaultServiceRoutine,
+  0, // UsageFault
+  0, // Reserved
+  _SVCallServiceRoutine,
+  0, // Debug Monitor
+  _PendSVServiceRoutine, // PendSV
+  _SystickServiceRoutine, // Systick
   0
 };
 
+
 int main(int argc, char * argv[]);
 
-void _start(void) {
+void _ResetServiceRoutine(void) {
   // This is where execution starts after reset.
   // Many things are not initialized yet so the code here has to pay attention.
 
@@ -53,4 +69,24 @@ void _start(void) {
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
   main(0, 0x0);
+}
+
+void _NMIServiceRoutine(void) {
+  while (1) {
+  }
+}
+
+void _HardFaultServiceRoutine(void) {
+  while (1) {
+  }
+}
+
+void _MemManageServiceRoutine(void) {
+  while (1) {
+  }
+}
+
+void _BusFaultServiceRoutine(void) {
+  while (1) {
+  }
 }

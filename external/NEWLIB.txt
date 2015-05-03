@@ -1,0 +1,2 @@
+- Using memcpy and memset
+- using <string.h>, <stdlib.h>, and <stdint.h>

@@ -7,10 +7,18 @@ CFLAGS=-march=armv7e-m -mcpu=cortex-m4 -mthumb -std=c99 -g -Iarch/stm32f429
 CC=clang
 CFLAGS=-target thumbv7em-unknown-eabi -mcpu=cortex-m4 -Iarch/stm32f429 -Wall
 
-objs := boot/crt0.o src/blinky.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o
+objs := boot/crt0.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o
+
+default: boot.elf
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
+
+test: test.elf
+	$(GDB) -x test/gdb_script.gdb test.elf
+
+test.elf: $(objs) test/runner.o
+	@$(LD) -T boot/stm32f429_flash.ld $(objs) test/runner.o -o $@
 
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"
@@ -20,9 +28,9 @@ boot.bin: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary boot.elf boot.bin
 
-boot.elf: $(objs)
+boot.elf: $(objs) src/blinky.o
 	@echo "LD      $@"
-	@$(LD) -T boot/stm32f429_flash.ld $(objs) -o $@
+	@$(LD) -T boot/stm32f429_flash.ld $(objs) src/blinky.o -o $@
 
 %.o: %.c
 	@echo "CC      $@"

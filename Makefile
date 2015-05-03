@@ -4,6 +4,9 @@ GDB=arm-none-eabi-gdb
 OBJCOPY=arm-none-eabi-objcopy
 CFLAGS=-march=armv7e-m -mcpu=cortex-m4 -mthumb -std=c99 -g -Iarch/stm32f429
 
+CC=clang
+CFLAGS=-target thumbv7em-unknown-eabi -mcpu=cortex-m4 -Iarch/stm32f429 -Wall
+
 objs := boot/crt0.o src/blinky.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o
 
 run: boot.elf

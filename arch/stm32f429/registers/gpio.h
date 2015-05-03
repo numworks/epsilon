@@ -130,7 +130,7 @@ typedef struct {
 
 GPIO_PUPDR_t * GPIO_PUPDR(GPIO_t gpio);
 
-#pragma mark - GPIO input data registers
+#pragma mark - GPIO port input data registers
 
 typedef struct {
   unsigned int IDR0:1;
@@ -154,7 +154,7 @@ typedef struct {
 
 GPIO_IDR_t * GPIO_IDR(GPIO_t gpio);
 
-#pragma mark - GPIO output data registers
+#pragma mark - GPIO port output data registers
 
 typedef struct {
   unsigned int ODR0:1;
@@ -178,3 +178,41 @@ typedef struct {
 
 GPIO_ODR_t * GPIO_ODR(GPIO_t gpio);
 
+#pragma mark - GPIO port bit set/reset registers
+
+typedef struct {
+  unsigned int BS0:1;
+  unsigned int BS1:1;
+  unsigned int BS2:1;
+  unsigned int BS3:1;
+  unsigned int BS4:1;
+  unsigned int BS5:1;
+  unsigned int BS6:1;
+  unsigned int BS7:1;
+  unsigned int BS8:1;
+  unsigned int BS9:1;
+  unsigned int BS10:1;
+  unsigned int BS11:1;
+  unsigned int BS12:1;
+  unsigned int BS13:1;
+  unsigned int BS14:1;
+  unsigned int BS15:1;
+  unsigned int BR0:1;
+  unsigned int BR1:1;
+  unsigned int BR2:1;
+  unsigned int BR3:1;
+  unsigned int BR4:1;
+  unsigned int BR5:1;
+  unsigned int BR6:1;
+  unsigned int BR7:1;
+  unsigned int BR8:1;
+  unsigned int BR9:1;
+  unsigned int BR10:1;
+  unsigned int BR11:1;
+  unsigned int BR12:1;
+  unsigned int BR13:1;
+  unsigned int BR14:1;
+  unsigned int BR15:1;
+} GPIO_BSRR_t;
+
+GPIO_BSRR_t * GPIO_BSRR(GPIO_t gpio);

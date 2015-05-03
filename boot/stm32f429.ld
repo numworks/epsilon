@@ -10,8 +10,11 @@
  * to be stored in Flash. */
 MEMORY {
   FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 2048K
-  RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 192K
-  CCM (rwx)  : ORIGIN = 0x10000000, LENGTH = 64K
+  RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 192K
+  /* We're splitting the CCM in two, this way we're sure nothing will use the
+   * stack space. */
+  CCM (rwx) : ORIGIN = 0x10000000, LENGTH = 60K
+  CCM_STACK (rw) : ORIGIN = 0x1000F000, LENGTH = 4K
 }
 
 SECTIONS {
@@ -32,7 +35,6 @@ SECTIONS {
      * See ST/RM0090/p70 for more infos. */
     *(.isr_vector_table)
   } >FLASH
-
 
   .text : {
     . = ALIGN(4);
@@ -76,4 +78,12 @@ SECTIONS {
     *(.bss)
     _bss_section_end_ram = .;
   } >RAM
+
+  .ccm : {
+    . = ALIGN(8);
+    _stack_end = .;
+    . = . + LENGTH(CCM_STACK) - 8;
+    . = ALIGN(8);
+    _stack_start = .;
+  } >CCM_STACK
 }

@@ -21,7 +21,7 @@ test: test.elf
 	$(GDB) -x test/gdb_script.gdb test.elf
 
 test.elf: $(objs) test/runner.o
-	@$(LD) -T boot/stm32f429_flash.ld $(objs) test/runner.o -o $@
+	@$(LD) -T boot/stm32f429.ld $(objs) test/runner.o -o $@
 
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"
@@ -33,7 +33,7 @@ boot.bin: boot.elf
 
 boot.elf: $(objs) src/freertos_blinky.o
 	@echo "LD      $@"
-	@$(LD) -T boot/stm32f429_flash.ld $(objs) src/freertos_blinky.o -o $@
+	@$(LD) -T boot/stm32f429.ld $(objs) src/freertos_blinky.o -o $@
 
 %.o: %.c
 	@echo "CC      $@"

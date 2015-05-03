@@ -7,6 +7,8 @@ extern const void * _data_section_start_ram;
 extern const void * _data_section_end_ram;
 extern const void * _bss_section_start_ram;
 extern const void * _bss_section_end_ram;
+extern const void * _stack_start;
+extern const void * _stack_end;
 
 void _start(void);
 
@@ -24,7 +26,7 @@ typedef void(*ISR)(void);
 ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   = {
-  0x2001FFF0, //FIXME: This is the stack pointer!
+  (ISR)&_stack_start,
   _start,
   0,
   0,

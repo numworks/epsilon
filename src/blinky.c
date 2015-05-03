@@ -22,18 +22,18 @@ int main(int argc, char * argv[]) {
   // And we should also set the output speed, but really
   // we don't care (we're doing something super slow)
 
-  long delay = 10000;
+  long delay = 50000;
 
   while (1) {
     GPIO_ODR(GPIOG)->ODR13 = 0;
     GPIO_ODR(GPIOG)->ODR14 = 1;
 
-    sleep(100000);
+    sleep(delay);
 
     GPIO_ODR(GPIOG)->ODR13 = 1;
     GPIO_ODR(GPIOG)->ODR14 = 0;
 
-    sleep(100000);
+    sleep(delay);
   }
 }
 

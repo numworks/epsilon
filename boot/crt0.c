@@ -27,7 +27,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0
 };
 
-void main(int argc, char * argv[]);
+int main(int argc, char * argv[]);
 
 void _start(void) {
   // This is where execution starts after reset.

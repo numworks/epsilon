@@ -30,3 +30,29 @@ extern struct {
   unsigned int :1;
 } * RCC_AHB1ENR;
 
+extern struct {
+  unsigned int TIM1EN:1;
+  unsigned int TIM8EN:1;
+  unsigned int :2;
+  unsigned int USART1EN:1;
+  unsigned int USART6EN:1;
+  unsigned int :2;
+  unsigned int ADC1EN:1;
+  unsigned int ADC2EN:1;
+  unsigned int ADC3EN:1;
+  unsigned int SDIOEN:1;
+  unsigned int SPI1EN:1;
+  unsigned int SPI4EN:1;
+  unsigned int SYSCFGEN:1;
+  unsigned int :1;
+  unsigned int TIM9EN:1;
+  unsigned int TIM10EN:1;
+  unsigned int TIM11EN:1;
+  unsigned int :1;
+  unsigned int SPI5EN:1;
+  unsigned int SPI6EN:1;
+  unsigned int SAI1EN:1;
+  unsigned int :3;
+  unsigned int LTDCEN:1;
+  unsigned int :5;
+} * RCC_APB2ENR;

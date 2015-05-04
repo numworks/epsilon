@@ -45,7 +45,7 @@ GPIO_MODER_t * GPIO_MODER(GPIO_t gpio);
 #pragma mark - GPIO port output type registers
 
 typedef enum {
-  GPIO_OTYPE_PUSH_PULL = 0,
+  GPIO_OTYPE_PUSH_PULL = 0, // Reset state
   GPIO_OTYPE_OPEN_DRAIN = 1
 } GPIO_OTYPE_t;
 
@@ -74,7 +74,7 @@ GPIO_OTYPER_t * GPIO_OTYPER(GPIO_t gpio);
 #pragma mark - GPIO port output speed registers
 
 typedef enum {
-  GPIO_OSPEED_LOW_SPEED = 0,
+  GPIO_OSPEED_LOW_SPEED = 0, // Reset state, execpt parts of GPIOA/B
   GPIO_OSPEED_MEDIUM_SPEED = 1,
   GPIO_OSPEED_FAST_SPEED = 2,
   GPIO_OSPEED_HIGH_SPEED = 3
@@ -104,7 +104,7 @@ GPIO_OSPEEDR_t * GPIO_OSPEEDR(GPIO_t gpio);
 #pragma mark - GPIO port pull-up/pull-down registers
 
 typedef enum {
-  GPIO_PUPD_NONE = 0,
+  GPIO_PUPD_NONE = 0, // Reset state, except parts of GPIOA/B
   GPIO_PUPD_PULL_UP = 1,
   GPIO_PUPD_PULL_DOWN = 2
 } GPIO_PUPD_t;
@@ -284,14 +284,14 @@ typedef struct {
 } GPIO_AFRL_t;
 
 typedef struct {
-  GPIO_AF_t AFRH0:4;
-  GPIO_AF_t AFRH1:4;
-  GPIO_AF_t AFRH2:4;
-  GPIO_AF_t AFRH3:4;
-  GPIO_AF_t AFRH4:4;
-  GPIO_AF_t AFRH5:4;
-  GPIO_AF_t AFRH6:4;
-  GPIO_AF_t AFRH7:4;
+  GPIO_AF_t AFRH8:4;
+  GPIO_AF_t AFRH9:4;
+  GPIO_AF_t AFRH10:4;
+  GPIO_AF_t AFRH11:4;
+  GPIO_AF_t AFRH12:4;
+  GPIO_AF_t AFRH13:4;
+  GPIO_AF_t AFRH14:4;
+  GPIO_AF_t AFRH15:4;
 } GPIO_AFRH_t;
 
 GPIO_AFRL_t * GPIO_AFRL(GPIO_t gpio);

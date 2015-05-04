@@ -10,10 +10,10 @@ CC=clang
 CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffreestanding
 
 # Production
-CFLAGS += -Os -fdata-sections -ffunction-sections
-LDFLAGS += --gc-sections
+#CFLAGS += -Os -fdata-sections -ffunction-sections
+#LDFLAGS += --gc-sections
 
-objs := boot/crt0.o arch/stm32f429/isr.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
+objs := boot/crt0.o arch/stm32f429/isr.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o arch/stm32f429/registers/spi.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
 
 default: clean boot.elf
 
@@ -35,9 +35,9 @@ boot.bin: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary boot.elf boot.bin
 
-boot.elf: $(objs) src/freertos_blinky.o
+boot.elf: $(objs) src/spi.o
 	@echo "LD      $@"
-	@$(LD) -T boot/stm32f429.ld $(objs) src/freertos_blinky.o -o $@
+	@$(LD) -T boot/stm32f429.ld $(objs) src/spi.o -o $@
 
 %.o: %.c
 	@echo "CC      $@"

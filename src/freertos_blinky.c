@@ -6,9 +6,9 @@
 
 void BlinkGreenLed(void * pvParameters) {
   while(1) {
-    vTaskDelay(100);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
     GPIO_ODR(GPIOG)->ODR13 = 0;
-    vTaskDelay(100);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
     GPIO_ODR(GPIOG)->ODR13 = 1;
   }
 }

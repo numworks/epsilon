@@ -18,6 +18,7 @@ MEMORY {
 }
 
 SECTIONS {
+
   .isr_vector_table ORIGIN(FLASH) : {
     /* When booting, the STM32F42xx fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
@@ -32,7 +33,24 @@ SECTIONS {
      * We're generating the ISR vector table in C, because it's very convenient:
      * using function pointers, we can easily point to the service routing for
      * each interrupt.
-     * See ST/RM0090/p70 for more infos. */
+     * See ST/RM0090/p70 for more infos.
+     *
+     * Last but not least, the ISR vector table contains pointer to functions
+     * that we may want to override depending on the binary we want to produce.
+     * The C implementation uses _NameServiceRoutine symbols. If those symbols
+     * are defined elsewhere, we'll use that version. If they aren't defined, we
+     * will provide here a default implementation (namely, calling crt0's _start
+     * on reset, and an infinite loop on HardFault). */
+
+    _ResetServiceRoutine = DEFINED(_ResetServiceRoutine) ? _ResetServiceRoutine : _start;
+    _NMIServiceRoutine = DEFINED(_NMIServiceRoutine) ? _NMIServiceRoutine : 0;
+    _HardFaultServiceRoutine = DEFINED(_HardFaultServiceRoutine) ? _HardFaultServiceRoutine : _halt;
+    _MemManageServiceRoutine = DEFINED(_MemManageServiceRoutine) ? _MemManageServiceRoutine : 0;
+    _BusFaultServiceRoutine = DEFINED(_BusFaultServiceRoutine) ? _BusFaultServiceRoutine : 0;
+    _SVCallServiceRoutine = DEFINED(_SVCallServiceRoutine) ? _SVCallServiceRoutine : 0;
+    _PendSVServiceRoutine = DEFINED(_PendSVServiceRoutine) ? _PendSVServiceRoutine : 0;
+    _SysTickServiceRoutine = DEFINED(_SysTickServiceRoutine) ? _SysTickServiceRoutine : 0;
+
     *(.isr_vector_table)
   } >FLASH
 

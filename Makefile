@@ -9,7 +9,7 @@ CFLAGS += -std=c99 -g -Wall # -Os
 CC=clang
 CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffreestanding
 
-objs := boot/crt0.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
+objs := boot/crt0.o arch/stm32f429/isr.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
 
 default: clean boot.elf
 

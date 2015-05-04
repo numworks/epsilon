@@ -166,7 +166,7 @@ header file. */
 standard names. */
 #define vPortSVCHandler _SVCallServiceRoutine
 #define xPortPendSVHandler _PendSVServiceRoutine
-#define xPortSysTickHandler _SystickServiceRoutine
+#define xPortSysTickHandler _SysTickServiceRoutine
 
 #endif /* FREERTOS_CONFIG_H */
 

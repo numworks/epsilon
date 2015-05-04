@@ -1,57 +1,15 @@
 #include <stdint.h>
 #include <string.h>
-// FIXME: Use a libc, and memset, bzerto!
 
 extern const void * _data_section_start_flash;
 extern const void * _data_section_start_ram;
 extern const void * _data_section_end_ram;
 extern const void * _bss_section_start_ram;
 extern const void * _bss_section_end_ram;
-extern const void * _stack_start;
-extern const void * _stack_end;
-
-void _ResetServiceRoutine(void);
-void _NMIServiceRoutine(void);
-void _HardFaultServiceRoutine(void);
-void _MemManageServiceRoutine(void);
-void _BusFaultServiceRoutine(void);
-void _SVCallServiceRoutine(void);
-void _PendSVServiceRoutine(void);
-void _SystickServiceRoutine(void);
-
-/* Interrupt Service Routines are void->void functions */
-typedef void(*ISR)(void);
-
-/* Notice: The Cortex-M4 expects all jumps to be made at an odd address when
- * jumping to Thumb code. For example, if you want to execute Thumb code at
- * address 0x100, you'll have to jump to 0x101. Luckily, this idiosyncrasy is
- * properly handled by the C compiler that will generate proper addresses when
- * using function pointers. */
-
-#define INITIALISATION_VECTOR_SIZE 0x6B
-
-ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
-  __attribute__((section(".isr_vector_table")))
-  = {
-  (ISR)&_stack_start,
-  _ResetServiceRoutine,
-  _NMIServiceRoutine,
-  _HardFaultServiceRoutine,
-  _MemManageServiceRoutine,
-  _BusFaultServiceRoutine,
-  0, // UsageFault
-  0, // Reserved
-  _SVCallServiceRoutine,
-  0, // Debug Monitor
-  _PendSVServiceRoutine, // PendSV
-  _SystickServiceRoutine, // Systick
-  0
-};
-
 
 int main(int argc, char * argv[]);
 
-void _ResetServiceRoutine(void) {
+void _start(void) {
   // This is where execution starts after reset.
   // Many things are not initialized yet so the code here has to pay attention.
 
@@ -71,22 +29,7 @@ void _ResetServiceRoutine(void) {
   main(0, 0x0);
 }
 
-void _NMIServiceRoutine(void) {
-  while (1) {
-  }
-}
-
-void _HardFaultServiceRoutine(void) {
-  while (1) {
-  }
-}
-
-void _MemManageServiceRoutine(void) {
-  while (1) {
-  }
-}
-
-void _BusFaultServiceRoutine(void) {
+void _halt(void) {
   while (1) {
   }
 }

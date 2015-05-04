@@ -13,6 +13,8 @@ typedef void(*ISR)(void);
 
 #define INITIALISATION_VECTOR_SIZE 0x6B
 
+void _start();
+
 ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   = {
@@ -22,11 +24,29 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   _HardFaultServiceRoutine,
   _MemManageServiceRoutine,
   _BusFaultServiceRoutine,
-  0, // UsageFault
-  0, // Reserved
+  _UsageFaultServiceRoutine,
+  0, 0, 0, 0, // Reserved
   _SVCallServiceRoutine,
-  0, // Debug Monitor
+  _DebugMonitorServiceRoutine,
+  0, // Reserved
   _PendSVServiceRoutine,
   _SysTickServiceRoutine,
-  0
+  _WWDGServiceRoutine,
+  _PVDServiceRoutine,
+  _TampStampServiceRoutine,
+  _RtcWakeupServiceRoutine,
+  _FlashServiceRoutine,
+  _RCCServiceRoutine,
+  _EXTI0ServiceRoutine,
+  _EXTI1ServiceRoutine,
+  _EXTI2ServiceRoutine,
+  _EXTI3ServiceRoutine,
+  _EXTI4ServiceRoutine,
+  _DMA1Stream0ServiceRoutine,
+  _DMA1Stream1ServiceRoutine,
+  _DMA1Stream2ServiceRoutine,
+  _DMA1Stream3ServiceRoutine,
+  _DMA1Stream4ServiceRoutine,
+  _DMA1Stream5ServiceRoutine,
+  _DMA1Stream6ServiceRoutine
 };

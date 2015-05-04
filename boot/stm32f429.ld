@@ -19,6 +19,42 @@ MEMORY {
 
 SECTIONS {
 
+  /* The ISR vector table (explained below) contains pointer to functions that
+   * we may want to override depending on the binary we want to produce.
+   * The C implementation uses _NameServiceRoutine symbols. If those symbols are
+   * defined elsewhere, want to use that version. If they aren't defined, we
+   * want to provide a default value. We'll define here the default value that
+   * we want to be "absolute zero" (outside of any section).
+   * provide here a default implementation (namely, calling crt0's _start on
+   * reset, and an infinite loop on HardFault). */
+
+  PROVIDE(_NMIServiceRoutine = 0);
+  PROVIDE(_MemManageServiceRoutine = 0);
+  PROVIDE(_BusFaultServiceRoutine = 0);
+  PROVIDE(_UsageFaultServiceRoutine = 0);
+  PROVIDE(_SVCallServiceRoutine = 0);
+  PROVIDE(_DebugMonitorServiceRoutine = 0);
+  PROVIDE(_PendSVServiceRoutine = 0);
+  PROVIDE(_SysTickServiceRoutine = 0);
+  PROVIDE(_WWDGServiceRoutine = 0);
+  PROVIDE(_PVDServiceRoutine = 0);
+  PROVIDE(_TampStampServiceRoutine = 0);
+  PROVIDE(_RtcWakeupServiceRoutine = 0);
+  PROVIDE(_FlashServiceRoutine = 0);
+  PROVIDE(_RCCServiceRoutine = 0);
+  PROVIDE(_EXTI0ServiceRoutine = 0);
+  PROVIDE(_EXTI1ServiceRoutine = 0);
+  PROVIDE(_EXTI2ServiceRoutine = 0);
+  PROVIDE(_EXTI3ServiceRoutine = 0);
+  PROVIDE(_EXTI4ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream0ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream1ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream2ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream3ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream4ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream5ServiceRoutine = 0);
+  PROVIDE(_DMA1Stream6ServiceRoutine = 0);
+
   .isr_vector_table ORIGIN(FLASH) : {
     /* When booting, the STM32F42xx fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
@@ -28,34 +64,31 @@ SECTIONS {
      *
      * Note that address 0x0 is always an alias. It points to the beginning of
      * Flash, SRAM, or integrated bootloader depending on the boot mode chosen.
-     * (This mode is chosen by setting BOOTn pins on the chip.
+     * (This mode is chosen by setting BOOTn pins on the chip).
      *
      * We're generating the ISR vector table in C, because it's very convenient:
-     * using function pointers, we can easily point to the service routing for
+     * using function pointers, we can easily point to the service routine for
      * each interrupt.
-     * See ST/RM0090/p70 for more infos.
-     *
-     * Last but not least, the ISR vector table contains pointer to functions
-     * that we may want to override depending on the binary we want to produce.
-     * The C implementation uses _NameServiceRoutine symbols. If those symbols
-     * are defined elsewhere, we'll use that version. If they aren't defined, we
-     * will provide here a default implementation (namely, calling crt0's _start
-     * on reset, and an infinite loop on HardFault). */
+     * See ST/RM0090/p70 for more infos. */
 
-    _ResetServiceRoutine = DEFINED(_ResetServiceRoutine) ? _ResetServiceRoutine : _start;
-    _NMIServiceRoutine = DEFINED(_NMIServiceRoutine) ? _NMIServiceRoutine : 0;
-    _HardFaultServiceRoutine = DEFINED(_HardFaultServiceRoutine) ? _HardFaultServiceRoutine : _halt;
-    _MemManageServiceRoutine = DEFINED(_MemManageServiceRoutine) ? _MemManageServiceRoutine : 0;
-    _BusFaultServiceRoutine = DEFINED(_BusFaultServiceRoutine) ? _BusFaultServiceRoutine : 0;
-    _SVCallServiceRoutine = DEFINED(_SVCallServiceRoutine) ? _SVCallServiceRoutine : 0;
-    _PendSVServiceRoutine = DEFINED(_PendSVServiceRoutine) ? _PendSVServiceRoutine : 0;
-    _SysTickServiceRoutine = DEFINED(_SysTickServiceRoutine) ? _SysTickServiceRoutine : 0;
 
     *(.isr_vector_table)
   } >FLASH
 
+
   .text : {
     . = ALIGN(4);
+
+  /* We have to finish defining the ISR vectors that might not have been defined
+   * previously. We are PROVIDing here the non-zero vectors. In other words, the
+   * one where we want to point to actual code.
+   * We're doing it here because we want those symbols to live in the .text
+   * section. We're simply setting the Reset vector to crt0's _start, and the
+   * HardFault one to crt0's _halt. */
+
+    PROVIDE(_ResetServiceRoutine = _start);
+    PROVIDE(_HardFaultServiceRoutine = _halt);
+
     *(.text)
   } >FLASH
 

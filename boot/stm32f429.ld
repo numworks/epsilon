@@ -90,11 +90,13 @@ SECTIONS {
     PROVIDE(_HardFaultServiceRoutine = _halt);
 
     *(.text)
+    *(.text.*)
   } >FLASH
 
   .rodata : {
     . = ALIGN(4);
     *(.rodata)
+    *(.rodata.*)
   } >FLASH
 
   .data : {
@@ -114,6 +116,7 @@ SECTIONS {
     _data_section_start_flash = LOADADDR(.data);
     _data_section_start_ram = .;
     *(.data)
+    *(.data.*)
     _data_section_end_ram = .;
   } >RAM AT> FLASH
 
@@ -127,6 +130,7 @@ SECTIONS {
     . = ALIGN(4);
     _bss_section_start_ram = .;
     *(.bss)
+    *(.bss.*)
     _bss_section_end_ram = .;
   } >RAM
 

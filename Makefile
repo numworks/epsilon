@@ -4,10 +4,14 @@ GDB=arm-none-eabi-gdb
 OBJCOPY=arm-none-eabi-objcopy
 CFLAGS = -Iarch/stm32f429 -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
 #-I/Users/romain/local/arm-none-eabi/include
-CFLAGS += -std=c99 -g -Wall # -Os
+CFLAGS += -std=c99 -g -Wall
 #CFLAGS += -march=armv7e-m -mcpu=cortex-m4 -mthumb  -mfpu=fpv4-sp-d16
 CC=clang
 CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffreestanding
+
+# Production
+CFLAGS += -Os -fdata-sections -ffunction-sections
+LDFLAGS += --gc-sections
 
 objs := boot/crt0.o arch/stm32f429/isr.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
 
@@ -21,7 +25,7 @@ test: test.elf
 	$(GDB) -x test/gdb_script.gdb test.elf
 
 test.elf: $(objs) test/runner.o
-	@$(LD) -T boot/stm32f429.ld $(objs) test/runner.o -o $@
+	@$(LD) $(LDFLAGS) $(objs) test/runner.o -o $@
 
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"

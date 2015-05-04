@@ -9,4 +9,4 @@ monitor reset halt
 
 break main
 
-#continue
+continue

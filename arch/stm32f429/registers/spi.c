@@ -9,6 +9,7 @@
 
 #define SPI_CR1_OFFSET 0x00
 #define SPI_SR_OFFSET  0x08
+#define SPI_DR_OFFSET  0x0C
 
 char * SPI_REGISTER_ADDRESS(SPI_t spi, int registerOffset) {
   char * spiBaseAddress[6] = {
@@ -24,4 +25,8 @@ SPI_CR1_t * SPI_CR1(SPI_t spi) {
 
 SPI_SR_t * SPI_SR(SPI_t spi) {
   return (SPI_SR_t *)SPI_REGISTER_ADDRESS(spi, SPI_SR_OFFSET);
+}
+
+SPI_DR_t * SPI_DR(SPI_t spi) {
+  return (SPI_DR_t *)SPI_REGISTER_ADDRESS(spi, SPI_DR_OFFSET);
 }

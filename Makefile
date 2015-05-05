@@ -35,9 +35,9 @@ boot.bin: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary boot.elf boot.bin
 
-boot.elf: $(objs) src/spi.o
+boot.elf: $(objs) src/lcd_spi.o
 	@echo "LD      $@"
-	@$(LD) -T boot/stm32f429.ld $(objs) src/spi.o -o $@
+	@$(LD) -T boot/stm32f429.ld $(objs) src/lcd_spi.o -o $@
 
 %.o: %.c
 	@echo "CC      $@"

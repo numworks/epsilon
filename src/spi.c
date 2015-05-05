@@ -51,43 +51,18 @@ int main(int argc, char * argv[]) {
   RCC_APB2ENR->SPI4EN = 1;
 
   // Configure the SPI port
-  /*
-    SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-    SPI_InitStruct.SPI_Mode = SPI_Mode_Master;
-    SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;
-    SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
-    SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
-    SPI_InitStruct.SPI_NSS = SPI_NSS_Soft | SPI_NSSInternalSoft_Set;
-    SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
-    SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
-    */
-  SPI_CR1_t * SPI4_CR1 = SPI_CR1(SPI4);
-  /*
-  SPI4_CR1->BIDIMODE = 0;
-  SPI4_CR1->BIDIOE = 1;
-  SPI4_CR1->MSTR = 1;
-  SPI4_CR1->DFF = SPI_DFF_8_BITS;
-  SPI4_CR1->CPOL = 0;
-  SPI4_CR1->BR = SPI_BR_DIV_256;
-  SPI4_CR1->SSM = 1;
-  SPI4_CR1->SSI = 1;
-  SPI4_CR1->SPE = 1;
-  */
-
-  /*
-   11 0 0 1
-   0 1 1 0 1 111
-   100 */
-
-  /*
-   * 1100
-   * 1011
-   * 0111
-   * 1100
-   */
-  *(uint16_t *)SPI4_CR1 = 0xCB7C;
-
-  SPI_CR1_t output = *SPI4_CR1;
+  // Using a C99 compound litteral
+  *SPI_CR1(SPI4) = (SPI_CR1_t){
+    .BIDIMODE = 1,
+    .BIDIOE = 1,
+    .MSTR = 1,
+    .DFF = SPI_DFF_16_BITS,
+    .CPOL = 0,
+    .BR = SPI_BR_DIV_256,
+    .SSM = 1,
+    .SSI = 1,
+    .SPE = 1
+  };
 
   BaseType_t success = xTaskCreate(SpiSend,
       "SpiSnd",

@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 typedef enum {
   SPI1 = 0,
   SPI2 = 1,
@@ -24,7 +26,6 @@ typedef enum {
   SPI_DFF_8_BITS = 0,
   SPI_DFF_16_BITS = 1
 } SPI_DFF_t;
-
 
 typedef struct {
   unsigned int CPHA:1;
@@ -61,3 +62,8 @@ typedef struct {
 } SPI_SR_t;
 
 SPI_SR_t * SPI_SR(SPI_t spi);
+
+#pragma mark - SPI data registers
+
+typedef uint16_t SPI_DR_t;
+SPI_DR_t * SPI_DR(SPI_t spi);

@@ -1,21 +1,30 @@
-#include <registers.h>
 #include <FreeRTOS.h>
 #include <task.h>
 #include <timers.h>
 #include <semphr.h>
+
+#include <platform/stm32f429/registers.h>
+#include <platform/stm32f429/spi.h>
 
 /* This code sends data to the onboard LCD over SPI
  *
  * The LCD has two interfaces, SPI and direct RGB.
  * We'll only use SPI in this one.
  *
- * The documentation gives the following mapping
- * Pin name  -  LCD-SPI
- * NRST  -  Reset
- * PC2   - CSX // Chip select for LCD
- * PD13 - DCX // Data/Command register
- * PF7 - SCL // SPI Clock
- * PF9 - SDI/SDO // MOSI
+ * The Discovery board has the IM[0-3] pins of the LCD controller
+ * connected to low, high, high, low = 0b0110. (UM1670 p. 33).
+ * This tells the LCD controller to expect data this way:
+ * "4 wire, 8-bit serial, SDA = In/out"
+ * See ILI9341 p. 63
+ *
+ * Now how are the LCD pins connected to the MCU ones?
+ * The Discovery board doc says this:
+ * MCU pin -  LCD-SPI
+ *   NRST  -  Reset
+ *   PC2   - CSX // Chip select for LCD
+ *    PD13 - DCX // Data/Command register
+ *     PF7 - SCL // SPI Clock
+ *     PF9 - SDI/SDO // MOSI
  *
  * See UM1670 p. 19 to 24. */
 
@@ -46,14 +55,78 @@ void SpiSend(void * pvParameters) {
     vTaskDelay(100/portTICK_PERIOD_MS);
   }
 }
+/*
+struct spi_port {
+  // Private data:
+  .config = {
+  },
+  .state = {
+  }
+};
 
+// Public API, private impl.
+spi_init();
+spi_write();
+*/
 int main(int argc, char * argv[]) {
+
+  spi_port_t my_spi_port = {
+    .config = {
+      .controlRegister1 = {
+        .BIDIMODE = 1,
+        .BIDIOE = 1,
+        .MSTR = 1,
+        .DFF = SPI_DFF_16_BITS,
+        .CPOL = 0,
+        .BR = SPI_BR_DIV_256,
+        .SSM = 1,
+        .SSI = 1,
+        .SPE = 1
+      }
+    }
+  };
+  spi_init(&my_spi_port);
+
+  /*
+  // Code we'd like to write:
+
+  spi_port my_spi_port;
+  spi_init(&my_spi_port);
+
+  ili9431 lcd_panel = {
+    .port = my_spi_port
+  };
+
+  ili9431_init(&lcd_panel);
+  lcd_panel.clear();
+  lcd_panel.setGammaCurve();
+
+  char * fb = lcd_panel.framebuffer;
+
+  for (int i=0;i<100;i++) {
+    *fb[i] = 1;
+  }
+
+*/
+
+
+
   // We'll use GPIO pins F6-F9 to emit SPI data
   // GPIO are grouped by letter. All GPIO groups live on the "AHB1" bus.
   // (this is documented in the STM32F4 reference mnual, page 65)
 
   // Step 1 : Enable clock in RCC_AHBxENR
   RCC_AHB1ENR->GPIOFEN = 1;
+
+  // Step 2 : Set the GPIO pin C2 as output
+
+  RCC_AHB1ENR->GPIOCEN = 1;
+  GPIO_MODER(GPIOC)->MODER2 = GPIO_MODE_OUTPUT;
+
+  RCC_AHB1ENR->GPIOCEN = 1;
+  GPIO_MODER(GPIOC)->MODER2 = GPIO_MODE_OUTPUT;
+  // From now on, we'll control pin C2 with
+  // GPIO_ODR(GPIOC)->ODR2 = desiredValue;
 
   // Step 2 : Configure the GPIO pin to "Alternate function number 5"
   // This means "SPI5 on pins F6-F9", cf STM32F249 p78

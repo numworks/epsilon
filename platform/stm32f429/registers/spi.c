@@ -1,4 +1,4 @@
-#include <registers/spi.h>
+#include "spi.h"
 
 #define SPI1_BASE 0x40013000
 #define SPI2_BASE 0x40003800

@@ -1,4 +1,4 @@
-#include <registers/gpio.h>
+#include "gpio.h"
 
 #define GPIOA_BASE 0x40020000
 #define GPIOB_BASE 0x40020400

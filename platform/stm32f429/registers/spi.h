@@ -1,3 +1,6 @@
+#ifndef STM32F429_REGISTERS_SPI_H
+#define STM32F429_REGISTERS_SPI_H 1
+
 #include <stdint.h>
 
 typedef enum {
@@ -67,3 +70,5 @@ SPI_SR_t * SPI_SR(SPI_t spi);
 
 typedef uint16_t SPI_DR_t;
 SPI_DR_t * SPI_DR(SPI_t spi);
+
+#endif

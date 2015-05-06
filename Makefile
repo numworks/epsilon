@@ -2,7 +2,8 @@ CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld.bfd
 GDB=arm-none-eabi-gdb
 OBJCOPY=arm-none-eabi-objcopy
-CFLAGS = -Iarch/stm32f429 -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
+CFLAGS = -I. -Iinclude -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
+#CFLAGS = -I. -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include -Iinclude
 #-I/Users/romain/local/arm-none-eabi/include
 CFLAGS += -std=c99 -g -Wall
 #CFLAGS += -march=armv7e-m -mcpu=cortex-m4 -mthumb  -mfpu=fpv4-sp-d16
@@ -13,13 +14,16 @@ CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffre
 #CFLAGS += -Os -fdata-sections -ffunction-sections
 #LDFLAGS += --gc-sections
 
-objs := boot/crt0.o arch/stm32f429/isr.o arch/stm32f429/registers/rcc.o arch/stm32f429/registers/gpio.o arch/stm32f429/registers/spi.o external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
+objs := boot/crt0.o
+objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
+objs += external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
+
+objs += platform/stm32f429/boot/isr.o platform/stm32f429/registers/gpio.o platform/stm32f429/registers/rcc.o platform/stm32f429/registers/spi.o platform/stm32f429/spi.o
 
 default: clean boot.elf
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
-
 
 test: test.elf
 	$(GDB) -x test/gdb_script.gdb test.elf
@@ -37,7 +41,7 @@ boot.bin: boot.elf
 
 boot.elf: $(objs) src/lcd_spi.o
 	@echo "LD      $@"
-	@$(LD) -T boot/stm32f429.ld $(objs) src/lcd_spi.o -o $@
+	@$(LD) -T platform/stm32f429/boot/flash.ld $(objs) src/lcd_spi.o -o $@
 
 %.o: %.c
 	@echo "CC      $@"

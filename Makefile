@@ -18,7 +18,7 @@ objs := boot/crt0.o
 objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
 objs += external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
 
-objs += platform/stm32f429/boot/isr.o platform/stm32f429/registers/gpio.o platform/stm32f429/registers/rcc.o platform/stm32f429/registers/spi.o platform/stm32f429/spi.o
+objs += platform/stm32f429/boot/isr.o platform/stm32f429/registers/gpio.o platform/stm32f429/registers/rcc.o platform/stm32f429/registers/spi.o platform/stm32f429/spi.o platform/stm32f429/pinmux.o
 
 default: clean boot.elf
 

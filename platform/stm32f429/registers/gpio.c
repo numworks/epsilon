@@ -23,52 +23,52 @@
 #define GPIO_AFRL_OFFSET    0x20
 #define GPIO_AFRH_OFFSET    0x24
 
-char * GPIO_REGISTER_ADDRESS(GPIO_t gpio, int registerOffset) {
+char * GPIO_REGISTER_ADDRESS(stm32_gpio_group_t gpio_group, int registerOffset) {
   char * gpioBaseAddress[11] = {
     (char *)GPIOA_BASE, (char *)GPIOB_BASE, (char *)GPIOC_BASE,
     (char *)GPIOD_BASE, (char *)GPIOE_BASE, (char *)GPIOF_BASE,
     (char *)GPIOG_BASE, (char *)GPIOH_BASE, (char *)GPIOI_BASE,
     (char *)GPIOJ_BASE, (char *)GPIOK_BASE
   };
-  return gpioBaseAddress[gpio] + registerOffset;
+  return gpioBaseAddress[gpio_group] + registerOffset;
 }
 
-GPIO_MODER_t * GPIO_MODER(GPIO_t gpio) {
-  return (GPIO_MODER_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_MODER_OFFSET);
+GPIO_MODER_t * GPIO_MODER(stm32_gpio_group_t gpio_group) {
+  return (GPIO_MODER_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_MODER_OFFSET);
 }
 
-GPIO_OTYPER_t * GPIO_OTYPER(GPIO_t gpio) {
-  return (GPIO_OTYPER_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_OTYPER_OFFSET);
+GPIO_OTYPER_t * GPIO_OTYPER(stm32_gpio_group_t gpio_group) {
+  return (GPIO_OTYPER_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_OTYPER_OFFSET);
 }
 
-GPIO_OSPEEDR_t * GPIO_OSPEEDR(GPIO_t gpio) {
-  return (GPIO_OSPEEDR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_OSPEEDR_OFFSET);
+GPIO_OSPEEDR_t * GPIO_OSPEEDR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_OSPEEDR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_OSPEEDR_OFFSET);
 }
 
-GPIO_PUPDR_t * GPIO_PUPDR(GPIO_t gpio) {
-  return (GPIO_PUPDR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_PUPDR_OFFSET);
+GPIO_PUPDR_t * GPIO_PUPDR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_PUPDR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_PUPDR_OFFSET);
 }
 
-GPIO_IDR_t * GPIO_IDR(GPIO_t gpio) {
-  return (GPIO_IDR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_IDR_OFFSET);
+GPIO_IDR_t * GPIO_IDR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_IDR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_IDR_OFFSET);
 }
 
-GPIO_ODR_t * GPIO_ODR(GPIO_t gpio) {
-  return (GPIO_ODR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_ODR_OFFSET);
+GPIO_ODR_t * GPIO_ODR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_ODR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_ODR_OFFSET);
 }
 
-GPIO_BSRR_t * GPIO_BSRR(GPIO_t gpio) {
-  return (GPIO_BSRR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_BSRR_OFFSET);
+GPIO_BSRR_t * GPIO_BSRR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_BSRR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_BSRR_OFFSET);
 }
 
-GPIO_LCKR_t * GPIO_LCKR(GPIO_t gpio) {
-  return (GPIO_LCKR_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_LCKR_OFFSET);
+GPIO_LCKR_t * GPIO_LCKR(stm32_gpio_group_t gpio_group) {
+  return (GPIO_LCKR_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_LCKR_OFFSET);
 }
 
-GPIO_AFRL_t * GPIO_AFRL(GPIO_t gpio) {
-  return (GPIO_AFRL_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_AFRL_OFFSET);
+GPIO_AFRL_t * GPIO_AFRL(stm32_gpio_group_t gpio_group) {
+  return (GPIO_AFRL_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_AFRL_OFFSET);
 }
 
-GPIO_AFRH_t * GPIO_AFRH(GPIO_t gpio) {
-  return (GPIO_AFRH_t *)GPIO_REGISTER_ADDRESS(gpio, GPIO_AFRH_OFFSET);
+GPIO_AFRH_t * GPIO_AFRH(stm32_gpio_group_t gpio_group) {
+  return (GPIO_AFRH_t *)GPIO_REGISTER_ADDRESS(gpio_group, GPIO_AFRH_OFFSET);
 }

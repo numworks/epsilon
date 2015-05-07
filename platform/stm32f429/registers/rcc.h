@@ -1,3 +1,6 @@
+#ifndef STM32_REGISTERS_RCC_H
+#define STM32_REGISTERS_RCC_H 1
+
 /* Sample usage : "RCC_AHB1ENR->GPIOAEN = 1;" will enable the clock on GPIOA.*/
 extern struct {
   unsigned int GPIOAEN:1;
@@ -56,3 +59,5 @@ extern struct {
   unsigned int LTDCEN:1;
   unsigned int :5;
 } * RCC_APB2ENR;
+
+#endif

@@ -64,11 +64,11 @@ typedef struct {
   unsigned int :7;
 } SPI_SR_t;
 
-SPI_SR_t * SPI_SR(SPI_t spi);
+volatile SPI_SR_t * SPI_SR(SPI_t spi);
 
 #pragma mark - SPI data registers
 
 typedef uint16_t SPI_DR_t;
-SPI_DR_t * SPI_DR(SPI_t spi);
+volatile SPI_DR_t * SPI_DR(SPI_t spi);
 
 #endif

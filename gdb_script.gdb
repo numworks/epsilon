@@ -7,6 +7,7 @@ load boot.elf
 # Tell OpenOCD to reset and halt
 monitor reset halt
 
-break main
+break init
+break _halt
 
 continue

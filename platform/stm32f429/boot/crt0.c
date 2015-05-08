@@ -7,7 +7,12 @@ extern const void * _data_section_end_ram;
 extern const void * _bss_section_start_ram;
 extern const void * _bss_section_end_ram;
 
-int main(int argc, char * argv[]);
+void init();
+
+void _halt() {
+  while (1) {
+  }
+}
 
 void _start(void) {
   // This is where execution starts after reset.
@@ -26,10 +31,7 @@ void _start(void) {
   size_t bssSectionLength = (char *)&_bss_section_end_ram - (char *)&_bss_section_start_ram;
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
-  main(0, 0x0);
-}
+  init();
 
-void _halt(void) {
-  while (1) {
-  }
+  _halt();
 }

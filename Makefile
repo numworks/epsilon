@@ -14,11 +14,14 @@ CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffre
 #CFLAGS += -Os -fdata-sections -ffunction-sections
 #LDFLAGS += --gc-sections
 
-objs := boot/crt0.o
+objs := platform/stm32f429/boot/crt0.o
 objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
 objs += external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
 
-objs += platform/stm32f429/boot/isr.o platform/stm32f429/registers/gpio.o platform/stm32f429/registers/rcc.o platform/stm32f429/registers/spi.o platform/stm32f429/spi.o platform/stm32f429/pinmux.o
+objs += platform/stm32f429/boot/isr.o platform/stm32f429/registers/gpio.o platform/stm32f429/registers/rcc.o platform/stm32f429/registers/spi.o
+
+objs += platform/stm32f429/init.o platform/stm32f429/init_lcd.o
+objs += platform/ili9341/ili9341.o
 
 default: clean boot.elf
 
@@ -39,9 +42,9 @@ boot.bin: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary boot.elf boot.bin
 
-boot.elf: $(objs) src/lcd_spi.o
+boot.elf: $(objs)
 	@echo "LD      $@"
-	@$(LD) -T platform/stm32f429/boot/flash.ld $(objs) src/lcd_spi.o -o $@
+	@$(LD) -T platform/stm32f429/boot/flash.ld $(objs) -o $@
 
 %.o: %.c
 	@echo "CC      $@"

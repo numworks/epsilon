@@ -23,10 +23,10 @@ SPI_CR1_t * SPI_CR1(SPI_t spi) {
   return (SPI_CR1_t *)SPI_REGISTER_ADDRESS(spi, SPI_CR1_OFFSET);
 }
 
-SPI_SR_t * SPI_SR(SPI_t spi) {
+volatile SPI_SR_t * SPI_SR(SPI_t spi) {
   return (SPI_SR_t *)SPI_REGISTER_ADDRESS(spi, SPI_SR_OFFSET);
 }
 
-SPI_DR_t * SPI_DR(SPI_t spi) {
+volatile SPI_DR_t * SPI_DR(SPI_t spi) {
   return (SPI_DR_t *)SPI_REGISTER_ADDRESS(spi, SPI_DR_OFFSET);
 }

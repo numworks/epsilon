@@ -1,7 +1,19 @@
 #ifndef STM32_REGISTERS_GPIO_H
 #define STM32_REGISTERS_GPIO_H 1
 
-#include <platform/stm32f429/gpio.h>
+typedef enum {
+  GPIOA = 0,
+  GPIOB = 1,
+  GPIOC = 2,
+  GPIOD = 3,
+  GPIOE = 4,
+  GPIOF = 5,
+  GPIOG = 6,
+  GPIOH = 7,
+  GPIOI = 8,
+  GPIOJ = 9,
+  GPIOK = 10
+} GPIO_GROUP_t;
 
 #pragma mark - GPIO port mode registers
 
@@ -31,7 +43,7 @@ typedef struct {
   GPIO_MODE_t MODER15:2;
 } GPIO_MODER_t;
 
-GPIO_MODER_t * GPIO_MODER(stm32_gpio_group_t gpio_group);
+GPIO_MODER_t * GPIO_MODER(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port output type registers
 
@@ -60,7 +72,7 @@ typedef struct {
   unsigned int :16;
 } GPIO_OTYPER_t;
 
-GPIO_OTYPER_t * GPIO_OTYPER(stm32_gpio_group_t gpio_group);
+GPIO_OTYPER_t * GPIO_OTYPER(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port output speed registers
 
@@ -90,7 +102,7 @@ typedef struct {
   GPIO_OSPEED_t OSPEEDR15:2;
 } GPIO_OSPEEDR_t;
 
-GPIO_OSPEEDR_t * GPIO_OSPEEDR(stm32_gpio_group_t gpio_group);
+GPIO_OSPEEDR_t * GPIO_OSPEEDR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port pull-up/pull-down registers
 
@@ -119,7 +131,7 @@ typedef struct {
   GPIO_PUPD_t PUPDR15:2;
 } GPIO_PUPDR_t;
 
-GPIO_PUPDR_t * GPIO_PUPDR(stm32_gpio_group_t gpio_group);
+GPIO_PUPDR_t * GPIO_PUPDR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port input data registers
 
@@ -143,7 +155,7 @@ typedef struct {
   unsigned int :16;
 } GPIO_IDR_t;
 
-GPIO_IDR_t * GPIO_IDR(stm32_gpio_group_t gpio_group);
+GPIO_IDR_t * GPIO_IDR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port output data registers
 
@@ -167,7 +179,7 @@ typedef struct {
   unsigned int :16;
 } GPIO_ODR_t;
 
-GPIO_ODR_t * GPIO_ODR(stm32_gpio_group_t gpio_group);
+GPIO_ODR_t * GPIO_ODR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port bit set/reset registers
 
@@ -206,7 +218,7 @@ typedef struct {
   unsigned int BR15:1;
 } GPIO_BSRR_t;
 
-GPIO_BSRR_t * GPIO_BSRR(stm32_gpio_group_t gpio_group);
+GPIO_BSRR_t * GPIO_BSRR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port configuration lock registers
 
@@ -240,7 +252,7 @@ typedef struct {
   GPIO_LCK_KEY_t LCKK:1;
 } GPIO_LCKR_t;
 
-GPIO_LCKR_t * GPIO_LCKR(stm32_gpio_group_t gpio_group);
+GPIO_LCKR_t * GPIO_LCKR(GPIO_GROUP_t gpio_group);
 
 #pragma mark - GPIO port alternate function registers
 
@@ -285,7 +297,7 @@ typedef struct {
   GPIO_AF_t AFRH15:4;
 } GPIO_AFRH_t;
 
-GPIO_AFRL_t * GPIO_AFRL(stm32_gpio_group_t gpio_group);
-GPIO_AFRH_t * GPIO_AFRH(stm32_gpio_group_t gpio_group);
+GPIO_AFRL_t * GPIO_AFRL(GPIO_GROUP_t gpio_group);
+GPIO_AFRH_t * GPIO_AFRH(GPIO_GROUP_t gpio_group);
 
 #endif

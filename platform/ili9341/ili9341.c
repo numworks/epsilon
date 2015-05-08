@@ -1,6 +1,4 @@
 #include "ili9341.h"
-#include <stdint.h>
-//#include <platform/stm32f429/registers/gpio.h> //FIXME
 
 enum {
   COMMAND_MODE = 0,
@@ -68,19 +66,6 @@ void perform_instruction(ili9341_t * c, instruction_t * instruction) {
   }
 }
 
-#define X 0xFFFF
-  uint16_t pattern[64] = {
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, X, X, X, X, 0, 0,
-    0, X, 0, 0, 0, 0, X, 0,
-    0, 0, X, X, X, 0, X, 0,
-    0, X, 0, 0, 0, X, 0, 0,
-    0, X, 0, 0, 0, X, 0, 0,
-    0, 0, X, X, X, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-  };
-#undef X
-
 void ili9341_initialize(ili9341_t * c) {
   // Falling edge on CSX
   c->chip_select_pin_write(0);
@@ -91,25 +76,22 @@ void ili9341_initialize(ili9341_t * c) {
     perform_instruction(c, instruction++);
   }
 
+#define FILL_SCREEN_UPON_INIT 0
+#if FILL_SCREEN_UPON_INIT
+  // This would draw stuff on the screen
+
   perform_instruction(c, &COMMAND(RAMWR));
 
   c->data_command_pin_write(DATA_MODE);
 
-  for (int j=0;j<320;j++) {
-    for (int i =0;i<30;i++) {
-      c->spi_write(((char *)pattern + sizeof(uint16_t)*8*(j%8)), 8*sizeof(uint16_t));
-    }
+  char buffer[256];
+  for (int i = 0;i<256;i++) {
+    buffer[i] = i;
   }
-
-/*
-  //FIXME
-  GPIO_MODER(GPIOF)->MODER9 = GPIO_MODE_INPUT;
-
-  for (int i = 0; i<1000; i++) {}
-
-  for (int i=0; i < 10; i++) {
-    send_data(c, 'A');
-  }*/
+  for (int i = 0; i<(320*240*2)/256; i++) {
+    c->spi_write(buffer, 256);
+  }
+#endif
 }
 
 void ili9341_set_gamma(ili9341_t * c) {

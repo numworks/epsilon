@@ -23,24 +23,16 @@
  *  That's wat ST says in stm32f429i_discovery_lcd.c.
  */
 
-#include "registers/rcc.h"
+/*#include "registers/rcc.h"
 #include "registers/gpio.h"
 #include "registers/spi.h"
+#include "registers/ltdc.h"*/
+#include "registers.h"
 #include <platform/ili9341/ili9341.h>
 
-static void spi_5_write(char * data, size_t size);
-static void gpio_c2_write(bool pin_state);
-static void gpio_d13_write(bool pin_state);
-
-ili9341_t sPanel = {
-  .chip_select_pin_write = gpio_c2_write,
-  .data_command_pin_write = gpio_d13_write,
-  .spi_write = spi_5_write
-};
-
-static void init_lcd_gpio();
-static void init_lcd_spi();
-static void init_lcd_panel();
+static void init_spi_interface();
+static void init_rgb_interface();
+static void init_panel();
 
 void init_lcd() {
   /* This routine is responsible for initializing the LCD panel.
@@ -48,107 +40,170 @@ void init_lcd() {
    * this routine, everyone can expect to write to the LCD by writing to the
    * framebuffer. */
 
-  /* The LCD panel is connected on GPIO pins. Let's configure them. */
-  init_lcd_gpio();
+  init_spi_interface();
 
-  /* According to our GPIO config, we send commands to the LCD panel over SPI on
-   * port SPI5. Let's configure it. */
-  init_lcd_spi();
+  init_rgb_interface();
 
-  /* configure display */
-  init_lcd_panel();
-
-  /* Last but not least */
-  //TODO: init_lcd_dma();
+  init_panel();
 }
 
-#pragma mark - GPIO initialization
+// SPI interface
 
-static void init_lcd_gpio_clocks() {
+static void init_spi_gpios();
+static void init_spi_port();
+
+static void init_spi_interface() {
+  init_spi_gpios();
+  init_spi_port();
+}
+
+static void init_spi_gpios() {
+  // The LCD panel is connected on GPIO pins. Let's configure them
+
   // We are using groups C, D, and F. Let's enable their clocks
-  RCC_AHB1ENR->GPIOCEN = 1;
-  RCC_AHB1ENR->GPIODEN = 1;
-  RCC_AHB1ENR->GPIOFEN = 1;
-}
+  RCC_AHB1ENR |= (GPIOCEN | GPIODEN | GPIOFEN);
 
-static void init_lcd_gpio_modes() {
   // PC2 and PD13 are controlled directly
-  GPIO_MODER(GPIOC)->MODER2 = GPIO_MODE_OUTPUT;
-  GPIO_MODER(GPIOD)->MODER13 = GPIO_MODE_OUTPUT;
+  REGISTER_SET_VALUE(GPIO_MODER(GPIOC), MODER(2), GPIO_MODE_OUTPUT);
+  REGISTER_SET_VALUE(GPIO_MODER(GPIOD), MODER(13), GPIO_MODE_OUTPUT);
 
   // PF7 and PF9 are used for an alternate function (in that case, SPI)
-  GPIO_MODER(GPIOF)->MODER7 = GPIO_MODE_ALTERNATE_FUNCTION;
-  GPIO_MODER(GPIOF)->MODER9 = GPIO_MODE_ALTERNATE_FUNCTION;
+  REGISTER_SET_VALUE(GPIO_MODER(GPIOF), MODER(7), GPIO_MODE_ALTERNATE_FUNCTION);
+  REGISTER_SET_VALUE(GPIO_MODER(GPIOF), MODER(9), GPIO_MODE_ALTERNATE_FUNCTION);
 
   // More precisely, PF7 and PF9 are doing SPI-SCL and SPI-SDO/SDO.
   // This corresponds to Alternate Function 5 using SPI port 5
   // (See STM32F429 p78)
-  GPIO_AFRL(GPIOF)->AFRL7 = GPIO_AF_AF5; // Pin 7 is in the "low" register
-  GPIO_AFRH(GPIOF)->AFRH9 = GPIO_AF_AF5; // and pin 9 in the "high" one
-
-  // For debug
-  /*
-  GPIO_MODER(GPIOF)->MODER6 = GPIO_MODE_ALTERNATE_FUNCTION;
-  GPIO_MODER(GPIOF)->MODER8 = GPIO_MODE_ALTERNATE_FUNCTION;
-  GPIO_AFRL(GPIOF)->AFRL6 = GPIO_AF_AF5; // and pin 9 in the "high" one
-  GPIO_AFRH(GPIOF)->AFRH8 = GPIO_AF_AF5; // and pin 9 in the "high" one
-  */
+  REGISTER_SET_VALUE(GPIO_AFRL(GPIOF), AFR(7), 5); // Pin 7 is in the "low" register
+  REGISTER_SET_VALUE(GPIO_AFRH(GPIOF), AFR(9), 5); // and pin 9 in the "high" one
 }
 
-static void init_lcd_gpio() {
-  /* The LCD panel is connected on GPIO pins. Let's configure them. */
-  init_lcd_gpio_clocks();
-  init_lcd_gpio_modes();
-}
-
-void gpio_c2_write(bool pin_state) {
-  GPIO_ODR(GPIOC)->ODR2 = pin_state;
-}
-
-void gpio_d13_write(bool pin_state) {
-  GPIO_ODR(GPIOD)->ODR13 = pin_state;
-}
-
-#pragma mark - SPI initialization
-
-static void init_lcd_spi() {
+static void init_spi_port() {
   // Enable the SPI5 clock (SPI5 lives on the APB2 bus)
-  RCC_APB2ENR->SPI5EN = 1;
+  RCC_APB2ENR |= SPI5EN;
 
   // Configure the SPI port
-  // Using a C99 compound litteral. C99 guarantees all non-set values are zero
-  *SPI_CR1(SPI5) = (SPI_CR1_t){
-    .BIDIMODE = 1,
-    .BIDIOE = 1,
-    .MSTR = 1,
-    .DFF = SPI_DFF_8_BITS,
-    .CPOL = 0,
-    .CPHA = 0,
-    .BR = SPI_BR_DIV_2,
-    .SSM = 1,
-    .SSI = 1,
-    .LSBFIRST = 0, // Send the most significant bit first
-    .SPE = 1
-  };
+  SPI_CR1(SPI5) = (SPI_BIDIMODE | SPI_BIDIOE | SPI_MSTR | SPI_DFF_8_BITS | SPI_BR(SPI_BR_DIV_2) | SPI_SSM | SPI_SSI | SPI_SPE);
+}
+
+// RGB interface
+
+static void init_rgb_gpios();
+static void init_rgb_clocks();
+
+static void init_rgb_interface() {
+  init_rgb_gpios();
+  init_rgb_clocks();
+}
+
+struct gpio_pin {
+  char group;
+  char number;
+};
+
+#define RGB_PIN_COUNT 77
+
+struct gpio_pin rgb_pins[RGB_PIN_COUNT] = {
+  {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 8}, {GPIOA, 11}, {GPIOA, 12},
+  {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
+  {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
+  {GPIOD, 3}, {GPIOD, 6}, {GPIOD, 10},
+  {GPIOE, 4}, {GPIOE, 5}, {GPIOE, 6}, {GPIOE, 11}, {GPIOE, 12}, {GPIOE, 13},
+  {GPIOE, 14}, {GPIOE, 15}, {GPIOF, 10},
+  {GPIOG, 6}, {GPIOG, 7}, {GPIOG, 10}, {GPIOG, 11}, {GPIOG, 12},
+  {GPIOH, 2}, {GPIOH, 3}, {GPIOH, 8}, {GPIOH, 9}, {GPIOH, 10}, {GPIOH, 11},
+  {GPIOH, 12}, {GPIOH, 13}, {GPIOH, 14}, {GPIOH, 15},
+  {GPIOI, 0}, {GPIOI, 1}, {GPIOI, 2}, {GPIOI, 4}, {GPIOI, 5}, {GPIOI, 6},
+  {GPIOI, 7}, {GPIOI, 9}, {GPIOI, 10}, {GPIOI, 12}, {GPIOI, 13}, {GPIOI, 14},
+  {GPIOI, 15},
+  {GPIOJ, 0}, {GPIOJ, 1}, {GPIOJ, 2}, {GPIOJ, 3}, {GPIOJ, 4}, {GPIOJ, 5},
+  {GPIOJ, 6}, {GPIOJ, 7}, {GPIOJ, 8}, {GPIOJ, 9}, {GPIOJ, 10}, {GPIOJ, 11},
+  {GPIOJ, 12}, {GPIOJ, 13}, {GPIOJ, 14}, {GPIOJ, 15}, {GPIOK, 0}, {GPIOK, 1},
+  {GPIOK, 2}, {GPIOK, 3}, {GPIOK, 4}, {GPIOK, 5}, {GPIOK, 6}, {GPIOK, 7}
+};
+
+static void init_rgb_gpios() {
+  // The RGB interface uses GPIO pins in all groups!
+  RCC_AHB1ENR |= (
+      GPIOAEN | GPIOBEN | GPIOCEN | GPIODEN |
+      GPIOEEN | GPIOFEN | GPIOGEN | GPIOHEN |
+      GPIOIEN | GPIOJEN | GPIOJEN
+      );
+
+  // The LTDC is always mapped to AF14
+  for (int i=0; i<RGB_PIN_COUNT; i++) {
+    struct gpio_pin * pin = rgb_pins+i;
+    if (pin->number > 7) {
+      REGISTER_SET_VALUE(GPIO_AFRL(pin->group), AFR(pin->number), 14);
+    } else {
+      REGISTER_SET_VALUE(GPIO_AFRH(pin->group), AFR(pin->number), 14);
+    }
+  }
+
+  //FIXME: Apprently DMA should be enabled?
+  RCC_AHB1ENR |= (DMA1EN | DMA2EN | DMA2DEN);
+}
+
+static void init_rgb_clocks() {
+  // STEP 1 : Enable the LTDC clock in the RCC register
+  //
+  // TFT-LCD lives on the APB2 bus, so we'll want to play with RCC_APB2ENR
+  // (RCC stands for "Reset and Clock Control)
+  RCC_APB2ENR |= LTDCEN;
+
+  // STEP 2 : Configure the required Pixel clock following the panel datasheet
+  //
+  // We're setting PLLSAIN = 192, PLLSAIR = 4, and PLLSAIDIVR = 0x2 meaning divide-by-8
+  // So with a f(PLLSAI clock input) = 1MHz
+  // we get f(VCO clock) = PLLSAIN * fPPLSAI = 192 MHz
+  // and f(PLL LCD clock) = fVCO / PLLSAIR = 48 MHz
+  // and eventually f(LCD_CLK) = fPLLLCD/8 = 6 MHz
+
+  int pllsain = 192;
+  int pllsair = 4;
+  int pllsaidivr = 0x2; // This value means "divide by 8"
+  //FIXME: A macro here
+
+  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIR, pllsair);
+  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIN, pllsain);
+  REGISTER_SET_VALUE(RCC_DCKCFGR, PLLSAIDIVR, pllsaidivr);
+
+  // Now let's enable the PLL/PLLSAI clocks
+  RCC_CR |= (PLLSAION | PLLON);
+}
+
+// Panel
+
+static void spi_5_write(char * data, size_t size);
+static void gpio_c2_write(bool pin_state);
+static void gpio_d13_write(bool pin_state);
+
+static ili9341_t panel = {
+  .chip_select_pin_write = gpio_c2_write,
+  .data_command_pin_write = gpio_d13_write,
+  .spi_write = spi_5_write
+};
+
+static void init_panel() {
+  ili9341_initialize(&panel);
 }
 
 static void spi_5_write(char * data, size_t size) {
-  volatile SPI_SR_t * spi_status = SPI_SR(SPI5);
-  volatile SPI_DR_t * spi_data_register = SPI_DR(SPI5);
-
-  while (spi_status->BSY != 0) {
+  while (SPI_SR(SPI5) & SPI_BSY) {
   }
   for (size_t i=0; i<size; i++) {
-    *spi_data_register = data[i];
-    while (spi_status->TXE == 0) {
+    SPI_DR(SPI5) = data[i];
+    while (!(SPI_SR(SPI5) & SPI_TXE)) {
     }
   }
-  while (spi_status->BSY != 0) {
+  while (SPI_SR(SPI5) & SPI_BSY) {
   }
 }
 
-#pragma mark - Panel initialization
+void gpio_c2_write(bool pin_state) {
+  REGISTER_SET_VALUE(GPIO_ODR(GPIOC), ODR(2), pin_state);
+}
 
-void init_lcd_panel() {
-  ili9341_initialize(&sPanel);
+void gpio_d13_write(bool pin_state) {
+  REGISTER_SET_VALUE(GPIO_ODR(GPIOD), ODR(13), pin_state);
 }

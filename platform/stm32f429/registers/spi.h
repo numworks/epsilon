@@ -1,74 +1,66 @@
 #ifndef STM32F429_REGISTERS_SPI_H
 #define STM32F429_REGISTERS_SPI_H 1
 
-#include <stdint.h>
+// Serial Peripheral Interface registers
 
-typedef enum {
-  SPI1 = 0,
-  SPI2 = 1,
-  SPI3 = 2,
-  SPI4 = 3,
-  SPI5 = 4,
-  SPI6 = 5
-} SPI_t;
+#define SPI1_BASE 0x40013000
+#define SPI2_BASE 0x40003800
+#define SPI3_BASE 0x40003C00
+#define SPI4_BASE 0x40013400
+#define SPI5_BASE 0x40015000
+#define SPI6_BASE 0x40015400
 
-#pragma mark - SPI control registers 1
+#define SPI_REGISTER_AT(spi_port,offset) (*(volatile uint16_t *)(spi_port##_BASE+offset))
 
-typedef enum {
-  SPI_BR_DIV_2 = 0,
-  SPI_BR_DIV_4 = 1,
-  SPI_BR_DIV_8 = 2,
-  SPI_BR_DIV_16 = 3,
-  SPI_BR_DIV_32 = 4,
-  SPI_BR_DIV_64 = 5,
-  SPI_BR_DIV_128 = 6,
-  SPI_BR_DIV_256 = 7
-} SPI_BR_t;
+// SPI control registers 1
 
-typedef enum {
-  SPI_DFF_8_BITS = 0,
-  SPI_DFF_16_BITS = 1
-} SPI_DFF_t;
+#define SPI_CR1(spi_port) SPI_REGISTER_AT(spi_port, 0x00)
 
-typedef struct {
-  unsigned int CPHA:1;
-  unsigned int CPOL:1;
-  unsigned int MSTR:1;
-  SPI_BR_t BR:3;
-  unsigned int SPE:1;
-  unsigned int LSBFIRST:1;
-  unsigned int SSI:1;
-  unsigned int SSM:1;
-  unsigned int RXONLY:1;
-  SPI_DFF_t DFF:1;
-  unsigned int CRCNEXT:1;
-  unsigned int CRCEN:1;
-  unsigned int BIDIOE:1;
-  unsigned int BIDIMODE:1;
-} SPI_CR1_t;
+#define SPI_BR_DIV_2 0
+#define SPI_BR_DIV_4 1
+#define SPI_BR_DIV_8 2
+#define SPI_BR_DIV_16 3
+#define SPI_BR_DIV_32 4
+#define SPI_BR_DIV_64 5
+#define SPI_BR_DIV_128 6
+#define SPI_BR_DIV_256 7
 
-SPI_CR1_t * SPI_CR1(SPI_t spi);
+#define SPI_DFF_8_BITS 0
+#define SPI_DFF_16_BITS 1
 
-#pragma mark - SPI status registers
+#define SPI_CPHA (1<<0)
+#define SPI_CPOL (1<<1)
+#define SPI_MSTR (1<<2)
+#define LOW_BIT_SPI_BR 3
+#define HIGH_BIT_SPI_BR 5
+#define SPI_BR(v) REGISTER_FIELD_VALUE(SPI_BR, v)
+#define SPI_SPE (1<<6)
+#define SPI_LSBFIRST (1<<7)
+#define SPI_SSI (1<<8)
+#define SPI_SSM (1<<9)
+#define SPI_RXONLY (1<<10)
+#define SPI_DFF (1<<11)
+#define SPI_CRCNEXT (1<<12)
+#define SPI_CRCEN (1<<13)
+#define SPI_BIDIOE (1<<14)
+#define SPI_BIDIMODE (1<<15)
 
-typedef struct {
-  unsigned int RXNE:1;
-  unsigned int TXE:1;
-  unsigned int CHSIDE:1;
-  unsigned int UDR:1;
-  unsigned int CRCERR:1;
-  unsigned int MODF:1;
-  unsigned int OVR:1;
-  unsigned int BSY:1;
-  unsigned int FRE:1;
-  unsigned int :7;
-} SPI_SR_t;
+// SPI status registers
 
-volatile SPI_SR_t * SPI_SR(SPI_t spi);
+#define SPI_SR(spi_port) SPI_REGISTER_AT(spi_port, 0x08)
 
-#pragma mark - SPI data registers
+#define SPI_RXNE (1<<0)
+#define SPI_TXE (1<<1)
+#define SPI_CHSIDE (1<<2)
+#define SPI_UDR (1<<3)
+#define SPI_CRCERR (1<<4)
+#define SPI_MODF (1<<5)
+#define SPI_OVR (1<<6)
+#define SPI_BSY (1<<7)
+#define SPI_FRE (1<<8)
 
-typedef uint16_t SPI_DR_t;
-volatile SPI_DR_t * SPI_DR(SPI_t spi);
+// SPI data registers
+
+#define SPI_DR(spi_port) SPI_REGISTER_AT(spi_port, 0x0C)
 
 #endif

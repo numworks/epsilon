@@ -1,6 +1,93 @@
 #ifndef STM32_REGISTERS_GPIO_H
 #define STM32_REGISTERS_GPIO_H 1
 
+#define GPIO_BASE 0x40020000
+
+#define GPIOA 0
+#define GPIOB 1
+#define GPIOC 2
+#define GPIOD 3
+#define GPIOE 4
+#define GPIOF 5
+#define GPIOG 6
+#define GPIOH 7
+#define GPIOI 8
+#define GPIOJ 9
+#define GPIOK 10
+
+#define GPIO_REGISTER_AT(gpio_group,offset) (*(volatile uint32_t *)(GPIO_BASE+(gpio_group*0x400)+offset))
+
+/*
+ //DELEte me when implementing
+ #define GPIO_OTYPER_OFFSET  0x04
+#define GPIO_OSPEEDR_OFFSET 0x08
+#define GPIO_PUPDR_OFFSET   0x0C
+#define GPIO_IDR_OFFSET     0x10
+#define GPIO_ODR_OFFSET     0x14
+#define GPIO_BSRR_OFFSET    0x18
+#define GPIO_LCKR_OFFSET    0x1C
+#define GPIO_AFRL_OFFSET    0x20
+#define GPIO_AFRH_OFFSET    0x24
+*/
+
+// GPIO port mode registers
+
+#define GPIO_MODER(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x00)
+
+#define GPIO_MODE_INPUT 0
+#define GPIO_MODE_OUTPUT 1
+#define GPIO_MODE_ALTERNATE_FUNCTION 2
+#define GPIO_MODE_ANALOG 3
+
+#define LOW_BIT_MODER(v) (2*v)
+#define HIGH_BIT_MODER(v) (2*v+1)
+
+// GPIO port output data registers
+
+#define GPIO_ODR(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x14)
+
+#define LOW_BIT_ODR(v) (v)
+#define HIGH_BIT_ODR(v) (v)
+
+// GPIO port alternate function registers
+
+#define GPIO_AFRL(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x20)
+#define GPIO_AFRH(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x24)
+
+#define LOW_BIT_AFR(v) (4*(v%8))
+#define HIGH_BIT_AFR(v) (4*(v%8)+3)
+
+
+#if 0
+
+
+typedef struct {
+  GPIO_AF_t AFRL0:4;
+  GPIO_AF_t AFRL1:4;
+  GPIO_AF_t AFRL2:4;
+  GPIO_AF_t AFRL3:4;
+  GPIO_AF_t AFRL4:4;
+  GPIO_AF_t AFRL5:4;
+  GPIO_AF_t AFRL6:4;
+  GPIO_AF_t AFRL7:4;
+} GPIO_AFRL_t;
+
+typedef struct {
+  GPIO_AF_t AFRH8:4;
+  GPIO_AF_t AFRH9:4;
+  GPIO_AF_t AFRH10:4;
+  GPIO_AF_t AFRH11:4;
+  GPIO_AF_t AFRH12:4;
+  GPIO_AF_t AFRH13:4;
+  GPIO_AF_t AFRH14:4;
+  GPIO_AF_t AFRH15:4;
+} GPIO_AFRH_t;
+
+GPIO_AFRL_t * GPIO_AFRL(GPIO_GROUP_t gpio_group);
+GPIO_AFRH_t * GPIO_AFRH(GPIO_GROUP_t gpio_group);
+// 
+
+
 typedef enum {
   GPIOA = 0,
   GPIOB = 1,
@@ -15,6 +102,8 @@ typedef enum {
   GPIOK = 10
 } GPIO_GROUP_t;
 
+
+#define
 #pragma mark - GPIO port mode registers
 
 typedef enum {
@@ -299,5 +388,7 @@ typedef struct {
 
 GPIO_AFRL_t * GPIO_AFRL(GPIO_GROUP_t gpio_group);
 GPIO_AFRH_t * GPIO_AFRH(GPIO_GROUP_t gpio_group);
+
+#endif
 
 #endif

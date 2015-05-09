@@ -196,17 +196,19 @@ static void init_rgb_timings() {
    /*- HSYNC and VSYNC Width: Horizontal and Vertical Synchronization width configured by
        programming a value of HSYNC Width - 1 and VSYNC Width - 1 in the LTDC_SSCR register. */
 
-  LTDC_SSCR = LTDC_VSH(lcd_panel_hsync-1) | LTDC_HSW(lcd_panel_vsync-1);
-#if 0
+  LTDC_SSCR =
+    LTDC_VSH(lcd_panel_vsync-1) |
+    LTDC_HSW(lcd_panel_hsync-1);
+
   /*– HBP and VBP: Horizontal and Vertical Synchronization back porch width configured by
       programming the accumulated value HSYNC Width + HBP - 1 and the accumulated
       value VSYNC Width + VBP - 1 in the LTDC_BPCR register. */
 
-  long * LTDC_BPCR = (long *)(LCD_TFT_BASE + 0x0C);
-  set_ltdc_register(LTDC_BPCR,
-      lcd_panel_hsync+lcd_panel_hbp-1,
-      lcd_panel_vsync+lcd_panel_vbp-1);
+  LTDC_BPCR =
+    LTDC_AVBP(lcd_panel_vsync+lcd_panel_vbp-1) |
+    LTDC_AHBP(lcd_panel_hsync+lcd_panel_hbp-1);
 
+#if 0
   /*– Active Width and Active Height: The Active Width and Active Height are configured by
       programming the accumulated value HSYNC Width + HBP + Active Width - 1 and the accumulated
       value VSYNC Width + VBP + Active Height - 1 in the LTDC_AWCR register (only up to 1024x768 is supported). */

@@ -24,8 +24,10 @@
 
 #define LOW_BIT_AVBP 0
 #define HIGH_BIT_AVBP 10
+#define LTDC_AVBP(v) REGISTER_FIELD_VALUE(AVBP, v)
 #define LOW_BIT_AHBP 15
 #define HIGH_BIT_AHBP 27
+#define LTDC_AHBP(v) REGISTER_FIELD_VALUE(AHBP, v)
 
 #if 0
 extern LTDC_BPCR_t * LTDC_BPCR;

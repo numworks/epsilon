@@ -228,15 +228,11 @@ static void init_rgb_timings() {
     LTDC_TOTALH(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr+lcd_panel_vfp-1) |
     LTDC_TOTALW(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr+lcd_panel_hfp-1);
 
-#if 0
-
   /* STEP 4 : Configure the synchronous signals and clock polarity in the LTDC_GCR register */
 
-  long * LTDC_GCR = (long *)(LCD_TFT_BASE + 0x18);
-  //*LTDC_GCR = set_bits(*LTDC_GCR, 0, 0, 0x1); // Enable LTDC (Bit 0 is LTDCEN)
+  LTDC_GCR = LTDC_LTDCEN;
   // Not setting the "Active low" bits since they are 0 by default, which we want
   // Same for the pixel clock, we don't want it inverted
-#endif
 }
 
 // Panel

@@ -51,26 +51,24 @@
 #define HIGH_BIT_TOTALW 27
 #define LTDC_TOTALW(v) REGISTER_FIELD_VALUE(TOTALW, v)
 
+// LTDC global control register
+
+#define LTDC_GCR LTDC_REGISTER_AT(0x18)
+
+#define LTDC_LTDCEN (1<<0) //FIXME: Prefix in RCC too!
+#define LOW_BIT_DBW 4
+#define HIGH_BIT_DBW 6
+#define LOW_BIT_DGW 8
+#define HIGH_BIT_DGW 10
+#define LOW_BIT_DRW 12
+#define HIGH_BIT_DRW 14
+#define LTDC_DEN (1<<16)
+#define LTDC_PCPOL (1<<28)
+#define LTDC_DEPOL (1<<29)
+#define LTDC_VSPOL (1<<30)
+#define LTDC_HSPOL (1<<31)
+
 #if 0
-
-typedef struct {
-  unsigned int LTDCEN:1;
-  unsigned int :3;
-  unsigned int DBW:3;
-  unsigned int :1;
-  unsigned int DGW:3;
-  unsigned int :1;
-  unsigned int DRW:3;
-  unsigned int :1;
-  unsigned int DEN:1;
-  unsigned int :11;
-  unsigned int PCPOL:1;
-  unsigned int DEPOL:1;
-  unsigned int VSPOL:1;
-  unsigned int HPOL:1;
-} LTDC_GCR_t;
-
-extern LTDC_GCR_t * LTDC_GCR;
 
 typedef struct {
   unsigned int IMR:1;

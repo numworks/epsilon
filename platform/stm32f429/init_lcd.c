@@ -90,10 +90,12 @@ static void init_spi_port() {
 
 static void init_rgb_gpios();
 static void init_rgb_clocks();
+static void init_rgb_timings();
 
 static void init_rgb_interface() {
   init_rgb_gpios();
   init_rgb_clocks();
+  init_rgb_timings();
 }
 
 struct gpio_pin {
@@ -170,6 +172,71 @@ static void init_rgb_clocks() {
 
   // Now let's enable the PLL/PLLSAI clocks
   RCC_CR |= (PLLSAION | PLLON);
+}
+
+static void init_rgb_timings() {
+  // Configure the Synchronous timings: VSYNC, HSYNC, Vertical and Horizontal
+  // back porch, active data area and the front porch timings following the
+  // panel datasheet
+
+  // We'll use the typical configuration from the ILI9341 datasheet since it
+  // seems to match our hardware. Here are the values of interest:
+  int lcd_panel_hsync = 10;
+  int lcd_panel_hbp = 20;
+  int lcd_panel_hadr = 240;
+  int lcd_panel_hfp = 10;
+  int lcd_panel_vsync = 2;
+  int lcd_panel_vbp = 2;
+  int lcd_panel_vadr = 320;
+  int lcd_panel_vfp = 4;
+
+   // The LCD-TFT programmable synchronous timings are:
+   // NOTE: we are only allowed to touch certain bits (0-14 and 16-27)
+
+   /*- HSYNC and VSYNC Width: Horizontal and Vertical Synchronization width configured by
+       programming a value of HSYNC Width - 1 and VSYNC Width - 1 in the LTDC_SSCR register. */
+
+  LTDC_SSCR = LTDC_VSH(lcd_panel_hsync-1) | LTDC_HSW(lcd_panel_vsync-1);
+#if 0
+  /*– HBP and VBP: Horizontal and Vertical Synchronization back porch width configured by
+      programming the accumulated value HSYNC Width + HBP - 1 and the accumulated
+      value VSYNC Width + VBP - 1 in the LTDC_BPCR register. */
+
+  long * LTDC_BPCR = (long *)(LCD_TFT_BASE + 0x0C);
+  set_ltdc_register(LTDC_BPCR,
+      lcd_panel_hsync+lcd_panel_hbp-1,
+      lcd_panel_vsync+lcd_panel_vbp-1);
+
+  /*– Active Width and Active Height: The Active Width and Active Height are configured by
+      programming the accumulated value HSYNC Width + HBP + Active Width - 1 and the accumulated
+      value VSYNC Width + VBP + Active Height - 1 in the LTDC_AWCR register (only up to 1024x768 is supported). */
+
+  long * LTDC_AWCR = (long *)(LCD_TFT_BASE + 0x10);
+  set_ltdc_register(LTDC_AWCR,
+      lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr-1,
+      lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr-1);
+
+  /*– Total Width: The Total width is configured by programming the accumulated
+      value HSYNC Width + HBP + Active Width + HFP - 1 in the LTDC_TWCR register.
+      The HFP is the Horizontal front porch period.
+    – Total Height: The Total Height is configured by programming the accumulated
+      value VSYNC Height + VBP + Active Height + VFP - 1 in the LTDC_TWCR register.
+      The VFP is the Vertical front porch period
+    */
+  long * LTDC_TWCR = (long *)(LCD_TFT_BASE + 0x14);
+  set_ltdc_register(LTDC_TWCR,
+      lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr+lcd_panel_hfp-1,
+      lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr+lcd_panel_vfp-1);
+
+
+
+  /* STEP 4 : Configure the synchronous signals and clock polarity in the LTDC_GCR register */
+
+  long * LTDC_GCR = (long *)(LCD_TFT_BASE + 0x18);
+  //*LTDC_GCR = set_bits(*LTDC_GCR, 0, 0, 0x1); // Enable LTDC (Bit 0 is LTDCEN)
+  // Not setting the "Active low" bits since they are 0 by default, which we want
+  // Same for the pixel clock, we don't want it inverted
+#endif
 }
 
 // Panel

@@ -13,8 +13,10 @@
 
 #define LOW_BIT_VSH 0
 #define HIGH_BIT_VSH 10
+#define LTDC_VSH(v) REGISTER_FIELD_VALUE(VSH, v)
 #define LOW_BIT_HSW 15
 #define HIGH_BIT_HSW 27
+#define LTDC_HSW(v) REGISTER_FIELD_VALUE(HSW, v)
 
 // LTDC Back porch configuration register
 

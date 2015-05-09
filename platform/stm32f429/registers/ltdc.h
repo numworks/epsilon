@@ -5,7 +5,11 @@
 
 #define LTDC_BASE 0x40016800
 
+#define LTDC_LAYER1 0
+#define LTDC_LAYER2 1
+
 #define LTDC_REGISTER_AT(offset) (*(volatile uint32_t *)(LTDC_BASE+offset))
+#define LTDC_LAYER_REGISTER_AT(layer, offset) LTDC_REGISTER_AT(offset+(0x80*layer))
 
 // LTDC synchronization size configuration register
 
@@ -13,10 +17,10 @@
 
 #define LOW_BIT_VSH 0
 #define HIGH_BIT_VSH 10
-#define LTDC_VSH(v) REGISTER_FIELD_VALUE(VSH, v)
+#define LTDC_VSH(v) REGISTER_FIELD_VALUE(VSH,v)
 #define LOW_BIT_HSW 16
 #define HIGH_BIT_HSW 27
-#define LTDC_HSW(v) REGISTER_FIELD_VALUE(HSW, v)
+#define LTDC_HSW(v) REGISTER_FIELD_VALUE(HSW,v)
 
 // LTDC back porch configuration register
 
@@ -24,10 +28,10 @@
 
 #define LOW_BIT_AVBP 0
 #define HIGH_BIT_AVBP 10
-#define LTDC_AVBP(v) REGISTER_FIELD_VALUE(AVBP, v)
+#define LTDC_AVBP(v) REGISTER_FIELD_VALUE(AVBP,v)
 #define LOW_BIT_AHBP 16
 #define HIGH_BIT_AHBP 27
-#define LTDC_AHBP(v) REGISTER_FIELD_VALUE(AHBP, v)
+#define LTDC_AHBP(v) REGISTER_FIELD_VALUE(AHBP,v)
 
 // LTDC active width configuration register
 
@@ -35,10 +39,10 @@
 
 #define LOW_BIT_AAH 0
 #define HIGH_BIT_AAH 10
-#define LTDC_AAH(v) REGISTER_FIELD_VALUE(AAH, v)
+#define LTDC_AAH(v) REGISTER_FIELD_VALUE(AAH,v)
 #define LOW_BIT_AAW 16
 #define HIGH_BIT_AAW 27
-#define LTDC_AAW(v) REGISTER_FIELD_VALUE(AAW, v)
+#define LTDC_AAW(v) REGISTER_FIELD_VALUE(AAW,v)
 
 // LTDC total width configuration register
 
@@ -46,10 +50,10 @@
 
 #define LOW_BIT_TOTALH 0
 #define HIGH_BIT_TOTALH 10
-#define LTDC_TOTALH(v) REGISTER_FIELD_VALUE(TOTALH, v)
+#define LTDC_TOTALH(v) REGISTER_FIELD_VALUE(TOTALH,v)
 #define LOW_BIT_TOTALW 16
 #define HIGH_BIT_TOTALW 27
-#define LTDC_TOTALW(v) REGISTER_FIELD_VALUE(TOTALW, v)
+#define LTDC_TOTALW(v) REGISTER_FIELD_VALUE(TOTALW,v)
 
 // LTDC global control register
 
@@ -75,16 +79,75 @@
 #define LTDC_IMR (1<<0)
 #define LTDC_VBR (1<<1)
 
-// LTDC layer control register
 
-#define LTDC_LAYER1 0
-#define LTDC_LAYER2 1
+// LTDC layer control registers
 
-#define LTDC_LCR(layer) LTDC_REGISTER_AT(0x84+(0x80*layer))
+#define LTDC_LCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x84)
 
 #define LTDC_LEN (1<<0)
 #define LTDC_COLKEN (1<<1)
 #define LTDC_CLUTEN (1<<4)
+
+// LTDC layer window horizontal position configuration registers
+
+#define LTDC_LWHPCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x88)
+
+#define LOW_BIT_LTDC_WHSTPOS 0
+#define HIGH_BIT_LTDC_WHSTPOS 11
+#define LTDC_WHSTPOS(v) REGISTER_FIELD_VALUE(LTDC_WHSTPOS,v)
+#define LOW_BIT_LTDC_WHSPPOS 16
+#define HIGH_BIT_LTDC_WHSPPOS 27
+#define LTDC_WHSPPOS(v) REGISTER_FIELD_VALUE(LTDC_WHSPPOS,v)
+
+// LTDC layer window vertical position configuration registers
+
+#define LTDC_LWVPCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x8C)
+
+#define LOW_BIT_LTDC_WVSTPOS 0
+#define HIGH_BIT_LTDC_WVSTPOS 11
+#define LTDC_WVSTPOS(v) REGISTER_FIELD_VALUE(LTDC_WVSTPOS,v)
+#define LOW_BIT_LTDC_WVSPPOS 16
+#define HIGH_BIT_LTDC_WVSPPOS 27
+#define LTDC_WVSPPOS(v) REGISTER_FIELD_VALUE(LTDC_WVSPPOS,v)
+
+// LTDC layer pixel format configuration registers
+
+#define LTDC_LPFCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x88)
+
+#define LTDC_PF_ARGB8888 0
+#define LTDC_PF_RGB888   1
+#define LTDC_PF_RGB565   2
+#define LTDC_PF_ARGB1555 3
+#define LTDC_PF_ARGB4444 4
+#define LTDC_PF_L8       5
+#define LTDC_PF_AL44     6
+#define LTDC_PF_AL88     7
+
+#define LOW_BIT_LTDC_PF 0
+#define HIGH_BIT_LTDC_PF 2
+
+// LTDC layer color frame buffer address registers
+
+#define LTDC_LCFBAR(layer) LTDC_LAYER_REGISTER_AT(layer,0xAC)
+
+// LTDC layer color frame buffer length registers
+
+#define LTDC_LCFBLR(layer) LTDC_LAYER_REGISTER_AT(layer,0xB0)
+
+#define LOW_BIT_LTDC_CFBLL 0
+#define HIGH_BIT_LTDC_CFBLL 12
+#define LTDC_CFBLL(v) REGISTER_FIELD_VALUE(LTDC_CFBLL,v)
+#define LOW_BIT_LTDC_CFBP 16
+#define HIGH_BIT_LTDC_CFBP 28
+#define LTDC_CFBP(v) REGISTER_FIELD_VALUE(LTDC_CFBP,v)
+
+// LTDC layer color frame buffer line registers
+
+#define LTDC_LCFBLNR(layer) LTDC_LAYER_REGISTER_AT(layer,0xB4)
+
+#define LOW_BIT_LTDC_CFBLNR 0
+#define HIGH_BIT_LTDC_CFBLNR 10
+#define LTDC_CFBLNR(v) REGISTER_FIELD_VALUE(LTDC_CFBLNR,v)
 
 #if 0
 

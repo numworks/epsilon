@@ -91,11 +91,16 @@ static void init_spi_port() {
 static void init_rgb_gpios();
 static void init_rgb_clocks();
 static void init_rgb_timings();
+//static void init_rgb_layers();
 
 static void init_rgb_interface() {
   init_rgb_gpios();
   init_rgb_clocks();
   init_rgb_timings();
+//  init_rgb_layers();
+
+  // Now let's actually enable the LTDC
+  LTDC_GCR |= LTDC_LTDCEN;
 }
 
 struct gpio_pin {
@@ -229,10 +234,17 @@ static void init_rgb_timings() {
   LTDC_GCR = LTDC_LTDCEN;
   // Not setting the "Active low" bits since they are 0 by default, which we want
   // Same for the pixel clock, we don't want it inverted
+
+
+
+  /*
 }
 
 static void init_rgb_layers() {
-#if 0
+*/
+
+
+
     /* STEP 7: Configure the Layer1/2 parameters by programming:
 – The Layer window horizontal and vertical position in the LTDC_LxWHPCR and LTDC_WVPCR registers. The layer window must be in the active data area.
 – The pixel input format in the LTDC_LxPFCR register
@@ -243,52 +255,34 @@ static void init_rgb_layers() {
 – If needed, configure the default color and the blending factors respectively in the LTDC_LxDCCR and LTDC_LxBFCR registers
 */
 
-  long * LTDC_L1WHPCR = (long *)(LCD_TFT_BASE + 0x88); // Window horizontal position config
-  *LTDC_L1WHPCR = set_bits(*LTDC_L1WHPCR, 11, 0, lcd_panel_hsync+lcd_panel_hbp);
-  *LTDC_L1WHPCR = set_bits(*LTDC_L1WHPCR, 27, 16, lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr);
+  LTDC_LWHPCR(LTDC_LAYER1) =
+    LTDC_WHSTPOS(lcd_panel_hsync+lcd_panel_hbp) |
+    LTDC_WHSPPOS(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr);
 
-  long * LTDC_L1WVPCR = (long *)(LCD_TFT_BASE + 0x8C); // Window vertical position config
-  *LTDC_L1WVPCR = set_bits(*LTDC_L1WVPCR, 11, 0, lcd_panel_vsync+lcd_panel_vbp);
-  *LTDC_L1WVPCR = set_bits(*LTDC_L1WVPCR, 27, 16, lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr);
+  LTDC_LWVPCR(LTDC_LAYER1) =
+    LTDC_WVSTPOS(lcd_panel_vsync+lcd_panel_vbp) |
+    LTDC_WVSPPOS(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr);
 
-  long * LTDC_L1PFCR = (long *)(LCD_TFT_BASE + 0x94); // Frame buffer pixel format
-  *LTDC_L1PFCR = set_bits(*LTDC_L1PFCR, 2, 0, 0x0); // 0x0 = ARGB8888
+  LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_ARGB8888;
 
-  long * LTDC_L1CFBAR = (long *)(LCD_TFT_BASE + 0xAC); // Frame buffer address
-  *LTDC_L1CFBAR = 0x2000000;
+//  long * LTDC_L1CFBAR = (long *)(LCD_TFT_BASE + 0xAC); // Frame buffer address
+//  *LTDC_L1CFBAR = 0x2000000;
 
-  long * LTDC_L1CFBLR = (long *)(LCD_TFT_BASE + 0xB0); // Frame buffer length
-  *LTDC_L1CFBLR = set_bits(*LTDC_L1CFBLR, 28, 16, 960); // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888)
-  *LTDC_L1CFBLR = set_bits(*LTDC_L1CFBLR, 12, 0, 963); // The doc says "length + 3". Here goes...
+  LTDC_LCFBLR(LTDC_LAYER1) =
+    LTDC_CFBLL(963) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888)
+    LTDC_CFBP(960); // The doc says "length + 3". Here goes...
 
-  long * LTDC_L1CFBLNR = (long *)(LCD_TFT_BASE + 0xB4);
-  *LTDC_L1CFBLNR = set_bits(*LTDC_L1CFBLNR, 10, 0, 320); // Number of lines
-
-  /*
-  long * LTDC_L2WHPCR = (long *)(LCD_TFT_BASE + 0x108);
-  *LTDC_L2WHPCR = set_bits(*LTDC_L2WHPCR, 11, 0, lcd_panel_hsync+lcd_panel_hbp);
-  *LTDC_L2WHPCR = set_bits(*LTDC_L2WHPCR, 27, 16, lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr);
-  long * LTDC_L2WWPCR = (long *)(LCD_TFT_BASE + 0x10C);
-  *LTDC_L2WVPCR = set_bits(*LTDC_L2WVPCR, 11, 0, lcd_panel_vsync+lcd_panel_vbp);
-  *LTDC_L2WVPCR = set_bits(*LTDC_L2WVPCR, 27, 16, lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr);
-  long * LTDC_L2PFCR = (long *)(LCD_TFT_BASE + 0x114);
-  long * LTDC_L2CFBAR = (long *)(LCD_TFT_BASE + 0x12C);
-  long * LTDC_L2CFBLNR = (long *)(LCD_TFT_BASE + 0x134);
-  long * LTDC_L2CR = (long *)(LCD_TFT_BASE + 0x104);
-  */
+  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(320); // Number of lines
 
   // STEP 8 : Enable layer 1
-  long * LTDC_L1CR = (long *)(LCD_TFT_BASE + 0x84);
-  *LTDC_L1CR = set_bits(*LTDC_L1CR, 4, 4, 0x0); // bit 4 = CLUTEN: Disable color look-up table
-  *LTDC_L1CR = set_bits(*LTDC_L1CR, 1, 1, 0x0); // bit 1 = COLKEN: Color keying, disabledd
-  *LTDC_L1CR = set_bits(*LTDC_L1CR, 0, 0, 0x1); // bit 1 = LEN, LayerENable: Enable
+  // Don't enable color keying nor color look-up table
+  LTDC_LCR(LTDC_LAYER1) = LTDC_LEN;
 
   // STEP 9 : If needed, enable color keing and dithering
 
   // STEP 10: Reload the shadow register
-  long * LTDC_SRCR = (long *)(LCD_TFT_BASE + 0x24);
-  *LTDC_SRCR = set_bits(*LTDC_SRCR, 1, 1, 0x1); // Ask for reload on next VBLANK
-#endif
+  // Ask for immediate reload
+  LTDC_SRCR = LTDC_IMR;
 }
 
 // Panel
@@ -304,7 +298,7 @@ static ili9341_t panel = {
 };
 
 static void init_panel() {
-  ili9341_initialize(&panel);
+  ili9341_initialize(&panel, 1);
 }
 
 static void spi_5_write(char * data, size_t size) {

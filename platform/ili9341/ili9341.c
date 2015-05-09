@@ -17,7 +17,9 @@ enum {
   DISPON = 0x29,  // Display on
   RAMWR = 0x2C,   // Memory write
   PIXSET = 0x3A,  // Pixel format set
-  FRMCTR1 = 0xB1A // Frame rate control in normal/full-color mode
+  IFMODE = 0xB0,  // RGB interface signal control
+  FRMCTR1 = 0xB1, // Frame rate control in normal/full-color mode
+  IFCTL = 0xF6    // Interface control
 };
 
 typedef struct {
@@ -47,6 +49,11 @@ static instruction_t initialisation_sequence[] = {
   //FIXME
 
   // Display
+  // RGB Interface mode //FIXME: explain
+  COMMAND(IFMODE), DATA(0xC0),
+
+  COMMAND(IFCTL), DATA(0x01), DATA(0x00), DATA(0x06),
+
   // Entry mode set, skipped
   COMMAND(SLPOUT), DELAY(100),
 
@@ -66,7 +73,7 @@ void perform_instruction(ili9341_t * c, instruction_t * instruction) {
   }
 }
 
-void ili9341_initialize(ili9341_t * c) {
+void ili9341_initialize(ili9341_t * c, bool rgb) {
   // Falling edge on CSX
   c->chip_select_pin_write(0);
 
@@ -76,7 +83,7 @@ void ili9341_initialize(ili9341_t * c) {
     perform_instruction(c, instruction++);
   }
 
-#define FILL_SCREEN_UPON_INIT 0
+#define FILL_SCREEN_UPON_INIT 1
 #if FILL_SCREEN_UPON_INIT
   // This would draw stuff on the screen
 

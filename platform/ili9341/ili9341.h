@@ -14,6 +14,6 @@ typedef struct {
   void (*spi_write)(char * data, size_t size);
 } ili9341_t;
 
-void ili9341_initialize(ili9341_t * controller);
+void ili9341_initialize(ili9341_t * controller, bool enable_rgb_interface);
 void ili9341_set_gamma(ili9341_t * controller);
 #endif

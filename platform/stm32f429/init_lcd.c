@@ -208,15 +208,13 @@ static void init_rgb_timings() {
     LTDC_AVBP(lcd_panel_vsync+lcd_panel_vbp-1) |
     LTDC_AHBP(lcd_panel_hsync+lcd_panel_hbp-1);
 
-#if 0
   /*– Active Width and Active Height: The Active Width and Active Height are configured by
       programming the accumulated value HSYNC Width + HBP + Active Width - 1 and the accumulated
       value VSYNC Width + VBP + Active Height - 1 in the LTDC_AWCR register (only up to 1024x768 is supported). */
 
-  long * LTDC_AWCR = (long *)(LCD_TFT_BASE + 0x10);
-  set_ltdc_register(LTDC_AWCR,
-      lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr-1,
-      lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr-1);
+  LTDC_AWCR =
+    LTDC_AAH(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr-1) |
+    LTDC_AAW(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr-1);
 
   /*– Total Width: The Total width is configured by programming the accumulated
       value HSYNC Width + HBP + Active Width + HFP - 1 in the LTDC_TWCR register.
@@ -225,12 +223,12 @@ static void init_rgb_timings() {
       value VSYNC Height + VBP + Active Height + VFP - 1 in the LTDC_TWCR register.
       The VFP is the Vertical front porch period
     */
-  long * LTDC_TWCR = (long *)(LCD_TFT_BASE + 0x14);
-  set_ltdc_register(LTDC_TWCR,
-      lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr+lcd_panel_hfp-1,
-      lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr+lcd_panel_vfp-1);
 
+  LTDC_TWCR =
+    LTDC_TOTALH(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr+lcd_panel_vfp-1) |
+    LTDC_TOTALW(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr+lcd_panel_hfp-1);
 
+#if 0
 
   /* STEP 4 : Configure the synchronous signals and clock polarity in the LTDC_GCR register */
 

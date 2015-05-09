@@ -7,48 +7,51 @@
 
 #define LTDC_REGISTER_AT(offset) (*(volatile uint32_t *)(LTDC_BASE+offset))
 
-// LTDC Synchronization size configuration register
+// LTDC synchronization size configuration register
 
 #define LTDC_SSCR LTDC_REGISTER_AT(0x08)
 
 #define LOW_BIT_VSH 0
 #define HIGH_BIT_VSH 10
 #define LTDC_VSH(v) REGISTER_FIELD_VALUE(VSH, v)
-#define LOW_BIT_HSW 15
+#define LOW_BIT_HSW 16
 #define HIGH_BIT_HSW 27
 #define LTDC_HSW(v) REGISTER_FIELD_VALUE(HSW, v)
 
-// LTDC Back porch configuration register
+// LTDC back porch configuration register
 
 #define LTDC_BPCR LTDC_REGISTER_AT(0x0C)
 
 #define LOW_BIT_AVBP 0
 #define HIGH_BIT_AVBP 10
 #define LTDC_AVBP(v) REGISTER_FIELD_VALUE(AVBP, v)
-#define LOW_BIT_AHBP 15
+#define LOW_BIT_AHBP 16
 #define HIGH_BIT_AHBP 27
 #define LTDC_AHBP(v) REGISTER_FIELD_VALUE(AHBP, v)
 
+// LTDC active width configuration register
+
+#define LTDC_AWCR LTDC_REGISTER_AT(0x10)
+
+#define LOW_BIT_AAH 0
+#define HIGH_BIT_AAH 10
+#define LTDC_AAH(v) REGISTER_FIELD_VALUE(AAH, v)
+#define LOW_BIT_AAW 16
+#define HIGH_BIT_AAW 27
+#define LTDC_AAW(v) REGISTER_FIELD_VALUE(AAW, v)
+
+// LTDC total width configuration register
+
+#define LTDC_TWCR LTDC_REGISTER_AT(0x14)
+
+#define LOW_BIT_TOTALH 0
+#define HIGH_BIT_TOTALH 10
+#define LTDC_TOTALH(v) REGISTER_FIELD_VALUE(TOTALH, v)
+#define LOW_BIT_TOTALW 16
+#define HIGH_BIT_TOTALW 27
+#define LTDC_TOTALW(v) REGISTER_FIELD_VALUE(TOTALW, v)
+
 #if 0
-extern LTDC_BPCR_t * LTDC_BPCR;
-
-typedef struct {
-  unsigned int AAH:11;
-  unsigned int :5;
-  unsigned int AAW:12;
-  unsigned int :4;
-} LTDC_AWCR_t;
-
-extern LTDC_AWCR_t * LTDC_AWCR;
-
-typedef struct {
-  unsigned int TOTALH:11;
-  unsigned int :5;
-  unsigned int TOTALW:12;
-  unsigned int :4;
-} LTDC_TWCR_t;
-
-extern LTDC_TWCR_t * LTDC_TWCR;
 
 typedef struct {
   unsigned int LTDCEN:1;

@@ -53,6 +53,7 @@
 
 #define GPIO_AFRL(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x20)
 #define GPIO_AFRH(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x24)
+#define GPIO_AFR(gpio_group,pin) GPIO_REGISTER_AT(gpio_group, 0x20+(pin>7?0x4:0x0))
 
 #define LOW_BIT_AFR(v) (4*(v%8))
 #define HIGH_BIT_AFR(v) (4*(v%8)+3)

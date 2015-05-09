@@ -68,15 +68,25 @@
 #define LTDC_VSPOL (1<<30)
 #define LTDC_HSPOL (1<<31)
 
+// LTDC shadow reload configuration register
+
+#define LTDC_SRCR LTDC_REGISTER_AT(0x24)
+
+#define LTDC_IMR (1<<0)
+#define LTDC_VBR (1<<1)
+
+// LTDC layer control register
+
+#define LTDC_LAYER1 0
+#define LTDC_LAYER2 1
+
+#define LTDC_LCR(layer) LTDC_REGISTER_AT(0x84+(0x80*layer))
+
+#define LTDC_LEN (1<<0)
+#define LTDC_COLKEN (1<<1)
+#define LTDC_CLUTEN (1<<4)
+
 #if 0
-
-typedef struct {
-  unsigned int IMR:1;
-  unsigned int VBR:1;
-  unsigned int :30;
-} LTDC_SRCR_t;
-
-extern LTDC_SRCR_t * LTDC_SRCR;
 
 typedef struct {
   unsigned int BCBLUE:8;

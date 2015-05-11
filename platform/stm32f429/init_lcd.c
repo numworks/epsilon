@@ -180,6 +180,8 @@ static void init_rgb_clocks() {
   }
 }
 
+extern const void * _framebuffer_start;
+
 static void init_rgb_timings() {
   // Configure the Synchronous timings: VSYNC, HSYNC, Vertical and Horizontal
   // back porch, active data area and the front porch timings following the
@@ -268,14 +270,13 @@ static void init_rgb_layers() {
     LTDC_WVSTPOS(lcd_panel_vsync+lcd_panel_vbp) |
     LTDC_WVSPPOS(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr);
 
-  LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_ARGB8888;
+  LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-//  long * LTDC_L1CFBAR = (long *)(LCD_TFT_BASE + 0xAC); // Frame buffer address
-//  *LTDC_L1CFBAR = 0x2000000;
+  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)&_framebuffer_start;
 
   LTDC_LCFBLR(LTDC_LAYER1) =
-    LTDC_CFBLL(963) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888)
-    LTDC_CFBP(960); // The doc says "length + 3". Here goes...
+    LTDC_CFBLL(243) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
+    LTDC_CFBP(240); // Width of a line in bytes
 
   LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(320); // Number of lines
 

@@ -133,7 +133,7 @@ static void init_rgb_gpios() {
   RCC_AHB1ENR |= (
       GPIOAEN | GPIOBEN | GPIOCEN | GPIODEN |
       GPIOEEN | GPIOFEN | GPIOGEN | GPIOHEN |
-      GPIOIEN | GPIOJEN | GPIOJEN
+      GPIOIEN | GPIOJEN | GPIOKEN
       );
 
   // The LTDC is always mapped to AF14
@@ -141,6 +141,7 @@ static void init_rgb_gpios() {
   for (int i=0; i<rgb_pin_count; i++) {
     struct gpio_pin * pin = rgb_pins+i;
     REGISTER_SET_VALUE(GPIO_AFR(pin->group, pin->number), AFR(pin->number), 14);
+    REGISTER_SET_VALUE(GPIO_MODER(pin->group), MODER(pin->number), GPIO_MODE_ALTERNATE_FUNCTION);
   }
 
   //FIXME: Apprently DMA should be enabled?

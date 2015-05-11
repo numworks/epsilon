@@ -108,15 +108,14 @@ struct gpio_pin {
   char number;
 };
 
-#define RGB_PIN_COUNT 77
-
-struct gpio_pin rgb_pins[RGB_PIN_COUNT] = {
+struct gpio_pin rgb_pins[] = {
   {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 8}, {GPIOA, 11}, {GPIOA, 12},
   {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
   {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
   {GPIOD, 3}, {GPIOD, 6}, {GPIOD, 10},
   {GPIOE, 4}, {GPIOE, 5}, {GPIOE, 6}, {GPIOE, 11}, {GPIOE, 12}, {GPIOE, 13},
-  {GPIOE, 14}, {GPIOE, 15}, {GPIOF, 10},
+  {GPIOE, 14}, {GPIOE, 15},
+  {GPIOF, 10},
   {GPIOG, 6}, {GPIOG, 7}, {GPIOG, 10}, {GPIOG, 11}, {GPIOG, 12},
   {GPIOH, 2}, {GPIOH, 3}, {GPIOH, 8}, {GPIOH, 9}, {GPIOH, 10}, {GPIOH, 11},
   {GPIOH, 12}, {GPIOH, 13}, {GPIOH, 14}, {GPIOH, 15},
@@ -138,7 +137,8 @@ static void init_rgb_gpios() {
       );
 
   // The LTDC is always mapped to AF14
-  for (int i=0; i<RGB_PIN_COUNT; i++) {
+  size_t rgb_pin_count = sizeof(rgb_pins)/sizeof(rgb_pins[0]);
+  for (int i=0; i<rgb_pin_count; i++) {
     struct gpio_pin * pin = rgb_pins+i;
     REGISTER_SET_VALUE(GPIO_AFR(pin->group, pin->number), AFR(pin->number), 14);
   }

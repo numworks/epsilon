@@ -10,7 +10,9 @@
  * to be stored in Flash. */
 MEMORY {
   FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 2048K
-  RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 192K
+  /* We're splitting the SRAM in two: general purpose, then framebuffer */
+  SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 117K
+  SRAM_FB (rw) : ORIGIN = 0x2001D400, LENGTH = 75K
   /* We're splitting the CCM in two, this way we're sure nothing will use the
    * stack space. */
   CCM (rwx) : ORIGIN = 0x10000000, LENGTH = 60K
@@ -118,7 +120,7 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >RAM AT> FLASH
+  } >SRAM AT> FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables
@@ -132,7 +134,7 @@ SECTIONS {
     *(.bss)
     *(.bss.*)
     _bss_section_end_ram = .;
-  } >RAM
+  } >SRAM
 
   .ccm : {
     . = ALIGN(8);
@@ -141,4 +143,10 @@ SECTIONS {
     . = ALIGN(8);
     _stack_start = .;
   } >CCM_STACK
+
+  .fb : {
+    _framebuffer_start = .;
+    . = . + LENGTH(SRAM_FB);
+    _framebuffer_end = .;
+  } > SRAM_FB
 }

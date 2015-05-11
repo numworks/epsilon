@@ -298,7 +298,7 @@ static ili9341_t panel = {
 };
 
 static void init_panel() {
-  ili9341_initialize(&panel, 1);
+  ili9341_initialize(&panel);
 }
 
 static void spi_5_write(char * data, size_t size) {

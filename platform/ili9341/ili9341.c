@@ -45,21 +45,28 @@ static instruction_t initialisation_sequence[] = {
   COMMAND(FRMCTR1), DATA(0x00), DATA(0x1B),
   */
 
-  // Gamma
-  //FIXME
+  // Gamma //TODO
 
-  // Display
-  // RGB Interface mode //FIXME: explain
+  /* RGB Interface mode
+   *  DE is on "high enable"
+   *  DOTCLK polarity: data fetched at rising time
+   *  HSYNC polarity: low-level sync clock
+   *  VSYNC polarity: low-level sync clock
+   *  RCM: valid data is determined by DE signal */
   COMMAND(IFMODE), DATA(0xC0),
 
+
+  /* Interface control
+   *  DM(1): RGB interface mode
+   *  RM(1): RGB interface for writing to GRAM
+   *  RIM(0): 16/18bits RGB interface (1 transfer/pixel) */
   COMMAND(IFCTL), DATA(0x01), DATA(0x00), DATA(0x06),
 
-  // Entry mode set, skipped
+  // Sleep out, requires a 100ms delay
   COMMAND(SLPOUT), DELAY(100),
 
-  COMMAND(DISPON), DELAY(20),
-
-  COMMAND(NOP) // Used to mark the end of the init sequence
+  // Display on, requires a 20ms delay
+  COMMAND(DISPON), DELAY(20)
 };
 
 void perform_instruction(ili9341_t * c, instruction_t * instruction) {
@@ -73,14 +80,14 @@ void perform_instruction(ili9341_t * c, instruction_t * instruction) {
   }
 }
 
-void ili9341_initialize(ili9341_t * c, bool rgb) {
+void ili9341_initialize(ili9341_t * c) {
   // Falling edge on CSX
   c->chip_select_pin_write(0);
 
   // Send all the initialisation_sequence
-  instruction_t * instruction = initialisation_sequence;
-  while (!(instruction->mode == COMMAND_MODE && instruction->payload == NOP)) {
-    perform_instruction(c, instruction++);
+  size_t init_sequence_length = sizeof(initialisation_sequence)/sizeof(initialisation_sequence[0]);
+  for (int i=0; i<init_sequence_length;i++) {
+    perform_instruction(c, initialisation_sequence+i);
   }
 
 #define FILL_SCREEN_UPON_INIT 1

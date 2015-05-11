@@ -174,6 +174,10 @@ static void init_rgb_clocks() {
 
   // Now let's enable the PLL/PLLSAI clocks
   RCC_CR |= (PLLSAION | PLLON);
+
+  // And wait 'till they are ready!
+  while ((RCC_CR & PLLSAIRDY) == 0 || (RCC_CR & PLLRDY) == 0) {
+  }
 }
 
 static void init_rgb_timings() {

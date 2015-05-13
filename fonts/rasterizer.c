@@ -18,13 +18,12 @@
 
 #define ENSURE(action, description...) { if (!(action)) { fprintf(stderr, "Error: "); fprintf(stderr, description); fprintf(stderr, "\n"); exit(-1);}}
 
-// Pixel format is BGRA8888
+// Pixel format is RGB888
 
 typedef struct {
-  char blue;
-  char green;
   char red;
-  char alpha;
+  char green;
+  char blue;
 } pixel_t;
 
 typedef struct {
@@ -65,12 +64,14 @@ int main(int argc, char * argv[]) {
   bitmap_image.pixels = malloc(sizeof(pixel_t)*bitmap_image.width*bitmap_image.height);
   ENSURE(bitmap_image.pixels != NULL, "Allocating bitmap image of size %dx%d at %ld bytes per pixel", glyph_width*16, glyph_height*16, sizeof(pixel_t));
 
-  // Draw the grid
+  // Draw the grid and the background
   for (int i = 0; i<bitmap_image.width;i++) {
     for (int j = 0; j<bitmap_image.height;j++) {
+      pixel_t pixel = {.red = 0xFF, .green = 0xFF, .blue = 0xFF};
       if (i%(glyph_width+grid_size) >= glyph_width || j%(glyph_height+grid_size) >= glyph_height) {
-        *(bitmap_image.pixels + j*bitmap_image.width + i) = (pixel_t){.red = 0xFF, .green = 0, .blue = 0, .alpha = 0xFF};
+        pixel = (pixel_t){.red = 0xFF, .green = 0, .blue = 0};
       }
+      *(bitmap_image.pixels + j*bitmap_image.width + i) = pixel;
     }
   }
 
@@ -106,7 +107,8 @@ void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int x, int y) {
   for (int j=0;j<glyphBitmap->rows;j++) {
     for (int i=0;i<glyphBitmap->width;i++) {
       uint8_t glyphPixel = *(glyphBitmap->buffer + j*glyphBitmap->pitch + i);
-      *(image->pixels + (y+j)*image->width + (x+i)) = (pixel_t){.alpha = glyphPixel};
+      pixel_t * currentPixelPointer = (image->pixels + (y+j)*image->width + (x+i));
+      *currentPixelPointer = (pixel_t){.red = (0xFF-glyphPixel), .green = (0xFF-glyphPixel), .blue = (0xFF-glyphPixel)}; // Alpha blending
     }
   }
 }
@@ -120,8 +122,6 @@ void writeImageToPNGFile(image_t * image, char * filename) {
   png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   ENSURE(png != NULL, "Allocating PNG write structure");
 
-  png_set_bgr(png); // Our pixel_t is BGRA
-
   png_infop info = png_create_info_struct(png);
   ENSURE(info != NULL, "Allocating info structure");
 
@@ -130,7 +130,7 @@ void writeImageToPNGFile(image_t * image, char * filename) {
   png_set_IHDR(png, info,
       image->width, image->height,
       8, // Number of bits per channel
-      PNG_COLOR_TYPE_RGB_ALPHA, // RGBA
+      PNG_COLOR_TYPE_RGB,
       PNG_INTERLACE_NONE,
       PNG_COMPRESSION_TYPE_DEFAULT,
       PNG_FILTER_TYPE_DEFAULT);

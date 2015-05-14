@@ -54,10 +54,42 @@ int main(int argc, char * argv[]) {
   }
 
   char * font_file = argv[1];
-  int glyph_width = atoi(argv[2]);
-  int glyph_height = atoi(argv[3]);
+  int requested_glyph_width = atoi(argv[2]);
+  int requested_glyph_height = atoi(argv[3]);
 
-  int grid_size = 1;
+  ENSURE(!FT_Init_FreeType(&library), "Initializing library");
+
+  // 0 means we're picking the first face in the provided file
+  ENSURE(!FT_New_Face(library, font_file, 0, &face), "Loading font file %s", font_file);
+
+  ENSURE(!FT_Set_Pixel_Sizes(face, requested_glyph_width, requested_glyph_height), "Setting face pixel size to %dx%d", requested_glyph_width, requested_glyph_height);
+
+  int maxHeight = 0;
+  int maxWidth = 0;
+  int minTop = requested_glyph_height;
+  for (int i=0x28; i<0x7E;i++) {
+    unsigned char character = (unsigned char)i;
+    ENSURE(!FT_Load_Char(face, character, FT_LOAD_RENDER), "Loading character 0x%02x", character);
+    int top = requested_glyph_height - face->glyph->bitmap_top;
+    int height = top + face->glyph->bitmap.rows;
+    int width = face->glyph->bitmap.width;
+    printf("Character %c(%x) has top %d\n", character, character, top);
+    if (top < minTop) {
+      minTop = top;
+    }
+    if (height > maxHeight) {
+      maxHeight = height;
+    }
+    if (width > maxWidth) {
+      maxWidth = width;
+    }
+  }
+
+  int glyph_height = maxHeight-minTop;
+  int glyph_width = maxWidth;
+  printf("Actual glyph size = %dx%d\n", glyph_width, glyph_height);
+
+  int grid_size = 10;
 
   bitmap_image.width = 16*glyph_width+15*grid_size;
   bitmap_image.height = 16*glyph_height+15*grid_size;
@@ -75,21 +107,20 @@ int main(int argc, char * argv[]) {
     }
   }
 
-  ENSURE(!FT_Init_FreeType(&library), "Initializing library");
 
-  // 0 means we're picking the first face in the provided file
-  ENSURE(!FT_New_Face(library, font_file, 0, &face), "Loading font file %s", font_file);
-
-  ENSURE(!FT_Set_Pixel_Sizes(face, glyph_width, glyph_height), "Setting face pixel size to %dx%d", glyph_width, glyph_height);
 
   // We're doing the ASCII table, so characters from 0 to 255 inclusive
-  for (int i=0; i<256; i++) {
+  for (int i=0x28; i<0x7E; i++) {
     unsigned char character = (unsigned char)i;
     int x = character%16;
     int y = character/16;
     // FT_LOAD_RENDER: Render the glyph upon load
     ENSURE(!FT_Load_Char(face, character, FT_LOAD_RENDER), "Loading character 0x%02x", character);
-    drawGlyphInImage(&face->glyph->bitmap, &bitmap_image, x*(glyph_width+grid_size), y*(glyph_height+grid_size));
+    //printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
+    drawGlyphInImage(&face->glyph->bitmap,
+        &bitmap_image,
+        x*(glyph_width+grid_size) /* + face->glyph->bitmap_left*/,
+        y*(glyph_height+grid_size) + requested_glyph_height - face->glyph->bitmap_top - minTop);// + glyph_height - face->glyph->bitmap_top - maxHeight);
   }
 
 #if GENERATE_PNG

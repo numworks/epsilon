@@ -16,11 +16,30 @@ enum {
   DISPOFF = 0x28, // Display off
   DISPON = 0x29,  // Display on
   RAMWR = 0x2C,   // Memory write
+  MADCTL = 0x36,  // Memory access control
   PIXSET = 0x3A,  // Pixel format set
   IFMODE = 0xB0,  // RGB interface signal control
   FRMCTR1 = 0xB1, // Frame rate control in normal/full-color mode
   IFCTL = 0xF6    // Interface control
 };
+
+#define IFMODE_EPL (1<<0)
+#define IFMODE_DPL (1<<1)
+#define IFMODE_HSPL (1<<2)
+#define IFMODE_VSPL (1<<3)
+#define IFMODE_RCM_DE (2<<5)
+// DE mode: Valid data is determined by the DE signal
+#define IFMODE_RCM_SYNC (3<<5)
+// Sync mode: In sync mode, DE signal is ignored
+#define IFMODE_BYPASS (1<<7)
+
+
+#define MADCTL_MH (1<<2)
+#define MADCTL_BGR (1<<3)
+#define MADCTL_ML (1<<4)
+#define MADCTL_MV (1<<5)
+#define MADCTL_MX (1<<6)
+#define MADCTL_MY (1<<7)
 
 typedef struct {
   char mode;
@@ -53,7 +72,7 @@ static instruction_t initialisation_sequence[] = {
    *  HSYNC polarity: low-level sync clock
    *  VSYNC polarity: low-level sync clock
    *  RCM: valid data is determined by DE signal */
-  COMMAND(IFMODE), DATA(0xC0),
+  COMMAND(IFMODE), DATA(IFMODE_BYPASS | IFMODE_RCM_DE),
 
 
   /* Interface control
@@ -61,6 +80,9 @@ static instruction_t initialisation_sequence[] = {
    *  RM(1): RGB interface for writing to GRAM
    *  RIM(0): 16/18bits RGB interface (1 transfer/pixel) */
   COMMAND(IFCTL), DATA(0x01), DATA(0x00), DATA(0x06),
+
+  /* Memory access control */
+  COMMAND(MADCTL), DATA(MADCTL_MX),
 
   // Sleep out, requires a 100ms delay
   COMMAND(SLPOUT), DELAY(100),

@@ -6,6 +6,6 @@
 typedef struct {
   uint16_t x;
   uint16_t y;
-} kdpoint_t;
+} KDPoint;
 
 #endif

@@ -3,6 +3,6 @@
 
 #include <kandinsky/point.h>
 
-void KDDrawLine(kdpoint_t * p1, kdpoint_t * p2);
+void KDDrawLine(KDPoint p1, KDPoint p2);
 
 #endif

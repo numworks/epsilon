@@ -89,7 +89,7 @@ SECTIONS {
    * HardFault one to crt0's _halt. */
 
     PROVIDE(_ResetServiceRoutine = _start);
-    PROVIDE(_HardFaultServiceRoutine = _halt);
+    PROVIDE(_HardFaultServiceRoutine = abort);
 
     *(.text)
     *(.text.*)

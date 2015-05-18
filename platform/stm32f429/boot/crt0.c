@@ -9,7 +9,8 @@ extern const void * _bss_section_end_ram;
 
 void init();
 
-void _halt() {
+void abort() {
+  // TODO: #ifdef NDEBUG, maybe trigger a reset?
   while (1) {
   }
 }
@@ -33,5 +34,5 @@ void _start(void) {
 
   init();
 
-  _halt();
+  abort();
 }

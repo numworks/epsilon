@@ -8,6 +8,7 @@ load boot.elf
 monitor reset halt
 
 break init
-break _halt
+break abort
+break __assert
 
 continue

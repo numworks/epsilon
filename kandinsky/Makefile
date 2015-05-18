@@ -1,4 +1,4 @@
-CFLAGS += -Ikandinsky/include
+CFLAGS += -Ikandinsky/include -Iplatform/stm32f429
 objs += $(addprefix kandinsky/src/, line.o text.o font.o)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.5.5

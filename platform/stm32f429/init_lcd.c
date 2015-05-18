@@ -27,12 +27,18 @@
 #include "registers/gpio.h"
 #include "registers/spi.h"
 #include "registers/ltdc.h"*/
+#include <assert.h>
 #include "registers.h"
+#include "framebuffer.h"
 #include <platform/ili9341/ili9341.h>
+
+extern pixel_t _framebuffer_start;
+extern pixel_t _framebuffer_end;
 
 static void init_spi_interface();
 static void init_rgb_interface();
 static void init_panel();
+static void check_framebuffer();
 
 void init_lcd() {
   /* This routine is responsible for initializing the LCD panel.
@@ -45,6 +51,10 @@ void init_lcd() {
   init_rgb_interface();
 
   init_panel();
+
+#ifndef NDEBUG
+  check_framebuffer();
+#endif
 }
 
 // SPI interface
@@ -187,7 +197,6 @@ static void init_rgb_clocks() {
   }
 }
 
-extern const void * _framebuffer_start;
 
 static void init_rgb_timings() {
   // Configure the Synchronous timings: VSYNC, HSYNC, Vertical and Horizontal
@@ -339,4 +348,13 @@ void gpio_c2_write(bool pin_state) {
 
 void gpio_d13_write(bool pin_state) {
   REGISTER_SET_VALUE(GPIO_ODR(GPIOD), ODR(13), pin_state);
+}
+
+// Framebuffer checks
+
+static void check_framebuffer() {
+  assert(&_framebuffer_start == FRAMEBUFFER_ADDRESS);
+  pixel_t * fb_end = &_framebuffer_start + (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8;
+  assert(&_framebuffer_end == fb_end);
+  assert(8*sizeof(pixel_t) == FRAMEBUFFER_BITS_PER_PIXEL);
 }

@@ -1,11 +1,11 @@
 #ifndef KANDINSKY_POINT_H
 #define KANDINSKY_POINT_H
 
-#include <stdint.h>
+#include <kandinsky/coordinate.h>
 
 typedef struct {
-  uint16_t x;
-  uint16_t y;
+  KDCoordinate x;
+  KDCoordinate y;
 } KDPoint;
 
 #endif

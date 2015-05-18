@@ -1,25 +1,47 @@
-CC=arm-none-eabi-gcc
-LD=arm-none-eabi-ld.bfd
-GDB=arm-none-eabi-gdb
-OBJCOPY=arm-none-eabi-objcopy
-CFLAGS = -Ilib -I. -Iinclude -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
-CFLAGS += -DHAVE_CONFIG_H=1 -DPIXMAN_NO_TLS=1 -Wno-unused-const-variable
-#CFLAGS += -fshort-double # Use the FPU even for doubles
-#CFLAGS = -I. -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include -Iinclude
-#-I/Users/romain/local/arm-none-eabi/include
-CFLAGS += -std=c99 -Wall
-#CFLAGS += -march=armv7e-m -mcpu=cortex-m4 -mthumb  -mfpu=fpv4-sp-d16
+TOOLCHAIN=arm-none-eabi
+COMPILER=llvm
+
+ifeq ($(COMPILER),llvm)
 CC=clang
-CFLAGS += -target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffreestanding
-
 CXX=clang++
-CXXFLAGS=-target thumbv7em-unknown-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -ffreestanding
-CXXFLAGS += -fno-exceptions -fno-unwind-tables -fno-rtti -nostdlib
+else
+CC=$(TOOLCHAIN)-gcc
+CXX=$(TOOLCHAIN)-g++
+endif
 
-# Production
-CFLAGS += -g
-#CFLAGS += -Os -fdata-sections -ffunction-sections
-#LDFLAGS += --gc-sections
+LD=$(TOOLCHAIN)-ld.bfd
+GDB=$(TOOLCHAIN)-gdb
+OBJCOPY=$(TOOLCHAIN)-objcopy
+
+# Compiler flags
+# Note: We're using CFLAGS, CXXFLAGS, and SFLAGS. SFLAGS are shared flags for both C and C++
+
+# Flags - Arch
+ifeq ($(COMPILER),llvm)
+  SFLAGS += -target thumbv7em-unknown-eabi
+else
+  SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=softfp
+endif
+SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
+
+# Flags - Header search path
+SFLAGS += -Ilib -I. -Iinclude -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
+
+# Flags - Building options
+SFLAGS += -Wall -ffreestanding
+
+# Flags - Optimizations
+ifeq ($(PRODUCTION),1)
+#echo "*** PRODUCTION BUILD ***"
+SFLAGS += -Os -fdata-sections -ffunction-sections
+LDFLAGS += --gc-sections
+else
+SFLAGS += -g
+endif
+
+# Language-specific flags
+CFLAGS = -std=c99
+CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti -nostdlib
 
 products := boot.elf boot.hex boot.bin
 
@@ -28,13 +50,14 @@ objs += external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.
 
 objs += lib/assert.o
 
-objs += math/expression.o
+objs += src/hello.o
 
 
 default: clean boot.elf
 
 include platform/Makefile
 include kandinsky/Makefile
+include poincare/Makefile
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
@@ -59,11 +82,11 @@ boot.elf: $(objs)
 
 %.o: %.c
 	@echo "CC      $@"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(SFLAGS) -c $< -o $@
 
 %.o: %.cpp
 	@echo "CXX     $@"
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(CXXFLAGS) $(SFLAGS) -c $< -o $@
 
 clean:
 	@echo "CLEAN"

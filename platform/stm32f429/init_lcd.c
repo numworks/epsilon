@@ -99,8 +99,6 @@ static void init_rgb_interface() {
   init_rgb_timings();
 //  init_rgb_layers();
 
-  // Now let's actually enable the LTDC
-  LTDC_GCR |= LTDC_LTDCEN;
 }
 
 struct gpio_pin {
@@ -157,20 +155,29 @@ static void init_rgb_clocks() {
 
   // STEP 2 : Configure the required Pixel clock following the panel datasheet
   //
-  // We're setting PLLSAIN = 192, PLLSAIR = 4, and PLLSAIDIVR = 0x2 meaning divide-by-8
-  // So with a f(PLLSAI clock input) = 1MHz
-  // we get f(VCO clock) = PLLSAIN * fPPLSAI = 192 MHz
-  // and f(PLL LCD clock) = fVCO / PLLSAIR = 48 MHz
-  // and eventually f(LCD_CLK) = fPLLLCD/8 = 6 MHz
+  // The pixel clock derives from the PLLSAI clock through various multipliers/dividers.
+  // Here is the exact sequence :
+  // PXL = PLL_LCD/RCC_DCKCFGR.PLLSAIDIVR;
+  // PLL_LCD = VCO/RCC_PLLSAICFGR.PLLSAIR;
+  // VCO = PLLSAI * (RCC_PLLSAICFG.PLLSAIN / RCC_PLLCFGR.PLLM);
+  // PLLSAI = HSE or HSI
+  //
+  // The multipliers have the following constraints :
+  // 2 <= PLLM <= 63
+  // 49 <= PLLSAIN <= 432
+  // 2 <= PLLSAIR <= 7
+  // 2 ≤ PLLSAIDIVR ≤ 16, (set as a power of two, use macro)
+  //
+  // By default, PLLSAI = HSI = 16MHz and RCC_PLLCFGR.PLLM = 16. This gives, in MHZ:
+  // PXL = SAIN/(SAIR*SAIDIVR);
+  //
+  // // FIXME: Maybe make this calculation dynamic?
+  // Per the panel doc, we want a clock of 6 MHz.
+  // 6 = 192/(4*8), hence:
 
-  int pllsain = 192;
-  int pllsair = 4;
-  int pllsaidivr = 0x2; // This value means "divide by 8"
-  //FIXME: A macro here
-
-  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIR, pllsair);
-  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIN, pllsain);
-  REGISTER_SET_VALUE(RCC_DCKCFGR, PLLSAIDIVR, pllsaidivr);
+  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIN, 192);
+  REGISTER_SET_VALUE(RCC_PLLSAICFGR, PLLSAIR, 4);
+  REGISTER_SET_VALUE(RCC_DCKCFGR, PLLSAIDIVR, RCC_PLLSAIDIVR_DIV8);
 
   // Now let's enable the PLL/PLLSAI clocks
   RCC_CR |= (PLLSAION | PLLON);
@@ -203,6 +210,7 @@ static void init_rgb_timings() {
 
    /*- HSYNC and VSYNC Width: Horizontal and Vertical Synchronization width configured by
        programming a value of HSYNC Width - 1 and VSYNC Width - 1 in the LTDC_SSCR register. */
+
 
   LTDC_SSCR =
     LTDC_VSH(lcd_panel_vsync-1) |
@@ -238,10 +246,13 @@ static void init_rgb_timings() {
 
   /* STEP 4 : Configure the synchronous signals and clock polarity in the LTDC_GCR register */
 
-  LTDC_GCR = LTDC_LTDCEN;
+  LTDC_GCR |= LTDC_PCPOL;
+
+  // FIXME: Later:LTDC_GCR = LTDC_LTDCEN;
   // Not setting the "Active low" bits since they are 0 by default, which we want
   // Same for the pixel clock, we don't want it inverted
 
+  LTDC_BCCR = 0x00FF00FF;
 
 
   /*
@@ -264,15 +275,15 @@ static void init_rgb_layers() {
 
   LTDC_LWHPCR(LTDC_LAYER1) =
     LTDC_WHSTPOS(lcd_panel_hsync+lcd_panel_hbp) |
-    LTDC_WHSPPOS(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr);
+    LTDC_WHSPPOS(lcd_panel_hsync+lcd_panel_hbp+lcd_panel_hadr-1); //FIXME: Why -1?
 
   LTDC_LWVPCR(LTDC_LAYER1) =
     LTDC_WVSTPOS(lcd_panel_vsync+lcd_panel_vbp) |
-    LTDC_WVSPPOS(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr);
+    LTDC_WVSPPOS(lcd_panel_vsync+lcd_panel_vbp+lcd_panel_vadr-1);
 
   LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)&_framebuffer_start;
+  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)(&_framebuffer_start);
 
   LTDC_LCFBLR(LTDC_LAYER1) =
     LTDC_CFBLL(243) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
@@ -289,6 +300,9 @@ static void init_rgb_layers() {
   // STEP 10: Reload the shadow register
   // Ask for immediate reload
   LTDC_SRCR = LTDC_IMR;
+
+  // Now let's actually enable the LTDC
+  LTDC_GCR |= LTDC_LTDCEN;
 }
 
 // Panel

@@ -68,6 +68,8 @@
 #define HIGH_BIT_DRW 14
 #define LTDC_DEN (1<<16)
 #define LTDC_PCPOL (1<<28)
+// When PCPOL=0, data is on the rising-edge
+// When PCPOL=1, data is on the falling-edge
 #define LTDC_DEPOL (1<<29)
 #define LTDC_VSPOL (1<<30)
 #define LTDC_HSPOL (1<<31)
@@ -79,6 +81,16 @@
 #define LTDC_IMR (1<<0)
 #define LTDC_VBR (1<<1)
 
+// LTDC background color configuration register
+
+#define LTDC_BCCR LTDC_REGISTER_AT(0x2C)
+
+#define LOW_BIT_BCBLUE 0
+#define HIGH_BIT_BCBLUE 7
+#define LOW_BIT_BCGREEN 8
+#define HIGH_BIT_BCGREEN 15
+#define LOW_BIT_BCRED 16
+#define HIGH_BIT_BCRED 23
 
 // LTDC layer control registers
 
@@ -112,7 +124,7 @@
 
 // LTDC layer pixel format configuration registers
 
-#define LTDC_LPFCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x88)
+#define LTDC_LPFCR(layer) LTDC_LAYER_REGISTER_AT(layer,0x94)
 
 #define LTDC_PF_ARGB8888 0
 #define LTDC_PF_RGB888   1
@@ -150,16 +162,6 @@
 #define LTDC_CFBLNR(v) REGISTER_FIELD_VALUE(LTDC_CFBLNR,v)
 
 #if 0
-
-typedef struct {
-  unsigned int BCBLUE:8;
-  unsigned int BCGREEN:8;
-  unsigned int BCRED:8;
-  unsigned int :8;
-} LTDC_BCCR_t;
-
-extern LTDC_BCCR_t * LTDC_BCCR;
-
 typedef struct {
   unsigned int LIE:1;
   unsigned int FUIE:1;

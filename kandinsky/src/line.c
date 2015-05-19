@@ -3,6 +3,6 @@
 
 void KDDrawLine(KDPoint p1, KDPoint p2) {
   for (KDCoordinate x = p1.x; x<p2.x; x++) {
-    PIXEL(x, p1.y) = 0xC7;
+    PIXEL(x, p1.y) = 0xFF;
   }
 }

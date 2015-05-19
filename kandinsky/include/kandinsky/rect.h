@@ -17,7 +17,7 @@ typedef struct {
       KDCoordinate width;
       KDCoordinate height;
     };
-    KDPoint size;
+    KDSize size;
   };
 } KDRect;
 

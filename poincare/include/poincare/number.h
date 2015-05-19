@@ -11,6 +11,7 @@ class Number : public Expression {
     virtual void layout();
   private:
     int m_value;
+    char m_stringValue[16];
 };
 
 #endif

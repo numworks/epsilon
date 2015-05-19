@@ -46,7 +46,7 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti -nostdlib
 products := boot.elf boot.hex boot.bin
 
 objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
-objs += external/newlib/libc/string/memset.o external/newlib/libc/string/memcpy.o
+objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
 
 objs += lib/assert.o
 

@@ -3,8 +3,8 @@
 
 #include <kandinsky/color.h>
 #include <kandinsky/line.h>
-#include <kandinsky/point.h>
 #include <kandinsky/rect.h>
 #include <kandinsky/text.h>
+#include <kandinsky/types.h>
 
 #endif

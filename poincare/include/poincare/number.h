@@ -3,9 +3,12 @@
 
 #include <poincare/expression.h>
 
-class Number : Expression {
+class Number : public Expression {
   public:
     Number(int v);
+    virtual void draw();
+  protected:
+    virtual void layout();
   private:
     int m_value;
 };

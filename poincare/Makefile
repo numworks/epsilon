@@ -1,2 +1,2 @@
 SFLAGS += -Ipoincare/include
-objs += $(addprefix poincare/src/, expression.o number.o)
+objs += $(addprefix poincare/src/, expression.o number.o fraction.o)

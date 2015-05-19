@@ -1,5 +1,6 @@
 #include <poincare/number.h>
 #include <kandinsky/text.h>
+#include <string.h>
 
 Number::Number(int v) : m_value(v) {
   for (int i=0; i<16; i++) {
@@ -17,10 +18,14 @@ Number::Number(int v) : m_value(v) {
   }
 }
 
+Expression ** Number::children() {
+  return NULL;
+}
+
 void Number::layout() {
   m_frame.size = KDStringSize(m_stringValue);
 }
 
 void Number::draw() {
-  KDDrawString(m_stringValue, m_frame.origin);
+  KDDrawString(m_stringValue, KDPOINT(0,0));
 }

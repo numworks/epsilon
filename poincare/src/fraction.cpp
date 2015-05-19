@@ -1,44 +1,47 @@
 #include <poincare/fraction.h>
+#include <string.h>
 
 static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
   return (a > b ? a : b);
 }
 
+#define NUMERATOR m_children[0]
+#define DENOMINATOR m_children[1]
+
 #define FRACTION_BORDER_LENGTH 2
 #define FRACTION_LINE_MARGIN 2
 #define FRACTION_LINE_HEIGHT 1
 
-Fraction::Fraction(Expression * numerator, Expression * denominator) :
-  m_numerator(numerator),
-  m_denominator(denominator) {
+Fraction::Fraction(Expression * numerator, Expression * denominator) {
+  m_children[0] = numerator;
+  m_children[1] = denominator;
+  m_children[2] = NULL;
+}
+
+Expression ** Fraction::children() {
+  return m_children;
 }
 
 void Fraction::layout() {
-  m_numerator->layout();
-  m_denominator->layout();
-
-  KDRect numFrame = m_numerator->m_frame;
-  KDRect denFrame = m_denominator->m_frame;
+  KDRect numFrame = NUMERATOR->m_frame;
+  KDRect denFrame = DENOMINATOR->m_frame;
 
   m_frame.width = max(numFrame.width, denFrame.width) + 2*FRACTION_BORDER_LENGTH;
   m_frame.height = numFrame.height + FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN + denFrame.height;
 
-  m_numerator->m_frame.origin = {
+  NUMERATOR->m_frame.origin = {
     .x = (KDCoordinate)((m_frame.width - numFrame.width)/2),
     .y = 0
   };
 
-  m_denominator->m_frame.origin = {
+  DENOMINATOR->m_frame.origin = {
     .x = (KDCoordinate)((m_frame.width - denFrame.width)/2),
     .y = (KDCoordinate)(numFrame.height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT)
   };
 }
 
 void Fraction::draw() {
-  m_numerator->draw();
-  m_denominator->draw();
-
-  KDCoordinate fractionLineY = m_numerator->m_frame.height + FRACTION_LINE_MARGIN;
+  KDCoordinate fractionLineY = NUMERATOR->m_frame.height + FRACTION_LINE_MARGIN;
 
   KDDrawLine((KDPoint){.x = 0, .y = fractionLineY},
       (KDPoint){.x = m_frame.width, .y = fractionLineY});

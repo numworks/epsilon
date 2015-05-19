@@ -7,11 +7,11 @@ class Fraction : public Expression {
   public:
     Fraction(Expression * numerator, Expression * denominator);
     virtual void draw();
+    virtual Expression ** children();
 //  protected:
     virtual void layout();
   private:
-    Expression * m_numerator;
-    Expression * m_denominator;
+    Expression * m_children[3];
 };
 
 #endif

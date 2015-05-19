@@ -10,6 +10,8 @@ typedef struct {
   KDCoordinate y;
 } KDPoint;
 
+#define KDPOINT(xc,yc) ((KDPoint){.x=(KDCoordinate)(xc),.y=(KDCoordinate)(yc)})
+
 typedef struct {
   KDCoordinate width;
   KDCoordinate height;

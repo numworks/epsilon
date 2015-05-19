@@ -1,5 +1,5 @@
 SFLAGS += -Ikandinsky/include -Iplatform/stm32f429
-objs += $(addprefix kandinsky/src/, line.o text.o font.o rect.o)
+objs += $(addprefix kandinsky/src/, line.o text.o font.o rect.o referential.o)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.5.5
 LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.17

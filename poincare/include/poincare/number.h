@@ -7,6 +7,7 @@ class Number : public Expression {
   public:
     Number(int v);
     virtual void draw();
+    virtual Expression ** children();
   protected:
     virtual void layout();
   private:

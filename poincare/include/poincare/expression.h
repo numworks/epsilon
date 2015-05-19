@@ -5,11 +5,19 @@ extern "C" {
 #include <kandinsky.h>
 }
 
+class Expression;
+typedef void (Expression::*ExpressionAction)(void);
+
 class Expression {
   public:
-    virtual void draw() = 0;
-    virtual void layout() = 0;
+    void recursiveDraw();
+    void recursiveLayout();
     KDRect m_frame;
+    virtual Expression ** children() = 0; // NULL-terminated
+    virtual void draw();
+    virtual void layout();
+  private:
+    void forEachChild(ExpressionAction);
 };
 
 #endif

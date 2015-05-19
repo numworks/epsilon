@@ -24,9 +24,12 @@ void hello() {
 
   Fraction f = Fraction(&n1, &n2);
 
-  f.layout();
-  f.m_frame.origin = (KDPoint){.x = 0, .y = 0};
-  f.draw();//(KDPoint){.x = 10, .y = 10});
+  Number n3 = Number(3);
+  Power p = Power(&f, &n3);
+
+  p.recursiveLayout();
+  p.m_frame.origin = KDPOINT(0, 0);
+  p.recursiveDraw();
 
 
 }

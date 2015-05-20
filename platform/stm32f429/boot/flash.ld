@@ -137,6 +137,9 @@ SECTIONS {
     _bss_section_start_ram = .;
     *(.bss)
     *(.bss.*)
+    /* The compiler may choose to allocate uninitialized global variables as
+     * COMMON blocks. This can be disabled with -fno-common if needed. */
+    *(COMMON)
     _bss_section_end_ram = .;
   } >SRAM
 

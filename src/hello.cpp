@@ -1,6 +1,7 @@
 extern "C" {
 #include "hello.h"
 #include <kandinsky.h>
+#include <malloc.h>
 }
 
 #include <poincare.h>
@@ -30,6 +31,14 @@ void hello() {
   p.recursiveLayout();
   p.m_frame.origin = KDPOINT(0, 0);
   p.recursiveDraw();
+
+
+  char * test = (char *)malloc(10);
+  char * bar = (char *)malloc(8);
+
+  free(bar);
+  free(test);
+
 
 
 }

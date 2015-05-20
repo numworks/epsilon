@@ -140,7 +140,13 @@ SECTIONS {
     _bss_section_end_ram = .;
   } >SRAM
 
-  .ccm : {
+  .ccm_heap : {
+    _ccm_heap_start = .;
+    . += LENGTH(CCM);
+    _ccm_heap_end = .;
+  } >CCM
+
+  .ccm_stack : {
     . = ALIGN(8);
     _stack_end = .;
     . = . + LENGTH(CCM_STACK) - 8;

@@ -82,11 +82,11 @@ boot.elf: $(objs)
 
 %.o: %.c
 	@echo "CC      $@"
-	@$(CC) $(CFLAGS) $(SFLAGS) -c $< -o $@
+	@$(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
 %.o: %.cpp
 	@echo "CXX     $@"
-	@$(CXX) $(CXXFLAGS) $(SFLAGS) -c $< -o $@
+	@$(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	@echo "CLEAN"

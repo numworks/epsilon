@@ -5,6 +5,8 @@ extern "C" {
 #include <kandinsky.h>
 }
 
+void CreateFromString(char * string);
+
 class Expression;
 typedef void (Expression::*ExpressionAction)(void);
 

@@ -2,7 +2,7 @@
 #include <kandinsky/text.h>
 #include <string.h>
 
-Number::Number(int v) : m_value(v) {
+/*Number::Number(int v) : m_value(v) {
   for (int i=0; i<16; i++) {
     m_stringValue[i] = 0;
   }
@@ -16,7 +16,19 @@ Number::Number(int v) : m_value(v) {
       break;
     }
   }
+}*/
+
+Number::Number(char * string) {
+  // FIXME: use strdup
+  memset(m_stringValue, 0, 16);
+  for (int i=0;i<15;i++) {
+    if (string[i] == 0) {
+      break;
+    }
+    m_stringValue[i] = string[i];
+  }
 }
+
 
 Expression ** Number::children() {
   return NULL;

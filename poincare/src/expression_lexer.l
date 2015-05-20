@@ -1,8 +1,18 @@
 %{
+
+/* Flex's job is to generate tokens that will be fed to the parser. Each token
+ * can be attached a value. The type of this value is specified in the Bison
+ * file. In our case, it can be a Poincare Expression. Therefore we need the
+ * definition of these types, hence the include.
+ * Note that those have to come before including the parser header, because the
+ * parser also needs those types to be defined. */
+#include <poincare.h>
+
 /* Flex generate a lexer, which outputs tokens. Strangely enough, tokens end up
  * being defined by Bison in the parser's header file. Since we'll emit tokens
  * in our C file, we'll definitely need their definition, hence this include. */
 #include "expression_parser.hpp"
+
 
 /* Flex has provision for reading files. We'll never use this, so we're defining
  * YY_INPUT which effectively disable taking input from a file. */
@@ -38,7 +48,8 @@
 
 %%
 
-[0-9]+  { return(INTEGER); }
+[0-9]+ { yylval->string = yytext; return(INTEGER); }
+\/ { return(DIVIDE); }
 
 %%
 

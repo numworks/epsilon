@@ -3,7 +3,7 @@
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 
-int poincare_expression_yyparse(yyscan_t scanner);
+int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
 void CreateFromString(char * string) {
   yyscan_t scanner;
@@ -11,8 +11,14 @@ void CreateFromString(char * string) {
   poincare_expression_yylex_init(&scanner);
   buf = poincare_expression_yy_scan_string(string, scanner);
   void * selector = 0;
-  //CSSSelector * selector = nullptr;
-  poincare_expression_yyparse(scanner);//, &selector);
+  Expression * expression = 0;
+  poincare_expression_yyparse(scanner, &expression);
+
+
+  expression->recursiveLayout();
+  expression->m_frame.origin = KDPOINT(0, 0);
+  expression->recursiveDraw();
+
   poincare_expression_yy_delete_buffer(buf, scanner);
   poincare_expression_yylex_destroy(scanner);
 }

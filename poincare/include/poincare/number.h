@@ -5,13 +5,13 @@
 
 class Number : public Expression {
   public:
-    Number(int v);
+    Number(char * string);
+    //Number(int v);
     virtual void draw();
     virtual Expression ** children();
   protected:
     virtual void layout();
   private:
-    int m_value;
     char m_stringValue[16];
 };
 

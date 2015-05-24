@@ -16,7 +16,7 @@ void CreateFromString(char * string) {
 
 
   expression->recursiveLayout();
-  expression->m_frame.origin = KDPOINT(0, 0);
+  expression->m_frame.origin = KDPOINT(0, 100);
   expression->recursiveDraw();
 
   poincare_expression_yy_delete_buffer(buf, scanner);

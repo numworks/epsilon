@@ -21,6 +21,8 @@
  *  therefore extended registers are not available. Those are 0xB0-0xCF and 0xE0
  *  - 0xFF. Apparently this means we cannot read the display ID (RDDIDIF).
  *  That's wat ST says in stm32f429i_discovery_lcd.c.
+ *
+ *  It doesn't seem right though, because some extended commands do work...
  */
 
 /*#include "registers/rcc.h"
@@ -30,6 +32,7 @@
 #include <assert.h>
 #include "registers.h"
 #include "framebuffer.h"
+#include <platform/platform.h>
 #include <platform/ili9341/ili9341.h>
 
 extern pixel_t _framebuffer_start;
@@ -45,6 +48,11 @@ void init_lcd() {
    * Its interface with the outer world is the framebuffer: after execution of
    * this routine, everyone can expect to write to the LCD by writing to the
    * framebuffer. */
+
+  Platform.framebuffer_width = 240;
+  Platform.framebuffer_height = 320;
+  Platform.framebuffer_bits_per_pixel = 8;
+  Platform.framebuffer_address = &_framebuffer_start;
 
   init_spi_interface();
 
@@ -111,13 +119,14 @@ static void init_rgb_interface() {
 
 }
 
+// FIXME: Apparently many of those aren't needed. E.g the GPIOE ones
 gpio_pin_t rgb_pins[] = {
   {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 8}, {GPIOA, 11}, {GPIOA, 12},
   {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
   {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
   {GPIOD, 3}, {GPIOD, 6}, {GPIOD, 10},
-  {GPIOE, 4}, {GPIOE, 5}, {GPIOE, 6}, {GPIOE, 11}, {GPIOE, 12}, {GPIOE, 13},
-  {GPIOE, 14}, {GPIOE, 15},
+  //{GPIOE, 4}, {GPIOE, 5}, {GPIOE, 6}, {GPIOE, 11}, {GPIOE, 12}, {GPIOE, 13},
+  //{GPIOE, 14}, {GPIOE, 15},
   {GPIOF, 10},
   {GPIOG, 6}, {GPIOG, 7}, {GPIOG, 10}, {GPIOG, 11}, {GPIOG, 12},
   {GPIOH, 2}, {GPIOH, 3}, {GPIOH, 8}, {GPIOH, 9}, {GPIOH, 10}, {GPIOH, 11},
@@ -148,7 +157,7 @@ static void init_rgb_gpios() {
   }
 
   //FIXME: Apprently DMA should be enabled?
-  RCC_AHB1ENR |= (DMA1EN | DMA2EN | DMA2DEN);
+  //RCC_AHB1ENR |= (DMA1EN | DMA2EN | DMA2DEN);
 }
 
 static void init_rgb_clocks() {
@@ -192,7 +201,6 @@ static void init_rgb_clocks() {
   }
 }
 
-
 static void init_rgb_timings() {
   // Configure the Synchronous timings: VSYNC, HSYNC, Vertical and Horizontal
   // back porch, active data area and the front porch timings following the
@@ -202,11 +210,11 @@ static void init_rgb_timings() {
   // seems to match our hardware. Here are the values of interest:
   int lcd_panel_hsync = 10;
   int lcd_panel_hbp = 20;
-  int lcd_panel_hadr = 240;
+  int lcd_panel_hadr = Platform.framebuffer_width;
   int lcd_panel_hfp = 10;
   int lcd_panel_vsync = 2;
   int lcd_panel_vbp = 2;
-  int lcd_panel_vadr = 320;
+  int lcd_panel_vadr = Platform.framebuffer_height;
   int lcd_panel_vfp = 4;
 
    // The LCD-TFT programmable synchronous timings are:
@@ -287,13 +295,13 @@ static void init_rgb_layers() {
 
   LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)(&_framebuffer_start);
+  LTDC_LCFBAR(LTDC_LAYER1) = Platform.framebuffer_address;
 
   LTDC_LCFBLR(LTDC_LAYER1) =
-    LTDC_CFBLL(243) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
-    LTDC_CFBP(240); // Width of a line in bytes
+    LTDC_CFBLL(Platform.framebuffer_width + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
+    LTDC_CFBP(Platform.framebuffer_width); // Width of a line in bytes
 
-  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(320); // Number of lines
+  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(Platform.framebuffer_height); // Number of lines
 
   // STEP 8 : Enable layer 1
   // Don't enable color keying nor color look-up table
@@ -315,14 +323,12 @@ static void spi_5_write(char * data, size_t size);
 static void gpio_c2_write(bool pin_state);
 static void gpio_d13_write(bool pin_state);
 
-static ili9341_t panel = {
-  .chip_select_pin_write = gpio_c2_write,
-  .data_command_pin_write = gpio_d13_write,
-  .spi_write = spi_5_write
-};
-
 static void init_panel() {
-  ili9341_initialize(&panel);
+  ili9341_t * panel = &(Platform.display);
+  panel->chip_select_pin_write = gpio_c2_write;
+  panel->data_command_pin_write = gpio_d13_write;
+  panel->spi_write = spi_5_write;
+  ili9341_initialize(panel);
 }
 
 static void spi_5_write(char * data, size_t size) {
@@ -348,8 +354,8 @@ void gpio_d13_write(bool pin_state) {
 // Framebuffer checks
 
 static void check_framebuffer() {
-  assert(&_framebuffer_start == FRAMEBUFFER_ADDRESS);
-  pixel_t * fb_end = &_framebuffer_start + (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8;
+  assert(&_framebuffer_start == Platform.framebuffer_address);
+  pixel_t * fb_end = &_framebuffer_start + (Platform.framebuffer_width*Platform.framebuffer_height*Platform.framebuffer_bits_per_pixel/8);
   assert(&_framebuffer_end == fb_end);
   assert(8*sizeof(pixel_t) == FRAMEBUFFER_BITS_PER_PIXEL);
 }

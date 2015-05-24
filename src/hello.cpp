@@ -2,11 +2,20 @@ extern "C" {
 #include "hello.h"
 #include <kandinsky.h>
 #include <malloc.h>
+#include <platform/stm32f429/init_kbd.h>
 }
 
 #include <poincare.h>
 
+
 void hello() {
+
+  /*char letter = 'Z';
+  while (1) {
+    letter = getc();
+  }
+  */
+
   KDFillRect((KDRect){
       .x = 0,
       .y = 0,
@@ -19,6 +28,8 @@ void hello() {
   }
   KDDrawString("Hello, world", (KDPoint){});
   */
+
+  /*
 
   Number n1 = Number(123);
   Number n2 = Number(45);
@@ -38,7 +49,34 @@ void hello() {
 
   free(bar);
   free(test);
+  */
+/*
+  while (1) {
+    char character = getc();
+    KDDrawChar(character, (KDPoint){.x = 0, .y = 0});
+  }
+  */
 
 
+  char input[255];
+
+  int index = 0;
+  while (1) {
+    char character = getc();
+    if (character == 'X') {
+      input[index] = 0;
+      index = 0;
+      CreateFromString(input);
+    } else {
+      input[index++] = character;
+      input[index] = 0;
+      KDDrawString(input, (KDPoint){.x = 0, .y = 0});
+    }
+  }
+
+  /*
+  char * input = "12/34/8787/29292929";
+  CreateFromString(input);
+*/
 
 }

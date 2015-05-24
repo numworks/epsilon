@@ -111,12 +111,7 @@ static void init_rgb_interface() {
 
 }
 
-struct gpio_pin {
-  char group;
-  char number;
-};
-
-struct gpio_pin rgb_pins[] = {
+gpio_pin_t rgb_pins[] = {
   {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 8}, {GPIOA, 11}, {GPIOA, 12},
   {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
   {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
@@ -147,7 +142,7 @@ static void init_rgb_gpios() {
   // The LTDC is always mapped to AF14
   size_t rgb_pin_count = sizeof(rgb_pins)/sizeof(rgb_pins[0]);
   for (int i=0; i<rgb_pin_count; i++) {
-    struct gpio_pin * pin = rgb_pins+i;
+    gpio_pin_t * pin = rgb_pins+i;
     REGISTER_SET_VALUE(GPIO_AFR(pin->group, pin->number), AFR(pin->number), 14);
     REGISTER_SET_VALUE(GPIO_MODER(pin->group), MODER(pin->number), GPIO_MODE_ALTERNATE_FUNCTION);
   }

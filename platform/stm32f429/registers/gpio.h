@@ -1,6 +1,13 @@
 #ifndef STM32_REGISTERS_GPIO_H
 #define STM32_REGISTERS_GPIO_H 1
 
+#include <stdint.h>
+
+typedef struct {
+  uint8_t group;
+  uint8_t number;
+} gpio_pin_t;
+
 #define GPIO_BASE 0x40020000
 
 #define GPIOA 0
@@ -41,6 +48,25 @@
 
 #define LOW_BIT_MODER(v) (2*v)
 #define HIGH_BIT_MODER(v) (2*v+1)
+
+// GPIO port pull-up/pull-down registers
+
+#define GPIO_PUPDR(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x0C)
+
+#define GPIO_PUPD_NONE 0
+#define GPIO_PUPD_PULL_UP 1
+#define GPIO_PUPD_PULL_DOWN 2
+//#define GPIO_PUPD_RESERVED 3
+
+#define LOW_BIT_PUPDR(v) (2*v)
+#define HIGH_BIT_PUPDR(v) (2*v+1)
+
+// GPIO port input data registers
+
+#define GPIO_IDR(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x10)
+
+#define LOW_BIT_IDR(v) (v)
+#define HIGH_BIT_IDR(v) (v)
 
 // GPIO port output data registers
 

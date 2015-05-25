@@ -114,33 +114,21 @@ static void init_rgb_interface() {
 
 }
 
-// FIXME: Apparently many of those aren't needed. E.g the GPIOE ones
+// The pins actually used are described in UM1670, starting p. 19
 gpio_pin_t rgb_pins[] = {
-  {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 8}, {GPIOA, 11}, {GPIOA, 12},
-  {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
-  {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
-  {GPIOD, 3}, {GPIOD, 6}, {GPIOD, 10},
-  //{GPIOE, 4}, {GPIOE, 5}, {GPIOE, 6}, {GPIOE, 11}, {GPIOE, 12}, {GPIOE, 13},
-  //{GPIOE, 14}, {GPIOE, 15},
+  {GPIOA, 3}, {GPIOA, 4}, {GPIOA, 6}, {GPIOA, 11}, {GPIOA, 12},
+  {GPIOB, 0}, {GPIOB, 1}, {GPIOB, 8}, {GPIOB, 9}, {GPIOB, 10}, {GPIOB, 11},
+  {GPIOC, 2}, {GPIOC, 6}, {GPIOC, 7}, {GPIOC, 10},
+  {GPIOD, 3}, {GPIOD, 6},
   {GPIOF, 10},
   {GPIOG, 6}, {GPIOG, 7}, {GPIOG, 10}, {GPIOG, 11}, {GPIOG, 12},
-  {GPIOH, 2}, {GPIOH, 3}, {GPIOH, 8}, {GPIOH, 9}, {GPIOH, 10}, {GPIOH, 11},
-  {GPIOH, 12}, {GPIOH, 13}, {GPIOH, 14}, {GPIOH, 15},
-  {GPIOI, 0}, {GPIOI, 1}, {GPIOI, 2}, {GPIOI, 4}, {GPIOI, 5}, {GPIOI, 6},
-  {GPIOI, 7}, {GPIOI, 9}, {GPIOI, 10}, {GPIOI, 12}, {GPIOI, 13}, {GPIOI, 14},
-  {GPIOI, 15},
-  {GPIOJ, 0}, {GPIOJ, 1}, {GPIOJ, 2}, {GPIOJ, 3}, {GPIOJ, 4}, {GPIOJ, 5},
-  {GPIOJ, 6}, {GPIOJ, 7}, {GPIOJ, 8}, {GPIOJ, 9}, {GPIOJ, 10}, {GPIOJ, 11},
-  {GPIOJ, 12}, {GPIOJ, 13}, {GPIOJ, 14}, {GPIOJ, 15}, {GPIOK, 0}, {GPIOK, 1},
-  {GPIOK, 2}, {GPIOK, 3}, {GPIOK, 4}, {GPIOK, 5}, {GPIOK, 6}, {GPIOK, 7}
 };
 
 static void init_rgb_gpios() {
-  // The RGB interface uses GPIO pins in all groups!
+  // The RGB interface uses GPIO pins many groups
   RCC_AHB1ENR |= (
-      GPIOAEN | GPIOBEN | GPIOCEN | GPIODEN |
-      GPIOEEN | GPIOFEN | GPIOGEN | GPIOHEN |
-      GPIOIEN | GPIOJEN | GPIOKEN
+      GPIOAEN | GPIOBEN | GPIOCEN |
+      GPIODEN | GPIOFEN | GPIOGEN
       );
 
   // The LTDC is always mapped to AF14
@@ -150,9 +138,6 @@ static void init_rgb_gpios() {
     REGISTER_SET_VALUE(GPIO_AFR(pin->group, pin->number), AFR(pin->number), 14);
     REGISTER_SET_VALUE(GPIO_MODER(pin->group), MODER(pin->number), GPIO_MODE_ALTERNATE_FUNCTION);
   }
-
-  //FIXME: Apprently DMA should be enabled?
-  //RCC_AHB1ENR |= (DMA1EN | DMA2EN | DMA2DEN);
 }
 
 static void init_rgb_clocks() {

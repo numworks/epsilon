@@ -52,12 +52,6 @@ typedef void sqlite3_mutex;
  * static variables. Luckily, there are none. */
 #define static
 
-
-/* Use standard names */
-#define memsys5Malloc malloc
-#define memsys5Free free
-#define memsys5Realloc realloc
-
 /* SQLite exports its memory methods in a struct. We don't need it since we've
  * renamed them to standard names anyway. So let's just make it build. */
 typedef void ** sqlite3_mem_methods;

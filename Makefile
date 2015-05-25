@@ -49,7 +49,7 @@ objs += external/freertos/tasks.o external/freertos/list.o external/freertos/que
 objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
 
 lib/private/mem5.o: CFLAGS += -w
-objs += lib/assert.o lib/errno.o lib/private/mem5.o lib/cxx_new.o
+objs += lib/assert.o lib/errno.o lib/private/mem5.o lib/cxx_new.o lib/malloc.o
 
 objs += src/hello.o
 

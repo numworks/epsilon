@@ -25,18 +25,13 @@
  *  It doesn't seem right though, because some extended commands do work...
  */
 
-/*#include "registers/rcc.h"
-#include "registers/gpio.h"
-#include "registers/spi.h"
-#include "registers/ltdc.h"*/
 #include <assert.h>
 #include "registers.h"
-#include "framebuffer.h"
 #include <platform/platform.h>
 #include <platform/ili9341/ili9341.h>
 
-extern pixel_t _framebuffer_start;
-extern pixel_t _framebuffer_end;
+extern char _framebuffer_start;
+extern char _framebuffer_end;
 
 static void init_spi_interface();
 static void init_rgb_interface();
@@ -355,7 +350,6 @@ void gpio_d13_write(bool pin_state) {
 
 static void check_framebuffer() {
   assert(&_framebuffer_start == Platform.framebuffer_address);
-  pixel_t * fb_end = &_framebuffer_start + (Platform.framebuffer_width*Platform.framebuffer_height*Platform.framebuffer_bits_per_pixel/8);
+  char * fb_end = &_framebuffer_start + (Platform.framebuffer_width*Platform.framebuffer_height*Platform.framebuffer_bits_per_pixel/8);
   assert(&_framebuffer_end == fb_end);
-  assert(8*sizeof(pixel_t) == FRAMEBUFFER_BITS_PER_PIXEL);
 }

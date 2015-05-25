@@ -1,4 +1,5 @@
 #include <kandinsky/referential.h>
+#include "config.h"
 
 static KDPoint sOrigin = {.x = 0, .y = 0};
 
@@ -12,8 +13,8 @@ KDPoint KDGetOrigin() {
 
 KDColor * KDPixelAddress(KDPoint p) {
   KDPoint origin = KDGetOrigin();
-  return (KDColor *)(FRAMEBUFFER_ADDRESS
-      + FRAMEBUFFER_WIDTH*(p.y + origin.y)
+  return (KDColor *)(KD_FRAMEBUFFER_ADDRESS
+      + KD_FRAMEBUFFER_WIDTH*(p.y + origin.y)
       + (p.x + origin.x));
 }
 

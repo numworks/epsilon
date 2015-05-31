@@ -9,7 +9,6 @@ void CreateFromString(char * string) {
   YY_BUFFER_STATE buf;
   poincare_expression_yylex_init(&scanner);
   buf = poincare_expression_yy_scan_string(string, scanner);
-  void * selector = 0;
   Expression * expression = 0;
   poincare_expression_yyparse(scanner, &expression);
 

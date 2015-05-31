@@ -275,7 +275,7 @@ static void init_rgb_layers() {
 
   LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-  LTDC_LCFBAR(LTDC_LAYER1) = Platform.framebuffer_address;
+  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)Platform.framebuffer_address;
 
   LTDC_LCFBLR(LTDC_LAYER1) =
     LTDC_CFBLL(Platform.framebuffer_width + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;

@@ -34,8 +34,8 @@ static void row_write(uint8_t row) {
   }
 }
 
-static uint16_t column_read() {
-  uint16_t output_value = 0;
+static uint8_t column_read() {
+  uint8_t output_value = 0;
   size_t column_length = sizeof(column_pins)/sizeof(column_pins[0]);
   for (int i=0; i<column_length; i++) {
     gpio_pin_t pin = column_pins[i];

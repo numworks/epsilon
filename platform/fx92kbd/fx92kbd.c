@@ -9,7 +9,7 @@ void fx92kbd_initialize(fx92kbd_t * controller) {
 }
 
 //FIXME!
-static int delay(int usec) {
+static void delay(int usec) {
   for (int i=0; i<usec; i++) {
   }
 }

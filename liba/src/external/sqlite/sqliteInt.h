@@ -5,7 +5,7 @@
  * That file provides a tested implementation of malloc/free/realloc. */
 
 #define sqlite3GlobalConfig HeapConfig
-#include "mem5config.h"
+#include <liba/include/private/memconfig.h>
 
 /* SQLite wants to use its own integer types. Let's define them based from the
  * stdint ones */

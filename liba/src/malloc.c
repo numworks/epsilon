@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+void memsys5FreeUnsafe(void *pOld);
+void * memsys5MallocUnsafe(int nByte);
+void * memsys5Realloc(void *pPrior, int nBytes);
+int memsys5Roundup(int n);
+
 void free(void *ptr) {
   if (ptr != NULL) {
     memsys5FreeUnsafe(ptr);

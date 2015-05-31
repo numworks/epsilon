@@ -50,7 +50,6 @@ products := boot.elf boot.hex boot.bin
 #objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
 
 lib/private/mem5.o: CFLAGS += -w
-objs += lib/errno.o lib/private/mem5.o lib/cxx_new.o
 
 objs += src/hello.o
 
@@ -58,6 +57,7 @@ objs += src/hello.o
 default: clean boot.elf
 
 include liba/Makefile
+include libaxx/Makefile
 include platform/Makefile
 include kandinsky/Makefile
 include poincare/Makefile

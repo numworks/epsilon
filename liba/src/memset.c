@@ -5,4 +5,5 @@ void * memset(void * b, int c, size_t len) {
   while (len--) {
     *destination++ = (unsigned char)c;
   }
+  return b;
 }

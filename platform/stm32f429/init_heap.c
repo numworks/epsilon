@@ -1,5 +1,5 @@
 #include "init_lcd.h"
-#include <lib/private/mem5config.h>
+#include <private/memconfig.h>
 
 extern char _ccm_heap_start;
 extern char _ccm_heap_end;

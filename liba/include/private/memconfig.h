@@ -1,5 +1,5 @@
-#ifndef LIB_MEM5CONFIG_H
-#define LIB_MEM5CONFIG_H
+#ifndef LIBA_MEMCONFIG_H
+#define LIBA_MEMCONFIG_H
 
 /* This structure contains all the configuration data for the mem5 allocator.
  * Before using mem5, the HeapConfig global variable should be created

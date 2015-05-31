@@ -1,2 +1,5 @@
 SFLAGS += -Iliba/include
-objs += $(addprefix liba/src/, assert.o memcpy.o memset.o malloc.o)
+
+liba/src/external/sqlite/mem5.o: CFLAGS += -w
+
+objs += $(addprefix liba/src/, assert.o errno.o malloc.o memcpy.o memset.o external/sqlite/mem5.o)

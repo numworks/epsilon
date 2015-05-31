@@ -8,7 +8,6 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include <stddef.h>
 #include "registers.h"
 #include "init_kbd.h"
 #include <platform/fx92kbd/fx92kbd.h>

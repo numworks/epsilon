@@ -1,7 +1,7 @@
 extern "C" {
 #include "hello.h"
 #include <kandinsky.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <platform/stm32f429/init_kbd.h>
 }
 

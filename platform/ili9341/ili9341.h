@@ -1,7 +1,7 @@
 #ifndef PLATFORM_ILI9341_H
 #define PLATFORM_ILI9341_H 1
 
-#include <stddef.h>
+#include <string.h>
 #include <stdbool.h>
 
 /* This is the ILI9341 driver

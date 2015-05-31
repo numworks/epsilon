@@ -1,4 +1,5 @@
-#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 void free(void *ptr) {
   if (ptr != NULL) {
@@ -6,7 +7,7 @@ void free(void *ptr) {
   }
 }
 
-void * malloc(int size) {
+void * malloc(size_t size) {
   void * p = NULL;
   if (size > 0) {
     p = memsys5MallocUnsafe(memsys5Roundup(size));
@@ -14,6 +15,6 @@ void * malloc(int size) {
   return p;
 }
 
-void * realloc(void *ptr, int size) {
+void * realloc(void *ptr, size_t size) {
   return memsys5Realloc(ptr, memsys5Roundup(size));
 }

@@ -25,10 +25,11 @@ endif
 SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
 
 # Flags - Header search path
-SFLAGS += -Ilib -I. -Iinclude -Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
+SFLAGS += -Ilib -I.
+#-Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
 
 # Flags - Building options
-SFLAGS += -Wall -ffreestanding
+SFLAGS += -Wall -ffreestanding -nostdinc
 
 # Flags - Optimizations
 ifeq ($(PRODUCTION),1)
@@ -45,17 +46,18 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti -nostdlib
 
 products := boot.elf boot.hex boot.bin
 
-objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
-objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
+#objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
+#objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
 
 lib/private/mem5.o: CFLAGS += -w
-objs += lib/assert.o lib/errno.o lib/private/mem5.o lib/cxx_new.o lib/malloc.o
+objs += lib/errno.o lib/private/mem5.o lib/cxx_new.o
 
 objs += src/hello.o
 
 
 default: clean boot.elf
 
+include liba/Makefile
 include platform/Makefile
 include kandinsky/Makefile
 include poincare/Makefile

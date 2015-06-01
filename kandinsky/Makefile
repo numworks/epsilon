@@ -8,6 +8,9 @@ kandinsky/src/text.c: kandinsky/src/font.h
 
 font_files = $(addprefix kandinsky/src/, font.h font.c)
 
+# Even though raster will generate both .c and .h files, we don't declare it as
+# such to make. If we did, "make -jN" with N>1 may call "raster" twice.
+
 kandinsky/src/font.h: kandinsky/src/font.c
 kandinsky/src/font.c: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(font_files)"

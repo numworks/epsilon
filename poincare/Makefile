@@ -1,6 +1,10 @@
 SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/, expression.o number.o fraction.o power.o expression_lexer.o expression_parser.o)
 
+# Even though flex and bison will generate both implementation and headers at
+# once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may
+# call bison or flex twice.
+
 lexer_files = $(addprefix poincare/src/, expression_lexer.cpp expression_lexer.hpp)
 poincare/src/expression_lexer.hpp: poincare/src/expression_lexer.cpp
 poincare/src/expression_lexer.cpp: poincare/src/expression_lexer.l

@@ -8,7 +8,8 @@ kandinsky/src/text.c: kandinsky/src/font.h
 
 font_files = $(addprefix kandinsky/src/, font.h font.c)
 
-$(font_files): kandinsky/fonts/rasterizer
+kandinsky/src/font.h: kandinsky/src/font.c
+kandinsky/src/font.c: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(font_files)"
 	@$< kandinsky/fonts/ProggyClean.ttf 16 16 $(font_files)
 

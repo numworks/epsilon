@@ -1,5 +1,7 @@
 liba is an adhoc libc.
 
+Warning: you must call "liba_init()" before using liba.
+
 We need a very small subset of the functionality provided by the standard C
 library. We could use an available libc implementation, but those are usually
 way to large and may have problematic licenses.

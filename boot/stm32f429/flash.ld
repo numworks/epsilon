@@ -144,9 +144,9 @@ SECTIONS {
   } >SRAM
 
   .ccm_heap : {
-    _ccm_heap_start = .;
+    _liba_heap_start = .;
     . += LENGTH(CCM);
-    _ccm_heap_end = .;
+    _liba_heap_end = .;
   } >CCM
 
   .ccm_stack : {

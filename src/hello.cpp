@@ -2,11 +2,10 @@ extern "C" {
 #include "hello.h"
 #include <kandinsky.h>
 #include <stdlib.h>
-#include <platform/stm32f429/init_kbd.h>
+#include <ion.h>
 }
 
 #include <poincare.h>
-
 
 void hello() {
 
@@ -62,7 +61,7 @@ void hello() {
 
   int index = 0;
   while (1) {
-    char character = getc();
+    char character = ion_getchar();
     if (character == 'X') {
       input[index] = 0;
       index = 0;

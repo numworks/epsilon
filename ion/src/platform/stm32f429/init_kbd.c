@@ -8,10 +8,11 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include "registers.h"
+#include <stdlib.h>
+#include "platform.h"
+#include "registers/registers.h"
 #include "init_kbd.h"
-#include <platform/fx92kbd/fx92kbd.h>
-#include <platform/platform.h>
+#include <ion/src/drivers/fx92kbd/fx92kbd.h>
 
 // The row pins are driven high or low in software.
 static gpio_pin_t row_pins[] = {
@@ -141,7 +142,7 @@ char charFromKey[] = {
   ' ', // FX92_KEY_NONE = 0,
 };
 
-char getc() {
+char ion_getchar() {
   char character = ' ';
   while (character == ' ') {
     fx92kbd_key_t key = fx92kbd_getkey(&Platform.keyboard);

@@ -1,35 +1,16 @@
-TOOLCHAIN=arm-none-eabi
-COMPILER=llvm
-
-ifeq ($(COMPILER),llvm)
-CC=clang
-CXX=clang++
-else
-CC=$(TOOLCHAIN)-gcc
-CXX=$(TOOLCHAIN)-g++
+PLATFORM ?= stm32f429
+#PLATFORM=simulator
+include Makefile.$(PLATFORM)
+ifndef USE_LIBA
+  $(error Makefile.PLATFORM should define USE_LIBA)
 endif
-
-LD=$(TOOLCHAIN)-ld.bfd
-GDB=$(TOOLCHAIN)-gdb
-OBJCOPY=$(TOOLCHAIN)-objcopy
-
-# Compiler flags
-# Note: We're using CFLAGS, CXXFLAGS, and SFLAGS. SFLAGS are shared flags for both C and C++
-
-# Flags - Arch
-ifeq ($(COMPILER),llvm)
-  SFLAGS += -target thumbv7em-unknown-eabi
-else
-  SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=softfp
-endif
-SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
+SFLAGS += -DUSE_LIBA=$(USE_LIBA)
 
 # Flags - Header search path
 SFLAGS += -Ilib -I.
-#-Iexternal/freertos/include -Iexternal -Iexternal/freertos/portable/GCC/ARM_CM4F -Iexternal/newlib/libc/include
 
 # Flags - Building options
-SFLAGS += -Wall -ffreestanding -nostdinc
+SFLAGS += -Wall
 
 # Flags - Optimizations
 ifeq ($(PRODUCTION),1)
@@ -42,7 +23,7 @@ endif
 
 # Language-specific flags
 CFLAGS = -std=c99
-CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti -nostdlib
+CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti
 
 products := boot.elf boot.hex boot.bin
 
@@ -51,16 +32,40 @@ products := boot.elf boot.hex boot.bin
 
 lib/private/mem5.o: CFLAGS += -w
 
-objs += src/hello.o
+#objs += src/hello.o
 
+.PHONY: default info
+default: info clean boot.elf
 
-default: clean boot.elf
+ifeq ($(VERBOSE),1)
+info:
+	@echo "========= BUILD SETTINGS ======"
+	@echo "PLATFORM = $(PLATFORM)"
+	@echo "CC = $(CC)"
+	@echo "CXX = $(CXX)"
+	@echo "LD = $(LD)"
+	@echo "CFLAGS = $(CFLAGS)"
+	@echo "CXXFLAGS = $(CXXFLAGS)"
+	@echo "SFLAGS = $(SFLAGS)"
+	@echo "LDFLAGS = $(LDFLAGS)"
+	@echo "==============================="
+else
+info:
+endif
 
+include boot/Makefile
+ifeq ($(USE_LIBA),0)
+LDFLAGS += -lc -lc++ -lcrt1.o
+else
+SFLAGS += -ffreestanding -nostdinc -nostdlib
 include liba/Makefile
 include libaxx/Makefile
-include platform/Makefile
+endif
+include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
+
+objs += src/hello.o
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
@@ -81,7 +86,7 @@ boot.bin: boot.elf
 
 boot.elf: $(objs)
 	@echo "LD      $@"
-	@$(LD) -T platform/stm32f429/boot/flash.ld $(objs) -o $@
+	@$(LD) $(LDFLAGS) $(objs) -o $@
 
 %.o: %.c
 	@echo "CC      $@"

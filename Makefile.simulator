@@ -1,0 +1,7 @@
+CC=clang
+CXX=clang++
+LD=ld
+#GDB=gdb
+#OBJCOPY=$(TOOLCHAIN)-objcopy
+
+USE_LIBA=0

@@ -1,13 +1,12 @@
 #include <stdint.h>
 #include <string.h>
+#include <boot/boot.h>
 
 extern char _data_section_start_flash;
 extern char _data_section_start_ram;
 extern char _data_section_end_ram;
 extern char _bss_section_start_ram;
 extern char _bss_section_end_ram;
-
-void init();
 
 void abort() {
   // TODO: #ifdef NDEBUG, maybe trigger a reset?
@@ -32,7 +31,7 @@ void _start(void) {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
-  init();
+  boot();
 
   abort();
 }

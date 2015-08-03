@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
+#include <private/memconfig.h>
 
+// Memsys headers cannot be included easily so we rewrite them here
 void memsys5FreeUnsafe(void *pOld);
 void * memsys5MallocUnsafe(int nByte);
 void * memsys5Realloc(void *pPrior, int nBytes);

@@ -1,0 +1,27 @@
+TOOLCHAIN=arm-none-eabi
+COMPILER=llvm
+
+ifeq ($(COMPILER),llvm)
+CC=clang
+CXX=clang++
+else
+CC=$(TOOLCHAIN)-gcc
+CXX=$(TOOLCHAIN)-g++
+endif
+
+LD=$(TOOLCHAIN)-ld.bfd
+GDB=$(TOOLCHAIN)-gdb
+OBJCOPY=$(TOOLCHAIN)-objcopy
+
+# Flags - Arch
+ifeq ($(COMPILER),llvm)
+  SFLAGS += -target thumbv7em-unknown-eabi
+else
+  SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=softfp
+endif
+SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
+
+LDFLAGS += -T boot/stm32f429/flash.ld
+
+# Platform configuration
+USE_LIBA=1

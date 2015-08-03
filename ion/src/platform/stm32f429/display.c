@@ -14,7 +14,7 @@
  *      SCL | PF7   | SPI clock
  *  SDI/SDO | PF9   | SPI data
  *
- * The entry point is init_lcd();
+ * The entry point is init_display();
  *
  * Some info regarding the built-in LCD panel of the STM32F429I Discovery:
  *  -> The pin EXTC of the ili9341 is not connected to Vdd. It reads as "0", and
@@ -25,39 +25,32 @@
  *  It doesn't seem right though, because some extended commands do work...
  */
 
-#include <assert.h>
-#include "registers.h"
-#include <platform/platform.h>
-#include <platform/ili9341/ili9341.h>
+#include <ion.h>
+#include "platform.h"
+#include "registers/registers.h"
+#include <ion/src/drivers/ili9341/ili9341.h>
 
-extern char _framebuffer_start;
-extern char _framebuffer_end;
+void ion_display_on() {
+}
+
+void ion_display_off() {
+}
 
 static void init_spi_interface();
 static void init_rgb_interface();
 static void init_panel();
-static void check_framebuffer();
 
-void init_lcd() {
+void init_display() {
   /* This routine is responsible for initializing the LCD panel.
    * Its interface with the outer world is the framebuffer: after execution of
    * this routine, everyone can expect to write to the LCD by writing to the
    * framebuffer. */
-
-  Platform.framebuffer_width = 240;
-  Platform.framebuffer_height = 320;
-  Platform.framebuffer_bits_per_pixel = 8;
-  Platform.framebuffer_address = &_framebuffer_start;
 
   init_spi_interface();
 
   init_rgb_interface();
 
   init_panel();
-
-#ifndef NDEBUG
-  check_framebuffer();
-#endif
 }
 
 // SPI interface
@@ -190,11 +183,11 @@ static void init_rgb_timings() {
   // seems to match our hardware. Here are the values of interest:
   int lcd_panel_hsync = 10;
   int lcd_panel_hbp = 20;
-  int lcd_panel_hadr = Platform.framebuffer_width;
+  int lcd_panel_hadr = ion_framebuffer_width;
   int lcd_panel_hfp = 10;
   int lcd_panel_vsync = 2;
   int lcd_panel_vbp = 2;
-  int lcd_panel_vadr = Platform.framebuffer_height;
+  int lcd_panel_vadr = ion_framebuffer_height;
   int lcd_panel_vfp = 4;
 
    // The LCD-TFT programmable synchronous timings are:
@@ -275,13 +268,13 @@ static void init_rgb_layers() {
 
   LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)Platform.framebuffer_address;
+  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)ion_framebuffer_address;
 
   LTDC_LCFBLR(LTDC_LAYER1) =
-    LTDC_CFBLL(Platform.framebuffer_width + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
-    LTDC_CFBP(Platform.framebuffer_width); // Width of a line in bytes
+    LTDC_CFBLL(ion_framebuffer_width + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
+    LTDC_CFBP(ion_framebuffer_width); // Width of a line in bytes
 
-  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(Platform.framebuffer_height); // Number of lines
+  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(ion_framebuffer_height); // Number of lines
 
   // STEP 8 : Enable layer 1
   // Don't enable color keying nor color look-up table
@@ -304,11 +297,10 @@ static void gpio_c2_write(bool pin_state);
 static void gpio_d13_write(bool pin_state);
 
 static void init_panel() {
-  ili9341_t * panel = &(Platform.display);
-  panel->chip_select_pin_write = gpio_c2_write;
-  panel->data_command_pin_write = gpio_d13_write;
-  panel->spi_write = spi_5_write;
-  ili9341_initialize(panel);
+  Platform.display.chip_select_pin_write = gpio_c2_write;
+  Platform.display.data_command_pin_write = gpio_d13_write;
+  Platform.display.spi_write = spi_5_write;
+  ili9341_initialize(&(Platform.display));
 }
 
 static void spi_5_write(char * data, size_t size) {
@@ -329,12 +321,4 @@ void gpio_c2_write(bool pin_state) {
 
 void gpio_d13_write(bool pin_state) {
   REGISTER_SET_VALUE(GPIO_ODR(GPIOD), ODR(13), pin_state);
-}
-
-// Framebuffer checks
-
-static void check_framebuffer() {
-  assert(&_framebuffer_start == Platform.framebuffer_address);
-  char * fb_end = &_framebuffer_start + (Platform.framebuffer_width*Platform.framebuffer_height*Platform.framebuffer_bits_per_pixel/8);
-  assert(&_framebuffer_end == fb_end);
 }

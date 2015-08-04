@@ -70,7 +70,7 @@ objs += src/hello.o
 size: boot.elf
 	@echo "========= BUILD OUTPUT ========"
 	@echo "File:  $<"
-	@arm-none-eabi-size $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " $$1 + $$2 " bytes";}'
+	@arm-none-eabi-size $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
 	@echo "==============================="
 
 run: boot.elf

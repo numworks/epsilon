@@ -1,4 +1,5 @@
 #include <ion.h>
+#include <assert.h>
 #include "display.h"
 #include "init_kbd.h"
 

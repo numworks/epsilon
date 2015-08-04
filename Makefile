@@ -1,4 +1,5 @@
 PLATFORM ?= stm32f429
+DEBUG ?= 1
 #PLATFORM=simulator
 include Makefile.$(PLATFORM)
 ifndef USE_LIBA
@@ -13,12 +14,12 @@ SFLAGS += -Ilib -I.
 SFLAGS += -Wall
 
 # Flags - Optimizations
-ifeq ($(PRODUCTION),1)
-#echo "*** PRODUCTION BUILD ***"
-SFLAGS += -Os -fdata-sections -ffunction-sections
-LDFLAGS += --gc-sections
+ifeq ($(DEBUG),1)
+SFLAGS += -g -DDEBUG=1
 else
-SFLAGS += -g
+SFLAGS += -Os -fdata-sections -ffunction-sections
+#LDFLAGS += --gc-sections
+#FIXME: --gc-sections doesn't seem to be working
 endif
 
 # Language-specific flags
@@ -35,11 +36,13 @@ lib/private/mem5.o: CFLAGS += -w
 #objs += src/hello.o
 
 .PHONY: default info
-default: info clean boot.elf
+default: info clean boot.elf size
 
 ifeq ($(VERBOSE),1)
+size: boot.elf
 info:
 	@echo "========= BUILD SETTINGS ======"
+	@echo "DEBUG = $(DEBUG)"
 	@echo "PLATFORM = $(PLATFORM)"
 	@echo "CC = $(CC)"
 	@echo "CXX = $(CXX)"
@@ -49,8 +52,14 @@ info:
 	@echo "SFLAGS = $(SFLAGS)"
 	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "==============================="
+size: boot.elf
+	@echo "========= BUILD OUTPUT ========"
+	@echo "File:  $<"
+	@arm-none-eabi-size $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
+	@echo "==============================="
 else
 info:
+size: boot.elf
 endif
 
 include boot/Makefile
@@ -66,12 +75,6 @@ include kandinsky/Makefile
 include poincare/Makefile
 
 objs += src/hello.o
-
-size: boot.elf
-	@echo "========= BUILD OUTPUT ========"
-	@echo "File:  $<"
-	@arm-none-eabi-size $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
-	@echo "==============================="
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf

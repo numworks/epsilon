@@ -67,6 +67,12 @@ include poincare/Makefile
 
 objs += src/hello.o
 
+size: boot.elf
+	@echo "========= BUILD OUTPUT ========"
+	@echo "File:  $<"
+	@arm-none-eabi-size $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " $$1 + $$2 " bytes";}'
+	@echo "==============================="
+
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
 

@@ -1,5 +1,5 @@
 #include <kandinsky/referential.h>
-#include "config.h"
+#include <kandinsky/config.h>
 
 static KDPoint sOrigin = {.x = 0, .y = 0};
 

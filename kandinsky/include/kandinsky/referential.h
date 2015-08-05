@@ -7,8 +7,9 @@
 void KDSetOrigin(KDPoint origin);
 KDPoint KDGetOrigin();
 
-KDColor * KDPixelAddress(KDPoint p);
+void KDSetPixel(KDPoint p, KDColor c);
 
-#define COLOR(p) *KDPixelAddress(p)
+//KDColor * KDPixelAddress(KDPoint p);
+//#define COLOR(p) *KDPixelAddress(p)
 
 #endif

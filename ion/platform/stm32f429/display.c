@@ -28,7 +28,7 @@
 #include <ion.h>
 #include "platform.h"
 #include "registers/registers.h"
-#include <ion/src/drivers/ili9341/ili9341.h>
+#include <ion/drivers/ili9341/ili9341.h>
 
 void ion_display_on() {
 }
@@ -183,11 +183,11 @@ static void init_rgb_timings() {
   // seems to match our hardware. Here are the values of interest:
   int lcd_panel_hsync = 10;
   int lcd_panel_hbp = 20;
-  int lcd_panel_hadr = ion_framebuffer_width;
+  int lcd_panel_hadr = ION_FRAMEBUFFER_WIDTH;
   int lcd_panel_hfp = 10;
   int lcd_panel_vsync = 2;
   int lcd_panel_vbp = 2;
-  int lcd_panel_vadr = ion_framebuffer_height;
+  int lcd_panel_vadr = ION_FRAMEBUFFER_HEIGHT;
   int lcd_panel_vfp = 4;
 
    // The LCD-TFT programmable synchronous timings are:
@@ -268,13 +268,13 @@ static void init_rgb_layers() {
 
   LTDC_LPFCR(LTDC_LAYER1) = LTDC_PF_L8;
 
-  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)ion_framebuffer_address;
+  LTDC_LCFBAR(LTDC_LAYER1) = (uint32_t)ION_FRAMEBUFFER_ADDRESS;
 
   LTDC_LCFBLR(LTDC_LAYER1) =
-    LTDC_CFBLL(ion_framebuffer_width + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
-    LTDC_CFBP(ion_framebuffer_width); // Width of a line in bytes
+    LTDC_CFBLL(ION_FRAMEBUFFER_WIDTH + 3) | // Number of bytes per lines in the framebuffer. 240 * 4 (RGBA888). +3, per doc;
+    LTDC_CFBP(ION_FRAMEBUFFER_WIDTH); // Width of a line in bytes
 
-  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(ion_framebuffer_height); // Number of lines
+  LTDC_LCFBLNR(LTDC_LAYER1) = LTDC_CFBLNR(ION_FRAMEBUFFER_HEIGHT); // Number of lines
 
   // STEP 8 : Enable layer 1
   // Don't enable color keying nor color look-up table

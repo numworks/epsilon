@@ -5,7 +5,7 @@ include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
 endif
-SFLAGS += -DUSE_LIBA=$(USE_LIBA)
+SFLAGS += -DPLATFORM=$(PLATFORM) -DUSE_LIBA=$(USE_LIBA)
 
 # Flags - Header search path
 SFLAGS += -Ilib -I.

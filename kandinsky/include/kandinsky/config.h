@@ -13,16 +13,8 @@
 #error Kandinsky expects KD_FRAMEBUFFER_WIDTH to be defined to the width of the framebuffer
 #endif
 
-// FIXME: #define this
-typedef uint8_t KDColor;
-
-/*
-#include <platform/platform.h>
-
-#define KD_FRAMEBUFFER_ADDRESS Platform.framebuffer_address
-#define KD_FRAMEBUFFER_WIDTH Platform.framebuffer_width
-typedef uint8_t KDColor;
-
-*/
+#ifndef KD_BITS_PER_PIXEL
+#error Kandinsky expects KD_BITS_PER_PIXEL to be defined to the number of bits per pixels.
+#endif
 
 #endif

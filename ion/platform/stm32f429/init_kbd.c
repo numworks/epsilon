@@ -12,7 +12,7 @@
 #include "platform.h"
 #include "registers/registers.h"
 #include "init_kbd.h"
-#include <ion/src/drivers/fx92kbd/fx92kbd.h>
+#include <ion/drivers/fx92kbd/fx92kbd.h>
 
 // The row pins are driven high or low in software.
 static gpio_pin_t row_pins[] = {

@@ -12,6 +12,7 @@ endif
 LD=$(TOOLCHAIN)-ld.bfd
 GDB=$(TOOLCHAIN)-gdb
 OBJCOPY=$(TOOLCHAIN)-objcopy
+SIZE=$(TOOLCHAIN)-size
 
 # Flags - Arch
 ifeq ($(COMPILER),llvm)

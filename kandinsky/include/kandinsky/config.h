@@ -13,6 +13,10 @@
 #error Kandinsky expects KD_FRAMEBUFFER_WIDTH to be defined to the width of the framebuffer
 #endif
 
+#ifndef KD_FRAMEBUFFER_HEIGHT
+#error Kandinsky expects KD_FRAMEBUFFER_HEIGHT to be defined to the width of the framebuffer
+#endif
+
 #ifndef KD_BITS_PER_PIXEL
 #error Kandinsky expects KD_BITS_PER_PIXEL to be defined to the number of bits per pixels.
 #endif

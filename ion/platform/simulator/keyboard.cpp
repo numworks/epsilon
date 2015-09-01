@@ -8,7 +8,6 @@ bool ion_scankey(ion_key_t key) {
 }
 
 char ion_getchar() {
-  printf("GETCHAR\n");
   for (int i=0; i<100; i++) {
     ion_sleep();
   }

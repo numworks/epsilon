@@ -13,8 +13,8 @@ FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
 void FltkLCD::draw() {
   printf("DRAW\n");
   fl_draw_image_mono((const uchar *)m_framebuffer,
-      0, // x
-      0, // y
+      x(), // x
+      y(), // y
       w(), // width
       h(), // height,
       1, // byte-delta between pixels

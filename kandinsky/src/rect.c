@@ -7,8 +7,8 @@ void KDFillRect(KDRect rect, KDColor color) {
     //memset(KDPixelAddress((KDPoint){.x=rect.x, .y=y}), color, rect.width);
   //}
   KDPoint p;
-  for (p.x = rect.x; p.x<(rect.x+rect.width-1); p.x++) {
-    for (p.y = rect.y; p.y<(rect.y+rect.height-1); p.y++) {
+  for (p.x = rect.x; p.x<(rect.x+rect.width); p.x++) {
+    for (p.y = rect.y; p.y<(rect.y+rect.height); p.y++) {
       KDSetPixel(p, color);
     }
   }

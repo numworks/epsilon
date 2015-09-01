@@ -80,8 +80,9 @@ run: boot.elf
 test: test.elf
 	$(GDB) -x test/gdb_script.gdb test.elf
 
-test.elf: $(objs) test/runner.o
-	@$(LD) $(LDFLAGS) $(objs) test/runner.o -o $@
+test.elf: $(objs) $(tests) test/runner.o
+	@echo "LD      $@"
+	@$(LD) $(LDFLAGS) $(objs) $(tests) test/runner.o -o $@
 
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"
@@ -105,4 +106,4 @@ boot.elf: $(objs)
 
 clean:
 	@echo "CLEAN"
-	@rm -f $(objs) $(products)
+	@rm -f $(objs) $(tests) $(products)

@@ -1,5 +1,6 @@
-SFLAGS += -Ikandinsky/include -Iplatform/stm32f429
-objs += $(addprefix kandinsky/src/, line.o text.o font.o rect.o referential.o)
+SFLAGS += -Ikandinsky/include
+objs += $(addprefix kandinsky/src/, font.o line.o pixel.o rect.o text.o)
+tests += $(addprefix kandinsky/test/, set_pixel.o)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.5.5
 LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.17
@@ -21,3 +22,4 @@ kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c
 	@clang -I$(FREETYPE_PATH)/include/freetype2 -L$(FREETYPE_PATH)/lib -lfreetype $< -o $@
 
 products += $(font_files) kandinsky/fonts/rasterizer
+

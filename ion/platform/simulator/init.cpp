@@ -10,9 +10,11 @@ extern "C" {
 #include <ion/drivers/fltklcd/fltklcd.h>
 
 void ion_init() {
-  Fl_Window * window = new Fl_Window(360, 280);
+  Fl::visual(FL_RGB);
+  int margin = 10;
+  Fl_Window * window = new Fl_Window(ION_FRAMEBUFFER_WIDTH+2*margin, ION_FRAMEBUFFER_HEIGHT+2*margin);
 #if 1
-  FltkLCD * lcd = new FltkLCD(20, 20, 320, 240);
+  FltkLCD * lcd = new FltkLCD(margin, margin, ION_FRAMEBUFFER_WIDTH, ION_FRAMEBUFFER_HEIGHT);
   assert(ION_FRAMEBUFFER_BITS_PER_PIXEL == 8);
   Platform.display = lcd;
   PlatformFramebuffer = lcd->m_framebuffer;

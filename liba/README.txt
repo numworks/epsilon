@@ -4,7 +4,7 @@ Warning: you must call "liba_init()" before using liba.
 
 We need a very small subset of the functionality provided by the standard C
 library. We could use an available libc implementation, but those are usually
-way to large and may have problematic licenses.
+way too large and may have problematic licenses.
 
 It wouldn't even be fair to call liba a libc at all since it doesn't come close
 to implementing a significant portion of the standard. However, we do need some

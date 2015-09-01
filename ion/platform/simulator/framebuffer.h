@@ -1,0 +1,11 @@
+#ifndef ION_SIMULATOR_FRAMEBUFFER_H
+#define ION_SIMULATOR_FRAMEBUFFER_H
+
+extern void * PlatformFramebuffer;
+
+#define ION_FRAMEBUFFER_ADDRESS PlatformFramebuffer
+#define ION_FRAMEBUFFER_WIDTH 320
+#define ION_FRAMEBUFFER_HEIGHT 240
+#define ION_FRAMEBUFFER_BITS_PER_PIXEL 8
+
+#endif

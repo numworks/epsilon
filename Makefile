@@ -1,6 +1,6 @@
 PLATFORM ?= stm32f429
 DEBUG ?= 1
-#PLATFORM=simulator
+
 include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
@@ -33,7 +33,7 @@ products := boot.elf boot.hex boot.bin
 
 lib/private/mem5.o: CFLAGS += -w
 
-#objs += src/hello.o
+objs += src/hello.o
 
 .PHONY: default info
 default: info clean boot.elf size
@@ -73,8 +73,6 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
-
-objs += src/hello.o
 
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf

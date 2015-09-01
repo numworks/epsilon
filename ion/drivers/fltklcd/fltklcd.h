@@ -5,9 +5,10 @@
 
 class FltkLCD : public Fl_Widget {
   public:
-    FltkLCD(int x, int y, int w, int h);
-    void draw();
+    FltkLCD(int x, int y, int w, int h, const char * label = 0);
     void * m_framebuffer;
+  protected:
+    void draw();
 };
 
 #endif

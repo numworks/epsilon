@@ -4,7 +4,8 @@
 
 #include <FL/Fl_draw.H>
 
-FltkLCD::FltkLCD(int x, int y, int w, int h) : Fl_Widget(x, y, w, h, NULL) {
+FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
+  Fl_Widget(x, y, w, h, label) {
   m_framebuffer = malloc(w*h);
 // FIXME: Delete the framebuffer!
 }

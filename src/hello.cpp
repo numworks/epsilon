@@ -21,7 +21,7 @@ void hello() {
   int index = 0;
   while (1) {
     char character = ion_getchar();
-    if (character == 'X') {
+    if (character == '.') {
       input[index] = 0;
       index = 0;
       CreateFromString(input);

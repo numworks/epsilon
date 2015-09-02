@@ -7,7 +7,6 @@ extern "C" {
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
 #include <ion/drivers/fltklcd/fltklcd.h>
 #include <ion/drivers/fltkkbd/fltkkbd.h>
 
@@ -21,10 +20,9 @@ void ion_init() {
   Platform.display = lcd;
   PlatformFramebuffer = lcd->m_framebuffer;
 
-  FltkKBD * kbd = new FltkKBD(0,0,100,100);
+  FltkKbd * kbd = new FltkKbd(0,0,100,100);
   Platform.keyboard = kbd;
 
-  Fl_Button *button = new Fl_Button(margin, ION_FRAMEBUFFER_HEIGHT+2*margin+margin, 40, 40, "A");
 
   window->end();
   window->show(NULL, NULL);

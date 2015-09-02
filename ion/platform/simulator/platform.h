@@ -9,7 +9,7 @@ extern "C" {
 
 typedef struct {
   FltkLCD * display;
-  FltkKBD * keyboard;
+  FltkKbd * keyboard;
 } platform_t;
 
 extern platform_t Platform;

@@ -6,10 +6,14 @@ extern "C" {
 #include <ion/keyboard.h>
 }
 
-class FltkKBD : public Fl_Group {
-  public:
-    FltkKBD(int x, int y, int w, int h);
-    bool scankey(ion_key_t key);
+class FltkKbd : public Fl_Group {
+  friend void FltkKbdButtonCallback(Fl_Widget * w, void * context);
+public:
+  FltkKbd(int x, int y, int w, int h);
+  bool scankey(ion_key_t key);
+private:
+  bool * m_keyState;
+  void register_key_state(ion_key_t key, bool active);
 };
 
 #endif

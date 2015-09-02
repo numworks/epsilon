@@ -142,6 +142,7 @@ char charFromKey[] = {
   ' ', // FX92_KEY_NONE = 0,
 };
 
+/*
 char ion_getchar() {
   char character = ' ';
   while (character == ' ') {
@@ -150,3 +151,4 @@ char ion_getchar() {
   }
   return character;
 }
+*/

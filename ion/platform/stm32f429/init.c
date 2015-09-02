@@ -14,3 +14,7 @@ void ion_init() {
   init_kbd();
   init_display();
 }
+
+void ion_sleep() {
+  // FIXME
+}

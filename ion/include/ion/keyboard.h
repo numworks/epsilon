@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+/* Platforms should simply set the ion_key_states pointer.
+ * Clients of Ion, (including ion_getchar) will then dereference this pointer to
+ * read the state of the keys: ion_key_states[ion_key] gives the last known
+ * state of ion_key */
 
 typedef enum {
   ION_KEY_1,
@@ -14,8 +18,6 @@ typedef enum {
 #define ION_NUMBER_OF_KEYS 4
 
 extern bool * ion_key_states;
-
-// ion_key_states[ion_key] gives the state of ion_key
 
 char ion_getchar();
 

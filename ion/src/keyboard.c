@@ -1,8 +1,7 @@
-extern "C" {
 #include <ion.h>
 #include <string.h>
-}
-#include "platform.h"
+
+bool * ion_key_states;
 
 char ion_getchar() {
   bool key_states[ION_NUMBER_OF_KEYS];

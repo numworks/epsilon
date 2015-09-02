@@ -2,6 +2,7 @@ extern "C" {
 #include <ion.h>
 #include <assert.h>
 #include <stdio.h>
+#include <unistd.h>
 }
 #include "platform.h"
 #include <FL/Fl.H>
@@ -31,7 +32,7 @@ void ion_init() {
 }
 
 void ion_sleep() {
-  printf("ion_sleep\n");
+  usleep(1000);
   Platform.display->redraw();
   Fl::wait();
 }

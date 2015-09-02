@@ -12,8 +12,8 @@ static inline void set_color(KDColor * address, int8_t high_bit, int8_t low_bit,
   assert(low_bit >= 0); //  Interval starts too early
   assert(low_bit < 8*sizeof(KDColor)); // Interval ends too late
   KDColor mask = ((((KDColor)1<<(high_bit-low_bit+1))-1)<<low_bit);
-  assert(address >= KD_FRAMEBUFFER_ADDRESS);
-  assert(address < (KD_FRAMEBUFFER_ADDRESS+(KD_FRAMEBUFFER_WIDTH*KD_FRAMEBUFFER_HEIGHT*KD_BITS_PER_PIXEL)/8));
+  assert((void *)address >= KD_FRAMEBUFFER_ADDRESS);
+  assert((void *)address < (KD_FRAMEBUFFER_ADDRESS+(KD_FRAMEBUFFER_WIDTH*KD_FRAMEBUFFER_HEIGHT*KD_BITS_PER_PIXEL)/8));
   *address = (*address & ~mask) | (value & mask);
 }
 

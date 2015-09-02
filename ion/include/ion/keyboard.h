@@ -11,11 +11,13 @@
 typedef enum {
   ION_KEY_1,
   ION_KEY_2,
-  ION_KEY_PLUS,
-  ION_KEY_MINUS,
+  ION_KEY_3,
+  ION_KEY_DIVIDE,
+  ION_KEY_POW,
+  ION_KEY_DOT
 } ion_key_t;
 
-#define ION_NUMBER_OF_KEYS 4
+#define ION_NUMBER_OF_KEYS 6
 
 extern bool * ion_key_states;
 

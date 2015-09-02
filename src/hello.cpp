@@ -8,14 +8,6 @@ extern "C" {
 #include <poincare.h>
 
 void hello() {
-
-  KDFillRect((KDRect){
-      .x = 0,
-      .y = 0,
-      .width = 320,
-      .height = 240},
-      0x7F);
-
   char input[255];
 
   int index = 0;
@@ -26,6 +18,14 @@ void hello() {
       index = 0;
       CreateFromString(input);
     } else {
+      if (index == 0) {
+        KDFillRect((KDRect){
+            .x = 0,
+            .y = 0,
+            .width = 320,
+            .height = 240},
+            0x7F);
+      }
       input[index++] = character;
       input[index] = 0;
       KDDrawString(input, (KDPoint){.x = 40, .y = 40});

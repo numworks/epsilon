@@ -13,16 +13,17 @@ extern "C" {
 void ion_init() {
   Fl::visual(FL_RGB);
   int margin = 10;
-  Fl_Window * window = new Fl_Window(ION_FRAMEBUFFER_WIDTH+2*margin, ION_FRAMEBUFFER_HEIGHT+2*margin+40+2*margin);
+
+  Fl_Window * window = new Fl_Window(ION_FRAMEBUFFER_WIDTH+2*margin, ION_FRAMEBUFFER_HEIGHT+2*margin+120+2*margin);
 
   FltkLCD * lcd = new FltkLCD(margin, margin, ION_FRAMEBUFFER_WIDTH, ION_FRAMEBUFFER_HEIGHT);
   assert(ION_FRAMEBUFFER_BITS_PER_PIXEL == 8);
   Platform.display = lcd;
   PlatformFramebuffer = lcd->m_framebuffer;
 
-  FltkKbd * kbd = new FltkKbd(0,0,100,100);
+  FltkKbd * kbd = new FltkKbd(margin,ION_FRAMEBUFFER_HEIGHT+3*margin,ION_FRAMEBUFFER_WIDTH,120);
   Platform.keyboard = kbd;
-
+  ion_key_states = kbd->m_keyStates;
 
   window->end();
   window->show(NULL, NULL);

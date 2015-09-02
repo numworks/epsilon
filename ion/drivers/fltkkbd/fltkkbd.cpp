@@ -11,7 +11,7 @@ void FltkKbdButtonCallback(Fl_Widget * w, void * context) {
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
   for (int i=0; i<ION_NUMBER_OF_KEYS; i++) {
-    m_keyState[i] = false;
+    m_keyStates[i] = false;
   }
   for (int k=0; k<ION_NUMBER_OF_KEYS; k++) {
     FltkKbdButton * b = new FltkKbdButton(x+(k*w)/ION_NUMBER_OF_KEYS, y, w/ION_NUMBER_OF_KEYS, h);

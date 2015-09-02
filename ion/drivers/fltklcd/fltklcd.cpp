@@ -1,7 +1,5 @@
 #include "fltklcd.h"
 #include <stdlib.h>
-#include <stdio.h> // FIXME: remove printfs
-
 #include <FL/Fl_draw.H>
 
 FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
@@ -11,7 +9,6 @@ FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
 }
 
 void FltkLCD::draw() {
-  printf("DRAW\n");
   fl_draw_image_mono((const uchar *)m_framebuffer,
       x(), // x
       y(), // y

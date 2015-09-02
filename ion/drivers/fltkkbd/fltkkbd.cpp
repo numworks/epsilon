@@ -1,12 +1,10 @@
 #include "fltkkbd.h"
 #include "fltkkbdbutton.h"
-#include <stdio.h>
 
 void FltkKbdButtonCallback(Fl_Widget * w, void * context) {
   FltkKbd * kbd = (FltkKbd *)context;
   FltkKbdButton * button = (FltkKbdButton *)w;
   kbd->m_keyStates[button->m_key] = button->value();
-  printf("Register state %d at %d\n", button->m_key, button->value());
 }
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {

@@ -26,11 +26,15 @@ KDPoint KDGetOrigin() {
 }
 
 void KDSetPixel(KDPoint p, KDColor c) {
-  assert(p.x >= 0);
-  assert(p.x < KD_FRAMEBUFFER_WIDTH);
-  assert(p.y >= 0);
-  assert(p.y < KD_FRAMEBUFFER_HEIGHT);
-  int pixels_offset = p.y*(KD_FRAMEBUFFER_WIDTH) + p.x;
+  KDPoint t = {
+    .x = p.x + sOrigin.x,
+    .y = p.y + sOrigin.y
+  };
+  assert(t.x >= 0);
+  assert(t.x < KD_FRAMEBUFFER_WIDTH);
+  assert(t.y >= 0);
+  assert(t.y < KD_FRAMEBUFFER_HEIGHT);
+  int pixels_offset = t.y*(KD_FRAMEBUFFER_WIDTH) + t.x;
   int bits_offset = (KD_BITS_PER_PIXEL)*pixels_offset;
   const uint8_t color_bitsize = 8*sizeof(KDColor);
   // Notice: the "const" here is rather important. Indeed, it hints the compiler

@@ -74,15 +74,18 @@ include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
 
+# Quiz should be included at the end
+include quiz/Makefile
+
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
 
-test: test.elf
-	$(GDB) -x test/gdb_script.gdb test.elf
+#test: test.elf
+#	$(GDB) -x test/gdb_script.gdb test.elf
 
-test.elf: $(objs) $(tests) test/runner.o
-	@echo "LD      $@"
-	@$(LD) $(LDFLAGS) $(objs) $(tests) test/runner.o -o $@
+#test.elf: $(objs) $(tests) test/symbols.c test/runner.o
+#	@echo "LD      $@"
+#	@$(LD) $(LDFLAGS) $(objs) $(tests) test/runner.o -o $@
 
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"
@@ -106,4 +109,4 @@ boot.elf: $(objs)
 
 clean:
 	@echo "CLEAN"
-	@rm -f $(objs) $(tests) $(products)
+	@rm -f $(objs) $(test_objs) $(products)

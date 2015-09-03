@@ -6,7 +6,7 @@ BEGIN {
 
 #FIXME: Is there a way to capture subexpression in awk? The following gsub is
 #       kind of ugly
-/TEST\(([a-z0-9_]+)\)/ { gsub(/(TEST\()|(\))/, "", $1); tests = tests "," $1 }
+/QUIZ_CASE\(([a-z0-9_]+)\)/ { gsub(/(QUIZ_CASE\()|(\))/, "", $1); tests = tests ",quiz_case_" $1 }
 
 END {
   a = tests;

@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <kandinsky.h>
 
-TEST(setpixel) {
+QUIZ_CASE(setpixel) {
   2+2;
 }

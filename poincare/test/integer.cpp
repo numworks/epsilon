@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
 
-TEST(integer) {
+QUIZ_CASE(integer) {
   1+1;
 }

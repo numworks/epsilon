@@ -1,3 +1,5 @@
+SFLAGS += -Iquiz/include
+
 symbols_file = $(addprefix quiz/src/, symbols.c)
 products += $(symbols_file)
 
@@ -7,4 +9,4 @@ $(symbols_file): $(tests)
 
 test_objs = $(subst .c,.o, $(subst .cpp,.o,$(tests)))
 
-test.elf: quiz/src/symbols.o $(test_objs)
+test.elf: quiz/src/symbols.o quiz/src/runner.o $(test_objs)

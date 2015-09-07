@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
 
-QUIZ_CASE(integer) {
-  1+1;
+QUIZ_CASE(poincare_integer) {
+  Integer i = Integer((char *)"123");
 }

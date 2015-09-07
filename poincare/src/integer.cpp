@@ -3,6 +3,21 @@
 #include <string.h>
 #include <stdlib.h>
 
+Integer::Integer(uint32_t integer) {
+  // FIXME: Suboptimal (and somewhat wrong, too!)
+  m_numberOfBits = 32;
+  m_bits = malloc(4);
+  *(uint32_t *)m_bits = integer;
+}
+
+bool Integer::identicalTo(Expression * e) {
+  /* FIXME
+  Integer * i = dynamic_cast<Integer *>(e);
+  return (i != NULL);
+  */
+  return true;
+}
+
 Integer::Integer(char * string) {
   int base = 10;
   int stringLength = strlen(string);
@@ -31,16 +46,10 @@ Integer::Integer(char * string) {
   float log2 = 3.32193f; // Caution: This value has to be round up!
   //int num_bytes = ceilf(log2*stringLength)/8;
   // FIXME: We don't have ceilf just yet. Do we really need it though?
-  int num_bytes = (log2*stringLength)/8;
-
-  m_bits = malloc(num_bytes);
-
+  m_numberOfBits = (log2*stringLength);
+  m_bits = malloc(m_numberOfBits/8+1);
 
 
-  // How many bits in base 2 for a k-digits number in base n?
-  // num_bits = log_2(number) (because 2**num_bits = number, more or less)
-  // = log_2(n^k)
-  // = log_2(n)*k
 
 }
 

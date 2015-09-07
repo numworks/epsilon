@@ -12,6 +12,7 @@ typedef void (Expression::*ExpressionAction)(void);
 
 class Expression {
   public:
+    static Expression * parse(char * string);
     void recursiveDraw();
     void recursiveLayout();
     KDRect m_frame;

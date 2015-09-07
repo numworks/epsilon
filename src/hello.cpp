@@ -16,7 +16,11 @@ void hello() {
     if (character == '.') {
       input[index] = 0;
       index = 0;
-      CreateFromString(input);
+      Expression * e = Expression::parse(input);
+      e->recursiveLayout();
+      e->m_frame.origin = KDPOINT(0, 100);
+      e->recursiveDraw();
+      //FIXME delete e;
     } else {
       if (index == 0) {
         KDFillRect((KDRect){

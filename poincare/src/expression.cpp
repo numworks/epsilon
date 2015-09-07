@@ -4,7 +4,7 @@
 
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
-void CreateFromString(char * string) {
+Expression * Expression::parse(char * string) {
   yyscan_t scanner;
   YY_BUFFER_STATE buf;
   poincare_expression_yylex_init(&scanner);
@@ -13,12 +13,16 @@ void CreateFromString(char * string) {
   poincare_expression_yyparse(scanner, &expression);
 
 
-  expression->recursiveLayout();
-  expression->m_frame.origin = KDPOINT(0, 100);
-  expression->recursiveDraw();
-
   poincare_expression_yy_delete_buffer(buf, scanner);
   poincare_expression_yylex_destroy(scanner);
+
+  return expression;
+}
+
+bool Expression::identicalTo(Expression * e) {
+  // By default, two expression are not identical.
+  // This should obviously be overriden in subclasses!
+  return false;
 }
 
 

@@ -1,4 +1,4 @@
-PLATFORM ?= stm32f429
+PLATFORM ?= device
 DEBUG ?= 1
 
 include Makefile.$(PLATFORM)

@@ -22,7 +22,7 @@ else
 endif
 SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
 
-LDFLAGS += -T boot/stm32f429/flash.ld
+LDFLAGS += -T boot/device/flash.ld
 
 # Platform configuration
 USE_LIBA=1

@@ -56,6 +56,36 @@
 #define OTGHSEN (1<<29)
 #define OTGHSULPIEN (1<<30)
 
+// RCC APB1 peripheral clock enable register
+
+#define RCC_APB1ENR RCC_REGISTER_AT(0x40)
+
+#define TIM2EN (1<<0)
+#define TIM3EN (1<<1)
+#define TIM4EN (1<<2)
+#define TIM5EN (1<<3)
+#define TIM6EN (1<<4)
+#define TIM7EN (1<<5)
+#define TIM12EN (1<<6)
+#define TIM13EN (1<<7)
+#define TIM14EN (1<<8)
+#define WWDGEN (1<<11)
+#define SPI2EN (1<<14)
+#define SPI3EN (1<<15)
+#define USART2EN (1<<17)
+#define USART3EN (1<<18)
+#define UART4EN (1<<19)
+#define UART5EN (1<<20)
+#define I2C1EN (1<<21)
+#define I2C2EN (1<<22)
+#define I2C3EN (1<<23)
+#define CAN1EN (1<<25)
+#define CAN2EN (1<<26)
+#define PWREN (1<<28)
+#define DACEN (1<<29)
+#define UART7EN (1<<30)
+#define UART8EN (1<<31)
+
 // RCC APB2 peripheral clock enable register
 
 #define RCC_APB2ENR RCC_REGISTER_AT(0x44)

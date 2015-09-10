@@ -7,8 +7,10 @@
 #define SPI2_BASE 0x40003800
 #define SPI3_BASE 0x40003C00
 #define SPI4_BASE 0x40013400
+/*
 #define SPI5_BASE 0x40015000
 #define SPI6_BASE 0x40015400
+*/
 
 #define SPI_REGISTER_AT(spi_port,offset) (*(volatile uint16_t *)(spi_port##_BASE+offset))
 

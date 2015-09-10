@@ -15,12 +15,16 @@ typedef struct {
 #define GPIOC 2
 #define GPIOD 3
 #define GPIOE 4
+/*
 #define GPIOF 5
 #define GPIOG 6
+*/
 #define GPIOH 7
+/*
 #define GPIOI 8
 #define GPIOJ 9
 #define GPIOK 10
+*/
 
 #define GPIO_REGISTER_AT(gpio_group,offset) (*(volatile uint32_t *)(GPIO_BASE+(gpio_group*0x400)+offset))
 

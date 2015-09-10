@@ -1,6 +1,11 @@
 PLATFORM ?= device
 DEBUG ?= 1
 
+.PHONY: prebuild default postbuild
+default: prebuild boot.elf postbuild
+prebuild:
+postbuild:
+
 include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
@@ -35,12 +40,11 @@ lib/private/mem5.o: CFLAGS += -w
 
 objs += src/hello.o
 
-.PHONY: default info
-default: info clean boot.elf size
 
 ifeq ($(VERBOSE),1)
-size: boot.elf
-info:
+.PHONY: toolchain_info output_size
+prebuild: toolchain_info
+toolchain_info:
 	@echo "========= BUILD SETTINGS ======"
 	@echo "DEBUG = $(DEBUG)"
 	@echo "PLATFORM = $(PLATFORM)"
@@ -52,14 +56,12 @@ info:
 	@echo "SFLAGS = $(SFLAGS)"
 	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "==============================="
-size: boot.elf
+postbuild: output_size
+output_size: boot.elf
 	@echo "========= BUILD OUTPUT ========"
 	@echo "File:  $<"
 	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
 	@echo "==============================="
-else
-info:
-size: boot.elf
 endif
 
 include boot/Makefile
@@ -107,6 +109,7 @@ boot.elf: $(objs)
 	@echo "CXX     $@"
 	@$(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
+.PHONY: clean
 clean:
 	@echo "CLEAN"
 	@rm -f $(objs) $(test_objs) $(products)

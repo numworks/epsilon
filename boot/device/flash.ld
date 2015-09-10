@@ -10,14 +10,19 @@
  * to be stored in Flash. */
 MEMORY {
   FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 2048K
-  /* We're splitting the SRAM in two: general purpose, then framebuffer */
-  SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 117K
-  SRAM_FB (rw) : ORIGIN = 0x2001D400, LENGTH = 75K
-  /* We're splitting the CCM in two, this way we're sure nothing will use the
-   * stack space. */
-  CCM (rwx) : ORIGIN = 0x10000000, LENGTH = 60K
-  CCM_STACK (rw) : ORIGIN = 0x1000F000, LENGTH = 4K
+  SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 96K
+  /*
+  // We're splitting the SRAM in two: general purpose, then framebuffer
+  SRAM_HEAP (rwx) : ORIGIN = 0x20000000, LENGTH = 83K
+  SRAM_FB (rw) : ORIGIN = 0x20014C00, LENGTH = 9K
+  // We're putting the stack after the framebuffer. This way, if the stack was
+   / to overflow, this would be visible!
+  SRAM_STACK (rw) : ORIGIN = 0x20017000, LENGTH = 4K
+  */
 }
+
+FRAMEBUFFER_SIZE = 9K;
+STACK_SIZE = 4K;
 
 SECTIONS {
 
@@ -143,23 +148,24 @@ SECTIONS {
     _bss_section_end_ram = .;
   } >SRAM
 
-  .ccm_heap : {
+  .heap : {
     _liba_heap_start = .;
-    . += LENGTH(CCM);
+    /* Note: We don't increment "." here, we set it. */
+    . = (ORIGIN(SRAM) + LENGTH(SRAM) - FRAMEBUFFER_SIZE - STACK_SIZE);
     _liba_heap_end = .;
-  } >CCM
+  } >SRAM
 
-  .ccm_stack : {
+  .framebuffer : {
+    _framebuffer_start = .;
+    . += FRAMEBUFFER_SIZE;
+    _framebuffer_end = .;
+  } > SRAM
+
+  .stack : {
     . = ALIGN(8);
     _stack_end = .;
-    . = . + LENGTH(CCM_STACK) - 8;
+    . += (STACK_SIZE - 8);
     . = ALIGN(8);
     _stack_start = .;
-  } >CCM_STACK
-
-  .fb : {
-    _framebuffer_start = .;
-    . = . + LENGTH(SRAM_FB);
-    _framebuffer_end = .;
-  } > SRAM_FB
+  } >SRAM
 }

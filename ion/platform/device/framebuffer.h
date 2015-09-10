@@ -5,7 +5,7 @@ extern char _framebuffer_start;
 
 #define ION_FRAMEBUFFER_ADDRESS ((void *)(&_framebuffer_start))
 #define ION_FRAMEBUFFER_WIDTH 240
-#define ION_FRAMEBUFFER_HEIGHT 320
-#define ION_FRAMEBUFFER_BITS_PER_PIXEL 16
+#define ION_FRAMEBUFFER_HEIGHT 160
+#define ION_FRAMEBUFFER_BITS_PER_PIXEL 2
 
 #endif

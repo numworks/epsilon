@@ -191,6 +191,8 @@ void st7586_initialize(st7586_t * c) {
 
   st7586_set_display_area(c, 0, 160, 0, 160);
 
+  /*
+
   perform_instruction(c, &COMMAND(WRITE_DISPLAY_DATA));
   c->data_command_pin_write(DATA_MODE);
   unsigned char pixel = two_pixels(0x0, 0x3);
@@ -199,15 +201,17 @@ void st7586_initialize(st7586_t * c) {
     for (int i=0;i<1000;i++) {
     }
   }
+  */
 
 #define FILL_SCREEN_UPON_INIT 0
 #if FILL_SCREEN_UPON_INIT
 
   /* FIGURED OUT THE PIXEL FORMAT!!!
    * 1 byte = 2 pixels
-   * Pixel 0 : bit 6,7,8
-   * Pixel 1 : bit 3,4,5
+   * Pixel 0 : bit 6,7
+   * Pixel 1 : bit 3,4
    */
+  // 4byte  data 8 dot  (B B X - A A X - X X X) 
 
   /* Obesrvations
    * - One byte = 2 pixels
@@ -241,3 +245,10 @@ void st7586_initialize(st7586_t * c) {
   }
 #endif
 }
+
+void st7586_display_buffer(st7586_t * controller, char * buffer, size_t length) {
+  perform_instruction(controller, &COMMAND(WRITE_DISPLAY_DATA));
+  controller->data_command_pin_write(DATA_MODE);
+  controller->spi_write(buffer, length);
+}
+

@@ -21,6 +21,8 @@
 #include "registers/registers.h"
 #include <ion/drivers/st7586/st7586.h>
 
+extern char _framebuffer_start, _framebuffer_end;
+
 void ion_display_on() {
 }
 
@@ -83,6 +85,18 @@ static void init_panel() {
   Platform.display.data_command_pin_write = gpio_b14_write;
   Platform.display.spi_write = spi_2_write;
   st7586_initialize(&(Platform.display));
+
+  char * framebuffer = &_framebuffer_start;
+  for (int i=0;i<1000; i++) {
+    framebuffer[i] = 0;
+  }
+
+  for(int i=0;i<10;i++) {
+    ion_set_pixel(i,i,i%4);
+  }
+  //framebuffer[0] = 0xD8;
+  //st7586_display_buffer(&(Platform.display), &_framebuffer_start, &_framebuffer_end-&_framebuffer_start);
+  st7586_display_buffer(&(Platform.display), &_framebuffer_start, 1000);
 }
 
 static void spi_2_write(char * data, size_t size) {

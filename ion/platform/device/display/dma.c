@@ -1,10 +1,9 @@
 #include "../registers/registers.h"
+#include "../framebuffer.h"
 
 // DMA 1, channel 0, stream 4 = SPI2_TX
 #define LCD_DMA_CHANNEL 0
 #define LCD_DMA_STREAM 4
-
-extern char _framebuffer_start, _framebuffer_end;
 
 void display_dma_init() {
 // 0 - ENable DMA clock!
@@ -20,11 +19,10 @@ void display_dma_init() {
   DMA_SPAR(DMA1,LCD_DMA_STREAM) = (uint32_t)&SPI_DR(SPI2);
 
   // 3 - Set the memory address
-  DMA_SMA0R(DMA1,LCD_DMA_STREAM) = (uint32_t)&_framebuffer_start;
+  DMA_SMA0R(DMA1,LCD_DMA_STREAM) = (uint32_t)FRAMEBUFFER_ADDRESS;
 
   // 4 - Number of data items
-  //DMA_SNDTR(DMA1,LCD_DMA_STREAM) = &_framebuffer_end-&_framebuffer_start;
-  REGISTER_SET_VALUE(DMA_SNDTR(DMA1,LCD_DMA_STREAM), DMA_SNDTR, &_framebuffer_end-&_framebuffer_start);
+  REGISTER_SET_VALUE(DMA_SNDTR(DMA1,LCD_DMA_STREAM), DMA_SNDTR, FRAMEBUFFER_LENGTH);
 
   // 5 - Select the DMA channel
   REGISTER_SET_VALUE(DMA_SCR(DMA1,LCD_DMA_STREAM), DMA_CHSEL, LCD_DMA_CHANNEL);

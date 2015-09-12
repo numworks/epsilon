@@ -17,6 +17,7 @@
  */
 
 #include <ion.h>
+#include <string.h>
 
 #include "display/gpio.h"
 #include "display/spi.h"
@@ -51,6 +52,14 @@ void init_display() {
   st7586_initialize(controller);
 
   st7586_set_display_area(controller, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
+
+  st7586_enable_frame_data_upload(controller);
+
+  memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
+
+  for (int i=0;i<10;i++) {
+    ion_set_pixel(i,i,0x3);
+  }
 
   display_dma_init();
 }

@@ -3,9 +3,9 @@
 
 extern void * PlatformFramebuffer;
 
-#define ION_FRAMEBUFFER_ADDRESS PlatformFramebuffer
-#define ION_FRAMEBUFFER_WIDTH 320
-#define ION_FRAMEBUFFER_HEIGHT 240
-#define ION_FRAMEBUFFER_BITS_PER_PIXEL 8
+#define FRAMEBUFFER_ADDRESS PlatformFramebuffer
+#define FRAMEBUFFER_WIDTH 320
+#define FRAMEBUFFER_HEIGHT 240
+#define FRAMEBUFFER_BITS_PER_PIXEL 8
 
 #endif

@@ -8,6 +8,9 @@ extern "C" {
 #include <poincare.h>
 
 void hello() {
+
+  KDDrawString("Hello, world!", (KDPoint){.x = x, .y = 10});
+
   char input[255];
 
   int index = 0;

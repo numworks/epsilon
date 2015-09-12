@@ -38,7 +38,8 @@ void display_dma_init() {
 
   // 9 - Data transfer direction, peripheral/memory increment, single burst or transaction, peripheral and memory data width
     REGISTER_SET_VALUE(DMA_SCR(DMA1,LCD_DMA_STREAM), DMA_DIR, DMA_DIR_MEMORY_TO_PERIPHERAL);
-    //DMA_SCR(DMA1,LCD_DMA_STREAM) |= DMA_CIRC;
+
+    DMA_SCR(DMA1,LCD_DMA_STREAM) |= DMA_CIRC;
 
     // Memory address is incremented
     DMA_SCR(DMA1,LCD_DMA_STREAM) |= DMA_MINC;
@@ -51,4 +52,9 @@ void display_dma_init() {
 
     // 11 - Bonux: enable DMA requests on SPI
     SPI_CR2(SPI2) |= SPI_TXDMAEN;
+
+    /*while (DMA_SCR(DMA1,LCD_DMA_STREAM) & DMA_EN) {
+    }
+    DMA_SCR(DMA1,LCD_DMA_STREAM) |= DMA_EN;
+    */
 }

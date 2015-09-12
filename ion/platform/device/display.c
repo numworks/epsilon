@@ -18,6 +18,7 @@
 
 #include <ion.h>
 #include <string.h>
+#include <assert.h>
 
 #include "display/gpio.h"
 #include "display/spi.h"
@@ -40,6 +41,8 @@ void ion_display_off() {
 }
 
 void init_display() {
+  assert(FRAMEBUFFER_LENGTH == (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8);
+
   display_gpio_init();
   display_spi_init();
 
@@ -56,10 +59,6 @@ void init_display() {
   st7586_enable_frame_data_upload(controller);
 
   memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
-
-  for (int i=0;i<10;i++) {
-    ion_set_pixel(i,i,0x3);
-  }
 
   display_dma_init();
 }

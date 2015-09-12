@@ -18,15 +18,19 @@
 
 #include <ion.h>
 #include "platform.h"
+#include "framebuffer.h"
 #include "registers/registers.h"
 #include <ion/drivers/st7586/st7586.h>
-
-extern char _framebuffer_start, _framebuffer_end;
+#include "display/dma.h"
 
 void ion_display_on() {
+  // Initialize panel
+  // Start DMA transfer
 }
 
 void ion_display_off() {
+  // Stop DMA transfer
+  // Turn off panel
 }
 
 static void init_spi_pins();
@@ -42,6 +46,10 @@ void init_display() {
   init_spi_port();
 
   init_panel();
+
+
+
+  display_configure_dma();
 }
 
 static void init_spi_pins() {
@@ -86,17 +94,15 @@ static void init_panel() {
   Platform.display.spi_write = spi_2_write;
   st7586_initialize(&(Platform.display));
 
-  char * framebuffer = &_framebuffer_start;
-  for (int i=0;i<1000; i++) {
-    framebuffer[i] = 0;
-  }
+  st7586_set_display_area(0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
+  st7586_display_buffer
 
-  for(int i=0;i<10;i++) {
-    ion_set_pixel(i,i,i%4);
-  }
+  //for(int i=0;i<10;i++) {
+  //  ion_set_pixel(i,i,i%4);
+  //}
   //framebuffer[0] = 0xD8;
   //st7586_display_buffer(&(Platform.display), &_framebuffer_start, &_framebuffer_end-&_framebuffer_start);
-  st7586_display_buffer(&(Platform.display), &_framebuffer_start, 1000);
+  //st7586_display_buffer(&(Platform.display), &_framebuffer_start, 1000);
 }
 
 static void spi_2_write(char * data, size_t size) {

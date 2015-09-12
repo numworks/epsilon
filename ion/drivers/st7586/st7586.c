@@ -148,7 +148,7 @@ static void perform_instructions(st7586_t * c, instruction_t * instructions, siz
   }
 }
 
-void st7586_set_display_area(st7586_t * c, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length) {
+void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length) {
   /* The datasheet says the panel counts in "columns", groups of 3 pixels.
    * It says 3, but from my understanding pixels are grouped by 2, not by 3. So
    * so let's make this 2 instead of 3. Seems to be working fine! */
@@ -172,8 +172,8 @@ void st7586_set_display_area(st7586_t * c, uint16_t x_start, uint16_t x_length, 
     DATA(y_end >> 8),
     DATA(y_end),
   };
-  perform_instructions(c, sequence, sizeof(sequence)/sizeof(sequence[0]));
 
+  perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
 }
 
 // p1 = 0, 1, 2, or 3
@@ -191,17 +191,17 @@ void st7586_initialize(st7586_t * c) {
 
   st7586_set_display_area(c, 0, 160, 0, 160);
 
-  /*
+  // Put the screen in "receive frame data"
 
   perform_instruction(c, &COMMAND(WRITE_DISPLAY_DATA));
   c->data_command_pin_write(DATA_MODE);
-  unsigned char pixel = two_pixels(0x0, 0x3);
-  for (int i=0; i<160*160/2; i++) {
-    c->spi_write(&pixel, 1);
-    for (int i=0;i<1000;i++) {
-    }
-  }
-  */
+
+  char pixels[3] = {
+    two_pixels(0x0,0x3),
+    two_pixels(0x0,0x3),
+    two_pixels(0x0,0x3)
+  };
+  c->spi_write(&pixels, 3);
 
 #define FILL_SCREEN_UPON_INIT 0
 #if FILL_SCREEN_UPON_INIT

@@ -15,9 +15,8 @@ typedef struct {
 } st7586_t;
 
 void st7586_initialize(st7586_t * controller);
+void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
 
-//TODO: Remove this API, it is ugly
-void st7586_display_buffer(st7586_t * controller, char * buffer, size_t length);
 
 
 #endif

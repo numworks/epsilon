@@ -1,13 +1,6 @@
 #include <ion.h>
 #include <assert.h>
-
-extern char _framebuffer_start;
-extern char _framebuffer_end;
-
-#define FRAMEBUFFER_ADDRESS (&_framebuffer_start)
-#define FRAMEBUFFER_WIDTH 160
-#define FRAMEBUFFER_HEIGHT 160
-#define FRAMEBUFFER_BITS_PER_PIXEL 4
+#include "framebuffer.h"
 
 #define BIT_MASK(high, low) ((((uint32_t)1<<((high)-(low)+1))-1)<<(low))
 #define BIT_VALUE(value, high, low) (((value)<<(low))&BIT_MASK(high, low))

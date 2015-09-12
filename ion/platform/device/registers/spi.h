@@ -47,6 +47,18 @@
 #define SPI_BIDIOE (1<<14)
 #define SPI_BIDIMODE (1<<15)
 
+// SPI control registers 2
+
+#define SPI_CR2(spi_port) SPI_REGISTER_AT(spi_port,0x04)
+
+#define SPI_RXDMAEN (1<<0)
+#define SPI_TXDMAEN (1<<1)
+#define SPI_SSOE (1<<2)
+#define SPI_FRF (1<<4)
+#define SPI_ERRIE (1<<5)
+#define SPI_RXNEIE (1<<6)
+#define SPI_TXEIE (1<<7)
+
 // SPI status registers
 
 #define SPI_SR(spi_port) SPI_REGISTER_AT(spi_port, 0x08)

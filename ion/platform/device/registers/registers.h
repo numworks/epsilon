@@ -13,6 +13,7 @@
 #include "rcc.h"
 #include "gpio.h"
 #include "spi.h"
+#include "dma.h"
 //#include "ltdc.h"
 
 #define REGISTER_FIELD_MASK(field) (BIT_MASK(HIGH_BIT_##field,LOW_BIT_##field))

@@ -1,11 +1,7 @@
-#ifndef ION_STM32F429_FRAMEBUFFER_H
-#define ION_STM32F429_FRAMEBUFFER_H
-
 extern char _framebuffer_start;
+extern char _framebuffer_end;
 
-#define ION_FRAMEBUFFER_ADDRESS ((void *)(&_framebuffer_start))
-#define ION_FRAMEBUFFER_WIDTH 240
-#define ION_FRAMEBUFFER_HEIGHT 160
-#define ION_FRAMEBUFFER_BITS_PER_PIXEL 2
-
-#endif
+#define FRAMEBUFFER_ADDRESS (&_framebuffer_start)
+#define FRAMEBUFFER_WIDTH 160
+#define FRAMEBUFFER_HEIGHT 160
+#define FRAMEBUFFER_BITS_PER_PIXEL 4

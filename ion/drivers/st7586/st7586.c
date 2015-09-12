@@ -152,7 +152,7 @@ void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x
   perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
 }
 
-void st7586_prepare_frame_upload(st7586_t * controller) {
+void st7586_enable_frame_data_upload(st7586_t * controller) {
   // Put the screen in "receive frame data"
   perform_instruction(controller, COMMAND(WRITE_DISPLAY_DATA));
   controller->data_command_pin_write(DATA_MODE);

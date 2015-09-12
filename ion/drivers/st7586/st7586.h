@@ -17,5 +17,5 @@ typedef struct {
 
 void st7586_initialize(st7586_t * controller);
 void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
-void st7586_prepare_frame_upload(st7586_t * controller);
+void st7586_enable_frame_data_upload(st7586_t * controller);
 #endif

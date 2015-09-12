@@ -9,7 +9,7 @@ extern "C" {
 
 void hello() {
 
-  KDDrawString("Hello, world!", (KDPoint){.x = x, .y = 10});
+  KDDrawString("Hello, world!", (KDPoint){.x = 10, .y = 10});
 
   char input[255];
 

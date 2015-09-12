@@ -1,1 +1,1 @@
-void display_configure_dma();
+void display_dma_init();

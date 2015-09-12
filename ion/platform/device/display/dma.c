@@ -6,7 +6,7 @@
 
 extern char _framebuffer_start, _framebuffer_end;
 
-void display_configure_dma() {
+void display_dma_init() {
 // 0 - ENable DMA clock!
   RCC_AHB1ENR |= DMA1EN;
 

@@ -2,6 +2,7 @@
 #define PLATFORM_ST7586_H 1
 
 #include <string.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 /* This is the ST7586 driver
@@ -16,7 +17,5 @@ typedef struct {
 
 void st7586_initialize(st7586_t * controller);
 void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
-
-
-
+void st7586_prepare_frame_upload(st7586_t * controller);
 #endif

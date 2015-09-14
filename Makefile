@@ -6,6 +6,9 @@ default: prebuild boot.elf postbuild
 prebuild:
 postbuild:
 
+.PHONY: tests
+test: prebuild test.elf postbuild
+
 include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
@@ -31,15 +34,15 @@ endif
 CFLAGS = -std=c99
 CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti
 
-products := boot.elf boot.hex boot.bin
+products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
 
 #objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
 #objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
 
 lib/private/mem5.o: CFLAGS += -w
 
-objs += src/hello.o
-
+products += src/hello.o
+boot.elf: src/hello.o
 
 ifeq ($(VERBOSE),1)
 .PHONY: toolchain_info output_size
@@ -90,9 +93,9 @@ run: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary $< $@
 
-boot.elf: $(objs)
+%.elf: $(objs)
 	@echo "LD      $@"
-	@$(LD) $(LDFLAGS) $(objs) -o $@
+	@$(LD) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	@echo "CC      $@"

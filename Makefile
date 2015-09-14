@@ -82,13 +82,6 @@ include quiz/Makefile
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
 
-#test: test.elf
-#	$(GDB) -x test/gdb_script.gdb test.elf
-
-#test.elf: $(objs) $(tests) test/symbols.c test/runner.o
-#	@echo "LD      $@"
-#	@$(LD) $(LDFLAGS) $(objs) $(tests) test/runner.o -o $@
-
 boot.hex: boot.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O ihex boot.elf boot.hex

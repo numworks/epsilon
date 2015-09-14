@@ -2,8 +2,11 @@
 #include <kandinsky/text.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <printf.h>
 
 #define MAX(a,b) ((a)>(b)?a:b)
+#define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
 
 #define INTEGER_IMMEDIATE_LIMIT 32
 
@@ -11,7 +14,18 @@ uint16_t Integer::arraySize(uint16_t bitSize) {
   return (bitSize-1)/(8*sizeof(native_uint_t))+1;
 }
 
+uint8_t log2(native_uint_t v) {
+  assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK
+  for (uint8_t i=0; i<NATIVE_UINT_BIT_COUNT; i++) {
+    if (v < (1<<i)) {
+      return i;
+    }
+  }
+  return 32;
+}
+
 bool Integer::operator==(const Integer &other) const {
+  printf("Comparing %d and %d\n", other.m_numberOfBits, m_numberOfBits);
   if (other.m_numberOfBits != m_numberOfBits) {
     return false;
   }
@@ -26,28 +40,29 @@ bool Integer::operator==(const Integer &other) const {
 
 Integer::Integer(native_uint_t i) {
   //m_numberOfBits = sizeof(native_uint_t)*8;
-  m_numberOfBits = 16;
+  m_numberOfBits = i ? log2(i) : 1;
   m_bits = (native_uint_t *)malloc(sizeof(native_uint_t));
+  printf("%d has %d\n", i, m_numberOfBits);
   *m_bits = i;
 }
 
 const Integer Integer::operator+(const Integer &other) const {
-  uint16_t sumSize = MAX(other.m_numberOfBits,m_numberOfBits) + 1;
+  uint16_t sumSize = MAX(other.m_numberOfBits,m_numberOfBits);
   uint16_t intArraySize = arraySize(sumSize);
   native_uint_t * bits = (native_uint_t *)malloc(intArraySize*sizeof(native_uint_t));
   bool carry = 0;
   for (uint16_t i = 0; i<intArraySize; i++) {
-    native_uint_t a = other.m_bits[i];
-    native_uint_t b = m_bits[i];
-    native_uint_t sum = a + b + carry;
+    native_uint_t a = m_bits[i];
+    native_uint_t b = other.m_bits[i];
+    native_uint_t sum = a + b + carry; // TODO: Prove it cannot overflow
     bits[i] = sum;
     carry = ((a>sum)||(b>sum));
   }
   if (carry) {
     bits[intArraySize] = 0x1;
   } else {
-    sumSize -= 1;
-    /* At this point we may realloc m_bits to a smaller size.
+    sumSize = (intArraySize-1)*NATIVE_UINT_BIT_COUNT + log2(bits[intArraySize-1]);
+    /* At this point we may realloc m_bits to a smaller size in some cases.
      * It might not be worth the trouble though : it won't happen very often
      * and we're wasting a single native_uint_t. */
   }
@@ -65,8 +80,8 @@ const Integer Integer::operator+(const Integer &other) const {
 */
 
 Integer::Integer(native_uint_t * bits, uint16_t size) :
-  m_bits(bits),
-  m_numberOfBits(size) {
+  m_numberOfBits(size),
+  m_bits(bits) {
 }
 
 Integer::Integer(char * string) {

@@ -24,7 +24,7 @@ class Integer : public Expression {
     /* WARNING: This constructor takes ownership of the bits array and will free it! */
     Integer(native_uint_t * bits, uint16_t length);
     uint16_t m_numberOfBits;
-    native_uint_t * m_bits;
+    native_uint_t * m_bits; // LITTLE-ENDIAN
     /*
      // TODO: Small-int optimization
     union {

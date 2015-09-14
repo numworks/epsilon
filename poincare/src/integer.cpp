@@ -3,19 +3,70 @@
 #include <string.h>
 #include <stdlib.h>
 
-Integer::Integer(uint32_t integer) {
-  // FIXME: Suboptimal (and somewhat wrong, too!)
-  m_numberOfBits = 32;
-  m_bits = malloc(4);
-  *(uint32_t *)m_bits = integer;
+#define MAX(a,b) ((a)>(b)?a:b)
+
+#define INTEGER_IMMEDIATE_LIMIT 32
+
+uint16_t Integer::arraySize(uint16_t bitSize) {
+  return (bitSize-1)/(8*sizeof(native_uint_t))+1;
 }
 
-bool Integer::identicalTo(Expression * e) {
-  /* FIXME
-  Integer * i = dynamic_cast<Integer *>(e);
-  return (i != NULL);
-  */
+bool Integer::operator==(const Integer &other) const {
+  if (other.m_numberOfBits != m_numberOfBits) {
+    return false;
+  }
+  uint16_t size = arraySize(m_numberOfBits);
+  for (uint16_t i=0; i<size; i++) {
+    if (m_bits[i] != other.m_bits[i]) {
+      return false;
+    }
+  }
   return true;
+}
+
+Integer::Integer(native_uint_t i) {
+  //m_numberOfBits = sizeof(native_uint_t)*8;
+  m_numberOfBits = 16;
+  m_bits = (native_uint_t *)malloc(sizeof(native_uint_t));
+  *m_bits = i;
+}
+
+const Integer Integer::operator+(const Integer &other) const {
+  uint16_t sumSize = MAX(other.m_numberOfBits,m_numberOfBits) + 1;
+  uint16_t intArraySize = arraySize(sumSize);
+  native_uint_t * bits = (native_uint_t *)malloc(intArraySize*sizeof(native_uint_t));
+  bool carry = 0;
+  for (uint16_t i = 0; i<intArraySize; i++) {
+    native_uint_t a = other.m_bits[i];
+    native_uint_t b = m_bits[i];
+    native_uint_t sum = a + b + carry;
+    bits[i] = sum;
+    carry = ((a>sum)||(b>sum));
+  }
+  if (carry) {
+    bits[intArraySize] = 0x1;
+  } else {
+    sumSize -= 1;
+    /* At this point we may realloc m_bits to a smaller size.
+     * It might not be worth the trouble though : it won't happen very often
+     * and we're wasting a single native_uint_t. */
+  }
+  return Integer(bits, sumSize);
+}
+
+/*
+ char * Integer::bits() {
+  if (m_numberOfBits > INTEGER_IMMEDIATE_LIMIT) {
+    return m_dynamicBits;
+  } else {
+    return &m_staticBits;
+  }
+}
+*/
+
+Integer::Integer(native_uint_t * bits, uint16_t size) :
+  m_bits(bits),
+  m_numberOfBits(size) {
 }
 
 Integer::Integer(char * string) {
@@ -47,31 +98,16 @@ Integer::Integer(char * string) {
   //int num_bytes = ceilf(log2*stringLength)/8;
   // FIXME: We don't have ceilf just yet. Do we really need it though?
   m_numberOfBits = (log2*stringLength);
-  m_bits = malloc(m_numberOfBits/8+1);
-
-
-
+  m_bits = (native_uint_t *)malloc(arraySize(m_numberOfBits)*sizeof(native_uint_t));
 }
 
-Integer::~Integer() {
-  free(m_bits);
+bool Integer::identicalTo(Expression * e) {
+  /* FIXME
+  Integer * i = dynamic_cast<Integer *>(e);
+  return (i != NULL);
+  */
+  return false;
 }
-
-/*Number::Number(int v) : m_value(v) {
-  for (int i=0; i<16; i++) {
-    m_stringValue[i] = 0;
-  }
-
-  int value = v;
-  for (int i=0; i<15; i++) {
-    int digit = value - 10*(value/10);
-    m_stringValue[i] = '0' + digit;
-    value = value/10;
-    if (value == 0) {
-      break;
-    }
-  }
-}*/
 
 Expression ** Integer::children() {
   return NULL;

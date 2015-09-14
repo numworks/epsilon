@@ -82,13 +82,13 @@ include quiz/Makefile
 run: boot.elf
 	$(GDB) -x gdb_script.gdb boot.elf
 
-boot.hex: boot.elf
+%.hex: %.elf
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O ihex boot.elf boot.hex
+	@$(OBJCOPY) -O ihex $< $@
 
-boot.bin: boot.elf
+%.bin: %.elf
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O binary boot.elf boot.bin
+	@$(OBJCOPY) -O binary $< $@
 
 boot.elf: $(objs)
 	@echo "LD      $@"

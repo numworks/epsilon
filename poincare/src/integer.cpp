@@ -10,10 +10,6 @@
 
 #define INTEGER_IMMEDIATE_LIMIT 32
 
-uint16_t Integer::arraySize(uint16_t bitSize) {
-  return (bitSize-1)/(8*sizeof(native_uint_t))+1;
-}
-
 uint8_t log2(native_uint_t v) {
   assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK
   for (uint8_t i=0; i<NATIVE_UINT_BIT_COUNT; i++) {
@@ -25,13 +21,12 @@ uint8_t log2(native_uint_t v) {
 }
 
 bool Integer::operator==(const Integer &other) const {
-  printf("Comparing %d and %d\n", other.m_numberOfBits, m_numberOfBits);
-  if (other.m_numberOfBits != m_numberOfBits) {
+  printf("Comparing %d and %d\n", other.m_numberOfDigits, m_numberOfDigits);
+  if (other.m_numberOfDigits != m_numberOfDigits) {
     return false;
   }
-  uint16_t size = arraySize(m_numberOfBits);
-  for (uint16_t i=0; i<size; i++) {
-    if (m_bits[i] != other.m_bits[i]) {
+  for (uint16_t i=0; i<m_numberOfDigits; i++) {
+    if (m_digits[i] != other.m_digits[i]) {
       return false;
     }
   }
@@ -39,56 +34,48 @@ bool Integer::operator==(const Integer &other) const {
 }
 
 Integer::Integer(native_uint_t i) {
-  //m_numberOfBits = sizeof(native_uint_t)*8;
-  m_numberOfBits = i ? log2(i) : 1;
-  m_bits = (native_uint_t *)malloc(sizeof(native_uint_t));
-  printf("%d has %d\n", i, m_numberOfBits);
-  *m_bits = i;
+  m_numberOfDigits = 1;
+  m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
+  printf("%d has %d\n", i, m_numberOfDigits);
+  *m_digits = i;
 }
 
 const Integer Integer::operator+(const Integer &other) const {
-  uint16_t sumSize = MAX(other.m_numberOfBits,m_numberOfBits);
-  uint16_t intArraySize = arraySize(sumSize);
-  native_uint_t * bits = (native_uint_t *)malloc(intArraySize*sizeof(native_uint_t));
+  uint16_t sumSize = MAX(other.m_numberOfDigits,m_numberOfDigits)+1;
+  native_uint_t * digits = (native_uint_t *)malloc(sumSize*sizeof(native_uint_t));
   bool carry = 0;
-  for (uint16_t i = 0; i<intArraySize; i++) {
-    native_uint_t a = m_bits[i];
-    native_uint_t b = other.m_bits[i];
+  for (uint16_t i = 0; i<sumSize; i++) {
+    native_uint_t a = (i >= m_numberOfDigits ? 0 : m_digits[i]);
+    native_uint_t b = (i >= other.m_numberOfDigits ? 0 : other.m_digits[i]);
     native_uint_t sum = a + b + carry; // TODO: Prove it cannot overflow
-    bits[i] = sum;
+    digits[i] = sum;
     carry = ((a>sum)||(b>sum));
   }
-  if (carry) {
-    bits[intArraySize] = 0x1;
-  } else {
-    sumSize = (intArraySize-1)*NATIVE_UINT_BIT_COUNT + log2(bits[intArraySize-1]);
-    /* At this point we may realloc m_bits to a smaller size in some cases.
+  while (digits[sumSize-1] == 0) {
+    sumSize--;
+    /* At this point we may realloc m_digits to a smaller size.
      * It might not be worth the trouble though : it won't happen very often
      * and we're wasting a single native_uint_t. */
   }
-  return Integer(bits, sumSize);
+  return Integer(digits, sumSize);
 }
 
 const Integer Integer::operator*(const Integer &other) const {
-  uint16_t productSize = other.m_numberOfBits + m_numberOfBits;
-  uint16_t intArraySize = arraySize(productSize);
-  native_uint_t * bits = (native_uint_t *)malloc(intArraySize*sizeof(native_uint_t));
-  memset(bits, 0, intArraySize*sizeof(native_uint_t));
-
-  uint16_t myArraySize = arraySize(m_numberOfBits);
-  uint16_t otherArraySize = arraySize(other.m_numberOfBits);
+  uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
+  native_uint_t * bits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
+  memset(bits, 0, productSize*sizeof(native_uint_t));
 
   native_uint_t carry = 0;
-  for (uint16_t i=0; i<myArraySize; i++) {
-    native_uint_t a = m_bits[i];
+  for (uint16_t i=0; i<m_numberOfDigits; i++) {
+    native_uint_t a = m_digits[i];
     carry = 0;
-    for (uint16_t j=0; j<otherArraySize; j++) {
-      native_uint_t b = other.m_bits[i];
+    for (uint16_t j=0; j<other.m_numberOfDigits; j++) {
+      native_uint_t b = other.m_digits[i];
       double_native_uint_t p = a*b + carry; // TODO: Prove it cannot overflow
-      m_bits[i+j] += (native_uint_t)p; // Only the last "digit"
+      m_digits[i+j] += (native_uint_t)p; // Only the last "digit"
       carry = p>>32; //FIXME: 32 is hardcoded here!
     }
-    m_bits[i+otherArraySize] = carry;
+    m_digits[i+other.m_numberOfDigits] = carry;
   }
 
   return Integer(bits, productSize);
@@ -96,7 +83,7 @@ const Integer Integer::operator*(const Integer &other) const {
 
 /*
  char * Integer::bits() {
-  if (m_numberOfBits > INTEGER_IMMEDIATE_LIMIT) {
+  if (m_numberOfDigits > INTEGER_IMMEDIATE_LIMIT) {
     return m_dynamicBits;
   } else {
     return &m_staticBits;
@@ -104,12 +91,12 @@ const Integer Integer::operator*(const Integer &other) const {
 }
 */
 
-Integer::Integer(native_uint_t * bits, uint16_t size) :
-  m_numberOfBits(size),
-  m_bits(bits) {
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
+  m_numberOfDigits(numberOfDigits),
+  m_digits(digits) {
 }
 
-Integer::Integer(char * string) {
+Integer Integer::parseInteger(char * string) {
   int base = 10;
   int stringLength = strlen(string);
   /*
@@ -126,19 +113,12 @@ Integer::Integer(char * string) {
   }
   */
 
-  /* How many bits do we need to store that number knowing that it requires at
-   * most K digits in base N?
-   *
-   * We know that 2^(num_bits-1) < number < 2^num_bits
-   * So num_bits = ceil(log2(number))
-   *             = ceil(log2(N^K))
-   *             = ceil(log2(N)*K)
-   */
-  float log2 = 3.32193f; // Caution: This value has to be round up!
-  //int num_bytes = ceilf(log2*stringLength)/8;
-  // FIXME: We don't have ceilf just yet. Do we really need it though?
-  m_numberOfBits = (log2*stringLength);
-  m_bits = (native_uint_t *)malloc(arraySize(m_numberOfBits)*sizeof(native_uint_t));
+  Integer v = Integer(string[0]-'0');
+  for (int i=1; i<stringLength; i++) {
+    v = v * Integer(10);
+    v = v + Integer(string[i]-'0'); // ASCII encoding
+  }
+  return v;
 }
 
 bool Integer::identicalTo(Expression * e) {

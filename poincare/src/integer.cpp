@@ -69,6 +69,31 @@ const Integer Integer::operator+(const Integer &other) const {
   return Integer(bits, sumSize);
 }
 
+const Integer Integer::operator*(const Integer &other) const {
+  uint16_t productSize = other.m_numberOfBits + m_numberOfBits;
+  uint16_t intArraySize = arraySize(productSize);
+  native_uint_t * bits = (native_uint_t *)malloc(intArraySize*sizeof(native_uint_t));
+  memset(bits, 0, intArraySize*sizeof(native_uint_t));
+
+  uint16_t myArraySize = arraySize(m_numberOfBits);
+  uint16_t otherArraySize = arraySize(other.m_numberOfBits);
+
+  native_uint_t carry = 0;
+  for (uint16_t i=0; i<myArraySize; i++) {
+    native_uint_t a = m_bits[i];
+    carry = 0;
+    for (uint16_t j=0; j<otherArraySize; j++) {
+      native_uint_t b = other.m_bits[i];
+      double_native_uint_t p = a*b + carry; // TODO: Prove it cannot overflow
+      m_bits[i+j] += (native_uint_t)p; // Only the last "digit"
+      carry = p>>32; //FIXME: 32 is hardcoded here!
+    }
+    m_bits[i+otherArraySize] = carry;
+  }
+
+  return Integer(bits, productSize);
+}
+
 /*
  char * Integer::bits() {
   if (m_numberOfBits > INTEGER_IMMEDIATE_LIMIT) {

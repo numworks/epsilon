@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 typedef uint32_t native_uint_t;
+typedef uint64_t double_native_uint_t;
 
 class Integer : public Expression {
   public:
@@ -16,6 +17,7 @@ class Integer : public Expression {
     virtual bool identicalTo(Expression * e);
     //Integer add(Integer * i);
     const Integer operator+(const Integer &other) const;
+    const Integer operator*(const Integer &other) const;
     bool operator==(const Integer &other) const;
   protected:
     virtual void layout();

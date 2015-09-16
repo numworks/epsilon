@@ -13,7 +13,7 @@ QUIZ_CASE(poincare_integer_add) {
 }
 
 QUIZ_CASE(poincare_integer_multiply) {
-  //assert(Integer(12) * Integer(34) == Integer(408));
+  assert(Integer(12) * Integer(34) == Integer(408));
 }
 
 QUIZ_CASE(poincare_integer_parse_integer) {

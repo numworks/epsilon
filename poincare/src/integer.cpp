@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <printf.h>
 
 #define MAX(a,b) ((a)>(b)?a:b)
 #define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
@@ -21,7 +20,6 @@ uint8_t log2(native_uint_t v) {
 }
 
 bool Integer::operator==(const Integer &other) const {
-  printf("Comparing %d and %d\n", other.m_numberOfDigits, m_numberOfDigits);
   if (other.m_numberOfDigits != m_numberOfDigits) {
     return false;
   }
@@ -36,7 +34,6 @@ bool Integer::operator==(const Integer &other) const {
 Integer::Integer(native_uint_t i) {
   m_numberOfDigits = 1;
   m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
-  printf("%d has %d\n", i, m_numberOfDigits);
   *m_digits = i;
 }
 
@@ -62,8 +59,8 @@ const Integer Integer::operator+(const Integer &other) const {
 
 const Integer Integer::operator*(const Integer &other) const {
   uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
-  native_uint_t * bits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
-  memset(bits, 0, productSize*sizeof(native_uint_t));
+  native_uint_t * digits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
+  memset(digits, 0, productSize*sizeof(native_uint_t));
 
   native_uint_t carry = 0;
   for (uint16_t i=0; i<m_numberOfDigits; i++) {
@@ -72,13 +69,18 @@ const Integer Integer::operator*(const Integer &other) const {
     for (uint16_t j=0; j<other.m_numberOfDigits; j++) {
       native_uint_t b = other.m_digits[i];
       double_native_uint_t p = a*b + carry; // TODO: Prove it cannot overflow
-      m_digits[i+j] += (native_uint_t)p; // Only the last "digit"
+      digits[i+j] += (native_uint_t)p; // Only the last "digit"
       carry = p>>32; //FIXME: 32 is hardcoded here!
     }
-    m_digits[i+other.m_numberOfDigits] = carry;
+    digits[i+other.m_numberOfDigits] += carry;
   }
 
-  return Integer(bits, productSize);
+  while (digits[productSize-1] == 0) {
+    productSize--;
+    /* At this point we may realloc m_digits to a smaller size. */
+  }
+
+  return Integer(digits, productSize);
 }
 
 /*

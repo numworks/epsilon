@@ -19,6 +19,7 @@ class Integer : public Expression {
     const Integer operator+(const Integer &other) const;
     const Integer operator*(const Integer &other) const;
     bool operator==(const Integer &other) const;
+    virtual float approximate();
   protected:
     virtual void layout();
   private:

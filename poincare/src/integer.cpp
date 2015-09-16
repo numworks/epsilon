@@ -162,15 +162,15 @@ float Integer::approximate() {
   *
   * We can tell that:
   * - the sign is going to be 0 for now, we only handle positive numbers
-  * - the exponent is the length of our BigInt, in bits + 127
-  * - the mantissa is the beginning of our BigInt
+  * - the exponent is the length of our BigInt, in bits - 1 + 127;
+  * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
   //bool sign = 0;
 
   native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
 
-  uint8_t exponent = 127;
+  uint8_t exponent = 126;
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
 
@@ -184,7 +184,7 @@ float Integer::approximate() {
   uint_result = 0;
   //uint_result |= (sign << 31);
   uint_result |= (exponent << 23);
-  uint_result |= (mantissa >> (32-23) & 0x7FFFFF);
+  uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
 
   return float_result;
 }

@@ -21,3 +21,7 @@ QUIZ_CASE(poincare_integer_multiply) {
 QUIZ_CASE(poincare_integer_parse_integer) {
   assert(Integer::parseInteger("123") == Integer(123));
 }
+
+QUIZ_CASE(poincare_integer_approximate) {
+  assert(Integer::parseInteger("12345678").approximate() == 12345678.0f);
+}

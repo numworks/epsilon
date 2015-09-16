@@ -58,26 +58,31 @@ const Integer Integer::operator+(const Integer &other) const {
 }
 
 const Integer Integer::operator*(const Integer &other) const {
+  assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
   uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
   native_uint_t * digits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
   memset(digits, 0, productSize*sizeof(native_uint_t));
 
-  native_uint_t carry = 0;
+  double_native_uint_t carry = 0;
   for (uint16_t i=0; i<m_numberOfDigits; i++) {
-    native_uint_t a = m_digits[i];
     carry = 0;
     for (uint16_t j=0; j<other.m_numberOfDigits; j++) {
-      native_uint_t b = other.m_digits[i];
-      double_native_uint_t p = a*b + carry; // TODO: Prove it cannot overflow
-      digits[i+j] += (native_uint_t)p; // Only the last "digit"
-      carry = p>>32; //FIXME: 32 is hardcoded here!
+      double_native_uint_t a = m_digits[i];
+      double_native_uint_t b = other.m_digits[j];
+      /* The fact that a and b are double_native is very important, otherwise
+       * the product might end up being computed on single_native size and
+       * then zero-padded. */
+      double_native_uint_t p = a*b + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
+      native_uint_t * l = (native_uint_t *)&p;
+      digits[i+j] = l[0];
+      carry = l[1];
     }
     digits[i+other.m_numberOfDigits] += carry;
   }
 
   while (digits[productSize-1] == 0) {
     productSize--;
-    /* At this point we may realloc m_digits to a smaller size. */
+    /* At this point we could realloc m_digits to a smaller size. */
   }
 
   return Integer(digits, productSize);

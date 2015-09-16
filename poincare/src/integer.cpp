@@ -140,3 +140,44 @@ void Integer::layout() {
 void Integer::draw() {
   // KDDrawString(m_stringValue, KDPOINT(0,0));
 }
+
+float Integer::approximate() {
+  union {
+    uint32_t uint_result;
+    float float_result;
+  };
+  assert(sizeof(float) == 4);
+  /* We're generating an IEEE 754 compliant float.
+  * Theses numbers are 32-bit values, stored as follow:
+  * sign (1 bit)
+  * exponent (8 bits)
+  * mantissa (23 bits)
+  *
+  * We can tell that:
+  * - the sign is going to be 0 for now, we only handle positive numbers
+  * - the exponent is the length of our BigInt, in bits + 127
+  * - the mantissa is the beginning of our BigInt
+  */
+  //bool sign = 0;
+
+  native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
+  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
+
+  uint8_t exponent = 127;
+  exponent += (m_numberOfDigits-1)*32;
+  exponent += numberOfBitsInLastDigit;
+
+  uint32_t mantissa = 0;
+  mantissa |= (lastDigit << (32-numberOfBitsInLastDigit));
+  if (m_numberOfDigits >= 2) {
+    native_uint_t beforeLastDigit = m_digits[m_numberOfDigits-2];
+    mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
+  }
+
+  uint_result = 0;
+  //uint_result |= (sign << 31);
+  uint_result |= (exponent << 23);
+  uint_result |= (mantissa >> (32-23) & 0x7FFFFF);
+
+  return float_result;
+}

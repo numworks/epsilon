@@ -10,7 +10,7 @@ typedef uint64_t double_native_uint_t;
 class Integer : public Expression {
   public:
     Integer(native_uint_t i);
-    static Integer parseInteger(char * string);
+    static Integer parseInteger(const char * string);
 
     virtual void draw();
     virtual Expression ** children();

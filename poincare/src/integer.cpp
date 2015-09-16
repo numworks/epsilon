@@ -103,7 +103,7 @@ Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
   m_digits(digits) {
 }
 
-Integer Integer::parseInteger(char * string) {
+Integer Integer::parseInteger(const char * string) {
   int base = 10;
   int stringLength = strlen(string);
   /*

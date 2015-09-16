@@ -65,9 +65,9 @@ const Integer Integer::operator*(const Integer &other) const {
 
   double_native_uint_t carry = 0;
   for (uint16_t i=0; i<m_numberOfDigits; i++) {
+    double_native_uint_t a = m_digits[i];
     carry = 0;
     for (uint16_t j=0; j<other.m_numberOfDigits; j++) {
-      double_native_uint_t a = m_digits[i];
       double_native_uint_t b = other.m_digits[j];
       /* The fact that a and b are double_native is very important, otherwise
        * the product might end up being computed on single_native size and
@@ -125,6 +125,7 @@ Integer Integer::parseInteger(char * string) {
     v = v * Integer(10);
     v = v + Integer(string[i]-'0'); // ASCII encoding
   }
+
   return v;
 }
 

@@ -23,5 +23,6 @@ QUIZ_CASE(poincare_integer_parse_integer) {
 }
 
 QUIZ_CASE(poincare_integer_approximate) {
+  assert(Integer(1).approximate() == 1.0f);
   assert(Integer::parseInteger("12345678").approximate() == 12345678.0f);
 }

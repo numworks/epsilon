@@ -19,6 +19,59 @@ uint8_t log2(native_uint_t v) {
   return 32;
 }
 
+Integer::Integer(native_uint_t i) {
+  m_numberOfDigits = 1;
+  m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
+  *m_digits = i;
+}
+
+Integer::Integer(const char * string) {
+  int stringLength = strlen(string);
+  /*
+  // Only support base 10 for now
+  if (stringLength > 2 && string[0] == '0')
+   switch (string[1]) {
+     case 'x':
+       base=16;
+       break;
+     case 'b':
+       base = 2;
+       break;
+   }
+  }
+  */
+
+  Integer base = Integer(10);
+
+  Integer v = Integer(string[0]-'0');
+  for (int i=1; i<stringLength; i++) {
+    v = v * base;
+    v = v + Integer(string[i]-'0'); // ASCII encoding
+  }
+
+  // Pilfer v's ivars
+  m_numberOfDigits = v.m_numberOfDigits;
+  m_digits = v.m_digits;
+
+  // Zero-out v
+  v.m_numberOfDigits = 0;
+  v.m_digits = NULL;
+}
+
+Integer::~Integer() {
+  if (m_digits) {
+    //free(m_digits);
+  }
+}
+
+// Private methods
+
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
+  m_numberOfDigits(numberOfDigits),
+  m_digits(digits) {
+  }
+
+
 bool Integer::operator==(const Integer &other) const {
   if (other.m_numberOfDigits != m_numberOfDigits) {
     return false;
@@ -31,11 +84,21 @@ bool Integer::operator==(const Integer &other) const {
   return true;
 }
 
-Integer::Integer(native_uint_t i) {
-  m_numberOfDigits = 1;
-  m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
-  *m_digits = i;
+/*
+Integer& Integer::operator=(Integer&& other) {
+  if (this != &other) {
+    // Release our ivars
+    m_numberOfDigits = 0;
+    free(m_digits);
+    // Pilfer other's ivars
+    m_numberOfDigits = other.m_numberOfDigits;
+    m_digits = other.m_digits;
+    // Reset other
+    other.m_numberOfDigits = 0;
+    other.m_digits = NULL;
+  }
 }
+*/
 
 const Integer Integer::operator+(const Integer &other) const {
   uint16_t sumSize = MAX(other.m_numberOfDigits,m_numberOfDigits)+1;
@@ -86,47 +149,6 @@ const Integer Integer::operator*(const Integer &other) const {
   }
 
   return Integer(digits, productSize);
-}
-
-/*
- char * Integer::bits() {
-  if (m_numberOfDigits > INTEGER_IMMEDIATE_LIMIT) {
-    return m_dynamicBits;
-  } else {
-    return &m_staticBits;
-  }
-}
-*/
-
-Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
-  m_numberOfDigits(numberOfDigits),
-  m_digits(digits) {
-}
-
-Integer Integer::parseInteger(const char * string) {
-  int base = 10;
-  int stringLength = strlen(string);
-  /*
-  // Only support base 10 for now
-  if (stringLength > 2 && string[0] == '0')
-   switch (string[1]) {
-     case 'x':
-       base=16;
-       break;
-     case 'b':
-       base = 2;
-       break;
-   }
-  }
-  */
-
-  Integer v = Integer(string[0]-'0');
-  for (int i=1; i<stringLength; i++) {
-    v = v * Integer(10);
-    v = v + Integer(string[i]-'0'); // ASCII encoding
-  }
-
-  return v;
 }
 
 bool Integer::identicalTo(Expression * e) {

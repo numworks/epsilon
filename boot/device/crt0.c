@@ -8,6 +8,13 @@ extern char _data_section_end_ram;
 extern char _bss_section_start_ram;
 extern char _bss_section_end_ram;
 
+#define CPACR (*(volatile uint32_t *)(0xE000ED88))
+
+void enable_fpu() {
+  // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
+  CPACR |= (0xF << 20); // Set the bits 20-23 to enable CP10 and CP11 coprocessors
+}
+
 void abort() {
   // TODO: #ifdef NDEBUG, maybe trigger a reset?
   while (1) {
@@ -30,6 +37,8 @@ void _start(void) {
    * Until we do, any uninitialized global variable will be unusable. */
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
+
+  enable_fpu();
 
   boot();
 

@@ -1,8 +1,6 @@
 #include <ion.h>
 #include <string.h>
 
-bool * ion_key_states;
-
 char charForKey[ION_NUMBER_OF_KEYS] = {
   '1',
   '2',
@@ -13,6 +11,20 @@ char charForKey[ION_NUMBER_OF_KEYS] = {
 };
 
 char ion_getchar() {
+  while (1) {
+    ion_sleep();
+    if (ion_key_state(0)) {
+      return charForKey[0];
+    }
+    /*
+    for (ion_key_t k=0;k<ION_NUMBER_OF_KEYS; k++) {
+      if (ion_key_state(k)) {
+        return charForKey[k];
+      }
+    }
+    */
+  }
+  /*
   bool key_states[ION_NUMBER_OF_KEYS];
   memcpy(key_states, ion_key_states, ION_NUMBER_OF_KEYS);
   while (1) {
@@ -28,4 +40,5 @@ char ion_getchar() {
     }
     ion_sleep();
   }
+  */
 }

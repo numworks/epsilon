@@ -1,7 +1,7 @@
 #include <ion.h>
 #include <assert.h>
 #include "display.h"
-#include "init_kbd.h"
+#include "keyboard.h"
 
 //#extern char _framebuffer_end;
 
@@ -13,7 +13,7 @@ void ion_init() {
 #endif
 */
 
-  init_kbd();
+  init_keyboard();
   init_display();
 }
 

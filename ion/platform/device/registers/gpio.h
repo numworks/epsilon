@@ -53,6 +53,16 @@ typedef struct {
 #define LOW_BIT_MODER(v) (2*v)
 #define HIGH_BIT_MODER(v) (2*v+1)
 
+// GPIO port output type registers
+
+#define GPIO_OTYPER(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x04)
+
+#define GPIO_OTYPE_PUSH_PULL 0
+#define GPIO_OTYPE_OPEN_DRAIN 1
+
+#define LOW_BIT_OTYPER(v) (v)
+#define HIGH_BIT_OTYPER(v) (v)
+
 // GPIO port pull-up/pull-down registers
 
 #define GPIO_PUPDR(gpio_group) GPIO_REGISTER_AT(gpio_group, 0x0C)

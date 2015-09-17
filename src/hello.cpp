@@ -29,9 +29,9 @@ void hello() {
         KDFillRect((KDRect){
             .x = 0,
             .y = 0,
-            .width = 320,
-            .height = 240},
-            0x7F);
+            .width = 160,
+            .height = 160},
+            0x00);
       }
       input[index++] = character;
       input[index] = 0;

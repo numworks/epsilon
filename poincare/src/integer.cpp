@@ -19,6 +19,15 @@ uint8_t log2(native_uint_t v) {
   return 32;
 }
 
+Integer::Integer(Integer&& other) {
+  // Pilfer other's data
+  m_numberOfDigits = other.m_numberOfDigits;
+  m_digits = other.m_digits;
+  // Reset other
+  other.m_numberOfDigits = 0;
+  other.m_digits = NULL;
+}
+
 Integer::Integer(native_uint_t i) {
   m_numberOfDigits = 1;
   m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
@@ -48,7 +57,9 @@ Integer::Integer(const char * string) {
     v = v * base;
     v = v + Integer(string[i]-'0'); // ASCII encoding
   }
-
+#if 0
+  *this = v;
+#else
   // Pilfer v's ivars
   m_numberOfDigits = v.m_numberOfDigits;
   m_digits = v.m_digits;
@@ -56,11 +67,12 @@ Integer::Integer(const char * string) {
   // Zero-out v
   v.m_numberOfDigits = 0;
   v.m_digits = NULL;
+#endif
 }
 
 Integer::~Integer() {
   if (m_digits) {
-    //free(m_digits);
+    free(m_digits);
   }
 }
 
@@ -84,7 +96,6 @@ bool Integer::operator==(const Integer &other) const {
   return true;
 }
 
-/*
 Integer& Integer::operator=(Integer&& other) {
   if (this != &other) {
     // Release our ivars
@@ -98,9 +109,8 @@ Integer& Integer::operator=(Integer&& other) {
     other.m_digits = NULL;
   }
 }
-*/
 
-const Integer Integer::operator+(const Integer &other) const {
+Integer Integer::operator+(const Integer &other) const {
   uint16_t sumSize = MAX(other.m_numberOfDigits,m_numberOfDigits)+1;
   native_uint_t * digits = (native_uint_t *)malloc(sumSize*sizeof(native_uint_t));
   bool carry = 0;
@@ -120,7 +130,7 @@ const Integer Integer::operator+(const Integer &other) const {
   return Integer(digits, sumSize);
 }
 
-const Integer Integer::operator*(const Integer &other) const {
+Integer Integer::operator*(const Integer &other) const {
   assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
   uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
   native_uint_t * digits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));

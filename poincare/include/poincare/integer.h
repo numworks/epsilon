@@ -10,14 +10,15 @@ typedef uint64_t double_native_uint_t;
 class Integer : public Expression {
   public:
     Integer(native_uint_t i);
+    Integer(Integer&& other); // C++11 move constructor
     Integer(const char * string); // NULL-terminated
     ~Integer();
 
-    //Integer& operator=(Integer&& other); // C++11 move assignment operator
+    Integer& operator=(Integer&& other); // C++11 move assignment operator
 
     // Arithmetic
-    const Integer operator+(const Integer &other) const;
-    const Integer operator*(const Integer &other) const;
+    Integer operator+(const Integer &other) const;
+    Integer operator*(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
     virtual void draw();

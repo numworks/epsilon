@@ -10,6 +10,7 @@ class Fraction : public Expression {
     virtual Expression ** children();
 //  protected:
     virtual void layout();
+    virtual float approximate();
   private:
     Expression * m_children[3];
 };

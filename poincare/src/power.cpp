@@ -28,3 +28,8 @@ void Power::layout() {
     .y = 0
   };
 }
+
+float Power::approximate() {
+  // TODO: Do it..
+  return 1.0f;
+}

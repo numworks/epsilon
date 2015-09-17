@@ -25,6 +25,8 @@ class Expression {
     virtual bool identicalTo(Expression * e);
     //virtual Integer approximate();
     //virtual Expression * simplify();
+
+    virtual float approximate() = 0;
   private:
     void forEachChild(ExpressionAction);
 };

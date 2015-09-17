@@ -7,6 +7,7 @@ class Power : public Expression {
   public:
     Power(Expression * base, Expression * exponent);
     virtual Expression ** children();
+    virtual float approximate();
 //  protected:
     virtual void layout();
   private:

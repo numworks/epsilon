@@ -46,3 +46,8 @@ void Fraction::draw() {
   KDDrawLine((KDPoint){.x = 0, .y = fractionLineY},
       (KDPoint){.x = m_frame.width, .y = fractionLineY});
 }
+
+float Fraction::approximate() {
+  // TODO: handle division by zero
+  return m_children[0]->approximate()/m_children[1]->approximate();
+}

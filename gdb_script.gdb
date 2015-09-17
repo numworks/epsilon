@@ -5,7 +5,7 @@ target remote localhost:3333
 set pagination off
 
 # Load our executable
-load boot.elf
+load
 
 # Tell OpenOCD to reset and halt
 monitor reset halt

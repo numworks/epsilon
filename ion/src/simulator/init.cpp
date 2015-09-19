@@ -22,14 +22,19 @@ static FltkKbd * sKeyboard;
 
 void init_platform() {
   Fl::visual(FL_RGB);
+
   int margin = 10;
+  int screen_width = FRAMEBUFFER_WIDTH;
+  int screen_height = FRAMEBUFFER_HEIGHT;
+  // keyboard_width == screen_width
+  int keyboard_height = screen_width;
 
-  Fl_Window * window = new Fl_Window(FRAMEBUFFER_WIDTH+2*margin, FRAMEBUFFER_HEIGHT+2*margin+120+2*margin);
+  Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
-  sDisplay = new FltkLCD(margin, margin, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);
+  sDisplay = new FltkLCD(margin, margin, screen_width, screen_height);
   assert(FRAMEBUFFER_BITS_PER_PIXEL == 8);
 
-  sKeyboard = new FltkKbd(margin,FRAMEBUFFER_HEIGHT+3*margin,FRAMEBUFFER_WIDTH,120);
+  sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
   window->end();
   window->show(NULL, NULL);

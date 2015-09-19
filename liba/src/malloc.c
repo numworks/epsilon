@@ -9,22 +9,21 @@ heap_config_t HeapConfig = {
   .nHeap = 0
 };
 
-static void configure_heap() {
-  HeapConfig.nHeap = (&_liba_heap_end - &_liba_heap_start);
-  HeapConfig.pHeap = &_liba_heap_start;
-  HeapConfig.mnReq = 1;
-  HeapConfig.bMemstat = 0;
-  HeapConfig.xLog = 0;
-
-  memsys5Init(0);
-}
-
 // Memsys headers cannot be included easily so we rewrite them here
 int memsys5Init(void *NotUsed);
 void memsys5FreeUnsafe(void *pOld);
 void * memsys5MallocUnsafe(int nByte);
 void * memsys5Realloc(void *pPrior, int nBytes);
 int memsys5Roundup(int n);
+
+static void configure_heap() {
+  HeapConfig.nHeap = (&_liba_heap_end - &_liba_heap_start);
+  HeapConfig.pHeap = &_liba_heap_start;
+  HeapConfig.mnReq = 1;
+  HeapConfig.bMemstat = 0;
+  HeapConfig.xLog = 0;
+  memsys5Init(0);
+}
 
 void free(void *ptr) {
   if (ptr != NULL) {

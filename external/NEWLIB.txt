@@ -1,4 +1,0 @@
-- Using memcpy and memset
-- using <string.h>, <stdlib.h>, and <stdint.h>
-- using <stdbool.h> for "bool"
-- using strlen from <string.h>

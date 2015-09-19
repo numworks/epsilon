@@ -1,14 +1,6 @@
 PLATFORM ?= device
 DEBUG ?= 1
 
-.PHONY: prebuild default postbuild
-default: prebuild boot.elf postbuild
-prebuild:
-postbuild:
-
-.PHONY: tests
-test: prebuild test.elf postbuild
-
 include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
@@ -36,18 +28,16 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti
 
 products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
 
-#objs += external/freertos/tasks.o external/freertos/list.o external/freertos/queue.o external/freertos/portable/GCC/ARM_CM4F/port.o external/freertos/portable/MemMang/heap_1.o
-#objs += $(addprefix external/newlib/libc/, string/memset.o string/memcpy.o string/strlen.o)
-
-lib/private/mem5.o: CFLAGS += -w
-
-products += src/hello.o
-boot.elf: src/hello.o
+#lib/private/mem5.o: CFLAGS += -w
 
 ifeq ($(VERBOSE),1)
-.PHONY: toolchain_info output_size
-prebuild: toolchain_info
-toolchain_info:
+default: info clean app_size app_memory_map
+else
+default: app.elf
+endif
+run: app_run
+
+info:
 	@echo "========= BUILD SETTINGS ======"
 	@echo "DEBUG = $(DEBUG)"
 	@echo "PLATFORM = $(PLATFORM)"
@@ -59,13 +49,6 @@ toolchain_info:
 	@echo "SFLAGS = $(SFLAGS)"
 	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "==============================="
-postbuild: output_size
-output_size: boot.elf
-	@echo "========= BUILD OUTPUT ========"
-	@echo "File:  $<"
-	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
-	@echo "==============================="
-endif
 
 ifeq ($(USE_LIBA),0)
 LDFLAGS += -lc -lc++ -lcrt1.o
@@ -78,12 +61,22 @@ include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
 include app/Makefile
+include quiz/Makefile # Quiz should be included at the end
 
-# Quiz should be included at the end
-include quiz/Makefile
+%.elf: $(objs)
+	@echo "LD      $@"
+	@$(LD) $(LDFLAGS) $^ -o $@
 
-run: boot.elf
-	$(GDB) -x gdb_script.gdb boot.elf
+.PHONY: %_size
+%_size: %.elf
+	@echo "========= BUILD OUTPUT ========"
+	@echo "File:  $<"
+	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
+	@echo "==============================="
+
+.PHONY: %_run
+%_run: %.elf
+	$(GDB) -x gdb_script.gdb $<
 
 %.hex: %.elf
 	@echo "OBJCOPY $@"
@@ -92,10 +85,6 @@ run: boot.elf
 %.bin: %.elf
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary $< $@
-
-%.elf: $(objs)
-	@echo "LD      $@"
-	@$(LD) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	@echo "CC      $@"

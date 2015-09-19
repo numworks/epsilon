@@ -1,2 +1,4 @@
-objs += $(addprefix app/, app.o)
-app.elf: app/app.o
+app_objs += $(addprefix app/, app.o)
+products += app.elf app.hex app.bin
+
+app.elf: $(app_objs)

@@ -50,22 +50,27 @@ static inline uint8_t column_for_key(ion_key_t key) {
   return key%5;
 }
 
-bool ion_key_state(ion_key_t key) {
+bool ion_key_down(ion_key_t key) {
   /* Drive the corresponding row low, and let all the others float.
-   * Note: In open-drain mode, a 0 in the register drives low, and a 1 let the
+   * Note: In open-drain mode, a 0 in the register drives low, and a 1 lets the
    * pin in Hi-Z (floating). */
-  GPIO_ODR(GPIOA) = ~(1 << (column_for_key(key)+ROW_PIN_START));
+  uint32_t output_mask = (((uint32_t)1 << (ROW_PIN_END-ROW_PIN_START+1)) - 1) << ROW_PIN_START;
+  uint32_t previous_odr = GPIO_ODR(GPIOA);
+  uint32_t new_odr = ~((uint32_t)1 << (row_for_key(key)+ROW_PIN_START)) & output_mask;
 
-  // Wait a little...
-  for (int i=0;i<10000;i++) {
+  if (new_odr != previous_odr) {
+    GPIO_ODR(GPIOA) = new_odr;
+    // We changed the outputs, give the hardware some time to react to this change
+    // FIXME: Real delay!
+    for (int i=0;i<1000; i++) {
+    }
   }
 
   // Read the input of the proper column
-  uint32_t input = (GPIO_IDR(GPIOA) & (1 << (row_for_key(key)+COLUMN_PIN_START)));
+  uint32_t input = (GPIO_IDR(GPIOA) & (1 << (column_for_key(key)+COLUMN_PIN_START)));
 
-  // The key is pressed if the input is brought low by the output. In other
-  // words, we want to return "true" (1) if the input is low (0).
-  // Return the logical opposite of what we've just read
+  /* The key is down if the input is brought low by the output. In other words,
+   * we want to return "true" (1) if the input is low (0). */
   return (input == 0);
 }
 

@@ -44,14 +44,13 @@ typedef enum {
   ION_KEY_G_2,
   ION_KEY_G_3,
   ION_KEY_G_4,
-  ION_KEY_G_5,
-
-  ION_KEY_LAST
+  ION_KEY_G_5
 } ion_key_t;
 
 #define ION_NUMBER_OF_KEYS 35
 
-bool ion_key_state(ion_key_t key);
+// FIXME: Which state is "true"?
+bool ion_key_down(ion_key_t key);
 
 // This is our keymap
 char ion_getchar();

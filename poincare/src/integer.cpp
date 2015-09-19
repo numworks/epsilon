@@ -19,6 +19,10 @@ uint8_t log2(native_uint_t v) {
   return 32;
 }
 
+static inline native_uint_t digit_from_char(char c) {
+  return (c > '9' ? (c-'A'+10) : (c-'0'));
+}
+
 Integer::Integer(Integer&& other) {
   // Pilfer other's data
   m_numberOfDigits = other.m_numberOfDigits;
@@ -36,26 +40,28 @@ Integer::Integer(native_uint_t i) {
 
 Integer::Integer(const char * string) {
   int stringLength = strlen(string);
-  /*
-  // Only support base 10 for now
-  if (stringLength > 2 && string[0] == '0')
-   switch (string[1]) {
-     case 'x':
-       base=16;
-       break;
-     case 'b':
-       base = 2;
-       break;
-   }
-  }
-  */
 
   Integer base = Integer(10);
 
-  Integer v = Integer(string[0]-'0');
+  if (stringLength > 2 && string[0] == '0') {
+    switch (string[1]) {
+      case 'x':
+        base = Integer(16);
+        string += 2;
+        stringLength -= 2;
+        break;
+      case 'b':
+        base = Integer(2);
+        string += 2;
+        stringLength -= 2;
+        break;
+    }
+  }
+
+  Integer v = Integer(digit_from_char(string[0]));
   for (int i=1; i<stringLength; i++) {
     v = v * base;
-    v = v + Integer(string[i]-'0'); // ASCII encoding
+    v = v + Integer(digit_from_char(string[i])); // ASCII encoding
   }
 #if 0
   *this = v;

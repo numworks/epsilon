@@ -67,7 +67,6 @@ output_size: boot.elf
 	@echo "==============================="
 endif
 
-include boot/Makefile
 ifeq ($(USE_LIBA),0)
 LDFLAGS += -lc -lc++ -lcrt1.o
 else

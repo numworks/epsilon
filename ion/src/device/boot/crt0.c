@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <string.h>
-#include <boot/boot.h>
+#include "../../shared/boot/boot.h"
 
 extern char _data_section_start_flash;
 extern char _data_section_start_ram;

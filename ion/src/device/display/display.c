@@ -28,7 +28,7 @@
 #include "framebuffer.h"
 #include "st7586.h"
 
-static st7586_t * sDisplayController = NULL;
+static st7586_t sDisplayController;
 
 void ion_display_on() {
   // Initialize panel
@@ -47,15 +47,15 @@ void init_display() {
   display_spi_init();
 
   gpio_b12_write(1); // LCD-RST high
-  sDisplayController->chip_select_pin_write = gpio_b10_write;
-  sDisplayController->data_command_pin_write = gpio_b14_write;
-  sDisplayController->spi_write = spi_2_write;
+  sDisplayController.chip_select_pin_write = gpio_b10_write;
+  sDisplayController.data_command_pin_write = gpio_b14_write;
+  sDisplayController.spi_write = spi_2_write;
 
-  st7586_initialize(sDisplayController);
+  st7586_initialize(&sDisplayController);
 
-  st7586_set_display_area(sDisplayController, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
+  st7586_set_display_area(&sDisplayController, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
 
-  st7586_enable_frame_data_upload(sDisplayController);
+  st7586_enable_frame_data_upload(&sDisplayController);
 
   memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
 

@@ -1,6 +1,7 @@
 #include "symbols.h"
 #include <string.h>
 #include <kandinsky.h>
+#include <ion.h>
 
 void print(char * message) {
   static int line_y = 0;
@@ -14,7 +15,7 @@ void print(char * message) {
   }
 }
 
-void hello() {
+void ion_app() {
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];

@@ -8,7 +8,7 @@ ifeq ($(VERBOSE),1)
 postbuild: memory_map
 memory_map:
 	@echo "========== MEMORY MAP ========="
-	@awk -f boot/device/memory_map.awk < output.map
+	@awk -f ion/src/device/boot/memory_map.awk < output.map
 	@echo "==============================="
 endif
 

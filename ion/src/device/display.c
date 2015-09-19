@@ -24,11 +24,12 @@
 #include "display/spi.h"
 #include "display/dma.h"
 
-#include "platform.h"
 #include "framebuffer.h"
 #include "registers/registers.h"
 #include <ion/drivers/st7586/st7586.h>
 #include "display/dma.h"
+
+static st7586_t * sDisplayController = NULL;
 
 void ion_display_on() {
   // Initialize panel
@@ -46,17 +47,16 @@ void init_display() {
   display_gpio_init();
   display_spi_init();
 
-  st7586_t * controller = &(Platform.display);
   gpio_b12_write(1); // LCD-RST high
-  controller->chip_select_pin_write = gpio_b10_write;
-  controller->data_command_pin_write = gpio_b14_write;
-  controller->spi_write = spi_2_write;
+  sDisplayController->chip_select_pin_write = gpio_b10_write;
+  sDisplayController->data_command_pin_write = gpio_b14_write;
+  sDisplayController->spi_write = spi_2_write;
 
-  st7586_initialize(controller);
+  st7586_initialize(sDisplayController);
 
-  st7586_set_display_area(controller, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
+  st7586_set_display_area(sDisplayController, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
 
-  st7586_enable_frame_data_upload(controller);
+  st7586_enable_frame_data_upload(sDisplayController);
 
   memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
 

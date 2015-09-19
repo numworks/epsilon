@@ -1,5 +1,5 @@
-#ifndef PLATFORM_ST7586_H
-#define PLATFORM_ST7586_H 1
+#ifndef ION_DEVICE_DISPLAY_ST7586_H
+#define ION_DEVICE_DISPLAY_ST7586_H
 
 #include <string.h>
 #include <stdint.h>
@@ -18,4 +18,5 @@ typedef struct {
 void st7586_initialize(st7586_t * controller);
 void st7586_set_display_area(st7586_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
 void st7586_enable_frame_data_upload(st7586_t * controller);
+
 #endif

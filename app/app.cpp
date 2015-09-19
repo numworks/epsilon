@@ -1,5 +1,4 @@
 extern "C" {
-#include "hello.h"
 #include <kandinsky.h>
 #include <stdlib.h>
 #include <ion.h>
@@ -7,7 +6,7 @@ extern "C" {
 
 #include <poincare.h>
 
-void hello() {
+void ion_app() {
 
   KDDrawString("Hello, world!", (KDPoint){.x = 10, .y = 10});
 

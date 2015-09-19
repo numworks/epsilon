@@ -13,7 +13,7 @@ include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
 endif
-SFLAGS += -DPLATFORM=$(PLATFORM) -DUSE_LIBA=$(USE_LIBA)
+SFLAGS += -DPLATFORM=$(PLATFORM)
 
 # Flags - Header search path
 SFLAGS += -Ilib -I.
@@ -77,6 +77,7 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
+include app/Makefile
 
 # Quiz should be included at the end
 include quiz/Makefile

@@ -20,14 +20,13 @@
 #include <string.h>
 #include <assert.h>
 
-#include "display/gpio.h"
-#include "display/spi.h"
-#include "display/dma.h"
+#include "../registers/registers.h"
 
+#include "gpio.h"
+#include "spi.h"
+#include "dma.h"
 #include "framebuffer.h"
-#include "registers/registers.h"
-#include <ion/drivers/st7586/st7586.h>
-#include "display/dma.h"
+#include "st7586.h"
 
 static st7586_t * sDisplayController = NULL;
 

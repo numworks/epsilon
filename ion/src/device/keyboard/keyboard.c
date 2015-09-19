@@ -35,7 +35,7 @@
  */
 
 #include <ion.h>
-#include "registers/registers.h"
+#include "../registers/registers.h"
 
 // We'll make the assertion that the row and column pins are contiguous
 #define ROW_PIN_START 0

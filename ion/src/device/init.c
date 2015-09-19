@@ -1,22 +1,23 @@
 #include <ion.h>
 #include <assert.h>
-#include "display.h"
-#include "keyboard.h"
+#include "init.h"
+#include "display/display.h"
+#include "keyboard/keyboard.h"
 
-//#extern char _framebuffer_end;
+#define CPACR (*(volatile uint32_t *)(0xE000ED88))
 
-void ion_init() {
-  /*
-#if DEBUG
-  char * computed_framebuffer_end = ION_FRAMEBUFFER_ADDRESS + (ION_FRAMEBUFFER_WIDTH*ION_FRAMEBUFFER_HEIGHT*ION_FRAMEBUFFER_BITS_PER_PIXEL)/8;
-  assert(&_framebuffer_end == computed_framebuffer_end);
-#endif
-*/
+void enable_fpu() {
+  // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
+  CPACR |= (0xF << 20); // Set the bits 20-23 to enable CP10 and CP11 coprocessors
+  // FIXME: The pipeline should be flushed at this point
+}
 
+void init_platform() {
+  enable_fpu();
   init_keyboard();
   init_display();
 }
 
 void ion_sleep() {
-  // FIXME
+  // FIXME: Do something, and also move this function to its own file
 }

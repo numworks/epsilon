@@ -1,5 +1,5 @@
 #include "../registers/registers.h"
-#include "../framebuffer.h"
+#include "framebuffer.h"
 
 // DMA 1, channel 0, stream 4 = SPI2_TX
 #define LCD_DMA_CHANNEL 0

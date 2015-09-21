@@ -4,7 +4,7 @@
 #include <kandinsky/types.h>
 
 void KDDrawChar(char character, KDPoint p);
-void KDDrawString(char * text, KDPoint p);
+void KDDrawString(const char * text, KDPoint p);
 KDSize KDStringSize(char * text);
 
 #endif

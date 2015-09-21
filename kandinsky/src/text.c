@@ -11,7 +11,7 @@ void KDDrawChar(char character, KDPoint p) {
   }
 }
 
-void KDDrawString(char * text, KDPoint p) {
+void KDDrawString(const char * text, KDPoint p) {
   char * charPointer = text;
   KDPoint position = p;
   while(*charPointer != 0) {

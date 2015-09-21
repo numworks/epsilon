@@ -87,8 +87,23 @@ Integer::~Integer() {
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
   m_numberOfDigits(numberOfDigits),
   m_digits(digits) {
-  }
+}
 
+// TODO: factor code with "==", they are very similar
+bool Integer::operator<(const Integer &other) const {
+  if (m_numberOfDigits != other.m_numberOfDigits) {
+    return (m_numberOfDigits < other.m_numberOfDigits);
+  }
+  for (uint16_t i = 0; i < m_numberOfDigits; i++) {
+    // Digits are stored most-significant last
+    native_uint_t digit = m_digits[m_numberOfDigits-i-1];
+    native_uint_t otherDigit = other.m_digits[m_numberOfDigits-i-1];
+    if (digit != otherDigit) {
+      return (digit < otherDigit);
+    }
+  }
+  return false;
+}
 
 bool Integer::operator==(const Integer &other) const {
   if (other.m_numberOfDigits != m_numberOfDigits) {

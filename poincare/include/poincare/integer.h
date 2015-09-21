@@ -19,6 +19,8 @@ class Integer : public Expression {
     // Arithmetic
     Integer operator+(const Integer &other) const;
     Integer operator*(const Integer &other) const;
+
+    bool operator<(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
     /*virtual Expression ** children();

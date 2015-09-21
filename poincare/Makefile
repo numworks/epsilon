@@ -1,5 +1,6 @@
 SFLAGS += -Ipoincare/include
-objs += $(addprefix poincare/src/, expression.o integer.o number.o fraction.o power.o expression_lexer.o expression_parser.o)
+objs += $(addprefix poincare/src/, expression.o integer.o fraction.o expression_lexer.o expression_parser.o)
+objs += $(addprefix poincare/src/layout/, fraction_layout.o horizontal_layout.o string_layout.o)
 tests += $(addprefix poincare/test/, integer.cpp)
 
 # Even though flex and bison will generate both implementation and headers at

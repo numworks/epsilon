@@ -1,9 +1,12 @@
 #include <poincare/fraction.h>
 #include <string.h>
+#include "layout/horizontal_layout.h"
 
+/*
 static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
   return (a > b ? a : b);
 }
+*/
 
 #define NUMERATOR m_children[0]
 #define DENOMINATOR m_children[1]
@@ -17,11 +20,17 @@ Fraction::Fraction(Expression * numerator, Expression * denominator) {
   m_children[1] = denominator;
   m_children[2] = NULL;
 }
+/*
 
 Expression ** Fraction::children() {
   return m_children;
 }
+*/
 
+ExpressionLayout * Fraction::createLayout() {
+  return new HorizontalLayout(NUMERATOR, '-', DENOMINATOR);
+}
+/*
 void Fraction::layout() {
   KDRect numFrame = NUMERATOR->m_frame;
   KDRect denFrame = DENOMINATOR->m_frame;
@@ -46,6 +55,7 @@ void Fraction::draw() {
   KDDrawLine((KDPoint){.x = 0, .y = fractionLineY},
       (KDPoint){.x = m_frame.width, .y = fractionLineY});
 }
+*/
 
 float Fraction::approximate() {
   // TODO: handle division by zero

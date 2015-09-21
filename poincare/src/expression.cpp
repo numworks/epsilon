@@ -19,6 +19,7 @@ Expression * Expression::parse(char * string) {
   return expression;
 }
 
+/*
 bool Expression::identicalTo(Expression * e) {
   // By default, two expression are not identical.
   // This should obviously be overriden in subclasses!
@@ -61,3 +62,4 @@ void Expression::draw() {
 void Expression::layout() {
   // No-op by default
 }
+*/

@@ -21,12 +21,11 @@ class Integer : public Expression {
     Integer operator*(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
-    virtual void draw();
-    virtual Expression ** children();
+    /*virtual Expression ** children();
     virtual bool identicalTo(Expression * e);
+    */
+    virtual ExpressionLayout * createLayout();
     virtual float approximate();
-  protected:
-    virtual void layout();
   private:
     /* WARNING: This constructor takes ownership of the bits array and will free it! */
     Integer(native_uint_t * digits, uint16_t numberOfDigits);

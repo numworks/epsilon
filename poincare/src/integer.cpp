@@ -114,6 +114,7 @@ Integer& Integer::operator=(Integer&& other) {
     other.m_numberOfDigits = 0;
     other.m_digits = NULL;
   }
+  return *this;
 }
 
 Integer Integer::operator+(const Integer &other) const {
@@ -167,6 +168,7 @@ Integer Integer::operator*(const Integer &other) const {
   return Integer(digits, productSize);
 }
 
+#if 0
 bool Integer::identicalTo(Expression * e) {
   /* FIXME
   Integer * i = dynamic_cast<Integer *>(e);
@@ -186,6 +188,7 @@ void Integer::layout() {
 void Integer::draw() {
   // KDDrawString(m_stringValue, KDPOINT(0,0));
 }
+#endif
 
 float Integer::approximate() {
   union {
@@ -226,4 +229,11 @@ float Integer::approximate() {
   uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
 
   return float_result;
+}
+
+ExpressionLayout * Integer::createLayout() {
+  // 1 - Build string rep'
+  // 2 - return StringLayout
+  // FIXME
+  return nullptr;
 }

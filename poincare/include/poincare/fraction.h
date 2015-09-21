@@ -6,10 +6,9 @@
 class Fraction : public Expression {
   public:
     Fraction(Expression * numerator, Expression * denominator);
-    virtual void draw();
-    virtual Expression ** children();
+//    virtual Expression ** children();
 //  protected:
-    virtual void layout();
+    virtual ExpressionLayout * createLayout();
     virtual float approximate();
   private:
     Expression * m_children[3];

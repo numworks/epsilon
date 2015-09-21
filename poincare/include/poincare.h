@@ -4,7 +4,6 @@
 #include <poincare/expression.h>
 #include <poincare/fraction.h>
 #include <poincare/integer.h>
-#include <poincare/number.h>
 #include <poincare/power.h>
 
 #endif

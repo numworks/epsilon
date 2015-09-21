@@ -92,7 +92,7 @@ Root:
 exp:
   INTEGER          { $$ = new Integer($1);      }
   | exp DIVIDE exp { $$ = new Fraction($1,$3); }
-  | exp POW exp    { $$ = new Power($1,$3); }
+/*  | exp POW exp    { $$ = new Power($1,$3); } */
 ;
 
 /*

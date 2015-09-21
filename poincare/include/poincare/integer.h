@@ -30,9 +30,10 @@ class Integer : public Expression {
     virtual float approximate();
   private:
     /* WARNING: This constructor takes ownership of the bits array and will free it! */
-    Integer(native_uint_t * digits, uint16_t numberOfDigits);
+    Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
     uint16_t m_numberOfDigits; // In base native_uint_max
     native_uint_t * m_digits; // LITTLE-ENDIAN
+    bool m_negative;
     /*
      // TODO: Small-int optimization
     union {

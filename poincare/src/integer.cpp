@@ -27,12 +27,16 @@ Integer::Integer(Integer&& other) {
   // Pilfer other's data
   m_numberOfDigits = other.m_numberOfDigits;
   m_digits = other.m_digits;
+  m_negative = other.m_negative;
+
   // Reset other
+  other.m_negative = 0;
   other.m_numberOfDigits = 0;
   other.m_digits = NULL;
 }
 
 Integer::Integer(native_uint_t i) {
+  m_negative = 0;
   m_numberOfDigits = 1;
   m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
   *m_digits = i;
@@ -63,6 +67,8 @@ Integer::Integer(const char * string) {
     v = v * base;
     v = v + Integer(digit_from_char(string[i])); // ASCII encoding
   }
+
+  m_negative = 0;
 #if 0
   *this = v;
 #else
@@ -84,13 +90,19 @@ Integer::~Integer() {
 
 // Private methods
 
-Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits) :
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
   m_numberOfDigits(numberOfDigits),
-  m_digits(digits) {
+  m_digits(digits),
+  m_negative(negative) {
 }
 
 // TODO: factor code with "==", they are very similar
 bool Integer::operator<(const Integer &other) const {
+  if (m_negative && !other.m_negative) {
+    return true;
+  } else if (!m_negative && other.m_negative) {
+    return false;
+  }
   if (m_numberOfDigits != other.m_numberOfDigits) {
     return (m_numberOfDigits < other.m_numberOfDigits);
   }
@@ -106,6 +118,9 @@ bool Integer::operator<(const Integer &other) const {
 }
 
 bool Integer::operator==(const Integer &other) const {
+  if (other.m_negative != m_negative) {
+    return false;
+  }
   if (other.m_numberOfDigits != m_numberOfDigits) {
     return false;
   }
@@ -120,12 +135,16 @@ bool Integer::operator==(const Integer &other) const {
 Integer& Integer::operator=(Integer&& other) {
   if (this != &other) {
     // Release our ivars
+    m_negative = 0;
     m_numberOfDigits = 0;
     free(m_digits);
+
     // Pilfer other's ivars
     m_numberOfDigits = other.m_numberOfDigits;
     m_digits = other.m_digits;
+    m_negative = other.m_negative;
     // Reset other
+    other.m_negative = 0;
     other.m_numberOfDigits = 0;
     other.m_digits = NULL;
   }
@@ -149,7 +168,7 @@ Integer Integer::operator+(const Integer &other) const {
      * It might not be worth the trouble though : it won't happen very often
      * and we're wasting a single native_uint_t. */
   }
-  return Integer(digits, sumSize);
+  return Integer(digits, sumSize, false);
 }
 
 Integer Integer::operator*(const Integer &other) const {
@@ -222,10 +241,11 @@ float Integer::approximate() {
   * - the exponent is the length of our BigInt, in bits - 1 + 127;
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
-  //bool sign = 0;
 
   native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
+
+  bool sign = m_negative;
 
   uint8_t exponent = 126;
   exponent += (m_numberOfDigits-1)*32;
@@ -239,7 +259,7 @@ float Integer::approximate() {
   }
 
   uint_result = 0;
-  //uint_result |= (sign << 31);
+  uint_result |= (sign << 31);
   uint_result |= (exponent << 23);
   uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
 

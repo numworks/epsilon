@@ -19,9 +19,11 @@ void ion_app() {
       input[index] = 0;
       index = 0;
       Expression * e = Expression::parse(input);
-      e->recursiveLayout();
-      e->m_frame.origin = KDPOINT(0, 100);
-      e->recursiveDraw();
+      ExpressionLayout * l = e->createLayout();
+      l->m_frame.origin = KDPOINT(0, 100);
+      l->draw();
+
+      // FIXME delete l;
       //FIXME delete e;
     } else {
       if (index == 0) {

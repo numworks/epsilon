@@ -48,6 +48,13 @@ Integer::Integer(const char * string) {
 
   Integer base = Integer(10);
 
+  m_negative = false;
+
+  if (stringLength > 1 && string[0] == '-') {
+    m_negative = true;
+    string += 1;
+    stringLength -= 1;
+  }
   if (stringLength > 2 && string[0] == '0') {
     switch (string[1]) {
       case 'x':
@@ -69,10 +76,6 @@ Integer::Integer(const char * string) {
     v = v + Integer(digit_from_char(string[i])); // ASCII encoding
   }
 
-  m_negative = 0;
-#if 0
-  *this = v;
-#else
   // Pilfer v's ivars
   m_numberOfDigits = v.m_numberOfDigits;
   m_digits = v.m_digits;
@@ -80,7 +83,6 @@ Integer::Integer(const char * string) {
   // Zero-out v
   v.m_numberOfDigits = 0;
   v.m_digits = NULL;
-#endif
 }
 
 Integer::~Integer() {

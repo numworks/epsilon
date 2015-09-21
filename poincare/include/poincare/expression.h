@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression_layout.h>
+#include <kandinsky.h>
 
 class Expression {
   public:
@@ -9,7 +10,7 @@ class Expression {
 
     //virtual Expression ** children() = 0; // NULL-terminated
 
-    virtual ExpressionLayout * createLayout() = 0; // Returned object must be deleted
+    virtual ExpressionLayout * createLayout(ExpressionLayout * parent) = 0; // Returned object must be deleted
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-

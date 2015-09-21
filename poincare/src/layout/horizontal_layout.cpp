@@ -1,45 +1,69 @@
-//#include <string.h>
+extern "C" {
+#include <kandinsky.h>
+#include <assert.h>
+}
 #include "horizontal_layout.h"
+#include "string_layout.h"
 
 static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
   return (a > b ? a : b);
 }
 
-HorizontalLayout::HorizontalLayout(Expression * left_expression, char symbol, Expression * right_expression) {
-  m_children[0] = left_expression->createLayout();
-  m_children[1] = right_expression->createLayout();
-  m_symbol = symbol;
-  /* Perform the layout */
-  m_frame.x = 0;
-  m_frame.y = 0;
-  m_frame.width = m_children[0]->m_frame.width + 12 + m_children[1]->m_frame.width; // FIXME: 12 is not actually 12
-  m_frame.height = max(m_children[0]->m_frame.height, m_children[1]->m_frame.height); // FIXME: height of m_symbol
+HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression) :
+ExpressionLayout(parent ) {
+  m_children[0] = left_expression->createLayout(this);
+
+  char string[2] = {symbol, NULL};
+  m_children[1] = new StringLayout(this, string, 1);
+
+  m_children[2] = right_expression->createLayout(this);
 }
 
 HorizontalLayout::~HorizontalLayout() {
-  delete m_children[1];
   delete m_children[2];
+  delete m_children[1];
+  delete m_children[0];
 }
 
-void HorizontalLayout::draw() {
-  m_children[0]->draw();
-  m_children[1]->draw();
-}
-/*
-
-Expression ** Fraction::children() {
-  return m_children;
+void HorizontalLayout::render(KDPoint point) {
+  // Nothing to render "per se"
 }
 
-int Addition::numberOfChildren() {
-  return 2;
+KDSize HorizontalLayout::computeSize() {
+  KDSize size = (KDSize){.width = 0, .height = 0};
+  KDCoordinate width = 0, height = 0;
+  int i = 0;
+  while (ExpressionLayout * c = child(i++)) {
+    KDSize childSize = c->size();
+    size.width += childSize.width;
+    if (childSize.height > size.height) {
+      size.height = childSize.height;
+    }
+  }
+  return size;
 }
 
-float Addition::approximate() {
-  return m_children[0]->approximate() + m_children[1]->approximate();
+ExpressionLayout * HorizontalLayout::child(uint16_t index) {
+  if (index >= 3) {
+    return nullptr;
+  }
+  return m_children[index];
 }
 
-ExpressionLayout * Addition::layout() {
-  return HorizontalLayout(m_children[0], "+", m_children[1]);
+KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
+  KDPoint position = (KDPoint){.x = 0, .y = 0};
+  uint16_t index = 0;
+  for (int i=0;i<3;i++) {
+    if (m_children[i] == child) {
+      index = i;
+      break;
+    }
+  }
+  if (index > 0) {
+    ExpressionLayout * previousChild = m_children[index-1];
+    assert(previousChild != nullptr);
+    position.x = previousChild->origin().x + previousChild->size().width;
+  }
+  position.y = (size().height - child->size().height)/2;
+  return position;
 }
-*/

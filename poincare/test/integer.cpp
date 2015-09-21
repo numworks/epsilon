@@ -46,6 +46,8 @@ QUIZ_CASE(poincare_integer_multiply) {
 
 QUIZ_CASE(poincare_integer_divide) {
   assert(Integer(8) / Integer(4) == Integer(2));
+  assert(Integer("3293920983029832")/Integer("38928") == Integer("84615726033"));
+  assert(Integer("3293920983029832")/Integer("389090928") == Integer("8465684"));
 }
 
 QUIZ_CASE(poincare_integer_approximate) {

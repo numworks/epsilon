@@ -19,9 +19,8 @@ void ion_app() {
       input[index] = 0;
       index = 0;
       Expression * e = Expression::parse(input);
-      ExpressionLayout * l = e->createLayout();
-      l->m_frame.origin = KDPOINT(0, 100);
-      l->draw();
+      ExpressionLayout * l = e->createLayout(nullptr);
+      l->draw(KDPOINT(0,100));
 
       // FIXME delete l;
       //FIXME delete e;

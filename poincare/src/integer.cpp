@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "layout/string_layout.h"
 
 #define MAX(a,b) ((a)>(b)?a:b)
 #define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
@@ -21,6 +22,10 @@ uint8_t log2(native_uint_t v) {
 
 static inline native_uint_t digit_from_char(char c) {
   return (c > '9' ? (c-'A'+10) : (c-'0'));
+}
+
+static inline char char_from_digit(native_uint_t digit) {
+  return '0'+digit;
 }
 
 Integer::Integer(Integer&& other) {
@@ -242,6 +247,7 @@ m_remainder(Integer((native_uint_t)0)) {
   if (numerator < denominator) {
     m_quotient = Integer((native_uint_t)0);
     m_remainder = numerator + Integer((native_uint_t)0);
+    // FIXME: This is a ugly way to bypass creating a copy constructor!
     return;
   }
 
@@ -257,28 +263,6 @@ m_remainder(Integer((native_uint_t)0)) {
 
 Integer Integer::operator/(const Integer &other) const {
   return Division(*this, other).m_quotient;
-
-  /* We want to compute q so that this = q*other + remainder, with remainder
-   * smaller than other */
-/*
-  q' = 2*(x/(2*y))
-
-    q' = 2*(this/(2*other))
-    */
-
-  /*  Use recursive algorithm:
-     *     Compute q' = 2 * (x/2y)
-     *     Fact: q = q' or q'+1
-     ***************************************/
-/*      return q and r such that x = q*y + r
- *
- *      this = x
- *      other =y
- *      q,r -> computed
- *
-   *
-   * */
-
 }
 
 #if 0
@@ -345,9 +329,26 @@ float Integer::approximate() {
   return float_result;
 }
 
-ExpressionLayout * Integer::createLayout() {
-  // 1 - Build string rep'
-  // 2 - return StringLayout
-  // FIXME
-  return nullptr;
+ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
+  char buffer[255];
+
+  Integer base = Integer(10);
+  Division d = Division(*this, base);
+  int size = 0;
+  while (!(d.m_remainder == Integer((native_uint_t)0))) {
+    assert(size<255); //TODO: malloc an extra buffer
+    char c = char_from_digit(d.m_remainder.m_digits[0]);
+    buffer[size++] = c;
+    d = Division(d.m_quotient, base);
+  }
+  buffer[size] = 0;
+
+  // Flip the string
+  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+    char c = buffer[i];
+    buffer[i] = buffer[j];
+    buffer[j] = c;
+  }
+
+  return new StringLayout(parent, buffer, size);
 }

@@ -51,6 +51,7 @@
 [0-9]+ { yylval->string = yytext; return(INTEGER); }
 \/ { return(DIVIDE); }
 \^ { return(POW); }
+\+ { return(PLUS); }
 
 %%
 

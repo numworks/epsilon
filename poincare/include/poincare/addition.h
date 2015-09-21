@@ -6,7 +6,7 @@
 class Addition : public Expression {
   public:
     Addition(Expression * first_operand, Expression * second_operand);
-    virtual ExpressionLayout * layout();
+    ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     virtual float approximate();
   private:
     Expression * m_children[2];

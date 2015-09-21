@@ -13,21 +13,36 @@ static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
 FractionLayout::FractionLayout(Expression * numerator, Expression * denominator) {
   m_numerator = numerator->createLayout();
   m_denominator = denominator->createLayout();
+}
 
-  KDRect numFrame = m_numerator->m_frame;
-  KDRect denFrame = m_denominator->m_frame;
+ExpressionLayout * FractionLayout::child(uint16_t index) {
+  switch (index) {
+    case 0:
+      return m_numerator;
+    case 1:
+      return m_denominator;
+    default:
+      return nullptr;
+  }
+}
 
-  m_frame.x = 0;
-  m_frame.y = 0;
-  m_frame.width = max(numFrame.width, denFrame.width) + 2*FRACTION_BORDER_LENGTH;
-  m_frame.height = numFrame.height + FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN + denFrame.height;
-
+void FractionLayout::positionChildren() {
+  /*
   m_numerator->m_frame.origin.x = (KDCoordinate)((m_frame.width - numFrame.width)/2);
   m_numerator->m_frame.origin.y = 0;
 
   m_denominator->m_frame.origin.x = (KDCoordinate)((m_frame.width - denFrame.width)/2);
   m_denominator->m_frame.origin.y = (KDCoordinate)(numFrame.height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
+  */
 }
+
+void FractionLayout::computeSize() {
+  /*
+  m_frame.width = max(numFrame.width, denFrame.width) + 2*FRACTION_BORDER_LENGTH;
+  m_frame.height = numFrame.height + FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN + denFrame.height;
+  */
+}
+
 
 void FractionLayout::draw() {
   m_numerator->draw();

@@ -27,8 +27,8 @@ Expression ** Fraction::children() {
 }
 */
 
-ExpressionLayout * Fraction::createLayout() {
-  return new HorizontalLayout(NUMERATOR, '-', DENOMINATOR);
+ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
+  return new HorizontalLayout(parent, NUMERATOR, '-', DENOMINATOR);
 }
 /*
 void Fraction::layout() {

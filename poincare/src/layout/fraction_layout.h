@@ -7,7 +7,10 @@
 class FractionLayout : public ExpressionLayout {
   public:
     FractionLayout(Expression * numerator, Expression * denominator);
-    virtual void draw();
+    ExpressionLayout * child(uint16_t index) override;
+    void draw() override;
+    void positionChildren() override;
+    void computeSize() override;
   private:
     ExpressionLayout * m_numerator;
     ExpressionLayout * m_denominator;

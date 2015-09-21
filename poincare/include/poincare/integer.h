@@ -30,7 +30,7 @@ class Integer : public Expression {
     /*virtual Expression ** children();
     virtual bool identicalTo(Expression * e);
     */
-    virtual ExpressionLayout * createLayout();
+    virtual ExpressionLayout * createLayout(ExpressionLayout * parent);
     virtual float approximate();
   private:
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1
@@ -48,6 +48,13 @@ class Integer : public Expression {
       char * m_dynamicBits;
     };
     */
+};
+
+class Division {
+public:
+  Division(const Integer &numerator, const Integer &denominator);
+  Integer m_quotient;
+  Integer m_remainder;
 };
 
 #endif

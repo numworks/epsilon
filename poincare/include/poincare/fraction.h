@@ -8,7 +8,7 @@ class Fraction : public Expression {
     Fraction(Expression * numerator, Expression * denominator);
 //    virtual Expression ** children();
 //  protected:
-    virtual ExpressionLayout * createLayout();
+    virtual ExpressionLayout * createLayout(ExpressionLayout * parent);
     virtual float approximate();
   private:
     Expression * m_children[3];

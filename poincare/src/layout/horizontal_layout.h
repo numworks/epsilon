@@ -6,12 +6,15 @@
 
 class HorizontalLayout : public ExpressionLayout {
   public:
-    HorizontalLayout(Expression * left_expression, char symbol, Expression * right_expression);
+    HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression);
     ~HorizontalLayout();
-    virtual void draw();
+  protected:
+    void render(KDPoint origin) override;
+    KDSize computeSize() override;
+    ExpressionLayout * child(uint16_t index) override;
+    KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
-    ExpressionLayout * m_children[2];
-    char m_symbol;
+    ExpressionLayout * m_children[3];
 };
 
 #endif

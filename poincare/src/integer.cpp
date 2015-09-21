@@ -177,7 +177,6 @@ Integer Integer::operator+(const Integer &other) const {
   return add(other, false);
 }
 
-
 Integer Integer::operator-(const Integer &other) const {
   return add(other, true);
 }
@@ -197,7 +196,7 @@ Integer Integer::usum(const Integer &other, bool subtract, bool output_negative)
     digits[i] = result;
     carry = (subtract ? (a<result) : ((a>result)||(b>result))); // There's been an underflow or overflow
   }
-  while (digits[size-1] == 0) {
+  while (digits[size-1] == 0 && size>1) {
     size--;
     // We could realloc digits to a smaller size. Probably not worth the trouble.
   }
@@ -227,7 +226,7 @@ Integer Integer::operator*(const Integer &other) const {
     digits[i+other.m_numberOfDigits] += carry;
   }
 
-  while (digits[productSize-1] == 0) {
+  while (digits[productSize-1] == 0 && productSize>1) {
     productSize--;
     /* At this point we could realloc m_digits to a smaller size. */
   }
@@ -235,7 +234,6 @@ Integer Integer::operator*(const Integer &other) const {
   return Integer(digits, productSize, m_negative != other.m_negative);
 }
 
-/*
 Division::Division(const Integer &numerator, const Integer &denominator) :
 m_quotient(Integer((native_uint_t)0)),
 m_remainder(Integer((native_uint_t)0)) {
@@ -243,7 +241,7 @@ m_remainder(Integer((native_uint_t)0)) {
 
   if (numerator < denominator) {
     m_quotient = Integer((native_uint_t)0);
-    m_remainder = numerator;
+    m_remainder = numerator + Integer((native_uint_t)0);
     return;
   }
 
@@ -252,14 +250,13 @@ m_remainder(Integer((native_uint_t)0)) {
   m_quotient = m_quotient + m_quotient;
   if (!(m_remainder < denominator)) {
     m_remainder = m_remainder - denominator;
-    m_quotient = m_quotient + 1;
+    m_quotient = m_quotient + Integer(1);
   }
 }
-*/
 
 
 Integer Integer::operator/(const Integer &other) const {
-  return Integer(2);
+  return Division(*this, other).m_quotient;
 
   /* We want to compute q so that this = q*other + remainder, with remainder
    * smaller than other */

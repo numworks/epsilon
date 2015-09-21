@@ -26,6 +26,8 @@ QUIZ_CASE(poincare_integer_add) {
 
 QUIZ_CASE(poincare_integer_multiply) {
   assert(Integer(12) * Integer(34) == Integer(408));
+  assert(Integer(-12) * Integer(34) == Integer(-408));
+  assert(Integer(-12) * Integer(-34) == Integer(408));
   assert(Integer(999999) * Integer(999999) == Integer("999998000001"));
   assert(Integer("9999999999") * Integer("9999999999") == Integer("99999999980000000001"));
 }

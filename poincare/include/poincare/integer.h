@@ -4,12 +4,14 @@
 #include <poincare/expression.h>
 #include <stdint.h>
 
+typedef int32_t native_int_t;
 typedef uint32_t native_uint_t;
 typedef uint64_t double_native_uint_t;
 
 class Integer : public Expression {
   public:
-    Integer(native_uint_t i);
+    // TODO static const Integer Zero;
+    Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor
     Integer(const char * string); // NULL-terminated
     ~Integer();

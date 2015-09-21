@@ -35,11 +35,12 @@ Integer::Integer(Integer&& other) {
   other.m_digits = NULL;
 }
 
-Integer::Integer(native_uint_t i) {
-  m_negative = 0;
+Integer::Integer(native_int_t i) {
+  assert(sizeof(native_int_t) <= sizeof(native_uint_t));
+  m_negative = (i<0);
   m_numberOfDigits = 1;
   m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
-  *m_digits = i;
+  *m_digits = (native_uint_t)(i>0 ? i : -i);
 }
 
 Integer::Integer(const char * string) {

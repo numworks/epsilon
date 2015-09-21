@@ -20,7 +20,9 @@ class Integer : public Expression {
 
     // Arithmetic
     Integer operator+(const Integer &other) const;
+    Integer operator-(const Integer &other) const;
     Integer operator*(const Integer &other) const;
+    Integer operator/(const Integer &other) const;
 
     bool operator<(const Integer &other) const;
     bool operator==(const Integer &other) const;
@@ -31,6 +33,9 @@ class Integer : public Expression {
     virtual ExpressionLayout * createLayout();
     virtual float approximate();
   private:
+    int8_t ucmp(const Integer &other) const; // -1, 0, or 1
+    Integer usum(const Integer &other, bool subtract, bool output_negative) const;
+    Integer add(const Integer &other, bool inverse_other_negative) const;
     /* WARNING: This constructor takes ownership of the bits array and will free it! */
     Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
     uint16_t m_numberOfDigits; // In base native_uint_max

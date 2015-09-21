@@ -99,40 +99,41 @@ Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative)
   m_negative(negative) {
 }
 
-// TODO: factor code with "==", they are very similar
-bool Integer::operator<(const Integer &other) const {
-  if (m_negative && !other.m_negative) {
-    return true;
-  } else if (!m_negative && other.m_negative) {
-    return false;
-  }
-  if (m_numberOfDigits != other.m_numberOfDigits) {
-    return (m_numberOfDigits < other.m_numberOfDigits);
+int8_t Integer::ucmp(const Integer &other) const {
+  if (m_numberOfDigits < other.m_numberOfDigits) {
+    return -1;
+  } else if (other.m_numberOfDigits < m_numberOfDigits) {
+    return 1;
   }
   for (uint16_t i = 0; i < m_numberOfDigits; i++) {
     // Digits are stored most-significant last
     native_uint_t digit = m_digits[m_numberOfDigits-i-1];
     native_uint_t otherDigit = other.m_digits[m_numberOfDigits-i-1];
-    if (digit != otherDigit) {
-      return (digit < otherDigit) != m_negative;
+    if (digit < otherDigit) {
+      return -1;
+    } else if (otherDigit < digit) {
+      return 1;
     }
   }
-  return false;
+  return 0;
+}
+
+static inline int8_t sign(bool negative) {
+  return 1 - 2*(int8_t)negative;
+}
+
+bool Integer::operator<(const Integer &other) const {
+  if (m_negative != other.m_negative) {
+    return m_negative;
+  }
+  return (sign(m_negative)*ucmp(other) < 0);
 }
 
 bool Integer::operator==(const Integer &other) const {
-  if (other.m_negative != m_negative) {
+  if (m_negative != other.m_negative) {
     return false;
   }
-  if (other.m_numberOfDigits != m_numberOfDigits) {
-    return false;
-  }
-  for (uint16_t i=0; i<m_numberOfDigits; i++) {
-    if (m_digits[i] != other.m_digits[i]) {
-      return false;
-    }
-  }
-  return true;
+  return (ucmp(other) == 0);
 }
 
 Integer& Integer::operator=(Integer&& other) {
@@ -154,24 +155,53 @@ Integer& Integer::operator=(Integer&& other) {
   return *this;
 }
 
+Integer Integer::add(const Integer &other, bool inverse_other_negative) const {
+  bool other_negative = (inverse_other_negative ? !other.m_negative : other.m_negative);
+  if (m_negative == other_negative) {
+    return usum(other, false, m_negative);
+  } else {
+    /* The signs are different, this is in fact a substraction
+     * s = this+other = (abs(this)-abs(other) OR abs(other)-abs(this))
+     * 1/abs(this)>abs(other) : s = sign*udiff(this, other)
+     * 2/abs(other)>abs(this) : s = sign*udiff(other, this)
+     * sign? sign of the greater! */
+    if (ucmp(other) >= 0) {
+      return usum(other, true, m_negative);
+    } else {
+      return other.usum(*this, true, other_negative);
+    }
+  }
+}
+
 Integer Integer::operator+(const Integer &other) const {
-  uint16_t sumSize = MAX(other.m_numberOfDigits,m_numberOfDigits)+1;
-  native_uint_t * digits = (native_uint_t *)malloc(sumSize*sizeof(native_uint_t));
-  bool carry = 0;
-  for (uint16_t i = 0; i<sumSize; i++) {
+  return add(other, false);
+}
+
+
+Integer Integer::operator-(const Integer &other) const {
+  return add(other, true);
+}
+
+Integer Integer::usum(const Integer &other, bool subtract, bool output_negative) const {
+  uint16_t size = MAX(m_numberOfDigits, other.m_numberOfDigits);
+  if (!subtract) {
+    // Addition can overflow
+    size += 1;
+  }
+  native_uint_t * digits = (native_uint_t *)malloc(size*sizeof(native_uint_t));
+  bool carry = false;
+  for (uint16_t i = 0; i<size; i++) {
     native_uint_t a = (i >= m_numberOfDigits ? 0 : m_digits[i]);
     native_uint_t b = (i >= other.m_numberOfDigits ? 0 : other.m_digits[i]);
-    native_uint_t sum = a + b + carry; // TODO: Prove it cannot overflow
-    digits[i] = sum;
-    carry = ((a>sum)||(b>sum));
+    native_uint_t result = (subtract ? a - b - carry : a + b + carry);
+    digits[i] = result;
+    carry = (subtract ? (a<result) : ((a>result)||(b>result))); // There's been an underflow or overflow
   }
-  while (digits[sumSize-1] == 0) {
-    sumSize--;
-    /* At this point we may realloc m_digits to a smaller size.
-     * It might not be worth the trouble though : it won't happen very often
-     * and we're wasting a single native_uint_t. */
+  while (digits[size-1] == 0) {
+    size--;
+    // We could realloc digits to a smaller size. Probably not worth the trouble.
   }
-  return Integer(digits, sumSize, false);
+  return Integer(digits, size, output_negative);
 }
 
 Integer Integer::operator*(const Integer &other) const {
@@ -202,7 +232,56 @@ Integer Integer::operator*(const Integer &other) const {
     /* At this point we could realloc m_digits to a smaller size. */
   }
 
-  return Integer(digits, productSize);
+  return Integer(digits, productSize, m_negative != other.m_negative);
+}
+
+/*
+Division::Division(const Integer &numerator, const Integer &denominator) :
+m_quotient(Integer((native_uint_t)0)),
+m_remainder(Integer((native_uint_t)0)) {
+  // FIXME: First, test if denominator is zero.
+
+  if (numerator < denominator) {
+    m_quotient = Integer((native_uint_t)0);
+    m_remainder = numerator;
+    return;
+  }
+
+  // Recursive case
+  *this = Division(numerator, denominator+denominator);
+  m_quotient = m_quotient + m_quotient;
+  if (!(m_remainder < denominator)) {
+    m_remainder = m_remainder - denominator;
+    m_quotient = m_quotient + 1;
+  }
+}
+*/
+
+
+Integer Integer::operator/(const Integer &other) const {
+  return Integer(2);
+
+  /* We want to compute q so that this = q*other + remainder, with remainder
+   * smaller than other */
+/*
+  q' = 2*(x/(2*y))
+
+    q' = 2*(this/(2*other))
+    */
+
+  /*  Use recursive algorithm:
+     *     Compute q' = 2 * (x/2y)
+     *     Fact: q = q' or q'+1
+     ***************************************/
+/*      return q and r such that x = q*y + r
+ *
+ *      this = x
+ *      other =y
+ *      q,r -> computed
+ *
+   *
+   * */
+
 }
 
 #if 0

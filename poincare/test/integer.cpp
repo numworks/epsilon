@@ -29,6 +29,12 @@ QUIZ_CASE(poincare_integer_add) {
   assert(Integer("123456789123456789") + Integer(1) == Integer("123456789123456790"));
 }
 
+QUIZ_CASE(poincare_integer_subtract) {
+  assert(Integer(123) - Integer(23) == Integer(100));
+  assert(Integer("123456789123456789") - Integer("9999999999") == Integer("123456779123456790"));
+  assert(Integer(23) - Integer(100) == Integer(-77));
+}
+
 QUIZ_CASE(poincare_integer_multiply) {
   assert(Integer(12) * Integer(34) == Integer(408));
   assert(Integer(-12) * Integer(34) == Integer(-408));

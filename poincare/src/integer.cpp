@@ -114,7 +114,7 @@ bool Integer::operator<(const Integer &other) const {
     native_uint_t digit = m_digits[m_numberOfDigits-i-1];
     native_uint_t otherDigit = other.m_digits[m_numberOfDigits-i-1];
     if (digit != otherDigit) {
-      return (digit < otherDigit);
+      return (digit < otherDigit) != m_negative;
     }
   }
   return false;

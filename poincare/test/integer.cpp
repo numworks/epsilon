@@ -15,6 +15,9 @@ QUIZ_CASE(poincare_integer) {
 QUIZ_CASE(poincare_integer_compare) {
   assert(Integer(123) < Integer(456));
   assert(!(Integer(123) < Integer(123)));
+  assert(!(Integer(-123) < Integer(-123)));
+  assert(Integer(-100) < Integer(2));
+  assert(Integer(-200) < Integer(-100));
   assert(Integer(123) < Integer("123456789123456789"));
   assert(Integer("123456789123456788") < Integer("123456789123456789"));
   assert(!(Integer("123456789123456789") < Integer("123456789123456788")));

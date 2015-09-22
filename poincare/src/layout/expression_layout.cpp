@@ -14,18 +14,31 @@ ExpressionLayout::ExpressionLayout(ExpressionLayout * parent) :
     };
 }
 
+KDPoint ExpressionLayout::origin() {
+  if (m_parent == nullptr) {
+    return absoluteOrigin();
+  } else {
+    return KDPOINT(absoluteOrigin().x-m_parent->absoluteOrigin().x, absoluteOrigin().y-m_parent->absoluteOrigin().y);
+  }
+}
+
 void ExpressionLayout::draw(KDPoint point) {
   int i = 0;
   while (ExpressionLayout * c = child(i++)) {
     c->draw(point);
   }
-  render(KDPointTranslate(origin(), point));
+  render(KDPointTranslate(absoluteOrigin(), point));
+#if 0
+  KDPoint topLeft = KDPointTranslate(absoluteOrigin(), point);
+  KDPoint bottomRight = KDPointTranslate(KDPointTranslate(absoluteOrigin(), KDPOINT(size().width, 0 /*size().height*/)), point);
+  KDDrawLine(topLeft, bottomRight);
+#endif
 }
 
-KDPoint ExpressionLayout::origin() {
+KDPoint ExpressionLayout::absoluteOrigin() {
   if (!m_positioned) {
     if (m_parent != nullptr) {
-      m_frame.origin = KDPointTranslate(m_parent->origin(), m_parent->positionOfChild(this));
+      m_frame.origin = KDPointTranslate(m_parent->absoluteOrigin(), m_parent->positionOfChild(this));
     } else {
       m_frame.origin = KDPOINT(0,0);
     }
@@ -41,33 +54,3 @@ KDSize ExpressionLayout::size() {
   }
   return m_frame.size;
 }
-
-#if 0
-void ExpressionLayout::computeLayout(ExpressionLayout * parent, uint16_t childIndex) {
-  assert(parent == nullptr || parent->child(childIndex) == this);
-
-  /* Positionning should be done before the recursion. This way, when a child is
-   * being positionned, its parent is already positionned. */
-  if (!m_positioned) {
-    if (parent == nullptr) {
-      m_frame.origin = KDPOINT(0,0);
-    } else {
-      m_frame.origin = KDPointTranslate(parent->origin(), parent->positionOfChild(childIndex));
-    }
-    m_positioned = true;
-  }
-
-  int i=0;
-  while (ExpressionLayout * c = child(i)) {
-    c->computeLayout(this, i);
-    i++;
-  }
-
-  /* Sizing should be done after the recursion. This way, when a parent is being
-   * sized, all its children are already sized up. */
-  if (!m_sized) {
-    m_frame.size = computeSize();
-    m_sized = true;
-  }
-}
-#endif

@@ -17,6 +17,7 @@ class ExpressionLayout {
     virtual ExpressionLayout * child(uint16_t index) = 0;
     virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   private:
+    KDPoint absoluteOrigin();
     //void computeLayout();//ExpressionLayout * parent, uint16_t childIndex);
     ExpressionLayout * m_parent;
     bool m_sized, m_positioned;

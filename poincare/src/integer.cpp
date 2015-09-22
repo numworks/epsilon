@@ -8,12 +8,17 @@
 #define MAX(a,b) ((a)>(b)?a:b)
 #define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
 
-#define INTEGER_IMMEDIATE_LIMIT 32
+/*
+const Integer Integer::Zero = {
+  m_numberOfDigits = 0,
+  m_digits = nullptr
+};
+*/
 
 uint8_t log2(native_uint_t v) {
   assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK
   for (uint8_t i=0; i<NATIVE_UINT_BIT_COUNT; i++) {
-    if (v < (1<<i)) {
+    if (v < ((native_uint_t)1<<i)) {
       return i;
     }
   }
@@ -240,13 +245,13 @@ Integer Integer::operator*(const Integer &other) const {
 }
 
 Division::Division(const Integer &numerator, const Integer &denominator) :
-m_quotient(Integer((native_uint_t)0)),
-m_remainder(Integer((native_uint_t)0)) {
+m_quotient(Integer((native_int_t)0)),
+m_remainder(Integer((native_int_t)0)) {
   // FIXME: First, test if denominator is zero.
 
   if (numerator < denominator) {
-    m_quotient = Integer((native_uint_t)0);
-    m_remainder = numerator + Integer((native_uint_t)0);
+    m_quotient = Integer((native_int_t)0);
+    m_remainder = numerator + Integer((native_int_t)0);
     // FIXME: This is a ugly way to bypass creating a copy constructor!
     return;
   }
@@ -335,7 +340,7 @@ ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
   Integer base = Integer(10);
   Division d = Division(*this, base);
   int size = 0;
-  while (!(d.m_remainder == Integer((native_uint_t)0))) {
+  while (!(d.m_remainder == Integer((native_int_t)0))) {
     assert(size<255); //TODO: malloc an extra buffer
     char c = char_from_digit(d.m_remainder.m_digits[0]);
     buffer[size++] = c;

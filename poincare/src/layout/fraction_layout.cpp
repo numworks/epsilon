@@ -22,11 +22,11 @@ FractionLayout::~FractionLayout() {
   delete m_numerator;
 }
 
-void FractionLayout::render(KDPoint origin) {
-  KDCoordinate fractionLineY = m_numerator->size().height + FRACTION_LINE_MARGIN;
+void FractionLayout::render(KDPoint point) {
+  KDCoordinate fractionLineY = point.y + m_numerator->size().height + FRACTION_LINE_MARGIN;
 
-  KDDrawLine((KDPoint){.x = 0, .y = fractionLineY},
-      (KDPoint){.x = size().width, .y = fractionLineY});
+  KDDrawLine((KDPoint){.x = point.x, .y = fractionLineY},
+      (KDPoint){.x = (KDCoordinate)(point.x + size().width), .y = fractionLineY});
 }
 
 KDSize FractionLayout::computeSize() {
@@ -54,7 +54,7 @@ KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
     p.y = 0;
   } else if (child == m_denominator) {
     p.x = (KDCoordinate)((size().width - m_denominator->size().width)/2);
-    p.y = (KDCoordinate)(size().height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
+    p.y = (KDCoordinate)(m_numerator->size().height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
   } else {
     assert(false); // Should not happen
   }

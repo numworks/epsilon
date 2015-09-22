@@ -9,7 +9,7 @@ class HorizontalLayout : public ExpressionLayout {
     HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression);
     ~HorizontalLayout();
   protected:
-    void render(KDPoint origin) override;
+    void render(KDPoint point) override;
     KDSize computeSize() override;
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;

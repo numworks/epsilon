@@ -1,5 +1,5 @@
 SFLAGS += -Ikandinsky/include
-objs += $(addprefix kandinsky/src/, font.o line.o pixel.o rect.o text.o)
+objs += $(addprefix kandinsky/src/, font.o line.o pixel.o rect.o text.o types.o)
 tests += $(addprefix kandinsky/test/, set_pixel.c)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.5.5

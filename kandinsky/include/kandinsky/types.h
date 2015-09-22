@@ -10,6 +10,8 @@ typedef struct {
   KDCoordinate y;
 } KDPoint;
 
+extern KDPoint KDPointZero;
+
 #define KDPOINT(xc,yc) ((KDPoint){.x=(KDCoordinate)(xc),.y=(KDCoordinate)(yc)})
 static inline KDPoint KDPointTranslate(KDPoint p1, KDPoint p2) {
   return (KDPoint){.x = (KDCoordinate)(p1.x + p2.x), .y = (KDCoordinate)(p1.y + p2.y)};

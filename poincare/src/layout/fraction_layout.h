@@ -6,11 +6,13 @@
 
 class FractionLayout : public ExpressionLayout {
   public:
-    FractionLayout(Expression * numerator, Expression * denominator);
+    FractionLayout(ExpressionLayout * parent, Expression * numerator, Expression * denominator);
+    ~FractionLayout();
+  protected:
+    void render(KDPoint origin) override;
+    KDSize computeSize() override;
     ExpressionLayout * child(uint16_t index) override;
-    void draw() override;
-    void positionChildren() override;
-    void computeSize() override;
+    KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
     ExpressionLayout * m_numerator;
     ExpressionLayout * m_denominator;

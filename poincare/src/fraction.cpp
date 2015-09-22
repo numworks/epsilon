@@ -1,6 +1,6 @@
 #include <poincare/fraction.h>
 #include <string.h>
-#include "layout/horizontal_layout.h"
+#include "layout/fraction_layout.h"
 
 /*
 static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
@@ -28,7 +28,7 @@ Expression ** Fraction::children() {
 */
 
 ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, NUMERATOR, '-', DENOMINATOR);
+  return new FractionLayout(parent, NUMERATOR, DENOMINATOR);
 }
 /*
 void Fraction::layout() {

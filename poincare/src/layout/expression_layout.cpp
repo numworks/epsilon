@@ -5,13 +5,11 @@
 ExpressionLayout::ExpressionLayout(ExpressionLayout * parent) :
   m_parent(parent),
   m_sized(false),
-  m_positioned(false) {
-    m_frame = (KDRect){
-      .x = 0,
-      .y = 0,
-      .width = 0,
-      .height = 0
-    };
+  m_positioned(false),
+  m_frame(KDRectZero) {
+}
+
+ExpressionLayout::~ExpressionLayout() {
 }
 
 KDPoint ExpressionLayout::origin() {

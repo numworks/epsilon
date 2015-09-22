@@ -8,6 +8,8 @@ extern "C" {
 class ExpressionLayout {
   public:
     ExpressionLayout(ExpressionLayout * parent);
+    virtual ~ExpressionLayout();
+
     void draw(KDPoint point);
     KDPoint origin();
     KDSize size();

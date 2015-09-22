@@ -38,7 +38,7 @@ KDPoint ExpressionLayout::absoluteOrigin() {
     if (m_parent != nullptr) {
       m_frame.origin = KDPointTranslate(m_parent->absoluteOrigin(), m_parent->positionOfChild(this));
     } else {
-      m_frame.origin = KDPOINT(0,0);
+      m_frame.origin = KDPointZero;
     }
     m_positioned = true;
   }

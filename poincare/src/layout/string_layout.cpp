@@ -23,7 +23,7 @@ void StringLayout::render(KDPoint point) {
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
   assert(false); // We should never be here
-  return KDPOINT(0,0);
+  return KDPointZero;
 }
 
 KDSize StringLayout::computeSize() {

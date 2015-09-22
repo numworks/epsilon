@@ -270,28 +270,6 @@ Integer Integer::operator/(const Integer &other) const {
   return Division(*this, other).m_quotient;
 }
 
-#if 0
-bool Integer::identicalTo(Expression * e) {
-  /* FIXME
-  Integer * i = dynamic_cast<Integer *>(e);
-  return (i != NULL);
-  */
-  return false;
-}
-
-Expression ** Integer::children() {
-  return NULL;
-}
-
-void Integer::layout() {
- //m_frame.size = KDStringSize(m_stringValue);
-}
-
-void Integer::draw() {
-  // KDDrawString(m_stringValue, KDPOINT(0,0));
-}
-#endif
-
 float Integer::approximate() {
   union {
     uint32_t uint_result;

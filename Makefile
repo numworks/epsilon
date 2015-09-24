@@ -15,7 +15,7 @@ SFLAGS += -Wall
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)
-SFLAGS += -g -DDEBUG=1
+SFLAGS += -ggdb3 -DDEBUG=1 -O0
 else
 SFLAGS += -Os -fdata-sections -ffunction-sections
 #LDFLAGS += --gc-sections
@@ -24,7 +24,7 @@ endif
 
 # Language-specific flags
 CFLAGS = -std=c99
-CXXFLAGS = -std=c++11 -fno-exceptions -fno-unwind-tables -fno-rtti
+CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti #-fno-unwind-tables
 
 products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
 

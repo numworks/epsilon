@@ -28,7 +28,7 @@ void FractionLayout::render(KDPoint point) {
   KDDrawLine(
       KDPointMake(point.x, fractionLineY),
       KDPointMake(point.x + size().width, fractionLineY),
-      0);
+      0xFF);
 }
 
 KDSize FractionLayout::computeSize() {

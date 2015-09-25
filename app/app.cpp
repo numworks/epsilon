@@ -23,15 +23,15 @@ void ion_app() {
     ion_sleep();
   }
   for (KDCoordinate y=0; y<height; y+=step) {
-    KDDrawLine(center, KDPointMake(width,y), c);
+    KDDrawLine(center, KDPointMake(width-1,y), c);
     ion_sleep();
   }
   for (KDCoordinate x=0; x<width; x+=step) {
-    KDDrawLine(center, KDPointMake(width-x,height), c);
+    KDDrawLine(center, KDPointMake(width-1-x,height-1), c);
     ion_sleep();
   }
   for (KDCoordinate y=0; y<height; y+=step) {
-    KDDrawLine(center, KDPointMake(0,height-y), c);
+    KDDrawLine(center, KDPointMake(0,height-1-y), c);
     ion_sleep();
   }
 

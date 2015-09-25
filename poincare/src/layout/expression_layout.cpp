@@ -16,7 +16,7 @@ KDPoint ExpressionLayout::origin() {
   if (m_parent == nullptr) {
     return absoluteOrigin();
   } else {
-    return KDPOINT(absoluteOrigin().x-m_parent->absoluteOrigin().x, absoluteOrigin().y-m_parent->absoluteOrigin().y);
+    return KDPointMake(absoluteOrigin().x-m_parent->absoluteOrigin().x, absoluteOrigin().y-m_parent->absoluteOrigin().y);
   }
 }
 

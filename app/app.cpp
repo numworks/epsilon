@@ -7,7 +7,33 @@ extern "C" {
 #include <poincare.h>
 
 void ion_app() {
-  KDDrawString("Hello, world!", (KDPoint){.x = 10, .y = 10});
+  KDDrawString("Hello, world!", KDPointMake(10,10));
+
+  KDCoordinate width = 240;
+  KDCoordinate height = 160;
+
+  KDColor c = 0xFF;
+
+  KDPoint center = KDPointMake(width/2, height/2);
+  int delay = 100000;
+  int step = 2;
+
+  for (KDCoordinate x=0; x<width; x+=step) {
+    KDDrawLine(center, KDPointMake(x,0), c);
+    ion_sleep();
+  }
+  for (KDCoordinate y=0; y<height; y+=step) {
+    KDDrawLine(center, KDPointMake(width,y), c);
+    ion_sleep();
+  }
+  for (KDCoordinate x=0; x<width; x+=step) {
+    KDDrawLine(center, KDPointMake(width-x,height), c);
+    ion_sleep();
+  }
+  for (KDCoordinate y=0; y<height; y+=step) {
+    KDDrawLine(center, KDPointMake(0,height-y), c);
+    ion_sleep();
+  }
 
   char input[255];
 
@@ -29,7 +55,7 @@ void ion_app() {
       index = 0;
       Expression * e = Expression::parse(input);
       ExpressionLayout * l = e->createLayout(nullptr);
-      l->draw(KDPOINT(0,100));
+      l->draw(KDPointMake(0,100));
 
       // FIXME delete l;
       //FIXME delete e;

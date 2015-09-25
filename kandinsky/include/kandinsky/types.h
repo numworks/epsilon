@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef uint16_t KDCoordinate;
+typedef int16_t KDCoordinate;
 
 typedef struct {
   KDCoordinate x;
@@ -12,9 +12,18 @@ typedef struct {
 
 extern KDPoint KDPointZero;
 
-#define KDPOINT(xc,yc) ((KDPoint){.x=(KDCoordinate)(xc),.y=(KDCoordinate)(yc)})
+static inline KDPoint KDPointMake(KDCoordinate x, KDCoordinate y) {
+  KDPoint p;
+  p.x = x;
+  p.y = y;
+  return p;
+}
+
 static inline KDPoint KDPointTranslate(KDPoint p1, KDPoint p2) {
-  return (KDPoint){.x = (KDCoordinate)(p1.x + p2.x), .y = (KDCoordinate)(p1.y + p2.y)};
+  KDPoint p;
+  p.x = p1.x+p2.x;
+  p.y = p1.y+p2.y;
+  return p;
 }
 
 typedef struct {

@@ -34,6 +34,30 @@ void draw_lines_from_center() {
   }
 }
 
+void plot(Expression * e, Variable * v, float xMin, float xMax, float yMin, float yMax) {
+  int screenWidth = 240;
+  int screenHeight = 160;
+  KDPoint previousPoint;
+  for (int i=0;i<screenWidth; i++) {
+    float x = xMin + (xMax-xMin)/screenWidth*i;
+    v->setValue(x);
+    float y = e->approximate();
+    int j = ((y-yMin)/(yMax-yMin)*screenHeight);
+    KDPoint currentPoint = KDPointMake(i,j);
+    if (i>0) {
+      KDDrawLine(previousPoint, currentPoint, 0xFF);
+    }
+    previousPoint = currentPoint;
+  }
+}
+
+void funnyPlot() {
+  Expression * e = Expression::parse("1/x");
+  Variable * v = Variable::VariableNamed("x");
+  plot(e,v, 1.0f, 4.0f, 0.0f, 1.0f);
+  delete e;
+}
+
 void parseInlineExpression() {
   char * expression = "1+2/3+4/5+6";
   Expression * e = Expression::parse(expression);
@@ -86,6 +110,10 @@ void interactive_expression_parsing() {
 
 void ion_app() {
   KDDrawString("Hello, world!", KDPointMake(10,10));
-  parseInlineExpression();
-//interactive_expression_parsing();
+  //parseInlineExpression();
+  funnyPlot();
+  //interactive_expression_parsing();
+  while (1) {
+    ion_sleep();
+  }
 }

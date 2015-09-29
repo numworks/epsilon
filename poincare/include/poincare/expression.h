@@ -7,6 +7,7 @@
 class Expression {
   public:
     static Expression * parse(char * string);
+    virtual ~Expression();
 
     //virtual Expression ** children() = 0; // NULL-terminated
 

@@ -6,12 +6,12 @@
 class Fraction : public Expression {
   public:
     Fraction(Expression * numerator, Expression * denominator);
-//    virtual Expression ** children();
-//  protected:
-    virtual ExpressionLayout * createLayout(ExpressionLayout * parent);
-    virtual float approximate();
+    ~Fraction();
+    ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    float approximate() override;
   private:
-    Expression * m_children[3];
+    Expression * m_numerator;
+    Expression * m_denominator;
 };
 
 #endif

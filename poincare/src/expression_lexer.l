@@ -52,6 +52,7 @@
 \/ { return(DIVIDE); }
 \^ { return(POW); }
 \+ { return(PLUS); }
+[A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }
 
 %%
 

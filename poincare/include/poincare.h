@@ -6,5 +6,6 @@
 #include <poincare/fraction.h>
 #include <poincare/integer.h>
 #include <poincare/power.h>
+#include <poincare/variable.h>
 
 #endif

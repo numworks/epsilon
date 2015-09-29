@@ -55,6 +55,7 @@ void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutpu
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <string> INTEGER
+%token <string> SYMBOL
 
 /* The DIVIDE and POW tokens use no value */
 %token DIVIDE
@@ -92,6 +93,7 @@ Root:
 
 exp:
   INTEGER          { $$ = new Integer($1);     }
+  | SYMBOL           { $$ = new Variable($1);    }
   | exp DIVIDE exp { $$ = new Fraction($1,$3); }
   | exp PLUS exp   { $$ = new Addition($1,$3); }
 /*  | exp POW exp    { $$ = new Power($1,$3); } */

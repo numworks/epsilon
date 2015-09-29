@@ -6,9 +6,7 @@ extern "C" {
 
 #include <poincare.h>
 
-void ion_app() {
-  KDDrawString("Hello, world!", KDPointMake(10,10));
-
+void draw_lines_from_center() {
   KDCoordinate width = 240;
   KDCoordinate height = 160;
 
@@ -34,7 +32,18 @@ void ion_app() {
     KDDrawLine(center, KDPointMake(0,height-1-y), c);
     ion_sleep();
   }
+}
 
+void parseInlineExpression() {
+  char * expression = "1+2/3+4/5+6";
+  Expression * e = Expression::parse(expression);
+  ExpressionLayout * l = e->createLayout(nullptr);
+  l->draw(KDPointMake(0,100));
+  delete l;
+  delete e;
+}
+
+void interactive_expression_parsing() {
   char input[255];
 
 #if 0
@@ -73,4 +82,10 @@ void ion_app() {
       KDDrawString(input, KDPointZero);
     }
   }
+}
+
+void ion_app() {
+  KDDrawString("Hello, world!", KDPointMake(10,10));
+  parseInlineExpression();
+//interactive_expression_parsing();
 }

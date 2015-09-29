@@ -2,8 +2,8 @@
 #include <string.h>
 #include <private/memconfig.h>
 
-extern char _liba_heap_start;
-extern char _liba_heap_end;
+extern char * _liba_heap_start;
+extern char * _liba_heap_end;
 
 heap_config_t HeapConfig = {
   .nHeap = 0
@@ -17,8 +17,8 @@ void * memsys5Realloc(void *pPrior, int nBytes);
 int memsys5Roundup(int n);
 
 static void configure_heap() {
-  HeapConfig.nHeap = (&_liba_heap_end - &_liba_heap_start);
-  HeapConfig.pHeap = &_liba_heap_start;
+  HeapConfig.nHeap = (_liba_heap_end - _liba_heap_start);
+  HeapConfig.pHeap = _liba_heap_start;
   HeapConfig.mnReq = 1;
   HeapConfig.bMemstat = 0;
   HeapConfig.xLog = 0;

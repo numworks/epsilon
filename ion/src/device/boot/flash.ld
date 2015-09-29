@@ -149,10 +149,10 @@ SECTIONS {
   } >SRAM
 
   .heap : {
-    _liba_heap_start = .;
+    _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
     . = (ORIGIN(SRAM) + LENGTH(SRAM) - FRAMEBUFFER_SIZE - STACK_SIZE);
-    _liba_heap_end = .;
+    _heap_end = .;
   } >SRAM
 
   .framebuffer : {

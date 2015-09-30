@@ -10,9 +10,12 @@ extern char _bss_section_start_ram;
 extern char _bss_section_end_ram;
 
 void abort() {
-  // TODO: #ifdef NDEBUG, maybe trigger a reset?
+#ifdef DEBUG
   while (1) {
   }
+#else
+  ion_reset();
+#endif
 }
 
 void _start(void) {

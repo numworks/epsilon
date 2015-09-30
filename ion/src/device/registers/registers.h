@@ -14,11 +14,11 @@
 #include "gpio.h"
 #include "spi.h"
 #include "dma.h"
+#include "cm4.h"
 //#include "ltdc.h"
 
 #define REGISTER_FIELD_MASK(field) (BIT_MASK(HIGH_BIT_##field,LOW_BIT_##field))
 #define REGISTER_FIELD_VALUE(field, value) (BIT_VALUE(value,HIGH_BIT_##field,LOW_BIT_##field))
-
 #define REGISTER_SET_VALUE(reg, field, value) (reg = ((reg&(~REGISTER_FIELD_MASK(field)))|REGISTER_FIELD_VALUE(field,value)))
 //#define SET(reg, field) (reg |= field)
 //#define CLEAR(reg, field) (reg &= ~field)

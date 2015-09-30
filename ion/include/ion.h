@@ -17,4 +17,7 @@ void ion_display_off();
 
 void ion_sleep();
 
+/* CAUTION: This is a complete reset! */
+void ion_reset();
+
 #endif

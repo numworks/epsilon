@@ -35,15 +35,15 @@ void draw_lines_from_center() {
 }
 
 void plot(Expression * e, Variable * v, float xMin, float xMax, float yMin, float yMax) {
-  int screenWidth = 240;
-  int screenHeight = 160;
+  KDCoordinate screenWidth = 240;
+  KDCoordinate screenHeight = 160;
   KDPoint previousPoint;
-  for (int i=0;i<screenWidth; i++) {
+  for (KDCoordinate i=0;i<screenWidth; i++) {
     float x = xMin + (xMax-xMin)/screenWidth*i;
     v->setValue(x);
     float y = e->approximate();
-    int j = ((y-yMin)/(yMax-yMin)*screenHeight);
-    KDPoint currentPoint = KDPointMake(i,j);
+    KDCoordinate j = ((y-yMin)/(yMax-yMin)*screenHeight);
+    KDPoint currentPoint = KDPointMake(i,screenHeight-j);
     if (i>0) {
       KDDrawLine(previousPoint, currentPoint, 0xFF);
     }
@@ -89,9 +89,13 @@ void interactive_expression_parsing() {
       Expression * e = Expression::parse(input);
       ExpressionLayout * l = e->createLayout(nullptr);
       l->draw(KDPointMake(0,100));
+      Variable * v = Variable::VariableNamed("x");
+      if (v) {
+        plot(e,v, 0.0f, 3.0f, 0.0f, 2.0f);
+      }
 
-      // FIXME delete l;
-      //FIXME delete e;
+      delete l;
+      delete e;
     } else {
       if (index == 0) {
         KDRect r;
@@ -110,8 +114,9 @@ void interactive_expression_parsing() {
 
 void ion_app() {
   KDDrawString("Hello, world!", KDPointMake(10,10));
+  interactive_expression_parsing();
   //parseInlineExpression();
-  funnyPlot();
+  //funnyPlot();
   //interactive_expression_parsing();
   while (1) {
     ion_sleep();

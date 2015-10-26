@@ -87,15 +87,20 @@ void interactive_expression_parsing() {
       input[index] = 0;
       index = 0;
       Expression * e = Expression::parse(input);
-      ExpressionLayout * l = e->createLayout(nullptr);
-      l->draw(KDPointMake(0,100));
-      Variable * v = Variable::VariableNamed("x");
-      if (v) {
-        plot(e,v, 0.0f, 3.0f, 0.0f, 2.0f);
+      if (e) {
+        ExpressionLayout * l = e->createLayout(nullptr);
+        if (l) {
+          l->draw(KDPointMake(0,100));
+          Variable * v = Variable::VariableNamed("x");
+          if (v) {
+            plot(e,v, 0.0f, 3.0f, 0.0f, 2.0f);
+          }
+          delete l;
+        }
+        delete e;
+      } else {
+        KDDrawString("PARSING ERROR", KDPointMake(10,10));
       }
-
-      delete l;
-      delete e;
     } else {
       if (index == 0) {
         KDRect r;

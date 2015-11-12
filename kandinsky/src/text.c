@@ -6,7 +6,7 @@
 void KDDrawChar(char character, KDPoint p) {
   for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
     for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
-      KDSetPixel(KDPOINT(p.x+i, p.y+j), 0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
+      KDSetPixel(KDPointMake(p.x+i, p.y+j), 0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
     }
   }
 }

@@ -1,12 +1,12 @@
-#ifndef POINCARE_ADDITION_H
-#define POINCARE_ADDITION_H
+#ifndef POINCARE_PRODUCT_H
+#define POINCARE_PRODUCT_H
 
 #include <poincare/expression.h>
 
-class Addition : public Expression {
+class Product : public Expression {
   public:
-    Addition(Expression * first_operand, Expression * second_operand);
-    ~Addition();
+    Product(Expression * first_factor, Expression * second_factor);
+    ~Product();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
   private:

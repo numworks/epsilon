@@ -8,7 +8,7 @@ class Fraction : public Expression {
     Fraction(Expression * numerator, Expression * denominator);
     ~Fraction();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
-    float approximate() override;
+    float approximate(Context& context) override;
   private:
     Expression * m_numerator;
     Expression * m_denominator;

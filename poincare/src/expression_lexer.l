@@ -50,6 +50,7 @@
 
 [0-9]+ { yylval->string = yytext; return(INTEGER); }
 \/ { return(DIVIDE); }
+\* { return(MULTIPLY); }
 \^ { return(POW); }
 \+ { return(PLUS); }
 [A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }

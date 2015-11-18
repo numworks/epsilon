@@ -34,14 +34,17 @@ void draw_lines_from_center() {
   }
 }
 
-void plot(Expression * e, Variable * v, float xMin, float xMax, float yMin, float yMax) {
+void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
+  Context plotContext;
   KDCoordinate screenWidth = 240;
   KDCoordinate screenHeight = 160;
   KDPoint previousPoint;
   for (KDCoordinate i=0;i<screenWidth; i++) {
     float x = xMin + (xMax-xMin)/screenWidth*i;
-    v->setValue(x);
-    float y = e->approximate();
+    Float xExp = Float(x);
+    //plotContext["x"] = xExp;
+    plotContext.setExpressionForSymbolName(&xExp, "x");
+    float y = e->approximate(plotContext);
     KDCoordinate j = ((y-yMin)/(yMax-yMin)*screenHeight);
     KDPoint currentPoint = KDPointMake(i,screenHeight-j);
     if (i>0) {
@@ -53,8 +56,7 @@ void plot(Expression * e, Variable * v, float xMin, float xMax, float yMin, floa
 
 void funnyPlot() {
   Expression * e = Expression::parse("1/x");
-  Variable * v = Variable::VariableNamed("x");
-  plot(e,v, 1.0f, 4.0f, 0.0f, 1.0f);
+  plot(e, 1.0f, 4.0f, 0.0f, 1.0f);
   delete e;
 }
 
@@ -91,10 +93,7 @@ void interactive_expression_parsing() {
         ExpressionLayout * l = e->createLayout(nullptr);
         if (l) {
           l->draw(KDPointMake(0,100));
-          Variable * v = Variable::VariableNamed("x");
-          if (v) {
-            plot(e,v, 0.0f, 3.0f, 0.0f, 2.0f);
-          }
+          plot(e, 0.0f, 3.0f, 0.0f, 2.0f);
           delete l;
         }
         delete e;

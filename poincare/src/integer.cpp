@@ -270,7 +270,7 @@ Integer Integer::operator/(const Integer &other) const {
   return Division(*this, other).m_quotient;
 }
 
-float Integer::approximate() {
+float Integer::approximate(Context& context) {
   union {
     uint32_t uint_result;
     float float_result;

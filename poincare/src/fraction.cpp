@@ -16,7 +16,7 @@ ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
   return new FractionLayout(parent, m_numerator, m_denominator);
 }
 
-float Fraction::approximate() {
+float Fraction::approximate(Context& context) {
   // TODO: handle division by zero
-  return m_numerator->approximate()/m_denominator->approximate();
+  return m_numerator->approximate(context)/m_denominator->approximate(context);
 }

@@ -4,6 +4,8 @@
 #include <poincare/expression_layout.h>
 #include <kandinsky.h>
 
+class Context;
+
 class Expression {
   public:
     static Expression * parse(char * string);
@@ -19,7 +21,7 @@ class Expression {
     //virtual bool identicalTo(Expression * e);
     //virtual Expression * simplify();
 
-    virtual float approximate() = 0;
+    virtual float approximate(Context& context) = 0;
   /*private:
     void forEachChild(ExpressionAction);
     */

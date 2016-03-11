@@ -51,7 +51,7 @@ info:
 	@echo "==============================="
 
 ifeq ($(USE_LIBA),0)
-LDFLAGS += -lc -lc++ -lcrt1.o
+#LDFLAGS += -lc -lc++ -lcrt1.o
 else
 SFLAGS += -ffreestanding -nostdinc -nostdlib
 include liba/Makefile
@@ -65,7 +65,7 @@ include quiz/Makefile # Quiz should be included at the end
 
 %.elf: $(objs)
 	@echo "LD      $@"
-	@$(LD) $(LDFLAGS) $^ -o $@
+	$(LD) $^ $(LDFLAGS) -o $@
 
 .PHONY: %_size
 %_size: %.elf

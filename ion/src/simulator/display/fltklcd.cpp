@@ -1,6 +1,6 @@
 #include "fltklcd.h"
 #include <stdlib.h>
-#include <FL/Fl_draw.H>
+#include <FL/fl_draw.H>
 
 FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
   Fl_Widget(x, y, w, h, label) {

@@ -1,5 +1,5 @@
 TOOLCHAIN=arm-none-eabi
-COMPILER=llvm
+#COMPILER=llvm
 
 ifeq ($(COMPILER),llvm)
 CC=clang

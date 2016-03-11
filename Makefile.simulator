@@ -1,6 +1,6 @@
-CC=clang
-CXX=clang++
-LD=ld
+CC=gcc
+CXX=g++
+LD=g++
 SIZE=size
 #GDB=gdb
 #OBJCOPY=$(TOOLCHAIN)-objcopy

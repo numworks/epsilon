@@ -1,1 +1,14 @@
+# No objects files.
 *.o
+*.elf
+
+# No lex / yacc generated files.
+poincare/src/expression_lexer.cpp
+poincare/src/expression_lexer.hpp
+poincare/src/expression_parser.cpp
+poincare/src/expression_parser.hpp
+
+# Font related generated files.
+kandinsky/fonts/rasterizer
+kandinsky/src/font.c
+kandinsky/src/font.h

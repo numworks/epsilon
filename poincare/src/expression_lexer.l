@@ -53,6 +53,8 @@
 \* { return(MULTIPLY); }
 \^ { return(POW); }
 \+ { return(PLUS); }
+\( { return(LEFT_PARENTHESIS); }
+\) { return(RIGHT_PARENTHESIS); }
 [A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }
 
 %%

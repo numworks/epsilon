@@ -1,5 +1,5 @@
 SFLAGS += -Ipoincare/include
-objs += $(addprefix poincare/src/, addition.o context.o expression.o float.o integer.o fraction.o expression_lexer.o expression_parser.o product.o symbol.o)
+objs += $(addprefix poincare/src/, addition.o context.o expression.o float.o integer.o fraction.o expression_lexer.o expression_parser.o power.o product.o symbol.o)
 objs += $(addprefix poincare/src/layout/, expression_layout.o fraction_layout.o horizontal_layout.o string_layout.o)
 tests += $(addprefix poincare/test/, integer.cpp)
 

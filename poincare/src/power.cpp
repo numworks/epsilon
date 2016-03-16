@@ -1,5 +1,5 @@
 #include <poincare/power.h>
-#include "layout/horizontal_layout.h"
+#include "layout/exponent_layout.h"
 
 Power::Power(Expression * base, Expression * exponent) :
   m_base(base),
@@ -17,5 +17,5 @@ float Power::approximate(Context& context) {
 }
 
 ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_base, '^', m_exponent);
+  return new ExponentLayout(parent, m_base, m_exponent);
 }

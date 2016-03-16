@@ -1,4 +1,3 @@
-#include <poincare/fraction.h>
 #include <string.h>
 #include <assert.h>
 #include "fraction_layout.h"

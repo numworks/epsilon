@@ -2,7 +2,5 @@ CC=gcc
 CXX=g++
 LD=g++
 SIZE=size
-#GDB=gdb
-#OBJCOPY=$(TOOLCHAIN)-objcopy
 
 USE_LIBA=0

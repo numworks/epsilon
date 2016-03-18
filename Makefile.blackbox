@@ -2,10 +2,7 @@ CC=clang
 CXX=clang++
 LD=clang++
 SIZE=size
-#GDB=gdb
-#OBJCOPY=$(TOOLCHAIN)-objcopy
 
-#LDFLAGS += -pagezero_size 100000000
 LDFLAGS =
 
 USE_LIBA=1

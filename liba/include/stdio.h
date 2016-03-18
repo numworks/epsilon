@@ -3,6 +3,7 @@
 
 #define stdin 0
 #define stdout 0
+#define EOF 0
 
 typedef void FILE;
 

@@ -1,35 +1,21 @@
 #include <poincare/power.h>
-#include <string.h>
+#include "layout/horizontal_layout.h"
 
-#define BASE m_children[0]
-#define EXPONENT m_children[1]
-
-Power::Power(Expression * base, Expression * exponent) {
-  m_children[0] = base;
-  m_children[1] = exponent;
-  m_children[2] = NULL;
+Power::Power(Expression * base, Expression * exponent) :
+  m_base(base),
+  m_exponent(exponent) {
 }
 
-Expression ** Power::children() {
-  return m_children;
+Power::~Power() {
+  delete m_exponent;
+  delete m_base;
 }
 
-void Power::layout() {
-  m_frame.width = BASE->m_frame.width + EXPONENT->m_frame.width;
-  m_frame.height = BASE->m_frame.height + EXPONENT->m_frame.height;
-
-  BASE->m_frame.origin = {
-    .x = 0,
-    .y = EXPONENT->m_frame.height
-  };
-
-  EXPONENT->m_frame.origin = {
-    .x = BASE->m_frame.width,
-    .y = 0
-  };
+float Power::approximate(Context& context) {
+  // TODO: do this for real
+  return 1;
 }
 
-float Power::approximate() {
-  // TODO: Do it..
-  return 1.0f;
+ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {
+  return new HorizontalLayout(parent, m_base, '^', m_exponent);
 }

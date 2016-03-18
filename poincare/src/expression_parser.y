@@ -63,27 +63,11 @@ void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutpu
 %token POW
 %token PLUS
 
+%token LEFT_PARENTHESIS
+%token RIGHT_PARENTHESIS
+
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;
-
-/*
-  //Expression * expression;
-  //CSSSelector * selector;
-%union {
-  int value;
-  char * string;
-}
-
-%token
-
-%right <string> COMBINATOR
-%token <string> IDENT
-%token HASH
-%token DOT
-
-%type <selector> Expression;
-*/
-
 
 %%
 
@@ -98,66 +82,12 @@ exp:
   | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
   | exp MULTIPLY exp { $$ = new Product($1,$3);  }
   | exp PLUS exp     { $$ = new Addition($1,$3); }
-/*  | exp POW exp    { $$ = new Power($1,$3); } */
+  | exp POW exp      { $$ = new Power($1,$3); }
+  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2 }
 ;
 
-/*
-
-Root:
-  Selector {
-    *selector = $1;
-    //printf("ROOT! : %p\n", $1);
-  }
-
-Selector:
-     {
-      //$$ = new CSSSelector();
-      //printf("New selector at %p\n", $$);
-    }
-  | IDENT {
-      //$$ = new CSSSelector();
-      //$$->setNameRequirement(*$1);
-      //delete $1;
-      //printf("Create NodeSpecWithName %s at %p\n", $1, $$);
-    }
-  | Selector DOT IDENT {
-      //$1->addClassRequirement(*$3);
-      //delete $3;
-      //printf("AddClassToNodeSpec %s\n", $3);
-    }
-  | Selector HASH IDENT {
-      //$1->setIdentifierRequirement(*$3);
-      //delete $3;
-      //printf("AddIdToNodeSpec : %s\n", $3);
-    }
-  | Selector COMBINATOR Selector {
-      //$3->setParentSelectorWithCombinator($1, awe_css_combinator_from_string(*$2));
-      //printf("Combine with \"%s\"\n", $2->c_str());
-      //delete $2;
-    }
-  ;
-
-*/
 %%
 
 void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutput, char const *msg) {
   // Handle the error!
 }
-
-/*
-
-CSSSelector::Combinator awe_css_combinator_from_string(std::string string) {
-  for (char& c : string) {
-    switch (c) {
-      case '>':
-        return CSSSelector::Combinator::DIRECT;
-    }
-  }
-  return CSSSelector::Combinator::ANY;
-}
-
-void awe_css_yyerror(yyscan_t scanner, CSSSelector ** selector, char const *msg) {
-  printf("ERROR %s\n",msg);
-}
-*/
-

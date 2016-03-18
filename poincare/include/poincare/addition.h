@@ -10,7 +10,8 @@ class Addition : public Expression {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
   private:
-    Expression * m_children[2];
+    Expression * m_left;
+    Expression * m_right;
 };
 
 #endif

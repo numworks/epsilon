@@ -170,7 +170,7 @@ Integer Integer::add(const Integer &other, bool inverse_other_negative) const {
   if (m_negative == other_negative) {
     return usum(other, false, m_negative);
   } else {
-    /* The signs are different, this is in fact a substraction
+    /* The signs are different, this is in fact a subtraction
      * s = this+other = (abs(this)-abs(other) OR abs(other)-abs(this))
      * 1/abs(this)>abs(other) : s = sign*udiff(this, other)
      * 2/abs(other)>abs(this) : s = sign*udiff(other, this)

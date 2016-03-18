@@ -6,12 +6,12 @@
 class Power : public Expression {
   public:
     Power(Expression * base, Expression * exponent);
-    virtual Expression ** children();
-    virtual float approximate();
-//  protected:
-    virtual void layout();
+    ~Power();
+    ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    float approximate(Context& context) override;
   private:
-    Expression * m_children[3];
+    Expression * m_base;
+    Expression * m_exponent;
 };
 
 #endif

@@ -64,7 +64,7 @@ include quiz/Makefile # Quiz should be included at the end
 
 %.elf: $(objs)
 	@echo "LD      $@"
-	$(LD) $^ $(LDFLAGS) -o $@
+	@$(LD) $^ $(LDFLAGS) -o $@
 
 .PHONY: %_size
 %_size: %.elf

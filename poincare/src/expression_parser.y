@@ -49,14 +49,21 @@ void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutpu
 %token <string> INTEGER
 %token <string> SYMBOL
 
+/* Operator tokens */
 %token PLUS
 %token MINUS
 %token MULTIPLY
 %token DIVIDE
 %token POW
-
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
+
+/* Make the operators left associative.
+ * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
+ * This makes 1 / 2 / 5’  be ‘(1 / 2) / 5’ instead of ‘1 / (2 / 5)’.
+ */
+%left '-' '+'
+%left '*' '/'
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;

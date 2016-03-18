@@ -1,5 +1,5 @@
-#ifndef LIBA_ASSERT_H
-#define LIBA_ASSERT_H
+#ifndef LIBA_MATH_H
+#define LIBA_MATH_H
 
 #include "private/macros.h"
 

@@ -1,3 +1,7 @@
+#if PLATFORM==simulator
+#include <cmath>
+#endif
+
 #include <poincare/power.h>
 #include "layout/exponent_layout.h"
 
@@ -12,8 +16,12 @@ Power::~Power() {
 }
 
 float Power::approximate(Context& context) {
-  // TODO: do this for real
-  return 1;
+#if PLATFORM==simulator
+  return powf(m_base->approximate(context), m_exponent->approximate(context));
+#else
+  // TODO(fraimundo): do this for real
+  return 1f;
+#endif
 }
 
 ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {

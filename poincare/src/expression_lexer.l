@@ -49,13 +49,13 @@
 %%
 
 [0-9]+ { yylval->string = yytext; return(INTEGER); }
-\/ { return(DIVIDE); }
-\* { return(MULTIPLY); }
-\^ { return(POW); }
+[A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }
 \+ { return(PLUS); }
+\- { return(MINUS); }
+\* { return(MULTIPLY); }
+\/ { return(DIVIDE); }
+\^ { return(POW); }
 \( { return(LEFT_PARENTHESIS); }
 \) { return(RIGHT_PARENTHESIS); }
-[A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }
 
 %%
-

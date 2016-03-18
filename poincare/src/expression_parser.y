@@ -19,14 +19,6 @@ void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutpu
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
 #define YYCOPY(To, From, Count) memcpy(To, From, (Count)*sizeof(*(From)))
 
-/*
-  #include <private/css_selector.h>
-  using namespace ui::Private;
-  #include "css_selector_parser.hpp"
-  #include "css_selector_lexer.hpp"
-  CSSSelector::Combinator awe_css_combinator_from_string(std::string string);
-  void awe_css_yyerror(yyscan_t scanner, CSSSelector ** selector, char const *msg);
-*/
 %}
 
 /* We want a reentrant parser. Otherwise Bison makes use of global variables,
@@ -57,11 +49,11 @@ void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutpu
 %token <string> INTEGER
 %token <string> SYMBOL
 
-/* The DIVIDE and POW tokens use no value */
-%token DIVIDE
-%token MULTIPLY
-%token POW
 %token PLUS
+%token MINUS
+%token MULTIPLY
+%token DIVIDE
+%token POW
 
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
@@ -76,12 +68,15 @@ Root:
     *expressionOutput = $1;
   }
 
+/* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
+ * one has the highest precedence. */
 exp:
   INTEGER            { $$ = new Integer($1);     }
   | SYMBOL           { $$ = new Symbol($1);    }
-  | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
-  | exp MULTIPLY exp { $$ = new Product($1,$3);  }
   | exp PLUS exp     { $$ = new Addition($1,$3); }
+  | exp MINUS exp    { $$ = new Substraction($1,$3); }
+  | exp MULTIPLY exp { $$ = new Product($1,$3);  }
+  | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
   | exp POW exp      { $$ = new Power($1,$3); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2 }
 ;

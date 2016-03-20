@@ -5,13 +5,11 @@
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
 Expression * Expression::parse(char * string) {
-  yyscan_t scanner;
-  YY_BUFFER_STATE buf;
+  void * scanner;
   poincare_expression_yylex_init(&scanner);
-  buf = poincare_expression_yy_scan_string(string, scanner);
+  YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string, scanner);
   Expression * expression = 0;
   poincare_expression_yyparse(scanner, &expression);
-
   poincare_expression_yy_delete_buffer(buf, scanner);
   poincare_expression_yylex_destroy(scanner);
 

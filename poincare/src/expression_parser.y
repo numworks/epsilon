@@ -1,39 +1,38 @@
-/* This file has been tested with Bison 2.3. It should work with newer versions
- * but it hasn't been tested. */
+/* This file should be built with Bison 3.0.4. It might work with other Bison
+ * version, but those haven't been tested. */
+
+/* Ask for a reentrant parser. Otherwise Bison uses global variables, and we
+ * want to avoid this behavior. */
+%pure-parser
+
+/* Our lexer and parser are reentrant. That means that their generated functions
+ * (such as yylex) will expect a context parameter, so let's tell Bison about
+ * it. Note that the context is an opaque pointer. */
+%lex-param   { void * scanner }
+%parse-param { void * scanner }
+
+/* When calling the parser, we will provide yyparse with an extra parameter : a
+ * backpointer to the resulting expression. */
+%parse-param { Expression ** expressionOutput }
+
 %{
-/* We will be generating all kind of Expressions, so we need their definitions
- * here. */
+// We will be generating all kind of Expressions, so we need their definitions
 #include <poincare.h>
 
-/* expression_lexer.hpp expects YYSTYPE to be defined. It is defined in the
- * expression_parser.hpp file, which must be included before. */
+/* The lexer manipulates tokens defined by the parser, so we need the following
+ * inclusion order. */
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 
-
 /* Declare our error-handling function. Since we're making a re-entrant parser,
- * it takes a "context" parameter as its first input. */
-void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutput, char const *msg);
+ * it takes a context parameter as its first input. */
+void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput, char const *msg);
 
 /* Bison expects to use __builtin_memcpy. We don't want to provide this, but
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
 #define YYCOPY(To, From, Count) memcpy(To, From, (Count)*sizeof(*(From)))
 
 %}
-
-/* We want a reentrant parser. Otherwise Bison makes use of global variables,
- * which we want to avoid. */
-%pure-parser
-
-/* Our lexer and parser are reentrant. That means that their generated functions
- * (such as *yylex) take a "context" as an input parameter. We're telling Bison
- * That this input will be a "yyscan_t" named "scanner". */
-%lex-param   { yyscan_t scanner }
-%parse-param { yyscan_t scanner }
-
-/* When calling the parser, we will provide yyparse with a backpointer to the
- * resulting expression. */
-%parse-param { Expression ** expressionOutput }
 
 
 /* All symbols (both terminals and non-terminals) may have a value associated
@@ -90,6 +89,6 @@ exp:
 
 %%
 
-void poincare_expression_yyerror(yyscan_t scanner, Expression ** expressionOutput, char const *msg) {
+void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput, char const *msg) {
   // Handle the error!
 }

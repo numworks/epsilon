@@ -85,7 +85,7 @@ exp:
   | exp MULTIPLY exp { $$ = new Product($1,$3);  }
   | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
   | exp POW exp      { $$ = new Power($1,$3); }
-  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2 }
+  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2; }
 ;
 
 %%

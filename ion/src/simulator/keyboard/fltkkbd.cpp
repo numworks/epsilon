@@ -4,9 +4,7 @@
 #define KEYBOARD_ROWS 7
 #define KEYBOARD_COLUMNS 5
 
-// TODO(raimundo): do this in a clean way with no duplication.
-// A bit ugly but we need a null terminated string from a single char.
-static const char* charForKey[KEYBOARD_ROWS * KEYBOARD_COLUMNS] = {
+static const char* kCharForKey[KEYBOARD_ROWS * KEYBOARD_COLUMNS] = {
   "A", "B", "C", "D", "E",
   "F", "G", "H", "I", "J",
   "K", "L", "M", "N", "O",
@@ -25,7 +23,7 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
                                  y + (k/KEYBOARD_COLUMNS)*key_height,
                                  key_width,
                                  key_height,
-                                 charForKey[k]);
+                                 kCharForKey[k]);
   }
   end();
 }

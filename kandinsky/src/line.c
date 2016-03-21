@@ -49,10 +49,7 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
 
   KDCoordinate scanCounter = 0;
   while (scanCounter++ < scanLength) {
-    // FIXME
-    if (p.x>=0 && p.x < 240 && p.y>=0 && p.y<=160) {
-      KDSetPixel(p, c);
-    }
+    KDSetPixel(p, c);
     p = KDPointTranslate(p, alwaysTranslate);
     error = error - minusError;
     if (error <= 0) {

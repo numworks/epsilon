@@ -7,8 +7,8 @@ extern "C" {
 #include <poincare.h>
 
 void draw_lines_from_center() {
-  KDCoordinate width = 240;
-  KDCoordinate height = 160;
+  KDCoordinate width = SCREEN_WIDTH;
+  KDCoordinate height = SCREEN_HEIGHT;
 
   KDColor c = 0xFF;
 
@@ -36,8 +36,8 @@ void draw_lines_from_center() {
 
 void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
   Context plotContext;
-  KDCoordinate screenWidth = 240;
-  KDCoordinate screenHeight = 160;
+  KDCoordinate screenWidth = SCREEN_WIDTH;
+  KDCoordinate screenHeight = SCREEN_HEIGHT;
   KDPoint previousPoint;
   for (KDCoordinate i=0;i<screenWidth; i++) {
     float x = xMin + (xMax-xMin)/screenWidth*i;
@@ -106,8 +106,8 @@ void interactive_expression_parsing() {
         KDRect r;
         r.x = 0;
         r.y = 0;
-        r.width = 160;
-        r.height = 160;
+        r.width = SCREEN_WIDTH;
+        r.height = SCREEN_HEIGHT;
         KDFillRect(r, 0x00);
       }
       input[index++] = character;

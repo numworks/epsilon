@@ -16,16 +16,14 @@ static FltkLCD * sDisplay;
 static FltkKbd * sKeyboard;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
-#define FRAMEBUFFER_WIDTH 320
-#define FRAMEBUFFER_HEIGHT 240
 #define FRAMEBUFFER_BITS_PER_PIXEL 8
 
 void init_platform() {
   Fl::visual(FL_RGB);
 
   int margin = 10;
-  int screen_width = FRAMEBUFFER_WIDTH;
-  int screen_height = FRAMEBUFFER_HEIGHT;
+  int screen_width = SCREEN_WIDTH;
+  int screen_height = SCREEN_HEIGHT;
   // keyboard_width == screen_width
   int keyboard_height = screen_width;
 
@@ -41,9 +39,9 @@ void init_platform() {
 }
 
 void ion_set_pixel(uint8_t x, uint8_t y, uint8_t color) {
-  assert(x <= FRAMEBUFFER_WIDTH);
-  assert(y <= FRAMEBUFFER_HEIGHT);
-  char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*FRAMEBUFFER_WIDTH)+x);
+  assert(x <= SCREEN_WIDTH);
+  assert(y <= SCREEN_HEIGHT);
+  char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*SCREEN_WIDTH)+x);
   *byte = color;
 }
 

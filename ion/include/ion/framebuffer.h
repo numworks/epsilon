@@ -5,4 +5,7 @@
 
 void ion_set_pixel(uint8_t x, uint8_t y, uint8_t color);
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+
 #endif

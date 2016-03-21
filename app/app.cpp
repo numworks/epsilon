@@ -113,10 +113,17 @@ void interactive_expression_parsing() {
       input[index++] = character;
       // We are at the end of the line.
       if (index == max) {
-        input[max++] = 0;
+        input[max++] = ' ';
+        input[max+1] = 0;
       }
-      KDDrawString(input, KDPointZero);
     }
+    // Here we draw the input and inverse the pixels under the cursor.
+    // FIXME: hard coded value
+    KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - 30),
+        KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - 30), 0xff);
+    KDDrawString(input, KDPointMake(0, SCREEN_HEIGHT - 15));
+    KDDrawInverseChar(input[index] ? input[index] : ' ',
+        KDPointMake(index*7, SCREEN_HEIGHT - 15));
   }
 }
 

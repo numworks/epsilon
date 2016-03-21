@@ -1,19 +1,12 @@
 #include <poincare/integer.h>
 #include <kandinsky/text.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include "layout/string_layout.h"
 
 #define MAX(a,b) ((a)>(b)?a:b)
 #define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
-
-/*
-const Integer Integer::Zero = {
-  m_numberOfDigits = 0,
-  m_digits = nullptr
-};
-*/
 
 uint8_t log2(native_uint_t v) {
   assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK

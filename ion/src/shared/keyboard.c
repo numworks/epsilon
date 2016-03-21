@@ -4,11 +4,11 @@
 static const char kCharForKey[ION_NUMBER_OF_KEYS] = {
   'A', 'B', 'C', 'D', 'E',
   'F', 'G', 'H', 'I', 'J',
-  'K', 'L', 'M', 'N', 'O',
+  'K', 'L', 'M', LEFT_ARROW_KEY, RIGHT_ARROW_KEY,
   '7', '8', '9', '(', ')',
   '4', '5', '6', '*', '/',
   '1', '2', '3', '+', '-',
-  '0', '.', 'x', '7', 'X'
+  '0', '.', 'x', '^', '='
 };
 
 char ion_getchar() {

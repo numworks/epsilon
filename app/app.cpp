@@ -71,23 +71,15 @@ void parseInlineExpression() {
 
 void interactive_expression_parsing() {
   char input[255];
-
-#if 0
-  while (1) {
-    for (int i =0; i<24;i++) {
-      input[i] = ion_getchar();
-      input[i+1] = 0;
-      KDDrawString(input, (KDPoint){.x = 0, .y = 0});
-    }
-  }
-#endif
-
   int index = 0;
+  int max = 1;
+
   while (1) {
     char character = ion_getchar();
-    if (character == 'X') {
+    if (character == '=') {
       input[index] = 0;
       index = 0;
+      max = index+1;
       Expression * e = Expression::parse(input);
       if (e) {
         ExpressionLayout * l = e->createLayout(nullptr);
@@ -100,6 +92,15 @@ void interactive_expression_parsing() {
       } else {
         KDDrawString("PARSING ERROR", KDPointMake(10,10));
       }
+    } else if (character == LEFT_ARROW_KEY) {
+      index--;
+      if (index < 0) {
+        index = 0;
+      }
+    } else if (character == RIGHT_ARROW_KEY) {
+        if (index < max) {
+          index++;
+        }
     } else {
       if (index == 0) {
         KDRect r;
@@ -110,7 +111,10 @@ void interactive_expression_parsing() {
         KDFillRect(r, 0x00);
       }
       input[index++] = character;
-      input[index] = 0;
+      // We are at the end of the line.
+      if (index == max) {
+        input[max++] = 0;
+      }
       KDDrawString(input, KDPointZero);
     }
   }

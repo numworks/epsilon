@@ -7,11 +7,11 @@
 static const char* kCharForKey[KEYBOARD_ROWS * KEYBOARD_COLUMNS] = {
   "A", "B", "C", "D", "E",
   "F", "G", "H", "I", "J",
-  "K", "L", "M", "N", "O",
+  "K", "L", "M", "LEFT", "RIGHT",
   "7", "8", "9", "(", ")",
   "4", "5", "6", "*", "/",
   "1", "2", "3", "+", "-",
-  "0", ".", "x", "7", "X"
+  "0", ".", "x", "^", "="
 };
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {

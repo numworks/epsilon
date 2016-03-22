@@ -19,8 +19,11 @@ objs += $(addprefix poincare/src/layout/,\
 				exponent_layout.o\
 				string_layout.o)
 tests += $(addprefix poincare/test/,\
+				 addition.cpp\
+				 fraction.cpp\
 				 integer.cpp\
-				 product.cpp)
+				 product.cpp\
+				 subtraction.cpp)
 
 # Even though flex and bison will generate both implementation and headers at
 # once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may

@@ -37,7 +37,7 @@ QUIZ_CASE(poincare_integer_subtract) {
 
 QUIZ_CASE(poincare_integer_multiply) {
   assert(Integer(12) * Integer(34) == Integer(408));
-  //assert(Integer(56) * Integer(0) == Integer(0));
+  assert(Integer(56) * Integer(0) == Integer(0));
   assert(Integer(-12) * Integer(34) == Integer(-408));
   assert(Integer(-12) * Integer(-34) == Integer(408));
   assert(Integer(999999) * Integer(999999) == Integer("999998000001"));

@@ -36,6 +36,7 @@ default: app.elf
 endif
 run: app_run
 
+.PHONY: info
 info:
 	@echo "========= BUILD SETTINGS ======"
 	@echo "DEBUG = $(DEBUG)"
@@ -50,7 +51,6 @@ info:
 	@echo "==============================="
 
 ifeq ($(USE_LIBA),0)
-#LDFLAGS += -lc -lc++ -lcrt1.o
 else
 SFLAGS += -ffreestanding -nostdinc -nostdlib
 include liba/Makefile

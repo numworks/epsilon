@@ -3,10 +3,10 @@
 
 #include <poincare/expression.h>
 
-class Substraction : public Expression {
+class Subtraction : public Expression {
   public:
-    Substraction(Expression * first_operand, Expression * second_operand);
-    ~Substraction();
+    Subtraction(Expression * first_operand, Expression * second_operand);
+    ~Subtraction();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
   private:

@@ -80,7 +80,7 @@ exp:
   INTEGER            { $$ = new Integer($1);     }
   | SYMBOL           { $$ = new Symbol($1);    }
   | exp PLUS exp     { $$ = new Addition($1,$3); }
-  | exp MINUS exp    { $$ = new Substraction($1,$3); }
+  | exp MINUS exp    { $$ = new Subtraction($1,$3); }
   | exp MULTIPLY exp { $$ = new Product($1,$3);  }
   | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
   | exp POW exp      { $$ = new Power($1,$3); }

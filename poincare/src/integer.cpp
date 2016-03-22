@@ -97,8 +97,8 @@ Integer::~Integer() {
 // Private methods
 
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
-  m_numberOfDigits(numberOfDigits),
   m_digits(digits),
+  m_numberOfDigits(numberOfDigits),
   m_negative(negative) {
 }
 

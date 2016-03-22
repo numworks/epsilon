@@ -20,11 +20,10 @@ void KDDrawInverseChar(char character, KDPoint p) {
 }
 
 void KDDrawString(const char * text, KDPoint p) {
-  char * charPointer = text;
   KDPoint position = p;
-  while(*charPointer != 0) {
-    KDDrawChar(*charPointer, position);
-    charPointer++;
+  while(*text != 0) {
+    KDDrawChar(*text, position);
+    text++;
     position.x += BITMAP_FONT_CHARACTER_WIDTH;
   }
 }

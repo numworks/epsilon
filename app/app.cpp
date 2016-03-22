@@ -13,7 +13,6 @@ void draw_lines_from_center() {
   KDColor c = 0xFF;
 
   KDPoint center = KDPointMake(width/2, height/2);
-  int delay = 100000;
   int step = 2;
 
   for (KDCoordinate x=0; x<width; x+=step) {
@@ -55,13 +54,13 @@ void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
 }
 
 void funnyPlot() {
-  Expression * e = Expression::parse("1/x");
+  Expression * e = Expression::parse((char *)"1/x");
   plot(e, 1.0f, 4.0f, 0.0f, 1.0f);
   delete e;
 }
 
 void parseInlineExpression() {
-  char * expression = "1+2/3+4/5+6";
+  char * expression = (char*) "1+2/3+4/5+6";
   Expression * e = Expression::parse(expression);
   ExpressionLayout * l = e->createLayout(nullptr);
   l->draw(KDPointMake(0,100));
@@ -96,6 +95,9 @@ void interactive_expression_parsing() {
       index--;
       if (index < 0) {
         index = 0;
+      }
+      for(int i(0); i<(1<<30); i++) {
+        asm("nop");
       }
     } else if (character == RIGHT_ARROW_KEY) {
         if (index < max) {

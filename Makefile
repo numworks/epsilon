@@ -23,11 +23,9 @@ endif
 
 # Language-specific flags
 CFLAGS = -std=c99
-CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti #-fno-unwind-tables
+CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti
 
 products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
-
-#lib/private/mem5.o: CFLAGS += -w
 
 ifeq ($(VERBOSE),1)
 default: info clean app_size app_memory_map

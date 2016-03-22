@@ -1,4 +1,5 @@
 TOOLCHAIN=arm-none-eabi
+# FIXME decide which one to use.
 #COMPILER=llvm
 
 ifeq ($(COMPILER),llvm)

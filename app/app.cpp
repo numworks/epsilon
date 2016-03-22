@@ -96,9 +96,6 @@ void interactive_expression_parsing() {
       if (index < 0) {
         index = 0;
       }
-      for(int i(0); i<(1<<30); i++) {
-        asm("nop");
-      }
     } else if (character == RIGHT_ARROW_KEY) {
         if (index < max) {
           index++;

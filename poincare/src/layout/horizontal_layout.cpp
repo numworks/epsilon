@@ -5,15 +5,11 @@ extern "C" {
 #include "horizontal_layout.h"
 #include "string_layout.h"
 
-static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
-  return (a > b ? a : b);
-}
-
 HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression) :
 ExpressionLayout(parent ) {
   m_children[0] = left_expression->createLayout(this);
 
-  char string[2] = {symbol, NULL};
+  char string[2] = {symbol, '\0'};
   m_children[1] = new StringLayout(this, string, 1);
 
   m_children[2] = right_expression->createLayout(this);

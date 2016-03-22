@@ -10,7 +10,7 @@ endif
 SFLAGS += -Ilib -I.
 
 # Flags - Building options
-SFLAGS += -Wall
+SFLAGS += -Wall -Werror
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)

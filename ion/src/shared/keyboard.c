@@ -1,7 +1,7 @@
 #include <ion.h>
 #include <string.h>
 
-char charForKey[ION_NUMBER_OF_KEYS] = {
+static const char charForKey[ION_NUMBER_OF_KEYS] = {
   'A', 'B', 'C', 'D', 'E',
   'F', 'G', 'H', 'I', 'J',
   'K', 'L', 'M', 'N', 'O',

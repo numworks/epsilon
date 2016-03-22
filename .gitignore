@@ -12,3 +12,6 @@ poincare/src/expression_parser.hpp
 kandinsky/fonts/rasterizer
 kandinsky/src/font.c
 kandinsky/src/font.h
+
+# Quiz output
+quiz/src/symbols.c

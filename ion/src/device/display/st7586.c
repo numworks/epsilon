@@ -32,8 +32,8 @@ typedef struct {
 static void perform_instruction(st7586_t * c, instruction_t instruction) {
   if (instruction.mode == DELAY_MODE) {
     // FIXME: Should sleep instruction->payload miliseconds
-    // FIXME: This can be optimized away by the compiler!
-    for (volatile int i = 0; i < 800*instruction.payload; i++) {
+    for (int i = 0; i < 800*instruction.payload; i++) {
+      __asm volatile("nop");
     }
   } else {
     c->data_command_pin_write(instruction.mode);

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void ion_set_pixel(uint8_t x, uint8_t y, uint8_t color);
+void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color);
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240

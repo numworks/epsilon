@@ -24,7 +24,6 @@ void init_platform() {
   int margin = 10;
   int screen_width = SCREEN_WIDTH;
   int screen_height = SCREEN_HEIGHT;
-  // keyboard_width == screen_width
   int keyboard_height = screen_width;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
@@ -35,10 +34,10 @@ void init_platform() {
   sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
   window->end();
-  window->show(NULL, NULL);
+  window->show(0, NULL);
 }
 
-void ion_set_pixel(uint8_t x, uint8_t y, uint8_t color) {
+void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
   assert(x <= SCREEN_WIDTH);
   assert(y <= SCREEN_HEIGHT);
   char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*SCREEN_WIDTH)+x);

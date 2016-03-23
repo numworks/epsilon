@@ -6,6 +6,10 @@ Addition::Addition(Expression * first_operand, Expression * second_operand) {
   m_right = second_operand;
 }
 
+expression_type_t Addition::type() {
+  return Addition::Type;
+}
+
 Addition::~Addition() {
   delete m_left;
   delete m_right;

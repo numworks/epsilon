@@ -20,11 +20,15 @@ objs += $(addprefix poincare/src/layout/,\
   exponent_layout.o\
   string_layout.o\
 )
+objs += $(addprefix poincare/src/simplify/,\
+  simplifier_zero.o\
+)
 tests += $(addprefix poincare/test/,\
   addition.cpp\
   fraction.cpp\
   integer.cpp\
   product.cpp\
+  simplify.cpp\
   subtraction.cpp\
 )
 

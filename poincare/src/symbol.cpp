@@ -18,6 +18,10 @@ float Symbol::approximate(Context& context) {
   return context[m_name]->approximate(context);
 }
 
+expression_type_t Symbol::type() {
+  return Symbol::Type;
+}
+
 ExpressionLayout * Symbol::createLayout(ExpressionLayout * parent) {
   size_t length = strlen(m_name);
   return new StringLayout(parent, m_name, length);

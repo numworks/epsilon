@@ -5,6 +5,7 @@
 #include <kandinsky.h>
 
 class Context;
+typedef uint8_t expression_type_t;
 
 class Expression {
   public:
@@ -19,7 +20,9 @@ class Expression {
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-
      * cal to 5+3. Those are equal, but not identical. */
     //virtual bool identicalTo(Expression * e);
-    //virtual Expression * simplify();
+    Expression * simplify();
+
+    virtual expression_type_t type() = 0;
 
     virtual float approximate(Context& context) = 0;
   /*private:

@@ -10,10 +10,12 @@ typedef uint64_t double_native_uint_t;
 
 class Integer : public Expression {
   public:
-    // TODO static const Integer Zero;
+    static const expression_type_t Type = 0x01;
     Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor
     Integer(const char * string); // NULL-terminated
+    expression_type_t type() override;
+
     ~Integer();
 
     Integer& operator=(Integer&& other); // C++11 move assignment operator
@@ -30,8 +32,8 @@ class Integer : public Expression {
     /*virtual Expression ** children();
     virtual bool identicalTo(Expression * e);
     */
-    virtual ExpressionLayout * createLayout(ExpressionLayout * parent);
-    virtual float approximate(Context& context);
+    virtual ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    virtual float approximate(Context& context) override;
   private:
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1
     Integer usum(const Integer &other, bool subtract, bool output_negative) const;

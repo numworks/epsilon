@@ -305,6 +305,10 @@ float Integer::approximate(Context& context) {
   return float_result;
 }
 
+expression_type_t Integer::type() {
+  return Integer::Type;
+}
+
 ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
   char buffer[255];
 

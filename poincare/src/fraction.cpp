@@ -20,3 +20,8 @@ float Fraction::approximate(Context& context) {
   // TODO: handle division by zero
   return m_numerator->approximate(context)/m_denominator->approximate(context);
 }
+
+expression_type_t Fraction::type() {
+  return Fraction::Type;
+}
+

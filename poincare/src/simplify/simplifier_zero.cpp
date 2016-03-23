@@ -7,8 +7,8 @@ Expression * SimplifierZero(Expression * e) {
     return nullptr;
   }
   Product * p = (Product *)e;
-  for (int i=0; i<2; i++) {
-    Expression * factor = p->m_children[i];
+  for (int i=0; i<p->numberOfFactors(); i++) {
+    Expression * factor = p->factor(i);
     if (factor->type() == Integer::Type) {
       Integer * integer = (Integer *)factor;
       if (*integer == Integer((native_int_t)0)) {

@@ -11,8 +11,12 @@ class Product : public Expression {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
     expression_type_t type() override;
-  //private:
-    Expression * m_children[2];
+
+    Expression * factor(int i);
+    int numberOfFactors();
+  private:
+    int m_numberOfFactors;
+    Expression ** m_factors;
 };
 
 #endif

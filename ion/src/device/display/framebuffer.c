@@ -12,7 +12,7 @@
  * those pixels and have to resort to two pixels per byte using the following
  * format : AAxBBxxx, where AA and BB are the bits for two contiguous pixels. */
 
-void ion_set_pixel(uint8_t x, uint8_t y, uint8_t color) {
+void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
   assert(x <= FRAMEBUFFER_WIDTH);
   assert(y <= FRAMEBUFFER_HEIGHT);
 

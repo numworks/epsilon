@@ -1,6 +1,7 @@
 #ifndef ION_ION_H
 #define ION_ION_H
 
+#include <ion/events.h>
 #include <ion/framebuffer.h>
 #include <ion/keyboard.h>
 

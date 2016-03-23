@@ -1,1 +1,2 @@
-objs += $(addprefix ion/src/shared/, keyboard.o)
+objs += $(addprefix ion/src/shared/,\
+			 	events.o)

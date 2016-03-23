@@ -1,29 +1,32 @@
 SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
-				addition.o\
-				context.o\
-				expression.o\
-				float.o\
-				integer.o\
-				fraction.o\
-				expression_lexer.o\
-				expression_parser.o\
-				subtraction.o\
-				power.o\
-				product.o\
-				symbol.o)
+  addition.o\
+  context.o\
+  expression.o\
+  float.o\
+  integer.o\
+  fraction.o\
+  expression_lexer.o\
+  expression_parser.o\
+  subtraction.o\
+  power.o\
+  product.o\
+  symbol.o\
+)
 objs += $(addprefix poincare/src/layout/,\
-				expression_layout.o\
-				fraction_layout.o\
-				horizontal_layout.o\
-				exponent_layout.o\
-				string_layout.o)
+  expression_layout.o\
+  fraction_layout.o\
+  horizontal_layout.o\
+  exponent_layout.o\
+  string_layout.o\
+)
 tests += $(addprefix poincare/test/,\
-				 addition.cpp\
-				 fraction.cpp\
-				 integer.cpp\
-				 product.cpp\
-				 subtraction.cpp)
+  addition.cpp\
+  fraction.cpp\
+  integer.cpp\
+  product.cpp\
+  subtraction.cpp\
+)
 
 # Even though flex and bison will generate both implementation and headers at
 # once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may

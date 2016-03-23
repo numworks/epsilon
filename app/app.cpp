@@ -6,6 +6,8 @@ extern "C" {
 
 #include <poincare.h>
 
+#include "text_input.h"
+
 void draw_lines_from_center() {
   KDCoordinate width = SCREEN_WIDTH;
   KDCoordinate height = SCREEN_HEIGHT;
@@ -41,7 +43,6 @@ void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
   for (KDCoordinate i=0;i<screenWidth; i++) {
     float x = xMin + (xMax-xMin)/screenWidth*i;
     Float xExp = Float(x);
-    //plotContext["x"] = xExp;
     plotContext.setExpressionForSymbolName(&xExp, "x");
     float y = e->approximate(plotContext);
     KDCoordinate j = ((y-yMin)/(yMax-yMin)*screenHeight);
@@ -59,79 +60,38 @@ void funnyPlot() {
   delete e;
 }
 
-void parseInlineExpression() {
-  char * expression = (char*) "1+2/3+4/5+6";
-  Expression * e = Expression::parse(expression);
-  ExpressionLayout * l = e->createLayout(nullptr);
-  l->draw(KDPointMake(0,100));
-  delete l;
-  delete e;
+static void clear_screen() {
+  KDRect r;
+  r.x = 0;
+  r.y = 0;
+  r.width = SCREEN_WIDTH;
+  r.height = SCREEN_HEIGHT;
+  KDFillRect(r, 0x00);
 }
 
-void interactive_expression_parsing() {
-  char input[255];
-  int index = 0;
-  int max = 1;
 
+static void interactive_expression_parsing() {
   while (1) {
-    char character = ion_getchar();
-    if (character == '=') {
-      input[index] = 0;
-      index = 0;
-      max = index+1;
-      Expression * e = Expression::parse(input);
-      if (e) {
-        ExpressionLayout * l = e->createLayout(nullptr);
-        if (l) {
-          l->draw(KDPointMake(0,100));
-          plot(e, 0.0f, 3.0f, 0.0f, 2.0f);
-          delete l;
-        }
-        delete e;
-      } else {
-        KDDrawString("PARSING ERROR", KDPointMake(10,10));
+    char * text_input = get_text();
+    clear_screen();
+    Expression * e = Expression::parse(text_input);
+    if (e) {
+      ExpressionLayout * l = e->createLayout(nullptr);
+      if (l) {
+        l->draw(KDPointMake(0,10));
+        delete l;
       }
-    } else if (character == LEFT_ARROW_KEY) {
-      index--;
-      if (index < 0) {
-        index = 0;
-      }
-    } else if (character == RIGHT_ARROW_KEY) {
-        if (index < max) {
-          index++;
-        }
+      delete e;
     } else {
-      if (index == 0) {
-        KDRect r;
-        r.x = 0;
-        r.y = 0;
-        r.width = SCREEN_WIDTH;
-        r.height = SCREEN_HEIGHT;
-        KDFillRect(r, 0x00);
-      }
-      input[index++] = character;
-      // We are at the end of the line.
-      if (index == max) {
-        input[max++] = ' ';
-        input[max+1] = 0;
-      }
+      KDDrawString("PARSING ERROR", KDPointMake(10,10));
     }
-    // Here we draw the input and inverse the pixels under the cursor.
-    // FIXME: hard coded value
-    KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - 30),
-        KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - 30), 0xff);
-    KDDrawString(input, KDPointMake(0, SCREEN_HEIGHT - 15));
-    KDDrawInverseChar(input[index] ? input[index] : ' ',
-        KDPointMake(index*7, SCREEN_HEIGHT - 15));
+    // We dealocate the memory allocated by get_text;
+    free(text_input);
   }
 }
 
 void ion_app() {
-  KDDrawString("Hello, world!", KDPointMake(10,10));
   interactive_expression_parsing();
-  //parseInlineExpression();
-  //funnyPlot();
-  //interactive_expression_parsing();
   while (1) {
     ion_sleep();
   }

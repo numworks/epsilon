@@ -62,7 +62,7 @@ bool ion_key_down(ion_key_t key) {
     GPIO_ODR(GPIOA) = new_odr;
     // We changed the outputs, give the hardware some time to react to this change
     // FIXME: Real delay!
-    for (int i=0;i<1000; i++) {
+    for (volatile int i=0;i<1000; i++) {
     }
   }
 

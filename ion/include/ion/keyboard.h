@@ -49,13 +49,6 @@ typedef enum {
 
 #define ION_NUMBER_OF_KEYS 35
 
-#define LEFT_ARROW_KEY '@'
-#define RIGHT_ARROW_KEY '?'
-
-// FIXME: Which state is "true"?
 bool ion_key_down(ion_key_t key);
-
-// This is our keymap
-char ion_getchar();
 
 #endif

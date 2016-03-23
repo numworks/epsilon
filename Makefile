@@ -6,6 +6,8 @@ ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
 endif
 
+HOSTCC = gcc
+
 # Flags - Header search path
 SFLAGS += -Ilib -I.
 

@@ -35,7 +35,7 @@ kandinsky/src/font.c: kandinsky/fonts/rasterizer
 
 kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c
 	@echo "HOSTCC  $@"
-	gcc $(RASTERIZER_CFLAGS) $< $(RASTERIZER_LDFLAGS) -o $@
+	@$(HOSTCC) $(RASTERIZER_CFLAGS) $< $(RASTERIZER_LDFLAGS) -o $@
 
 products += $(font_files) kandinsky/fonts/rasterizer
 

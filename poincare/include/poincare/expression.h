@@ -5,10 +5,19 @@
 #include <kandinsky.h>
 
 class Context;
-typedef uint8_t expression_type_t;
 
 class Expression {
   public:
+    enum class Type : uint8_t {
+      Addition,
+      Float,
+      Fraction,
+      Integer,
+      Power,
+      Product,
+      Subtraction,
+      Symbol
+    };
     static Expression * parse(char * string);
     virtual ~Expression();
 
@@ -22,7 +31,7 @@ class Expression {
     //virtual bool identicalTo(Expression * e);
     Expression * simplify();
 
-    virtual expression_type_t type() = 0;
+    virtual Type type() = 0;
 
     virtual float approximate(Context& context) = 0;
   /*private:

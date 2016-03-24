@@ -15,10 +15,9 @@ float Subtraction::approximate(Context& context) {
   return m_left->approximate(context) - m_right->approximate(context);
 }
 
-expression_type_t Subtraction::type() {
-  return Subtraction::Type;
+Expression::Type Subtraction::type() {
+  return Expression::Type::Subtraction;
 }
-
 
 ExpressionLayout * Subtraction::createLayout(ExpressionLayout * parent) {
   return new HorizontalLayout(parent, m_left, '-', m_right);

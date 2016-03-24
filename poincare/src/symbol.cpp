@@ -18,8 +18,8 @@ float Symbol::approximate(Context& context) {
   return context[m_name]->approximate(context);
 }
 
-expression_type_t Symbol::type() {
-  return Symbol::Type;
+Expression::Type Symbol::type() {
+  return Expression::Type::Symbol;
 }
 
 ExpressionLayout * Symbol::createLayout(ExpressionLayout * parent) {

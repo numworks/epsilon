@@ -21,7 +21,6 @@ float Fraction::approximate(Context& context) {
   return m_numerator->approximate(context)/m_denominator->approximate(context);
 }
 
-expression_type_t Fraction::type() {
-  return Fraction::Type;
+Expression::Type Fraction::type() {
+  return Expression::Type::Fraction;
 }
-

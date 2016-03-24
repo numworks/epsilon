@@ -305,8 +305,8 @@ float Integer::approximate(Context& context) {
   return float_result;
 }
 
-expression_type_t Integer::type() {
-  return Integer::Type;
+Expression::Type Integer::type() {
+  return Expression::Type::Integer;
 }
 
 ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {

@@ -4,9 +4,8 @@
 
 QUIZ_CASE(poincare_fraction_approximate) {
   Context context;
-  // Note: these have to be heap allocated.
-  Integer *a = new Integer(1);
-  Integer *b = new Integer(2);
-  assert(Fraction(a, b).approximate(context) == 0.5f);
+  Expression * f = Expression::parse("1/2");
+  assert(f->approximate(context) == 0.5f);
+  delete f;
 }
 

@@ -9,6 +9,7 @@ CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfO
   m_numberOfOperands = numberOfOperands;
   m_operands = (Expression **)malloc(numberOfOperands*sizeof(Expression *));
   for (int i=0; i<numberOfOperands; i++) {
+    assert(operands[i] != nullptr);
     if (cloneOperands) {
       m_operands[i] = operands[i]->clone();
     } else {

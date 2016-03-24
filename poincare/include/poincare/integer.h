@@ -33,7 +33,7 @@ class Integer : public LeafExpression {
     */
     Expression * clone() override;
     virtual ExpressionLayout * createLayout(ExpressionLayout * parent) override;
-    virtual float approximate(Context& context) override;
+    float approximate(Context& context) override;
   private:
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1
     Integer usum(const Integer &other, bool subtract, bool output_negative) const;

@@ -21,9 +21,9 @@ class Expression {
     static Expression * parse(char const * string);
     virtual ~Expression();
 
-    //virtual Expression ** children() = 0; // NULL-terminated
-
     virtual ExpressionLayout * createLayout(ExpressionLayout * parent) = 0; // Returned object must be deleted
+    virtual Expression * operand(int i) = 0;
+    virtual int numberOfOperands() = 0;
     virtual Expression * clone() = 0;
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 

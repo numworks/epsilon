@@ -7,8 +7,8 @@ class CommutativeOperation : public Expression {
   public:
     CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
     ~CommutativeOperation();
-    Expression * operand(int i);
-    int numberOfOperands();
+    Expression * operand(int i) override;
+    int numberOfOperands() override;
     float approximate(Context& context) override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) = 0;

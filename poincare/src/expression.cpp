@@ -43,3 +43,14 @@ Expression * Expression::simplify() {
   return result;
 }
 
+bool Expression::isIdenticalTo(Expression * e) {
+  if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {
+    return false;
+  }
+  for (int i=0; i<this->numberOfOperands(); i++) {
+    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
+      return false;
+    }
+  }
+  return true;
+}

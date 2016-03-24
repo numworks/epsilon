@@ -29,7 +29,7 @@ class Expression {
 
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-
      * cal to 5+3. Those are equal, but not identical. */
-    //virtual bool identicalTo(Expression * e);
+    bool isIdenticalTo(Expression * e);
     Expression * simplify();
 
     virtual Type type() = 0;

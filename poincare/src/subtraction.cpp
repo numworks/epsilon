@@ -11,6 +11,10 @@ Subtraction::~Subtraction() {
   delete m_right;
 }
 
+Expression * Subtraction::clone() {
+  return new Subtraction(m_left->clone(), m_right->clone());
+}
+
 float Subtraction::approximate(Context& context) {
   return m_left->approximate(context) - m_right->approximate(context);
 }

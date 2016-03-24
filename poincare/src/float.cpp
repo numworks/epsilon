@@ -7,6 +7,10 @@ Float::Float(float f) : m_float(f) {
 Float::~Float() {
 }
 
+Expression * Float::clone() {
+  return new Float(m_float);
+}
+
 float Float::approximate(Context& context) {
   return m_float;
 }

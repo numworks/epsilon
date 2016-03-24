@@ -4,6 +4,10 @@ extern "C" {
 #include <stdlib.h>
 }
 
+Expression * Product::clone() {
+  return new Product(m_operands, m_numberOfOperands, true);
+}
+
 float Product::operateApproximatevelyOn(float a, float b) {
   return a*b;
 }

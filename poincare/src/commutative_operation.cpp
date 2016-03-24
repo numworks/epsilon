@@ -1,14 +1,16 @@
 #include <poincare/commutative_operation.h>
 extern "C" {
+#include <assert.h>
 #include <stdlib.h>
 }
 
 CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands) {
+  assert(numberOfOperands >= 2);
   m_numberOfOperands = numberOfOperands;
   m_operands = (Expression **)malloc(numberOfOperands*sizeof(Expression *));
   for (int i=0; i<numberOfOperands; i++) {
     if (cloneOperands) {
-      m_operands[i] = operands[i]; //FIXME: Do the cloning!
+      m_operands[i] = operands[i]->clone();
     } else {
       m_operands[i] = operands[i];
     }

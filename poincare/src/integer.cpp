@@ -258,9 +258,20 @@ m_remainder(Integer((native_int_t)0)) {
   }
 }
 
-
 Integer Integer::operator/(const Integer &other) const {
   return Division(*this, other).m_quotient;
+}
+
+Expression * Integer::clone() {
+  Integer * clone = new Integer((native_int_t)0);
+  clone->m_numberOfDigits = m_numberOfDigits;
+  clone->m_negative = m_negative;
+  free(clone->m_digits);
+  clone->m_digits = (native_uint_t *)malloc(m_numberOfDigits*sizeof(native_uint_t));
+  for (int i=0;i<m_numberOfDigits; i++) {
+    clone->m_digits[i] = m_digits[i];
+  }
+  return clone;
 }
 
 float Integer::approximate(Context& context) {

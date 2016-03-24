@@ -10,6 +10,7 @@ class Power : public Expression {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
     Type type() override;
+    Expression * clone() override;
   private:
     Expression * m_base;
     Expression * m_exponent;

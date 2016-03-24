@@ -24,6 +24,7 @@ class Expression {
     //virtual Expression ** children() = 0; // NULL-terminated
 
     virtual ExpressionLayout * createLayout(ExpressionLayout * parent) = 0; // Returned object must be deleted
+    virtual Expression * clone() = 0;
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-

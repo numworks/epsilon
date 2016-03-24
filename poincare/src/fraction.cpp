@@ -12,6 +12,10 @@ Fraction::~Fraction() {
   delete m_numerator;
 }
 
+Expression * Fraction::clone() {
+  return new Fraction(m_numerator->clone(), m_denominator->clone());
+}
+
 ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
   return new FractionLayout(parent, m_numerator, m_denominator);
 }

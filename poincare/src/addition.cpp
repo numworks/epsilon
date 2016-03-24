@@ -5,6 +5,10 @@ Expression::Type Addition::type() {
   return Expression::Type::Addition;
 }
 
+Expression * Addition::clone() {
+  return new Addition(m_operands, m_numberOfOperands, true);
+}
+
 float Addition::operateApproximatevelyOn(float a, float b) {
   return a + b;
 }

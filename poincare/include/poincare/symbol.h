@@ -10,6 +10,7 @@ class Symbol : public Expression {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
     Type type() override;
+    Expression * clone() override;
   private:
     char * m_name;
 };

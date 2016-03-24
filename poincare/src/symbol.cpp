@@ -26,3 +26,8 @@ ExpressionLayout * Symbol::createLayout(ExpressionLayout * parent) {
   size_t length = strlen(m_name);
   return new StringLayout(parent, m_name, length);
 }
+
+Expression * Symbol::clone() {
+  return new Symbol(m_name);
+}
+

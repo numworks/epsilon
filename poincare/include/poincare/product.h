@@ -9,6 +9,7 @@ class Product : public CommutativeOperation {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     Type type() override;
     float operateApproximatevelyOn(float a, float b) override;
+    Expression * clone() override;
 };
 
 #endif

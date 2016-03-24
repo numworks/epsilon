@@ -12,6 +12,10 @@ Power::~Power() {
   delete m_base;
 }
 
+Expression * Power::clone() {
+  return new Power(m_base->clone(), m_exponent->clone());
+}
+
 float Power::approximate(Context& context) {
   return powf(m_base->approximate(context), m_exponent->approximate(context));
 }

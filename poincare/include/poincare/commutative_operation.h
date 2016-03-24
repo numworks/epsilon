@@ -12,7 +12,6 @@ class CommutativeOperation : public Expression {
     float approximate(Context& context) override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) = 0;
-  private:
     int m_numberOfOperands;
     Expression ** m_operands;
 };

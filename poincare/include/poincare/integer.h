@@ -31,6 +31,7 @@ class Integer : public Expression {
     /*virtual Expression ** children();
     virtual bool identicalTo(Expression * e);
     */
+    Expression * clone() override;
     virtual ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     virtual float approximate(Context& context) override;
   private:

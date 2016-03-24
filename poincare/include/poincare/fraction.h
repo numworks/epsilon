@@ -10,6 +10,7 @@ class Fraction : public Expression {
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
     Type type() override;
+    Expression * clone() override;
   private:
     Expression * m_numerator;
     Expression * m_denominator;

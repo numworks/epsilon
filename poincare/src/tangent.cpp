@@ -1,6 +1,10 @@
 #include <poincare/tangent.h>
 #include "layout/horizontal_layout.h"
 
+Expression * Tangent::clone() {
+  return new Tangent(m_arg, true);
+}
+
 Expression::Type Tangent::type() {
   return Expression::Type::Tangent;
 }

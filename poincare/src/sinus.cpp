@@ -1,6 +1,10 @@
 #include <poincare/sinus.h>
 #include "layout/horizontal_layout.h"
 
+Expression * Sinus::clone() {
+  return new Sinus(m_arg, true);
+}
+
 Expression::Type Sinus::type() {
   return Expression::Type::Sinus;
 }

@@ -5,9 +5,10 @@
 
 class Sinus : public Function {
   public:
-    Sinus(Expression * arg): Function(arg, (char*) "sin") {}
+    Sinus(Expression * arg, bool clone_arg=true): Function(arg, (char*) "sin", clone_arg) {}
     float approximate(Context& context) override;
     Type type() override;
+    Expression * clone() override;
 };
 
 #endif

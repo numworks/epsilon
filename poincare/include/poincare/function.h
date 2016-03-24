@@ -5,9 +5,11 @@
 
 class Function : public Expression {
   public:
-    Function(Expression * arg, char* function_name): m_arg(arg), m_function_name(function_name) {}
+    Function(Expression * arg, char* function_name, bool clone_operands=true);
     ~Function();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    Expression * operand(int i) override;
+    int numberOfOperands() override;
   protected:
     Expression * m_arg;
   private:

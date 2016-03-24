@@ -3,11 +3,16 @@ extern "C" {
 #include <stdlib.h>
 }
 
-CommutativeOperation::CommutativeOperation(Expression * first_operand, Expression * second_operand) {
-  m_numberOfOperands = 2;
-  m_operands = (Expression **)malloc(2*sizeof(Expression *));
-  m_operands[0] = first_operand;
-  m_operands[1] = second_operand;
+CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands) {
+  m_numberOfOperands = numberOfOperands;
+  m_operands = (Expression **)malloc(numberOfOperands*sizeof(Expression *));
+  for (int i=0; i<numberOfOperands; i++) {
+    if (cloneOperands) {
+      m_operands[i] = operands[i]; //FIXME: Do the cloning!
+    } else {
+      m_operands[i] = operands[i];
+    }
+  }
 }
 
 CommutativeOperation::~CommutativeOperation() {

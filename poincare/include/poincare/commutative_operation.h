@@ -5,7 +5,7 @@
 
 class CommutativeOperation : public Expression {
   public:
-    CommutativeOperation(Expression * first_operand, Expression * second_operand);
+    CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
     ~CommutativeOperation();
     Expression * operand(int i);
     int numberOfOperands();

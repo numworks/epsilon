@@ -17,14 +17,12 @@ static void clear_prompt() {
 }
 
 static void print_prompt(char* text, int index) {
-  // Here we draw the input and inverse the pixels under the cursor.
-  // FIXME: hard coded value
+  char* tmp = (char*) " ";
+  KDSize font_size = KDStringSize(tmp);
   KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - PROMPT_HEIGHT),
-      KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - PROMPT_HEIGHT), 0xff);
+             KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - PROMPT_HEIGHT), 0xff);
   KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)));
-  // The hardcoded 7 is the width of the font.
-  KDDrawInverseChar(text[index],
-      KDPointMake(index*7, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)));
+  KDDrawInverseChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)));
 }
 
 char* get_text() {

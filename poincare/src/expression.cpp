@@ -14,7 +14,7 @@ int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput
 Expression::~Expression() {
 }
 
-Expression * Expression::parse(char * string) {
+Expression * Expression::parse(char const * string) {
   void * scanner;
   poincare_expression_yylex_init(&scanner);
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string, scanner);

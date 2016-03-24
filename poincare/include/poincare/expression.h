@@ -18,7 +18,7 @@ class Expression {
       Subtraction,
       Symbol
     };
-    static Expression * parse(char * string);
+    static Expression * parse(char const * string);
     virtual ~Expression();
 
     //virtual Expression ** children() = 0; // NULL-terminated

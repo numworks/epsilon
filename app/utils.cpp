@@ -7,6 +7,15 @@ extern "C" {
 
 #define PROMPT_HEIGHT 30
 
+void clear_screen() {
+  KDRect r;
+  r.x = 0;
+  r.y = 0;
+  r.width = SCREEN_WIDTH;
+  r.height = SCREEN_HEIGHT;
+  KDFillRect(r, 0x00);
+}
+
 static void clear_prompt() {
   KDRect r;
   r.x = 0;

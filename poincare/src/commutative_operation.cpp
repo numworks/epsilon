@@ -30,6 +30,7 @@ int CommutativeOperation::numberOfOperands() {
 }
 
 Expression * CommutativeOperation::operand(int i) {
+  assert(i < m_numberOfOperands);
   return m_operands[i];
 }
 

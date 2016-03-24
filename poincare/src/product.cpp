@@ -17,6 +17,5 @@ Expression::Type Product::type() {
 }
 
 ExpressionLayout * Product::createLayout(ExpressionLayout * parent) {
-  //FIXME: There can be more than two factors now! :-)
-  return new HorizontalLayout(parent, operand(0), '*', operand(1));
+  return new HorizontalLayout(parent, m_operands, m_numberOfOperands, '*');
 }

@@ -1,5 +1,5 @@
-#ifndef POINCARE_SIMPLIFIER_H
-#define POINCARE_SIMPLIFIER_H
+#ifndef POINCARE_SIMPLIFY_H
+#define POINCARE_SIMPLIFY_H
 
 #include <poincare/expression.h>
 

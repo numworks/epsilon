@@ -1,9 +1,9 @@
 #ifndef POINCARE_FLOAT_H
 #define POINCARE_FLOAT_H
 
-#include <poincare/expression.h>
+#include <poincare/leaf_expression.h>
 
-class Float : public Expression {
+class Float : public LeafExpression {
   public:
     Float(float f);
     ~Float();

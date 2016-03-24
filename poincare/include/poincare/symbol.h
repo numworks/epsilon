@@ -1,9 +1,9 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/expression.h>
+#include <poincare/leaf_expression.h>
 
-class Symbol : public Expression {
+class Symbol : public LeafExpression {
   public:
     Symbol(char * name);
     ~Symbol();

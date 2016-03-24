@@ -1,14 +1,14 @@
 #ifndef POINCARE_INTEGER_H
 #define POINCARE_INTEGER_H
 
-#include <poincare/expression.h>
+#include <poincare/leaf_expression.h>
 #include <stdint.h>
 
 typedef int32_t native_int_t;
 typedef uint32_t native_uint_t;
 typedef uint64_t double_native_uint_t;
 
-class Integer : public Expression {
+class Integer : public LeafExpression {
   public:
     Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor

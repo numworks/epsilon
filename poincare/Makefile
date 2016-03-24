@@ -1,17 +1,19 @@
 SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   addition.o\
+  binary_operation.o\
   commutative_operation.o\
   context.o\
   expression.o\
-  float.o\
-  integer.o\
-  fraction.o\
   expression_lexer.o\
   expression_parser.o\
-  subtraction.o\
+  float.o\
+  fraction.o\
+  integer.o\
+  leaf_expression.o\
   power.o\
   product.o\
+  subtraction.o\
   symbol.o\
 )
 objs += $(addprefix poincare/src/layout/,\
@@ -31,6 +33,7 @@ tests += $(addprefix poincare/test/,\
   integer.cpp\
   product.cpp\
   simplify.cpp\
+  simplify_addition_integer.cpp\
   subtraction.cpp\
 )
 

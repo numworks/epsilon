@@ -10,13 +10,16 @@ class Expression {
   public:
     enum class Type : uint8_t {
       Addition,
+      Cosinus,
       Float,
       Fraction,
       Integer,
       Power,
       Product,
+      Sinus,
       Subtraction,
-      Symbol
+      Symbol,
+      Tangent,
     };
     static Expression * parse(char const * string);
     virtual ~Expression();

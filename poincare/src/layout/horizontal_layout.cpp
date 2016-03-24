@@ -6,7 +6,7 @@ extern "C" {
 #include "string_layout.h"
 
 HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression) :
-ExpressionLayout(parent ) {
+ExpressionLayout(parent) {
   m_children[0] = left_expression->createLayout(this);
 
   char string[2] = {symbol, '\0'};

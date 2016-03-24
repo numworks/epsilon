@@ -10,13 +10,13 @@ class Expression {
   public:
     enum class Type : uint8_t {
       Addition,
-      Cosinus,
+      Cosine,
       Float,
       Fraction,
       Integer,
       Power,
       Product,
-      Sinus,
+      Sine,
       Subtraction,
       Symbol,
       Tangent,

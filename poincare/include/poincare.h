@@ -3,7 +3,7 @@
 
 #include <poincare/addition.h>
 #include <poincare/context.h>
-#include <poincare/cosinus.h>
+#include <poincare/cosine.h>
 #include <poincare/expression.h>
 #include <poincare/float.h>
 #include <poincare/fraction.h>
@@ -11,7 +11,7 @@
 #include <poincare/integer.h>
 #include <poincare/power.h>
 #include <poincare/product.h>
-#include <poincare/sinus.h>
+#include <poincare/sine.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>

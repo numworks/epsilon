@@ -54,8 +54,8 @@ void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput,
 %token MULTIPLY
 %token DIVIDE
 %token POW
-%token SINUS
-%token COSINUS
+%token SINE
+%token COSINE
 %token TANGENT
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
@@ -88,8 +88,8 @@ exp:
   | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
   | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2; }
-  | SINUS LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Sinus($3); }
-  | COSINUS LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Cosinus($3); }
+  | SINE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Sine($3); }
+  | COSINE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Cosine($3); }
   | TANGENT LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Tangent($3); }
 ;
 

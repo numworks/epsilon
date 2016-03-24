@@ -33,8 +33,8 @@ Expression * Product::factor(int i) {
   return m_factors[i];
 }
 
-expression_type_t Product::type() {
-  return Product::Type;
+Expression::Type Product::type() {
+  return Expression::Type::Product;
 }
 
 ExpressionLayout * Product::createLayout(ExpressionLayout * parent) {

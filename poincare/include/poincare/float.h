@@ -5,13 +5,12 @@
 
 class Float : public Expression {
   public:
-    static const expression_type_t Type = 0x03;
     Float(float f);
     ~Float();
 
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
-    expression_type_t type() override;
+    Type type() override;
   private:
     float m_float;
 };

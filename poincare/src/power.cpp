@@ -16,10 +16,9 @@ float Power::approximate(Context& context) {
   return powf(m_base->approximate(context), m_exponent->approximate(context));
 }
 
-expression_type_t Power::type() {
-  return Power::Type;
+Expression::Type Power::type() {
+  return Expression::Type::Power;
 }
-
 
 ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {
   return new ExponentLayout(parent, m_base, m_exponent);

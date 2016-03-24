@@ -10,11 +10,10 @@ typedef uint64_t double_native_uint_t;
 
 class Integer : public Expression {
   public:
-    static const expression_type_t Type = 0x01;
     Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor
     Integer(const char * string); // NULL-terminated
-    expression_type_t type() override;
+    Type type() override;
 
     ~Integer();
 

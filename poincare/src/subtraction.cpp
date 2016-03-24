@@ -1,22 +1,12 @@
 #include <poincare/subtraction.h>
 #include "layout/horizontal_layout.h"
 
-Subtraction::Subtraction(Expression * first_operand, Expression * second_operand) {
-  m_left = first_operand;
-  m_right = second_operand;
-}
-
-Subtraction::~Subtraction() {
-  delete m_left;
-  delete m_right;
-}
-
 Expression * Subtraction::clone() {
-  return new Subtraction(m_left->clone(), m_right->clone());
+  return new Subtraction(m_operands, true);
 }
 
 float Subtraction::approximate(Context& context) {
-  return m_left->approximate(context) - m_right->approximate(context);
+  return m_operands[0]->approximate(context) - m_operands[1]->approximate(context);
 }
 
 Expression::Type Subtraction::type() {
@@ -24,5 +14,5 @@ Expression::Type Subtraction::type() {
 }
 
 ExpressionLayout * Subtraction::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_left, '-', m_right);
+  return new HorizontalLayout(parent, m_operands[0], '-', m_operands[1]);
 }

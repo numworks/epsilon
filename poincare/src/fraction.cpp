@@ -2,27 +2,17 @@
 #include <string.h>
 #include "layout/fraction_layout.h"
 
-Fraction::Fraction(Expression * numerator, Expression * denominator) :
-  m_numerator(numerator),
-  m_denominator(denominator) {
-}
-
-Fraction::~Fraction() {
-  delete m_denominator;
-  delete m_numerator;
-}
-
 Expression * Fraction::clone() {
-  return new Fraction(m_numerator->clone(), m_denominator->clone());
+  return new Fraction(m_operands, true);
 }
 
 ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
-  return new FractionLayout(parent, m_numerator, m_denominator);
+  return new FractionLayout(parent, m_operands[0], m_operands[1]);
 }
 
 float Fraction::approximate(Context& context) {
   // TODO: handle division by zero
-  return m_numerator->approximate(context)/m_denominator->approximate(context);
+  return m_operands[0]->approximate(context)/m_operands[1]->approximate(context);
 }
 
 Expression::Type Fraction::type() {

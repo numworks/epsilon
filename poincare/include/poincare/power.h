@@ -1,19 +1,15 @@
 #ifndef POINCARE_POWER_H
 #define POINCARE_POWER_H
 
-#include <poincare/expression.h>
+#include <poincare/binary_operation.h>
 
-class Power : public Expression {
+class Power : public BinaryOperation {
+  using BinaryOperation::BinaryOperation;
   public:
-    Power(Expression * base, Expression * exponent);
-    ~Power();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
     float approximate(Context& context) override;
     Type type() override;
     Expression * clone() override;
-  private:
-    Expression * m_base;
-    Expression * m_exponent;
 };
 
 #endif

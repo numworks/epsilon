@@ -2,22 +2,12 @@
 #include <math.h>
 #include "layout/exponent_layout.h"
 
-Power::Power(Expression * base, Expression * exponent) :
-  m_base(base),
-  m_exponent(exponent) {
-}
-
-Power::~Power() {
-  delete m_exponent;
-  delete m_base;
-}
-
 Expression * Power::clone() {
-  return new Power(m_base->clone(), m_exponent->clone());
+  return new Power(m_operands, true);
 }
 
 float Power::approximate(Context& context) {
-  return powf(m_base->approximate(context), m_exponent->approximate(context));
+  return powf(m_operands[0]->approximate(context), m_operands[1]->approximate(context));
 }
 
 Expression::Type Power::type() {
@@ -25,5 +15,5 @@ Expression::Type Power::type() {
 }
 
 ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {
-  return new ExponentLayout(parent, m_base, m_exponent);
+  return new ExponentLayout(parent, m_operands[0], m_operands[1]);
 }

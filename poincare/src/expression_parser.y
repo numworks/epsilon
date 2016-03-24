@@ -79,11 +79,11 @@ Root:
 exp:
   INTEGER            { $$ = new Integer($1);     }
   | SYMBOL           { $$ = new Symbol($1);    }
-  | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, 2, true); }
-  | exp MINUS exp    { $$ = new Subtraction($1,$3); }
-  | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Product(terms, 2, true);  }
-  | exp DIVIDE exp   { $$ = new Fraction($1,$3); }
-  | exp POW exp      { $$ = new Power($1,$3); }
+  | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, 2, false); }
+  | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }
+  | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Product(terms, 2, false);  }
+  | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
+  | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = $2; }
 ;
 

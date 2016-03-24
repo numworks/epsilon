@@ -3,9 +3,11 @@
 #include "expression_lexer.hpp"
 #include "simplify/simplify.h"
 #include "simplify/simplify_product_zero.h"
+#include "simplify/simplify_addition_integer.h"
 
 static expression_simplifier_t kSimplifiers[] = {
   &SimplifyProductZero,
+  &SimplifyAdditionInteger,
   nullptr
 };
 

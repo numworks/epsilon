@@ -1,5 +1,7 @@
 #include <poincare/float.h>
+extern "C" {
 #include <assert.h>
+}
 
 Float::Float(float f) : m_float(f) {
 }
@@ -22,4 +24,9 @@ Expression::Type Float::type() {
 ExpressionLayout * Float::createLayout(ExpressionLayout * parent) {
   assert(0); // Should not come here, ever...
   return nullptr;
+}
+
+bool Float::valueEquals(Expression * e) {
+  assert(e->type() == Expression::Type::Float);
+  return m_float == ((Float *)e)->m_float;
 }

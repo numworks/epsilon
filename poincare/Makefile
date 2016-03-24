@@ -25,6 +25,7 @@ objs += $(addprefix poincare/src/layout/,\
 )
 objs += $(addprefix poincare/src/simplify/,\
   simplify_addition_integer.o\
+  simplify_addition_merge.o\
   simplify_product_zero.o\
 )
 tests += $(addprefix poincare/test/,\

@@ -343,3 +343,8 @@ ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
 
   return new StringLayout(parent, buffer, size);
 }
+
+bool Integer::valueEquals(Expression * e) {
+  assert(e->type() == Expression::Type::Integer);
+  return (*this == *(Integer *)e); // FIXME: Remove operator overloading
+}

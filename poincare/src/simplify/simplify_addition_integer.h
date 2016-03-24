@@ -3,6 +3,8 @@
 
 #include "simplify.h"
 
+// 2+3 -> 5
+
 Expression * SimplifyAdditionInteger(Expression * e);
 
 #endif

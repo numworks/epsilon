@@ -11,6 +11,7 @@ class Symbol : public LeafExpression {
     float approximate(Context& context) override;
     Type type() override;
     Expression * clone() override;
+    bool valueEquals(Expression * e) override;
   private:
     char * m_name;
 };

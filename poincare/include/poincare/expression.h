@@ -30,6 +30,9 @@ class Expression {
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-
      * cal to 5+3. Those are equal, but not identical. */
     bool isIdenticalTo(Expression * e);
+    // Compare the value of two expressions.
+    // This only make sense if the two values are of the same type
+    virtual bool valueEquals(Expression * e);
     Expression * simplify();
 
     virtual Type type() = 0;

@@ -3,6 +3,8 @@
 
 #include "simplify.h"
 
+// a*b*c*0 -> 0
+
 Expression * SimplifyProductZero(Expression * e);
 
 #endif

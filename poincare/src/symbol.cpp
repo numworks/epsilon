@@ -2,6 +2,9 @@
 #include <poincare/context.h>
 #include <stdlib.h>
 #include "layout/string_layout.h"
+extern "C" {
+#include <assert.h>
+}
 
 Symbol::Symbol(char * name) {
   size_t length = strlen(name);
@@ -31,3 +34,7 @@ Expression * Symbol::clone() {
   return new Symbol(m_name);
 }
 
+bool Symbol::valueEquals(Expression * e) {
+  assert(e->type() == Expression::Type::Symbol);
+  return (strcmp(m_name, ((Symbol *)e)->m_name) == 0);
+}

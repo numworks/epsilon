@@ -28,6 +28,8 @@ class Integer : public LeafExpression {
     bool operator<(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
+    bool valueEquals(Expression * e) override;
+
     /*virtual Expression ** children();
     virtual bool identicalTo(Expression * e);
     */

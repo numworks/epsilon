@@ -4,10 +4,16 @@
 #include "simplify/simplify.h"
 #include "simplify/simplify_product_zero.h"
 #include "simplify/simplify_addition_integer.h"
+#include "simplify/simplify_addition_merge.h"
+extern "C" {
+#include <assert.h>
+}
+
 
 static expression_simplifier_t kSimplifiers[] = {
   &SimplifyProductZero,
   &SimplifyAdditionInteger,
+  &SimplifyAdditionMerge,
   nullptr
 };
 
@@ -30,18 +36,22 @@ Expression * Expression::parse(char const * string) {
 
 Expression * Expression::simplify() {
   Expression * result = this;
-  expression_simplifier_t * simplifier_pointer = kSimplifiers;
-  while (expression_simplifier_t simplifier = *simplifier_pointer) {
-    Expression * simplification = simplifier(result);
-    if (simplification != nullptr) {
-      if (result != this) {
-        delete result;
+  bool simplification_pass_was_useful = true;
+  while (simplification_pass_was_useful) {
+    simplification_pass_was_useful = false;
+    expression_simplifier_t * simplifier_pointer = kSimplifiers;
+    while (expression_simplifier_t simplifier = *simplifier_pointer) {
+      Expression * simplification = simplifier(result);
+      if (simplification != nullptr) {
+        simplification_pass_was_useful = true;
+        if (result != this) {
+          delete result;
+        }
+        result = simplification;
       }
-      result = simplification;
+      simplifier_pointer++;
     }
-    simplifier_pointer++;
   }
-
   return result;
 }
 
@@ -54,5 +64,13 @@ bool Expression::isIdenticalTo(Expression * e) {
       return false;
     }
   }
+  return e->valueEquals(this);
+}
+
+bool Expression::valueEquals(Expression * e) {
+  assert(this->type() == e->type());
+  /* This behavior makes sense for value-less nodes (addition, product, fraction
+   * power, etc… For nodes with a value (Integer, Float), this must be over-
+   * -riden. */
   return true;
 }

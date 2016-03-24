@@ -1,18 +1,14 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/expression.h>
+#include <poincare/commutative_operation.h>
 
-class Addition : public Expression {
+class Addition : public CommutativeOperation {
+  using CommutativeOperation::CommutativeOperation;
   public:
-    Addition(Expression * first_operand, Expression * second_operand);
-    ~Addition();
     ExpressionLayout * createLayout(ExpressionLayout * parent) override;
-    float approximate(Context& context) override;
     Type type() override;
-  private:
-    Expression * m_left;
-    Expression * m_right;
+    float operateApproximatevelyOn(float a, float b) override;
 };
 
 #endif

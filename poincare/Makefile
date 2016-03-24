@@ -1,6 +1,7 @@
 SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   addition.o\
+  commutative_operation.o\
   context.o\
   expression.o\
   float.o\

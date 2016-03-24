@@ -1,24 +1,15 @@
 #include <poincare/addition.h>
 #include "layout/horizontal_layout.h"
 
-Addition::Addition(Expression * first_operand, Expression * second_operand) {
-  m_left = first_operand;
-  m_right = second_operand;
-}
-
 Expression::Type Addition::type() {
   return Expression::Type::Addition;
 }
 
-Addition::~Addition() {
-  delete m_left;
-  delete m_right;
-}
-
-float Addition::approximate(Context& context) {
-  return m_left->approximate(context) + m_right->approximate(context);
+float Addition::operateApproximatevelyOn(float a, float b) {
+  return a + b;
 }
 
 ExpressionLayout * Addition::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_left, '+', m_right);
+  //FIXME: There can be more than two operands now! :-)
+  return new HorizontalLayout(parent, operand(0), '+', operand(1));
 }

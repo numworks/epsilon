@@ -1,8 +1,8 @@
-#include "simplifier_zero.h"
+#include "simplify_product_zero.h"
 #include <poincare/product.h>
 #include <poincare/integer.h>
 
-Expression * SimplifierZero(Expression * e) {
+Expression * SimplifyProductZero(Expression * e) {
   if (e->type() != Expression::Type::Product) {
     return nullptr;
   }

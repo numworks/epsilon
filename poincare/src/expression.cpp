@@ -1,11 +1,11 @@
 #include <poincare/expression.h>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
-#include "simplify/simplifier.h"
-#include "simplify/simplifier_zero.h"
+#include "simplify/simplify.h"
+#include "simplify/simplify_product_zero.h"
 
 static expression_simplifier_t kSimplifiers[] = {
-  &SimplifierZero,
+  &SimplifyProductZero,
   nullptr
 };
 

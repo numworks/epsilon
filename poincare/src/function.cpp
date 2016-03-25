@@ -22,7 +22,7 @@ Function::~Function() {
 ExpressionLayout * Function::createLayout() {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(4*sizeof(ExpressionLayout *));
   children_layouts[0] = new StringLayout(m_function_name, strlen(m_function_name));
-  char string[2] = {'-', '\0'};
+  char string[2] = {'(', '\0'};
   children_layouts[1] = new StringLayout(string, 1);
   children_layouts[2] = m_arg->createLayout();
   string[0] = ')';

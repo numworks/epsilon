@@ -30,8 +30,8 @@ static void print_prompt(char* text, int index) {
   KDSize font_size = KDStringSize(tmp);
   KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - PROMPT_HEIGHT),
              KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - PROMPT_HEIGHT), 0xff);
-  KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)));
-  KDDrawInverseChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)));
+  KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)), 0);
+  KDDrawChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)), true);
 }
 
 char* get_text() {

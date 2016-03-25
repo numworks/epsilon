@@ -73,7 +73,7 @@ static void interactive_expression_parsing() {
       }
       delete e;
     } else {
-      KDDrawString("PARSING ERROR", KDPointMake(10,10));
+      KDDrawString("PARSING ERROR", KDPointMake(10,10), 0);
     }
     // We dealocate the memory allocated by get_text;
     free(text_input);

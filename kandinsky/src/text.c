@@ -3,26 +3,21 @@
 #include <string.h>
 #include "font.h"
 
-void KDDrawChar(char character, KDPoint p) {
+void KDDrawChar(char character, KDPoint p, uint8_t inverse) {
   for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
     for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
-      KDSetPixel(KDPointMake(p.x+i, p.y+j), 0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
+      uint8_t intensity = inverse ?
+        bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i] :
+        (0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
+      KDSetPixel(KDPointMake(p.x+i, p.y+j), intensity);
     }
   }
 }
 
-void KDDrawInverseChar(char character, KDPoint p) {
-  for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
-    for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
-      KDSetPixel(KDPointMake(p.x+i, p.y+j), bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
-    }
-  }
-}
-
-void KDDrawString(const char * text, KDPoint p) {
+void KDDrawString(const char * text, KDPoint p, uint8_t inverse) {
   KDPoint position = p;
   while(*text != 0) {
-    KDDrawChar(*text, position);
+    KDDrawChar(*text, position, inverse);
     text++;
     position.x += BITMAP_FONT_CHARACTER_WIDTH;
   }

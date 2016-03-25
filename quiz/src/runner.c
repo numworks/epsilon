@@ -6,7 +6,7 @@
 void print(char * message) {
   static int line_y = 0;
   int line_height = KDStringSize("M").height;
-  KDDrawString(message, (KDPoint){.x = 0, .y = line_y});
+  KDDrawString(message, (KDPoint){.x = 0, .y = line_y}, 0);
   line_y += line_height;
   if (line_y > SCREEN_HEIGHT) {
     line_y = 0;

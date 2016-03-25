@@ -6,7 +6,10 @@
 
 class StringLayout : public ExpressionLayout {
   public:
-    StringLayout(const char * string, size_t length);
+    // Here the inverse is a uint8_t instead of a bool, because the size of a bool is
+    // not standardized, thus since we call a foreign C function with this value we want to be
+    // sure about compatibility.
+    StringLayout(const char * string, size_t length, uint8_t inverse=0);
     ~StringLayout();
   protected:
     void render(KDPoint point) override;
@@ -15,6 +18,7 @@ class StringLayout : public ExpressionLayout {
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
     char * m_string;
+    bool m_inverse;
 };
 
 #endif

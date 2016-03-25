@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "string_layout.h"
 
-StringLayout::StringLayout(ExpressionLayout * parent, const char * string, size_t length) :
-ExpressionLayout(parent) {
+StringLayout::StringLayout(const char * string, size_t length) :
+ExpressionLayout() {
   assert(string[length] == 0); // Assert NULL-termination
   m_string = (char *)malloc(sizeof(char)*(length+1));
   memcpy(m_string, string, (length+1));

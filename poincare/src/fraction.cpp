@@ -6,8 +6,8 @@ Expression * Fraction::clone() {
   return new Fraction(m_operands, true);
 }
 
-ExpressionLayout * Fraction::createLayout(ExpressionLayout * parent) {
-  return new FractionLayout(parent, m_operands[0], m_operands[1]);
+ExpressionLayout * Fraction::createLayout() {
+  return new FractionLayout(m_operands[0]->createLayout(), m_operands[1]->createLayout());
 }
 
 float Fraction::approximate(Context& context) {

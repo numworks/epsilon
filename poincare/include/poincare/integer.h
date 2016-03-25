@@ -34,7 +34,7 @@ class Integer : public LeafExpression {
     virtual bool identicalTo(Expression * e);
     */
     Expression * clone() override;
-    virtual ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    virtual ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;
   private:
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1

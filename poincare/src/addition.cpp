@@ -13,6 +13,6 @@ float Addition::operateApproximatevelyOn(float a, float b) {
   return a + b;
 }
 
-ExpressionLayout * Addition::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_operands, m_numberOfOperands, '+');
+char Addition::operatorChar() {
+  return '+';
 }

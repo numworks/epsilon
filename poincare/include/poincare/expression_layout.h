@@ -7,12 +7,13 @@ extern "C" {
 
 class ExpressionLayout {
   public:
-    ExpressionLayout(ExpressionLayout * parent);
+    ExpressionLayout();
     virtual ~ExpressionLayout();
 
     void draw(KDPoint point);
     KDPoint origin();
     KDSize size();
+    void setParent(ExpressionLayout* parent);
   protected:
     virtual void render(KDPoint point) = 0;
     virtual KDSize computeSize() = 0;
@@ -21,7 +22,7 @@ class ExpressionLayout {
   private:
     KDPoint absoluteOrigin();
     //void computeLayout();//ExpressionLayout * parent, uint16_t childIndex);
-    ExpressionLayout * m_parent;
+    ExpressionLayout* m_parent;
     bool m_sized, m_positioned;
     KDRect m_frame;
 };

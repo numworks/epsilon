@@ -320,7 +320,7 @@ Expression::Type Integer::type() {
   return Expression::Type::Integer;
 }
 
-ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
+ExpressionLayout * Integer::createLayout() {
   char buffer[255];
 
   Integer base = Integer(10);
@@ -341,7 +341,7 @@ ExpressionLayout * Integer::createLayout(ExpressionLayout * parent) {
     buffer[j] = c;
   }
 
-  return new StringLayout(parent, buffer, size);
+  return new StringLayout(buffer, size);
 }
 
 bool Integer::valueEquals(Expression * e) {

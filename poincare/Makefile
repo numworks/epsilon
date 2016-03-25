@@ -24,7 +24,6 @@ objs += $(addprefix poincare/src/layout/,\
   exponent_layout.o\
   expression_layout.o\
   fraction_layout.o\
-  function_layout.o\
   horizontal_layout.o\
   string_layout.o\
 )

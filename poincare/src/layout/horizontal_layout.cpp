@@ -6,15 +6,11 @@ extern "C" {
 #include "horizontal_layout.h"
 #include "string_layout.h"
 
-HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, Expression ** operands,int number_of_operands, char symbol) : ExpressionLayout(parent) {
-  assert(number_of_operands > 0);
-  m_number_of_children = 2*number_of_operands-1;
-  m_children_layouts = (ExpressionLayout **)malloc(m_number_of_children*sizeof(ExpressionLayout *));
-  char string[2] = {symbol, '\0'};
-  m_children_layouts[0] = operands[0]->createLayout(this);
-  for (int i=1; i<number_of_operands; i++) {
-    m_children_layouts[2*i-1] = new StringLayout(this, string, 1);
-    m_children_layouts[2*i] = operands[i]->createLayout(this);
+HorizontalLayout::HorizontalLayout(ExpressionLayout ** children_layouts, int number_of_children) :
+  ExpressionLayout(), m_number_of_children(number_of_children), m_children_layouts(children_layouts) {
+  assert(number_of_children > 0);
+  for (int i=0; i<m_number_of_children; i++) {
+    m_children_layouts[i]->setParent(this);
   }
 }
 

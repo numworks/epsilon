@@ -7,7 +7,7 @@ class Symbol : public LeafExpression {
   public:
     Symbol(char * name);
     ~Symbol();
-    ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;
     Type type() override;
     Expression * clone() override;

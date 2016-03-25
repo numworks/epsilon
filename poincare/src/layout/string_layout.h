@@ -6,7 +6,7 @@
 
 class StringLayout : public ExpressionLayout {
   public:
-    StringLayout(ExpressionLayout * parent, const char * string, size_t length);
+    StringLayout(const char * string, size_t length);
     ~StringLayout();
   protected:
     void render(KDPoint point) override;

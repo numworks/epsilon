@@ -24,7 +24,7 @@ class Expression {
     static Expression * parse(char const * string);
     virtual ~Expression();
 
-    virtual ExpressionLayout * createLayout(ExpressionLayout * parent) = 0; // Returned object must be deleted
+    virtual ExpressionLayout * createLayout() = 0; // Returned object must be deleted
     virtual Expression * operand(int i) = 0;
     virtual int numberOfOperands() = 0;
     virtual Expression * clone() = 0;

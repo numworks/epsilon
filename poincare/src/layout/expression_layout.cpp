@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "string_layout.h"
 
-ExpressionLayout::ExpressionLayout(ExpressionLayout * parent) :
-  m_parent(parent),
+ExpressionLayout::ExpressionLayout() :
+  m_parent(nullptr),
   m_sized(false),
   m_positioned(false),
   m_frame(KDRectZero) {
@@ -51,4 +51,8 @@ KDSize ExpressionLayout::size() {
     m_sized = true;
   }
   return m_frame.size;
+}
+
+void ExpressionLayout::setParent(ExpressionLayout* parent) {
+  m_parent = parent;
 }

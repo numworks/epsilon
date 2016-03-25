@@ -14,6 +14,6 @@ Expression::Type Power::type() {
   return Expression::Type::Power;
 }
 
-ExpressionLayout * Power::createLayout(ExpressionLayout * parent) {
-  return new ExponentLayout(parent, m_operands[0], m_operands[1]);
+ExpressionLayout * Power::createLayout() {
+  return new ExponentLayout(m_operands[0]->createLayout(), m_operands[1]->createLayout());
 }

@@ -5,10 +5,10 @@
 // TODO(fraimundo): Find a better name.
 #define EXPONENT_HEIGHT 5
 
-ExponentLayout::ExponentLayout(ExpressionLayout * parent, Expression * base, Expression * exponent) :
-ExpressionLayout(parent) {
-  m_base_layout = base->createLayout(this);
-  m_exponent_layout = exponent->createLayout(this);
+ExponentLayout::ExponentLayout(ExpressionLayout * base_layout, ExpressionLayout * exponent_layout) :
+ExpressionLayout(), m_base_layout(base_layout), m_exponent_layout(exponent_layout) {
+  m_base_layout->setParent(this);
+  m_exponent_layout->setParent(this);
 }
 
 ExponentLayout::~ExponentLayout() {

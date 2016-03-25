@@ -16,6 +16,6 @@ Expression::Type Product::type() {
   return Expression::Type::Product;
 }
 
-ExpressionLayout * Product::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_operands, m_numberOfOperands, '*');
+char Product::operatorChar() {
+  return '*';
 }

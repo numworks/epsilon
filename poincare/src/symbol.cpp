@@ -25,9 +25,9 @@ Expression::Type Symbol::type() {
   return Expression::Type::Symbol;
 }
 
-ExpressionLayout * Symbol::createLayout(ExpressionLayout * parent) {
+ExpressionLayout * Symbol::createLayout() {
   size_t length = strlen(m_name);
-  return new StringLayout(parent, m_name, length);
+  return new StringLayout(m_name, length);
 }
 
 Expression * Symbol::clone() {

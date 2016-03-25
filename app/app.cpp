@@ -66,7 +66,7 @@ static void interactive_expression_parsing() {
     clear_screen();
     Expression * e = Expression::parse(text_input);
     if (e) {
-      ExpressionLayout * l = e->createLayout(nullptr);
+      ExpressionLayout * l = e->createLayout();
       if (l) {
         l->draw(KDPointMake(0,10));
         delete l;

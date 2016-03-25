@@ -23,7 +23,7 @@ void KDDrawString(const char * text, KDPoint p, uint8_t inverse) {
   }
 }
 
-KDSize KDStringSize(char * text) {
+KDSize KDStringSize(const char * text) {
   return (KDSize){
     .width = strlen(text)*BITMAP_FONT_CHARACTER_WIDTH,
     .height = BITMAP_FONT_CHARACTER_HEIGHT

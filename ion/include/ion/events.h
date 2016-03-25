@@ -75,7 +75,9 @@ typedef enum {
   LOWER_CASE_Z,
   LEFT_ARROW = 0x100, // events for things outside of ASCII.
   RIGHT_ARROW,
-  MENU_TRIG,
+  UP_ARROW,
+  DOWN_ARROW,
+  TRIG_MENU,
   ERROR = 0xffffffff,
 } ion_event_t;
 

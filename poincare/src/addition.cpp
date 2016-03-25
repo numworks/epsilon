@@ -14,6 +14,5 @@ float Addition::operateApproximatevelyOn(float a, float b) {
 }
 
 ExpressionLayout * Addition::createLayout(ExpressionLayout * parent) {
-  //FIXME: There can be more than two operands now! :-)
-  return new HorizontalLayout(parent, operand(0), '+', operand(1));
+  return new HorizontalLayout(parent, m_operands, m_numberOfOperands, '+');
 }

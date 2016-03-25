@@ -4,23 +4,28 @@ objs += $(addprefix poincare/src/,\
   binary_operation.o\
   commutative_operation.o\
   context.o\
+  cosine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
   float.o\
   fraction.o\
+  function.o\
   integer.o\
   leaf_expression.o\
   power.o\
   product.o\
+  sine.o\
   subtraction.o\
   symbol.o\
+  tangent.o\
 )
 objs += $(addprefix poincare/src/layout/,\
+  exponent_layout.o\
   expression_layout.o\
   fraction_layout.o\
+  function_layout.o\
   horizontal_layout.o\
-  exponent_layout.o\
   string_layout.o\
 )
 objs += $(addprefix poincare/src/simplify/,\
@@ -35,6 +40,7 @@ tests += $(addprefix poincare/test/,\
   product.cpp\
   simplify.cpp\
   simplify_addition_integer.cpp\
+  trigo.cpp\
   subtraction.cpp\
 )
 

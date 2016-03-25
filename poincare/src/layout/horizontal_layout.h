@@ -6,7 +6,7 @@
 
 class HorizontalLayout : public ExpressionLayout {
   public:
-    HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression);
+    HorizontalLayout(ExpressionLayout * parent, Expression ** operands, int number_of_children, char symbol);
     ~HorizontalLayout();
   protected:
     void render(KDPoint point) override;
@@ -14,7 +14,8 @@ class HorizontalLayout : public ExpressionLayout {
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
-    ExpressionLayout * m_children[3];
+    int m_number_of_children;
+    ExpressionLayout ** m_children_layouts;
 };
 
 #endif

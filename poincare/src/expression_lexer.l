@@ -42,6 +42,9 @@ class Expression;
 %%
 
 [0-9]+ { yylval->string = yytext; return(INTEGER); }
+sin {return(SINE);}
+cos {return(COSINE);}
+tan {return(TANGENT);}
 [A-Za-z]+ { yylval->string = yytext; return(SYMBOL); }
 \+ { return(PLUS); }
 \- { return(MINUS); }

@@ -10,7 +10,6 @@ void print(char * message) {
   line_y += line_height;
   if (line_y > SCREEN_HEIGHT) {
     line_y = 0;
-    ion_getchar();
     // Clear screen maybe?
   }
 }

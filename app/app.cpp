@@ -6,7 +6,7 @@ extern "C" {
 
 #include <poincare.h>
 
-#include "text_input.h"
+#include "utils.h"
 
 void draw_lines_from_center() {
   KDCoordinate width = SCREEN_WIDTH;
@@ -59,16 +59,6 @@ void funnyPlot() {
   plot(e, 1.0f, 4.0f, 0.0f, 1.0f);
   delete e;
 }
-
-static void clear_screen() {
-  KDRect r;
-  r.x = 0;
-  r.y = 0;
-  r.width = SCREEN_WIDTH;
-  r.height = SCREEN_HEIGHT;
-  KDFillRect(r, 0x00);
-}
-
 
 static void interactive_expression_parsing() {
   while (1) {

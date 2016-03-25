@@ -5,25 +5,28 @@ extern "C" {
 #include "horizontal_layout.h"
 #include "string_layout.h"
 
-HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, Expression * left_expression, char symbol, Expression * right_expression) :
-ExpressionLayout(parent ) {
-  m_children[0] = left_expression->createLayout(this);
-
+HorizontalLayout::HorizontalLayout(ExpressionLayout * parent, int number_of_operands, Expression ** operands, char symbol) {
+  m_number_of_operands = number_of_operands;
+  // FIXME: This implementation is not optimal as the operator layout is created and stored a lot of times.
+  // The reason for this is how the layouts are drawn.
+  m_children_layouts = (ExpressionLayout **)malloc((2*m_number_of_operands-)*sizeof(ExpressionLayout *));
+  m_operator_layout = new StringLayout(this, string, 1);
   char string[2] = {symbol, '\0'};
-  m_children[1] = new StringLayout(this, string, 1);
-
-  m_children[2] = right_expression->createLayout(this);
+  for (int i=1; i<m_number_of_operands; i++) {
+    m_operands[2*i-1] = m_operator_layout;
+    m_operands[2*i] = operands[i]->createLayout();
+  }
 }
 
 HorizontalLayout::~HorizontalLayout() {
-  delete m_children[2];
-  delete m_children[1];
-  delete m_children[0];
+  for (int i(0); i<m_numberOfOperands; i++) {
+    delete m_operands[2*i];
+  }
+  free(m_operands);
+  delete m_operator_layout;
 }
 
-void HorizontalLayout::render(KDPoint point) {
-  // Nothing to render "per se"
-}
+void HorizontalLayout::render(KDPoint point) { }
 
 KDSize HorizontalLayout::computeSize() {
   KDSize size = (KDSize){.width = 0, .height = 0};
@@ -39,10 +42,10 @@ KDSize HorizontalLayout::computeSize() {
 }
 
 ExpressionLayout * HorizontalLayout::child(uint16_t index) {
-  if (index >= 3) {
+  if (index >= 2*m_number_of_operands) {
     return nullptr;
   }
-  return m_children[index];
+  return m_children_layouts[index];
 }
 
 KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {

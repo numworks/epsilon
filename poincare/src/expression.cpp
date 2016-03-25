@@ -4,7 +4,7 @@
 #include "simplify/simplify.h"
 #include "simplify/simplify_product_zero.h"
 #include "simplify/simplify_addition_integer.h"
-#include "simplify/simplify_addition_merge.h"
+#include "simplify/simplify_commutative_merge.h"
 extern "C" {
 #include <assert.h>
 }
@@ -13,7 +13,7 @@ extern "C" {
 static expression_simplifier_t kSimplifiers[] = {
   &SimplifyProductZero,
   &SimplifyAdditionInteger,
-  &SimplifyAdditionMerge,
+  &SimplifyCommutativeMerge,
   nullptr
 };
 

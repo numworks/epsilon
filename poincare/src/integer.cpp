@@ -268,7 +268,7 @@ Expression * Integer::clone() {
   clone->m_negative = m_negative;
   free(clone->m_digits);
   clone->m_digits = (native_uint_t *)malloc(m_numberOfDigits*sizeof(native_uint_t));
-  for (int i=0;i<m_numberOfDigits; i++) {
+  for (unsigned int i=0;i<m_numberOfDigits; i++) {
     clone->m_digits[i] = m_digits[i];
   }
   return clone;

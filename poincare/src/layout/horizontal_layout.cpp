@@ -37,8 +37,8 @@ KDSize HorizontalLayout::computeSize() {
 }
 
 ExpressionLayout * HorizontalLayout::child(uint16_t index) {
-  assert(index <= m_number_of_children);
-  if (index < m_number_of_children) {
+  assert(index <= (unsigned int) m_number_of_children);
+  if (index < (unsigned int) m_number_of_children) {
     return m_children_layouts[index];
   } else {
     return nullptr;

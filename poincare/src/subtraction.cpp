@@ -14,5 +14,5 @@ Expression::Type Subtraction::type() {
 }
 
 ExpressionLayout * Subtraction::createLayout(ExpressionLayout * parent) {
-  return new HorizontalLayout(parent, m_operands[0], '-', m_operands[1]);
+  return new HorizontalLayout(parent, m_operands, 2, '-');
 }

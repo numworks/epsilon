@@ -4,7 +4,7 @@ objs += $(addprefix poincare/src/,\
   binary_operation.o\
   commutative_operation.o\
   context.o\
-  cosinus.o\
+  cosine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -15,7 +15,7 @@ objs += $(addprefix poincare/src/,\
   leaf_expression.o\
   power.o\
   product.o\
-  sinus.o\
+  sine.o\
   subtraction.o\
   symbol.o\
   tangent.o\
@@ -40,6 +40,7 @@ tests += $(addprefix poincare/test/,\
   product.cpp\
   simplify.cpp\
   simplify_addition_integer.cpp\
+  trigo.cpp\
   subtraction.cpp\
 )
 

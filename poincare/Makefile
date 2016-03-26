@@ -32,6 +32,7 @@ objs += $(addprefix poincare/src/simplify/,\
   simplify_addition_integer.o\
   simplify_commutative_merge.o\
   simplify_product_zero.o\
+  expression_selector.o\
 )
 tests += $(addprefix poincare/test/,\
   addition.cpp\

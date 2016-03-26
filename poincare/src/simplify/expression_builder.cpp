@@ -55,6 +55,6 @@ ExpressionBuilder * ExpressionBuilder::child(int index) {
     return (this+1); // Pointer arithmetics
   } else {
     ExpressionBuilder * previousChild = this->child(index-1);
-    return previousChild+previousChild->m_numberOfChildren; // Pointer arithm.
+    return previousChild+previousChild->m_numberOfChildren+1; // Pointer arithm.
   }
 }

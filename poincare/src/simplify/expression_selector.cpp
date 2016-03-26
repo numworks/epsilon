@@ -43,7 +43,7 @@ int ExpressionSelector::match(Expression * e, Expression ** matches) {
     ExpressionSelector * childSelector = this->child(i);
     // To account for commutativity, we should have multiple possibilities for childExpression
     Expression * childExpression = e->operand(i);
-    int numberOfChildMatches = childSelector->match(childExpression, &matches[numberOfMatches]);
+    int numberOfChildMatches = childSelector->match(childExpression, (matches+numberOfMatches));
     if (numberOfChildMatches == 0) {
       return 0;
     } else {
@@ -62,6 +62,6 @@ ExpressionSelector * ExpressionSelector::child(int index) {
     return (this+1); // Pointer arithmetics
   } else {
     ExpressionSelector * previousChild = this->child(index-1);
-    return previousChild+previousChild->m_numberOfChildren; // Pointer arithm.
+    return previousChild+previousChild->m_numberOfChildren+1; // Pointer arithm.
   }
 }

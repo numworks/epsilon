@@ -34,6 +34,7 @@ objs += $(addprefix poincare/src/simplify/,\
   simplify_product_zero.o\
   expression_selector.o\
   expression_builder.o\
+  simplification.o\
 )
 tests += $(addprefix poincare/test/,\
   addition.cpp\

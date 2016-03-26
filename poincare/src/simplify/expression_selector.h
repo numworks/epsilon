@@ -41,13 +41,4 @@ public:
   uint8_t m_numberOfChildren;
 };
 
-/*
-{
-  my_tree_selector, my_expression_builder;
-  if (my_tree_selector->match(my_expression)) {
-    my_expression_builder->build(my_expression, *matchedData);
-  }
-}
-*/
-
 #endif

@@ -25,7 +25,7 @@ Expression * ExpressionBuilder::build(Expression * matches[]) {
   }
   Expression * result = nullptr;
   switch(m_action) {
-    case ExpressionBuilder::Action::Build:
+    case ExpressionBuilder::Action::BuildFromTypeAndValue:
       switch(m_expressionType) {
         case Expression::Type::Addition:
           result = new Addition(children_expressions, m_numberOfChildren, true);
@@ -41,8 +41,8 @@ Expression * ExpressionBuilder::build(Expression * matches[]) {
     case ExpressionBuilder::Action::Clone:
       result = matches[m_matchIndex]->clone();
       break;
-    case ExpressionBuilder::Action::FunctionCall:
-      result = m_expressionFactory(children_expressions, m_numberOfChildren);
+    case ExpressionBuilder::Action::CallExternalGenerator:
+      result = m_generator(children_expressions, m_numberOfChildren);
       break;
   }
   return result;

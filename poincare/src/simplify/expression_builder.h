@@ -8,23 +8,21 @@ extern "C" {
 
 
 class ExpressionBuilder {
-  typedef Expression * (*ExpressionFactory)(Expression ** parameters, int numberOfParameters);
+  typedef Expression * (ExternalGenerator)(Expression ** parameters, int numberOfParameters);
 public:
   ExpressionBuilder * child(int i);
   Expression * build(Expression * matches[]);
 
-  /*Expression ** match(Expression * e);*/
-
   enum class Action {
-    Build,
+    BuildFromTypeAndValue,
     Clone,
-    FunctionCall
+    CallExternalGenerator
   };
 
   Action m_action;
 
   union {
-    // m_action == Build
+    // m_action == BuildFromTypeAndValue
     struct {
       Expression::Type m_expressionType;
       union {
@@ -36,8 +34,8 @@ public:
     };
     // m_action == Clone
     uint8_t m_matchIndex;
-    // m_action == FunctionCall
-    ExpressionFactory m_expressionFactory;
+    // m_action == CallExternalGenerator
+    ExternalGenerator * m_generator;
   };
 
   uint8_t m_numberOfChildren;

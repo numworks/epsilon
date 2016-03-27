@@ -42,7 +42,7 @@ Expression * ExpressionBuilder::build(Expression * matches[]) {
       result = matches[m_matchIndex]->clone();
       break;
     case ExpressionBuilder::Action::FunctionCall:
-      // result = m_functionPointer(children_expressions);
+      result = m_expressionFactory(children_expressions, m_numberOfChildren);
       break;
   }
   return result;

@@ -6,7 +6,9 @@ extern "C" {
 #include <stdint.h>
 }
 
+
 class ExpressionBuilder {
+  typedef Expression * (*ExpressionFactory)(Expression ** parameters, int numberOfParameters);
 public:
   ExpressionBuilder * child(int i);
   Expression * build(Expression * matches[]);
@@ -35,7 +37,7 @@ public:
     // m_action == Clone
     uint8_t m_matchIndex;
     // m_action == FunctionCall
-    void * m_functionPointer;
+    ExpressionFactory m_expressionFactory;
   };
 
   uint8_t m_numberOfChildren;

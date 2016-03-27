@@ -1,14 +1,22 @@
 #include <poincare/expression.h>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
-#include "simplify/simplify.h"
-#include "simplify/simplify_product_zero.h"
-#include "simplify/simplify_addition_integer.h"
-#include "simplify/simplify_commutative_merge.h"
 extern "C" {
 #include <assert.h>
 }
 
+#define USE_GENERIC_EXPRESSION_SIMPLIFIER 0
+
+#if USE_GENERIC_EXPRESSION_SIMPLIFIER
+
+#include "simplify/simplification_rules.h"
+
+#else
+
+#include "simplify/simplify.h"
+#include "simplify/simplify_product_zero.h"
+#include "simplify/simplify_integer_operation.h"
+#include "simplify/simplify_commutative_merge.h"
 
 static expression_simplifier_t kSimplifiers[] = {
   &SimplifyProductZero,
@@ -16,6 +24,8 @@ static expression_simplifier_t kSimplifiers[] = {
   &SimplifyCommutativeMerge,
   nullptr
 };
+
+#endif
 
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
@@ -34,6 +44,27 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+#if USE_GENERIC_EXPRESSION_SIMPLIFIER
+Expression * Expression::simplify() {
+  Expression * result = this;
+  bool simplification_pass_was_useful = true;
+  while (simplification_pass_was_useful) {
+    simplification_pass_was_useful = false;
+    for (int i=0; i<numberOfSimplifications; i++) {
+      const Simplification * simplification = (simplifications + i); // Pointer arithmetics
+      Expression * simplified = simplification->simplify(result);
+      if (simplified != nullptr) {
+        simplification_pass_was_useful = true;
+        if (result != this) {
+          delete result;
+        }
+        result = simplified;
+      }
+    }
+  }
+  return result;
+}
+#else
 Expression * Expression::simplify() {
   Expression * result = this;
   bool simplification_pass_was_useful = true;
@@ -54,6 +85,7 @@ Expression * Expression::simplify() {
   }
   return result;
 }
+#endif
 
 bool Expression::isIdenticalTo(Expression * e) {
   if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {

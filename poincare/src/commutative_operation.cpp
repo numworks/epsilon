@@ -4,6 +4,9 @@ extern "C" {
 #include <stdlib.h>
 }
 
+#include "layout/horizontal_layout.h"
+#include "layout/string_layout.h"
+
 CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands) {
   assert(numberOfOperands >= 2);
   m_numberOfOperands = numberOfOperands;
@@ -41,4 +44,16 @@ float CommutativeOperation::approximate(Context& context) {
     result = this->operateApproximatevelyOn(result, next);
   }
   return result;
+}
+
+ExpressionLayout * CommutativeOperation::createLayout() {
+  int number_of_children = 2*m_numberOfOperands-1;
+  ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(number_of_children*sizeof(ExpressionLayout *));
+  char string[2] = {operatorChar(), '\0'};
+  children_layouts[0] = m_operands[0]->createLayout();
+  for (int i=1; i<m_numberOfOperands; i++) {
+    children_layouts[2*i-1] = new StringLayout(string, 1);
+    children_layouts[2*i] = m_operands[i]->createLayout();
+  }
+  return new HorizontalLayout(children_layouts, number_of_children);
 }

@@ -10,19 +10,19 @@ static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
 #define FRACTION_LINE_MARGIN 2
 #define FRACTION_LINE_HEIGHT 1
 
-FractionLayout::FractionLayout(ExpressionLayout * parent, Expression * numerator, Expression * denominator) :
-ExpressionLayout(parent) {
-  m_numerator = numerator->createLayout(this);
-  m_denominator = denominator->createLayout(this);
+FractionLayout::FractionLayout(ExpressionLayout * numerator_layout, ExpressionLayout * denominator_layout) :
+ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(denominator_layout) {
+  m_numerator_layout->setParent(this);
+  m_denominator_layout->setParent(this);
 }
 
 FractionLayout::~FractionLayout() {
-  delete m_denominator;
-  delete m_numerator;
+  delete m_denominator_layout;
+  delete m_numerator_layout;
 }
 
 void FractionLayout::render(KDPoint point) {
-  KDCoordinate fractionLineY = point.y + m_numerator->size().height + FRACTION_LINE_MARGIN;
+  KDCoordinate fractionLineY = point.y + m_numerator_layout->size().height + FRACTION_LINE_MARGIN;
 
   KDDrawLine(
       KDPointMake(point.x, fractionLineY),
@@ -32,17 +32,18 @@ void FractionLayout::render(KDPoint point) {
 
 KDSize FractionLayout::computeSize() {
   KDSize s;
-  s.width = max(m_numerator->size().width, m_denominator->size().width) + 2*FRACTION_BORDER_LENGTH;
-  s.height = m_numerator->size().height + FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN + m_denominator->size().height;
+  s.width = max(m_numerator_layout->size().width, m_denominator_layout->size().width) + 2*FRACTION_BORDER_LENGTH;
+  s.height = m_numerator_layout->size().height + FRACTION_LINE_MARGIN
+    + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN + m_denominator_layout->size().height;
   return s;
 }
 
 ExpressionLayout * FractionLayout::child(uint16_t index) {
   switch (index) {
     case 0:
-      return m_numerator;
+      return m_numerator_layout;
     case 1:
-      return m_denominator;
+      return m_denominator_layout;
     default:
       return nullptr;
   }
@@ -50,12 +51,12 @@ ExpressionLayout * FractionLayout::child(uint16_t index) {
 
 KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
   KDPoint p;
-  if (child == m_numerator) {
-    p.x = (KDCoordinate)((size().width - m_numerator->size().width)/2);
+  if (child == m_numerator_layout) {
+    p.x = (KDCoordinate)((size().width - m_numerator_layout->size().width)/2);
     p.y = 0;
-  } else if (child == m_denominator) {
-    p.x = (KDCoordinate)((size().width - m_denominator->size().width)/2);
-    p.y = (KDCoordinate)(m_numerator->size().height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
+  } else if (child == m_denominator_layout) {
+    p.x = (KDCoordinate)((size().width - m_denominator_layout->size().width)/2);
+    p.y = (KDCoordinate)(m_numerator_layout->size().height + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
   } else {
     assert(false); // Should not happen
   }

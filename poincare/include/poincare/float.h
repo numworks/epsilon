@@ -8,7 +8,7 @@ class Float : public LeafExpression {
     Float(float f);
     ~Float();
 
-    ExpressionLayout * createLayout(ExpressionLayout * parent) override;
+    ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;
     Type type() override;
     Expression * clone() override;

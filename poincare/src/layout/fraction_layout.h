@@ -6,7 +6,7 @@
 
 class FractionLayout : public ExpressionLayout {
   public:
-    FractionLayout(ExpressionLayout * parent, Expression * numerator, Expression * denominator);
+    FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator);
     ~FractionLayout();
   protected:
     void render(KDPoint point) override;
@@ -14,8 +14,8 @@ class FractionLayout : public ExpressionLayout {
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
-    ExpressionLayout * m_numerator;
-    ExpressionLayout * m_denominator;
+    ExpressionLayout * m_numerator_layout;
+    ExpressionLayout * m_denominator_layout;
 };
 
 #endif

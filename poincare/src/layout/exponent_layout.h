@@ -6,7 +6,7 @@
 
 class ExponentLayout : public ExpressionLayout {
   public:
-    ExponentLayout(ExpressionLayout * parent, Expression * base, Expression * exponent);
+    ExponentLayout(ExpressionLayout * base_layout, ExpressionLayout * exponent_layout);
     ~ExponentLayout();
   protected:
     void render(KDPoint point) override;

@@ -21,7 +21,7 @@ Expression::Type Float::type() {
   return Expression::Type::Float;
 }
 
-ExpressionLayout * Float::createLayout(ExpressionLayout * parent) {
+ExpressionLayout * Float::createLayout() {
   assert(0); // Should not come here, ever...
   return nullptr;
 }

@@ -10,8 +10,10 @@ class CommutativeOperation : public Expression {
     Expression * operand(int i) override;
     int numberOfOperands() override;
     float approximate(Context& context) override;
+    ExpressionLayout * createLayout() override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) = 0;
+    virtual char operatorChar() = 0;
     int m_numberOfOperands;
     Expression ** m_operands;
 };

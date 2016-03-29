@@ -14,6 +14,7 @@ FractionLayout::FractionLayout(ExpressionLayout * numerator_layout, ExpressionLa
 ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(denominator_layout) {
   m_numerator_layout->setParent(this);
   m_denominator_layout->setParent(this);
+  m_baseline = m_numerator_layout->size().height + FRACTION_LINE_MARGIN + KDStringSize(" ").height/2;
 }
 
 FractionLayout::~FractionLayout() {

@@ -3,6 +3,7 @@
 #include "string_layout.h"
 
 ExpressionLayout::ExpressionLayout() :
+  m_baseline(0),
   m_parent(nullptr),
   m_sized(false),
   m_positioned(false),
@@ -10,6 +11,10 @@ ExpressionLayout::ExpressionLayout() :
 }
 
 ExpressionLayout::~ExpressionLayout() {
+}
+
+KDCoordinate ExpressionLayout::baseline() {
+  return m_baseline;
 }
 
 KDPoint ExpressionLayout::origin() {
@@ -26,11 +31,6 @@ void ExpressionLayout::draw(KDPoint point) {
     c->draw(point);
   }
   render(KDPointTranslate(absoluteOrigin(), point));
-#if 0
-  KDPoint topLeft = KDPointTranslate(absoluteOrigin(), point);
-  KDPoint bottomRight = KDPointTranslate(KDPointTranslate(absoluteOrigin(), KDPOINT(size().width, 0 /*size().height*/)), point);
-  KDDrawLine(topLeft, bottomRight);
-#endif
 }
 
 KDPoint ExpressionLayout::absoluteOrigin() {

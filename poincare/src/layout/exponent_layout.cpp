@@ -9,6 +9,7 @@ ExponentLayout::ExponentLayout(ExpressionLayout * base_layout, ExpressionLayout 
 ExpressionLayout(), m_base_layout(base_layout), m_exponent_layout(exponent_layout) {
   m_base_layout->setParent(this);
   m_exponent_layout->setParent(this);
+  m_baseline = m_exponent_layout->baseline() + m_base_layout->baseline() - EXPONENT_HEIGHT;
 }
 
 ExponentLayout::~ExponentLayout() {
@@ -44,7 +45,7 @@ KDPoint ExponentLayout::positionOfChild(ExpressionLayout * child) {
   KDPoint p;
   if (child == m_base_layout) {
     p.x = 0;
-    p.y = m_exponent_layout->size().height - EXPONENT_HEIGHT;
+    p.y = m_exponent_layout->baseline() - EXPONENT_HEIGHT;
   } else if (child == m_exponent_layout) {
     p.x = m_base_layout->size().width;
     p.y = 0;

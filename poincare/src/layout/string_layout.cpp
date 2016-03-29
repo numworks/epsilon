@@ -8,6 +8,8 @@ ExpressionLayout() {
   m_string = (char *)malloc(sizeof(char)*(length+1));
   memcpy(m_string, string, (length+1));
   m_inverse = inverse;
+  // Height of the font.
+  m_baseline = KDStringSize(" ").height;
 }
 
 StringLayout::~StringLayout() {

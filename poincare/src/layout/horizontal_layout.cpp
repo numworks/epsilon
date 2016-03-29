@@ -11,6 +11,9 @@ HorizontalLayout::HorizontalLayout(ExpressionLayout ** children_layouts, int num
   assert(number_of_children > 0);
   for (int i=0; i<m_number_of_children; i++) {
     m_children_layouts[i]->setParent(this);
+    if (m_children_layouts[i]->baseline() > m_baseline) {
+      m_baseline = m_children_layouts[i]->baseline();
+    }
   }
 }
 
@@ -26,13 +29,18 @@ void HorizontalLayout::render(KDPoint point) { }
 KDSize HorizontalLayout::computeSize() {
   KDSize size = (KDSize){.width = 0, .height = 0};
   int i = 0;
+  KDCoordinate max_under_baseline, max_above_baseline;
   while (ExpressionLayout * c = child(i++)) {
     KDSize childSize = c->size();
     size.width += childSize.width;
-    if (childSize.height > size.height) {
-      size.height = childSize.height;
+    if (childSize.height - c->baseline() > max_under_baseline) {
+      max_under_baseline = childSize.height - c->baseline() ;
+    }
+    if (c->baseline() > max_above_baseline) {
+      max_above_baseline = c->baseline();
     }
   }
+  size.height = max_under_baseline + max_above_baseline;
   return size;
 }
 
@@ -59,6 +67,6 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
     assert(previousChild != nullptr);
     position.x = previousChild->origin().x + previousChild->size().width;
   }
-  position.y = (size().height - child->size().height)/2;
+  position.y = m_baseline - child->baseline();
   return position;
 }

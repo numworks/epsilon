@@ -63,6 +63,9 @@ void dump_ast(Expression * e, int level) {
     case Expression::Type::Subtraction:
       expression_symbol = '-';
       break;
+    default:
+      expression_symbol = '?';
+      break;
   }
   char text[255];
   int cursor = 0;

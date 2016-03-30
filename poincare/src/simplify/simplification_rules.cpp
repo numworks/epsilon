@@ -96,4 +96,4 @@ const Simplification simplifications[2] = {
   }
 };
 
-const int numberOfSimplifications = 2;
+const int knumberOfSimplifications = 2;

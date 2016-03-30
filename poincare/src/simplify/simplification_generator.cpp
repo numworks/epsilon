@@ -5,10 +5,12 @@ extern "C" {
 }
 
 Expression * SimplificationGenerator::AddIntegers(Expression ** parameters, int numberOfParameters) {
-  Integer result = Integer(0);
+  Integer * result = new Integer(0);
   for (int i=0; i<numberOfParameters; i++) {
     assert(parameters[i]->type() == Expression::Type::Integer);
-    result = result + *(Integer *)parameters[i];
+    // FIXME: get rid of this operator overloading.
+    *result = *result + *(Integer *)parameters[i];
+    delete paramett[i]
   }
-  return result.clone();
+  return result;
 }

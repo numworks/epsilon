@@ -28,6 +28,7 @@ class Expression {
     virtual Expression * operand(int i) = 0;
     virtual int numberOfOperands() = 0;
     virtual Expression * clone() = 0;
+
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
     /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-

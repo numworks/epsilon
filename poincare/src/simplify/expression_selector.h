@@ -12,7 +12,8 @@ class ExpressionSelector {
 public:
   enum class Match {
     Any,
-    TypeAndValue
+    TypeAndValue,
+    WildCard,
   };
   ExpressionSelector * child(int i);
   /* The match function is interesting
@@ -21,6 +22,7 @@ public:
    * Caution: This function *will* write to *matches even if the returned
    * value is zero.
    */
+  // TODO Matches are weak pointers.
   int match(Expression * e, Expression ** matches); // Return the matched expressions
   /*Expression ** match(Expression * e);*/
   Match m_match;

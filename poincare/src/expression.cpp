@@ -5,27 +5,7 @@ extern "C" {
 #include <assert.h>
 }
 
-#define USE_GENERIC_EXPRESSION_SIMPLIFIER 0
-
-#if USE_GENERIC_EXPRESSION_SIMPLIFIER
-
 #include "simplify/simplification_rules.h"
-
-#else
-
-#include "simplify/simplify.h"
-#include "simplify/simplify_product_zero.h"
-#include "simplify/simplify_integer_operation.h"
-#include "simplify/simplify_commutative_merge.h"
-
-static expression_simplifier_t kSimplifiers[] = {
-  &SimplifyProductZero,
-  &SimplifyAdditionInteger,
-  &SimplifyCommutativeMerge,
-  nullptr
-};
-
-#endif
 
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
@@ -44,13 +24,12 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
-#if USE_GENERIC_EXPRESSION_SIMPLIFIER
 Expression * Expression::simplify() {
   Expression * result = this;
   bool simplification_pass_was_useful = true;
   while (simplification_pass_was_useful) {
     simplification_pass_was_useful = false;
-    for (int i=0; i<numberOfSimplifications; i++) {
+    for (int i=0; i<knumberOfSimplifications; i++) {
       const Simplification * simplification = (simplifications + i); // Pointer arithmetics
       Expression * simplified = simplification->simplify(result);
       if (simplified != nullptr) {
@@ -64,28 +43,6 @@ Expression * Expression::simplify() {
   }
   return result;
 }
-#else
-Expression * Expression::simplify() {
-  Expression * result = this;
-  bool simplification_pass_was_useful = true;
-  while (simplification_pass_was_useful) {
-    simplification_pass_was_useful = false;
-    expression_simplifier_t * simplifier_pointer = kSimplifiers;
-    while (expression_simplifier_t simplifier = *simplifier_pointer) {
-      Expression * simplification = simplifier(result);
-      if (simplification != nullptr) {
-        simplification_pass_was_useful = true;
-        if (result != this) {
-          delete result;
-        }
-        result = simplification;
-      }
-      simplifier_pointer++;
-    }
-  }
-  return result;
-}
-#endif
 
 bool Expression::isIdenticalTo(Expression * e) {
   if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {

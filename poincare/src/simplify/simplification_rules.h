@@ -4,6 +4,6 @@
 #include "simplification.h"
 
 extern const Simplification simplifications[];
-extern const int numberOfSimplifications;
+extern const int knumberOfSimplifications;
 
 #endif

@@ -15,20 +15,10 @@ int ExpressionSelector::match(Expression * e, Expression ** matches) {
       if (e->type() != m_expressionType) {
         return 0;
       }
-      /*
-      switch (e->type()) {
-        case Expression::Type::Integer:
-          // Test e->equals(Integer(m_integerValue));
-          // Maybe return 0
-          break;
-        case Expression::Type::Symbol:
-          // Test symbol is same name
-          // Maybe return 0
-          break;
-        default:
-          // By default we don't check a value equality
-      }
-      */
+      break;
+    case ExpressionSelector::Match::WildCard:
+      /* This should not happen as a wildcard should be matched _before_ */
+      assert(false);
       break;
   }
 

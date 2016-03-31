@@ -15,9 +15,9 @@ public:
   int flatIndexOfChildNamed(std::string name);
 protected:
   virtual void generateFields(Rule * context, std::string &indentation) = 0;
-protected:
   std::string * m_name;
   std::vector<Node *> * m_children;
+  Node * m_parent;
 };
 
 #endif

@@ -9,6 +9,9 @@ Node::Node(std::string * name, std::vector<Node *> * children) :
   if (children == nullptr) {
     m_children = new std::vector<Node *>();
   }
+  for (Node * child : *m_children) {
+    child->m_parent = this;
+  }
 }
 
 Node::~Node() {

@@ -9,12 +9,15 @@ Selector::Selector(Type type, std::string * name, std::vector<Selector *> * chil
 }
 
 void Selector::generateFields(Rule * context, std::string &indentation) {
+  Selector * parent = (Selector *)m_parent;
   switch (m_type) {
     case Type::Variable:
       std::cout << indentation << ".m_match = ExpressionSelector::Match::Any," << std::endl;
       break;
     case Type::Wildcard:
       std::cout << indentation << ".m_match = ExpressionSelector::Match::Wildcard," << std::endl;
+      // Wildcard should always be the last element of a parent
+      assert(parent->m_children->back() == this);
       break;
     case Type::ExpressionType:
       std::cout << indentation << ".m_match = ExpressionSelector::Match::TypeAndValue," << std::endl;

@@ -2,6 +2,7 @@
 #define POINCARE_SIMPLIFY_EXPRESSION_SELECTOR_H
 
 #include <poincare/expression.h>
+#include "expression_match.h"
 extern "C" {
 #include <stdint.h>
 }
@@ -22,9 +23,8 @@ public:
    * Caution: This function *will* write to *matches even if the returned
    * value is zero.
    */
-  // TODO Matches are weak pointers.
-  int match(Expression * e, Expression ** matches); // Return the matched expressions
-  /*Expression ** match(Expression * e);*/
+  int match(Expression * e, ExpressionMatch ** matches);
+
   Match m_match;
   union {
     // m_match == Any

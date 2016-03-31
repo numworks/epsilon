@@ -3,7 +3,7 @@ extern "C" {
 #include <assert.h>
 }
 
-int ExpressionSelector::match(Expression * e, Expression ** matches) {
+int ExpressionSelector::match(Expression * e, ExpressionMatch ** matches) {
   int numberOfMatches = 0;
 
   // Does the current node match?
@@ -23,7 +23,9 @@ int ExpressionSelector::match(Expression * e, Expression ** matches) {
   }
 
   // The current node does match. Let's add it to our matches
-  matches[numberOfMatches++] = e;
+  // FIXME
+  matches[numberOfMatches++] = ExpressionMatch(&e, 1);
+  //matches[numberOfMatches++] = e;
 
   // FIXME: For now we'll ignore the commutativity of the Selector
   // which is definitely something *very* important
@@ -33,6 +35,15 @@ int ExpressionSelector::match(Expression * e, Expression ** matches) {
     ExpressionSelector * childSelector = this->child(i);
     // To account for commutativity, we should have multiple possibilities for childExpression
     Expression * childExpression = e->operand(i);
+    if (childSelector->m_match == ExpressionSelector::Match::WildCard) {
+      assert(i == m_numberOfChildren-1); // Wildcards should be the last argument!
+      Expression * pouet[255];//TODO
+      for (int j=i; j<childSelector->numberOfOperands(); j++) {
+        pouet[j-i] = e->operand(j);
+        ExpressionMatch(e->operand(j...));
+      }
+      matches[i+1] = ExpressionMatch(pouet, childSelector->numberOfOperands() - i +1);
+    }
     int numberOfChildMatches = childSelector->match(childExpression, (matches+numberOfMatches));
     if (numberOfChildMatches == 0) {
       return 0;

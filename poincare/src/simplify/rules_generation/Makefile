@@ -10,7 +10,7 @@ all:
 	clang++ rules_lexer.o rules_parser.o rule.o builder.o selector.o node.o -o parser
 
 run:
-	cat rule.pr | ./parser
+	cat rules.pr | ./parser
 
 clean:
 	rm -f rules_token.h rules_lexer.cpp rules_parser.cpp parser *.o

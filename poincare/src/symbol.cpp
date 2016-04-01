@@ -6,7 +6,7 @@ extern "C" {
 #include <assert.h>
 }
 
-Symbol::Symbol(char * name) {
+Symbol::Symbol(const char * name) {
   size_t length = strlen(name);
   m_name = (char *)malloc(sizeof(char)*length+1);
   memcpy(m_name, name, length);

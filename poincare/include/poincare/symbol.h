@@ -5,7 +5,7 @@
 
 class Symbol : public LeafExpression {
   public:
-    Symbol(char * name);
+    Symbol(const char * name);
     ~Symbol();
     ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;

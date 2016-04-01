@@ -2,6 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/integer.h>
 #include <poincare/product.h>
+#include <poincare/symbol.h>
 extern "C" {
 #include <assert.h>
 }
@@ -37,6 +38,9 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
           break;
         case Expression::Type::Integer:
           result = new Integer(m_integerValue);
+          break;
+        case Expression::Type::Symbol:
+          result = new Symbol(m_symbolName);
           break;
         default:
           assert(false);

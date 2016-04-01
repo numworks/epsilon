@@ -1,7 +1,10 @@
-#include "expression_selector.h"
 extern "C" {
 #include <assert.h>
 }
+
+#include <poincare/integer.h>
+#include <poincare/symbol.h>
+#include "expression_selector.h"
 
 int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
   int numberOfMatches = 0;
@@ -14,6 +17,34 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
     case ExpressionSelector::Match::Type:
       if (e->type() != m_expressionType) {
         return 0;
+      }
+      break;
+    case ExpressionSelector::Match::TypeAndValue:
+      if (e->type() != m_expressionType) {
+        return 0;
+      }
+      switch(e->type()) {
+        case Expression::Type::Integer:
+          {
+            Integer integer = Integer(m_integerValue);
+            if (!e->valueEquals(&integer)) {
+              return 0;
+            }
+          }
+          break;
+        case Expression::Type::Symbol:
+          {
+            Symbol symbol = Symbol(m_symbolName);
+            if (!e->valueEquals(&symbol)) {
+              return 0;
+            }
+          }
+          break;
+        default:
+          // Symbol and Integer are the only expressions which should be matched
+          // with a value.
+          assert(false);
+          break;
       }
       break;
     case ExpressionSelector::Match::Wildcard:

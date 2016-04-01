@@ -12,7 +12,7 @@ HOSTCC = gcc
 SFLAGS += -Ilib -I.
 
 # Flags - Building options
-SFLAGS += -Wall -Werror
+SFLAGS += -Wall
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)

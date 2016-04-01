@@ -5,9 +5,6 @@ extern "C" {
 #include <stdlib.h>
 }
 
-#include <iostream>
-using namespace std;
-
 ExpressionMatch::ExpressionMatch() {
   m_numberOfExpressions = 0;
   m_expressions = nullptr;

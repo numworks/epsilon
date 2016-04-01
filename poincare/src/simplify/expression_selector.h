@@ -14,7 +14,7 @@ public:
   enum class Match {
     Any,
     Type,
-    WildCard,
+    Wildcard,
   };
   ExpressionSelector * child(int i);
   /* The match function is interesting

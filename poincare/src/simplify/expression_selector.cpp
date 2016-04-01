@@ -16,7 +16,7 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
         return 0;
       }
       break;
-    case ExpressionSelector::Match::WildCard:
+    case ExpressionSelector::Match::Wildcard:
       /* This should not happen as a wildcard should be matched _before_ */
       assert(false);
       break;
@@ -29,7 +29,7 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
     ExpressionSelector * childSelector = this->child(i);
     Expression * childExpression = e->operand(i);
 
-    if (childSelector->m_match == ExpressionSelector::Match::WildCard) {
+    if (childSelector->m_match == ExpressionSelector::Match::Wildcard) {
       assert(i == m_numberOfChildren-1); // Wildcards should be the last argument!
       Expression * local_expr[255];
       for (int j=i; j<e->numberOfOperands(); j++) {

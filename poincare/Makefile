@@ -42,6 +42,10 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
 )
 
+# We won't use this very often but the linker should be smart enough to just
+# remove it if we don't use it.
+tests += poincare/src/expression_debug.o
+
 # Even though flex and bison will generate both implementation and headers at
 # once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may
 # call bison or flex twice.

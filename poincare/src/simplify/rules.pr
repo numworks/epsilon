@@ -1,0 +1,3 @@
+Integer(a)->Integer(a);
+Addition(Addition(a,b),c)->Addition(a,b,c);
+Addition(Addition(a*),b*)->Addition(a*,b*);

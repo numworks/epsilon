@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-include poincare/src/simplify/rules_generation/Makefile
+include poincare/src/simplify/Makefile
 
 objs += $(addprefix poincare/src/,\
   addition.o\
@@ -30,14 +30,7 @@ objs += $(addprefix poincare/src/layout/,\
   horizontal_layout.o\
   string_layout.o\
 )
-objs += $(addprefix poincare/src/simplify/,\
-  expression_builder.o\
-  expression_match.o\
-  expression_selector.o\
-  simplification.o\
-	simplification_generator.o\
-	simplification_rules.o\
-)
+
 tests += $(addprefix poincare/test/,\
   addition.cpp\
   fraction.cpp\

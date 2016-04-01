@@ -106,7 +106,13 @@ int yyerror(std::vector<Rule *> ** rules, char *s) {
 
 int main(void) {
   std::vector<Rule *> * rules = new std::vector<Rule *>();
+
   yyparse(&rules);
+
+  std::cout << "#include \"simplification_rules.h\"" << std::endl;
+  std::cout << "#include \"simplification_generator.h\"" << std::endl;
+  std::cout << std::endl;
+
   int counter = 0;
   for (int i=0; i<rules->size(); i++) {
     std::stringstream name;
@@ -124,6 +130,10 @@ int main(void) {
     std::cout << "  }," << std::endl;
   }
   std::cout << "};" << std::endl;
+
+  std::cout << std::endl;
+  std::cout << "const int knumberOfSimplifications = " << rules->size() << ";" << std::endl;
+
 
   delete rules;
   return 0;

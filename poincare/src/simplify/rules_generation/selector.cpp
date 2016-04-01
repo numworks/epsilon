@@ -20,7 +20,7 @@ void Selector::generateFields(Rule * context, std::string &indentation) {
       assert(parent->m_children->back() == this);
       break;
     case Type::ExpressionType:
-      std::cout << indentation << ".m_match = ExpressionSelector::Match::TypeAndValue," << std::endl;
+      std::cout << indentation << ".m_match = ExpressionSelector::Match::Type," << std::endl;
       std::cout << indentation << ".m_expressionType = Expression::Type::" << *m_name << "," << std::endl;
       break;
   }

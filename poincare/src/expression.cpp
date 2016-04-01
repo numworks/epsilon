@@ -7,11 +7,6 @@ extern "C" {
 
 #include "simplify/simplification_rules.h"
 
-#ifdef DEBUG
-#include <iostream>
-using namespace std;
-#endif
-
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
 Expression::~Expression() {

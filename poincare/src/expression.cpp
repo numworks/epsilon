@@ -38,7 +38,6 @@ Expression * Expression::simplify() {
       const Simplification * simplification = (simplifications + i); // Pointer arithmetics
       Expression * simplified = simplification->simplify(result);
       if (simplified != nullptr) {
-        std::cout << "simplification " << i << " returned a non null pointer" << std::endl;
         PRINT_AST(simplified);
         simplification_pass_was_useful = true;
         if (result != this) {

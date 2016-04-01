@@ -15,6 +15,7 @@ public:
     Any,
     Type,
     Wildcard,
+    TypeAndValue,
   };
   ExpressionSelector * child(int i);
   /* The match function is interesting

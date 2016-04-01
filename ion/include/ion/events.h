@@ -78,6 +78,7 @@ typedef enum {
   UP_ARROW,
   DOWN_ARROW,
   TRIG_MENU,
+  DELETE,
   ERROR = 0xffffffff,
 } ion_event_t;
 

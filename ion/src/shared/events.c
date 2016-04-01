@@ -49,7 +49,7 @@ static ion_key_event_t ion_get_key_event() {
 // For now this is a bit silly but needed for instreface purpose.
 static const ion_event_t kEventForKeyDown[ION_NUMBER_OF_KEYS] = {
   UPPER_CASE_A, UPPER_CASE_B, UPPER_CASE_C, UPPER_CASE_D, UPPER_CASE_E,
-  UPPER_CASE_F, UPPER_CASE_G, UPPER_CASE_H, UP_ARROW, DOWN_ARROW,
+  UPPER_CASE_F, UPPER_CASE_G, DELETE, UP_ARROW, DOWN_ARROW,
   UPPER_CASE_K, UPPER_CASE_L, TRIG_MENU, LEFT_ARROW, RIGHT_ARROW,
   SEVEN, EIGHT, NINE, LEFT_PARENTHESIS, RIGHT_PARENTHESIS,
   FOUR, FIVE, SIX, PRODUCT, DIVISION,

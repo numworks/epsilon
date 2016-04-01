@@ -1,34 +1,39 @@
 #include "expression_builder.h"
 #include <poincare/addition.h>
 #include <poincare/integer.h>
+#include <poincare/product.h>
 extern "C" {
 #include <assert.h>
 }
 
-/* Our compiler defines two things:
- * - First, a list of ExpressionBuilder
- * - Second, a children_expression_buffer[] of the proper size.
- */
-
-Expression * children_expression_buffer[4]; // This will be defined by our compiler
-
-Expression * ExpressionBuilder::build(Expression * matches[]) {
+Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
   Expression * children_expressions[255]; // FIXME: <- The sized can be given by the compiler
   //Expression * children_expressions = malloc;
-// That malloc can be avoided: we can give an upper bound
-// Afer we've finished processing the rules
-// That upper bound is likely to be very small (3, currently)
+  // That malloc can be avoided: we can give an upper bound
+  // Afer we've finished processing the rules
+  // That upper bound is likely to be very small (3, currently)
+  int numberOfChildrenExpressions = 0;
 
   for (int i=0; i<m_numberOfChildren; i++) {
     ExpressionBuilder * child = this->child(i);
-    children_expressions[i] = child->build(matches);
+    if (child->m_action == ExpressionBuilder::Action::BringUpWildcard) {
+      for (int j=0; j<matches[child->m_matchIndex].numberOfExpressions(); j++) {
+        children_expressions[numberOfChildrenExpressions++] =
+          matches[child->m_matchIndex].expression(j)->clone();
+      }
+    } else {
+      children_expressions[numberOfChildrenExpressions++] = child->build(matches);
+    }
   }
   Expression * result = nullptr;
   switch(m_action) {
     case ExpressionBuilder::Action::BuildFromTypeAndValue:
       switch(m_expressionType) {
         case Expression::Type::Addition:
-          result = new Addition(children_expressions, m_numberOfChildren, true);
+          result = new Addition(children_expressions, numberOfChildrenExpressions, true);
+          break;
+        case Expression::Type::Product:
+          result = new Product(children_expressions, numberOfChildrenExpressions, true);
           break;
         case Expression::Type::Integer:
           result = new Integer(m_integerValue);
@@ -38,11 +43,17 @@ Expression * ExpressionBuilder::build(Expression * matches[]) {
           break;
       }
       break;
+    case ExpressionBuilder::Action::BringUpWildcard:
+      // Build should never be called on BringUpWildcard action directly
+      assert(false);
+      break;
     case ExpressionBuilder::Action::Clone:
-      result = matches[m_matchIndex]->clone();
+      // It only makes sense to clone if the match has a single expression!
+      assert(matches[m_matchIndex].numberOfExpressions() == 1);
+      result = matches[m_matchIndex].expression(0)->clone();
       break;
     case ExpressionBuilder::Action::CallExternalGenerator:
-      result = m_generator(children_expressions, m_numberOfChildren);
+      result = m_generator(children_expressions, numberOfChildrenExpressions);
       break;
   }
   return result;

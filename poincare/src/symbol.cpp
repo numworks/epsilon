@@ -38,3 +38,12 @@ bool Symbol::valueEquals(Expression * e) {
   assert(e->type() == Expression::Type::Symbol);
   return (strcmp(m_name, ((Symbol *)e)->m_name) == 0);
 }
+
+#ifdef DEBUG
+int Symbol::getPrintableVersion(char* txt) {
+  for(int i=0; m_name[i]!='\0'; i++) {
+    txt[i] = m_name[i];
+  }
+  return strlen(m_name);
+}
+#endif

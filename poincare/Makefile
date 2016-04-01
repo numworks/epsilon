@@ -28,8 +28,9 @@ objs += $(addprefix poincare/src/layout/,\
   string_layout.o\
 )
 objs += $(addprefix poincare/src/simplify/,\
-  expression_selector.o\
   expression_builder.o\
+  expression_match.o\
+  expression_selector.o\
   simplification.o\
 	simplification_generator.o\
 	simplification_rules.o\

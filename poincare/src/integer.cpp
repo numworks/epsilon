@@ -344,6 +344,30 @@ ExpressionLayout * Integer::createLayout() {
   return new StringLayout(buffer, size);
 }
 
+#ifdef DEBUG
+int Integer::getPrintableVersion(char* txt) {
+  Integer base = Integer(10);
+  Division d = Division(*this, base);
+  int size = 0;
+  while (!(d.m_remainder == Integer((native_int_t)0))) {
+    assert(size<255); //TODO: malloc an extra buffer
+    char c = char_from_digit(d.m_remainder.m_digits[0]);
+    txt[size++] = c;
+    d = Division(d.m_quotient, base);
+  }
+  txt[size] = 0;
+
+  // Flip the string
+  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+    char c = txt[i];
+    txt[i] = txt[j];
+    txt[j] = c;
+  }
+
+  return size;
+}
+#endif
+
 bool Integer::valueEquals(Expression * e) {
   assert(e->type() == Expression::Type::Integer);
   return (*this == *(Integer *)e); // FIXME: Remove operator overloading

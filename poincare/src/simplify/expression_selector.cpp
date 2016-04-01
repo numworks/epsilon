@@ -3,7 +3,7 @@ extern "C" {
 #include <assert.h>
 }
 
-int ExpressionSelector::match(Expression * e, ExpressionMatch ** matches) {
+int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
   int numberOfMatches = 0;
 
   // Does the current node match?
@@ -11,7 +11,7 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch ** matches) {
     case ExpressionSelector::Match::Any:
       // Yes, it always does!
       break;
-    case ExpressionSelector::Match::TypeAndValue:
+    case ExpressionSelector::Match::Type:
       if (e->type() != m_expressionType) {
         return 0;
       }
@@ -23,32 +23,26 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch ** matches) {
   }
 
   // The current node does match. Let's add it to our matches
-  // FIXME
   matches[numberOfMatches++] = ExpressionMatch(&e, 1);
-  //matches[numberOfMatches++] = e;
-
-  // FIXME: For now we'll ignore the commutativity of the Selector
-  // which is definitely something *very* important
-  // Checking if "e" is commutative seems like a nice solution
 
   for (int i=0; i<m_numberOfChildren; i++) {
     ExpressionSelector * childSelector = this->child(i);
-    // To account for commutativity, we should have multiple possibilities for childExpression
     Expression * childExpression = e->operand(i);
+
     if (childSelector->m_match == ExpressionSelector::Match::WildCard) {
       assert(i == m_numberOfChildren-1); // Wildcards should be the last argument!
-      Expression * pouet[255];//TODO
-      for (int j=i; j<childSelector->numberOfOperands(); j++) {
-        pouet[j-i] = e->operand(j);
-        ExpressionMatch(e->operand(j...));
+      Expression * local_expr[255];
+      for (int j=i; j<e->numberOfOperands(); j++) {
+        local_expr[j-i] = e->operand(j);
       }
-      matches[i+1] = ExpressionMatch(pouet, childSelector->numberOfOperands() - i +1);
-    }
-    int numberOfChildMatches = childSelector->match(childExpression, (matches+numberOfMatches));
-    if (numberOfChildMatches == 0) {
-      return 0;
+      matches[numberOfMatches++] = ExpressionMatch(local_expr, e->numberOfOperands() - i);
     } else {
-      numberOfMatches += numberOfChildMatches;
+      int numberOfChildMatches = childSelector->match(childExpression, (matches+numberOfMatches));
+      if (numberOfChildMatches == 0) {
+        return 0;
+      } else {
+        numberOfMatches += numberOfChildMatches;
+      }
     }
   }
 

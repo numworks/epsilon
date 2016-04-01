@@ -45,6 +45,10 @@ class Integer : public LeafExpression {
     native_uint_t * m_digits; // LITTLE-ENDIAN
     uint16_t m_numberOfDigits; // In base native_uint_max
     bool m_negative;
+
+#ifdef DEBUG
+    int getPrintableVersion(char* txt) override;
+#endif
     /*
      // TODO: Small-int optimization
     union {

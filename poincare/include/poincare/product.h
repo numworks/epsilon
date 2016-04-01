@@ -9,6 +9,9 @@ class Product : public CommutativeOperation {
     Type type() override;
     float operateApproximatevelyOn(float a, float b) override;
     Expression * clone() override;
+#ifdef DEBUG
+    int getPrintableVersion(char* txt) override;
+#endif
   protected:
     char operatorChar() override;
 };

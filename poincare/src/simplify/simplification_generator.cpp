@@ -10,7 +10,7 @@ Expression * SimplificationGenerator::AddIntegers(Expression ** parameters, int 
     assert(parameters[i]->type() == Expression::Type::Integer);
     // FIXME: get rid of this operator overloading.
     *result = *result + *(Integer *)parameters[i];
-    delete paramett[i]
+    delete parameters[i];
   }
   return result;
 }

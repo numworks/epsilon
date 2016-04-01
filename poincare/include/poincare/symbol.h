@@ -12,6 +12,9 @@ class Symbol : public LeafExpression {
     Type type() override;
     Expression * clone() override;
     bool valueEquals(Expression * e) override;
+#ifdef DEBUG
+    int getPrintableVersion(char* txt) override;
+#endif
   private:
     char * m_name;
 };

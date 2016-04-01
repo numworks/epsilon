@@ -16,3 +16,10 @@ float Addition::operateApproximatevelyOn(float a, float b) {
 char Addition::operatorChar() {
   return '+';
 }
+
+#ifdef DEBUG
+int Addition::getPrintableVersion(char* txt) {
+  txt[0] = '+';
+  return 1;
+}
+#endif

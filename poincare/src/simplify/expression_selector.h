@@ -13,7 +13,7 @@ class ExpressionSelector {
 public:
   enum class Match {
     Any,
-    TypeAndValue,
+    Type,
     WildCard,
   };
   ExpressionSelector * child(int i);
@@ -23,7 +23,7 @@ public:
    * Caution: This function *will* write to *matches even if the returned
    * value is zero.
    */
-  int match(Expression * e, ExpressionMatch ** matches);
+  int match(Expression * e, ExpressionMatch * matches);
 
   Match m_match;
   union {

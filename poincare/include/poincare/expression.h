@@ -4,6 +4,12 @@
 #include <poincare/expression_layout.h>
 #include <kandinsky.h>
 
+#ifdef DEBUG
+#define PRINT_AST(e)  e->__printAst(0)
+#else
+#define PRINT_AST(e) ((void)0)
+#endif
+
 class Context;
 
 class Expression {
@@ -12,8 +18,8 @@ class Expression {
       Addition,
       Cosine,
       Float,
-      Fraction,
       Integer,
+      Fraction,
       Power,
       Product,
       Sine,
@@ -45,6 +51,10 @@ class Expression {
   /*private:
     void forEachChild(ExpressionAction);
     */
+#ifdef DEBUG
+    virtual int getPrintableVersion(char* txt) = 0;
+    void __printAst(int level=0);
+#endif
 };
 
 #endif

@@ -18,3 +18,10 @@ float Fraction::approximate(Context& context) {
 Expression::Type Fraction::type() {
   return Expression::Type::Fraction;
 }
+
+#ifdef DEBUG
+int Fraction::getPrintableVersion(char* txt) {
+  txt[0] = '/';
+  return 1;
+}
+#endif

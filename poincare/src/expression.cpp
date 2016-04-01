@@ -7,6 +7,11 @@ extern "C" {
 
 #include "simplify/simplification_rules.h"
 
+#ifdef DEBUG
+#include <iostream>
+using namespace std;
+#endif
+
 int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
 
 Expression::~Expression() {
@@ -33,6 +38,8 @@ Expression * Expression::simplify() {
       const Simplification * simplification = (simplifications + i); // Pointer arithmetics
       Expression * simplified = simplification->simplify(result);
       if (simplified != nullptr) {
+        std::cout << "simplification " << i << " returned a non null pointer" << std::endl;
+        PRINT_AST(simplified);
         simplification_pass_was_useful = true;
         if (result != this) {
           delete result;
@@ -63,3 +70,18 @@ bool Expression::valueEquals(Expression * e) {
    * -riden. */
   return true;
 }
+
+#ifdef DEBUG
+void Expression::__printAst(int level) {
+  char txt[255];
+  for (int i(0); i<level; i++) {
+    txt[i] = ' ';
+  }
+  int offset = getPrintableVersion(&txt[level]);
+  txt[level + offset] = '\0';
+  std::cout << txt << std::endl;
+  for (int i(0); i < numberOfOperands(); i++) {
+    operand(i)->__printAst(level + 2);
+  }
+}
+#endif

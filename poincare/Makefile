@@ -1,4 +1,7 @@
 SFLAGS += -Ipoincare/include
+
+include poincare/src/simplify/rules_generation/Makefile
+
 objs += $(addprefix poincare/src/,\
   addition.o\
   binary_operation.o\

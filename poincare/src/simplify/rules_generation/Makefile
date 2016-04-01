@@ -1,16 +1,46 @@
-all:
-	bison --defines=rules_tokens.h rules_parser.y -o rules_parser.cpp
-	clang++ -c -std=c++11 rules_parser.cpp
-	flex -o rules_lexer.cpp rules_lexer.l
-	clang++ -c -std=c++11 rules_lexer.cpp
-	clang++ -c -std=c++11 rule.cpp
-	clang++ -c -std=c++11 builder.cpp
-	clang++ -c -std=c++11 selector.cpp
-	clang++ -c -std=c++11 node.cpp
-	clang++ rules_lexer.o rules_parser.o rule.o builder.o selector.o node.o -o parser
+dir=poincare/src/simplify/rules_generation
 
-run:
+rulegen_objs := $(addprefix $(dir)/,\
+  rules_parser.o\
+  rules_lexer.o\
+  builder.o\
+  node.o\
+  rule.o\
+  selector.o\
+)
+
+$(dir)/rules_parser.cpp: $(dir)/rules_parser.y
+	@echo "BISON   $@"
+	bison --defines=$(dir)/rules_tokens.h $< -o $@
+
+$(dir)/rules_lexer.cpp: $(dir)/rules_lexer.l $(dir)/rules_parser.cpp
+	@echo "FLEX    $@"
+	flex -o $@ $<
+
+rulegen := $(dir)/rulegen
+
+products += $(rulegen_objs) $(rulegen) $(addprefix $(dir)/,\
+  rules_tokens.h\
+  rules_parser.cpp\
+  rules_lexer.cpp\
+)
+
+GENERATOR_CXXFLAGS = -std=c++11
+
+HOSTCC = clang
+HOSTCXX = clang++
+
+$(rulegen_objs): %.o: %.cpp
+	@echo "HOSTCC  $@"
+	$(HOSTCXX) $(GENERATOR_CXXFLAGS) -c $< -o $@
+
+$(rulegen): $(rulegen_objs)
+
+# Now let's use the rulegen
+
+$(dir)/rules.cpp: $(dir)/rules.pr
+	@echo "RULEGEN $@"
+	$(dir)/rulegen < $< > $@
+
+generator_run:
 	cat rules.pr | ./parser
-
-clean:
-	rm -f rules_token.h rules_lexer.cpp rules_parser.cpp parser *.o

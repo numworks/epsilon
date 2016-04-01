@@ -25,10 +25,3 @@ ExpressionLayout * Subtraction::createLayout() {
   children_layouts[2] = m_operands[1]->createLayout();
   return new HorizontalLayout(children_layouts, 3);
 }
-
-#ifdef DEBUG
-int Subtraction::getPrintableVersion(char* txt) {
-  txt[0] = '-';
-  return 1;
-}
-#endif

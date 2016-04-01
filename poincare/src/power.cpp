@@ -17,10 +17,3 @@ Expression::Type Power::type() {
 ExpressionLayout * Power::createLayout() {
   return new ExponentLayout(m_operands[0]->createLayout(), m_operands[1]->createLayout());
 }
-
-#ifdef DEBUG
-int Power::getPrintableVersion(char* txt) {
-  txt[0] = '^';
-  return 1;
-}
-#endif

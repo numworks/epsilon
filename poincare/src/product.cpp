@@ -19,10 +19,3 @@ Expression::Type Product::type() {
 char Product::operatorChar() {
   return '*';
 }
-
-#ifdef DEBUG
-int Product::getPrintableVersion(char* txt) {
-  txt[0] = '*';
-  return 1;
-}
-#endif

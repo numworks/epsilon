@@ -9,9 +9,6 @@ class Tangent : public Function {
     float approximate(Context& context) override;
     Type type() override;
     Expression * clone() override;
-#ifdef DEBUG
-    int getPrintableVersion(char* txt) override;
-#endif
 };
 
 #endif

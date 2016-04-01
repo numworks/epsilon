@@ -4,12 +4,6 @@
 #include <poincare/expression_layout.h>
 #include <kandinsky.h>
 
-#ifdef DEBUG
-#define PRINT_AST(e)  e->__printAst(0)
-#else
-#define PRINT_AST(e) ((void)0)
-#endif
-
 class Context;
 
 class Expression {
@@ -48,13 +42,6 @@ class Expression {
     virtual Type type() = 0;
 
     virtual float approximate(Context& context) = 0;
-  /*private:
-    void forEachChild(ExpressionAction);
-    */
-#ifdef DEBUG
-    virtual int getPrintableVersion(char* txt) = 0;
-    void __printAst(int level=0);
-#endif
 };
 
 #endif

@@ -33,13 +33,3 @@ bool Float::valueEquals(Expression * e) {
   assert(e->type() == Expression::Type::Float);
   return m_float == ((Float *)e)->m_float;
 }
-
-#ifdef DEBUG
-int Float::getPrintableVersion(char* txt) {
-  const char* printable = "float number";
-  for(int i=0; printable[i]!='\0'; i++) {
-    txt[i] = printable[i];
-  }
-  return strlen(printable);
-}
-#endif

@@ -5,7 +5,7 @@ extern "C" {
 }
 
 Expression * SimplificationGenerator::AddIntegers(Expression ** parameters, int numberOfParameters) {
-  Integer * result = new Integer(0);
+  Integer * result = new Integer((native_int_t)0);
   for (int i=0; i<numberOfParameters; i++) {
     assert(parameters[i]->type() == Expression::Type::Integer);
     // FIXME: get rid of this operator overloading.

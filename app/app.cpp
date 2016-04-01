@@ -67,9 +67,24 @@ static void interactive_expression_parsing() {
     Expression * e = Expression::parse(text_input);
     if (e) {
       ExpressionLayout * l = e->createLayout();
+      int16_t yOffset = 10;
       if (l) {
-        l->draw(KDPointMake(0,10));
+        l->draw(KDPointMake(0, yOffset));
+        yOffset += l->size().height;
         delete l;
+      }
+      Expression * simplified = e->simplify();
+      // Print the simplification.
+      if (simplified) {
+        ExpressionLayout * simplified_l = simplified->createLayout();
+        if (simplified_l) {
+          int16_t xOffset = SCREEN_WIDTH - simplified_l->size().width;
+          simplified_l->draw(KDPointMake(xOffset, yOffset));
+          delete simplified_l;
+        }
+        if (simplified != e) {
+          delete simplified;
+        }
       }
       delete e;
     } else {

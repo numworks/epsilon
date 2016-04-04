@@ -11,11 +11,11 @@ rulegen_objs := $(addprefix $(dir)/,\
 
 $(dir)/rules_parser.cpp: $(dir)/rules_parser.y
 	@echo "BISON   $@"
-	bison --defines=poincare/src/simplify/rules_generation/rules_tokens.h $< -o $@
+	@bison --defines=poincare/src/simplify/rules_generation/rules_tokens.h $< -o $@
 
 $(dir)/rules_lexer.cpp: $(dir)/rules_lexer.l $(dir)/rules_parser.cpp
 	@echo "FLEX    $@"
-	flex -o $@ $<
+	@flex -o $@ $<
 
 RULEGEN := $(dir)/rulegen
 
@@ -25,7 +25,7 @@ products += $(rulegen_objs) $(RULEGEN) $(addprefix $(dir)/,\
   rules_lexer.cpp\
 )
 
-GENERATOR_CXXFLAGS = -std=c++11
+GENERATOR_CXXFLAGS = -std=c++11 -Wno-deprecated-register
 
 HOSTCC = clang
 HOSTCXX = clang++
@@ -36,4 +36,4 @@ $(rulegen_objs): %.o: %.cpp
 
 $(RULEGEN): $(rulegen_objs)
 	@echo "HOSTLD  $@"
-	$(HOSTCXX) $(rulegen_objs) -o $@
+	@$(HOSTCXX) $(rulegen_objs) -o $@

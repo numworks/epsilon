@@ -14,7 +14,7 @@
 
 int yylex();
 int yyparse(std::vector<Rule *> ** rules);
-int yyerror(std::vector<Rule *> ** rules, char *s);
+int yyerror(std::vector<Rule *> ** rules, const char *s);
 %}
 
 
@@ -99,7 +99,7 @@ builder_list:
 #include <sstream>
 #include <iostream>
 
-int yyerror(std::vector<Rule *> ** rules, char *s) {
+int yyerror(std::vector<Rule *> ** rules, const char *s) {
   printf("Error: %s\n",s);
   return 0;
 }

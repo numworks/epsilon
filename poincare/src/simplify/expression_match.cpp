@@ -35,7 +35,9 @@ int ExpressionMatch::numberOfExpressions() {
 
 ExpressionMatch& ExpressionMatch::operator=(ExpressionMatch&& other) {
   m_numberOfExpressions = other.m_numberOfExpressions;
-  other.m_numberOfExpressions = 0; // Here we make sure that the memory containing the expressions is not freed.
+  // Here we make sure that the memory containing the expressions is not freed
+  // in order to avoid a double free
+  other.m_numberOfExpressions = 0;
   m_expressions = other.m_expressions;
   return *this;
 }

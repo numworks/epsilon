@@ -38,11 +38,16 @@ void assert_simplifies_to(const char * input_string, const char * expected_strin
 
   assert(simplified->isIdenticalTo(expected));
   delete expected;
-  delete simplified;
+  if (simplified != input) {
+    delete simplified;
+  }
   delete input;
 }
 
 QUIZ_CASE(poincare_simplify_addition_integer) {
-  //assert_simplifies_to("2+2", "4");
-  assert_simplifies_to("2*2*2*2*2*2", "6");
+  assert_simplifies_to("1", "1");
+  assert_simplifies_to("1+2", "3");
+  assert_simplifies_to("1+a", "1+a");
+  assert_simplifies_to("1+2+3+4+5+6+7", "28");
+  assert_simplifies_to("1+2+3+4+5+a+6+7", "28+a");
 }

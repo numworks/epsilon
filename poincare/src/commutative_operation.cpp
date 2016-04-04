@@ -57,3 +57,8 @@ ExpressionLayout * CommutativeOperation::createLayout() {
   }
   return new HorizontalLayout(children_layouts, number_of_children);
 }
+
+bool CommutativeOperation::isCommutative() {
+  return true;
+}
+

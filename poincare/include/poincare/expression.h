@@ -40,6 +40,7 @@ class Expression {
     Expression * simplify();
 
     virtual Type type() = 0;
+    virtual bool isCommutative();
 
     virtual float approximate(Context& context) = 0;
 };

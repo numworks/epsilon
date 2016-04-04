@@ -4,7 +4,7 @@ dir=poincare/src/simplify
 
 $(dir)/rules.cpp: $(RULEGEN) $(dir)/rules.pr
 	@echo "RULEGEN $@"
-	$(RULEGEN) < $(dir)/rules.pr > $@
+	@$(RULEGEN) < $(dir)/rules.pr > $@
 
 products += $(dir)/rules.cpp
 

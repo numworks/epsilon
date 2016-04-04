@@ -6,7 +6,7 @@
 
 static const char* kCharForKey[KEYBOARD_ROWS * KEYBOARD_COLUMNS] = {
   "A", "B", "C", "D", "E",
-  "F", "G", "H", "UP", "DOWN",
+  "F", "G", "DEL", "UP", "DOWN",
   "K", "L", "TRIG", "LEFT", "RIGHT",
   "7", "8", "9", "(", ")",
   "4", "5", "6", "*", "/",

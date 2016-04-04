@@ -153,6 +153,15 @@ char* get_text() {
       }
       // we want to be inside the parenthese if there are some.
       index -= (tmp > 2) ? 2 : 0;
+    } else if (event == DELETE) {
+      // Nothing to delete.
+      if (index == max) {
+        continue;
+      }
+      for (int i=index; i<max+1; i++) {
+        input[i] = input[i+1];
+      }
+      max--;
     }
   }
   

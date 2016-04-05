@@ -30,7 +30,7 @@ KDSize HorizontalLayout::computeSize() {
   KDSize size = (KDSize){.width = 0, .height = 0};
   int i = 0;
   KDCoordinate max_under_baseline = 0;
-  KDSize max_above_baseline = 0;
+  KDCoordinate max_above_baseline = 0;
   while (ExpressionLayout * c = child(i++)) {
     KDSize childSize = c->size();
     size.width += childSize.width;

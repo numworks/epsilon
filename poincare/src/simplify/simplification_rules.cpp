@@ -173,7 +173,7 @@ const ExpressionSelector multiplyByZeroSelector[3] = {
     .m_numberOfChildren = 2
   },
   {
-    .m_match = ExpressionSelector::Match::Type,
+    .m_match = ExpressionSelector::Match::TypeAndValue,
     .m_expressionType = Expression::Type::Integer,
     .m_numberOfChildren = 0,
     .m_integerValue = 0,

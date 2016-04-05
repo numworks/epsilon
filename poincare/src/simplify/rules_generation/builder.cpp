@@ -26,5 +26,8 @@ void Builder::generateFields(Rule * context, std::string &indentation) {
       assert(m_children->size() == 0);
       std::cout << indentation << ".m_matchIndex = " << selector->flatIndexOfChildNamed(*m_name) << "," << std::endl;
       break;
+    case Type::ExpressionGenerator:
+      assert(false); // Not implemented yet.
+      break;
   }
 }

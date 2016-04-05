@@ -13,11 +13,11 @@ const ExpressionSelector additionCommutativeWCSelector[4] = {
     .m_numberOfChildren = 1,
   },
   {
-    .m_match = ExpressionSelector::Match::WildCard,
+    .m_match = ExpressionSelector::Match::Wildcard,
     .m_numberOfChildren = 0
   },
   {
-    .m_match = ExpressionSelector::Match::WildCard,
+    .m_match = ExpressionSelector::Match::Wildcard,
     .m_numberOfChildren = 0
   },
 };
@@ -52,11 +52,11 @@ const ExpressionSelector multiplyCommutativeWCSelector[4] = {
     .m_numberOfChildren = 1,
   },
   {
-    .m_match = ExpressionSelector::Match::WildCard,
+    .m_match = ExpressionSelector::Match::Wildcard,
     .m_numberOfChildren = 0
   },
   {
-    .m_match = ExpressionSelector::Match::WildCard,
+    .m_match = ExpressionSelector::Match::Wildcard,
     .m_numberOfChildren = 0
   },
 };
@@ -133,7 +133,7 @@ const ExpressionSelector additionIntegerWCSelector[4] = {
     .m_numberOfChildren = 0
   },
   {
-    .m_match = ExpressionSelector::Match::WildCard,
+    .m_match = ExpressionSelector::Match::Wildcard,
     .m_numberOfChildren = 0
   },
 };
@@ -166,7 +166,35 @@ const ExpressionBuilder additionIntegerWCBuilder[5] = {
   },
 };
 
-const Simplification simplifications[4] = {
+const ExpressionSelector multiplyByZeroSelector[3] = {
+  {
+    .m_match = ExpressionSelector::Match::Type,
+    .m_expressionType = Expression::Type::Product,
+    .m_numberOfChildren = 2
+  },
+  {
+    .m_match = ExpressionSelector::Match::Type,
+    .m_expressionType = Expression::Type::Integer,
+    .m_numberOfChildren = 0,
+    .m_integerValue = 0,
+  },
+  {
+    .m_match = ExpressionSelector::Match::Wildcard,
+    .m_numberOfChildren = 0
+  },
+};
+
+const ExpressionBuilder multiplyByZeroBuilder[1] = {
+  {
+    .m_action = ExpressionBuilder::Action::BuildFromTypeAndValue,
+    .m_expressionType = Expression::Type::Integer,
+    .m_numberOfChildren = 0,
+    .m_integerValue = 0,
+  },
+};
+
+
+const Simplification simplifications[5] = {
   {
     .m_selector = (ExpressionSelector *)additionCommutativeWCSelector,
     .m_builder = (ExpressionBuilder *)additionCommutativeWCBuilder
@@ -183,6 +211,10 @@ const Simplification simplifications[4] = {
     .m_selector = (ExpressionSelector *)additionIntegerWCSelector,
     .m_builder = (ExpressionBuilder *)additionIntegerWCBuilder
   },
+  {
+    .m_selector = (ExpressionSelector *)multiplyByZeroSelector,
+    .m_builder = (ExpressionBuilder *)multiplyByZeroBuilder
+  },
 };
 
-const int knumberOfSimplifications = 4;
+const int knumberOfSimplifications = 5;

@@ -63,9 +63,16 @@ void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput,
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
  * This makes 1 / 2 / 5’  be ‘(1 / 2) / 5’ instead of ‘1 / (2 / 5)’.
+ *
+ * This also puts the precedence of the operators, here DIVIDE has a bigger
+ * precedence than PLUS for example.
  */
-%left '-' '+'
-%left '*' '/'
+%left PLUS
+%left MINUS
+%left MULTIPLY
+%left DIVIDE
+%left POW
+
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;

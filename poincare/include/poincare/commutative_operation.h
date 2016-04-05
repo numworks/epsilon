@@ -11,6 +11,7 @@ class CommutativeOperation : public Expression {
     int numberOfOperands() override;
     float approximate(Context& context) override;
     ExpressionLayout * createLayout() override;
+    bool isCommutative() override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) = 0;
     virtual char operatorChar() = 0;

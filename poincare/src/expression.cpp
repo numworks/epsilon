@@ -63,3 +63,7 @@ bool Expression::valueEquals(Expression * e) {
    * -riden. */
   return true;
 }
+
+bool Expression::isCommutative() {
+  return false;
+}

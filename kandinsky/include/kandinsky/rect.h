@@ -24,5 +24,6 @@ typedef struct {
 extern KDRect KDRectZero;
 
 void KDFillRect(KDRect rect, KDColor color);
+void KDDrawRect(KDRect rect, KDColor color);
 
 #endif

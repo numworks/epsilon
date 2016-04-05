@@ -48,19 +48,11 @@ static void clear_trig_menu() {
 static void print_trig_menu() {
   {
     KDRect r;
-    r.x = SCREEN_WIDTH / 4 - 1;
-    r.y = SCREEN_HEIGHT / 4 - 1;
-    r.width = SCREEN_WIDTH / 2 + 2;
-    r.height = SCREEN_HEIGHT / 2 + 2;
-    KDFillRect(r, 0xFF);
-  }
-  {
-    KDRect r;
     r.x = SCREEN_WIDTH / 4;
     r.y = SCREEN_HEIGHT / 4;
     r.width = SCREEN_WIDTH / 2;
     r.height = SCREEN_HEIGHT / 2;
-    KDFillRect(r, 0x00);
+    KDDrawRect(r, 0xff);
   }
 }
 

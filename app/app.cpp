@@ -1,4 +1,5 @@
 extern "C" {
+#include <assert.h>
 #include <kandinsky.h>
 #include <stdlib.h>
 #include <ion.h>
@@ -85,7 +86,7 @@ class UserExpressions {
     }
 
     // Gets the i th latest expression.
-    user_expression_t get_expression(uint8_t index) {
+    user_expression_t get_expression(uint8_t index) const {
       //assert(index < m_numberOfExpressions);
       int pos = (m_position - index) % INPUT_MEMORY;
       if (pos < 0) {
@@ -94,7 +95,7 @@ class UserExpressions {
       return m_expressions[pos];
     }
 
-    uint8_t numberOfExpressions() {
+    uint8_t numberOfExpressions() const {
       return m_numberOfExpressions;
     }
 
@@ -139,20 +140,45 @@ static int16_t print_user_input(user_expression_t user_expression, int16_t yOffs
   return yOffset;
 }
 
+static void print_user_inputs(const UserExpressions& user_inputs, uint8_t startingAt) {
+  int16_t yOffset = 0;
+  for (uint8_t i=startingAt; i<user_inputs.numberOfExpressions(); i++) {
+    yOffset = print_user_input(user_inputs.get_expression(i), yOffset);
+    if (yOffset>SCREEN_HEIGHT) {
+      break;
+    }
+  }
+}
+
 static void interactive_expression_parsing() {
-  UserExpressions user_inputs;
+  UserExpressions user_inputs = UserExpressions();
+  int index = 0;
   while (1) {
-    text_event_t text_event = get_text(nullptr);
+    text_event_t text_event;
+    if (index == 0) {
+      text_event = get_text(nullptr);
+    } else {
+      text_event = get_text(user_inputs.get_expression(index - 1).text_input);
+    }
     if (text_event.event == EQUAL) {
       user_inputs.append_expression(create_user_input(text_event.text));
-    }
-    int16_t yOffset = 0;
-    for (int i=0; i<user_inputs.numberOfExpressions(); i++) {
-      yOffset = print_user_input(user_inputs.get_expression(i), yOffset);
-      if (yOffset>SCREEN_HEIGHT) {
-        break;
+    } else if (text_event.event == UP_ARROW) {
+      index--;
+      if (index < 0) {
+        index = 0;
       }
+    } else if (text_event.event == DOWN_ARROW) {
+      if (user_inputs.numberOfExpressions() != 0) {
+        index++;
+        if (index >= user_inputs.numberOfExpressions()) {
+          index = user_inputs.numberOfExpressions() - 1;
+        }
+      }
+    } else {
+      assert(false); // unreachable.
     }
+    clear_screen();
+    print_user_inputs(user_inputs, index ? index - 1 : 0);
   }
 }
 

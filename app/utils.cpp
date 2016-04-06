@@ -111,13 +111,16 @@ text_event_t get_text(char* txt) {
   char input[255] = {0};
   int index = 0;
   int max = 0;
-  input[max] = ' ';
-  input[max+1] = '\0';
   text_event_t text_event = {nullptr, ERROR};
 
   if (txt != nullptr) {
-   assert(false);
+    index = strlen(txt);
+    max = index;
+    memcpy(input, txt, (size_t) index);
   }
+
+  input[max] = ' ';
+  input[max+1] = '\0';
 
   while (1) {
     clear_prompt();
@@ -165,9 +168,17 @@ text_event_t get_text(char* txt) {
         input[i] = input[i+1];
       }
       max--;
+    } else if (event == UP_ARROW) {
+      text_event.event = UP_ARROW;
+      break;
+    } else if (event == DOWN_ARROW) {
+      text_event.event = DOWN_ARROW;
+      break;
+    } else {
+      assert(false); // unreachable.
     }
   }
-  
+
   clear_prompt();
   return text_event;
 }

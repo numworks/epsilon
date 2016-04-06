@@ -2,8 +2,7 @@
 #include <poincare.h>
 #include <assert.h>
 
-#define DUMP_EXPRESSIONS_TO_STD_OUT 1
-#if DUMP_EXPRESSIONS_TO_STD_OUT
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
 #include "../src/expression_debug.h"
 #include <iostream>
 using namespace std;

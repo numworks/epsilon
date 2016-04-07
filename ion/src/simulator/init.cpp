@@ -38,8 +38,8 @@ void init_platform() {
 }
 
 void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
-  assert(x <= SCREEN_WIDTH);
-  assert(y <= SCREEN_HEIGHT);
+  assert(x < SCREEN_WIDTH);
+  assert(y < SCREEN_HEIGHT);
   char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*SCREEN_WIDTH)+x);
   *byte = color;
 }

@@ -161,7 +161,7 @@ static void interactive_expression_parsing() {
       // We check that the expression is correct.
       if (user_inputs.get_expression(0).expression) {
         clear_screen();
-        plot(user_inputs.get_expression(0).expression, -3, 3, -2, 10);
+        plot(user_inputs.get_expression(0).expression, -3, 3);
       }
     } else {
       assert(false); // unreachable.

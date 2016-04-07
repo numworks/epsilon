@@ -13,6 +13,9 @@ extern "C" {
 constexpr KDCoordinate kScreenWidth = SCREEN_WIDTH;
 const KDCoordinate kScreenHeight = SCREEN_HEIGHT;
 
+static float plotValues[kScreenWidth];
+static float yMin, yMax;
+
 // For now we only plot the axes at the origin.
 // TODO: print axes not at the origin with some values too.
 // TODO: label the axes.
@@ -32,40 +35,49 @@ static void plot_axes(float xMin, float xMax, float yMin, float yMax) {
   }
 }
 
-// TODO: Add a cursor.
-// TODO: print the expression.
-void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
+static void fill_values(Expression * e, float xMin, float xMax) {
   assert(e);
-
   Context plotContext;
 
-  // Plot the original axes.
-  plot_axes(xMin, xMax, yMin, yMax);
-
-  // We need to initialize the first point.
+  // Initialize min and max.
   Float xExp = Float(xMin);
   plotContext.setExpressionForSymbolName(&xExp, "x");
-  float y = e->approximate(plotContext);
-  KDCoordinate j = ((y-yMin) / (yMax-yMin) * kScreenHeight);
-  if (j < 0) {
-    j = 0;
-  } else if (j >= kScreenHeight) {
-    j = kScreenHeight - 1;
-  }
-  KDPoint previousPoint = KDPointMake(0, kScreenHeight-j);
+  plotValues[0] = e->approximate(plotContext);
+  yMin = plotValues[0];
+  yMax = plotValues[0];
 
   for (KDCoordinate i = 1; i < kScreenWidth; i++) {
     float x = xMin + (xMax-xMin)/kScreenWidth*i;
     Float xExp = Float(x);
     plotContext.setExpressionForSymbolName(&xExp, "x");
-    float y = e->approximate(plotContext);
-    KDCoordinate j = ((y-yMin) / (yMax-yMin) * kScreenHeight);
-    KDPoint currentPoint = KDPointMake(i, kScreenHeight-j);
-    if (currentPoint.y < 0) {
-      currentPoint.y = 0;
-    } else if (currentPoint.y >= kScreenHeight) {
-      currentPoint.y = kScreenHeight - 1;
+    plotValues[i] = e->approximate(plotContext);
+    if (plotValues[i] > yMax) {
+      yMax = plotValues[i];
     }
+    if (plotValues[i] < yMin) {
+      yMin = plotValues[i];
+    }
+  }
+}
+
+// TODO: Add a cursor.
+// TODO: print the expression.
+void plot(Expression * e, float xMin, float xMax) {
+  assert(e);
+
+  fill_values(e, xMin, xMax);
+
+  // Plot the original axes.
+  plot_axes(xMin, xMax, yMin, yMax);
+
+  // We need to initialize the first point.
+  KDCoordinate j = ((plotValues[0]-yMin) / (yMax-yMin) * (kScreenHeight - 1));
+  KDPoint previousPoint = KDPointMake(0, kScreenHeight - 1 - j);
+
+  for (KDCoordinate i = 1; i < kScreenWidth; i++) {
+    // TODO: check for yMin == yMax
+    KDCoordinate j = ((plotValues[i]-yMin) / (yMax-yMin) * (kScreenHeight - 1));
+    KDPoint currentPoint = KDPointMake(i, kScreenHeight - 1 - j);
     KDDrawLine(previousPoint, currentPoint, 0xFF);
     previousPoint = currentPoint;
   }

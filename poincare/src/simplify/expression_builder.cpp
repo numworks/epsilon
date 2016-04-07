@@ -28,7 +28,7 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
   }
   Expression * result = nullptr;
   switch(m_action) {
-    case ExpressionBuilder::Action::BuildFromTypeAndValue:
+    case ExpressionBuilder::Action::BuildFromType:
       switch(m_expressionType) {
         case Expression::Type::Addition:
           result = new Addition(children_expressions, numberOfChildrenExpressions, true);
@@ -36,6 +36,12 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
         case Expression::Type::Product:
           result = new Product(children_expressions, numberOfChildrenExpressions, true);
           break;
+        default:
+          assert(false);
+          break;
+      }
+    case ExpressionBuilder::Action::BuildFromTypeAndValue:
+      switch(m_expressionType) {
         case Expression::Type::Integer:
           result = new Integer(m_integerValue);
           break;

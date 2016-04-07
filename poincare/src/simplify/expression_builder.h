@@ -22,6 +22,7 @@ public:
 
 private:
   enum class Action {
+    BuildFromType,
     BuildFromTypeAndValue,
     Clone,
     BringUpWildcard,
@@ -35,7 +36,7 @@ private:
   Action m_action;
 
   union {
-    // m_action == BuildFromTypeAndValue
+    // m_action == BuildFromType and BuildFromTypeAndValue
     struct {
       Expression::Type m_expressionType;
       union {

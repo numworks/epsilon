@@ -7,9 +7,19 @@
 
 class Simplification {
 public:
+  constexpr Simplification(ExpressionSelector * m_selector, ExpressionBuilder * m_builder);
+  Expression * simplify(Expression * expression) const;
+private:
   ExpressionSelector * m_selector;
   ExpressionBuilder * m_builder;
-  Expression * simplify(Expression * expression) const;
 };
+
+constexpr Simplification::Simplification(
+  ExpressionSelector * selector,
+  ExpressionBuilder * builder)
+  :
+  m_selector(selector),
+  m_builder(builder) {
+}
 
 #endif

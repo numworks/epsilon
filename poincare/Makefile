@@ -42,9 +42,10 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
 )
 
-# We won't use this very often but the linker should be smart enough to just
-# remove it if we don't use it.
+ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o
+SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
+endif
 
 # Even though flex and bison will generate both implementation and headers at
 # once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may

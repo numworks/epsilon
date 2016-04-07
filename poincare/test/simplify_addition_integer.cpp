@@ -9,7 +9,7 @@ using namespace std;
 #endif
 
 void assert_simplifies_to(const char * input_string, const char * expected_string) {
-#if DUMP_EXPRESSIONS_TO_STD_OUT
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Simplification Run ----"  << endl;
   cout << input_string << " -> " << expected_string << endl;
 #endif
@@ -17,21 +17,21 @@ void assert_simplifies_to(const char * input_string, const char * expected_strin
   //Expression* input = new Addition(tab, 3, false);
   Expression * input = Expression::parse(input_string);
   assert(input != nullptr);
-#if DUMP_EXPRESSIONS_TO_STD_OUT
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Input = " << endl;
   print_expression(input);
 #endif
 
   Expression * simplified = input->simplify();
   assert(simplified != nullptr);
-#if DUMP_EXPRESSIONS_TO_STD_OUT
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Simplified = " << endl;
   print_expression(simplified);
 #endif
 
   Expression * expected = Expression::parse(expected_string);
   assert(expected != nullptr);
-#if DUMP_EXPRESSIONS_TO_STD_OUT
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Expected = " << endl;
   print_expression(expected);
 #endif

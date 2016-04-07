@@ -8,16 +8,10 @@ extern "C" {
 #include "expression_selector.h"
 
 const uint8_t kUnmatched = 0xff;
-static bool canCommutativelyMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch);
-static int commutativeMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches);
-static int sequentialMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches);
 
-static int numberOfNonWildcardChildren(ExpressionSelector* selector) {
-  bool hasWildcard = selector->child(selector->m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
-  int numberOfChildren = selector->m_numberOfChildren;
+int ExpressionSelector::numberOfNonWildcardChildren() {
+  bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
+  int numberOfChildren = m_numberOfChildren;
   if (hasWildcard) {
     numberOfChildren--;
   }
@@ -78,9 +72,9 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
   if (this->m_numberOfChildren != 0) {
     int numberOfChildMatches = 0;
     if (!e->isCommutative()) {
-      numberOfChildMatches = sequentialMatch(this, e, matches+numberOfMatches);
+      numberOfChildMatches = sequentialMatch(e, matches+numberOfMatches);
     } else {
-      numberOfChildMatches = commutativeMatch(this, e, matches+numberOfMatches);
+      numberOfChildMatches = commutativeMatch(e, matches+numberOfMatches);
     }
     // We check whether the children matched or not.
     if (numberOfChildMatches == 0) {
@@ -94,11 +88,10 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
 }
 
 /* This tries to match the children selector sequentialy */
-static int sequentialMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches) {
+int ExpressionSelector::sequentialMatch(Expression * e, ExpressionMatch * matches) {
   int numberOfMatches = 0;
-  for (int i=0; i<selector->m_numberOfChildren; i++) {
-    ExpressionSelector * childSelector = selector->child(i);
+  for (int i=0; i<m_numberOfChildren; i++) {
+    ExpressionSelector * childSelector = child(i);
     Expression * childExpression = e->operand(i);
 
     if (childSelector->m_match == ExpressionSelector::Match::Wildcard) {
@@ -119,19 +112,18 @@ static int sequentialMatch(ExpressionSelector * selector, Expression * e,
  * a selector and then writes the output ExpressionMatch to matches just like
  * match would do.
  */
-static int commutativeMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches) {
+int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * matches) {
   // If we have more children to match than the expression has, we cannot match.
-  if (e->numberOfOperands() < selector->m_numberOfChildren) {
+  if (e->numberOfOperands() < m_numberOfChildren) {
     return 0;
   }
 
-  bool hasWildcard = selector->child(selector->m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
-  uint8_t * selectorMatched = (uint8_t*) malloc(e->numberOfOperands());
+  bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
+  uint8_t * selectorMatched = (uint8_t *)malloc(e->numberOfOperands());
 
   // Initialize the selectors matched to unmatched (0xff), here we assume that
   // we never have more than 255 direct children selector.
-  assert(selector->m_numberOfChildren<kUnmatched);
+  assert(m_numberOfChildren<kUnmatched);
   for (int i(0); i<e->numberOfOperands(); i++) {
     selectorMatched[i] = kUnmatched;
   }
@@ -142,9 +134,9 @@ static int commutativeMatch(ExpressionSelector * selector, Expression * e,
 
   // If we have a wildcard we do not want to try to match it to an expression
   // yet.
-  int numberOfChildren = numberOfNonWildcardChildren(selector);
+  int numberOfChildren = numberOfNonWildcardChildren();
 
-  if (!canCommutativelyMatch(selector, e, matches, selectorMatched, numberOfChildren)) {
+  if (!canCommutativelyMatch(e, matches, selectorMatched, numberOfChildren)) {
     free(selectorMatched);
     return 0;
   }
@@ -210,7 +202,7 @@ static int commutativeMatch(ExpressionSelector * selector, Expression * e,
   // Integer(4)
   int numberOfMatches = 0;
   for (int i(0); i<numberOfChildren; i++) {
-    int numberOfChildMatches = selector->child(i)->match(e->operand(expressionMatched[i]), matches+numberOfMatches);
+    int numberOfChildMatches = child(i)->match(e->operand(expressionMatched[i]), matches+numberOfMatches);
     assert(numberOfChildMatches > 0);
     numberOfMatches += numberOfChildMatches;
   }
@@ -242,9 +234,8 @@ static int commutativeMatch(ExpressionSelector * selector, Expression * e,
  * leftToMatch tells it how many selectors still have to be matched.
  * Implementation detail: selectors are matched in ascending order.
  */
-static bool canCommutativelyMatch(ExpressionSelector * selector, Expression * e,
-    ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch) {
-  bool hasWildcard = selector->child(selector->m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
+bool ExpressionSelector::canCommutativelyMatch(Expression * e, ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch) {
+  bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
 
   // This part is used to make sure that we stop once we matched everything.
   if (leftToMatch == 0) {
@@ -279,18 +270,18 @@ static bool canCommutativelyMatch(ExpressionSelector * selector, Expression * e,
   }
 
   // We try to match the i-th child selector.
-  int i = numberOfNonWildcardChildren(selector) - leftToMatch;
+  int i = numberOfNonWildcardChildren() - leftToMatch;
   for (int j = 0; j<e->numberOfOperands(); j++) {
     // If the child has already been matched, we skip it.
     if (selectorMatched[j] != kUnmatched) {
       continue;
     }
-    if (selector->child(i)->match(e->operand(j), matches)) {
+    if (child(i)->match(e->operand(j), matches)) {
       // We managed to match this selector.
       selectorMatched[j] = i;
       // We check that we can match the rest in this configuration, if so we
       // are good.
-      if (canCommutativelyMatch(selector, e, matches, selectorMatched, leftToMatch - 1)) {
+      if (canCommutativelyMatch(e, matches, selectorMatched, leftToMatch - 1)) {
         return true;
       }
       // Otherwise we backtrack.

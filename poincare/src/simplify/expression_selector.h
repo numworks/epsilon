@@ -51,6 +51,12 @@ private:
   {
   }
 
+  int numberOfNonWildcardChildren();
+  bool canCommutativelyMatch(Expression * e, ExpressionMatch * matches,
+      uint8_t * selectorMatched, int leftToMatch);
+  int commutativeMatch(Expression * e, ExpressionMatch * matches);
+  int sequentialMatch(Expression * e, ExpressionMatch * matches);
+
   Match m_match;
   union {
     // m_match == Any

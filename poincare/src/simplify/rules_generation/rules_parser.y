@@ -87,7 +87,7 @@ node:
       $$ = $1;
       $$->setReference(Node::ReferenceMode::SingleNode, $3);
     }
-  | node LEFT_BRACKET IDENTIFIER RIGHT_BRACKET {
+  | node LEFT_BRACKET VALUE RIGHT_BRACKET {
       $$ = $1;
       $$->setValue($3);
     }

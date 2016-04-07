@@ -59,7 +59,7 @@ std::string Node::generateSelectorConstructor(Rule * context) {
       if (m_value == nullptr) {
         result << "ExpressionSelector::Type(Expression::Type::" << *m_typeName << ", ";
       } else {
-        result << "ExpressionSelector::TypeAndValue(Expression::Type::" << *m_typeName << ", " << *m_value << ",";
+        result << "ExpressionSelector::TypeAndValue(Expression::Type::" << *m_typeName << ", " << *m_value << ", ";
       }
       break;
     case Node::Type::Generator:

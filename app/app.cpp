@@ -8,32 +8,14 @@ extern "C" {
 #include <poincare.h>
 #include "../poincare/src/layout/string_layout.h"
 
+#include "plot.h"
 #include "utils.h"
 
-const char* kParsingErrorMessage = "PARSING ERROR";
-
-void plot(Expression * e, float xMin, float xMax, float yMin, float yMax) {
-  Context plotContext;
-  KDCoordinate screenWidth = SCREEN_WIDTH;
-  KDCoordinate screenHeight = SCREEN_HEIGHT;
-  KDPoint previousPoint;
-  for (KDCoordinate i=0;i<screenWidth; i++) {
-    float x = xMin + (xMax-xMin)/screenWidth*i;
-    Float xExp = Float(x);
-    plotContext.setExpressionForSymbolName(&xExp, "x");
-    float y = e->approximate(plotContext);
-    KDCoordinate j = ((y-yMin)/(yMax-yMin)*screenHeight);
-    KDPoint currentPoint = KDPointMake(i,screenHeight-j);
-    if (i>0) {
-      KDDrawLine(previousPoint, currentPoint, 0xFF);
-    }
-    previousPoint = currentPoint;
-  }
-}
+static const char* kParsingErrorMessage = "PARSING ERROR";
 
 //////////////////////////////////////////////////////
 
-#define INPUT_MEMORY 15
+static constexpr uint8_t kInputMemory = 15;
 
 typedef struct user_expression_t {
   char* text_input;
@@ -47,24 +29,24 @@ class UserExpressions {
   public:
     UserExpressions() {
       m_numberOfExpressions = 0;
-      m_position = INPUT_MEMORY;
-      for (int i=0; i<INPUT_MEMORY; i++) {
+      m_position = kInputMemory;
+      for (int i=0; i<kInputMemory; i++) {
         m_expressions[i] = {nullptr, nullptr, nullptr, nullptr, nullptr};
       }
     }
 
     // Adds a user expression as the most recent one.
     void append_expression(user_expression_t user_expression) {
-      if (m_numberOfExpressions < INPUT_MEMORY) {
+      if (m_numberOfExpressions < kInputMemory) {
         m_numberOfExpressions++;
       }
-      m_position = (m_position + 1) % INPUT_MEMORY;
+      m_position = (m_position + 1) % kInputMemory;
       if (m_position < 0) {
-        m_numberOfExpressions += INPUT_MEMORY;
+        m_numberOfExpressions += kInputMemory;
       }
 
       // The circular buffer is full, now we have to erase stuff.
-      if (m_numberOfExpressions == INPUT_MEMORY) {
+      if (m_numberOfExpressions == kInputMemory) {
         user_expression_t tmp = m_expressions[m_position];
         if (tmp.text_input) {
           free(tmp.text_input);
@@ -88,9 +70,9 @@ class UserExpressions {
     // Gets the i th latest expression.
     user_expression_t get_expression(uint8_t index) const {
       //assert(index < m_numberOfExpressions);
-      int pos = (m_position - index) % INPUT_MEMORY;
+      int pos = (m_position - index) % kInputMemory;
       if (pos < 0) {
-        pos += INPUT_MEMORY;
+        pos += kInputMemory;
       }
       return m_expressions[pos];
     }
@@ -102,7 +84,7 @@ class UserExpressions {
   private:
     uint8_t m_numberOfExpressions;
     uint8_t m_position;
-    user_expression_t m_expressions[INPUT_MEMORY];
+    user_expression_t m_expressions[kInputMemory];
 };
 
 /////////////////////////////////////////////////
@@ -173,6 +155,13 @@ static void interactive_expression_parsing() {
         if (index >= user_inputs.numberOfExpressions()) {
           index = user_inputs.numberOfExpressions() - 1;
         }
+      }
+    } else if (text_event.event == PLOT) {
+      user_inputs.append_expression(create_user_input(text_event.text));
+      // We check that the expression is correct.
+      if (user_inputs.get_expression(0).expression) {
+        clear_screen();
+        plot(user_inputs.get_expression(0).expression, -3, 3, -2, 10);
       }
     } else {
       assert(false); // unreachable.

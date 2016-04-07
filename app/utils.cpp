@@ -174,6 +174,12 @@ text_event_t get_text(char* txt) {
     } else if (event == DOWN_ARROW) {
       text_event.event = DOWN_ARROW;
       break;
+    } else if (event == PLOT) {
+      text_event.event = PLOT;
+      input[max] = '\0';
+      text_event.text = (char*) malloc(sizeof(char) * (index + 1));
+      memcpy(text_event.text, input, (size_t) (index + 1));
+      break;
     } else {
       assert(false); // unreachable.
     }

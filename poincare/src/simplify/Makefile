@@ -9,7 +9,6 @@ $(dir)/rules.cpp: $(RULEGEN) $(dir)/rules.pr
 products += $(dir)/rules.cpp
 
 objs += $(addprefix $(dir)/,\
-  contiguous_tree.o\
   expression_builder.o\
   expression_match.o\
   expression_selector.o\

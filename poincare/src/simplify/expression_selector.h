@@ -2,13 +2,12 @@
 #define POINCARE_SIMPLIFY_EXPRESSION_SELECTOR_H
 
 #include <poincare/expression.h>
-#include "contiguous_tree.h"
 #include "expression_match.h"
 extern "C" {
 #include <stdint.h>
 }
 
-class ExpressionSelector : public ContiguousTree {
+class ExpressionSelector {
 public:
   static constexpr ExpressionSelector Any(uint8_t numberOfChildren) {
     return ExpressionSelector(Match::Any, (Expression::Type)0, 0, numberOfChildren);
@@ -23,7 +22,6 @@ public:
     return ExpressionSelector(Match::TypeAndValue, type, value, numberOfChildren);
   }
 
-  ExpressionSelector * child(int i);
   /* The match function is interesting
    * - It returns 0 if the selector didn't match the expression
    * - Otherwise, it returns the number of captured matches and sets *matches
@@ -44,10 +42,10 @@ private:
       int32_t integerValue,
       uint8_t numberOfChildren)
     :
-      ContiguousTree(numberOfChildren),
       m_match(match),
       m_expressionType(type),
-      m_integerValue(integerValue)
+      m_integerValue(integerValue),
+      m_numberOfChildren(numberOfChildren)
   {
   }
 
@@ -56,6 +54,7 @@ private:
       uint8_t * selectorMatched, int leftToMatch);
   int commutativeMatch(Expression * e, ExpressionMatch * matches);
   int sequentialMatch(Expression * e, ExpressionMatch * matches);
+  ExpressionSelector * child(int index);
 
   Match m_match;
   union {
@@ -72,6 +71,7 @@ private:
       };
     };
   };
+  uint8_t m_numberOfChildren;
 };
 
 #endif

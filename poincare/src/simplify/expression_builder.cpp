@@ -16,7 +16,7 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
   int numberOfChildrenExpressions = 0;
 
   for (int i=0; i<m_numberOfChildren; i++) {
-    ExpressionBuilder * child = (ExpressionBuilder *)this->child(i);
+    ExpressionBuilder * child = this->child(i);
     if (child->m_action == ExpressionBuilder::Action::BringUpWildcard) {
       for (int j=0; j<matches[child->m_matchIndex].numberOfExpressions(); j++) {
         children_expressions[numberOfChildrenExpressions++] =
@@ -67,4 +67,14 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
       break;
   }
   return result;
+}
+
+ExpressionBuilder * ExpressionBuilder::child(int index) {
+  assert(index>=0 && index<m_numberOfChildren);
+  if (index == 0) {
+    return (this+1); // Pointer arithmetics
+  } else {
+    ExpressionBuilder * previousChild = this->child(index-1);
+    return previousChild+previousChild->m_numberOfChildren+1; // Pointer arithm.
+  }
 }

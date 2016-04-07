@@ -69,7 +69,7 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
   matches[numberOfMatches++] = ExpressionMatch(&e, 1);
 
 
-  if (this->m_numberOfChildren != 0) {
+  if (m_numberOfChildren != 0) {
     int numberOfChildMatches = 0;
     if (!e->isCommutative()) {
       numberOfChildMatches = sequentialMatch(e, matches+numberOfMatches);
@@ -292,8 +292,6 @@ bool ExpressionSelector::canCommutativelyMatch(Expression * e, ExpressionMatch *
   return false;
 }
 
-// Extrude in a class impossible otherwise ExpressionBuilder is not aggregate
-// and cannot be initialized statically
 ExpressionSelector * ExpressionSelector::child(int index) {
   assert(index>=0 && index<m_numberOfChildren);
   if (index == 0) {

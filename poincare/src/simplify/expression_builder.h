@@ -2,14 +2,12 @@
 #define POINCARE_SIMPLIFY_EXPRESSION_BUILDER_H
 
 #include <poincare/expression.h>
-#include "contiguous_tree.h"
 #include "expression_match.h"
 extern "C" {
 #include <stdint.h>
 }
 
-
-class ExpressionBuilder : public ContiguousTree {
+class ExpressionBuilder {
 public:
   static constexpr ExpressionBuilder BuildFromType(Expression::Type type, uint8_t numberOfChildren);
   static constexpr ExpressionBuilder BuildFromTypeAndValue(Expression::Type type, int32_t value, uint8_t numberOfChildren);
@@ -32,9 +30,9 @@ private:
   constexpr ExpressionBuilder(Expression::Type type, int32_t integerValue, uint8_t numberOfChildren);
   constexpr ExpressionBuilder(Action action, uint8_t matchIndex, uint8_t numberOfChildren);
   constexpr ExpressionBuilder(ExternalGenerator * generator, uint8_t numberOfChildren);
+  ExpressionBuilder * child(int index);
 
   Action m_action;
-
   union {
     // m_action == BuildFromType and BuildFromTypeAndValue
     struct {
@@ -51,6 +49,7 @@ private:
     // m_action == CallExternalGenerator
     ExternalGenerator * m_generator;
   };
+  uint8_t m_numberOfChildren;
 };
 
 /* Since they have to be evaluated at compile time, constexpr functions are
@@ -91,27 +90,27 @@ constexpr ExpressionBuilder::ExpressionBuilder(Expression::Type type,
   int32_t integerValue,
   uint8_t numberOfChildren)
   :
-  ContiguousTree(numberOfChildren),
   m_action(ExpressionBuilder::Action::BuildFromTypeAndValue),
   m_expressionType(type),
-  m_integerValue(integerValue) {
+  m_integerValue(integerValue),
+  m_numberOfChildren(numberOfChildren) {
 }
 
 constexpr ExpressionBuilder::ExpressionBuilder(Action action,
   uint8_t matchIndex,
   uint8_t numberOfChildren)
   :
-  ContiguousTree(numberOfChildren),
   m_action(action),
-  m_matchIndex(matchIndex) {
+  m_matchIndex(matchIndex),
+  m_numberOfChildren(numberOfChildren) {
 }
 
 constexpr ExpressionBuilder::ExpressionBuilder(ExternalGenerator * generator,
   uint8_t numberOfChildren)
   :
-  ContiguousTree(numberOfChildren),
   m_action(ExpressionBuilder::Action::CallExternalGenerator),
-  m_generator(generator) {
+  m_generator(generator),
+  m_numberOfChildren(numberOfChildren) {
 }
 
 #endif

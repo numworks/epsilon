@@ -27,6 +27,7 @@ private:
     CallExternalGenerator
   };
 
+  constexpr ExpressionBuilder(Expression::Type type, uint8_t numberOfChildren);
   constexpr ExpressionBuilder(Expression::Type type, int32_t integerValue, uint8_t numberOfChildren);
   constexpr ExpressionBuilder(Action action, uint8_t matchIndex, uint8_t numberOfChildren);
   constexpr ExpressionBuilder(ExternalGenerator * generator, uint8_t numberOfChildren);
@@ -59,8 +60,9 @@ private:
 constexpr ExpressionBuilder ExpressionBuilder::BuildFromType(
   Expression::Type type,
   uint8_t numberOfChildren) {
-  return ExpressionBuilder(type, 0, numberOfChildren);
+  return ExpressionBuilder(type, numberOfChildren);
 }
+
 constexpr ExpressionBuilder ExpressionBuilder::BuildFromTypeAndValue(
   Expression::Type type,
   int32_t value,
@@ -84,6 +86,15 @@ constexpr ExpressionBuilder ExpressionBuilder::CallExternalGenerator(
   ExternalGenerator * generator,
   uint8_t numberOfChildren) {
   return ExpressionBuilder(generator, numberOfChildren);
+}
+
+constexpr ExpressionBuilder::ExpressionBuilder(Expression::Type type,
+  uint8_t numberOfChildren)
+  :
+  m_action(ExpressionBuilder::Action::BuildFromType),
+  m_expressionType(type),
+  m_integerValue(0),
+  m_numberOfChildren(numberOfChildren) {
 }
 
 constexpr ExpressionBuilder::ExpressionBuilder(Expression::Type type,

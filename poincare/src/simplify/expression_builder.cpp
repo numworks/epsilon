@@ -40,6 +40,7 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
           assert(false);
           break;
       }
+      break;
     case ExpressionBuilder::Action::BuildFromTypeAndValue:
       switch(m_expressionType) {
         case Expression::Type::Integer:

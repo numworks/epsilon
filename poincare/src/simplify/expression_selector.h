@@ -9,18 +9,10 @@ extern "C" {
 
 class ExpressionSelector {
 public:
-  static constexpr ExpressionSelector Any(uint8_t numberOfChildren) {
-    return ExpressionSelector(Match::Any, (Expression::Type)0, 0, numberOfChildren);
-  }
-  static constexpr ExpressionSelector Wildcard(uint8_t numberOfChildren) {
-    return ExpressionSelector(Match::Wildcard, (Expression::Type)0, 0, numberOfChildren);
-  }
-  static constexpr ExpressionSelector Type(Expression::Type type, uint8_t numberOfChildren) {
-    return ExpressionSelector(Match::Type, type, 0, numberOfChildren);
-  }
-  static constexpr ExpressionSelector TypeAndValue(Expression::Type type, int32_t value, uint8_t numberOfChildren) {
-    return ExpressionSelector(Match::TypeAndValue, type, value, numberOfChildren);
-  }
+  static constexpr ExpressionSelector Any(uint8_t numberOfChildren);
+  static constexpr ExpressionSelector Wildcard(uint8_t numberOfChildren);
+  static constexpr ExpressionSelector Type(Expression::Type type, uint8_t numberOfChildren);
+  static constexpr ExpressionSelector TypeAndValue(Expression::Type type, int32_t value, uint8_t numberOfChildren);
 
   /* The match function is interesting
    * - It returns 0 if the selector didn't match the expression
@@ -37,17 +29,7 @@ private:
     TypeAndValue,
   };
 
-  constexpr ExpressionSelector(Match match,
-      Expression::Type type,
-      int32_t integerValue,
-      uint8_t numberOfChildren)
-    :
-      m_match(match),
-      m_expressionType(type),
-      m_integerValue(integerValue),
-      m_numberOfChildren(numberOfChildren)
-  {
-  }
+  constexpr ExpressionSelector(Match match, Expression::Type type, int32_t integerValue, uint8_t numberOfChildren);
 
   int numberOfNonWildcardChildren();
   bool canCommutativelyMatch(Expression * e, ExpressionMatch * matches,
@@ -73,5 +55,36 @@ private:
   };
   uint8_t m_numberOfChildren;
 };
+
+/* Since they have to be evaluated at compile time, constexpr functions are
+ * implicitely defined inline. Therefore we have to provide their implementation
+ * in this header. */
+
+constexpr ExpressionSelector ExpressionSelector::Any(uint8_t numberOfChildren) {
+  return ExpressionSelector(Match::Any, (Expression::Type)0, 0, numberOfChildren);
+}
+
+constexpr ExpressionSelector ExpressionSelector::Wildcard(uint8_t numberOfChildren) {
+  return ExpressionSelector(Match::Wildcard, (Expression::Type)0, 0, numberOfChildren);
+}
+
+constexpr ExpressionSelector ExpressionSelector::Type(Expression::Type type, uint8_t numberOfChildren) {
+  return ExpressionSelector(Match::Type, type, 0, numberOfChildren);
+}
+
+constexpr ExpressionSelector ExpressionSelector::TypeAndValue(Expression::Type type, int32_t value, uint8_t numberOfChildren) {
+  return ExpressionSelector(Match::TypeAndValue, type, value, numberOfChildren);
+}
+
+constexpr ExpressionSelector::ExpressionSelector(Match match,
+  Expression::Type type,
+  int32_t integerValue,
+  uint8_t numberOfChildren)
+  :
+  m_match(match),
+  m_expressionType(type),
+  m_integerValue(integerValue),
+  m_numberOfChildren(numberOfChildren) {
+}
 
 #endif

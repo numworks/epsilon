@@ -121,85 +121,85 @@ int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * match
   bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
   uint8_t * selectorMatched = (uint8_t *)malloc(e->numberOfOperands());
 
-  // Initialize the selectors matched to unmatched (0xff), here we assume that
-  // we never have more than 255 direct children selector.
-  assert(m_numberOfChildren<kUnmatched);
+  /* Initialize the selectors matched to unmatched (0xff), here we assume that
+   * we never have more than 255 direct children selector. */
+  assert(this->m_numberOfChildren<kUnmatched);
   for (int i(0); i<e->numberOfOperands(); i++) {
     selectorMatched[i] = kUnmatched;
   }
 
-  // TODO: This one's size can be determined by the compiler as this is the
-  // maximum number of direct children selectors.
+  /* TODO: This one's size can be determined by the compiler as this is the
+   * maximum number of direct children selectors. */
   uint8_t expressionMatched[5];
 
-  // If we have a wildcard we do not want to try to match it to an expression
-  // yet.
-  int numberOfChildren = numberOfNonWildcardChildren();
+  /* If we have a wildcard we do not want to try to match it to an expression
+   * yet. */
+  int numberOfChildren = this->numberOfNonWildcardChildren();
 
   if (!canCommutativelyMatch(e, matches, selectorMatched, numberOfChildren)) {
     free(selectorMatched);
     return 0;
   }
 
-  // Note that we need this indirection because the order in which the selectors
-  // are defined is significant.
-  //
-  // We can see that in the following example:
-  // Here we try to match:
-  //     +
-  //    / \
-  //   +   w
-  //  /
-  // w
-  // Onto:
-  //     +
-  //    / \
-  //   4   +
-  //      / \
-  //     2   3
-  //
-  // Since + is commutative they do match which is nice.
-  // The issue here is that the matches are expected in a certain order by the
-  // builder, here the order expected is:
-  //     0
-  //    / \
-  //   1   3
-  //  /
-  // 2
-  // But The nodes of the expressions are matched in this order:
-  //     0
-  //    / \
-  //   1   2
-  //        \
-  //         3
-  // Which is not what we want, thus remembering which selector matched which
-  // expression allows us to put the match in the proper order.
-  // We got an expression -> selector relationship, here we are just inversting
-  // it to get the selector -> expression relationship that we want.
+  /* Note that we need this indirection because the order in which the selectors
+   * are defined is significant.
+   *
+   * We can see that in the following example:
+   * Here we try to match:
+   *     +
+   *    / \
+   *   +   w
+   *  /
+   * w
+   * Onto:
+   *     +
+   *    / \
+   *   4   +
+   *      / \
+   *     2   3
+   *
+   * Since + is commutative they do match which is nice.
+   * The issue here is that the matches are expected in a certain order by the
+   * builder, here the order expected is:
+   *     0
+   *    / \
+   *   1   3
+   *  /
+   * 2
+   * But The nodes of the expressions are matched in this order:
+   *     0
+   *    / \
+   *   1   2
+   *        \
+   *         3
+   * Which is not what we want, thus remembering which selector matched which
+   * expression allows us to put the match in the proper order.
+   * We got an expression -> selector relationship, here we are just inversting
+   * it to get the selector -> expression relationship that we want. */
   for (int i = 0; i<e->numberOfOperands(); i++) {
     if (selectorMatched[i] != kUnmatched) {
       expressionMatched[selectorMatched[i]] = i;
     }
   }
 
-  // Here we recursively write the matches of each selector in the matches
-  // table.
-  //
-  // Using the example in the previous comment we would write
-  // | + | + | (Integer(2),Ineteger(3)) | Integer(4) |
-  //
-  // The pointer arithmetic with numberOfMatches, allows us to know how many
-  // matches a selector has written.
-  // Using the previous example, the part with
-  // +
-  // |
-  // w
-  // would write two matches:
-  // + and (Integer(2), Integer(3))
-  // whereas:
-  // w
-  // would only write one:
-  // Integer(4)
+  /* Here we recursively write the matches of each selector in the matches
+   * table.
+   *
+   * Using the example in the previous comment we would write
+   * | + | + | (Integer(2),Ineteger(3)) | Integer(4) |
+   *
+   * The pointer arithmetic with numberOfMatches, allows us to know how many
+   * matches a selector has written.
+   * Using the previous example, the part with
+   * +
+   * |
+   * w
+   * would write two matches:
+   * + and (Integer(2), Integer(3))
+   * whereas:
+   * w
+   * would only write one:
+   * Integer(4)  */
   int numberOfMatches = 0;
   for (int i(0); i<numberOfChildren; i++) {
     int numberOfChildMatches = child(i)->match(e->operand(expressionMatched[i]), matches+numberOfMatches);
@@ -208,8 +208,8 @@ int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * match
   }
 
   if (hasWildcard) {
-    // We allocate a table of Expression* the size of the number of unmatched
-    // operands.
+    /* We allocate a table of Expression* the size of the number of unmatched
+     * operands. */
     Expression ** local_expr = (Expression**) malloc((e->numberOfOperands() - numberOfChildren) * sizeof(Expression*));
     int j = 0;
     for (int i(0); i<e->numberOfOperands(); i++) {
@@ -279,9 +279,9 @@ bool ExpressionSelector::canCommutativelyMatch(Expression * e, ExpressionMatch *
     if (child(i)->match(e->operand(j), matches)) {
       // We managed to match this selector.
       selectorMatched[j] = i;
-      // We check that we can match the rest in this configuration, if so we
-      // are good.
-      if (canCommutativelyMatch(e, matches, selectorMatched, leftToMatch - 1)) {
+      /* We check that we can match the rest in this configuration, if so we
+       * are good. */
+      if (this->canCommutativelyMatch(e, matches, selectorMatched, leftToMatch - 1)) {
         return true;
       }
       // Otherwise we backtrack.
@@ -292,6 +292,8 @@ bool ExpressionSelector::canCommutativelyMatch(Expression * e, ExpressionMatch *
   return false;
 }
 
+/* Extrude in a class impossible otherwise ExpressionBuilder is not aggregate
+ * and cannot be initialized statically. */
 ExpressionSelector * ExpressionSelector::child(int index) {
   assert(index>=0 && index<m_numberOfChildren);
   if (index == 0) {

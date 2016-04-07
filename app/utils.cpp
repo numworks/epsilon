@@ -1,9 +1,11 @@
 extern "C" {
+#include <assert.h>
 #include <kandinsky.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ion.h>
 }
+
+#include "utils.h"
 
 #define PROMPT_HEIGHT 30
 
@@ -105,10 +107,18 @@ static int get_trig_input(char* input) {
   }
 }
 
-char* get_text() {
+text_event_t get_text(char* txt) {
   char input[255] = {0};
   int index = 0;
   int max = 0;
+  text_event_t text_event = {nullptr, ERROR};
+
+  if (txt != nullptr) {
+    index = strlen(txt);
+    max = index;
+    memcpy(input, txt, (size_t) index);
+  }
+
   input[max] = ' ';
   input[max+1] = '\0';
 
@@ -117,6 +127,10 @@ char* get_text() {
     print_prompt(input, index);
     ion_event_t event = ion_get_event();
     if (event == EQUAL) {
+      input[max] = '\0';
+      text_event.event = EQUAL;
+      text_event.text = (char*) malloc(sizeof(char) * (index + 1));
+      memcpy(text_event.text, input, (size_t) (index + 1));
       break;
     } else if (event == LEFT_ARROW) {
       index--;
@@ -154,12 +168,23 @@ char* get_text() {
         input[i] = input[i+1];
       }
       max--;
+    } else if (event == UP_ARROW) {
+      text_event.event = UP_ARROW;
+      break;
+    } else if (event == DOWN_ARROW) {
+      text_event.event = DOWN_ARROW;
+      break;
+    } else if (event == PLOT) {
+      text_event.event = PLOT;
+      input[max] = '\0';
+      text_event.text = (char*) malloc(sizeof(char) * (index + 1));
+      memcpy(text_event.text, input, (size_t) (index + 1));
+      break;
+    } else {
+      assert(false); // unreachable.
     }
   }
-  
+
   clear_prompt();
-  input[max] = '\0';
-  char* output = (char*) malloc(sizeof(char) * (index + 1));
-  memcpy(output, input, (size_t) (index + 1));
-  return output;
+  return text_event;
 }

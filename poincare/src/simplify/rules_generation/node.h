@@ -8,14 +8,39 @@ class Rule;
 
 class Node {
 public:
-  Node(std::string * name, std::vector<Node *> * m_children);
+  enum class Type {
+    Expression,
+    Generator,
+    Any
+  };
+  enum class ReferenceMode {
+    None,
+    SingleNode,
+    Wildcard
+  };
+
+  // Creating Nodes
+  Node(Type type, std::string * typeName = nullptr);
   ~Node();
-  int generate(Rule * context = nullptr, int index = 0, int indentationLevel = 0);
+  void setReference(ReferenceMode mode, std::string * referenceName);
+  void setValue(std::string * value);
+  void setChildren(std::vector<Node *> * children);
+
   int totalDescendantCountIncludingSelf();
   int flatIndexOfChildNamed(std::string name);
-protected:
-  virtual void generateFields(Rule * context, std::string &indentation) = 0;
-  std::string * m_name;
+
+  void generateSelectorTree(Rule * context);
+  void generateBuilderTree(Rule * context);
+private:
+  int generateTree(bool selector, Rule * context, int index, int indentationLevel);
+  std::string generateSelectorConstructor(Rule * context);
+  std::string generateBuilderConstructor(Rule * context);
+
+  Type m_type;
+  std::string * m_typeName;
+  ReferenceMode m_referenceMode;
+  std::string * m_referenceName;
+  std::string * m_value;
   std::vector<Node *> * m_children;
   Node * m_parent;
 };

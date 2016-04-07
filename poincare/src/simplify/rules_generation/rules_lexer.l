@@ -9,14 +9,18 @@
 
 %%
 
-[A-Z][a-z]+ { yylval.string = new std::string(yytext); return(EXPRESSION_TYPE); }
-\$[a-zA-Z]+ { yylval.string = new std::string(yytext); return(EXPRESSION_GENERATOR); }
-[a-z]+\* { yylval.string = new std::string(yytext); return(WILDCARD); }
-[a-z]+ { yylval.string = new std::string(yytext); return(VARIABLE); }
+[a-z]+ { yylval.string = new std::string(yytext); return (IDENTIFIER); }
+[A-Za-z]+ { yylval.string = new std::string(yytext); return (CAPITALIZED_IDENTIFIER); }
+[0-9]+ { yylval.string = new std::string(yytext); return (VALUE); }
+\$ { return(DOLLAR); }
+\* { return (ASTERISK); }
 \-\> { return(SIMPLIFIES_TO); }
 \( { return(LEFT_PARENTHESIS); }
 \) { return(RIGHT_PARENTHESIS); }
+\[ { return(LEFT_BRACKET); }
+\] { return(RIGHT_BRACKET); }
 \, { return(COMMA); }
 \; { return(SEMICOLON); }
+\. { return(PERIOD); }
 
 %%

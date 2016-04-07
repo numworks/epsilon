@@ -23,39 +23,38 @@ int yyerror(std::vector<Rule *> ** rules, const char *s);
  * when parsing (a/b) we want to create a new Fraction), or a string (this will
  * be useful to retrieve the value of Integers for example). */
 %union {
-  std::vector<Builder *> * builder_list;
-  std::vector<Selector *> * selector_list;
   std::vector<Rule *> * rule_list;
+  std::vector<Node *> * node_list;
   Rule * rule;
-  Selector * selector;
-  Builder * builder;
+  Node * node;
   std::string * string;
 }
 
-/* The INTEGER token uses the "string" part of the union to store its value */
-%token <string> INTEGER
-%token <string> SYMBOL
+/* The IDENTIFIER, CAPITALIZED_IDENTIFIER and VALUE token uses the "string" part
+ * of the union to store their value */
 
-%token <string> EXPRESSION_TYPE
-%token <string> EXPRESSION_GENERATOR
-%token <string> WILDCARD
-%token <string> VARIABLE
+%token <string> IDENTIFIER
+%token <string> CAPITALIZED_IDENTIFIER
+%token <string> VALUE
+
+/* Some tokens don't store any value */
 
 %token SIMPLIFIES_TO
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
+%token LEFT_BRACKET
+%token RIGHT_BRACKET
 %token COMMA
 %token SEMICOLON
+%token PERIOD
+%token DOLLAR
+%token ASTERISK
 
+/* The "rule_list" symbol uses the "rule_list" part of the union, and so on */
 %type <rule_list> rule_list;
 %type <rule> rule;
-%type <selector> selector;
-%type <selector_list> selector_list;
-%type <builder> builder;
-%type <builder_list> builder_list;
-
-/* The "exp" symbol uses the "expression" part of the union. */
-/*%type <expression> exp;*/
+%type <node> node;
+%type <node_list> node_list;
 
 %%
 
@@ -67,32 +66,39 @@ rule_list:
   | rule_list rule { $1->push_back($2); $$ = $1; }
 
 rule:
-  selector SIMPLIFIES_TO builder SEMICOLON { $$ = new Rule($1, $3); }
+  node SIMPLIFIES_TO node SEMICOLON { $$ = new Rule($1, $3); }
 
-selector:
-  VARIABLE { $$ = new Selector(Selector::Type::Variable, $1); }
-  | WILDCARD { $$ = new Selector(Selector::Type::Wildcard, $1); }
-  | EXPRESSION_TYPE LEFT_PARENTHESIS selector_list RIGHT_PARENTHESIS {
-      $$ = new Selector(Selector::Type::ExpressionType, $1, $3);
+node:
+  CAPITALIZED_IDENTIFIER {
+      $$ = new Node(Node::Type::Expression, $1);
+    }
+  | DOLLAR CAPITALIZED_IDENTIFIER {
+      $$ = new Node(Node::Type::Generator, $2);
+    }
+  | IDENTIFIER {
+      $$ = new Node(Node::Type::Any);
+      $$->setReference(Node::ReferenceMode::SingleNode, $1);
+    }
+  | IDENTIFIER ASTERISK {
+      $$ = new Node(Node::Type::Any);
+      $$->setReference(Node::ReferenceMode::Wildcard, $1);
+    }
+  | node PERIOD IDENTIFIER {
+      $$ = $1;
+      $$->setReference(Node::ReferenceMode::SingleNode, $3);
+    }
+  | node LEFT_BRACKET IDENTIFIER RIGHT_BRACKET {
+      $$ = $1;
+      $$->setValue($3);
+    }
+  | node LEFT_PARENTHESIS node_list RIGHT_PARENTHESIS {
+      $$ = $1;
+      $$->setChildren($3);
     }
 
-selector_list:
-  selector { $$ = new std::vector<Selector *>(); $$->push_back($1); }
-  | selector_list COMMA selector { $1->push_back($3); $$ = $1; }
-
-builder:
-  VARIABLE { $$ = new Builder(Builder::Type::Variable, $1); }
-  | WILDCARD { $$ = new Builder(Builder::Type::Wildcard, $1); }
-  | EXPRESSION_GENERATOR LEFT_PARENTHESIS builder_list RIGHT_PARENTHESIS {
-      $$ = new Builder(Builder::Type::ExpressionGenerator, $1, $3);
-    }
-  | EXPRESSION_TYPE LEFT_PARENTHESIS builder_list RIGHT_PARENTHESIS {
-      $$ = new Builder(Builder::Type::ExpressionType, $1, $3);
-    }
-
-builder_list:
-  builder { $$ = new std::vector<Builder *>(); $$->push_back($1); }
-  | builder_list COMMA builder { $1->push_back($3); $$ = $1; }
+node_list:
+  node { $$ = new std::vector<Node *>(); $$->push_back($1); }
+  | node_list COMMA node { $1->push_back($3); $$ = $1; }
 
 %%
 
@@ -120,20 +126,16 @@ int main(void) {
     rules->at(i)->generate(name.str());
     std::cout << std::endl;
   }
-  std::cout << "const Simplification simplifications[" << rules->size() << "] = {" << std::endl;
+  std::cout << "constexpr Simplification simplifications[" << rules->size() << "] = {" << std::endl;
   for (int i=0; i<rules->size(); i++) {
     std::stringstream name;
     name << "rule" << i;
-    std::cout << "  {" << std::endl;
-    std::cout << "    .m_selector = (ExpressionSelector *)" << name.str() << "Selector," << std::endl;
-    std::cout << "    .m_builder = (ExpressionBuilder *)" << name.str() << "Builder," << std::endl;
-    std::cout << "  }," << std::endl;
+std::cout << "  Simplification((ExpressionSelector *)" << name.str() << "Selector, (ExpressionBuilder *)" << name.str() << "Builder)," << std::endl;
   }
   std::cout << "};" << std::endl;
 
   std::cout << std::endl;
-  std::cout << "const int knumberOfSimplifications = " << rules->size() << ";" << std::endl;
-
+  std::cout << "constexpr int knumberOfSimplifications = " << rules->size() << ";" << std::endl;
 
   delete rules;
   return 0;

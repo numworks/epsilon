@@ -3,10 +3,8 @@ dir=poincare/src/simplify/rules_generation
 rulegen_objs := $(addprefix $(dir)/,\
   rules_parser.o\
   rules_lexer.o\
-  builder.o\
   node.o\
   rule.o\
-  selector.o\
 )
 
 $(dir)/rules_parser.cpp: $(dir)/rules_parser.y

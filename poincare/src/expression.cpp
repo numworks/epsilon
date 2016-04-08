@@ -25,7 +25,30 @@ Expression * Expression::parse(char const * string) {
 }
 
 Expression * Expression::simplify() {
-  Expression * result = this;
+  /* We make sure that the simplification is deletable.
+   * Indeed, we don't want an expression with some parts deletable and some not
+   */
+
+  // If we have a leaf node nothing can be simplified.
+  if (this->numberOfOperands()==0) {
+    return this->clone();
+  }
+
+  /* We recursively simplify the children expressions.
+   * Note that we are sure to get the samne number of children as we had before
+   */
+  Expression ** simplifiedOperands = (Expression**) malloc(this->numberOfOperands() * sizeof(Expression*));
+  for (int i = 0; i < this->numberOfOperands(); i++) {
+    simplifiedOperands[i] = this->operand(i)->simplify();
+  }
+
+  /* Note that we don't need to clone the simplified children because they are
+   * already cloned before. */
+  Expression * result = this->cloneWithDifferentOperands(simplifiedOperands, this->numberOfOperands(), false);
+
+  // The table is no longer needed.
+  free(simplifiedOperands);
+
   bool simplification_pass_was_useful = true;
   while (simplification_pass_was_useful) {
     simplification_pass_was_useful = false;
@@ -34,13 +57,12 @@ Expression * Expression::simplify() {
       Expression * simplified = simplification->simplify(result);
       if (simplified != nullptr) {
         simplification_pass_was_useful = true;
-        if (result != this) {
-          delete result;
-        }
+        delete result;
         result = simplified;
       }
     }
   }
+
   return result;
 }
 

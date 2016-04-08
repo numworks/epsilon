@@ -7,13 +7,11 @@
 using namespace std;
 #endif
 
-void assert_simplifies_to(const char * input_string, const char * expected_string) {
+bool simplifies_to(const char * input_string, const char * expected_string) {
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Simplification Run ----"  << endl;
   cout << input_string << " -> " << expected_string << endl;
 #endif
-  //Expression* tab[3] = {new Integer(1), new Integer(2), new Integer(3)};
-  //Expression* input = new Addition(tab, 3, false);
   Expression * input = Expression::parse(input_string);
   assert(input != nullptr);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
@@ -35,10 +33,34 @@ void assert_simplifies_to(const char * input_string, const char * expected_strin
   print_expression(expected);
 #endif
 
-  assert(simplified->isIdenticalTo(expected));
+  bool isIdentical = simplified->isIdenticalTo(expected);
+
   delete expected;
-  if (simplified != input) {
-    delete simplified;
-  }
+  delete simplified;
   delete input;
+
+  return isIdentical;
+}
+
+bool identical_to(const char * input_string, const char * expected_string) {
+  Expression * input = Expression::parse(input_string);
+  assert(input != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Input = " << endl;
+  print_expression(input);
+#endif
+
+  Expression * expected = Expression::parse(expected_string);
+  assert(expected != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Expected = " << endl;
+  print_expression(expected);
+#endif
+
+  bool isIdentical = input->isIdenticalTo(expected);
+
+  delete expected;
+  delete input;
+
+  return isIdentical;
 }

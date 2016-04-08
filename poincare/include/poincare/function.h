@@ -5,15 +5,16 @@
 
 class Function : public Expression {
   public:
-    Function(Expression * arg, char* function_name, bool clone_operands=true);
+    Function(Expression * arg, char* functionName, bool cloneOperands=true);
     ~Function();
     ExpressionLayout * createLayout() override;
     Expression * operand(int i) override;
     int numberOfOperands() override;
+    Expression * clone() override;
   protected:
     Expression * m_arg;
   private:
-    char* m_function_name;
+    char* m_functionName;
 };
 
 #endif

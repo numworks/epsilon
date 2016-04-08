@@ -1,9 +1,16 @@
-#include <poincare/fraction.h>
+extern "C" {
+#include <assert.h>
 #include <string.h>
+}
+
+#include <poincare/fraction.h>
 #include "layout/fraction_layout.h"
 
-Expression * Fraction::clone() {
-  return new Fraction(m_operands, true);
+Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
+        int numberOfOperands, bool cloneOperands) {
+  assert(numberOfOperands == 2);
+  assert(newOperands != nullptr);
+  return new Fraction(newOperands, cloneOperands);
 }
 
 ExpressionLayout * Fraction::createLayout() {

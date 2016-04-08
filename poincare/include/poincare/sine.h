@@ -8,7 +8,8 @@ class Sine : public Function {
     Sine(Expression * arg, bool clone_arg=true): Function(arg, (char*) "sin", clone_arg) {}
     float approximate(Context& context) override;
     Type type() override;
-    Expression * clone() override;
+    Expression * cloneWithDifferentOperands(Expression** newOperands,
+        int numberOfOperands, bool cloneOperands = true) override;
 };
 
 #endif

@@ -9,7 +9,8 @@ class Power : public BinaryOperation {
     ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;
     Type type() override;
-    Expression * clone() override;
+    Expression * cloneWithDifferentOperands(Expression** newOperands,
+        int numnerOfOperands, bool cloneOperands = true) override;
 };
 
 #endif

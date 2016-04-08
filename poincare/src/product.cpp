@@ -1,11 +1,12 @@
-#include <poincare/product.h>
-#include "layout/horizontal_layout.h"
 extern "C" {
-#include <stdlib.h>
+#include <assert.h>
 }
 
-Expression * Product::clone() {
-  return new Product(m_operands, m_numberOfOperands, true);
+#include <poincare/product.h>
+
+Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) {
+  return new Product(newOperands, numberOfOperands, cloneOperands);
 }
 
 float Product::operateApproximatevelyOn(float a, float b) {

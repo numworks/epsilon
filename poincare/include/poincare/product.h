@@ -8,7 +8,8 @@ class Product : public CommutativeOperation {
   public:
     Type type() override;
     float operateApproximatevelyOn(float a, float b) override;
-    Expression * clone() override;
+    Expression * cloneWithDifferentOperands(Expression** newOperands,
+        int numnerOfOperands, bool cloneOperands = true) override;
   protected:
     char operatorChar() override;
 };

@@ -119,7 +119,7 @@ int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * match
   }
 
   bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
-  uint8_t * selectorMatched = (uint8_t *)malloc(e->numberOfOperands());
+  uint8_t * selectorMatched = (uint8_t *)malloc(e->numberOfOperands()*sizeof(uint8_t));
 
   /* Initialize the selectors matched to unmatched (0xff), here we assume that
    * we never have more than 255 direct children selector. */

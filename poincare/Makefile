@@ -35,6 +35,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   fraction.cpp\
   integer.cpp\
+  identity.cpp\
   product.cpp\
   simplify_utils.cpp\
   simplify_addition.cpp\

@@ -66,12 +66,75 @@ Expression * Expression::simplify() {
   return result;
 }
 
+bool Expression::sequentialOperandsIdentity(Expression * e) {
+  /* Here we simply test all operands for identity in the order they are defined
+   * in. */
+  for (int i=0; i<this->numberOfOperands(); i++) {
+    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool Expression::combinatoryCommutativeOperandsIdentity(Expression * e,
+    bool * operandMatched, int leftToMatch) {
+  if (leftToMatch == 0) {
+    return true;
+  }
+
+  // We try to test for equality the i-th operand of our first expression.
+  int i = this->numberOfOperands() - leftToMatch;
+  for (int j = 0; j<e->numberOfOperands(); j++) {
+    /* If the operand of the second expression has already been associated with
+     * a previous operand we skip it */
+    if (operandMatched[j]) {
+      continue;
+    }
+    if (this->operand(i)->isIdenticalTo(e->operand(j))) {
+      // We managed to match this operand.
+      operandMatched[j] = true;
+      /* We check that we can match the rest in this configuration, if so we
+       * are good. */
+      if (this->combinatoryCommutativeOperandsIdentity(e, operandMatched, leftToMatch - 1)) {
+        return true;
+      }
+      // Otherwise we backtrack.
+      operandMatched[j] = false;
+    }
+  }
+
+  return false;
+}
+
+bool Expression::commutativeOperandsIdentity(Expression * e) {
+  int leftToMatch = this->numberOfOperands();
+
+  /* We create a table allowing us to know which operands of the second
+   * expression have been associated with one of the operands of the first
+   * expression */
+  bool * operandMatched = (bool *) malloc (this->numberOfOperands() * sizeof(bool));
+  for (int i(0); i<this->numberOfOperands(); i++) {
+    operandMatched[i] = false;
+  }
+
+  // We call our recursive helper.
+  bool commutativelyIdentical = this->combinatoryCommutativeOperandsIdentity(e, operandMatched, leftToMatch);
+
+  free(operandMatched);
+  return commutativelyIdentical;
+}
+
 bool Expression::isIdenticalTo(Expression * e) {
   if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {
     return false;
   }
-  for (int i=0; i<this->numberOfOperands(); i++) {
-    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
+  if (this->isCommutative()) {
+    if (!this->commutativeOperandsIdentity(e)) {
+      return false;
+    }
+  } else {
+    if (!this->sequentialOperandsIdentity(e)) {
       return false;
     }
   }

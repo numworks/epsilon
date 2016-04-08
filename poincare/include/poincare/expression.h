@@ -45,6 +45,11 @@ class Expression {
     virtual bool isCommutative();
 
     virtual float approximate(Context& context) = 0;
+  private:
+    bool sequentialOperandsIdentity(Expression * e);
+    bool commutativeOperandsIdentity(Expression * e);
+    bool combinatoryCommutativeOperandsIdentity(Expression * e, bool * operandMatched,
+        int leftToMatch);
 };
 
 #endif

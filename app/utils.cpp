@@ -7,7 +7,8 @@ extern "C" {
 
 #include "utils.h"
 
-#define PROMPT_HEIGHT 30
+static constexpr int16_t kPromptHeight = 25;
+static constexpr uint8_t kBufferSize = 255;
 
 void clear_screen() {
   KDRect r;
@@ -21,19 +22,19 @@ void clear_screen() {
 static void clear_prompt() {
   KDRect r;
   r.x = 0;
-  r.y = SCREEN_HEIGHT - PROMPT_HEIGHT;
+  r.y = SCREEN_HEIGHT - kPromptHeight;
   r.width = SCREEN_WIDTH;
-  r.height = PROMPT_HEIGHT;
+  r.height = kPromptHeight;
   KDFillRect(r, 0x00);
 }
 
 static void print_prompt(char* text, int index) {
   char* tmp = (char*) " ";
   KDSize font_size = KDStringSize(tmp);
-  KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - PROMPT_HEIGHT),
-             KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - PROMPT_HEIGHT), 0xff);
-  KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)), 0);
-  KDDrawChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (PROMPT_HEIGHT / 2)), true);
+  KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - kPromptHeight),
+             KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - kPromptHeight), 0xff);
+  KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (kPromptHeight / 2)), 0);
+  KDDrawChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (kPromptHeight / 2)), true);
 }
 
 static void clear_trig_menu() {
@@ -108,10 +109,14 @@ static int get_trig_input(char* input) {
 }
 
 text_event_t get_text(char* txt) {
-  char input[255] = {0};
+  char input[kBufferSize];
   int index = 0;
   int max = 0;
   text_event_t text_event = {nullptr, ERROR};
+
+  for (int i = 0; i < kBufferSize; i++) {
+    input[i] = 0;
+  }
 
   if (txt != nullptr) {
     index = strlen(txt);

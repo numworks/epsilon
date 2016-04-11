@@ -33,11 +33,30 @@ class Expression {
 
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
-    /* identicalTo means strictly the same tree. For example, 3+5 is NOT identi-
-     * cal to 5+3. Those are equal, but not identical. */
+    /* This tests whether two expressions are the same, this takes into account
+     * commutativity of operators.
+     *
+     * For example 3+5 is identical to 5+3 but is not identical to 8.
+     */
     bool isIdenticalTo(Expression * e);
-    // Compare the value of two expressions.
-    // This only make sense if the two values are of the same type
+
+    /* This tests whether two expressions are equivalent.
+     * This is done by testing wheter they simplify to the same expression.
+     *
+     * For example:
+     * - 3+5 and 4+4 are equivalent.
+     * - (x+y)*z and x*z+y*z are equivalent.
+     *
+     * Here we assume that two equivalent expressions have the same
+     * simplification, we don't really know whether that's the case,
+     * nevertheless we are sure that if two expressions simplify to the same
+     * expression they are indeed equivalent.
+     */
+    bool isEquivalentTo(Expression * e);
+
+    /* Compare the value of two expressions.
+     * This only make sense if the two values are of the same type
+     */
     virtual bool valueEquals(Expression * e);
     Expression * simplify();
 

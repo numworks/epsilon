@@ -147,6 +147,15 @@ bool Expression::isIdenticalTo(Expression * e) {
   return e->valueEquals(this);
 }
 
+bool Expression::isEquivalentTo(Expression * e) {
+  Expression * a = this->simplify();
+  Expression * b = e->simplify();
+  bool result = a->isIdenticalTo(b);
+  delete a;
+  delete b;
+  return result;
+}
+
 bool Expression::valueEquals(Expression * e) {
   assert(this->type() == e->type());
   /* This behavior makes sense for value-less nodes (addition, product, fraction

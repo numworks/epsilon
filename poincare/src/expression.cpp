@@ -34,23 +34,28 @@ Expression * Expression::simplify() {
     return this->clone();
   }
 
-  /* We recursively simplify the children expressions.
-   * Note that we are sure to get the samne number of children as we had before
-   */
-  Expression ** simplifiedOperands = (Expression**) malloc(this->numberOfOperands() * sizeof(Expression*));
-  for (int i = 0; i < this->numberOfOperands(); i++) {
-    simplifiedOperands[i] = this->operand(i)->simplify();
-  }
-
-  /* Note that we don't need to clone the simplified children because they are
-   * already cloned before. */
-  Expression * result = this->cloneWithDifferentOperands(simplifiedOperands, this->numberOfOperands(), false);
-
-  // The table is no longer needed.
-  free(simplifiedOperands);
+  Expression * result = this->clone();
+  Expression * tmp = nullptr;
 
   bool simplification_pass_was_useful = true;
   while (simplification_pass_was_useful) {
+    /* We recursively simplify the children expressions.
+     * Note that we are sure to get the samne number of children as we had before
+     */
+    Expression ** simplifiedOperands = (Expression**) malloc(result->numberOfOperands() * sizeof(Expression*));
+    for (int i = 0; i < result->numberOfOperands(); i++) {
+      simplifiedOperands[i] = result->operand(i)->simplify();
+    }
+
+    /* Note that we don't need to clone the simplified children because they are
+     * already cloned before. */
+    tmp = result->cloneWithDifferentOperands(simplifiedOperands, result->numberOfOperands(), false);
+    delete result;
+    result = tmp;
+
+    // The table is no longer needed.
+    free(simplifiedOperands);
+
     simplification_pass_was_useful = false;
     for (int i=0; i<knumberOfSimplifications; i++) {
       const Simplification * simplification = (simplifications + i); // Pointer arithmetics
@@ -59,6 +64,7 @@ Expression * Expression::simplify() {
         simplification_pass_was_useful = true;
         delete result;
         result = simplified;
+        break;
       }
     }
   }

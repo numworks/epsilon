@@ -64,3 +64,26 @@ bool identical_to(const char * input_string, const char * expected_string) {
 
   return isIdentical;
 }
+
+bool equivalent_to(const char * input_string, const char * expected_string) {
+  Expression * input = Expression::parse(input_string);
+  assert(input != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Input = " << endl;
+  print_expression(input);
+#endif
+
+  Expression * expected = Expression::parse(expected_string);
+  assert(expected != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Expected = " << endl;
+  print_expression(expected);
+#endif
+
+  bool isEquivalent = input->isEquivalentTo(expected);
+
+  delete expected;
+  delete input;
+
+  return isEquivalent;
+}

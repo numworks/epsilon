@@ -75,8 +75,8 @@ Integer::Integer(const char * string) {
 
   Integer v = Integer(digit_from_char(string[0]));
   for (int i=1; i<stringLength; i++) {
-    v = v * base;
-    v = v + Integer(digit_from_char(string[i])); // ASCII encoding
+    v = v.multiply_by(base);
+    v = v.add(Integer(digit_from_char(string[i]))); // ASCII encoding
   }
 
   // Pilfer v's ivars
@@ -176,11 +176,11 @@ Integer Integer::add(const Integer &other, bool inverse_other_negative) const {
   }
 }
 
-Integer Integer::operator+(const Integer &other) const {
+Integer Integer::add(const Integer &other) const {
   return add(other, false);
 }
 
-Integer Integer::operator-(const Integer &other) const {
+Integer Integer::subtract(const Integer &other) const {
   return add(other, true);
 }
 
@@ -206,7 +206,7 @@ Integer Integer::usum(const Integer &other, bool subtract, bool output_negative)
   return Integer(digits, size, output_negative);
 }
 
-Integer Integer::operator*(const Integer &other) const {
+Integer Integer::multiply_by(const Integer &other) const {
   assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
   uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
   native_uint_t * digits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
@@ -244,21 +244,21 @@ m_remainder(Integer((native_int_t)0)) {
 
   if (numerator < denominator) {
     m_quotient = Integer((native_int_t)0);
-    m_remainder = numerator + Integer((native_int_t)0);
+    m_remainder = numerator.add(Integer((native_int_t)0));
     // FIXME: This is a ugly way to bypass creating a copy constructor!
     return;
   }
 
   // Recursive case
-  *this = Division(numerator, denominator+denominator);
-  m_quotient = m_quotient + m_quotient;
+  *this = Division(numerator, denominator.add(denominator));
+  m_quotient = m_quotient.add(m_quotient);
   if (!(m_remainder < denominator)) {
-    m_remainder = m_remainder - denominator;
-    m_quotient = m_quotient + Integer(1);
+    m_remainder = m_remainder.subtract(denominator);
+    m_quotient = m_quotient.add(Integer(1));
   }
 }
 
-Integer Integer::operator/(const Integer &other) const {
+Integer Integer::divide_by(const Integer &other) const {
   return Division(*this, other).m_quotient;
 }
 

@@ -20,26 +20,23 @@ class Integer : public LeafExpression {
     Integer& operator=(Integer&& other); // C++11 move assignment operator
 
     // Arithmetic
-    Integer operator+(const Integer &other) const;
-    Integer operator-(const Integer &other) const;
-    Integer operator*(const Integer &other) const;
-    Integer operator/(const Integer &other) const;
+    Integer add(const Integer &other) const;
+    Integer subtract(const Integer &other) const;
+    Integer multiply_by(const Integer &other) const;
+    Integer divide_by(const Integer &other) const;
 
     bool operator<(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
     bool valueEquals(Expression * e) override;
 
-    /*virtual Expression ** children();
-    virtual bool identicalTo(Expression * e);
-    */
     Expression * clone() override;
     virtual ExpressionLayout * createLayout() override;
     float approximate(Context& context) override;
   private:
+    Integer add(const Integer &other, bool inverse_other_negative) const;
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1
     Integer usum(const Integer &other, bool subtract, bool output_negative) const;
-    Integer add(const Integer &other, bool inverse_other_negative) const;
     /* WARNING: This constructor takes ownership of the bits array and will free it! */
     Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
     native_uint_t * m_digits; // LITTLE-ENDIAN

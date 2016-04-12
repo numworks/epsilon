@@ -7,6 +7,8 @@ class LeafExpression : public Expression {
   public:
     Expression * operand(int i) override;
     int numberOfOperands() override;
+    Expression * cloneWithDifferentOperands(Expression** newOperands,
+        int numberOfOperands, bool cloneOperands = true) override;
 };
 
 #endif

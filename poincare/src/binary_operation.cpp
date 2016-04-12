@@ -29,3 +29,7 @@ Expression * BinaryOperation::operand(int i) {
   assert(i>0 && i<=2);
   return m_operands[i];
 }
+
+Expression * BinaryOperation::clone() {
+  return this->cloneWithDifferentOperands(m_operands, 2, true);
+}

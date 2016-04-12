@@ -1,10 +1,10 @@
-#include <poincare/power.h>
+extern "C" {
+#include <assert.h>
 #include <math.h>
-#include "layout/exponent_layout.h"
-
-Expression * Power::clone() {
-  return new Power(m_operands, true);
 }
+
+#include <poincare/power.h>
+#include "layout/exponent_layout.h"
 
 float Power::approximate(Context& context) {
   return powf(m_operands[0]->approximate(context), m_operands[1]->approximate(context));
@@ -12,6 +12,12 @@ float Power::approximate(Context& context) {
 
 Expression::Type Power::type() {
   return Expression::Type::Power;
+}
+
+Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) {
+  assert(numberOfOperands == 2);
+  return new Power(newOperands, cloneOperands);
 }
 
 ExpressionLayout * Power::createLayout() {

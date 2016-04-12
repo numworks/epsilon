@@ -12,6 +12,7 @@ class CommutativeOperation : public Expression {
     float approximate(Context& context) override;
     ExpressionLayout * createLayout() override;
     bool isCommutative() override;
+    Expression * clone() override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) = 0;
     virtual char operatorChar() = 0;

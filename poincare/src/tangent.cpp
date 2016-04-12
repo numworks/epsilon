@@ -1,8 +1,14 @@
 #include <poincare/tangent.h>
-#include "layout/horizontal_layout.h"
 
-Expression * Tangent::clone() {
-  return new Tangent(m_arg, true);
+extern "C" {
+#include <assert.h>
+}
+
+Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) {
+  assert(newOperands != nullptr);
+  assert(numberOfOperands == 1);
+  return new Tangent(*newOperands, cloneOperands);
 }
 
 Expression::Type Tangent::type() {

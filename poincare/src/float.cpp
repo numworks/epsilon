@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <string.h>
 extern "C" {
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 }
 
 #include <poincare/float.h>

@@ -1,12 +1,17 @@
 extern "C" {
+#include <assert.h>
 #include <stdlib.h>
 }
+
 #include <poincare/subtraction.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
 
-Expression * Subtraction::clone() {
-  return new Subtraction(m_operands, true);
+Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) {
+  assert(newOperands != nullptr);
+  assert(numberOfOperands == 2);
+  return new Subtraction(newOperands, cloneOperands);
 }
 
 float Subtraction::approximate(Context& context) {

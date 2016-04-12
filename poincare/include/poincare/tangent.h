@@ -8,7 +8,8 @@ class Tangent : public Function {
     Tangent(Expression * arg, bool clone_arg=true): Function(arg, (char*) "tan", clone_arg) {}
     float approximate(Context& context) override;
     Type type() override;
-    Expression * clone() override;
+    Expression * cloneWithDifferentOperands(Expression** newOperands,
+        int numnerOfOperands, bool cloneOperands = true) override;
 };
 
 #endif

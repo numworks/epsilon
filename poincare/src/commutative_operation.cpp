@@ -8,6 +8,7 @@ extern "C" {
 #include "layout/string_layout.h"
 
 CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands) {
+  assert(operands != nullptr);
   assert(numberOfOperands >= 2);
   m_numberOfOperands = numberOfOperands;
   m_operands = (Expression **)malloc(numberOfOperands*sizeof(Expression *));
@@ -37,6 +38,10 @@ Expression * CommutativeOperation::operand(int i) {
   return m_operands[i];
 }
 
+Expression * CommutativeOperation::clone() {
+  return this->cloneWithDifferentOperands(m_operands, m_numberOfOperands, true);
+}
+
 float CommutativeOperation::approximate(Context& context) {
   float result = m_operands[0]->approximate(context);
   for (size_t i=1; i<m_numberOfOperands; i++) {
@@ -61,4 +66,3 @@ ExpressionLayout * CommutativeOperation::createLayout() {
 bool CommutativeOperation::isCommutative() {
   return true;
 }
-

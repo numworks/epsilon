@@ -9,6 +9,7 @@ class BinaryOperation : public Expression {
     ~BinaryOperation();
     Expression * operand(int i) override;
     int numberOfOperands() override;
+    Expression * clone() override;
   protected:
     Expression * m_operands[2];
 };

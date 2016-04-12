@@ -1,8 +1,14 @@
 #include <poincare/sine.h>
-#include "layout/horizontal_layout.h"
 
-Expression * Sine::clone() {
-  return new Sine(m_arg, true);
+extern "C" {
+#include <assert.h>
+}
+
+Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) {
+  assert(newOperands != nullptr);
+  assert(numberOfOperands == 1);
+  return new Sine(*newOperands, cloneOperands);
 }
 
 Expression::Type Sine::type() {

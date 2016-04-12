@@ -12,3 +12,9 @@ Expression * LeafExpression::operand(int i) {
   assert(false);
   return nullptr;
 }
+
+Expression * LeafExpression::cloneWithDifferentOperands(Expression** newOperands,
+        int numberOfOperands, bool cloneOperands) {
+  assert(false);
+  return nullptr;
+}

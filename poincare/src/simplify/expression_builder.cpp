@@ -26,15 +26,20 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
       children_expressions[numberOfChildrenExpressions++] = child->build(matches);
     }
   }
+
   Expression * result = nullptr;
   switch(m_action) {
     case ExpressionBuilder::Action::BuildFromType:
       switch(m_expressionType) {
         case Expression::Type::Addition:
-          result = new Addition(children_expressions, numberOfChildrenExpressions, true);
+          /* The children do not need to be cloned as they already have been
+           * before. */
+          result = new Addition(children_expressions, numberOfChildrenExpressions, false);
           break;
         case Expression::Type::Product:
-          result = new Product(children_expressions, numberOfChildrenExpressions, true);
+          /* The children do not need to be cloned as they already have been
+           * before. */
+          result = new Product(children_expressions, numberOfChildrenExpressions, false);
           break;
         default:
           assert(false);

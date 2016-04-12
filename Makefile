@@ -59,6 +59,7 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
+include escher/Makefile
 include app/Makefile
 include quiz/Makefile # Quiz should be included at the end
 

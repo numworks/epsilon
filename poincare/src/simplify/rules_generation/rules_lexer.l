@@ -22,5 +22,7 @@
 \, { return(COMMA); }
 \; { return(SEMICOLON); }
 \. { return(PERIOD); }
+"//".* {} /* ignore single line comments */
+"/*"(.|\n)*"*/" {} /* ignore multiline comments */
 
 %%

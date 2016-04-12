@@ -1,10 +1,6 @@
 /* This file should be built with Bison 3.0.4. It might work with other Bison
  * version, but those haven't been tested. */
 
-/* Our lexer and parser are reentrant. That means that their generated functions
- * (such as yylex) will expect a context parameter, so let's tell Bison about
- * it. Note that the context is an opaque pointer. */
-
 /* When calling the parser, we will provide yyparse with an extra parameter : a
  * backpointer to the resulting expression. */
 %parse-param { std::vector<Rule *> ** rules }

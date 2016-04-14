@@ -34,6 +34,15 @@ class Expression;
  * We don't want that feature : we don't even have printf ! */
 #define ECHO
 
+/* This defines the size of the flex buffer size.
+ * By default this buffer is of 16k, but we don't have the luxury to use so much
+ * memory on a microcontroller.
+ * The choice of 256 Bytes is the size of the input buffer given to flex in the
+ * current implementation (the app takes a maximum of 256).
+ */
+#undef YY_BUF_SIZE
+#define YY_BUF_SIZE 256
+
 #define fprintf(...) ((void)0)
 #define exit(...) abort()
 

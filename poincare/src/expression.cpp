@@ -7,19 +7,16 @@ extern "C" {
 
 #include "simplify/simplification_rules.h"
 
-int poincare_expression_yyparse(yyscan_t scanner, Expression ** expressionOutput);
+int poincare_expression_yyparse(Expression ** expressionOutput);
 
 Expression::~Expression() {
 }
 
 Expression * Expression::parse(char const * string) {
-  void * scanner;
-  poincare_expression_yylex_init(&scanner);
-  YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string, scanner);
+  YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
   Expression * expression = 0;
-  poincare_expression_yyparse(scanner, &expression);
-  poincare_expression_yy_delete_buffer(buf, scanner);
-  poincare_expression_yylex_destroy(scanner);
+  poincare_expression_yyparse(&expression);
+  poincare_expression_yy_delete_buffer(buf);
 
   return expression;
 }

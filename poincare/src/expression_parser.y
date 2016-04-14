@@ -1,24 +1,12 @@
 /* This file should be built with Bison 3.0.4. It might work with other Bison
  * version, but those haven't been tested. */
 
-/* Ask for a reentrant parser. Otherwise Bison uses global variables, and we
- * want to avoid this behavior. */
-%pure-parser
-
-/* Our lexer and parser are reentrant. That means that their generated functions
- * (such as yylex) will expect a context parameter, so let's tell Bison about
- * it. Note that the context is an opaque pointer. */
-%lex-param   { void * scanner }
-%parse-param { void * scanner }
-
 /* When calling the parser, we will provide yyparse with an extra parameter : a
  * backpointer to the resulting expression. */
 %parse-param { Expression ** expressionOutput }
 
 %{
-// We will be generating all kind of Expressions, so we need their definitions
 #include <poincare.h>
-
 /* The lexer manipulates tokens defined by the parser, so we need the following
  * inclusion order. */
 #include "expression_parser.hpp"
@@ -26,7 +14,7 @@
 
 /* Declare our error-handling function. Since we're making a re-entrant parser,
  * it takes a context parameter as its first input. */
-void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput, char const *msg);
+void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg);
 
 /* Bison expects to use __builtin_memcpy. We don't want to provide this, but
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
@@ -66,6 +54,12 @@ void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput,
  *
  * This also puts the precedence of the operators, here DIVIDE has a bigger
  * precedence than PLUS for example.
+ *
+ * Note that specifying the precedence of reduces is usually a very bad practice
+ * expect in the case of operator precedence and of IF/THE/ELSE structure which
+ * are the only two exceptions.
+ * If you need to define precedence in order to avoid shift/redice conflicts for
+ * other situations your grammar is most likely ambiguous.
  */
 %left PLUS
 %left MINUS
@@ -102,6 +96,6 @@ exp:
 
 %%
 
-void poincare_expression_yyerror(void * scanner, Expression ** expressionOutput, char const *msg) {
+void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg) {
   // Handle the error!
 }

@@ -21,6 +21,7 @@ class Context {
       Expression * expression;
     };
     ContextPair * m_pairs;
+    const uint16_t kMaxContextPairs = 10;
 };
 
 #endif

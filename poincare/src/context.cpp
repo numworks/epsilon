@@ -2,10 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_CONTEXT_PAIRS 10
-
 Context::Context() {
-  size_t size = sizeof(ContextPair)*MAX_CONTEXT_PAIRS;
+  size_t size = sizeof(ContextPair)*this->kMaxContextPairs;
   m_pairs = (ContextPair *)malloc(size);
   memset(m_pairs, 0, size);
 }
@@ -15,7 +13,7 @@ Context::~Context() {
 }
 
 Expression * Context::operator[](const char * symbol_name) const {
-  for (int16_t i=0; i<MAX_CONTEXT_PAIRS; i++) {
+  for (int16_t i=0; i<this->kMaxContextPairs; i++) {
     ContextPair p = m_pairs[i];
     if (p.name != NULL && strcmp(p.name, symbol_name) == 0) {
       return p.expression;
@@ -25,7 +23,7 @@ Expression * Context::operator[](const char * symbol_name) const {
 }
 
 void Context::setExpressionForSymbolName(Expression * expression, const char * symbol_name) {
-  for (int16_t i=0; i<MAX_CONTEXT_PAIRS; i++) {
+  for (int16_t i=0; i<this->kMaxContextPairs; i++) {
     ContextPair * p = &m_pairs[i];
     if (p->name == NULL) {
       // FIXME: Should be copied or retained!

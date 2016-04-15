@@ -34,7 +34,7 @@ void init_platform() {
   sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
   window->end();
-  window->show(0, NULL);
+  window->show();
 }
 
 void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {

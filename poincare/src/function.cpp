@@ -21,11 +21,11 @@ Function::~Function() {
   delete m_arg;
 }
 
-Expression * Function::clone() {
-  return this->cloneWithDifferentOperands(&m_arg, 1, true);
+Expression * Function::clone() const {
+  return this->cloneWithDifferentOperands((Expression**)&m_arg, 1, true);
 }
 
-ExpressionLayout * Function::createLayout() {
+ExpressionLayout * Function::createLayout() const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(4*sizeof(ExpressionLayout *));
   children_layouts[0] = new StringLayout(m_functionName, strlen(m_functionName));
   char string[2] = {'(', '\0'};
@@ -36,7 +36,7 @@ ExpressionLayout * Function::createLayout() {
   return new HorizontalLayout(children_layouts, 4);
 }
 
-Expression * Function::operand(int i) {
+const Expression * Function::operand(int i) const {
   if (i==0) {
     return m_arg;
   } else {
@@ -44,6 +44,6 @@ Expression * Function::operand(int i) {
   }
 }
 
-int Function::numberOfOperands() {
+int Function::numberOfOperands() const {
   return 1;
 }

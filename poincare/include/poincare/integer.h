@@ -13,7 +13,7 @@ class Integer : public LeafExpression {
     Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor
     Integer(const char * string); // NULL-terminated
-    Type type() override;
+    Type type() const override;
 
     ~Integer();
 
@@ -28,11 +28,11 @@ class Integer : public LeafExpression {
     bool operator<(const Integer &other) const;
     bool operator==(const Integer &other) const;
 
-    bool valueEquals(Expression * e) override;
+    bool valueEquals(const Expression * e) const override;
 
-    Expression * clone() override;
-    virtual ExpressionLayout * createLayout() override;
-    float approximate(Context& context) override;
+    Expression * clone() const override;
+    virtual ExpressionLayout * createLayout() const override;
+    float approximate(Context& context) const override;
   private:
     Integer add(const Integer &other, bool inverse_other_negative) const;
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1

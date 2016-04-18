@@ -7,9 +7,9 @@ class BinaryOperation : public Expression {
   public:
     BinaryOperation(Expression ** operands, bool cloneOperands = true);
     ~BinaryOperation();
-    Expression * operand(int i) override;
-    int numberOfOperands() override;
-    Expression * clone() override;
+    const Expression * operand(int i) const override;
+    int numberOfOperands() const override;
+    Expression * clone() const override;
   protected:
     Expression * m_operands[2];
 };

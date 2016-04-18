@@ -18,7 +18,7 @@ int ExpressionSelector::numberOfNonWildcardChildren() {
   return numberOfChildren;
 }
 
-int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
+int ExpressionSelector::match(const Expression * e, ExpressionMatch * matches) {
   int numberOfMatches = 0;
 
   // Does the current node match?
@@ -88,11 +88,11 @@ int ExpressionSelector::match(Expression * e, ExpressionMatch * matches) {
 }
 
 /* This tries to match the children selector sequentialy */
-int ExpressionSelector::sequentialMatch(Expression * e, ExpressionMatch * matches) {
+int ExpressionSelector::sequentialMatch(const Expression * e, ExpressionMatch * matches) {
   int numberOfMatches = 0;
   for (int i=0; i<m_numberOfChildren; i++) {
     ExpressionSelector * childSelector = child(i);
-    Expression * childExpression = e->operand(i);
+    const Expression * childExpression = e->operand(i);
 
     if (childSelector->m_match == ExpressionSelector::Match::Wildcard) {
       assert(false); // There should not be a wildcard for non commutative op.
@@ -112,7 +112,7 @@ int ExpressionSelector::sequentialMatch(Expression * e, ExpressionMatch * matche
  * a selector and then writes the output ExpressionMatch to matches just like
  * match would do.
  */
-int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * matches) {
+int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch * matches) {
   // If we have more children to match than the expression has, we cannot match.
   if (e->numberOfOperands() < m_numberOfChildren) {
     return 0;
@@ -210,7 +210,7 @@ int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * match
   if (hasWildcard) {
     /* We allocate a table of Expression* the size of the number of unmatched
      * operands. */
-    Expression ** local_expr = (Expression**) malloc((e->numberOfOperands() - numberOfChildren) * sizeof(Expression*));
+    const Expression ** local_expr = (const Expression**) malloc((e->numberOfOperands() - numberOfChildren) * sizeof(Expression*));
     int j = 0;
     for (int i(0); i<e->numberOfOperands(); i++) {
       // if the expression was not matched, give it to the wildcard.
@@ -234,7 +234,7 @@ int ExpressionSelector::commutativeMatch(Expression * e, ExpressionMatch * match
  * leftToMatch tells it how many selectors still have to be matched.
  * Implementation detail: selectors are matched in ascending order.
  */
-bool ExpressionSelector::canCommutativelyMatch(Expression * e, ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch) {
+bool ExpressionSelector::canCommutativelyMatch(const Expression * e, ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch) {
   bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
 
   // This part is used to make sure that we stop once we matched everything.

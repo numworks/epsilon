@@ -9,13 +9,13 @@ extern "C" {
 class ExpressionMatch {
 public:
   ExpressionMatch();
-  ExpressionMatch(Expression ** expressions, int numberOfExpressions);
+  ExpressionMatch(const Expression ** expressions, int numberOfExpressions);
   ~ExpressionMatch();
-  Expression * expression(int i);
+  const Expression * expression(int i);
   int numberOfExpressions();
   ExpressionMatch& operator=(ExpressionMatch&& other);
 private:
-  Expression ** m_expressions;
+  const Expression ** m_expressions;
   int m_numberOfExpressions;
 };
 

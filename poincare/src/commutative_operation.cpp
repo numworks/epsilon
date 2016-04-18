@@ -7,10 +7,11 @@ extern "C" {
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
 
-CommutativeOperation::CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands) {
+CommutativeOperation::CommutativeOperation(Expression ** operands,
+    int numberOfOperands,
+    bool cloneOperands) : m_numberOfOperands(numberOfOperands) {
   assert(operands != nullptr);
   assert(numberOfOperands >= 2);
-  m_numberOfOperands = numberOfOperands;
   m_operands = (Expression **)malloc(numberOfOperands*sizeof(Expression *));
   for (int i=0; i<numberOfOperands; i++) {
     assert(operands[i] != nullptr);
@@ -29,21 +30,21 @@ CommutativeOperation::~CommutativeOperation() {
   free(m_operands);
 }
 
-int CommutativeOperation::numberOfOperands() {
+int CommutativeOperation::numberOfOperands() const {
   return m_numberOfOperands;
 }
 
-Expression * CommutativeOperation::operand(int i) {
+const Expression * CommutativeOperation::operand(int i) const {
   assert(i >= 0);
   assert(i < m_numberOfOperands);
   return m_operands[i];
 }
 
-Expression * CommutativeOperation::clone() {
+Expression * CommutativeOperation::clone() const {
   return this->cloneWithDifferentOperands(m_operands, m_numberOfOperands, true);
 }
 
-float CommutativeOperation::approximate(Context& context) {
+float CommutativeOperation::approximate(Context& context) const {
   float result = m_operands[0]->approximate(context);
   for (size_t i=1; i<m_numberOfOperands; i++) {
     float next = m_operands[i]->approximate(context);
@@ -52,7 +53,7 @@ float CommutativeOperation::approximate(Context& context) {
   return result;
 }
 
-ExpressionLayout * CommutativeOperation::createLayout() {
+ExpressionLayout * CommutativeOperation::createLayout() const {
   int number_of_children = 2*m_numberOfOperands-1;
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(number_of_children*sizeof(ExpressionLayout *));
   char string[2] = {operatorChar(), '\0'};
@@ -64,6 +65,6 @@ ExpressionLayout * CommutativeOperation::createLayout() {
   return new HorizontalLayout(children_layouts, number_of_children);
 }
 
-bool CommutativeOperation::isCommutative() {
+bool CommutativeOperation::isCommutative() const {
   return true;
 }

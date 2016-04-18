@@ -6,10 +6,10 @@
 class Sine : public Function {
   public:
     Sine(Expression * arg, bool clone_arg=true): Function(arg, (char*) "sin", clone_arg) {}
-    float approximate(Context& context) override;
-    Type type() override;
+    float approximate(Context& context) const override;
+    Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands = true) override;
+        int numberOfOperands, bool cloneOperands = true) const override;
 };
 
 #endif

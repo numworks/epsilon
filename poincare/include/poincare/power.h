@@ -6,11 +6,11 @@
 class Power : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
   public:
-    ExpressionLayout * createLayout() override;
-    float approximate(Context& context) override;
-    Type type() override;
+    ExpressionLayout * createLayout() const override;
+    float approximate(Context& context) const override;
+    Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numnerOfOperands, bool cloneOperands = true) override;
+        int numnerOfOperands, bool cloneOperands = true) const override;
 };
 
 #endif

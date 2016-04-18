@@ -20,7 +20,7 @@ public:
    * Caution: This function *will* write to *matches even if the returned
    * value is zero.
    */
-  int match(Expression * e, ExpressionMatch * matches);
+  int match(const Expression * e, ExpressionMatch * matches);
 private:
   enum class Match {
     Any,
@@ -32,10 +32,10 @@ private:
   constexpr ExpressionSelector(Match match, Expression::Type type, int32_t integerValue, uint8_t numberOfChildren);
 
   int numberOfNonWildcardChildren();
-  bool canCommutativelyMatch(Expression * e, ExpressionMatch * matches,
+  bool canCommutativelyMatch(const Expression * e, ExpressionMatch * matches,
       uint8_t * selectorMatched, int leftToMatch);
-  int commutativeMatch(Expression * e, ExpressionMatch * matches);
-  int sequentialMatch(Expression * e, ExpressionMatch * matches);
+  int commutativeMatch(const Expression * e, ExpressionMatch * matches);
+  int sequentialMatch(const Expression * e, ExpressionMatch * matches);
   ExpressionSelector * child(int index);
 
   Match m_match;
@@ -49,7 +49,7 @@ private:
         // m_expressionType == Integer
         int32_t m_integerValue;
         // m_expressionType == Symbol
-        char const * m_symbolName;
+        char * m_symbolName;
       };
     };
   };

@@ -1,5 +1,4 @@
-/* You can use this file to specify simplification rules to use.
- */
+/* */
 Addition(Addition(a*),b*)->Addition(a*,b*);
 Addition(Integer.a,Integer.b)->$AddIntegers(a,b);
 Addition(Integer.a,Integer.b,c*)->Addition($AddIntegers(a,b),c*);

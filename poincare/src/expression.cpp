@@ -21,7 +21,7 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
-Expression * Expression::simplify() {
+Expression * Expression::simplify() const {
   /* We make sure that the simplification is deletable.
    * Indeed, we don't want an expression with some parts deletable and some not
    */
@@ -69,19 +69,19 @@ Expression * Expression::simplify() {
   return result;
 }
 
-bool Expression::sequentialOperandsIdentity(Expression * e) {
+bool Expression::sequentialOperandsIdentity(const Expression * e) const {
   /* Here we simply test all operands for identity in the order they are defined
    * in. */
   for (int i=0; i<this->numberOfOperands(); i++) {
-    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
+    if (!this->operand(i)->isIdenticalTo(e->operand(i))) {
       return false;
     }
   }
   return true;
 }
 
-bool Expression::combinatoryCommutativeOperandsIdentity(Expression * e,
-    bool * operandMatched, int leftToMatch) {
+bool Expression::combinatoryCommutativeOperandsIdentity(const Expression * e,
+    bool * operandMatched, int leftToMatch) const {
   if (leftToMatch == 0) {
     return true;
   }
@@ -110,7 +110,7 @@ bool Expression::combinatoryCommutativeOperandsIdentity(Expression * e,
   return false;
 }
 
-bool Expression::commutativeOperandsIdentity(Expression * e) {
+bool Expression::commutativeOperandsIdentity(const Expression * e) const {
   int leftToMatch = this->numberOfOperands();
 
   /* We create a table allowing us to know which operands of the second
@@ -128,7 +128,7 @@ bool Expression::commutativeOperandsIdentity(Expression * e) {
   return commutativelyIdentical;
 }
 
-bool Expression::isIdenticalTo(Expression * e) {
+bool Expression::isIdenticalTo(const Expression * e) const {
   if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {
     return false;
   }
@@ -141,10 +141,10 @@ bool Expression::isIdenticalTo(Expression * e) {
       return false;
     }
   }
-  return e->valueEquals(this);
+  return this->valueEquals(e);
 }
 
-bool Expression::isEquivalentTo(Expression * e) {
+bool Expression::isEquivalentTo(Expression * e) const {
   Expression * a = this->simplify();
   Expression * b = e->simplify();
   bool result = a->isIdenticalTo(b);
@@ -153,7 +153,7 @@ bool Expression::isEquivalentTo(Expression * e) {
   return result;
 }
 
-bool Expression::valueEquals(Expression * e) {
+bool Expression::valueEquals(const Expression * e) const {
   assert(this->type() == e->type());
   /* This behavior makes sense for value-less nodes (addition, product, fraction
    * power, etc… For nodes with a value (Integer, Float), this must be over-
@@ -161,6 +161,6 @@ bool Expression::valueEquals(Expression * e) {
   return true;
 }
 
-bool Expression::isCommutative() {
+bool Expression::isCommutative() const {
   return false;
 }

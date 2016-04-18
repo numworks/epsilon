@@ -24,12 +24,12 @@ class Expression {
     static Expression * parse(char const * string);
     virtual ~Expression();
 
-    virtual ExpressionLayout * createLayout() = 0; // Returned object must be deleted
-    virtual Expression * operand(int i) = 0;
-    virtual int numberOfOperands() = 0;
-    virtual Expression * clone() = 0;
+    virtual ExpressionLayout * createLayout() const = 0; // Returned object must be deleted
+    virtual const Expression * operand(int i) const = 0;
+    virtual int numberOfOperands() const = 0;
+    virtual Expression * clone() const = 0;
     virtual Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands = true) = 0;
+        int numberOfOperands, bool cloneOperands = true) const = 0;
 
     // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
@@ -38,7 +38,7 @@ class Expression {
      *
      * For example 3+5 is identical to 5+3 but is not identical to 8.
      */
-    bool isIdenticalTo(Expression * e);
+    bool isIdenticalTo(const Expression * e) const;
 
     /* This tests whether two expressions are equivalent.
      * This is done by testing wheter they simplify to the same expression.
@@ -52,23 +52,23 @@ class Expression {
      * nevertheless we are sure that if two expressions simplify to the same
      * expression they are indeed equivalent.
      */
-    bool isEquivalentTo(Expression * e);
+    bool isEquivalentTo(Expression * e) const;
 
     /* Compare the value of two expressions.
      * This only make sense if the two values are of the same type
      */
-    virtual bool valueEquals(Expression * e);
-    Expression * simplify();
+    virtual bool valueEquals(const Expression * e) const;
+    Expression * simplify() const;
 
-    virtual Type type() = 0;
-    virtual bool isCommutative();
+    virtual Type type() const = 0;
+    virtual bool isCommutative() const;
 
-    virtual float approximate(Context& context) = 0;
+    virtual float approximate(Context& context) const = 0;
   private:
-    bool sequentialOperandsIdentity(Expression * e);
-    bool commutativeOperandsIdentity(Expression * e);
-    bool combinatoryCommutativeOperandsIdentity(Expression * e, bool * operandMatched,
-        int leftToMatch);
+    bool sequentialOperandsIdentity(const Expression * e) const;
+    bool commutativeOperandsIdentity(const Expression * e) const;
+    bool combinatoryCommutativeOperandsIdentity(const Expression * e,
+        bool * operandMatched, int leftToMatch) const;
 };
 
 #endif

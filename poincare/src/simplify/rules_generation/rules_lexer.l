@@ -23,6 +23,6 @@
 \; { return(SEMICOLON); }
 \. { return(PERIOD); }
 "//".* {} /* ignore single line comments */
-"/*"(.|\n)*"*/" {} /* ignore multiline comments */
+"/*".*"*/" {} /* ignore multiline comments */
 
 %%

@@ -8,21 +8,21 @@ extern "C" {
 #include "layout/string_layout.h"
 
 Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) {
+    int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
   assert(numberOfOperands == 2);
   return new Subtraction(newOperands, cloneOperands);
 }
 
-float Subtraction::approximate(Context& context) {
+float Subtraction::approximate(Context& context) const {
   return m_operands[0]->approximate(context) - m_operands[1]->approximate(context);
 }
 
-Expression::Type Subtraction::type() {
+Expression::Type Subtraction::type() const {
   return Expression::Type::Subtraction;
 }
 
-ExpressionLayout * Subtraction::createLayout() {
+ExpressionLayout * Subtraction::createLayout() const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
   children_layouts[0] = m_operands[0]->createLayout();
   char string[2] = {'-', '\0'};

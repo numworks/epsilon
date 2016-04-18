@@ -262,7 +262,7 @@ Integer Integer::divide_by(const Integer &other) const {
   return Division(*this, other).m_quotient;
 }
 
-Expression * Integer::clone() {
+Expression * Integer::clone() const {
   Integer * clone = new Integer((native_int_t)0);
   clone->m_numberOfDigits = m_numberOfDigits;
   clone->m_negative = m_negative;
@@ -274,7 +274,7 @@ Expression * Integer::clone() {
   return clone;
 }
 
-float Integer::approximate(Context& context) {
+float Integer::approximate(Context& context) const {
   union {
     uint32_t uint_result;
     float float_result;
@@ -316,11 +316,11 @@ float Integer::approximate(Context& context) {
   return float_result;
 }
 
-Expression::Type Integer::type() {
+Expression::Type Integer::type() const {
   return Expression::Type::Integer;
 }
 
-ExpressionLayout * Integer::createLayout() {
+ExpressionLayout * Integer::createLayout() const {
   char buffer[255];
 
   Integer base = Integer(10);
@@ -345,7 +345,7 @@ ExpressionLayout * Integer::createLayout() {
   return new StringLayout(buffer, size);
 }
 
-bool Integer::valueEquals(Expression * e) {
+bool Integer::valueEquals(const Expression * e) const {
   assert(e->type() == Expression::Type::Integer);
   return (*this == *(Integer *)e); // FIXME: Remove operator overloading
 }

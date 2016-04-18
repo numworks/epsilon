@@ -4,17 +4,17 @@ extern "C" {
 #include <stdlib.h>
 }
 
-int LeafExpression::numberOfOperands() {
+int LeafExpression::numberOfOperands() const {
   return 0;
 }
 
-Expression * LeafExpression::operand(int i) {
+const Expression * LeafExpression::operand(int i) const {
   assert(false);
   return nullptr;
 }
 
 Expression * LeafExpression::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) {
+        int numberOfOperands, bool cloneOperands) const {
   assert(numberOfOperands == 0);
   return this->clone();
 }

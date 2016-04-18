@@ -7,12 +7,12 @@ class Function : public Expression {
   public:
     Function(Expression * arg, char* functionName, bool cloneOperands=true);
     ~Function();
-    ExpressionLayout * createLayout() override;
-    Expression * operand(int i) override;
-    int numberOfOperands() override;
-    Expression * clone() override;
+    ExpressionLayout * createLayout() const override;
+    const Expression * operand(int i) const override;
+    int numberOfOperands() const override;
+    Expression * clone() const override;
   protected:
-    Expression * m_arg;
+    const Expression * m_arg;
   private:
     char* m_functionName;
 };

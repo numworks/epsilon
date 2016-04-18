@@ -7,16 +7,16 @@ class CommutativeOperation : public Expression {
   public:
     CommutativeOperation(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
     ~CommutativeOperation();
-    Expression * operand(int i) override;
-    int numberOfOperands() override;
-    float approximate(Context& context) override;
-    ExpressionLayout * createLayout() override;
-    bool isCommutative() override;
-    Expression * clone() override;
+    const Expression * operand(int i) const override;
+    int numberOfOperands() const override;
+    float approximate(Context& context) const override;
+    ExpressionLayout * createLayout() const override;
+    bool isCommutative() const override;
+    Expression * clone() const override;
   protected:
-    virtual float operateApproximatevelyOn(float a, float b) = 0;
-    virtual char operatorChar() = 0;
-    int m_numberOfOperands;
+    virtual float operateApproximatevelyOn(float a, float b) const = 0;
+    virtual char operatorChar() const = 0;
+    const int m_numberOfOperands;
     Expression ** m_operands;
 };
 

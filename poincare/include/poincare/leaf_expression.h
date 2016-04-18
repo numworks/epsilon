@@ -5,10 +5,10 @@
 
 class LeafExpression : public Expression {
   public:
-    Expression * operand(int i) override;
-    int numberOfOperands() override;
+    const Expression * operand(int i) const override;
+    int numberOfOperands() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands = true) override;
+        int numberOfOperands, bool cloneOperands = true) const override;
 };
 
 #endif

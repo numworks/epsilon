@@ -10,9 +10,9 @@ ExpressionMatch::ExpressionMatch() {
   m_expressions = nullptr;
 }
 
-ExpressionMatch::ExpressionMatch(Expression ** expressions, int numberOfExpressions) {
+ExpressionMatch::ExpressionMatch(const Expression ** expressions, int numberOfExpressions) {
   m_numberOfExpressions = numberOfExpressions;
-  m_expressions = (Expression**) malloc(m_numberOfExpressions * sizeof(ExpressionMatch*));
+  m_expressions = (const Expression**) malloc(m_numberOfExpressions * sizeof(ExpressionMatch*));
   for (int i(0); i<numberOfExpressions; i++) {
     m_expressions[i] = expressions[i];
   }
@@ -24,7 +24,7 @@ ExpressionMatch::~ExpressionMatch() {
   }
 }
 
-Expression * ExpressionMatch::expression(int i) {
+const Expression * ExpressionMatch::expression(int i) {
   assert(i < m_numberOfExpressions);
   return m_expressions[i];
 }

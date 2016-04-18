@@ -3,3 +3,5 @@ Addition(Integer.a,Integer.b)->$AddIntegers(a,b);
 Addition(Integer.a,Integer.b,c*)->Addition($AddIntegers(a,b),c*);
 Product(Product(a*),b*)->Product(a*,b*);
 Product(Integer[0],a*)->Integer[0];
+Product(Integer.a,Integer.b)->$MultiplyIntegers(a,b);
+Product(Integer.a,Integer.b,c*)->Product($MultiplyIntegers(a,b),c*);

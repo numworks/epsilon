@@ -6,6 +6,7 @@
 class SimplificationGenerator {
 public:
   static Expression * AddIntegers(Expression ** parameters, int numberOfParameters);
+  static Expression * MultiplyIntegers(Expression ** parameters, int numberOfParameters);
 };
 
 #endif

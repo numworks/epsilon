@@ -64,7 +64,7 @@ void View::removeFromSuperview() {
   // First, remove the view from its parent hierarchy
   assert(false); // FIXME: Unimplemented
   // Then, redraw the parent
-  m_superview->drawRect(m_frame);
+  m_superview->redraw(m_frame);
 }
 
 void View::setFrame(KDRect frame) {

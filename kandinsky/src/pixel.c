@@ -2,16 +2,20 @@
 #include <assert.h>
 #include <ion.h>
 
-static KDPoint sOrigin = {.x = 0, .y = 0};
+static KDRect sDrawingArea = {
+  .x = 0,
+  .y = 0,
+  .width = 0, // TODO: KDCoordinateMax
+  .height = 0 // TODO: KDCoordinateMax
+};
 
-void KDSetOrigin(KDPoint origin) {
-  sOrigin = origin;
-}
-
-KDPoint KDGetOrigin() {
-  return sOrigin;
+void KDSetDrawingArea(KDRect rect) {
+  sDrawingArea = rect;
 }
 
 void KDSetPixel(KDPoint p, KDColor c) {
-  ion_set_pixel(p.x+sOrigin.x, p.y+sOrigin.y, c);
+  if (p.x >= 0 && p.x < sDrawingArea.width &&
+      p.y >= 0 && p.y < sDrawingArea.height) {
+    ion_set_pixel(p.x+sDrawingArea.x, p.y+sDrawingArea.y, c);
+  }
 }

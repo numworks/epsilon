@@ -4,38 +4,40 @@
 
 KDRect KDRectZero = {.x = 0, .y = 0, .width = 0, .height = 0};
 
-KDRect KDRectIntersect(KDRect r1, KDRect r2) {
-  KDRect intersection;
+static inline KDCoordinate left(KDRect r) { return r.x; }
+static inline KDCoordinate right(KDRect r) { return r.x+r.width; }
+static inline KDCoordinate top(KDRect r) { return r.y; }
+static inline KDCoordinate bottom(KDRect r) { return r.y+r.height; }
+static inline KDCoordinate min(KDCoordinate x, KDCoordinate y) { return (x<y ? x : y); }
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return (x>y ? x : y); }
 
-  // Let's start by computing the overlap on the X axis
-  if (r1.x < r2.x) {
-    intersection.x = r2.x;
-    intersection.width = r1.x+r1.width-r2.x;
-  } else {
-    intersection.x = r1.x;
-    intersection.width = r2.x+r2.width-r1.x;
-  }
+bool KDRectIntersect(KDRect r1, KDRect r2) {
+    return !(right(r2) < left(r1)
+             ||
+             left(r2) > right(r1)
+             ||
+             top(r2) > bottom(r1)
+             ||
+             bottom(r2) < top(r1)
+             );
+}
 
-  if (intersection.width < 0) {
-    // There's no overlap on the X axis, let's bail out
-    return KDRectZero;
-  }
+KDRect KDRectIntersection(KDRect r1, KDRect r2) {
+    if (!KDRectIntersect(r1, r2)) {
+        return KDRectZero;
+    }
 
-  // Let's then compute the overlap on the Y axis
-  if (r1.y < r2.y) {
-    intersection.y = r2.y;
-    intersection.height = r1.y+r1.height-r2.y;
-  } else {
-    intersection.y = r1.y;
-    intersection.height = r2.y+r2.height-r1.y;
-  }
+    KDCoordinate intersectionLeft = max(left(r1), left(r2));
+    KDCoordinate intersectionRight = min(right(r1), right(r2));
+    KDCoordinate intersectionTop = max(top(r1), top(r2));
+    KDCoordinate intersectionBottom = min(bottom(r1), bottom(r2));
 
-  if (intersection.height < 0) {
-    // There's no overlap on the Y axis, let's bail out
-    return KDRectZero;
-  }
-
-  return intersection;
+    KDRect intersection;
+    intersection.x = intersectionLeft;
+    intersection.width = intersectionRight-intersectionLeft;
+    intersection.y = intersectionTop;
+    intersection.height = intersectionBottom-intersectionTop;
+    return intersection;
 }
 
 void KDFillRect(KDRect rect, KDColor color) {

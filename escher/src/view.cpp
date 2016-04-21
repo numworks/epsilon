@@ -34,8 +34,8 @@ void View::redraw(KDRect rect) {
     if (subview == nullptr) {
       continue;
     }
-    KDRect intersection = KDRectIntersect(rect, subview->m_frame);
-    if (intersection.width > 0 || intersection.height > 0) {
+    if (KDRectIntersect(rect, subview->m_frame)) {
+      KDRect intersection = KDRectIntersection(rect, subview->m_frame);
       // Let's express intersection in subview's coordinates
       intersection.x -= subview->m_frame.x;
       intersection.y -= subview->m_frame.y;

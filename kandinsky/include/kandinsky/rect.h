@@ -1,6 +1,7 @@
 #ifndef KANDINSKY_RECT_H
 #define KANDINSKY_RECT_H
 
+#include <stdbool.h>
 #include <kandinsky/color.h>
 #include <kandinsky/types.h>
 
@@ -22,7 +23,9 @@ typedef struct {
 } KDRect;
 
 extern KDRect KDRectZero;
-KDRect KDRectIntersect(KDRect r1, KDRect r2);
+
+bool KDRectIntersect(KDRect r1, KDRect r2);
+KDRect KDRectIntersection(KDRect r1, KDRect r2);
 
 void KDFillRect(KDRect rect, KDColor color);
 void KDDrawRect(KDRect rect, KDColor color);

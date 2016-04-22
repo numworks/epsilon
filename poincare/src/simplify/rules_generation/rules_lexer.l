@@ -25,4 +25,6 @@
 "//".* {} /* ignore single line comments */
 "/*".*"*/" {} /* ignore multiline comments */
 
+[ \t\n] {} /* ignore line jump and whitespaces */
+
 %%

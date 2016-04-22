@@ -1,3 +1,3 @@
 #include <poincare/expression.h>
 
-void print_expression(Expression * e, int indentationLevel = 0);
+void print_expression(const Expression * e, int indentationLevel = 0);

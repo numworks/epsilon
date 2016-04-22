@@ -1,8 +1,9 @@
-#include <poincare/expression.h>
 #include <poincare/context.h>
+#include <poincare/expression.h>
+#include <poincare/symbol.h>
 #include <iostream>
 
-void print_expression(Expression * e, int indentationLevel) {
+void print_expression(const Expression * e, int indentationLevel) {
   if (indentationLevel>0) {
     for (int i=0; i<indentationLevel-1; i++) {
       std::cout << "  ";
@@ -41,7 +42,7 @@ void print_expression(Expression * e, int indentationLevel) {
       std::cout << "Subtraction";
       break;
     case Expression::Type::Symbol:
-      std::cout << "Symbol";
+      std::cout << "Symbol(" << ((Symbol*)e)->name() << ")";
       break;
     case Expression::Type::Tangent:
       std::cout << "Tangent";

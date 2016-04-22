@@ -48,7 +48,17 @@ std::string Node::generateSelectorConstructor(Rule * context) {
       switch (m_referenceMode) {
         case Node::ReferenceMode::None:
         case Node::ReferenceMode::SingleNode:
-          result << "ExpressionSelector::Any(";
+          {
+            // We try to see if we already saw this node before.
+            Node * selector = context->selector();
+            int index = selector->flatIndexOfChildNamed(*m_referenceName);
+            int my_index = selector->flatIndexOfChildRef(this);
+            if (index >= 0 && index < my_index) {
+              result << "ExpressionSelector::SameAs(" << index << ", ";
+            } else {
+              result << "ExpressionSelector::Any(";
+            }
+          }
           break;
         case Node::ReferenceMode::Wildcard:
           result << "ExpressionSelector::Wildcard(";
@@ -104,6 +114,22 @@ std::string Node::generateBuilderConstructor(Rule * context) {
   }
   result << m_children->size() << ")";
   return result.str();
+}
+
+int Node::flatIndexOfChildRef(Node * node) {
+  if (m_referenceName != nullptr && node == this) {
+    return 0;
+  }
+  int sum=1;
+  for (Node * child : *m_children) {
+    int index = child->flatIndexOfChildRef(node);
+    if (index >= 0) {
+      return sum+index;
+    } else {
+      sum += child->totalDescendantCountIncludingSelf();
+    }
+  }
+  return -1;
 }
 
 int Node::flatIndexOfChildNamed(std::string name) {

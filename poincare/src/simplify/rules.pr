@@ -2,9 +2,20 @@
 Addition(Addition(a*),b*)->Addition(a*,b*);
 Addition(Integer.a,Integer.b)->$AddIntegers(a,b);
 Addition(Integer.a,Integer.b,c*)->Addition($AddIntegers(a,b),c*);
+
+Subtraction(a,b)->Addition(a,Product(b,Integer[-1]));
+Addition(a, Product(a,Integer[-1]))->Integer[0];
+Addition(a, Product(a,Integer[-1]), b)->b;
+Addition(a, Product(a,Integer[-1]), b, c*)->Addition(b,c*);
+
+Addition(a,a,b*)->Addition(Product(a,Integer[2]),b*);
+Addition(a,Product(a,b),c*)->Addition(Product(a,Addition(b,Integer[1])),c*);
+Addition(Product(a,b),Product(a,c),d*)->Addition(Product(a,Addition(b,c)),d*);
+Addition(a,a)->Product(a,Integer[2]);
+Addition(a,Product(a,b))->Product(a,Addition(b,Integer[1]));
+Addition(Product(a,b),Product(a,c))->Product(a,Addition(b,c));
+
 Product(Product(a*),b*)->Product(a*,b*);
 Product(Integer[0],a*)->Integer[0];
 Product(Integer.a,Integer.b)->$MultiplyIntegers(a,b);
 Product(Integer.a,Integer.b,c*)->Product($MultiplyIntegers(a,b),c*);
-Product(Addition(a, b), c*)->Addition(Product(a, c*), Product(b, c*)); /* Distributivity. */
-Product(Addition(a, b, c*), d*)->Addition(Product(a, d*), Product(d*, Addition(b, c*)));

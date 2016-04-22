@@ -19,6 +19,10 @@ int ExpressionSelector::numberOfNonWildcardChildren() {
 }
 
 int ExpressionSelector::match(const Expression * e, ExpressionMatch * matches) {
+  return this->match(e, matches, 0);
+}
+
+int ExpressionSelector::match(const Expression * e, ExpressionMatch * matches, int offset) {
   int numberOfMatches = 0;
 
   // Does the current node match?
@@ -63,18 +67,25 @@ int ExpressionSelector::match(const Expression * e, ExpressionMatch * matches) {
       /* This should not happen as a wildcard should be matched _before_ */
       assert(false);
       break;
+    case ExpressionSelector::Match::SameAs:
+      /* Here we assume that the match can only have a single child, as we
+       * don't want to match on wildcards. */
+      assert(matches[m_integerValue].numberOfExpressions() == 1);
+      if (!e->isEquivalentTo((Expression *)matches[m_sameAsPosition].expression(0))) {
+        return 0;
+      }
+      break;
   }
 
   // The current node does match. Let's add it to our matches
-  matches[numberOfMatches++] = ExpressionMatch(&e, 1);
-
+  matches[offset + numberOfMatches++] = ExpressionMatch(&e, 1);
 
   if (m_numberOfChildren != 0) {
     int numberOfChildMatches = 0;
     if (!e->isCommutative()) {
-      numberOfChildMatches = sequentialMatch(e, matches+numberOfMatches);
+      numberOfChildMatches = sequentialMatch(e, matches, offset+numberOfMatches);
     } else {
-      numberOfChildMatches = commutativeMatch(e, matches+numberOfMatches);
+      numberOfChildMatches = commutativeMatch(e, matches, offset+numberOfMatches);
     }
     // We check whether the children matched or not.
     if (numberOfChildMatches == 0) {
@@ -88,7 +99,8 @@ int ExpressionSelector::match(const Expression * e, ExpressionMatch * matches) {
 }
 
 /* This tries to match the children selector sequentialy */
-int ExpressionSelector::sequentialMatch(const Expression * e, ExpressionMatch * matches) {
+int ExpressionSelector::sequentialMatch(const Expression * e,
+    ExpressionMatch * matches, int offset) {
   int numberOfMatches = 0;
   for (int i=0; i<m_numberOfChildren; i++) {
     ExpressionSelector * childSelector = child(i);
@@ -97,7 +109,10 @@ int ExpressionSelector::sequentialMatch(const Expression * e, ExpressionMatch * 
     if (childSelector->m_match == ExpressionSelector::Match::Wildcard) {
       assert(false); // There should not be a wildcard for non commutative op.
     } else {
-      int numberOfChildMatches = childSelector->match(childExpression, (matches+numberOfMatches));
+      int numberOfChildMatches = childSelector->match(
+          childExpression,
+          matches,
+          offset+numberOfMatches);
       if (numberOfChildMatches == 0) {
         return 0;
       } else {
@@ -112,7 +127,7 @@ int ExpressionSelector::sequentialMatch(const Expression * e, ExpressionMatch * 
  * a selector and then writes the output ExpressionMatch to matches just like
  * match would do.
  */
-int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch * matches) {
+int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch * matches, int offset) {
   // If we have more children to match than the expression has, we cannot match.
   if (e->numberOfOperands() < m_numberOfChildren) {
     return 0;
@@ -136,7 +151,7 @@ int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch *
    * yet. */
   int numberOfChildren = this->numberOfNonWildcardChildren();
 
-  if (!canCommutativelyMatch(e, matches, selectorMatched, numberOfChildren)) {
+  if (!canCommutativelyMatch(e, matches, selectorMatched, numberOfChildren, offset)) {
     free(selectorMatched);
     return 0;
   }
@@ -186,7 +201,7 @@ int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch *
    * table.
    *
    * Using the example in the previous comment we would write
-   * | + | + | (Integer(2),Ineteger(3)) | Integer(4) |
+   * | + | + | (Integer(2),Integer(3)) | Integer(4) |
    *
    * The pointer arithmetic with numberOfMatches, allows us to know how many
    * matches a selector has written.
@@ -202,7 +217,10 @@ int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch *
    * Integer(4)  */
   int numberOfMatches = 0;
   for (int i(0); i<numberOfChildren; i++) {
-    int numberOfChildMatches = child(i)->match(e->operand(expressionMatched[i]), matches+numberOfMatches);
+    int numberOfChildMatches = child(i)->match(
+        e->operand(expressionMatched[i]),
+        matches,
+        offset + numberOfMatches);
     assert(numberOfChildMatches > 0);
     numberOfMatches += numberOfChildMatches;
   }
@@ -218,7 +236,7 @@ int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch *
         local_expr[j++] = e->operand(i);
       }
     }
-    matches[numberOfMatches++] = ExpressionMatch(local_expr, j);
+    matches[offset + numberOfMatches++] = ExpressionMatch(local_expr, j);
     free(local_expr);
   }
 
@@ -234,7 +252,11 @@ int ExpressionSelector::commutativeMatch(const Expression * e, ExpressionMatch *
  * leftToMatch tells it how many selectors still have to be matched.
  * Implementation detail: selectors are matched in ascending order.
  */
-bool ExpressionSelector::canCommutativelyMatch(const Expression * e, ExpressionMatch * matches, uint8_t * selectorMatched, int leftToMatch) {
+bool ExpressionSelector::canCommutativelyMatch(const Expression * e,
+    ExpressionMatch * matches,
+    uint8_t * selectorMatched,
+    int leftToMatch,
+    int offset) {
   bool hasWildcard = child(m_numberOfChildren-1)->m_match == ExpressionSelector::Match::Wildcard;
 
   // This part is used to make sure that we stop once we matched everything.
@@ -276,12 +298,13 @@ bool ExpressionSelector::canCommutativelyMatch(const Expression * e, ExpressionM
     if (selectorMatched[j] != kUnmatched) {
       continue;
     }
-    if (child(i)->match(e->operand(j), matches)) {
+    int numberOfMatches = child(i)->match(e->operand(j), matches, offset);
+    if (numberOfMatches) {
       // We managed to match this selector.
       selectorMatched[j] = i;
       /* We check that we can match the rest in this configuration, if so we
        * are good. */
-      if (this->canCommutativelyMatch(e, matches, selectorMatched, leftToMatch - 1)) {
+      if (this->canCommutativelyMatch(e, matches, selectorMatched, leftToMatch - 1, offset + numberOfMatches)) {
         return true;
       }
       // Otherwise we backtrack.

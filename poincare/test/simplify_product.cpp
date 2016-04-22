@@ -15,8 +15,18 @@ QUIZ_CASE(poincare_simplify_product_by_zero) {
   assert(simplifies_to("3*(5+4)", "27"));
 }
 
-QUIZ_CASE(poincare_simplify_distributive) {
-  assert(equivalent_to("3*(x+y)", "3*x+3*y"));
-  assert(equivalent_to("3*(x+y+z)", "3*x+3*y+3*z"));
-  assert(equivalent_to("3*(x+y+z+w)", "3*x+3*y+3*z+3*w"));
+QUIZ_CASE(poincare_simplify_distributive_reverse) {
+  assert(equivalent_to("x+x", "2*x"));
+  assert(equivalent_to("2*x+x", "3*x"));
+  assert(equivalent_to("x*2+x", "3*x"));
+  assert(equivalent_to("2*x+2*x", "4*x"));
+  assert(equivalent_to("x*2+2*y", "2*(x+y)"));
+  assert(equivalent_to("x+x+y+y", "2*x+2*y"));
+  assert(equivalent_to("2*x+2*y", "2*(x+y)"));
+  //assert(equivalent_to("x+x+y+y", "2*(x+y)"));
+  assert(equivalent_to("x-x-y+y", "0)"));
+  assert(equivalent_to("x+y-x-y", "0"));
+  assert(equivalent_to("x+x*y", "x*(y+1)"));
+  assert(equivalent_to("x-x", "0"));
+  assert(equivalent_to("x-x", "0"));
 }

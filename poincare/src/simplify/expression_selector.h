@@ -11,6 +11,7 @@ class ExpressionSelector {
 public:
   static constexpr ExpressionSelector Any(uint8_t numberOfChildren);
   static constexpr ExpressionSelector Wildcard(uint8_t numberOfChildren);
+  static constexpr ExpressionSelector SameAs(int index, uint8_t numberOfChildren);
   static constexpr ExpressionSelector Type(Expression::Type type, uint8_t numberOfChildren);
   static constexpr ExpressionSelector TypeAndValue(Expression::Type type, int32_t value, uint8_t numberOfChildren);
 
@@ -27,15 +28,18 @@ private:
     Type,
     Wildcard,
     TypeAndValue,
+    SameAs,
   };
+
+  int match(const Expression * e, ExpressionMatch * matches, int offset);
 
   constexpr ExpressionSelector(Match match, Expression::Type type, int32_t integerValue, uint8_t numberOfChildren);
 
   int numberOfNonWildcardChildren();
   bool canCommutativelyMatch(const Expression * e, ExpressionMatch * matches,
-      uint8_t * selectorMatched, int leftToMatch);
-  int commutativeMatch(const Expression * e, ExpressionMatch * matches);
-  int sequentialMatch(const Expression * e, ExpressionMatch * matches);
+      uint8_t * selectorMatched, int leftToMatch, int offset);
+  int commutativeMatch(const Expression * e, ExpressionMatch * matches, int offset);
+  int sequentialMatch(const Expression * e, ExpressionMatch * matches, int offset);
   ExpressionSelector * child(int index);
 
   Match m_match;
@@ -50,6 +54,8 @@ private:
         int32_t m_integerValue;
         // m_expressionType == Symbol
         char * m_symbolName;
+        // Position of the other match we must be equal to.
+        int32_t m_sameAsPosition;
       };
     };
   };
@@ -66,6 +72,10 @@ constexpr ExpressionSelector ExpressionSelector::Any(uint8_t numberOfChildren) {
 
 constexpr ExpressionSelector ExpressionSelector::Wildcard(uint8_t numberOfChildren) {
   return ExpressionSelector(Match::Wildcard, (Expression::Type)0, 0, numberOfChildren);
+}
+
+constexpr ExpressionSelector ExpressionSelector::SameAs(int index, uint8_t numberOfChildren) {
+  return ExpressionSelector(Match::SameAs, (Expression::Type)0, index, numberOfChildren);
 }
 
 constexpr ExpressionSelector ExpressionSelector::Type(Expression::Type type, uint8_t numberOfChildren) {

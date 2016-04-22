@@ -28,6 +28,7 @@ public:
 
   int totalDescendantCountIncludingSelf();
   int flatIndexOfChildNamed(std::string name);
+  int flatIndexOfChildRef(Node * node);
 
   void generateSelectorTree(Rule * context);
   void generateBuilderTree(Rule * context);

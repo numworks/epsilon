@@ -308,6 +308,15 @@ float Integer::approximate(Context& context) const {
     mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
   }
 
+  if ((m_numberOfDigits==1) && (m_digits[0]==0)) {
+    /* This special case for 0 is needed, because the current algorithm assumes
+     * that the big integer is non zero, thus puts the exponent to 126 (integer
+     * area), the issue is that when the mantissa is 0, a "shadow bit" is
+     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
+     */
+    return m_negative ? -0.0f : 0.0f;
+  }
+
   uint_result = 0;
   uint_result |= (sign << 31);
   uint_result |= (exponent << 23);

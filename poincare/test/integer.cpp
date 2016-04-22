@@ -54,4 +54,7 @@ QUIZ_CASE(poincare_integer_approximate) {
   Context context;
   assert(Integer(1).approximate(context) == 1.0f);
   assert(Integer("12345678").approximate(context) == 12345678.0f);
+  assert(Integer("0").approximate(context) == 0);
+  assert(Integer("-0").approximate(context) == -0);
+  assert(Integer(-1).approximate(context) == -1);
 }

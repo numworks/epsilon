@@ -43,6 +43,10 @@ bool simplifies_to(const char * input_string, const char * expected_string) {
 }
 
 bool identical_to(const char * input_string, const char * expected_string) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "---- Identical Run ----"  << endl;
+  cout << input_string << " -> " << expected_string << endl;
+#endif
   Expression * input = Expression::parse(input_string);
   assert(input != nullptr);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
@@ -66,6 +70,10 @@ bool identical_to(const char * input_string, const char * expected_string) {
 }
 
 bool equivalent_to(const char * input_string, const char * expected_string) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "---- Equivalence Run ----"  << endl;
+  cout << input_string << " -> " << expected_string << endl;
+#endif
   Expression * input = Expression::parse(input_string);
   assert(input != nullptr);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
@@ -80,10 +88,25 @@ bool equivalent_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  bool isEquivalent = input->isEquivalentTo(expected);
+  Expression * simplified_input = input->simplify();
+  assert(simplified_input != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Simplified Input = " << endl;
+  print_expression(simplified_input);
+#endif
+
+  Expression * simplified_expected = Expression::parse(expected_string);
+  assert(simplified_expected != nullptr);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "Simplified Expected = " << endl;
+  print_expression(simplified_expected);
+#endif
+  bool isEquivalent = simplified_input->isIdenticalTo(simplified_expected);
 
   delete expected;
   delete input;
+  delete simplified_expected;
+  delete simplified_input;
 
   return isEquivalent;
 }

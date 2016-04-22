@@ -10,6 +10,7 @@ class Symbol : public LeafExpression {
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
     Type type() const override;
+    const char* name() const;
     Expression * clone() const override;
     bool valueEquals(const Expression * e) const override;
   private:

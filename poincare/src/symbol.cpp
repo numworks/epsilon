@@ -25,6 +25,10 @@ Expression::Type Symbol::type() const {
   return Expression::Type::Symbol;
 }
 
+const char* Symbol::name() const {
+  return m_name;
+}
+
 ExpressionLayout * Symbol::createLayout() const {
   size_t length = strlen(m_name);
   return new StringLayout(m_name, length);

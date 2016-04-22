@@ -5,7 +5,7 @@ extern "C" {
 #include <assert.h>
 }
 
-#include "simplify/simplification_rules.h"
+#include "simplify/rules.h"
 
 int poincare_expression_yyparse(Expression ** expressionOutput);
 

@@ -111,7 +111,7 @@ int main(void) {
 
   yyparse(&rules);
 
-  std::cout << "#include \"simplification_rules.h\"" << std::endl;
+  std::cout << "#include \"rules.h\"" << std::endl;
   std::cout << "#include \"simplification_generator.h\"" << std::endl;
   std::cout << std::endl;
 

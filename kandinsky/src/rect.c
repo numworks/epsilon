@@ -4,6 +4,40 @@
 
 KDRect KDRectZero = {.x = 0, .y = 0, .width = 0, .height = 0};
 
+KDRect KDRectIntersect(KDRect r1, KDRect r2) {
+  KDRect intersection;
+
+  // Let's start by computing the overlap on the X axis
+  if (r1.x < r2.x) {
+    intersection.x = r2.x;
+    intersection.width = r1.x+r1.width-r2.x;
+  } else {
+    intersection.x = r1.x;
+    intersection.width = r2.x+r2.width-r1.x;
+  }
+
+  if (intersection.width < 0) {
+    // There's no overlap on the X axis, let's bail out
+    return KDRectZero;
+  }
+
+  // Let's then compute the overlap on the Y axis
+  if (r1.y < r2.y) {
+    intersection.y = r2.y;
+    intersection.height = r1.y+r1.height-r2.y;
+  } else {
+    intersection.y = r1.y;
+    intersection.height = r2.y+r2.height-r1.y;
+  }
+
+  if (intersection.height < 0) {
+    // There's no overlap on the Y axis, let's bail out
+    return KDRectZero;
+  }
+
+  return intersection;
+}
+
 void KDFillRect(KDRect rect, KDColor color) {
   KDPoint p;
   for (p.x = rect.x; p.x<(rect.x+rect.width); p.x++) {

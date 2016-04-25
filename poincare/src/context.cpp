@@ -13,7 +13,7 @@ Context::~Context() {
 }
 
 Expression * Context::operator[](const char * symbol_name) const {
-  for (int16_t i=0; i<this->kMaxContextPairs; i++) {
+  for (uint16_t i=0; i<this->kMaxContextPairs; i++) {
     ContextPair p = m_pairs[i];
     if (p.name != NULL && strcmp(p.name, symbol_name) == 0) {
       return p.expression;
@@ -23,7 +23,7 @@ Expression * Context::operator[](const char * symbol_name) const {
 }
 
 void Context::setExpressionForSymbolName(Expression * expression, const char * symbol_name) {
-  for (int16_t i=0; i<this->kMaxContextPairs; i++) {
+  for (uint16_t i=0; i<this->kMaxContextPairs; i++) {
     ContextPair * p = &m_pairs[i];
     if (p->name == NULL) {
       // FIXME: Should be copied or retained!

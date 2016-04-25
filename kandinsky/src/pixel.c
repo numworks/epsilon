@@ -5,8 +5,8 @@
 static KDRect sDrawingArea = {
   .x = 0,
   .y = 0,
-  .width = 0, // TODO: KDCoordinateMax
-  .height = 0 // TODO: KDCoordinateMax
+  .width = 9999, // TODO: KDCoordinateMax
+  .height = 9999 // TODO: KDCoordinateMax
 };
 
 void KDSetDrawingArea(KDRect rect) {

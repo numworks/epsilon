@@ -26,7 +26,7 @@ void View::redraw() {
 
 void View::redraw(KDRect rect) {
   // Fisrt, let's draw our own content by calling drawRect
-  KDSetOrigin(absoluteOrigin());
+  KDSetDrawingArea(absoluteDrawingArea());
   this->drawRect(rect);
   // Then, let's recursively draw our children over ourself
   for (uint8_t i=0; i<k_maxNumberOfSubviews; i++) {
@@ -87,15 +87,16 @@ KDRect View::bounds() {
   return bounds;
 }
 
-KDPoint View::absoluteOrigin() {
+KDRect View::absoluteDrawingArea() {
   if (m_superview == nullptr) {
-    return m_frame.origin;
+    return m_frame;
   } else {
-    KDPoint parentOrigin = m_superview->absoluteOrigin();
-    KDPoint myOrigin = m_frame.origin;
-    KDPoint result;
-    result.x = parentOrigin.x + myOrigin.x;
-    result.y = parentOrigin.y + myOrigin.y;
-    return result;
+    KDRect parentDrawingArea = m_superview->absoluteDrawingArea();
+
+    KDRect absoluteFrame = m_frame;
+    absoluteFrame.x += parentDrawingArea.x;
+    absoluteFrame.y += parentDrawingArea.y;
+
+    return KDRectIntersection(absoluteFrame, parentDrawingArea);
   }
 }

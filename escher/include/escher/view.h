@@ -30,7 +30,7 @@ protected:
 private:
   void redraw();
   void redraw(KDRect rect);
-  KDPoint absoluteOrigin();
+  KDRect absoluteDrawingArea();
   //TODO: We may want a dynamic size at some point
   static constexpr uint8_t k_maxNumberOfSubviews = 4;
   KDRect m_frame;

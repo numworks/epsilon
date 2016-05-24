@@ -4,12 +4,14 @@ extern "C" {
 #include <escher/view.h>
 
 View::View(KDRect frame) :
-  m_frame(frame),
-  m_superview(nullptr)
+  m_superview(nullptr),
+  m_frame(frame)
 {
+  /*
   for (uint8_t i=0; i<k_maxNumberOfSubviews; i++) {
     m_subviews[i] = nullptr;
   }
+  */
 }
 
 View::~View() {
@@ -29,8 +31,8 @@ void View::redraw(KDRect rect) {
   KDSetDrawingArea(absoluteDrawingArea());
   this->drawRect(rect);
   // Then, let's recursively draw our children over ourself
-  for (uint8_t i=0; i<k_maxNumberOfSubviews; i++) {
-    View * subview = m_subviews[i];
+  for (uint8_t i=0; i<numberOfSubviews(); i++) {
+    View * subview = this->subview(i);
     if (subview == nullptr) {
       continue;
     }
@@ -44,6 +46,7 @@ void View::redraw(KDRect rect) {
   }
 }
 
+/*
 void View::addSubview(View * subview) {
   // Let's find a spot for that subview
   uint8_t i = 0;
@@ -66,6 +69,7 @@ void View::removeFromSuperview() {
   // Then, redraw the parent
   m_superview->redraw(m_frame);
 }
+*/
 
 void View::setFrame(KDRect frame) {
  // TODO: Return if frame is equal to m_frame

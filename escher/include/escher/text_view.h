@@ -1,7 +1,7 @@
 #ifndef ESCHER_TEXT_VIEW_H
 #define ESCHER_TEXT_VIEW_H
 
-#include <escher/view.h>
+#include <escher/childless_view.h>
 
 class TextView : public View {
 public:

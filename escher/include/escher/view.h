@@ -22,20 +22,25 @@ public:
 
   virtual void drawRect(KDRect rect); // To be implemented. Draw ourself.
 
-  void addSubview(View * subview);
-  void removeFromSuperview();
+  //void addSubview(View * subview);
+  //void removeFromSuperview();
   void setFrame(KDRect frame);
 protected:
   KDRect bounds();
+  virtual int numberOfSubviews() = 0;
+  virtual View * subview(int index) = 0;
 private:
   void redraw();
   void redraw(KDRect rect);
   KDRect absoluteDrawingArea();
-  //TODO: We may want a dynamic size at some point
-  static constexpr uint8_t k_maxNumberOfSubviews = 4;
-  KDRect m_frame;
+
   View * m_superview;
+  KDRect m_frame;
+  //TODO: We may want a dynamic size at some point
+  /*
+  static constexpr uint8_t k_maxNumberOfSubviews = 4;
   View * m_subviews[k_maxNumberOfSubviews];
+  */
 };
 
 #endif

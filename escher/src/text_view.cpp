@@ -1,16 +1,20 @@
 #include <escher/text_view.h>
 
-KDRect ViewFrame(KDPoint origin, const char * text) {
+/*
+KDRect ViewFrame(const char * text) {
   KDRect r;
   r.origin = origin;
   r.size = KDStringSize(text);
   return r;
 }
+*/
 
-TextView::TextView(KDPoint origin, const char * text) :
-  View(ViewFrame(origin, text)) {
+TextView::TextView(const char * text) :
+  ChildlessView() {
   m_text = text;
 }
+
+//TODO: implement "setFrame"
 
 void TextView::drawRect(KDRect rect) {
   KDPoint zero = {0, 0};

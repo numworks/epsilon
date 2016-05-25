@@ -17,20 +17,24 @@ extern "C" {
 
 class View {
 public:
-  View(KDRect frame);
-  ~View();
+  View();
 
   virtual void drawRect(KDRect rect); // To be implemented. Draw ourself.
 
   //void addSubview(View * subview);
   //void removeFromSuperview();
   void setFrame(KDRect frame);
+  void redraw();
+
+  void setSubview(View * v, int index);
 protected:
   KDRect bounds();
+  virtual bool isOnScreen();
   virtual int numberOfSubviews() = 0;
   virtual View * subview(int index) = 0;
+  virtual void storeSubviewAtIndex(View * v, int index) = 0;
+  virtual void layoutSubviews() = 0;
 private:
-  void redraw();
   void redraw(KDRect rect);
   KDRect absoluteDrawingArea();
 

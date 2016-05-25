@@ -3,9 +3,9 @@
 
 #include <escher/childless_view.h>
 
-class TextView : public View {
+class TextView : public ChildlessView {
 public:
-  TextView(KDPoint origin, const char * text);
+  TextView(const char * text);
   void drawRect(KDRect rect) override;
 private:
   const char * m_text;

@@ -4,9 +4,12 @@
 #include <escher/view.h>
 
 class ChildlessView : public View {
+  using View::View;
 protected:
   int numberOfSubviews() override;
   View * subview(int index) override;
+  void storeSubviewAtIndex(View * v, int index) override;
+  void layoutSubviews() override;
 };
 
 #endif

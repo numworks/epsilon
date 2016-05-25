@@ -3,9 +3,9 @@ extern "C" {
 }
 #include <escher/view.h>
 
-View::View(KDRect frame) :
+View::View() :
   m_superview(nullptr),
-  m_frame(frame)
+  m_frame(KDRectZero)
 {
   /*
   for (uint8_t i=0; i<k_maxNumberOfSubviews; i++) {
@@ -14,12 +14,17 @@ View::View(KDRect frame) :
   */
 }
 
-View::~View() {
-}
-
 void View::drawRect(KDRect rect) {
   // By default, a view doesn't do anything
   // It's transparent!
+}
+
+bool View::isOnScreen() {
+  if (m_superview == nullptr) {
+    return false;
+  } else {
+    return m_superview->isOnScreen();
+  }
 }
 
 void View::redraw() {
@@ -27,6 +32,9 @@ void View::redraw() {
 }
 
 void View::redraw(KDRect rect) {
+  if (!isOnScreen()) {
+    return;
+  }
   // Fisrt, let's draw our own content by calling drawRect
   KDSetDrawingArea(absoluteDrawingArea());
   this->drawRect(rect);
@@ -44,6 +52,17 @@ void View::redraw(KDRect rect) {
       subview->redraw(intersection);
     }
   }
+}
+
+  void setSubview(View * v, int index);
+
+
+void View::setSubview(View * view, int index) {
+  view->m_superview = this;
+  storeSubviewAtIndex(view, index);
+  assert(subview(index) == view);
+  layoutSubviews();
+  redraw();
 }
 
 /*
@@ -80,6 +99,7 @@ void View::setFrame(KDRect frame) {
     * previously was. So let's redraw that part of the superview. */
    m_superview->redraw(previousFrame);
  }
+ layoutSubviews();
  // The view now needs to redraw itself entirely
  redraw();
 }

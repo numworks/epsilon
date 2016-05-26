@@ -27,8 +27,8 @@ public:
   void redraw();
 
   void setSubview(View * v, int index);
-protected:
   KDRect bounds();
+protected:
   virtual bool isOnScreen();
   virtual int numberOfSubviews() = 0;
   virtual View * subview(int index) = 0;

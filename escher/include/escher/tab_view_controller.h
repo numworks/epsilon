@@ -6,17 +6,18 @@
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(ViewController ** children);
+  TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
   void handleKeyEvent(int key) override;
 
   void setActiveTab(uint8_t index);
   uint8_t numberOfTabs();
 
+  const char * tabName(uint8_t index);
 private:
   class ContentView : public View {
   public:
-    ContentView(TabViewController * vc);
+    ContentView();
 
     int numberOfSubviews() override;
     View * subview(int index) override;
@@ -24,14 +25,15 @@ private:
     void layoutSubviews() override;
 
     void setActiveView(View * view);
-  private:
     TabView m_tabView;
+  private:
     View * m_activeView;
   };
 
   ContentView m_view;
 
   ViewController ** m_children;
+  uint8_t m_numberOfChildren;
   uint8_t m_activeChildIndex;
 };
 

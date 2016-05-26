@@ -35,6 +35,7 @@ void View::redraw(KDRect rect) {
   if (!isOnScreen()) {
     return;
   }
+
   // Fisrt, let's draw our own content by calling drawRect
   KDSetDrawingArea(absoluteDrawingArea());
   this->drawRect(rect);
@@ -54,14 +55,10 @@ void View::redraw(KDRect rect) {
   }
 }
 
-  void setSubview(View * v, int index);
-
-
 void View::setSubview(View * view, int index) {
   view->m_superview = this;
   storeSubviewAtIndex(view, index);
   assert(subview(index) == view);
-  layoutSubviews();
   redraw();
 }
 
@@ -80,28 +77,37 @@ void View::addSubview(View * subview) {
   // That subview needs to be drawn
   subview->redraw();
 }
+*/
 
+/*
 void View::removeFromSuperview() {
   assert(m_superview != nullptr);
   // First, remove the view from its parent hierarchy
-  assert(false); // FIXME: Unimplemented
+  for (int i=0; i<m_superview->numberOfSubviews(); i++) {
+    if (m_superview->subview(i) == this) {
+      m_superview->storeSubviewAtIndex(nullptr, i);
+      break;
+    }
+  }
   // Then, redraw the parent
   m_superview->redraw(m_frame);
+  // Eventually clear the superview ivar
+  m_superview = nullptr;
 }
 */
 
 void View::setFrame(KDRect frame) {
- // TODO: Return if frame is equal to m_frame
- KDRect previousFrame = m_frame;
- m_frame = frame;
- if (m_superview != nullptr) {
-   /* We have moved this view. This left a blank spot in its superview were it
-    * previously was. So let's redraw that part of the superview. */
-   m_superview->redraw(previousFrame);
- }
- layoutSubviews();
- // The view now needs to redraw itself entirely
- redraw();
+  // TODO: Return if frame is equal to m_frame
+  KDRect previousFrame = m_frame;
+  m_frame = frame;
+  if (m_superview != nullptr) {
+    /* We have moved this view. This left a blank spot in its superview were it
+     * previously was. So let's redraw that part of the superview. */
+    m_superview->redraw(previousFrame);
+  }
+  layoutSubviews();
+  // The view now needs to redraw itself entirely
+  redraw();
 }
 
 KDRect View::bounds() {

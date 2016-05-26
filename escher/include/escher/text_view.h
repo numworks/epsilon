@@ -5,10 +5,19 @@
 
 class TextView : public ChildlessView {
 public:
-  TextView(const char * text);
+  TextView();//;: TextView(nullptr, 0.0f, 0.0f);
+  // alignment = 0 -> align left or top
+  // alignment = 0.5 -> align center
+  // alignment = 1.0 -> align right or bottom
+  TextView(const char * text,
+      float horizontalAlignment,
+      float verticalAlignment);
   void drawRect(KDRect rect) override;
+  void setText(const char * text);
 private:
   const char * m_text;
+  float m_horizontalAlignment;
+  float m_verticalAlignment;
 };
 
 #endif

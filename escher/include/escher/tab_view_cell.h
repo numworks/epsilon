@@ -4,15 +4,15 @@
 #include <escher/view.h>
 #include <escher/text_view.h>
 
-class TabViewCell : public View {
+class TabViewCell : public ChildlessView {
 public:
   TabViewCell();
-  int numberOfSubviews() override;
-  View * subview(int index) override;
-
+  void drawRect(KDRect rect) override;
   void setName(const char * name);
+  void setActive(bool active);
 private:
-  TextView m_textView;
+  bool m_active;
+  const char * m_name;
 };
 
 #endif

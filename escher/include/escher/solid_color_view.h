@@ -6,7 +6,7 @@
 class SolidColorView : public ChildlessView {
 public:
   SolidColorView(KDColor color);
-  void drawRect(KDRect rect) override;
+  void drawRect(KDRect rect) const override;
 private:
   KDColor m_color;
 };

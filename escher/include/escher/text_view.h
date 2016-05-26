@@ -12,7 +12,7 @@ public:
   TextView(const char * text,
       float horizontalAlignment,
       float verticalAlignment);
-  void drawRect(KDRect rect) override;
+  void drawRect(KDRect rect) const override;
   void setText(const char * text);
 private:
   const char * m_text;

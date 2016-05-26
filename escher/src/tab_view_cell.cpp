@@ -20,6 +20,6 @@ void TabViewCell::setActive(bool active) {
   redraw();
 }
 
-void TabViewCell::drawRect(KDRect rect) {
+void TabViewCell::drawRect(KDRect rect) const {
   KDDrawString(m_name, {0,0}, m_active);
 }

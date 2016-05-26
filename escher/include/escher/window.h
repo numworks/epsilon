@@ -7,9 +7,9 @@ class Window : public View {
 public:
   Window();
 protected:
-  bool isOnScreen() override;
-  int numberOfSubviews() override;
-  View * subview(int index) override;
+  bool isOnScreen() const override;
+  int numberOfSubviews() const override;
+  const View * subview(int index) const override;
   void layoutSubviews() override;
   void storeSubviewAtIndex(View * view, int index) override;
 private:

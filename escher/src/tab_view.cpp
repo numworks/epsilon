@@ -30,11 +30,11 @@ void TabView::setActiveIndex(int index) {
   m_cells[m_activeTabIndex].setActive(true);
 }
 
-int TabView::numberOfSubviews() {
+int TabView::numberOfSubviews() const {
   return m_numberOfTabs;
 }
 
-View * TabView::subview(int index) {
+const View * TabView::subview(int index) const {
   assert(index < m_numberOfTabs);
   return &m_cells[index];
 }

@@ -8,15 +8,15 @@ Window::Window() :
 {
 }
 
-bool Window::isOnScreen() {
+bool Window::isOnScreen() const {
   return true;
 }
 
-int Window::numberOfSubviews() {
+int Window::numberOfSubviews() const {
   return (m_contentView == nullptr ? 0 : 1);
 }
 
-View * Window::subview(int index) {
+const View * Window::subview(int index) const {
   assert(m_contentView != nullptr && index == 0);
   return m_contentView;
 }

@@ -19,24 +19,24 @@ class View {
 public:
   View();
 
-  virtual void drawRect(KDRect rect); // To be implemented. Draw ourself.
+  virtual void drawRect(KDRect rect) const; // To be implemented. Draw ourself.
 
   //void addSubview(View * subview);
   //void removeFromSuperview();
   void setFrame(KDRect frame);
-  void redraw();
+  void redraw() const;
 
   void setSubview(View * v, int index);
-  KDRect bounds();
+  KDRect bounds() const;
 protected:
-  virtual bool isOnScreen();
-  virtual int numberOfSubviews() = 0;
-  virtual View * subview(int index) = 0;
+  virtual bool isOnScreen() const;
+  virtual int numberOfSubviews() const = 0;
+  virtual const View * subview(int index) const = 0;
   virtual void storeSubviewAtIndex(View * v, int index) = 0;
   virtual void layoutSubviews() = 0;
 private:
-  void redraw(KDRect rect);
-  KDRect absoluteDrawingArea();
+  void redraw(KDRect rect) const;
+  KDRect absoluteDrawingArea() const;
 
   View * m_superview;
   KDRect m_frame;

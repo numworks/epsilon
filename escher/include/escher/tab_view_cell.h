@@ -7,7 +7,7 @@
 class TabViewCell : public ChildlessView {
 public:
   TabViewCell();
-  void drawRect(KDRect rect) override;
+  void drawRect(KDRect rect) const override;
   void setName(const char * name);
   void setActive(bool active);
 private:

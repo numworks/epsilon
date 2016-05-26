@@ -14,12 +14,12 @@ View::View() :
   */
 }
 
-void View::drawRect(KDRect rect) {
+void View::drawRect(KDRect rect) const {
   // By default, a view doesn't do anything
   // It's transparent!
 }
 
-bool View::isOnScreen() {
+bool View::isOnScreen() const {
   if (m_superview == nullptr) {
     return false;
   } else {
@@ -27,11 +27,11 @@ bool View::isOnScreen() {
   }
 }
 
-void View::redraw() {
+void View::redraw() const {
   redraw(bounds());
 }
 
-void View::redraw(KDRect rect) {
+void View::redraw(KDRect rect) const {
   if (!isOnScreen()) {
     return;
   }
@@ -41,7 +41,7 @@ void View::redraw(KDRect rect) {
   this->drawRect(rect);
   // Then, let's recursively draw our children over ourself
   for (uint8_t i=0; i<numberOfSubviews(); i++) {
-    View * subview = this->subview(i);
+    const View * subview = this->subview(i);
     if (subview == nullptr) {
       continue;
     }
@@ -110,14 +110,14 @@ void View::setFrame(KDRect frame) {
   redraw();
 }
 
-KDRect View::bounds() {
+KDRect View::bounds() const {
   KDRect bounds = m_frame;
   bounds.x = 0;
   bounds.y = 0;
   return bounds;
 }
 
-KDRect View::absoluteDrawingArea() {
+KDRect View::absoluteDrawingArea() const {
   if (m_superview == nullptr) {
     return m_frame;
   } else {

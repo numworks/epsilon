@@ -33,11 +33,11 @@ void TabViewController::ContentView::layoutSubviews() {
   }
 }
 
-int TabViewController::ContentView::numberOfSubviews() {
+int TabViewController::ContentView::numberOfSubviews() const {
   return 2;
 }
 
-View * TabViewController::ContentView::subview(int index) {
+const View * TabViewController::ContentView::subview(int index) const {
   if (index == 0) {
     return &m_tabView;
   } else {

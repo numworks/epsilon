@@ -3,11 +3,11 @@ extern "C" {
 #include <assert.h>
 }
 
-int ChildlessView::numberOfSubviews() {
+int ChildlessView::numberOfSubviews() const {
   return 0;
 }
 
-View * ChildlessView::subview(int index) {
+const View * ChildlessView::subview(int index) const {
   assert(false);
   return nullptr;
 }

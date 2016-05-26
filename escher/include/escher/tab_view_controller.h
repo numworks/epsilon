@@ -19,8 +19,8 @@ private:
   public:
     ContentView();
 
-    int numberOfSubviews() override;
-    View * subview(int index) override;
+    int numberOfSubviews() const override;
+    const View * subview(int index) const override;
     void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 

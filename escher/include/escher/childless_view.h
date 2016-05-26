@@ -6,8 +6,8 @@
 class ChildlessView : public View {
   using View::View;
 protected:
-  int numberOfSubviews() override;
-  View * subview(int index) override;
+  int numberOfSubviews() const override;
+  const View * subview(int index) const override;
   void storeSubviewAtIndex(View * v, int index) override;
   void layoutSubviews() override;
 };

@@ -6,6 +6,6 @@ SolidColorView::SolidColorView(KDColor color) :
 {
 }
 
-void SolidColorView::drawRect(KDRect rect) {
+void SolidColorView::drawRect(KDRect rect) const {
   KDFillRect(rect, m_color);
 }

@@ -9,3 +9,9 @@ SolidColorView::SolidColorView(KDColor color) :
 void SolidColorView::drawRect(KDRect rect) const {
   KDFillRect(rect, m_color);
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * SolidColorView::className() const {
+  return "SolidColorView";
+}
+#endif

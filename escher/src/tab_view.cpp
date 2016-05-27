@@ -56,3 +56,9 @@ void TabView::storeSubviewAtIndex(View * view, int index) {
   // We're not doing anything here, because we already store all the subviews we ever wanna have
   assert(&m_cells[index] == view);
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * TabView::className() const {
+  return "TabView";
+}
+#endif

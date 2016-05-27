@@ -130,3 +130,26 @@ KDRect View::absoluteDrawingArea() const {
     return KDRectIntersection(absoluteFrame, parentDrawingArea);
   }
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * View::className() const {
+  return "View";
+}
+
+void View::logAttributes(std::ostream &os) const {
+  os << " frame=\"" << m_frame.x << "," << m_frame.y << "," << m_frame.width << "," << m_frame.height << "\"";
+  //os << " child_count=\"" << numberOfSubviews() << "\"";
+}
+
+std::ostream &operator<<(std::ostream &os, const View &view) {
+  os << "<" << view.className();
+  view.logAttributes(os);
+  os << ">";
+  for (int i=0; i<view.numberOfSubviews(); i++) {
+    os << *view.subview(i);
+  }
+  os << "</" << view.className() << ">";
+  return os;
+}
+#endif
+

@@ -52,6 +52,12 @@ void TabViewController::ContentView::storeSubviewAtIndex(View * view, int index)
   }
 }
 
+#if ESCHER_VIEW_LOGGING
+const char * TabViewController::ContentView::className() const {
+  return "TabViewController::ContentView";
+}
+#endif
+
 TabViewController::TabViewController(ViewController ** children, uint8_t numberOfChildren) :
   m_children(children),
   m_numberOfChildren(numberOfChildren),

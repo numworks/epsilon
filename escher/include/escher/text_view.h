@@ -14,6 +14,10 @@ public:
       float verticalAlignment);
   void drawRect(KDRect rect) const override;
   void setText(const char * text);
+protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
 private:
   const char * m_text;
   float m_horizontalAlignment;

@@ -24,3 +24,9 @@ void TextView::drawRect(KDRect rect) const {
   };
   KDDrawString(m_text, origin, 0);
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * TextView::className() const {
+  return "TextView";
+}
+#endif

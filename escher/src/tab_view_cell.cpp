@@ -23,3 +23,10 @@ void TabViewCell::setActive(bool active) {
 void TabViewCell::drawRect(KDRect rect) const {
   KDDrawString(m_name, {0,0}, m_active);
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * TabViewCell::className() const {
+  return "TabViewCell";
+}
+#endif
+

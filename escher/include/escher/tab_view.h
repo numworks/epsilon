@@ -17,6 +17,9 @@ public:
   //TODO: void removeLastTab();
   void setActiveIndex(int index);
 protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
   void storeSubviewAtIndex(View * view, int index) override;
 private:
   static constexpr uint8_t k_maxNumberOfTabs = 4;

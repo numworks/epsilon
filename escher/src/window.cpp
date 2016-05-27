@@ -31,3 +31,9 @@ void Window::storeSubviewAtIndex(View * view, int index) {
   assert(index == 0);
   m_contentView = view;
 }
+
+#if ESCHER_VIEW_LOGGING
+const char * Window::className() const {
+  return "Window";
+}
+#endif

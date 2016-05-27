@@ -7,6 +7,10 @@ class SolidColorView : public ChildlessView {
 public:
   SolidColorView(KDColor color);
   void drawRect(KDRect rect) const override;
+protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
 private:
   KDColor m_color;
 };

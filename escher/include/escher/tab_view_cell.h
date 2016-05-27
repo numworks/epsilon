@@ -10,6 +10,10 @@ public:
   void drawRect(KDRect rect) const override;
   void setName(const char * name);
   void setActive(bool active);
+protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
 private:
   bool m_active;
   const char * m_name;

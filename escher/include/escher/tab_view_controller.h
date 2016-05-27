@@ -26,6 +26,10 @@ private:
 
     void setActiveView(View * view);
     TabView m_tabView;
+  protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
   private:
     View * m_activeView;
   };

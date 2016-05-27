@@ -6,6 +6,10 @@ extern "C" {
 #include <kandinsky.h>
 }
 
+#if ESCHER_VIEW_LOGGING
+#include <iostream>
+#endif
+
 /* Key concepts
  * - A View always clips: you cannot draw outside its frame (TODO!)
  * - A View can redraw its whole hierarchy, but a very important optimization is
@@ -28,7 +32,14 @@ public:
 
   void setSubview(View * v, int index);
   KDRect bounds() const;
+#if ESCHER_VIEW_LOGGING
+  friend std::ostream &operator<<(std::ostream &os, const View &view);
+#endif
 protected:
+#if ESCHER_VIEW_LOGGING
+  virtual const char * className() const;
+  virtual void logAttributes(std::ostream &os) const;
+#endif
   virtual bool isOnScreen() const;
   virtual int numberOfSubviews() const = 0;
   virtual const View * subview(int index) const = 0;

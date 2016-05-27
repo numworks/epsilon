@@ -19,6 +19,7 @@ public:
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
 #endif
   void storeSubviewAtIndex(View * view, int index) override;
 private:

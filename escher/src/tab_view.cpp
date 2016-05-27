@@ -61,4 +61,10 @@ void TabView::storeSubviewAtIndex(View * view, int index) {
 const char * TabView::className() const {
   return "TabView";
 }
+
+void TabView::logAttributes(std::ostream &os) const {
+  View::logAttributes(os);
+  os << " numberOfTabs=\"" << (int)m_numberOfTabs << "\"";
+  os << " activeTabIndex=\"" << (int)m_activeTabIndex << "\"";
+}
 #endif

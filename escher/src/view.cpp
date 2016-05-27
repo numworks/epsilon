@@ -137,8 +137,8 @@ const char * View::className() const {
 }
 
 void View::logAttributes(std::ostream &os) const {
+  os << " address=\"" << this << "\"";
   os << " frame=\"" << m_frame.x << "," << m_frame.y << "," << m_frame.width << "," << m_frame.height << "\"";
-  //os << " child_count=\"" << numberOfSubviews() << "\"";
 }
 
 std::ostream &operator<<(std::ostream &os, const View &view) {

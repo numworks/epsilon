@@ -14,4 +14,9 @@ void SolidColorView::drawRect(KDRect rect) const {
 const char * SolidColorView::className() const {
   return "SolidColorView";
 }
+
+void SolidColorView::logAttributes(std::ostream &os) const {
+  View::logAttributes(os);
+  os << " color=\"" << (int)m_color << "\"";
+}
 #endif

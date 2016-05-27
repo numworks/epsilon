@@ -13,6 +13,7 @@ public:
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
 #endif
 private:
   bool m_active;

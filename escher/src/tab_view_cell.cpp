@@ -28,5 +28,10 @@ void TabViewCell::drawRect(KDRect rect) const {
 const char * TabViewCell::className() const {
   return "TabViewCell";
 }
-#endif
 
+void TabViewCell::logAttributes(std::ostream &os) const {
+  View::logAttributes(os);
+  os << " active=\"" << m_active << "\"";
+  os << " name=\"" << m_name << "\"";
+}
+#endif

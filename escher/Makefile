@@ -4,6 +4,7 @@ objs += $(addprefix escher/src/,\
   app.o\
   childless_view.o\
   responder.o\
+  scroll_view.o\
   solid_color_view.o\
   tab_view.o\
   tab_view_cell.o\

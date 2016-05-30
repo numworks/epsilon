@@ -58,6 +58,39 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
+TabViewController::TabViewController(ViewController * one, ViewController * two) :
+  ViewController(),
+  m_numberOfChildren(2),
+  m_activeChildIndex(-1)
+{
+  m_children[0] = one;
+  m_children[1] = two;
+
+  // TODO: This should be lazy loaded!
+  // So this code should live in view()
+  for (int i=0; i<m_numberOfChildren; i++) {
+    m_view.m_tabView.addTabNamed(m_children[i]->title());
+  }
+}
+
+bool TabViewController::handleEvent(ion_event_t event) {
+  switch(event) {
+    case LEFT_ARROW:
+      if (m_activeChildIndex > 0) {
+        setActiveTab(m_activeChildIndex-1);
+      }
+      return true;
+    case RIGHT_ARROW:
+      if (m_activeChildIndex < m_numberOfChildren-1) {
+        setActiveTab(m_activeChildIndex+1);
+      }
+      return true;
+    default:
+      return false;
+  }
+}
+
+/*
 TabViewController::TabViewController(ViewController ** children, uint8_t numberOfChildren) :
   m_children(children),
   m_numberOfChildren(numberOfChildren),
@@ -67,6 +100,7 @@ TabViewController::TabViewController(ViewController ** children, uint8_t numberO
     m_view.m_tabView.addTabNamed(children[i]->title());
   }
 }
+*/
 
 void TabViewController::setActiveTab(uint8_t i) {
   if (i == m_activeChildIndex) {

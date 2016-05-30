@@ -1,9 +1,9 @@
 extern "C" {
 #include <assert.h>
-#include <escher.h>
 #include <stdlib.h>
 #include <ion.h>
 }
+#include <escher.h>
 
 /*
 class App {
@@ -66,6 +66,37 @@ void MyTextView::drawRect(KDRect frame) {
 }
 */
 
+class GraphView : public ChildlessView {
+public:
+  void drawRect(KDRect rect) const override;
+};
+
+void GraphView::drawRect(KDRect rect) const {
+  KDColor bg = 0x99;
+  KDFillRect(rect, bg);
+  for (KDCoordinate x=rect.x; x<rect.x+rect.width; x++) {
+    KDSetPixel((KDPoint){x, (KDCoordinate)(x*x/rect.width)}, 0x00);
+  }
+}
+
+class GraphViewController : public ViewController {
+public:
+  using ViewController::ViewController;
+  View * view() override;
+  char * title() override;
+private:
+  GraphView m_view;
+};
+
+
+View * GraphViewController::view() {
+  return &m_view;
+}
+
+char * GraphViewController::title() {
+  return "Graph";
+}
+
 class DemoViewController : public ViewController {
 public:
   DemoViewController(KDColor c);
@@ -88,6 +119,28 @@ char * DemoViewController::title() {
   return "HELLO";
 }
 
+class MyTestApp : public App {
+public:
+  MyTestApp();
+protected:
+  ViewController * rootViewController() override;
+private:
+  DemoViewController m_demoViewController;
+  GraphViewController m_graphViewController;
+  TabViewController m_tabViewController;
+};
+
+MyTestApp::MyTestApp() :
+  m_demoViewController(DemoViewController(0x55)),
+  m_graphViewController(GraphViewController()),
+  m_tabViewController(&m_demoViewController, &m_graphViewController)
+{
+}
+
+ViewController * MyTestApp::rootViewController() {
+  return &m_tabViewController;
+}
+
 void ion_app() {
 
   //KDDrawString("Hello", {0,0}, 0);
@@ -95,25 +148,23 @@ void ion_app() {
   //KDFillRect({0,0,100,100}, 0x55);
   //KDFillRect({100,100,100,100}, 0x99);
 
-  Window window;
-  DemoViewController v1 = DemoViewController(0x55);
-  DemoViewController v2 = DemoViewController(0x99);
-  ViewController * tabs[]= { &v1, &v2};
-  TabViewController tabVC = TabViewController(tabs, 2);
+  MyTestApp myApp = MyTestApp();
 
-  window.setFrame({{0,0}, {200, 200}});
-  window.setSubview(tabVC.view(), 0);
-  tabVC.view()->setFrame(window.bounds());
+  myApp.run();
 
-
+  /*
   int i = 0;
 
   while(true) {
+#if ESCHER_VIEW_LOGGING
+    std::cout << window << std::endl;
+#endif
     tabVC.setActiveTab(i);
     ion_event_t event = ion_get_event();
     tabVC.handleKeyEvent(event);
     i = (i+1)%2;
   }
+  */
 
 
 

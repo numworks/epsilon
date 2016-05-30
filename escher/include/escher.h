@@ -1,6 +1,8 @@
 #ifndef ESCHER_H
 #define ESCHER_H
 
+#include <escher/app.h>
+#include <escher/responder.h>
 #include <escher/solid_color_view.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

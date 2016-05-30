@@ -1,6 +1,7 @@
 #include <escher/view_controller.h>
 
-ViewController::ViewController() {
+ViewController::ViewController() :
+  Responder() {
 }
 
 char * ViewController::title() {

@@ -12,8 +12,9 @@ extern "C" {
  */
 
 #include <escher/view.h>
+#include <escher/responder.h>
 
-class ViewController {
+class ViewController : public Responder {
 public:
   ViewController();
   virtual char * title();

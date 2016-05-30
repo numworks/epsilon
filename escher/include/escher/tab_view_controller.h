@@ -6,7 +6,8 @@
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(ViewController ** children, uint8_t numberOfChildren);
+  TabViewController(ViewController * one, ViewController * two);
+  //TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
   void handleKeyEvent(int key) override;
 
@@ -14,6 +15,7 @@ public:
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);
+  bool handleEvent(ion_event_t event) override;
 private:
   class ContentView : public View {
   public:
@@ -36,7 +38,8 @@ private:
 
   ContentView m_view;
 
-  ViewController ** m_children;
+  static constexpr uint8_t k_maxNumberOfChildren = 4;
+  ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   uint8_t m_activeChildIndex;
 };

@@ -4,7 +4,7 @@ ViewController::ViewController() :
   Responder() {
 }
 
-char * ViewController::title() {
+const char * ViewController::title() const {
   return nullptr;
 }
 

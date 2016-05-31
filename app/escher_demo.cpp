@@ -83,7 +83,7 @@ class GraphViewController : public ViewController {
 public:
   using ViewController::ViewController;
   View * view() override;
-  char * title() override;
+  const char * title() const override;
 private:
   GraphView m_view;
 };
@@ -93,7 +93,7 @@ View * GraphViewController::view() {
   return &m_view;
 }
 
-char * GraphViewController::title() {
+const char * GraphViewController::title() const {
   return "Graph";
 }
 
@@ -101,7 +101,7 @@ class DemoViewController : public ViewController {
 public:
   DemoViewController(KDColor c);
   View * view() override;
-  char * title() override;
+  const char * title() const override;
 private:
   SolidColorView m_view;
 };
@@ -115,7 +115,7 @@ View * DemoViewController::view() {
   return &m_view;
 }
 
-char * DemoViewController::title() {
+const char * DemoViewController::title() const {
   return "HELLO";
 }
 

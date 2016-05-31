@@ -31,7 +31,11 @@ void ScrollView::layoutSubviews() {
   // TODO
   // Layout contentview
   // FIXME: Use KDCoordinateMax
-  m_contentView->setFrame({m_offset.x, m_offset.y, (KDCoordinate)9999, (KDCoordinate)9999});
+  KDRect frame;
+  frame.origin = m_offset;
+  frame.width = KDCoordinateMax;
+  frame.height = KDCoordinateMax;
+  m_contentView->setFrame(frame);
 }
 
 #if ESCHER_VIEW_LOGGING

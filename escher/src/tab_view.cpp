@@ -43,12 +43,12 @@ void TabView::layoutSubviews() {
   // Simple layout: all tabs have the same length
   KDCoordinate tabLength = bounds().width/m_numberOfTabs;
   for (int i=0; i<m_numberOfTabs; i++) {
-    m_cells[i].setFrame({
-        (KDCoordinate)(i*tabLength),
-        0,
-        tabLength,
-        bounds().height
-      });
+    KDRect cellFrame;
+    cellFrame.x = i*tabLength;
+    cellFrame.y = 0;
+    cellFrame.width = tabLength;
+    cellFrame.height = bounds().height;
+    m_cells[i].setFrame(cellFrame);
   }
 }
 

@@ -17,19 +17,19 @@ void TabViewController::ContentView::setActiveView(View * view) {
 
 void TabViewController::ContentView::layoutSubviews() {
   KDCoordinate tabHeight = 20;
-  m_tabView.setFrame({
-    0,
-    0,
-    this->bounds().width,
-    tabHeight
-  });
+
+  KDRect tabViewFrame;
+  tabViewFrame.origin = KDPointZero;
+  tabViewFrame.width = this->bounds().width,
+  tabViewFrame.height = tabHeight;
+  m_tabView.setFrame(tabViewFrame);
   if (m_activeView) {
-    m_activeView->setFrame({
-      0,
-      tabHeight,
-      this->bounds().width,
-      (KDCoordinate)(this->bounds().height - tabHeight)
-    });
+    KDRect activeViewFrame;
+    activeViewFrame.x = 0;
+    activeViewFrame.y = tabHeight;
+    activeViewFrame.width = this->bounds().width;
+    activeViewFrame.height = (this->bounds().height - tabHeight);
+    m_activeView->setFrame(activeViewFrame);
   }
 }
 

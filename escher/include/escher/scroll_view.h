@@ -15,8 +15,8 @@ public:
   void setContentOffset(KDPoint offset);
 protected:
 #if ESCHER_VIEW_LOGGING
-  virtual const char * className() const;
-  virtual void logAttributes(std::ostream &os) const;
+  virtual const char * className() const override;
+  virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
   KDPoint m_offset;

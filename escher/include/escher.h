@@ -3,6 +3,7 @@
 
 #include <escher/app.h>
 #include <escher/responder.h>
+#include <escher/scroll_view_indicator.h>
 #include <escher/solid_color_view.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

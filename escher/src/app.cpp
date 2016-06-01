@@ -17,6 +17,7 @@ void App::run() {
   while (true) {
     ion_event_t event = ion_get_event(); // This is a blocking call
     dispatchEvent(event);
+    window.redraw();
   }
 }
 

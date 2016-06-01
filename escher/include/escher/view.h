@@ -22,6 +22,7 @@ extern "C" {
 class Window;
 
 class View {
+  friend class Window;
 public:
   View();
 
@@ -30,12 +31,17 @@ public:
   //void addSubview(View * subview);
   //void removeFromSuperview();
   void setFrame(KDRect frame);
+
+  void markAsNeedingRedraw();
+  /*
+  void markAsDirty() const;
   void redraw() const;
+  */
 
   void setSubview(View * v, int index);
   KDRect bounds() const;
 #if ESCHER_VIEW_LOGGING
-  friend std::ostream &operator<<(std::ostream &os, const View &view);
+  friend std::ostream &operator<<(std::ostream &os, View &view);
 #endif
 protected:
 #if ESCHER_VIEW_LOGGING
@@ -44,15 +50,16 @@ protected:
 #endif
   virtual const Window * window() const;
   virtual int numberOfSubviews() const = 0;
-  virtual const View * subview(int index) const = 0;
+  virtual View * subview(int index) = 0;
   virtual void storeSubviewAtIndex(View * v, int index) = 0;
   virtual void layoutSubviews() = 0;
 private:
-  void redraw(KDRect rect) const;
+  void redraw(KDRect rect);
   KDRect absoluteDrawingArea() const;
 
   View * m_superview;
   KDRect m_frame;
+  bool m_needsRedraw;
   //TODO: We may want a dynamic size at some point
   /*
   static constexpr uint8_t k_maxNumberOfSubviews = 4;

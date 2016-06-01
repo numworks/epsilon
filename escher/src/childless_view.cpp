@@ -7,7 +7,7 @@ int ChildlessView::numberOfSubviews() const {
   return 0;
 }
 
-const View * ChildlessView::subview(int index) const {
+View * ChildlessView::subview(int index) {
   assert(false);
   return nullptr;
 }

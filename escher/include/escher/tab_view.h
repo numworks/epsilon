@@ -10,7 +10,7 @@ class TabView : public View {
 public:
   TabView();
   int numberOfSubviews() const override;
-  const View * subview(int index) const override;
+  View * subview(int index) override;
   void layoutSubviews() override;
 
   void addTabNamed(const char * name);

@@ -17,7 +17,7 @@ void TabView::addTabNamed(const char * name) {
   m_cells[tabIndex].setName(name);
   m_numberOfTabs++;
   setSubview(&m_cells[tabIndex], tabIndex);
-  redraw();
+  markAsNeedingRedraw();
 }
 
 void TabView::setActiveIndex(int index) {
@@ -34,7 +34,7 @@ int TabView::numberOfSubviews() const {
   return m_numberOfTabs;
 }
 
-const View * TabView::subview(int index) const {
+View * TabView::subview(int index) {
   assert(index < m_numberOfTabs);
   return &m_cells[index];
 }

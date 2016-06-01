@@ -12,12 +12,12 @@ TabViewCell::TabViewCell() :
 
 void TabViewCell::setName(const char * name) {
   m_name = name;
-  redraw();
+  markAsNeedingRedraw();
 }
 
 void TabViewCell::setActive(bool active) {
   m_active = active;
-  redraw();
+  markAsNeedingRedraw();
 }
 
 void TabViewCell::drawRect(KDRect rect) const {

@@ -5,13 +5,9 @@ extern "C" {
 
 View::View() :
   m_superview(nullptr),
-  m_frame(KDRectZero)
+  m_frame(KDRectZero),
+  m_needsRedraw(true)
 {
-  /*
-  for (uint8_t i=0; i<k_maxNumberOfSubviews; i++) {
-    m_subviews[i] = nullptr;
-  }
-  */
 }
 
 void View::drawRect(KDRect rect) const {
@@ -27,21 +23,36 @@ const Window * View::window() const {
   }
 }
 
-void View::redraw() const {
-  redraw(bounds());
+void View::markAsNeedingRedraw() {
+  // Let's mark ourself as needing redraw
+  m_needsRedraw = true;
+
+  /* And let's mark our parents as needing redraw too. The alternative would be
+   * to have a recursive getter, which would be more resilient to superview
+   * modification, but much slower too. As long as we don't change the view
+   * hierarchy, this way is easier. */
+  if (m_superview) {
+    m_superview->markAsNeedingRedraw();
+  }
 }
 
-void View::redraw(KDRect rect) const {
-  if (window() == nullptr) {
+void View::redraw(KDRect rect) {
+  /* CAUTION: do NOT call redraw directly.
+   * This may seem to work, but will not. Namely, it won't clip.
+   * Example : our superview is smaller than we are. If we redraw ourself, we
+   * will overflow our superview. */
+
+  if (window() == nullptr || !m_needsRedraw) {
     return;
   }
 
-  // Fisrt, let's draw our own content by calling drawRect
+  // First, let's draw our own content by calling drawRect
   KDSetDrawingArea(absoluteDrawingArea());
   this->drawRect(rect);
+
   // Then, let's recursively draw our children over ourself
   for (uint8_t i=0; i<numberOfSubviews(); i++) {
-    const View * subview = this->subview(i);
+    View * subview = this->subview(i);
     if (subview == nullptr) {
       continue;
     }
@@ -53,13 +64,16 @@ void View::redraw(KDRect rect) const {
       subview->redraw(intersection);
     }
   }
+
+  // Eventually, mark that we don't need to be redrawn
+  m_needsRedraw = false;
 }
 
 void View::setSubview(View * view, int index) {
   view->m_superview = this;
   storeSubviewAtIndex(view, index);
   assert(subview(index) == view);
-  redraw();
+  view->markAsNeedingRedraw();
 }
 
 /*
@@ -98,16 +112,18 @@ void View::removeFromSuperview() {
 
 void View::setFrame(KDRect frame) {
   // TODO: Return if frame is equal to m_frame
-  KDRect previousFrame = m_frame;
   m_frame = frame;
   if (m_superview != nullptr) {
     /* We have moved this view. This left a blank spot in its superview were it
-     * previously was. So let's redraw that part of the superview. */
-    m_superview->redraw(previousFrame);
+     * previously was.
+     * At this point, we know that the only area that really needs to be redrawn
+     * in the superview is the value of m_frame at the start of that method.
+     * However, let's not try to optimize too early, and let's simply mark the
+     * whole superview as needing redraw. */
+    m_superview->markAsNeedingRedraw();
   }
   layoutSubviews();
-  // The view now needs to redraw itself entirely
-  redraw();
+  markAsNeedingRedraw();
 }
 
 KDRect View::bounds() const {
@@ -141,7 +157,7 @@ void View::logAttributes(std::ostream &os) const {
   os << " frame=\"" << m_frame.x << "," << m_frame.y << "," << m_frame.width << "," << m_frame.height << "\"";
 }
 
-std::ostream &operator<<(std::ostream &os, const View &view) {
+std::ostream &operator<<(std::ostream &os, View &view) {
   os << "<" << view.className();
   view.logAttributes(os);
   os << ">";

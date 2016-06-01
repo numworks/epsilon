@@ -16,7 +16,7 @@ int ScrollView::numberOfSubviews() const {
   return 1;
 }
 
-const View * ScrollView::subview(int index) const {
+View * ScrollView::subview(int index) {
   assert(index == 0);
   return m_contentView;
 }

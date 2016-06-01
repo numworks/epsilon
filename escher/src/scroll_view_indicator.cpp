@@ -34,12 +34,12 @@ void ScrollViewIndicator::drawRect(KDRect rect) const {
 
 void ScrollViewIndicator::setStart(float start) {
   m_start = start;
-  redraw();
+  markAsNeedingRedraw();
 }
 
 void ScrollViewIndicator::setEnd(float end) {
   m_end = end;
-  redraw();
+  markAsNeedingRedraw();
 }
 
 #if ESCHER_VIEW_LOGGING

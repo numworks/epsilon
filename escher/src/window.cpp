@@ -8,6 +8,10 @@ Window::Window() :
 {
 }
 
+void Window::redraw() {
+  View::redraw(bounds());
+}
+
 const Window * Window::window() const {
   return this;
 }
@@ -16,7 +20,7 @@ int Window::numberOfSubviews() const {
   return (m_contentView == nullptr ? 0 : 1);
 }
 
-const View * Window::subview(int index) const {
+View * Window::subview(int index) {
   assert(m_contentView != nullptr && index == 0);
   return m_contentView;
 }

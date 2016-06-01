@@ -37,7 +37,7 @@ int TabViewController::ContentView::numberOfSubviews() const {
   return 2;
 }
 
-const View * TabViewController::ContentView::subview(int index) const {
+View * TabViewController::ContentView::subview(int index) {
   if (index == 0) {
     return &m_tabView;
   } else {
@@ -111,7 +111,7 @@ void TabViewController::setActiveTab(uint8_t i) {
   m_view.setActiveView(activeVC->view());
   m_view.m_tabView.setActiveIndex(i);
   m_activeChildIndex = i;
-  m_view.redraw();
+  m_view.markAsNeedingRedraw();
 }
 
 View * TabViewController::view() {

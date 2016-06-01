@@ -22,7 +22,7 @@ private:
     ContentView();
 
     int numberOfSubviews() const override;
-    const View * subview(int index) const override;
+    View * subview(int index) override;
     void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 

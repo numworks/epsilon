@@ -19,11 +19,11 @@ void View::drawRect(KDRect rect) const {
   // It's transparent!
 }
 
-bool View::isOnScreen() const {
+const Window * View::window() const {
   if (m_superview == nullptr) {
-    return false;
+    return nullptr;
   } else {
-    return m_superview->isOnScreen();
+    return m_superview->window();
   }
 }
 
@@ -32,7 +32,7 @@ void View::redraw() const {
 }
 
 void View::redraw(KDRect rect) const {
-  if (!isOnScreen()) {
+  if (window() == nullptr) {
     return;
   }
 

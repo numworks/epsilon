@@ -19,6 +19,8 @@ extern "C" {
  *   send any display command.
  */
 
+class Window;
+
 class View {
 public:
   View();
@@ -40,7 +42,7 @@ protected:
   virtual const char * className() const;
   virtual void logAttributes(std::ostream &os) const;
 #endif
-  virtual bool isOnScreen() const;
+  virtual const Window * window() const;
   virtual int numberOfSubviews() const = 0;
   virtual const View * subview(int index) const = 0;
   virtual void storeSubviewAtIndex(View * v, int index) = 0;

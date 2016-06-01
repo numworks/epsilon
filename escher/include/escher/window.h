@@ -10,7 +10,7 @@ protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
-  bool isOnScreen() const override;
+  const Window * window() const override;
   int numberOfSubviews() const override;
   const View * subview(int index) const override;
   void layoutSubviews() override;

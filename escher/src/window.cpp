@@ -8,8 +8,8 @@ Window::Window() :
 {
 }
 
-bool Window::isOnScreen() const {
-  return true;
+const Window * Window::window() const {
+  return this;
 }
 
 int Window::numberOfSubviews() const {

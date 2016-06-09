@@ -40,6 +40,10 @@ void ion_display_off() {
   // Turn off panel
 }
 
+void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
+  st7789_set_pixel(&sDisplayController, x, y, color * 257);
+}
+
 void init_display() {
   //assert(FRAMEBUFFER_LENGTH == (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8);
 
@@ -53,12 +57,18 @@ void init_display() {
 
   st7789_initialize(&sDisplayController);
 
-  //st7789_set_display_area(&sDisplayController, 0, 240, 0, 320);
-
-  st7789_enable_frame_data_upload(&sDisplayController);
-
-  while (1) {
+  for (int i=50; i<100; i++) {
+    st7789_set_pixel(&sDisplayController, i, 2*i, 0x0);
   }
 
-  display_dma_init();
+  //st7789_set_display_area(&sDisplayController, 0, 240, 0, 320);
+
+  //st7789_enable_frame_data_upload(&sDisplayController);
+
+  /*while (1) {
+  }*/
+
+  //memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
+
+  //display_dma_init();
 }

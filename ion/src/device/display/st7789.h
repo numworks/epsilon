@@ -20,7 +20,9 @@ typedef struct {
 } st7789_t;
 
 void st7789_initialize(st7789_t * controller);
+void st7789_set_pixel(st7789_t * controller, uint16_t i, uint16_t j, uint16_t color);
+//TODO: void st7789_fill_rect(st7789_t * controller, uint16_t x, uint16_t, ...
 void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
-void st7789_enable_frame_data_upload(st7789_t * controller);
+//void st7789_enable_frame_data_upload(st7789_t * controller);
 
 #endif

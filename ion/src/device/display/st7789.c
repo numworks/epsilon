@@ -116,7 +116,14 @@ void st7789_initialize(st7789_t * c) {
     COMMAND(NOP), // Just needed because of the delay and the 9-bit thing...
     DELAY(120), //Delay 120ms
 
-    COMMAND(MADCTL), DATA(0x00),
+    // Manufacturer says MADCTL = 0
+    // COMMAND(MADCTL), DATA(0x00),
+
+    COMMAND(MADCTL), DATA(0xA0),
+    // D7 = MY = 1 : Bottom-to-top
+    // D5 = MV = 1 : Invert columns and rows (rotate 90deg)
+
+
     COMMAND(COLMOD), DATA(0x05),
 
     COMMAND(PORCTRL),
@@ -148,6 +155,30 @@ void st7789_initialize(st7789_t * c) {
   perform_instructions(c, init_sequence, sizeof(init_sequence)/sizeof(init_sequence[0]));
 }
 
+void st7789_set_pixel(st7789_t * controller, uint16_t i, uint16_t j, uint16_t color) {
+  const instruction_t sequence[] = {
+    COMMAND(CASET),
+    DATA(i >> 8),
+    DATA(i & 0xFF),
+    DATA(i >> 8),
+    DATA(i & 0xFF),
+
+    COMMAND(RASET),
+    DATA(j >> 8),
+    DATA(j & 0xFF),
+    DATA(j >> 8),
+    DATA(j & 0xFF),
+
+    COMMAND(RAMRW),
+    DATA(color >> 8),
+    DATA(color & 0xFF),
+    COMMAND(NOP)
+  };
+
+  perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
+}
+
+/*
 void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length) {
   uint16_t x_end = x_start + x_length;
   uint16_t y_end = y_start + y_length;
@@ -168,8 +199,9 @@ void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x
 
   perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
 }
+*/
 
-void st7789_enable_frame_data_upload(st7789_t * controller) {
+/*void st7789_enable_frame_data_upload(st7789_t * controller) {
   // Put the screen in "receive frame data"
   perform_instruction(controller, COMMAND(RAMRW));
 
@@ -185,3 +217,4 @@ void st7789_enable_frame_data_upload(st7789_t * controller) {
   //controller->data_command_pin_write(DATA_MODE);
   //
 }
+*/

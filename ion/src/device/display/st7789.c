@@ -123,7 +123,6 @@ void st7789_initialize(st7789_t * c) {
     // D7 = MY = 1 : Bottom-to-top
     // D5 = MV = 1 : Invert columns and rows (rotate 90deg)
 
-
     COMMAND(COLMOD), DATA(0x05),
 
     COMMAND(PORCTRL),
@@ -177,44 +176,3 @@ void st7789_set_pixel(st7789_t * controller, uint16_t i, uint16_t j, uint16_t co
 
   perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
 }
-
-/*
-void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length) {
-  uint16_t x_end = x_start + x_length;
-  uint16_t y_end = y_start + y_length;
-
-  const instruction_t sequence[] = {
-    COMMAND(CASET),
-    DATA(x_start >> 8),
-    DATA(x_start & 0xFF),
-    DATA(x_end >> 8),
-    DATA(x_end & 0xFF),
-
-    COMMAND(RASET),
-    DATA(y_start >> 8),
-    DATA(y_start & 0xFF),
-    DATA(y_end >> 8),
-    DATA(y_end & 0xFF)
-  };
-
-  perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
-}
-*/
-
-/*void st7789_enable_frame_data_upload(st7789_t * controller) {
-  // Put the screen in "receive frame data"
-  perform_instruction(controller, COMMAND(RAMRW));
-
-  int check_size = 5;
-
-  for (int i=0; i<320; i++) {
-    for (int j=0; j<240; j++) {
-      char color = (((i/check_size)%2 == 0) ^ ((j/check_size)%2 == 0)) ? 0x00 : i;
-      perform_instruction(controller, DATA(color));
-      perform_instruction(controller, DATA(color));
-    }
-  }
-  //controller->data_command_pin_write(DATA_MODE);
-  //
-}
-*/

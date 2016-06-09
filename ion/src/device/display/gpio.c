@@ -5,12 +5,11 @@
  *
  *  LCD          | STM32 | Role
  * --------------+-------+-----
- *  LCD_CS       | PB10  | Chip-select for LCD panel (panel selected when low)
+ *  LCD_CS       | PC13  | Chip-select for LCD panel (panel selected when low)
  *  LCD_RST      | PB12  | Reset the LCD panel (panel active when high)
- *  LCD_DAT_INS  | PB14  | Select "command" or "data" mode
  *  LCD_SPI_CLK  | PB13  | SPI clock
+ *  LCD_DAT_INS  | PB14  | Select "command" or "data" mode
  *  LCD_SPI_MOSI | PB15  | SPI data
- *
  */
 
 #include "../registers/registers.h"
@@ -19,9 +18,11 @@
 void display_gpio_init() {
   // We are using GPIO B, which live on the AHB1 bus. Let's enable its clock.
   RCC_AHB1ENR |= GPIOBEN;
+  // Same for GPIO C
+  RCC_AHB1ENR |= GPIOCEN;
 
-  // LCD_CS(PB10, LCD_RST(PB12) and LCD_DAT_INS(PB14)are controlled directly
-  REGISTER_SET_VALUE(GPIO_MODER(GPIOB), MODER(10), GPIO_MODE_OUTPUT);
+  // LCD_CS(PC13), LCD_RST(PB12) and LCD_DAT_INS(PB14) are controlled directly
+  REGISTER_SET_VALUE(GPIO_MODER(GPIOC), MODER(13), GPIO_MODE_OUTPUT);
   REGISTER_SET_VALUE(GPIO_MODER(GPIOB), MODER(12), GPIO_MODE_OUTPUT);
   REGISTER_SET_VALUE(GPIO_MODER(GPIOB), MODER(14), GPIO_MODE_OUTPUT);
 
@@ -36,14 +37,14 @@ void display_gpio_init() {
   REGISTER_SET_VALUE(GPIO_AFR(GPIOB, 15), AFR(15), 5);
 }
 
-void gpio_b10_write(bool pin_state) {
-  REGISTER_SET_VALUE(GPIO_ODR(GPIOB), ODR(10), pin_state);
-}
-
 void gpio_b12_write(bool pin_state) {
   REGISTER_SET_VALUE(GPIO_ODR(GPIOB), ODR(12), pin_state);
 }
 
 void gpio_b14_write(bool pin_state) {
   REGISTER_SET_VALUE(GPIO_ODR(GPIOB), ODR(14), pin_state);
+}
+
+void gpio_c13_write(bool pin_state) {
+  REGISTER_SET_VALUE(GPIO_ODR(GPIOC), ODR(13), pin_state);
 }

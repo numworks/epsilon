@@ -7,7 +7,7 @@
  *
  *  LCD          | STM32 | Role
  * --------------+-------+-----
- *  LCD_CS       | PB10  | Chip-select for LCD panel (panel selected when low)
+ *  LCD_CS       | PC13  | Chip-select for LCD panel (panel selected when low)
  *  LCD_RST      | PB12  | Reset the LCD panel (panel active when high)
  *  LCD_DAT_INS  | PB14  | Select "command" or "data" mode
  *  LCD_SPI_CLK  | PB13  | SPI clock
@@ -26,9 +26,9 @@
 #include "spi.h"
 #include "dma.h"
 #include "framebuffer.h"
-#include "st7586.h"
+#include "st7789.h"
 
-static st7586_t sDisplayController;
+static st7789_t sDisplayController;
 
 void ion_display_on() {
   // Initialize panel
@@ -41,23 +41,24 @@ void ion_display_off() {
 }
 
 void init_display() {
-  assert(FRAMEBUFFER_LENGTH == (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8);
+  //assert(FRAMEBUFFER_LENGTH == (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8);
 
   display_gpio_init();
   display_spi_init();
 
-  gpio_b12_write(1); // LCD-RST high
-  sDisplayController.chip_select_pin_write = gpio_b10_write;
-  sDisplayController.data_command_pin_write = gpio_b14_write;
+  sDisplayController.chip_select_pin_write = gpio_c13_write;
+  sDisplayController.reset_pin_write = gpio_b12_write;
+  //sDisplayController.data_command_pin_write = gpio_b14_write;
   sDisplayController.spi_write = spi_2_write;
 
-  st7586_initialize(&sDisplayController);
+  st7789_initialize(&sDisplayController);
 
-  st7586_set_display_area(&sDisplayController, 0, FRAMEBUFFER_WIDTH, 0, FRAMEBUFFER_HEIGHT);
+  //st7789_set_display_area(&sDisplayController, 0, 240, 0, 320);
 
-  st7586_enable_frame_data_upload(&sDisplayController);
+  st7789_enable_frame_data_upload(&sDisplayController);
 
-  memset(FRAMEBUFFER_ADDRESS, 0, FRAMEBUFFER_LENGTH);
+  while (1) {
+  }
 
   display_dma_init();
 }

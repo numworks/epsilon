@@ -41,6 +41,7 @@ typedef struct {
 #define DATA(d) (instruction_t){.mode = (char)DATA_MODE, .payload = (char)d}
 #define DELAY(m) (instruction_t){.mode = (char)DELAY_MODE, .payload = (char)m}
 
+// FIXME: This is ugly and should not live here
 static inline void delay_ms(long ms) {
   for (long i=0; i<1040*ms; i++) {
       __asm volatile("nop");
@@ -67,16 +68,15 @@ static void flush_spi_buffer(st7789_t * c) {
 
 static void perform_instruction(st7789_t * c, instruction_t instruction) {
   if (instruction.mode == DELAY_MODE) {
-    // FIXME: Should sleep instruction->payload miliseconds
     delay_ms(instruction.payload);
   } else {
-    c->data_command_pin_write(instruction.mode);
     //c->chip_select_pin_write(0);
 #if ST7789_USE_9BIT_SPI
     push_data_on_spi_queue(c, (instruction.mode == DATA_MODE), 1);
     push_data_on_spi_queue(c, instruction.payload, 8);
     flush_spi_buffer(c);
 #else
+    c->data_command_pin_write(instruction.mode);
     c->spi_write(&instruction.payload, 1);
 #endif
     //c->chip_select_pin_write(1);
@@ -89,122 +89,63 @@ static void perform_instructions(st7789_t * c, const instruction_t * instruction
   }
 }
 
-/*
-static void enable_cs(st7789_t * controller) {
-  // Falling edge on CSX
-  controller->chip_select_pin_write(1);
-  delay_ms(120);
-  controller->chip_select_pin_write(0);
-  delay_ms(120);
-}
-*/
-
-void st7789_initialize(st7789_t * controller) {
+void st7789_initialize(st7789_t * c) {
 #if ST7789_USE_9BIT_SPI
-  controller->spi_queue = 0;
-  controller->spi_queue_usage_in_bits = 0;
+  c->spi_queue = 0;
+  c->spi_queue_usage_in_bits = 0;
 #endif
 
-  /*
-  enable_cs(controller);
-
-  const instruction_t debug_sequence[] = {
-    COMMAND(SWRESET),
-    DELAY(120),
-    COMMAND(SLPOUT),
-    DELAY(120),
-    COMMAND(DISPON)
-  };
-
-  perform_instructions(controller, debug_sequence, sizeof(debug_sequence)/sizeof(debug_sequence[0]));
-
-  while (1) {
+  /* The ST7789S has multiple interfaces to receive data.
+   * In this driver, we're using the SPI interface. To initialize this
+   * interface, the controller expects a falling edge on the CS pin. */
+  c->chip_select_pin_write(1);
+  if (c->reset_pin_write != NULL) {
+    c->reset_pin_write(1);
+    delay_ms(10);
+    c->reset_pin_write(0);
+    delay_ms(10);
+    c->reset_pin_write(1);
+    delay_ms(100);
   }
+  delay_ms(10);
+  c->chip_select_pin_write(0);
 
-  return;
-  */
-
-  // Falling edge on CSX
-  //enable_cs(controller);
-
+  /* We were provided the following init sequence by the manufacturer */
   const instruction_t init_sequence[] = {
-#if 0
     COMMAND(SLPOUT),
-    COMMAND(NOP),
-    DELAY(120),
-    COMMAND(DISPON),
-    COMMAND(NOP)
-#else
-    COMMAND(0x11),
-    COMMAND(NOP),
+    COMMAND(NOP), // Just needed because of the delay and the 9-bit thing...
     DELAY(120), //Delay 120ms
-//----------------------------------Display Setting-----------------------------------------------//
-COMMAND(0x36),
-DATA(0x00),
-COMMAND(0x3a),
-DATA(0x05),
-//--------------------------------ST7789S Frame rate setting----------------------------------//
-COMMAND(0xb2),
-DATA(0x0c),
-DATA(0x0c),
-DATA(0x00),
-DATA(0x33),
-DATA(0x33),
-COMMAND(0xb7),
-DATA(0x35), //VGH=13V, VGL=-10.4V
-//----------------------------------------------------------------------------------------------------//
-COMMAND(0xbb),
-DATA(0x19),
-COMMAND(0xc0),
-DATA(0x2c),
-COMMAND(0xc2),
-DATA(0x01),
-COMMAND(0xc3),
-DATA(0x12),
-COMMAND(0xc4),
-DATA(0x20),
-COMMAND(0xc6),
-DATA(0x0f),
-COMMAND(0xd0),
-DATA(0xa4),
-DATA(0xa1),
-//----------------------------------------------------------------------------------------------------//
-COMMAND(0xe0), //gamma setting
-DATA(0xd0),
-DATA(0x04),
-DATA(0x0d),
-DATA(0x11),
-DATA(0x13),
-DATA(0x2b),
-DATA(0x3f),
-DATA(0x54),
-DATA(0x4c),
-DATA(0x18),
-DATA(0x0d),
-DATA(0x0b),
-DATA(0x1f),
-DATA(0x23),
-COMMAND(0xe1),
-DATA(0xd0),
-DATA(0x04),
-DATA(0x0c),
-DATA(0x11),
-DATA(0x13),
-DATA(0x2c),
-DATA(0x3f),
-DATA(0x44),
-DATA(0x51),
-DATA(0x2f),
-DATA(0x1f),
-DATA(0x1f),
-DATA(0x20),
-DATA(0x23),
-COMMAND(0x29) //display on
-#endif
+
+    COMMAND(MADCTL), DATA(0x00),
+    COMMAND(COLMOD), DATA(0x05),
+
+    COMMAND(PORCTRL),
+    DATA(0x0c), DATA(0x0c), DATA(0x00), DATA(0x33), DATA(0x33),
+
+    COMMAND(GCTRL), DATA(0x35), //VGH=13V, VGL=-10.4V
+    COMMAND(VCOMS), DATA(0x19),
+    COMMAND(LCMCTRL), DATA(0x2c),
+    COMMAND(VDVVRHEN), DATA(0x01),
+    COMMAND(VRHS), DATA(0x12),
+    COMMAND(VDVS), DATA(0x20),
+    COMMAND(FRCTRL2), DATA(0x0f),
+    COMMAND(PWCTRL1), DATA(0xa4), DATA(0xa1),
+
+    COMMAND(PVGAMCTRL), //gamma setting
+    DATA(0xd0), DATA(0x04), DATA(0x0d), DATA(0x11), DATA(0x13), DATA(0x2b),
+    DATA(0x3f), DATA(0x54), DATA(0x4c), DATA(0x18), DATA(0x0d), DATA(0x0b),
+    DATA(0x1f), DATA(0x23),
+
+    COMMAND(NVGAMCTRL),
+    DATA(0xd0), DATA(0x04), DATA(0x0c), DATA(0x11), DATA(0x13), DATA(0x2c),
+    DATA(0x3f), DATA(0x44), DATA(0x51), DATA(0x2f), DATA(0x1f), DATA(0x1f),
+    DATA(0x20), DATA(0x23),
+
+    COMMAND(DISPON) //display on
   };
 
   // Send all the initialisation_sequence
-  perform_instructions(controller, init_sequence, sizeof(init_sequence)/sizeof(init_sequence[0]));
+  perform_instructions(c, init_sequence, sizeof(init_sequence)/sizeof(init_sequence[0]));
 }
 
 void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length) {
@@ -231,5 +172,16 @@ void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x
 void st7789_enable_frame_data_upload(st7789_t * controller) {
   // Put the screen in "receive frame data"
   perform_instruction(controller, COMMAND(RAMRW));
-  controller->data_command_pin_write(DATA_MODE);
+
+  int check_size = 5;
+
+  for (int i=0; i<320; i++) {
+    for (int j=0; j<240; j++) {
+      char color = (((i/check_size)%2 == 0) ^ ((j/check_size)%2 == 0)) ? 0x00 : i;
+      perform_instruction(controller, DATA(color));
+      perform_instruction(controller, DATA(color));
+    }
+  }
+  //controller->data_command_pin_write(DATA_MODE);
+  //
 }

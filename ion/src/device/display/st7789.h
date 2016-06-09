@@ -7,17 +7,15 @@
 
 #define ST7789_USE_9BIT_SPI 1
 
-/* This is the ST7789 driver
- *
- * It just needs to be pointed to a "write" function
- */
 typedef struct {
+  void (*reset_pin_write)(bool pin_state);
   void (*chip_select_pin_write)(bool pin_state);
-  void (*data_command_pin_write)(bool pin_state);
   void (*spi_write)(char * data, size_t size);
 #if ST7789_USE_9BIT_SPI
   uint32_t spi_queue;
   uint8_t spi_queue_usage_in_bits;
+#else
+  void (*data_command_pin_write)(bool pin_state);
 #endif
 } st7789_t;
 

@@ -1,11 +1,13 @@
 SFLAGS += -Ikandinsky/include
 objs += $(addprefix kandinsky/src/,\
-				font.o\
-				line.o\
-				pixel.o\
-				rect.o\
-				text.o\
-				types.o)
+  drawing_area.o\
+  font.o\
+  line.o\
+  pixel.o\
+  rect.o\
+  text.o\
+  types.o\
+)
 tests += $(addprefix kandinsky/test/, set_pixel.c)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3

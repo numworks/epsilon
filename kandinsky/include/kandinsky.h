@@ -2,6 +2,7 @@
 #define KANDINSKY_KANDINSKY_H
 
 #include <kandinsky/color.h>
+#include <kandinsky/drawing_area.h>
 #include <kandinsky/line.h>
 #include <kandinsky/pixel.h>
 #include <kandinsky/rect.h>

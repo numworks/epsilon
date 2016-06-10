@@ -14,16 +14,16 @@ void clear_screen() {
   KDRect r;
   r.x = 0;
   r.y = 0;
-  r.width = SCREEN_WIDTH;
-  r.height = SCREEN_HEIGHT;
+  r.width = ION_SCREEN_WIDTH;
+  r.height = ION_SCREEN_HEIGHT;
   KDFillRect(r, 0x00);
 }
 
 static void clear_prompt() {
   KDRect r;
   r.x = 0;
-  r.y = SCREEN_HEIGHT - kPromptHeight;
-  r.width = SCREEN_WIDTH;
+  r.y = ION_SCREEN_HEIGHT - kPromptHeight;
+  r.width = ION_SCREEN_WIDTH;
   r.height = kPromptHeight;
   KDFillRect(r, 0x00);
 }
@@ -31,19 +31,19 @@ static void clear_prompt() {
 static void print_prompt(char* text, int index) {
   char* tmp = (char*) " ";
   KDSize font_size = KDStringSize(tmp);
-  KDDrawLine(KDPointMake(0, SCREEN_HEIGHT - kPromptHeight),
-             KDPointMake(SCREEN_WIDTH, SCREEN_HEIGHT - kPromptHeight), 0xff);
-  KDDrawString(text, KDPointMake(0, SCREEN_HEIGHT - (kPromptHeight / 2)), 0);
-  KDDrawChar(text[index], KDPointMake(index * font_size.width, SCREEN_HEIGHT - (kPromptHeight / 2)), true);
+  KDDrawLine(KDPointMake(0, ION_SCREEN_HEIGHT - kPromptHeight),
+             KDPointMake(ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT - kPromptHeight), 0xff);
+  KDDrawString(text, KDPointMake(0, ION_SCREEN_HEIGHT - (kPromptHeight / 2)), 0);
+  KDDrawChar(text[index], KDPointMake(index * font_size.width, ION_SCREEN_HEIGHT - (kPromptHeight / 2)), true);
 }
 
 static void clear_trig_menu() {
   {
     KDRect r;
-    r.x = SCREEN_WIDTH / 4 - 1;
-    r.y = SCREEN_HEIGHT / 4 - 1;
-    r.width = SCREEN_WIDTH / 2 + 2;
-    r.height = SCREEN_HEIGHT / 2 + 2;
+    r.x = ION_SCREEN_WIDTH / 4 - 1;
+    r.y = ION_SCREEN_HEIGHT / 4 - 1;
+    r.width = ION_SCREEN_WIDTH / 2 + 2;
+    r.height = ION_SCREEN_HEIGHT / 2 + 2;
     KDFillRect(r, 0x00);
   }
 }
@@ -51,10 +51,10 @@ static void clear_trig_menu() {
 static void print_trig_menu() {
   {
     KDRect r;
-    r.x = SCREEN_WIDTH / 4;
-    r.y = SCREEN_HEIGHT / 4;
-    r.width = SCREEN_WIDTH / 2;
-    r.height = SCREEN_HEIGHT / 2;
+    r.x = ION_SCREEN_WIDTH / 4;
+    r.y = ION_SCREEN_HEIGHT / 4;
+    r.width = ION_SCREEN_WIDTH / 2;
+    r.height = ION_SCREEN_HEIGHT / 2;
     KDDrawRect(r, 0xff);
   }
 }
@@ -72,7 +72,7 @@ static int get_trig_input(char* input) {
     "cos( )",
     "tan( )",
   };
-  const KDPoint orig = KDPointMake(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);
+  const KDPoint orig = KDPointMake(ION_SCREEN_WIDTH / 4, ION_SCREEN_HEIGHT / 4);
   while (true) {
     print_trig_menu();
 

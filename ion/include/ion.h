@@ -2,8 +2,8 @@
 #define ION_ION_H
 
 #include <ion/events.h>
-#include <ion/framebuffer.h>
 #include <ion/keyboard.h>
+#include <ion/screen.h>
 
 /* ION is not your regular library. It is a library you link against, but it
  * will take care of configuring the whole environment for you. In POSIX terms,

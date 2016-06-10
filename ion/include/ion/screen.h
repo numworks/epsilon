@@ -1,5 +1,5 @@
-#ifndef ION_FRAMEBUFFER_H
-#define ION_FRAMEBUFFER_H
+#ifndef ION_SCREEN_H
+#define ION_SCREEN_H
 
 /* ION abstracts pushing pixels to the screen.
  *
@@ -33,7 +33,7 @@ void ion_fill_rect_from_buffer(
     ion_color_t * buffer
 );
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define ION_SCREEN_WIDTH 320
+#define ION_SCREEN_HEIGHT 240
 
 #endif

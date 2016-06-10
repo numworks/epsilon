@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <ion/framebuffer.h>
+#include <ion/screen.h>
 
 #define ST7789_USE_9BIT_SPI 1
 

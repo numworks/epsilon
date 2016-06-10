@@ -22,8 +22,8 @@ void init_platform() {
   Fl::visual(FL_RGB);
 
   int margin = 10;
-  int screen_width = SCREEN_WIDTH;
-  int screen_height = SCREEN_HEIGHT;
+  int screen_width = ION_SCREEN_WIDTH;
+  int screen_height = ION_SCREEN_HEIGHT;
   int keyboard_height = screen_width;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
@@ -38,9 +38,9 @@ void init_platform() {
 }
 
 void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
-  assert(x < SCREEN_WIDTH);
-  assert(y < SCREEN_HEIGHT);
-  char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*SCREEN_WIDTH)+x);
+  assert(x < ION_SCREEN_WIDTH);
+  assert(y < ION_SCREEN_HEIGHT);
+  char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*ION_SCREEN_WIDTH)+x);
   *byte = color;
 }
 

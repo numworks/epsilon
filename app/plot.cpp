@@ -10,8 +10,8 @@ extern "C" {
 #include "utils.h"
 #include "plot.h"
 
-constexpr KDCoordinate kScreenWidth = SCREEN_WIDTH;
-const KDCoordinate kScreenHeight = SCREEN_HEIGHT;
+constexpr KDCoordinate kScreenWidth = ION_SCREEN_WIDTH;
+const KDCoordinate kScreenHeight = ION_SCREEN_HEIGHT;
 
 static float plotValues[kScreenWidth];
 static float yMin, yMax;

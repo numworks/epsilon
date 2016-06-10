@@ -106,15 +106,15 @@ static user_expression_t create_user_input(char* text) {
 static int16_t print_user_input(user_expression_t user_expression, int16_t yOffset) {
   if (user_expression.expression_layout) {
     int16_t height = user_expression.expression_layout->size().height;
-    if (yOffset + height < SCREEN_HEIGHT) {
+    if (yOffset + height < ION_SCREEN_HEIGHT) {
       user_expression.expression_layout->draw(KDPointMake(0, yOffset));
     }
     yOffset += height;
   }
   if (user_expression.simplified_layout) {
     int16_t height = user_expression.simplified_layout->size().height;
-    if (yOffset + height < SCREEN_HEIGHT) {
-      int16_t xOffset = SCREEN_WIDTH - user_expression.simplified_layout->size().width;
+    if (yOffset + height < ION_SCREEN_HEIGHT) {
+      int16_t xOffset = ION_SCREEN_WIDTH - user_expression.simplified_layout->size().width;
       user_expression.simplified_layout->draw(KDPointMake(xOffset, yOffset));
     }
     yOffset += height;
@@ -126,7 +126,7 @@ static void print_user_inputs(const UserExpressions& user_inputs, uint8_t starti
   int16_t yOffset = 0;
   for (uint8_t i=startingAt; i<user_inputs.numberOfExpressions(); i++) {
     yOffset = print_user_input(user_inputs.get_expression(i), yOffset);
-    if (yOffset>SCREEN_HEIGHT) {
+    if (yOffset>ION_SCREEN_HEIGHT) {
       break;
     }
   }

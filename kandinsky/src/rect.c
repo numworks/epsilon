@@ -1,6 +1,8 @@
 #include <kandinsky/rect.h>
 #include <kandinsky/pixel.h>
 #include <string.h>
+#include "private/drawing_area.h"
+#include <ion.h>
 
 KDRect KDRectZero = {.x = 0, .y = 0, .width = 0, .height = 0};
 
@@ -41,12 +43,15 @@ KDRect KDRectIntersection(KDRect r1, KDRect r2) {
 }
 
 void KDFillRect(KDRect rect, KDColor color) {
-  KDPoint p;
-  for (p.x = rect.x; p.x<(rect.x+rect.width); p.x++) {
-    for (p.y = rect.y; p.y<(rect.y+rect.height); p.y++) {
-      KDSetPixel(p, color);
-    }
-  }
+  KDRect rectToBeFilled = {
+    .x = rect.x + KDDrawingArea.x,
+    .y = rect.y + KDDrawingArea.y,
+    .width = min(rect.width, KDDrawingArea.width),
+    .height = min(rect.height, KDDrawingArea.height)
+  };
+  ion_fill_rect(rectToBeFilled.x, rectToBeFilled.y,
+      rectToBeFilled.width, rectToBeFilled.height,
+      color);
 }
 
 void KDDrawRect(KDRect rect, KDColor color) {

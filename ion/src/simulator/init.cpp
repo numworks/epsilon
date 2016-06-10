@@ -44,6 +44,18 @@ void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
   *byte = color;
 }
 
+void ion_fill_rect(
+    uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    ion_color_t color)
+{
+  for (int16_t i = x; i<(x+width); i++) {
+    for (int16_t j = y; j<(y+height); j++) {
+      ion_set_pixel(i, j, color);
+    }
+  }
+}
+
 bool ion_key_down(ion_key_t key) {
   return sKeyboard->key_down(key);
 }

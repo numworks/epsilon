@@ -50,9 +50,10 @@ void ion_fill_rect(
     uint16_t width, uint16_t height,
     ion_color_t color)
 {
-
-
-
+  st7789_set_drawing_area(&sDisplayController, x, y, width, height);
+  for (int i=0; i<width*height; i++) {
+    st7789_push_pixels(&sDisplayController, &color, 1);
+  }
 }
 
 void init_display() {

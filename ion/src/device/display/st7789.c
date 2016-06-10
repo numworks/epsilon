@@ -181,7 +181,6 @@ void st7789_set_drawing_area(st7789_t * controller, int16_t x, int16_t y, int16_
 }
 
 void st7789_push_pixels(st7789_t * controller, ion_color_t * pixels, int32_t numberOfPixels) {
-  perform_instruction(controller, COMMAND(RAMRW));
   for (int32_t i=0; i<numberOfPixels; i++) {
     perform_instruction(controller, DATA(pixels[i] >> 8));
     perform_instruction(controller, DATA(pixels[i] & 0xFF));

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <ion/framebuffer.h>
 
 #define ST7789_USE_9BIT_SPI 1
 
@@ -20,8 +21,11 @@ typedef struct {
 } st7789_t;
 
 void st7789_initialize(st7789_t * controller);
-void st7789_set_pixel(st7789_t * controller, uint16_t i, uint16_t j, uint16_t color);
-//TODO: void st7789_fill_rect(st7789_t * controller, uint16_t x, uint16_t, ...
-void st7789_set_display_area(st7789_t * controller, uint16_t x_start, uint16_t x_length, uint16_t y_start, uint16_t y_length);
 
+void st7789_set_drawing_area(st7789_t * controller,
+    int16_t x, int16_t y,
+    int16_t width, int16_t height);
+
+void st7789_push_pixels(st7789_t * controller,
+    ion_color_t * pixels, int32_t numberOfPixels);
 #endif

@@ -37,7 +37,7 @@ void init_platform() {
   window->show();
 }
 
-void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
+void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
   assert(x < SCREEN_WIDTH);
   assert(y < SCREEN_HEIGHT);
   char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*SCREEN_WIDTH)+x);

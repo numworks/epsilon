@@ -40,8 +40,19 @@ void ion_display_off() {
   // Turn off panel
 }
 
-void ion_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
-  st7789_set_pixel(&sDisplayController, x, y, color * 257);
+void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
+  st7789_set_drawing_area(&sDisplayController, x, y, 1, 1);
+  st7789_push_pixels(&sDisplayController, &color, 1);
+}
+
+void ion_fill_rect(
+    uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    ion_color_t color)
+{
+
+
+
 }
 
 void init_display() {
@@ -56,10 +67,6 @@ void init_display() {
   sDisplayController.spi_write = spi_2_write;
 
   st7789_initialize(&sDisplayController);
-
-  for (int i=50; i<100; i++) {
-    st7789_set_pixel(&sDisplayController, i, 2*i, 0x0);
-  }
 
   //st7789_set_display_area(&sDisplayController, 0, 240, 0, 320);
 

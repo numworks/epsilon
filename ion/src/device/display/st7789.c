@@ -49,7 +49,8 @@ static inline void delay_ms(long ms) {
 }
 
 #if ST7789_USE_9BIT_SPI
-static void push_data_on_spi_queue(st7789_t * c, uint8_t data, uint8_t numberOfBits) {
+static void push_data_on_spi_queue(st7789_t * c, uint8_t data, int8_t numberOfBits) {
+  assert(numberOfBits >= 0);
   c->spi_queue = (c->spi_queue << numberOfBits) | data;
   c->spi_queue_usage_in_bits += numberOfBits;
   assert(c->spi_queue_usage_in_bits < 8*sizeof(c->spi_queue));
@@ -154,25 +155,35 @@ void st7789_initialize(st7789_t * c) {
   perform_instructions(c, init_sequence, sizeof(init_sequence)/sizeof(init_sequence[0]));
 }
 
-void st7789_set_pixel(st7789_t * controller, uint16_t i, uint16_t j, uint16_t color) {
+void st7789_set_drawing_area(st7789_t * controller, int16_t x, int16_t y, int16_t width, int16_t height) {
+  uint16_t x_start = x;
+  uint16_t x_end = x + width - 1;
+  uint16_t y_start = y;
+  uint16_t y_end = y + height - 1;
+
   const instruction_t sequence[] = {
     COMMAND(CASET),
-    DATA(i >> 8),
-    DATA(i & 0xFF),
-    DATA(i >> 8),
-    DATA(i & 0xFF),
+    DATA(x_start >> 8),
+    DATA(x_start & 0xFF),
+    DATA(x_end >> 8),
+    DATA(x_end & 0xFF),
 
     COMMAND(RASET),
-    DATA(j >> 8),
-    DATA(j & 0xFF),
-    DATA(j >> 8),
-    DATA(j & 0xFF),
+    DATA(y_start >> 8),
+    DATA(y_start & 0xFF),
+    DATA(y_end >> 8),
+    DATA(y_end & 0xFF),
 
-    COMMAND(RAMRW),
-    DATA(color >> 8),
-    DATA(color & 0xFF),
-    COMMAND(NOP)
+    COMMAND(RAMRW)
   };
 
   perform_instructions(controller, sequence, sizeof(sequence)/sizeof(sequence[0]));
+}
+
+void st7789_push_pixels(st7789_t * controller, ion_color_t * pixels, int32_t numberOfPixels) {
+  perform_instruction(controller, COMMAND(RAMRW));
+  for (int32_t i=0; i<numberOfPixels; i++) {
+    perform_instruction(controller, DATA(pixels[i] >> 8));
+    perform_instruction(controller, DATA(pixels[i] & 0xFF));
+  }
 }

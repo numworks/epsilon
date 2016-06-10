@@ -3,14 +3,18 @@
 
 #include <escher/view.h>
 
+class TableViewDataSource {
+  virtual int numberOfCells() = 0;
+  View * cellAtIndex(int index) = 0;
+  void tableWillDisplayCellAtIndex(int index) = 0;
+};
+
 class TableView : public View {
 public:
-  TableView(
-      -> DataSource,
-      -> CellClass
-      );
-  TextView(KDPoint origin, const char * text);
+  TableView();
   void drawRect(KDRect rect) override;
+
+  void scrollToRow(int index);
 private:
   const char * m_text;
 };

@@ -1,17 +1,20 @@
 #include <assert.h>
 #include "fltkkbd.h"
 
-#define KEYBOARD_ROWS 7
+#define KEYBOARD_ROWS 10
 #define KEYBOARD_COLUMNS 5
 
-static const char* kCharForKey[KEYBOARD_ROWS * KEYBOARD_COLUMNS] = {
-  "A", "B", "C", "D", "E",
-  "F", "G", "DEL", "UP", "DOWN",
-  "K", "PLOT", "TRIG", "LEFT", "RIGHT",
-  "7", "8", "9", "(", ")",
-  "4", "5", "6", "*", "/",
-  "1", "2", "3", "+", "-",
-  "0", ".", "x", "^", "="
+static const char* kCharForKey[ION_NUMBER_OF_KEYS] = {
+  "F1",      "F2",    "F3",      "F4",     "F5",
+  "2nd",     "Shift", "ESC",     "LEFT",   "UP",
+  "Diamond", "alpha", "APPS",    "DOWN",   "RIGHT",
+  "HOME",    "MODE",  "CTLG", "Delete", "CLEAR",
+  "X",       "Y",     "Z",       "T",      "^",
+  "=",       "(",     ")",       ",",      "%",
+  "|",       "7",     "8",       "9",      "x",
+  "EE",      "4",     "5",       "6",      "-",
+  "STO",     "1",     "2",       "3",      "+",
+  "ON",      "0",     ".",       "(-)",    "ENTER"
 };
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {

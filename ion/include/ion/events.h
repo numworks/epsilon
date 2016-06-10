@@ -4,6 +4,7 @@
 typedef enum {
   LEFT_PARENTHESIS = '(', // 0x28
   RIGHT_PARENTHESIS = ')', // 0x29
+  COMMA = ',',
   PRODUCT = '*', // 0x2a
   PLUS = '+', // 0x2b
   MINUS = '-', // 0x2d
@@ -80,6 +81,22 @@ typedef enum {
   TRIG_MENU,
   DELETE,
   PLOT,
+  F1,
+  F2,
+  F3,
+  F4,
+  F5,
+  SECOND,
+  SHIFT,
+  ESC,
+  ENTER,
+  DIAMOND,
+  ALPHA,
+  APPS,
+  HOME,
+  MODE,
+  CATALOG,
+  CLEAR,
   ERROR = 0xffffffff,
 } ion_event_t;
 

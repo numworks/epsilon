@@ -6,6 +6,7 @@
 
 class App {
 public:
+  App();
   void run();
   void focus(Responder * responder);
 protected:

@@ -22,6 +22,7 @@ extern "C" {
 class Window;
 
 class View {
+  // We only want Window to be able to invoke View::redraw
   friend class Window;
 public:
   View();

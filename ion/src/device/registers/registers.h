@@ -1,13 +1,5 @@
 #include <stdint.h>
 
-/* Example usage:
- *
- * REGISTER_SET_VALUE(RCC_CR, HSITRIM, 37);
- * RCC_CR = (HSION|HSITRIM_VALUE(15));
- * if (RCC_CR & HSIRDY) { }
- */
-
-
 // Bit manipulation helpers
 
 // 32 bits value where bits between HIGH and LOW are 1 and others are 0
@@ -27,9 +19,6 @@
 
 // Get the value of a FIELD defined by LOW_BIT_FIELD and HIGH_BIT_FIELD
 #define REGISTER_GET_VALUE(reg, field) ((reg & REGISTER_FIELD_MASK(field) >> LOW_BIT_##field))
-
-//#define SET(reg, field) (reg |= field)
-//#define CLEAR(reg, field) (reg &= ~field)
 
 #include "rcc.h"
 #include "gpio.h"

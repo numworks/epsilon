@@ -1,32 +1,40 @@
 /* Keyboard initialization code
  *
- * Our role here is to implement the "ion_key_state" function.
- * The keyboard is a matrix that is as plugged as follow:
+ * The job of this code is to implement the "ion_key_state" function.
  *
- *     |  PA8 |  PA9 | PA10 | PA11 | PA12 |
+ * The keyboard is a matrix that is laid out as follow:
+ *
+ *     |  PA0 |  PA1 | PA2  | PA3  | PA4  |
  * ----+------+------+------+------+------+
- * PA0 | K_A1 | K_A2 | K_A3 | K_A4 | K_A5 |
+ * PB0 | K_A1 | K_A2 | K_A3 | K_A4 | K_A5 |
  * ----+------+------+------+------+------+
- * PA1 | K_B1 | K_B2 | K_B3 | K_B4 | K_B5 |
+ * PB1 | K_B1 | K_B2 | K_B3 | K_B4 | K_B5 |
  * ----+------+------+------+------+------+
- * PA2 |      |      | K_C1 | K_C2 | K_C3 |
+ * PB2 | K_C1 | K_C2 | K_C3 | K_C4 | K_C5 |
  * ----+------+------+------+------+------+
- * PA3 | K_D1 | K_D2 | K_D3 | K_D4 | K_D5 |
+ * PB3 | K_D1 | K_D2 | K_D3 | K_D4 | K_D5 |
  * ----+------+------+------+------+------+
- * PA4 | K_E1 | K_E2 | K_E3 | K_E4 | K_E5 |
+ * PB4 | K_E1 | K_E2 | K_E3 | K_E4 | K_E5 |
  * ----+------+------+------+------+------+
- * PA5 | K_F1 | K_F2 | K_F3 | K_F4 | K_F5 |
+ * PB5 | K_F1 | K_F2 | K_F3 | K_F4 | K_F5 |
  * ----+------+------+------+------+------+
- * PA6 | K_G1 | K_G2 | K_G3 | K_G4 | K_G5 |
+ * PB6 | K_G1 | K_G2 | K_G3 | K_G4 | K_G5 |
+ * ----+------+------+------+------+------+
+ * PB7 | K_H1 | K_H2 | K_H3 | K_H4 | K_H5 |
+ * ----+------+------+------+------+------+
+ * PB8 | K_I1 | K_I2 | K_I3 | K_I4 | K_I5 |
+ * ----+------+------+------+------+------+
+ * PB9 | K_J1 | K_J2 | K_J3 | K_J4 | K_J5 |
  * ----+------+------+------+------+------+
  *
- *  We decide to drive the rows (PA0-6) and read the columns (PA8-12).
+ *  We decide to drive the rows (PB0-9) and read the columns (PA0-4).
  *
- *  To avoid short-circuits, the pins A0-A6 will not be standard outputs but
- *  only open-drain. Open drain can either drive low or let it float. Otherwise,
- *  when a user presses multiple keys, a shortcut between rows could happen,
- *  which could trigger a short circuit between an output driving high and
- *  another driving low.
+ *  To avoid short-circuits, the pins B0-B9 will not be standard outputs but
+ *  only open-drain. Open drain means the pin is either driven low or left
+ *  floating.
+ *  When a user presses multiple keys, a connection between two rows can happen.
+ *  If we dont' use open drain outputs, this situation could trigger a short
+ *  circuit between an output driving high and another driving low.
  *
  *  If the outputs are open-drain, this means that the input must be pulled up.
  *  So if the input reads "1", this means the key is in fact *not* pressed, and
@@ -37,11 +45,17 @@
 #include <ion.h>
 #include "../registers/registers.h"
 
-// We'll make the assertion that the row and column pins are contiguous
-#define ROW_PIN_START 0
-#define ROW_PIN_END 6
-#define COLUMN_PIN_START 8
-#define COLUMN_PIN_END 12
+/* This driver expects that row pins are contiguous. It also expects that
+ * column pins are contiguous too. This is not mandatory but it makes the code
+ * a lot simpler. */
+
+#define ROW_GPIO GPIOB
+#define LOW_BIT_ROW 0
+#define HIGH_BIT_ROW 9
+
+#define COLUMN_GPIO GPIOA
+#define COLUMN_PIN_START 0
+#define COLUMN_PIN_END 4
 
 static inline uint8_t row_for_key(ion_key_t key) {
   return key/5;
@@ -53,13 +67,12 @@ static inline uint8_t column_for_key(ion_key_t key) {
 bool ion_key_down(ion_key_t key) {
   /* Drive the corresponding row low, and let all the others float.
    * Note: In open-drain mode, a 0 in the register drives low, and a 1 lets the
-   * pin in Hi-Z (floating). */
-  uint32_t output_mask = (((uint32_t)1 << (ROW_PIN_END-ROW_PIN_START+1)) - 1) << ROW_PIN_START;
-  uint32_t previous_odr = GPIO_ODR(GPIOA);
-  uint32_t new_odr = ~((uint32_t)1 << (row_for_key(key)+ROW_PIN_START)) & output_mask;
+   * pin floating (Hi-Z). */
+  uint32_t new_row_value = ~((uint32_t)1 << row_for_key(key));
+  uint32_t previous_row_value = REGISTER_GET_VALUE(GPIO_ODR(ROW_GPIO), ROW);
 
-  if (new_odr != previous_odr) {
-    GPIO_ODR(GPIOA) = new_odr;
+  if (new_row_value != previous_row_value) {
+    REGISTER_SET_VALUE(GPIO_ODR(ROW_GPIO), ROW, new_row_value);
     // We changed the outputs, give the hardware some time to react to this change
     // FIXME: Real delay!
     for (volatile int i=0;i<1000; i++) {
@@ -67,7 +80,7 @@ bool ion_key_down(ion_key_t key) {
   }
 
   // Read the input of the proper column
-  uint32_t input = (GPIO_IDR(GPIOA) & (1 << (column_for_key(key)+COLUMN_PIN_START)));
+  uint32_t input = (GPIO_IDR(COLUMN_GPIO) & (1 << (column_for_key(key)+COLUMN_PIN_START)));
 
   /* The key is down if the input is brought low by the output. In other words,
    * we want to return "true" (1) if the input is low (0). */
@@ -75,19 +88,19 @@ bool ion_key_down(ion_key_t key) {
 }
 
 void init_keyboard() {
-  /* We are using GPIO group A, which live on the AHB1 bus. Let's start by
-   * enabling its clock. */
-  RCC_AHB1ENR |= GPIOAEN;
+  /* We are using GPIOs, let's start by enabling their clock. */
+  /* Note: All GPIOs live on the AHB1 bus */
+  RCC_AHB1ENR |= GPIO_EN(ROW_GPIO) | GPIO_EN(COLUMN_GPIO);
 
   // Configure the row pins as open-drain outputs
-  for (int pin=ROW_PIN_START; pin<=ROW_PIN_END; pin++) {
-    REGISTER_SET_VALUE(GPIO_MODER(GPIOA), MODER(pin), GPIO_MODE_OUTPUT);
-    REGISTER_SET_VALUE(GPIO_OTYPER(GPIOA), OTYPER(pin), GPIO_OTYPE_OPEN_DRAIN);
+  for (int pin=LOW_BIT_ROW; pin<=HIGH_BIT_ROW; pin++) {
+    REGISTER_SET_VALUE(GPIO_MODER(ROW_GPIO), MODER(pin), GPIO_MODE_OUTPUT);
+    REGISTER_SET_VALUE(GPIO_OTYPER(ROW_GPIO), OTYPER(pin), GPIO_OTYPE_OPEN_DRAIN);
   }
 
   // Configure the column as are pulled-up inputs
   for (int pin=COLUMN_PIN_START; pin<=COLUMN_PIN_END; pin++) {
-    REGISTER_SET_VALUE(GPIO_MODER(GPIOA), MODER(pin), GPIO_MODE_INPUT);
-    REGISTER_SET_VALUE(GPIO_PUPDR(GPIOA), PUPDR(pin), GPIO_PUPD_PULL_UP);
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(pin), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(pin), GPIO_PUPD_PULL_UP);
   }
 }

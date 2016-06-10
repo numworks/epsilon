@@ -43,6 +43,7 @@
 #define GPIOIEN (1<<8)
 #define GPIOJEN (1<<9)
 #define GPIOKEN (1<<10)
+#define GPIO_EN(GPIO) (1<<GPIO)
 #define CRCEN (1<<12)
 #define BKPSRAMEN (1<<18)
 #define CCMDATARAMEN (1<<20)

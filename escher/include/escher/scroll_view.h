@@ -2,6 +2,7 @@
 #define ESCHER_SCROLL_VIEW_H
 
 #include <escher/view.h>
+#include <escher/scroll_view_indicator.h>
 
 class ScrollView : public View {
 public:
@@ -21,7 +22,7 @@ protected:
 private:
   KDPoint m_offset;
   View * m_contentView;
-  //ScollIndicator m_verticalScrollIndicator;
+  ScrollViewIndicator m_verticalScrollIndicator;
 };
 
 #endif

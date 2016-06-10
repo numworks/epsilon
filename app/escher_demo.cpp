@@ -5,74 +5,19 @@ extern "C" {
 }
 #include <escher.h>
 
-/*
-class App {
-public:
-  void run();
-protected:
-  ViewController * rootViewController() = 0;
-private:
-  View m_window;
-};
-
-void App::run() {
-  self.window = rootViewController()->view();
-  self.responder = rootViewController()->responder();
-}
-
-class GraphApp : public App {
-public:
-  GraphApp();
-  void run() override;
-protected:
-  ViewController * rootViewController() override;
-private:
-  FunctionController m_functionController;
-  GraphController m_graphController;
-  TabViewController m_tabController;
-};
-
-class FunctionStore {
-};
-
-class FunctionController : public ViewController {
-
-};
-
-class GraphController : public ViewController {
-};
-
-GraphApp::GraphApp() {
-  m_functionController = FunctionController();
-  m_graphController = GraphController();
-  ViewController * tabs[] = {
-    &m_functionController,
-    &m_graphController
-  };
-  m_tabController = TabViewController(tabs);
-}
-*/
-
-/*
-class MyTextView : public View {
-  using View::View;
-public:
-  void drawRect(KDRect frame) override;
-};
-
-void MyTextView::drawRect(KDRect frame) {
-  KDPoint zero = {0, 0};
-  KDDrawString("Hello, world!", zero, 0);
-}
-*/
-
 class GraphView : public ChildlessView {
 public:
   void drawRect(KDRect rect) const override;
 };
 
 void GraphView::drawRect(KDRect rect) const {
-  KDColor bg = 0x99;
+  /*
+  std::cout << "DrawingRect of GraphView in " <<
+   rect.x << "," << rect.y << "," <<
+   rect.width << "," << rect.height << "," <<
+   std::endl;
+   */
+  KDColor bg = 0xA0;
   KDFillRect(rect, bg);
   for (KDCoordinate x=rect.x; x<rect.x+rect.width; x++) {
     KDSetPixel((KDPoint){x, (KDCoordinate)(x*x/rect.width)}, 0x00);
@@ -81,16 +26,26 @@ void GraphView::drawRect(KDRect rect) const {
 
 class GraphViewController : public ViewController {
 public:
-  using ViewController::ViewController;
+  GraphViewController();
   View * view() override;
   const char * title() const override;
 private:
-  GraphView m_view;
+  GraphView m_graphView;
+  // It's best to declare m_graphView *before* m_scrollView
+  // Otherwise we cannot use m_graphView in the m_scrollView constructor
+  // Well, we can have the pointer but it points to an unitialized object
+  ScrollView m_scrollView;
 };
 
+GraphViewController::GraphViewController() :
+  ViewController(),
+  m_graphView(GraphView()),
+  m_scrollView(ScrollView(&m_graphView))
+{
+}
 
 View * GraphViewController::view() {
-  return &m_view;
+  return &m_scrollView;
 }
 
 const char * GraphViewController::title() const {
@@ -107,7 +62,8 @@ private:
 };
 
 DemoViewController::DemoViewController(KDColor c) :
-m_view(SolidColorView(c))
+  ViewController(),
+  m_view(SolidColorView(c))
 {
 }
 
@@ -131,6 +87,7 @@ private:
 };
 
 MyTestApp::MyTestApp() :
+  App(),
   m_demoViewController(DemoViewController(0x55)),
   m_graphViewController(GraphViewController()),
   m_tabViewController(&m_demoViewController, &m_graphViewController)
@@ -147,6 +104,20 @@ void ion_app() {
 
   //KDFillRect({0,0,100,100}, 0x55);
   //KDFillRect({100,100,100,100}, 0x99);
+
+  /*
+  KDCoordinate i = 0;
+  char message[4] = {'F', 'O', 'O', 0};
+  while (1) {
+    KDPoint p = {i, i};
+    KDDrawString(message, p, false);
+    ion_event_t event = ion_get_event();
+    if (event < 0x100) {
+      message[1] = event;
+    }
+    i+= 1;
+  }
+  */
 
   MyTestApp myApp = MyTestApp();
 

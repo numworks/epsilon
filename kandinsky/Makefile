@@ -8,7 +8,10 @@ objs += $(addprefix kandinsky/src/,\
   text.o\
   types.o\
 )
-tests += $(addprefix kandinsky/test/, set_pixel.c)
+tests += $(addprefix kandinsky/test/,\
+  color.c\
+  set_pixel.c\
+)
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
 # LIBPNG_PATH is optional. If LIBPNG_PATH is not defined, rasterizer will be

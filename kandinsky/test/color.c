@@ -3,7 +3,6 @@
 #include <assert.h>
 
 QUIZ_CASE(kandinsky_color_rgb) {
-  KDColor foo = KDColorRGB(0xFF, 0, 0);
   assert(KDColorRGB(0xFF, 0, 0) == 0xF800);
   assert(KDColorRGB(0, 0xFF, 0) == 0x07E0);
   assert(KDColorRGB(0, 0, 0xFF) == 0x1F);

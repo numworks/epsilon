@@ -1,22 +1,41 @@
 #ifndef ESCHER_TABLE_VIEW_H
 #define ESCHER_TABLE_VIEW_H
 
-#include <escher/view.h>
+#include <escher/scroll_view.h>
 
 class TableViewDataSource {
+public:
   virtual int numberOfCells() = 0;
-  View * cellAtIndex(int index) = 0;
-  void tableWillDisplayCellAtIndex(int index) = 0;
+  virtual View * cellAtIndex(int index) = 0;
+  virtual void willDisplayCellAtIndex(int index) = 0;
+  virtual KDCoordinate cellHeight() = 0;
 };
 
-class TableView : public View {
+class TableView : public ScrollView {
 public:
-  TableView();
-  void drawRect(KDRect rect) override;
+  TableView(TableViewDataSource * dataSource);
 
   void scrollToRow(int index);
+  void layoutSubviews() override;
 private:
-  const char * m_text;
+  class ContentView : public View {
+  public:
+    ContentView(TableViewDataSource * dataSource);
+
+    int numberOfSubviews() const override;
+    View * subview(int index) override;
+    void storeSubviewAtIndex(View * view, int index) override;
+    void layoutSubviews() override;
+  protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
+  private:
+    int cellScrollingOffset();
+    TableViewDataSource * m_dataSource;
+  };
+
+  ContentView m_contentView;
 };
 
 #endif

@@ -59,10 +59,12 @@ void ScrollView::setContentOffset(KDPoint offset) {
 
   float contentHeight = m_contentView->bounds().height;
   float start = offset.x;
-  float end = offset.x + bounds().height;
+  float end = offset.x + m_frame.height;
 
   m_verticalScrollIndicator.setStart(start/contentHeight);
   m_verticalScrollIndicator.setEnd(end/contentHeight);
+
+  setContentViewOrigin();
 
   markAsNeedingRedraw();
 }

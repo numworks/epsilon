@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
-typedef uint8_t KDColor;
+typedef uint16_t KDColor;
+
+#define KDColorRGB(r,g,b) ((KDColor)(((r&0x1F)<<11)&((g&0x3F)<<5)&(b&0x1F)))
 
 #endif

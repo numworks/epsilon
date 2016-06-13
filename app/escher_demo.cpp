@@ -17,7 +17,7 @@ void GraphView::drawRect(KDRect rect) const {
    rect.width << "," << rect.height << "," <<
    std::endl;
    */
-  KDColor bg = 0xA0;
+  KDColor bg = 0xFFFF;
   KDFillRect(rect, bg);
   for (KDCoordinate x=rect.x; x<rect.x+rect.width; x++) {
     KDSetPixel((KDPoint){x, (KDCoordinate)(x*x/rect.width)}, 0x00);

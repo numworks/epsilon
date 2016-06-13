@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 typedef int16_t KDCoordinate;
-#define KDCoordinateMax ((KDCoordinate)((1<<15)-1))
 
 typedef struct {
   KDCoordinate x;

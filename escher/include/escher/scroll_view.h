@@ -20,6 +20,7 @@ protected:
   virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
+  void setContentViewOrigin();
   KDPoint m_offset;
   View * m_contentView;
   ScrollViewIndicator m_verticalScrollIndicator;

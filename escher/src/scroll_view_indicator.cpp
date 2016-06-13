@@ -18,16 +18,16 @@ void ScrollViewIndicator::drawRect(KDRect rect) const {
   KDFillRect(bounds(), k_backgroundColor);
   KDRect indicatorFrame;
   if (m_direction == Direction::Horizontal) {
-  indicatorFrame.x = m_start*bounds().width;
+  indicatorFrame.x = m_start*m_frame.width;
   indicatorFrame.y = 0;
-  indicatorFrame.width = (m_end-m_start)*bounds().width;
-  indicatorFrame.height = bounds().height;
+  indicatorFrame.width = (m_end-m_start)*m_frame.width;
+  indicatorFrame.height = m_frame.height;
   } else {
     assert(m_direction == Direction::Vertical);
     indicatorFrame.x = 0;
-    indicatorFrame.y = m_start*bounds().height;
-    indicatorFrame.width = bounds().width;
-    indicatorFrame.height = (m_end-m_start)*bounds().height;
+    indicatorFrame.y = m_start*m_frame.height;
+    indicatorFrame.width = m_frame.width;
+    indicatorFrame.height = (m_end-m_start)*m_frame.height;
   }
   KDFillRect(indicatorFrame, k_indicatorColor);
 }

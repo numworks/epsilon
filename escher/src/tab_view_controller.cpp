@@ -20,15 +20,15 @@ void TabViewController::ContentView::layoutSubviews() {
 
   KDRect tabViewFrame;
   tabViewFrame.origin = KDPointZero;
-  tabViewFrame.width = this->bounds().width,
+  tabViewFrame.width = m_frame.width,
   tabViewFrame.height = tabHeight;
   m_tabView.setFrame(tabViewFrame);
   if (m_activeView) {
     KDRect activeViewFrame;
     activeViewFrame.x = 0;
     activeViewFrame.y = tabHeight;
-    activeViewFrame.width = this->bounds().width;
-    activeViewFrame.height = (this->bounds().height - tabHeight);
+    activeViewFrame.width = m_frame.width;
+    activeViewFrame.height = m_frame.height - tabHeight;
     m_activeView->setFrame(activeViewFrame);
   }
 }

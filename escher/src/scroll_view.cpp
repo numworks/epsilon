@@ -44,10 +44,10 @@ void ScrollView::storeSubviewAtIndex(View * view, int index) {
 void ScrollView::layoutSubviews() {
   // Layout indicators
   KDRect verticalIndicatorFrame;
-  verticalIndicatorFrame.x = bounds().width - k_indicatorThickness;
+  verticalIndicatorFrame.x = m_frame.width - k_indicatorThickness;
   verticalIndicatorFrame.y = 0;
   verticalIndicatorFrame.width = k_indicatorThickness;
-  verticalIndicatorFrame.height = bounds().height;
+  verticalIndicatorFrame.height = m_frame.height;
   m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
 
   // Layout contentview

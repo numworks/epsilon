@@ -33,13 +33,13 @@ enum {
 };
 
 typedef struct {
-  char mode;
-  char payload;
+  uint8_t mode;
+  uint8_t payload;
 } instruction_t;
 
-#define COMMAND(c) (instruction_t){.mode = (char)COMMAND_MODE, .payload = (char)c}
-#define DATA(d) (instruction_t){.mode = (char)DATA_MODE, .payload = (char)d}
-#define DELAY(m) (instruction_t){.mode = (char)DELAY_MODE, .payload = (char)m}
+#define COMMAND(c) (instruction_t){.mode = (uint8_t)COMMAND_MODE, .payload = (uint8_t)(c)}
+#define DATA(d) (instruction_t){.mode = (uint8_t)DATA_MODE, .payload = (uint8_t)(d)}
+#define DELAY(m) (instruction_t){.mode = (uint8_t)DELAY_MODE, .payload = (uint8_t)(m)}
 
 // FIXME: This is ugly and should not live here
 static inline void delay_ms(long ms) {

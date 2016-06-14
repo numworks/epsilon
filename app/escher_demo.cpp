@@ -5,51 +5,82 @@ extern "C" {
 }
 #include <escher.h>
 
-class GraphView : public ChildlessView {
+class MyFunCell : public ChildlessView {
 public:
+  MyFunCell();
   void drawRect(KDRect rect) const override;
 };
 
-void GraphView::drawRect(KDRect rect) const {
-  /*
-  std::cout << "DrawingRect of GraphView in " <<
-   rect.x << "," << rect.y << "," <<
-   rect.width << "," << rect.height << "," <<
-   std::endl;
-   */
-  KDColor bg = 0xFFFF;
-  KDFillRect(rect, bg);
-  for (KDCoordinate x=rect.x; x<rect.x+rect.width; x++) {
-    KDSetPixel((KDPoint){x, (KDCoordinate)(x*x/rect.width)}, 0x00);
-  }
-}
-
-class GraphViewController : public ViewController {
-public:
-  GraphViewController();
-  View * view() override;
-  const char * title() const override;
-private:
-  GraphView m_graphView;
-  // It's best to declare m_graphView *before* m_scrollView
-  // Otherwise we cannot use m_graphView in the m_scrollView constructor
-  // Well, we can have the pointer but it points to an unitialized object
-  ScrollView m_scrollView;
-};
-
-GraphViewController::GraphViewController() :
-  ViewController(),
-  m_graphView(GraphView()),
-  m_scrollView(ScrollView(&m_graphView))
+MyFunCell::MyFunCell() :
+  ChildlessView()
 {
 }
 
-View * GraphViewController::view() {
-  return &m_scrollView;
+void MyFunCell::drawRect(KDRect rect) const {
+  KDDrawString("Cell", KDPointZero, 0);
 }
 
-const char * GraphViewController::title() const {
-  return "Graph";
+class ListController : public ViewController, public TableViewDataSource {
+public:
+  ListController();
+  View * view() override;
+  const char * title() const override;
+  bool handleEvent(ion_event_t event) override;
+
+  int numberOfCells() override;
+  void willDisplayCellForIndex(View * cell, int index) override;
+  KDCoordinate cellHeight() override;
+  View * reusableCell(int index) override;
+  int reusableCellCount() override;
+private:
+  constexpr static int k_maxNumberOfCells = 10;
+  // !!! CAUTION: The order here is important
+  // The cells should be initialized *before* the tableview!
+  MyFunCell m_cells[k_maxNumberOfCells];
+  TableView m_tableView;
+};
+
+ListController::ListController() :
+  ViewController(),
+  m_tableView(TableView(this))
+{
+}
+
+View * ListController::view() {
+  return &m_tableView;
+}
+
+const char * ListController::title() const {
+  return "List";
+}
+
+bool ListController::handleEvent(ion_event_t event) {
+  if (event != ENTER) {
+    return false;
+  }
+  m_tableView.scrollToRow(0);
+  return true;
+}
+
+int ListController::numberOfCells() {
+  return 3;
+};
+
+View * ListController::reusableCell(int index) {
+  assert(index >= 0);
+  assert(index < k_maxNumberOfCells);
+  return &m_cells[index];
+}
+
+int ListController::reusableCellCount() {
+  return k_maxNumberOfCells;
+}
+
+void ListController::willDisplayCellForIndex(View * cell, int index) {
+}
+
+KDCoordinate ListController::cellHeight() {
+  return 40;
 }
 
 class DemoViewController : public ViewController {
@@ -82,15 +113,15 @@ protected:
   ViewController * rootViewController() override;
 private:
   DemoViewController m_demoViewController;
-  GraphViewController m_graphViewController;
+  ListController m_listViewController;
   TabViewController m_tabViewController;
 };
 
 MyTestApp::MyTestApp() :
   App(),
-  m_demoViewController(DemoViewController(0x55)),
-  m_graphViewController(GraphViewController()),
-  m_tabViewController(&m_demoViewController, &m_graphViewController)
+  m_demoViewController(DemoViewController(0x1235)),
+  m_listViewController(ListController()),
+  m_tabViewController(&m_demoViewController, &m_listViewController)
 {
 }
 

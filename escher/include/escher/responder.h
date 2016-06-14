@@ -11,7 +11,6 @@ public:
   virtual bool handleEvent(ion_event_t event); // Default implementation does nothing
   virtual void setFocused(bool focused); // Default implementation does nothing. Used by subclasses to know when active or not
   Responder * parentResponder();
-protected:
   void setParentResponder(Responder * responder);
 private:
   Responder * m_parentResponder;

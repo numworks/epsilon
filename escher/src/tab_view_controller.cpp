@@ -2,6 +2,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/tab_view_controller.h>
+#include <escher/app.h>
 
 TabViewController::ContentView::ContentView() :
   View(),
@@ -66,6 +67,9 @@ TabViewController::TabViewController(ViewController * one, ViewController * two)
   m_children[0] = one;
   m_children[1] = two;
 
+  one->setParentResponder(this);
+  two->setParentResponder(this);
+
   // TODO: This should be lazy loaded!
   // So this code should live in view()
   for (int i=0; i<m_numberOfChildren; i++) {
@@ -111,7 +115,8 @@ void TabViewController::setActiveTab(uint8_t i) {
   m_view.setActiveView(activeVC->view());
   m_view.m_tabView.setActiveIndex(i);
   m_activeChildIndex = i;
-  m_view.markAsNeedingRedraw();
+
+  App::runningApp()->focus(activeVC);
 }
 
 View * TabViewController::view() {

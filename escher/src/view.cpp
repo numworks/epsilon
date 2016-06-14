@@ -162,6 +162,7 @@ std::ostream &operator<<(std::ostream &os, View &view) {
   view.logAttributes(os);
   os << ">";
   for (int i=0; i<view.numberOfSubviews(); i++) {
+    assert(view.subview(i)->m_superview == &view);
     os << *view.subview(i);
   }
   os << "</" << view.className() << ">";

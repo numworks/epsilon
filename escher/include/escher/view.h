@@ -54,12 +54,12 @@ protected:
   virtual View * subview(int index) = 0;
   virtual void storeSubviewAtIndex(View * v, int index) = 0;
   virtual void layoutSubviews() = 0;
+  View * m_superview;
   KDRect m_frame;
 private:
   void redraw(KDRect rect);
   KDRect absoluteDrawingArea() const;
 
-  View * m_superview;
   bool m_needsRedraw;
   //TODO: We may want a dynamic size at some point
   /*

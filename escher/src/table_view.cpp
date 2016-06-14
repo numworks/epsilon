@@ -30,13 +30,14 @@ TableView::ContentView::ContentView(TableViewDataSource * dataSource) :
 }
 
 int TableView::ContentView::numberOfSubviews() const {
-  int numberOfDisplayableCells = m_frame.height / m_dataSource->cellHeight();
-  return MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells);
+  return MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
 }
 
 View * TableView::ContentView::subview(int index) {
   int offset = cellScrollingOffset();
-  return m_dataSource->cellAtIndex(offset+index);
+  View * cell = m_dataSource->reusableCell(index);
+  m_dataSource->willDisplayCellForIndex(cell, offset+index);
+  return cell;
 }
 
 void TableView::ContentView::storeSubviewAtIndex(View * view, int index) {
@@ -57,6 +58,10 @@ void TableView::ContentView::layoutSubviews() {
 
     cell->setFrame(cellFrame);
   }
+}
+
+int TableView::ContentView::numberOfDisplayableCells() const {
+  return m_frame.height / m_dataSource->cellHeight();
 }
 
 // Index of the topmost cell

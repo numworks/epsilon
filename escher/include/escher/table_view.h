@@ -6,8 +6,8 @@
 class TableViewDataSource {
 public:
   virtual int numberOfCells() = 0;
-  virtual View * cellAtIndex(int index) = 0;
-  virtual void willDisplayCellAtIndex(int index) = 0;
+  virtual View * reusableCell(int index) = 0;
+  virtual void willDisplayCellForIndex(View * cell, int index) = 0;
   virtual KDCoordinate cellHeight() = 0;
 };
 
@@ -28,9 +28,10 @@ private:
     void layoutSubviews() override;
   protected:
 #if ESCHER_VIEW_LOGGING
-  const char * className() const override;
+    const char * className() const override;
 #endif
   private:
+    int numberOfDisplayableCells() const;
     int cellScrollingOffset();
     TableViewDataSource * m_dataSource;
   };

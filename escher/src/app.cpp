@@ -4,12 +4,16 @@ extern "C" {
 #include <ion.h>
 }
 
+static App * sRunningApp = nullptr;
+
 App::App() :
   m_focusedResponder(nullptr)
 {
 }
 
 void App::run() {
+  sRunningApp = this;
+
   Window window;
   window.setFrame({{{0,0}}, {{200, 200}}});
   View * rootView = rootViewController()->view();
@@ -26,6 +30,12 @@ void App::run() {
     dispatchEvent(event);
     window.redraw();
   }
+
+  sRunningApp = nullptr;
+}
+
+App * App::runningApp() {
+  return sRunningApp;
 }
 
 void App::dispatchEvent(ion_event_t event) {

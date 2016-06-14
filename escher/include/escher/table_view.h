@@ -15,9 +15,10 @@ public:
 class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource);
+  void layoutSubviews() override;
 
   void scrollToRow(int index);
-  void layoutSubviews() override;
+  View * cellAtIndex(int index);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -31,12 +32,15 @@ private:
     View * subview(int index) override;
     void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
+
+    View * cellAtIndex(int index);
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
 #endif
   private:
     int numberOfDisplayableCells() const;
+    int cellScrollingOffset() const;
     TableViewDataSource * m_dataSource;
   };
 

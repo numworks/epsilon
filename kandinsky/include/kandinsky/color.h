@@ -13,6 +13,8 @@ typedef uint16_t KDColor;
 
 #define KDColorRGB(r,g,b) ((KDColor)((((((uint16_t)(r))>>3)&0x1F)<<11)|(((((uint16_t)(g))>>2)&0x3F)<<5)|((((uint16_t)(b))>>3)&0x1F)))
 
+#define KDColorGray(i) KDColorRGB(i,i,i)
+
 #define KDColorBlack KDColorRGB(0x00, 0x00, 0x00)
 #define KDColorWhite KDColorRGB(0xFF, 0xFF, 0xFF)
 

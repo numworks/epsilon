@@ -14,6 +14,7 @@ TabViewController::ContentView::ContentView() :
 void TabViewController::ContentView::setActiveView(View * view) {
   setSubview(view, 1);
   layoutSubviews();
+  view->markAsNeedingRedraw();
 }
 
 void TabViewController::ContentView::layoutSubviews() {

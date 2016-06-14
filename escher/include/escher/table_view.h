@@ -6,9 +6,10 @@
 class TableViewDataSource {
 public:
   virtual int numberOfCells() = 0;
-  virtual View * reusableCell(int index) = 0;
   virtual void willDisplayCellForIndex(View * cell, int index) = 0;
   virtual KDCoordinate cellHeight() = 0;
+  virtual View * reusableCell(int index) = 0;
+  virtual int reusableCellCount() = 0;
 };
 
 class TableView : public ScrollView {
@@ -17,6 +18,10 @@ public:
 
   void scrollToRow(int index);
   void layoutSubviews() override;
+protected:
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+#endif
 private:
   class ContentView : public View {
   public:
@@ -32,7 +37,6 @@ private:
 #endif
   private:
     int numberOfDisplayableCells() const;
-    int cellScrollingOffset();
     TableViewDataSource * m_dataSource;
   };
 

@@ -10,6 +10,7 @@ objs += $(addprefix kandinsky/src/,\
 )
 tests += $(addprefix kandinsky/test/,\
   color.c\
+  rect.c\
   set_pixel.c\
 )
 

@@ -32,6 +32,7 @@ private:
     void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 
+    void scrollToRow(int index) const;
     View * cellAtIndex(int index);
   protected:
 #if ESCHER_VIEW_LOGGING
@@ -40,6 +41,8 @@ private:
   private:
     int numberOfDisplayableCells() const;
     int cellScrollingOffset() const;
+    bool cellAtIndexIsBeforeFullyVisibleRange(int index) const;
+    bool cellAtIndexIsAfterFullyVisibleRange(int index) const;
     TableViewDataSource * m_dataSource;
   };
 

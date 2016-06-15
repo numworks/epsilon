@@ -27,6 +27,9 @@ extern KDRect KDRectZero;
 bool KDRectIntersect(KDRect r1, KDRect r2);
 KDRect KDRectIntersection(KDRect r1, KDRect r2);
 
+bool KDRectContains(KDRect r, KDPoint p);
+KDRect KDRectTranslate(KDRect r, KDPoint p);
+
 void KDFillRect(KDRect rect, KDColor color);
 void KDDrawRect(KDRect rect, KDColor color);
 

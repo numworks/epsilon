@@ -42,13 +42,23 @@ KDRect KDRectIntersection(KDRect r1, KDRect r2) {
     return intersection;
 }
 
-void KDFillRect(KDRect rect, KDColor color) {
-  KDRect rectToBeFilled = {
-    .x = rect.x + KDDrawingArea.x,
-    .y = rect.y + KDDrawingArea.y,
-    .width = min(rect.width, KDDrawingArea.width),
-    .height = min(rect.height, KDDrawingArea.height)
+bool KDRectContains(KDRect r, KDPoint p) {
+  return (p.x >= r.x && p.x < (r.x+r.width) && p.y >= r.y && p.y < (r.y+r.height));
+}
+
+KDRect KDRectTranslate(KDRect r, KDPoint p) {
+  return (KDRect){
+    .origin = KDPointTranslate(r.origin, p),
+    .size = r.size
   };
+}
+
+void KDFillRect(KDRect rect, KDColor color) {
+  KDRect absolutRect = rect;
+  absolutRect.origin = KDPointTranslate(absolutRect.origin, KDDrawingAreaOrigin);
+
+  KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDDrawingAreaClippingRect);
+
   ion_fill_rect(rectToBeFilled.x, rectToBeFilled.y,
       rectToBeFilled.width, rectToBeFilled.height,
       color);

@@ -47,7 +47,13 @@ void View::redraw(KDRect rect) {
   }
 
   // First, let's draw our own content by calling drawRect
-  KDSetDrawingArea(absoluteDrawingArea());
+  KDPoint absOrigin = absoluteOrigin();
+  KDRect absRect = KDRectTranslate(rect, absOrigin);
+
+  KDRect absClippingRect = KDRectIntersection(absoluteVisibleFrame(), absRect);
+
+  KDSetDrawingArea(absOrigin, absoluteVisibleFrame());
+
   this->drawRect(rect);
 
   // Then, let's recursively draw our children over ourself
@@ -142,12 +148,12 @@ KDPoint View::absoluteOrigin() const {
   }
 }
 
-KDRect View::absoluteDrawingArea() const {
+KDRect View::absoluteVisibleFrame() const {
   if (m_superview == nullptr) {
     assert(this == (View *)window());
     return m_frame;
   } else {
-    KDRect parentDrawingArea = m_superview->absoluteDrawingArea();
+    KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
 
     KDRect absoluteFrame = m_frame;
     absoluteFrame.origin = absoluteOrigin();

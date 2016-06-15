@@ -1,11 +1,12 @@
 #include <kandinsky/pixel.h>
+#include <kandinsky/rect.h>
 #include <assert.h>
 #include <ion.h>
 #include "private/drawing_area.h"
 
 void KDSetPixel(KDPoint p, KDColor c) {
-  if (p.x >= 0 && p.x < KDDrawingArea.width &&
-      p.y >= 0 && p.y < KDDrawingArea.height) {
-    ion_set_pixel(p.x+KDDrawingArea.x, p.y+KDDrawingArea.y, c);
+  KDPoint absolutePoint = KDPointTranslate(p, KDDrawingAreaOrigin);
+  if (KDRectContains(KDDrawingAreaClippingRect, absolutePoint)) {
+    ion_set_pixel(absolutePoint.x, absolutePoint.y, c);
   }
 }

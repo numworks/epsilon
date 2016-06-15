@@ -59,7 +59,7 @@ protected:
 private:
   void redraw(KDRect rect);
   KDPoint absoluteOrigin() const;
-  KDRect absoluteDrawingArea() const;
+  KDRect absoluteVisibleFrame() const;
 
   bool m_needsRedraw;
   //TODO: We may want a dynamic size at some point

@@ -53,8 +53,8 @@ void ScrollView::layoutSubviews() {
   // Layout contentView
   KDRect contentFrame;
   contentFrame.origin = m_offset;
-  // We want contentFrame.rightX = verticalIndicatorFrame.x - 1;
-  // contentFrame.x + contentFrame.width = verticalIndicatorFrame.x - 1;
+  // We want contentFrame.rightX = verticalIndicatorFrame.x;
+  // contentFrame.x + contentFrame.width = verticalIndicatorFrame.x;
   contentFrame.width = verticalIndicatorFrame.x - contentFrame.x;
   contentFrame.height = m_frame.height;
   m_contentView->setFrame(contentFrame);

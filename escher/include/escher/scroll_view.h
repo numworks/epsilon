@@ -15,6 +15,7 @@ public:
 
   void setContentOffset(KDPoint offset);
 protected:
+  KDCoordinate maxContentWidth();
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;

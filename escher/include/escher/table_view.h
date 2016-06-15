@@ -16,6 +16,9 @@ class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource);
 
+  // View
+  void layoutSubviews() override;
+
   void scrollToRow(int index);
   View * cellAtIndex(int index);
 protected:
@@ -32,6 +35,7 @@ private:
     void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 
+    KDCoordinate height() const;
     void scrollToRow(int index) const;
     View * cellAtIndex(int index);
   protected:

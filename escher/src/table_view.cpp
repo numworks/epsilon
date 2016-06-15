@@ -18,6 +18,19 @@ void TableView::scrollToRow(int index) {
   m_contentView.scrollToRow(index);
 }
 
+void TableView::layoutSubviews() {
+  // We only have to layout our contentView.
+  // We will size it here, and ScrollView::layoutSubviews will position it.
+
+  KDRect contentViewFrame;
+  contentViewFrame.origin = KDPointZero; // Will be overriden by ScrollView::layoutSubviews
+  contentViewFrame.width = maxContentWidth();
+  contentViewFrame.height = m_contentView.height();
+  m_contentView.setFrame(contentViewFrame);
+
+  ScrollView::layoutSubviews();
+}
+
 View * TableView::cellAtIndex(int index) {
   return m_contentView.cellAtIndex(index);
 }
@@ -74,6 +87,10 @@ void TableView::ContentView::layoutSubviews() {
 
 View * TableView::ContentView::cellAtIndex(int index) {
   return m_dataSource->reusableCell(index - cellScrollingOffset());
+}
+
+KDCoordinate TableView::ContentView::height() const {
+  return m_dataSource->numberOfCells() * m_dataSource->cellHeight();
 }
 
 void TableView::ContentView::scrollToRow(int index) const {

@@ -117,7 +117,7 @@ int TableView::ContentView::cellScrollingOffset() const {
 }
 
 bool TableView::ContentView::cellAtIndexIsBeforeFullyVisibleRange(int index) const {
-  return index < cellScrollingOffset();
+  return index <= cellScrollingOffset();
 }
 
 bool TableView::ContentView::cellAtIndexIsAfterFullyVisibleRange(int index) const {

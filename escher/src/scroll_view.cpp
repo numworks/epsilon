@@ -57,7 +57,7 @@ void ScrollView::layoutSubviews() {
   // We want contentFrame.rightX = verticalIndicatorFrame.x;
   // contentFrame.x + contentFrame.width = verticalIndicatorFrame.x;
   contentFrame.width = verticalIndicatorFrame.x - contentFrame.x;
-  contentFrame.height = m_frame.height;
+  contentFrame.height = m_offset.y + m_frame.height;
   m_contentView->setFrame(contentFrame);
 }
 

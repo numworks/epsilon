@@ -5,24 +5,53 @@ extern "C" {
 }
 #include <escher.h>
 
-class MyFunCell : public ChildlessView {
+class MyFunCell : public ChildlessView, public Responder {
 public:
   MyFunCell();
+  void setMessage(char * message);
+  void setEven(bool even);
+
   void drawRect(KDRect rect) const override;
+  void setFocused(bool focused) override;
+private:
+  char * m_message;
+  bool m_focused;
+  bool m_even;
 };
 
 MyFunCell::MyFunCell() :
-  ChildlessView()
+  ChildlessView(),
+  m_focused(false),
+  m_even(false)
 {
+  m_message = "NULL";
 }
 
 void MyFunCell::drawRect(KDRect rect) const {
-  KDDrawString("Cell", KDPointZero, 0);
+  KDColor background = m_even ? KDColorRGB(0xEE, 0xEE, 0xEE) : KDColorRGB(0x77,0x77,0x77);
+  KDFillRect(rect, background);
+  KDDrawString(m_message, KDPointZero, m_focused);
+}
+
+void MyFunCell::setMessage(char * message) {
+  m_message = message;
+}
+
+void MyFunCell::setFocused(bool focused) {
+  m_focused = focused;
+  markAsNeedingRedraw();
+}
+
+void MyFunCell::setEven(bool even) {
+  m_even = even;
 }
 
 class ListController : public ViewController, public TableViewDataSource {
 public:
   ListController();
+
+  void setActiveCell(int index);
+
   View * view() override;
   const char * title() const override;
   bool handleEvent(ion_event_t event) override;
@@ -33,17 +62,31 @@ public:
   View * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
+  constexpr static int k_totalNumberOfModels = 20;
   constexpr static int k_maxNumberOfCells = 10;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the tableview!
   MyFunCell m_cells[k_maxNumberOfCells];
   TableView m_tableView;
+  char ** m_messages;
+  int m_activeCell;
+  KDCoordinate m_manualScrolling;
+};
+
+static char * sMessages[] = {
+  "AAA 0", "BBB 1", "CCC 2", "DDD 3", "EEE 4",
+  "FFF 5", "GGG 6", "HHH 7", "III 8", "JJJ 9",
+  "KKK10", "LLL11", "MMM12", "NNN13", "OOO14",
+  "PPP15", "QQQ16", "RRR17", "SSS18", "TTT19"
 };
 
 ListController::ListController() :
   ViewController(),
-  m_tableView(TableView(this))
+  m_tableView(TableView(this)),
+  m_activeCell(0),
+  m_manualScrolling(0)
 {
+  m_messages = sMessages;
 }
 
 View * ListController::view() {
@@ -54,16 +97,37 @@ const char * ListController::title() const {
   return "List";
 }
 
-bool ListController::handleEvent(ion_event_t event) {
-  if (event != ENTER) {
-    return false;
+void ListController::setActiveCell(int index) {
+  if (index < 0 || index >= k_totalNumberOfModels) {
+    return;
   }
-  m_tableView.scrollToRow(0);
-  return true;
+
+  m_activeCell = index;
+  m_tableView.scrollToRow(index);
+  MyFunCell * cell = (MyFunCell *)(m_tableView.cellAtIndex(index));
+  cell->setParentResponder(this);
+  App::runningApp()->focus(cell);
+}
+
+bool ListController::handleEvent(ion_event_t event) {
+  switch (event) {
+    case DOWN_ARROW:
+      setActiveCell(m_activeCell+1);
+      return true;
+    case UP_ARROW:
+      setActiveCell(m_activeCell-1);
+      return true;
+    case ENTER:
+      m_manualScrolling += 10;
+      m_tableView.setContentOffset({0, m_manualScrolling});
+      return true;
+    default:
+      return false;
+  }
 }
 
 int ListController::numberOfCells() {
-  return 3;
+  return k_totalNumberOfModels;
 };
 
 View * ListController::reusableCell(int index) {
@@ -77,25 +141,76 @@ int ListController::reusableCellCount() {
 }
 
 void ListController::willDisplayCellForIndex(View * cell, int index) {
+  MyFunCell * myCell = (MyFunCell *)cell;
+  myCell->setMessage(m_messages[index]);
+  myCell->setEven(index%2 == 0);
 }
 
 KDCoordinate ListController::cellHeight() {
   return 40;
 }
 
+class GraphView : public ChildlessView {
+public:
+  using ChildlessView::ChildlessView;
+  void drawRect(KDRect rect) const override;
+};
+
+void GraphView::drawRect(KDRect rect) const {
+  KDFillRect(rect, KDColorWhite);
+  KDCoordinate x_grid_step = m_frame.width/10;
+  KDCoordinate y_grid_step = m_frame.height/10;
+  KDColor gridColor = KDColorGray(0xEE);
+  for (KDCoordinate x=rect.x; x<rect.width; x += x_grid_step) {
+    KDRect verticalGridRect;
+    verticalGridRect.x = x;
+    verticalGridRect.y = rect.y;
+    verticalGridRect.width = 1;
+    verticalGridRect.height = rect.height;
+    KDFillRect(verticalGridRect, gridColor);
+  }
+  for (KDCoordinate y=rect.y; y<rect.height; y += y_grid_step) {
+    KDRect horizontalGridRect;
+    horizontalGridRect.x = rect.x;
+    horizontalGridRect.y = y;
+    horizontalGridRect.width = rect.width;
+    horizontalGridRect.height = 1;
+    KDFillRect(horizontalGridRect, gridColor);
+  }
+
+  for (int i=rect.x; i<rect.width; i++) {
+    KDPoint p;
+    p.x = i;
+    p.y = (i*i)/rect.height;
+    KDSetPixel(p, KDColorRGB(0x7F, 0, 0));
+  }
+
+};
+
 class DemoViewController : public ViewController {
 public:
   DemoViewController(KDColor c);
   View * view() override;
   const char * title() const override;
+  void setFocused(bool focused) override;
 private:
-  SolidColorView m_view;
+#if 0
+  //SolidColorView m_view;
+  static constexpr int k_bufferSize = 100;
+  char buffer[k_bufferSize];
+  TextField m_view;
+#else
+  GraphView m_view;
+#endif
 };
 
 DemoViewController::DemoViewController(KDColor c) :
   ViewController(),
-  m_view(SolidColorView(c))
+  //m_view(TextField(buffer, k_bufferSize))
+  //m_view(SolidColorView(c))
+  m_view(GraphView())
 {
+  //m_view.setParentResponder(this);
 }
 
 View * DemoViewController::view() {
@@ -104,6 +219,14 @@ View * DemoViewController::view() {
 
 const char * DemoViewController::title() const {
   return "HELLO";
+}
+
+void DemoViewController::setFocused(bool focused) {
+  /*
+  if (focused) {
+    App::runningApp()->focus(&m_view);
+  }
+  */
 }
 
 class MyTestApp : public App {
@@ -119,7 +242,7 @@ private:
 
 MyTestApp::MyTestApp() :
   App(),
-  m_demoViewController(DemoViewController(0x1235)),
+  m_demoViewController(DemoViewController(KDColorWhite)),
   m_listViewController(ListController()),
   m_tabViewController(&m_demoViewController, &m_listViewController)
 {

@@ -15,7 +15,6 @@ public:
 class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource);
-  void layoutSubviews() override;
 
   void scrollToRow(int index);
   View * cellAtIndex(int index);

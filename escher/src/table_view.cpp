@@ -12,17 +12,6 @@ TableView::TableView(TableViewDataSource * dataSource) :
   setSubview(&m_contentView, 0);
 }
 
-void TableView::layoutSubviews() {
-  KDRect frame;
-  frame.x = 0;
-  frame.y = 0;
-  frame.width = m_frame.width;
-  frame.height = 9999; // FIXME: Depends on the datasource, actually...
-  m_contentView.setFrame(frame);
-
-  ScrollView::layoutSubviews();
-}
-
 void TableView::scrollToRow(int index) {
   KDPoint contentOffset;
   contentOffset.x = 0;

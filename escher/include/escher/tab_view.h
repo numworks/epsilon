@@ -9,6 +9,9 @@ class TabViewController;
 class TabView : public View {
 public:
   TabView();
+
+  // View
+  void drawRect(KDRect rect) const override;
   int numberOfSubviews() const override;
   View * subview(int index) override;
   void layoutSubviews() override;

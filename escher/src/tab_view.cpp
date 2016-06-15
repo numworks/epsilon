@@ -11,6 +11,11 @@ TabView::TabView() :
 {
 }
 
+/* View */
+void TabView::drawRect(KDRect rect) const {
+  KDFillRect(rect, KDColorRGB(0xb5, 0x1d, 0xab));
+}
+
 void TabView::addTabNamed(const char * name) {
   assert(m_numberOfTabs < k_maxNumberOfTabs);
   uint8_t tabIndex = m_numberOfTabs;

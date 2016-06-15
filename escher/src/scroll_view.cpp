@@ -50,8 +50,14 @@ void ScrollView::layoutSubviews() {
   verticalIndicatorFrame.height = m_frame.height;
   m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
 
-  // Layout contentview
-  setContentViewOrigin();
+  // Layout contentView
+  KDRect contentFrame;
+  contentFrame.origin = m_offset;
+  // We want contentFrame.rightX = verticalIndicatorFrame.x - 1;
+  // contentFrame.x + contentFrame.width = verticalIndicatorFrame.x - 1;
+  contentFrame.width = verticalIndicatorFrame.x - contentFrame.x;
+  contentFrame.height = m_frame.height;
+  m_contentView->setFrame(contentFrame);
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
@@ -64,16 +70,7 @@ void ScrollView::setContentOffset(KDPoint offset) {
   m_verticalScrollIndicator.setStart(start/contentHeight);
   m_verticalScrollIndicator.setEnd(end/contentHeight);
 
-  setContentViewOrigin();
-
-  markAsNeedingRedraw();
-}
-
-void ScrollView::setContentViewOrigin() {
-  KDRect contentFrame;
-  contentFrame.origin = m_offset;
-  contentFrame.size = m_contentView->bounds().size;
-  m_contentView->setFrame(contentFrame);
+  layoutSubviews();
 }
 
 #if ESCHER_VIEW_LOGGING

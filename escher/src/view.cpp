@@ -133,15 +133,24 @@ KDRect View::bounds() const {
   return bounds;
 }
 
+KDPoint View::absoluteOrigin() const {
+  if (m_superview == nullptr) {
+    assert(this == (View *)window());
+    return m_frame.origin;
+  } else {
+    return KDPointTranslate(m_frame.origin, m_superview->absoluteOrigin());
+  }
+}
+
 KDRect View::absoluteDrawingArea() const {
   if (m_superview == nullptr) {
+    assert(this == (View *)window());
     return m_frame;
   } else {
     KDRect parentDrawingArea = m_superview->absoluteDrawingArea();
 
     KDRect absoluteFrame = m_frame;
-    absoluteFrame.x += parentDrawingArea.x;
-    absoluteFrame.y += parentDrawingArea.y;
+    absoluteFrame.origin = absoluteOrigin();
 
     return KDRectIntersection(absoluteFrame, parentDrawingArea);
   }

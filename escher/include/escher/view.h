@@ -58,6 +58,7 @@ protected:
   KDRect m_frame;
 private:
   void redraw(KDRect rect);
+  KDPoint absoluteOrigin() const;
   KDRect absoluteDrawingArea() const;
 
   bool m_needsRedraw;

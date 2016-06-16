@@ -4,16 +4,14 @@
 
 FltkLCD::FltkLCD(int x, int y, int w, int h, const char * label) :
   Fl_Widget(x, y, w, h, label) {
-  m_framebuffer = malloc(w*h);
+  m_framebuffer = malloc(w*h*3);
 // FIXME: Delete the framebuffer!
 }
 
 void FltkLCD::draw() {
-  fl_draw_image_mono((const uchar *)m_framebuffer,
+  fl_draw_image((const uchar *)m_framebuffer,
       x(), // x
       y(), // y
       w(), // width
-      h(), // height,
-      1, // byte-delta between pixels
-      0); // byte-delta between lines;
+      h()); // height);
 }

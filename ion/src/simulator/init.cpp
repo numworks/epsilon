@@ -16,7 +16,6 @@ static FltkLCD * sDisplay;
 static FltkKbd * sKeyboard;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
-#define FRAMEBUFFER_BITS_PER_PIXEL 8
 
 void init_platform() {
   Fl::visual(FL_RGB);
@@ -29,7 +28,6 @@ void init_platform() {
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
   sDisplay = new FltkLCD(margin, margin, screen_width, screen_height);
-  assert(FRAMEBUFFER_BITS_PER_PIXEL == 8);
 
   sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
@@ -40,8 +38,13 @@ void init_platform() {
 void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
   assert(x < ION_SCREEN_WIDTH);
   assert(y < ION_SCREEN_HEIGHT);
-  char * byte = (char *)(FRAMEBUFFER_ADDRESS) + ((y*ION_SCREEN_WIDTH)+x);
-  *byte = color;
+  uint8_t * pixel = (uint8_t *)(FRAMEBUFFER_ADDRESS) + 3*((y*ION_SCREEN_WIDTH)+x);
+  uint8_t red = (color >> 11) << 3;
+  uint8_t green = ((color >> 5) & 0x3F) << 2;
+  uint8_t blue = (color & 0x1F) << 3;
+  *pixel++ = red;
+  *pixel++ = green;
+  *pixel++ = blue;
 }
 
 void ion_fill_rect(

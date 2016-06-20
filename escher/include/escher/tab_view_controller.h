@@ -22,8 +22,6 @@ private:
     ContentView();
 
     int numberOfSubviews() const override;
-    View * subview(int index) override;
-    void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 
     void setActiveView(View * view);
@@ -33,6 +31,7 @@ private:
   const char * className() const override;
 #endif
   private:
+    View * subviewAtIndex(int index) override;
     View * m_activeView;
   };
 

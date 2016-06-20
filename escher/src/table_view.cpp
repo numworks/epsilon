@@ -7,9 +7,8 @@ extern "C" {
 
 TableView::TableView(TableViewDataSource * dataSource) :
   ScrollView(&m_contentView),
-  m_contentView(TableView::ContentView(dataSource))
+  m_contentView(TableView::ContentView(this, dataSource))
 {
-  setSubview(&m_contentView, 0);
 }
 
 // This method computes the minimal scrolling needed to properly display the
@@ -43,27 +42,21 @@ const char * TableView::className() const {
 
 /* TableView::ContentView */
 
-TableView::ContentView::ContentView(TableViewDataSource * dataSource) :
+TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource) :
   View(),
+  m_tableView(tableView),
   m_dataSource(dataSource)
 {
-  for (int i=0; i<m_dataSource->reusableCellCount(); i++) {
-    setSubview(m_dataSource->reusableCell(i), i);
-  }
 }
 
 int TableView::ContentView::numberOfSubviews() const {
   return MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
 }
 
-View * TableView::ContentView::subview(int index) {
+View * TableView::ContentView::subviewAtIndex(int index) {
   assert(index >= 0);
   assert(index < m_dataSource->reusableCellCount());
   return m_dataSource->reusableCell(index);
-}
-
-void TableView::ContentView::storeSubviewAtIndex(View * view, int index) {
-  // Do nothing!
 }
 
 void TableView::ContentView::layoutSubviews() {
@@ -94,21 +87,20 @@ KDCoordinate TableView::ContentView::height() const {
 }
 
 void TableView::ContentView::scrollToRow(int index) const {
-  TableView * superview = (TableView *)m_superview;
   if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
     // Let's scroll the tableView to put that cell on the top
     KDPoint contentOffset;
     contentOffset.x = 0;
     contentOffset.y = index*m_dataSource->cellHeight();
-    superview->setContentOffset(contentOffset);
+    m_tableView->setContentOffset(contentOffset);
     return;
   }
   if (cellAtIndexIsAfterFullyVisibleRange(index)) {
     // Let's scroll the tableView to put that cell on the bottom
     KDPoint contentOffset;
     contentOffset.x = 0;
-    contentOffset.y = (index+1)*m_dataSource->cellHeight() - superview->bounds().height;
-    superview->setContentOffset(contentOffset);
+    contentOffset.y = (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height;
+    m_tableView->setContentOffset(contentOffset);
     return;
   }
   // Nothing to do if the cell is already visible!
@@ -121,13 +113,13 @@ const char * TableView::ContentView::className() const {
 #endif
 
 int TableView::ContentView::numberOfDisplayableCells() const {
-  int result = m_superview->bounds().height / m_dataSource->cellHeight() + 1;
+  int result = m_tableView->bounds().height / m_dataSource->cellHeight() + 1;
   assert(result <= m_dataSource->reusableCellCount());
   return result;
 }
 
 int TableView::ContentView::cellScrollingOffset() const {
-  /* Here, we want to translate the offset at which our superview is displaying
+  /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate pixelScrollingOffset = -m_frame.y;
   return pixelScrollingOffset / m_dataSource->cellHeight();

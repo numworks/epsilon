@@ -8,11 +8,10 @@ TabViewController::ContentView::ContentView() :
   View(),
   m_activeView(nullptr)
 {
-  setSubview(&m_tabView, 0);
 };
 
 void TabViewController::ContentView::setActiveView(View * view) {
-  setSubview(view, 1);
+  m_activeView = view;
   layoutSubviews();
   view->markAsNeedingRedraw();
 }
@@ -39,18 +38,12 @@ int TabViewController::ContentView::numberOfSubviews() const {
   return 2;
 }
 
-View * TabViewController::ContentView::subview(int index) {
+View * TabViewController::ContentView::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_tabView;
   } else {
     assert(index == 1);
     return m_activeView;
-  }
-}
-
-void TabViewController::ContentView::storeSubviewAtIndex(View * view, int index) {
-  if (index == 1) {
-    m_activeView = view;
   }
 }
 

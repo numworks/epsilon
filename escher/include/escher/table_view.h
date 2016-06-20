@@ -28,11 +28,9 @@ protected:
 private:
   class ContentView : public View {
   public:
-    ContentView(TableViewDataSource * dataSource);
+    ContentView(TableView * tableView, TableViewDataSource * dataSource);
 
     int numberOfSubviews() const override;
-    View * subview(int index) override;
-    void storeSubviewAtIndex(View * view, int index) override;
     void layoutSubviews() override;
 
     KDCoordinate height() const;
@@ -43,10 +41,12 @@ private:
     const char * className() const override;
 #endif
   private:
+    View * subviewAtIndex(int index) override;
     int numberOfDisplayableCells() const;
     int cellScrollingOffset() const;
     bool cellAtIndexIsBeforeFullyVisibleRange(int index) const;
     bool cellAtIndexIsAfterFullyVisibleRange(int index) const;
+    TableView * m_tableView;
     TableViewDataSource * m_dataSource;
   };
 

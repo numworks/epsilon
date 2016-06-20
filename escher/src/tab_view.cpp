@@ -21,7 +21,7 @@ void TabView::addTabNamed(const char * name) {
   uint8_t tabIndex = m_numberOfTabs;
   m_cells[tabIndex].setName(name);
   m_numberOfTabs++;
-  setSubview(&m_cells[tabIndex], tabIndex);
+  //setSubview(&m_cells[tabIndex], tabIndex);
   markAsNeedingRedraw();
 }
 
@@ -39,7 +39,7 @@ int TabView::numberOfSubviews() const {
   return m_numberOfTabs;
 }
 
-View * TabView::subview(int index) {
+View * TabView::subviewAtIndex(int index) {
   assert(index < m_numberOfTabs);
   return &m_cells[index];
 }
@@ -55,11 +55,6 @@ void TabView::layoutSubviews() {
     cellFrame.height = m_frame.height;
     m_cells[i].setFrame(cellFrame);
   }
-}
-
-void TabView::storeSubviewAtIndex(View * view, int index) {
-  // We're not doing anything here, because we already store all the subviews we ever wanna have
-  assert(&m_cells[index] == view);
 }
 
 #if ESCHER_VIEW_LOGGING

@@ -13,7 +13,6 @@ public:
   // View
   void drawRect(KDRect rect) const override;
   int numberOfSubviews() const override;
-  View * subview(int index) override;
   void layoutSubviews() override;
 
   void addTabNamed(const char * name);
@@ -24,8 +23,8 @@ protected:
   const char * className() const override;
   void logAttributes(std::ostream &os) const override;
 #endif
-  void storeSubviewAtIndex(View * view, int index) override;
 private:
+  View * subviewAtIndex(int index) override;
   static constexpr uint8_t k_maxNumberOfTabs = 4;
   TabViewCell m_cells[k_maxNumberOfTabs];
   uint8_t m_numberOfTabs;

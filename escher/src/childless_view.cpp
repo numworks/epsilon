@@ -7,14 +7,10 @@ int ChildlessView::numberOfSubviews() const {
   return 0;
 }
 
-View * ChildlessView::subview(int index) {
+View * ChildlessView::subviewAtIndex(int index) {
   assert(false);
   return nullptr;
 }
 
 void ChildlessView::layoutSubviews() {
-}
-
-void ChildlessView::storeSubviewAtIndex(View * v, int index) {
-  assert(false);
 }

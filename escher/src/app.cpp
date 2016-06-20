@@ -20,7 +20,7 @@ void App::run() {
 
   focus(rootViewController());
 
-  window.setSubview(rootView, 0);
+  window.setContentView(rootView);
   rootView->setFrame(window.bounds());
 
   window.redraw();

@@ -62,6 +62,8 @@ void View::redraw(KDRect rect) {
     if (subview == nullptr) {
       continue;
     }
+    assert(subview->m_superview == this);
+
     if (KDRectIntersect(rect, subview->m_frame)) {
       KDRect intersection = KDRectIntersection(rect, subview->m_frame);
       // Let's express intersection in subview's coordinates
@@ -75,12 +77,23 @@ void View::redraw(KDRect rect) {
   m_needsRedraw = false;
 }
 
-void View::setSubview(View * view, int index) {
+View * View::subview(int index) {
+  assert(index < numberOfSubviews());
+  View * subview = subviewAtIndex(index);
+  if (subview != nullptr) {
+    subview->m_superview = this;
+  }
+  return subview;
+}
+
+/*
+ void View::setSubview(View * view, int index) {
   view->m_superview = this;
   storeSubviewAtIndex(view, index);
   assert(subview(index) == view);
   view->markAsNeedingRedraw();
 }
+*/
 
 /*
 void View::addSubview(View * subview) {
@@ -129,6 +142,7 @@ void View::setFrame(KDRect frame) {
     m_superview->markAsNeedingRedraw();
   }
   layoutSubviews();
+
   markAsNeedingRedraw();
 }
 

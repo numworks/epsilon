@@ -9,8 +9,6 @@ public:
   ScrollView(View * contentView);
 
   int numberOfSubviews() const override;
-  View * subview(int index) override;
-  void storeSubviewAtIndex(View * view, int index) override;
   void layoutSubviews() override;
 
   void setContentOffset(KDPoint offset);
@@ -21,6 +19,7 @@ protected:
   virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
+  View * subviewAtIndex(int index) override;
   KDPoint m_offset;
   View * m_contentView;
   ScrollViewIndicator m_verticalScrollIndicator;

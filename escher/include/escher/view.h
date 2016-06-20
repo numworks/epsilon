@@ -39,8 +39,14 @@ public:
   void redraw() const;
   */
 
-  void setSubview(View * v, int index);
+  //void setSubview(View * v, int index); --> Remove this, it's annoying
+    // Also this allows us to remove storeSubviewAtIndex
+  //void layoutSubviews should not be purely virtual.
+
+
   KDRect bounds() const;
+
+  View * subview(int index);
 #if ESCHER_VIEW_LOGGING
   friend std::ostream &operator<<(std::ostream &os, View &view);
 #endif
@@ -51,16 +57,15 @@ protected:
 #endif
   virtual const Window * window() const;
   virtual int numberOfSubviews() const = 0;
-  virtual View * subview(int index) = 0;
-  virtual void storeSubviewAtIndex(View * v, int index) = 0;
   virtual void layoutSubviews() = 0;
-  View * m_superview;
   KDRect m_frame;
 private:
+  virtual View * subviewAtIndex(int index) = 0;
   void redraw(KDRect rect);
   KDPoint absoluteOrigin() const;
   KDRect absoluteVisibleFrame() const;
 
+  View * m_superview;
   bool m_needsRedraw;
   //TODO: We may want a dynamic size at some point
   /*

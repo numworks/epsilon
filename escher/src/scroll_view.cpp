@@ -11,15 +11,15 @@ ScrollView::ScrollView(View * contentView) :
   m_contentView(contentView),
   m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical))
 {
-  setSubview(m_contentView, 0);
-  setSubview(&m_verticalScrollIndicator, 1);
+  //setSubview(m_contentView, 0);
+  //setSubview(&m_verticalScrollIndicator, 1);
 }
 
 int ScrollView::numberOfSubviews() const {
   return 2;
 }
 
-View * ScrollView::subview(int index) {
+View * ScrollView::subviewAtIndex(int index) {
   switch(index) {
     case 0:
       return m_contentView;
@@ -28,17 +28,6 @@ View * ScrollView::subview(int index) {
   }
   assert(false);
   return nullptr;
-}
-
-void ScrollView::storeSubviewAtIndex(View * view, int index) {
-  switch (index) {
-    case 0:
-      m_contentView = view;
-      break;
-    case 1:
-      assert(view == &m_verticalScrollIndicator);
-      break;
-  }
 }
 
 void ScrollView::layoutSubviews() {

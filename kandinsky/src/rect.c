@@ -42,6 +42,54 @@ KDRect KDRectIntersection(KDRect r1, KDRect r2) {
     return intersection;
 }
 
+static void KDRectComputeUnionBound(KDCoordinate size1, KDCoordinate size2,
+    KDCoordinate * outputMin, KDCoordinate * outputMax,
+    KDCoordinate min1, KDCoordinate min2,
+    KDCoordinate max1, KDCoordinate max2)
+{
+  if (size1 != 0) {
+    if (size2 != 0) {
+      *outputMin = min(min1, min2);
+      *outputMax = max(max1, max2);
+    } else {
+      *outputMin = min1;
+      *outputMax = max1;
+    }
+  } else {
+    if (size2 != 0) {
+      *outputMin = min2;
+      *outputMax = max2;
+    }
+  }
+}
+
+KDRect KDRectUnion(KDRect r1, KDRect r2) {
+  /* We should ignore coordinate whose size is zero
+   * For example, if r1.height is zero, just ignore r1.y and r1.height. */
+
+  KDCoordinate resultLeft = 0;
+  KDCoordinate resultTop = 0;
+  KDCoordinate resultRight = 0;
+  KDCoordinate resultBottom = 0;
+
+  KDRectComputeUnionBound(r1.width, r2.width,
+      &resultLeft, &resultRight,
+      left(r1), left(r2),
+      right(r1), right(r2));
+
+  KDRectComputeUnionBound(r1.height, r2.height,
+      &resultTop, &resultBottom,
+      top(r1), top(r2),
+      bottom(r1), bottom(r2));
+
+  return (KDRect){
+    .x = resultLeft,
+    .y = resultTop,
+    .width = resultRight-resultLeft,
+    .height = resultBottom-resultTop
+  };
+}
+
 bool KDRectContains(KDRect r, KDPoint p) {
   return (p.x >= r.x && p.x < (r.x+r.width) && p.y >= r.y && p.y < (r.y+r.height));
 }

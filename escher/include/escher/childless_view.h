@@ -5,11 +5,10 @@
 
 class ChildlessView : public View {
   using View::View;
-protected:
-  int numberOfSubviews() const override;
-  void layoutSubviews() override;
 private:
+  int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
 };
 
 #endif

@@ -16,9 +16,6 @@ class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource);
 
-  // View
-  void layoutSubviews() override;
-
   void scrollToRow(int index);
   View * cellAtIndex(int index);
 protected:
@@ -30,9 +27,6 @@ private:
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource);
 
-    int numberOfSubviews() const override;
-    void layoutSubviews() override;
-
     KDCoordinate height() const;
     void scrollToRow(int index) const;
     View * cellAtIndex(int index);
@@ -41,7 +35,10 @@ private:
     const char * className() const override;
 #endif
   private:
+    int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+
     int numberOfDisplayableCells() const;
     int cellScrollingOffset() const;
     bool cellAtIndexIsBeforeFullyVisibleRange(int index) const;
@@ -49,6 +46,8 @@ private:
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
   };
+
+  void layoutSubviews() override;
 
   ContentView m_contentView;
 };

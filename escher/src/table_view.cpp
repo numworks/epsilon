@@ -17,6 +17,16 @@ void TableView::scrollToRow(int index) {
   m_contentView.scrollToRow(index);
 }
 
+View * TableView::cellAtIndex(int index) {
+  return m_contentView.cellAtIndex(index);
+}
+
+#if ESCHER_VIEW_LOGGING
+const char * TableView::className() const {
+  return "TableView";
+}
+#endif
+
 void TableView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
@@ -30,16 +40,6 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
-View * TableView::cellAtIndex(int index) {
-  return m_contentView.cellAtIndex(index);
-}
-
-#if ESCHER_VIEW_LOGGING
-const char * TableView::className() const {
-  return "TableView";
-}
-#endif
-
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource) :
@@ -48,6 +48,40 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
   m_dataSource(dataSource)
 {
 }
+
+KDCoordinate TableView::ContentView::height() const {
+  return m_dataSource->numberOfCells() * m_dataSource->cellHeight();
+}
+
+void TableView::ContentView::scrollToRow(int index) const {
+  if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
+    // Let's scroll the tableView to put that cell on the top
+    KDPoint contentOffset;
+    contentOffset.x = 0;
+    contentOffset.y = index*m_dataSource->cellHeight();
+    m_tableView->setContentOffset(contentOffset);
+    return;
+  }
+  if (cellAtIndexIsAfterFullyVisibleRange(index)) {
+    // Let's scroll the tableView to put that cell on the bottom
+    KDPoint contentOffset;
+    contentOffset.x = 0;
+    contentOffset.y = (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height;
+    m_tableView->setContentOffset(contentOffset);
+    return;
+  }
+  // Nothing to do if the cell is already visible!
+}
+
+View * TableView::ContentView::cellAtIndex(int index) {
+  return m_dataSource->reusableCell(index - cellScrollingOffset());
+}
+
+#if ESCHER_VIEW_LOGGING
+const char * TableView::ContentView::className() const {
+  return "TableView::ContentView";
+}
+#endif
 
 int TableView::ContentView::numberOfSubviews() const {
   return MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
@@ -77,40 +111,6 @@ void TableView::ContentView::layoutSubviews() {
     m_dataSource->willDisplayCellForIndex(cell, cellOffset+i);
   }
 }
-
-View * TableView::ContentView::cellAtIndex(int index) {
-  return m_dataSource->reusableCell(index - cellScrollingOffset());
-}
-
-KDCoordinate TableView::ContentView::height() const {
-  return m_dataSource->numberOfCells() * m_dataSource->cellHeight();
-}
-
-void TableView::ContentView::scrollToRow(int index) const {
-  if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the top
-    KDPoint contentOffset;
-    contentOffset.x = 0;
-    contentOffset.y = index*m_dataSource->cellHeight();
-    m_tableView->setContentOffset(contentOffset);
-    return;
-  }
-  if (cellAtIndexIsAfterFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the bottom
-    KDPoint contentOffset;
-    contentOffset.x = 0;
-    contentOffset.y = (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height;
-    m_tableView->setContentOffset(contentOffset);
-    return;
-  }
-  // Nothing to do if the cell is already visible!
-}
-
-#if ESCHER_VIEW_LOGGING
-const char * TableView::ContentView::className() const {
-  return "TableView::ContentView";
-}
-#endif
 
 int TableView::ContentView::numberOfDisplayableCells() const {
   int result = m_tableView->bounds().height / m_dataSource->cellHeight() + 1;

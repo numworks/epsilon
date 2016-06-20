@@ -11,7 +11,6 @@ TabView::TabView() :
 {
 }
 
-/* View */
 void TabView::drawRect(KDRect rect) const {
   KDFillRect(rect, KDColorRGB(0xb5, 0x1d, 0xab));
 }

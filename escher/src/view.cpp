@@ -86,49 +86,6 @@ View * View::subview(int index) {
   return subview;
 }
 
-/*
- void View::setSubview(View * view, int index) {
-  view->m_superview = this;
-  storeSubviewAtIndex(view, index);
-  assert(subview(index) == view);
-  view->markAsNeedingRedraw();
-}
-*/
-
-/*
-void View::addSubview(View * subview) {
-  // Let's find a spot for that subview
-  uint8_t i = 0;
-  while (m_subviews[i] != nullptr) {
-    i++;
-    assert(i<k_maxNumberOfSubviews); // No room left!
-  }
-
-  subview->m_superview = this;
-  m_subviews[i] = subview;
-
-  // That subview needs to be drawn
-  subview->redraw();
-}
-*/
-
-/*
-void View::removeFromSuperview() {
-  assert(m_superview != nullptr);
-  // First, remove the view from its parent hierarchy
-  for (int i=0; i<m_superview->numberOfSubviews(); i++) {
-    if (m_superview->subview(i) == this) {
-      m_superview->storeSubviewAtIndex(nullptr, i);
-      break;
-    }
-  }
-  // Then, redraw the parent
-  m_superview->redraw(m_frame);
-  // Eventually clear the superview ivar
-  m_superview = nullptr;
-}
-*/
-
 void View::setFrame(KDRect frame) {
   // TODO: Return if frame is equal to m_frame
   m_frame = frame;

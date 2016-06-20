@@ -12,10 +12,10 @@ protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
-  const Window * window() const override;
   int numberOfSubviews() const override;
   void layoutSubviews() override;
 private:
+  const Window * window() const override;
   View * subviewAtIndex(int index) override;
   View * m_contentView;
 };

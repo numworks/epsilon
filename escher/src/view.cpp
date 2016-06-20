@@ -6,7 +6,7 @@ extern "C" {
 View::View() :
   m_superview(nullptr),
   m_frame(KDRectZero),
-  m_needsRedraw(true)
+  m_dirtyRect(KDRectZero)
 {
 }
 
@@ -23,38 +23,26 @@ const Window * View::window() const {
   }
 }
 
-void View::markAsNeedingRedraw() {
-  // Let's mark ourself as needing redraw
-  m_needsRedraw = true;
-
-  /* And let's mark our parents as needing redraw too. The alternative would be
-   * to have a recursive getter, which would be more resilient to superview
-   * modification, but much slower too. As long as we don't change the view
-   * hierarchy, this way is easier. */
-  if (m_superview) {
-    m_superview->markAsNeedingRedraw();
-  }
+void View::markRectAsDirty(KDRect rect) {
+  m_dirtyRect = KDRectUnion(m_dirtyRect, rect);
 }
 
 void View::redraw(KDRect rect) {
-  /* CAUTION: do NOT call redraw directly.
-   * This may seem to work, but will not. Namely, it won't clip.
-   * Example : our superview is smaller than we are. If we redraw ourself, we
-   * will overflow our superview. */
-
-  if (window() == nullptr || !m_needsRedraw) {
+  if (window() == nullptr) {
+    /* That view (and all of its subviews) is offscreen. That means so are all
+     * of its subviews. So there's no point in drawing them. */
     return;
   }
 
   // First, let's draw our own content by calling drawRect
-  KDPoint absOrigin = absoluteOrigin();
-  KDRect absRect = KDRectTranslate(rect, absOrigin);
-
-  KDRect absClippingRect = KDRectIntersection(absoluteVisibleFrame(), absRect);
-
-  KDSetDrawingArea(absOrigin, absoluteVisibleFrame());
-
-  this->drawRect(rect);
+  KDRect rectNeedingRedraw = KDRectIntersection(rect, m_dirtyRect);
+  if (rectNeedingRedraw.width > 0 && rectNeedingRedraw.height > 0) {
+    KDPoint absOrigin = absoluteOrigin();
+    KDRect absRect = KDRectTranslate(rectNeedingRedraw, absOrigin);
+    KDRect absClippingRect = KDRectIntersection(absoluteVisibleFrame(), absRect);
+    KDSetDrawingArea(absOrigin, absoluteVisibleFrame());
+    this->drawRect(rectNeedingRedraw);
+  }
 
   // Then, let's recursively draw our children over ourself
   for (uint8_t i=0; i<numberOfSubviews(); i++) {
@@ -74,7 +62,7 @@ void View::redraw(KDRect rect) {
   }
 
   // Eventually, mark that we don't need to be redrawn
-  m_needsRedraw = false;
+  m_dirtyRect = KDRectZero;
 }
 
 View * View::subview(int index) {
@@ -88,19 +76,23 @@ View * View::subview(int index) {
 
 void View::setFrame(KDRect frame) {
   // TODO: Return if frame is equal to m_frame
-  m_frame = frame;
   if (m_superview != nullptr) {
-    /* We have moved this view. This left a blank spot in its superview were it
-     * previously was.
+    /* We will move this view. This will leave a blank spot in its superview
+     * were it previously was.
      * At this point, we know that the only area that really needs to be redrawn
-     * in the superview is the value of m_frame at the start of that method.
-     * However, let's not try to optimize too early, and let's simply mark the
-     * whole superview as needing redraw. */
-    m_superview->markAsNeedingRedraw();
+     * in the superview is the value of m_frame at the start of that method. */
+    m_superview->markRectAsDirty(m_frame);
   }
-  layoutSubviews();
 
-  markAsNeedingRedraw();
+  m_frame = frame;
+
+  /* Now that we have moved, we have also dirtied our new absolute frame.
+   * There are two ways to declare this, which are semantically equivalent: we
+   * can either mark an area of our superview as dirty, or mark our whole frame
+   * as dirty. We pick the second option because it is more efficient. */
+  markRectAsDirty(bounds());
+
+  layoutSubviews();
 }
 
 KDRect View::bounds() const {

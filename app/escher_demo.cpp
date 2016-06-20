@@ -39,7 +39,7 @@ void MyFunCell::setMessage(const char * message) {
 
 void MyFunCell::setFocused(bool focused) {
   m_focused = focused;
-  markAsNeedingRedraw();
+  markRectAsDirty(bounds());
 }
 
 void MyFunCell::setEven(bool even) {
@@ -150,49 +150,96 @@ KDCoordinate ListController::cellHeight() {
   return 40;
 }
 
-class GraphView : public ChildlessView {
+class CursorView : public ChildlessView {
 public:
   using ChildlessView::ChildlessView;
   void drawRect(KDRect rect) const override;
 };
+
+void CursorView::drawRect(KDRect rect) const {
+  KDFillRect(rect, KDColorRed);
+}
+
+class GraphView : public View {
+public:
+  GraphView();
+  void drawRect(KDRect rect) const override;
+  void moveCursorRight();
+private:
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
+
+  CursorView m_cursorView;
+  KDPoint m_cursorPosition;
+};
+
+GraphView::GraphView() :
+  View(),
+  m_cursorView(CursorView()),
+  m_cursorPosition(KDPointZero)
+{
+}
+
+int GraphView::numberOfSubviews() const {
+  return 1;
+};
+
+View * GraphView::subviewAtIndex(int index) {
+  return &m_cursorView;
+}
+
+void GraphView::moveCursorRight() {
+  m_cursorPosition.x = m_cursorPosition.x + 2;
+  layoutSubviews();
+}
+
+void GraphView::layoutSubviews() {
+  KDRect cursorFrame;
+  cursorFrame.origin = m_cursorPosition;
+  cursorFrame.width = 10;
+  cursorFrame.height = 10;
+  m_cursorView.setFrame(cursorFrame);
+}
 
 void GraphView::drawRect(KDRect rect) const {
   KDFillRect(rect, KDColorWhite);
   KDCoordinate x_grid_step = m_frame.width/10;
   KDCoordinate y_grid_step = m_frame.height/10;
   KDColor gridColor = KDColorGray(0xEE);
-  for (KDCoordinate x=rect.x; x<rect.width; x += x_grid_step) {
+  for (KDCoordinate x=m_frame.x; x<m_frame.width; x += x_grid_step) {
     KDRect verticalGridRect;
     verticalGridRect.x = x;
-    verticalGridRect.y = rect.y;
+    verticalGridRect.y = m_frame.y;
     verticalGridRect.width = 1;
-    verticalGridRect.height = rect.height;
+    verticalGridRect.height = m_frame.height;
     KDFillRect(verticalGridRect, gridColor);
   }
-  for (KDCoordinate y=rect.y; y<rect.height; y += y_grid_step) {
+  for (KDCoordinate y=m_frame.y; y<m_frame.height; y += y_grid_step) {
     KDRect horizontalGridRect;
-    horizontalGridRect.x = rect.x;
+    horizontalGridRect.x = m_frame.x;
     horizontalGridRect.y = y;
-    horizontalGridRect.width = rect.width;
+    horizontalGridRect.width = m_frame.width;
     horizontalGridRect.height = 1;
     KDFillRect(horizontalGridRect, gridColor);
   }
 
-  for (int i=rect.x; i<rect.width; i++) {
+  for (int i=m_frame.x; i<m_frame.width; i++) {
     KDPoint p;
     p.x = i;
-    p.y = (i*i)/rect.height;
+    p.y = (i*i)/m_frame.height;
     KDSetPixel(p, KDColorRGB(0x7F, 0, 0));
   }
 
 };
 
-class DemoViewController : public ViewController {
+class GraphController : public ViewController {
 public:
-  DemoViewController(KDColor c);
+  GraphController(KDColor c);
   View * view() override;
   const char * title() const override;
   void setFocused(bool focused) override;
+  bool handleEvent(ion_event_t event) override;
 private:
 #if 0
   //SolidColorView m_view;
@@ -204,7 +251,7 @@ private:
 #endif
 };
 
-DemoViewController::DemoViewController(KDColor c) :
+GraphController::GraphController(KDColor c) :
   ViewController(),
   //m_view(TextField(buffer, k_bufferSize))
   //m_view(SolidColorView(c))
@@ -213,20 +260,30 @@ DemoViewController::DemoViewController(KDColor c) :
   //m_view.setParentResponder(this);
 }
 
-View * DemoViewController::view() {
+View * GraphController::view() {
   return &m_view;
 }
 
-const char * DemoViewController::title() const {
-  return "HELLO";
+const char * GraphController::title() const {
+  return "Graph";
 }
 
-void DemoViewController::setFocused(bool focused) {
+void GraphController::setFocused(bool focused) {
   /*
   if (focused) {
     App::runningApp()->focus(&m_view);
   }
   */
+}
+
+bool GraphController::handleEvent(ion_event_t event) {
+  switch (event) {
+    case ENTER:
+      m_view.moveCursorRight();
+      return true;
+    default:
+      return false;
+  }
 }
 
 class MyTestApp : public App {
@@ -235,16 +292,16 @@ public:
 protected:
   ViewController * rootViewController() override;
 private:
-  DemoViewController m_demoViewController;
+  GraphController m_graphViewController;
   ListController m_listViewController;
   TabViewController m_tabViewController;
 };
 
 MyTestApp::MyTestApp() :
   App(),
-  m_demoViewController(DemoViewController(KDColorWhite)),
+  m_graphViewController(GraphController(KDColorWhite)),
   m_listViewController(ListController()),
-  m_tabViewController(&m_demoViewController, &m_listViewController)
+  m_tabViewController(&m_graphViewController, &m_listViewController)
 {
 }
 

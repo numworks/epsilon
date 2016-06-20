@@ -39,7 +39,17 @@ public:
   friend std::ostream &operator<<(std::ostream &os, View &view);
 #endif
 protected:
-  void markAsNeedingRedraw();
+  /* The whole point of the dirty-tracking mechanism is to identify which
+   * pixels have to be redrawn. So in the end it doesn't really need to be bound
+   * to a view, it's really absolute pixels that count.
+   *
+   * That being said, what are the case of dirtyness that we know of?
+   *  - Scrolling -> well, everything has to be redrawn anyway
+   *  - Moving a cursor -> In that case, there's really a much more efficient way
+   *  - ... and that's all I can think of.
+   */
+  void markRectAsDirty(KDRect rect);
+  //void markAsNeedingRedraw();
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const;
   virtual void logAttributes(std::ostream &os) const;
@@ -55,7 +65,7 @@ private:
   KDRect absoluteVisibleFrame() const;
 
   View * m_superview;
-  bool m_needsRedraw;
+  KDRect m_dirtyRect;
 };
 
 #endif

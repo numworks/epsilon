@@ -21,7 +21,7 @@ void TabView::addTabNamed(const char * name) {
   m_cells[tabIndex].setName(name);
   m_numberOfTabs++;
   //setSubview(&m_cells[tabIndex], tabIndex);
-  markAsNeedingRedraw();
+  markRectAsDirty(bounds());
 }
 
 void TabView::setActiveIndex(int index) {

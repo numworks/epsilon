@@ -33,7 +33,7 @@ bool TextField::handleEvent(ion_event_t event) {
   }
   if (m_currentTextLength-1 < m_textBufferSize) {
     m_textBuffer[m_currentTextLength++] = event;
-    markAsNeedingRedraw();
+    markRectAsDirty(bounds()); // TODO: Could be optimized
   }
   return true;
 }

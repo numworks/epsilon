@@ -13,7 +13,7 @@ TabViewController::ContentView::ContentView() :
 void TabViewController::ContentView::setActiveView(View * view) {
   m_activeView = view;
   layoutSubviews();
-  markAsNeedingRedraw();
+  markRectAsDirty(bounds());
 }
 
 void TabViewController::ContentView::layoutSubviews() {

@@ -21,9 +21,6 @@ private:
   public:
     ContentView();
 
-    int numberOfSubviews() const override;
-    void layoutSubviews() override;
-
     void setActiveView(View * view);
     TabView m_tabView;
   protected:
@@ -31,7 +28,10 @@ private:
   const char * className() const override;
 #endif
   private:
+    int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+
     View * m_activeView;
   };
 

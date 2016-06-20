@@ -8,13 +8,13 @@ extern "C" {
 class MyFunCell : public ChildlessView, public Responder {
 public:
   MyFunCell();
-  void setMessage(char * message);
+  void setMessage(const char * message);
   void setEven(bool even);
 
   void drawRect(KDRect rect) const override;
   void setFocused(bool focused) override;
 private:
-  char * m_message;
+  const char * m_message;
   bool m_focused;
   bool m_even;
 };
@@ -33,7 +33,7 @@ void MyFunCell::drawRect(KDRect rect) const {
   KDDrawString(m_message, KDPointZero, m_focused);
 }
 
-void MyFunCell::setMessage(char * message) {
+void MyFunCell::setMessage(const char * message) {
   m_message = message;
 }
 
@@ -68,12 +68,12 @@ private:
   // The cells should be initialized *before* the tableview!
   MyFunCell m_cells[k_maxNumberOfCells];
   TableView m_tableView;
-  char ** m_messages;
+  const char ** m_messages;
   int m_activeCell;
   KDCoordinate m_manualScrolling;
 };
 
-static char * sMessages[] = {
+static const char * sMessages[] = {
   "AAA 0", "BBB 1", "CCC 2", "DDD 3", "EEE 4",
   "FFF 5", "GGG 6", "HHH 7", "III 8", "JJJ 9",
   "KKK10", "LLL11", "MMM12", "NNN13", "OOO14",

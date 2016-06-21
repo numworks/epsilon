@@ -22,7 +22,7 @@ View * ListController::view() {
 }
 
 const char * ListController::title() const {
-  return "List";
+  return "Fonctions";
 }
 
 void ListController::setActiveCell(int index) {

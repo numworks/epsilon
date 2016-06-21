@@ -11,7 +11,7 @@ View * GraphController::view() {
 }
 
 const char * GraphController::title() const {
-  return "Graph";
+  return "Graphique";
 }
 
 void GraphController::setFocused(bool focused) {

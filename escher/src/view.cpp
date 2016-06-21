@@ -40,7 +40,7 @@ void View::redraw(KDRect rect) {
     KDPoint absOrigin = absoluteOrigin();
     KDRect absRect = KDRectTranslate(rectNeedingRedraw, absOrigin);
     KDRect absClippingRect = KDRectIntersection(absoluteVisibleFrame(), absRect);
-    KDSetDrawingArea(absOrigin, absoluteVisibleFrame());
+    KDSetDrawingArea(absOrigin, absClippingRect);
     this->drawRect(rectNeedingRedraw);
   }
 

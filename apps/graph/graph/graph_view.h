@@ -15,17 +15,23 @@ private:
   void layoutSubviews() override;
 
   enum class Axis {
-    Horizontal,
-    Vertical
+    Horizontal = 0,
+    Vertical = 1
   };
+
+  float min(Axis axis) const;
+  float max(Axis axis) const;
+  KDCoordinate pixelLength(Axis axis) const;
 
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   KDCoordinate floatToPixel(Axis axis, float f) const;
+
   void drawLine(KDRect rect, Axis axis,
       float coordinate, KDColor color) const;
 
   void drawAxes(KDRect rect) const;
   void drawGrid(KDRect rect) const;
+  void drawGridLines(KDRect rect, Axis axis, int count, KDColor color) const;
   void drawFunction(KDRect rect) const;
 
   CursorView m_cursorView;

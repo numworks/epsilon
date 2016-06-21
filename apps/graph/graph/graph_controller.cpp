@@ -1,12 +1,9 @@
 #include "graph_controller.h"
 
-GraphController::GraphController(KDColor c) :
+GraphController::GraphController() :
   ViewController(),
-  //m_view(TextField(buffer, k_bufferSize))
-  //m_view(SolidColorView(c))
   m_view(GraphView())
 {
-  //m_view.setParentResponder(this);
 }
 
 View * GraphController::view() {

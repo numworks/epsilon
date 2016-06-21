@@ -11,8 +11,8 @@ public:
 protected:
   ViewController * rootViewController() override;
 private:
-  GraphController m_graphViewController;
-  ListController m_listViewController;
+  ListController m_listController;
+  GraphController m_graphController;
   TabViewController m_tabViewController;
 };
 

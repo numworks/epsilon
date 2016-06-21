@@ -6,7 +6,7 @@
 
 class GraphController : public ViewController {
 public:
-  GraphController(KDColor c);
+  GraphController();
   View * view() override;
   const char * title() const override;
   void setFocused(bool focused) override;

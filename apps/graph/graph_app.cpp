@@ -2,9 +2,9 @@
 
 GraphApp::GraphApp() :
   App(),
-  m_graphViewController(GraphController(KDColorWhite)),
-  m_listViewController(ListController()),
-  m_tabViewController(&m_graphViewController, &m_listViewController)
+  m_listController(ListController()),
+  m_graphController(GraphController()),
+  m_tabViewController(&m_listController, &m_graphController)
 {
 }
 

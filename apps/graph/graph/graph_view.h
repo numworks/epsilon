@@ -14,15 +14,17 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 
-  float xPixelToFloat(int xPixel) const;
-  float yPixelToFloat(int yPixel) const;
-  KDCoordinate floatToXPixel(float x) const;
-  KDCoordinate floatToYPixel(float y) const;
+  enum class Axis {
+    Horizontal,
+    Vertical
+  };
 
-  void drawHorizontalLine(KDRect rect, float y, KDColor color) const;
-  void drawVerticalLine(KDRect rect, float x, KDColor color) const;
+  float pixelToFloat(Axis axis, KDCoordinate p) const;
+  KDCoordinate floatToPixel(Axis axis, float f) const;
+  void drawLine(KDRect rect, Axis axis,
+      float coordinate, KDColor color) const;
 
-  void drawAxis(KDRect rect) const;
+  void drawAxes(KDRect rect) const;
   void drawGrid(KDRect rect) const;
   void drawFunction(KDRect rect) const;
 

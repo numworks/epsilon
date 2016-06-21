@@ -41,31 +41,32 @@ void GraphView::layoutSubviews() {
 void GraphView::drawRect(KDRect rect) const {
   KDFillRect(rect, KDColorWhite);
   drawGrid(rect);
-  drawAxis(rect);
+  drawAxes(rect);
   drawFunction(rect);
 }
 
-void GraphView::drawHorizontalLine(KDRect rect, float y, KDColor color) const {
+void GraphView::drawLine(KDRect rect, Axis axis, float coordinate, KDColor color) const {
   KDRect lineRect;
-  lineRect.x = rect.x;
-  lineRect.y = floatToYPixel(y);
-  lineRect.width = rect.width;
-  lineRect.height = 1;
+  switch(axis) {
+    case Axis::Horizontal:
+      lineRect.x = rect.x;
+      lineRect.y = floatToPixel(Axis::Vertical, coordinate);
+      lineRect.width = rect.width;
+      lineRect.height = 1;
+      break;
+    case Axis::Vertical:
+      lineRect.x = floatToPixel(Axis::Horizontal, coordinate);
+      lineRect.y = rect.y;
+      lineRect.width = 1;
+      lineRect.height = rect.height;
+      break;
+  }
   KDFillRect(lineRect, color);
 }
 
-void GraphView::drawVerticalLine(KDRect rect, float x, KDColor color) const {
-  KDRect lineRect;
-  lineRect.x = floatToXPixel(x);
-  lineRect.y = rect.y;
-  lineRect.width = 1;
-  lineRect.height = rect.height;
-  KDFillRect(lineRect, color);
-}
-
-void GraphView::drawAxis(KDRect rect) const {
-  drawHorizontalLine(rect, 0.0f, kAxisColor);
-  drawVerticalLine(rect, 0.0f, kAxisColor);
+void GraphView::drawAxes(KDRect rect) const {
+  drawLine(rect, Axis::Horizontal, 0.0f, kAxisColor);
+  drawLine(rect, Axis::Vertical, 0.0f, kAxisColor);
 }
 
 void GraphView::drawGrid(KDRect rect) const {
@@ -73,39 +74,64 @@ void GraphView::drawGrid(KDRect rect) const {
   float xGridStep = xRange/kNumberOfMainGridLines;
   float xGridStart = xGridStep*((int)(m_xMin/xGridStep));
   for (int i=0; i<kNumberOfMainGridLines; i++) {
-    drawVerticalLine(rect, xGridStart+i*xGridStep, kMainGridColor);
+    drawLine(rect, Axis::Vertical, xGridStart+i*xGridStep, kMainGridColor);
   }
 
   float yRange = m_yMax - m_yMin;
   float yGridStep = yRange/kNumberOfMainGridLines;
   float yGridStart = yGridStep*((int)(m_yMin/yGridStep));
   for (int i=0; i<kNumberOfMainGridLines; i++) {
-    drawHorizontalLine(rect, yGridStart+i*yGridStep, kMainGridColor);
+    drawLine(rect, Axis::Horizontal, yGridStart+i*yGridStep, kMainGridColor);
   }
 }
 
-float GraphView::xPixelToFloat(int xPixel) const {
-  return m_xMin + xPixel*(m_xMax-m_xMin)/m_frame.width;
+float GraphView::pixelToFloat(Axis axis, KDCoordinate p) const {
+  float min, max;
+  KDCoordinate length;
+
+  switch (axis) {
+    case Axis::Horizontal:
+      min = m_xMin;
+      max = m_xMax;
+      length = m_frame.width;
+      break;
+    case Axis::Vertical:
+      min = m_yMin;
+      max = m_yMax;
+      length = m_frame.height;
+      break;
+  }
+
+  return min + p*(max-min)/length;
 }
 
-float GraphView::yPixelToFloat(int yPixel) const {
-  return m_yMin + yPixel*(m_yMax-m_yMin)/m_frame.height;
-}
+KDCoordinate GraphView::floatToPixel(Axis axis, float f) const {
+  float min, max;
+  KDCoordinate length;
 
-KDCoordinate GraphView::floatToYPixel(float y) const {
-  return m_frame.height*(m_yMax-y)/(m_yMax-m_yMin);
-}
+  switch (axis) {
+    case Axis::Horizontal:
+      min = m_xMin;
+      max = m_xMax;
+      length = m_frame.width;
+      break;
+    case Axis::Vertical:
+      min = m_yMin;
+      max = m_yMax;
+      length = m_frame.height;
+      break;
+  }
 
-KDCoordinate GraphView::floatToXPixel(float x) const {
-  return m_frame.width*(m_xMax-x)/(m_xMax-m_xMin);
+  return length*(max-f)/(max-min);
+
 }
 
 void GraphView::drawFunction(KDRect rect) const {
   KDPoint p = KDPointZero;
   for (p.x=rect.x; p.x<(rect.x+rect.width); p.x++) {
-    float x = xPixelToFloat(p.x);
+    float x = pixelToFloat(Axis::Horizontal, p.x);
     float y = (x-1)*(x+1)*x;
-    p.y = floatToYPixel(y);
-    KDSetPixel(p, KDColorRGB(0x7F, 0, 0));
+    p.y = floatToPixel(Axis::Vertical, y);
+    KDSetPixel(p, KDColorRGB(0xCF, 0, 0));
   }
 }

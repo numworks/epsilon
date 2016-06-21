@@ -75,6 +75,9 @@ View * View::subview(int index) {
 }
 
 void View::setFrame(KDRect frame) {
+  /* CAUTION: This code is not resilient to multiple consecutive setFrame()
+   * calls without intermediate redraw() calls. */
+
   // TODO: Return if frame is equal to m_frame
   if (m_superview != nullptr) {
     /* We will move this view. This will leave a blank spot in its superview

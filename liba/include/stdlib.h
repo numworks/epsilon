@@ -2,7 +2,7 @@
 #define LIBA_MALLOC_H
 
 #include "private/macros.h"
-#include "private/types.h"
+#include <stddef.h>
 
 LIBA_BEGIN_DECLS
 

@@ -2,9 +2,7 @@
 #define LIBA_STRING_H
 
 #include "private/macros.h"
-#include "private/types.h"
-
-#define NULL 0
+#include <stddef.h>
 
 LIBA_BEGIN_DECLS
 

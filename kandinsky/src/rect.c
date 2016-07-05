@@ -2,6 +2,7 @@
 #include <kandinsky/pixel.h>
 #include <kandinsky/context.h>
 #include <string.h>
+#include <assert.h>
 
 KDRect KDRectZero = {.x = 0, .y = 0, .width = 0, .height = 0};
 
@@ -100,15 +101,37 @@ KDRect KDRectTranslate(KDRect r, KDPoint p) {
   };
 }
 
-void KDFillRect(KDRect rect, KDColor color) {
+void KDPerPixelFillRect(KDCoordinate x, KDCoordinate y,
+    KDCoordinate width, KDCoordinate height,
+    KDColor * pattern, size_t patternSize) {
+  size_t offset = 0;
+  for (KDCoordinate j=0; j<height; j++) {
+    for (KDCoordinate i=0; i<width; i++) {
+      KDCurrentContext->setPixel(x+i, y+j, pattern[offset++]);
+      if (offset >= patternSize) {
+        offset = 0;
+      }
+    }
+  }
+}
+
+void KDFillRect(KDRect rect, const KDColor * pattern, size_t patternSize) {
+  assert(patternSize >= 1);
   KDRect absolutRect = rect;
   absolutRect.origin = KDPointTranslate(absolutRect.origin, KDCurrentContext->origin);
 
   KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDCurrentContext->clippingRect);
 
-  KDCurrentContext->fillRect(rectToBeFilled.x, rectToBeFilled.y,
+  void (*fillRectFunction)(KDCoordinate x, KDCoordinate y,
+      KDCoordinate width, KDCoordinate height,
+      KDColor * pattern, size_t patternSize) = KDCurrentContext->fillRect;
+  if (fillRectFunction == NULL) {
+    fillRectFunction = KDPerPixelFillRect;
+  }
+
+  fillRectFunction(rectToBeFilled.x, rectToBeFilled.y,
       rectToBeFilled.width, rectToBeFilled.height,
-      color);
+      pattern, patternSize);
 }
 
 void KDDrawRect(KDRect rect, KDColor color) {

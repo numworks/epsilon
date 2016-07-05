@@ -6,9 +6,11 @@
 
 typedef struct {
   void (*setPixel)(KDCoordinate x, KDCoordinate y, KDColor color);
+  // fillRect can be left NULL.
+  // In that case, Kandinsky will fall back to using setPixel only
   void (*fillRect)(KDCoordinate x, KDCoordinate y,
       KDCoordinate width, KDCoordinate height,
-      KDColor color);
+      KDColor * pattern, size_t patternSize);
   KDPoint origin;
   KDRect clippingRect;
 } KDContext;

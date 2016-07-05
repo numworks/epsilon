@@ -40,7 +40,8 @@ void GraphView::layoutSubviews() {
 }
 
 void GraphView::drawRect(KDRect rect) const {
-  KDFillRect(rect, KDColorWhite);
+  KDColor backgroundColor = KDColorWhite;
+  KDFillRect(rect, &backgroundColor, 1);
   drawGrid(rect);
   drawAxes(rect);
   drawFunction(rect);
@@ -62,7 +63,7 @@ void GraphView::drawLine(KDRect rect, Axis axis, float coordinate, KDColor color
       lineRect.height = rect.height;
       break;
   }
-  KDFillRect(lineRect, color);
+  KDFillRect(lineRect, &color, 1);
 }
 
 void GraphView::drawAxes(KDRect rect) const {

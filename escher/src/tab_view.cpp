@@ -12,7 +12,8 @@ TabView::TabView() :
 }
 
 void TabView::drawRect(KDRect rect) const {
-  KDFillRect(rect, KDColorRGB(0xb5, 0x1d, 0xab));
+  KDColor backgroundColor = KDColorRGB(0xb5, 0x1d, 0xab);
+  KDFillRect(rect, &backgroundColor, 1);
 }
 
 void TabView::addTabNamed(const char * name) {

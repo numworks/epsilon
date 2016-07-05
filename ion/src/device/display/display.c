@@ -48,11 +48,14 @@ void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
 void ion_fill_rect(
     uint16_t x, uint16_t y,
     uint16_t width, uint16_t height,
-    ion_color_t color)
+    ion_color_t * pattern, size_t patternSize)
 {
   st7789_set_drawing_area(&sDisplayController, x, y, width, height);
-  for (int i=0; i<width*height; i++) {
-    st7789_push_pixels(&sDisplayController, &color, 1);
+  size_t remainingSize = width*height;
+  while (remainingSize > 0) {
+    int32_t blockSize = remainingSize > patternSize ? patternSize : remainingSize;
+    st7789_push_pixels(&sDisplayController, pattern, blockSize);
+    remainingSize -= blockSize;
   }
 }
 

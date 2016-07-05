@@ -10,7 +10,7 @@ FunctionCell::FunctionCell() :
 
 void FunctionCell::drawRect(KDRect rect) const {
   KDColor background = m_even ? KDColorRGB(0xEE, 0xEE, 0xEE) : KDColorRGB(0x77,0x77,0x77);
-  KDFillRect(rect, background);
+  KDFillRect(rect, &background, 1);
   KDDrawString(m_message, KDPointZero, m_focused);
 }
 

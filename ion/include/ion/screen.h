@@ -12,6 +12,7 @@
  * which results in a very consequent speedup (up to ~10x faster). */
 
 #include <stdint.h>
+#include <stddef.h>
 
 /* ION manipulates RGB565 colors */
 typedef uint16_t ion_color_t;
@@ -23,14 +24,7 @@ void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color);
 void ion_fill_rect(
     uint16_t x, uint16_t y,
     uint16_t width, uint16_t height,
-    ion_color_t color
-);
-
-/* Fill a rect with a color buffer */
-void ion_fill_rect_from_buffer(
-    uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t * buffer
+    ion_color_t * pattern, size_t patternSize
 );
 
 #define ION_SCREEN_WIDTH 320

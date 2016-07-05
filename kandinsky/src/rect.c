@@ -1,8 +1,7 @@
 #include <kandinsky/rect.h>
 #include <kandinsky/pixel.h>
+#include <kandinsky/context.h>
 #include <string.h>
-#include "private/drawing_area.h"
-#include <ion.h>
 
 KDRect KDRectZero = {.x = 0, .y = 0, .width = 0, .height = 0};
 
@@ -103,11 +102,11 @@ KDRect KDRectTranslate(KDRect r, KDPoint p) {
 
 void KDFillRect(KDRect rect, KDColor color) {
   KDRect absolutRect = rect;
-  absolutRect.origin = KDPointTranslate(absolutRect.origin, KDDrawingAreaOrigin);
+  absolutRect.origin = KDPointTranslate(absolutRect.origin, KDCurrentContext->origin);
 
-  KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDDrawingAreaClippingRect);
+  KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDCurrentContext->clippingRect);
 
-  ion_fill_rect(rectToBeFilled.x, rectToBeFilled.y,
+  KDCurrentContext->fillRect(rectToBeFilled.x, rectToBeFilled.y,
       rectToBeFilled.width, rectToBeFilled.height,
       color);
 }

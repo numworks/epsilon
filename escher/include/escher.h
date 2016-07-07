@@ -10,6 +10,7 @@
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>
 #include <escher/table_view.h>
+#include <escher/tiled_view.h>
 #include <escher/view.h>
 #include <escher/view_controller.h>
 #include <escher/window.h>

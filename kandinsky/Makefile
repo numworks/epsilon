@@ -1,7 +1,9 @@
 SFLAGS += -Ikandinsky/include
 objs += $(addprefix kandinsky/src/,\
+  color.o\
   context.o\
   font.o\
+  framebuffer.o\
   line.o\
   pixel.o\
   rect.o\

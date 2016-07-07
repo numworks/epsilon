@@ -40,24 +40,58 @@ void ion_display_off() {
   // Turn off panel
 }
 
-void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
-  st7789_set_drawing_area(&sDisplayController, x, y, 1, 1);
-  st7789_push_pixels(&sDisplayController, &color, 1);
+void ion_screen_push_rect(KDRect rect, const KDColor * pixels) {
+  st7789_set_drawing_area(&sDisplayController, rect);
+  st7789_push_pixels(&sDisplayController, pixels, rect.width*rect.height);
 }
 
-void ion_fill_rect(
-    uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t * pattern, size_t patternSize)
-{
-  st7789_set_drawing_area(&sDisplayController, x, y, width, height);
-  size_t remainingSize = width*height;
-  while (remainingSize > 0) {
-    int32_t blockSize = remainingSize > patternSize ? patternSize : remainingSize;
-    st7789_push_pixels(&sDisplayController, pattern, blockSize);
-    remainingSize -= blockSize;
+void ion_screen_push_rect_uniform(KDRect rect, KDColor color) {
+  st7789_set_drawing_area(&sDisplayController, rect);
+  for (size_t i=0; i<rect.width*rect.height; i++) {
+    st7789_push_pixels(&sDisplayController, &color, 1);
   }
 }
+
+void ion_screen_pull_rect(KDRect rect, KDColor * pixels) {
+  assert(0); // Unimplemented
+}
+
+#if 0
+void ion_screen_push_rect(
+    uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    ion_color_t * pattern, uint16_t patternWidth, uint16_t patternHeight)
+{
+  st7789_set_drawing_area(&sDisplayController, x, y, width, height);
+#if ION_DEVICE_FILL_RECT_FAST_PATH
+  /* If the pattern width matches the target rect width, we can easily push
+   * mutliple lines at once since those will be contiguous in memory. */
+  if (patternWidth == width) {
+    size_t remainingSize = width*height;
+    size_t patternSize = patternWidth*patternHeight;
+    while (remainingSize > 0) {
+      int32_t blockSize = remainingSize > patternSize ? patternSize : remainingSize;
+      st7789_push_pixels(&sDisplayController, pattern, blockSize);
+      remainingSize -= blockSize;
+    }
+    return;
+  }
+#endif
+  uint16_t remainingHeight = height;
+  uint16_t patternLine = 0;
+  while (remainingHeight-- > 0) {
+    uint16_t remainingWidth = width;
+    while (remainingWidth > 0) {
+      int32_t blockSize = remainingWidth > patternWidth ? patternWidth : remainingWidth;
+      st7789_push_pixels(&sDisplayController, pattern+patternLine*patternWidth, blockSize);
+      remainingWidth -= blockSize;
+    }
+    if (++patternLine >= patternHeight) {
+      patternLine = 0;
+    }
+  }
+}
+#endif
 
 void init_display() {
   //assert(FRAMEBUFFER_LENGTH == (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT*FRAMEBUFFER_BITS_PER_PIXEL)/8);

@@ -6,4 +6,6 @@
 
 void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c);
 
+void KDDrawAntiAliasedLine(KDPoint p1, KDPoint p2, KDCoordinate width, KDColor frontColor, KDColor backColor);
+
 #endif

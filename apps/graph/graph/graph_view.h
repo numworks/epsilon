@@ -4,10 +4,27 @@
 #include <escher.h>
 #include "cursor_view.h"
 
-class GraphView : public View {
+#define GRAPH_VIEW_IS_TILED 1
+
+class GraphView : public
+#if GRAPH_VIEW_IS_TILED
+                  TiledView
+#else
+                  View
+#endif
+{
 public:
   GraphView();
+
+#if GRAPH_VIEW_IS_TILED
+  KDColor * tile() const override;
+  KDSize tileSize() const override;
+  void drawTile(KDRect rect) const override;
+#else
   void drawRect(KDRect rect) const override;
+#endif
+
+//  void drawRect(KDRect rect) const override;
   void moveCursorRight();
 private:
   int numberOfSubviews() const override;
@@ -27,12 +44,16 @@ private:
   KDCoordinate floatToPixel(Axis axis, float f) const;
 
   void drawLine(KDRect rect, Axis axis,
-      float coordinate, KDColor color) const;
+      float coordinate, KDColor color, KDCoordinate thickness = 1) const;
 
   void drawAxes(KDRect rect) const;
   void drawGrid(KDRect rect) const;
   void drawGridLines(KDRect rect, Axis axis, int count, KDColor color) const;
   void drawFunction(KDRect rect) const;
+
+  static constexpr KDCoordinate kTileWidth = 32;
+  static constexpr KDCoordinate kTileHeight = 32;
+  KDColor m_tile[kTileWidth*kTileHeight];
 
   CursorView m_cursorView;
   KDPoint m_cursorPosition;

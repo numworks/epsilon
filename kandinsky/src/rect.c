@@ -101,38 +101,150 @@ KDRect KDRectTranslate(KDRect r, KDPoint p) {
   };
 }
 
-void KDPerPixelFillRect(KDCoordinate x, KDCoordinate y,
-    KDCoordinate width, KDCoordinate height,
-    KDColor * pattern, size_t patternSize) {
-  size_t offset = 0;
-  for (KDCoordinate j=0; j<height; j++) {
-    for (KDCoordinate i=0; i<width; i++) {
-      KDCurrentContext->setPixel(x+i, y+j, pattern[offset++]);
-      if (offset >= patternSize) {
-        offset = 0;
-      }
+KDRect absoluteFillRect(KDRect rect) {
+  KDRect absolutRect = rect;
+  absolutRect.origin = KDPointTranslate(absolutRect.origin, KDCurrentContext->origin);
+
+  KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDCurrentContext->clippingRect);
+  return rectToBeFilled;
+}
+
+void KDFillRect(KDRect rect, KDColor color) {
+  KDRect absoluteRect = absoluteFillRect(rect);
+  if (absoluteRect.width > 0 && absoluteRect.height > 0) {
+    KDCurrentContext->io.pushRectUniform(absoluteRect, color);
+  }
+}
+
+/* Note: we support the case where workingBuffer IS equal to pixels */
+void KDFillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer) {
+  KDRect absoluteRect = absoluteFillRect(rect);
+
+  if (absoluteRect.width == 0 || absoluteRect.height == 0) {
+    return;
+  }
+
+  /* Caution:
+   * The absoluteRect may have a SMALLER size than the original rect because it
+   * has been clipped. Therefore we cannot assume that the mask can be read as a
+   * continuous area. */
+
+  if (absoluteRect.width == rect.width && absoluteRect.height == rect.height) {
+    KDCurrentContext->io.pushRect(absoluteRect, pixels);
+    return;
+  }
+
+  /* At this point we need the working buffer */
+  assert(workingBuffer != NULL);
+  for (KDCoordinate j=0; j<absoluteRect.height; j++) {
+    for (KDCoordinate i=0; i<absoluteRect.width; i++) {
+      workingBuffer[i+absoluteRect.width*j] = pixels[i+rect.width*j];
+    }
+  }
+  KDCurrentContext->io.pushRect(absoluteRect, workingBuffer);
+}
+
+// Mask's size must be rect.size
+// WorkingBuffer, same deal
+void KDFillRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer) {
+  KDRect absoluteRect = absoluteFillRect(rect);
+
+  /* Caution:
+   * The absoluteRect may have a SMALLER size than the original rect because it
+   * has been clipped. Therefore we cannot assume that the mask can be read as a
+   * continuous area. */
+
+  KDCurrentContext->io.pullRect(absoluteRect, workingBuffer);
+  for (KDCoordinate j=0; j<absoluteRect.height; j++) {
+    for (KDCoordinate i=0; i<absoluteRect.width; i++) {
+      KDColor * currentPixelAdress = workingBuffer + i + absoluteRect.width*j;
+      const uint8_t * currentMaskAddress = mask + i + rect.width*j;
+      *currentPixelAdress = KDColorBlend(*currentPixelAdress, color, *currentMaskAddress);
+    }
+  }
+  KDCurrentContext->io.pushRect(absoluteRect, workingBuffer);
+}
+
+#if 0
+
+/* Takes an absolute rect and pushes the pixels */
+/* Does the pattern-to-continuous-memory conversion */
+void pushRect(KDRect rect, const KDColor * pattern, KDSize patternSize) {
+  KDCurrentContext->io.setWorkingArea(rect);
+//#define ION_DEVICE_FILL_RECT_FAST_PATH 1
+#if ION_DEVICE_FILL_RECT_FAST_PATH
+  /* If the pattern width matches the target rect width, we can easily push
+   * mutliple lines at once since those will be contiguous in memory. */
+  if (patternSize.width == rect.width) {
+    size_t remainingPixelCount = rect.width*rect.height;
+    size_t patternPixelCount = patternSize.width*patternSize.height;
+    while (remainingPixelCount > 0) {
+      int32_t blockSize = remainingPixelCount < patternPixelCount ? remainingPixelCount : patternPixelCount;
+      KDCurrentContext->io.pushPixels(pattern, blockSize);
+      remainingPixelCount -= blockSize;
+    }
+    return;
+  }
+#endif
+  uint16_t remainingHeight = rect.height;
+  uint16_t patternLine = 0;
+  while (remainingHeight-- > 0) {
+    uint16_t remainingWidth = rect.width;
+    while (remainingWidth > 0) {
+      int32_t blockSize = remainingWidth < patternSize.width ? remainingWidth : patternSize.width;
+      KDCurrentContext->io.pushPixels(pattern + patternLine*patternSize.width, blockSize);
+      remainingWidth -= blockSize;
+    }
+    if (++patternLine >= patternSize.height) {
+      patternLine = 0;
     }
   }
 }
 
-void KDFillRect(KDRect rect, const KDColor * pattern, size_t patternSize) {
-  assert(patternSize >= 1);
+void KDBlitRect(KDRect rect, const KDColor * pattern, KDSize patternSize, const uint8_t * mask, KDSize maskSize) {
+  assert(pattern != NULL && patternSize.width > 0 && patternSize.height > 0);
   KDRect absolutRect = rect;
   absolutRect.origin = KDPointTranslate(absolutRect.origin, KDCurrentContext->origin);
 
   KDRect rectToBeFilled = KDRectIntersection(absolutRect, KDCurrentContext->clippingRect);
 
-  void (*fillRectFunction)(KDCoordinate x, KDCoordinate y,
-      KDCoordinate width, KDCoordinate height,
-      KDColor * pattern, size_t patternSize) = KDCurrentContext->fillRect;
-  if (fillRectFunction == NULL) {
-    fillRectFunction = KDPerPixelFillRect;
+  bool useBlending = (mask != NULL && maskSize.width > 0 && maskSize.height > 0);
+
+  if (!useBlending) {
+    pushRect(rectToBeFilled, pattern, patternSize);
+    return;
   }
 
-  fillRectFunction(rectToBeFilled.x, rectToBeFilled.y,
-      rectToBeFilled.width, rectToBeFilled.height,
-      pattern, patternSize);
+  assert(KDCurrentContext->io.pullPixels != NULL);
+
+  KDCoordinate patternX = 0, patternY = 0, maskX = 0, maskY = 0;
+  for (KDCoordinate j=0; j<rectToBeFilled.height; j++) {
+    for (KDCoordinate i=0; i<rectToBeFilled.width; i++) {
+      KDColor foregroundColor = pattern[patternX+patternSize.width*patternY];
+      KDPoint p = {
+        .x = rectToBeFilled.x + i,
+        .y = rectToBeFilled.y + j
+      };
+      KDColor backgroundColor = KDGetAbsolutePixelDirect(p);
+      uint8_t alpha = mask[maskX+maskSize.width*maskY];
+      KDColor newColor = KDColorBlend(backgroundColor, foregroundColor, alpha);
+      KDSetAbsolutePixelDirect(p, newColor);
+      if (++patternX >= patternSize.width) {
+        patternX = 0;
+      }
+      if (++maskX >= maskSize.width) {
+        maskX = 0;
+      }
+    }
+    if (++patternY >= patternSize.height) {
+      patternY = 0;
+    }
+    if (++maskY >= maskSize.height) {
+      maskY = 0;
+    }
+  }
 }
+#endif
 
 void KDDrawRect(KDRect rect, KDColor color) {
   KDPoint p1, p2;

@@ -5,5 +5,6 @@
 #include <kandinsky/color.h>
 
 void KDSetPixel(KDPoint p, KDColor c);
+KDColor KDGetPixel(KDPoint p);
 
 #endif

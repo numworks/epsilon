@@ -11,21 +11,16 @@
  * pixel coordinates every time. We're therefore leveraging this capability
  * which results in a very consequent speedup (up to ~10x faster). */
 
-#include <stdint.h>
-#include <stddef.h>
+#include <kandinsky.h>
 
-/* ION manipulates RGB565 colors */
-typedef uint16_t ion_color_t;
-
-/* Set the color of a single pixel. */
-void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color);
-
-/* Fill a rect with a single color */
-void ion_fill_rect(
-    uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t * pattern, size_t patternSize
-);
+void ion_screen_push_rect(KDRect rect, const KDColor * pixels);
+void ion_screen_push_rect_uniform(KDRect rect, KDColor color);
+void ion_screen_pull_rect(KDRect rect, KDColor * pixels);
+/*
+void ion_screen_set_working_area(KDRect area);
+void ion_screen_push_pixels(const KDColor * pixels, size_t count);
+void ion_screen_pull_pixels(KDColor * pixels, size_t count);
+*/
 
 #define ION_SCREEN_WIDTH 320
 #define ION_SCREEN_HEIGHT 240

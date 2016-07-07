@@ -15,6 +15,7 @@ extern "C" {
 
 static FltkLCD * sDisplay;
 static FltkKbd * sKeyboard;
+static KDFrameBuffer sFrameBuffer;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
 
@@ -28,34 +29,34 @@ void init_platform() {
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
-  sDisplay = new FltkLCD(margin, margin, screen_width, screen_height);
+  sFrameBuffer.pixels = (KDColor *)malloc(ION_SCREEN_WIDTH*ION_SCREEN_HEIGHT*2);
+  sFrameBuffer.size.width = ION_SCREEN_WIDTH;
+  sFrameBuffer.size.height = ION_SCREEN_HEIGHT;
+  /*
+  sFrameBuffer.drawingArea.origin = KDPointZero;
+  sFrameBuffer.drawingArea.size = sFrameBuffer.size;
+  sFrameBuffer.drawingCursor = KDPointZero;
+  */
 
+  sDisplay = new FltkLCD(margin, margin, screen_width, screen_height, sFrameBuffer.pixels);
   sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
   window->end();
   window->show();
 
-  KDCurrentContext->fillRect = NULL;
+  //KDCurrentContext->fillRect = NULL;
 }
 
-void ion_set_pixel(uint16_t x, uint16_t y, ion_color_t color) {
-  assert(x < ION_SCREEN_WIDTH);
-  assert(y < ION_SCREEN_HEIGHT);
-  uint8_t * pixel = (uint8_t *)(FRAMEBUFFER_ADDRESS) + 3*((y*ION_SCREEN_WIDTH)+x);
-  uint8_t red = (color >> 11) << 3;
-  uint8_t green = ((color >> 5) & 0x3F) << 2;
-  uint8_t blue = (color & 0x1F) << 3;
-  *pixel++ = red;
-  *pixel++ = green;
-  *pixel++ = blue;
+void ion_screen_push_rect(KDRect rect, const KDColor * pixels) {
+  KDFramePushRect(&sFrameBuffer, rect, pixels);
 }
 
-void ion_fill_rect(
-    uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t * pattern, size_t patternSize)
-{
-  assert(false);
+void ion_screen_push_rect_uniform(KDRect rect, KDColor color) {
+  KDFramePushRectUniform(&sFrameBuffer, rect, color);
+}
+
+void ion_screen_pull_rect(KDRect rect, KDColor * pixels) {
+  KDFramePullRect(&sFrameBuffer, rect, pixels);
 }
 
 bool ion_key_down(ion_key_t key) {

@@ -2,8 +2,11 @@
 #include <ion.h>
 
 KDContext KDIonContext = {
-  .setPixel = &ion_set_pixel,
-  .fillRect = &ion_fill_rect,
+  .io = {
+    .pushRect = &ion_screen_push_rect,
+    .pushRectUniform = &ion_screen_push_rect_uniform,
+    .pullRect = &ion_screen_pull_rect
+  },
   .origin = {
     .x = 0,
     .y = 0

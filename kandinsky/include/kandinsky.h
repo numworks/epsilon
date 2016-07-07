@@ -3,6 +3,7 @@
 
 #include <kandinsky/color.h>
 #include <kandinsky/context.h>
+#include <kandinsky/framebuffer.h>
 #include <kandinsky/line.h>
 #include <kandinsky/pixel.h>
 #include <kandinsky/rect.h>

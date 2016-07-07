@@ -5,12 +5,11 @@
 #include "rect.h"
 
 typedef struct {
-  void (*setPixel)(KDCoordinate x, KDCoordinate y, KDColor color);
-  // fillRect can be left NULL.
-  // In that case, Kandinsky will fall back to using setPixel only
-  void (*fillRect)(KDCoordinate x, KDCoordinate y,
-      KDCoordinate width, KDCoordinate height,
-      KDColor * pattern, size_t patternSize);
+  struct {
+    void (*pushRect)(KDRect rect, const KDColor * pixels);
+    void (*pushRectUniform)(KDRect rect, KDColor color);
+    void (*pullRect)(KDRect rect, KDColor * pixels);
+  } io;
   KDPoint origin;
   KDRect clippingRect;
 } KDContext;

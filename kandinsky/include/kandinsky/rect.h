@@ -34,7 +34,9 @@ KDRect KDRectUnion(KDRect r1, KDRect r2);
 bool KDRectContains(KDRect r, KDPoint p);
 KDRect KDRectTranslate(KDRect r, KDPoint p);
 
-void KDFillRect(KDRect rect, const KDColor * pattern, size_t patternSize);
+void KDFillRect(KDRect rect, KDColor color);
+void KDFillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
+void KDFillRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
 void KDDrawRect(KDRect rect, KDColor color);
 
 #endif

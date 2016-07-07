@@ -13,6 +13,7 @@ objs += $(addprefix escher/src/,\
   table_view.o\
   text_field.o\
   text_view.o\
+  tiled_view.o\
   view.o\
   view_controller.o\
   window.o\

@@ -8,10 +8,10 @@ FunctionCell::FunctionCell() :
   m_message = "NULL";
 }
 
-void FunctionCell::drawRect(KDRect rect) const {
-  KDColor background = m_even ? KDColorRGB(0xEE, 0xEE, 0xEE) : KDColorRGB(0x77,0x77,0x77);
-  KDFillRect(rect, background);
-  KDDrawString(m_message, KDPointZero, m_focused);
+void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor background = m_even ? KDColor(0xEEEEEE) : KDColor(0x777777);
+  ctx->fillRect(rect, background);
+  ctx->drawString(m_message, KDPointZero, m_focused);
 }
 
 void FunctionCell::setMessage(const char * message) {

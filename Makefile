@@ -25,7 +25,7 @@ endif
 
 # Language-specific flags
 CFLAGS = -std=c99
-CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti
+CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
 
@@ -58,7 +58,7 @@ include libaxx/Makefile
 endif
 include ion/Makefile
 include kandinsky/Makefile
-include poincare/Makefile
+#include poincare/Makefile
 include escher/Makefile
 include apps/Makefile
 include quiz/Makefile # Quiz should be included at the end

@@ -155,12 +155,11 @@ void st7789_initialize(st7789_t * c) {
   perform_instructions(c, init_sequence, sizeof(init_sequence)/sizeof(init_sequence[0]));
 }
 
-void st7789_set_drawing_area(st7789_t * controller, KDRect area) {
-  assert(sizeof(KDCoordinate) == 2); // We expect 16-bit values
-  uint16_t x_start = area.x;
-  uint16_t x_end = area.x + area.width - 1;
-  uint16_t y_start = area.y;
-  uint16_t y_end = area.y + area.height - 1;
+void st7789_set_drawing_area(st7789_t * controller, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+  uint16_t x_start = x;
+  uint16_t x_end = x + width - 1;
+  uint16_t y_start = y;
+  uint16_t y_end = y + height - 1;
 
   const instruction_t sequence[] = {
     COMMAND(CASET),
@@ -183,8 +182,8 @@ void st7789_set_drawing_area(st7789_t * controller, KDRect area) {
 
 
 void st7789_push_pixels(st7789_t * controller,
-    const KDColor * pixels, size_t numberOfPixels) {
-  assert(sizeof(KDColor) == 2); // We expect KDColor to be RGB565
+    const ion_color_t * pixels, size_t numberOfPixels) {
+  assert(sizeof(ion_color_t) == 2); // We expect KDColor to be RGB565
   for (size_t i=0; i<numberOfPixels; i++) {
     perform_instruction(controller, DATA(pixels[i] >> 8));
     perform_instruction(controller, DATA(pixels[i] & 0xFF));

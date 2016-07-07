@@ -10,9 +10,9 @@ TextField::TextField(char * textBuffer, size_t textBufferSize) :
 
 /* View */
 
-void TextField::drawRect(KDRect rect) const {
+void TextField::drawRect(KDContext * ctx, KDRect rect) const {
   m_textBuffer[m_currentTextLength] = 0;
-  KDDrawString(m_textBuffer, KDPointZero, 0);
+  ctx->drawString(m_textBuffer, KDPointZero, 0);
 }
 
 #if ESCHER_VIEW_LOGGING

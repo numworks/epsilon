@@ -12,7 +12,7 @@ public:
   TextView(const char * text,
       float horizontalAlignment,
       float verticalAlignment);
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void setText(const char * text);
 protected:
 #if ESCHER_VIEW_LOGGING

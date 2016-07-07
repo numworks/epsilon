@@ -32,28 +32,24 @@ View * ScrollView::subviewAtIndex(int index) {
 
 void ScrollView::layoutSubviews() {
   // Layout indicators
-  KDRect verticalIndicatorFrame;
-  verticalIndicatorFrame.x = m_frame.width - k_indicatorThickness;
-  verticalIndicatorFrame.y = 0;
-  verticalIndicatorFrame.width = k_indicatorThickness;
-  verticalIndicatorFrame.height = m_frame.height;
+  KDRect verticalIndicatorFrame = KDRect(
+      m_frame.width() - k_indicatorThickness, 0,
+      k_indicatorThickness, m_frame.height()
+   );
   m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
 
   // Layout contentView
   // We're only re-positionning the contentView, not modifying its size.
-  KDRect contentFrame;
-  contentFrame.x = -m_offset.x;
-  contentFrame.y = -m_offset.y;
-  contentFrame.size = m_contentView->bounds().size;
+  KDRect contentFrame = KDRect(m_offset.opposite(), m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
   m_offset = offset;
 
-  float contentHeight = m_contentView->bounds().height;
-  float start = offset.y;
-  float end = offset.y + m_frame.height;
+  float contentHeight = m_contentView->bounds().height();
+  float start = offset.y();
+  float end = offset.y() + m_frame.height();
 
   m_verticalScrollIndicator.setStart(start/contentHeight);
   m_verticalScrollIndicator.setEnd(end/contentHeight);
@@ -62,7 +58,7 @@ void ScrollView::setContentOffset(KDPoint offset) {
 }
 
 KDCoordinate ScrollView::maxContentWidth() {
-  return m_frame.width - k_indicatorThickness;
+  return m_frame.width() - k_indicatorThickness;
 }
 
 #if ESCHER_VIEW_LOGGING

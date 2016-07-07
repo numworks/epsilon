@@ -14,22 +14,22 @@ ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction directio
 {
 }
 
-void ScrollViewIndicator::drawRect(KDRect rect) const {
-  KDFillRect(bounds(), k_backgroundColor);
-  KDRect indicatorFrame;
+void ScrollViewIndicator::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(bounds(), k_backgroundColor);
+  KDRect indicatorFrame = KDRectZero;
   if (m_direction == Direction::Horizontal) {
-  indicatorFrame.x = m_start*m_frame.width;
-  indicatorFrame.y = 0;
-  indicatorFrame.width = (m_end-m_start)*m_frame.width;
-  indicatorFrame.height = m_frame.height;
+    indicatorFrame = KDRect(
+        m_start*m_frame.width(), 0,
+        (m_end-m_start)*m_frame.width(), m_frame.height()
+        );
   } else {
     assert(m_direction == Direction::Vertical);
-    indicatorFrame.x = 0;
-    indicatorFrame.y = m_start*m_frame.height;
-    indicatorFrame.width = m_frame.width;
-    indicatorFrame.height = (m_end-m_start)*m_frame.height;
+    indicatorFrame = KDRect(
+        0, m_start*m_frame.height(),
+        m_frame.width(), (m_end-m_start)*m_frame.height()
+        );
   }
-  KDFillRect(indicatorFrame, k_indicatorColor);
+  ctx->fillRect(indicatorFrame, k_indicatorColor);
 }
 
 void ScrollViewIndicator::setStart(float start) {

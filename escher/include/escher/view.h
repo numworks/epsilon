@@ -28,8 +28,8 @@ public:
 
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
-   * Kandinsky library. */
-  virtual void drawRect(KDRect rect) const;
+   * Kandinsky library using the provided context. */
+  virtual void drawRect(KDContext * ctx, KDRect rect) const;
 
   void setFrame(KDRect frame);
 

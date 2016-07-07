@@ -9,7 +9,7 @@ public:
   void setMessage(const char * message);
   void setEven(bool even);
 
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void setFocused(bool focused) override;
 private:
   const char * m_message;

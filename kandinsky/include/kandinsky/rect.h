@@ -1,42 +1,43 @@
 #ifndef KANDINSKY_RECT_H
 #define KANDINSKY_RECT_H
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <kandinsky/color.h>
-#include <kandinsky/types.h>
+#include <kandinsky/coordinate.h>
+#include <kandinsky/point.h>
+#include <kandinsky/size.h>
 
-typedef struct {
-  union {
-    struct {
-      KDCoordinate x;
-      KDCoordinate y;
-    };
-    KDPoint origin;
-  };
-  union {
-    struct {
-      KDCoordinate width;
-      KDCoordinate height;
-    };
-    KDSize size;
-  };
-} KDRect;
+class KDRect {
+public:
+  constexpr KDRect(KDCoordinate x, KDCoordinate y,
+      KDCoordinate width, KDCoordinate height) :
+    m_x(x), m_y(y), m_width(width), m_height(height) {}
 
-extern KDRect KDRectZero;
+  KDRect(KDPoint p, KDSize s);
+  KDRect(KDCoordinate x, KDCoordinate y, KDSize s);
+  KDRect(KDPoint p, KDCoordinate width, KDCoordinate height);
 
-bool KDRectIntersect(KDRect r1, KDRect r2);
-KDRect KDRectIntersection(KDRect r1, KDRect r2);
+  KDCoordinate x() const;
+  KDCoordinate y() const;
+  KDPoint origin() const;
+  KDCoordinate width() const;
+  KDCoordinate height() const;
+  KDSize size() const;
+  KDCoordinate left() const;
+  KDCoordinate right() const;
+  KDCoordinate top() const;
+  KDCoordinate bottom() const;
 
-// Returns the smallest rectangle containing r1 and r2
-KDRect KDRectUnion(KDRect r1, KDRect r2);
+  KDRect translatedBy(KDPoint p) const;
+  KDRect movedTo(KDPoint p) const;
+  bool intersects(const KDRect & other) const;
+  KDRect intersectedWith(const KDRect & other) const;
+  KDRect unionedWith(const KDRect & other) const; // Returns the smallest rectangle containing r1 and r2
+  bool contains(KDPoint p) const;
+  bool isEmpty() const;
 
-bool KDRectContains(KDRect r, KDPoint p);
-KDRect KDRectTranslate(KDRect r, KDPoint p);
+private:
+  KDCoordinate m_x, m_y, m_width, m_height;
+};
 
-void KDFillRect(KDRect rect, KDColor color);
-void KDFillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
-void KDFillRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
-void KDDrawRect(KDRect rect, KDColor color);
+constexpr KDRect KDRectZero = KDRect(0,0,0,0);
 
 #endif

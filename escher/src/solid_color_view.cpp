@@ -6,8 +6,8 @@ SolidColorView::SolidColorView(KDColor color) :
 {
 }
 
-void SolidColorView::drawRect(KDRect rect) const {
-  KDFillRect(rect, m_color);
+void SolidColorView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(rect, m_color);
 }
 
 #if ESCHER_VIEW_LOGGING

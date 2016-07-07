@@ -31,10 +31,7 @@ void TableView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
 
-  KDRect contentViewFrame;
-  contentViewFrame.origin = KDPointZero; // Will be overriden by ScrollView::layoutSubviews
-  contentViewFrame.width = maxContentWidth();
-  contentViewFrame.height = m_contentView.height();
+  KDRect contentViewFrame(0, 0, maxContentWidth(), m_contentView.height());
   m_contentView.setFrame(contentViewFrame);
 
   ScrollView::layoutSubviews();
@@ -56,17 +53,14 @@ KDCoordinate TableView::ContentView::height() const {
 void TableView::ContentView::scrollToRow(int index) const {
   if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
     // Let's scroll the tableView to put that cell on the top
-    KDPoint contentOffset;
-    contentOffset.x = 0;
-    contentOffset.y = index*m_dataSource->cellHeight();
+    KDPoint contentOffset(0, index*m_dataSource->cellHeight());
     m_tableView->setContentOffset(contentOffset);
     return;
   }
   if (cellAtIndexIsAfterFullyVisibleRange(index)) {
     // Let's scroll the tableView to put that cell on the bottom
-    KDPoint contentOffset;
-    contentOffset.x = 0;
-    contentOffset.y = (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height;
+    KDPoint contentOffset(0,
+    (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height());
     m_tableView->setContentOffset(contentOffset);
     return;
   }
@@ -99,12 +93,8 @@ void TableView::ContentView::layoutSubviews() {
   for (int i=0; i<numberOfSubviews(); i++) {
     View * cell = subview(i);
 
-    KDRect cellFrame;
     KDCoordinate cellHeight = m_dataSource->cellHeight();
-    cellFrame.x = 0;
-    cellFrame.y = (cellOffset+i)*cellHeight;
-    cellFrame.width = m_frame.width;
-    cellFrame.height = cellHeight;
+    KDRect cellFrame(0, (cellOffset+i)*cellHeight, m_frame.width(), cellHeight);
 
     cell->setFrame(cellFrame);
 
@@ -113,7 +103,7 @@ void TableView::ContentView::layoutSubviews() {
 }
 
 int TableView::ContentView::numberOfDisplayableCells() const {
-  int result = m_tableView->bounds().height / m_dataSource->cellHeight() + 1;
+  int result = m_tableView->bounds().height() / m_dataSource->cellHeight() + 1;
   assert(result <= m_dataSource->reusableCellCount());
   return result;
 }
@@ -121,7 +111,7 @@ int TableView::ContentView::numberOfDisplayableCells() const {
 int TableView::ContentView::cellScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate pixelScrollingOffset = -m_frame.y;
+  KDCoordinate pixelScrollingOffset = -m_frame.y();
   return pixelScrollingOffset / m_dataSource->cellHeight();
 }
 

@@ -15,7 +15,7 @@ extern "C" {
 
 static FltkLCD * sDisplay;
 static FltkKbd * sKeyboard;
-static KDFrameBuffer sFrameBuffer;
+static KDFrameBuffer * sFrameBuffer;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
 
@@ -29,16 +29,15 @@ void init_platform() {
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
-  sFrameBuffer.pixels = (KDColor *)malloc(ION_SCREEN_WIDTH*ION_SCREEN_HEIGHT*2);
-  sFrameBuffer.size.width = ION_SCREEN_WIDTH;
-  sFrameBuffer.size.height = ION_SCREEN_HEIGHT;
+  KDColor * pixels = (KDColor *)malloc(ION_SCREEN_WIDTH*ION_SCREEN_HEIGHT*sizeof(KDColor));
+  sFrameBuffer = new KDFrameBuffer(pixels, KDSize(ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT));
   /*
   sFrameBuffer.drawingArea.origin = KDPointZero;
   sFrameBuffer.drawingArea.size = sFrameBuffer.size;
   sFrameBuffer.drawingCursor = KDPointZero;
   */
 
-  sDisplay = new FltkLCD(margin, margin, screen_width, screen_height, sFrameBuffer.pixels);
+  sDisplay = new FltkLCD(margin, margin, screen_width, screen_height, pixels);
   sKeyboard = new FltkKbd(margin, margin+screen_height+margin, screen_width, keyboard_height);
 
   window->end();
@@ -47,16 +46,33 @@ void init_platform() {
   //KDCurrentContext->fillRect = NULL;
 }
 
-void ion_screen_push_rect(KDRect rect, const KDColor * pixels) {
-  KDFramePushRect(&sFrameBuffer, rect, pixels);
+void ion_screen_push_rect(uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    const ion_color_t * pixels)
+{
+  // FIXME: Boy those casts are fugly
+  const void * foo = static_cast<const void *>(pixels);
+  const KDColor * pouet = static_cast<const KDColor *>(foo);
+  sFrameBuffer->pushRect(KDRect(x,y,width,height), pouet);
 }
 
-void ion_screen_push_rect_uniform(KDRect rect, KDColor color) {
-  KDFramePushRectUniform(&sFrameBuffer, rect, color);
+void ion_screen_push_rect_uniform(uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    ion_color_t color)
+{
+  ion_color_t * foo = &color;
+  const void * bar = static_cast<const void *>(foo);
+  const KDColor * baz = static_cast<const KDColor *>(bar);
+  sFrameBuffer->pushRectUniform(KDRect(x,y,width,height), *baz);
 }
 
-void ion_screen_pull_rect(KDRect rect, KDColor * pixels) {
-  KDFramePullRect(&sFrameBuffer, rect, pixels);
+void ion_screen_pull_rect(uint16_t x, uint16_t y,
+    uint16_t width, uint16_t height,
+    ion_color_t * pixels)
+{
+  void * foo = static_cast<void *>(pixels);
+  KDColor * pouet = static_cast<KDColor *>(foo);
+  sFrameBuffer->pullRect(KDRect(x,y,width,height), pouet);
 }
 
 bool ion_key_down(ion_key_t key) {

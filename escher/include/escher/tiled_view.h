@@ -6,8 +6,8 @@
 class TiledView : public View {
   using View::View;
 protected:
-  void drawRect(KDRect rect) const override;
-  virtual void drawTile(KDRect rect) const = 0;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  virtual void drawTile(KDContext * ctx, KDRect rect) const = 0;
 
   virtual KDColor * tile() const = 0;
   virtual KDSize tileSize() const = 0;

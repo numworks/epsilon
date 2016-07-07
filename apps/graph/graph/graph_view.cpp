@@ -1,9 +1,9 @@
 #include "graph_view.h"
 #include <assert.h>
 
-constexpr KDColor kAxisColor = KDColorGray(0x0);
-constexpr KDColor kMainGridColor = KDColorGray(0xCC);
-constexpr KDColor kSecondaryGridColor = KDColorGray(0xEE);
+constexpr KDColor kAxisColor = KDColor(0x000000);
+constexpr KDColor kMainGridColor = KDColor(0xCCCCCC);
+constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 
@@ -31,15 +31,13 @@ View * GraphView::subviewAtIndex(int index) {
 }
 
 void GraphView::moveCursorRight() {
-  m_cursorPosition.x = m_cursorPosition.x + 2;
+  KDPoint offset = KDPoint(2,0);
+  m_cursorPosition = m_cursorPosition.translatedBy(offset);
   layoutSubviews();
 }
 
 void GraphView::layoutSubviews() {
-  KDRect cursorFrame;
-  cursorFrame.origin = m_cursorPosition;
-  cursorFrame.width = 10;
-  cursorFrame.height = 10;
+  KDRect cursorFrame(m_cursorPosition, 10, 10);
   m_cursorView.setFrame(cursorFrame);
 }
 
@@ -52,14 +50,14 @@ KDSize GraphView::tileSize() const {
   return {kTileWidth, kTileHeight};
 }
 
-void GraphView::drawTile(KDRect rect) const {
+void GraphView::drawTile(KDContext * ctx, KDRect rect) const {
 #else
-void GraphView::drawRect(KDRect rect) const {
+void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 #endif
-  KDFillRect(rect, KDColorWhite);
-  drawGrid(rect);
-  drawAxes(rect);
-  drawFunction(rect);
+  ctx->fillRect(rect, KDColorWhite);
+  drawGrid(ctx, rect);
+  drawAxes(ctx, rect);
+  drawFunction(ctx, rect);
   /*
 
   constexpr int maskLength = 3;
@@ -80,46 +78,46 @@ void GraphView::drawRect(KDRect rect) const {
   */
 }
 
-void GraphView::drawLine(KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
-  KDRect lineRect;
+void GraphView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
+  KDRect lineRect = KDRectZero;
   switch(axis) {
     case Axis::Horizontal:
-      lineRect.x = rect.x;
-      lineRect.y = floatToPixel(Axis::Vertical, coordinate);
-      lineRect.width = rect.width;
-      lineRect.height = thickness;
+      lineRect = KDRect(
+          rect.x(), floatToPixel(Axis::Vertical, coordinate),
+          rect.width(), thickness
+          );
       break;
     case Axis::Vertical:
-      lineRect.x = floatToPixel(Axis::Horizontal, coordinate);
-      lineRect.y = rect.y;
-      lineRect.width = thickness;
-      lineRect.height = rect.height;
+      lineRect = KDRect(
+          floatToPixel(Axis::Horizontal, coordinate), rect.y(),
+          thickness, rect.height()
+      );
       break;
   }
-  KDFillRect(lineRect, color);
+  ctx->fillRect(lineRect, color);
 }
 
-void GraphView::drawAxes(KDRect rect) const {
-  drawLine(rect, Axis::Horizontal, 0.0f, kAxisColor, 2);
-  drawLine(rect, Axis::Vertical, 0.0f, kAxisColor, 2);
+void GraphView::drawAxes(KDContext * ctx, KDRect rect) const {
+  drawLine(ctx, rect, Axis::Horizontal, 0.0f, kAxisColor, 2);
+  drawLine(ctx, rect, Axis::Vertical, 0.0f, kAxisColor, 2);
 }
 
-void GraphView::drawGridLines(KDRect rect, Axis axis, int count, KDColor color) const {
+void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const {
   float range = max(axis)-min(axis);
   float step = range/count;
   float start = step*((int)(min(axis)/step));
   for (int i=0; i<count; i++) {
     Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-    drawLine(rect, otherAxis, start+i*step, color);
+    drawLine(ctx, rect, otherAxis, start+i*step, color);
   }
 }
 
-void GraphView::drawGrid(KDRect rect) const {
-  drawGridLines(rect, Axis::Horizontal, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
-  drawGridLines(rect, Axis::Vertical, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
+void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
+  drawGridLines(ctx, rect, Axis::Horizontal, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
 
-  drawGridLines(rect, Axis::Horizontal, kNumberOfMainGridLines, kMainGridColor);
-  drawGridLines(rect, Axis::Vertical, kNumberOfMainGridLines, kMainGridColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, kNumberOfMainGridLines, kMainGridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, kNumberOfMainGridLines, kMainGridColor);
 }
 
 float GraphView::min(Axis axis) const {
@@ -134,7 +132,7 @@ float GraphView::max(Axis axis) const {
 
 KDCoordinate GraphView::pixelLength(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_frame.width : m_frame.height);
+  return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
 }
 
 float GraphView::pixelToFloat(Axis axis, KDCoordinate p) const {
@@ -145,8 +143,7 @@ KDCoordinate GraphView::floatToPixel(Axis axis, float f) const {
   return pixelLength(axis)*(max(axis)-f)/(max(axis)-min(axis));
 }
 
-void GraphView::drawFunction(KDRect rect) const {
-  KDPoint p;
+void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
 
   constexpr KDCoordinate stampSize = 5;
 
@@ -160,16 +157,13 @@ void GraphView::drawFunction(KDRect rect) const {
 
   KDColor workingBuffer[stampSize*stampSize];
 
-  for (p.x=rect.x-stampSize; p.x<(rect.x+rect.width); p.x++) {
-    float x = pixelToFloat(Axis::Horizontal, p.x);
+  for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
+    float x = pixelToFloat(Axis::Horizontal, px);
     float y = (x-1)*(x+1)*x;
-    p.y = floatToPixel(Axis::Vertical, y);
-    KDRect stampRect;
-    stampRect.origin = p;
-    stampRect.width = stampSize;
-    stampRect.height = stampSize;
+    KDCoordinate py = floatToPixel(Axis::Vertical, y);
+    KDRect stampRect(px, py, stampSize, stampSize);
     //KDColor red = KDColorRed;
-    KDFillRectWithMask(stampRect, KDColorRed, mask, workingBuffer);
+    ctx->fillRectWithMask(stampRect, KDColorRed, mask, workingBuffer);
     //KDBlitRect(stampRect, &red, {1,1}, mask, {stampSize,stampSize});
   }
 }

@@ -40,19 +40,19 @@ void ion_display_off() {
   // Turn off panel
 }
 
-void ion_screen_push_rect(KDRect rect, const KDColor * pixels) {
-  st7789_set_drawing_area(&sDisplayController, rect);
-  st7789_push_pixels(&sDisplayController, pixels, rect.width*rect.height);
+void ion_screen_push_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ion_color_t * pixels) {
+  st7789_set_drawing_area(&sDisplayController, x, y, width, height);
+  st7789_push_pixels(&sDisplayController, pixels, width*height);
 }
 
-void ion_screen_push_rect_uniform(KDRect rect, KDColor color) {
-  st7789_set_drawing_area(&sDisplayController, rect);
-  for (size_t i=0; i<rect.width*rect.height; i++) {
+void ion_screen_push_rect_uniform(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t color) {
+  st7789_set_drawing_area(&sDisplayController, x, y, width, height);
+  for (size_t i=0; i<width*height; i++) {
     st7789_push_pixels(&sDisplayController, &color, 1);
   }
 }
 
-void ion_screen_pull_rect(KDRect rect, KDColor * pixels) {
+void ion_screen_pull_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t * pixels) {
   assert(0); // Unimplemented
 }
 

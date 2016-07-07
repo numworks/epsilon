@@ -3,32 +3,24 @@
 
 #include <stdint.h>
 
-// Kandinsky uses RGB565
+class KDColor {
+public:
+  constexpr KDColor() : m_value(0) {}
+  // FIXME: This should not be needed, and is probably wasting CPU cycles
 
-typedef uint16_t KDColor;
+  constexpr KDColor(uint32_t rgb)
+    : m_value(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3)) {}
+  uint8_t red();
+  uint8_t green();
+  uint8_t blue();
+  KDColor blend(KDColor other, uint8_t alpha);
+  operator uint16_t() { return m_value; }
+private:
+  uint16_t m_value;
+};
 
-/* KDColorRGB takes a 32-bits RGB color and builds a KDColor from it.
- * Given KDColor is RGB565 and that we take 8-bit values for R, G, and B,
- * some shifting has to happen. */
-
-// FIXME: KDColorRGB(rgb), as a single 32-bits value
-#define KDColorRGB(r,g,b) ((KDColor)((((((uint16_t)(r))>>3)&0x1F)<<11)|(((((uint16_t)(g))>>2)&0x3F)<<5)|((((uint16_t)(b))>>3)&0x1F)))
-
-#define KDColorRedComponent(color) ((uint8_t)(((color)>>11)<<3))
-#define KDColorGreenComponent(color) ((uint8_t)((((color)>>5)&0x3F)<<2))
-#define KDColorBlueComponent(color) ((uint8_t)(((color)&0x1F)<<3))
-
-#define KDColorGray(i) KDColorRGB(i,i,i)
-
-#define KDColorBlack KDColorRGB(0x00, 0x00, 0x00)
-#define KDColorWhite KDColorRGB(0xFF, 0xFF, 0xFF)
-
-#define KDColorRed KDColorRGB(0xFF, 0x00, 0x00)
-#define KDColorGreen KDColorRGB(0x00, 0xFF, 0x00)
-#define KDColorBlue KDColorRGB(0x00, 0x00, 0xFF)
-
-// alpha = 0 -> only a
-// alpha = 0xFF -> only b
-KDColor KDColorBlend(KDColor background, KDColor foreground, uint8_t alpha);
+constexpr KDColor KDColorBlack = KDColor(0x000000);
+constexpr KDColor KDColorWhite = KDColor(0xFFFFFF);
+constexpr KDColor KDColorRed = KDColor(0xFF0000);
 
 #endif

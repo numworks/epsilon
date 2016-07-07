@@ -10,7 +10,7 @@ class TabView : public View {
 public:
   TabView();
 
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void addTabNamed(const char * name);
   //TODO: void removeLastTab();

@@ -15,7 +15,7 @@ void App::run() {
   sRunningApp = this;
 
   Window window;
-  window.setFrame({{{0,0}}, {{ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT}}});
+  window.setFrame(KDRect(0, 0, ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT));
   View * rootView = rootViewController()->view();
 
   focus(rootViewController());

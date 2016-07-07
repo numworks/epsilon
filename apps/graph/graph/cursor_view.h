@@ -6,7 +6,7 @@
 class CursorView : public ChildlessView {
 public:
   using ChildlessView::ChildlessView;
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 
 #endif

@@ -11,11 +11,13 @@
  * pixel coordinates every time. We're therefore leveraging this capability
  * which results in a very consequent speedup (up to ~10x faster). */
 
-#include <kandinsky.h>
+#include <stdint.h>
 
-void ion_screen_push_rect(KDRect rect, const KDColor * pixels);
-void ion_screen_push_rect_uniform(KDRect rect, KDColor color);
-void ion_screen_pull_rect(KDRect rect, KDColor * pixels);
+typedef uint16_t ion_color_t;
+
+void ion_screen_push_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ion_color_t * pixels);
+void ion_screen_push_rect_uniform(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t color);
+void ion_screen_pull_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t * pixels);
 /*
 void ion_screen_set_working_area(KDRect area);
 void ion_screen_push_pixels(const KDColor * pixels, size_t count);

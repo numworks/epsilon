@@ -10,7 +10,7 @@ public:
     Vertical
   };
   ScrollViewIndicator(Direction direction);
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void setStart(float start);
   void setEnd(float end);

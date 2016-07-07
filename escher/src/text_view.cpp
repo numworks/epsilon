@@ -16,13 +16,13 @@ void TextView::setText(const char * text) {
   m_text = text;
 }
 
-void TextView::drawRect(KDRect rect) const {
-  KDSize textSize = KDStringSize(m_text);
+void TextView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDSize textSize = ctx->stringSize(m_text);
   KDPoint origin = {
-    (KDCoordinate)(m_horizontalAlignment*(m_frame.width - textSize.width)),
-    (KDCoordinate)(m_verticalAlignment*(m_frame.height - textSize.height))
+    (KDCoordinate)(m_horizontalAlignment*(m_frame.width() - textSize.width())),
+    (KDCoordinate)(m_verticalAlignment*(m_frame.height() - textSize.height()))
   };
-  KDDrawString(m_text, origin, 0);
+  ctx->drawString(m_text, origin, 0);
 }
 
 #if ESCHER_VIEW_LOGGING

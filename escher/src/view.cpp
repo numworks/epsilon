@@ -10,7 +10,7 @@ View::View() :
 {
 }
 
-void View::drawRect(KDRect rect) const {
+void View::drawRect(KDContext * ctx, KDRect rect) const {
   // By default, a view doesn't do anything
   // It's transparent!
 }
@@ -24,7 +24,7 @@ const Window * View::window() const {
 }
 
 void View::markRectAsDirty(KDRect rect) {
-  m_dirtyRect = KDRectUnion(m_dirtyRect, rect);
+  m_dirtyRect = m_dirtyRect.unionedWith(rect);
 }
 
 void View::redraw(KDRect rect) {
@@ -35,14 +35,15 @@ void View::redraw(KDRect rect) {
   }
 
   // First, let's draw our own content by calling drawRect
-  KDRect rectNeedingRedraw = KDRectIntersection(rect, m_dirtyRect);
-  if (rectNeedingRedraw.width > 0 && rectNeedingRedraw.height > 0) {
+  KDRect rectNeedingRedraw = rect.intersectedWith(m_dirtyRect);
+  if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
-    KDRect absRect = KDRectTranslate(rectNeedingRedraw, absOrigin);
-    KDRect absClippingRect = KDRectIntersection(absoluteVisibleFrame(), absRect);
-    KDCurrentContext->origin = absOrigin;
-    KDCurrentContext->clippingRect = absClippingRect;
-    this->drawRect(rectNeedingRedraw);
+    KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
+    KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
+    KDContext * ctx = KDIonContext::sharedContext();
+    ctx->setOrigin(absOrigin);
+    ctx->setClippingRect(absClippingRect);
+    this->drawRect(ctx, rectNeedingRedraw);
   }
 
   // Then, let's recursively draw our children over ourself
@@ -53,11 +54,10 @@ void View::redraw(KDRect rect) {
     }
     assert(subview->m_superview == this);
 
-    if (KDRectIntersect(rect, subview->m_frame)) {
-      KDRect intersection = KDRectIntersection(rect, subview->m_frame);
+    if (rect.intersects(subview->m_frame)) {
+      KDRect intersection = rect.intersectedWith(subview->m_frame);
       // Let's express intersection in subview's coordinates
-      intersection.x -= subview->m_frame.x;
-      intersection.y -= subview->m_frame.y;
+      intersection = intersection.translatedBy(subview->m_frame.origin().opposite());
       subview->redraw(intersection);
     }
   }
@@ -100,18 +100,15 @@ void View::setFrame(KDRect frame) {
 }
 
 KDRect View::bounds() const {
-  KDRect bounds = m_frame;
-  bounds.x = 0;
-  bounds.y = 0;
-  return bounds;
+  return m_frame.movedTo(KDPointZero);
 }
 
 KDPoint View::absoluteOrigin() const {
   if (m_superview == nullptr) {
     assert(this == (View *)window());
-    return m_frame.origin;
+    return m_frame.origin();
   } else {
-    return KDPointTranslate(m_frame.origin, m_superview->absoluteOrigin());
+    return m_frame.origin().translatedBy(m_superview->absoluteOrigin());
   }
 }
 
@@ -122,10 +119,9 @@ KDRect View::absoluteVisibleFrame() const {
   } else {
     KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
 
-    KDRect absoluteFrame = m_frame;
-    absoluteFrame.origin = absoluteOrigin();
+    KDRect absoluteFrame = m_frame.movedTo(absoluteOrigin());
 
-    return KDRectIntersection(absoluteFrame, parentDrawingArea);
+    return absoluteFrame.intersectedWith(parentDrawingArea);
   }
 }
 

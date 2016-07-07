@@ -19,9 +19,9 @@ public:
 #if GRAPH_VIEW_IS_TILED
   KDColor * tile() const override;
   KDSize tileSize() const override;
-  void drawTile(KDRect rect) const override;
+  void drawTile(KDContext * ctx, KDRect rect) const override;
 #else
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 #endif
 
 //  void drawRect(KDRect rect) const override;
@@ -43,13 +43,13 @@ private:
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   KDCoordinate floatToPixel(Axis axis, float f) const;
 
-  void drawLine(KDRect rect, Axis axis,
+  void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
 
-  void drawAxes(KDRect rect) const;
-  void drawGrid(KDRect rect) const;
-  void drawGridLines(KDRect rect, Axis axis, int count, KDColor color) const;
-  void drawFunction(KDRect rect) const;
+  void drawAxes(KDContext * ctx, KDRect rect) const;
+  void drawGrid(KDContext * ctx, KDRect rect) const;
+  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const;
+  void drawFunction(KDContext * ctx, KDRect rect) const;
 
   static constexpr KDCoordinate kTileWidth = 32;
   static constexpr KDCoordinate kTileHeight = 32;

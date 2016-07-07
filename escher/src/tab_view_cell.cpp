@@ -20,8 +20,8 @@ void TabViewCell::setActive(bool active) {
   markRectAsDirty(bounds());
 }
 
-void TabViewCell::drawRect(KDRect rect) const {
-  KDDrawString(m_name, {0,0}, m_active);
+void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->drawString(m_name, {0,0}, m_active);
 }
 
 #if ESCHER_VIEW_LOGGING

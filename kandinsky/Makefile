@@ -2,18 +2,21 @@ SFLAGS += -Ikandinsky/include
 objs += $(addprefix kandinsky/src/,\
   color.o\
   context.o\
+  context_line.o\
+  context_pixel.o\
+  context_rect.o\
+  context_text.o\
   font.o\
   framebuffer.o\
-  line.o\
-  pixel.o\
+  framebuffer_context.o\
+  ion_context.o\
+  point.o\
   rect.o\
-  text.o\
-  types.o\
+  size.o\
 )
 tests += $(addprefix kandinsky/test/,\
-  color.c\
-  rect.c\
-  set_pixel.c\
+  color.cpp\
+  rect.cpp\
 )
 
 FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
@@ -21,7 +24,7 @@ FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
 # built w/o PNG support and simply won't output an image of the rasterization
 #LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.21
 
-kandinsky/src/text.c: kandinsky/src/font.h
+kandinsky/src/context_text.cpp: kandinsky/src/font.h
 
 font_files = $(addprefix kandinsky/src/, font.h font.c)
 

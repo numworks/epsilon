@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <ion/screen.h>
-#include <kandinsky.h>
 
 #define ST7789_USE_9BIT_SPI 1
 
@@ -23,8 +22,8 @@ typedef struct {
 
 void st7789_initialize(st7789_t * controller);
 
-void st7789_set_drawing_area(st7789_t * controller, KDRect area);
+void st7789_set_drawing_area(st7789_t * controller, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
 void st7789_push_pixels(st7789_t * controller,
-    const KDColor * pixels, size_t numberOfPixels);
+    const ion_color_t * pixels, size_t numberOfPixels);
 #endif

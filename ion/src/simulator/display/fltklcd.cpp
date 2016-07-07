@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <FL/fl_draw.H>
 
-FltkLCD::FltkLCD(int x, int y, int w, int h, uint16_t * rgb565FrameBuffer) :
+FltkLCD::FltkLCD(int x, int y, int w, int h, KDColor * rgb565FrameBuffer) :
   Fl_Widget(x, y, w, h, nullptr),
   m_rgb565frameBufferStart(rgb565FrameBuffer),
   m_rgb565frameBufferEnd(rgb565FrameBuffer+w*h)
@@ -21,9 +21,9 @@ void FltkLCD::draw() {
 
   while(rgb565Pixel < m_rgb565frameBufferEnd) {
     KDColor color = *rgb565Pixel++;
-    *rgb888Component++ = KDColorRedComponent(color);
-    *rgb888Component++ = KDColorGreenComponent(color);
-    *rgb888Component++ = KDColorBlueComponent(color);
+    *rgb888Component++ = color.red();
+    *rgb888Component++ = color.green();
+    *rgb888Component++ = color.blue();
   }
 
   // 2/ Draw the 888 framebuffer

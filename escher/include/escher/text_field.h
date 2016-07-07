@@ -9,7 +9,7 @@ class TextField : public ChildlessView, public Responder {
 public:
   TextField(char * textBuffer, size_t textBufferSize);
   // View
-  void drawRect(KDRect rect) const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder
   bool handleEvent(ion_event_t event) override;
 protected:

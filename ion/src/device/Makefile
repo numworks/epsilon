@@ -1,5 +1,5 @@
 include ion/src/device/boot/Makefile
-objs += $(addprefix ion/src/device/, init.o heap.o)
+objs += $(addprefix ion/src/device/, init.o heap.o led.o)
 objs += $(addprefix ion/src/device/display/,\
   display.o\
   gpio.o\

@@ -19,6 +19,7 @@ void enable_fpu() {
 void init_platform() {
   enable_fpu();
   init_keyboard();
+  ion_led_init();
   init_display();
 }
 

@@ -25,4 +25,5 @@
 #include "spi.h"
 #include "dma.h"
 #include "cm4.h"
+#include "tim.h"
 //#include "ltdc.h"

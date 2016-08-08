@@ -1,4 +1,5 @@
 include apps/graph/Makefile
+#include apps/picview/Makefile
 
 app_objs += $(addprefix apps/,\
   main.o\

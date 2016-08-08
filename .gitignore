@@ -20,5 +20,9 @@ kandinsky/fonts/rasterizer
 kandinsky/src/font.c
 kandinsky/src/font.h
 
+# No PicView generated files
+apps/picview/image.raw
+apps/picview/image.c
+
 # Quiz output
 quiz/src/symbols.c

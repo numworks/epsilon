@@ -33,7 +33,7 @@ RASTERIZER_LDFLAGS := `freetype-config --libs`
 
 ifdef LIBPNG_PATH
   font_files += kandinsky/src/font.png
-  RASTERIZER_FLAGS += -I$(LIBPNG_PATH)/include -DGENERATE_PNG=1 -L$(LIBPNG_PATH)/lib -lpng
+  RASTERIZER_CFLAGS += -I$(LIBPNG_PATH)/include -DGENERATE_PNG=1 -L$(LIBPNG_PATH)/lib -lpng
 endif
 
 # Even though raster will generate both .c and .h files, we don't declare it as

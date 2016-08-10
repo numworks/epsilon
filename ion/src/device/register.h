@@ -6,23 +6,23 @@ public:
   Register() = delete;
   void set(T value) volatile {
     m_value = value;
-  };
+  }
   T get() volatile {
     return m_value;
-  };
+  }
 protected:
   static constexpr T bit_range_mask(uint8_t high, uint8_t low) {
     return ((((T)1)<<(high-low+1))-1)<<low;
-  };
+  }
   static constexpr T bit_range_value(T value, uint8_t high, uint8_t low) {
     return (value<<low) & bit_range_mask(high,low);
   }
   static constexpr T bit_range_set_value(uint8_t high, uint8_t low, T originalValue, T targetValue) {
     return (originalValue & ~bit_range_mask(high,low))|bit_range_value(targetValue, high, low);
-  };
+  }
   void set(uint8_t high, uint8_t low, T value) volatile {
     m_value = bit_range_set_value(high, low, m_value, value);
-  };
+  }
   T get(uint8_t high, uint8_t low) volatile {
     return (m_value & bit_range_mask(high,low)) >> low;
   }
@@ -32,6 +32,7 @@ private:
 
 typedef Register<uint16_t> Register16;
 typedef Register<uint32_t> Register32;
+typedef Register<uint64_t> Register64;
 
 // RCC
 
@@ -84,7 +85,9 @@ public:
     void setMODER(int index, MODE mode) volatile { set(2*index+1, 2*index, (uint32_t)mode); };
   };
 
-  class AFR : Register<uint64_t> {
+  class AFR : Register64 {
+    /* The AFR register doesn't exist per-se in the documentation. It is the
+     * consolidation of AFRL and AFRH which are two 32 bits registers. */
   public:
     enum class AlternateFunction {
       AF0 = 0,   AF1 = 1,   AF2 = 2,   AF3 = 3,
@@ -100,7 +103,7 @@ public:
     };
   };
 
-  constexpr GPIO(int i) : m_index(i) {};
+  constexpr GPIO(int i) : m_index(i) {}
   registerAt(MODER, 0x00);
   registerAt(AFR, 0x20);
 private:
@@ -129,7 +132,12 @@ public:
     boolField(ARPE, 7);
   };
 
-  class CCMR1 : Register16 {
+  class CCMR : Register64 {
+    /* We're declaring CCMR as a 64 bits register. CCMR doesn't exsist per se,
+     * it is in fact the consolidation of CCMR1 and CCMR2. Both are 16 bits
+     * registers, so one could expect the consolidation to be 32 bits. However,
+     * both CCMR1 and CCMR2 live on 32-bits boundaries, so the consolidation has
+     * to be 64 bits wide, even though we'll only use 32 bits out of 64. */
   public:
     enum class CC1S : uint8_t {
       OUTPUT = 0,
@@ -137,7 +145,7 @@ public:
       INPUT_TI1 = 2,
       INPUT_TRC = 3
     };
-    enum class OC1M : uint8_t {
+    enum class OCM : uint8_t {
       Frozen = 0,
       ActiveOnMatch = 1,
       InactiveOnMatch = 2,
@@ -147,18 +155,26 @@ public:
       PWM1 = 6,
       PWM2 = 7
     };
-    typedef OC1M OC2M;
-    typeField(CC1S, 1, 0);
+    typedef OCM OC1M;
+    typedef OCM OC2M;
+    typedef OCM OC3M;
+    typedef OCM OC4M;
     boolField(OC1PE, 3);
     typeField(OC1M, 6, 4);
     boolField(OC2PE, 11);
     typeField(OC2M, 14, 12);
+    boolField(OC3PE, 35);
+    typeField(OC3M, 38, 36);
+    boolField(OC4PE, 43);
+    typeField(OC4M, 46, 44);
   };
 
   class CCER : Register16 {
   public:
     boolField(CC1E, 0);
     boolField(CC2E, 4);
+    boolField(CC3E, 8);
+    boolField(CC4E, 12);
   };
 
   class BDTR : Register16 {
@@ -170,15 +186,17 @@ public:
   class ARR : public Register16 {};
   class CCR1 : public Register16 {};
   class CCR2 : public Register16 {};
+  class CCR3 : public Register16 {};
 
-  constexpr TIM(int i) : m_index(i) {};
+  constexpr TIM(int i) : m_index(i) {}
   registerAt(CR1, 0x0);
-  registerAt(CCMR1, 0x18);
+  registerAt(CCMR, 0x18);
   registerAt(CCER, 0x20);
   registerAt(PSC, 0x28);
   registerAt(ARR, 0x2C);
   registerAt(CCR1, 0x34);
   registerAt(CCR2, 0x38);
+  registerAt(CCR3, 0x3C);
   registerAt(BDTR, 0x44);
 private:
   constexpr uint32_t Base() const {

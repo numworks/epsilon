@@ -1,7 +1,7 @@
 extern "C" {
 #include <ion/led.h>
 }
-#include "register.h"
+#include "regs/regs.h"
 
 extern "C" {
   void ion_led_init();

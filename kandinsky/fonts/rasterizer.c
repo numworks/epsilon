@@ -1,13 +1,11 @@
-/* example1.c                                                      */
-/*                                                                 */
-/* This small program shows how to print a rotated string with the */
-/* FreeType 2 library.                                             */
-
-/*
+/* The font rasterizer takes a standard font and converts it into a bitmap
+ * embeddable font. In other words, it takes a .ttf in and outputs a .c/.h pair.
+ *
+ * It can also print a PNG file showing how each glyph has been rendered.
+*
  * Usage: rasterizer font_name glyph_width glyph_height
  * -> Generates a .png image with the font rasterized
- * -> Generates a .c file with the content of the font
- */
+ * -> Generates a .c file with the content of the font */
 
 #include <stdio.h>
 #include <string.h>
@@ -93,27 +91,32 @@ int main(int argc, char * argv[]) {
 
   ENSURE(!FT_Set_Pixel_Sizes(face, requested_glyph_width, requested_glyph_height), "Setting face pixel size to %dx%d", requested_glyph_width, requested_glyph_height);
 
-  int maxHeight = 0;
+  /* Glyph metrics are complicated. Here are some useful links:
+   * https://www.freetype.org/freetype2/docs/glyphs/metrics.png
+   * https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
+   * https://www.freetype.org/freetype2/docs/reference/ft2-basic_types.html#FT_Bitmap
+   */
   int maxWidth = 0;
-  int minTop = requested_glyph_height;
+  int maxAboveBaseline = 0;
+  int maxBelowBaseline = 0;
   for (unsigned char character = CHARACTER_RANGE_START; character <= CHARACTER_RANGE_END; character++) {
     ENSURE(!FT_Load_Char(face, character, FT_LOAD_RENDER), "Loading character 0x%02x", character);
-    int top = requested_glyph_height - face->glyph->bitmap_top;
-    int height = top + face->glyph->bitmap.rows;
-    int width = face->glyph->bitmap.width;
-    if (top < minTop) {
-      minTop = top;
-    }
-    if (height > maxHeight) {
-      maxHeight = height;
-    }
+    int aboveBaseline = face->glyph->bitmap_top;
+    int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
+    int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
     if (width > maxWidth) {
       maxWidth = width;
+    }
+    if (aboveBaseline > maxAboveBaseline) {
+      maxAboveBaseline = aboveBaseline;
+    }
+    if (belowBaseline > maxBelowBaseline) {
+      maxBelowBaseline = belowBaseline;
     }
   }
 
   int glyph_width = maxWidth;
-  int glyph_height = maxHeight-minTop;
+  int glyph_height = maxAboveBaseline+maxBelowBaseline;
   //printf("Actual glyph size = %dx%d\n", glyph_width, glyph_height);
 
   int grid_size = 1;
@@ -134,8 +137,6 @@ int main(int argc, char * argv[]) {
     }
   }
 
-
-
   // We're doing the ASCII table, so characters from 0 to 255 inclusive
   for (unsigned char character = CHARACTER_RANGE_START; character <= CHARACTER_RANGE_END; character++) {
     int x = (character-CHARACTER_RANGE_START)%(GRID_WIDTH);
@@ -145,8 +146,9 @@ int main(int argc, char * argv[]) {
     //printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
     drawGlyphInImage(&face->glyph->bitmap,
         &bitmap_image,
-        x*(glyph_width+grid_size) /* + face->glyph->bitmap_left*/,
-        y*(glyph_height+grid_size) + requested_glyph_height - face->glyph->bitmap_top - minTop);// + glyph_height - face->glyph->bitmap_top - maxHeight);
+        x*(glyph_width+grid_size) + face->glyph->bitmap_left,
+        y*(glyph_height+grid_size) + maxAboveBaseline - face->glyph->bitmap_top
+    );
   }
 
 #if GENERATE_PNG

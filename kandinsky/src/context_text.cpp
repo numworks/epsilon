@@ -8,8 +8,9 @@ void KDContext::drawChar(char character, KDPoint p, uint8_t inverse) {
       uint8_t intensity = inverse ?
         bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i] :
         (0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
+      KDColor color(intensity * 0x010101);
       KDPoint offset = KDPoint(i,j);
-      setPixel(p.translatedBy(offset), intensity);
+      setPixel(p.translatedBy(offset), color);
     }
   }
 }

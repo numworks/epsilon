@@ -2,9 +2,9 @@
 
 GraphApp::GraphApp() :
   App(),
-  m_listController(ListController()),
-  m_graphController(GraphController()),
-  m_tabViewController(&m_listController, &m_graphController)
+  m_listController(ListController(nullptr)),
+  m_graphController(GraphController(nullptr)),
+  m_tabViewController(this, &m_listController, &m_graphController)
 {
 }
 

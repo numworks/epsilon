@@ -7,6 +7,7 @@ extern "C" {
 static App * sRunningApp = nullptr;
 
 App::App() :
+  Responder(nullptr),
   m_focusedResponder(nullptr)
 {
 }

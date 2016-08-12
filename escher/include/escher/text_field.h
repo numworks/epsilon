@@ -7,7 +7,7 @@
 
 class TextField : public ChildlessView, public Responder {
 public:
-  TextField(char * textBuffer, size_t textBufferSize);
+  TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize);
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder

@@ -6,7 +6,7 @@
 
 class ListController : public ViewController, public TableViewDataSource {
 public:
-  ListController();
+  ListController(Responder * parentResponder);
 
   void setActiveCell(int index);
 

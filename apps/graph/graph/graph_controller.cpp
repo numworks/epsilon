@@ -1,7 +1,7 @@
 #include "graph_controller.h"
 
-GraphController::GraphController() :
-  ViewController(),
+GraphController::GraphController(Responder * parentResponder) :
+  ViewController(parentResponder),
   m_view(GraphView())
 {
 }

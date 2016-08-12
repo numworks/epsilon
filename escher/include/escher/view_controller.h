@@ -16,7 +16,7 @@ extern "C" {
 
 class ViewController : public Responder {
 public:
-  ViewController();
+  ViewController(Responder * parentResponder);
   virtual const char * title() const;
   virtual void handleKeyEvent(int key);
   virtual View * view() = 0;

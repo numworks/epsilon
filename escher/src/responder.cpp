@@ -1,11 +1,11 @@
 #include <escher/responder.h>
 
-Responder::Responder() :
-  m_parentResponder(nullptr)
+Responder::Responder(Responder * parentResponder) :
+  m_parentResponder(parentResponder)
 {
 }
 
-Responder * Responder::parentResponder() {
+Responder * Responder::parentResponder() const {
   return m_parentResponder;
 }
 
@@ -18,4 +18,16 @@ bool Responder::handleEvent(ion_event_t event) {
 }
 
 void Responder::setFocused(bool focused) {
+}
+
+/* We assume the app is the root parent. */
+App * Responder::app() {
+  Responder * rootResponder = this;
+  while (rootResponder->parentResponder() != nullptr) {
+    rootResponder = rootResponder->parentResponder();
+  }
+  /* If we used RTTI we could use a dynamic_cast, which would be a lot more
+   * safe, as such:
+   * return dynamic_cast<App *>(rootResponder); */
+  return (App *)rootResponder;
 }

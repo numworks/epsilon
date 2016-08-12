@@ -4,7 +4,7 @@
 #include <escher/responder.h>
 #include <escher/view_controller.h>
 
-class App {
+class App : public Responder {
 public:
   App();
   static App * runningApp();

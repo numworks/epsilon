@@ -8,8 +8,8 @@ static const char * sMessages[] = {
   "PPP15", "QQQ16", "RRR17", "SSS18", "TTT19"
 };
 
-ListController::ListController() :
-  ViewController(),
+ListController::ListController(Responder * parentResponder) :
+  ViewController(parentResponder),
   m_tableView(TableView(this)),
   m_activeCell(0),
   m_manualScrolling(0)

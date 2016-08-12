@@ -53,8 +53,8 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(ViewController * one, ViewController * two) :
-  ViewController(),
+TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two) :
+  ViewController(parentResponder),
   m_numberOfChildren(2),
   m_activeChildIndex(-1)
 {

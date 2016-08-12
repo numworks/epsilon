@@ -2,6 +2,7 @@
 
 FunctionCell::FunctionCell() :
   ChildlessView(),
+  Responder(nullptr),
   m_focused(false),
   m_even(false)
 {

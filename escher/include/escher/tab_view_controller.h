@@ -6,7 +6,7 @@
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(ViewController * one, ViewController * two);
+  TabViewController(Responder * parentResponder, ViewController * one, ViewController * two);
   //TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
   void handleKeyEvent(int key) override;

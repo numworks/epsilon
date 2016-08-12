@@ -1,6 +1,7 @@
 #include <escher/text_field.h>
 
-TextField::TextField(char * textBuffer, size_t textBufferSize) :
+TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize) :
+  Responder(parentResponder),
   ChildlessView(),
   m_textBuffer(textBuffer),
   m_textBufferSize(textBufferSize),

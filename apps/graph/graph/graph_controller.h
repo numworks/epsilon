@@ -6,7 +6,7 @@
 
 class GraphController : public ViewController {
 public:
-  GraphController();
+  GraphController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
   void setFocused(bool focused) override;

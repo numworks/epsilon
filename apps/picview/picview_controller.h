@@ -6,7 +6,7 @@
 
 class PicViewController : public ViewController {
 public:
-  PicViewController();
+  PicViewController(Responder * parentResponder);
   View * view() override;
 private:
   PicView m_view;

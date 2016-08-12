@@ -2,7 +2,7 @@
 
 PicViewApp::PicViewApp() :
   App(),
-  m_picViewController(PicViewController())
+  m_picViewController(PicViewController(this))
 {
 }
 

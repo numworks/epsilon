@@ -1,7 +1,7 @@
 #include "picview_controller.h"
 
-PicViewController::PicViewController() :
-  ViewController(),
+PicViewController::PicViewController(Responder * parentResponder) :
+  ViewController(parentResponder),
   m_view(PicView())
 {
 }

@@ -4,26 +4,25 @@
 #include <escher/responder.h>
 #include <escher/view_controller.h>
 
+/* An app is fed events and outputs drawing calls.
+ *
+ * To achieve this, it uses a View hierarchy, and modifies it according to the
+ * events received. The View hierarchy keeps a memory of the area that needs to
+ * be redrawn depending on how it's been modified.
+ *
+ * Multiple App can exist at once.
+ * */
+
 class App : public Responder {
 public:
   App();
-  void run();
+  void setWindow(Window * window);
   void focus(Responder * responder);
+  void processEvent(ion_event_t event);
 protected:
   virtual ViewController * rootViewController() = 0;
 private:
-  void dispatchEvent(ion_event_t event);
   Responder * m_focusedResponder;
 };
-
-/*
-
-void handleEvent(event) {
-  // BACK: I want to do stuff!
-   1/ Reset my text to what it was "before"
-   2/ dismiss
-   dismiss = app->focus(parentResponder());
-}
-*/
 
 #endif

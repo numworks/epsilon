@@ -2,6 +2,7 @@
 #define ESCHER_H
 
 #include <escher/app.h>
+#include <escher/container.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_indicator.h>

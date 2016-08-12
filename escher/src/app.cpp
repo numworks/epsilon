@@ -2,6 +2,7 @@
 #include <escher/window.h>
 extern "C" {
 #include <ion.h>
+#include <assert.h>
 }
 
 App::App() :
@@ -10,26 +11,21 @@ App::App() :
 {
 }
 
-void App::run() {
-  Window window;
-  window.setFrame(KDRect(0, 0, ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT));
-  View * rootView = rootViewController()->view();
-
-  focus(rootViewController());
-
-  window.setContentView(rootView);
-  rootView->setFrame(window.bounds());
-
-  window.redraw();
-
-  while (true) {
-    ion_event_t event = ion_get_event(); // This is a blocking call
-    dispatchEvent(event);
-    window.redraw();
+void App::setWindow(Window * window) {
+  ViewController * controller = rootViewController();
+  View * view = controller->view();
+  if (m_focusedResponder == nullptr) {
+    focus(controller);
   }
+  assert(controller->app() == this);
+
+  window->setContentView(view);
+  view->setFrame(window->bounds());
+
+  window->redraw();
 }
 
-void App::dispatchEvent(ion_event_t event) {
+void App::processEvent(ion_event_t event) {
   Responder * responder = m_focusedResponder;
   bool didHandleEvent = false;
   while (responder) {

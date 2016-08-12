@@ -40,7 +40,7 @@ private:
   static constexpr uint8_t k_maxNumberOfChildren = 4;
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
-  uint8_t m_activeChildIndex;
+  int8_t m_activeChildIndex;
 };
 
 #endif

@@ -116,7 +116,9 @@ void TabViewController::setActiveTab(uint8_t i) {
 View * TabViewController::view() {
   // We're asked for a view!
   // Let's populate our tabview
-  setActiveTab(0);
+  if (m_activeChildIndex < 0) {
+    setActiveTab(0);
+  }
 
   return &m_view;
 }

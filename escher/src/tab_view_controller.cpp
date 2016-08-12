@@ -110,7 +110,7 @@ void TabViewController::setActiveTab(uint8_t i) {
   m_view.m_tabView.setActiveIndex(i);
   m_activeChildIndex = i;
 
-  App::runningApp()->focus(activeVC);
+  app()->focus(activeVC);
 }
 
 View * TabViewController::view() {

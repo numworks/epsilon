@@ -34,7 +34,7 @@ void ListController::setActiveCell(int index) {
   m_tableView.scrollToRow(index);
   FunctionCell * cell = (FunctionCell *)(m_tableView.cellAtIndex(index));
   cell->setParentResponder(this);
-  App::runningApp()->focus(cell);
+  app()->focus(cell);
 }
 
 bool ListController::handleEvent(ion_event_t event) {

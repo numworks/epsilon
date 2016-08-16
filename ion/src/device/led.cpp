@@ -19,7 +19,7 @@ void sleep() {
 }
 
 void ion_led_gpio_init() {
-  RCC_AHB1ENR()->setGPIOAEN(true);
+  RCC.AHB1ENR()->setGPIOAEN(true);
 
   /* RED_LED(PA8), GREEN_LED(PA9), BLUE_LED(PA10) are driven using a timer,
    * which is an alternate function. */
@@ -36,7 +36,7 @@ void ion_led_gpio_init() {
 
 void ion_led_timer_init() {
   /* TIM1 lives on the APB2 bus. Let's enable its clock. */
-  RCC_APB2ENR()->setTIM1EN(true);
+  RCC.APB2ENR()->setTIM1EN(true);
   TIM1.PSC()->set(1000);
 
   /* Pulse width modulation mode allows you to generate a signal with a

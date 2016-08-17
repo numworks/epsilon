@@ -7,28 +7,32 @@ class FSMC {
 public:
   class BCR : Register32 {
   public:
+    enum class MWID : uint8_t {
+      EIGHT_BITS = 0,
+      SIXTEEN_BITS = 1
+    };
     REGS_BOOL_FIELD(MBKEN, 0);
     REGS_BOOL_FIELD(MUXEN, 1);
+    REGS_TYPE_FIELD(MWID, 5, 4);
+    REGS_BOOL_FIELD(WREN, 12);
   };
+
   class BTR : Register32 {
   public:
-    typedef uint8_t ADDSET;
-    REGS_TYPE_FIELD(ADDSET, 3, 0);
-    /*
-    REGS_TYPE_FIELD(ADDHLD, 7, 4);
-    REGS_TYPE_FIELD(DATAST, 15, 8);
-    REGS_TYPE_FIELD(BUSTURN, 19, 16);
-    REGS_TYPE_FIELD(CLKDIV, 23, 20);
-    REGS_TYPE_FIELD(DATLAT, 27, 24);
-    REGS_TYPE_FIELD(ACCMOD, 29, 28);
-    */
+    REGS_FIELD(ADDSET, uint8_t, 3, 0);
+    REGS_FIELD(ADDHLD, uint8_t, 7, 4);
+    REGS_FIELD(DATAST, uint8_t, 15, 8);
+    REGS_FIELD(BUSTURN, uint8_t, 19, 16);
+    REGS_FIELD(CLKDIV, uint8_t, 23, 20);
+    REGS_FIELD(DATLAT, uint8_t, 27, 24);
+    REGS_FIELD(ACCMOD, uint8_t, 29, 28);
   };
 
   constexpr FSMC() {}
-  constexpr volatile BCR * BCR(int index) {
+  volatile BCR * BCR(int index) const {
     return (class BCR *)(Base() + 8*(index-1));
   }
-  constexpr volatile BTR * BTR(int index) {
+  volatile BTR * BTR(int index) const {
     return (class BTR *)(Base() + 4 + 8*(index-1));
   }
 private:

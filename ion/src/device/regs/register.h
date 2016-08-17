@@ -37,8 +37,9 @@ typedef Register<uint16_t> Register16;
 typedef Register<uint32_t> Register32;
 typedef Register<uint64_t> Register64;
 
-#define REGS_BOOL_FIELD(name,bit) bool get##name() volatile { return get(bit,bit); }; void set##name(bool enable) volatile { set(bit,bit,enable); };
-#define REGS_TYPE_FIELD(name,high,low) name get##name() volatile { return (name)get(high,low); }; void set##name(name v) volatile { set(high, low, (uint8_t)v); };
+#define REGS_FIELD(name,type,high,low) type get##name() volatile { return (type)get(high,low); }; void set##name(type v) volatile { set(high, low, (uint8_t)v); };
+#define REGS_TYPE_FIELD(name,high,low) REGS_FIELD(name,name,high,low)
+#define REGS_BOOL_FIELD(name,bit) REGS_FIELD(name,bool,bit,bit)
 #define REGS_REGISTER_AT(name, offset) volatile name * name() const { return (class name *)(Base() + offset); };
 
 #endif

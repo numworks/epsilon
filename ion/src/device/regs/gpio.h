@@ -17,6 +17,12 @@ public:
     void setMODER(int index, MODE mode) volatile { set(2*index+1, 2*index, (uint32_t)mode); };
   };
 
+  class ODR : Register32 {
+  public:
+    bool getODR(int index) { return (bool)get(index, index); }
+    void setODR(int index, bool state) volatile { set(index, index, state); }
+  };
+
   class AFR : Register64 {
     /* The AFR register doesn't exist per-se in the documentation. It is the
      * consolidation of AFRL and AFRH which are two 32 bits registers. */
@@ -37,6 +43,7 @@ public:
 
   constexpr GPIO(int i) : m_index(i) {}
   REGS_REGISTER_AT(MODER, 0x00);
+  REGS_REGISTER_AT(ODR, 0x14);
   REGS_REGISTER_AT(AFR, 0x20);
 private:
   constexpr uint32_t Base() const {

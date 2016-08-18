@@ -115,7 +115,7 @@ void Ion::Screen::initPanel() {
   SEND_COMMAND(PowerControl2, 0x11);
   SEND_COMMAND(VCOMControl1, 0x34, 0x3D);
   SEND_COMMAND(VCOMControl2, 0xC0);
-  SEND_COMMAND(MemoryAccessControl, 0xA0);
+  SEND_COMMAND(MemoryAccessControl, 0xA8);
   SEND_COMMAND(PixelFormatSet, 0x55);
   SEND_COMMAND(FrameRateControl, 0x00, 0x1D);
   SEND_COMMAND(DisplayFunctionControl, 0x0A, 0xA2, 0x27, 0x00);

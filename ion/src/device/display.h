@@ -30,7 +30,7 @@ namespace Screen {
   void setDrawingArea(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
   void pushPixels(const ion_color_t * pixels, size_t numberOfPixels);
 
-  enum class LCDCommand : uint8_t {
+  enum class Command : uint8_t {
     SleepOut = 0x11,
     DisplayOn = 0x29,
     ColumnAddressSet = 0x2A,
@@ -56,7 +56,7 @@ namespace Screen {
     PumpRatioControl = 0xF7,
   };
 
-  static volatile LCDCommand * const CommandAddress = (LCDCommand *)0x6C000000;
+  static volatile Command * const CommandAddress = (Command *)0x6C000000;
   static volatile uint8_t * const DataAddress = (uint8_t *)0x6C000001;
 }
 }

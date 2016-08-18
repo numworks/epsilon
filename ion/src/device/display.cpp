@@ -4,8 +4,7 @@ extern "C" {
 #include <assert.h>
 }
 
-#define SEND_COMMAND(c) {*CommandAddress = LCDCommand::c;}
-#define SEND_DATA(...) { uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
+#define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
 void Ion::Screen::initGPIO() {
   // We use GPIOA to GPIOD
@@ -92,81 +91,31 @@ void Ion::Screen::initPanel() {
   //*CommandAddress = 0x01; //software reset
   //delayms(5);
 
-  *CommandAddress = LCDCommand::SleepOut;
+  *CommandAddress = Command::SleepOut;
   delayms(120);
 
-  *CommandAddress = LCDCommand::PowerControlB;
-  SEND_DATA(0x00, 0x83, 0x30);
-  //*DataAddress = 0x00; *DataAddress = 0x83; *DataAddress = 0X30;
+  SEND_COMMAND(PowerControlB, 0x00, 0x83, 0x30);
+  SEND_COMMAND(PowerOnSequenceControl, 0x64, 0x03, 0x12, 0x81);
+  SEND_COMMAND(DriverTimingControlA, 0x85, 0x01, 0x79);
+  SEND_COMMAND(PowerControlA, 0x39, 0x2C, 0x00, 0x34, 0x02);
+  SEND_COMMAND(PumpRatioControl, 0x20);
+  SEND_COMMAND(DriverTimingControlB, 0x00, 0x00);
+  SEND_COMMAND(PowerControl2, 0x11);
+  SEND_COMMAND(VCOMControl1, 0x34, 0x3D);
+  SEND_COMMAND(VCOMControl2, 0xC0);
+  SEND_COMMAND(MemoryAccessControl, 0xA0);
+  SEND_COMMAND(PixelFormatSet, 0x55);
+  SEND_COMMAND(FrameRateControl, 0x00, 0x1D);
+  SEND_COMMAND(DisplayFunctionControl, 0x0A, 0xA2, 0x27, 0x00);
+  SEND_COMMAND(EntryMode, 0x07);
+  SEND_COMMAND(Enable3G, 0x08);
+  SEND_COMMAND(GammaSet, 0x01);
+  SEND_COMMAND(PositiveGammaCorrection, 0x1f, 0x1a, 0x18, 0x0a, 0x0f, 0x06, 0x45, 0x87, 0x32, 0x0a, 0x07, 0x02, 0x07, 0x05, 0x00);
+  SEND_COMMAND(NegativeGammaCorrection, 0x00, 0x25, 0x27, 0x05, 0x10, 0x09, 0x3a, 0x78, 0x4d, 0x05, 0x18, 0x0d, 0x38, 0x3a, 0x1f);
 
-  *CommandAddress = LCDCommand::PowerOnSequenceControl;
-  *DataAddress = 0x64; *DataAddress = 0x03; *DataAddress = 0X12;
-  *DataAddress = 0X81;
-
-  *CommandAddress = LCDCommand::DriverTimingControlA;
-  *DataAddress = 0x85; *DataAddress = 0x01; *DataAddress = 0x79;
-
-  *CommandAddress = LCDCommand::PowerControlA;
-  *DataAddress = 0x39; *DataAddress = 0x2C; *DataAddress = 0x00;
-  *DataAddress = 0x34; *DataAddress = 0x02;
-
-  *CommandAddress = LCDCommand::PumpRatioControl;
-  *DataAddress = 0x20;
-
-  *CommandAddress = LCDCommand::DriverTimingControlB;
-  *DataAddress = 0x00; *DataAddress = 0x00;
-
-  *CommandAddress = LCDCommand::PowerControl2;    //Power control
-  *DataAddress = 0x11;   //SAP[2:0];BT[3:0]
-
-  *CommandAddress = LCDCommand::VCOMControl1;    //VCM control 1
-  *DataAddress = 0x34;
-  *DataAddress = 0x3D;
-
-  *CommandAddress = LCDCommand::VCOMControl2;    //VCM control 2
-  *DataAddress = 0xC0;
-
-  *CommandAddress = LCDCommand::MemoryAccessControl;    // Memory Access Control
-  *DataAddress = 0xA0;
-
-  *CommandAddress = LCDCommand::PixelFormatSet;    // Pixel format
-  *DataAddress = 0x55;  //16bit
-
-  *CommandAddress = LCDCommand::FrameRateControl;      // Frame rate
-  *DataAddress = 0x00;
-  *DataAddress = 0x1D;  //65Hz
-
-  *CommandAddress = LCDCommand::DisplayFunctionControl;    // Display Function Control
-  *DataAddress = 0x0A; *DataAddress = 0xA2; *DataAddress = 0x27;
-  *DataAddress = 0x00;
-
-  *CommandAddress = LCDCommand::EntryMode; //Entry mode
-  *DataAddress = 0x07;
-
-
-  *CommandAddress = LCDCommand::Enable3G;    // 3Gamma Function Disable
-  *DataAddress = 0x08;
-
-  *CommandAddress = LCDCommand::GammaSet;    //Gamma curve selected
-  *DataAddress = 0x01;
-
-  *CommandAddress = LCDCommand::PositiveGammaCorrection; //positive gamma correction
-  *DataAddress = 0x1f; *DataAddress = 0x1a; *DataAddress = 0x18;
-  *DataAddress = 0x0a; *DataAddress = 0x0f; *DataAddress = 0x06;
-  *DataAddress = 0x45; *DataAddress = 0x87; *DataAddress = 0x32;
-  *DataAddress = 0x0a; *DataAddress = 0x07; *DataAddress = 0x02;
-  *DataAddress = 0x07; *DataAddress = 0x05; *DataAddress = 0x00;
-
-  *CommandAddress = LCDCommand::NegativeGammaCorrection; //negamma correction
-  *DataAddress = 0x00; *DataAddress = 0x25; *DataAddress = 0x27;
-  *DataAddress = 0x05; *DataAddress = 0x10; *DataAddress = 0x09;
-  *DataAddress = 0x3a; *DataAddress = 0x78; *DataAddress = 0x4d;
-  *DataAddress = 0x05; *DataAddress = 0x18; *DataAddress = 0x0d;
-  *DataAddress = 0x38; *DataAddress = 0x3a; *DataAddress = 0x1f;
-
-  *CommandAddress = LCDCommand::SleepOut;    //Exit Sleep
+  *CommandAddress = Command::SleepOut;    //Exit Sleep
   delayms(120);
-  *CommandAddress = LCDCommand::DisplayOn;    //Display on
+  *CommandAddress = Command::DisplayOn;    //Display on
   delayms(50);
 }
 
@@ -194,19 +143,19 @@ void Ion::Screen::setDrawingArea(uint16_t x, uint16_t y, uint16_t width, uint16_
   uint16_t y_start = y;
   uint16_t y_end = y + height - 1;
 
-  *CommandAddress  = LCDCommand::ColumnAddressSet;
+  *CommandAddress  = Command::ColumnAddressSet;
   *DataAddress = (x_start >> 8);
   *DataAddress = (x_start & 0xFF);
   *DataAddress = (x_end >> 8);
   *DataAddress = (x_end & 0xFF);
 
-  *CommandAddress  = LCDCommand::PageAddressSet;
+  *CommandAddress  = Command::PageAddressSet;
   *DataAddress = (y_start >> 8);
   *DataAddress = (y_start & 0xFF);
   *DataAddress = (y_end >> 8);
   *DataAddress = (y_end & 0xFF);
 
-  *CommandAddress  = LCDCommand::MemoryWrite;
+  *CommandAddress  = Command::MemoryWrite;
 }
 
 void Ion::Screen::pushPixels(const ion_color_t * pixels, size_t numberOfPixels) {

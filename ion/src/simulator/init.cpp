@@ -79,8 +79,8 @@ bool ion_key_down(ion_key_t key) {
   return sKeyboard->key_down(key);
 }
 
-void ion_sleep() {
-  usleep(1000);
+void ion_sleep(long ms) {
+  usleep(1000*ms);
   sDisplay->redraw();
   Fl::wait();
 }

@@ -1,8 +1,11 @@
+extern "C" {
+#include "init.h"
 #include <ion.h>
 #include <assert.h>
-#include "init.h"
 #include "keyboard/keyboard.h"
 #include "registers/registers.h"
+}
+#include "display.h"
 
 void enable_fpu() {
   // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
@@ -18,12 +21,14 @@ void enable_fpu() {
 void init_platform() {
   enable_fpu();
   init_keyboard();
-  ion_led_init();
-  ion_screen_init();
+  //ion_led_init();
+  Ion::Screen::init();
 }
 
-void ion_sleep() {
-  // FIXME: Do something, and also move this function to its own file
+void ion_sleep(long ms) {
+  for (long i=0; i<1040*ms; i++) {
+      __asm volatile("nop");
+  }
 }
 
 void ion_reset() {

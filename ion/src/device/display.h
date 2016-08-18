@@ -2,7 +2,6 @@ extern "C" {
 #include <ion/screen.h>
 #include <stdint.h>
 #include <string.h>
-  void ion_screen_init();
 }
 
 /* Pinout:

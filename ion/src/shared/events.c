@@ -19,9 +19,7 @@ static ion_key_event_t ion_get_key_event() {
   }
 
   // Wait a little to debounce the button.
-  // FIXME: REAL SLEEP
-  for (volatile int i=0;i<10000;i++) {
-  }
+  ion_sleep(10);
 
   /* Let's discard the keys we previously saw up but which aren't anymore: those
    * were probably bouncing! */
@@ -39,10 +37,7 @@ static ion_key_event_t ion_get_key_event() {
         key_seen_up[k] = 1;
       }
     }
-    ion_sleep();
-    // FIXME: REAL SLEEP
-    for (int i=0;i<10000;i++) {
-    }
+    ion_sleep(10);
   }
 }
 

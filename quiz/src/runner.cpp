@@ -27,6 +27,6 @@ void ion_app() {
   }
   print("ALL TESTS FINISHED");
   while (1) {
-    ion_sleep();
+    ion_sleep(1000);
   }
 }

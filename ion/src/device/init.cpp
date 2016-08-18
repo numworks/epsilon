@@ -26,7 +26,7 @@ void init_platform() {
 }
 
 void ion_sleep(long ms) {
-  for (long i=0; i<1040*ms; i++) {
+  for (volatile long i=0; i<1040*ms; i++) {
       __asm volatile("nop");
   }
 }

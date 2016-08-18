@@ -1,7 +1,6 @@
 #include <ion.h>
 #include <assert.h>
 #include "init.h"
-#include "display/display.h"
 #include "keyboard/keyboard.h"
 #include "registers/registers.h"
 
@@ -20,7 +19,7 @@ void init_platform() {
   enable_fpu();
   init_keyboard();
   ion_led_init();
-  init_display();
+  ion_screen_init();
 }
 
 void ion_sleep() {

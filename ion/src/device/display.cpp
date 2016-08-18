@@ -1,29 +1,13 @@
-extern "C" {
-#include <ion/led.h>
-}
+#include "display.h"
 #include "regs/regs.h"
-#include "regs/fsmc.h"
-
 extern "C" {
-  void ion_lcd_init();
+#include <assert.h>
 }
 
-/* Pinout:
- * PA2  - D4
- * PA3  - D5
- * PA4  - D6
- * PA5  - D7
- * PB14 - D0
- * PC3  - A0
- * PC4  - NE4
- * PC5  - NOE
- * PC6  - D1
- * PC11 - D2
- * PC12 - D3
- * PD2  - NWE
- */
+#define SEND_COMMAND(c) {*CommandAddress = LCDCommand::c;}
+#define SEND_DATA(...) { uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
-void ion_lcd_gpio_init() {
+void Ion::Screen::initGPIO() {
   // We use GPIOA to GPIOD
   RCC.AHB1ENR()->setGPIOAEN(true);
   RCC.AHB1ENR()->setGPIOBEN(true);
@@ -72,7 +56,7 @@ void ion_lcd_gpio_init() {
   GPIOD.AFR()->setAFR(2, GPIO::AFR::AlternateFunction::AF10);
 }
 
-void ion_lcd_fsmc_init() {
+void Ion::Screen::initFSMC() {
   // FSMC lives on the AHB3 bus. Let's enable its clock. */
   RCC.AHB3ENR()->setFSMCEN(true);
 
@@ -91,14 +75,102 @@ void ion_lcd_fsmc_init() {
   FSMC.BCR(4)->setMBKEN(true);
 
   // Timing register
-  /*
-  FSMC.BTR(1)->setADDSET(6);
-  FSMC.BTR(1)->setDATAST(10);
-  FSMC.BTR(1)->setBUSTURN(10);
-  */
+  FSMC.BTR(4)->setADDSET(0);
+  FSMC.BTR(4)->setDATAST(0);
+  FSMC.BTR(4)->setBUSTURN(0);
 }
 
-void ion_lcd_init() {
+static inline void delayms(long ms) {
+  for (long i=0; i<1040*ms; i++) {
+      __asm volatile("nop");
+  }
+}
+
+
+void Ion::Screen::initPanel() {
+
+  //*CommandAddress = 0x01; //software reset
+  //delayms(5);
+
+  *CommandAddress = LCDCommand::SleepOut;
+  delayms(120);
+
+  *CommandAddress = LCDCommand::PowerControlB;
+  SEND_DATA(0x00, 0x83, 0x30);
+  //*DataAddress = 0x00; *DataAddress = 0x83; *DataAddress = 0X30;
+
+  *CommandAddress = LCDCommand::PowerOnSequenceControl;
+  *DataAddress = 0x64; *DataAddress = 0x03; *DataAddress = 0X12;
+  *DataAddress = 0X81;
+
+  *CommandAddress = LCDCommand::DriverTimingControlA;
+  *DataAddress = 0x85; *DataAddress = 0x01; *DataAddress = 0x79;
+
+  *CommandAddress = LCDCommand::PowerControlA;
+  *DataAddress = 0x39; *DataAddress = 0x2C; *DataAddress = 0x00;
+  *DataAddress = 0x34; *DataAddress = 0x02;
+
+  *CommandAddress = LCDCommand::PumpRatioControl;
+  *DataAddress = 0x20;
+
+  *CommandAddress = LCDCommand::DriverTimingControlB;
+  *DataAddress = 0x00; *DataAddress = 0x00;
+
+  *CommandAddress = LCDCommand::PowerControl2;    //Power control
+  *DataAddress = 0x11;   //SAP[2:0];BT[3:0]
+
+  *CommandAddress = LCDCommand::VCOMControl1;    //VCM control 1
+  *DataAddress = 0x34;
+  *DataAddress = 0x3D;
+
+  *CommandAddress = LCDCommand::VCOMControl2;    //VCM control 2
+  *DataAddress = 0xC0;
+
+  *CommandAddress = LCDCommand::MemoryAccessControl;    // Memory Access Control
+  *DataAddress = 0xA0;
+
+  *CommandAddress = LCDCommand::PixelFormatSet;    // Pixel format
+  *DataAddress = 0x55;  //16bit
+
+  *CommandAddress = LCDCommand::FrameRateControl;      // Frame rate
+  *DataAddress = 0x00;
+  *DataAddress = 0x1D;  //65Hz
+
+  *CommandAddress = LCDCommand::DisplayFunctionControl;    // Display Function Control
+  *DataAddress = 0x0A; *DataAddress = 0xA2; *DataAddress = 0x27;
+  *DataAddress = 0x00;
+
+  *CommandAddress = LCDCommand::EntryMode; //Entry mode
+  *DataAddress = 0x07;
+
+
+  *CommandAddress = LCDCommand::Enable3G;    // 3Gamma Function Disable
+  *DataAddress = 0x08;
+
+  *CommandAddress = LCDCommand::GammaSet;    //Gamma curve selected
+  *DataAddress = 0x01;
+
+  *CommandAddress = LCDCommand::PositiveGammaCorrection; //positive gamma correction
+  *DataAddress = 0x1f; *DataAddress = 0x1a; *DataAddress = 0x18;
+  *DataAddress = 0x0a; *DataAddress = 0x0f; *DataAddress = 0x06;
+  *DataAddress = 0x45; *DataAddress = 0x87; *DataAddress = 0x32;
+  *DataAddress = 0x0a; *DataAddress = 0x07; *DataAddress = 0x02;
+  *DataAddress = 0x07; *DataAddress = 0x05; *DataAddress = 0x00;
+
+  *CommandAddress = LCDCommand::NegativeGammaCorrection; //negamma correction
+  *DataAddress = 0x00; *DataAddress = 0x25; *DataAddress = 0x27;
+  *DataAddress = 0x05; *DataAddress = 0x10; *DataAddress = 0x09;
+  *DataAddress = 0x3a; *DataAddress = 0x78; *DataAddress = 0x4d;
+  *DataAddress = 0x05; *DataAddress = 0x18; *DataAddress = 0x0d;
+  *DataAddress = 0x38; *DataAddress = 0x3a; *DataAddress = 0x1f;
+
+  *CommandAddress = LCDCommand::SleepOut;    //Exit Sleep
+  delayms(120);
+  *CommandAddress = LCDCommand::DisplayOn;    //Display on
+  delayms(50);
+}
+
+void ion_screen_init() {
   // Turn on the backlight
   RCC.AHB1ENR()->setGPIOCEN(true);
   GPIOC.MODER()->setMODER(9, GPIO::MODER::MODE::Output);
@@ -109,32 +181,54 @@ void ion_lcd_init() {
   GPIOB.MODER()->setMODER(13, GPIO::MODER::MODE::Output);
   GPIOB.ODR()->setODR(13, true);
 
-  ion_lcd_gpio_init();
-  ion_lcd_fsmc_init();
+  delayms(120);
 
+  Ion::Screen::initGPIO();
+  Ion::Screen::initFSMC();
+  Ion::Screen::initPanel();
+}
 
-  volatile uint16_t * command = (uint16_t *)0x6C000000;
-  volatile uint16_t * data = (uint16_t *)0x6C020000;
+void Ion::Screen::setDrawingArea(uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+  uint16_t x_start = x;
+  uint16_t x_end = x + width - 1;
+  uint16_t y_start = y;
+  uint16_t y_end = y + height - 1;
 
-  /*
-  uint16_t j = 0;
-  while (true) {
-    *data = j++;
-   // *command = j++;
+  *CommandAddress  = LCDCommand::ColumnAddressSet;
+  *DataAddress = (x_start >> 8);
+  *DataAddress = (x_start & 0xFF);
+  *DataAddress = (x_end >> 8);
+  *DataAddress = (x_end & 0xFF);
+
+  *CommandAddress  = LCDCommand::PageAddressSet;
+  *DataAddress = (y_start >> 8);
+  *DataAddress = (y_start & 0xFF);
+  *DataAddress = (y_end >> 8);
+  *DataAddress = (y_end & 0xFF);
+
+  *CommandAddress  = LCDCommand::MemoryWrite;
+}
+
+void Ion::Screen::pushPixels(const ion_color_t * pixels, size_t numberOfPixels) {
+  assert(sizeof(ion_color_t) == 2); // We expect KDColor to be RGB565
+  for (size_t i=0; i<numberOfPixels; i++) {
+    *DataAddress = (pixels[i] >> 8);
+    *DataAddress = (pixels[i] & 0xFF);
   }
-  */
+}
 
-  while (true) {
+void ion_screen_push_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ion_color_t * pixels) {
+  Ion::Screen::setDrawingArea(x, y, width, height);
+  Ion::Screen::pushPixels(pixels, width*height);
+}
 
-    for (int i=0; i< 100000; i++) {
-    }
-
-    *command = 0x11;
-    for (int i=0; i< 100000; i++) {
-    }
-    *command = 0x29;
-
-    for (int i=0; i< 1000000; i++) {
-    }
+void ion_screen_push_rect_uniform(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t color) {
+  Ion::Screen::setDrawingArea(x, y, width, height);
+  for (size_t i=0; i<width*height; i++) {
+    Ion::Screen::pushPixels(&color, 1);
   }
+}
+
+void ion_screen_pull_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t * pixels) {
+  assert(0); // Unimplemented
 }

@@ -4,32 +4,32 @@
  *
  * The keyboard is a matrix that is laid out as follow:
  *
- *     |  PA0 |  PA1 | PA2  | PA3  | PA4  |
- * ----+------+------+------+------+------+
- * PB0 | K_A1 | K_A2 | K_A3 | K_A4 | K_A5 |
- * ----+------+------+------+------+------+
- * PB1 | K_B1 | K_B2 | K_B3 | K_B4 | K_B5 |
- * ----+------+------+------+------+------+
- * PB2 | K_C1 | K_C2 | K_C3 | K_C4 | K_C5 |
- * ----+------+------+------+------+------+
- * PB3 | K_D1 | K_D2 | K_D3 | K_D4 | K_D5 |
- * ----+------+------+------+------+------+
- * PB4 | K_E1 | K_E2 | K_E3 | K_E4 | K_E5 |
- * ----+------+------+------+------+------+
- * PB5 | K_F1 | K_F2 | K_F3 | K_F4 | K_F5 |
- * ----+------+------+------+------+------+
- * PB6 | K_G1 | K_G2 | K_G3 | K_G4 | K_G5 |
- * ----+------+------+------+------+------+
- * PB7 | K_H1 | K_H2 | K_H3 | K_H4 | K_H5 |
- * ----+------+------+------+------+------+
- * PB8 | K_I1 | K_I2 | K_I3 | K_I4 | K_I5 |
- * ----+------+------+------+------+------+
- * PB9 | K_J1 | K_J2 | K_J3 | K_J4 | K_J5 |
- * ----+------+------+------+------+------+
+ *      |  PC0 |  PC1 | PC13 | PC14 | PC15 |
+ * -----+------+------+------+------+------+
+ *  PB1 | K_A1 | K_A2 | K_A3 | K_A4 | K_A5 |
+ * -----+------+------+------+------+------+
+ *  PB2 | K_B1 | K_B2 | K_B3 | K_B4 | K_B5 |
+ * -----+------+------+------+------+------+
+ *  PB3 | K_C1 | K_C2 | K_C3 | K_C4 | K_C5 |
+ * -----+------+------+------+------+------+
+ *  PB4 | K_D1 | K_D2 | K_D3 | K_D4 | K_D5 |
+ * -----+------+------+------+------+------+
+ *  PB5 | K_E1 | K_E2 | K_E3 | K_E4 | K_E5 |
+ * -----+------+------+------+------+------+
+ *  PB6 | K_F1 | K_F2 | K_F3 | K_F4 | K_F5 |
+ * -----+------+------+------+------+------+
+ *  PB7 | K_G1 | K_G2 | K_G3 | K_G4 | K_G5 |
+ * -----+------+------+------+------+------+
+ *  PB8 | K_H1 | K_H2 | K_H3 | K_H4 | K_H5 |
+ * -----+------+------+------+------+------+
+ *  PB9 | K_I1 | K_I2 | K_I3 | K_I4 | K_I5 |
+ * -----+------+------+------+------+------+
+ * PB10 | K_J1 | K_J2 | K_J3 | K_J4 | K_J5 |
+ * -----+------+------+------+------+------+
  *
- *  We decide to drive the rows (PB0-9) and read the columns (PA0-4).
+ *  We decide to drive the rows (PB1-10) and read the columns (PC0,1,13,14,15).
  *
- *  To avoid short-circuits, the pins B0-B9 will not be standard outputs but
+ *  To avoid short-circuits, the pins B1-B10 will not be standard outputs but
  *  only open-drain. Open drain means the pin is either driven low or left
  *  floating.
  *  When a user presses multiple keys, a connection between two rows can happen.
@@ -50,12 +50,10 @@
  * a lot simpler. */
 
 #define ROW_GPIO GPIOB
-#define LOW_BIT_ROW 0
-#define HIGH_BIT_ROW 9
+#define LOW_BIT_ROW 1
+#define HIGH_BIT_ROW 10
 
-#define COLUMN_GPIO GPIOA
-#define COLUMN_PIN_START 0
-#define COLUMN_PIN_END 4
+#define COLUMN_GPIO GPIOC
 
 static inline uint8_t row_for_key(ion_key_t key) {
   return key/5;
@@ -80,7 +78,9 @@ bool ion_key_down(ion_key_t key) {
   }
 
   // Read the input of the proper column
-  uint32_t input = (GPIO_IDR(COLUMN_GPIO) & (1 << (column_for_key(key)+COLUMN_PIN_START)));
+  uint8_t column = column_for_key(key);
+  uint8_t bit_for_column = (column <= 1 ? column : column+11);
+  uint32_t input = (GPIO_IDR(COLUMN_GPIO) & (1 << bit_for_column));
 
   /* The key is down if the input is brought low by the output. In other words,
    * we want to return "true" (1) if the input is low (0). */
@@ -99,8 +99,14 @@ void init_keyboard() {
   }
 
   // Configure the column as are pulled-up inputs
-  for (int pin=COLUMN_PIN_START; pin<=COLUMN_PIN_END; pin++) {
-    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(pin), GPIO_MODE_INPUT);
-    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(pin), GPIO_PUPD_PULL_UP);
-  }
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(0), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(0), GPIO_PUPD_PULL_UP);
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(1), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(1), GPIO_PUPD_PULL_UP);
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(13), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(13), GPIO_PUPD_PULL_UP);
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(14), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(14), GPIO_PUPD_PULL_UP);
+    REGISTER_SET_VALUE(GPIO_MODER(COLUMN_GPIO), MODER(15), GPIO_MODE_INPUT);
+    REGISTER_SET_VALUE(GPIO_PUPDR(COLUMN_GPIO), PUPDR(15), GPIO_PUPD_PULL_UP);
 }

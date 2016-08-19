@@ -51,9 +51,11 @@ private:
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const;
   void drawFunction(KDContext * ctx, KDRect rect) const;
 
+#if GRAPH_VIEW_IS_TILED
   static constexpr KDCoordinate kTileWidth = 32;
   static constexpr KDCoordinate kTileHeight = 32;
   KDColor m_tile[kTileWidth*kTileHeight];
+#endif
 
   CursorView m_cursorView;
   KDPoint m_cursorPosition;

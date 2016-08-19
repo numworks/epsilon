@@ -26,6 +26,9 @@ public:
   KDCoordinate top() const;
   KDCoordinate bottom() const;
 
+  void setOrigin(KDPoint origin);
+  void setSize(KDSize size);
+
   KDRect translatedBy(KDPoint p) const;
   KDRect movedTo(KDPoint p) const;
   bool intersects(const KDRect & other) const;

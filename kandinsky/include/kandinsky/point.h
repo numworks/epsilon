@@ -3,11 +3,12 @@
 
 #include <kandinsky/coordinate.h>
 
-struct KDPoint {
+class KDPoint {
+public:
   constexpr KDPoint(KDCoordinate x, KDCoordinate y) :
     m_x(x), m_y(y) {}
-  KDCoordinate x() const;
-  KDCoordinate y() const;
+  KDCoordinate x() const { return m_x; }
+  KDCoordinate y() const { return m_y; }
   KDPoint translatedBy(KDPoint other) const;
   KDPoint opposite() const;
 private:

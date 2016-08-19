@@ -3,11 +3,12 @@
 
 #include <kandinsky/coordinate.h>
 
-struct KDSize {
+class KDSize {
+public:
   constexpr KDSize(KDCoordinate width, KDCoordinate height) :
     m_width(width), m_height(height) {}
-  KDCoordinate width() const;
-  KDCoordinate height() const;
+  KDCoordinate width() const { return m_width; }
+  KDCoordinate height() const { return m_height; }
 private:
   KDCoordinate m_width;
   KDCoordinate m_height;

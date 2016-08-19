@@ -12,7 +12,6 @@ objs += $(addprefix kandinsky/src/,\
   ion_context.o\
   point.o\
   rect.o\
-  size.o\
   text.o\
 )
 tests += $(addprefix kandinsky/test/,\

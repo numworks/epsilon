@@ -13,6 +13,7 @@ objs += $(addprefix kandinsky/src/,\
   point.o\
   rect.o\
   size.o\
+  text.o\
 )
 tests += $(addprefix kandinsky/test/,\
   color.cpp\

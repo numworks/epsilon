@@ -8,7 +8,7 @@ extern "C" {
 void print(const char * message) {
   static int line_y = 0;
   KDContext * ctx = KDIonContext::sharedContext();
-  int line_height = ctx->stringSize("M").height();
+  int line_height = KDText::stringSize("M").height();
   ctx->drawString(message, KDPoint(0, line_y), 0);
   line_y += line_height;
   if (line_y > ION_SCREEN_HEIGHT) {

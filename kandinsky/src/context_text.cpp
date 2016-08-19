@@ -1,5 +1,4 @@
 #include <kandinsky/context.h>
-#include <string.h>
 #include "font.h"
 
 void KDContext::drawChar(char character, KDPoint p, uint8_t inverse) {
@@ -23,8 +22,4 @@ void KDContext::drawString(const char * text, KDPoint p, uint8_t inverse) {
     text++;
     position = position.translatedBy(characterSize);
   }
-}
-
-KDSize KDContext::stringSize(const char * text) {
-  return KDSize(BITMAP_FONT_CHARACTER_WIDTH*strlen(text), BITMAP_FONT_CHARACTER_HEIGHT);
 }

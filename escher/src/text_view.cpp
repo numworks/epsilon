@@ -17,7 +17,7 @@ void TextView::setText(const char * text) {
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDSize textSize = ctx->stringSize(m_text);
+  KDSize textSize = KDText::stringSize(m_text);
   KDPoint origin = {
     (KDCoordinate)(m_horizontalAlignment*(m_frame.width() - textSize.width())),
     (KDCoordinate)(m_verticalAlignment*(m_frame.height() - textSize.height()))

@@ -16,7 +16,6 @@ public:
   // Text
   void drawChar(char character, KDPoint p, uint8_t inverse);
   void drawString(const char * text, KDPoint p, uint8_t inverse);
-  KDSize stringSize(const char * text);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);

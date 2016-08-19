@@ -15,16 +15,16 @@ public:
   KDRect(KDCoordinate x, KDCoordinate y, KDSize s);
   KDRect(KDPoint p, KDCoordinate width, KDCoordinate height);
 
-  KDCoordinate x() const;
-  KDCoordinate y() const;
-  KDPoint origin() const;
-  KDCoordinate width() const;
-  KDCoordinate height() const;
-  KDSize size() const;
-  KDCoordinate left() const;
-  KDCoordinate right() const;
-  KDCoordinate top() const;
-  KDCoordinate bottom() const;
+  KDCoordinate x() const { return m_x; }
+  KDCoordinate y() const { return m_y; }
+  KDPoint origin() const { return KDPoint(m_x, m_y); }
+  KDCoordinate width() const { return m_width; }
+  KDCoordinate height() const { return m_height; }
+  KDSize size() const { return KDSize(m_width, m_height); }
+  KDCoordinate top() const { return m_y; }
+  KDCoordinate right() const { return m_x+m_width; }
+  KDCoordinate bottom() const { return m_y+m_height; }
+  KDCoordinate left() const { return m_x; }
 
   void setOrigin(KDPoint origin);
   void setSize(KDSize size);

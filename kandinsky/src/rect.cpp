@@ -18,18 +18,6 @@ KDRect::KDRect(KDPoint p, KDCoordinate width, KDCoordinate height) :
 {
 }
 
-KDCoordinate KDRect::x() const { return m_x; }
-KDCoordinate KDRect::y() const { return m_y; }
-KDPoint KDRect::origin() const { return KDPoint(m_x, m_y); }
-KDCoordinate KDRect::width() const { return m_width; }
-KDCoordinate KDRect::height() const { return m_height; }
-KDSize KDRect::size() const { return KDSize(m_width, m_height); }
-
-KDCoordinate KDRect::top() const { return m_y; }
-KDCoordinate KDRect::right() const { return m_x+m_width; }
-KDCoordinate KDRect::bottom() const { return m_y+m_height; }
-KDCoordinate KDRect::left() const { return m_x; }
-
 void KDRect::setOrigin(KDPoint p) { m_x = p.x(); m_y = p.y(); }
 void KDRect::setSize(KDSize s) { m_width = s.width(); m_height = s.height(); }
 

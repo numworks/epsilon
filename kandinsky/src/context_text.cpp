@@ -1,6 +1,8 @@
 #include <kandinsky/context.h>
 #include "font.h"
 
+KDColor characterBuffer[BITMAP_FONT_CHARACTER_WIDTH*BITMAP_FONT_CHARACTER_HEIGHT];
+
 void KDContext::drawChar(char character, KDPoint p, uint8_t inverse) {
   for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
     for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
@@ -8,10 +10,12 @@ void KDContext::drawChar(char character, KDPoint p, uint8_t inverse) {
         bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i] :
         (0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
       KDColor color(intensity * 0x010101);
-      KDPoint offset = KDPoint(i,j);
-      setPixel(p.translatedBy(offset), color);
+      characterBuffer[j*BITMAP_FONT_CHARACTER_WIDTH+i] = color;
     }
   }
+  fillRectWithPixels(KDRect(p, BITMAP_FONT_CHARACTER_WIDTH, BITMAP_FONT_CHARACTER_HEIGHT),
+      characterBuffer,
+      characterBuffer);
 }
 
 void KDContext::drawString(const char * text, KDPoint p, uint8_t inverse) {

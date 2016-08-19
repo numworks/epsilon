@@ -1,22 +1,20 @@
 #ifndef POINCARE_EXPRESSION_LAYOUT_H
 #define POINCARE_EXPRESSION_LAYOUT_H
 
-extern "C" {
 #include <kandinsky.h>
-}
 
 class ExpressionLayout {
   public:
     ExpressionLayout();
     virtual ~ExpressionLayout();
 
-    void draw(KDPoint point);
+    void draw(KDContext * ctx, KDPoint p);
     KDPoint origin();
     KDSize size();
     KDCoordinate baseline();
     void setParent(ExpressionLayout* parent);
   protected:
-    virtual void render(KDPoint point) = 0;
+    virtual void render(KDContext * ctx, KDPoint p) = 0;
     virtual KDSize computeSize() = 0;
     virtual ExpressionLayout * child(uint16_t index) = 0;
     virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;

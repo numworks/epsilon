@@ -9,7 +9,7 @@ ExpressionLayout() {
   memcpy(m_string, string, (length+1));
   m_inverse = inverse;
   // Height of the font.
-  m_baseline = KDStringSize(" ").height;
+  m_baseline = KDText::stringSize(" ").height();
 }
 
 StringLayout::~StringLayout() {
@@ -20,8 +20,8 @@ ExpressionLayout * StringLayout::child(uint16_t index) {
   return nullptr;
 }
 
-void StringLayout::render(KDPoint point) {
-  KDDrawString(m_string, point, m_inverse);
+void StringLayout::render(KDContext * ctx, KDPoint p) {
+  ctx->drawString(m_string, p, m_inverse);
 }
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
@@ -30,5 +30,5 @@ KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 KDSize StringLayout::computeSize() {
-  return KDStringSize(m_string);
+  return KDText::stringSize(m_string);
 }

@@ -17,17 +17,17 @@ ExponentLayout::~ExponentLayout() {
   delete m_base_layout;
 }
 
-// There is nothing to draw for a power, only the position of the children matters
-void ExponentLayout::render(KDPoint point) { }
+void ExponentLayout::render(KDContext * ctx, KDPoint p) {
+  // There is nothing to draw for a power, only the position of the children matters
+}
 
 KDSize ExponentLayout::computeSize() {
-  KDSize s;
-  KDSize exponent_size, base_size;
-  exponent_size = m_exponent_layout->size();
-  base_size = m_base_layout->size();
-  s.height = base_size.height + exponent_size.height - EXPONENT_HEIGHT;
-  s.width = base_size.width + exponent_size.width;
-  return s;
+  KDSize exponent_size = m_exponent_layout->size();
+  KDSize base_size = m_base_layout->size();
+  return KDSize(
+      base_size.height() + exponent_size.height() - EXPONENT_HEIGHT,
+      base_size.width() + exponent_size.width()
+      );
 }
 
 ExpressionLayout * ExponentLayout::child(uint16_t index) {
@@ -42,15 +42,16 @@ ExpressionLayout * ExponentLayout::child(uint16_t index) {
 }
 
 KDPoint ExponentLayout::positionOfChild(ExpressionLayout * child) {
-  KDPoint p;
+  KDCoordinate x = 0;
+  KDCoordinate y = 0;
   if (child == m_base_layout) {
-    p.x = 0;
-    p.y = m_exponent_layout->baseline() - EXPONENT_HEIGHT;
+    x = 0;
+    y = m_exponent_layout->baseline() - EXPONENT_HEIGHT;
   } else if (child == m_exponent_layout) {
-    p.x = m_base_layout->size().width;
-    p.y = 0;
+    x = m_base_layout->size().width();
+    y = 0;
   } else {
     assert(false); // Should not happen
   }
-  return p;
+  return KDPoint(x,y);
 }

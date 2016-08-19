@@ -1,5 +1,4 @@
 #include <poincare/integer.h>
-#include <kandinsky/text.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>

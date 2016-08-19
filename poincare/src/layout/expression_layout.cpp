@@ -21,36 +21,37 @@ KDPoint ExpressionLayout::origin() {
   if (m_parent == nullptr) {
     return absoluteOrigin();
   } else {
-    return KDPointMake(absoluteOrigin().x-m_parent->absoluteOrigin().x, absoluteOrigin().y-m_parent->absoluteOrigin().y);
+    return KDPoint(absoluteOrigin().x() - m_parent->absoluteOrigin().x(),
+        absoluteOrigin().y() - m_parent->absoluteOrigin().y());
   }
 }
 
-void ExpressionLayout::draw(KDPoint point) {
+void ExpressionLayout::draw(KDContext * ctx, KDPoint p) {
   int i = 0;
   while (ExpressionLayout * c = child(i++)) {
-    c->draw(point);
+    c->draw(ctx, p);
   }
-  render(KDPointTranslate(absoluteOrigin(), point));
+  render(ctx, absoluteOrigin().translatedBy(p));
 }
 
 KDPoint ExpressionLayout::absoluteOrigin() {
   if (!m_positioned) {
     if (m_parent != nullptr) {
-      m_frame.origin = KDPointTranslate(m_parent->absoluteOrigin(), m_parent->positionOfChild(this));
+      m_frame.setOrigin(m_parent->absoluteOrigin().translatedBy(m_parent->positionOfChild(this)));
     } else {
-      m_frame.origin = KDPointZero;
+      m_frame.setOrigin(KDPointZero);
     }
     m_positioned = true;
   }
-  return m_frame.origin;
+  return m_frame.origin();
 }
 
 KDSize ExpressionLayout::size() {
   if (!m_sized) {
-    m_frame.size = computeSize();
+    m_frame.setSize(computeSize());
     m_sized = true;
   }
-  return m_frame.size;
+  return m_frame.size();
 }
 
 void ExpressionLayout::setParent(ExpressionLayout* parent) {

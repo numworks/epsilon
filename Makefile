@@ -58,7 +58,7 @@ include libaxx/Makefile
 endif
 include ion/Makefile
 include kandinsky/Makefile
-#include poincare/Makefile
+include poincare/Makefile
 include escher/Makefile
 include apps/Makefile
 include quiz/Makefile # Quiz should be included at the end

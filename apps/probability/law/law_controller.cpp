@@ -1,5 +1,6 @@
 #include "law_controller.h"
 #include <assert.h>
+#include "../app.h"
 
 static const char * sMessages[] = {
   "Loi Normale",
@@ -49,8 +50,7 @@ bool Probability::LawController::handleEvent(ion_event_t event) {
       setActiveCell(m_activeCell-1);
       return true;
     case ENTER:
-      m_manualScrolling += 10;
-      m_tableView.setContentOffset({0, m_manualScrolling});
+      ((Probability::App *)app())->setLaw(App::Law::Normal);
       return true;
     default:
       return false;

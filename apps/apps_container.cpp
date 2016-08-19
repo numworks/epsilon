@@ -1,19 +1,18 @@
 #include "apps_container.h"
 
 AppsContainer::AppsContainer() :
-  Container()
+  Container(),
+  m_activeAppIndex(0)
 {
 }
 
 bool AppsContainer::handleEvent(ion_event_t event) {
   if (event == F1) {
-#if USE_PIC_VIEW_APP
-    if (activeApp() == &m_picViewApp) {
-      Container::switchTo(&m_graphApp);
-    } else {
-      Container::switchTo(&m_picViewApp);
+    m_activeAppIndex++;
+    if (m_activeAppIndex >= (int)(AppId::Count)) {
+      m_activeAppIndex = 0;
     }
-#endif
+    switchTo((AppId)m_activeAppIndex);
     return true;
   }
   return false;
@@ -25,9 +24,10 @@ void AppsContainer::switchTo(AppId appId) {
 
 App * AppsContainer::appWithId(AppId appId) {
   App * apps[] = {
-    &m_graphApp
+    &m_graphApp,
+    &m_probabilityApp,
 #if USE_PIC_VIEW_APP
-    , &m_picViewApp
+    &m_picViewApp,
 #endif
   };
   return apps[(int)appId];

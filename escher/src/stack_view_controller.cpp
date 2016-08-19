@@ -81,7 +81,7 @@ void StackViewController::pop() {
 
 void StackViewController::setupActiveViewController() {
   ViewController * vc = m_children[m_numberOfChildren-1];
-  //vc->setParentResponder(this);
+  vc->setParentResponder(this);
   m_view.setContentView(vc->view());
   app()->focus(vc);
 }

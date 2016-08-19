@@ -8,6 +8,8 @@ objs += $(addprefix escher/src/,\
   scroll_view.o\
   scroll_view_indicator.o\
   solid_color_view.o\
+  stack_view.o\
+  stack_view_controller.o\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\

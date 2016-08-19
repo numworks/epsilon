@@ -92,6 +92,10 @@ void StackViewController::handleKeyEvent(int key) {
 
 
 bool StackViewController::handleEvent(ion_event_t event) {
+  if (event == ESC && m_numberOfChildren > 1) {
+    pop();
+    return true;
+  }
   return false;
 }
 

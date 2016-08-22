@@ -1,8 +1,8 @@
 #include "graph_controller.h"
 
-GraphController::GraphController(Responder * parentResponder) :
+GraphController::GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_view(GraphView())
+  m_view(GraphView(functionStore))
 {
 }
 

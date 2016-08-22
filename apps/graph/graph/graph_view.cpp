@@ -7,7 +7,7 @@ constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 
-GraphView::GraphView() :
+GraphView::GraphView(Graph::FunctionStore * functionStore) :
 #if GRAPH_VIEW_IS_TILED
   TiledView(),
 #else
@@ -18,7 +18,8 @@ GraphView::GraphView() :
   m_xMin(-2.0f),
   m_xMax(2.0f),
   m_yMin(-2.0f),
-  m_yMax(2.0f)
+  m_yMax(2.0f),
+  m_functionStore(functionStore)
 {
 }
 
@@ -157,14 +158,18 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
 
   KDColor workingBuffer[stampSize*stampSize];
 
+  Context plotContext;
   for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
     float x = pixelToFloat(Axis::Horizontal, px);
-    float y = (x-1)*(x+1)*x;
-    KDCoordinate py = floatToPixel(Axis::Vertical, y);
-    KDRect stampRect(px, py, stampSize, stampSize);
-    //KDColor red = KDColorRed;
-    ctx->fillRectWithMask(stampRect, KDColorRed, mask, workingBuffer);
-    //KDBlitRect(stampRect, &red, {1,1}, mask, {stampSize,stampSize});
+    for (int i=0; i<m_functionStore->numberOfFunctions(); i++) {
+      Float xExp = Float(x);
+      plotContext.setExpressionForSymbolName(&xExp, "x");
+      Graph::Function * f = m_functionStore->functionAtIndex(i);
+      float y = f->expression()->approximate(plotContext);
+      KDCoordinate py = floatToPixel(Axis::Vertical, y);
+      KDRect stampRect(px, py, stampSize, stampSize);
+      ctx->fillRectWithMask(stampRect, KDColorRed, mask, workingBuffer);
+    }
   }
 }
 

@@ -1,22 +1,29 @@
 #include "function_cell.h"
+#include <poincare.h>
 
 FunctionCell::FunctionCell() :
   ChildlessView(),
   Responder(nullptr),
+  m_function(nullptr),
   m_focused(false),
   m_even(false)
 {
-  m_message = "NULL";
 }
 
 void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = m_even ? KDColor(0xEEEEEE) : KDColor(0x777777);
   ctx->fillRect(rect, background);
-  ctx->drawString(m_message, KDPointZero, m_focused);
+  ctx->drawString(m_function->text(), KDPointZero, m_focused);
+  m_function->layout()->draw(ctx, KDPointZero);
+  //Expression * foo = Expression::parse("1+2/3");
+  //ExpressionLayout * fooLayout = foo->createLayout();
+  //fooLayout->draw(ctx, KDPointZero);
+  //delete fooLayout;
+  //delete foo;
 }
 
-void FunctionCell::setMessage(const char * message) {
-  m_message = message;
+void FunctionCell::setFunction(Graph::Function * f) {
+  m_function = f;
 }
 
 void FunctionCell::setFocused(bool focused) {

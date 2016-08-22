@@ -1,20 +1,13 @@
 #include "list_controller.h"
 #include <assert.h>
 
-static const char * sMessages[] = {
-  "AAA 0", "BBB 1", "CCC 2", "DDD 3", "EEE 4",
-  "FFF 5", "GGG 6", "HHH 7", "III 8", "JJJ 9",
-  "KKK10", "LLL11", "MMM12", "NNN13", "OOO14",
-  "PPP15", "QQQ16", "RRR17", "SSS18", "TTT19"
-};
-
-ListController::ListController(Responder * parentResponder) :
+ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
   m_tableView(TableView(this)),
   m_activeCell(0),
-  m_manualScrolling(0)
+  m_manualScrolling(0),
+  m_functionStore(functionStore)
 {
-  m_messages = sMessages;
 }
 
 View * ListController::view() {
@@ -26,7 +19,7 @@ const char * ListController::title() const {
 }
 
 void ListController::setActiveCell(int index) {
-  if (index < 0 || index >= k_totalNumberOfModels) {
+  if (index < 0 || index >= m_functionStore->numberOfFunctions()) {
     return;
   }
 
@@ -55,7 +48,7 @@ bool ListController::handleEvent(ion_event_t event) {
 }
 
 int ListController::numberOfCells() {
-  return k_totalNumberOfModels;
+  return m_functionStore->numberOfFunctions();
 };
 
 View * ListController::reusableCell(int index) {
@@ -70,7 +63,7 @@ int ListController::reusableCellCount() {
 
 void ListController::willDisplayCellForIndex(View * cell, int index) {
   FunctionCell * myCell = (FunctionCell *)cell;
-  myCell->setMessage(m_messages[index]);
+  myCell->setFunction(m_functionStore->functionAtIndex(index));
   myCell->setEven(index%2 == 0);
 }
 

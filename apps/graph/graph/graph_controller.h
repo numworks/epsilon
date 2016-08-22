@@ -3,10 +3,11 @@
 
 #include <escher.h>
 #include "graph_view.h"
+#include "../function_store.h"
 
 class GraphController : public ViewController {
 public:
-  GraphController(Responder * parentResponder);
+  GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore);
   View * view() override;
   const char * title() const override;
   void setFocused(bool focused) override;

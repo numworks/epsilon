@@ -2,11 +2,12 @@
 #define GRAPH_LIST_CONTROLLER_H
 
 #include <escher.h>
+#include "../function_store.h"
 #include "function_cell.h"
 
 class ListController : public ViewController, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder);
+  ListController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
   void setActiveCell(int index);
 
@@ -26,9 +27,9 @@ private:
   // The cells should be initialized *before* the tableview!
   FunctionCell m_cells[k_maxNumberOfCells];
   TableView m_tableView;
-  const char ** m_messages;
   int m_activeCell;
   KDCoordinate m_manualScrolling;
+  Graph::FunctionStore * m_functionStore;
 };
 
 #endif

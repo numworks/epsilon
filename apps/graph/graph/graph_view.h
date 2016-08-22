@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "cursor_view.h"
+#include "../function_store.h"
 
 #define GRAPH_VIEW_IS_TILED 1
 
@@ -14,7 +15,7 @@ class GraphView : public
 #endif
 {
 public:
-  GraphView();
+  GraphView(Graph::FunctionStore * functionStore);
 
 #if GRAPH_VIEW_IS_TILED
   KDColor * tile() const override;
@@ -64,6 +65,8 @@ private:
   float m_xMax;
   float m_yMin;
   float m_yMax;
+
+  Graph::FunctionStore * m_functionStore;
 };
 
 #endif

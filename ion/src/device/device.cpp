@@ -2,7 +2,6 @@
 #include "regs/regs.h"
 extern "C" {
 #include <assert.h>
-#include "registers/registers.h"
 }
 #include <ion.h>
 #include "led.h"
@@ -18,7 +17,7 @@ void Ion::msleep(long ms) {
 }
 
 void Ion::reset() {
-  AIRCR = AIRCR_VECTKEY_MASK | AIRCR_SYSRESETREQ;
+  CM4.AIRCR()->requestReset();
 }
 
 // Private Ion::Device methods
@@ -44,11 +43,7 @@ void Ion::Device::initClocks() {
 
 void Ion::Device::initFPU() {
   // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
-  //CPACR |= (0xF << 20); // Set the bits 20-23 to enable CP10 and CP11 coprocessors
-  CPACR |= (
-    REGISTER_FIELD_VALUE(CPACR_CP(10), CPACR_ACCESS_FULL)
-    |
-    REGISTER_FIELD_VALUE(CPACR_CP(11), CPACR_ACCESS_FULL)
-    );
+  CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
+  CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
   // FIXME: The pipeline should be flushed at this point
 }

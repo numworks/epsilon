@@ -38,13 +38,7 @@ namespace Device {
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
 void init() {
-  // Turn on the backlight
-  RCC.AHB1ENR()->setGPIOCEN(true);
-  GPIOC.MODER()->setMode(9, GPIO::MODER::Mode::Output);
-  GPIOC.ODR()->set(9, true);
-
   // Turn on the reset pin
-  RCC.AHB1ENR()->setGPIOBEN(true);
   GPIOB.MODER()->setMode(13, GPIO::MODER::Mode::Output);
   GPIOB.ODR()->set(13, true);
 

@@ -17,6 +17,12 @@ void init();
 void initGPIO();
 void initTimer();
 
+constexpr uint16_t PWMPeriod = 40000;
+
+inline uint16_t dutyCycleForUInt8(uint8_t value) {
+  return ((((uint32_t)value + 1)*PWMPeriod)>>8);
+}
+
 }
 }
 }

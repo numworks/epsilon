@@ -4,6 +4,7 @@
 #include <ion/display.h>
 #include <ion/events.h>
 #include <ion/keyboard.h>
+#include <ion/led.h>
 
 
 /* ION is not your regular library. It is a library you link against, but it

@@ -66,6 +66,7 @@ public:
   class CCR1 : public Register16 {};
   class CCR2 : public Register16 {};
   class CCR3 : public Register16 {};
+  class CCR4 : public Register16 {};
 
   constexpr TIM(int i) : m_index(i) {}
   REGS_REGISTER_AT(CR1, 0x0);
@@ -76,14 +77,16 @@ public:
   REGS_REGISTER_AT(CCR1, 0x34);
   REGS_REGISTER_AT(CCR2, 0x38);
   REGS_REGISTER_AT(CCR3, 0x3C);
+  REGS_REGISTER_AT(CCR4, 0x40);
   REGS_REGISTER_AT(BDTR, 0x44);
 private:
   constexpr uint32_t Base() const {
-    return (m_index == 1 ? 0x40010000 : 0x40000000 + 0x400*m_index);
+    return (m_index == 1 ? 0x40010000 : 0x40000000 + 0x400*(m_index-2));
   };
   int m_index;
 };
 
 constexpr TIM TIM1(1);
+constexpr TIM TIM3(3);
 
 #endif

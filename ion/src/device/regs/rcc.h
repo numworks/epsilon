@@ -20,11 +20,18 @@ public:
     REGS_BOOL_FIELD(DMA1EN, 21);
     REGS_BOOL_FIELD(DMA2EN, 22);
   };
+
   class AHB3ENR : Register32 {
   public:
     REGS_BOOL_FIELD(FSMCEN, 0);
     REGS_BOOL_FIELD(QSPIEN, 0);
   };
+
+  class APB1ENR : Register32 {
+  public:
+    REGS_BOOL_FIELD(TIM3EN, 1);
+  };
+
   class APB2ENR : Register32 {
   public:
     REGS_BOOL_FIELD(TIM1EN, 0);
@@ -33,6 +40,7 @@ public:
   constexpr RCC() {};
   REGS_REGISTER_AT(AHB1ENR, 0x30);
   REGS_REGISTER_AT(AHB3ENR, 0x38);
+  REGS_REGISTER_AT(APB1ENR, 0x40);
   REGS_REGISTER_AT(APB2ENR, 0x44);
 private:
   constexpr uint32_t Base() const {

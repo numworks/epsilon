@@ -14,7 +14,7 @@ public:
   uint8_t green();
   uint8_t blue();
   KDColor blend(KDColor other, uint8_t alpha);
-  operator uint16_t() { return m_value; }
+  operator uint16_t() const { return m_value; }
 private:
   uint16_t m_value;
 };

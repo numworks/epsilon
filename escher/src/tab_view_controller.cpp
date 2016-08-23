@@ -71,14 +71,14 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
   }
 }
 
-bool TabViewController::handleEvent(ion_event_t event) {
+bool TabViewController::handleEvent(Ion::Events::Event event) {
   switch(event) {
-    case LEFT_ARROW:
+    case Ion::Events::Event::LEFT_ARROW:
       if (m_activeChildIndex > 0) {
         setActiveTab(m_activeChildIndex-1);
       }
       return true;
-    case RIGHT_ARROW:
+    case Ion::Events::Event::RIGHT_ARROW:
       if (m_activeChildIndex < m_numberOfChildren-1) {
         setActiveTab(m_activeChildIndex+1);
       }

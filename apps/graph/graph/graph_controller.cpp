@@ -22,9 +22,9 @@ void GraphController::setFocused(bool focused) {
   */
 }
 
-bool GraphController::handleEvent(ion_event_t event) {
+bool GraphController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case ENTER:
+    case Ion::Events::Event::ENTER:
       m_view.moveCursorRight();
       return true;
     default:

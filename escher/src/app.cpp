@@ -1,7 +1,6 @@
 #include <escher/app.h>
 #include <escher/window.h>
 extern "C" {
-#include <ion.h>
 #include <assert.h>
 }
 
@@ -25,7 +24,7 @@ void App::setWindow(Window * window) {
   window->redraw();
 }
 
-void App::processEvent(ion_event_t event) {
+void App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_focusedResponder;
   bool didHandleEvent = false;
   while (responder) {

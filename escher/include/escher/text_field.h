@@ -11,7 +11,7 @@ public:
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder
-  bool handleEvent(ion_event_t event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

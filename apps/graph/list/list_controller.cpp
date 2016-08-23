@@ -30,15 +30,15 @@ void ListController::setActiveCell(int index) {
   app()->focus(cell);
 }
 
-bool ListController::handleEvent(ion_event_t event) {
+bool ListController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case DOWN_ARROW:
+    case Ion::Events::Event::DOWN_ARROW:
       setActiveCell(m_activeCell+1);
       return true;
-    case UP_ARROW:
+    case Ion::Events::Event::UP_ARROW:
       setActiveCell(m_activeCell-1);
       return true;
-    case ENTER:
+    case Ion::Events::Event::ENTER:
       m_manualScrolling += 10;
       m_tableView.setContentOffset({0, m_manualScrolling});
       return true;

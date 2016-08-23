@@ -1,9 +1,10 @@
 #ifndef ION_ION_H
 #define ION_ION_H
 
+#include <ion/display.h>
 #include <ion/events.h>
 #include <ion/keyboard.h>
-#include <ion/screen.h>
+
 
 /* ION is not your regular library. It is a library you link against, but it
  * will take care of configuring the whole environment for you. In POSIX terms,
@@ -13,12 +14,13 @@
 
 void ion_app();
 
-void ion_display_on();
-void ion_display_off();
+namespace Ion {
 
-void ion_sleep(long ms);
+void msleep(long ms);
 
 /* CAUTION: This is a complete reset! */
-void ion_reset();
+void reset();
+
+}
 
 #endif

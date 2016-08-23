@@ -14,6 +14,6 @@ const char * Probability::ParametersController::title() const {
   return "Parameters";
 }
 
-bool Probability::ParametersController::handleEvent(ion_event_t event) {
+bool Probability::ParametersController::handleEvent(Ion::Events::Event event) {
   return false;
 }

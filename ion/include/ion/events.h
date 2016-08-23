@@ -1,7 +1,10 @@
 #ifndef ION_EVENTS_H
 #define ION_EVENTS_H
 
-typedef enum {
+namespace Ion {
+namespace Events {
+
+enum class Event {
   LEFT_PARENTHESIS = '(', // 0x28
   RIGHT_PARENTHESIS = ')', // 0x29
   COMMA = ',',
@@ -97,9 +100,12 @@ typedef enum {
   MODE,
   CATALOG,
   CLEAR,
-  ERROR = 0xffffffff,
-} ion_event_t;
+  //ERROR = 0xffffffff,
+};
 
-ion_event_t ion_get_event();
+Event getEvent();
+
+}
+}
 
 #endif

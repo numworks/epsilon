@@ -1,54 +1,78 @@
+#include <ion.h>
 #include "display.h"
 #include "regs/regs.h"
 extern "C" {
 #include <assert.h>
-#include <ion.h>
 }
+
+// Public Ion::Display methods
+
+namespace Ion {
+namespace Display {
+
+void pushRect(KDRect r, const KDColor * pixels) {
+  Device::setDrawingArea(r);
+  Device::pushPixels(pixels, r.width()*r.height());
+}
+
+void pushRectUniform(KDRect r, KDColor c) {
+  Device::setDrawingArea(r);
+  for (size_t i=0; i<r.width()*r.height(); i++) {
+    Device::pushPixels(&c, 1);
+  }
+}
+
+void pullRect(KDRect r, KDColor * pixels) {
+  //assert(0); // Unimplemented
+}
+
+}
+}
+
+// Private Ion::Display::Device methods
+
+namespace Ion {
+namespace Display {
+namespace Device {
 
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
-void Ion::Screen::init() {
+void init() {
   // Turn on the backlight
   RCC.AHB1ENR()->setGPIOCEN(true);
-  GPIOC.MODER()->setMODER(9, GPIO::MODER::MODE::Output);
-  GPIOC.ODR()->setODR(9, true);
+  GPIOC.MODER()->setMode(9, GPIO::MODER::Mode::Output);
+  GPIOC.ODR()->set(9, true);
 
   // Turn on the reset pin
   RCC.AHB1ENR()->setGPIOBEN(true);
-  GPIOB.MODER()->setMODER(13, GPIO::MODER::MODE::Output);
-  GPIOB.ODR()->setODR(13, true);
+  GPIOB.MODER()->setMode(13, GPIO::MODER::Mode::Output);
+  GPIOB.ODR()->set(13, true);
 
-  ion_sleep(120);
+  msleep(120);
 
-  Ion::Screen::initGPIO();
-  Ion::Screen::initFSMC();
-  Ion::Screen::initPanel();
+  initGPIO();
+  initFSMC();
+  initPanel();
 }
 
-void Ion::Screen::initGPIO() {
-  // We use GPIOA to GPIOD
-  RCC.AHB1ENR()->setGPIOAEN(true);
-  RCC.AHB1ENR()->setGPIOBEN(true);
-  RCC.AHB1ENR()->setGPIOCEN(true);
-  RCC.AHB1ENR()->setGPIODEN(true);
-
+void initGPIO() {
   // Configure GPIOs to use AF
 
-  GPIOA.MODER()->setMODER(2, GPIO::MODER::MODE::AlternateFunction);
-  GPIOA.MODER()->setMODER(3, GPIO::MODER::MODE::AlternateFunction);
-  GPIOA.MODER()->setMODER(4, GPIO::MODER::MODE::AlternateFunction);
-  GPIOA.MODER()->setMODER(5, GPIO::MODER::MODE::AlternateFunction);
+  GPIOA.MODER()->setMode(2, GPIO::MODER::Mode::AlternateFunction);
+  GPIOA.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
+  GPIOA.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
+  GPIOA.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOB.MODER()->setMODER(14, GPIO::MODER::MODE::AlternateFunction);
+  GPIOB.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOC.MODER()->setMODER(3, GPIO::MODER::MODE::AlternateFunction);
-  GPIOC.MODER()->setMODER(4, GPIO::MODER::MODE::AlternateFunction);
-  GPIOC.MODER()->setMODER(5, GPIO::MODER::MODE::AlternateFunction);
-  GPIOC.MODER()->setMODER(6, GPIO::MODER::MODE::AlternateFunction);
-  GPIOC.MODER()->setMODER(11, GPIO::MODER::MODE::AlternateFunction);
-  GPIOC.MODER()->setMODER(12, GPIO::MODER::MODE::AlternateFunction);
+  GPIOC.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
+  GPIOC.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
+  GPIOC.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
+  GPIOC.MODER()->setMode(6, GPIO::MODER::Mode::AlternateFunction);
+  GPIOC.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
+  GPIOC.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOD.MODER()->setMODER(2, GPIO::MODER::MODE::AlternateFunction);
+  GPIOD.MODER()->setMode(2, GPIO::MODER::Mode::AlternateFunction);
 
   /* More precisely, we want to use the FSMC alternate function.
    * Oddly enough, this isn't always the same AF number. That equals to:
@@ -57,24 +81,24 @@ void Ion::Screen::initGPIO() {
    * AF12 for PC3,4,5
    * AF10 for PC6,11,12
    * AF10 for PD2 */
-  GPIOA.AFR()->setAFR(2, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAFR(3, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAFR(4, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAFR(5, GPIO::AFR::AlternateFunction::AF12);
+  GPIOA.AFR()->setAlternateFunction(2, GPIO::AFR::AlternateFunction::AF12);
+  GPIOA.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF12);
+  GPIOA.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
+  GPIOA.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
 
-  GPIOB.AFR()->setAFR(14, GPIO::AFR::AlternateFunction::AF10);
+  GPIOB.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF10);
 
-  GPIOC.AFR()->setAFR(3, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAFR(4, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAFR(5, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAFR(6, GPIO::AFR::AlternateFunction::AF10);
-  GPIOC.AFR()->setAFR(11, GPIO::AFR::AlternateFunction::AF10);
-  GPIOC.AFR()->setAFR(12, GPIO::AFR::AlternateFunction::AF10);
+  GPIOC.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF12);
+  GPIOC.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
+  GPIOC.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
+  GPIOC.AFR()->setAlternateFunction(6, GPIO::AFR::AlternateFunction::AF10);
+  GPIOC.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF10);
+  GPIOC.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF10);
 
-  GPIOD.AFR()->setAFR(2, GPIO::AFR::AlternateFunction::AF10);
+  GPIOD.AFR()->setAlternateFunction(2, GPIO::AFR::AlternateFunction::AF10);
 }
 
-void Ion::Screen::initFSMC() {
+void initFSMC() {
   // FSMC lives on the AHB3 bus. Let's enable its clock. */
   RCC.AHB3ENR()->setFSMCEN(true);
 
@@ -98,13 +122,13 @@ void Ion::Screen::initFSMC() {
   FSMC.BTR(4)->setBUSTURN(0);
 }
 
-void Ion::Screen::initPanel() {
+void initPanel() {
 
   //*CommandAddress = 0x01; //software reset
-  //ion_sleep(5);
+  // msleep(5);
 
   *CommandAddress = Command::SleepOut;
-  ion_sleep(120);
+  msleep(120);
 
   SEND_COMMAND(PowerControlB, 0x00, 0x83, 0x30);
   SEND_COMMAND(PowerOnSequenceControl, 0x64, 0x03, 0x12, 0x81);
@@ -126,17 +150,17 @@ void Ion::Screen::initPanel() {
   SEND_COMMAND(NegativeGammaCorrection, 0x00, 0x25, 0x27, 0x05, 0x10, 0x09, 0x3a, 0x78, 0x4d, 0x05, 0x18, 0x0d, 0x38, 0x3a, 0x1f);
 
   *CommandAddress = Command::SleepOut;    //Exit Sleep
-  ion_sleep(120);
+  msleep(120);
   *CommandAddress = Command::DisplayOn;    //Display on
-  ion_sleep(50);
+  msleep(50);
 }
 
 
-void Ion::Screen::setDrawingArea(uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
-  uint16_t x_start = x;
-  uint16_t x_end = x + width - 1;
-  uint16_t y_start = y;
-  uint16_t y_end = y + height - 1;
+void setDrawingArea(KDRect r) {
+  uint16_t x_start = r.x();
+  uint16_t x_end = r.x() + r.width() - 1;
+  uint16_t y_start = r.y();
+  uint16_t y_end = r.y() + r.height() - 1;
 
   *CommandAddress  = Command::ColumnAddressSet;
   *DataAddress = (x_start >> 8);
@@ -153,26 +177,15 @@ void Ion::Screen::setDrawingArea(uint16_t x, uint16_t y, uint16_t width, uint16_
   *CommandAddress  = Command::MemoryWrite;
 }
 
-void Ion::Screen::pushPixels(const ion_color_t * pixels, size_t numberOfPixels) {
-  assert(sizeof(ion_color_t) == 2); // We expect KDColor to be RGB565
+void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
+  assert(sizeof(KDColor) == 2); // We expect KDColor to be RGB565
   for (size_t i=0; i<numberOfPixels; i++) {
-    *DataAddress = (pixels[i] >> 8);
-    *DataAddress = (pixels[i] & 0xFF);
+    uint16_t pixel = pixels[i];
+    *DataAddress = (pixel >> 8);
+    *DataAddress = (pixel & 0xFF);
   }
 }
 
-void ion_screen_push_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ion_color_t * pixels) {
-  Ion::Screen::setDrawingArea(x, y, width, height);
-  Ion::Screen::pushPixels(pixels, width*height);
 }
-
-void ion_screen_push_rect_uniform(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t color) {
-  Ion::Screen::setDrawingArea(x, y, width, height);
-  for (size_t i=0; i<width*height; i++) {
-    Ion::Screen::pushPixels(&color, 1);
-  }
 }
-
-void ion_screen_pull_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ion_color_t * pixels) {
-  assert(0); // Unimplemented
 }

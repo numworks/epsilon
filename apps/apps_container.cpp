@@ -6,8 +6,8 @@ AppsContainer::AppsContainer() :
 {
 }
 
-bool AppsContainer::handleEvent(ion_event_t event) {
-  if (event == F1) {
+bool AppsContainer::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Event::F1) {
     m_activeAppIndex++;
     if (m_activeAppIndex >= (int)(AppId::Count)) {
       m_activeAppIndex = 0;

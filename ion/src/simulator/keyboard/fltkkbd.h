@@ -3,16 +3,14 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-extern "C" {
 #include <ion/keyboard.h>
-}
 
 class FltkKbd : public Fl_Group {
 public:
   FltkKbd(int x, int y, int w, int h);
-  bool key_down(ion_key_t key);
+  bool key_down(Ion::Keyboard::Key key);
 private:
-  Fl_Button * m_buttons[ION_NUMBER_OF_KEYS];
+  Fl_Button * m_buttons[Ion::Keyboard::NumberOfKeys];
 };
 
 #endif

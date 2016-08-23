@@ -1,11 +1,11 @@
 extern "C" {
-#include <ion.h>
 #include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <kandinsky.h>
-#include "init.h"
 }
+#include "init.h"
+#include <ion.h>
+#include <kandinsky.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -23,14 +23,14 @@ void init_platform() {
   Fl::visual(FL_RGB);
 
   int margin = 10;
-  int screen_width = ION_SCREEN_WIDTH;
-  int screen_height = ION_SCREEN_HEIGHT;
+  int screen_width = Ion::Display::Width;
+  int screen_height = Ion::Display::Height;
   int keyboard_height = screen_width;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
-  KDColor * pixels = (KDColor *)malloc(ION_SCREEN_WIDTH*ION_SCREEN_HEIGHT*sizeof(KDColor));
-  sFrameBuffer = new KDFrameBuffer(pixels, KDSize(ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT));
+  KDColor * pixels = (KDColor *)malloc(Ion::Display::Width*Ion::Display::Height*sizeof(KDColor));
+  sFrameBuffer = new KDFrameBuffer(pixels, KDSize(Ion::Display::Width, Ion::Display::Height));
   /*
   sFrameBuffer.drawingArea.origin = KDPointZero;
   sFrameBuffer.drawingArea.size = sFrameBuffer.size;
@@ -46,40 +46,23 @@ void init_platform() {
   //KDCurrentContext->fillRect = NULL;
 }
 
-void ion_screen_push_rect(uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    const ion_color_t * pixels)
-{
-  // FIXME: Boy those casts are fugly
-  const void * foo = static_cast<const void *>(pixels);
-  const KDColor * pouet = static_cast<const KDColor *>(foo);
-  sFrameBuffer->pushRect(KDRect(x,y,width,height), pouet);
+void Ion::Display::pushRect(KDRect r, const KDColor * pixels) {
+  sFrameBuffer->pushRect(r, pixels);
 }
 
-void ion_screen_push_rect_uniform(uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t color)
-{
-  ion_color_t * foo = &color;
-  const void * bar = static_cast<const void *>(foo);
-  const KDColor * baz = static_cast<const KDColor *>(bar);
-  sFrameBuffer->pushRectUniform(KDRect(x,y,width,height), *baz);
+void Ion::Display::pushRectUniform(KDRect r, KDColor c) {
+  sFrameBuffer->pushRectUniform(r, c);
 }
 
-void ion_screen_pull_rect(uint16_t x, uint16_t y,
-    uint16_t width, uint16_t height,
-    ion_color_t * pixels)
-{
-  void * foo = static_cast<void *>(pixels);
-  KDColor * pouet = static_cast<KDColor *>(foo);
-  sFrameBuffer->pullRect(KDRect(x,y,width,height), pouet);
+void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
+  sFrameBuffer->pullRect(r, pixels);
 }
 
-bool ion_key_down(ion_key_t key) {
+bool Ion::Keyboard::keyDown(Ion::Keyboard::Key key) {
   return sKeyboard->key_down(key);
 }
 
-void ion_sleep(long ms) {
+void Ion::msleep(long ms) {
   usleep(1000*ms);
   sDisplay->redraw();
   Fl::wait();

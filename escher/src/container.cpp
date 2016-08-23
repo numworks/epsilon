@@ -1,7 +1,5 @@
 #include <escher/container.h>
-extern "C" {
-#include <ion.h>
-}
+#include <ion/display.h>
 
 Container::Container() :
   m_activeApp(nullptr)
@@ -18,16 +16,16 @@ App * Container::activeApp() {
   return m_activeApp;
 }
 
-bool Container::handleEvent(ion_event_t event) {
+bool Container::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
 void Container::run() {
-  m_window.setFrame(KDRect(0, 0, ION_SCREEN_WIDTH, ION_SCREEN_HEIGHT));
+  m_window.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   m_window.redraw();
 
   while (true) {
-    ion_event_t event = ion_get_event(); // This is a blocking call
+    Ion::Events::Event event = Ion::Events::getEvent(); // This is a blocking call
     if (handleEvent(event)) {
       continue;
     }

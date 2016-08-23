@@ -1,10 +1,10 @@
 #include <assert.h>
 #include "fltkkbd.h"
 
-#define KEYBOARD_ROWS 10
-#define KEYBOARD_COLUMNS 5
+constexpr int KeyboardRows = 10;
+constexpr int KeyboardColumns = 5;
 
-static const char* kCharForKey[ION_NUMBER_OF_KEYS] = {
+static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
   "F1",      "F2",    "F3",      "F4",     "F5",
   "2nd",     "Shift", "ESC",     "LEFT",   "UP",
   "Diamond", "alpha", "APPS",    "DOWN",   "RIGHT",
@@ -18,12 +18,12 @@ static const char* kCharForKey[ION_NUMBER_OF_KEYS] = {
 };
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-  assert(KEYBOARD_ROWS*KEYBOARD_COLUMNS == ION_NUMBER_OF_KEYS);
-  int key_width = w/KEYBOARD_COLUMNS;
-  int key_height = h/KEYBOARD_ROWS;
-  for (int k=0; k<ION_NUMBER_OF_KEYS; k++) {
-    m_buttons[k] = new Fl_Button(x + (k%KEYBOARD_COLUMNS)*key_width,
-                                 y + (k/KEYBOARD_COLUMNS)*key_height,
+  assert(KeyboardRows*KeyboardColumns == Ion::Keyboard::NumberOfKeys);
+  int key_width = w/KeyboardColumns;
+  int key_height = h/KeyboardRows;
+  for (int k=0; k<Ion::Keyboard::NumberOfKeys; k++) {
+    m_buttons[k] = new Fl_Button(x + (k%KeyboardColumns)*key_width,
+                                 y + (k/KeyboardColumns)*key_height,
                                  key_width,
                                  key_height,
                                  kCharForKey[k]);
@@ -31,6 +31,6 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
   end();
 }
 
-bool FltkKbd::key_down(ion_key_t key) {
-  return m_buttons[key]->value();
+bool FltkKbd::key_down(Ion::Keyboard::Key key) {
+  return m_buttons[(int)key]->value();
 }

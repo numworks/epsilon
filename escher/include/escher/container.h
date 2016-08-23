@@ -12,16 +12,14 @@
 
 #include <escher/app.h>
 #include <escher/window.h>
-extern "C" {
-#include <ion.h>
-}
+#include <ion/events.h>
 
 class Container {
 public:
   Container();
   void run();
   App * activeApp();
-  virtual bool handleEvent(ion_event_t event);
+  virtual bool handleEvent(Ion::Events::Event event);
 protected:
   void switchTo(App * app);
 private:

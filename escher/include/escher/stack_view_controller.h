@@ -18,7 +18,7 @@ public:
   View * view() override;
   void handleKeyEvent(int key) override;
 
-  bool handleEvent(ion_event_t event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   class ControllerView : public View {
   public:

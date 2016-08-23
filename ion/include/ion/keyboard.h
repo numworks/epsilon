@@ -1,72 +1,27 @@
 #ifndef ION_KEYBOARD_H
 #define ION_KEYBOARD_H
 
-#include <stdbool.h>
+namespace Ion {
+namespace Keyboard {
 
-typedef enum {
-  ION_KEY_A_1,
-  ION_KEY_A_2,
-  ION_KEY_A_3,
-  ION_KEY_A_4,
-  ION_KEY_A_5,
+enum class Key {
+  A1 =  0, A2 =  1, A3 =  2, A4 =  3, A5 =  4,
+  B1 =  5, B2 =  6, B3 =  7, B4 =  8, B5 =  9,
+  C1 = 10, C2 = 11, C3 = 12, C4 = 13, C5 = 14,
+  D1, D2, D3, D4, D5,
+  E1, E2, E3, E4, E5,
+  F1, F2, F3, F4, F5,
+  G1, G2, G3, G4, G5,
+  H1, H2, H3, H4, H5,
+  I1, I2, I3, I4, I5,
+  J1, J2, J3, J4, J5
+};
 
-  ION_KEY_B_1,
-  ION_KEY_B_2,
-  ION_KEY_B_3,
-  ION_KEY_B_4,
-  ION_KEY_B_5,
+constexpr int NumberOfKeys  = 50;
 
-  ION_KEY_C_1,
-  ION_KEY_C_2,
-  ION_KEY_C_3,
-  ION_KEY_C_4,
-  ION_KEY_C_5,
+bool keyDown(Key k);
 
-  ION_KEY_D_1,
-  ION_KEY_D_2,
-  ION_KEY_D_3,
-  ION_KEY_D_4,
-  ION_KEY_D_5,
-
-  ION_KEY_E_1,
-  ION_KEY_E_2,
-  ION_KEY_E_3,
-  ION_KEY_E_4,
-  ION_KEY_E_5,
-
-  ION_KEY_F_1,
-  ION_KEY_F_2,
-  ION_KEY_F_3,
-  ION_KEY_F_4,
-  ION_KEY_F_5,
-
-  ION_KEY_G_1,
-  ION_KEY_G_2,
-  ION_KEY_G_3,
-  ION_KEY_G_4,
-  ION_KEY_G_5,
-
-  ION_KEY_H_1,
-  ION_KEY_H_2,
-  ION_KEY_H_3,
-  ION_KEY_H_4,
-  ION_KEY_H_5,
-
-  ION_KEY_I_1,
-  ION_KEY_I_2,
-  ION_KEY_I_3,
-  ION_KEY_I_4,
-  ION_KEY_I_5,
-
-  ION_KEY_J_1,
-  ION_KEY_J_2,
-  ION_KEY_J_3,
-  ION_KEY_J_4,
-  ION_KEY_J_5
-} ion_key_t;
-
-#define ION_NUMBER_OF_KEYS 50
-
-bool ion_key_down(ion_key_t key);
+}
+}
 
 #endif

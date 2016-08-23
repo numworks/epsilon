@@ -41,15 +41,15 @@ void Probability::LawController::setActiveCell(int index) {
   app()->focus(cell);
 }
 
-bool Probability::LawController::handleEvent(ion_event_t event) {
+bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case DOWN_ARROW:
+    case Ion::Events::Event::DOWN_ARROW:
       setActiveCell(m_activeCell+1);
       return true;
-    case UP_ARROW:
+    case Ion::Events::Event::UP_ARROW:
       setActiveCell(m_activeCell-1);
       return true;
-    case ENTER:
+    case Ion::Events::Event::ENTER:
       ((Probability::App *)app())->setLaw(App::Law::Normal);
       return true;
     default:

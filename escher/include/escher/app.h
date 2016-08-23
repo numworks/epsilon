@@ -18,7 +18,7 @@ public:
   App();
   void setWindow(Window * window);
   void focus(Responder * responder);
-  void processEvent(ion_event_t event);
+  void processEvent(Ion::Events::Event event);
 protected:
   virtual ViewController * rootViewController() = 0;
 private:

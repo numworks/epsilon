@@ -1,5 +1,11 @@
 include ion/src/device/boot/Makefile
-objs += $(addprefix ion/src/device/, init.o heap.o led.o display.o)
+objs += $(addprefix ion/src/device/, \
+  device.o\
+  display.o\
+  heap.o\
+  keyboard.o\
+  led.o\
+)
 
 # When using the register.h C++ file in production mode, we expect the compiler
 # to completely inline all bit manipulations. For some reason, if we build using
@@ -14,4 +20,4 @@ ion/src/device/display.o: SFLAGS+=-O3
 endif
 endif
 
-objs += $(addprefix ion/src/device/keyboard/, keyboard.o)
+#objs += $(addprefix ion/src/device/keyboard/, keyboard.o)

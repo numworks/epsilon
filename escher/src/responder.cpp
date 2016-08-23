@@ -13,7 +13,7 @@ void Responder::setParentResponder(Responder * responder) {
   m_parentResponder = responder;
 }
 
-bool Responder::handleEvent(ion_event_t event) {
+bool Responder::handleEvent(Ion::Events::Event event) {
   return false;
 }
 

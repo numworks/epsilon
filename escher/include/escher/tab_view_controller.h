@@ -15,7 +15,7 @@ public:
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);
-  bool handleEvent(ion_event_t event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   class ContentView : public View {
   public:

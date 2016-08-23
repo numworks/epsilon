@@ -11,7 +11,7 @@ public:
 
   View * view() override;
   const char * title() const override;
-  bool handleEvent(ion_event_t event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   SolidColorView m_view;
 };

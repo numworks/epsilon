@@ -24,16 +24,16 @@ const char * TextField::className() const {
 
 /* Responder */
 
-bool TextField::handleEvent(ion_event_t event) {
-  if (event == DELETE && m_currentTextLength > 0) {
+bool TextField::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Event::DELETE && m_currentTextLength > 0) {
     m_currentTextLength--;
     return true;
   }
-  if (event >= 0x100) {
+  if ((int)event >= 0x100) {
     return false;
   }
   if (m_currentTextLength-1 < m_textBufferSize) {
-    m_textBuffer[m_currentTextLength++] = event;
+    m_textBuffer[m_currentTextLength++] = (int)event;
     markRectAsDirty(bounds()); // TODO: Could be optimized
   }
   return true;

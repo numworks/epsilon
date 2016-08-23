@@ -5,8 +5,9 @@
 
 class RCC {
 public:
-  class AHB1ENR : Register32 {
+  class AHB1ENR : public Register32 {
   public:
+    AHB1ENR(uint32_t v) : Register32(v) {}
     REGS_BOOL_FIELD(GPIOAEN, 0);
     REGS_BOOL_FIELD(GPIOBEN, 1);
     REGS_BOOL_FIELD(GPIOCEN, 2);

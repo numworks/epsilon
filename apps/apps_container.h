@@ -23,7 +23,7 @@ public:
 #endif
   };
   void switchTo(AppId appId);
-  bool handleEvent(ion_event_t event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   App * appWithId(AppId appId);
   int m_activeAppIndex;

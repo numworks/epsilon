@@ -7,20 +7,47 @@ class GPIO {
 public:
   class MODER : Register32 {
   public:
-    enum class MODE {
+    enum class Mode {
       Input = 0,
       Output = 1,
       AlternateFunction = 2,
       Analog = 3
     };
-    MODE getMODER(int index) { return (MODE)get(2*index+1, 2*index); };
-    void setMODER(int index, MODE mode) volatile { set(2*index+1, 2*index, (uint32_t)mode); };
+    Mode getMode(int index) { return (Mode)getBitRange(2*index+1, 2*index); }
+    void setMode(int index, Mode mode) volatile { setBitRange(2*index+1, 2*index, (uint32_t)mode); }
+  };
+
+  class OTYPER : Register32 {
+  public:
+    enum class Type {
+      PushPull = 0,
+      OpenDrain = 1
+    };
+    Type getType(int index) { return (Type)getBitRange(index, index); }
+    void setType(int index, Type type) volatile { setBitRange(index, index, (uint32_t)type); }
+  };
+
+  class PUPDR : Register32 {
+  public:
+    enum class Pull {
+      None = 0,
+      Up = 1,
+      Down = 2,
+      Reserved = 3
+    };
+    Pull getPull(int index) { return (Pull)getBitRange(2*index+1, 2*index); }
+    void setPull(int index, Pull pull) volatile { setBitRange(2*index+1, 2*index, (uint32_t)pull); }
+  };
+
+  class IDR : Register32 {
+  public:
+    bool get(int index) volatile { return (bool)getBitRange(index, index); }
   };
 
   class ODR : Register32 {
   public:
-    bool getODR(int index) { return (bool)get(index, index); }
-    void setODR(int index, bool state) volatile { set(index, index, state); }
+    bool get(int index) { return (bool)getBitRange(index, index); }
+    void set(int index, bool state) volatile { setBitRange(index, index, state); }
   };
 
   class AFR : Register64 {
@@ -33,16 +60,19 @@ public:
       AF8 = 8,   AF9 = 9,   AF10 = 10, AF11 = 11,
       AF12 = 12, AF13 = 13, AF14 = 14, AF15 = 15
     };
-    AlternateFunction getAFR(int index) {
-      return (AlternateFunction)get(4*index+3, 4*index);
+    AlternateFunction getAlternateFunction(int index) {
+      return (AlternateFunction)getBitRange(4*index+3, 4*index);
     };
-    void setAFR(int index, AlternateFunction af) volatile {
-      set(4*index+3, 4*index, (uint64_t)af);
+    void setAlternateFunction(int index, AlternateFunction af) volatile {
+      setBitRange(4*index+3, 4*index, (uint64_t)af);
     };
   };
 
   constexpr GPIO(int i) : m_index(i) {}
   REGS_REGISTER_AT(MODER, 0x00);
+  REGS_REGISTER_AT(OTYPER, 0x04);
+  REGS_REGISTER_AT(PUPDR, 0x0C);
+  REGS_REGISTER_AT(IDR, 0x10);
   REGS_REGISTER_AT(ODR, 0x14);
   REGS_REGISTER_AT(AFR, 0x20);
 private:

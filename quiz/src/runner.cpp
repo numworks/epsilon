@@ -1,9 +1,7 @@
 #include "symbols.h"
 #include <string.h>
 #include <kandinsky.h>
-extern "C" {
 #include <ion.h>
-}
 
 void print(const char * message) {
   static int line_y = 0;
@@ -11,7 +9,7 @@ void print(const char * message) {
   int line_height = KDText::stringSize("M").height();
   ctx->drawString(message, KDPoint(0, line_y), 0);
   line_y += line_height;
-  if (line_y > ION_SCREEN_HEIGHT) {
+  if (line_y > Ion::Display::Height) {
     line_y = 0;
     // Clear screen maybe?
   }
@@ -27,6 +25,6 @@ void ion_app() {
   }
   print("ALL TESTS FINISHED");
   while (1) {
-    ion_sleep(1000);
+    Ion::msleep(1000);
   }
 }

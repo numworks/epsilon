@@ -5,6 +5,7 @@ void TiledView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor * pixels = tile();
   KDSize size = tileSize();
   KDFrameBuffer tileBuffer(pixels, size);
+  KDFrameBufferContext tileContext = KDFrameBufferContext(&tileBuffer);
 
   for (int i=0; i<(rect.width()/size.width()+1); i++) {
     for (int j=0; j<(rect.height()/size.height()+1); j++) {
@@ -14,7 +15,6 @@ void TiledView::drawRect(KDContext * ctx, KDRect rect) const {
           size.width(), size.height()
           );
       //tileRect = KDRectIntersection(tileRect, rect); // Optional
-      KDFrameBufferContext tileContext = KDFrameBufferContext(&tileBuffer);
       KDPoint origin = tileRect.origin().opposite();
       tileContext.setOrigin(origin);
 

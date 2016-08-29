@@ -3,8 +3,8 @@ extern "C" {
 #include <assert.h>
 }
 
-constexpr KDColor k_backgroundColor = 0x00;
-constexpr KDColor k_indicatorColor = 0x30;
+constexpr KDColor k_backgroundColor = KDColorBlack;
+constexpr KDColor k_indicatorColor = KDColorRed;
 
 ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction) :
   ChildlessView(),

@@ -22,5 +22,7 @@ private:
 constexpr KDColor KDColorBlack = KDColor(0x000000);
 constexpr KDColor KDColorWhite = KDColor(0xFFFFFF);
 constexpr KDColor KDColorRed = KDColor(0xFF0000);
+constexpr KDColor KDColorGreen = KDColor(0x00FF00);
+constexpr KDColor KDColorBlue = KDColor(0x0000FF);
 
 #endif

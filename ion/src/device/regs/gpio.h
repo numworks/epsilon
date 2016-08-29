@@ -62,10 +62,10 @@ public:
     };
     AlternateFunction getAlternateFunction(int index) {
       return (AlternateFunction)getBitRange(4*index+3, 4*index);
-    };
+    }
     void setAlternateFunction(int index, AlternateFunction af) volatile {
       setBitRange(4*index+3, 4*index, (uint64_t)af);
-    };
+    }
   };
 
   constexpr GPIO(int i) : m_index(i) {}

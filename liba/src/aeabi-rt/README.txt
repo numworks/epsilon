@@ -9,6 +9,7 @@ memory copying/clearing/setting, etc...
 Since we're telling our compiler to build an AEABI binary, it may decide to use
 those symbols, and so we have to provide an implementation for them. Refer to
 the "Run-time ABI for the ARM Architecture" for a full list of functions.
+http://infocenter.arm.com/help/topic/com.arm.doc.ihi0043d/IHI0043D_rtabi.pdf
 
 Note that this is not formally the job of a libc implementation. Similar code is
 often shipped alongside a compiler (LLVM calls it compiler-rt, GCC libgcc). But

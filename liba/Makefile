@@ -7,4 +7,7 @@ tests += $(addprefix liba/test/, stdint.c)
 
 # The use of aeabi-rt could be made conditional to an AEABI target.
 # In practice we're always using liba on such a target.
-objs += $(addprefix liba/src/aeabi-rt/, memcpy.o)
+objs += $(addprefix liba/src/aeabi-rt/, \
+  memclr.o \
+  memcpy.o \
+)

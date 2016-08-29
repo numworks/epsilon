@@ -3,6 +3,11 @@ extern "C" {
 #include <assert.h>
 }
 
+constexpr int numberOfDefaultColors = 3;
+constexpr KDColor defaultColors[numberOfDefaultColors] = {
+  KDColorRed, KDColorGreen, KDColorBlue
+};
+
 Graph::FunctionStore::FunctionStore() :
   m_numberOfFunctions(0)
 {
@@ -15,7 +20,7 @@ Graph::Function * Graph::FunctionStore::functionAtIndex(int i) {
 
 void Graph::FunctionStore::pushFunction(const char * functionText) {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
-  m_functions[m_numberOfFunctions++] = Function(functionText);
+  m_functions[m_numberOfFunctions++] = Function(functionText, defaultColors[m_numberOfFunctions%numberOfDefaultColors]);
 }
 
 int Graph::FunctionStore::numberOfFunctions() {

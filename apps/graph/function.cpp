@@ -7,8 +7,9 @@ Graph::Function::Function() :
 {
 }
 
-Graph::Function::Function(const char * text) :
+Graph::Function::Function(const char * text, KDColor color) :
   m_text(text), // FIXME: Copy !!
+  m_color(color),
   m_expression(nullptr),
   m_layout(nullptr)
 {

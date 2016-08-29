@@ -168,7 +168,7 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
       float y = f->expression()->approximate(plotContext);
       KDCoordinate py = floatToPixel(Axis::Vertical, y);
       KDRect stampRect(px, py, stampSize, stampSize);
-      ctx->fillRectWithMask(stampRect, KDColorRed, mask, workingBuffer);
+      ctx->fillRectWithMask(stampRect, f->color(), mask, workingBuffer);
     }
   }
 }

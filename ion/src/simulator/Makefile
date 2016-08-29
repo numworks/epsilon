@@ -1,4 +1,7 @@
-objs += $(addprefix ion/src/simulator/, init.o)
+objs += $(addprefix ion/src/simulator/, \
+  battery.o\
+  init.o\
+)
 objs += $(addprefix ion/src/simulator/boot/, main.o)
 objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
 objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)

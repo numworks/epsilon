@@ -7,6 +7,7 @@ extern "C" {
 #include "led.h"
 #include "display.h"
 #include "keyboard.h"
+#include "battery.h"
 
 // Public Ion methods
 
@@ -28,6 +29,7 @@ void Ion::Device::init() {
   LED::Device::init();
   Display::Device::init();
   Keyboard::Device::init();
+  Battery::Device::init();
 }
 
 void Ion::Device::initClocks() {

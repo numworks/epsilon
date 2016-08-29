@@ -15,12 +15,15 @@ namespace Ion {
 namespace Battery {
 
 bool isCharging();
+
 enum class Charge {
   EMPTY,
   SOMEWHERE_INBETWEEN,
   FULL
 };
 Charge level();
+
+float voltage();
 
 }
 }

@@ -35,6 +35,7 @@ public:
   class APB2ENR : Register32 {
   public:
     REGS_BOOL_FIELD(TIM1EN, 0);
+    REGS_BOOL_FIELD(ADC1EN, 8);
   };
 
   constexpr RCC() {};

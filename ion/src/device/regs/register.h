@@ -14,7 +14,7 @@ public:
   void set(T value) volatile {
     m_value = value;
   }
-  T get() {
+  T get() volatile {
     return m_value;
   }
 protected:

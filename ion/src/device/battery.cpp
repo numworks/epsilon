@@ -1,5 +1,6 @@
 #include <ion/battery.h>
 #include "battery.h"
+#include "regs/regs.h"
 
 namespace Ion {
 namespace Battery {
@@ -7,6 +8,17 @@ namespace Battery {
 bool isCharging() {
   return !Device::ChargingGPIO.IDR()->get(Device::ChargingPin);
 }
+
+float voltage() {
+  ADC1.CR2()->setSWSTART(true);
+  while (ADC1.SR()->getEOC() != true) {
+  }
+  uint16_t value = ADC1.DR()->get();
+
+  // The ADC is 12 bits by default
+  return Device::ADCDividerBridgeRatio*(Device::ADCReferenceVoltage * value)/0xFFF;
+}
+
 
 }
 }
@@ -16,23 +28,27 @@ namespace Battery {
 namespace Device {
 
 void init() {
+  initGPIO();
+  initADC();
+}
+
+void initGPIO() {
   /* The BAT_CHRG pin is connected to the Li-Po charging IC. That pin uses an
    * open-drain output. Open-drain output are either connected to ground or left
    * floating. To interact with such an output, our input must therefore be
    * pulled up. */
   ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Input);
   ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::Up);
+
+  /* The BAT_SNS pin is connected to Vbat through a divider bridge. It therefore
+   * has a voltage of Vbat/2. We'll measure this using ADC1 channel 0. */
+  ADCGPIO.MODER()->setMode(ADCPin, GPIO::MODER::Mode::Analog);
+}
+
+void initADC() {
+  ADC1.CR2()->setADON(true);
 }
 
 }
 }
 }
-
-/*
- *
- * RAIN = External input impedance should be <= to
- * (k-0.5)/(fADC * CADC * ln(2^(n+2)) - RADC
- *
- * n = resolution = 12
- * k = number of sampling periods
- */

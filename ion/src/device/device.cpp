@@ -51,6 +51,8 @@ void Ion::Device::initClocks() {
   // APB1 bus
   // We're using TIM3
   RCC.APB1ENR()->setTIM3EN(true);
+
+  RCC.APB2ENR()->setADC1EN(true);
 }
 
 void Ion::Device::initFPU() {

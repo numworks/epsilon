@@ -33,7 +33,7 @@
  *  only open-drain. Open drain means the pin is either driven low or left
  *  floating.
  *  When a user presses multiple keys, a connection between two rows can happen.
- *  If we dont' use open drain outputs, this situation could trigger a short
+ *  If we don't use open drain outputs, this situation could trigger a short
  *  circuit between an output driving high and another driving low.
  *
  *  If the outputs are open-drain, this means that the input must be pulled up.

@@ -30,6 +30,8 @@ void Ion::Device::init() {
   Display::Device::init();
   Keyboard::Device::init();
   Battery::Device::init();
+
+  Display::setBacklightIntensity(0xFF);
 }
 
 void Ion::Device::initClocks() {

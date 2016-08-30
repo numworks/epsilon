@@ -17,9 +17,7 @@ void pushRect(KDRect r, const KDColor * pixels) {
 
 void pushRectUniform(KDRect r, KDColor c) {
   Device::setDrawingArea(r);
-  for (size_t i=0; i<r.width()*r.height(); i++) {
-    Device::pushPixels(&c, 1);
-  }
+  Device::pushColor(c, r.width()*r.height());
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
@@ -142,6 +140,7 @@ void initPanel() {
   SEND_COMMAND(GammaSet, 0x01);
   SEND_COMMAND(PositiveGammaCorrection, 0x1f, 0x1a, 0x18, 0x0a, 0x0f, 0x06, 0x45, 0x87, 0x32, 0x0a, 0x07, 0x02, 0x07, 0x05, 0x00);
   SEND_COMMAND(NegativeGammaCorrection, 0x00, 0x25, 0x27, 0x05, 0x10, 0x09, 0x3a, 0x78, 0x4d, 0x05, 0x18, 0x0d, 0x38, 0x3a, 0x1f);
+  SEND_COMMAND(InterfaceControl, 0x01, 0x00, 0x20); // Data is sent little-endian
 
   *CommandAddress = Command::SleepOut;    //Exit Sleep
   msleep(120);
@@ -172,11 +171,20 @@ void setDrawingArea(KDRect r) {
 }
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
-  assert(sizeof(KDColor) == 2); // We expect KDColor to be RGB565
-  for (size_t i=0; i<numberOfPixels; i++) {
-    uint16_t pixel = pixels[i];
-    *DataAddress = (pixel >> 8);
-    *DataAddress = (pixel & 0xFF);
+  uint8_t * bytePixelPointer = (uint8_t *)pixels;
+  size_t i = 2*numberOfPixels;
+  while (i--) {
+    *DataAddress = *bytePixelPointer++;
+  }
+}
+
+void pushColor(KDColor color, size_t numberOfPixels) {
+  uint8_t firstByte = color;
+  uint8_t secondByte = (color >> 8);
+  size_t i = numberOfPixels;
+  while (i--) {
+    *DataAddress = firstByte;
+    *DataAddress = secondByte;
   }
 }
 

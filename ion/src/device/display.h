@@ -36,6 +36,7 @@ void initPanel();
 
 void setDrawingArea(KDRect r);
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
+void pushColor(KDColor color, size_t numberOfPixels);
 
 enum class Command : uint8_t {
   SleepOut = 0x11,
@@ -60,6 +61,7 @@ enum class Command : uint8_t {
   DriverTimingControlB = 0xEA,
   PowerOnSequenceControl = 0xED,
   Enable3G = 0xF2,
+  InterfaceControl = 0xF6,
   PumpRatioControl = 0xF7,
 };
 

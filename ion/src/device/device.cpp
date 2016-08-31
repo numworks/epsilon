@@ -53,6 +53,7 @@ void Ion::Device::initClocks() {
   RCC.APB1ENR()->setTIM3EN(true);
 
   RCC.APB2ENR()->setADC1EN(true);
+  RCC.APB2ENR()->setSYSCFGEN(true);
 }
 
 void Ion::Device::initFPU() {

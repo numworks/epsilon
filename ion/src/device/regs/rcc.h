@@ -36,6 +36,7 @@ public:
   public:
     REGS_BOOL_FIELD(TIM1EN, 0);
     REGS_BOOL_FIELD(ADC1EN, 8);
+    REGS_BOOL_FIELD(SYSCFGEN, 14);
   };
 
   constexpr RCC() {};

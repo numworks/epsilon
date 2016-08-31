@@ -79,7 +79,11 @@ bool keyDown(Key k) {
 
 // Private Ion::Keyboard::Device methods
 
-void Ion::Keyboard::Device::init() {
+namespace Ion {
+namespace Keyboard {
+namespace Device {
+
+void init() {
   for (uint8_t i=0; i<numberOfRows; i++) {
     uint8_t pin = RowPins[i];
     RowGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Output);
@@ -91,4 +95,33 @@ void Ion::Keyboard::Device::init() {
     ColumnGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Input);
     ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::Up);
   }
+}
+
+void generateWakeUpEventForKey(Ion::Keyboard::Key k) {
+  // We're driving the rows and reading the columns.
+  int row = rowForKey(k);
+  for (uint8_t i=0; i<numberOfRows; i++) {
+    /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
+     * the pin floating (Hi-Z). So we want to set the current row to zero and
+     * all the others to 1. */
+    bool state = (i == row ? 0 : 1);
+    uint8_t pin = RowPins[i];
+    RowGPIO.ODR()->set(pin, state);
+  }
+
+  uint8_t column = columnForKey(k);
+  uint8_t columnPin = ColumnPins[column];
+
+  SYSCFG.EXTICR1()->setEXTI(columnPin, ColumnGPIO);
+
+  EXTI.EMR()->set(columnPin, true);
+
+  /* When the key is pressed, it will go from 1 (because it's pulled up) to
+   * zero (because it's connected to the open-drain output. In other words,
+   * we're waiting for a falling edge. */
+  EXTI.FTSR()->set(columnPin, true);
+}
+
+}
+}
 }

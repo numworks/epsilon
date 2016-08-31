@@ -69,6 +69,7 @@ public:
   };
 
   constexpr GPIO(int i) : m_index(i) {}
+  operator int() const { return m_index; }
   REGS_REGISTER_AT(MODER, 0x00);
   REGS_REGISTER_AT(OTYPER, 0x04);
   REGS_REGISTER_AT(PUPDR, 0x0C);

@@ -6,6 +6,7 @@ objs += $(addprefix ion/src/device/, \
   heap.o\
   keyboard.o\
   led.o\
+  power.o\
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_KEYBOARD_H
 #define ION_DEVICE_KEYBOARD_H
 
+#include <ion/keyboard.h>
 #include "regs/regs.h"
 
 namespace Ion {
@@ -42,6 +43,8 @@ inline uint8_t rowForKey(Ion::Keyboard::Key key) {
 inline uint8_t columnForKey(Ion::Keyboard::Key key) {
   return (int)key%numberOfColumns;
 }
+
+void generateWakeUpEventForKey(Ion::Keyboard::Key k);
 
 }
 }

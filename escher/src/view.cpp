@@ -27,15 +27,32 @@ void View::markRectAsDirty(KDRect rect) {
   m_dirtyRect = m_dirtyRect.unionedWith(rect);
 }
 
-void View::redraw(KDRect rect) {
+KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
+  /* View::redraw recursively redraws the rectangle 'rect' of the view and all
+   * its subviews. 
+   * To optimize the function, we redraw only the union of the current dirty
+   * rectangle with a rectangle forced to be redrawn (forceRedrawRect). This
+   * rectangle is initially empty and recursively expands by unioning with the
+   * rectangles that are redrawn. This process handles the case when several
+   * sister views are overlapping (provided that the sister views are indexed in
+   * the right order).
+  */
   if (window() == nullptr) {
     /* That view (and all of its subviews) is offscreen. That means so are all
      * of its subviews. So there's no point in drawing them. */
-    return;
+    return KDRectZero;
   }
 
-  // First, let's draw our own content by calling drawRect
-  KDRect rectNeedingRedraw = rect.intersectedWith(m_dirtyRect);
+  /* First, for the current view, the rectangle to redraw is the union of the
+   * dirty rectangle and the rectangle forced to be redrawn. The rectangle to
+   * redraw must also be included in the current view bounds and in the
+   * rectangle rect. */
+  KDRect rectNeedingRedraw = rect
+    .intersectedWith(m_dirtyRect)
+    .unionedWith(forceRedrawRect
+      .intersectedWith(bounds()));
+
+  // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
     KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
@@ -45,6 +62,8 @@ void View::redraw(KDRect rect) {
     ctx->setClippingRect(absClippingRect);
     this->drawRect(ctx, rectNeedingRedraw);
   }
+  // This initiates the area that has been redrawn.
+  KDRect redrawnArea = rectNeedingRedraw;
 
   // Then, let's recursively draw our children over ourself
   for (uint8_t i=0; i<numberOfSubviews(); i++) {
@@ -54,16 +73,26 @@ void View::redraw(KDRect rect) {
     }
     assert(subview->m_superview == this);
 
-    if (rect.intersects(subview->m_frame)) {
-      KDRect intersection = rect.intersectedWith(subview->m_frame);
-      // Let's express intersection in subview's coordinates
-      intersection = intersection.translatedBy(subview->m_frame.origin().opposite());
-      subview->redraw(intersection);
-    }
-  }
+    // We transpose rect and forcedRedrawArea in the subview coordinates.
+    KDRect intersectionInSubview = rect
+      .intersectedWith(subview->m_frame)
+      .translatedBy(subview->m_frame.origin().opposite());
+    KDRect forcedRedrawAreaInSubview = redrawnArea
+      .translatedBy(subview->m_frame.origin().opposite());
 
+    // We redraw the current subview by passing the rectangle previously redrawn
+    // (by the parent view or previous sister views) as forced to be redraw.
+    KDRect subviewRedrawnArea =
+      subview->redraw(intersectionInSubview, forcedRedrawAreaInSubview);
+
+    // We expand the redrawn area to include the area just drawn.
+    redrawnArea = redrawnArea.unionedWith(subviewRedrawnArea.translatedBy(subview->m_frame.origin()));
+  }
   // Eventually, mark that we don't need to be redrawn
   m_dirtyRect = KDRectZero;
+
+  // The function returns the total area that have been redrawn.
+  return redrawnArea;
 }
 
 View * View::subview(int index) {
@@ -95,6 +124,7 @@ void View::setFrame(KDRect frame) {
    * can either mark an area of our superview as dirty, or mark our whole frame
    * as dirty. We pick the second option because it is more efficient. */
   markRectAsDirty(bounds());
+  // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is being shrinked)
 
   layoutSubviews();
 }

@@ -60,9 +60,10 @@ private:
   virtual View * subviewAtIndex(int index) = 0;
   virtual void layoutSubviews() = 0;
   virtual const Window * window() const;
-  void redraw(KDRect rect);
+  KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
   KDPoint absoluteOrigin() const;
   KDRect absoluteVisibleFrame() const;
+  //KDRect areaNeedingRedraw() const;
 
   View * m_superview;
   KDRect m_dirtyRect;

@@ -49,7 +49,6 @@ protected:
    *  - ... and that's all I can think of.
    */
   void markRectAsDirty(KDRect rect);
-  //void markAsNeedingRedraw();
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const;
   virtual void logAttributes(std::ostream &os) const;
@@ -63,7 +62,6 @@ private:
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
   KDPoint absoluteOrigin() const;
   KDRect absoluteVisibleFrame() const;
-  //KDRect areaNeedingRedraw() const;
 
   View * m_superview;
   KDRect m_dirtyRect;

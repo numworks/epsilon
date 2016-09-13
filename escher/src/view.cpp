@@ -29,7 +29,7 @@ void View::markRectAsDirty(KDRect rect) {
 
 KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   /* View::redraw recursively redraws the rectangle 'rect' of the view and all
-   * its subviews. 
+   * its subviews.
    * To optimize the function, we redraw only the union of the current dirty
    * rectangle with a rectangle forced to be redrawn (forceRedrawRect). This
    * rectangle is initially empty and recursively expands by unioning with the

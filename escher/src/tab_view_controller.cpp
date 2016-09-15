@@ -123,10 +123,6 @@ View * TabViewController::view() {
   return &m_view;
 }
 
-void TabViewController::handleKeyEvent(int key) {
-  // Switch tabs!
-}
-
 uint8_t TabViewController::numberOfTabs() {
   return m_numberOfChildren;
 }

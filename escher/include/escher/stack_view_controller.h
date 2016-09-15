@@ -16,7 +16,6 @@ public:
 
 
   View * view() override;
-  void handleKeyEvent(int key) override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
 private:

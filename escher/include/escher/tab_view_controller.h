@@ -9,7 +9,6 @@ public:
   TabViewController(Responder * parentResponder, ViewController * one, ViewController * two);
   //TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
-  void handleKeyEvent(int key) override;
 
   void setActiveTab(uint8_t index);
   uint8_t numberOfTabs();

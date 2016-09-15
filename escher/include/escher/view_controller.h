@@ -18,7 +18,6 @@ class ViewController : public Responder {
 public:
   ViewController(Responder * parentResponder);
   virtual const char * title() const;
-  virtual void handleKeyEvent(int key);
   virtual View * view() = 0;
 };
 

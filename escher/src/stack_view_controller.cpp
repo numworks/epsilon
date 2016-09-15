@@ -100,11 +100,6 @@ void StackViewController::setupActiveViewController() {
   app()->focus(vc);
 }
 
-void StackViewController::handleKeyEvent(int key) {
-  // Switch tabs!
-}
-
-
 bool StackViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Event::ESC && m_numberOfChildren > 1) {
     pop();

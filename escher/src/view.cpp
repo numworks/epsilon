@@ -4,8 +4,8 @@ extern "C" {
 #include <escher/view.h>
 
 View::View() :
-  m_superview(nullptr),
   m_frame(KDRectZero),
+  m_superview(nullptr),
   m_dirtyRect(KDRectZero)
 {
 }

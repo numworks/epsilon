@@ -5,8 +5,8 @@ extern "C" {
 }
 
 App::App() :
-  m_magic(Magic),
   Responder(nullptr),
+  m_magic(Magic),
   m_firstResponder(nullptr)
 {
 }

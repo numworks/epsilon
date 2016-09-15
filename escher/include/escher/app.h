@@ -18,13 +18,14 @@ public:
   constexpr static uint8_t Magic = 0xA8;
   App();
   void setWindow(Window * window);
-  void focus(Responder * responder);
+  void setFirstResponder(Responder * responder);
+  Responder * firstResponder();
   void processEvent(Ion::Events::Event event);
   uint8_t m_magic; // Poor man's RTTI
 protected:
   virtual ViewController * rootViewController() = 0;
 private:
-  Responder * m_focusedResponder;
+  Responder * m_firstResponder;
 };
 
 #endif

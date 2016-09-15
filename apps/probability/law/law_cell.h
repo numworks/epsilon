@@ -12,7 +12,8 @@ public:
   void setEven(bool even);
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setFocused(bool focused) override;
+  void didBecomeFirstResponder() override;
+  void didResignFirstResponder() override;
 private:
   const char * m_message;
   bool m_focused;

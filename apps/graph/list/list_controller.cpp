@@ -29,7 +29,7 @@ void ListController::setActiveCell(int index) {
   m_tableView.scrollToRow(index);
   FunctionCell * cell = (FunctionCell *)(m_tableView.cellAtIndex(index));
   cell->setParentResponder(this);
-  app()->focus(cell);
+  app()->setFirstResponder(cell);
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {

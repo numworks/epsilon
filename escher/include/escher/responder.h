@@ -9,7 +9,9 @@ class Responder {
 public:
   Responder(Responder * parentResponder);
   virtual bool handleEvent(Ion::Events::Event event); // Default implementation does nothing
-  virtual void setFocused(bool focused); // Default implementation does nothing. Used by subclasses to know when active or not
+  virtual void didBecomeFirstResponder();
+  virtual void didResignFirstResponder();
+
   Responder * parentResponder() const;
   void setParentResponder(Responder * responder);
   App * app();

@@ -38,7 +38,7 @@ void Probability::LawController::setActiveCell(int index) {
   m_tableView.scrollToRow(index);
   LawCell * cell = (LawCell *)(m_tableView.cellAtIndex(index));
   cell->setParentResponder(this);
-  app()->focus(cell);
+  app()->setFirstResponder(cell);
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
@@ -78,5 +78,5 @@ void Probability::LawController::willDisplayCellForIndex(View * cell, int index)
 }
 
 KDCoordinate Probability::LawController::cellHeight() {
-  return 40;
+  return 35;
 }

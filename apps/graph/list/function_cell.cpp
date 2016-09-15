@@ -21,8 +21,13 @@ void FunctionCell::setFunction(Graph::Function * f) {
   m_function = f;
 }
 
-void FunctionCell::setFocused(bool focused) {
-  m_focused = focused;
+void FunctionCell::didBecomeFirstResponder() {
+  m_focused = true;
+  markRectAsDirty(bounds());
+}
+
+void FunctionCell::didResignFirstResponder() {
+  m_focused = false;
   markRectAsDirty(bounds());
 }
 

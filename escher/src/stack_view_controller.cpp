@@ -97,7 +97,12 @@ void StackViewController::setupActiveViewController() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   vc->setParentResponder(this);
   m_view.setContentView(vc->view());
-  app()->focus(vc);
+  app()->setFirstResponder(vc);
+}
+
+void StackViewController::didBecomeFirstResponder() {
+  ViewController * vc = m_children[m_numberOfChildren-1];
+  app()->setFirstResponder(vc);
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {

@@ -18,6 +18,7 @@ public:
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 private:
   class ControllerView : public View {
   public:

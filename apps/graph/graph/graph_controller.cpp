@@ -14,14 +14,6 @@ const char * GraphController::title() const {
   return "Graphique";
 }
 
-void GraphController::setFocused(bool focused) {
-  /*
-  if (focused) {
-    App::runningApp()->focus(&m_view);
-  }
-  */
-}
-
 bool GraphController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:

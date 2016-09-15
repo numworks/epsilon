@@ -19,7 +19,10 @@ bool Responder::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void Responder::setFocused(bool focused) {
+void Responder::didBecomeFirstResponder() {
+}
+
+void Responder::didResignFirstResponder() {
 }
 
 /* We assume the app is the root parent. */

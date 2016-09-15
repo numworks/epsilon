@@ -7,15 +7,15 @@ extern "C" {
 App::App() :
   m_magic(Magic),
   Responder(nullptr),
-  m_focusedResponder(nullptr)
+  m_firstResponder(nullptr)
 {
 }
 
 void App::setWindow(Window * window) {
   ViewController * controller = rootViewController();
   View * view = controller->view();
-  if (m_focusedResponder == nullptr) {
-    focus(controller);
+  if (m_firstResponder == nullptr) {
+    setFirstResponder(controller);
   }
   assert(controller->app() == this);
 
@@ -26,7 +26,7 @@ void App::setWindow(Window * window) {
 }
 
 void App::processEvent(Ion::Events::Event event) {
-  Responder * responder = m_focusedResponder;
+  Responder * responder = m_firstResponder;
   bool didHandleEvent = false;
   while (responder) {
     didHandleEvent = responder->handleEvent(event);
@@ -37,12 +37,16 @@ void App::processEvent(Ion::Events::Event event) {
   }
 }
 
-void App::focus(Responder * responder) {
-  if (m_focusedResponder) {
-    m_focusedResponder->setFocused(false);
+Responder * App::firstResponder() {
+  return m_firstResponder;
+}
+
+void App::setFirstResponder(Responder * responder) {
+  if (m_firstResponder) {
+    m_firstResponder->didResignFirstResponder();
   }
-  m_focusedResponder = responder;
-  if (m_focusedResponder) {
-    m_focusedResponder->setFocused(true);
+  m_firstResponder = responder;
+  if (m_firstResponder) {
+    m_firstResponder->didBecomeFirstResponder();
   }
 }

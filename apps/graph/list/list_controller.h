@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../function_store.h"
 #include "function_cell.h"
+#include "parameter_controller.h"
 
 class ListController : public ViewController, public TableViewDataSource {
 public:
@@ -30,6 +31,9 @@ private:
   int m_activeCell;
   KDCoordinate m_manualScrolling;
   Graph::FunctionStore * m_functionStore;
+  ParameterController m_parameterController;
+
+
 };
 
 #endif

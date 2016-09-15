@@ -7,4 +7,5 @@ app_objs += $(addprefix apps/graph/,\
   graph/graph_view.o\
   list/function_cell.o\
   list/list_controller.o\
+  list/parameter_controller.o\
 )

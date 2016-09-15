@@ -4,13 +4,15 @@
 ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
   m_tableView(TableView(this)),
-  m_activeCell(0),
+  m_activeCell(-1),
   m_manualScrolling(0),
-  m_functionStore(functionStore)
+  m_functionStore(functionStore),
+  m_parameterController(ParameterController(this))
 {
 }
 
 View * ListController::view() {
+  setActiveCell(0);
   return &m_tableView;
 }
 
@@ -39,6 +41,9 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
+      ((StackViewController *) parentResponder())->push(&m_parameterController);
+      return true;
+    case Ion::Events::Event::PLUS:
       m_manualScrolling += 10;
       m_tableView.setContentOffset({0, m_manualScrolling});
       return true;

@@ -30,7 +30,6 @@ private:
   TableView m_tableView;
   const char ** m_messages;
   int m_activeCell;
-  KDCoordinate m_manualScrolling;
 };
 
 }

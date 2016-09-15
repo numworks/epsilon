@@ -81,7 +81,7 @@ void StackViewController::push(ViewController * vc) {
   m_view.pushStack("name");
   m_children[m_numberOfChildren++] = vc;
   setupActiveViewController();
-  vc->setParentResponder(this);
+  //vc->setParentResponder(this);
 }
 
 void StackViewController::pop() {

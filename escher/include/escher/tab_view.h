@@ -28,7 +28,7 @@ private:
   static constexpr uint8_t k_maxNumberOfTabs = 4;
   TabViewCell m_cells[k_maxNumberOfTabs];
   uint8_t m_numberOfTabs;
-  uint8_t m_activeTabIndex;
+  int8_t m_activeTabIndex;
 };
 
 #endif

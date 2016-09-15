@@ -7,7 +7,7 @@ extern "C" {
 TabView::TabView() :
   View(),
   m_numberOfTabs(0),
-  m_activeTabIndex(0)
+  m_activeTabIndex(-1)
 {
 }
 
@@ -30,7 +30,9 @@ void TabView::setActiveIndex(int index) {
   if (m_activeTabIndex == index) {
     return;
   }
-  m_cells[m_activeTabIndex].setActive(false);
+  if (m_activeTabIndex >= 0) {
+    m_cells[m_activeTabIndex].setActive(false);
+  }
   m_activeTabIndex = index;
   m_cells[m_activeTabIndex].setActive(true);
 }

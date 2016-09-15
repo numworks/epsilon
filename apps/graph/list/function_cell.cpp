@@ -14,12 +14,7 @@ void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = m_even ? KDColor(0xEEEEEE) : KDColor(0x777777);
   ctx->fillRect(rect, background);
   ctx->drawString(m_function->text(), KDPointZero, m_focused);
-  m_function->layout()->draw(ctx, KDPointZero);
-  //Expression * foo = Expression::parse("1+2/3");
-  //ExpressionLayout * fooLayout = foo->createLayout();
-  //fooLayout->draw(ctx, KDPointZero);
-  //delete fooLayout;
-  //delete foo;
+  // m_function->layout()->draw(ctx, KDPointZero);
 }
 
 void FunctionCell::setFunction(Graph::Function * f) {

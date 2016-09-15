@@ -5,6 +5,7 @@ extern "C" {
 }
 
 App::App() :
+  m_magic(Magic),
   Responder(nullptr),
   m_focusedResponder(nullptr)
 {

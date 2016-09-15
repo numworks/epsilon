@@ -1,4 +1,6 @@
 #include <escher/responder.h>
+#include <escher/app.h>
+#include <assert.h>
 
 Responder::Responder(Responder * parentResponder) :
   m_parentResponder(parentResponder)
@@ -29,5 +31,7 @@ App * Responder::app() {
   /* If we used RTTI we could use a dynamic_cast, which would be a lot more
    * safe, as such:
    * return dynamic_cast<App *>(rootResponder); */
-  return (App *)rootResponder;
+   App * result = (App *)rootResponder;
+   assert(result->m_magic == App::Magic); // Poor man's RTTI
+  return result;
 }

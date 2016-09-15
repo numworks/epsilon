@@ -15,10 +15,12 @@
 
 class App : public Responder {
 public:
+  constexpr static uint8_t Magic = 0xA8;
   App();
   void setWindow(Window * window);
   void focus(Responder * responder);
   void processEvent(Ion::Events::Event event);
+  uint8_t m_magic; // Poor man's RTTI
 protected:
   virtual ViewController * rootViewController() = 0;
 private:

@@ -24,6 +24,7 @@ FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
 # built w/o PNG support and simply won't output an image of the rasterization
 #LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.21
 
+kandinsky/src/text.cpp: kandinsky/src/font.h
 kandinsky/src/context_text.cpp: kandinsky/src/font.h
 
 font_files = $(addprefix kandinsky/src/, font.h font.c)

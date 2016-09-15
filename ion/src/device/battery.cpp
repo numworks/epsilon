@@ -10,10 +10,10 @@ bool isCharging() {
 }
 
 float voltage() {
-  ADC1.CR2()->setSWSTART(true);
-  while (ADC1.SR()->getEOC() != true) {
+  ADC.CR2()->setSWSTART(true);
+  while (ADC.SR()->getEOC() != true) {
   }
-  uint16_t value = ADC1.DR()->get();
+  uint16_t value = ADC.DR()->get();
 
   // The ADC is 12 bits by default
   return Device::ADCDividerBridgeRatio*(Device::ADCReferenceVoltage * value)/0xFFF;
@@ -41,12 +41,12 @@ void initGPIO() {
   ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::Up);
 
   /* The BAT_SNS pin is connected to Vbat through a divider bridge. It therefore
-   * has a voltage of Vbat/2. We'll measure this using ADC1 channel 0. */
+   * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
   ADCGPIO.MODER()->setMode(ADCPin, GPIO::MODER::Mode::Analog);
 }
 
 void initADC() {
-  ADC1.CR2()->setADON(true);
+  ADC.CR2()->setADON(true);
 }
 
 }

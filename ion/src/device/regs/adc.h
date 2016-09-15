@@ -46,7 +46,7 @@ public:
   class DR : public Register16 {
   };
 
-  constexpr ADC(int i) : m_index(i) {}
+  constexpr ADC() {};
   REGS_REGISTER_AT(SR, 0x0);
   REGS_REGISTER_AT(CR2, 0x08);
   REGS_REGISTER_AT(DR, 0x4C);
@@ -54,9 +54,8 @@ private:
   constexpr uint32_t Base() const {
     return 0x40012000;
   };
-  int m_index;
 };
 
-constexpr ADC ADC1(1);
+constexpr ADC ADC;
 
 #endif

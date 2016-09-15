@@ -20,7 +20,8 @@ Graph::Function * Graph::FunctionStore::functionAtIndex(int i) {
 
 void Graph::FunctionStore::pushFunction(const char * functionText) {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
-  m_functions[m_numberOfFunctions++] = Function(functionText, defaultColors[m_numberOfFunctions%numberOfDefaultColors]);
+  m_functions[m_numberOfFunctions] = Function(functionText, defaultColors[m_numberOfFunctions%numberOfDefaultColors]);
+  m_numberOfFunctions++;
 }
 
 int Graph::FunctionStore::numberOfFunctions() {

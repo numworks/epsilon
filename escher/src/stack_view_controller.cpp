@@ -60,21 +60,35 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController) :
   ViewController(parentResponder),
-  m_numberOfChildren(0)
+  m_numberOfChildren(0),
+  m_rootViewController(rootViewController)
 {
+  // push(rootViewController);
+}
+
+const char * StackViewController::title() const {
+  if (m_rootViewController) {
+    return m_rootViewController->title();
+  } else {
+    ViewController * vc = m_children[m_numberOfChildren-1];
+    return vc->title();
+  }
 }
 
 void StackViewController::push(ViewController * vc) {
   m_view.pushStack("name");
   m_children[m_numberOfChildren++] = vc;
   setupActiveViewController();
+  vc->setParentResponder(this);
 }
 
 void StackViewController::pop() {
   m_view.popStack();
   assert(m_numberOfChildren > 0);
+  ViewController * vc = m_children[m_numberOfChildren-1];
+  vc->setParentResponder(nullptr);
   m_numberOfChildren--;
   setupActiveViewController();
 }
@@ -100,5 +114,9 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
 }
 
 View * StackViewController::view() {
+  if (m_rootViewController != nullptr) {
+    push(m_rootViewController);
+    m_rootViewController = nullptr;
+  }
   return &m_view;
 }

@@ -14,6 +14,7 @@ protected:
 private:
   Graph::FunctionStore m_functionStore;
   ListController m_listController;
+  StackViewController m_listStackViewController;
   GraphController m_graphController;
   TabViewController m_tabViewController;
 };

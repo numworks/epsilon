@@ -17,3 +17,10 @@ QUIZ_CASE(kandinsky_color_rgb) {
   assert(KDColor(0x123456) == 0x11AA);
 }
 
+QUIZ_CASE(kandinsky_color_blend) {
+  KDColor midGray = KDColor(0x7F7F7F);
+  KDColor res = KDColor::blend(KDColorWhite, KDColorBlack, 0xFF);
+  assert(res == KDColorWhite);
+  assert(KDColor::blend(KDColorWhite, KDColorBlack, 0) == KDColorBlack);
+  assert(KDColor::blend(KDColorWhite, KDColorBlack, 0x7F) == midGray);
+}

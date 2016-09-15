@@ -175,7 +175,7 @@ int main(int argc, char * argv[]) {
       fprintf(sourceFile, "    {");
       for (int x = 0; x < glyph_width; x++) {
         pixel_t * pixel = (bitmap_image.pixels + (y+characterY)*bitmap_image.width + (x+characterX));
-        fprintf(sourceFile, "0x%02x", pixel->green);
+        fprintf(sourceFile, "0x%02x", 0xFF - pixel->green);
         if (x+1 < glyph_width) {
           fprintf(sourceFile, ", ");
         }

@@ -30,7 +30,7 @@ void Probability::LawCell::drawRect(KDContext * ctx, KDRect rect) const {
 
   //KDColor background = m_even ? KDColor(0xEEEEEE) : KDColor(0x777777);
   //ctx->fillRect(rect, background);
-  //ctx->drawString(m_message, KDPoint(margin+10, 5), textColor, backgroundColor);
+  ctx->drawString(m_message, KDPoint(margin+10, 5), textColor, backgroundColor);
 }
 
 void Probability::LawCell::setMessage(const char * message) {

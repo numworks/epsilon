@@ -21,7 +21,9 @@ void TabViewCell::setActive(bool active) {
 }
 
 void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->drawString(m_name, {0,0}, m_active);
+  KDColor text = m_active ? KDColorBlack : KDColorWhite;
+  KDColor background = m_active ? KDColorWhite : KDColorBlack;
+  ctx->drawString(m_name, KDPointZero, text, background);
 }
 
 #if ESCHER_VIEW_LOGGING

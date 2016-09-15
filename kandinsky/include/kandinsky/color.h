@@ -10,10 +10,12 @@ public:
 
   constexpr KDColor(uint32_t rgb)
     : m_value(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3)) {}
+  constexpr KDColor(uint8_t r, uint8_t g, uint8_t b)
+    : m_value((r>>3)<<11 | (g>>2) << 5 | (b>>3)) {}
   uint8_t red();
   uint8_t green();
   uint8_t blue();
-  KDColor blend(KDColor other, uint8_t alpha);
+  static KDColor blend(KDColor first, KDColor second, uint8_t alpha);
   operator uint16_t() const { return m_value; }
 private:
   uint16_t m_value;

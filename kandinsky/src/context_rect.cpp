@@ -56,7 +56,7 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, const uint8_t * mas
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAdress = workingBuffer + i + absoluteRect.width()*j;
       const uint8_t * currentMaskAddress = mask + i + rect.width()*j;
-      *currentPixelAdress = currentPixelAdress->blend(color, *currentMaskAddress);
+      *currentPixelAdress = KDColor::blend(*currentPixelAdress, color, *currentMaskAddress);
       //*currentPixelAdress = KDColorBlend(*currentPixelAdress, color, *currentMaskAddress);
     }
   }

@@ -14,8 +14,8 @@ public:
   KDColor getPixel(KDPoint p);
 
   // Text
-  void drawChar(char character, KDPoint p, uint8_t inverse);
-  void drawString(const char * text, KDPoint p, uint8_t inverse);
+  void drawChar(char character, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void drawString(const char * text, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);

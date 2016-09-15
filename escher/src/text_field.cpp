@@ -13,7 +13,7 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, size_t text
 
 void TextField::drawRect(KDContext * ctx, KDRect rect) const {
   m_textBuffer[m_currentTextLength] = 0;
-  ctx->drawString(m_textBuffer, KDPointZero, 0);
+  ctx->drawString(m_textBuffer, KDPointZero);
 }
 
 #if ESCHER_VIEW_LOGGING

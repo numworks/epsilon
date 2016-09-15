@@ -1,7 +1,20 @@
 #include <kandinsky/color.h>
 
-KDColor KDColor::blend(KDColor other, uint8_t alpha) {
-  return other; // FIXME
+KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
+  // We want to do first*alpha + second*(1-alpha)
+  // First is RRRRR GGGGGG BBBBB
+  // Second is same
+
+  uint8_t oneMinusAlpha = 0xFF-alpha;
+  uint16_t red = first.red()*alpha + second.red()*oneMinusAlpha;
+  uint16_t green = first.green()*alpha + second.green()*oneMinusAlpha;
+  uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
+  return KDColor(red>>8, green>>8, blue>>8);
+
+
+  // Blend White + black, ask for white
+  // white.red() = 0x1F << 3 = 0xF8
+//  white.red() * 0xFF = 0xF708, we wanted 0xF800
 }
 
 uint8_t KDColor::red() {

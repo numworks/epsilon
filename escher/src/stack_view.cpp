@@ -16,7 +16,7 @@ void StackView::setName(const char * name) {
 
 void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColor(0xFFCD50));
-  ctx->drawString(m_name, {0,0}, true);
+  ctx->drawString(m_name, KDPointZero);
 }
 
 #if ESCHER_VIEW_LOGGING

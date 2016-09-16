@@ -88,9 +88,7 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     case Ion::Events::Event::ENTER:
-      if (m_selectedChildIndex != m_activeChildIndex) {
         setActiveTab(m_selectedChildIndex);
-      }
       return true;
     default:
       return false;
@@ -110,14 +108,13 @@ TabViewController::TabViewController(ViewController ** children, uint8_t numberO
 */
 
 void TabViewController::setActiveTab(int8_t i) {
-  if (i == m_activeChildIndex) {
-    return;
-  }
-  //TODO assert(i <= m_numberOfchildren);
   ViewController * activeVC = m_children[i];
-  m_view.setActiveView(activeVC->view());
-  m_view.m_tabView.setActiveIndex(i);
-  m_activeChildIndex = i;
+  if (i  != m_activeChildIndex) {
+    //TODO assert(i <= m_numberOfchildren);
+    m_view.setActiveView(activeVC->view());
+    m_view.m_tabView.setActiveIndex(i);
+    m_activeChildIndex = i;
+  }
 
   app()->setFirstResponder(activeVC);
 }

@@ -38,7 +38,11 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell+1);
       return true;
     case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCell-1);
+      if (m_activeCell > 0) {
+        setActiveCell(m_activeCell-1);
+      } else {
+        app()->setFirstResponder(parentResponder()->parentResponder());
+      }
       return true;
     case Ion::Events::Event::ENTER:
       ((StackViewController *) parentResponder())->push(&m_parameterController);

@@ -84,6 +84,20 @@ void initTimer() {
   TIM3.CR1()->setCEN(true);
 }
 
+void suspend() {
+  TIM3.CCMR()->setOC1M(TIM::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::ForceInactive);
+}
+
+void resume() {
+  TIM3.CCMR()->setOC1M(TIM::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::PWM1);
+}
+
 }
 }
 }

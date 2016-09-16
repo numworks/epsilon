@@ -19,6 +19,9 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::ENTER:
       m_view.moveCursorRight();
       return true;
+    case Ion::Events::Event::UP_ARROW:
+      app()->setFirstResponder(parentResponder());
+      return true;
     default:
       return false;
   }

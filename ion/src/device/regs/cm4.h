@@ -27,8 +27,15 @@ public:
     }
   };
 
+  // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/Cihhjgdh.html
+  class SCR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(SLEEPDEEP, 2);
+  };
+
   constexpr CM4() {};
   REGS_REGISTER_AT(AIRCR, 0x0C);
+  REGS_REGISTER_AT(SCR, 0x10);
   REGS_REGISTER_AT(CPACR, 0x88);
 private:
   constexpr uint32_t Base() const {

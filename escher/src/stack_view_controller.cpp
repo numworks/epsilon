@@ -30,11 +30,11 @@ void StackViewController::ControllerView::popStack() {
 void StackViewController::ControllerView::layoutSubviews() {
   KDCoordinate stackHeight = 20;
   KDCoordinate width = m_frame.width();
-  for (int i=0; i<m_numberOfStacks; i++) {
-    m_stackViews[i].setFrame(KDRect(0, stackHeight*i, width, stackHeight));
+  for (int i=1; i<m_numberOfStacks; i++) {
+    m_stackViews[i].setFrame(KDRect(0, stackHeight*(i-1), width, stackHeight));
   }
   if (m_contentView) {
-    KDRect contentViewFrame = KDRect( 0, m_numberOfStacks*stackHeight,
+    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-1)*stackHeight,
         width, m_frame.height() - m_numberOfStacks*stackHeight);
     m_contentView->setFrame(contentViewFrame);
   }

@@ -13,7 +13,10 @@ FunctionCell::FunctionCell() :
 void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = m_even ? KDColor(0xEEEEEE) : KDColor(0x777777);
   ctx->fillRect(rect, background);
-  ctx->drawString(m_function->text(), KDPointZero, m_focused);
+  KDColor text = m_focused ? KDColorBlack : KDColorWhite;
+  KDColor textBackground = m_focused ? KDColorWhite : KDColorBlack;
+
+  ctx->drawString(m_function->text(), KDPointZero, text, textBackground);
   // m_function->layout()->draw(ctx, KDPointZero);
 }
 

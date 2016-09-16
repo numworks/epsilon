@@ -33,13 +33,19 @@ void init();
 void initGPIO();
 void initFSMC();
 void initPanel();
+void suspend();
+void resume();
 
 void setDrawingArea(KDRect r);
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);
 
 enum class Command : uint8_t {
+  Nop = 0x00,
+  Reset = 0x01,
+  SleepIn = 0x10,
   SleepOut = 0x11,
+  DisplayOff = 0x28,
   DisplayOn = 0x29,
   ColumnAddressSet = 0x2A,
   GammaSet = 0x26,

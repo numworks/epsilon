@@ -116,11 +116,11 @@ void initFSMC() {
 
 void initPanel() {
 
-  //*CommandAddress = 0x01; //software reset
-  // msleep(5);
+  *CommandAddress = Command::Reset; //software reset
+  msleep(5);
 
   *CommandAddress = Command::SleepOut;
-  msleep(120);
+  msleep(5);
 
   SEND_COMMAND(PowerControlB, 0x00, 0x83, 0x30);
   SEND_COMMAND(PowerOnSequenceControl, 0x64, 0x03, 0x12, 0x81);
@@ -142,12 +142,21 @@ void initPanel() {
   SEND_COMMAND(NegativeGammaCorrection, 0x00, 0x25, 0x27, 0x05, 0x10, 0x09, 0x3a, 0x78, 0x4d, 0x05, 0x18, 0x0d, 0x38, 0x3a, 0x1f);
   SEND_COMMAND(InterfaceControl, 0x01, 0x00, 0x20); // Data is sent little-endian
 
-  *CommandAddress = Command::SleepOut;    //Exit Sleep
-  msleep(120);
+  //*CommandAddress = Command::SleepOut;    //Exit Sleep
+  //msleep(120);
   *CommandAddress = Command::DisplayOn;    //Display on
-  msleep(50);
+  //msleep(50);
 }
 
+void suspend() {
+  *CommandAddress = Command::SleepIn;
+  msleep(5);
+}
+
+void resume() {
+  *CommandAddress = Command::SleepOut;
+  msleep(5);
+}
 
 void setDrawingArea(KDRect r) {
   uint16_t x_start = r.x();

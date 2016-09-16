@@ -1,3 +1,6 @@
+extern "C" {
+#include "rt0.h"
+}
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
@@ -9,11 +12,6 @@ extern char _data_section_end_ram;
 extern char _bss_section_start_ram;
 extern char _bss_section_end_ram;
 
-extern "C" {
-  void _start();
-  void abort();
-}
-
 void abort() {
 #ifdef DEBUG
   while (1) {
@@ -23,7 +21,7 @@ void abort() {
 #endif
 }
 
-void _start() {
+void start() {
   // This is where execution starts after reset.
   // Many things are not initialized yet so the code here has to pay attention.
 

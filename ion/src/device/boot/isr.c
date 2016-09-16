@@ -1,5 +1,4 @@
-#include "isr.h"
-
+#include "rt0.h"
 extern const void * _stack_start;
 
 /* Interrupt Service Routines are void->void functions */
@@ -13,40 +12,38 @@ typedef void(*ISR)(void);
 
 #define INITIALISATION_VECTOR_SIZE 0x6B
 
-void _start();
-
 ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   = {
-  (ISR)&_stack_start,
-  _ResetServiceRoutine,
-  _NMIServiceRoutine,
-  _HardFaultServiceRoutine,
-  _MemManageServiceRoutine,
-  _BusFaultServiceRoutine,
-  _UsageFaultServiceRoutine,
+  (ISR)&_stack_start, // Stack start
+  start, // Reset service routine,
+  0, // NMI service routine,
+  abort, // HardFault service routine,
+  0, // MemManage service routine,
+  0, // BusFault service routine,
+  0, // UsageFault service routine,
   0, 0, 0, 0, // Reserved
-  _SVCallServiceRoutine,
-  _DebugMonitorServiceRoutine,
+  0, // SVCall service routine,
+  0, // DebugMonitor service routine,
   0, // Reserved
-  _PendSVServiceRoutine,
-  _SysTickServiceRoutine,
-  _WWDGServiceRoutine,
-  _PVDServiceRoutine,
-  _TampStampServiceRoutine,
-  _RtcWakeupServiceRoutine,
-  _FlashServiceRoutine,
-  _RCCServiceRoutine,
-  _EXTI0ServiceRoutine,
-  _EXTI1ServiceRoutine,
-  _EXTI2ServiceRoutine,
-  _EXTI3ServiceRoutine,
-  _EXTI4ServiceRoutine,
-  _DMA1Stream0ServiceRoutine,
-  _DMA1Stream1ServiceRoutine,
-  _DMA1Stream2ServiceRoutine,
-  _DMA1Stream3ServiceRoutine,
-  _DMA1Stream4ServiceRoutine,
-  _DMA1Stream5ServiceRoutine,
-  _DMA1Stream6ServiceRoutine
+  0, // PendSV service routine,
+  0, // SysTick service routine
+  0, // WWDG service routine
+  0, // PVD service routine
+  0, // TampStamp service routine
+  0, // RtcWakeup service routine
+  0, // Flash service routine
+  0, // RCC service routine
+  0, // EXTI0 service routine
+  0, // EXTI1 service routine
+  0, // EXTI2 service routine
+  0, // EXTI3 service routine
+  0, // EXTI4 service routine
+  0, // DMA1Stream0 service routine
+  0, // DMA1Stream1 service routine
+  0, // DMA1Stream2 service routine
+  0, // DMA1Stream3 service routine
+  0, // DMA1Stream4 service routine
+  0, // DMA1Stream5 service routine
+  0  // DMA1Stream6 service routine
 };

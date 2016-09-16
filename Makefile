@@ -19,8 +19,7 @@ ifeq ($(DEBUG),1)
 SFLAGS += -ggdb3 -DDEBUG=1 -O0
 else
 SFLAGS += -Os -fdata-sections -ffunction-sections
-#LDFLAGS += --gc-sections
-#FIXME: --gc-sections doesn't seem to be working
+LDFLAGS += --gc-sections
 endif
 
 # Language-specific flags

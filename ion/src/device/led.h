@@ -16,6 +16,8 @@ namespace Device {
 void init();
 void initGPIO();
 void initTimer();
+void suspend();
+void resume();
 
 constexpr uint16_t PWMPeriod = 40000;
 

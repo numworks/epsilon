@@ -1,10 +1,18 @@
-#include <ion/power.h>
-#include <ion/display.h>
+#include <ion.h>
+#include "regs/regs.h"
 #include "keyboard.h"
+#include "led.h"
+#include "display.h"
 
 void Ion::Power::suspend() {
-  Display::setBacklightIntensity(0);
+  LED::Device::suspend();
+  Display::Device::suspend();
+
+  CM4.SCR()->setSLEEPDEEP(true);
   Keyboard::Device::generateWakeUpEventForKey(Ion::Keyboard::Key::J1);
+  msleep(300);
   asm("wfe");
-  Display::setBacklightIntensity(0xFF);
+
+  Display::Device::resume();
+  LED::Device::resume();
 }

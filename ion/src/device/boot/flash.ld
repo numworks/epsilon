@@ -6,95 +6,69 @@
  * written at a specific address (in Flash ROM) and the data at another. */
 
 /* Let's instruct the linker about our memory layout.
- * This will let us use shortcuts such as ">FLASH" to ask for a given section
- * to be stored in Flash. */
+ * This will let us use shortcuts such as ">FLASH" to ask for a given section to
+ * be stored in Flash. */
 MEMORY {
-  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 2048K
-  SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 96K
-  /*
-  // We're splitting the SRAM in two: general purpose, then framebuffer
-  SRAM_HEAP (rwx) : ORIGIN = 0x20000000, LENGTH = 83K
-  SRAM_FB (rw) : ORIGIN = 0x20014C00, LENGTH = 9K
-  // We're putting the stack after the framebuffer. This way, if the stack was
-   / to overflow, this would be visible!
-  SRAM_STACK (rw) : ORIGIN = 0x20017000, LENGTH = 4K
-  */
+  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+  SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
 }
 
-FRAMEBUFFER_SIZE = 19200;
 STACK_SIZE = 4K;
 
 SECTIONS {
-
-  /* The ISR vector table (explained below) contains pointer to functions that
-   * we may want to override depending on the binary we want to produce.
-   * The C implementation uses _NameServiceRoutine symbols. If those symbols are
-   * defined elsewhere, want to use that version. If they aren't defined, we
-   * want to provide a default value. We'll define here the default value that
-   * we want to be "absolute zero" (outside of any section).
-   * provide here a default implementation (namely, calling crt0's _start on
-   * reset, and an infinite loop on HardFault). */
-
-  PROVIDE(_NMIServiceRoutine = 0);
-  PROVIDE(_MemManageServiceRoutine = 0);
-  PROVIDE(_BusFaultServiceRoutine = 0);
-  PROVIDE(_UsageFaultServiceRoutine = 0);
-  PROVIDE(_SVCallServiceRoutine = 0);
-  PROVIDE(_DebugMonitorServiceRoutine = 0);
-  PROVIDE(_PendSVServiceRoutine = 0);
-  PROVIDE(_SysTickServiceRoutine = 0);
-  PROVIDE(_WWDGServiceRoutine = 0);
-  PROVIDE(_PVDServiceRoutine = 0);
-  PROVIDE(_TampStampServiceRoutine = 0);
-  PROVIDE(_RtcWakeupServiceRoutine = 0);
-  PROVIDE(_FlashServiceRoutine = 0);
-  PROVIDE(_RCCServiceRoutine = 0);
-  PROVIDE(_EXTI0ServiceRoutine = 0);
-  PROVIDE(_EXTI1ServiceRoutine = 0);
-  PROVIDE(_EXTI2ServiceRoutine = 0);
-  PROVIDE(_EXTI3ServiceRoutine = 0);
-  PROVIDE(_EXTI4ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream0ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream1ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream2ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream3ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream4ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream5ServiceRoutine = 0);
-  PROVIDE(_DMA1Stream6ServiceRoutine = 0);
-
   .isr_vector_table ORIGIN(FLASH) : {
-    /* When booting, the STM32F42xx fetches the content of address 0x0, and
+    /* When booting, the STM32F412 fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
      * (program counter), the initial value of the stack pointer, and various
-     * entry points for interrupt service routines. This data is called the
-     * ISR vector table.
+     * entry points to interrupt service routines. This data is called the ISR
+     * vector table.
      *
      * Note that address 0x0 is always an alias. It points to the beginning of
      * Flash, SRAM, or integrated bootloader depending on the boot mode chosen.
-     * (This mode is chosen by setting BOOTn pins on the chip).
+     * (This mode is chosen by setting the BOOTn pins on the chip).
      *
-     * We're generating the ISR vector table in C, because it's very convenient:
-     * using function pointers, we can easily point to the service routine for
-     * each interrupt.
-     * See ST/RM0090/p70 for more infos. */
+     * We're generating the ISR vector table in code because it's very
+     * convenient: using function pointers, we can easily point to the service
+     * routine for each interrupt.
+     *
+     * Last but not least, instead of pointing directly to handler functions in
+     * the ISR declaration, we take the opportunity of having a custom linker
+     * script to use meaningful names in the ISR declaration. */
 
+    PROVIDE(_ResetServiceRoutine = _start);
+    PROVIDE(_NMIServiceRoutine = 0);
+    PROVIDE(_HardFaultServiceRoutine = abort);
+    PROVIDE(_MemManageServiceRoutine = 0);
+    PROVIDE(_BusFaultServiceRoutine = 0);
+    PROVIDE(_UsageFaultServiceRoutine = 0);
+    PROVIDE(_SVCallServiceRoutine = 0);
+    PROVIDE(_DebugMonitorServiceRoutine = 0);
+    PROVIDE(_PendSVServiceRoutine = 0);
+    PROVIDE(_SysTickServiceRoutine = 0);
+    PROVIDE(_WWDGServiceRoutine = 0);
+    PROVIDE(_PVDServiceRoutine = 0);
+    PROVIDE(_TampStampServiceRoutine = 0);
+    PROVIDE(_RtcWakeupServiceRoutine = 0);
+    PROVIDE(_FlashServiceRoutine = 0);
+    PROVIDE(_RCCServiceRoutine = 0);
+    PROVIDE(_EXTI0ServiceRoutine = 0);
+    PROVIDE(_EXTI1ServiceRoutine = 0);
+    PROVIDE(_EXTI2ServiceRoutine = 0);
+    PROVIDE(_EXTI3ServiceRoutine = 0);
+    PROVIDE(_EXTI4ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream0ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream1ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream2ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream3ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream4ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream5ServiceRoutine = 0);
+    PROVIDE(_DMA1Stream6ServiceRoutine = 0);
 
     *(.isr_vector_table)
   } >FLASH
 
-
   .text : {
     . = ALIGN(4);
-
-  /* We have to finish defining the ISR vectors that might not have been defined
-   * previously. We are PROVIDing here the non-zero vectors. In other words, the
-   * one where we want to point to actual code.
-   * We're doing it here because we want those symbols to live in the .text
-   * section. We're simply setting the Reset vector to crt0's _start, and the
-   * HardFault one to crt0's _halt. */
-
-    PROVIDE(_ResetServiceRoutine = _start);
-    PROVIDE(_HardFaultServiceRoutine = abort);
 
     /* C++ code calls __cxa_pure_virtual when a pure-virtual method is called.
      * This is an error case, so we just redirect it to abort. */
@@ -116,7 +90,7 @@ SECTIONS {
      * This is required because its initial value matters (so it has to be in
      * persistant memory in the first place), but it is a R/W area of memory
      * so it will have to live in RAM upon execution (in linker lingo, that
-     * translate to the data section having a LMA in Flash and a VMA in RAM).
+     * translates to the data section having a LMA in Flash and a VMA in RAM).
      *
      * This means we'll have to copy it from Flash to RAM on initialization.
      * To do this, we'll need to know the source location of the data section
@@ -133,7 +107,7 @@ SECTIONS {
 
   .bss : {
     /* The bss section contains data for all uninitialized variables
-     * So like the .data section, it will go in RAM, but unline the data section
+     * So like the .data section, it will go in RAM, but unlike the data section
      * we don't care at all about an initial value.
      *
      * Before execution, crt0 will erase that section of memory though, so we'll
@@ -151,15 +125,9 @@ SECTIONS {
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM) + LENGTH(SRAM) - FRAMEBUFFER_SIZE - STACK_SIZE);
+    . = (ORIGIN(SRAM) + LENGTH(SRAM) - STACK_SIZE);
     _heap_end = .;
   } >SRAM
-
-  .framebuffer : {
-    _framebuffer_start = .;
-    . += FRAMEBUFFER_SIZE;
-    _framebuffer_end = .;
-  } > SRAM
 
   .stack : {
     . = ALIGN(8);

@@ -27,8 +27,8 @@ void TabViewCell::setSelected(bool selected) {
 }
 
 void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor text = m_active ? KDColorBlack : KDColorWhite;
-  KDColor background = m_active ? KDColorWhite : KDColorBlack;
+  KDColor text = m_selected ? KDColorRed : KDColorWhite;
+  KDColor background = m_active ? KDColorGreen : KDColorBlack;
   ctx->drawString(m_name, KDPointZero, text, background);
 }
 

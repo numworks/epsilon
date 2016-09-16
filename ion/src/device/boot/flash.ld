@@ -29,42 +29,9 @@ SECTIONS {
      *
      * We're generating the ISR vector table in code because it's very
      * convenient: using function pointers, we can easily point to the service
-     * routine for each interrupt.
-     *
-     * Last but not least, instead of pointing directly to handler functions in
-     * the ISR declaration, we take the opportunity of having a custom linker
-     * script to use meaningful names in the ISR declaration. */
+     * routine for each interrupt. */
 
-    PROVIDE(_ResetServiceRoutine = _start);
-    PROVIDE(_NMIServiceRoutine = 0);
-    PROVIDE(_HardFaultServiceRoutine = abort);
-    PROVIDE(_MemManageServiceRoutine = 0);
-    PROVIDE(_BusFaultServiceRoutine = 0);
-    PROVIDE(_UsageFaultServiceRoutine = 0);
-    PROVIDE(_SVCallServiceRoutine = 0);
-    PROVIDE(_DebugMonitorServiceRoutine = 0);
-    PROVIDE(_PendSVServiceRoutine = 0);
-    PROVIDE(_SysTickServiceRoutine = 0);
-    PROVIDE(_WWDGServiceRoutine = 0);
-    PROVIDE(_PVDServiceRoutine = 0);
-    PROVIDE(_TampStampServiceRoutine = 0);
-    PROVIDE(_RtcWakeupServiceRoutine = 0);
-    PROVIDE(_FlashServiceRoutine = 0);
-    PROVIDE(_RCCServiceRoutine = 0);
-    PROVIDE(_EXTI0ServiceRoutine = 0);
-    PROVIDE(_EXTI1ServiceRoutine = 0);
-    PROVIDE(_EXTI2ServiceRoutine = 0);
-    PROVIDE(_EXTI3ServiceRoutine = 0);
-    PROVIDE(_EXTI4ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream0ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream1ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream2ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream3ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream4ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream5ServiceRoutine = 0);
-    PROVIDE(_DMA1Stream6ServiceRoutine = 0);
-
-    *(.isr_vector_table)
+    KEEP(*(.isr_vector_table))
   } >FLASH
 
   .text : {

@@ -14,6 +14,9 @@ SFLAGS += -Ilib -I.
 # Flags - Building options
 SFLAGS += -Wall
 
+# Flags - Header dependency tracking
+SFLAGS += -MD -MP
+
 # Flags - Optimizations
 ifeq ($(DEBUG),1)
 SFLAGS += -ggdb3 -DDEBUG=1 -O0
@@ -61,6 +64,8 @@ include poincare/Makefile
 include escher/Makefile
 include apps/Makefile
 include quiz/Makefile # Quiz should be included at the end
+
+-include $(objs:.o=.d)
 
 %.elf: $(objs)
 	@echo "LD      $@"

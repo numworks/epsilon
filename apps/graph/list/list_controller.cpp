@@ -37,6 +37,12 @@ void ListController::setActiveCell(int index) {
   app()->setFirstResponder(cell);
 }
 
+void ListController::configureFunction(Graph::Function * function) {
+  // Add call to function
+  StackViewController * stack = ((StackViewController *)parentResponder());
+  stack->push(&m_parameterController);
+}
+
 bool ListController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
@@ -48,9 +54,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       } else {
         app()->setFirstResponder(tabController());
       }
-      return true;
-    case Ion::Events::Event::ENTER:
-      ((StackViewController *) parentResponder())->push(&m_parameterController);
       return true;
     case Ion::Events::Event::PLUS:
       m_manualScrolling += 10;

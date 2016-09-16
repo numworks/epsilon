@@ -6,6 +6,7 @@ extern "C" {
 TabViewCell::TabViewCell() :
   ChildlessView(),
   m_active(false),
+  m_selected(false),
   m_name(nullptr)
 {
 }
@@ -17,6 +18,11 @@ void TabViewCell::setName(const char * name) {
 
 void TabViewCell::setActive(bool active) {
   m_active = active;
+  markRectAsDirty(bounds());
+}
+
+void TabViewCell::setSelected(bool selected) {
+  m_selected = selected;
   markRectAsDirty(bounds());
 }
 

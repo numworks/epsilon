@@ -7,7 +7,8 @@ extern "C" {
 TabView::TabView() :
   View(),
   m_numberOfTabs(0),
-  m_activeTabIndex(-1)
+  m_activeTabIndex(-1),
+  m_selectedTabIndex(-1)
 {
 }
 
@@ -35,6 +36,18 @@ void TabView::setActiveIndex(int index) {
   }
   m_activeTabIndex = index;
   m_cells[m_activeTabIndex].setActive(true);
+}
+
+void TabView::setSelectedIndex(int index) {
+  assert(index < m_numberOfTabs);
+  if (m_selectedTabIndex == index) {
+    return;
+  }
+  if (m_selectedTabIndex >= 0) {
+    m_cells[m_selectedTabIndex].setSelected(false);
+  }
+  m_selectedTabIndex = index;
+  m_cells[m_selectedTabIndex].setSelected(true);
 }
 
 int TabView::numberOfSubviews() const {

@@ -56,7 +56,8 @@ const char * TabViewController::ContentView::className() const {
 TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two) :
   ViewController(parentResponder),
   m_numberOfChildren(2),
-  m_activeChildIndex(-1)
+  m_activeChildIndex(-1),
+  m_selectedChildIndex(-1)
 {
   m_children[0] = one;
   m_children[1] = two;
@@ -72,15 +73,23 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
+  if (app()->firstResponder() != this) {
+    return false;
+  }
   switch(event) {
     case Ion::Events::Event::LEFT_ARROW:
-      if (m_activeChildIndex > 0) {
-        setActiveTab(m_activeChildIndex-1);
+      if (m_selectedChildIndex > 0) {
+        setSelectedTab(m_selectedChildIndex-1);
       }
       return true;
     case Ion::Events::Event::RIGHT_ARROW:
-      if (m_activeChildIndex < m_numberOfChildren-1) {
-        setActiveTab(m_activeChildIndex+1);
+      if (m_selectedChildIndex < m_numberOfChildren-1) {
+        setSelectedTab(m_selectedChildIndex+1);
+      }
+      return true;
+    case Ion::Events::Event::ENTER:
+      if (m_selectedChildIndex != m_activeChildIndex) {
+        setActiveTab(m_selectedChildIndex);
       }
       return true;
     default:
@@ -100,7 +109,7 @@ TabViewController::TabViewController(ViewController ** children, uint8_t numberO
 }
 */
 
-void TabViewController::setActiveTab(uint8_t i) {
+void TabViewController::setActiveTab(int8_t i) {
   if (i == m_activeChildIndex) {
     return;
   }
@@ -112,6 +121,23 @@ void TabViewController::setActiveTab(uint8_t i) {
 
   app()->setFirstResponder(activeVC);
 }
+
+void TabViewController::setSelectedTab(int8_t i) {
+  if (i == m_selectedChildIndex) {
+    return;
+  }
+  m_view.m_tabView.setSelectedIndex(i);
+  m_selectedChildIndex = i;
+}
+
+void TabViewController::didBecomeFirstResponder() {
+  setSelectedTab(m_activeChildIndex);
+}
+
+void TabViewController::didResignFirstResponder() {
+  setSelectedTab(-1);
+}
+
 
 View * TabViewController::view() {
   // We're asked for a view!

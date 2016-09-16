@@ -10,6 +10,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setName(const char * name);
   void setActive(bool active);
+  void setSelected(bool selected);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -17,6 +18,7 @@ protected:
 #endif
 private:
   bool m_active;
+  bool m_selected;
   const char * m_name;
 };
 

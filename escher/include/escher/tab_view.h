@@ -15,6 +15,7 @@ public:
   void addTabNamed(const char * name);
   //TODO: void removeLastTab();
   void setActiveIndex(int index);
+  void setSelectedIndex(int index);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -29,6 +30,7 @@ private:
   TabViewCell m_cells[k_maxNumberOfTabs];
   uint8_t m_numberOfTabs;
   int8_t m_activeTabIndex;
+  int8_t m_selectedTabIndex;
 };
 
 #endif

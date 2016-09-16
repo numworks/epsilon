@@ -10,11 +10,14 @@ public:
   //TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
 
-  void setActiveTab(uint8_t index);
+  void setSelectedTab(int8_t index);
+  void setActiveTab(int8_t index);
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
+  void didResignFirstResponder() override;
 private:
   class ContentView : public View {
   public:
@@ -40,6 +43,7 @@ private:
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   int8_t m_activeChildIndex;
+  int8_t m_selectedChildIndex;
 };
 
 #endif

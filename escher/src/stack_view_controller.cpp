@@ -4,10 +4,11 @@ extern "C" {
 #include <escher/stack_view_controller.h>
 #include <escher/app.h>
 
-StackViewController::ControllerView::ControllerView() :
+StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader) :
   View(),
   m_contentView(nullptr),
-  m_numberOfStacks(0)
+  m_numberOfStacks(0),
+  m_displayFirstStackHeader(displayFirstStackHeader)
 {
 }
 
@@ -30,11 +31,12 @@ void StackViewController::ControllerView::popStack() {
 void StackViewController::ControllerView::layoutSubviews() {
   KDCoordinate stackHeight = 20;
   KDCoordinate width = m_frame.width();
-  for (int i=1; i<m_numberOfStacks; i++) {
-    m_stackViews[i].setFrame(KDRect(0, stackHeight*(i-1), width, stackHeight));
+  int indexFirstHeader = m_displayFirstStackHeader ? 0 : 1;
+  for (int i=indexFirstHeader; i<m_numberOfStacks; i++) {
+    m_stackViews[i].setFrame(KDRect(0, stackHeight*(i-indexFirstHeader), width, stackHeight));
   }
   if (m_contentView) {
-    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-1)*stackHeight,
+    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-indexFirstHeader)*stackHeight,
         width, m_frame.height() - m_numberOfStacks*stackHeight);
     m_contentView->setFrame(contentViewFrame);
   }
@@ -60,10 +62,11 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader) :
   ViewController(parentResponder),
   m_numberOfChildren(0),
-  m_rootViewController(rootViewController)
+  m_rootViewController(rootViewController),
+  m_view(ControllerView(displayFirstStackHeader))
 {
   // push(rootViewController);
 }

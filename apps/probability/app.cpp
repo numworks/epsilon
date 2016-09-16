@@ -4,7 +4,7 @@ Probability::App::App() :
   ::App(),
   m_lawController(LawController(nullptr)),
   m_parametersController(ParametersController(nullptr)),
-  m_stackViewController(this, &m_lawController)
+  m_stackViewController(this, &m_lawController, true)
 {
 }
 

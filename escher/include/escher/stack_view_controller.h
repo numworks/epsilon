@@ -8,7 +8,7 @@ constexpr uint8_t kMaxNumberOfStacks = 4;
 
 class StackViewController : public ViewController {
 public:
-  StackViewController(Responder * parentResponder, ViewController * rootViewController);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader = false);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc);
@@ -22,7 +22,7 @@ public:
 private:
   class ControllerView : public View {
   public:
-    ControllerView();
+    ControllerView(bool displayFirstStackHeader);
     void setContentView(View * view);
     void pushStack(const char * name);
     void popStack();
@@ -38,6 +38,7 @@ private:
     StackView m_stackViews[kMaxNumberOfStacks];
     View * m_contentView;
     int8_t m_numberOfStacks;
+    bool m_displayFirstStackHeader;
   };
 
   ControllerView m_view;

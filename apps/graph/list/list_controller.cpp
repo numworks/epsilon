@@ -20,6 +20,11 @@ const char * ListController::title() const {
   return "Fonctions";
 }
 
+Responder * ListController::tabController() const{
+  return (parentResponder()->parentResponder());
+}
+
+
 void ListController::setActiveCell(int index) {
   if (index < 0 || index >= m_functionStore->numberOfFunctions()) {
     return;
@@ -41,7 +46,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       if (m_activeCell > 0) {
         setActiveCell(m_activeCell-1);
       } else {
-        app()->setFirstResponder(parentResponder()->parentResponder());
+        app()->setFirstResponder(tabController());
       }
       return true;
     case Ion::Events::Event::ENTER:

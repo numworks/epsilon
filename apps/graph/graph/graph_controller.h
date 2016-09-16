@@ -10,8 +10,10 @@ public:
   GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore);
   View * view() override;
   const char * title() const override;
+
   bool handleEvent(Ion::Events::Event event) override;
 private:
+  Responder * tabController() const;
   GraphView m_view;
 };
 

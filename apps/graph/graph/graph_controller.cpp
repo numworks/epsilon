@@ -14,13 +14,17 @@ const char * GraphController::title() const {
   return "Graphique";
 }
 
+Responder * GraphController::tabController() const{
+  return (parentResponder());
+}
+
 bool GraphController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:
       m_view.moveCursorRight();
       return true;
     case Ion::Events::Event::UP_ARROW:
-      app()->setFirstResponder(parentResponder());
+      app()->setFirstResponder(tabController());
       return true;
     default:
       return false;

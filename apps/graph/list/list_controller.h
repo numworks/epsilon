@@ -22,6 +22,7 @@ public:
   View * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
+  Responder * tabController() const;
   constexpr static int k_totalNumberOfModels = 20;
   constexpr static int k_maxNumberOfCells = 10;
   // !!! CAUTION: The order here is important

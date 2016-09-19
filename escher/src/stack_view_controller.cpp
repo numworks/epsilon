@@ -37,7 +37,7 @@ void StackViewController::ControllerView::layoutSubviews() {
   }
   if (m_contentView) {
     KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-indexFirstHeader)*stackHeight,
-        width, m_frame.height() - m_numberOfStacks*stackHeight);
+        width, m_frame.height() - (m_numberOfStacks-indexFirstHeader)*stackHeight);
     m_contentView->setFrame(contentViewFrame);
   }
 }

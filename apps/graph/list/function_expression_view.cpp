@@ -13,14 +13,14 @@ void FunctionExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   bool evenLine = isEven();
   KDColor background = evenLine ? KDColor(0xEEEEEE) : KDColor(0x777777);
   ctx->fillRect(rect, background);
-  KDColor text = m_focused ? KDColorBlack : KDColorWhite;
+  bool active = function()->isActive();
+  KDColor text = active ? KDColorGreen : KDColorRed;
   KDColor textBackground = m_focused ? KDColorWhite : KDColorBlack;
 
   Graph::Function * function = FunctionExpressionView::function();
   ctx->drawString(function->text(), KDPointZero, text, textBackground);
   // m_function->layout()->draw(ctx, KDPointZero);
 }
-
 
 void FunctionExpressionView::didBecomeFirstResponder() {
   m_focused = true;

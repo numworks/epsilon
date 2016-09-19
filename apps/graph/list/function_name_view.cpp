@@ -14,7 +14,8 @@ void FunctionNameView::drawRect(KDContext * ctx, KDRect rect) const {
   bool evenLine = isEven();
   KDColor background = evenLine ? KDColor(0xEEEEEE) : KDColor(0x777777);
   ctx->fillRect(rect, background);
-  KDColor text = m_focused ? KDColorBlack : KDColorWhite;
+  bool active = function()->isActive();
+  KDColor text = active ? KDColorGreen : KDColorRed;
   KDColor textBackground = m_focused ? KDColorWhite : KDColorBlack;
 
   Graph::Function * function = FunctionNameView::function();

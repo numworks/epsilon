@@ -12,7 +12,8 @@ Graph::Function::Function(const char * text, KDColor color) :
   m_color(color),
   m_name("f(x)"),
   m_expression(nullptr),
-  m_layout(nullptr)
+  m_layout(nullptr),
+  m_active(true)
 {
 }
 
@@ -46,4 +47,12 @@ ExpressionLayout * Graph::Function::layout() {
     m_layout = expression()->createLayout();
   }
   return m_layout;
+}
+
+bool Graph::Function::isActive() {
+  return m_active;
+}
+
+void Graph::Function::setActive(bool active) {
+  m_active = active;
 }

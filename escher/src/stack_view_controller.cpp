@@ -81,7 +81,7 @@ const char * StackViewController::title() const {
 }
 
 void StackViewController::push(ViewController * vc) {
-  m_view.pushStack("name");
+  m_view.pushStack(vc->title());
   m_children[m_numberOfChildren++] = vc;
   setupActiveViewController();
   //vc->setParentResponder(this);

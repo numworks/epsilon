@@ -21,6 +21,7 @@ public:
   KDCoordinate cellHeight() override;
   View * reusableCell(int index) override;
   int reusableCellCount() override;
+  void configureFunction(Graph::Function * function);
 private:
   Responder * tabController() const;
   constexpr static int k_totalNumberOfModels = 20;

@@ -10,6 +10,7 @@ Graph::Function::Function() :
 Graph::Function::Function(const char * text, KDColor color) :
   m_text(text), // FIXME: Copy !!
   m_color(color),
+  m_name("f(x)"),
   m_expression(nullptr),
   m_layout(nullptr)
 {
@@ -27,6 +28,10 @@ Graph::Function::~Function() {
 
 const char * Graph::Function::text() {
   return m_text;
+}
+
+const char * Graph::Function::name() {
+  return m_name;
 }
 
 Expression * Graph::Function::expression() {

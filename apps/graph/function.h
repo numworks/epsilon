@@ -12,11 +12,13 @@ public:
   Function(const char * text, KDColor m_color);
   ~Function(); // Delete expression and layout, if needed
   const char * text();
+  const char * name();
   KDColor color() const { return m_color; }
   Expression * expression();
   ExpressionLayout * layout();
 private:
   const char * m_text;
+  const char * m_name;
   KDColor m_color;
   Expression * m_expression;
   ExpressionLayout * m_layout;

@@ -65,7 +65,9 @@ include escher/Makefile
 include apps/Makefile
 include quiz/Makefile # Quiz should be included at the end
 
--include $(objs:.o=.d)
+dependencies = $(objs:.o=.d)
+
+-include $(dependencies)
 
 %.elf: $(objs)
 	@echo "LD      $@"
@@ -101,4 +103,4 @@ include quiz/Makefile # Quiz should be included at the end
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	@rm -f $(objs) $(test_objs) $(products)
+	@rm -f $(objs) $(test_objs) $(products) $(dependencies)

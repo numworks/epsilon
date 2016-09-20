@@ -6,7 +6,8 @@
 class Metric {
 public:
   constexpr static KDCoordinate VerticalMargin = 20;
-  constexpr static KDCoordinate MarginLabel = 5;
+  constexpr static KDCoordinate HorizontalMargin = 10;
+  constexpr static KDCoordinate LabelMargin = 5;
 };
 
 #endif

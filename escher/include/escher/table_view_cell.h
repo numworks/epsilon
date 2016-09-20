@@ -4,6 +4,7 @@
 #include <escher/view.h>
 #include <escher/label_view.h>
 #include <escher/palette.h>
+#include <escher/metric.h>
 
 
 class TableViewCell : public View {

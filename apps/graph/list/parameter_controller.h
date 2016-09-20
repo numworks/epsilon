@@ -24,7 +24,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   TableViewCell m_colorCell;
-  TableViewCell m_enableCell;
+  SwitchTableViewCell m_enableCell;
   TableViewCell m_deleteCell;
   TableView m_tableView;
   int m_activeCell;

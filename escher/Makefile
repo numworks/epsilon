@@ -5,6 +5,7 @@ objs += $(addprefix escher/src/,\
   childless_view.o\
   container.o\
   invocation.o\
+  palette.o\
   responder.o\
   scroll_view.o\
   scroll_view_indicator.o\

@@ -11,6 +11,8 @@
 #include <escher/scroll_view_indicator.h>
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
+#include <escher/switch_view.h>
+#include <escher/switch_table_view_cell.h>
 #include <escher/text_field.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

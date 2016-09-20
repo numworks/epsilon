@@ -13,6 +13,8 @@ objs += $(addprefix escher/src/,\
   solid_color_view.o\
   stack_view.o\
   stack_view_controller.o\
+  switch_table_view_cell.o\
+  switch_view.o\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\

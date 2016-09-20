@@ -38,8 +38,8 @@ void ListController::setActiveCell(int index) {
 }
 
 void ListController::configureFunction(Graph::Function * function) {
-  // Add call to function
   StackViewController * stack = ((StackViewController *)parentResponder());
+  m_parameterController.setFunction(function);
   stack->push(&m_parameterController);
 }
 

@@ -78,7 +78,9 @@ const char * TableView::ContentView::className() const {
 #endif
 
 int TableView::ContentView::numberOfSubviews() const {
-  return MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
+  int result = MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
+  assert(result <= m_dataSource->reusableCellCount());
+  return result;
 }
 
 View * TableView::ContentView::subviewAtIndex(int index) {
@@ -103,9 +105,7 @@ void TableView::ContentView::layoutSubviews() {
 }
 
 int TableView::ContentView::numberOfDisplayableCells() const {
-  int result = m_tableView->bounds().height() / m_dataSource->cellHeight() + 1;
-  assert(result <= m_dataSource->reusableCellCount());
-  return result;
+  return m_tableView->bounds().height() / m_dataSource->cellHeight() + 1;
 }
 
 int TableView::ContentView::cellScrollingOffset() const {

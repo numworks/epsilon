@@ -5,6 +5,10 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
+void TableViewDataSource::willDisplayCellForIndex(View * cell, int index) {
+}
+
+
 TableView::TableView(TableViewDataSource * dataSource) :
   ScrollView(&m_contentView),
   m_contentView(TableView::ContentView(this, dataSource))

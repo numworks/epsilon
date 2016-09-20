@@ -1,24 +1,28 @@
 #ifndef ESCHER_TABLE_VIEW_CELL_H
 #define ESCHER_TABLE_VIEW_CELL_H
 
-#include <escher.h>
+#include <escher/view.h>
+#include <escher/label_view.h>
+#include <escher/palette.h>
 
-class TableViewCell : public ChildlessView {
+
+class TableViewCell : public View {
 public:
-  TableViewCell();
-  void setMessage(const char * message);
-  bool isFocused() const;
-  void setFocused(bool focused);
+  TableViewCell(char * label);
+  LabelView * labelView();
+  virtual View * contentView() const;
+  bool isHighlighted() const;
+  void setHighlighted(bool highlight);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
 private:
-  constexpr static KDColor k_separatorColor = KDColor(0xB4B7B9);
-  constexpr static KDColor k_tableBackgroundColor = KDColor(0xF0F3F5);
-  constexpr static KDColor k_focusedCellBackgroundColor = KDColor(0xBFD3EB);
-  constexpr static KDColor k_cellBackgroundColor = KDColor(0xFCFCFC);
   constexpr static KDCoordinate k_margin = 20;
   constexpr static KDCoordinate k_marginLabel = 5;
-  const char * m_message;
-  bool m_focused;
+  bool m_highlighted;
+  LabelView m_labelView;
 };
 
 #endif

@@ -1,19 +1,14 @@
 #include "parameter_controller.h"
 #include <assert.h>
 
-
-static const char * sMessages[] = {
-  "Couleur de la fonction",
-  "Activer/Desactiver",
-  "Supprimer la fonction"
-};
-
 ParameterController::ParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
+  m_colorCell(TableViewCell("Couleur de la fonction")),
+  m_enableCell(TableViewCell("Activer/Desactiver")),
+  m_deleteCell(TableViewCell("Supprimer la fonction")),
   m_tableView(TableView(this)),
   m_activeCell(0)
 {
-  m_messages = sMessages;
 }
 
 const char * ParameterController::title() const {
@@ -33,12 +28,12 @@ void ParameterController::setActiveCell(int index) {
     return;
   }
   TableViewCell * previousCell = (TableViewCell *)(m_tableView.cellAtIndex(m_activeCell));
-  previousCell->setFocused(false);
+  previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_tableView.scrollToRow(index);
   TableViewCell * cell = (TableViewCell *)(m_tableView.cellAtIndex(index));
-  cell->setFocused(true);
+  cell->setHighlighted(true);
 
 }
 
@@ -56,7 +51,7 @@ bool ParameterController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
-      switch (m_activeCell) {
+      /*switch (m_activeCell) {
       case 0:
         return true;
       case 1:
@@ -64,7 +59,7 @@ bool ParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       case 2:
         return true;
-      }
+      }*/
     default:
       return false;
   }
@@ -78,16 +73,12 @@ int ParameterController::numberOfCells() {
 View * ParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  return &m_cells[index];
+  View * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
+  return cells[index];
 }
 
 int ParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
-}
-
-void ParameterController::willDisplayCellForIndex(View * cell, int index) {
-  TableViewCell * myCell = (TableViewCell *)cell;
-  myCell->setMessage(m_messages[index]);
 }
 
 KDCoordinate ParameterController::cellHeight() {

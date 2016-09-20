@@ -6,7 +6,7 @@
 class TableViewDataSource {
 public:
   virtual int numberOfCells() = 0;
-  virtual void willDisplayCellForIndex(View * cell, int index) = 0;
+  virtual void willDisplayCellForIndex(View * cell, int index);
   virtual KDCoordinate cellHeight() = 0;
   virtual View * reusableCell(int index) = 0;
   virtual int reusableCellCount() = 0;

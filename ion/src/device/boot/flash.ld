@@ -13,7 +13,7 @@ MEMORY {
   SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
 }
 
-STACK_SIZE = 4K;
+STACK_SIZE = 32K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(FLASH) : {

@@ -2,6 +2,7 @@
 #define ESCHER_TEXT_VIEW_H
 
 #include <escher/childless_view.h>
+#include <kandinsky/color.h>
 
 class TextView : public ChildlessView {
 public:
@@ -10,10 +11,12 @@ public:
   // alignment = 0.5 -> align center
   // alignment = 1.0 -> align right or bottom
   TextView(const char * text,
-      float horizontalAlignment,
-      float verticalAlignment);
+      float horizontalAlignment, float verticalAlignment,
+      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setText(const char * text);
+  void setBackgroundColor(KDColor backgroundColor);
+  void setTextColor(KDColor textColor);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -22,6 +25,8 @@ private:
   const char * m_text;
   float m_horizontalAlignment;
   float m_verticalAlignment;
+  KDColor m_textColor;
+  KDColor m_backgroundColor;
 };
 
 #endif

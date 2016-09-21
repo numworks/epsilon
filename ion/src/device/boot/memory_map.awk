@@ -4,8 +4,6 @@
 /bss_section_end_ram/ { bss_end = $1 }
 /heap_start/ { heap_start = $1 }
 /heap_end/ { heap_end = $1 }
-/framebuffer_start/ { framebuffer_start = $1 }
-/framebuffer_end/ { framebuffer_end = $1 }
 /stack_start/ { stack_start = $1 }
 /stack_end/ { stack_end = $1 }
 
@@ -17,6 +15,5 @@ END {
   log_section("DATA ", data_start, data_end);
   log_section("BSS  ", bss_start, bss_end);
   log_section("HEAP ", heap_start, heap_end);
-  log_section("FB   ", framebuffer_start, framebuffer_end);
   log_section("STACK", stack_end, stack_start);
 }

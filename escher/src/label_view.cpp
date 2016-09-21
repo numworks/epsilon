@@ -1,11 +1,11 @@
 #include <escher/label_view.h>
 #include <escher/table_view_cell.h>
 
-LabelView::LabelView(const char * label, KDColor backgroundColor, KDColor textColor) :
+LabelView::LabelView(const char * label, KDColor textColor, KDColor backgroundColor) :
   ChildlessView(),
   m_label(label),
-  m_backgroundColor(backgroundColor),
-  m_textColor(textColor)
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor)
 {
 }
 

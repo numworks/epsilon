@@ -46,7 +46,7 @@ Expression * CommutativeOperation::clone() const {
 
 float CommutativeOperation::approximate(Context& context) const {
   float result = m_operands[0]->approximate(context);
-  for (size_t i=1; i<m_numberOfOperands; i++) {
+  for (int i=1; i<m_numberOfOperands; i++) {
     float next = m_operands[i]->approximate(context);
     result = this->operateApproximatevelyOn(result, next);
   }

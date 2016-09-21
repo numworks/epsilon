@@ -2,6 +2,6 @@
 #define LIBA_STDDEF_H
 
 #define NULL 0
-typedef int size_t;
+typedef __SIZE_TYPE__ size_t;
 
 #endif

@@ -97,7 +97,7 @@ void init() {
   }
 }
 
-void generateWakeUpEventForKey(Ion::Keyboard::Key k) {
+void generateWakeUpEventForKey(Key k) {
   // We're driving the rows and reading the columns.
   int row = rowForKey(k);
   for (uint8_t i=0; i<numberOfRows; i++) {

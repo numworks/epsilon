@@ -37,14 +37,14 @@ constexpr GPIO ColumnGPIO = GPIOC;
 constexpr uint8_t numberOfColumns = 5;
 constexpr uint8_t ColumnPins[numberOfColumns] = {0, 1, 13, 14, 15};
 
-inline uint8_t rowForKey(Ion::Keyboard::Key key) {
+inline uint8_t rowForKey(Key key) {
   return (int)key/numberOfColumns;
 }
-inline uint8_t columnForKey(Ion::Keyboard::Key key) {
+inline uint8_t columnForKey(Key key) {
   return (int)key%numberOfColumns;
 }
 
-void generateWakeUpEventForKey(Ion::Keyboard::Key k);
+void generateWakeUpEventForKey(Key k);
 
 }
 }

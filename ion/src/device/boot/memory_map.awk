@@ -2,8 +2,8 @@
 /data_section_end_ram/ { data_end = $1 }
 /bss_section_start_ram/ { bss_start = $1 }
 /bss_section_end_ram/ { bss_end = $1 }
-/liba_heap_start/ { heap_start = $1 }
-/liba_heap_end/ { heap_end = $1 }
+/heap_start/ { heap_start = $1 }
+/heap_end/ { heap_end = $1 }
 /framebuffer_start/ { framebuffer_start = $1 }
 /framebuffer_end/ { framebuffer_end = $1 }
 /stack_start/ { stack_start = $1 }

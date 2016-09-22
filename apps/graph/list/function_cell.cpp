@@ -58,9 +58,6 @@ void FunctionCell::didBecomeFirstResponder() {
  //markRectAsDirty(bounds());
 }
 
-void FunctionCell::didResignFirstResponder() {
-  //markRectAsDirty(bounds());
-}
 
 bool FunctionCell::handleEvent(Ion::Events::Event event){
   switch (event) {

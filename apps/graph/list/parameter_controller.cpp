@@ -6,7 +6,8 @@ ParameterController::ParameterController(Responder * parentResponder, Graph::Fun
   m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
   m_deleteCell(TableViewCell((char*)"Supprimer la fonction")),
-  m_tableView(TableView(this)),
+  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
+    Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
   m_functionStore(functionStore)
 {

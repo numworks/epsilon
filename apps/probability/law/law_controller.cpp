@@ -14,7 +14,8 @@ static const char * sMessages[] = {
 
 Probability::LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_tableView(TableView(this)),
+  m_tableView(TableView(this, Metric::TopMargin, Metric::RightMargin,
+    Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0)
 {
   m_messages = sMessages;

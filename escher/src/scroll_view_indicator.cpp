@@ -15,6 +15,10 @@ ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction directio
 }
 
 void ScrollViewIndicator::drawRect(KDContext * ctx, KDRect rect) const {
+  if (m_start <= 0 && m_end >=1) {
+    return;
+  }
+
   ctx->fillRect(bounds(), k_backgroundColor);
   KDRect indicatorFrame = KDRectZero;
   if (m_direction == Direction::Horizontal) {

@@ -20,8 +20,9 @@ public:
   KDCoordinate cellHeight() override;
   View * reusableCell(int index) override;
   int reusableCellCount() override;
-
+  void willDisplayCellForIndex(View * cell, int index) override;
 private:
+  bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
   TableViewCell m_colorCell;
   SwitchTableViewCell m_enableCell;

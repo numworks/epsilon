@@ -20,7 +20,14 @@ View * ParameterController::view() {
 }
 
 void ParameterController::didBecomeFirstResponder() {
-   setActiveCell(0);
+  setActiveCell(0);
+}
+
+void ParameterController::willDisplayCellForIndex(View * cell, int index) {
+  if (cell == &m_enableCell) {
+    SwitchView * switchView = (SwitchView *)m_enableCell.contentView();
+    switchView->setState(m_function->isActive());
+  }
 }
 
 void ParameterController::setActiveCell(int index) {
@@ -51,19 +58,32 @@ bool ParameterController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
-      /*switch (m_activeCell) {
-      case 0:
-        return true;
-      case 1:
-        m_function->setActive(!m_function->isActive());
-        return true;
-      case 2:
-        return true;
-      }*/
+      return handleEnter();
     default:
       return false;
   }
 }
+
+bool ParameterController::handleEnter() {
+  switch (m_activeCell) {
+    case 0:
+    {
+      return true;
+    }
+    case 1:
+    {
+      SwitchView * switchView = (SwitchView *)m_enableCell.contentView();
+      switchView->setState(!switchView->state());
+      m_function->setActive(!m_function->isActive());
+      return true;
+    }
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
 
 int ParameterController::numberOfCells() {
   return k_totalNumberOfCell;

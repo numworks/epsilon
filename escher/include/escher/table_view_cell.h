@@ -20,8 +20,7 @@ public:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 private:
-  constexpr static KDCoordinate k_margin = 20;
-  constexpr static KDCoordinate k_marginLabel = 5;
+  constexpr static KDCoordinate k_separatorThickness = 1;
   bool m_highlighted;
   LabelView m_labelView;
 };

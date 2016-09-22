@@ -1,18 +1,22 @@
 #include <escher/scroll_view.h>
+#include <escher/palette.h>
+
 extern "C" {
 #include <assert.h>
 }
 
-constexpr KDCoordinate k_indicatorThickness = 20;
+constexpr KDCoordinate ScrollView::k_indicatorThickness;
 
-ScrollView::ScrollView(View * contentView) :
+ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   View(),
   m_offset(KDPointZero),
   m_contentView(contentView),
-  m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical))
+  m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical)),
+  m_topMargin(topMargin),
+  m_rightMargin(rightMargin),
+  m_bottomMargin(bottomMargin),
+  m_leftMargin(leftMargin)
 {
-  //setSubview(m_contentView, 0);
-  //setSubview(&m_verticalScrollIndicator, 1);
 }
 
 int ScrollView::numberOfSubviews() const {
@@ -30,6 +34,15 @@ View * ScrollView::subviewAtIndex(int index) {
   return nullptr;
 }
 
+void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+  ctx->fillRect(KDRect(0, 0, width, height), Palette::BackgroundColor);
+  // Future optimization: avoid drawing behind the content view/
+  //ctx->fillRect(KDRect(m_leftMargin, m_contentView->bounds().height()+m_topMargin,  width-m_leftMargin-m_rightMargin, height- m_contentView->bounds().height())-m_topMargin, Palette::BackgroundColor);
+}
+
+
 void ScrollView::layoutSubviews() {
   // Layout indicators
   KDRect verticalIndicatorFrame = KDRect(
@@ -40,14 +53,15 @@ void ScrollView::layoutSubviews() {
 
   // Layout contentView
   // We're only re-positionning the contentView, not modifying its size.
-  KDRect contentFrame = KDRect(m_offset.opposite(), m_contentView->bounds().size());
+  KDPoint absoluteOffset = m_offset.opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
+  KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
   m_offset = offset;
 
-  float contentHeight = m_contentView->bounds().height();
+  float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
   float start = offset.y();
   float end = offset.y() + m_frame.height();
 
@@ -57,8 +71,12 @@ void ScrollView::setContentOffset(KDPoint offset) {
   layoutSubviews();
 }
 
-KDCoordinate ScrollView::maxContentWidth() {
-  return m_frame.width() - k_indicatorThickness;
+KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
+  return m_frame.width() - m_leftMargin - m_rightMargin;
+}
+
+KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
+  return m_frame.height() - m_topMargin - m_bottomMargin;
 }
 
 #if ESCHER_VIEW_LOGGING

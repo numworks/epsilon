@@ -1,4 +1,6 @@
 #include <escher/table_view.h>
+#include <escher/metric.h>
+
 extern "C" {
 #include <assert.h>
 }
@@ -10,7 +12,7 @@ void TableViewDataSource::willDisplayCellForIndex(View * cell, int index) {
 
 
 TableView::TableView(TableViewDataSource * dataSource) :
-  ScrollView(&m_contentView),
+  ScrollView(&m_contentView, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin),
   m_contentView(TableView::ContentView(this, dataSource))
 {
 }
@@ -35,7 +37,7 @@ void TableView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
 
-  KDRect contentViewFrame(0, 0, maxContentWidth(), m_contentView.height());
+  KDRect contentViewFrame(0, 0, maxContentWidthDisplayableWithoutScrolling(), m_contentView.height());
   m_contentView.setFrame(contentViewFrame);
 
   ScrollView::layoutSubviews();
@@ -56,15 +58,15 @@ KDCoordinate TableView::ContentView::height() const {
 
 void TableView::ContentView::scrollToRow(int index) const {
   if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the top
+    // Let's scroll the tableView to put that cell on the top (while keeping the top margin)
     KDPoint contentOffset(0, index*m_dataSource->cellHeight());
     m_tableView->setContentOffset(contentOffset);
     return;
   }
   if (cellAtIndexIsAfterFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the bottom
+    // Let's scroll the tableView to put that cell on the bottom (while keeping the bottom margin)
     KDPoint contentOffset(0,
-    (index+1)*m_dataSource->cellHeight() - m_tableView->bounds().height());
+    (index+1)*m_dataSource->cellHeight() - m_tableView->maxContentHeightDisplayableWithoutScrolling());
     m_tableView->setContentOffset(contentOffset);
     return;
   }
@@ -108,8 +110,14 @@ void TableView::ContentView::layoutSubviews() {
   }
 }
 
+int TableView::ContentView::numberOfFullyDisplayableCells() const {
+  /* This function considers that cells in top and bottom margins are not
+  * "fully" displayed. */
+  return (m_tableView->maxContentHeightDisplayableWithoutScrolling()) / m_dataSource->cellHeight() + 1;
+}
+
 int TableView::ContentView::numberOfDisplayableCells() const {
-  return m_tableView->bounds().height() / m_dataSource->cellHeight() + 1;
+  return (m_tableView->bounds().height()) / m_dataSource->cellHeight() + 1;
 }
 
 int TableView::ContentView::cellScrollingOffset() const {
@@ -125,5 +133,5 @@ bool TableView::ContentView::cellAtIndexIsBeforeFullyVisibleRange(int index) con
 
 bool TableView::ContentView::cellAtIndexIsAfterFullyVisibleRange(int index) const {
   int relativeIndex = index - cellScrollingOffset();
-  return (relativeIndex >= numberOfDisplayableCells()-1);
+  return (relativeIndex >= numberOfFullyDisplayableCells()-1);
 }

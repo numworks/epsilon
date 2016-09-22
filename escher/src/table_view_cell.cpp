@@ -1,13 +1,12 @@
 #include <escher/table_view_cell.h>
 #include <assert.h>
 
-constexpr KDCoordinate TableViewCell::k_margin;
-constexpr KDCoordinate TableViewCell::k_marginLabel;
+constexpr KDCoordinate TableViewCell::k_separatorThickness;
 
 TableViewCell::TableViewCell(char * label) :
   View(),
   m_highlighted(false),
-  m_labelView(LabelView(label, Palette::CellBackgroundColor, KDColorBlack))
+  m_labelView(LabelView(label, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
 
@@ -29,10 +28,10 @@ View * TableViewCell::subviewAtIndex(int index) {
 void TableViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_labelView.setFrame(KDRect(k_margin + k_marginLabel, k_marginLabel, 3*width/4, height));
+  m_labelView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, 3*width/4 - 2*k_separatorThickness, height - 2*k_separatorThickness));
   View * content = contentView();
   if (content) {
-    content->setFrame(KDRect(k_margin + k_marginLabel + 3*width/4, k_marginLabel, width/4-k_margin, height-k_marginLabel));
+    content->setFrame(KDRect(k_separatorThickness + 3*width/4, k_separatorThickness, width/4-2*k_separatorThickness, height-2*k_separatorThickness));
   }
 }
 
@@ -60,10 +59,8 @@ void TableViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = (m_highlighted ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor);
 
-  ctx->fillRect(KDRect(k_margin+1, 1, width-2*k_margin-1, height-1), backgroundColor);
-  ctx->fillRect(KDRect(0,0,k_margin,height), Palette::BackgroundColor);
-  ctx->fillRect(KDRect(k_margin,0,width-2*k_margin,1), Palette::LineColor);
-  ctx->fillRect(KDRect(k_margin,0,1,height), Palette::LineColor);
-  ctx->fillRect(KDRect(width-k_margin,0,1,height), Palette::LineColor);
-  ctx->fillRect(KDRect(width-k_margin+1,0,k_margin, height), Palette::BackgroundColor);
-}
+  ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
+  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::LineColor);
+  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::LineColor);
+  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::LineColor);
+ }

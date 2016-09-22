@@ -39,6 +39,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
 
+    int numberOfFullyDisplayableCells() const;
     int numberOfDisplayableCells() const;
     int cellScrollingOffset() const;
     bool cellAtIndexIsBeforeFullyVisibleRange(int index) const;

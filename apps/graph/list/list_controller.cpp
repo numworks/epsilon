@@ -7,7 +7,7 @@ ListController::ListController(Responder * parentResponder, Graph::FunctionStore
   m_activeCell(-1),
   m_manualScrolling(0),
   m_functionStore(functionStore),
-  m_parameterController(ParameterController(this))
+  m_parameterController(ParameterController(this, functionStore))
 {
 }
 

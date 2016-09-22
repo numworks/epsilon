@@ -1,13 +1,14 @@
 #include "parameter_controller.h"
 #include <assert.h>
 
-ParameterController::ParameterController(Responder * parentResponder) :
+ParameterController::ParameterController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
   m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
   m_deleteCell(TableViewCell((char*)"Supprimer la fonction")),
   m_tableView(TableView(this)),
-  m_activeCell(0)
+  m_activeCell(0),
+  m_functionStore(functionStore)
 {
 }
 
@@ -78,12 +79,18 @@ bool ParameterController::handleEnter() {
       return true;
     }
     case 2:
+    {
+      m_functionStore->removeFunction(m_function);
+      StackViewController * stack = (StackViewController *)(parentResponder());
+      stack->pop();
       return true;
+    }
     default:
+    {
       return false;
+    }
   }
 }
-
 
 int ParameterController::numberOfCells() {
   return k_totalNumberOfCell;

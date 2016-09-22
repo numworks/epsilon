@@ -7,7 +7,7 @@
 
 class ParameterController : public ViewController, public TableViewDataSource {
 public:
-  ParameterController(Responder * parentResponder);
+  ParameterController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
   View * view() override;
   const char * title() const override;
@@ -30,6 +30,7 @@ private:
   TableView m_tableView;
   int m_activeCell;
   Graph::Function * m_function;
+  Graph::FunctionStore * m_functionStore;
 };
 
 #endif

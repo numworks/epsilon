@@ -6,7 +6,7 @@ constexpr KDCoordinate TableViewCell::k_separatorThickness;
 TableViewCell::TableViewCell(char * label) :
   View(),
   m_highlighted(false),
-  m_labelView(LabelView(label, KDColorBlack, Palette::CellBackgroundColor))
+  m_textView(TextView(label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
 
@@ -19,7 +19,7 @@ int TableViewCell::numberOfSubviews() const {
 
 View * TableViewCell::subviewAtIndex(int index) {
   if (index == 0) {
-    return &m_labelView;
+    return &m_textView;
   }
   assert(numberOfSubviews() == 2 && index == 1);
   return contentView();
@@ -28,15 +28,15 @@ View * TableViewCell::subviewAtIndex(int index) {
 void TableViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_labelView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, 3*width/4 - 2*k_separatorThickness, height - 2*k_separatorThickness));
+  m_textView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, 3*width/4 - 2*k_separatorThickness, height - 2*k_separatorThickness));
   View * content = contentView();
   if (content) {
     content->setFrame(KDRect(k_separatorThickness + 3*width/4, k_separatorThickness, width/4-2*k_separatorThickness, height-2*k_separatorThickness));
   }
 }
 
-LabelView * TableViewCell::labelView() {
-  return &m_labelView;
+TextView * TableViewCell::textView() {
+  return &m_textView;
 }
 
 View * TableViewCell::contentView() const {
@@ -50,7 +50,7 @@ bool TableViewCell::isHighlighted() const {
 void TableViewCell::setHighlighted(bool highlight) {
   m_highlighted = highlight;
   KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
-  m_labelView.setBackgroundColor(backgroundColor);
+  m_textView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }
 

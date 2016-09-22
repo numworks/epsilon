@@ -4,7 +4,6 @@
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/invocation.h>
-#include <escher/label_view.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/responder.h>

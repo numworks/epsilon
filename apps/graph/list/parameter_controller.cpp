@@ -3,9 +3,9 @@
 
 ParameterController::ParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_colorCell(TableViewCell("Couleur de la fonction")),
-  m_enableCell(SwitchTableViewCell("Activer/Desactiver")),
-  m_deleteCell(TableViewCell("Supprimer la fonction")),
+  m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
+  m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
+  m_deleteCell(TableViewCell((char*)"Supprimer la fonction")),
   m_tableView(TableView(this)),
   m_activeCell(0)
 {

@@ -5,8 +5,8 @@
 FunctionNameView::FunctionNameView(Responder * parentResponder, Invocation invocation) :
   ChildlessView(),
   Responder(parentResponder),
-  m_invocation(invocation),
-  m_focused(false)
+  m_focused(false),
+  m_invocation(invocation)
 {
 }
 

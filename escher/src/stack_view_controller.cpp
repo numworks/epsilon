@@ -64,9 +64,9 @@ const char * StackViewController::ControllerView::className() const {
 
 StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader) :
   ViewController(parentResponder),
+  m_view(ControllerView(displayFirstStackHeader)),
   m_numberOfChildren(0),
-  m_rootViewController(rootViewController),
-  m_view(ControllerView(displayFirstStackHeader))
+  m_rootViewController(rootViewController)
 {
   // push(rootViewController);
 }

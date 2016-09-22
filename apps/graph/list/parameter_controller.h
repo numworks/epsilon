@@ -29,7 +29,6 @@ private:
   TableView m_tableView;
   int m_activeCell;
   Graph::Function * m_function;
-  Graph::FunctionStore * m_functionStore;
 };
 
 #endif

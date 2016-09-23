@@ -17,6 +17,7 @@ public:
   void setText(const char * text);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
+  void setAlignment(float horizontalAlignment, float verticalAlignment);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

@@ -29,6 +29,12 @@ void TextView::setTextColor(KDColor textColor) {
   markRectAsDirty(bounds());
 }
 
+void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  m_horizontalAlignment = horizontalAlignment;
+  m_verticalAlignment = verticalAlignment;
+  markRectAsDirty(bounds());
+}
+
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize textSize = KDText::stringSize(m_text);
   KDPoint origin = {

@@ -11,15 +11,21 @@ FunctionNameView::FunctionNameView(Responder * parentResponder, Invocation invoc
 }
 
 void FunctionNameView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+  // First color the color indicator
+  KDColor functionColor = function()->color();
+  ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, height), functionColor);
+  // Select the background color according to the even line and the cursor selection
   bool evenLine = isEven();
-  KDColor background = evenLine ? KDColor(0xEEEEEE) : KDColor(0x777777);
-  ctx->fillRect(rect, background);
+  KDColor background = evenLine ? FunctionCell::k_evenLineBackgroundColor : FunctionCell::k_oddLineBackgroundColor;
+  background = m_focused ? FunctionCell::k_selectedLineBackgroundColor : background;
+  ctx->fillRect(KDRect(4, 0, width-4, height), background);
+  // Select text color according to the state of the function
   bool active = function()->isActive();
-  KDColor text = active ? KDColorGreen : KDColorRed;
-  KDColor textBackground = m_focused ? KDColorWhite : KDColorBlack;
-
+  KDColor text = active ? KDColorBlack : FunctionCell::k_desactiveTextColor;
   Graph::Function * function = FunctionNameView::function();
-  ctx->drawString(function->name(), KDPointZero, text, textBackground);
+  ctx->drawString(function->name(), KDPoint(4, 0), text, background);
   // m_function->layout()->draw(ctx, KDPointZero);
 }
 

@@ -3,6 +3,11 @@
 #include <poincare.h>
 #include <assert.h>
 
+constexpr KDColor FunctionCell::k_evenLineBackgroundColor;
+constexpr KDColor FunctionCell::k_oddLineBackgroundColor;
+constexpr KDColor FunctionCell::k_selectedLineBackgroundColor;
+constexpr KDColor FunctionCell::k_desactiveTextColor;
+
 FunctionCell::FunctionCell() :
   View(),
   Responder(nullptr),
@@ -32,7 +37,7 @@ View * FunctionCell::subviewAtIndex(int index) {
 }
 void FunctionCell::layoutSubviews() {
   m_functionNameView.setFrame(KDRect(0, 0, k_functionNameWidth, k_functionCellHeight));
-  m_functionExpressionView.setFrame(KDRect(k_functionNameWidth, 0, k_functionExpressionWidth, k_functionCellHeight));
+  m_functionExpressionView.setFrame(KDRect(k_functionNameWidth, 0, bounds().width()-k_functionNameWidth, k_functionCellHeight));
 }
 
 

@@ -10,15 +10,16 @@ FunctionExpressionView::FunctionExpressionView(Responder * parentResponder) :
 }
 
 void FunctionExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
+  // Select the background color according to the even line and the cursor selection
   bool evenLine = isEven();
-  KDColor background = evenLine ? KDColor(0xEEEEEE) : KDColor(0x777777);
+  KDColor background = evenLine ? FunctionCell::k_evenLineBackgroundColor : FunctionCell::k_oddLineBackgroundColor;
+  background = m_focused ? FunctionCell::k_selectedLineBackgroundColor : background;
   ctx->fillRect(rect, background);
+  // Select text color according to the state of the function
   bool active = function()->isActive();
-  KDColor text = active ? KDColorGreen : KDColorRed;
-  KDColor textBackground = m_focused ? KDColorWhite : KDColorBlack;
-
+  KDColor text = active ? KDColorBlack : FunctionCell::k_desactiveTextColor;
   Graph::Function * function = FunctionExpressionView::function();
-  ctx->drawString(function->text(), KDPointZero, text, textBackground);
+  ctx->drawString(function->text(), KDPointZero, text, background);
   // m_function->layout()->draw(ctx, KDPointZero);
 }
 

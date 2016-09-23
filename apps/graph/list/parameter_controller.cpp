@@ -80,10 +80,15 @@ bool ParameterController::handleEnter() {
     }
     case 2:
     {
-      m_functionStore->removeFunction(m_function);
-      StackViewController * stack = (StackViewController *)(parentResponder());
-      stack->pop();
-      return true;
+      if (m_functionStore->numberOfFunctions() > 1) {
+        m_functionStore->removeFunction(m_function);
+        StackViewController * stack = (StackViewController *)(parentResponder());
+        stack->pop();
+        return true;
+      } else {
+        // TODO: add an warning "no function to delete!"
+        return false;
+      }
     }
     default:
     {

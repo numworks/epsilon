@@ -18,6 +18,7 @@ public:
   void didResignFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
+  constexpr static int k_colorIndicatorThickness = 4;
   bool m_focused;
   Invocation m_invocation;
 };

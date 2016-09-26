@@ -8,18 +8,14 @@ GraphApp::GraphApp() :
   m_graphController(GraphController(nullptr, &m_functionStore)),
   m_tabViewController(this, &m_listStackViewController, &m_graphController)
 {
-  Graph::Function function = Graph::Function("(x-1)*(x+1)*x",
-      Graph::FunctionStore::defaultColors[(m_functionStore.numberOfFunctions())%Graph::FunctionStore::numberOfDefaultColors]);
-  m_functionStore.addFunction(&function);
-  function = Graph::Function("x*x",
-      Graph::FunctionStore::defaultColors[(m_functionStore.numberOfFunctions())%Graph::FunctionStore::numberOfDefaultColors]);
-  m_functionStore.addFunction(&function);
-  function = Graph::Function("3",
-      Graph::FunctionStore::defaultColors[(m_functionStore.numberOfFunctions())%Graph::FunctionStore::numberOfDefaultColors]);
-  m_functionStore.addFunction(&function);
-  function = Graph::Function("x*x*x",
-      Graph::FunctionStore::defaultColors[(m_functionStore.numberOfFunctions())%Graph::FunctionStore::numberOfDefaultColors]);
-  m_functionStore.addFunction(&function);
+  Graph::Function * function = m_functionStore.addEmptyFunction();
+  function->setContent("(x-1)*(x+1)*x");
+  function = m_functionStore.addEmptyFunction();
+  function->setContent("x*x");
+  function = m_functionStore.addEmptyFunction();
+  function->setContent("3");
+  function = m_functionStore.addEmptyFunction();
+  function->setContent("x*x*x");
 }
 
 ViewController * GraphApp::rootViewController() {

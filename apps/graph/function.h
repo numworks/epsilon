@@ -18,8 +18,12 @@ public:
   ExpressionLayout * layout();
   bool isActive();
   void setActive(bool active);
+  void setContent(const char * c);
+  void setColor(KDColor m_color);
+  void setName(const char * c);
 private:
-  const char * m_text;
+  constexpr static int k_bodyLength = 255;
+  char m_text[k_bodyLength];
   const char * m_name;
   KDColor m_color;
   Expression * m_expression;

@@ -1,20 +1,30 @@
 #include "function.h"
+#include <string.h>
 
 Graph::Function::Function() :
-  m_text(nullptr),
+  m_name(nullptr),
   m_expression(nullptr),
   m_layout(nullptr)
 {
 }
 
-Graph::Function::Function(const char * text, KDColor color) :
-  m_text(text), // FIXME: Copy !!
-  m_name("f(x)"),
-  m_color(color),
-  m_expression(nullptr),
-  m_layout(nullptr),
-  m_active(true)
-{
+void Graph::Function::setContent(const char * c) {
+  #if __GLIBC__
+  // FIXME: This is ugly.
+  strncpy(m_text, c, sizeof(m_text));
+#else
+  strlcpy(m_text, c, sizeof(m_text));
+#endif
+  m_expression = expression();
+  m_layout = layout();
+}
+
+void Graph::Function::setColor(KDColor color) {
+  m_color = color;
+}
+
+void Graph::Function::setName(const char * c) {
+  m_name = c;
 }
 
 Graph::Function::~Function() {

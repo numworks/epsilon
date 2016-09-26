@@ -16,9 +16,16 @@ Graph::Function * Graph::FunctionStore::functionAtIndex(int i) {
   return &m_functions[i];
 }
 
-void Graph::FunctionStore::addFunction(Function * f) {
+Graph::Function * Graph::FunctionStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
-  m_functions[m_numberOfFunctions++] = (*f);
+  Graph::Function addedFunction = Function();
+  addedFunction.setColor(defaultColors[numberOfFunctions()%numberOfDefaultColors]);
+  addedFunction.setName("f(x)");
+  addedFunction.setActive(true);
+  m_functions[m_numberOfFunctions] = addedFunction;
+  Function * result = &m_functions[m_numberOfFunctions];
+  m_numberOfFunctions++;
+  return result;
 }
 
 void Graph::FunctionStore::removeFunction(Function * f) {

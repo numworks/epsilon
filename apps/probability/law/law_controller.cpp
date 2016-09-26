@@ -29,16 +29,21 @@ const char * Probability::LawController::title() const {
   return "Type de Loi";
 }
 
+void Probability::LawController::didBecomeFirstResponder() {
+  setActiveCell(0);
+}
+
 void Probability::LawController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfModels) {
     return;
   }
+  TableViewCell * previousCell = (TableViewCell *)(m_tableView.cellAtIndex(m_activeCell));
+  previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_tableView.scrollToRow(index);
-  LawCell * cell = (LawCell *)(m_tableView.cellAtIndex(index));
-  cell->setParentResponder(this);
-  app()->setFirstResponder(cell);
+  TableViewCell * cell = (TableViewCell *)(m_tableView.cellAtIndex(index));
+  cell->setHighlighted(true);
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
@@ -72,9 +77,15 @@ int Probability::LawController::reusableCellCount() {
 }
 
 void Probability::LawController::willDisplayCellForIndex(View * cell, int index) {
-  LawCell * myCell = (LawCell *)cell;
-  myCell->setMessage(m_messages[index]);
-  myCell->setEven(index%2 == 0);
+  TableViewCell * myCell = (TableViewCell *)cell;
+  myCell->textView()->setText(m_messages[index]);
+  if (m_activeCell == index) {
+    myCell->textView()->setBackgroundColor(Palette::FocusCellBackgroundColor);
+  } else {
+    myCell->textView()->setBackgroundColor(Palette::CellBackgroundColor);
+  }
+  myCell->textView()->setTextColor(KDColorBlack);
+  myCell->textView()->setAlignment(0., 0.5);
 }
 
 KDCoordinate Probability::LawController::cellHeight() {

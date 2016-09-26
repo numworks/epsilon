@@ -12,7 +12,6 @@ ListController::ListController(Responder * parentResponder, Graph::FunctionStore
 }
 
 View * ListController::view() {
-  setActiveCell(0);
   return &m_tableView;
 }
 
@@ -35,6 +34,19 @@ void ListController::setActiveCell(int index) {
   FunctionCell * cell = (FunctionCell *)(m_tableView.cellAtIndex(index));
   cell->setParentResponder(this);
   app()->setFirstResponder(cell);
+}
+
+void ListController::didBecomeFirstResponder() {
+  if (m_activeCell == -1) {
+    setActiveCell(0);
+  } else {
+    if (m_activeCell < m_functionStore->numberOfFunctions()) {
+      setActiveCell(m_activeCell);
+    } else {
+      setActiveCell(m_functionStore->numberOfFunctions()-1);
+    }
+  }
+  assert(m_activeCell >= 0);
 }
 
 void ListController::configureFunction(Graph::Function * function) {

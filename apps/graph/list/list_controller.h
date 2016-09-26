@@ -15,6 +15,7 @@ public:
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
   int numberOfCells() override;
   void willDisplayCellForIndex(View * cell, int index) override;

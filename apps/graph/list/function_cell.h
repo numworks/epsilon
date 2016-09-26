@@ -15,7 +15,6 @@ public:
   Graph::Function * function();
 
   void didBecomeFirstResponder() override;
-  void didResignFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
 private:

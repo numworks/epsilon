@@ -9,7 +9,7 @@
 
 class TableViewCell : public View {
 public:
-  TableViewCell(char * label);
+  TableViewCell(char * label = nullptr);
   TextView * textView();
   virtual View * contentView() const;
   bool isHighlighted() const;

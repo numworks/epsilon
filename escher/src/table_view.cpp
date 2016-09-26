@@ -11,8 +11,9 @@ void TableViewDataSource::willDisplayCellForIndex(View * cell, int index) {
 }
 
 
-TableView::TableView(TableViewDataSource * dataSource) :
-  ScrollView(&m_contentView, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin),
+TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
+    KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+  ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin),
   m_contentView(TableView::ContentView(this, dataSource))
 {
 }

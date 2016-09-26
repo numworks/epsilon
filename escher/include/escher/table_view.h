@@ -14,7 +14,8 @@ public:
 
 class TableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource);
+  TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
+    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
   void scrollToRow(int index);
   View * cellAtIndex(int index);

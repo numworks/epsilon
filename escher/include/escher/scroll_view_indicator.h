@@ -12,7 +12,9 @@ public:
   ScrollViewIndicator(Direction direction);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
+  float start() const;
   void setStart(float start);
+  float end() const;
   void setEnd(float end);
 protected:
 #if ESCHER_VIEW_LOGGING

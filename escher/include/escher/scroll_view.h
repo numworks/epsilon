@@ -28,6 +28,9 @@ private:
   KDPoint m_offset;
   View * m_contentView;
   ScrollViewIndicator m_verticalScrollIndicator;
+  ScrollViewIndicator m_horizontalScrollIndicator;
+  bool hasVerticalIndicator() const;
+  bool hasHorizontalIndicator() const;
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;

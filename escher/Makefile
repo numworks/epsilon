@@ -27,3 +27,20 @@ objs += $(addprefix escher/src/,\
   view_controller.o\
   window.o\
 )
+
+INLINER := escher/image/inliner
+
+$(INLINER): escher/image/inliner.c
+	@echo "HOSTCC  $@"
+	@$(HOSTCC) `libpng-config --cflags` `libpng-config --ldflags` $< -o $@
+
+inline_image_headers := $(inline_images:.png=.h)
+inline_image_sources := $(inline_images:.png=.cpp)
+inline_image_objs := $(inline_images:.png=.o)
+
+$(inline_image_sources) : %.cpp : %.png $(INLINER)
+	@echo "INLINER $@"
+	@$(INLINER) $<
+
+objs += $(inline_image_objs)
+products += $(INLINER) $(inline_image_headers) $(inline_image_sources)

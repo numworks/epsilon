@@ -61,8 +61,8 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
-include escher/Makefile
 include apps/Makefile
+include escher/Makefile # Escher should be included after apps as it needs to know which images to inline
 include quiz/Makefile # Quiz should be included at the end
 
 dependencies = $(objs:.o=.d)

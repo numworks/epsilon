@@ -6,7 +6,7 @@ ParameterController::ParameterController(Responder * parentResponder, Graph::Fun
   m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
   m_deleteCell(TableViewCell((char*)"Supprimer la fonction")),
-  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
+  m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
   m_functionStore(functionStore)
@@ -18,7 +18,7 @@ const char * ParameterController::title() const {
 }
 
 View * ParameterController::view() {
-  return &m_tableView;
+  return &m_listView;
 }
 
 void ParameterController::didBecomeFirstResponder() {
@@ -36,12 +36,12 @@ void ParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  TableViewCell * previousCell = (TableViewCell *)(m_tableView.cellAtIndex(m_activeCell));
+  TableViewCell * previousCell = (TableViewCell *)(m_listView.cellAtIndex(m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_tableView.scrollToRow(index);
-  TableViewCell * cell = (TableViewCell *)(m_tableView.cellAtIndex(index));
+  m_listView.scrollToRow(index);
+  TableViewCell * cell = (TableViewCell *)(m_listView.cellAtIndex(index));
   cell->setHighlighted(true);
 
 }

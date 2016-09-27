@@ -1,4 +1,4 @@
-#include <escher/table_view.h>
+#include <escher/list_view.h>
 #include <escher/metric.h>
 
 extern "C" {
@@ -7,34 +7,34 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-void TableViewDataSource::willDisplayCellForIndex(View * cell, int index) {
+void ListViewDataSource::willDisplayCellForIndex(View * cell, int index) {
 }
 
 
-TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
+ListView::ListView(ListViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin),
-  m_contentView(TableView::ContentView(this, dataSource))
+  m_contentView(ListView::ContentView(this, dataSource))
 {
 }
 
 // This method computes the minimal scrolling needed to properly display the
 // requested cell.
-void TableView::scrollToRow(int index) {
+void ListView::scrollToRow(int index) {
   m_contentView.scrollToRow(index);
 }
 
-View * TableView::cellAtIndex(int index) {
+View * ListView::cellAtIndex(int index) {
   return m_contentView.cellAtIndex(index);
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * TableView::className() const {
-  return "TableView";
+const char * ListView::className() const {
+  return "ListView";
 }
 #endif
 
-void TableView::layoutSubviews() {
+void ListView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
 
@@ -44,59 +44,59 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
-/* TableView::ContentView */
+/* ListView::ContentView */
 
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource) :
+ListView::ContentView::ContentView(ListView * listView, ListViewDataSource * dataSource) :
   View(),
-  m_tableView(tableView),
+  m_listView(listView),
   m_dataSource(dataSource)
 {
 }
 
-KDCoordinate TableView::ContentView::height() const {
+KDCoordinate ListView::ContentView::height() const {
   return m_dataSource->numberOfCells() * m_dataSource->cellHeight();
 }
 
-void TableView::ContentView::scrollToRow(int index) const {
+void ListView::ContentView::scrollToRow(int index) const {
   if (cellAtIndexIsBeforeFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the top (while keeping the top margin)
+    // Let's scroll the listView to put that cell on the top (while keeping the top margin)
     KDPoint contentOffset(0, index*m_dataSource->cellHeight());
-    m_tableView->setContentOffset(contentOffset);
+    m_listView->setContentOffset(contentOffset);
     return;
   }
   if (cellAtIndexIsAfterFullyVisibleRange(index)) {
-    // Let's scroll the tableView to put that cell on the bottom (while keeping the bottom margin)
+    // Let's scroll the listView to put that cell on the bottom (while keeping the bottom margin)
     KDPoint contentOffset(0,
-    (index+1)*m_dataSource->cellHeight() - m_tableView->maxContentHeightDisplayableWithoutScrolling());
-    m_tableView->setContentOffset(contentOffset);
+    (index+1)*m_dataSource->cellHeight() - m_listView->maxContentHeightDisplayableWithoutScrolling());
+    m_listView->setContentOffset(contentOffset);
     return;
   }
   // Nothing to do if the cell is already visible!
 }
 
-View * TableView::ContentView::cellAtIndex(int index) {
+View * ListView::ContentView::cellAtIndex(int index) {
   return m_dataSource->reusableCell(index - cellScrollingOffset());
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * TableView::ContentView::className() const {
-  return "TableView::ContentView";
+const char * ListView::ContentView::className() const {
+  return "ListView::ContentView";
 }
 #endif
 
-int TableView::ContentView::numberOfSubviews() const {
+int ListView::ContentView::numberOfSubviews() const {
   int result = MIN(m_dataSource->numberOfCells(), numberOfDisplayableCells());
   assert(result <= m_dataSource->reusableCellCount());
   return result;
 }
 
-View * TableView::ContentView::subviewAtIndex(int index) {
+View * ListView::ContentView::subviewAtIndex(int index) {
   assert(index >= 0);
   assert(index < m_dataSource->reusableCellCount());
   return m_dataSource->reusableCell(index);
 }
 
-void TableView::ContentView::layoutSubviews() {
+void ListView::ContentView::layoutSubviews() {
   int cellOffset = cellScrollingOffset();
 
   for (int i=0; i<numberOfSubviews(); i++) {
@@ -111,28 +111,28 @@ void TableView::ContentView::layoutSubviews() {
   }
 }
 
-int TableView::ContentView::numberOfFullyDisplayableCells() const {
+int ListView::ContentView::numberOfFullyDisplayableCells() const {
   /* This function considers that cells in top and bottom margins are not
   * "fully" displayed. */
-  return (m_tableView->maxContentHeightDisplayableWithoutScrolling()) / m_dataSource->cellHeight() + 1;
+  return (m_listView->maxContentHeightDisplayableWithoutScrolling()) / m_dataSource->cellHeight() + 1;
 }
 
-int TableView::ContentView::numberOfDisplayableCells() const {
-  return (m_tableView->bounds().height()) / m_dataSource->cellHeight() + 1;
+int ListView::ContentView::numberOfDisplayableCells() const {
+  return (m_listView->bounds().height()) / m_dataSource->cellHeight() + 1;
 }
 
-int TableView::ContentView::cellScrollingOffset() const {
-  /* Here, we want to translate the offset at which our tableView is displaying
+int ListView::ContentView::cellScrollingOffset() const {
+  /* Here, we want to translate the offset at which our listView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate pixelScrollingOffset = -m_frame.y();
   return pixelScrollingOffset / m_dataSource->cellHeight();
 }
 
-bool TableView::ContentView::cellAtIndexIsBeforeFullyVisibleRange(int index) const {
+bool ListView::ContentView::cellAtIndexIsBeforeFullyVisibleRange(int index) const {
   return index <= cellScrollingOffset();
 }
 
-bool TableView::ContentView::cellAtIndexIsAfterFullyVisibleRange(int index) const {
+bool ListView::ContentView::cellAtIndexIsAfterFullyVisibleRange(int index) const {
   int relativeIndex = index - cellScrollingOffset();
   return (relativeIndex >= numberOfFullyDisplayableCells()-1);
 }

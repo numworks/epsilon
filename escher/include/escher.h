@@ -6,6 +6,7 @@
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/invocation.h>
+#include <escher/list_view.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/responder.h>
@@ -18,7 +19,6 @@
 #include <escher/text_field.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>
-#include <escher/table_view.h>
 #include <escher/table_view_cell.h>
 #include <escher/tiled_view.h>
 #include <escher/view.h>

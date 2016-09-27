@@ -6,7 +6,7 @@
 #include "function_cell.h"
 #include "parameter_controller.h"
 
-class ListController : public ViewController, public TableViewDataSource {
+class ListController : public ViewController, public ListViewDataSource {
 public:
   ListController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
@@ -28,9 +28,9 @@ private:
   constexpr static int k_totalNumberOfModels = 20;
   constexpr static int k_maxNumberOfCells = 10;
   // !!! CAUTION: The order here is important
-  // The cells should be initialized *before* the tableview!
+  // The cells should be initialized *before* the listView!
   FunctionCell m_cells[k_maxNumberOfCells];
-  TableView m_tableView;
+  ListView m_listView;
   int m_activeCell;
   KDCoordinate m_manualScrolling;
   Graph::FunctionStore * m_functionStore;

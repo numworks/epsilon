@@ -6,6 +6,7 @@ objs += $(addprefix escher/src/,\
   container.o\
   image_view.o\
   invocation.o\
+  list_view.o\
   metric.o\
   palette.o\
   responder.o\
@@ -19,7 +20,6 @@ objs += $(addprefix escher/src/,\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\
-  table_view.o\
   table_view_cell.o\
   text_field.o\
   text_view.o\

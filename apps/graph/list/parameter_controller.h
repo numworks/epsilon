@@ -5,7 +5,7 @@
 #include "../function.h"
 #include "../function_store.h"
 
-class ParameterController : public ViewController, public TableViewDataSource {
+class ParameterController : public ViewController, public ListViewDataSource {
 public:
   ParameterController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
@@ -27,7 +27,7 @@ private:
   TableViewCell m_colorCell;
   SwitchTableViewCell m_enableCell;
   TableViewCell m_deleteCell;
-  TableView m_tableView;
+  ListView m_listView;
   int m_activeCell;
   Graph::Function * m_function;
   Graph::FunctionStore * m_functionStore;

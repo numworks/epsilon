@@ -3,6 +3,7 @@
 
 #include <escher/app.h>
 #include <escher/container.h>
+#include <escher/image.h>
 #include <escher/invocation.h>
 #include <escher/metric.h>
 #include <escher/palette.h>

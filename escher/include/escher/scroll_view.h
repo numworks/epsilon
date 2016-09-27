@@ -10,6 +10,7 @@ public:
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
   void setContentOffset(KDPoint offset);
+  KDPoint contentOffset();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling();
@@ -21,11 +22,11 @@ protected:
   virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
+  KDPoint m_offset;
   constexpr static KDCoordinate k_indicatorThickness = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
-  KDPoint m_offset;
   View * m_contentView;
   ScrollViewIndicator m_verticalScrollIndicator;
   ScrollViewIndicator m_horizontalScrollIndicator;

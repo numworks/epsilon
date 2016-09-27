@@ -116,6 +116,11 @@ void ScrollView::setContentOffset(KDPoint offset) {
   layoutSubviews();
 }
 
+KDPoint ScrollView::contentOffset() {
+  return m_offset;
+}
+
+
 KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
   return m_frame.width() - m_leftMargin - m_rightMargin;
 }

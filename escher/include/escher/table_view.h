@@ -43,6 +43,9 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
 
+    /* realCellWidth enables to handle list view for which
+     * TableViewDataSource->cellWidht = 0 */
+    KDCoordinate realCellWidth() const;
     int numberOfFullyDisplayableRows() const;
     int numberOfFullyDisplayableColumns() const;
     int numberOfDisplayableRows() const;

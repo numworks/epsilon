@@ -35,6 +35,36 @@ void Ion::Device::init() {
 }
 
 void Ion::Device::initClocks() {
+#define USE_96MHZ_SYSTEM_CLOCK 0
+#if USE_96MHZ_SYSTEM_CLOCK
+  /* System clock
+   * Configure the CPU at 96 MHz, APB2 and USB at 48 MHz. */
+
+  /* After reset the Flash runs as fast as the CPU. When we clock the CPU faster
+   * the flash memory cannot follow and therefore flash memory accesses need to
+   * wait a little bit.
+   * The spec tells us that at 2.8V and over 90MHz the flash expects 3 WS. */
+  FLASH.ACR()->setLATENCY(3);
+
+  /* We're using the high-speed internal oscillator as a clock source. It runs
+   * at a fixed 16 MHz frequency, but by piping it through the PLL we can derive
+   * faster oscillations. Combining default values and a PLLQ of 4 can provide
+   * us with a 96 MHz frequency for SYSCLK. */
+  RCC.PLLCFGR()->setPLLQ(4);
+  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSI);
+  // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
+  RCC.CFGR()->setPPRE1(RCC::CFGR::AHBRatio::DivideBy2);
+
+  // Enable the PLL and wait for it to be ready
+  RCC.CR()->setPLLON(true);
+  while(!RCC.CR()->getPLLRDY()) {
+  }
+
+  // Last but not least, use the PLL output as a SYSCLK source
+  RCC.CFGR()->setSW(RCC::CFGR::SW::PLL);
+  while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
+  }
+#endif
 
   // Peripheral clocks
 

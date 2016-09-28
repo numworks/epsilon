@@ -5,6 +5,45 @@
 
 class RCC {
 public:
+  class CR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(PLLRDY, 25);
+    REGS_BOOL_FIELD(PLLON, 24);
+  };
+
+  class PLLCFGR : public Register32 {
+  public:
+    REGS_FIELD(PLLM, uint8_t, 5, 0);
+    REGS_FIELD(PLLN, uint16_t, 14, 6);
+    REGS_FIELD(PLLP, uint8_t, 17, 16);
+    enum class PLLSRC {
+      HSI = 0,
+      HSE = 1
+    };
+    void setPLLSRC(PLLSRC s) volatile { setBitRange(22, 22, (uint8_t)s); }
+    REGS_FIELD(PLLQ, uint8_t, 27, 24);
+    REGS_FIELD(PLLR, uint8_t, 30, 28);
+  };
+
+  class CFGR : public Register32 {
+  public:
+    enum class SW {
+      HSI = 0,
+      HSE = 1,
+      PLL = 2
+    };
+    void setSW(SW s) volatile { setBitRange(1, 0, (uint8_t)s); }
+    SW getSWS() volatile { return (SW)getBitRange(3,2); }
+    enum class AHBRatio {
+      One = 0,
+      DivideBy2 = 4,
+      DivideBy4 = 5,
+      DivideBy8 = 6,
+      DivideBy16 = 7
+    };
+    void setPPRE1(AHBRatio r) volatile { setBitRange(12, 10, (uint32_t)r); }
+  };
+
   class AHB1ENR : public Register32 {
   public:
     AHB1ENR(uint32_t v) : Register32(v) {}
@@ -40,6 +79,9 @@ public:
   };
 
   constexpr RCC() {};
+  REGS_REGISTER_AT(CR, 0x00);
+  REGS_REGISTER_AT(PLLCFGR, 0x04);
+  REGS_REGISTER_AT(CFGR, 0x08);
   REGS_REGISTER_AT(AHB1ENR, 0x30);
   REGS_REGISTER_AT(AHB3ENR, 0x38);
   REGS_REGISTER_AT(APB1ENR, 0x40);

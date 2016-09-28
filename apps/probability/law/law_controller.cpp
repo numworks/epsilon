@@ -62,7 +62,7 @@ bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   }
 }
 
-int Probability::LawController::numberOfCells() {
+int Probability::LawController::numberOfRows() {
   return k_totalNumberOfModels;
 };
 

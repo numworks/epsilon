@@ -20,7 +20,7 @@ public:
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
   void scrollToCell(int x, int y);
-  View * cellAtIndex(int x, int y);
+  View * cellAtLocation(int x, int y);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -33,7 +33,7 @@ private:
     KDCoordinate height() const;
     KDCoordinate width() const;
     void scrollToCell(int x, int y) const;
-    View * cellAtIndex(int x, int y);
+    View * cellAtLocation(int x, int y);
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

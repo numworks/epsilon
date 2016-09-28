@@ -24,8 +24,8 @@ void TableView::scrollToCell(int x, int y) {
   m_contentView.scrollToCell(x, y);
 }
 
-View * TableView::cellAtIndex(int x, int y) {
-  return m_contentView.cellAtIndex(x, y);
+View * TableView::cellAtLocation(int x, int y) {
+  return m_contentView.cellAtLocation(x, y);
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -88,7 +88,7 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
   m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
-View * TableView::ContentView::cellAtIndex(int x, int y) {
+View * TableView::ContentView::cellAtLocation(int x, int y) {
   int relativeX = x-columnsScrollingOffset();
   int relativeY = y-rowsScrollingOffset();
   return m_dataSource->reusableCell(relativeY*numberOfDisplayableColumns()+relativeX);
@@ -148,7 +148,7 @@ int TableView::ContentView::numberOfFullyDisplayableColumns() const {
 int TableView::ContentView::numberOfDisplayableRows() const {
   return MIN(
     m_dataSource->numberOfRows(),
-    m_tableView->bounds().height()/m_dataSource->cellHeight() + 2
+    m_tableView->bounds().height() / m_dataSource->cellHeight() + 2
   );
 }
 
@@ -159,7 +159,7 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
   }
   return MIN(
     m_dataSource->numberOfColumns(),
-    m_tableView->bounds().width()/width + 2
+    m_tableView->bounds().width() / width + 2
   );
 }
 
@@ -171,12 +171,12 @@ int TableView::ContentView::rowsScrollingOffset() const {
 }
 
 int TableView::ContentView::columnsScrollingOffset() const {
+  /* Here, we want to translate the offset at which our tableView is displaying
+   * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate width = realCellWidth();
   if (width == 0) {
     return 0;
   }
-  /* Here, we want to translate the offset at which our tableView is displaying
-   * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate pixelScrollingOffset = -m_frame.x();
   return pixelScrollingOffset / width;
 }

@@ -24,7 +24,7 @@ void ListViewDataSource::willDisplayCellForIndex(View * cell, int index) {
 
 ListView::ListView(ListViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  TableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin)
+  SimpleTableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin)
 {
 }
 

@@ -1,4 +1,4 @@
-#include <escher/table_view.h>
+#include <escher/simple_table_view.h>
 #include <escher/metric.h>
 
 extern "C" {
@@ -7,34 +7,34 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-void TableViewDataSource::willDisplayCellAtLocation(View * cell, int x, int y) {
+void SimpleTableViewDataSource::willDisplayCellAtLocation(View * cell, int x, int y) {
 }
 
 
-TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
+SimpleTableView::SimpleTableView(SimpleTableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin),
-  m_contentView(TableView::ContentView(this, dataSource))
+  m_contentView(SimpleTableView::ContentView(this, dataSource))
 {
 }
 
 // This method computes the minimal scrolling needed to properly display the
 // requested cell.
-void TableView::scrollToCell(int x, int y) {
+void SimpleTableView::scrollToCell(int x, int y) {
   m_contentView.scrollToCell(x, y);
 }
 
-View * TableView::cellAtLocation(int x, int y) {
+View * SimpleTableView::cellAtLocation(int x, int y) {
   return m_contentView.cellAtLocation(x, y);
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * TableView::className() const {
-  return "TableView";
+const char * SimpleTableView::className() const {
+  return "SimpleTableView";
 }
 #endif
 
-void TableView::layoutSubviews() {
+void SimpleTableView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
 
@@ -44,31 +44,31 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
-/* TableView::ContentView */
+/* SimpleTableView::ContentView */
 
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource) :
+SimpleTableView::ContentView::ContentView(SimpleTableView * tableView, SimpleTableViewDataSource * dataSource) :
   View(),
   m_tableView(tableView),
   m_dataSource(dataSource)
 {
 }
 
-KDCoordinate TableView::ContentView::realCellWidth() const {
+KDCoordinate SimpleTableView::ContentView::realCellWidth() const {
   int cellWidth = m_dataSource->cellWidth();
   cellWidth = cellWidth ? cellWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
   return cellWidth;
 }
 
 
-KDCoordinate TableView::ContentView::height() const {
+KDCoordinate SimpleTableView::ContentView::height() const {
   return m_dataSource->numberOfRows() * m_dataSource->cellHeight();
 }
 
-KDCoordinate TableView::ContentView::width() const {
+KDCoordinate SimpleTableView::ContentView::width() const {
   return m_dataSource->numberOfColumns() * realCellWidth();
 }
 
-void TableView::ContentView::scrollToCell(int x, int y) const {
+void SimpleTableView::ContentView::scrollToCell(int x, int y) const {
   KDCoordinate contentOffsetX = m_tableView->contentOffset().x();
   KDCoordinate contentOffsetY = m_tableView->contentOffset().y();
   if (columnAtIndexIsBeforeFullyVisibleRange(x)) {
@@ -88,31 +88,31 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
   m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
-View * TableView::ContentView::cellAtLocation(int x, int y) {
+View * SimpleTableView::ContentView::cellAtLocation(int x, int y) {
   int relativeX = x-columnsScrollingOffset();
   int relativeY = y-rowsScrollingOffset();
   return m_dataSource->reusableCell(relativeY*numberOfDisplayableColumns()+relativeX);
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * TableView::ContentView::className() const {
+const char * SimpleTableView::ContentView::className() const {
   return "TableView::ContentView";
 }
 #endif
 
-int TableView::ContentView::numberOfSubviews() const {
+int SimpleTableView::ContentView::numberOfSubviews() const {
   int result = numberOfDisplayableRows() * numberOfDisplayableColumns();
   assert(result <= m_dataSource->reusableCellCount());
   return result;
 }
 
-View * TableView::ContentView::subviewAtIndex(int index) {
+View * SimpleTableView::ContentView::subviewAtIndex(int index) {
   assert(index >= 0);
   assert(index < m_dataSource->reusableCellCount());
   return m_dataSource->reusableCell(index);
 }
 
-void TableView::ContentView::layoutSubviews() {
+void SimpleTableView::ContentView::layoutSubviews() {
   int rowOffset = rowsScrollingOffset();
   int columnOffset = columnsScrollingOffset();
 
@@ -135,24 +135,24 @@ void TableView::ContentView::layoutSubviews() {
   }
 }
 
-int TableView::ContentView::numberOfFullyDisplayableRows() const {
+int SimpleTableView::ContentView::numberOfFullyDisplayableRows() const {
   // The number of displayable rows taking into accounts margins
   return m_tableView->maxContentHeightDisplayableWithoutScrolling()/m_dataSource->cellHeight();
 }
 
-int TableView::ContentView::numberOfFullyDisplayableColumns() const {
+int SimpleTableView::ContentView::numberOfFullyDisplayableColumns() const {
   // The number of displayable columns taking into accounts margins
   return m_tableView->maxContentWidthDisplayableWithoutScrolling()/m_dataSource->cellHeight();
 }
 
-int TableView::ContentView::numberOfDisplayableRows() const {
+int SimpleTableView::ContentView::numberOfDisplayableRows() const {
   return MIN(
     m_dataSource->numberOfRows(),
     m_tableView->bounds().height() / m_dataSource->cellHeight() + 2
   );
 }
 
-int TableView::ContentView::numberOfDisplayableColumns() const {
+int SimpleTableView::ContentView::numberOfDisplayableColumns() const {
   KDCoordinate width = realCellWidth();
   if (width == 0) {
     return 0;
@@ -163,14 +163,14 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
   );
 }
 
-int TableView::ContentView::rowsScrollingOffset() const {
+int SimpleTableView::ContentView::rowsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate pixelScrollingOffset = -m_frame.y();
   return pixelScrollingOffset / m_dataSource->cellHeight();
 }
 
-int TableView::ContentView::columnsScrollingOffset() const {
+int SimpleTableView::ContentView::columnsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate width = realCellWidth();
@@ -181,20 +181,20 @@ int TableView::ContentView::columnsScrollingOffset() const {
   return pixelScrollingOffset / width;
 }
 
-bool TableView::ContentView::rowAtIndexIsBeforeFullyVisibleRange(int index) const {
+bool SimpleTableView::ContentView::rowAtIndexIsBeforeFullyVisibleRange(int index) const {
   return index <= rowsScrollingOffset();
 }
 
-bool TableView::ContentView::columnAtIndexIsBeforeFullyVisibleRange(int index) const {
+bool SimpleTableView::ContentView::columnAtIndexIsBeforeFullyVisibleRange(int index) const {
   return index <= columnsScrollingOffset();
 }
 
-bool TableView::ContentView::rowAtIndexIsAfterFullyVisibleRange(int index) const {
+bool SimpleTableView::ContentView::rowAtIndexIsAfterFullyVisibleRange(int index) const {
   int relativeIndex = index - rowsScrollingOffset();
   return (relativeIndex >= numberOfFullyDisplayableRows());
 }
 
-bool TableView::ContentView::columnAtIndexIsAfterFullyVisibleRange(int index) const {
+bool SimpleTableView::ContentView::columnAtIndexIsAfterFullyVisibleRange(int index) const {
   int relativeIndex = index - columnsScrollingOffset();
   return (relativeIndex >= numberOfFullyDisplayableColumns());
 }

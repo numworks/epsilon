@@ -1,9 +1,9 @@
-#ifndef ESCHER_TABLE_VIEW_H
-#define ESCHER_TABLE_VIEW_H
+#ifndef ESCHER_SIMPLE_TABLE_VIEW_H
+#define ESCHER_SIMPLE_TABLE_VIEW_H
 
 #include <escher/scroll_view.h>
 
-class TableViewDataSource {
+class SimpleTableViewDataSource {
 public:
   virtual int numberOfRows() = 0;
   virtual int numberOfColumns() = 0;
@@ -14,9 +14,9 @@ public:
   virtual int reusableCellCount() = 0;
 };
 
-class TableView : public ScrollView {
+class SimpleTableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
+  SimpleTableView(SimpleTableViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
   void scrollToCell(int x, int y);
@@ -28,7 +28,7 @@ protected:
 private:
   class ContentView : public View {
   public:
-    ContentView(TableView * tableView, TableViewDataSource * dataSource);
+    ContentView(SimpleTableView * tableView, SimpleTableViewDataSource * dataSource);
 
     KDCoordinate height() const;
     KDCoordinate width() const;
@@ -56,8 +56,8 @@ private:
     bool columnAtIndexIsBeforeFullyVisibleRange(int index) const;
     bool rowAtIndexIsAfterFullyVisibleRange(int index) const;
     bool columnAtIndexIsAfterFullyVisibleRange(int index) const;
-    TableView * m_tableView;
-    TableViewDataSource * m_dataSource;
+    SimpleTableView * m_tableView;
+    SimpleTableViewDataSource * m_dataSource;
   };
 
   void layoutSubviews() override;

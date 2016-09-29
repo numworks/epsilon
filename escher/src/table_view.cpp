@@ -7,9 +7,6 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-void TableViewDataSource::willDisplayCellAtLocation(View * cell, int i, int j) {
-}
-
 TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin),

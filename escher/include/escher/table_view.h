@@ -2,28 +2,7 @@
 #define ESCHER_TABLE_VIEW_H
 
 #include <escher/scroll_view.h>
-
-class TableViewDataSource {
-public:
-  virtual int numberOfRows() = 0;
-  virtual int numberOfColumns() = 0;
-  virtual void willDisplayCellAtLocation(View * cell, int i, int j);
-  virtual KDCoordinate columnWidth(int i) = 0;
-  virtual KDCoordinate rowHeight(int j) = 0;
-  /* return the number of pixels to include in offset to display the column i at
-  the top */
-  virtual KDCoordinate cumulatedWidthFromIndex(int i) = 0;
-  virtual KDCoordinate cumulatedHeightFromIndex(int j) = 0;
-  /* return the number of columns (starting with first ones) that can be fully
-   * displayed in offsetX pixels.
-   * Caution: if the offset is exactly the size of n columns, the function
-   * returns n-1. */
-  virtual int indexFromCumulatedWidth(KDCoordinate offsetX) = 0;
-  virtual int indexFromCumulatedHeight(KDCoordinate offsetY) = 0;
-  virtual View * reusableCell(int index, int type) = 0;
-  virtual int reusableCellCount(int type) = 0;
-  virtual int typeAtLocation(int i, int j) = 0;
-};
+#include <escher/table_view_data_source.h>
 
 class TableView : public ScrollView {
 public:

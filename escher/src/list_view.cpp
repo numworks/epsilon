@@ -5,8 +5,6 @@ extern "C" {
 #include <assert.h>
 }
 
-#define MIN(x,y) ((x)<(y) ? (x) : (y))
-
 int ListViewDataSource::numberOfColumns() {
   return 1;
 }
@@ -24,7 +22,7 @@ void ListViewDataSource::willDisplayCellForIndex(View * cell, int index) {
 
 ListView::ListView(ListViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  SimpleTableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin)
+  TableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin)
 {
 }
 

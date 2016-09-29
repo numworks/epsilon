@@ -12,7 +12,7 @@ objs += $(addprefix escher/src/,\
   responder.o\
   scroll_view.o\
   scroll_view_indicator.o\
-  simple_table_view.o\
+  simple_table_view_data_source.o\
   solid_color_view.o\
   stack_view.o\
   stack_view_controller.o\

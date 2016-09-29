@@ -12,7 +12,7 @@
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_indicator.h>
-#include <escher/simple_table_view.h>
+#include <escher/simple_table_view_data_source.h>
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>

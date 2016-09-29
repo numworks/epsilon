@@ -1,7 +1,7 @@
 #ifndef ESCHER_LIST_VIEW_H
 #define ESCHER_LIST_VIEW_H
 
-#include <escher/simple_table_view.h>
+#include <escher/simple_table_view_data_source.h>
 
 class ListViewDataSource : public SimpleTableViewDataSource{
 public:
@@ -11,7 +11,7 @@ public:
   virtual void willDisplayCellForIndex(View * cell, int index);
 };
 
-class ListView : public SimpleTableView {
+class ListView : public TableView {
 public:
   ListView(ListViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);

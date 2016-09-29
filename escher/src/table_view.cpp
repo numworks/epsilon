@@ -53,12 +53,19 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
 {
 }
 
+KDCoordinate TableView::ContentView::realCellWidth() const {
+  int cellWidth = m_dataSource->cellWidth();
+  cellWidth = cellWidth ? cellWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
+  return cellWidth;
+}
+
+
 KDCoordinate TableView::ContentView::height() const {
   return m_dataSource->numberOfRows() * m_dataSource->cellHeight();
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  return m_dataSource->numberOfColumns() * m_dataSource->cellWidth();
+  return m_dataSource->numberOfColumns() * realCellWidth();
 }
 
 void TableView::ContentView::scrollToCell(int x, int y) const {
@@ -66,10 +73,10 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
   KDCoordinate contentOffsetY = m_tableView->contentOffset().y();
   if (columnAtIndexIsBeforeFullyVisibleRange(x)) {
     // Let's scroll the tableView to put that cell on the left (while keeping the left margin)
-    contentOffsetX = x*m_dataSource->cellWidth();
+    contentOffsetX = x*realCellWidth();
   } else if (columnAtIndexIsAfterFullyVisibleRange(x)) {
     // Let's scroll the tableView to put that cell on the right (while keeping the right margin)
-    contentOffsetX = (x+1)*m_dataSource->cellWidth() - m_tableView->maxContentWidthDisplayableWithoutScrolling();
+    contentOffsetX = (x+1)*realCellWidth() - m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
   if (rowAtIndexIsBeforeFullyVisibleRange(y)) {
     // Let's scroll the tableView to put that cell on the top (while keeping the top margin)
@@ -118,7 +125,7 @@ void TableView::ContentView::layoutSubviews() {
     int x = i - y * columns;
 
     KDCoordinate cellHeight = m_dataSource->cellHeight();
-    KDCoordinate cellWidth = m_dataSource->cellWidth();
+    KDCoordinate cellWidth = realCellWidth();
     KDRect cellFrame((columnOffset+x)*cellWidth, (rowOffset+y)*cellHeight,
       cellWidth, cellHeight);
 
@@ -146,9 +153,13 @@ int TableView::ContentView::numberOfDisplayableRows() const {
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
+  KDCoordinate width = realCellWidth();
+  if (width == 0) {
+    return 0;
+  }
   return MIN(
     m_dataSource->numberOfColumns(),
-    m_tableView->bounds().width()/m_dataSource->cellWidth() + 2
+    m_tableView->bounds().width()/width + 2
   );
 }
 
@@ -160,10 +171,14 @@ int TableView::ContentView::rowsScrollingOffset() const {
 }
 
 int TableView::ContentView::columnsScrollingOffset() const {
+  KDCoordinate width = realCellWidth();
+  if (width == 0) {
+    return 0;
+  }
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate pixelScrollingOffset = -m_frame.x();
-  return pixelScrollingOffset / m_dataSource->cellWidth();
+  return pixelScrollingOffset / width;
 }
 
 bool TableView::ContentView::rowAtIndexIsBeforeFullyVisibleRange(int index) const {

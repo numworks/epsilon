@@ -11,6 +11,8 @@ public:
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset();
+  KDCoordinate topMargin() const;
+  KDCoordinate leftMargin() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling();

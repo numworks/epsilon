@@ -120,6 +120,13 @@ KDPoint ScrollView::contentOffset() {
   return m_offset;
 }
 
+KDCoordinate ScrollView::topMargin() const {
+  return m_topMargin;
+}
+
+KDCoordinate ScrollView::leftMargin() const {
+  return m_leftMargin;
+}
 
 KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
   return m_frame.width() - m_leftMargin - m_rightMargin;

@@ -5,8 +5,6 @@ extern "C" {
 #include <assert.h>
 }
 
-#define MIN(x,y) ((x)<(y) ? (x) : (y))
-
 int ListViewDataSource::numberOfColumns() {
   return 1;
 }

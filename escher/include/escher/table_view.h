@@ -2,25 +2,15 @@
 #define ESCHER_TABLE_VIEW_H
 
 #include <escher/scroll_view.h>
-
-class TableViewDataSource {
-public:
-  virtual int numberOfRows() = 0;
-  virtual int numberOfColumns() = 0;
-  virtual void willDisplayCellAtLocation(View * cell, int x, int y);
-  virtual KDCoordinate cellHeight() = 0;
-  virtual KDCoordinate cellWidth() = 0;
-  virtual View * reusableCell(int index) = 0;
-  virtual int reusableCellCount() = 0;
-};
+#include <escher/table_view_data_source.h>
 
 class TableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
-    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+  TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0,
+    KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
-  void scrollToCell(int x, int y);
-  View * cellAtLocation(int x, int y);
+  void scrollToCell(int i, int j);
+  View * cellAtLocation(int i, int j);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -32,8 +22,8 @@ private:
 
     KDCoordinate height() const;
     KDCoordinate width() const;
-    void scrollToCell(int x, int y) const;
-    View * cellAtLocation(int x, int y);
+    void scrollToCell(int i, int j) const;
+    View * cellAtLocation(int i, int j);
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
@@ -45,7 +35,11 @@ private:
 
     /* realCellWidth enables to handle list view for which
      * TableViewDataSource->cellWidht = 0 */
-    KDCoordinate realCellWidth() const;
+    KDCoordinate columnWidth(int x) const;
+    /* These two methods transform an index (of subview for instance) into
+     * coordinates that refer to the data source entire table */
+    int absoluteColumnNumberFromSubviewIndex(int index) const;
+    int absoluteRowNumberFromSubviewIndex(int index) const;
     int numberOfFullyDisplayableRows() const;
     int numberOfFullyDisplayableColumns() const;
     int numberOfDisplayableRows() const;
@@ -56,6 +50,10 @@ private:
     bool columnAtIndexIsBeforeFullyVisibleRange(int index) const;
     bool rowAtIndexIsAfterFullyVisibleRange(int index) const;
     bool columnAtIndexIsAfterFullyVisibleRange(int index) const;
+    int typeOfSubviewAtIndex(int index) const;
+    /* This method transform a index (of subview for instance) into an index
+     * refering to the set of cells of type "type". */
+    int typeIndexFromSubviewIndex(int index, int type) const;
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
   };

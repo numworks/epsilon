@@ -19,8 +19,8 @@ ExpressionLayout * StringLayout::child(uint16_t index) {
   return nullptr;
 }
 
-void StringLayout::render(KDContext * ctx, KDPoint p) {
-  ctx->drawString(m_string, p, KDColorBlack, KDColorWhite);
+void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  ctx->drawString(m_string, p, expressionColor, backgroundColor);
 }
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {

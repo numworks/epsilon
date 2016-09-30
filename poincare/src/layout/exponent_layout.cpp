@@ -17,7 +17,7 @@ ExponentLayout::~ExponentLayout() {
   delete m_base_layout;
 }
 
-void ExponentLayout::render(KDContext * ctx, KDPoint p) {
+void ExponentLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // There is nothing to draw for a power, only the position of the children matters
 }
 

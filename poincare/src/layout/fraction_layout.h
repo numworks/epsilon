@@ -9,7 +9,7 @@ class FractionLayout : public ExpressionLayout {
     FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator);
     ~FractionLayout();
   protected:
-    void render(KDContext * ctx, KDPoint p) override;
+    void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
     KDSize computeSize() override;
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;

@@ -24,7 +24,7 @@ HorizontalLayout::~HorizontalLayout() {
   free(m_children_layouts);
 }
 
-void HorizontalLayout::render(KDContext * ctx, KDPoint p) {
+void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 
 KDSize HorizontalLayout::computeSize() {

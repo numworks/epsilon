@@ -12,7 +12,7 @@ class StringLayout : public ExpressionLayout {
     StringLayout(const char * string, size_t length);
     ~StringLayout();
   protected:
-    void render(KDContext * ctx, KDPoint p) override;
+    void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
     KDSize computeSize() override;
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;

@@ -26,12 +26,12 @@ KDPoint ExpressionLayout::origin() {
   }
 }
 
-void ExpressionLayout::draw(KDContext * ctx, KDPoint p) {
+void ExpressionLayout::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   int i = 0;
   while (ExpressionLayout * c = child(i++)) {
-    c->draw(ctx, p);
+    c->draw(ctx, p, expressionColor, backgroundColor);
   }
-  render(ctx, absoluteOrigin().translatedBy(p));
+  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDPoint ExpressionLayout::absoluteOrigin() {

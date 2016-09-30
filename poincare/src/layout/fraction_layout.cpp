@@ -24,14 +24,9 @@ FractionLayout::~FractionLayout() {
   delete m_numerator_layout;
 }
 
-void FractionLayout::render(KDContext * ctx, KDPoint p) {
+void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + FRACTION_LINE_MARGIN;
-
-  ctx->drawLine(
-      KDPoint(p.x(), fractionLineY),
-      KDPoint(p.x() + size().width(), fractionLineY),
-      KDColorRed
-      );
+  ctx->fillRect(KDRect(p.x(), fractionLineY, size().width(), 1), expressionColor);
 }
 
 KDSize FractionLayout::computeSize() {

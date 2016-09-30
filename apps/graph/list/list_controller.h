@@ -33,6 +33,7 @@ public:
   void configureFunction(Graph::Function * function);
   int typeAtLocation(int i, int j) override;
 private:
+  static constexpr KDCoordinate k_minimalfunctionHeight = 40;
   static constexpr KDCoordinate k_functionNameWidth = 40;
   Responder * tabController() const;
   constexpr static int k_maxNumberOfRows = 6;

@@ -1,3 +1,4 @@
+include apps/home/Makefile
 include apps/graph/Makefile
 include apps/probability/Makefile
 #include apps/picview/Makefile

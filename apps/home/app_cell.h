@@ -9,6 +9,9 @@ class AppCell : public ChildlessView {
 public:
   AppCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setActive(bool active);
+private:
+  bool m_active;
 };
 
 }

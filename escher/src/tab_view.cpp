@@ -47,7 +47,9 @@ void TabView::setSelectedIndex(int index) {
     m_cells[m_selectedTabIndex].setSelected(false);
   }
   m_selectedTabIndex = index;
-  m_cells[m_selectedTabIndex].setSelected(true);
+  if (m_selectedTabIndex >= 0) {
+    m_cells[m_selectedTabIndex].setSelected(true);
+  }
 }
 
 int TabView::numberOfSubviews() const {

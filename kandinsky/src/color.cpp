@@ -1,6 +1,16 @@
 #include <kandinsky/color.h>
 
 KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
+  /* This function is a hot path since it's being called for every single pixel
+   * whenever we want to display a string. In this context, we're quite often
+   * calling it with a value of either 0 or 0xFF, which can be very trivially
+   * dealt with. So let's make a special case for them. */
+  if (alpha == 0) {
+    return second;
+  } else if (alpha == 0xFF) {
+    return first;
+  }
+
   // We want to do first*alpha + second*(1-alpha)
   // First is RRRRR GGGGGG BBBBB
   // Second is same

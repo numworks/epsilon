@@ -76,7 +76,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
 }
 
-int ListController::numberOfCells() {
+int ListController::numberOfRows() {
   return m_functionStore->numberOfFunctions();
 };
 

@@ -16,7 +16,7 @@ public:
   void didBecomeFirstResponder() override;
 
   void setActiveCell(int index);
-  int numberOfCells() override;
+  int numberOfRows() override;
   KDCoordinate cellHeight() override;
   View * reusableCell(int index) override;
   int reusableCellCount() override;

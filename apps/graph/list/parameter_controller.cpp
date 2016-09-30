@@ -98,7 +98,7 @@ bool ParameterController::handleEnter() {
   }
 }
 
-int ParameterController::numberOfCells() {
+int ParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 

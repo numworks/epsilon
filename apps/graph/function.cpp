@@ -1,10 +1,12 @@
 #include "function.h"
 #include <string.h>
 
-Graph::Function::Function() :
-  m_name(nullptr),
+Graph::Function::Function(const char * text, KDColor color) :
+  m_name(text),
+  m_color(color),
   m_expression(nullptr),
-  m_layout(nullptr)
+  m_layout(nullptr),
+  m_active(true)
 {
 }
 
@@ -21,10 +23,6 @@ void Graph::Function::setContent(const char * c) {
 
 void Graph::Function::setColor(KDColor color) {
   m_color = color;
-}
-
-void Graph::Function::setName(const char * c) {
-  m_name = c;
 }
 
 Graph::Function::~Function() {

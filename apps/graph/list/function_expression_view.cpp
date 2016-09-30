@@ -13,6 +13,5 @@ void FunctionExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   // Select text color according to the state of the function
   bool active = m_function->isActive();
   KDColor text = active ? KDColorBlack : FunctionCell::k_desactiveTextColor;
-  ctx->drawString(m_function->text(), KDPointZero, text, background);
-  // m_function->layout()->draw(ctx, KDPointZero);
+  m_function->layout()->draw(ctx, KDPointZero, text, background);
 }

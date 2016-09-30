@@ -15,12 +15,18 @@ public:
   int numberOfFunctions();
 
 private:
-  constexpr static int numberOfDefaultColors = 4;
-  constexpr static KDColor defaultColors[numberOfDefaultColors] = {
-    KDColorRed, KDColorGreen, KDColorBlue, KDColorBlack
+  const char * firstAvailableName();
+  const KDColor firstAvailableColor();
+  static constexpr int k_maxNumberOfFunctions = 8;
+  static constexpr int k_numberOfDefaultColors = 8;
+  static constexpr KDColor defaultColors[k_numberOfDefaultColors] = {
+    KDColorRed, KDColorGreen, KDColorBlue, KDColorBlack,
+    KDColor(0xBFD3EB), KDColor(0xFF00FF), KDColor(0x00FFEB), KDColor(0xBFAA00)
+  };
+  static constexpr const char * functionNames[k_maxNumberOfFunctions] = {
+    "f", "g", "h", "i", "j", "k", "l", "m"
   };
   int m_numberOfFunctions;
-  static constexpr int k_maxNumberOfFunctions = 8;
   Function m_functions[k_maxNumberOfFunctions];
 };
 

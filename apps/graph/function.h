@@ -8,8 +8,7 @@ namespace Graph {
 
 class Function {
 public:
-  Function();
-  Function(const char * text, KDColor m_color);
+  Function(const char * text = nullptr, KDColor color = KDColorBlack);
   ~Function(); // Delete expression and layout, if needed
   const char * text();
   const char * name();
@@ -20,7 +19,6 @@ public:
   void setActive(bool active);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  void setName(const char * c);
 private:
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];

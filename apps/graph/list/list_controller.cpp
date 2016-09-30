@@ -3,8 +3,9 @@
 
 ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_listView(ListView(this)),
-  m_activeCell(-1),
+  m_tableView(TableView(this)),
+  m_activeCellx(0),
+  m_activeCelly(-1),
   m_manualScrolling(0),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
@@ -12,7 +13,7 @@ ListController::ListController(Responder * parentResponder, Graph::FunctionStore
 }
 
 View * ListController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 const char * ListController::title() const {
@@ -23,30 +24,106 @@ Responder * ListController::tabController() const{
   return (parentResponder()->parentResponder());
 }
 
+int ListController::numberOfRows() {
+  return m_functionStore->numberOfFunctions();
+};
 
-void ListController::setActiveCell(int index) {
-  if (index < 0 || index >= m_functionStore->numberOfFunctions()) {
+int ListController::numberOfColumns() {
+  return 2;
+};
+
+KDCoordinate ListController::rowHeight(int j) {
+  // TODO: get the size from the function expression
+  return 40;
+}
+
+KDCoordinate ListController::columnWidth(int i) {
+  switch (i) {
+    case 0:
+      return k_functionNameWidth;
+    case 1:
+      return m_tableView.bounds().width()-k_functionNameWidth;
+    default:
+      assert(false);
+      break;
+  }
+}
+
+KDCoordinate ListController::cumulatedWidthFromIndex(int i) {
+  switch (i) {
+    case 0:
+      return 0;
+    case 1:
+      return k_functionNameWidth;
+    case 2:
+      return m_tableView.bounds().width();
+    default:
+      assert(false);
+      break;
+  }
+}
+
+KDCoordinate ListController::cumulatedHeightFromIndex(int j) {
+  int result = 0;
+  for (int k = 0; k < j; k++) {
+    result += rowHeight(k);
+  }
+  return result;
+}
+
+int ListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  if (offsetX <= k_functionNameWidth) {
+    return 0;
+  } else {
+    if (offsetX <= m_tableView.bounds().width())
+      return 1;
+    else {
+      return 2;
+    }
+  }
+}
+
+int ListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  int result = 0;
+  int j = 0;
+  do {
+    result += rowHeight(j++);
+  } while (result < offsetY && j < numberOfRows());
+  return result < offsetY ? j : j - 1;
+}
+
+void ListController::setActiveCell(int i, int j) {
+  if (i < 0 || i >= numberOfColumns()) {
+    return;
+  }
+  if (j < -1 || j >= numberOfRows()) {
     return;
   }
 
-  m_activeCell = index;
-  m_listView.scrollToRow(index);
-  FunctionCell * cell = (FunctionCell *)(m_listView.cellAtIndex(index));
-  cell->setParentResponder(this);
-  app()->setFirstResponder(cell);
+  if (m_activeCelly >= 0) {
+    FunctionCell * previousCell = (FunctionCell *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
+    previousCell->setHighlighted(false);
+  }
+
+  m_activeCellx = i;
+  m_activeCelly = j;
+  if (m_activeCelly >= 0) {
+    m_tableView.scrollToCell(i, j);
+    FunctionCell * cell = (FunctionExpressionView *)(m_tableView.cellAtLocation(i, j));
+    cell->setHighlighted(true);
+  }
 }
 
 void ListController::didBecomeFirstResponder() {
-  if (m_activeCell == -1) {
-    setActiveCell(0);
+  if (m_activeCelly == -1) {
+    setActiveCell(1,0);
   } else {
-    if (m_activeCell < m_functionStore->numberOfFunctions()) {
-      setActiveCell(m_activeCell);
+    if (m_activeCellx < m_functionStore->numberOfFunctions()) {
+      setActiveCell(m_activeCellx, m_activeCelly);
     } else {
-      setActiveCell(m_functionStore->numberOfFunctions()-1);
+      setActiveCell(m_functionStore->numberOfFunctions()-1, m_activeCelly);
     }
   }
-  assert(m_activeCell >= 0);
 }
 
 void ListController::configureFunction(Graph::Function * function) {
@@ -58,44 +135,76 @@ void ListController::configureFunction(Graph::Function * function) {
 bool ListController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCell+1);
+      setActiveCell(m_activeCellx, m_activeCelly+1);
       return true;
     case Ion::Events::Event::UP_ARROW:
-      if (m_activeCell > 0) {
-        setActiveCell(m_activeCell-1);
-      } else {
+      setActiveCell(m_activeCellx, m_activeCelly-1);
+      if (m_activeCelly == -1) {
         app()->setFirstResponder(tabController());
       }
       return true;
+    case Ion::Events::Event::LEFT_ARROW:
+      setActiveCell(m_activeCellx-1, m_activeCelly);
+      return true;
+    case Ion::Events::Event::RIGHT_ARROW:
+      setActiveCell(m_activeCellx+1, m_activeCelly);
+      return true;
     case Ion::Events::Event::PLUS:
       m_manualScrolling += 10;
-      m_listView.setContentOffset({0, m_manualScrolling});
+      m_tableView.setContentOffset({0, m_manualScrolling});
       return true;
+    case Ion::Events::Event::ENTER:
+      return handleEnter();
     default:
       return false;
   }
 }
 
-int ListController::numberOfRows() {
-  return m_functionStore->numberOfFunctions();
-};
+bool ListController::handleEnter() {
+  switch (m_activeCellx) {
+    case 0:
+    {
+      FunctionNameView * functionCell = (FunctionNameView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
+      configureFunction(functionCell->function());
+      return true;
+    }
+    case 1:
+    {
+      // TODO: display a text field
+      return true;
+    }
+    default:
+    {
+      return false;
+    }
+  }
+}
 
-View * ListController::reusableCell(int index) {
+int ListController::typeAtLocation(int i, int j) {
+  return i;
+}
+
+View * ListController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < k_maxNumberOfCells);
-  return &m_cells[index];
+  assert(index < k_maxNumberOfRows);
+  switch (type) {
+    case 0:
+      return &m_nameCells[index];
+    case 1:
+      return &m_expressionCells[index];
+    default:
+      assert(false);
+      break;
+  }
 }
 
-int ListController::reusableCellCount() {
-  return k_maxNumberOfCells;
+int ListController::reusableCellCount(int type) {
+  return k_maxNumberOfRows;
 }
 
-void ListController::willDisplayCellForIndex(View * cell, int index) {
+void ListController::willDisplayCellAtLocation(View * cell, int i, int j) {
   FunctionCell * myCell = (FunctionCell *)cell;
-  myCell->setFunction(m_functionStore->functionAtIndex(index));
-  myCell->setEven(index%2 == 0);
+  myCell->setFunction(m_functionStore->functionAtIndex(j));
+  myCell->setEven(j%2 == 0);
 }
 
-KDCoordinate ListController::cellHeight() {
-  return 40;
-}

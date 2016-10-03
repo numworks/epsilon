@@ -20,7 +20,6 @@ public:
   void run();
   App * activeApp();
   virtual bool handleEvent(Ion::Events::Event event);
-protected:
   void switchTo(App * app);
 private:
   App * m_activeApp;

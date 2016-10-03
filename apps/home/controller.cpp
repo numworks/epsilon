@@ -1,12 +1,14 @@
 #include "controller.h"
+#include "../apps_container.h"
 extern "C" {
 #include <assert.h>
 }
 
 namespace Home {
 
-Controller::Controller(Responder * parentResponder) :
+Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
   ViewController(parentResponder),
+  m_container(container),
   m_tableView(TableView(this)),
   m_activeIndex(0)
 {
@@ -15,6 +17,9 @@ Controller::Controller(Responder * parentResponder) :
 bool Controller::handleEvent(Ion::Events::Event event) {
   int nextActiveIndex = 0;
   switch (event) {
+    case Ion::Events::Event::ENTER:
+      m_container->switchTo(m_container->appAtIndex(m_activeIndex+1));
+      return true;
     case Ion::Events::Event::DOWN_ARROW:
       nextActiveIndex = m_activeIndex+k_numberOfColumns;
       break;
@@ -33,8 +38,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   if (nextActiveIndex < 0) {
     nextActiveIndex = 0;
   }
-  if (nextActiveIndex >= k_numberOfApps) {
-    nextActiveIndex = k_numberOfApps-1;
+  if (nextActiveIndex >= numberOfIcons()) {
+    nextActiveIndex = numberOfIcons()-1;
   }
   setActiveIndex(nextActiveIndex);
   return true;
@@ -49,7 +54,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() {
-  return ((k_numberOfApps-1)/k_numberOfColumns)+1;
+  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
 }
 
 int Controller::numberOfColumns() {
@@ -72,8 +77,13 @@ int Controller::reusableCellCount() {
   return k_maxNumberOfCells;
 }
 
+int Controller::numberOfIcons() {
+  assert(m_container->numberOfApps() > 0);
+  return m_container->numberOfApps() - 1;
+}
+
 void Controller::setActiveIndex(int index) {
-  if (m_activeIndex < 0 && m_activeIndex >= k_numberOfApps) {
+  if (m_activeIndex < 0 && m_activeIndex >= numberOfIcons()) {
     return;
   }
 

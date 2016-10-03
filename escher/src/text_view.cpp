@@ -36,6 +36,9 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (m_text == nullptr) {
+    return;
+  }
   KDSize textSize = KDText::stringSize(m_text);
   KDPoint origin = {
     (KDCoordinate)(m_horizontalAlignment*(m_frame.width() - textSize.width())),

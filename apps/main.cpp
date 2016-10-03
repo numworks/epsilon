@@ -2,6 +2,6 @@
 
 void ion_app() {
   AppsContainer container;
-  container.switchTo(AppsContainer::AppId::Graph);
+  container.switchTo(container.appAtIndex(0));
   container.run();
 }

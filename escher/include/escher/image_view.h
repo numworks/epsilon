@@ -6,7 +6,8 @@
 
 class ImageView : public ChildlessView {
 public:
-  ImageView(const Image * image);
+  ImageView();
+  void setImage(const Image * image);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   const Image * m_image;

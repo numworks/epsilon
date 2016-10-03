@@ -4,10 +4,12 @@ extern "C" {
 #include <assert.h>
 }
 
-App::App() :
+App::App(const char * name, const Image * icon) :
   Responder(nullptr),
   m_magic(Magic),
-  m_firstResponder(nullptr)
+  m_firstResponder(nullptr),
+  m_name(name),
+  m_icon(icon)
 {
 }
 
@@ -49,4 +51,12 @@ void App::setFirstResponder(Responder * responder) {
   if (m_firstResponder) {
     m_firstResponder->didBecomeFirstResponder();
   }
+}
+
+const char * App::name() {
+  return m_name;
+}
+
+const Image * App::icon() {
+  return m_icon;
 }

@@ -1,6 +1,7 @@
 #ifndef APPS_CONTAINER_H
 #define APPS_CONTAINER_H
 
+#include "home/app.h"
 #include "graph/graph_app.h"
 #include "probability/app.h"
 
@@ -12,21 +13,14 @@
 class AppsContainer : public Container {
 public:
   AppsContainer();
-  enum class AppId {
-    Graph = 0,
-    Probability = 1,
-#if USE_PIC_VIEW_APP
-    PicView = 2,
-    Count = 3
-#else
-    Count = 2
-#endif
-  };
-  void switchTo(AppId appId);
+
+  int numberOfApps();
+  App * appAtIndex(int index);
+
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  App * appWithId(AppId appId);
-  int m_activeAppIndex;
+  static constexpr int k_numberOfApps = 3;
+  Home::App m_homeApp;
   GraphApp m_graphApp;
   Probability::App m_probabilityApp;
 #if USE_PIC_VIEW_APP

@@ -1,34 +1,33 @@
 #include "apps_container.h"
+extern "C" {
+#include <assert.h>
+}
 
 AppsContainer::AppsContainer() :
   Container(),
-  m_activeAppIndex(0)
+  m_homeApp(this)
 {
+}
+
+int AppsContainer::numberOfApps() {
+  return k_numberOfApps;
+}
+
+App * AppsContainer::appAtIndex(int index) {
+  static App * apps[] = {
+    &m_homeApp,
+    &m_graphApp,
+    &m_probabilityApp,
+  };
+  assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
+  assert(index >= 0 && index < k_numberOfApps);
+  return apps[index];
 }
 
 bool AppsContainer::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Event::F1) {
-    m_activeAppIndex++;
-    if (m_activeAppIndex >= (int)(AppId::Count)) {
-      m_activeAppIndex = 0;
-    }
-    switchTo((AppId)m_activeAppIndex);
+    switchTo(appAtIndex(0));
     return true;
   }
   return false;
 }
-
-void AppsContainer::switchTo(AppId appId) {
-  Container::switchTo(appWithId(appId));
-}
-
-App * AppsContainer::appWithId(AppId appId) {
-  App * apps[] = {
-    &m_graphApp,
-    &m_probabilityApp,
-#if USE_PIC_VIEW_APP
-    &m_picViewApp,
-#endif
-  };
-  return apps[(int)appId];
-};

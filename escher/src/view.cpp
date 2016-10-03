@@ -96,7 +96,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
 }
 
 View * View::subview(int index) {
-  assert(index < numberOfSubviews());
+  assert(index >= 0 && index < numberOfSubviews());
   View * subview = subviewAtIndex(index);
   if (subview != nullptr) {
     subview->m_superview = this;

@@ -13,6 +13,7 @@ public:
   View * view() override;
 
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
   virtual int numberOfRows() override;
   virtual int numberOfColumns() override;

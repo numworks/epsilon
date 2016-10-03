@@ -7,7 +7,8 @@ namespace Home {
 
 Controller::Controller(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_tableView(TableView(this))
+  m_tableView(TableView(this)),
+  m_activeIndex(0)
 {
 }
 
@@ -37,6 +38,10 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   setActiveIndex(nextActiveIndex);
   return true;
+}
+
+void Controller::didBecomeFirstResponder() {
+  setActiveIndex(m_activeIndex);
 }
 
 View * Controller::view() {
@@ -69,9 +74,6 @@ int Controller::reusableCellCount() {
 
 void Controller::setActiveIndex(int index) {
   if (m_activeIndex < 0 && m_activeIndex >= k_numberOfApps) {
-    return;
-  }
-  if (index == m_activeIndex) {
     return;
   }
 

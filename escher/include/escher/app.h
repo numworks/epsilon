@@ -22,6 +22,8 @@ public:
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   void processEvent(Ion::Events::Event event);
+  const char * name();
+  const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
 protected:
   virtual ViewController * rootViewController() = 0;

@@ -52,3 +52,11 @@ void App::setFirstResponder(Responder * responder) {
     m_firstResponder->didBecomeFirstResponder();
   }
 }
+
+const char * App::name() {
+  return m_name;
+}
+
+const Image * App::icon() {
+  return m_icon;
+}

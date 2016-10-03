@@ -4,26 +4,47 @@
 namespace Home {
 
 AppCell::AppCell() :
-  ChildlessView(),
+  View(),
+  m_visible(true),
   m_active(false)
 {
+}
+
+int AppCell::numberOfSubviews() const {
+  return m_visible ? 2 : 0;
+}
+
+View * AppCell::subviewAtIndex(int index) {
+  View * views[] = {&m_iconView, &m_nameView};
+  return views[index];
+}
+
+void AppCell::layoutSubviews() {
+  m_iconView.setFrame(KDRect(0,0,k_iconSize,k_iconSize));
+  if (bounds().height() > k_iconSize) {
+    m_nameView.setFrame(KDRect(0, k_iconSize, bounds().width(), bounds().height()-k_iconSize));
+  }
+}
+
+void AppCell::setApp(::App * app) {
+  m_iconView.setImage(app->icon());
+  m_nameView.setText(app->name());
+}
+
+void AppCell::setVisible(bool visible) {
+  if (m_visible != visible) {
+    m_visible = visible;
+    markRectAsDirty(bounds());
+  }
 }
 
 void AppCell::setActive(bool active) {
   if (m_active != active) {
     m_active = active;
+    m_nameView.setBackgroundColor(m_active ? KDColorRed : KDColorWhite);
+
     markRectAsDirty(bounds());
   }
-}
-
-void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor c = m_active ? KDColorRed : KDColorBlack;
-  ctx->fillRect(KDRect(0,0, 20, 20), c);
-  /*
-  KDColor * pixels = (KDColor *)apps_picview_image_raw;
-  assert(apps_picview_image_raw_len == bounds().width() * bounds().height() * sizeof(KDColor));
-  ctx->fillRectWithPixels(bounds(), pixels, nullptr);
-  */
 }
 
 }

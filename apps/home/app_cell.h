@@ -5,12 +5,22 @@
 
 namespace Home {
 
-class AppCell : public ChildlessView {
+class AppCell : public View {
 public:
   AppCell();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
+
+  void setVisible(bool visible);
   void setActive(bool active);
+  void setApp(::App * app);
 private:
+  static constexpr KDCoordinate k_iconSize = 32;
+  ImageView m_iconView;
+  TextView m_nameView;
+  bool m_visible;
   bool m_active;
 };
 

@@ -11,3 +11,5 @@ app_objs += $(addprefix apps/graph/,\
   list/list_controller.o\
   list/parameter_controller.o\
 )
+
+inline_images += apps/graph/graph_icon.png

@@ -23,6 +23,7 @@ public:
   virtual KDCoordinate cellWidth() override;
   virtual View * reusableCell(int index) override;
   virtual int reusableCellCount() override;
+  void willDisplayCellAtLocation(View * cell, int i, int j) override;
 private:
   int numberOfIcons();
   void setActiveIndex(int index);

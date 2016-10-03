@@ -1,7 +1,8 @@
 #include "graph_app.h"
+#include "graph_icon.h"
 
 GraphApp::GraphApp() :
-  App(),
+  App("Graph", ImageStore::GraphIcon),
   m_functionStore(Graph::FunctionStore()),
   m_listController(ListController(nullptr, &m_functionStore)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listController)),

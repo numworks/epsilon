@@ -3,6 +3,7 @@
 
 #include <escher/responder.h>
 #include <escher/view_controller.h>
+#include <escher/image.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -16,7 +17,7 @@
 class App : public Responder {
 public:
   constexpr static uint8_t Magic = 0xA8;
-  App();
+  App(const char * name = nullptr, const Image * icon = nullptr);
   void setWindow(Window * window);
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
@@ -26,6 +27,8 @@ protected:
   virtual ViewController * rootViewController() = 0;
 private:
   Responder * m_firstResponder;
+  const char * m_name;
+  const Image * m_icon;
 };
 
 #endif

@@ -1,7 +1,8 @@
 #include "app.h"
+#include "probability_icon.h"
 
 Probability::App::App() :
-  ::App(),
+  ::App("Probability", ImageStore::ProbabilityIcon),
   m_lawController(LawController(nullptr)),
   m_parametersController(ParametersController(nullptr)),
   m_stackViewController(this, &m_lawController, true)

@@ -77,6 +77,18 @@ int Controller::reusableCellCount() {
   return k_maxNumberOfCells;
 }
 
+void Controller::willDisplayCellAtLocation(View * cell, int i, int j) {
+  AppCell * appCell = (AppCell *)cell;
+  int appIndex = (j*k_numberOfColumns+i)+1;
+  if (appIndex >= m_container->numberOfApps()) {
+    appCell->setVisible(false);
+  } else {
+    appCell->setVisible(true);
+    ::App * app = m_container->appAtIndex((j*k_numberOfColumns+i)+1);
+    appCell->setApp(app);
+  }
+}
+
 int Controller::numberOfIcons() {
   assert(m_container->numberOfApps() > 0);
   return m_container->numberOfApps() - 1;

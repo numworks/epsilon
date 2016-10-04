@@ -1,4 +1,5 @@
 #include "list_controller.h"
+#include "../graph_app.h"
 #include <assert.h>
 
 ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
@@ -133,6 +134,23 @@ void ListController::configureFunction(Graph::Function * function) {
   stack->push(&m_parameterController);
 }
 
+void ListController::editExpression(FunctionExpressionView * functionCell) {
+  GraphApp * myApp = (GraphApp *)app();
+  InputViewController * inputController = myApp->inputViewController();
+  const char * initialTextContent = functionCell->function()->text();
+  inputController->edit(this, initialTextContent, functionCell,
+    [](void * context, void * sender){
+    FunctionExpressionView * myCell = (FunctionExpressionView *) context;
+    Graph::Function * myFunction = myCell->function();
+    InputViewController * myInputViewController = (InputViewController *)sender;
+    const char * textBody = myInputViewController->textBody();
+    myFunction->setContent(textBody);
+    myCell->reloadCell();
+    },
+    [](void * context, void * sender){
+    });
+}
+
 bool ListController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
@@ -171,7 +189,8 @@ bool ListController::handleEnter() {
     }
     case 1:
     {
-      // TODO: display a text field
+      FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
+      editExpression(functionCell);
       return true;
     }
     default:

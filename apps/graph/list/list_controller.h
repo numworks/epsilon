@@ -30,8 +30,10 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   View * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void configureFunction(Graph::Function * function);
   int typeAtLocation(int i, int j) override;
+  void configureFunction(Graph::Function * function);
+  void editExpression(FunctionExpressionView * functionCell);
+
 private:
   static constexpr KDCoordinate k_minimalfunctionHeight = 40;
   static constexpr KDCoordinate k_functionNameWidth = 40;

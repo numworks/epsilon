@@ -87,10 +87,10 @@ int ListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 int ListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   int result = 0;
   int j = 0;
-  do {
+  while (result < offsetY && j < numberOfRows()) {
     result += rowHeight(j++);
-  } while (result < offsetY && j < numberOfRows());
-  return result < offsetY ? j : j - 1;
+  }
+  return (result < offsetY || offsetY == 0) ? j : j - 1;
 }
 
 void ListController::setActiveCell(int i, int j) {

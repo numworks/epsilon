@@ -13,7 +13,10 @@ void Window::redraw() {
 }
 
 void Window::setContentView(View * contentView) {
-  m_contentView = contentView;
+  if (m_contentView != contentView) {
+    m_contentView = contentView;
+    markRectAsDirty(bounds());
+  }
 };
 
 const Window * Window::window() const {

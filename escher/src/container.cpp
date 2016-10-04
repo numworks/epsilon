@@ -9,7 +9,6 @@ Container::Container() :
 void Container::switchTo(App * app) {
   m_activeApp = app;
   m_activeApp->setWindow(&m_window);
-  //m_window.redraw();
 }
 
 App * Container::activeApp() {

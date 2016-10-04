@@ -104,6 +104,11 @@ View * View::subview(int index) {
   return subview;
 }
 
+void View::setSize(KDSize size) {
+  setFrame(KDRect(m_frame.origin(), size));
+}
+
+
 void View::setFrame(KDRect frame) {
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */

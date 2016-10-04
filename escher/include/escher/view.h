@@ -31,6 +31,7 @@ public:
    * Kandinsky library using the provided context. */
   virtual void drawRect(KDContext * ctx, KDRect rect) const;
 
+  void setSize(KDSize size);
   void setFrame(KDRect frame);
 
   KDRect bounds() const;

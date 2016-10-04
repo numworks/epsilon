@@ -26,6 +26,11 @@ public:
   KDCoordinate bottom() const { return m_y+m_height; }
   KDCoordinate left() const { return m_x; }
 
+  bool operator ==(const KDRect &other) const {
+    return (m_x == other.m_x && m_y == other.m_y
+        && m_width == other.m_width && m_height == other.m_height);
+  }
+
   void setOrigin(KDPoint origin);
   void setSize(KDSize size);
 

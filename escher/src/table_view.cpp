@@ -34,8 +34,7 @@ void TableView::layoutSubviews() {
   // We only have to layout our contentView.
   // We will size it here, and ScrollView::layoutSubviews will position it.
 
-  KDRect contentViewFrame(0, 0, m_contentView.width(), m_contentView.height());
-  m_contentView.setFrame(contentViewFrame);
+  m_contentView.resizeToFitContent();
 
   ScrollView::layoutSubviews();
 }
@@ -55,6 +54,9 @@ KDCoordinate TableView::ContentView::columnWidth(int i) const {
   return columnWidth;
 }
 
+void TableView::ContentView::resizeToFitContent() {
+  setSize(KDSize(width(), height()));
+}
 
 KDCoordinate TableView::ContentView::height() const {
   return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows());

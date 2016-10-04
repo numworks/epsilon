@@ -20,15 +20,17 @@ private:
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource);
 
-    KDCoordinate height() const;
-    KDCoordinate width() const;
     void scrollToCell(int i, int j) const;
     View * cellAtLocation(int i, int j);
+    void resizeToFitContent();
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
 #endif
   private:
+    KDCoordinate height() const;
+    KDCoordinate width() const;
+
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

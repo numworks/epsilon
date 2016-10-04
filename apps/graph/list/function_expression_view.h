@@ -9,7 +9,6 @@ class FunctionCell;
 class FunctionExpressionView : public FunctionCell {
 public:
   FunctionExpressionView();
-
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 

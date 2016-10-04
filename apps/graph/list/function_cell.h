@@ -11,6 +11,7 @@ public:
   void setEven(bool even);
   void setHighlighted(bool highlight);
   Graph::Function * function();
+  void reloadCell();
 
   static constexpr KDColor k_evenLineBackgroundColor = KDColor(0xF9F9F9);
   static constexpr KDColor k_oddLineBackgroundColor = KDColor(0xEEEEF2);

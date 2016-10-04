@@ -119,10 +119,10 @@ void ListController::didBecomeFirstResponder() {
   if (m_activeCelly == -1) {
     setActiveCell(1,0);
   } else {
-    if (m_activeCellx < m_functionStore->numberOfFunctions()) {
+    if (m_activeCelly < m_functionStore->numberOfFunctions()) {
       setActiveCell(m_activeCellx, m_activeCelly);
     } else {
-      setActiveCell(m_functionStore->numberOfFunctions()-1, m_activeCelly);
+      setActiveCell(m_activeCellx, m_functionStore->numberOfFunctions()-1);
     }
   }
 }

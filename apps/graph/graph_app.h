@@ -9,6 +9,7 @@
 class GraphApp : public ::App {
 public:
   GraphApp();
+  InputViewController * inputViewController();
 protected:
   ViewController * rootViewController() override;
 private:
@@ -17,6 +18,7 @@ private:
   StackViewController m_listStackViewController;
   GraphController m_graphController;
   TabViewController m_tabViewController;
+  InputViewController m_inputViewController;
 };
 
 #endif

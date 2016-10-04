@@ -11,12 +11,7 @@ Graph::Function::Function(const char * text, KDColor color) :
 }
 
 void Graph::Function::setContent(const char * c) {
-#if __GLIBC__
-  // FIXME: This is ugly.
-  strncpy(m_text, c, sizeof(m_text));
-#else
   strlcpy(m_text, c, sizeof(m_text));
-#endif
   if (m_expression != nullptr) {
     delete m_expression;
   }

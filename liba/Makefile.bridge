@@ -1,0 +1,3 @@
+SFLAGS += -Iliba/include/bridge
+
+objs += liba/src/bridge.o

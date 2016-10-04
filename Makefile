@@ -53,6 +53,7 @@ info:
 	@echo "==============================="
 
 ifeq ($(USE_LIBA),0)
+include liba/Makefile.bridge
 else
 SFLAGS += -ffreestanding -nostdinc -nostdlib
 include liba/Makefile

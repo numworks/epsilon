@@ -31,3 +31,8 @@ void FunctionCell::setHighlighted(bool highlight) {
 Graph::Function * FunctionCell::function() {
   return m_function;
 }
+
+void FunctionCell::reloadCell() {
+  //TODO: optimize for function_name_view (make it virtual)
+  markRectAsDirty(bounds());
+}

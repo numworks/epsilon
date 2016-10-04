@@ -162,13 +162,15 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
   for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
     float x = pixelToFloat(Axis::Horizontal, px);
     for (int i=0; i<m_functionStore->numberOfFunctions(); i++) {
-      Float xExp = Float(x);
-      plotContext.setExpressionForSymbolName(&xExp, "x");
       Graph::Function * f = m_functionStore->functionAtIndex(i);
-      float y = f->expression()->approximate(plotContext);
-      KDCoordinate py = floatToPixel(Axis::Vertical, y);
-      KDRect stampRect(px, py, stampSize, stampSize);
-      ctx->fillRectWithMask(stampRect, f->color(), mask, workingBuffer);
+      if (f->isActive()) {
+        Float xExp = Float(x);
+        plotContext.setExpressionForSymbolName(&xExp, "x");
+        float y = f->expression()->approximate(plotContext);
+        KDCoordinate py = floatToPixel(Axis::Vertical, y);
+        KDRect stampRect(px, py, stampSize, stampSize);
+        ctx->fillRectWithMask(stampRect, f->color(), mask, workingBuffer);
+      }
     }
   }
 }

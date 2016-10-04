@@ -87,8 +87,9 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
         setSelectedTab(m_selectedChildIndex+1);
       }
       return true;
+    case Ion::Events::Event::DOWN_ARROW:
     case Ion::Events::Event::ENTER:
-        setActiveTab(m_selectedChildIndex);
+      setActiveTab(m_selectedChildIndex);
       return true;
     default:
       return false;

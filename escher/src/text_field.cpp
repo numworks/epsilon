@@ -26,18 +26,24 @@ const char * TextField::className() const {
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Event::DELETE && m_currentTextLength > 0) {
+    KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
     m_currentTextLength--;
     m_textBuffer[m_currentTextLength] = 0;
-    markRectAsDirty(bounds()); //TODO: Could be optimized
+    KDSize sizeText = KDText::stringSize(m_textBuffer);
+    KDRect dirtyZone(sizeText.width(), 0, sizePreviousText.width()-sizeText.width(), sizeText.height());
+    markRectAsDirty(dirtyZone);
     return true;
   }
   if ((int)event >= 0x100) {
     return false;
   }
   if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
+    KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
     m_textBuffer[m_currentTextLength++] = (int)event;
     m_textBuffer[m_currentTextLength] = 0;
-    markRectAsDirty(bounds()); //TODO: Could be optimized
+    KDSize sizeText = KDText::stringSize(m_textBuffer);
+    KDRect dirtyZone(sizePreviousText.width(), 0, sizeText.width()-sizePreviousText.width(), sizeText.height());
+    markRectAsDirty(dirtyZone);
   }
   return true;
 }

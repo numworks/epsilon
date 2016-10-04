@@ -110,6 +110,9 @@ void View::setSize(KDSize size) {
 
 
 void View::setFrame(KDRect frame) {
+  if (frame == m_frame) {
+    return;
+  }
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
 

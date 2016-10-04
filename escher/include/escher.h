@@ -5,6 +5,7 @@
 #include <escher/container.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
+#include <escher/input_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/list_view.h>
 #include <escher/metric.h>

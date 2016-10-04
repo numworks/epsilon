@@ -27,9 +27,11 @@ View * InputViewController::ContentView::subviewAtIndex(int index) {
         return &m_textField;
       } else {
         assert(false);
+        return nullptr;
       }
     default:
       assert(false);
+      return nullptr;
   }
 }
 

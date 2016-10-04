@@ -47,7 +47,7 @@ KDCoordinate ListController::columnWidth(int i) {
       return m_tableView.bounds().width()-k_functionNameWidth;
     default:
       assert(false);
-      break;
+      return 0;
   }
 }
 
@@ -61,7 +61,7 @@ KDCoordinate ListController::cumulatedWidthFromIndex(int i) {
       return m_tableView.bounds().width();
     default:
       assert(false);
-      break;
+      return 0;
   }
 }
 
@@ -214,7 +214,7 @@ View * ListController::reusableCell(int index, int type) {
       return &m_expressionCells[index];
     default:
       assert(false);
-      break;
+      return nullptr;
   }
 }
 

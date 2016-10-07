@@ -24,6 +24,5 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float Cosine::approximate(Context& context) const {
-  //return cosf(m_arg->approximate(context));
-  return m_arg->approximate(context);
+  return cosf(m_arg->approximate(context));
 }

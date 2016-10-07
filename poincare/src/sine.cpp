@@ -24,6 +24,5 @@ Expression::Type Sine::type() const {
 }
 
 float Sine::approximate(Context& context) const {
-  // return sinf(m_arg->approximate(context));
-  return m_arg->approximate(context);
+  return sinf(m_arg->approximate(context));
 }

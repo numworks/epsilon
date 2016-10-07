@@ -24,6 +24,5 @@ Expression::Type Tangent::type() const {
 }
 
 float Tangent::approximate(Context& context) const {
-  // return tanf(m_arg->approximate(context));
-  return m_arg->approximate(context);
+  return tanf(m_arg->approximate(context));
 }

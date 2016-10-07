@@ -13,6 +13,7 @@ app_objs += $(addprefix apps/graph/,\
   list/parameter_controller.o\
   values/float_to_string.o\
   values/title_cell.o\
+  values/value_cell.o\
 )
 
 inline_images += apps/graph/graph_icon.png

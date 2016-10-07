@@ -1,0 +1,7 @@
+#ifndef LIBA_MSUN_MACHINE_ENDIAN_H
+#define LIBA_MSUN_MACHINE_ENDIAN_H
+
+#define LITTLE_ENDIAN  1234
+#define BIG_ENDIAN     4321
+
+#endif

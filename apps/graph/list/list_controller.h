@@ -35,7 +35,7 @@ public:
   void editExpression(FunctionExpressionView * functionCell);
 
 private:
-  static constexpr KDCoordinate k_minimalfunctionHeight = 40;
+  static constexpr KDCoordinate k_verticalFunctionMargin = 20;
   static constexpr KDCoordinate k_functionNameWidth = 40;
   Responder * tabController() const;
   constexpr static int k_maxNumberOfRows = 6;

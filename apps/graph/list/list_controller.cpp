@@ -36,7 +36,7 @@ int ListController::numberOfColumns() {
 KDCoordinate ListController::rowHeight(int j) {
   Graph::Function * function = m_functionStore->functionAtIndex(j);
   KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize > k_minimalfunctionHeight ? functionSize : k_minimalfunctionHeight;
+  return functionSize + k_verticalFunctionMargin;
 }
 
 KDCoordinate ListController::columnWidth(int i) {

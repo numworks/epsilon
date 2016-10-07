@@ -11,6 +11,7 @@ app_objs += $(addprefix apps/graph/,\
   list/function_name_view.o\
   list/list_controller.o\
   list/parameter_controller.o\
+  values/float_to_string.o\
 )
 
 inline_images += apps/graph/graph_icon.png

@@ -26,7 +26,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 
-  static constexpr uint8_t k_maxNumberOfTabs = 4;
+  constexpr static uint8_t k_maxNumberOfTabs = 4;
   TabViewCell m_cells[k_maxNumberOfTabs];
   uint8_t m_numberOfTabs;
   int8_t m_activeTabIndex;

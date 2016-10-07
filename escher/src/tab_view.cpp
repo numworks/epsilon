@@ -13,8 +13,10 @@ TabView::TabView() :
 }
 
 void TabView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backgroundColor = KDColor(0xB51DAB);
-  ctx->fillRect(rect, backgroundColor);
+  KDCoordinate height = bounds().height();
+  KDCoordinate width = bounds().width();
+  // Draw a separator with the content
+  ctx->fillRect(KDRect(0, height-5, width, 5), KDColorWhite);
 }
 
 void TabView::addTabNamed(const char * name) {
@@ -67,7 +69,7 @@ void TabView::layoutSubviews() {
   for (int i=0; i<m_numberOfTabs; i++) {
     KDRect cellFrame = KDRect(
         i*tabLength, 0,
-        tabLength, m_frame.height()
+        tabLength, m_frame.height() - 5
         );
     m_cells[i].setFrame(cellFrame);
   }

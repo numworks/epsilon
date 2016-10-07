@@ -53,17 +53,19 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two) :
+TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three) :
   ViewController(parentResponder),
-  m_numberOfChildren(2),
+  m_numberOfChildren(3),
   m_activeChildIndex(-1),
   m_selectedChildIndex(-1)
 {
   m_children[0] = one;
   m_children[1] = two;
+  m_children[2] = three;
 
   one->setParentResponder(this);
   two->setParentResponder(this);
+  three->setParentResponder(this);
 
   // TODO: This should be lazy loaded!
   // So this code should live in view()

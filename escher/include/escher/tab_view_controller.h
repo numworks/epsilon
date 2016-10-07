@@ -6,7 +6,7 @@
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(Responder * parentResponder, ViewController * one, ViewController * two);
+  TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three);
   //TabViewController(ViewController ** children, uint8_t numberOfChildren);
   View * view() override;
 

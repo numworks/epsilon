@@ -9,6 +9,7 @@
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/integer.h>
+#include <poincare/logarithm.h>
 #include <poincare/power.h>
 #include <poincare/product.h>
 #include <poincare/sine.h>

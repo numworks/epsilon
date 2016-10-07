@@ -2,13 +2,21 @@
 
 extern "C" {
 #include <assert.h>
+#include <math.h>
+}
+
+Sine::Sine() :
+  Function("sin")
+{
 }
 
 Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
   assert(numberOfOperands == 1);
-  return new Sine(*newOperands, cloneOperands);
+  Sine * s = new Sine();
+  s->setArgument(*newOperands, cloneOperands);
+  return s;
 }
 
 Expression::Type Sine::type() const {
@@ -16,6 +24,6 @@ Expression::Type Sine::type() const {
 }
 
 float Sine::approximate(Context& context) const {
-  // FIXME: use sine obviously.
+  // return sinf(m_arg->approximate(context));
   return m_arg->approximate(context);
 }

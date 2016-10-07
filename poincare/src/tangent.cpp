@@ -2,13 +2,21 @@
 
 extern "C" {
 #include <assert.h>
+#include <math.h>
+}
+
+Tangent::Tangent() :
+  Function("tan")
+{
 }
 
 Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
   assert(numberOfOperands == 1);
-  return new Tangent(*newOperands, cloneOperands);
+  Tangent * t = new Tangent();
+  t->setArgument(*newOperands, cloneOperands);
+  return t;
 }
 
 Expression::Type Tangent::type() const {
@@ -16,6 +24,6 @@ Expression::Type Tangent::type() const {
 }
 
 float Tangent::approximate(Context& context) const {
-  // FIXME: use tangent obviously.
+  // return tanf(m_arg->approximate(context));
   return m_arg->approximate(context);
 }

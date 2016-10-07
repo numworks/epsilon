@@ -1,4 +1,5 @@
 #include <poincare/expression.h>
+#include <poincare/function.h>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 extern "C" {

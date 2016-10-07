@@ -13,6 +13,7 @@ class Expression {
       Cosine,
       Float,
       Integer,
+      Log,
       Fraction,
       Power,
       Product,

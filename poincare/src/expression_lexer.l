@@ -38,8 +38,9 @@
  * which is not installed by default on MacOS, we thus made the choice to prefer
  * compatibility with MacOS's default version (2.3) instead of using the code
  * requires feature. */
-class Expression;
+#include <poincare.h>
 #include "expression_parser.hpp"
+
 
 /* Flex has provision for reading files. We'll never use this, so we're defining
  * YY_INPUT which effectively disables taking input from a file. */
@@ -66,9 +67,9 @@ class Expression;
 %%
 
 [0-9]+ { poincare_expression_yylval.string = yytext; return(INTEGER); }
-sin {return(SINE);}
-cos {return(COSINE);}
-tan {return(TANGENT);}
+sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
+cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
+tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 [A-Za-z]+ { poincare_expression_yylval.string = yytext; return(SYMBOL); }
 \+ { return(PLUS); }
 \- { return(MINUS); }

@@ -7,7 +7,9 @@ GraphApp::GraphApp() :
   m_listController(ListController(nullptr, &m_functionStore)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listController)),
   m_graphController(GraphController(nullptr, &m_functionStore)),
-  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_graphController),
+  m_valuesController(ValuesController(nullptr, &m_functionStore)),
+  m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesController)),
+  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_valuesStackViewController),
   m_inputViewController(this, &m_tabViewController)
 {
   Graph::Function * function = m_functionStore.addEmptyFunction();

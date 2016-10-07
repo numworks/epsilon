@@ -5,6 +5,7 @@
 #include "function_store.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
+#include "values/values_controller.h"
 
 class GraphApp : public ::App {
 public:
@@ -17,6 +18,8 @@ private:
   ListController m_listController;
   StackViewController m_listStackViewController;
   GraphController m_graphController;
+  ValuesController m_valuesController;
+  StackViewController m_valuesStackViewController;
   TabViewController m_tabViewController;
   InputViewController m_inputViewController;
 };

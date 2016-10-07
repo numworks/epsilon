@@ -11,7 +11,9 @@ public:
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static int k_colorIndicatorThickness = 4;
+  constexpr static KDCoordinate k_colorIndicatorThickness = 2;
+  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDColor k_separatorColor = KDColor(0xEFF2F4);
 };
 
 #endif

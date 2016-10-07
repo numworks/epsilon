@@ -1,6 +1,8 @@
 #include "function_name_view.h"
 #include "../function_store.h"
 
+constexpr KDColor FunctionNameView::k_separatorColor;
+
 FunctionNameView::FunctionNameView() :
   FunctionCell()
 {
@@ -8,10 +10,14 @@ FunctionNameView::FunctionNameView() :
 
 void FunctionNameView::drawRect(KDContext * ctx, KDRect rect) const {
   EvenOddCell::drawRect(ctx, rect);
-  // First color the color indicator
+
   KDCoordinate height = bounds().height();
+  KDCoordinate width = bounds().width();
+  // Color the color indicator
   KDColor functionColor = m_function->color();
   ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, height), functionColor);
+  // Color the separator
+  ctx->fillRect(KDRect(width - k_separatorThickness, 0, k_separatorThickness, height), k_separatorColor);
   // Select function name color and the text color according to the state of the function
   bool active = m_function->isActive();
   KDColor textColor = active ? KDColorBlack : FunctionCell::k_desactiveTextColor;

@@ -7,8 +7,8 @@ extern "C" {
 #include "layout/string_layout.h"
 
 Function::Function(const char * name) :
-  m_name(name),
-  m_arg(nullptr)
+  m_arg(nullptr),
+  m_name(name)
 {
 }
 

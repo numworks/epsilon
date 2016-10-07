@@ -19,7 +19,7 @@ SIZE=$(TOOLCHAIN)-size
 ifeq ($(COMPILER),llvm)
   SFLAGS += -target thumbv7em-unknown-eabi
 else
-  SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=softfp
+  SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=hard
 endif
 SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
 

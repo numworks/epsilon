@@ -8,6 +8,7 @@ namespace Graph {
 
 class Function {
 public:
+  static constexpr const char * Parameter = "(x)";
   Function(const char * text = nullptr, KDColor color = KDColorBlack);
   ~Function(); // Delete expression and layout, if needed
   const char * text();

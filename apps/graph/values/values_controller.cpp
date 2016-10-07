@@ -1,0 +1,187 @@
+#include "values_controller.h"
+#include <assert.h>
+
+ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
+  ViewController(parentResponder),
+  m_tableView(TableView(this, k_topMargin, 0, k_bottomMargin, 0)),
+  m_activeCellX(0),
+  m_activeCellY(-1),
+  m_functionStore(functionStore)
+{
+}
+
+View * ValuesController::view() {
+  return &m_tableView;
+}
+
+const char * ValuesController::title() const {
+  return "Valeurs";
+}
+
+Responder * ValuesController::tabController() const{
+  return (parentResponder()->parentResponder());
+}
+
+int ValuesController::numberOfRows() {
+  return 4;
+};
+
+int ValuesController::numberOfColumns() {
+  return 1+m_functionStore->numberOfActiveFunctions();
+};
+
+KDCoordinate ValuesController::rowHeight(int j) {
+  return k_cellHeight;
+}
+
+KDCoordinate ValuesController::columnWidth(int i) {
+  switch (i) {
+    case 0:
+      return k_abscissaCellWidth;
+    default:
+      return k_ordinateCellWidth;
+  }
+}
+
+KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
+  if (i == 0) {
+    return 0;
+  } else {
+    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
+  }
+}
+
+KDCoordinate ValuesController::cumulatedHeightFromIndex(int j) {
+  return j*k_cellHeight;
+}
+
+int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  if (offsetX <= k_abscissaCellWidth) {
+    return 0;
+  } else {
+    int index = 0;
+    while ((k_abscissaCellWidth+index*k_ordinateCellWidth) <= offsetX) {
+      index++;
+    }
+    return index;
+  }
+}
+
+int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  int index = 0;
+  while (index*k_cellHeight <= offsetY) {
+    index++;
+  }
+  return index-1;
+}
+
+void ValuesController::setActiveCell(int i, int j) {
+  if (i < 0 || i >= numberOfColumns()) {
+    return;
+  }
+  if (j < -1 || j >= numberOfRows()) {
+    return;
+  }
+
+  if (m_activeCellY >= 0) {
+    EvenOddCell * previousCell = (EvenOddCell *)(m_tableView.cellAtLocation(m_activeCellX, m_activeCellY));
+    previousCell->setHighlighted(false);
+  }
+
+  m_activeCellX = i;
+  m_activeCellY = j;
+  if (m_activeCellY >= 0) {
+    m_tableView.scrollToCell(i, j);
+    EvenOddCell * cell = (EvenOddCell *)(m_tableView.cellAtLocation(i, j));
+    cell->setHighlighted(true);
+  }
+}
+
+void ValuesController::didBecomeFirstResponder() {
+  if (m_activeCellY == -1) {
+    setActiveCell(0,0);
+  } else {
+    if (m_activeCellX < m_functionStore->numberOfActiveFunctions()) {
+      setActiveCell(m_activeCellX, m_activeCellY);
+    } else {
+      setActiveCell(m_functionStore->numberOfActiveFunctions(), m_activeCellY);
+    }
+  }
+}
+
+bool ValuesController::handleEvent(Ion::Events::Event event) {
+  switch (event) {
+    case Ion::Events::Event::DOWN_ARROW:
+      setActiveCell(m_activeCellX, m_activeCellY+1);
+      return true;
+    case Ion::Events::Event::UP_ARROW:
+      setActiveCell(m_activeCellX, m_activeCellY-1);
+      if (m_activeCellY == -1) {
+        app()->setFirstResponder(tabController());
+      }
+      return true;
+    case Ion::Events::Event::LEFT_ARROW:
+      setActiveCell(m_activeCellX-1, m_activeCellY);
+      return true;
+    case Ion::Events::Event::RIGHT_ARROW:
+      setActiveCell(m_activeCellX+1, m_activeCellY);
+      return true;
+    case Ion::Events::Event::ENTER:
+      return false;
+    default:
+      return false;
+  }
+}
+
+int ValuesController::typeAtLocation(int i, int j) {
+  if (j == 0) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+View * ValuesController::reusableCell(int index, int type) {
+  assert(index >= 0);
+  switch (type) {
+    case 0:
+      assert(index < k_maxNumberOfColumns);
+      return &m_titleCells[index];
+    case 1:
+      assert(index < k_maxNumberOfCells);
+      return &m_floatCells[index];
+    default:
+      assert(false);
+      break;
+  }
+}
+
+int ValuesController::reusableCellCount(int type) {
+  switch (type) {
+    case 0:
+      return k_maxNumberOfColumns;
+    case 1:
+      return k_maxNumberOfCells;
+    default:
+      assert(false);
+      break;
+  }
+}
+
+void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
+  if (j == 0) {
+    TitleCell * myCell = (TitleCell *)cell;
+    myCell->setEven(j%2 == 0);
+    if (i == 0) {
+      myCell->setText("x");
+    } else {
+      Graph::Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+      myCell->setText(function->name());
+    }
+  } else {
+    ValueCell * myCell = (ValueCell *)cell;
+    myCell->setFloat(12.33f);
+    myCell->setEven(j%2 == 0);
+  }
+}
+

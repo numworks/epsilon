@@ -5,7 +5,7 @@
 
 class EvenOddCell : public ChildlessView {
 public:
-  EvenOddCell(float horizontalAlignment, float verticalAlignment);
+  EvenOddCell();
   void setEven(bool even);
   void setHighlighted(bool highlight);
   void reloadCell();
@@ -16,9 +16,7 @@ public:
   static constexpr KDColor k_oddLineBackgroundColor = KDColorWhite;
   static constexpr KDColor k_selectedLineBackgroundColor = KDColor(0xC0D3EA);
 
-protected:
-  float m_horizontalAlignment;
-  float m_verticalAlignment;
+private:
   bool m_highlighted;
   bool m_even;
 };

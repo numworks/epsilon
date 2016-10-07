@@ -4,10 +4,8 @@ constexpr KDColor EvenOddCell::k_evenLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_oddLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_selectedLineBackgroundColor;
 
-EvenOddCell::EvenOddCell(float horizontalAlignment, float verticalAlignement) :
+EvenOddCell::EvenOddCell() :
   ChildlessView(),
-  m_horizontalAlignment(horizontalAlignment),
-  m_verticalAlignment(verticalAlignement),
   m_highlighted(false),
   m_even(false)
 {
@@ -36,7 +34,6 @@ KDColor EvenOddCell::backgroundColor() const {
 
 
 void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
-  // Select the background color according to the even line and the cursor selection
   KDColor background = backgroundColor();
   ctx->fillRect(rect, background);
 }

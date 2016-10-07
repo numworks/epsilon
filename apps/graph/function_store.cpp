@@ -17,6 +17,21 @@ Graph::Function * Graph::FunctionStore::functionAtIndex(int i) {
   return &m_functions[i];
 }
 
+Graph::Function * Graph::FunctionStore::activeFunctionAtIndex(int i) {
+  assert(i>=0 && i<m_numberOfFunctions);
+  int index = 0;
+  for (int k = 0; k < m_numberOfFunctions; k++) {
+    if (m_functions[k].isActive()) {
+      if (i == index) {
+        return &m_functions[k];
+      }
+      index++;
+    }
+  }
+  assert(false);
+  return nullptr;
+}
+
 Graph::Function * Graph::FunctionStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
   const char * name = firstAvailableName();
@@ -42,6 +57,16 @@ void Graph::FunctionStore::removeFunction(Function * f) {
 
 int Graph::FunctionStore::numberOfFunctions() {
   return m_numberOfFunctions;
+}
+
+int Graph::FunctionStore::numberOfActiveFunctions() {
+  int result = 0;
+  for (int i = 0; i < m_numberOfFunctions; i++) {
+    if (m_functions[i].isActive()) {
+      result++;
+    }
+  }
+  return result;
 }
 
 const char *  Graph::FunctionStore::firstAvailableName() {

@@ -10,9 +10,11 @@ class FunctionStore {
 public:
   FunctionStore();
   Function * functionAtIndex(int i);
+  Function * activeFunctionAtIndex(int i);
   Function * addEmptyFunction();
   void removeFunction(Function * f);
   int numberOfFunctions();
+  int numberOfActiveFunctions();
 
 private:
   const char * firstAvailableName();

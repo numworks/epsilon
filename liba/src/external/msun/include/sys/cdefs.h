@@ -4,4 +4,6 @@
 // This file permits standalone compilation of FreeBSD's msun
 #define __FBSDID(x)
 
+#define __strong_reference(x,y)
+
 #endif

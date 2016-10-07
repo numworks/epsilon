@@ -4,8 +4,8 @@ extern "C" {
 }
 
 constexpr int Graph::FunctionStore::k_numberOfDefaultColors;
-constexpr KDColor Graph::FunctionStore::defaultColors[k_numberOfDefaultColors];
-constexpr const char * Graph::FunctionStore::functionNames[k_maxNumberOfFunctions];
+constexpr KDColor Graph::FunctionStore::k_defaultColors[k_numberOfDefaultColors];
+constexpr const char * Graph::FunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
 Graph::FunctionStore::FunctionStore() :
   m_numberOfFunctions(0)
@@ -48,30 +48,30 @@ const char *  Graph::FunctionStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfFunctions; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
-      if (m_functions[j].name() == functionNames[k]) {
+      if (m_functions[j].name() == k_functionNames[k]) {
         break;
       }
       j++;
     }
     if (j == m_numberOfFunctions) {
-      return functionNames[k];
+      return k_functionNames[k];
     }
   }
-  return functionNames[0];
+  return k_functionNames[0];
 }
 
 const KDColor  Graph::FunctionStore::firstAvailableColor() {
   for (int k = 0; k < k_numberOfDefaultColors; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
-      if (m_functions[j].color() == defaultColors[k]) {
+      if (m_functions[j].color() == k_defaultColors[k]) {
         break;
       }
       j++;
     }
     if (j == m_numberOfFunctions) {
-      return defaultColors[k];
+      return k_defaultColors[k];
     }
   }
-  return defaultColors[0];
+  return k_defaultColors[0];
 }

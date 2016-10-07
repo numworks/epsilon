@@ -5,6 +5,7 @@
 
 LIBA_BEGIN_DECLS
 
+float logf(float x);
 float log10f(float x);
 float powf(float x, float y);
 float fabsf(float x);

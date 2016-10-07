@@ -4,7 +4,8 @@ liba/src/external/sqlite/mem5.o: CFLAGS += -w
 
 objs += $(addprefix liba/src/, assert.o errno.o malloc.o memcpy.o memset.o strcmp.o strlcpy.o strlen.o external/sqlite/mem5.o)
 
-objs += $(addprefix liba/src/external/msun/, \
+objs += $(addprefix liba/src/external/openbsd/, \
+  e_logf.o \
   e_log10f.o \
   e_powf.o \
   e_sqrtf.o \
@@ -13,8 +14,7 @@ objs += $(addprefix liba/src/external/msun/, \
   s_scalbnf.o \
 )
 
-liba/src/external/msun/%.o: CFLAGS += -Iliba/src/external/msun/include -Dlint=1 -Wno-parentheses
-liba/src/external/msun/%.o: SFLAGS:=$(filter-out -DDEBUG=1,$(SFLAGS))
+liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses
 
 tests += $(addprefix liba/test/, stdint.c strlcpy.c)
 

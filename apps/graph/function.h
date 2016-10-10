@@ -9,6 +9,7 @@ namespace Graph {
 class Function {
 public:
   static constexpr const char * Parameter = "(x)";
+
   Function(const char * text = nullptr, KDColor color = KDColorBlack);
   ~Function(); // Delete expression and layout, if needed
   const char * text();
@@ -20,6 +21,7 @@ public:
   void setActive(bool active);
   void setContent(const char * c);
   void setColor(KDColor m_color);
+  float evaluateAtAbscissa(float x);
 private:
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];

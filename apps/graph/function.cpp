@@ -58,3 +58,10 @@ bool Graph::Function::isActive() {
 void Graph::Function::setActive(bool active) {
   m_active = active;
 }
+
+float Graph::Function::evaluateAtAbscissa(float x) {
+  Context plotContext;
+  Float xExp = Float(x);
+  plotContext.setExpressionForSymbolName(&xExp, "x");
+  return m_expression->approximate(plotContext);
+}

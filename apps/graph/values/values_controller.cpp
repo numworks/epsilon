@@ -3,7 +3,7 @@
 
 ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_tableView(TableView(this, k_topMargin, 0, k_bottomMargin, 0)),
+  m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_activeCellX(0),
   m_activeCellY(-1),
   m_functionStore(functionStore)

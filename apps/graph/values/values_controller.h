@@ -32,6 +32,8 @@ public:
 
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
+  static constexpr KDCoordinate k_leftMargin = 1;
+  static constexpr KDCoordinate k_rightMargin = 10;
   static constexpr KDCoordinate k_cellHeight = 30;
   static constexpr KDCoordinate k_abscissaCellWidth = 150;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;

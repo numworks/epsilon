@@ -3,7 +3,7 @@
 #include <assert.h>
 
 ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
-  ViewController(parentResponder),
+  HeaderViewController(parentResponder, &m_tableView),
   m_tableView(TableView(this)),
   m_activeCellx(0),
   m_activeCelly(-1),
@@ -11,10 +11,7 @@ ListController::ListController(Responder * parentResponder, Graph::FunctionStore
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
 {
-}
-
-View * ListController::view() {
-  return &m_tableView;
+  setVisibleHeader(false);
 }
 
 const char * ListController::title() const {

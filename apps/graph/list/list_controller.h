@@ -7,13 +7,12 @@
 #include "function_expression_view.h"
 #include "parameter_controller.h"
 
-class ListController : public ViewController, public TableViewDataSource {
+class ListController : public HeaderViewController, public TableViewDataSource {
 public:
   ListController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
   void setActiveCell(int i, int j);
 
-  View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEnter();

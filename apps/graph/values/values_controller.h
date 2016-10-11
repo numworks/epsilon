@@ -7,13 +7,12 @@
 #include "title_cell.h"
 #include "interval.h"
 
-class ValuesController : public ViewController, public TableViewDataSource {
+class ValuesController : public HeaderViewController, public TableViewDataSource {
 public:
   ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore);
 
   void setActiveCell(int i, int j);
 
-  View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

@@ -2,17 +2,14 @@
 #include <assert.h>
 
 ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
-  ViewController(parentResponder),
+  HeaderViewController(parentResponder, &m_tableView),
   m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_activeCellX(0),
   m_activeCellY(-1),
   m_functionStore(functionStore),
   m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f))
 {
-}
-
-View * ValuesController::view() {
-  return &m_tableView;
+  setButtonTitles("Regler l'intervalle", nullptr, nullptr);
 }
 
 const char * ValuesController::title() const {
@@ -111,26 +108,40 @@ void ValuesController::didBecomeFirstResponder() {
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCellX, m_activeCellY+1);
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCellX, m_activeCellY-1);
-      if (m_activeCellY == -1) {
+  if (m_activeCellY == -1) {
+    switch (event) {
+      case Ion::Events::Event::DOWN_ARROW:
+        setSelectedButton(-1);
+        setActiveCell(m_activeCellX, m_activeCellY+1);
+        return true;
+      case Ion::Events::Event::UP_ARROW:
+        setSelectedButton(-1);
         app()->setFirstResponder(tabController());
-      }
-      return true;
-    case Ion::Events::Event::LEFT_ARROW:
-      setActiveCell(m_activeCellX-1, m_activeCellY);
-      return true;
-    case Ion::Events::Event::RIGHT_ARROW:
-      setActiveCell(m_activeCellX+1, m_activeCellY);
-      return true;
-    case Ion::Events::Event::ENTER:
-      return false;
-    default:
-      return false;
+      default:
+        return HeaderViewController::handleEvent(event);
+    }
+  } else {
+    switch (event) {
+      case Ion::Events::Event::DOWN_ARROW:
+        setActiveCell(m_activeCellX, m_activeCellY+1);
+        return true;
+      case Ion::Events::Event::UP_ARROW:
+        setActiveCell(m_activeCellX, m_activeCellY-1);
+        if (m_activeCellY == -1) {
+          setSelectedButton(0);
+        }
+        return true;
+      case Ion::Events::Event::LEFT_ARROW:
+        setActiveCell(m_activeCellX-1, m_activeCellY);
+        return true;
+      case Ion::Events::Event::RIGHT_ARROW:
+        setActiveCell(m_activeCellX+1, m_activeCellY);
+        return true;
+      case Ion::Events::Event::ENTER:
+        return true;
+      default:
+        return false;
+    }
   }
 }
 

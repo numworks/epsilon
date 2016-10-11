@@ -17,6 +17,7 @@ TextView::TextView(const char * text, float horizontalAlignment, float verticalA
 
 void TextView::setText(const char * text) {
   m_text = text;
+  markRectAsDirty(bounds());
 }
 
 void TextView::setBackgroundColor(KDColor backgroundColor) {
@@ -33,6 +34,14 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
   m_horizontalAlignment = horizontalAlignment;
   m_verticalAlignment = verticalAlignment;
   markRectAsDirty(bounds());
+}
+
+KDSize TextView::textSize() {
+  if (m_text == nullptr) {
+    return KDSizeZero;
+  } else {
+    return KDText::stringSize(m_text);
+  }
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {

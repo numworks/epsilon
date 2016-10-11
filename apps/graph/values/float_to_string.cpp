@@ -25,10 +25,12 @@ void FloatToString::printBase10IntegerWithDecimalMarker(char * buffer, int buffe
   }  while (endChar >= startChar);
 }
 
-void FloatToString::convertFloatToText(float f, char * buffer, int maxNumberOfChar, Mode mode) {
-  /* We here assert that the buffer is long enough to display any float in a
-   * understandable way: the worst case has the form -1e-38 (6+1 char). */
-  assert(maxNumberOfChar > 6);
+void FloatToString::convertFloatToText(float f, char * buffer, int maxNumberOfChar,
+    int numberOfDigitsInMantissa, Mode mode) {
+  /* We here assert that the buffer is long enough to display with the right
+   * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
+   * worst case has the form -1.999999e-38 (7+6+1 char). */
+  assert(maxNumberOfChar > 6 + numberOfDigitsInMantissa);
 
   //if (isinf(f)) {
   float maximalFloat = 3.4f*powf(10, 38);
@@ -59,19 +61,32 @@ void FloatToString::convertFloatToText(float f, char * buffer, int maxNumberOfCh
    * decide whether to display the exponent. */
 
   // Number of char available for the mantissa
-  int availableCharsForMantissa = maxNumberOfChar - numberOfCharExponent - 2;
+  int availableCharsForMantissaWithoutSign = numberOfDigitsInMantissa + 1;
+  int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
 
   // Compute mantissa
   /* The number of digits in an integer is capped because the maximal integer is
    * 2^31 - 1. As our mantissa is an integer, we assert that we stay beyond this
    * threshold during computation. */
   int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
-  assert(availableCharsForMantissa < numberMaximalOfCharsInInteger);
-  int mantissa = f >= 0 ? f * powf(10, availableCharsForMantissa - exponentInBase10 - 2) : f * powf(10, availableCharsForMantissa - exponentInBase10 - 3);
+  assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
+  int mantissa = f * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2);
+
+  // Supress the 0 on the right side of the mantissa
+  int dividend = fabsf((float)mantissa);
+  int quotien = dividend/10;
+  int digit = dividend - quotien*10;
+  while (digit == 0 && availableCharsForMantissaWithSign > 2) {
+    mantissa = mantissa/10;
+    availableCharsForMantissaWithSign--;
+    dividend = quotien;
+    quotien = dividend/10;
+    digit = dividend - quotien*10;
+  }
 
   // Print sequentially mantissa and exponent
-  printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissa, mantissa, 1);
-  buffer[availableCharsForMantissa] = 'e';
-  printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissa+1, numberOfCharExponent, exponentInBase10, -1);
-  buffer[availableCharsForMantissa+1+numberOfCharExponent] = 0;
+  printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, 1);
+  buffer[availableCharsForMantissaWithSign] = 'e';
+  printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
+  buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
 }

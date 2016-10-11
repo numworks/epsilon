@@ -8,7 +8,7 @@ ValueCell::ValueCell() :
 
 void ValueCell::setFloat(float f) {
   m_float = f;
-  FloatToString::convertFloatToText(f, m_buffer, 10);
+  FloatToString::convertFloatToText(f, m_buffer, 14, 7);
 }
 
 void ValueCell::drawRect(KDContext * ctx, KDRect rect) const {

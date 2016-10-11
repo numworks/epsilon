@@ -20,7 +20,7 @@ enum Mode {
 void printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, int i, int decimalMarkerPosition);
 /* The parameter 'mode' refers to the way to display float 'scientific' or
  * 'decimal'. The code only handles 'scientific' so far. */
-void convertFloatToText(float f, char * buffer, int maxNumberOfChar, Mode mode = SCIENTIFIC);
+void convertFloatToText(float f, char * buffer, int maxNumberOfChar, int numberOfDigitsInMantissa, Mode mode = SCIENTIFIC);
 }
 
 #endif

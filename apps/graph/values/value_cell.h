@@ -12,7 +12,7 @@ public:
 
 protected:
   float m_float;
-  char m_buffer[10];
+  char m_buffer[14];
 };
 
 #endif

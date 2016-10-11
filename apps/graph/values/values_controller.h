@@ -5,6 +5,7 @@
 #include "../function_store.h"
 #include "value_cell.h"
 #include "title_cell.h"
+#include "interval.h"
 
 class ValuesController : public ViewController, public TableViewDataSource {
 public:
@@ -50,6 +51,7 @@ private:
   int m_activeCellX;
   int m_activeCellY;
   Graph::FunctionStore * m_functionStore;
+  Graph::Interval m_interval;
 };
 
 #endif

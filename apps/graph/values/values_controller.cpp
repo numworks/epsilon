@@ -6,7 +6,8 @@ ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionS
   m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_activeCellX(0),
   m_activeCellY(-1),
-  m_functionStore(functionStore)
+  m_functionStore(functionStore),
+  m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f))
 {
 }
 
@@ -23,11 +24,11 @@ Responder * ValuesController::tabController() const{
 }
 
 int ValuesController::numberOfRows() {
-  return 4;
+  return 1 + m_interval.numberOfElements();
 };
 
 int ValuesController::numberOfColumns() {
-  return 1+m_functionStore->numberOfActiveFunctions();
+  return 1 + m_functionStore->numberOfActiveFunctions();
 };
 
 KDCoordinate ValuesController::rowHeight(int j) {
@@ -180,7 +181,13 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     }
   } else {
     ValueCell * myCell = (ValueCell *)cell;
-    myCell->setFloat(12.33f);
+    if (i == 0){
+      myCell->setFloat(m_interval.element(j-1));
+    } else {
+      Graph::Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+      float x = m_interval.element(j-1);
+      myCell->setFloat(function->evaluateAtAbscissa(x));
+    }
     myCell->setEven(j%2 == 0);
   }
 }

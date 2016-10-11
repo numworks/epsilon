@@ -22,6 +22,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     void setVisibleInput(bool showInput);
+    bool visibleInput();
     TextField * textField();
   private:
     static constexpr KDCoordinate k_textFieldHeight = 20;

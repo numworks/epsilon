@@ -49,6 +49,10 @@ void InputViewController::ContentView::setVisibleInput(bool showInput) {
   layoutSubviews();
 }
 
+bool InputViewController::ContentView::visibleInput() {
+  return m_visibleInput;
+}
+
 TextField * InputViewController::ContentView::textField() {
   return &m_textField;
 }
@@ -96,13 +100,19 @@ void InputViewController::setTextBody(const char * text) {
 bool InputViewController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:
-      m_successAction.perform(this);
-      showInput(false);
-      return true;
+      if (m_contentView.visibleInput()) {
+        m_successAction.perform(this);
+        showInput(false);
+        return true;
+      }
+      return false;
     case Ion::Events::Event::ESC:
-      m_failureAction.perform(this);
-      showInput(false);
-      return true;
+      if (m_contentView.visibleInput()) {
+        m_failureAction.perform(this);
+        showInput(false);
+        return true;
+      }
+      return false;
     default:
       return false;
   }

@@ -3,6 +3,7 @@
 
 #include <escher/app.h>
 #include <escher/container.h>
+#include <escher/header_view_controller.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>

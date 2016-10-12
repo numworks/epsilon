@@ -16,6 +16,7 @@ app_objs += $(addprefix apps/graph/,\
   values/title_cell.o\
   values/value_cell.o\
   values/values_controller.o\
+  values/values_parameter_controller.o\
 )
 
 inline_images += apps/graph/graph_icon.png

@@ -7,7 +7,8 @@ ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionS
   m_activeCellX(0),
   m_activeCellY(-1),
   m_functionStore(functionStore),
-  m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f))
+  m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f)),
+  m_parameterController(ValuesParameterController(this))
 {
   setButtonTitles("Regler l'intervalle", nullptr, nullptr);
 }
@@ -18,6 +19,10 @@ const char * ValuesController::title() const {
 
 Responder * ValuesController::tabController() const{
   return (parentResponder()->parentResponder());
+}
+
+ViewController * ValuesController::parameterController() {
+  return &m_parameterController;
 }
 
 int ValuesController::numberOfRows() {

@@ -6,6 +6,7 @@
 #include "value_cell.h"
 #include "title_cell.h"
 #include "interval.h"
+#include "values_parameter_controller.h"
 
 class ValuesController : public HeaderViewController, public TableViewDataSource {
 public:
@@ -16,6 +17,7 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  ViewController * parameterController();
 
   int numberOfRows() override;
   int numberOfColumns() override;
@@ -51,6 +53,7 @@ private:
   int m_activeCellY;
   Graph::FunctionStore * m_functionStore;
   Graph::Interval m_interval;
+  ValuesParameterController m_parameterController;
 };
 
 #endif

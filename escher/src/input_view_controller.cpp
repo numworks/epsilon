@@ -98,21 +98,18 @@ void InputViewController::setTextBody(const char * text) {
 }
 
 bool InputViewController::handleEvent(Ion::Events::Event event) {
+  if (!m_contentView.visibleInput()) {
+    return false;
+  }
   switch (event) {
     case Ion::Events::Event::ENTER:
-      if (m_contentView.visibleInput()) {
-        m_successAction.perform(this);
-        showInput(false);
-        return true;
-      }
-      return false;
+      m_successAction.perform(this);
+      showInput(false);
+      return true;
     case Ion::Events::Event::ESC:
-      if (m_contentView.visibleInput()) {
-        m_failureAction.perform(this);
-        showInput(false);
-        return true;
-      }
-      return false;
+      m_failureAction.perform(this);
+      showInput(false);
+      return true;
     default:
       return false;
   }

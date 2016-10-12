@@ -4,11 +4,11 @@
 constexpr KDColor HeaderViewController::ContentView::k_separatorHeaderColor;
 constexpr KDColor HeaderViewController::ContentView::k_selectedBackgroundColor;
 
-HeaderViewController::ContentView::ContentView(View * subview) :
+HeaderViewController::ContentView::ContentView(View * subview, Responder * parentResponder) :
   View(),
-  m_buttonOne(TextView()),
-  m_buttonTwo(TextView()),
-  m_buttonThree(TextView()),
+  m_buttonOne(Button(parentResponder)),
+  m_buttonTwo(Button(parentResponder)),
+  m_buttonThree(Button(parentResponder)),
   m_numberOfButtons(0),
   m_mainView(subview),
   m_visibleHeader(true),
@@ -45,16 +45,26 @@ void HeaderViewController::ContentView::layoutSubviews() {
     m_mainView->setFrame(mainViewFrame);
   } else {
     KDRect mainViewFrame(0, k_headerHeight + 1, bounds().width(), bounds().height() - k_headerHeight - 1);
-    m_mainView->setFrame(mainViewFrame);
     KDCoordinate buttonOneWidth = m_buttonOne.textSize().width();
-    KDRect buttonOneFrame(0, 0, buttonOneWidth + k_buttonTextMargin, k_headerHeight);
-    m_buttonOne.setFrame(buttonOneFrame);
     KDCoordinate buttonTwoWidth = m_buttonTwo.textSize().width();
-    KDRect buttonTwoFrame(buttonOneWidth + k_buttonTextMargin, 0, buttonTwoWidth + k_buttonTextMargin, k_headerHeight);
-    m_buttonTwo.setFrame(buttonTwoFrame);
     KDCoordinate buttonThreeWidth = m_buttonThree.textSize().width();
+    KDRect buttonOneFrame(0, 0, buttonOneWidth + k_buttonTextMargin, k_headerHeight);
+    KDRect buttonTwoFrame(buttonOneWidth + k_buttonTextMargin, 0, buttonTwoWidth + k_buttonTextMargin, k_headerHeight);
     KDRect buttonThreeFrame(buttonOneWidth + buttonTwoWidth + 2*k_buttonTextMargin, 0, buttonThreeWidth + k_buttonTextMargin, k_headerHeight);
-    m_buttonThree.setFrame(buttonThreeFrame);
+    switch(m_numberOfButtons) {
+      case 3:
+        m_buttonThree.setFrame(buttonThreeFrame);
+      case 2:
+        m_buttonTwo.setFrame(buttonTwoFrame);
+      case 1:
+        m_buttonOne.setFrame(buttonOneFrame);
+      case 0:
+        m_mainView->setFrame(mainViewFrame);
+        return;
+      default:
+        assert(false);
+        return;
+    }
   }
 }
 
@@ -80,7 +90,13 @@ void HeaderViewController::ContentView::setButtonTitles(const char * buttonOneTi
   m_buttonThree.setText(buttonThreeTitle);
 }
 
-void HeaderViewController::ContentView::setSelectedButton(int selectedButton) {
+void HeaderViewController::ContentView::setButtonActions(Invocation buttonOneAction, Invocation buttonTwoAction, Invocation buttonThreeAction) {
+  m_buttonOne.setInvocation(buttonOneAction);
+  m_buttonTwo.setInvocation(buttonTwoAction);
+  m_buttonThree.setInvocation(buttonThreeAction);
+}
+
+void HeaderViewController::ContentView::setSelectedButton(int selectedButton, App * application) {
   if (selectedButton < -1 || selectedButton >= m_numberOfButtons) {
     return;
   }
@@ -101,12 +117,15 @@ void HeaderViewController::ContentView::setSelectedButton(int selectedButton) {
   switch (m_selectedButton) {
     case 0:
       m_buttonOne.setBackgroundColor(k_selectedBackgroundColor);
+      application->setFirstResponder(&m_buttonOne);
       break;
     case 1:
       m_buttonTwo.setBackgroundColor(k_selectedBackgroundColor);
+      application->setFirstResponder(&m_buttonTwo);
       break;
     case 2:
       m_buttonThree.setBackgroundColor(k_selectedBackgroundColor);
+      application->setFirstResponder(&m_buttonThree);
       break;
     default:
       break;
@@ -119,7 +138,7 @@ int HeaderViewController::ContentView::selectedButton() {
 
 HeaderViewController::HeaderViewController(Responder * parentResponder, View * mainView) :
   ViewController(parentResponder),
-  m_contentView(ContentView(mainView))
+  m_contentView(ContentView(mainView, this))
 {
 }
 
@@ -139,8 +158,13 @@ void HeaderViewController::setButtonTitles(const char * buttonOneTitle, const ch
   m_contentView.setButtonTitles(buttonOneTitle, buttonTwoTitle, buttonThreeTitle);
 }
 
+void HeaderViewController::setButtonActions(Invocation buttonOneAction, Invocation buttonTwoAction, Invocation buttonThreeAction) {
+  m_contentView.setButtonActions(buttonOneAction, buttonTwoAction, buttonThreeAction);
+}
+
 void HeaderViewController::setSelectedButton(int selectedButton) {
-  m_contentView.setSelectedButton(selectedButton);
+  App * application = app();
+  m_contentView.setSelectedButton(selectedButton, application);
 }
 
 bool HeaderViewController::handleEvent(Ion::Events::Event event) {

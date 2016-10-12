@@ -11,6 +11,12 @@ public:
   KDCoordinate y() const { return m_y; }
   KDPoint translatedBy(KDPoint other) const;
   KDPoint opposite() const;
+  bool operator ==(const KDPoint &other) const {
+    return (m_x == other.m_x && m_y == other.m_y);
+  }
+  bool operator !=(const KDPoint &other) const {
+    return !(operator ==(other));
+  }
 private:
   KDCoordinate m_x;
   KDCoordinate m_y;

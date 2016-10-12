@@ -112,8 +112,10 @@ void ScrollView::updateScrollIndicator() {
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
-  m_offset = offset;
-  layoutSubviews();
+  if (offset != m_offset) {
+    m_offset = offset;
+    layoutSubviews();
+  }
 }
 
 KDPoint ScrollView::contentOffset() {

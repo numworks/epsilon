@@ -56,6 +56,7 @@ KDCoordinate TableView::ContentView::columnWidth(int i) const {
 
 void TableView::ContentView::resizeToFitContent() {
   setSize(KDSize(width(), height()));
+  layoutSubviews();
 }
 
 KDCoordinate TableView::ContentView::height() const {

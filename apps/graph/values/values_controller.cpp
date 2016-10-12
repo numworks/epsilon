@@ -11,6 +11,11 @@ ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionS
   m_parameterController(ValuesParameterController(this))
 {
   setButtonTitles("Regler l'intervalle", nullptr, nullptr);
+  setButtonActions(Invocation([](void * context, void * sender) {
+    ValuesController * valuesController = (ValuesController *) context;
+    StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
+    stack->push(valuesController->parameterController());
+  }, this), Invocation(nullptr, nullptr), Invocation(nullptr, nullptr));
 }
 
 const char * ValuesController::title() const {
@@ -101,6 +106,7 @@ void ValuesController::setActiveCell(int i, int j) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
+  setSelectedButton(-1);
   if (m_activeCellY == -1) {
     setActiveCell(0,0);
   } else {

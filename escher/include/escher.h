@@ -2,6 +2,7 @@
 #define ESCHER_H
 
 #include <escher/app.h>
+#include <escher/button.h>
 #include <escher/container.h>
 #include <escher/header_view_controller.h>
 #include <escher/image.h>

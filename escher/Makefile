@@ -3,6 +3,7 @@ SFLAGS += -Iescher/include
 objs += $(addprefix escher/src/,\
   app.o\
   childless_view.o\
+  button.o\
   container.o\
   header_view_controller.o\
   image_view.o\

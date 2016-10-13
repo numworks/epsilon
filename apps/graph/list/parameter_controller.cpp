@@ -1,7 +1,9 @@
 #include "parameter_controller.h"
 #include <assert.h>
 
-ParameterController::ParameterController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
+namespace Graph {
+
+ParameterController::ParameterController(Responder * parentResponder, FunctionStore * functionStore) :
   ViewController(parentResponder),
   m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
@@ -47,7 +49,7 @@ void ParameterController::setActiveCell(int index) {
 }
 
 
-void ParameterController::setFunction(Graph::Function * function) {
+void ParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
@@ -116,4 +118,6 @@ int ParameterController::reusableCellCount() {
 
 KDCoordinate ParameterController::cellHeight() {
   return 35;
+}
+
 }

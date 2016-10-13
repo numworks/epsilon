@@ -1,7 +1,9 @@
 #include "graph_controller.h"
 #include <assert.h>
 
-GraphController::GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext) :
+namespace Graph {
+
+GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext) :
   HeaderViewController(parentResponder, &m_view),
   m_view(GraphView(functionStore, evaluateContext)),
   m_headerSelected(false),
@@ -64,4 +66,6 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
         return false;
     }
   }
+}
+
 }

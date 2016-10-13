@@ -3,10 +3,13 @@
 
 #include <escher.h>
 
+namespace Graph {
 class CursorView : public ChildlessView {
 public:
   using ChildlessView::ChildlessView;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
+
+}
 
 #endif

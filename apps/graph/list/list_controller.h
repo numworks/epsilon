@@ -7,9 +7,11 @@
 #include "function_expression_view.h"
 #include "parameter_controller.h"
 
+namespace Graph {
+
 class ListController : public HeaderViewController, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder, Graph::FunctionStore * functionStore);
+  ListController(Responder * parentResponder, FunctionStore * functionStore);
 
   void setActiveCell(int i, int j);
 
@@ -30,7 +32,7 @@ public:
   View * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void configureFunction(Graph::Function * function);
+  void configureFunction(Function * function);
   void editExpression(FunctionExpressionView * functionCell);
 
 private:
@@ -46,8 +48,10 @@ private:
   int m_activeCellx;
   int m_activeCelly;
   KDCoordinate m_manualScrolling;
-  Graph::FunctionStore * m_functionStore;
+  FunctionStore * m_functionStore;
   ParameterController m_parameterController;
 };
+
+}
 
 #endif

@@ -3,21 +3,23 @@ extern "C" {
 #include <assert.h>
 }
 
-constexpr int Graph::FunctionStore::k_numberOfDefaultColors;
-constexpr KDColor Graph::FunctionStore::k_defaultColors[k_numberOfDefaultColors];
-constexpr const char * Graph::FunctionStore::k_functionNames[k_maxNumberOfFunctions];
+namespace Graph {
 
-Graph::FunctionStore::FunctionStore() :
+constexpr int FunctionStore::k_numberOfDefaultColors;
+constexpr KDColor FunctionStore::k_defaultColors[k_numberOfDefaultColors];
+constexpr const char * FunctionStore::k_functionNames[k_maxNumberOfFunctions];
+
+FunctionStore::FunctionStore() :
   m_numberOfFunctions(0)
 {
 }
 
-Graph::Function * Graph::FunctionStore::functionAtIndex(int i) {
+Function * FunctionStore::functionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   return &m_functions[i];
 }
 
-Graph::Function * Graph::FunctionStore::activeFunctionAtIndex(int i) {
+Function * FunctionStore::activeFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
   for (int k = 0; k < m_numberOfFunctions; k++) {
@@ -32,18 +34,18 @@ Graph::Function * Graph::FunctionStore::activeFunctionAtIndex(int i) {
   return nullptr;
 }
 
-Graph::Function * Graph::FunctionStore::addEmptyFunction() {
+Function * FunctionStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
   const char * name = firstAvailableName();
   KDColor color = firstAvailableColor();
-  Graph::Function addedFunction = Function(name, color);
+  Function addedFunction = Function(name, color);
   m_functions[m_numberOfFunctions] = addedFunction;
   Function * result = &m_functions[m_numberOfFunctions];
   m_numberOfFunctions++;
   return result;
 }
 
-void Graph::FunctionStore::removeFunction(Function * f) {
+void FunctionStore::removeFunction(Function * f) {
   int i = 0;
   while (&m_functions[i] != f && i < m_numberOfFunctions) {
     i++;
@@ -55,11 +57,11 @@ void Graph::FunctionStore::removeFunction(Function * f) {
   }
 }
 
-int Graph::FunctionStore::numberOfFunctions() {
+int FunctionStore::numberOfFunctions() {
   return m_numberOfFunctions;
 }
 
-int Graph::FunctionStore::numberOfActiveFunctions() {
+int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
     if (m_functions[i].isActive()) {
@@ -69,7 +71,7 @@ int Graph::FunctionStore::numberOfActiveFunctions() {
   return result;
 }
 
-const char *  Graph::FunctionStore::firstAvailableName() {
+const char *  FunctionStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfFunctions; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
@@ -85,7 +87,7 @@ const char *  Graph::FunctionStore::firstAvailableName() {
   return k_functionNames[0];
 }
 
-const KDColor  Graph::FunctionStore::firstAvailableColor() {
+const KDColor  FunctionStore::firstAvailableColor() {
   for (int k = 0; k < k_numberOfDefaultColors; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
@@ -99,4 +101,6 @@ const KDColor  Graph::FunctionStore::firstAvailableColor() {
     }
   }
   return k_defaultColors[0];
+}
+
 }

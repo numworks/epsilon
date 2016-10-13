@@ -5,14 +5,16 @@
 #include "../function.h"
 #include "../function_store.h"
 
+namespace Graph {
+
 class ParameterController : public ViewController, public ListViewDataSource {
 public:
-  ParameterController(Responder * parentResponder, Graph::FunctionStore * functionStore);
+  ParameterController(Responder * parentResponder, FunctionStore * functionStore);
 
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Graph::Function * function);
+  void setFunction(Function * function);
   void didBecomeFirstResponder() override;
 
   void setActiveCell(int index);
@@ -29,8 +31,10 @@ private:
   TableViewCell m_deleteCell;
   ListView m_listView;
   int m_activeCell;
-  Graph::Function * m_function;
-  Graph::FunctionStore * m_functionStore;
+  Function * m_function;
+  FunctionStore * m_functionStore;
 };
+
+}
 
 #endif

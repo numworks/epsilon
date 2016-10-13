@@ -3,6 +3,8 @@
 
 #include <escher.h>
 
+namespace Graph {
+
 class EvenOddCell : public ChildlessView {
 public:
   EvenOddCell();
@@ -20,5 +22,7 @@ private:
   bool m_highlighted;
   bool m_even;
 };
+
+}
 
 #endif

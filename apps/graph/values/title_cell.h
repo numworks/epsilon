@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../even_odd_cell.h"
 
+namespace Graph {
 class TitleCell : public EvenOddCell {
 public:
   TitleCell();
@@ -13,5 +14,7 @@ public:
 protected:
   char * m_text;
 };
+
+}
 
 #endif

@@ -1,13 +1,15 @@
 #include "graph_view.h"
 #include <assert.h>
 
+namespace Graph {
+
 constexpr KDColor kAxisColor = KDColor(0x000000);
 constexpr KDColor kMainGridColor = KDColor(0xCCCCCC);
 constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 
-GraphView::GraphView(Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext) :
+GraphView::GraphView(FunctionStore * functionStore, EvaluateContext * evaluateContext) :
 #if GRAPH_VIEW_IS_TILED
   TiledView(),
 #else
@@ -162,7 +164,7 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
   for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
     float x = pixelToFloat(Axis::Horizontal, px);
     for (int i=0; i<m_functionStore->numberOfFunctions(); i++) {
-      Graph::Function * f = m_functionStore->functionAtIndex(i);
+      Function * f = m_functionStore->functionAtIndex(i);
       if (f->isActive()) {
         float y = f->evaluateAtAbscissa(x, m_evaluateContext);
         KDCoordinate py = floatToPixel(Axis::Vertical, y);
@@ -222,3 +224,5 @@ void GraphView::drawFunction(KDRect rect) const {
   }
 }
 #endif
+
+}

@@ -8,6 +8,8 @@
 
 #define GRAPH_VIEW_IS_TILED 1
 
+namespace Graph {
+
 class GraphView : public
 #if GRAPH_VIEW_IS_TILED
                   TiledView
@@ -16,7 +18,7 @@ class GraphView : public
 #endif
 {
 public:
-  GraphView(Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext);
+  GraphView(FunctionStore * functionStore, EvaluateContext * evaluateContext);
 
 #if GRAPH_VIEW_IS_TILED
   KDColor * tile() const override;
@@ -67,8 +69,10 @@ private:
   float m_yMin;
   float m_yMax;
 
-  Graph::FunctionStore * m_functionStore;
-  Graph::EvaluateContext * m_evaluateContext;
+  FunctionStore * m_functionStore;
+  EvaluateContext * m_evaluateContext;
 };
+
+}
 
 #endif

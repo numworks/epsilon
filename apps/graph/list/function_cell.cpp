@@ -1,5 +1,7 @@
 #include "function_cell.h"
 
+namespace Graph {
+
 constexpr KDColor FunctionCell::k_desactiveTextColor;
 
 FunctionCell::FunctionCell() :
@@ -8,11 +10,13 @@ FunctionCell::FunctionCell() :
 {
 }
 
-void FunctionCell::setFunction(Graph::Function * f) {
+void FunctionCell::setFunction(Function * f) {
   m_function = f;
   markRectAsDirty(bounds());
 }
 
-Graph::Function * FunctionCell::function() {
+Function * FunctionCell::function() {
   return m_function;
+}
+
 }

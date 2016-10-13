@@ -6,9 +6,10 @@
 #include "../function_store.h"
 #include "../evaluate_context.h"
 
+namespace Graph {
 class GraphController : public HeaderViewController {
 public:
-  GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext);
+  GraphController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
   const char * title() const override;
 
   bool handleEvent(Ion::Events::Event event) override;
@@ -23,5 +24,7 @@ private:
   Button m_windowButton;
   Button m_displayButton;
 };
+
+}
 
 #endif

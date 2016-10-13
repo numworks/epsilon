@@ -1,6 +1,8 @@
 #include "function_name_view.h"
 #include "../function_store.h"
 
+namespace Graph {
+
 constexpr KDColor FunctionNameView::k_separatorColor;
 
 FunctionNameView::FunctionNameView() :
@@ -32,5 +34,7 @@ void FunctionNameView::drawRect(KDContext * ctx, KDRect rect) const {
   KDPoint origin(0.5f*(k_colorIndicatorThickness + m_frame.width() - 4*textSize.width()),
     baseline-textSize.height()+0.5f*(m_frame.height() - expressionSize.height()));
   ctx->drawString(functionName, origin, functionNameColor, background);
-  ctx->drawString(Graph::Function::Parameter, origin.translatedBy(KDPoint(textSize.width(), 0)), textColor, background);
+  ctx->drawString(Function::Parameter, origin.translatedBy(KDPoint(textSize.width(), 0)), textColor, background);
+}
+
 }

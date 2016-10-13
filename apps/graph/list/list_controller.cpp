@@ -1,8 +1,10 @@
 #include "list_controller.h"
-#include "../graph_app.h"
+#include "../app.h"
 #include <assert.h>
 
-ListController::ListController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
+namespace Graph {
+
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore) :
   HeaderViewController(parentResponder, &m_tableView),
   m_tableView(TableView(this)),
   m_activeCellx(0),
@@ -31,7 +33,7 @@ int ListController::numberOfColumns() {
 };
 
 KDCoordinate ListController::rowHeight(int j) {
-  Graph::Function * function = m_functionStore->functionAtIndex(j);
+  Function * function = m_functionStore->functionAtIndex(j);
   KDCoordinate functionSize = function->layout()->size().height();
   return functionSize + k_verticalFunctionMargin;
 }
@@ -125,20 +127,20 @@ void ListController::didBecomeFirstResponder() {
   }
 }
 
-void ListController::configureFunction(Graph::Function * function) {
+void ListController::configureFunction(Function * function) {
   StackViewController * stack = ((StackViewController *)parentResponder());
   m_parameterController.setFunction(function);
   stack->push(&m_parameterController);
 }
 
 void ListController::editExpression(FunctionExpressionView * functionCell) {
-  GraphApp * myApp = (GraphApp *)app();
+  App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   const char * initialTextContent = functionCell->function()->text();
   inputController->edit(this, initialTextContent, functionCell,
     [](void * context, void * sender){
     FunctionExpressionView * myCell = (FunctionExpressionView *) context;
-    Graph::Function * myFunction = myCell->function();
+    Function * myFunction = myCell->function();
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     myFunction->setContent(textBody);
@@ -225,3 +227,4 @@ void ListController::willDisplayCellAtLocation(View * cell, int i, int j) {
   myCell->setEven(j%2 == 0);
 }
 
+}

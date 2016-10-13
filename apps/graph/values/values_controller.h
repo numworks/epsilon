@@ -9,9 +9,11 @@
 #include "interval.h"
 #include "values_parameter_controller.h"
 
+namespace Graph {
+
 class ValuesController : public HeaderViewController, public TableViewDataSource {
 public:
-  ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext);
+  ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
 
   void setActiveCell(int i, int j);
 
@@ -54,11 +56,13 @@ private:
   TableView m_tableView;
   int m_activeCellX;
   int m_activeCellY;
-  Graph::FunctionStore * m_functionStore;
-  Graph::EvaluateContext * m_evaluateContext;
-  Graph::Interval m_interval;
+  FunctionStore * m_functionStore;
+  EvaluateContext * m_evaluateContext;
+  Interval m_interval;
   ValuesParameterController m_parameterController;
   Button m_setIntervalButton;
 };
+
+}
 
 #endif

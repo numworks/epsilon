@@ -1,10 +1,12 @@
-#include "graph_app.h"
+#include "app.h"
 #include "graph_icon.h"
 
-GraphApp::GraphApp(Context * context) :
-  App("Graph", ImageStore::GraphIcon),
-  m_functionStore(Graph::FunctionStore()),
-  m_evaluateContext(Graph::EvaluateContext(context)),
+namespace Graph {
+
+App::App(::Context * context) :
+  ::App("Graph", ImageStore::GraphIcon),
+  m_functionStore(FunctionStore()),
+  m_evaluateContext(EvaluateContext(context)),
   m_listController(ListController(nullptr, &m_functionStore)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listController)),
   m_graphController(GraphController(nullptr, &m_functionStore, &m_evaluateContext)),
@@ -13,7 +15,7 @@ GraphApp::GraphApp(Context * context) :
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_valuesStackViewController),
   m_inputViewController(this, &m_tabViewController)
 {
-  Graph::Function * function = m_functionStore.addEmptyFunction();
+  Function * function = m_functionStore.addEmptyFunction();
   function->setContent("(x-1)*(x+1)*x");
   function = m_functionStore.addEmptyFunction();
   function->setContent("x*x");
@@ -27,10 +29,12 @@ GraphApp::GraphApp(Context * context) :
   function->setContent("1/(1+1/(1/x))");
 }
 
-ViewController * GraphApp::rootViewController() {
+ViewController * App::rootViewController() {
   return &m_inputViewController;
 }
 
-InputViewController * GraphApp::inputViewController() {
+InputViewController * App::inputViewController() {
   return &m_inputViewController;
+}
+
 }

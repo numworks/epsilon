@@ -1,6 +1,8 @@
 #include "values_parameter_controller.h"
 #include <assert.h>
 
+namespace Graph {
+
 ValuesParameterController::ValuesParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_intervalStartCell(TableViewCell((char*)"X Debut")),
@@ -69,4 +71,6 @@ int ValuesParameterController::reusableCellCount() {
 
 KDCoordinate ValuesParameterController::cellHeight() {
   return 35;
+}
+
 }

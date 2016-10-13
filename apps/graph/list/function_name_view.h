@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "function_cell.h"
 
+namespace Graph {
 
 class FunctionNameView : public FunctionCell {
 public:
@@ -15,5 +16,7 @@ private:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDColor k_separatorColor = KDColor(0xEFF2F4);
 };
+
+}
 
 #endif

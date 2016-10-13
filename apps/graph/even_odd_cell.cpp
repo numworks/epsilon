@@ -1,5 +1,7 @@
 #include "even_odd_cell.h"
 
+namespace Graph {
+
 constexpr KDColor EvenOddCell::k_evenLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_oddLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_selectedLineBackgroundColor;
@@ -38,3 +40,4 @@ void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, background);
 }
 
+}

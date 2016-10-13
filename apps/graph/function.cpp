@@ -1,7 +1,9 @@
 #include "function.h"
 #include <string.h>
 
-Graph::Function::Function(const char * text, KDColor color) :
+namespace Graph {
+
+Function::Function(const char * text, KDColor color) :
   m_name(text),
   m_color(color),
   m_expression(nullptr),
@@ -10,7 +12,7 @@ Graph::Function::Function(const char * text, KDColor color) :
 {
 }
 
-void Graph::Function::setContent(const char * c) {
+void Function::setContent(const char * c) {
   strlcpy(m_text, c, sizeof(m_text));
   if (m_expression != nullptr) {
     delete m_expression;
@@ -22,11 +24,11 @@ void Graph::Function::setContent(const char * c) {
   m_layout = expression()->createLayout();
 }
 
-void Graph::Function::setColor(KDColor color) {
+void Function::setColor(KDColor color) {
   m_color = color;
 }
 
-Graph::Function::~Function() {
+Function::~Function() {
   if (m_layout != nullptr) {
     delete m_layout;
   }
@@ -35,31 +37,33 @@ Graph::Function::~Function() {
   }
 }
 
-const char * Graph::Function::text() {
+const char * Function::text() {
   return m_text;
 }
 
-const char * Graph::Function::name() {
+const char * Function::name() {
   return m_name;
 }
 
-Expression * Graph::Function::expression() {
+Expression * Function::expression() {
   return m_expression;
 }
 
-ExpressionLayout * Graph::Function::layout() {
+ExpressionLayout * Function::layout() {
   return m_layout;
 }
 
-bool Graph::Function::isActive() {
+bool Function::isActive() {
   return m_active;
 }
 
-void Graph::Function::setActive(bool active) {
+void Function::setActive(bool active) {
   m_active = active;
 }
 
-float Graph::Function::evaluateAtAbscissa(float x, Graph::EvaluateContext * context) {
+float Function::evaluateAtAbscissa(float x, EvaluateContext * context) {
   context->setOverridenValueForSymbolX(x);
   return m_expression->approximate(*context);
+}
+
 }

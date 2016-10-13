@@ -2,7 +2,7 @@
 #define APPS_CONTAINER_H
 
 #include "home/app.h"
-#include "graph/graph_app.h"
+#include "graph/app.h"
 #include "probability/app.h"
 
 #define USE_PIC_VIEW_APP 0
@@ -21,7 +21,7 @@ public:
 private:
   static constexpr int k_numberOfApps = 3;
   Home::App m_homeApp;
-  GraphApp m_graphApp;
+  Graph::App m_graphApp;
   Probability::App m_probabilityApp;
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;

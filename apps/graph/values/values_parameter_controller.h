@@ -3,6 +3,7 @@
 
 #include <escher.h>
 
+namespace Graph {
 class ValuesParameterController : public ViewController, public ListViewDataSource {
 public:
   ValuesParameterController(Responder * parentResponder);
@@ -25,5 +26,7 @@ private:
   ListView m_listView;
   int m_activeCell;
 };
+
+}
 
 #endif

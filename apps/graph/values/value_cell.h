@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../even_odd_cell.h"
 
+namespace Graph {
 class ValueCell : public EvenOddCell {
 public:
   ValueCell();
@@ -14,5 +15,7 @@ protected:
   float m_float;
   char m_buffer[14];
 };
+
+}
 
 #endif

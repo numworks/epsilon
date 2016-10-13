@@ -1,6 +1,8 @@
 #include "value_cell.h"
 #include "float_to_string.h"
 
+namespace Graph {
+
 ValueCell::ValueCell() :
   EvenOddCell()
 {
@@ -18,4 +20,6 @@ void ValueCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize textSize = KDText::stringSize(m_buffer);
   KDPoint origin(m_frame.width() - textSize.width(), 0.5f*(m_frame.height() - textSize.height()));
   ctx->drawString(m_buffer, origin, KDColorBlack, background);
+}
+
 }

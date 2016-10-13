@@ -34,15 +34,16 @@ objs += $(addprefix poincare/src/layout/,\
 
 tests += $(addprefix poincare/test/,\
   addition.cpp\
+  float.cpp\
   fraction.cpp\
-  integer.cpp\
   identity.cpp\
+  integer.cpp\
   product.cpp\
   simplify_utils.cpp\
   simplify_addition.cpp\
   simplify_product.cpp\
-  trigo.cpp\
   subtraction.cpp\
+  trigo.cpp\
 )
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS

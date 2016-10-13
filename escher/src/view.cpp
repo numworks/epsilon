@@ -163,6 +163,10 @@ KDRect View::absoluteVisibleFrame() const {
   }
 }
 
+KDSize View::minimalSizeForOptimalDisplay() {
+  return KDSizeZero;
+}
+
 #if ESCHER_VIEW_LOGGING
 const char * View::className() const {
   return "View";

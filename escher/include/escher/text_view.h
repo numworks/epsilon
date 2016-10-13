@@ -18,7 +18,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  KDSize textSize();
+  KDSize minimalSizeForOptimalDisplay() override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

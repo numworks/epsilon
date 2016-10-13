@@ -14,8 +14,10 @@ public:
   void setText(const char * textBody);
   void setInvocation(Invocation invocation);
   void setBackgroundColor(KDColor backgroundColor);
-  KDSize textSize();
+  KDSize minimalSizeForOptimalDisplay() override;
 private:
+  constexpr static KDCoordinate k_verticalMargin = 5;
+  constexpr static KDCoordinate k_horizontalMargin = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

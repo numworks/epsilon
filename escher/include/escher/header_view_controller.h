@@ -33,7 +33,6 @@ private:
     int selectedButton();
   private:
     constexpr static KDCoordinate k_headerHeight = 20;
-    constexpr static KDCoordinate k_buttonTextMargin = 10;
     constexpr static KDColor k_separatorHeaderColor = KDColor(0xDEE0E2);
     constexpr static KDColor k_selectedBackgroundColor = KDColor(0x426DA7);;
     Button m_buttonOne;

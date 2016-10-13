@@ -53,6 +53,7 @@ void Button::setBackgroundColor(KDColor backgroundColor) {
   markRectAsDirty(bounds());
 }
 
-KDSize Button::textSize() {
-  return m_textView.textSize();
+KDSize Button::minimalSizeForOptimalDisplay() {
+  KDSize textSize = m_textView.minimalSizeForOptimalDisplay();
+  return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }

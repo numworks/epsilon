@@ -45,12 +45,12 @@ void HeaderViewController::ContentView::layoutSubviews() {
     m_mainView->setFrame(mainViewFrame);
   } else {
     KDRect mainViewFrame(0, k_headerHeight + 1, bounds().width(), bounds().height() - k_headerHeight - 1);
-    KDCoordinate buttonOneWidth = m_buttonOne.textSize().width();
-    KDCoordinate buttonTwoWidth = m_buttonTwo.textSize().width();
-    KDCoordinate buttonThreeWidth = m_buttonThree.textSize().width();
-    KDRect buttonOneFrame(0, 0, buttonOneWidth + k_buttonTextMargin, k_headerHeight);
-    KDRect buttonTwoFrame(buttonOneWidth + k_buttonTextMargin, 0, buttonTwoWidth + k_buttonTextMargin, k_headerHeight);
-    KDRect buttonThreeFrame(buttonOneWidth + buttonTwoWidth + 2*k_buttonTextMargin, 0, buttonThreeWidth + k_buttonTextMargin, k_headerHeight);
+    KDCoordinate buttonOneWidth = m_buttonOne.minimalSizeForOptimalDisplay().width();
+    KDCoordinate buttonTwoWidth = m_buttonTwo.minimalSizeForOptimalDisplay().width();
+    KDCoordinate buttonThreeWidth = m_buttonThree.minimalSizeForOptimalDisplay().width();
+    KDRect buttonOneFrame(0, 0, buttonOneWidth, k_headerHeight);
+    KDRect buttonTwoFrame(buttonOneWidth, 0, buttonTwoWidth, k_headerHeight);
+    KDRect buttonThreeFrame(buttonOneWidth + buttonTwoWidth, 0, buttonThreeWidth, k_headerHeight);
     switch(m_numberOfButtons) {
       case 3:
         m_buttonThree.setFrame(buttonThreeFrame);

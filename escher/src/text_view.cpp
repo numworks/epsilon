@@ -36,8 +36,8 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
   markRectAsDirty(bounds());
 }
 
-KDSize TextView::textSize() {
-  if (m_text == nullptr) {
+KDSize TextView::minimalSizeForOptimalDisplay() {
+    if (m_text == nullptr) {
     return KDSizeZero;
   } else {
     return KDText::stringSize(m_text);

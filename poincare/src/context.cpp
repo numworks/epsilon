@@ -12,7 +12,7 @@ Context::~Context() {
   free(m_pairs);
 }
 
-Expression * Context::operator[](const char * symbol_name) const {
+const Expression * Context::operator[](const char * symbol_name) const {
   for (uint16_t i=0; i<this->kMaxContextPairs; i++) {
     ContextPair p = m_pairs[i];
     if (p.name != NULL && strcmp(p.name, symbol_name) == 0) {

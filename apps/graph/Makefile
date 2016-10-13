@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/graph/,\
   graph_app.o\
   even_odd_cell.o\
+  evaluate_context.o\
   function.o\
   function_store.o\
   graph/cursor_view.o\

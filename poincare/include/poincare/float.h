@@ -14,7 +14,7 @@ class Float : public LeafExpression {
     Expression * clone() const override;
     bool valueEquals(const Expression * e) const override;
   private:
-    const float m_float;
+    float m_float;
 };
 
 #endif

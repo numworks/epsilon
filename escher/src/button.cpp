@@ -1,15 +1,12 @@
 #include <escher/button.h>
 #include <assert.h>
 
-Button::Button(Responder * parentResponder) :
+Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation) :
   Responder(parentResponder),
-  m_textView(),
-  m_invocation(Invocation(nullptr, nullptr)),
+  m_textView(TextView(textBody, 0.5f, 0.5f)),
+  m_invocation(invocation),
   m_backgroundColor(KDColorWhite)
 {
-  m_textView.setBackgroundColor(KDColorWhite);
-  m_textView.setTextColor(KDColorBlack);
-  m_textView.setAlignment(0.5f, 0.5f);
 }
 
 void Button::drawRect(KDContext * ctx, KDRect rect) const {
@@ -37,14 +34,6 @@ bool Button::handleEvent(Ion::Events::Event event) {
     default:
       return false;
   }
-}
-
-void Button::setText(const char * textBody) {
-  m_textView.setText(textBody);
-}
-
-void Button::setInvocation(Invocation invocation) {
-  m_invocation = invocation;
 }
 
 void Button::setBackgroundColor(KDColor backgroundColor) {

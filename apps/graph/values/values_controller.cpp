@@ -8,21 +8,28 @@ ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionS
   m_activeCellY(-1),
   m_functionStore(functionStore),
   m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f)),
-  m_parameterController(ValuesParameterController(this))
-{
-  setButtonTitles("Regler l'intervalle", nullptr, nullptr);
-  setButtonActions(Invocation([](void * context, void * sender) {
+  m_parameterController(ValuesParameterController(this)),
+  m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
     stack->push(valuesController->parameterController());
-  }, this), Invocation(nullptr, nullptr), Invocation(nullptr, nullptr));
+  }, this)))
+{
 }
 
 const char * ValuesController::title() const {
   return "Valeurs";
 }
 
-Responder * ValuesController::tabController() const{
+int ValuesController::numberOfButtons() const {
+  return 1;
+}
+
+Button * ValuesController::buttonAtIndex(int index) {
+  return &m_setIntervalButton;
+}
+
+Responder * ValuesController::tabController() const {
   return (parentResponder()->parentResponder());
 }
 

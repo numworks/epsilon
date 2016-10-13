@@ -1,11 +1,13 @@
 #include "graph_controller.h"
+#include <assert.h>
 
 GraphController::GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
   HeaderViewController(parentResponder, &m_view),
   m_view(GraphView(functionStore)),
-  m_headerSelected(false)
+  m_headerSelected(false),
+  m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
+  m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this))
 {
-  setButtonTitles("Fenetre", "Affichage", nullptr);
 }
 
 const char * GraphController::title() const {
@@ -14,6 +16,22 @@ const char * GraphController::title() const {
 
 Responder * GraphController::tabController() const{
   return (parentResponder());
+}
+
+int GraphController::numberOfButtons() const {
+  return 2;
+}
+
+Button * GraphController::buttonAtIndex(int index) {
+  switch (index) {
+    case 0:
+      return &m_windowButton;
+    case 1:
+      return &m_displayButton;
+    default:
+      assert(false);
+  }
+  return nullptr;
 }
 
 void GraphController::didBecomeFirstResponder() {

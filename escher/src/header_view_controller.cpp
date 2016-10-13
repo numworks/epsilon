@@ -4,67 +4,52 @@
 constexpr KDColor HeaderViewController::ContentView::k_separatorHeaderColor;
 constexpr KDColor HeaderViewController::ContentView::k_selectedBackgroundColor;
 
-HeaderViewController::ContentView::ContentView(View * subview, Responder * parentResponder) :
+HeaderViewController::ContentView::ContentView(View * subview, HeaderViewController * headerViewController) :
   View(),
-  m_buttonOne(Button(parentResponder)),
-  m_buttonTwo(Button(parentResponder)),
-  m_buttonThree(Button(parentResponder)),
-  m_numberOfButtons(0),
   m_mainView(subview),
   m_visibleHeader(true),
-  m_selectedButton(-1)
+  m_selectedButton(-1),
+  m_headerViewController(headerViewController)
 {
+}
+
+int HeaderViewController::ContentView::numberOfButtons() const {
+  return m_headerViewController->numberOfButtons();
+}
+Button * HeaderViewController::ContentView::buttonAtIndex(int index) {
+  return m_headerViewController->buttonAtIndex(index);
 }
 
 int HeaderViewController::ContentView::numberOfSubviews() const {
   if (m_visibleHeader) {
-    return 4;
+    return numberOfButtons() + 1;
   }
   return 1;
 }
 
 View * HeaderViewController::ContentView::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return m_mainView;
-    case 1:
-      return &m_buttonOne;
-    case 2:
-      return &m_buttonTwo;
-    case 3:
-      return &m_buttonThree;
-    default:
-      assert(false);
-      return nullptr;
+  if (index == 0) {
+    return m_mainView;
+  } else {
+    return buttonAtIndex(index - 1);
   }
 }
 
 void HeaderViewController::ContentView::layoutSubviews() {
-  if (numberOfSubviews() == 1){
+  if (numberOfButtons() == 0) {
     KDRect mainViewFrame(0, 1, bounds().width(), bounds().height() - 1);
     m_mainView->setFrame(mainViewFrame);
-  } else {
-    KDRect mainViewFrame(0, k_headerHeight + 1, bounds().width(), bounds().height() - k_headerHeight - 1);
-    KDCoordinate buttonOneWidth = m_buttonOne.minimalSizeForOptimalDisplay().width();
-    KDCoordinate buttonTwoWidth = m_buttonTwo.minimalSizeForOptimalDisplay().width();
-    KDCoordinate buttonThreeWidth = m_buttonThree.minimalSizeForOptimalDisplay().width();
-    KDRect buttonOneFrame(0, 0, buttonOneWidth, k_headerHeight);
-    KDRect buttonTwoFrame(buttonOneWidth, 0, buttonTwoWidth, k_headerHeight);
-    KDRect buttonThreeFrame(buttonOneWidth + buttonTwoWidth, 0, buttonThreeWidth, k_headerHeight);
-    switch(m_numberOfButtons) {
-      case 3:
-        m_buttonThree.setFrame(buttonThreeFrame);
-      case 2:
-        m_buttonTwo.setFrame(buttonTwoFrame);
-      case 1:
-        m_buttonOne.setFrame(buttonOneFrame);
-      case 0:
-        m_mainView->setFrame(mainViewFrame);
-        return;
-      default:
-        assert(false);
-        return;
-    }
+    return;
+  }
+  KDRect mainViewFrame(0, k_headerHeight + 1, bounds().width(), bounds().height() - k_headerHeight - 1);
+  m_mainView->setFrame(mainViewFrame);
+  int currentXOrigin = 0;
+  for (int i = 0; i < numberOfButtons(); i++) {
+    Button * button = buttonAtIndex(i);
+    KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
+    KDRect buttonFrame(currentXOrigin, 0, buttonWidth, k_headerHeight);
+    button->setFrame(buttonFrame);
+    currentXOrigin += buttonWidth;
   }
 }
 
@@ -83,52 +68,19 @@ void HeaderViewController::ContentView::setVisibleHeader(bool isVisibleHeader) {
   layoutSubviews();
 }
 
-void HeaderViewController::ContentView::setButtonTitles(const char * buttonOneTitle, const char * buttonTwoTitle, const char * buttonThreeTitle) {
-  m_numberOfButtons = (bool)buttonOneTitle + (bool)buttonTwoTitle + (bool)buttonThreeTitle;
-  m_buttonOne.setText(buttonOneTitle);
-  m_buttonTwo.setText(buttonTwoTitle);
-  m_buttonThree.setText(buttonThreeTitle);
-}
-
-void HeaderViewController::ContentView::setButtonActions(Invocation buttonOneAction, Invocation buttonTwoAction, Invocation buttonThreeAction) {
-  m_buttonOne.setInvocation(buttonOneAction);
-  m_buttonTwo.setInvocation(buttonTwoAction);
-  m_buttonThree.setInvocation(buttonThreeAction);
-}
-
 void HeaderViewController::ContentView::setSelectedButton(int selectedButton, App * application) {
-  if (selectedButton < -1 || selectedButton >= m_numberOfButtons) {
+  if (selectedButton < -1 || selectedButton >= numberOfButtons()) {
     return;
   }
-  switch (m_selectedButton) {
-    case 0:
-      m_buttonOne.setBackgroundColor(KDColorWhite);
-      break;
-    case 1:
-      m_buttonTwo.setBackgroundColor(KDColorWhite);
-      break;
-    case 2:
-      m_buttonThree.setBackgroundColor(KDColorWhite);
-      break;
-    default:
-      break;
+  if (m_selectedButton >= 0) {
+    Button * button = buttonAtIndex(m_selectedButton);
+    button->setBackgroundColor(KDColorWhite);
   }
   m_selectedButton = selectedButton;
-  switch (m_selectedButton) {
-    case 0:
-      m_buttonOne.setBackgroundColor(k_selectedBackgroundColor);
-      application->setFirstResponder(&m_buttonOne);
-      break;
-    case 1:
-      m_buttonTwo.setBackgroundColor(k_selectedBackgroundColor);
-      application->setFirstResponder(&m_buttonTwo);
-      break;
-    case 2:
-      m_buttonThree.setBackgroundColor(k_selectedBackgroundColor);
-      application->setFirstResponder(&m_buttonThree);
-      break;
-    default:
-      break;
+  if (m_selectedButton >= 0) {
+    Button * button = buttonAtIndex(selectedButton);
+    button->setBackgroundColor(k_selectedBackgroundColor);
+    application->setFirstResponder(button);
   }
 }
 
@@ -142,6 +94,15 @@ HeaderViewController::HeaderViewController(Responder * parentResponder, View * m
 {
 }
 
+int HeaderViewController::numberOfButtons() const {
+  return 0;
+}
+
+Button * HeaderViewController::buttonAtIndex(int index) {
+  assert(false);
+  return nullptr;
+}
+
 View * HeaderViewController::view() {
   return &m_contentView;
 }
@@ -152,14 +113,6 @@ const char * HeaderViewController::title() const {
 
 void HeaderViewController::setVisibleHeader(bool isVisibleHeader) {
   m_contentView.setVisibleHeader(isVisibleHeader);
-}
-
-void HeaderViewController::setButtonTitles(const char * buttonOneTitle, const char * buttonTwoTitle, const char * buttonThreeTitle) {
-  m_contentView.setButtonTitles(buttonOneTitle, buttonTwoTitle, buttonThreeTitle);
-}
-
-void HeaderViewController::setButtonActions(Invocation buttonOneAction, Invocation buttonTwoAction, Invocation buttonThreeAction) {
-  m_contentView.setButtonActions(buttonOneAction, buttonTwoAction, buttonThreeAction);
 }
 
 void HeaderViewController::setSelectedButton(int selectedButton) {

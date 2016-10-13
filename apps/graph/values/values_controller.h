@@ -18,6 +18,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   ViewController * parameterController();
+  int numberOfButtons() const override;
+  Button * buttonAtIndex(int index) override;
 
   int numberOfRows() override;
   int numberOfColumns() override;
@@ -54,6 +56,7 @@ private:
   Graph::FunctionStore * m_functionStore;
   Graph::Interval m_interval;
   ValuesParameterController m_parameterController;
+  Button m_setIntervalButton;
 };
 
 #endif

@@ -7,7 +7,7 @@ constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 
-GraphView::GraphView(Graph::FunctionStore * functionStore) :
+GraphView::GraphView(Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext) :
 #if GRAPH_VIEW_IS_TILED
   TiledView(),
 #else
@@ -19,7 +19,8 @@ GraphView::GraphView(Graph::FunctionStore * functionStore) :
   m_xMax(2.0f),
   m_yMin(-2.0f),
   m_yMax(2.0f),
-  m_functionStore(functionStore)
+  m_functionStore(functionStore),
+  m_evaluateContext(evaluateContext)
 {
 }
 
@@ -158,13 +159,12 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
 
   KDColor workingBuffer[stampSize*stampSize];
 
-  Context plotContext;
   for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
     float x = pixelToFloat(Axis::Horizontal, px);
     for (int i=0; i<m_functionStore->numberOfFunctions(); i++) {
       Graph::Function * f = m_functionStore->functionAtIndex(i);
       if (f->isActive()) {
-        float y = f->evaluateAtAbscissa(x);
+        float y = f->evaluateAtAbscissa(x, m_evaluateContext);
         KDCoordinate py = floatToPixel(Axis::Vertical, y);
         KDRect stampRect(px, py, stampSize, stampSize);
         ctx->fillRectWithMask(stampRect, f->color(), mask, workingBuffer);

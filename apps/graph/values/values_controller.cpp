@@ -1,12 +1,13 @@
 #include "values_controller.h"
 #include <assert.h>
 
-ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
+ValuesController::ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext) :
   HeaderViewController(parentResponder, &m_tableView),
   m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_activeCellX(0),
   m_activeCellY(-1),
   m_functionStore(functionStore),
+  m_evaluateContext(evaluateContext),
   m_interval(Graph::Interval(-1.0f, 1.0f, 0.25f)),
   m_parameterController(ValuesParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
@@ -215,7 +216,7 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     } else {
       Graph::Function * function = m_functionStore->activeFunctionAtIndex(i-1);
       float x = m_interval.element(j-1);
-      myCell->setFloat(function->evaluateAtAbscissa(x));
+      myCell->setFloat(function->evaluateAtAbscissa(x, m_evaluateContext));
     }
     myCell->setEven(j%2 == 0);
   }

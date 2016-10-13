@@ -4,8 +4,8 @@
 #include "function.h"
 
 namespace Graph {
-  /* FunctionStore is a dumb class.
-   * Its only job is to store functions and to give them a color. */
+/* FunctionStore is a dumb class.
+ * Its only job is to store functions and to give them a color. */
 class FunctionStore {
 public:
   FunctionStore();

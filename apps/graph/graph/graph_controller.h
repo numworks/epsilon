@@ -4,10 +4,11 @@
 #include <escher.h>
 #include "graph_view.h"
 #include "../function_store.h"
+#include "../evaluate_context.h"
 
 class GraphController : public HeaderViewController {
 public:
-  GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore);
+  GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext);
   const char * title() const override;
 
   bool handleEvent(Ion::Events::Event event) override;

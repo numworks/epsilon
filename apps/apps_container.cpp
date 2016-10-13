@@ -5,7 +5,9 @@ extern "C" {
 
 AppsContainer::AppsContainer() :
   Container(),
-  m_homeApp(this)
+  m_homeApp(this),
+  m_graphApp(&m_context),
+  m_context(Context())
 {
 }
 

@@ -3,18 +3,20 @@
 
 #include <escher.h>
 #include "function_store.h"
+#include "evaluate_context.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 
 class GraphApp : public ::App {
 public:
-  GraphApp();
+  GraphApp(Context * context);
   InputViewController * inputViewController();
 protected:
   ViewController * rootViewController() override;
 private:
   Graph::FunctionStore m_functionStore;
+  Graph::EvaluateContext m_evaluateContext;
   ListController m_listController;
   StackViewController m_listStackViewController;
   GraphController m_graphController;

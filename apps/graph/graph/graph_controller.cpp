@@ -1,9 +1,9 @@
 #include "graph_controller.h"
 #include <assert.h>
 
-GraphController::GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore) :
+GraphController::GraphController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext) :
   HeaderViewController(parentResponder, &m_view),
-  m_view(GraphView(functionStore)),
+  m_view(GraphView(functionStore, evaluateContext)),
   m_headerSelected(false),
   m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
   m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this))

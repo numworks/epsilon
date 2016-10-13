@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../function_store.h"
+#include "../evaluate_context.h"
 #include "value_cell.h"
 #include "title_cell.h"
 #include "interval.h"
@@ -10,7 +11,7 @@
 
 class ValuesController : public HeaderViewController, public TableViewDataSource {
 public:
-  ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore);
+  ValuesController(Responder * parentResponder, Graph::FunctionStore * functionStore, Graph::EvaluateContext * evaluateContext);
 
   void setActiveCell(int i, int j);
 
@@ -54,6 +55,7 @@ private:
   int m_activeCellX;
   int m_activeCellY;
   Graph::FunctionStore * m_functionStore;
+  Graph::EvaluateContext * m_evaluateContext;
   Graph::Interval m_interval;
   ValuesParameterController m_parameterController;
   Button m_setIntervalButton;

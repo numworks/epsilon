@@ -26,6 +26,7 @@ private:
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif
+  Context m_context;
 };
 
 #endif

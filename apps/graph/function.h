@@ -3,6 +3,7 @@
 
 #include <poincare.h>
 #include <kandinsky.h>
+#include "evaluate_context.h"
 
 namespace Graph {
 
@@ -21,7 +22,7 @@ public:
   void setActive(bool active);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  float evaluateAtAbscissa(float x);
+  float evaluateAtAbscissa(float x, EvaluateContext * context);
 private:
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];

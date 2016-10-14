@@ -112,6 +112,7 @@ void ValuesController::setActiveCell(int i, int j) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
+  m_tableView.reloadData();
   setSelectedButton(-1);
   if (m_activeCellY == -1) {
     setActiveCell(0,0);

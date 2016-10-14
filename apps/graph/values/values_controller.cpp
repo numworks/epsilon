@@ -11,7 +11,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_functionStore(functionStore),
   m_evaluateContext(evaluateContext),
   m_interval(Interval(-1.0f, 1.0f, 0.25f)),
-  m_parameterController(ValuesParameterController(this)),
+  m_parameterController(ValuesParameterController(this, &m_interval)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());

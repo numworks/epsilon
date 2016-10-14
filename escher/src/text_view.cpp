@@ -6,7 +6,7 @@ TextView::TextView() : TextView(0.0f, 0.0f, KDColorBlack, KDColorWhite)
 
 TextView::TextView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  ChildlessView(),
+  View(),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),

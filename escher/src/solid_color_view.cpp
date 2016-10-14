@@ -1,7 +1,7 @@
 #include <escher/solid_color_view.h>
 
 SolidColorView::SolidColorView(KDColor color) :
-  ChildlessView(),
+  View(),
   m_color(color)
 {
 }

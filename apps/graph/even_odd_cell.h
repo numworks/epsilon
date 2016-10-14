@@ -5,7 +5,7 @@
 
 namespace Graph {
 
-class EvenOddCell : public ChildlessView {
+class EvenOddCell : public View {
 public:
   EvenOddCell();
   void setEven(bool even);

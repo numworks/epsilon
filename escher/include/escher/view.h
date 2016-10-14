@@ -59,9 +59,9 @@ protected:
 #endif
   KDRect m_frame;
 private:
-  virtual int numberOfSubviews() const = 0;
-  virtual View * subviewAtIndex(int index) = 0;
-  virtual void layoutSubviews() = 0;
+  virtual int numberOfSubviews() const;
+  virtual View * subviewAtIndex(int index);
+  virtual void layoutSubviews();
   virtual const Window * window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
   KDPoint absoluteOrigin() const;

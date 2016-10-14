@@ -4,7 +4,7 @@ extern "C" {
 }
 
 ImageView::ImageView() :
-  ChildlessView(),
+  View(),
   m_image(nullptr)
 {
 }

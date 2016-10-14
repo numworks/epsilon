@@ -1,9 +1,9 @@
 #ifndef ESCHER_STACK_VIEW_H
 #define ESCHER_STACK_VIEW_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 
-class StackView : public ChildlessView {
+class StackView : public View {
 public:
   StackView();
   void drawRect(KDContext * ctx, KDRect rect) const override;

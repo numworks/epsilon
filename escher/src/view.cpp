@@ -167,6 +167,19 @@ KDSize View::minimalSizeForOptimalDisplay() {
   return KDSizeZero;
 }
 
+int View::numberOfSubviews() const {
+  return 0;
+}
+
+View * View::subviewAtIndex(int index) {
+  assert(false);
+  return nullptr;
+}
+
+void View::layoutSubviews() {
+}
+
+
 #if ESCHER_VIEW_LOGGING
 const char * View::className() const {
   return "View";

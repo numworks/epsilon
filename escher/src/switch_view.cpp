@@ -9,7 +9,7 @@ constexpr KDCoordinate SwitchView::k_separatorThickness;
 
 
 SwitchView::SwitchView() :
-ChildlessView(),
+View(),
 m_state(true)
 {
 }

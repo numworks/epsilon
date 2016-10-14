@@ -1,10 +1,10 @@
 #ifndef ESCHER_TEXT_VIEW_H
 #define ESCHER_TEXT_VIEW_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 #include <kandinsky/color.h>
 
-class TextView : public ChildlessView {
+class TextView : public View {
 public:
   TextView();//;: TextView(nullptr, 0.0f, 0.0f);
   // alignment = 0 -> align left or top

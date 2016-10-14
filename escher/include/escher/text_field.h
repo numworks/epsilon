@@ -1,11 +1,11 @@
 #ifndef ESCHER_TEXT_FIELD_H
 #define ESCHER_TEXT_FIELD_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 #include <escher/responder.h>
 #include <string.h>
 
-class TextField : public ChildlessView, public Responder {
+class TextField : public View, public Responder {
 public:
   TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize);
   // View

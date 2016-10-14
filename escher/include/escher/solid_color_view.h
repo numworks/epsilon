@@ -1,9 +1,9 @@
 #ifndef ESCHER_SOLID_COLOR_VIEW_H
 #define ESCHER_SOLID_COLOR_VIEW_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 
-class SolidColorView : public ChildlessView {
+class SolidColorView : public View {
 public:
   SolidColorView(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;

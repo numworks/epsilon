@@ -7,7 +7,7 @@ constexpr KDColor EvenOddCell::k_oddLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_selectedLineBackgroundColor;
 
 EvenOddCell::EvenOddCell() :
-  ChildlessView(),
+  View(),
   m_highlighted(false),
   m_even(false)
 {

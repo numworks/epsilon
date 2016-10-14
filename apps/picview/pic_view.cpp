@@ -2,7 +2,7 @@
 #include <assert.h>
 
 PicView::PicView() :
-  ChildlessView() {
+  View() {
 }
 
 #include "image.c"

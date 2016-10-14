@@ -1,9 +1,9 @@
 #ifndef ESCHER_SCROLL_VIEW_INDICATOR_H
 #define ESCHER_SCROLL_VIEW_INDICATOR_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 
-class ScrollViewIndicator : public ChildlessView {
+class ScrollViewIndicator : public View {
 public:
   enum class Direction {
     Horizontal,

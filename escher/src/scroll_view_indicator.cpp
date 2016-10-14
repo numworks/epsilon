@@ -7,7 +7,7 @@ constexpr KDColor k_backgroundColor = KDColorBlack;
 constexpr KDColor k_indicatorColor = KDColorRed;
 
 ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction) :
-  ChildlessView(),
+  View(),
   m_direction(direction),
   m_start(0),
   m_end(0)

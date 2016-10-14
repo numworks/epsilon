@@ -4,7 +4,7 @@ extern "C" {
 }
 
 StackView::StackView() :
-  ChildlessView(),
+  View(),
   m_name(nullptr)
 {
 }

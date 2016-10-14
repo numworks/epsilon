@@ -4,9 +4,9 @@
 #include <escher.h>
 
 namespace Graph {
-class CursorView : public ChildlessView {
+class CursorView : public View {
 public:
-  using ChildlessView::ChildlessView;
+  using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 

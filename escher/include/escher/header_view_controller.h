@@ -2,7 +2,7 @@
 #define HEADER_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/childless_view.h>
+#include <escher/view.h>
 #include <escher/invocation.h>
 #include <escher/button.h>
 #include <escher/app.h>

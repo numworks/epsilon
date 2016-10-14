@@ -8,7 +8,7 @@ constexpr KDColor TabViewCell::k_selectedTabColor;
 constexpr KDColor TabViewCell::k_separatorTabColor;
 
 TabViewCell::TabViewCell() :
-  ChildlessView(),
+  View(),
   m_active(false),
   m_selected(false),
   m_name(nullptr)

@@ -1,10 +1,10 @@
 #ifndef ESCHER_IMAGE_VIEW_H
 #define ESCHER_IMAGE_VIEW_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 #include <escher/image.h>
 
-class ImageView : public ChildlessView {
+class ImageView : public View {
 public:
   ImageView();
   void setImage(const Image * image);

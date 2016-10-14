@@ -4,7 +4,7 @@
 #include <escher/view.h>
 #include <escher/text_view.h>
 
-class TabViewCell : public ChildlessView {
+class TabViewCell : public View {
 public:
   TabViewCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;

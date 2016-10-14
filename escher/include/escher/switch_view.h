@@ -1,9 +1,9 @@
 #ifndef ESCHER_SWITCH_VIEW_H
 #define ESCHER_SWITCH_VIEW_H
 
-#include <escher/childless_view.h>
+#include <escher/view.h>
 
-class SwitchView : public ChildlessView {
+class SwitchView : public View {
 public:
   SwitchView();
   bool state();

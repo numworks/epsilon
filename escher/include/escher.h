@@ -2,6 +2,7 @@
 #define ESCHER_H
 
 #include <escher/app.h>
+#include <escher/buffer_text_view.h>
 #include <escher/button.h>
 #include <escher/container.h>
 #include <escher/float_table_view_cell.h>

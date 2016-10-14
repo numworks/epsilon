@@ -11,6 +11,7 @@ public:
 
   void scrollToCell(int i, int j);
   View * cellAtLocation(int i, int j);
+  void reloadData();
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

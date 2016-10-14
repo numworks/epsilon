@@ -39,6 +39,10 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
+void TableView::reloadData() {
+  layoutSubviews();
+}
+
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource) :

@@ -9,6 +9,13 @@ public:
 
   int numberOfElements();
   float element(int i);
+  float start();
+  float end();
+  float step();
+  void setStart(float f);
+  void setEnd(float f);
+  void setStep(float f);
+
 private:
   float m_start;
   float m_end;

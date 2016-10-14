@@ -23,4 +23,28 @@ float Interval::element(int i) {
   return m_start + i*m_step;
 }
 
+float Interval::start() {
+  return m_start;
+}
+
+float Interval::end() {
+  return m_end;
+}
+
+float Interval::step() {
+  return m_step;
+}
+
+void Interval::setStart(float f) {
+  m_start = f;
+}
+
+void Interval::setEnd(float f) {
+  m_end = f;
+}
+
+void Interval::setStep(float f) {
+  m_step = f;
+}
+
 }

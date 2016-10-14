@@ -9,7 +9,7 @@ class ValuesParameterController : public ViewController, public ListViewDataSour
 public:
   ValuesParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
-  FloatTableViewCell * tableViewCellAtIndex(int index);
+  TextTableViewCell * tableViewCellAtIndex(int index);
   int activeCell();
   void editParameterInterval();
   void setIntervalParameterAtIndex(int parameterIndex, float f);
@@ -28,9 +28,9 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   Interval * m_interval;
-  FloatTableViewCell m_intervalStartCell;
-  FloatTableViewCell m_intervalEndCell;
-  FloatTableViewCell m_intervalStepCell;
+  TextTableViewCell m_intervalStartCell;
+  TextTableViewCell m_intervalEndCell;
+  TextTableViewCell m_intervalStepCell;
   ListView m_listView;
   int m_activeCell;
 };

@@ -7,9 +7,9 @@ namespace Graph {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, Interval * interval) :
   ViewController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(FloatTableViewCell((char*)"X Debut")),
-  m_intervalEndCell(FloatTableViewCell((char*)"X Fin")),
-  m_intervalStepCell(FloatTableViewCell((char*)"Pas")),
+  m_intervalStartCell(TextTableViewCell((char*)"X Debut")),
+  m_intervalEndCell(TextTableViewCell((char*)"X Fin")),
+  m_intervalStepCell(TextTableViewCell((char*)"Pas")),
   m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0)
@@ -24,7 +24,7 @@ View * ValuesParameterController::view() {
   return &m_listView;
 }
 
-FloatTableViewCell * ValuesParameterController::tableViewCellAtIndex(int index) {
+TextTableViewCell * ValuesParameterController::tableViewCellAtIndex(int index) {
   switch(index) {
     case 0:
       return &m_intervalStartCell;
@@ -51,16 +51,20 @@ int ValuesParameterController::activeCell() {
 }
 
 void ValuesParameterController::willDisplayCellForIndex(View * cell, int index) {
-  FloatTableViewCell * myCell = (FloatTableViewCell *) cell;
+  TextTableViewCell * myCell = (TextTableViewCell *) cell;
+  char buffer[14];
   switch (index) {
     case 0:
-      myCell->setFloat(m_interval->start());
+      Float(m_interval->start()).convertFloatToText(buffer, 14, 7);
+      myCell->setText(buffer);
       break;
     case 1:
-      myCell->setFloat(m_interval->end());
+      Float(m_interval->end()).convertFloatToText(buffer, 14, 7);
+      myCell->setText(buffer);
       break;
     case 2:
-      myCell->setFloat(m_interval->step());
+      Float(m_interval->step()).convertFloatToText(buffer, 14, 7);
+      myCell->setText(buffer);
       break;
     default:
       assert(false);
@@ -72,12 +76,12 @@ void ValuesParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  FloatTableViewCell * previousCell = (FloatTableViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  TextTableViewCell * previousCell = (TextTableViewCell *)(m_listView.cellAtIndex(m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_listView.scrollToRow(index);
-  FloatTableViewCell * cell = (FloatTableViewCell *)(m_listView.cellAtIndex(index));
+  TextTableViewCell * cell = (TextTableViewCell *)(m_listView.cellAtIndex(index));
   cell->setHighlighted(true);
 }
 
@@ -117,14 +121,14 @@ void ValuesParameterController::editParameterInterval() {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  const char * initialTextContent = tableViewCellAtIndex(m_activeCell)->stringFromFloat();
+  const char * initialTextContent = tableViewCellAtIndex(m_activeCell)->textContent();
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   inputController->edit(this, initialTextContent, this,
     [](void * context, void * sender){
     ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
     int activeCell = valuesParameterController->activeCell();
-    FloatTableViewCell * cell = valuesParameterController->tableViewCellAtIndex(activeCell);
+    TextTableViewCell * cell = valuesParameterController->tableViewCellAtIndex(activeCell);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     App * myApp = (App *)valuesParameterController->app();

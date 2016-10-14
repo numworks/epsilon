@@ -6,8 +6,6 @@ objs += $(addprefix escher/src/,\
   buffer_text_view.o\
   button.o\
   container.o\
-  float_table_view_cell.o\
-  float_view.o\
   header_view_controller.o\
   image_view.o\
   invocation.o\

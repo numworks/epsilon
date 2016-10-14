@@ -37,11 +37,7 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
 }
 
 KDSize TextView::minimalSizeForOptimalDisplay() {
-    if (m_text == nullptr) {
-    return KDSizeZero;
-  } else {
-    return KDText::stringSize(m_text);
-  }
+  return KDText::stringSize(m_text);
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {

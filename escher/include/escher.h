@@ -4,6 +4,7 @@
 #include <escher/app.h>
 #include <escher/button.h>
 #include <escher/container.h>
+#include <escher/float_table_view_cell.h>
 #include <escher/float_view.h>
 #include <escher/header_view_controller.h>
 #include <escher/image.h>

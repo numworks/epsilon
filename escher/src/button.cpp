@@ -3,7 +3,7 @@
 
 Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation) :
   Responder(parentResponder),
-  m_textView(TextView(textBody, 0.5f, 0.5f)),
+  m_pointerTextView(PointerTextView(textBody, 0.5f, 0.5f)),
   m_invocation(invocation),
   m_backgroundColor(KDColorWhite)
 {
@@ -19,11 +19,11 @@ int Button::numberOfSubviews() const {
 
 View * Button::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_textView;
+  return &m_pointerTextView;
 }
 
 void Button::layoutSubviews() {
-  m_textView.setFrame(bounds());
+  m_pointerTextView.setFrame(bounds());
 }
 
 bool Button::handleEvent(Ion::Events::Event event) {
@@ -38,11 +38,11 @@ bool Button::handleEvent(Ion::Events::Event event) {
 
 void Button::setBackgroundColor(KDColor backgroundColor) {
   m_backgroundColor = backgroundColor;
-  m_textView.setBackgroundColor(backgroundColor);
+  m_pointerTextView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }
 
 KDSize Button::minimalSizeForOptimalDisplay() {
-  KDSize textSize = m_textView.minimalSizeForOptimalDisplay();
+  KDSize textSize = m_pointerTextView.minimalSizeForOptimalDisplay();
   return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }

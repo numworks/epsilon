@@ -10,21 +10,18 @@ public:
   // alignment = 0 -> align left or top
   // alignment = 0.5 -> align center
   // alignment = 1.0 -> align right or bottom
-  TextView(const char * text,
-      float horizontalAlignment, float verticalAlignment,
-      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  TextView(float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setText(const char * text);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() override;
 protected:
+  virtual const char * text() const = 0;
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
 private:
-  const char * m_text;
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

@@ -3,7 +3,7 @@
 
 #include <escher/view.h>
 #include <escher/responder.h>
-#include <escher/text_view.h>
+#include <escher/pointer_text_view.h>
 #include <escher/invocation.h>
 
 class Button : public View, public Responder {
@@ -19,7 +19,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  TextView m_textView;
+  PointerTextView m_pointerTextView;
   Invocation m_invocation;
   KDColor m_backgroundColor;
 };

@@ -19,7 +19,7 @@ public:
 private:
   static constexpr KDCoordinate k_iconSize = 32;
   ImageView m_iconView;
-  TextView m_nameView;
+  PointerTextView m_nameView;
   bool m_visible;
   bool m_active;
 };

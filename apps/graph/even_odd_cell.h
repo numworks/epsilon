@@ -10,7 +10,7 @@ public:
   EvenOddCell();
   void setEven(bool even);
   void setHighlighted(bool highlight);
-  void reloadCell();
+  virtual void reloadCell();
   KDColor backgroundColor() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 

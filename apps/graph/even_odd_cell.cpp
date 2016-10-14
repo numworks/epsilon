@@ -15,12 +15,12 @@ EvenOddCell::EvenOddCell() :
 
 void EvenOddCell::setEven(bool even) {
   m_even = even;
-  markRectAsDirty(bounds());
+  reloadCell();
 }
 
 void EvenOddCell::setHighlighted(bool highlight) {
   m_highlighted = highlight;
-  markRectAsDirty(bounds());
+  reloadCell();
 }
 
 void EvenOddCell::reloadCell() {

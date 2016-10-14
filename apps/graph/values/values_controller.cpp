@@ -210,12 +210,15 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     }
   } else {
     ValueCell * myCell = (ValueCell *)cell;
+    char buffer[14];
     if (i == 0){
-      myCell->setFloat(m_interval.element(j-1));
+      Float(m_interval.element(j-1)).convertFloatToText(buffer, 14, 7);
+      myCell->setText(buffer);
     } else {
       Function * function = m_functionStore->activeFunctionAtIndex(i-1);
       float x = m_interval.element(j-1);
-      myCell->setFloat(function->evaluateAtAbscissa(x, m_evaluateContext));
+      Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
+      myCell->setText(buffer);
     }
     myCell->setEven(j%2 == 0);
   }

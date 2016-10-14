@@ -9,12 +9,14 @@ namespace Graph {
 class ValueCell : public EvenOddCell {
 public:
   ValueCell();
-  void setFloat(float f);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void reloadCell() override;
+  void setText(const char * textContent);
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
 
 protected:
-  Float m_float;
-  char m_buffer[14];
+  BufferTextView m_bufferTextView;
 };
 
 }

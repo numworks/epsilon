@@ -14,10 +14,12 @@ class App : public ::App {
 public:
   App(::Context * context);
   InputViewController * inputViewController();
+  Context * globalContext();
 protected:
   ViewController * rootViewController() override;
 private:
   FunctionStore m_functionStore;
+  Context * m_globalContext;
   EvaluateContext m_evaluateContext;
   ListController m_listController;
   StackViewController m_listStackViewController;

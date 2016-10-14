@@ -32,6 +32,7 @@ objs += $(addprefix escher/src/,\
   table_view_cell.o\
   table_view_data_source.o\
   text_field.o\
+  text_table_view_cell.o\
   text_view.o\
   tiled_view.o\
   view.o\

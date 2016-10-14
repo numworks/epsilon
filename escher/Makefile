@@ -20,16 +20,16 @@ objs += $(addprefix escher/src/,\
   solid_color_view.o\
   stack_view.o\
   stack_view_controller.o\
-  switch_table_view_cell.o\
+  switch_list_view_cell.o\
   switch_view.o\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\
   table_view.o\
-  table_view_cell.o\
+  list_view_cell.o\
   table_view_data_source.o\
   text_field.o\
-  text_table_view_cell.o\
+  text_list_view_cell.o\
   text_view.o\
   tiled_view.o\
   view.o\

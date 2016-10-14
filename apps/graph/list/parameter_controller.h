@@ -26,9 +26,9 @@ public:
 private:
   bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
-  TableViewCell m_colorCell;
-  SwitchTableViewCell m_enableCell;
-  TableViewCell m_deleteCell;
+  ListViewCell m_colorCell;
+  SwitchListViewCell m_enableCell;
+  ListViewCell m_deleteCell;
   ListView m_listView;
   int m_activeCell;
   Function * m_function;

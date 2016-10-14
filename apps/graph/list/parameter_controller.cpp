@@ -5,9 +5,9 @@ namespace Graph {
 
 ParameterController::ParameterController(Responder * parentResponder, FunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_colorCell(TableViewCell((char*)"Couleur de la fonction")),
-  m_enableCell(SwitchTableViewCell((char*)"Activer/Desactiver")),
-  m_deleteCell(TableViewCell((char*)"Supprimer la fonction")),
+  m_colorCell(ListViewCell((char*)"Couleur de la fonction")),
+  m_enableCell(SwitchListViewCell((char*)"Activer/Desactiver")),
+  m_deleteCell(ListViewCell((char*)"Supprimer la fonction")),
   m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
@@ -38,12 +38,12 @@ void ParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  TableViewCell * previousCell = (TableViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_listView.scrollToRow(index);
-  TableViewCell * cell = (TableViewCell *)(m_listView.cellAtIndex(index));
+  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
   cell->setHighlighted(true);
 
 }

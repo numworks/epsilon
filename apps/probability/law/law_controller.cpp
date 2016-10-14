@@ -37,12 +37,12 @@ void Probability::LawController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfModels) {
     return;
   }
-  TableViewCell * previousCell = (TableViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_listView.scrollToRow(index);
-  TableViewCell * cell = (TableViewCell *)(m_listView.cellAtIndex(index));
+  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
   cell->setHighlighted(true);
 }
 
@@ -77,7 +77,7 @@ int Probability::LawController::reusableCellCount() {
 }
 
 void Probability::LawController::willDisplayCellForIndex(View * cell, int index) {
-  TableViewCell * myCell = (TableViewCell *)cell;
+  ListViewCell * myCell = (ListViewCell *)cell;
   myCell->textView()->setText(m_messages[index]);
   if (m_activeCell == index) {
     myCell->textView()->setBackgroundColor(Palette::FocusCellBackgroundColor);

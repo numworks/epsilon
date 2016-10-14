@@ -7,9 +7,9 @@ namespace Graph {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, Interval * interval) :
   ViewController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(TextTableViewCell((char*)"X Debut")),
-  m_intervalEndCell(TextTableViewCell((char*)"X Fin")),
-  m_intervalStepCell(TextTableViewCell((char*)"Pas")),
+  m_intervalStartCell(TextListViewCell((char*)"X Debut")),
+  m_intervalEndCell(TextListViewCell((char*)"X Fin")),
+  m_intervalStepCell(TextListViewCell((char*)"Pas")),
   m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0)
@@ -24,7 +24,7 @@ View * ValuesParameterController::view() {
   return &m_listView;
 }
 
-TextTableViewCell * ValuesParameterController::tableViewCellAtIndex(int index) {
+TextListViewCell * ValuesParameterController::ListViewCellAtIndex(int index) {
   switch(index) {
     case 0:
       return &m_intervalStartCell;
@@ -51,7 +51,7 @@ int ValuesParameterController::activeCell() {
 }
 
 void ValuesParameterController::willDisplayCellForIndex(View * cell, int index) {
-  TextTableViewCell * myCell = (TextTableViewCell *) cell;
+  TextListViewCell * myCell = (TextListViewCell *) cell;
   char buffer[14];
   switch (index) {
     case 0:
@@ -76,12 +76,12 @@ void ValuesParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  TextTableViewCell * previousCell = (TextTableViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  TextListViewCell * previousCell = (TextListViewCell *)(m_listView.cellAtIndex(m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
   m_listView.scrollToRow(index);
-  TextTableViewCell * cell = (TextTableViewCell *)(m_listView.cellAtIndex(index));
+  TextListViewCell * cell = (TextListViewCell *)(m_listView.cellAtIndex(index));
   cell->setHighlighted(true);
 }
 
@@ -121,14 +121,14 @@ void ValuesParameterController::editParameterInterval() {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  const char * initialTextContent = tableViewCellAtIndex(m_activeCell)->textContent();
+  const char * initialTextContent = ListViewCellAtIndex(m_activeCell)->textContent();
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   inputController->edit(this, initialTextContent, this,
     [](void * context, void * sender){
     ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
     int activeCell = valuesParameterController->activeCell();
-    TextTableViewCell * cell = valuesParameterController->tableViewCellAtIndex(activeCell);
+    TextListViewCell * cell = valuesParameterController->ListViewCellAtIndex(activeCell);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     App * myApp = (App *)valuesParameterController->app();

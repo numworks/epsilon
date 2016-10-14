@@ -1,23 +1,23 @@
-#include <escher/table_view_cell.h>
+#include <escher/list_view_cell.h>
 #include <assert.h>
 
-constexpr KDCoordinate TableViewCell::k_separatorThickness;
+constexpr KDCoordinate ListViewCell::k_separatorThickness;
 
-TableViewCell::TableViewCell(char * label) :
+ListViewCell::ListViewCell(char * label) :
   View(),
   m_highlighted(false),
   m_pointerTextView(PointerTextView(label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
 
-int TableViewCell::numberOfSubviews() const {
+int ListViewCell::numberOfSubviews() const {
   if (contentView() == nullptr) {
     return 1;
   }
   return 2;
 }
 
-View * TableViewCell::subviewAtIndex(int index) {
+View * ListViewCell::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_pointerTextView;
   }
@@ -25,7 +25,7 @@ View * TableViewCell::subviewAtIndex(int index) {
   return contentView();
 }
 
-void TableViewCell::layoutSubviews() {
+void ListViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   m_pointerTextView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, 3*width/4 - 2*k_separatorThickness, height - 2*k_separatorThickness));
@@ -35,26 +35,26 @@ void TableViewCell::layoutSubviews() {
   }
 }
 
-PointerTextView * TableViewCell::textView() {
+PointerTextView * ListViewCell::textView() {
   return &m_pointerTextView;
 }
 
-View * TableViewCell::contentView() const {
+View * ListViewCell::contentView() const {
   return nullptr;
 }
 
-bool TableViewCell::isHighlighted() const {
+bool ListViewCell::isHighlighted() const {
   return m_highlighted;
 }
 
-void TableViewCell::setHighlighted(bool highlight) {
+void ListViewCell::setHighlighted(bool highlight) {
   m_highlighted = highlight;
   KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_pointerTextView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }
 
-void TableViewCell::drawRect(KDContext * ctx, KDRect rect) const {
+void ListViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = (m_highlighted ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor);

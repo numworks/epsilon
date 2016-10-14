@@ -26,7 +26,7 @@ private:
   constexpr static int k_maxNumberOfCells = 10;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
-  TableViewCell m_cells[k_maxNumberOfCells];
+  ListViewCell m_cells[k_maxNumberOfCells];
   ListView m_listView;
   const char ** m_messages;
   int m_activeCell;

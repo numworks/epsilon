@@ -1,5 +1,5 @@
-#ifndef ESCHER_TABLE_VIEW_CELL_H
-#define ESCHER_TABLE_VIEW_CELL_H
+#ifndef ESCHER_LIST_VIEW_CELL_H
+#define ESCHER_LIST_VIEW_CELL_H
 
 #include <escher/view.h>
 #include <escher/pointer_text_view.h>
@@ -7,9 +7,9 @@
 #include <escher/metric.h>
 
 
-class TableViewCell : public View {
+class ListViewCell : public View {
 public:
-  TableViewCell(char * label = nullptr);
+  ListViewCell(char * label = nullptr);
   PointerTextView * textView();
   virtual View * contentView() const;
   bool isHighlighted() const;

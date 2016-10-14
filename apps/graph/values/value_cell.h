@@ -2,6 +2,7 @@
 #define GRAPH_VALUE_CELL_H
 
 #include <escher.h>
+#include <poincare.h>
 #include "../even_odd_cell.h"
 
 namespace Graph {
@@ -12,7 +13,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 protected:
-  float m_float;
+  Float m_float;
   char m_buffer[14];
 };
 

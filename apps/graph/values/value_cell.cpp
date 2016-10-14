@@ -1,16 +1,16 @@
 #include "value_cell.h"
-#include "float_to_string.h"
 
 namespace Graph {
 
 ValueCell::ValueCell() :
-  EvenOddCell()
+  EvenOddCell(),
+  m_float(Float(0.0f))
 {
 }
 
 void ValueCell::setFloat(float f) {
-  m_float = f;
-  FloatToString::convertFloatToText(f, m_buffer, 14, 7);
+  m_float = Float(f);
+  m_float.convertFloatToText(m_buffer, 14, 7);
 }
 
 void ValueCell::drawRect(KDContext * ctx, KDRect rect) const {

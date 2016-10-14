@@ -12,7 +12,6 @@ app_objs += $(addprefix apps/graph/,\
   list/function_name_view.o\
   list/list_controller.o\
   list/parameter_controller.o\
-  values/float_to_string.o\
   values/interval.o\
   values/title_cell.o\
   values/value_cell.o\

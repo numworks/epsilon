@@ -8,6 +8,7 @@
 #include "value_cell.h"
 #include "title_cell.h"
 #include "interval.h"
+#include "abscissa_parameter_controller.h"
 #include "values_parameter_controller.h"
 
 namespace Graph {
@@ -22,6 +23,7 @@ public:
   Interval * interval();
   ValueCell * abscisseCellAtRow(int rowIndex);
   void editValue(bool overwrite, char initialDigit = 0);
+  void configureAbscissa();
 
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -67,6 +69,7 @@ private:
   EvaluateContext * m_evaluateContext;
   Interval m_interval;
   ValuesParameterController m_parameterController;
+  AbscissaParameterController m_abscissaParameterController;
   Button m_setIntervalButton;
 };
 

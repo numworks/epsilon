@@ -44,7 +44,7 @@ ViewController * ValuesController::parameterController() {
 }
 
 int ValuesController::numberOfRows() {
-  return 1 + m_interval.numberOfElements();
+  return 2 + m_interval.numberOfElements();
 };
 
 int ValuesController::numberOfColumns() {
@@ -272,6 +272,7 @@ int ValuesController::reusableCellCount(int type) {
 void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
+  // The cell is a title cell:
   if (j == 0) {
     TitleCell * mytitleCell = (TitleCell *)cell;
     if (i == 0) {
@@ -284,8 +285,16 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     myFunctionCell->setText(function->name(), function->color());
     return;
   }
+  // The cell is a value cell:
   ValueCell * myValueCell = (ValueCell *)cell;
   char buffer[14];
+  // Special case 1: last row
+  if (j == numberOfRows() - 1) {
+    buffer[0] = 0;
+    myValueCell->setText(buffer);
+    return;
+  }
+  // Special case 2: first column
   if (i == 0){
     Float(m_interval.element(j-1)).convertFloatToText(buffer, 14, 7);
     myValueCell->setText(buffer);

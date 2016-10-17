@@ -165,19 +165,24 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 int ValuesController::typeAtLocation(int i, int j) {
   if (j == 0) {
-    return 0;
-  } else {
+    if (i == 0) {
+      return 0;
+    }
     return 1;
   }
+  return 2;
 }
 
 View * ValuesController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
     case 0:
-      assert(index < k_maxNumberOfColumns);
-      return &m_titleCells[index];
+      assert(index == 0);
+      return &m_abscissaTitleCell;
     case 1:
+      assert(index < k_maxNumberOfFunctions);
+      return &m_functionTitleCells[index];
+    case 2:
       assert(index < k_maxNumberOfCells);
       return &m_floatCells[index];
     default:
@@ -189,8 +194,10 @@ View * ValuesController::reusableCell(int index, int type) {
 int ValuesController::reusableCellCount(int type) {
   switch (type) {
     case 0:
-      return k_maxNumberOfColumns;
+      return 1;
     case 1:
+      return k_maxNumberOfFunctions;
+    case 2:
       return k_maxNumberOfCells;
     default:
       assert(false);
@@ -199,29 +206,31 @@ int ValuesController::reusableCellCount(int type) {
 }
 
 void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
+  EvenOddCell * myCell = (EvenOddCell *)cell;
+  myCell->setEven(j%2 == 0);
   if (j == 0) {
-    TitleCell * myCell = (TitleCell *)cell;
-    myCell->setEven(j%2 == 0);
+    TitleCell * mytitleCell = (TitleCell *)cell;
     if (i == 0) {
-      myCell->setText("x");
-    } else {
-      Function * function = m_functionStore->activeFunctionAtIndex(i-1);
-      myCell->setText(function->name());
+      mytitleCell->setText("x");
+      return;
     }
-  } else {
-    ValueCell * myCell = (ValueCell *)cell;
-    char buffer[14];
-    if (i == 0){
-      Float(m_interval.element(j-1)).convertFloatToText(buffer, 14, 7);
-      myCell->setText(buffer);
-    } else {
-      Function * function = m_functionStore->activeFunctionAtIndex(i-1);
-      float x = m_interval.element(j-1);
-      Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
-      myCell->setText(buffer);
-    }
-    myCell->setEven(j%2 == 0);
+    FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+    Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+    myFunctionCell->setColor(function->color());
+    myFunctionCell->setText(function->name(), function->color());
+    return;
   }
+  ValueCell * myValueCell = (ValueCell *)cell;
+  char buffer[14];
+  if (i == 0){
+    Float(m_interval.element(j-1)).convertFloatToText(buffer, 14, 7);
+    myValueCell->setText(buffer);
+    return;
+  }
+  Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+  float x = m_interval.element(j-1);
+  Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
+  myValueCell->setText(buffer);
 }
 
 }

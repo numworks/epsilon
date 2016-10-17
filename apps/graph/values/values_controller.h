@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../function_store.h"
 #include "../evaluate_context.h"
+#include "function_title_cell.h"
 #include "value_cell.h"
 #include "title_cell.h"
 #include "interval.h"
@@ -48,10 +49,11 @@ public:
 private:
   Responder * tabController() const;
   constexpr static int k_maxNumberOfCells = 40;
-  constexpr static int k_maxNumberOfColumns = 5;
+  constexpr static int k_maxNumberOfFunctions = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
-  TitleCell m_titleCells[k_maxNumberOfColumns];
+  TitleCell m_abscissaTitleCell;
+  FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
   TableView m_tableView;
   int m_activeCellX;

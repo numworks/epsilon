@@ -28,10 +28,11 @@ View * ListViewCell::subviewAtIndex(int index) {
 void ListViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_pointerTextView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, 3*width/4 - 2*k_separatorThickness, height - 2*k_separatorThickness));
+  KDSize labelSize = m_pointerTextView.minimalSizeForOptimalDisplay();
+  m_pointerTextView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));
   View * content = contentView();
   if (content) {
-    content->setFrame(KDRect(k_separatorThickness + 3*width/4, k_separatorThickness, width/4-2*k_separatorThickness, height-2*k_separatorThickness));
+    content->setFrame(KDRect(k_separatorThickness + labelSize.width(), k_separatorThickness, width - labelSize.width()-2*k_separatorThickness, height-2*k_separatorThickness));
   }
 }
 

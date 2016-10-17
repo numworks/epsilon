@@ -155,6 +155,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       case Ion::Events::Event::UP_ARROW:
         setSelectedButton(-1);
         app()->setFirstResponder(tabController());
+        return true;
       default:
         return HeaderViewController::handleEvent(event);
     }

@@ -15,8 +15,9 @@ void TitleCell::reloadCell() {
   m_pointerTextView.setBackgroundColor(backgroundColor());
 }
 
-void TitleCell::setText(const char * title) {
+void TitleCell::setText(const char * title, KDColor textColor) {
   m_pointerTextView.setText(title);
+  m_pointerTextView.setTextColor(textColor);
 }
 
 int TitleCell::numberOfSubviews() const {

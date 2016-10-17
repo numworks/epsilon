@@ -50,9 +50,12 @@ void Interval::setStep(float f) {
 }
 
 void Interval::setElement(int i, float f) {
-  assert(i < numberOfElements());
+  assert(i <= numberOfElements() && i < k_maxNumberOfElements);
   computeElements();
   m_intervalBuffer[i] = f;
+  if (i == numberOfElements()) {
+    m_numberOfElements++;
+  }
 }
 
 void Interval::computeElements() {

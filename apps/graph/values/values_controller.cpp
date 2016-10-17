@@ -44,6 +44,10 @@ ViewController * ValuesController::parameterController() {
 }
 
 int ValuesController::numberOfRows() {
+  int numberOfIntervalElements = m_interval.numberOfElements();
+  if (numberOfIntervalElements >= Interval::k_maxNumberOfElements) {
+    return 1 + m_interval.numberOfElements();
+  }
   return 2 + m_interval.numberOfElements();
 };
 
@@ -206,7 +210,11 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
   } else {
-    Float(m_interval.element(m_activeCellY-1)).convertFloatToText(initialTextContent, 14, 7);
+    if (m_activeCellY > m_interval.numberOfElements()) {
+      initialTextContent[0] = 0;
+    } else {
+      Float(m_interval.element(m_activeCellY-1)).convertFloatToText(initialTextContent, 14, 7);
+    }
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
@@ -291,9 +299,14 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
   char buffer[14];
   // Special case 1: last row
   if (j == numberOfRows() - 1) {
-    buffer[0] = 0;
-    myValueCell->setText(buffer);
-    return;
+    /* Display an empty line only if there is enough space for a new element in
+     * interval */
+    int numberOfIntervalElements = m_interval.numberOfElements();
+    if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
+      buffer[0] = 0;
+      myValueCell->setText(buffer);
+      return;
+    }
   }
   // Special case 2: first column
   if (i == 0){

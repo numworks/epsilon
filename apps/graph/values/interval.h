@@ -17,9 +17,9 @@ public:
   void setEnd(float f);
   void setStep(float f);
   void setElement(int i, float f);
-private:
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfElements = 500;
+private:
   void computeElements();
   int m_numberOfElements;
   float m_intervalBuffer[k_maxNumberOfElements];

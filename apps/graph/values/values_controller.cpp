@@ -10,7 +10,6 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_activeCellY(-1),
   m_functionStore(functionStore),
   m_evaluateContext(evaluateContext),
-  m_interval(Interval(-1.0f, 1.0f, 0.25f)),
   m_parameterController(ValuesParameterController(this, &m_interval)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
@@ -18,6 +17,9 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     stack->push(valuesController->parameterController());
   }, this)))
 {
+  m_interval.setStart(0);
+  m_interval.setEnd(10);
+  m_interval.setStep(1);
 }
 
 const char * ValuesController::title() const {

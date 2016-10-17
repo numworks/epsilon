@@ -3,24 +3,23 @@
 
 namespace Graph {
 
-Interval::Interval(float start, float end, float step) :
-  m_start(start),
-  m_end(end),
-  m_step(step)
+Interval::Interval() :
+  m_start(0),
+  m_end(0),
+  m_step(0),
+  m_needCompute(false)
 {
 }
 
 int Interval::numberOfElements() {
-  if (m_start > m_end) {
-    return 0;
-  } else {
-    return 1 + (m_end - m_start)/m_step;
-  }
+  computeElements();
+  return m_numberOfElements;
 }
 
 float Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
-  return m_start + i*m_step;
+  computeElements();
+  return m_intervalBuffer[i];
 }
 
 float Interval::start() {
@@ -37,14 +36,39 @@ float Interval::step() {
 
 void Interval::setStart(float f) {
   m_start = f;
+  m_needCompute = true;
 }
 
 void Interval::setEnd(float f) {
   m_end = f;
+  m_needCompute = true;
 }
 
 void Interval::setStep(float f) {
   m_step = f;
+  m_needCompute = true;
+}
+
+void Interval::setElement(int i, float f) {
+  assert(i < numberOfElements());
+  computeElements();
+  m_intervalBuffer[i] = f;
+}
+
+void Interval::computeElements() {
+  if (!m_needCompute) {
+    return;
+  }
+  if ( m_start > m_end) {
+    m_numberOfElements = 0;
+  } else {
+    m_numberOfElements = m_step > 0 ? 1 + (m_end - m_start)/m_step : k_maxNumberOfElements;
+    m_numberOfElements = m_numberOfElements > k_maxNumberOfElements ? k_maxNumberOfElements : m_numberOfElements;
+  }
+  for (int i = 0; i < m_numberOfElements; i += 1) {
+    m_intervalBuffer[i] = m_start + i * m_step;
+  }
+  m_needCompute = false;
 }
 
 }

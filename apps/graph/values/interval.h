@@ -5,8 +5,9 @@ namespace Graph {
 
 class Interval {
 public:
-  Interval(float start, float end, float step);
-
+  Interval();
+  // Delete the implicit copy constructor: the object is heavy
+  Interval(const Interval&) = delete;
   int numberOfElements();
   float element(int i);
   float start();
@@ -15,11 +16,17 @@ public:
   void setStart(float f);
   void setEnd(float f);
   void setStep(float f);
-
+  void setElement(int i, float f);
 private:
+  // TODO: decide the max number of elements after optimization
+  constexpr static int k_maxNumberOfElements = 500;
+  void computeElements();
+  int m_numberOfElements;
+  float m_intervalBuffer[k_maxNumberOfElements];
   float m_start;
   float m_end;
   float m_step;
+  bool m_needCompute;
 };
 
 }

@@ -13,8 +13,6 @@ public:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-
 protected:
   PointerTextView m_pointerTextView;
 };

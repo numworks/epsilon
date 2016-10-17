@@ -11,7 +11,7 @@ public:
   Interval * interval();
   TextListViewCell * ListViewCellAtIndex(int index);
   int activeCell();
-  void editParameterInterval();
+  void editInterval(bool overwrite, char initialDigit = 0);
   void setIntervalParameterAtIndex(int parameterIndex, float f);
 
   View * view() override;

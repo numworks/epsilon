@@ -110,18 +110,28 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
-      editParameterInterval();
+      editInterval(false);
       return true;
     default:
-      return false;
+      if ((int)event >= 0x100) {
+        return false;
+      }
+      editInterval(true, (char)event);
+      return true;
   }
 }
 
-void ValuesParameterController::editParameterInterval() {
+void ValuesParameterController::editInterval(bool overwrite, char initialDigit) {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  const char * initialTextContent = ListViewCellAtIndex(m_activeCell)->textContent();
+  char initialTextContent[16];
+  if (overwrite) {
+    initialTextContent[0] = initialDigit;
+    initialTextContent[1] = 0;
+  } else {
+    strlcpy(initialTextContent, ListViewCellAtIndex(m_activeCell)->textContent(), sizeof(initialTextContent));
+  }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   inputController->edit(this, initialTextContent, this,

@@ -14,6 +14,7 @@ objs += $(addprefix escher/src/,\
   list_view.o\
   metric.o\
   palette.o\
+  pointer_text_view.o\
   responder.o\
   scroll_view.o\
   scroll_view_indicator.o\

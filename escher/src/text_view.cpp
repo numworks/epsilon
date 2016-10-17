@@ -1,23 +1,17 @@
 #include <escher/text_view.h>
 
-TextView::TextView() : TextView(nullptr, 0.0f, 0.0f, KDColorBlack, KDColorWhite)
+TextView::TextView() : TextView(0.0f, 0.0f, KDColorBlack, KDColorWhite)
 {
 }
 
-TextView::TextView(const char * text, float horizontalAlignment, float verticalAlignment,
+TextView::TextView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   ChildlessView(),
-  m_text(text),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
   m_backgroundColor(backgroundColor)
 {
-}
-
-void TextView::setText(const char * text) {
-  m_text = text;
-  markRectAsDirty(bounds());
 }
 
 void TextView::setBackgroundColor(KDColor backgroundColor) {
@@ -37,19 +31,19 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
 }
 
 KDSize TextView::minimalSizeForOptimalDisplay() {
-  return KDText::stringSize(m_text);
+  return KDText::stringSize(text());
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_text == nullptr) {
+  if (text() == nullptr) {
     return;
   }
-  KDSize textSize = KDText::stringSize(m_text);
+  KDSize textSize = KDText::stringSize(text());
   KDPoint origin = {
     (KDCoordinate)(m_horizontalAlignment*(m_frame.width() - textSize.width())),
     (KDCoordinate)(m_verticalAlignment*(m_frame.height() - textSize.height()))
   };
-  ctx->drawString(m_text, origin, m_textColor, m_backgroundColor);
+  ctx->drawString(text(), origin, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING

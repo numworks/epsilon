@@ -133,10 +133,16 @@ void ListController::configureFunction(Function * function) {
   stack->push(&m_parameterController);
 }
 
-void ListController::editExpression(FunctionExpressionView * functionCell) {
+void ListController::editExpression(FunctionExpressionView * functionCell, bool overwrite, char initialDigit) {
+  char initialTextContent[255];
+  if (overwrite) {
+    initialTextContent[0] = initialDigit;
+    initialTextContent[1] = 0;
+  } else {
+    strlcpy(initialTextContent, functionCell->function()->text(), sizeof(initialTextContent));
+  }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  const char * initialTextContent = functionCell->function()->text();
   inputController->edit(this, initialTextContent, functionCell,
     [](void * context, void * sender){
     FunctionExpressionView * myCell = (FunctionExpressionView *) context;
@@ -174,7 +180,12 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::ENTER:
       return handleEnter();
     default:
-      return false;
+      if ((int)event >= 0x100 || m_activeCellx == 0) {
+        return false;
+      }
+      FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
+      editExpression(functionCell, true, (char)event);
+      return true;
   }
 }
 
@@ -189,7 +200,7 @@ bool ListController::handleEnter() {
     case 1:
     {
       FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
-      editExpression(functionCell);
+      editExpression(functionCell, false);
       return true;
     }
     default:

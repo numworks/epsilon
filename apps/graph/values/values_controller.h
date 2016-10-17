@@ -17,6 +17,11 @@ public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
 
   void setActiveCell(int i, int j);
+  int activeRow();
+  int activeColumn();
+  Interval * interval();
+  ValueCell * abscisseCellAtRow(int rowIndex);
+  void editValue(bool overwrite, char initialDigit = 0);
 
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

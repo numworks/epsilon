@@ -1,4 +1,5 @@
 #include "values_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
@@ -113,6 +114,23 @@ void ValuesController::setActiveCell(int i, int j) {
   }
 }
 
+int ValuesController::activeRow() {
+  return m_activeCellY;
+}
+
+int ValuesController::activeColumn() {
+  return m_activeCellX;
+}
+
+Interval * ValuesController::interval() {
+  return &m_interval;
+}
+
+ValueCell * ValuesController::abscisseCellAtRow(int rowIndex) {
+  assert(rowIndex > 0 && rowIndex < numberOfRows());
+  return &m_floatCells[rowIndex];
+}
+
 void ValuesController::didBecomeFirstResponder() {
   m_tableView.reloadData();
   setSelectedButton(-1);
@@ -140,29 +158,73 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       default:
         return HeaderViewController::handleEvent(event);
     }
-  } else {
-    switch (event) {
-      case Ion::Events::Event::DOWN_ARROW:
-        setActiveCell(m_activeCellX, m_activeCellY+1);
-        return true;
-      case Ion::Events::Event::UP_ARROW:
-        setActiveCell(m_activeCellX, m_activeCellY-1);
-        if (m_activeCellY == -1) {
-          setSelectedButton(0);
-        }
-        return true;
-      case Ion::Events::Event::LEFT_ARROW:
-        setActiveCell(m_activeCellX-1, m_activeCellY);
-        return true;
-      case Ion::Events::Event::RIGHT_ARROW:
-        setActiveCell(m_activeCellX+1, m_activeCellY);
-        return true;
-      case Ion::Events::Event::ENTER:
-        return true;
-      default:
-        return false;
-    }
   }
+  switch (event) {
+    case Ion::Events::Event::DOWN_ARROW:
+      setActiveCell(m_activeCellX, m_activeCellY+1);
+      return true;
+    case Ion::Events::Event::UP_ARROW:
+      setActiveCell(m_activeCellX, m_activeCellY-1);
+      if (m_activeCellY == -1) {
+        setSelectedButton(0);
+      }
+      return true;
+    case Ion::Events::Event::LEFT_ARROW:
+      setActiveCell(m_activeCellX-1, m_activeCellY);
+      return true;
+    case Ion::Events::Event::RIGHT_ARROW:
+      setActiveCell(m_activeCellX+1, m_activeCellY);
+      return true;
+    case Ion::Events::Event::ENTER:
+      if (m_activeCellX == 0) {
+        if (m_activeCellY == 0) {
+          return true;
+        }
+        editValue(false);
+        return true;
+      }
+      return false;
+    default:
+      if ((int)event < 0x100) {
+        if (m_activeCellX == 0 && m_activeCellY > 0) {
+          editValue(true, (char)event);
+          return true;
+        }
+        return false;
+      }
+      return false;
+  }
+}
+
+void ValuesController::editValue(bool overwrite, char initialDigit) {
+  /* This code assumes that the active cell remains the one which is edited
+   * until the invocation is performed. This could lead to concurrency issue in
+   * other cases. */
+  char initialTextContent[16];
+  if (overwrite) {
+    initialTextContent[0] = initialDigit;
+    initialTextContent[1] = 0;
+  } else {
+    Float(m_interval.element(m_activeCellY-1)).convertFloatToText(initialTextContent, 14, 7);
+  }
+  App * myApp = (App *)app();
+  InputViewController * inputController = myApp->inputViewController();
+  inputController->edit(this, initialTextContent, this,
+    [](void * context, void * sender){
+    ValuesController * valuesController = (ValuesController *)context;
+    int activeRow = valuesController->activeRow();
+    int activeColumn = valuesController->activeColumn();
+    ValueCell * cell = valuesController->abscisseCellAtRow(activeRow);
+    InputViewController * myInputViewController = (InputViewController *)sender;
+    const char * textBody = myInputViewController->textBody();
+    App * myApp = (App *)valuesController->app();
+    Context * globalContext = myApp->globalContext();
+    float floatBody = Expression::parse(textBody)->approximate(*globalContext);
+    valuesController->interval()->setElement(activeRow-1, floatBody);
+    valuesController->willDisplayCellAtLocation(cell, activeColumn, activeRow);
+    },
+    [](void * context, void * sender){
+    });
 }
 
 int ValuesController::typeAtLocation(int i, int j) {

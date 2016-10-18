@@ -280,7 +280,7 @@ View * ValuesController::reusableCell(int index, int type) {
       return &m_floatCells[index];
     default:
       assert(false);
-      break;
+      return nullptr;
   }
 }
 
@@ -294,7 +294,7 @@ int ValuesController::reusableCellCount(int type) {
       return k_maxNumberOfCells;
     default:
       assert(false);
-      break;
+      return 0;
   }
 }
 

@@ -2,11 +2,12 @@
 #define GRAPH_ABSCISSA_PARAM_CONTROLLER_H
 
 #include <escher.h>
+#include "values_parameter_controller.h"
 
 namespace Graph {
 class AbscissaParameterController : public ViewController, public ListViewDataSource {
 public:
-  AbscissaParameterController(Responder * parentResponder);
+  AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController);
 
   View * view() override;
   const char * title() const override;
@@ -25,6 +26,7 @@ private:
   ListViewCell m_setInterval;
   ListView m_listView;
   int m_activeCell;
+  ValuesParameterController * m_valuesParameterController;
 };
 
 }

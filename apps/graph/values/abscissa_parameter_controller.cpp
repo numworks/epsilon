@@ -3,14 +3,15 @@
 
 namespace Graph {
 
-AbscissaParameterController::AbscissaParameterController(Responder * parentResponder) :
+AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController) :
   ViewController(parentResponder),
   m_deleteColumn(ListViewCell((char*)"Effacer la colonne")),
   m_copyColumn(ListViewCell((char*)"Copier la colonne dans une liste")),
   m_setInterval(ListViewCell((char*)"Regler l'intervalle")),
   m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_activeCell(0)
+  m_activeCell(0),
+  m_valuesParameterController(valuesParameterController)
 {
 }
 

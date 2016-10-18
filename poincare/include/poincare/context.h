@@ -2,22 +2,19 @@
 #define POINCARE_CONTEXT_H
 
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
 
 //TODO: We should probably make a COPY of the expressions we store
 
 class Context {
   public:
     Context();
-    ~Context();
-    virtual const Expression * operator[](const char * symbol_name) const;
-    void setExpressionForSymbolName(Expression * expression, const char * symbol_name);
+    virtual const Expression * expressionForSymbol(const Symbol * symbol) const;
+    void setExpressionForSymbolName(Expression * expression, const Symbol * symbol);
   private:
-    struct ContextPair {
-      const char * name;
-      Expression * expression;
-    };
-    ContextPair * m_pairs;
-    const uint16_t kMaxContextPairs = 10;
+    int symbolIndex(const Symbol * symbol) const;
+    static constexpr uint16_t k_maxNumberOfExpressions = 26;
+    Expression * m_expressions[k_maxNumberOfExpressions];
 };
 
 #endif

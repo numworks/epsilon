@@ -13,12 +13,11 @@ void EvaluateContext::setOverridenValueForSymbolX(float f) {
   m_xValue = Float(f);
 }
 
-const Expression * EvaluateContext::operator[](const char * symbolName) const {
-  if (strcmp("x", symbolName) == 0) {
+const Expression * EvaluateContext::expressionForSymbol(const Symbol * symbol) const {
+  if (symbol->name() == 'x') {
     return &m_xValue;
   } else {
-    Context context = *m_context;
-    return context[symbolName];
+    return m_context->expressionForSymbol(symbol);
   }
 }
 

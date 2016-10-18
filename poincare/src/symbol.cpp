@@ -12,7 +12,7 @@ Symbol::Symbol(const char * name) :
 }
 
 float Symbol::approximate(Context& context) const {
-  return context[&m_name]->approximate(context);
+  return context.expressionForSymbol(this)->approximate(context);
 }
 
 Expression::Type Symbol::type() const {

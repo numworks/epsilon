@@ -13,6 +13,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_evaluateContext(evaluateContext),
   m_parameterController(ValuesParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_parameterController)),
+  m_functionParameterController(FunctionParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
@@ -182,11 +183,15 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCellX+1, m_activeCellY);
       return true;
     case Ion::Events::Event::ENTER:
-      if (m_activeCellX == 0) {
-        if (m_activeCellY == 0) {
+      if (m_activeCellY == 0) {
+        if (m_activeCellX == 0) {
           configureAbscissa();
           return true;
         }
+        configureFunction();
+        return true;
+      }
+      if (m_activeCellX == 0) {
         editValue(false);
         return true;
       }
@@ -207,6 +212,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 void ValuesController::configureAbscissa() {
   StackViewController * stack = ((StackViewController *)parentResponder());
   stack->push(&m_abscissaParameterController);
+}
+
+void ValuesController::configureFunction() {
+  Function * function = m_functionStore->activeFunctionAtIndex(m_activeCellX-1);
+  m_functionParameterController.setFunction(function);
+  StackViewController * stack = ((StackViewController *)parentResponder());
+  stack->push(&m_functionParameterController);
 }
 
 void ValuesController::editValue(bool overwrite, char initialDigit) {

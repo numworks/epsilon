@@ -49,8 +49,34 @@ bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
-      return true;
+      return handleEnter();
     default:
+      return false;
+  }
+}
+
+bool AbscissaParameterController::handleEnter() {
+  switch (m_activeCell) {
+    case 0:
+    {
+      Interval * interval = m_valuesParameterController->interval();
+      interval->setEnd(0.0f);
+      interval->setStep(1.0f);
+      interval->setStart(1.0f);
+      StackViewController * stack = ((StackViewController *)parentResponder());
+      stack->pop();
+      return true;
+    }
+    case 1:
+      return false;
+    case 2:
+    {
+      StackViewController * stack = ((StackViewController *)parentResponder());
+      stack->push(m_valuesParameterController);
+      return true;
+    }
+    default:
+      assert(false);
       return false;
   }
 }

@@ -20,6 +20,7 @@ public:
   View * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
+  bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
   ListViewCell m_deleteColumn;
   ListViewCell m_copyColumn;

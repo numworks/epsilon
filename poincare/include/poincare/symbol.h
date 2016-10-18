@@ -5,16 +5,15 @@
 
 class Symbol : public LeafExpression {
   public:
-    Symbol(char * name);
-    ~Symbol();
+    Symbol(const char * name);
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
     Type type() const override;
-    const char* name() const;
+    const char name() const;
     Expression * clone() const override;
     bool valueEquals(const Expression * e) const override;
   private:
-    char * m_name;
+    const char m_name;
 };
 
 #endif

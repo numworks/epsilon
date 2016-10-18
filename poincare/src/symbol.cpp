@@ -1,44 +1,40 @@
 #include <poincare/symbol.h>
 #include <poincare/context.h>
-#include <stdlib.h>
 #include "layout/string_layout.h"
 extern "C" {
 #include <assert.h>
 }
 
-Symbol::Symbol(char * name) {
-  size_t length = strlen(name);
-  m_name = (char *)malloc(sizeof(char)*length+1);
-  memcpy(m_name, name, length);
-  m_name[length] = 0;
-}
-
-Symbol::~Symbol() {
-  free(m_name);
+Symbol::Symbol(const char * name) :
+  m_name(*name)
+{
+  assert(strlen(name) == 1);
 }
 
 float Symbol::approximate(Context& context) const {
-  return context[m_name]->approximate(context);
+  return context[&m_name]->approximate(context);
 }
 
 Expression::Type Symbol::type() const {
   return Expression::Type::Symbol;
 }
 
-const char* Symbol::name() const {
+const char Symbol::name() const {
   return m_name;
 }
 
 ExpressionLayout * Symbol::createLayout() const {
-  size_t length = strlen(m_name);
-  return new StringLayout(m_name, length);
+  return new StringLayout(&m_name, 1);
 }
 
 Expression * Symbol::clone() const {
-  return new Symbol(m_name);
+  char name[2];
+  name[0] = m_name;
+  name[1] = 0;
+  return new Symbol(name);
 }
 
 bool Symbol::valueEquals(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
-  return (strcmp(m_name, ((Symbol *)e)->m_name) == 0);
+  return (m_name == ((Symbol *)e)->m_name);
 }

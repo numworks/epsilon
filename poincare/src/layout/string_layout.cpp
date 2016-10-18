@@ -4,9 +4,9 @@
 
 StringLayout::StringLayout(const char * string, size_t length) :
 ExpressionLayout() {
-  assert(string[length] == 0); // Assert NULL-termination
   m_string = (char *)malloc(sizeof(char)*(length+1));
-  memcpy(m_string, string, (length+1));
+  memcpy(m_string, string, length);
+  m_string[length] = 0;
   // Height of the font.
   m_baseline = KDText::stringSize(" ").height();
 }

@@ -67,11 +67,11 @@
 %%
 
 [0-9]+ { poincare_expression_yylval.string = yytext; return(INTEGER); }
+[A-Zxnt] { poincare_expression_yylval.string = yytext; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
-[A-Za-z]+ { poincare_expression_yylval.string = yytext; return(SYMBOL); }
 \+ { return(PLUS); }
 \- { return(MINUS); }
 \* { return(MULTIPLY); }

@@ -14,6 +14,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_parameterController(ValuesParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_parameterController)),
   m_functionParameterController(FunctionParameterController(this)),
+  m_derivativeParameterController(DerivativeParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
@@ -232,7 +233,10 @@ void ValuesController::configureFunction() {
 }
 
 void ValuesController::configureDerivativeFunction() {
-  // TODO: push a derivativeParameterController
+  Function * function = functionAtColumn(m_activeCellX);
+  m_derivativeParameterController.setFunction(function);
+  StackViewController * stack = ((StackViewController *)parentResponder());
+  stack->push(&m_derivativeParameterController);
 }
 
 void ValuesController::editValue(bool overwrite, char initialDigit) {

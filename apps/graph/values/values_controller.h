@@ -9,6 +9,7 @@
 #include "title_cell.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
+#include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
 #include "values_parameter_controller.h"
 
@@ -76,6 +77,7 @@ private:
   ValuesParameterController m_parameterController;
   AbscissaParameterController m_abscissaParameterController;
   FunctionParameterController m_functionParameterController;
+  DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
 };
 

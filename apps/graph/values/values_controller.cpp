@@ -54,7 +54,13 @@ int ValuesController::numberOfRows() {
 };
 
 int ValuesController::numberOfColumns() {
-  return 1 + m_functionStore->numberOfActiveFunctions();
+  int result = 1;
+  for (int i = 0; i < m_functionStore->numberOfFunctions(); i++) {
+    if (m_functionStore->functionAtIndex(i)->isActive()) {
+      result += 1 + m_functionStore->functionAtIndex(i)->displayDerivative();
+    }
+  }
+  return result;
 };
 
 KDCoordinate ValuesController::rowHeight(int j) {
@@ -143,10 +149,10 @@ void ValuesController::didBecomeFirstResponder() {
   if (m_activeCellY == -1) {
     setActiveCell(0,0);
   } else {
-    if (m_activeCellX < m_functionStore->numberOfActiveFunctions()) {
+    if (m_activeCellX < numberOfColumns()) {
       setActiveCell(m_activeCellX, m_activeCellY);
     } else {
-      setActiveCell(m_functionStore->numberOfActiveFunctions(), m_activeCellY);
+      setActiveCell(numberOfColumns() - 1, m_activeCellY);
     }
   }
 }
@@ -188,7 +194,11 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
           configureAbscissa();
           return true;
         }
-        configureFunction();
+        if (isDerivativeColumn(m_activeCellX)) {
+          configureDerivativeFunction();
+        } else {
+          configureFunction();
+        }
         return true;
       }
       if (m_activeCellX == 0) {
@@ -215,10 +225,14 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
-  Function * function = m_functionStore->activeFunctionAtIndex(m_activeCellX-1);
+  Function * function = functionAtColumn(m_activeCellX);
   m_functionParameterController.setFunction(function);
   StackViewController * stack = ((StackViewController *)parentResponder());
   stack->push(&m_functionParameterController);
+}
+
+void ValuesController::configureDerivativeFunction() {
+  // TODO: push a derivativeParameterController
 }
 
 void ValuesController::editValue(bool overwrite, char initialDigit) {
@@ -309,8 +323,13 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
       return;
     }
     FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-    Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+    Function * function = functionAtColumn(i);
     myFunctionCell->setColor(function->color());
+    if (isDerivativeColumn(i)) {
+      myFunctionCell->setDerivative(true);
+    } else {
+      myFunctionCell->setDerivative(false);
+    }
     myFunctionCell->setText(function->name(), function->color());
     return;
   }
@@ -334,10 +353,56 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     myValueCell->setText(buffer);
     return;
   }
-  Function * function = m_functionStore->activeFunctionAtIndex(i-1);
+  Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
-  Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
+  if (isDerivativeColumn(i)) {
+    Float(function->approximateDerivative(x, m_evaluateContext)).convertFloatToText(buffer, 14, 3);
+  } else {
+    Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
+  }
   myValueCell->setText(buffer);
+}
+
+Function * ValuesController::functionAtColumn(int i) {
+  assert(i > 0);
+  int index = 1;
+  for (int k = 0; k < m_functionStore->numberOfFunctions(); k++) {
+    if (m_functionStore->functionAtIndex(k)->isActive()) {
+      if (i == index) {
+        return m_functionStore->functionAtIndex(k);
+      }
+      index++;
+      if (m_functionStore->functionAtIndex(k)->displayDerivative()) {
+        if (i == index) {
+          return m_functionStore->functionAtIndex(k);
+        }
+        index++;
+      }
+    }
+  }
+  assert(false);
+  return nullptr;
+}
+
+bool ValuesController::isDerivativeColumn(int i) {
+  assert(i >= 1);
+  int index = 1;
+  for (int k = 0; k < m_functionStore->numberOfFunctions(); k++) {
+    if (m_functionStore->functionAtIndex(k)->isActive()) {
+      if (i == index) {
+        return false;
+      }
+      index++;
+      if (m_functionStore->functionAtIndex(k)->displayDerivative()) {
+        if (i == index) {
+          return true;
+        }
+        index++;
+      }
+    }
+  }
+  assert(false);
+  return false;
 }
 
 }

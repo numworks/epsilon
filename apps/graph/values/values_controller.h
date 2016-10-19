@@ -24,8 +24,6 @@ public:
   Interval * interval();
   ValueCell * abscisseCellAtRow(int rowIndex);
   void editValue(bool overwrite, char initialDigit = 0);
-  void configureAbscissa();
-  void configureFunction();
 
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -56,7 +54,12 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 
 private:
+  Function * functionAtColumn(int i);
+  bool isDerivativeColumn(int i);
   Responder * tabController() const;
+  void configureAbscissa();
+  void configureFunction();
+  void configureDerivativeFunction();
   constexpr static int k_maxNumberOfCells = 40;
   constexpr static int k_maxNumberOfFunctions = 5;
   // !!! CAUTION: The order here is important

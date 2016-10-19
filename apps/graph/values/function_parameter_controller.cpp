@@ -34,6 +34,7 @@ void FunctionParameterController::setFunction(Function * function) {
 }
 
 void FunctionParameterController::didBecomeFirstResponder() {
+  m_listView.reloadData();
   setActiveCell(m_activeCell);
 }
 
@@ -59,8 +60,24 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
-      return true;
+      return handleEnter();
     default:
+      return false;
+  }
+}
+
+bool FunctionParameterController::handleEnter() {
+  switch (m_activeCell) {
+    case 0:
+    {
+      m_function->setDisplayDerivative(!m_function->displayDerivative());
+      m_listView.reloadData();
+      return true;
+    }
+    case 1:
+      return false;
+    default:
+      assert(false);
       return false;
   }
 }
@@ -87,7 +104,7 @@ KDCoordinate FunctionParameterController::cellHeight() {
 void FunctionParameterController::willDisplayCellForIndex(View * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.contentView();
-    switchView->setState(false);
+    switchView->setState(m_function->displayDerivative());
   }
 }
 

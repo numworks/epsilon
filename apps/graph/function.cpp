@@ -61,9 +61,16 @@ void Function::setActive(bool active) {
   m_active = active;
 }
 
-float Function::evaluateAtAbscissa(float x, EvaluateContext * context) {
+float Function::evaluateAtAbscissa(float x, EvaluateContext * context) const {
   context->setOverridenValueForSymbolX(x);
   return m_expression->approximate(*context);
+}
+
+float Function::approximateDerivative(float x, EvaluateContext * context) const {
+  float functionPlus = evaluateAtAbscissa(x + k_epsilon, context);
+  float functionMinus = evaluateAtAbscissa(x - k_epsilon, context);
+  float growthRate = (functionPlus - functionMinus)/(2*k_epsilon);
+  return growthRate;
 }
 
 }

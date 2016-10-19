@@ -22,8 +22,10 @@ public:
   void setActive(bool active);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  float evaluateAtAbscissa(float x, EvaluateContext * context);
+  float evaluateAtAbscissa(float x, EvaluateContext * context) const;
+  float approximateDerivative(float x, EvaluateContext * context) const;
 private:
+  constexpr static float k_epsilon = 0.0001f;
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];
   const char * m_name;

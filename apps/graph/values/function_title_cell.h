@@ -9,9 +9,11 @@ class FunctionTitleCell : public TitleCell {
 public:
   void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setDerivative(bool derivative);
  private:
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDColor m_functionColor;
+  bool m_derivative;
 };
 
 }

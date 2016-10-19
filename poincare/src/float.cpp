@@ -79,17 +79,11 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
 
   float logBase10 = m_float != 0.0f ? log10f(fabsf(m_float)) : 0;
   int exponentInBase10 = logBase10;
-  if ((int)m_float == 0 and logBase10 != exponentInBase10) {
+  if ((int)m_float == 0 && logBase10 != exponentInBase10) {
     /* For floats < 0, the exponent in base 10 is the inferior integer part of
      * log10(float). We thus decrement the exponent for float < 0 whose exponent
      * is not an integer. */
     exponentInBase10--;
-  }
-
-  int numberOfCharExponent = exponentInBase10 != 0 ? log10f(fabsf((float)exponentInBase10)) + 1 : 1;
-  if (exponentInBase10 < 0){
-    // If the exponent is < 0, we need a additional char for the sign
-    numberOfCharExponent++;
   }
 
   /* Future optimisation, if mode > 0, find the position of decimalMarker and
@@ -105,7 +99,19 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
    * threshold during computation. */
   int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
   assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
-  int mantissa = m_float * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2);
+  // TODO: add round here;
+  int mantissa = (m_float * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2));
+  // Correct the number of digits in mantissa after rounding
+  if ((int)(mantissa * powf(10, - availableCharsForMantissaWithoutSign + 1)) > 0) {
+    mantissa = mantissa/10;
+    exponentInBase10++;
+  }
+
+  int numberOfCharExponent = exponentInBase10 != 0 ? log10f(fabsf((float)exponentInBase10)) + 1 : 1;
+  if (exponentInBase10 < 0){
+    // If the exponent is < 0, we need a additional char for the sign
+    numberOfCharExponent++;
+  }
 
   // Supress the 0 on the right side of the mantissa
   int dividend = fabsf((float)mantissa);

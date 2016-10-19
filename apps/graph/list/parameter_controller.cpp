@@ -24,6 +24,7 @@ View * ParameterController::view() {
 }
 
 void ParameterController::didBecomeFirstResponder() {
+  m_listView.reloadData();
   setActiveCell(0);
 }
 

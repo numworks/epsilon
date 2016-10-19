@@ -8,7 +8,8 @@ Function::Function(const char * text, KDColor color) :
   m_color(color),
   m_expression(nullptr),
   m_layout(nullptr),
-  m_active(true)
+  m_active(true),
+  m_displayDerivative(false)
 {
 }
 
@@ -57,8 +58,16 @@ bool Function::isActive() {
   return m_active;
 }
 
+bool Function::displayDerivative() {
+  return m_displayDerivative;
+}
+
 void Function::setActive(bool active) {
   m_active = active;
+}
+
+void Function::setDisplayDerivative(bool display) {
+  m_displayDerivative = display;
 }
 
 float Function::evaluateAtAbscissa(float x, EvaluateContext * context) const {

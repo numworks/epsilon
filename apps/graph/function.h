@@ -20,6 +20,8 @@ public:
   ExpressionLayout * layout();
   bool isActive();
   void setActive(bool active);
+  bool displayDerivative();
+  void setDisplayDerivative(bool display);
   void setContent(const char * c);
   void setColor(KDColor m_color);
   float evaluateAtAbscissa(float x, EvaluateContext * context) const;
@@ -33,6 +35,7 @@ private:
   Expression * m_expression;
   ExpressionLayout * m_layout;
   bool m_active;
+  bool m_displayDerivative;
 };
 
 }

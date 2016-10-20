@@ -4,8 +4,50 @@
 
 namespace Graph {
 
+/* Content View */
+
+ValuesController::ContentView::ContentView(View * mainView) :
+  m_noFunctionSelected(PointerTextView("Aucune fonction selectionnee", 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
+  m_mainView(mainView),
+  m_tableState(TableState::Empty)
+{
+}
+
+void ValuesController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (m_tableState == TableState::Empty) {
+    ctx->fillRect(bounds(), Palette::BackgroundColor);
+  }
+}
+
+int ValuesController::ContentView::numberOfSubviews() const {
+  return 1;
+}
+
+View * ValuesController::ContentView::subviewAtIndex(int index) {
+  assert(index == 0);
+  if (m_tableState == TableState::Empty) {
+    return &m_noFunctionSelected;
+  }
+  return m_mainView;
+}
+
+void ValuesController::ContentView::layoutSubviews() {
+  m_noFunctionSelected.setFrame(bounds());
+  m_mainView->setFrame(bounds());
+}
+
+void ValuesController::ContentView::setTableState(TableState tableState) {
+  m_tableState = tableState;
+}
+
+ValuesController::ContentView::TableState ValuesController::ContentView::tableState() {
+  return m_tableState;
+}
+
+/* Value Controller */
+
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext) :
-  HeaderViewController(parentResponder, &m_tableView),
+  HeaderViewController(parentResponder, &m_contentView),
   m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_activeCellX(0),
   m_activeCellY(-1),
@@ -19,7 +61,8 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
     stack->push(valuesController->parameterController());
-  }, this)))
+  }, this))),
+  m_contentView(ContentView(&m_tableView))
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -145,6 +188,11 @@ ValueCell * ValuesController::abscisseCellAtRow(int rowIndex) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
+  if (m_functionStore->numberOfActiveFunctions() == 0) {
+    m_contentView.setTableState(ValuesController::ContentView::TableState::Empty);
+    return;
+  }
+  m_contentView.setTableState(ContentView::TableState::NonEmpty);
   m_tableView.reloadData();
   setSelectedButton(-1);
   if (m_activeCellY == -1) {
@@ -159,6 +207,14 @@ void ValuesController::didBecomeFirstResponder() {
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
+  if (m_contentView.tableState() == ContentView::TableState::Empty) {
+    if (event == Ion::Events::Event::UP_ARROW) {
+      app()->setFirstResponder(tabController());
+      return true;
+    }
+    return false;
+  }
+
   if (m_activeCellY == -1) {
     switch (event) {
       case Ion::Events::Event::DOWN_ARROW:

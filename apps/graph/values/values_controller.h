@@ -55,6 +55,25 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 
 private:
+  class ContentView : public View {
+    public:
+      enum class TableState {
+        Empty,
+        NonEmpty
+      };
+      ContentView(View * mainView);
+      void drawRect(KDContext * ctx, KDRect rect) const override;
+      void setTableState(TableState tableState);
+      TableState tableState();
+    private:
+      PointerTextView m_noFunctionSelected;
+      View * m_mainView;
+      TableState m_tableState;
+      int numberOfSubviews() const override;
+      View * subviewAtIndex(int index) override;
+      void layoutSubviews() override;
+  };
+
   Function * functionAtColumn(int i);
   bool isDerivativeColumn(int i);
   Responder * tabController() const;
@@ -79,6 +98,7 @@ private:
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
+  ContentView m_contentView;
 };
 
 }

@@ -5,6 +5,7 @@
 #include "../function_store.h"
 #include "function_name_view.h"
 #include "function_expression_view.h"
+#include "new_function_cell.h"
 #include "parameter_controller.h"
 
 namespace Graph {
@@ -45,6 +46,8 @@ private:
   // The cells should be initialized *before* the TableView!
   FunctionNameView m_nameCells[k_maxNumberOfRows];
   FunctionExpressionView m_expressionCells[k_maxNumberOfRows];
+  EvenOddCell m_emptyCell;
+  NewFunctionCell m_addNewFunction;
   TableView m_tableView;
   int m_activeCellx;
   int m_activeCelly;

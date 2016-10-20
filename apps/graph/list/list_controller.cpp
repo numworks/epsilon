@@ -108,7 +108,7 @@ void ListController::setActiveCell(int i, int j) {
   }
 
   if (m_activeCelly >= 0) {
-    FunctionCell * previousCell = (FunctionCell *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
+    EvenOddCell * previousCell = (EvenOddCell *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
     previousCell->setHighlighted(false);
   }
 
@@ -116,7 +116,7 @@ void ListController::setActiveCell(int i, int j) {
   m_activeCelly = j;
   if (m_activeCelly >= 0) {
     m_tableView.scrollToCell(i, j);
-    FunctionCell * cell = (FunctionExpressionView *)(m_tableView.cellAtLocation(i, j));
+    EvenOddCell * cell = (EvenOddCell *)(m_tableView.cellAtLocation(i, j));
     cell->setHighlighted(true);
   }
 }
@@ -126,10 +126,10 @@ void ListController::didBecomeFirstResponder() {
   if (m_activeCelly == -1) {
     setActiveCell(1,0);
   } else {
-    if (m_activeCelly < m_functionStore->numberOfFunctions()) {
+    if (m_activeCelly <= m_functionStore->numberOfFunctions()) {
       setActiveCell(m_activeCellx, m_activeCelly);
     } else {
-      setActiveCell(m_activeCellx, m_functionStore->numberOfFunctions()-1);
+      setActiveCell(m_activeCellx, m_functionStore->numberOfFunctions());
     }
   }
 }
@@ -200,12 +200,24 @@ bool ListController::handleEnter() {
   switch (m_activeCellx) {
     case 0:
     {
+      if (m_activeCelly == numberOfRows() - 1) {
+        return true;
+      }
       FunctionNameView * functionCell = (FunctionNameView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
       configureFunction(functionCell->function());
       return true;
     }
     case 1:
     {
+      if (m_activeCelly == numberOfRows() - 1) {
+        if (m_functionStore->numberOfFunctions() < FunctionStore::k_maxNumberOfFunctions) {
+          m_functionStore->addEmptyFunction();
+          m_tableView.reloadData();
+          return true;
+        }
+        // Add a warning to tell the user there is no more space for new functions
+        return false;
+      }
       FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
       editExpression(functionCell, false);
       return true;
@@ -218,6 +230,9 @@ bool ListController::handleEnter() {
 }
 
 int ListController::typeAtLocation(int i, int j) {
+  if (j == numberOfRows() - 1) {
+    return i + 2;
+  }
   return i;
 }
 
@@ -229,6 +244,10 @@ View * ListController::reusableCell(int index, int type) {
       return &m_nameCells[index];
     case 1:
       return &m_expressionCells[index];
+    case 2:
+      return &m_emptyCell;
+    case 3:
+      return &m_addNewFunction;
     default:
       assert(false);
       return nullptr;
@@ -236,13 +255,20 @@ View * ListController::reusableCell(int index, int type) {
 }
 
 int ListController::reusableCellCount(int type) {
+  if (type > 1) {
+    return 1;
+  }
   return k_maxNumberOfRows;
 }
 
 void ListController::willDisplayCellAtLocation(View * cell, int i, int j) {
-  FunctionCell * myCell = (FunctionCell *)cell;
-  myCell->setFunction(m_functionStore->functionAtIndex(j));
+  if (j < numberOfRows() - 1) {
+    FunctionCell * myCell = (FunctionCell *)cell;
+    myCell->setFunction(m_functionStore->functionAtIndex(j));
+  }
+  EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
+  myCell->setHighlighted(i == m_activeCellx && j == m_activeCelly);
 }
 
 }

@@ -116,6 +116,7 @@ void ListController::setActiveCell(int i, int j) {
 }
 
 void ListController::didBecomeFirstResponder() {
+  m_tableView.reloadData();
   if (m_activeCelly == -1) {
     setActiveCell(1,0);
   } else {

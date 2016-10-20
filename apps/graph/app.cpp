@@ -16,18 +16,6 @@ App::App(::Context * context) :
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_valuesStackViewController),
   m_inputViewController(this, &m_tabViewController)
 {
-  Function * function = m_functionStore.addEmptyFunction();
-  function->setContent("(x-1)*(x+1)*x");
-  function = m_functionStore.addEmptyFunction();
-  function->setContent("x*x");
-  function = m_functionStore.addEmptyFunction();
-  function->setContent("3");
-  function = m_functionStore.addEmptyFunction();
-  function->setContent("x*x*x");
-  function = m_functionStore.addEmptyFunction();
-  function->setContent("1/(1+1/x)");
-  function = m_functionStore.addEmptyFunction();
-  function->setContent("1/(1+1/(1/x))");
 }
 
 ViewController * App::rootViewController() {

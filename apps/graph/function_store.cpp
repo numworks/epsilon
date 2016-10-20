@@ -12,6 +12,7 @@ constexpr const char * FunctionStore::k_functionNames[k_maxNumberOfFunctions];
 FunctionStore::FunctionStore() :
   m_numberOfFunctions(0)
 {
+  addEmptyFunction();
 }
 
 Function * FunctionStore::functionAtIndex(int i) {

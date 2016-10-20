@@ -4,6 +4,7 @@
 namespace Graph {
 
 Function::Function(const char * text, KDColor color) :
+  m_text(""),
   m_name(text),
   m_color(color),
   m_expression(nullptr),
@@ -22,7 +23,10 @@ void Function::setContent(const char * c) {
   if (m_layout != nullptr) {
     delete m_layout;
   }
-  m_layout = expression()->createLayout();
+  m_layout = nullptr;
+  if (m_expression) {
+    m_layout = expression()->createLayout();
+  }
 }
 
 void Function::setColor(KDColor color) {

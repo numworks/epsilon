@@ -28,9 +28,13 @@ void FunctionNameView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = backgroundColor();
   // Position the name of the function
   const char * functionName = m_function->name();
-  KDCoordinate baseline = m_function->layout()->baseline();
   KDSize textSize = KDText::stringSize(functionName);
-  KDSize expressionSize = m_function->layout()->size();
+  KDCoordinate baseline = textSize.height();
+  KDSize expressionSize = textSize;
+  if (m_function->layout()) {
+    baseline = m_function->layout()->baseline();
+    expressionSize = m_function->layout()->size();
+  }
   KDPoint origin(0.5f*(k_colorIndicatorThickness + m_frame.width() - 4*textSize.width()),
     baseline-textSize.height()+0.5f*(m_frame.height() - expressionSize.height()));
   ctx->drawString(functionName, origin, functionNameColor, background);

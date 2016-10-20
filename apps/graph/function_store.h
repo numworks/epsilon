@@ -11,9 +11,11 @@ public:
   FunctionStore();
   Function * functionAtIndex(int i);
   Function * activeFunctionAtIndex(int i);
+  Function * definedFunctionAtIndex(int i);
   Function * addEmptyFunction();
   void removeFunction(Function * f);
   int numberOfFunctions();
+  int numberOfDefinedFunctions();
   int numberOfActiveFunctions();
 
 private:

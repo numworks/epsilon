@@ -25,7 +25,7 @@ Responder * ListController::tabController() const{
 }
 
 int ListController::numberOfRows() {
-  return m_functionStore->numberOfFunctions();
+  return 1 + m_functionStore->numberOfFunctions();
 };
 
 int ListController::numberOfColumns() {
@@ -33,7 +33,13 @@ int ListController::numberOfColumns() {
 };
 
 KDCoordinate ListController::rowHeight(int j) {
+  if (j == numberOfRows() - 1) {
+    return k_emptyRowHeight;
+  }
   Function * function = m_functionStore->functionAtIndex(j);
+  if (function->layout() == nullptr) {
+    return k_emptyRowHeight;
+  }
   KDCoordinate functionSize = function->layout()->size().height();
   return functionSize + k_verticalFunctionMargin;
 }

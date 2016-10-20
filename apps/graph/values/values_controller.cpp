@@ -99,9 +99,9 @@ int ValuesController::numberOfRows() {
 
 int ValuesController::numberOfColumns() {
   int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfFunctions(); i++) {
-    if (m_functionStore->functionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->functionAtIndex(i)->displayDerivative();
+  for (int i = 0; i < m_functionStore->numberOfDefinedFunctions(); i++) {
+    if (m_functionStore->definedFunctionAtIndex(i)->isActive()) {
+      result += 1 + m_functionStore->definedFunctionAtIndex(i)->displayDerivative();
     }
   }
   return result;
@@ -426,15 +426,15 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
 Function * ValuesController::functionAtColumn(int i) {
   assert(i > 0);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfFunctions(); k++) {
-    if (m_functionStore->functionAtIndex(k)->isActive()) {
+  for (int k = 0; k < m_functionStore->numberOfDefinedFunctions(); k++) {
+    if (m_functionStore->definedFunctionAtIndex(k)->isActive()) {
       if (i == index) {
-        return m_functionStore->functionAtIndex(k);
+        return m_functionStore->definedFunctionAtIndex(k);
       }
       index++;
-      if (m_functionStore->functionAtIndex(k)->displayDerivative()) {
+      if (m_functionStore->definedFunctionAtIndex(k)->displayDerivative()) {
         if (i == index) {
-          return m_functionStore->functionAtIndex(k);
+          return m_functionStore->definedFunctionAtIndex(k);
         }
         index++;
       }
@@ -447,13 +447,13 @@ Function * ValuesController::functionAtColumn(int i) {
 bool ValuesController::isDerivativeColumn(int i) {
   assert(i >= 1);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfFunctions(); k++) {
-    if (m_functionStore->functionAtIndex(k)->isActive()) {
+  for (int k = 0; k < m_functionStore->numberOfDefinedFunctions(); k++) {
+    if (m_functionStore->definedFunctionAtIndex(k)->isActive()) {
       if (i == index) {
         return false;
       }
       index++;
-      if (m_functionStore->functionAtIndex(k)->displayDerivative()) {
+      if (m_functionStore->definedFunctionAtIndex(k)->displayDerivative()) {
         if (i == index) {
           return true;
         }

@@ -9,6 +9,9 @@ FunctionExpressionView::FunctionExpressionView() :
 
 void FunctionExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   EvenOddCell::drawRect(ctx, rect);
+  if (m_function->layout() == nullptr) {
+    return;
+  }
   // Select the background color according to the even line and the cursor selection
   KDColor background = backgroundColor();
   // Select text color according to the state of the function

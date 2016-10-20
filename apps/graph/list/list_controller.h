@@ -38,6 +38,7 @@ public:
 private:
   static constexpr KDCoordinate k_verticalFunctionMargin = 50-12;
   static constexpr KDCoordinate k_functionNameWidth = 65;
+  static constexpr KDCoordinate k_emptyRowHeight = 50;
   Responder * tabController() const;
   constexpr static int k_maxNumberOfRows = 6;
   // !!! CAUTION: The order here is important

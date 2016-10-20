@@ -23,7 +23,22 @@ Function * FunctionStore::activeFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
   for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (m_functions[k].isActive()) {
+    if (m_functions[k].isActive() && m_functions[k].layout() != nullptr) {
+      if (i == index) {
+        return &m_functions[k];
+      }
+      index++;
+    }
+  }
+  assert(false);
+  return nullptr;
+}
+
+Function * FunctionStore::definedFunctionAtIndex(int i) {
+  assert(i>=0 && i<m_numberOfFunctions);
+  int index = 0;
+  for (int k = 0; k < m_numberOfFunctions; k++) {
+    if (m_functions[k].layout() != nullptr) {
       if (i == index) {
         return &m_functions[k];
       }
@@ -65,6 +80,16 @@ int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
     if (m_functions[i].isActive()) {
+      result++;
+    }
+  }
+  return result;
+}
+
+int FunctionStore::numberOfDefinedFunctions() {
+  int result = 0;
+  for (int i = 0; i < m_numberOfFunctions; i++) {
+    if (m_functions[i].layout() != nullptr) {
       result++;
     }
   }

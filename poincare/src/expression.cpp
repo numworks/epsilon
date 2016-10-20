@@ -14,6 +14,9 @@ Expression::~Expression() {
 }
 
 Expression * Expression::parse(char const * string) {
+  if (string[0] == 0) {
+    return nullptr;
+  }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
   Expression * expression = 0;
   poincare_expression_yyparse(&expression);

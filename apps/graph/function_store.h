@@ -27,7 +27,7 @@ private:
     KDColor(0xEF7138), KDColor(0x1774C5)
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
-    "f", "g", "h", "i", "j", "k", "l", "m"
+    "f", "g", "h", "p", "q", "r", "s", "t"
   };
   int m_numberOfFunctions;
   Function m_functions[k_maxNumberOfFunctions];

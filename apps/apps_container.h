@@ -4,6 +4,7 @@
 #include "home/app.h"
 #include "graph/app.h"
 #include "probability/app.h"
+#include "calcul/app.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -19,10 +20,11 @@ public:
 
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  static constexpr int k_numberOfApps = 3;
+  static constexpr int k_numberOfApps = 4;
   Home::App m_homeApp;
   Graph::App m_graphApp;
   Probability::App m_probabilityApp;
+  Calcul::App m_calculApp;
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif

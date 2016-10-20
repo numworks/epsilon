@@ -20,6 +20,7 @@ App * AppsContainer::appAtIndex(int index) {
     &m_homeApp,
     &m_graphApp,
     &m_probabilityApp,
+    &m_calculApp,
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);

@@ -21,7 +21,7 @@ const char * HistoryController::title() const {
 }
 
 void HistoryController::didBecomeFirstResponder() {
-  setActiveCell(0);
+  setActiveCell(numberOfRows()-1);
   m_listView.reloadData();
 }
 
@@ -44,6 +44,11 @@ void HistoryController::setActiveCell(int index) {
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
+      if (m_activeCell == numberOfRows()-1) {
+        app()->setFirstResponder(parentResponder());
+        setActiveCell(-1);
+        return true;
+      }
       setActiveCell(m_activeCell+1);
       return true;
     case Ion::Events::Event::UP_ARROW:

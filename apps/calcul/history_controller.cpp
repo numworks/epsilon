@@ -4,11 +4,11 @@
 
 namespace Calcul {
 
-HistoryController::HistoryController(Responder * parentResponder) :
+HistoryController::HistoryController(Responder * parentResponder, CalculStore * calculStore) :
   ViewController(parentResponder),
   m_listView(ListView(this, 0, 0, 0, 0)),
   m_activeCell(0),
-  m_calcul(Calcul())
+  m_calculStore(calculStore)
 {
 }
 
@@ -62,7 +62,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 int HistoryController::numberOfRows() {
-  return 10;
+  return m_calculStore->numberOfCalculs();
 };
 
 
@@ -82,7 +82,7 @@ KDCoordinate HistoryController::cellHeight() {
 
 void HistoryController::willDisplayCellForIndex(View * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalcul(&m_calcul);
+  myCell->setCalcul(m_calculStore->calculAtIndex(index));
 }
 
 }

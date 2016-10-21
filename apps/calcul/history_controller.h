@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "history_view_cell.h"
+#include "calcul_store.h"
 
 namespace Calcul {
 
@@ -11,7 +12,7 @@ class App;
 
 class HistoryController : public ViewController, ListViewDataSource {
 public:
-  HistoryController(Responder * parentResponder);
+  HistoryController(Responder * parentResponder, CalculStore * calculStore);
 
   View * view() override;
   const char * title() const override;
@@ -31,7 +32,7 @@ private:
   HistoryViewCell m_calculHistory[k_maxNumberOfDisplayedRows];
   ListView m_listView;
   int m_activeCell;
-  Calcul m_calcul;
+  CalculStore * m_calculStore;
 };
 
 }

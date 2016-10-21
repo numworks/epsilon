@@ -15,6 +15,7 @@ protected:
   ViewController * rootViewController() override;
 private:
   Context * m_globalContext;
+  CalculStore m_calculStore;
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };

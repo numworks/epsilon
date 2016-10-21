@@ -4,14 +4,11 @@
 namespace Calcul {
 
 Calcul::Calcul() :
-  m_text("1+3"),
+  m_text(""),
   m_expression(nullptr),
   m_layout(nullptr),
-  m_evaluation(Float(3.0f))
+  m_evaluation(Float(0.0f))
 {
-  // TODO: this is temporary. To test the render.
-  m_expression = Expression::parse(m_text);
-  m_layout = expression()->createLayout();
 }
 
 void Calcul::setContent(const char * c, Context * context) {

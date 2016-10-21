@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setFunction(Function * function);
   void didBecomeFirstResponder() override;
-
+  void reload();
   void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;

@@ -1,4 +1,5 @@
 #include "edit_expression_controller.h"
+#include "app.h"
 #include <assert.h>
 
 namespace Calcul {
@@ -38,10 +39,11 @@ TextField * EditExpressionController::ContentView::textField() {
   return &m_textField;
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculStore * calculStore) :
   ViewController(parentResponder),
   m_contentView(historyController->view()),
-  m_historyController(historyController)
+  m_historyController(historyController),
+  m_calculStore(calculStore)
 {
   m_contentView.textField()->setParentResponder(this);
 }
@@ -65,7 +67,14 @@ void EditExpressionController::setTextBody(const char * text) {
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:
+    {
+      Calcul * calcul = m_calculStore->addEmptyCalcul();
+      App * calculApp = (App *)app();
+      calcul->setContent(textBody(), calculApp->globalContext());
+      m_historyController->reload();
+      m_contentView.textField()->setTextBuffer("");
       return true;
+    }
     case Ion::Events::Event::ESC:
       return true;
     case Ion::Events::Event::UP_ARROW:

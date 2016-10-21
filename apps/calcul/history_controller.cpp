@@ -20,6 +20,10 @@ const char * HistoryController::title() const {
   return "Calcul Table";
 }
 
+void HistoryController::reload() {
+  m_listView.reloadData();
+}
+
 void HistoryController::didBecomeFirstResponder() {
   setActiveCell(numberOfRows()-1);
   m_listView.reloadData();

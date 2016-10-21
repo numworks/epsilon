@@ -56,4 +56,5 @@ const char * TextField::textBuffer () const {
 void TextField::setTextBuffer(const char * text) {
   strlcpy(m_textBuffer, text, m_textBufferSize);
   m_currentTextLength = strlen(text);
+  markRectAsDirty(bounds());
 }

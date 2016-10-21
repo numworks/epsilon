@@ -3,14 +3,19 @@
 
 namespace Calcul {
 
-App::App() :
+App::App(Context * context) :
   ::App("Calcul", ImageStore::CalculIcon),
-  m_calculController(CalculController(this))
+  m_globalContext(context),
+  m_historyController(HistoryController(this))
 {
 }
 
 ViewController * App::rootViewController() {
-  return &m_calculController;
+  return &m_historyController;
+}
+
+Context * App::globalContext() {
+  return m_globalContext;
 }
 
 }

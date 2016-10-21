@@ -11,6 +11,7 @@
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/list_view.h>
+#include <escher/list_view_data_source.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/pointer_text_view.h>
@@ -18,6 +19,7 @@
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/simple_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>

@@ -10,12 +10,14 @@ objs += $(addprefix escher/src/,\
   invocation.o\
   input_view_controller.o\
   list_view.o\
+  list_view_data_source.o\
   metric.o\
   palette.o\
   pointer_text_view.o\
   responder.o\
   scroll_view.o\
   scroll_view_indicator.o\
+  simple_list_view_data_source.o\
   simple_table_view_data_source.o\
   solid_color_view.o\
   stack_view.o\

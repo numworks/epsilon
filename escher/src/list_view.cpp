@@ -1,25 +1,6 @@
 #include <escher/list_view.h>
 #include <escher/metric.h>
 
-extern "C" {
-#include <assert.h>
-}
-
-int ListViewDataSource::numberOfColumns() {
-  return 1;
-}
-
-KDCoordinate ListViewDataSource::cellWidth() {
-  return 0;
-}
-
-void ListViewDataSource::willDisplayCellAtLocation(View * cell, int x, int y) {
-  willDisplayCellForIndex(cell, y);
-}
-
-void ListViewDataSource::willDisplayCellForIndex(View * cell, int index) {
-}
-
 ListView::ListView(ListViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   TableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin)

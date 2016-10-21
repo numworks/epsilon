@@ -5,7 +5,7 @@
 #include "interval.h"
 
 namespace Graph {
-class ValuesParameterController : public ViewController, public ListViewDataSource {
+class ValuesParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   ValuesParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();

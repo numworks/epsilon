@@ -5,7 +5,7 @@
 #include "../function.h"
 
 namespace Graph {
-class DerivativeParameterController : public ViewController, public ListViewDataSource {
+class DerivativeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   DerivativeParameterController(Responder * parentResponder);
 

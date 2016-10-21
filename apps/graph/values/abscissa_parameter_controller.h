@@ -5,7 +5,7 @@
 #include "values_parameter_controller.h"
 
 namespace Graph {
-class AbscissaParameterController : public ViewController, public ListViewDataSource {
+class AbscissaParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController);
 

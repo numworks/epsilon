@@ -7,7 +7,7 @@
 
 namespace Graph {
 
-class ParameterController : public ViewController, public ListViewDataSource {
+class ParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   ParameterController(Responder * parentResponder, FunctionStore * functionStore);
 

@@ -10,7 +10,7 @@ namespace Calcul {
 
 class App;
 
-class HistoryController : public ViewController, ListViewDataSource {
+class HistoryController : public ViewController, SimpleListViewDataSource {
 public:
   HistoryController(Responder * parentResponder, CalculStore * calculStore);
 

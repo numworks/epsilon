@@ -70,23 +70,48 @@ int HistoryController::numberOfRows() {
 };
 
 
-View * HistoryController::reusableCell(int index) {
+View * HistoryController::reusableCell(int index, int type) {
+  assert(type == 0);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
   return &m_calculHistory[index];
 }
 
-int HistoryController::reusableCellCount() {
+int HistoryController::reusableCellCount(int type) {
+  assert(type == 0);
   return k_maxNumberOfDisplayedRows;
-}
-
-KDCoordinate HistoryController::cellHeight() {
-  return 35;
 }
 
 void HistoryController::willDisplayCellForIndex(View * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalcul(m_calculStore->calculAtIndex(index));
+}
+
+KDCoordinate HistoryController::rowHeight(int j) {
+  Calcul * calcul = m_calculStore->calculAtIndex(j);
+  KDCoordinate calculHeight = calcul->layout()->size().height();
+  return calculHeight;
+}
+
+KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {
+  int result = 0;
+  for (int k = 0; k < j; k++) {
+    result += rowHeight(k);
+  }
+  return result;
+}
+
+int HistoryController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  int result = 0;
+  int j = 0;
+  while (result < offsetY && j < numberOfRows()) {
+    result += rowHeight(j++);
+  }
+  return (result < offsetY || offsetY == 0) ? j : j - 1;
+}
+
+int HistoryController::typeAtLocation(int i, int j) {
+  return 0;
 }
 
 }

@@ -77,9 +77,8 @@ bool ParameterController::handleEnter() {
     }
     case 1:
     {
-      SwitchView * switchView = (SwitchView *)m_enableCell.contentView();
-      switchView->setState(!switchView->state());
       m_function->setActive(!m_function->isActive());
+      m_listView.reloadData();
       return true;
     }
     case 2:

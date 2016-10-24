@@ -220,6 +220,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       case Ion::Events::Event::DOWN_ARROW:
         setSelectedButton(-1);
         setActiveCell(m_activeCellX, m_activeCellY+1);
+        app()->setFirstResponder(this);
         return true;
       case Ion::Events::Event::UP_ARROW:
         setSelectedButton(-1);

@@ -2,7 +2,7 @@
 #include "app.h"
 #include <assert.h>
 
-namespace Calcul {
+namespace Calculation {
 
 EditExpressionController::ContentView::ContentView(View * subview) :
   View(),
@@ -39,11 +39,11 @@ TextField * EditExpressionController::ContentView::textField() {
   return &m_textField;
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculStore * calculStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
   m_contentView(historyController->view()),
   m_historyController(historyController),
-  m_calculStore(calculStore)
+  m_calculationStore(calculationStore)
 {
   m_contentView.textField()->setParentResponder(this);
 }
@@ -68,9 +68,9 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:
     {
-      Calcul * calcul = m_calculStore->addEmptyCalcul();
-      App * calculApp = (App *)app();
-      calcul->setContent(textBody(), calculApp->globalContext());
+      Calculation * calculation = m_calculationStore->addEmptyCalculation();
+      App * calculationApp = (App *)app();
+      calculation->setContent(textBody(), calculationApp->globalContext());
       m_historyController->reload();
       m_contentView.textField()->setTextBuffer("");
       return true;

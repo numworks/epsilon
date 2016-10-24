@@ -1,24 +1,23 @@
-#ifndef CALCUL_HISTORY_VIEW_CELL_H
-#define CALCUL_HISTORY_VIEW_CELL_H
+#ifndef CALCULATION_HISTORY_VIEW_CELL_H
+#define CALCULATION_HISTORY_VIEW_CELL_H
 
 #include <escher.h>
-#include "calcul.h"
+#include "calculation.h"
 
-namespace Calcul {
+namespace Calculation {
 
 class HistoryViewCell : public View {
 public:
   HistoryViewCell();
   BufferTextView * result();
-  void setCalcul(Calcul * calcul);
+  void setCalculation(Calculation * calculation);
   void setHighlighted(bool highlight);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 private:
-  Calcul * m_calcul;
+  Calculation * m_calculation;
   bool m_highlighted;
   BufferTextView m_result;
 };

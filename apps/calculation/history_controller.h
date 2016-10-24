@@ -1,18 +1,18 @@
-#ifndef CALCUL_HISTORY_CONTROLLER_H
-#define CALCUL_HISTORY_CONTROLLER_H
+#ifndef CALCULATION_HISTORY_CONTROLLER_H
+#define CALCULATION_HISTORY_CONTROLLER_H
 
 #include <escher.h>
 #include <poincare.h>
 #include "history_view_cell.h"
-#include "calcul_store.h"
+#include "calculation_store.h"
 
-namespace Calcul {
+namespace Calculation {
 
 class App;
 
 class HistoryController : public ViewController, ListViewDataSource {
 public:
-  HistoryController(Responder * parentResponder, CalculStore * calculStore);
+  HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
 
   View * view() override;
   const char * title() const override;
@@ -32,12 +32,12 @@ public:
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;
-  constexpr static int k_defaultCalculCellWidth = 320;
+  constexpr static int k_defaultCalculationCellWidth = 320;
   constexpr static int k_resultWidth = 7*14;
-  HistoryViewCell m_calculHistory[k_maxNumberOfDisplayedRows];
+  HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   ListView m_listView;
   int m_activeCell;
-  CalculStore * m_calculStore;
+  CalculationStore * m_calculationStore;
 };
 
 }

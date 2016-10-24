@@ -1,16 +1,16 @@
-#ifndef CALCUL_EDIT_EXPRESSION_CONTROLLER_H
-#define CALCUL_EDIT_EXPRESSION_CONTROLLER_H
+#ifndef CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
+#define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
 #include "history_controller.h"
-#include "calcul_store.h"
+#include "calculation_store.h"
 
-namespace Calcul {
+namespace Calculation {
 class HistoryController;
 
 class EditExpressionController : public ViewController {
 public:
-  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculStore * calculStore);
+  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
   const char * title() const override;
   void didBecomeFirstResponder() override;
@@ -34,7 +34,7 @@ private:
   void setTextBody(const char * text);
   ContentView m_contentView;
   HistoryController * m_historyController;
-  CalculStore * m_calculStore;
+  CalculationStore * m_calculationStore;
 };
 
 }

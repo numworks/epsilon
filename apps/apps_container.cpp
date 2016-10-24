@@ -7,7 +7,7 @@ AppsContainer::AppsContainer() :
   Container(),
   m_homeApp(this),
   m_graphApp(&m_context),
-  m_calculApp(&m_context),
+  m_calculationApp(&m_context),
   m_context(Context())
 {
 }
@@ -21,7 +21,7 @@ App * AppsContainer::appAtIndex(int index) {
     &m_homeApp,
     &m_graphApp,
     &m_probabilityApp,
-    &m_calculApp,
+    &m_calculationApp,
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);

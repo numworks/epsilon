@@ -2,13 +2,15 @@
 #include "app.h"
 #include <assert.h>
 
-namespace Calcul {
+// TODO transform list in non simple list + adjust size to content
+// make the list cell responder
+namespace Calculation {
 
-HistoryController::HistoryController(Responder * parentResponder, CalculStore * calculStore) :
+HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
   m_listView(ListView(this, 0, 0, 0, 0)),
   m_activeCell(0),
-  m_calculStore(calculStore)
+  m_calculationStore(calculationStore)
 {
 }
 
@@ -17,7 +19,7 @@ View * HistoryController::HistoryController::view() {
 }
 
 const char * HistoryController::title() const {
-  return "Calcul Table";
+  return "Calculation Table";
 }
 
 void HistoryController::reload() {
@@ -66,7 +68,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 int HistoryController::numberOfRows() {
-  return m_calculStore->numberOfCalculs();
+  return m_calculationStore->numberOfCalculations();
 };
 
 
@@ -74,7 +76,7 @@ View * HistoryController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
-  return &m_calculHistory[index];
+  return &m_calculationHistory[index];
 }
 
 int HistoryController::reusableCellCount(int type) {
@@ -84,13 +86,13 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(View * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalcul(m_calculStore->calculAtIndex(index));
+  myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {
-  Calcul * calcul = m_calculStore->calculAtIndex(j);
-  KDCoordinate calculHeight = calcul->layout()->size().height();
-  return calculHeight;
+  Calculation * calculation = m_calculationStore->calculationAtIndex(j);
+  KDCoordinate calculationHeight = calculation->layout()->size().height();
+  return calculationHeight;
 }
 
 KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {

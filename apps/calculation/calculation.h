@@ -1,14 +1,14 @@
-#ifndef CALCUL_CALCUL_H
-#define CALCUL_CALCUL_H
+#ifndef CALCULATION_CALCULATION_H
+#define CALCULATION_CALCULATION_H
 
 #include <poincare.h>
 
-namespace Calcul {
+namespace Calculation {
 
-class Calcul {
+class Calculation {
 public:
-  Calcul();
-  ~Calcul(); // Delete expression and layout, if needed
+  Calculation();
+  ~Calculation(); // Delete expression and layout, if needed
   const char * text();
   Expression * expression();
   ExpressionLayout * layout();

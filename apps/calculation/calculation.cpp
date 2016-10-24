@@ -1,9 +1,9 @@
-#include "calcul.h"
+#include "calculation.h"
 #include <string.h>
 
-namespace Calcul {
+namespace Calculation {
 
-Calcul::Calcul() :
+Calculation::Calculation() :
   m_text(""),
   m_expression(nullptr),
   m_layout(nullptr),
@@ -11,7 +11,7 @@ Calcul::Calcul() :
 {
 }
 
-void Calcul::setContent(const char * c, Context * context) {
+void Calculation::setContent(const char * c, Context * context) {
   strlcpy(m_text, c, sizeof(m_text));
   if (m_expression != nullptr) {
     delete m_expression;
@@ -24,7 +24,7 @@ void Calcul::setContent(const char * c, Context * context) {
   m_evaluation = m_expression->approximate(*context);
 }
 
-Calcul::~Calcul() {
+Calculation::~Calculation() {
   if (m_layout != nullptr) {
     delete m_layout;
   }
@@ -33,19 +33,19 @@ Calcul::~Calcul() {
   }
 }
 
-const char * Calcul::text() {
+const char * Calculation::text() {
   return m_text;
 }
 
-Expression * Calcul::expression() {
+Expression * Calculation::expression() {
   return m_expression;
 }
 
-ExpressionLayout * Calcul::layout() {
+ExpressionLayout * Calculation::layout() {
   return m_layout;
 }
 
-Float * Calcul::evaluation() {
+Float * Calculation::evaluation() {
   return &m_evaluation;
 }
 

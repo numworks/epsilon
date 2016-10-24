@@ -1,11 +1,11 @@
-#ifndef CALCUL_APP_H
-#define CALCUL_APP_H
+#ifndef CALCULATION_APP_H
+#define CALCULATION_APP_H
 
 #include "edit_expression_controller.h"
 #include "history_controller.h"
 #include <escher.h>
 
-namespace Calcul {
+namespace Calculation {
 
 class App : public ::App {
 public:
@@ -15,7 +15,7 @@ protected:
   ViewController * rootViewController() override;
 private:
   Context * m_globalContext;
-  CalculStore m_calculStore;
+  CalculationStore m_calculationStore;
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };

@@ -66,7 +66,7 @@ int Probability::LawController::numberOfRows() {
   return k_totalNumberOfModels;
 };
 
-View * Probability::LawController::reusableCell(int index) {
+TableViewCell * Probability::LawController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_maxNumberOfCells);
   return &m_cells[index];
@@ -76,7 +76,7 @@ int Probability::LawController::reusableCellCount() {
   return k_maxNumberOfCells;
 }
 
-void Probability::LawController::willDisplayCellForIndex(View * cell, int index) {
+void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   ListViewCell * myCell = (ListViewCell *)cell;
   myCell->textView()->setText(m_messages[index]);
   if (m_activeCell == index) {

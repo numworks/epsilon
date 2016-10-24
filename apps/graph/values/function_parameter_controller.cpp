@@ -86,10 +86,10 @@ int FunctionParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-View * FunctionParameterController::reusableCell(int index) {
+TableViewCell * FunctionParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  View * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
+  TableViewCell * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
   return cells[index];
 }
 
@@ -101,7 +101,7 @@ KDCoordinate FunctionParameterController::cellHeight() {
   return 35;
 }
 
-void FunctionParameterController::willDisplayCellForIndex(View * cell, int index) {
+void FunctionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.contentView();
     switchView->setState(m_function->displayDerivative());

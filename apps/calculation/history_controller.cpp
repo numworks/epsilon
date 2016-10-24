@@ -72,7 +72,7 @@ int HistoryController::numberOfRows() {
 };
 
 
-View * HistoryController::reusableCell(int index, int type) {
+TableViewCell * HistoryController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
@@ -84,7 +84,7 @@ int HistoryController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedRows;
 }
 
-void HistoryController::willDisplayCellForIndex(View * cell, int index) {
+void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
 }

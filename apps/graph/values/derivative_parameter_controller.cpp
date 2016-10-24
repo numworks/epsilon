@@ -87,10 +87,10 @@ int DerivativeParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-View * DerivativeParameterController::reusableCell(int index) {
+TableViewCell * DerivativeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  View * cells[] = {&m_hideColumn, &m_copyColumn};
+  TableViewCell * cells[] = {&m_hideColumn, &m_copyColumn};
   return cells[index];
 }
 

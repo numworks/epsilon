@@ -5,12 +5,10 @@
 
 namespace Graph {
 
-class EvenOddCell : public View {
+class EvenOddCell : public TableViewCell {
 public:
   EvenOddCell();
   void setEven(bool even);
-  void setHighlighted(bool highlight);
-  virtual void reloadCell();
   KDColor backgroundColor() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
@@ -19,7 +17,6 @@ public:
   static constexpr KDColor k_selectedLineBackgroundColor = KDColor(0xC0D3EA);
 
 private:
-  bool m_highlighted;
   bool m_even;
 };
 

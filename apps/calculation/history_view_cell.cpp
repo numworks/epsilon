@@ -6,7 +6,6 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell() :
   m_calculation(nullptr),
-  m_highlighted(false),
   m_result(BufferTextView(1.0f, 0.5f))
 {
 }
@@ -39,16 +38,15 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_result.setText(buffer);
 }
 
-void HistoryViewCell::setHighlighted(bool highlight) {
-  m_highlighted = highlight;
-  KDColor backgroundColor = m_highlighted ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+void HistoryViewCell::reloadCell() {
+  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_result.setBackgroundColor(backgroundColor);
-  markRectAsDirty(bounds());
+  TableViewCell::reloadCell();
 }
 
 void HistoryViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Select background color
-  KDColor backgroundColor = m_highlighted ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   ctx->fillRect(rect, backgroundColor);
   // Draw the pretty print
   if (m_calculation && m_calculation->layout() != nullptr) {

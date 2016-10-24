@@ -28,7 +28,7 @@ void ParameterController::didBecomeFirstResponder() {
   setActiveCell(0);
 }
 
-void ParameterController::willDisplayCellForIndex(View * cell, int index) {
+void ParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.contentView();
     switchView->setState(m_function->isActive());
@@ -105,10 +105,10 @@ int ParameterController::numberOfRows() {
 };
 
 
-View * ParameterController::reusableCell(int index) {
+TableViewCell * ParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  View * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
+  TableViewCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
   return cells[index];
 }
 

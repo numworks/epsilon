@@ -85,10 +85,10 @@ int AbscissaParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-View * AbscissaParameterController::reusableCell(int index) {
+TableViewCell * AbscissaParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  View * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
+  TableViewCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
 }
 

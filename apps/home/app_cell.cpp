@@ -4,9 +4,8 @@
 namespace Home {
 
 AppCell::AppCell() :
-  View(),
-  m_visible(true),
-  m_active(false)
+  TableViewCell(),
+  m_visible(true)
 {
 }
 
@@ -38,13 +37,9 @@ void AppCell::setVisible(bool visible) {
   }
 }
 
-void AppCell::setActive(bool active) {
-  if (m_active != active) {
-    m_active = active;
-    m_nameView.setBackgroundColor(m_active ? KDColorRed : KDColorWhite);
-
-    markRectAsDirty(bounds());
-  }
+void AppCell::reloadCell() {
+  TableViewCell::reloadCell();
+  m_nameView.setBackgroundColor(isHighlighted() ? KDColorRed : KDColorWhite);
 }
 
 }

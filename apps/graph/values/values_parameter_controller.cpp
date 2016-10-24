@@ -36,7 +36,7 @@ int ValuesParameterController::activeCell() {
   return m_activeCell;
 }
 
-void ValuesParameterController::willDisplayCellForIndex(View * cell, int index) {
+void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   TextListViewCell * myCell = (TextListViewCell *) cell;
   char buffer[14];
   switch (index) {
@@ -142,10 +142,10 @@ int ValuesParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-View * ValuesParameterController::reusableCell(int index) {
+TableViewCell * ValuesParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  View * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
+  TableViewCell * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
   return cells[index];
 }
 

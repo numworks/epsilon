@@ -2,6 +2,7 @@
 #define ESCHER_SIMPLE_LIST_VIEW_DATA_SOURCE_H
 
 #include <escher/list_view_data_source.h>
+#include <escher/table_view_cell.h>
 
 class SimpleListViewDataSource : public ListViewDataSource {
 public:
@@ -9,9 +10,9 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  virtual View * reusableCell(int index) = 0;
+  virtual TableViewCell * reusableCell(int index) = 0;
   virtual int reusableCellCount() = 0;
-  View * reusableCell(int index, int type) override;
+  TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 };

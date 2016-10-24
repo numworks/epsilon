@@ -7,8 +7,7 @@ constexpr KDColor EvenOddCell::k_oddLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_selectedLineBackgroundColor;
 
 EvenOddCell::EvenOddCell() :
-  View(),
-  m_highlighted(false),
+  TableViewCell(),
   m_even(false)
 {
 }
@@ -18,22 +17,12 @@ void EvenOddCell::setEven(bool even) {
   reloadCell();
 }
 
-void EvenOddCell::setHighlighted(bool highlight) {
-  m_highlighted = highlight;
-  reloadCell();
-}
-
-void EvenOddCell::reloadCell() {
-  markRectAsDirty(bounds());
-}
-
 KDColor EvenOddCell::backgroundColor() const {
    // Select the background color according to the even line and the cursor selection
   KDColor background = m_even ? EvenOddCell::k_evenLineBackgroundColor : EvenOddCell::k_oddLineBackgroundColor;
-  background = m_highlighted ? EvenOddCell::k_selectedLineBackgroundColor : background;
+  background = isHighlighted() ? EvenOddCell::k_selectedLineBackgroundColor : background;
   return background;
 }
-
 
 void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = backgroundColor();

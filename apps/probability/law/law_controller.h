@@ -17,9 +17,9 @@ public:
   void didBecomeFirstResponder() override;
 
   int numberOfRows() override;
-  void willDisplayCellForIndex(View * cell, int index) override;
+  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   KDCoordinate cellHeight() override;
-  View * reusableCell(int index) override;
+  TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfModels = 7;

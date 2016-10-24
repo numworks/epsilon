@@ -20,7 +20,7 @@ void TableView::scrollToCell(int i, int j) {
   m_contentView.scrollToCell(i, j);
 }
 
-View * TableView::cellAtLocation(int i, int j) {
+TableViewCell * TableView::cellAtLocation(int i, int j) {
   return m_contentView.cellAtLocation(i, j);
 }
 
@@ -112,7 +112,7 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index, int type) const
   return typeIndex;
 }
 
-View * TableView::ContentView::cellAtLocation(int x, int y) {
+TableViewCell * TableView::ContentView::cellAtLocation(int x, int y) {
   int relativeX = x-columnsScrollingOffset();
   int relativeY = y-rowsScrollingOffset();
   int type = m_dataSource->typeAtLocation(x, y);
@@ -168,7 +168,7 @@ void TableView::ContentView::layoutSubviews() {
 
     cell->setFrame(cellFrame);
 
-    m_dataSource->willDisplayCellAtLocation(cell, i, j);
+    m_dataSource->willDisplayCellAtLocation((TableViewCell *)cell, i, j);
   }
 }
 

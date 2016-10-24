@@ -17,7 +17,7 @@ int SimpleListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (offsetY - 1) / height;
 }
 
-View * SimpleListViewDataSource::reusableCell(int index, int type) {
+TableViewCell * SimpleListViewDataSource::reusableCell(int index, int type) {
   assert(type == 0);
   return reusableCell(index);
 }

@@ -5,7 +5,7 @@
 
 namespace Home {
 
-class AppCell : public View {
+class AppCell : public TableViewCell {
 public:
   AppCell();
 
@@ -14,14 +14,13 @@ public:
   void layoutSubviews() override;
 
   void setVisible(bool visible);
-  void setActive(bool active);
+  void reloadCell() override;
   void setApp(::App * app);
 private:
   static constexpr KDCoordinate k_iconSize = 32;
   ImageView m_iconView;
   PointerTextView m_nameView;
   bool m_visible;
-  bool m_active;
 };
 
 }

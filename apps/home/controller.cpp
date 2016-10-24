@@ -69,7 +69,7 @@ KDCoordinate Controller::cellWidth() {
   return 50;
 }
 
-View * Controller::reusableCell(int index) {
+TableViewCell * Controller::reusableCell(int index) {
   return &m_cells[index];
 }
 
@@ -77,7 +77,7 @@ int Controller::reusableCellCount() {
   return k_maxNumberOfCells;
 }
 
-void Controller::willDisplayCellAtLocation(View * cell, int i, int j) {
+void Controller::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
   int appIndex = (j*k_numberOfColumns+i)+1;
   if (appIndex >= m_container->numberOfApps()) {
@@ -102,14 +102,14 @@ void Controller::setActiveIndex(int index) {
   int j = m_activeIndex/k_numberOfColumns;
   int i = m_activeIndex-j*k_numberOfColumns; // Avoid modulo
   AppCell * previousCell = (AppCell *)m_tableView.cellAtLocation(i, j);
-  previousCell->setActive(false);
+  previousCell->setHighlighted(false);
 
   m_activeIndex = index;
 
   j = m_activeIndex/k_numberOfColumns;
   i = m_activeIndex-j*k_numberOfColumns; // Avoid modulo
   AppCell * nextCell = (AppCell *)m_tableView.cellAtLocation(i, j);
-  nextCell->setActive(true);
+  nextCell->setHighlighted(true);
 
 }
 

@@ -22,9 +22,9 @@ public:
   void reload();
   void setActiveCell(int index);
   int numberOfRows() override;
-  View * reusableCell(int index, int type) override;
+  TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(View * cell, int index) override;
+  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

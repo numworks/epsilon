@@ -4,8 +4,7 @@
 constexpr KDCoordinate ListViewCell::k_separatorThickness;
 
 ListViewCell::ListViewCell(char * label) :
-  View(),
-  m_highlighted(false),
+  TableViewCell(),
   m_pointerTextView(PointerTextView(label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
@@ -36,6 +35,12 @@ void ListViewCell::layoutSubviews() {
   }
 }
 
+void ListViewCell::reloadCell() {
+  TableViewCell::reloadCell();
+  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  m_pointerTextView.setBackgroundColor(backgroundColor);
+}
+
 PointerTextView * ListViewCell::textView() {
   return &m_pointerTextView;
 }
@@ -44,21 +49,10 @@ View * ListViewCell::contentView() const {
   return nullptr;
 }
 
-bool ListViewCell::isHighlighted() const {
-  return m_highlighted;
-}
-
-void ListViewCell::setHighlighted(bool highlight) {
-  m_highlighted = highlight;
-  KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
-  m_pointerTextView.setBackgroundColor(backgroundColor);
-  markRectAsDirty(bounds());
-}
-
 void ListViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = (m_highlighted ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor);
+  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
 
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
   ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::LineColor);

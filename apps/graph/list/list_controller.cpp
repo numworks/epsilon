@@ -235,7 +235,7 @@ int ListController::typeAtLocation(int i, int j) {
   return i;
 }
 
-View * ListController::reusableCell(int index, int type) {
+TableViewCell * ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfRows);
   switch (type) {
@@ -260,7 +260,7 @@ int ListController::reusableCellCount(int type) {
   return k_maxNumberOfRows;
 }
 
-void ListController::willDisplayCellAtLocation(View * cell, int i, int j) {
+void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   if (j < numberOfRows() - 1) {
     if (i == 0) {
       FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;

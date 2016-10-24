@@ -2,6 +2,7 @@
 #define ESCHER_TABLE_VIEW_H
 
 #include <escher/scroll_view.h>
+#include <escher/table_view_cell.h>
 #include <escher/table_view_data_source.h>
 
 class TableView : public ScrollView {
@@ -10,7 +11,7 @@ public:
     KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
   void scrollToCell(int i, int j);
-  View * cellAtLocation(int i, int j);
+  TableViewCell * cellAtLocation(int i, int j);
   void reloadData();
 protected:
 #if ESCHER_VIEW_LOGGING
@@ -22,7 +23,7 @@ private:
     ContentView(TableView * tableView, TableViewDataSource * dataSource);
 
     void scrollToCell(int i, int j) const;
-    View * cellAtLocation(int i, int j);
+    TableViewCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
   protected:
 #if ESCHER_VIEW_LOGGING

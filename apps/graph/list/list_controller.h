@@ -23,14 +23,14 @@ public:
 
   int numberOfRows() override;
   int numberOfColumns() override;
-  void willDisplayCellAtLocation(View * cell, int i, int j) override;
+  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  View * reusableCell(int index, int type) override;
+  TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void configureFunction(Function * function);

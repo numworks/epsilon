@@ -17,7 +17,7 @@ public:
   void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  View * reusableCell(int index) override;
+  TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   bool handleEnter();

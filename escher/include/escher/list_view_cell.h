@@ -5,23 +5,20 @@
 #include <escher/pointer_text_view.h>
 #include <escher/palette.h>
 #include <escher/metric.h>
+#include <escher/table_view_cell.h>
 
-
-class ListViewCell : public View {
+class ListViewCell : public TableViewCell {
 public:
   ListViewCell(char * label = nullptr);
   PointerTextView * textView();
   virtual View * contentView() const;
-  bool isHighlighted() const;
-  void setHighlighted(bool highlight);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-
+  void reloadCell() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
-  bool m_highlighted;
   PointerTextView m_pointerTextView;
 };
 

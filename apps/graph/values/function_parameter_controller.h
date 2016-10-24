@@ -17,9 +17,9 @@ public:
   void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  View * reusableCell(int index) override;
+  TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(View * cell, int index) override;
+  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 
   void setFunction(Function * function);
 private:

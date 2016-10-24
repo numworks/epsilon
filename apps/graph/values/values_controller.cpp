@@ -341,7 +341,7 @@ int ValuesController::typeAtLocation(int i, int j) {
   return 2;
 }
 
-View * ValuesController::reusableCell(int index, int type) {
+TableViewCell * ValuesController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
     case 0:
@@ -373,7 +373,7 @@ int ValuesController::reusableCellCount(int type) {
   }
 }
 
-void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
+void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   // The cell is a title cell:

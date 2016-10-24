@@ -188,7 +188,7 @@ ValueCell * ValuesController::abscisseCellAtRow(int rowIndex) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
-  if (m_functionStore->numberOfActiveFunctions() == 0) {
+  if (m_functionStore->numberOfDefinedFunctions() == 0 || m_functionStore->numberOfActiveFunctions() == 0) {
     m_contentView.setTableState(ValuesController::ContentView::TableState::Empty);
     return;
   }

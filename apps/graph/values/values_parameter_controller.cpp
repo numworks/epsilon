@@ -24,20 +24,6 @@ View * ValuesParameterController::view() {
   return &m_listView;
 }
 
-TextListViewCell * ValuesParameterController::ListViewCellAtIndex(int index) {
-  switch(index) {
-    case 0:
-      return &m_intervalStartCell;
-    case 1:
-      return &m_intervalEndCell;
-    case 2:
-      return &m_intervalStepCell;
-    default:
-      assert(false);
-      return nullptr;
-  }
-}
-
 Graph::Interval * ValuesParameterController::interval() {
   return m_interval;
 }
@@ -130,7 +116,8 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
   } else {
-    strlcpy(initialTextContent, ListViewCellAtIndex(m_activeCell)->textContent(), sizeof(initialTextContent));
+    TextListViewCell * textListViewCell = (TextListViewCell *)reusableCell(m_activeCell);
+    strlcpy(initialTextContent, textListViewCell->textContent(), sizeof(initialTextContent));
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
@@ -138,7 +125,7 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     [](void * context, void * sender){
     ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
     int activeCell = valuesParameterController->activeCell();
-    TextListViewCell * cell = valuesParameterController->ListViewCellAtIndex(activeCell);
+    TextListViewCell * cell = (TextListViewCell *)valuesParameterController->reusableCell(activeCell);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     App * myApp = (App *)valuesParameterController->app();

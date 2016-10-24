@@ -9,7 +9,6 @@ class ValuesParameterController : public ViewController, public SimpleListViewDa
 public:
   ValuesParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
-  TextListViewCell * ListViewCellAtIndex(int index);
   int activeCell();
   void editInterval(bool overwrite, char initialDigit = 0);
   void setIntervalParameterAtIndex(int parameterIndex, float f);

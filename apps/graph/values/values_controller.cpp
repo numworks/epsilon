@@ -384,13 +384,16 @@ void ValuesController::willDisplayCellAtLocation(View * cell, int i, int j) {
     }
     FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
     Function * function = functionAtColumn(i);
+    char bufferName[6] = "f'(x)";
+    bufferName[1] = *function->name();
+    myFunctionCell->setText(bufferName + 1);
     myFunctionCell->setColor(function->color());
+    myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     if (isDerivativeColumn(i)) {
-      myFunctionCell->setDerivative(true);
-    } else {
-      myFunctionCell->setDerivative(false);
+      bufferName[0] = bufferName[1];
+      bufferName[1] = '\'';
+      myFunctionCell->setText(bufferName);
     }
-    myFunctionCell->setText(function->name(), function->color());
     return;
   }
   // The cell is a value cell:

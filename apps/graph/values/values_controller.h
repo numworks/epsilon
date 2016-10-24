@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../function_store.h"
 #include "../evaluate_context.h"
-#include "function_title_cell.h"
+#include "../function_title_cell.h"
 #include "value_cell.h"
 #include "title_cell.h"
 #include "interval.h"

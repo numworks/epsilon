@@ -203,8 +203,7 @@ bool ListController::handleEnter() {
       if (m_activeCelly == numberOfRows() - 1) {
         return true;
       }
-      FunctionNameView * functionCell = (FunctionNameView *)(m_tableView.cellAtLocation(m_activeCellx, m_activeCelly));
-      configureFunction(functionCell->function());
+      configureFunction(m_functionStore->functionAtIndex(m_activeCelly));
       return true;
     }
     case 1:
@@ -241,7 +240,7 @@ View * ListController::reusableCell(int index, int type) {
   assert(index < k_maxNumberOfRows);
   switch (type) {
     case 0:
-      return &m_nameCells[index];
+      return &m_functionTitleCells[index];
     case 1:
       return &m_expressionCells[index];
     case 2:
@@ -263,8 +262,19 @@ int ListController::reusableCellCount(int type) {
 
 void ListController::willDisplayCellAtLocation(View * cell, int i, int j) {
   if (j < numberOfRows() - 1) {
-    FunctionCell * myCell = (FunctionCell *)cell;
-    myCell->setFunction(m_functionStore->functionAtIndex(j));
+    if (i == 0) {
+      FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+      Function * function = m_functionStore->functionAtIndex(j);
+      char bufferName[5] = "*(x)";
+      bufferName[0] = *function->name();
+      myFunctionCell->setText(bufferName);
+      KDColor functionNameColor = function->isActive() ? function->color() : Palette::k_desactiveTextColor;
+      myFunctionCell->setColor(functionNameColor);
+      myFunctionCell->setOrientation(FunctionTitleCell::Orientation::VerticalIndicator);
+    } else {
+      FunctionExpressionView * myCell = (FunctionExpressionView *)cell;
+      myCell->setFunction(m_functionStore->functionAtIndex(j));
+    }
   }
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);

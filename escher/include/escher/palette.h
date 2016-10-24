@@ -9,6 +9,7 @@ public:
   constexpr static KDColor BackgroundColor = KDColor(0xF0F3F5);
   constexpr static KDColor CellBackgroundColor = KDColor(0xFCFCFC);
   constexpr static KDColor FocusCellBackgroundColor = KDColor(0xBFD3EB);
+  constexpr static KDColor k_desactiveTextColor = KDColor(0x646464);
 };
 
 #endif

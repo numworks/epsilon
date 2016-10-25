@@ -31,12 +31,21 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_cosf.o \
   s_fabsf.o \
   s_floorf.o \
+  s_roundf.o \
   s_scalbnf.o \
   s_sinf.o \
   s_tanf.o \
 )
 
-liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses
+liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses -Wno-implicit-function-declaration
+# isnanf ans isinff are throwing implicit declaration warnings
+ifeq ($(DEBUG),1)
+# OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision
+# code. That's annoying because Clang rightfully decides to emit double-to-float
+# aeabi conversions when building in -O0 mode, and we really don't want to code
+# such functions. A simple workaround is to always build this file -Os.
+liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
+endif
 
 tests += $(addprefix liba/test/, \
   ieee754.c \

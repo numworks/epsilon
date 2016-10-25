@@ -16,8 +16,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setFunction(Function * function);
   void didBecomeFirstResponder() override;
-
-  void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
@@ -29,8 +27,7 @@ private:
   ListViewCell m_colorCell;
   SwitchListViewCell m_enableCell;
   ListViewCell m_deleteCell;
-  TableView m_tableView;
-  int m_activeCell;
+  SelectableTableView m_selectableTableView;
   Function * m_function;
   FunctionStore * m_functionStore;
 };

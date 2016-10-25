@@ -9,48 +9,31 @@ namespace Home {
 Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
   ViewController(parentResponder),
   m_container(container),
-  m_tableView(TableView(this)),
-  m_activeIndex(0)
+  m_selectableTableView(SelectableTableView(this, this))
 {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  int nextActiveIndex = 0;
   switch (event) {
     case Ion::Events::Event::ENTER:
-      m_container->switchTo(m_container->appAtIndex(m_activeIndex+1));
+      m_container->switchTo(m_container->appAtIndex(m_selectableTableView.selectedRow()*k_numberOfColumns+m_selectableTableView.selectedColumn()+1));
       return true;
-    case Ion::Events::Event::DOWN_ARROW:
-      nextActiveIndex = m_activeIndex+k_numberOfColumns;
-      break;
-    case Ion::Events::Event::UP_ARROW:
-      nextActiveIndex = m_activeIndex-k_numberOfColumns;
-      break;
-    case Ion::Events::Event::LEFT_ARROW:
-      nextActiveIndex = m_activeIndex-1;
-      break;
-    case Ion::Events::Event::RIGHT_ARROW:
-      nextActiveIndex = m_activeIndex+1;
-      break;
     default:
       return false;
   }
-  if (nextActiveIndex < 0) {
-    nextActiveIndex = 0;
-  }
-  if (nextActiveIndex >= numberOfIcons()) {
-    nextActiveIndex = numberOfIcons()-1;
-  }
-  setActiveIndex(nextActiveIndex);
-  return true;
 }
 
 void Controller::didBecomeFirstResponder() {
-  setActiveIndex(m_activeIndex);
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.setSelectedCellAtLocation(0, 0);
+  } else {
+    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  }
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 View * Controller::view() {
-  return &m_tableView;
+  return &m_selectableTableView;
 }
 
 int Controller::numberOfRows() {
@@ -92,25 +75,6 @@ void Controller::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
 int Controller::numberOfIcons() {
   assert(m_container->numberOfApps() > 0);
   return m_container->numberOfApps() - 1;
-}
-
-void Controller::setActiveIndex(int index) {
-  if (m_activeIndex < 0 && m_activeIndex >= numberOfIcons()) {
-    return;
-  }
-
-  int j = m_activeIndex/k_numberOfColumns;
-  int i = m_activeIndex-j*k_numberOfColumns; // Avoid modulo
-  AppCell * previousCell = (AppCell *)m_tableView.cellAtLocation(i, j);
-  previousCell->setHighlighted(false);
-
-  m_activeIndex = index;
-
-  j = m_activeIndex/k_numberOfColumns;
-  i = m_activeIndex-j*k_numberOfColumns; // Avoid modulo
-  AppCell * nextCell = (AppCell *)m_tableView.cellAtLocation(i, j);
-  nextCell->setHighlighted(true);
-
 }
 
 }

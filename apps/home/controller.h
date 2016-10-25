@@ -26,14 +26,12 @@ public:
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
 private:
   int numberOfIcons();
-  void setActiveIndex(int index);
   AppsContainer * m_container;
-  TableView m_tableView;
+  SelectableTableView m_selectableTableView;
   static constexpr int k_numberOfColumns = 3;
   static constexpr int k_numberOfApps = 10;
   static constexpr int k_maxNumberOfCells = 16;
   AppCell m_cells[k_maxNumberOfCells];
-  int m_activeIndex;
 };
 
 }

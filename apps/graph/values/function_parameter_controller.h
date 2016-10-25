@@ -13,8 +13,6 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-
-  void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
@@ -29,8 +27,7 @@ private:
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   SwitchListViewCell m_displayDerivativeColumn;
   ListViewCell m_copyColumn;
-  TableView m_tableView;
-  int m_activeCell;
+  SelectableTableView m_selectableTableView;
   Function * m_function;
 };
 

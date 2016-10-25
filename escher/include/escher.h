@@ -19,6 +19,7 @@
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_indicator.h>
+#include <escher/selectable_table_view.h>
 #include <escher/simple_table_view_data_source.h>
 #include <escher/simple_list_view_data_source.h>
 #include <escher/solid_color_view.h>

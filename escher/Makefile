@@ -10,6 +10,7 @@ objs += $(addprefix escher/src/,\
   invocation.o\
   input_view_controller.o\
   list_view.o\
+  list_view_cell.o\
   list_view_data_source.o\
   metric.o\
   palette.o\
@@ -17,6 +18,7 @@ objs += $(addprefix escher/src/,\
   responder.o\
   scroll_view.o\
   scroll_view_indicator.o\
+  selectable_table_view.o\
   simple_list_view_data_source.o\
   simple_table_view_data_source.o\
   solid_color_view.o\
@@ -29,7 +31,6 @@ objs += $(addprefix escher/src/,\
   tab_view_controller.o\
   table_view.o\
   table_view_cell.o\
-  list_view_cell.o\
   table_view_data_source.o\
   text_field.o\
   text_list_view_cell.o\

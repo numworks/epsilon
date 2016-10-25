@@ -48,9 +48,7 @@ ValuesController::ContentView::TableState ValuesController::ContentView::tableSt
 
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext) :
   HeaderViewController(parentResponder, &m_contentView),
-  m_tableView(TableView(this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
-  m_activeCellX(0),
-  m_activeCellY(-1),
+  m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_functionStore(functionStore),
   m_evaluateContext(evaluateContext),
   m_parameterController(ValuesParameterController(this, &m_interval)),
@@ -62,7 +60,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
     stack->push(valuesController->parameterController());
   }, this))),
-  m_contentView(ContentView(&m_tableView))
+  m_contentView(&m_selectableTableView)
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -148,34 +146,12 @@ int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (offsetY-1) / k_cellHeight;
 }
 
-void ValuesController::setActiveCell(int i, int j) {
-  if (i < 0 || i >= numberOfColumns()) {
-    return;
-  }
-  if (j < -1 || j >= numberOfRows()) {
-    return;
-  }
-
-  if (m_activeCellY >= 0) {
-    EvenOddCell * previousCell = (EvenOddCell *)(m_tableView.cellAtLocation(m_activeCellX, m_activeCellY));
-    previousCell->setHighlighted(false);
-  }
-
-  m_activeCellX = i;
-  m_activeCellY = j;
-  if (m_activeCellY >= 0) {
-    m_tableView.scrollToCell(i, j);
-    EvenOddCell * cell = (EvenOddCell *)(m_tableView.cellAtLocation(i, j));
-    cell->setHighlighted(true);
-  }
-}
-
 int ValuesController::activeRow() {
-  return m_activeCellY;
+  return m_selectableTableView.selectedRow();
 }
 
 int ValuesController::activeColumn() {
-  return m_activeCellX;
+  return m_selectableTableView.selectedColumn();
 }
 
 Interval * ValuesController::interval() {
@@ -193,17 +169,13 @@ void ValuesController::didBecomeFirstResponder() {
     return;
   }
   m_contentView.setTableState(ContentView::TableState::NonEmpty);
-  m_tableView.reloadData();
   setSelectedButton(-1);
-  if (m_activeCellY == -1) {
-    setActiveCell(0,0);
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.setSelectedCellAtLocation(0, 0);
   } else {
-    if (m_activeCellX < numberOfColumns()) {
-      setActiveCell(m_activeCellX, m_activeCellY);
-    } else {
-      setActiveCell(numberOfColumns() - 1, m_activeCellY);
-    }
+    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -214,59 +186,51 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-
-  if (m_activeCellY == -1) {
-    switch (event) {
-      case Ion::Events::Event::DOWN_ARROW:
+  switch (event) {
+    case Ion::Events::Event::DOWN_ARROW:
+      if (activeRow() == -1) {
         setSelectedButton(-1);
-        setActiveCell(m_activeCellX, m_activeCellY+1);
-        app()->setFirstResponder(this);
+        m_selectableTableView.setSelectedCellAtLocation(0,0);
+        app()->setFirstResponder(&m_selectableTableView);
         return true;
-      case Ion::Events::Event::UP_ARROW:
+      }
+      return false;
+    case Ion::Events::Event::UP_ARROW:
+      if (activeRow() == -1) {
         setSelectedButton(-1);
         app()->setFirstResponder(tabController());
         return true;
-      default:
-        return HeaderViewController::handleEvent(event);
-    }
-  }
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCellX, m_activeCellY+1);
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCellX, m_activeCellY-1);
-      if (m_activeCellY == -1) {
-        setSelectedButton(0);
       }
-      return true;
-    case Ion::Events::Event::LEFT_ARROW:
-      setActiveCell(m_activeCellX-1, m_activeCellY);
-      return true;
-    case Ion::Events::Event::RIGHT_ARROW:
-      setActiveCell(m_activeCellX+1, m_activeCellY);
+      m_selectableTableView.deselectTable();
+      setSelectedButton(0);
       return true;
     case Ion::Events::Event::ENTER:
-      if (m_activeCellY == 0) {
-        if (m_activeCellX == 0) {
+      if (activeRow() == -1) {
+        return HeaderViewController::handleEvent(event);
+      }
+      if (activeRow() == 0) {
+        if (activeColumn() == 0) {
           configureAbscissa();
           return true;
         }
-        if (isDerivativeColumn(m_activeCellX)) {
+        if (isDerivativeColumn(activeColumn())) {
           configureDerivativeFunction();
         } else {
           configureFunction();
         }
         return true;
       }
-      if (m_activeCellX == 0) {
+      if (activeColumn() == 0) {
         editValue(false);
         return true;
       }
       return false;
     default:
+      if (activeRow() == -1) {
+        return HeaderViewController::handleEvent(event);
+      }
       if ((int)event < 0x100) {
-        if (m_activeCellX == 0 && m_activeCellY > 0) {
+        if (activeColumn() == 0 && activeRow() > 0) {
           editValue(true, (char)event);
           return true;
         }
@@ -283,14 +247,14 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
-  Function * function = functionAtColumn(m_activeCellX);
+  Function * function = functionAtColumn(activeColumn());
   m_functionParameterController.setFunction(function);
   StackViewController * stack = ((StackViewController *)parentResponder());
   stack->push(&m_functionParameterController);
 }
 
 void ValuesController::configureDerivativeFunction() {
-  Function * function = functionAtColumn(m_activeCellX);
+  Function * function = functionAtColumn(activeColumn());
   m_derivativeParameterController.setFunction(function);
   StackViewController * stack = ((StackViewController *)parentResponder());
   stack->push(&m_derivativeParameterController);
@@ -305,10 +269,10 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
   } else {
-    if (m_activeCellY > m_interval.numberOfElements()) {
+    if (activeRow() > m_interval.numberOfElements()) {
       initialTextContent[0] = 0;
     } else {
-      Float(m_interval.element(m_activeCellY-1)).convertFloatToText(initialTextContent, 14, 7);
+      Float(m_interval.element(activeRow()-1)).convertFloatToText(initialTextContent, 14, 7);
     }
   }
   App * myApp = (App *)app();

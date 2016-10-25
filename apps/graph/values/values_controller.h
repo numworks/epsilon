@@ -19,7 +19,6 @@ class ValuesController : public HeaderViewController, public TableViewDataSource
 public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
 
-  void setActiveCell(int i, int j);
   int activeRow();
   int activeColumn();
   Interval * interval();
@@ -84,12 +83,10 @@ private:
   constexpr static int k_maxNumberOfFunctions = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
+  SelectableTableView m_selectableTableView;
   TitleCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
-  TableView m_tableView;
-  int m_activeCellX;
-  int m_activeCellY;
   FunctionStore * m_functionStore;
   EvaluateContext * m_evaluateContext;
   Interval m_interval;

@@ -68,9 +68,9 @@ void HeaderViewController::ContentView::setVisibleHeader(bool isVisibleHeader) {
   layoutSubviews();
 }
 
-void HeaderViewController::ContentView::setSelectedButton(int selectedButton, App * application) {
-  if (selectedButton < -1 || selectedButton >= numberOfButtons()) {
-    return;
+bool HeaderViewController::ContentView::setSelectedButton(int selectedButton, App * application) {
+  if (selectedButton < -1 || selectedButton >= numberOfButtons() || selectedButton == m_selectedButton) {
+    return false;
   }
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(m_selectedButton);
@@ -81,7 +81,9 @@ void HeaderViewController::ContentView::setSelectedButton(int selectedButton, Ap
     Button * button = buttonAtIndex(selectedButton);
     button->setBackgroundColor(k_selectedBackgroundColor);
     application->setFirstResponder(button);
+    return true;
   }
+  return false;
 }
 
 int HeaderViewController::ContentView::selectedButton() {
@@ -115,9 +117,9 @@ void HeaderViewController::setVisibleHeader(bool isVisibleHeader) {
   m_contentView.setVisibleHeader(isVisibleHeader);
 }
 
-void HeaderViewController::setSelectedButton(int selectedButton) {
+bool HeaderViewController::setSelectedButton(int selectedButton) {
   App * application = app();
-  m_contentView.setSelectedButton(selectedButton, application);
+  return m_contentView.setSelectedButton(selectedButton, application);
 }
 
 bool HeaderViewController::handleEvent(Ion::Events::Event event) {

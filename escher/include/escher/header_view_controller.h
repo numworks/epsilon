@@ -17,7 +17,7 @@ public:
   virtual int numberOfButtons() const;
   virtual Button * buttonAtIndex(int index);
 protected:
-  void setSelectedButton(int selectedButton);
+  bool setSelectedButton(int selectedButton);
 private:
   class ContentView : public View {
   public:
@@ -29,7 +29,7 @@ private:
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setVisibleHeader(bool isVisibleHeader);
-    void setSelectedButton(int selectedButton, App * app);
+    bool setSelectedButton(int selectedButton, App * app);
     int selectedButton();
   private:
     constexpr static KDCoordinate k_headerHeight = 20;

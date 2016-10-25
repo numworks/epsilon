@@ -5,6 +5,9 @@
 
 LIBA_BEGIN_DECLS
 
+int isinff(float x);
+int isnanf(float x);
+
 float copysignf(float x, float y);
 float cosf(float x);
 float fabsf(float x);

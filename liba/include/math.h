@@ -15,6 +15,7 @@ float floorf(float x);
 float log10f(float x);
 float logf(float x);
 float powf(float x, float y);
+float roundf(float x);
 float scalbnf(float x, int n);
 float sinf(float x);
 float sqrtf(float x);

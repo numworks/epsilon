@@ -8,9 +8,8 @@ AbscissaParameterController::AbscissaParameterController(Responder * parentRespo
   m_deleteColumn(ListViewCell((char*)"Effacer la colonne")),
   m_copyColumn(ListViewCell((char*)"Copier la colonne dans une liste")),
   m_setInterval(ListViewCell((char*)"Regler l'intervalle")),
-  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
+  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_activeCell(0),
   m_valuesParameterController(valuesParameterController)
 {
 }
@@ -20,34 +19,16 @@ const char * AbscissaParameterController::title() const {
 }
 
 View * AbscissaParameterController::view() {
-  return &m_tableView;
+  return &m_selectableTableView;
 }
 
 void AbscissaParameterController::didBecomeFirstResponder() {
-  setActiveCell(m_activeCell);
-}
-
-void AbscissaParameterController::setActiveCell(int index) {
-  if (index < 0 || index >= k_totalNumberOfCell) {
-    return;
-  }
-  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
-  previousCell->setHighlighted(false);
-
-  m_activeCell = index;
-  m_tableView.scrollToCell(0, index);
-  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
-  cell->setHighlighted(true);
+  m_selectableTableView.setSelectedCellAtLocation(0, 0);
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCell+1);
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCell-1);
-      return true;
     case Ion::Events::Event::ENTER:
       return handleEnter();
     default:
@@ -56,7 +37,7 @@ bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 bool AbscissaParameterController::handleEnter() {
-  switch (m_activeCell) {
+  switch (m_selectableTableView.selectedRow()) {
     case 0:
     {
       Interval * interval = m_valuesParameterController->interval();

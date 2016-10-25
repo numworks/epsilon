@@ -13,8 +13,6 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-
-  void setActiveCell(int index);
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
@@ -25,8 +23,7 @@ private:
   ListViewCell m_deleteColumn;
   ListViewCell m_copyColumn;
   ListViewCell m_setInterval;
-  TableView m_tableView;
-  int m_activeCell;
+  SelectableTableView m_selectableTableView;
   ValuesParameterController * m_valuesParameterController;
 };
 

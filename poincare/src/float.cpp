@@ -99,8 +99,7 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
    * threshold during computation. */
   int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
   assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
-  // TODO: add round here;
-  int mantissa = (m_float * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2));
+  int mantissa = roundf(m_float * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2));
   // Correct the number of digits in mantissa after rounding
   if ((int)(mantissa * powf(10, - availableCharsForMantissaWithoutSign + 1)) > 0) {
     mantissa = mantissa/10;

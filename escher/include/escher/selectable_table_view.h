@@ -14,8 +14,9 @@
 
 class SelectableTableView : public TableView, public Responder {
 public:
-  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate topMargin, 
-    KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin);
+  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
+    KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
+    KDCoordinate leftMargin = 0);
   int selectedRow();
   int selectedColumn();
   virtual bool handleEvent(Ion::Events::Event event) override;

@@ -6,7 +6,7 @@ namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0)),
+  m_selectableTableView(SelectableTableView(this, this)),
   m_calculationStore(calculationStore)
 {
 }

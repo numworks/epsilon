@@ -78,7 +78,9 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::ESC:
       return true;
     case Ion::Events::Event::UP_ARROW:
-      app()->setFirstResponder(m_historyController);
+      if (m_calculationStore->numberOfCalculations() > 0) {
+        app()->setFirstResponder(m_historyController);
+      }
       return true;
     default:
       return false;

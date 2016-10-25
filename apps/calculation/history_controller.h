@@ -20,7 +20,6 @@ public:
   void setFunction(Function * function);
   void didBecomeFirstResponder() override;
   void reload();
-  void setActiveCell(int index);
   int numberOfRows() override;
   TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -35,8 +34,7 @@ private:
   constexpr static int k_defaultCalculationCellWidth = 320;
   constexpr static int k_resultWidth = 7*14;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
-  TableView m_tableView;
-  int m_activeCell;
+  SelectableTableView m_selectableTableView;
   CalculationStore * m_calculationStore;
 };
 

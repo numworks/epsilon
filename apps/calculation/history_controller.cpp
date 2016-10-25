@@ -2,20 +2,17 @@
 #include "app.h"
 #include <assert.h>
 
-// TODO transform list in non simple list + adjust size to content
-// make the list cell responder
 namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_tableView(TableView(this, 0, 0, 0, 0)),
-  m_activeCell(0),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0)),
   m_calculationStore(calculationStore)
 {
 }
 
 View * HistoryController::HistoryController::view() {
-  return &m_tableView;
+  return &m_selectableTableView;
 }
 
 const char * HistoryController::title() const {
@@ -23,42 +20,21 @@ const char * HistoryController::title() const {
 }
 
 void HistoryController::reload() {
-  m_tableView.reloadData();
+  m_selectableTableView.reloadData();
 }
 
 void HistoryController::didBecomeFirstResponder() {
-  setActiveCell(numberOfRows()-1);
-  m_tableView.reloadData();
-}
-
-void HistoryController::setActiveCell(int index) {
-  if (index < -1 || index >= numberOfRows()) {
-    return;
-  }
-  if (m_activeCell >= 0) {
-    HistoryViewCell * previousCell = (HistoryViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
-    previousCell->setHighlighted(false);
-  }
-  m_activeCell = index;
-  if (m_activeCell >= 0) {
-    m_tableView.scrollToCell(0, index);
-    HistoryViewCell * cell = (HistoryViewCell *)(m_tableView.cellAtLocation(0, index));
-    cell->setHighlighted(true);
-  }
+  m_selectableTableView.setSelectedCellAtLocation(0, numberOfRows()-1);
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
-      if (m_activeCell == numberOfRows()-1) {
-        app()->setFirstResponder(parentResponder());
-        setActiveCell(-1);
-        return true;
-      }
-      setActiveCell(m_activeCell+1);
+      m_selectableTableView.deselectTable();
+      app()->setFirstResponder(parentResponder());
       return true;
     case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCell-1);
       return true;
     case Ion::Events::Event::ENTER:
       return false;
@@ -70,7 +46,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 int HistoryController::numberOfRows() {
   return m_calculationStore->numberOfCalculations();
 };
-
 
 TableViewCell * HistoryController::reusableCell(int index, int type) {
   assert(type == 0);

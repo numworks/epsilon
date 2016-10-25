@@ -14,6 +14,10 @@ TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, K
 {
 }
 
+TableViewDataSource * TableView::dataSource() {
+  return m_contentView.dataSource();
+}
+
 // This method computes the minimal scrolling needed to properly display the
 // requested cell.
 void TableView::scrollToCell(int i, int j) {
@@ -50,6 +54,10 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
   m_tableView(tableView),
   m_dataSource(dataSource)
 {
+}
+
+TableViewDataSource * TableView::ContentView::dataSource() {
+  return m_dataSource;
 }
 
 KDCoordinate TableView::ContentView::columnWidth(int i) const {

@@ -17,6 +17,7 @@ protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
+  TableViewDataSource * dataSource();
 private:
   class ContentView : public View {
   public:
@@ -25,6 +26,7 @@ private:
     void scrollToCell(int i, int j) const;
     TableViewCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
+    TableViewDataSource * dataSource();
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

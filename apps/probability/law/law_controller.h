@@ -9,8 +9,6 @@ class LawController : public ViewController, public SimpleListViewDataSource {
 public:
   LawController(Responder * parentResponder);
 
-  void setActiveCell(int index);
-
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -27,9 +25,8 @@ private:
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
   ListViewCell m_cells[k_maxNumberOfCells];
-  TableView m_tableView;
+  SelectableTableView m_selectableTableView;
   const char ** m_messages;
-  int m_activeCell;
 };
 
 }

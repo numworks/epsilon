@@ -14,15 +14,14 @@ static const char * sMessages[] = {
 
 Probability::LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_tableView(TableView(this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
-  m_activeCell(0)
+  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
+    Metric::BottomMargin, Metric::LeftMargin))
 {
   m_messages = sMessages;
 }
 
 View * Probability::LawController::view() {
-  return &m_tableView;
+  return &m_selectableTableView;
 }
 
 const char * Probability::LawController::title() const {
@@ -30,30 +29,16 @@ const char * Probability::LawController::title() const {
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
-  setActiveCell(0);
-}
-
-void Probability::LawController::setActiveCell(int index) {
-  if (index < 0 || index >= k_totalNumberOfModels) {
-    return;
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.setSelectedCellAtLocation(0, 0);
+  } else {
+    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
-  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
-  previousCell->setHighlighted(false);
-
-  m_activeCell = index;
-  m_tableView.scrollToCell(0, index);
-  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
-  cell->setHighlighted(true);
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCell+1);
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCell-1);
-      return true;
     case Ion::Events::Event::ENTER:
       ((Probability::App *)app())->setLaw(App::Law::Normal);
       return true;
@@ -79,12 +64,6 @@ int Probability::LawController::reusableCellCount() {
 void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   ListViewCell * myCell = (ListViewCell *)cell;
   myCell->textView()->setText(m_messages[index]);
-  if (m_activeCell == index) {
-    myCell->textView()->setBackgroundColor(Palette::FocusCellBackgroundColor);
-  } else {
-    myCell->textView()->setBackgroundColor(Palette::CellBackgroundColor);
-  }
-  myCell->textView()->setTextColor(KDColorBlack);
   myCell->textView()->setAlignment(0., 0.5);
 }
 

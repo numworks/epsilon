@@ -14,7 +14,7 @@ static const char * sMessages[] = {
 
 Probability::LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_listView(ListView(this, Metric::TopMargin, Metric::RightMargin,
+  m_tableView(TableView(this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0)
 {
@@ -22,7 +22,7 @@ Probability::LawController::LawController(Responder * parentResponder) :
 }
 
 View * Probability::LawController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 const char * Probability::LawController::title() const {
@@ -37,12 +37,12 @@ void Probability::LawController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfModels) {
     return;
   }
-  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_listView.scrollToRow(index);
-  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
+  m_tableView.scrollToCell(0, index);
+  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
   cell->setHighlighted(true);
 }
 

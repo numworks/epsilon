@@ -10,7 +10,7 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   m_intervalStartCell(TextListViewCell((char*)"X Debut")),
   m_intervalEndCell(TextListViewCell((char*)"X Fin")),
   m_intervalStepCell(TextListViewCell((char*)"Pas")),
-  m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
+  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0)
 {
@@ -21,7 +21,7 @@ const char * ValuesParameterController::title() const {
 }
 
 View * ValuesParameterController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 Graph::Interval * ValuesParameterController::interval() {
@@ -62,12 +62,12 @@ void ValuesParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  TextListViewCell * previousCell = (TextListViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  TextListViewCell * previousCell = (TextListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_listView.scrollToRow(index);
-  TextListViewCell * cell = (TextListViewCell *)(m_listView.cellAtIndex(index));
+  m_tableView.scrollToCell(0, index);
+  TextListViewCell * cell = (TextListViewCell *)(m_tableView.cellAtLocation(0, index));
   cell->setHighlighted(true);
 }
 

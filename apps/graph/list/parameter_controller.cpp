@@ -8,7 +8,7 @@ ParameterController::ParameterController(Responder * parentResponder, FunctionSt
   m_colorCell(ListViewCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchListViewCell((char*)"Activer/Desactiver")),
   m_deleteCell(ListViewCell((char*)"Supprimer la fonction")),
-  m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
+  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
   m_functionStore(functionStore)
@@ -20,11 +20,11 @@ const char * ParameterController::title() const {
 }
 
 View * ParameterController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 void ParameterController::didBecomeFirstResponder() {
-  m_listView.reloadData();
+  m_tableView.reloadData();
   setActiveCell(0);
 }
 
@@ -39,12 +39,12 @@ void ParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_listView.scrollToRow(index);
-  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
+  m_tableView.scrollToCell(0, index);
+  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
   cell->setHighlighted(true);
 
 }
@@ -78,7 +78,7 @@ bool ParameterController::handleEnter() {
     case 1:
     {
       m_function->setActive(!m_function->isActive());
-      m_listView.reloadData();
+      m_tableView.reloadData();
       return true;
     }
     case 2:

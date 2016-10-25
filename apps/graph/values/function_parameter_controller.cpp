@@ -8,7 +8,7 @@ FunctionParameterController::FunctionParameterController(Responder * parentRespo
   m_pageTitle("Colonne f(x)"),
   m_displayDerivativeColumn(SwitchListViewCell((char*)"Colonne de la fonction derivee")),
   m_copyColumn(ListViewCell((char*)"Copier la colonne dans une liste")),
-  m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
+  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
   m_function(nullptr)
@@ -20,7 +20,7 @@ const char * FunctionParameterController::title() const {
 }
 
 View * FunctionParameterController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 void FunctionParameterController::setFunction(Function * function) {
@@ -34,7 +34,7 @@ void FunctionParameterController::setFunction(Function * function) {
 }
 
 void FunctionParameterController::didBecomeFirstResponder() {
-  m_listView.reloadData();
+  m_tableView.reloadData();
   setActiveCell(m_activeCell);
 }
 
@@ -42,12 +42,12 @@ void FunctionParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_listView.scrollToRow(index);
-  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
+  m_tableView.scrollToCell(0, index);
+  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
   cell->setHighlighted(true);
 }
 
@@ -71,7 +71,7 @@ bool FunctionParameterController::handleEnter() {
     case 0:
     {
       m_function->setDisplayDerivative(!m_function->displayDerivative());
-      m_listView.reloadData();
+      m_tableView.reloadData();
       return true;
     }
     case 1:

@@ -29,7 +29,7 @@ private:
   ListViewCell m_colorCell;
   SwitchListViewCell m_enableCell;
   ListViewCell m_deleteCell;
-  ListView m_listView;
+  TableView m_tableView;
   int m_activeCell;
   Function * m_function;
   FunctionStore * m_functionStore;

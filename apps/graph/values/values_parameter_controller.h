@@ -30,7 +30,7 @@ private:
   TextListViewCell m_intervalStartCell;
   TextListViewCell m_intervalEndCell;
   TextListViewCell m_intervalStepCell;
-  ListView m_listView;
+  TableView m_tableView;
   int m_activeCell;
 };
 

@@ -8,14 +8,14 @@ namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_listView(ListView(this, 0, 0, 0, 0)),
+  m_tableView(TableView(this, 0, 0, 0, 0)),
   m_activeCell(0),
   m_calculationStore(calculationStore)
 {
 }
 
 View * HistoryController::HistoryController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 const char * HistoryController::title() const {
@@ -23,12 +23,12 @@ const char * HistoryController::title() const {
 }
 
 void HistoryController::reload() {
-  m_listView.reloadData();
+  m_tableView.reloadData();
 }
 
 void HistoryController::didBecomeFirstResponder() {
   setActiveCell(numberOfRows()-1);
-  m_listView.reloadData();
+  m_tableView.reloadData();
 }
 
 void HistoryController::setActiveCell(int index) {
@@ -36,13 +36,13 @@ void HistoryController::setActiveCell(int index) {
     return;
   }
   if (m_activeCell >= 0) {
-    HistoryViewCell * previousCell = (HistoryViewCell *)(m_listView.cellAtIndex(m_activeCell));
+    HistoryViewCell * previousCell = (HistoryViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
     previousCell->setHighlighted(false);
   }
   m_activeCell = index;
   if (m_activeCell >= 0) {
-    m_listView.scrollToRow(index);
-    HistoryViewCell * cell = (HistoryViewCell *)(m_listView.cellAtIndex(index));
+    m_tableView.scrollToCell(0, index);
+    HistoryViewCell * cell = (HistoryViewCell *)(m_tableView.cellAtLocation(0, index));
     cell->setHighlighted(true);
   }
 }

@@ -25,7 +25,7 @@ private:
   ListViewCell m_deleteColumn;
   ListViewCell m_copyColumn;
   ListViewCell m_setInterval;
-  ListView m_listView;
+  TableView m_tableView;
   int m_activeCell;
   ValuesParameterController * m_valuesParameterController;
 };

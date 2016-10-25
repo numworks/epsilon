@@ -35,7 +35,7 @@ private:
   constexpr static int k_defaultCalculationCellWidth = 320;
   constexpr static int k_resultWidth = 7*14;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
-  ListView m_listView;
+  TableView m_tableView;
   int m_activeCell;
   CalculationStore * m_calculationStore;
 };

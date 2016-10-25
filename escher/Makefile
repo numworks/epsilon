@@ -9,7 +9,6 @@ objs += $(addprefix escher/src/,\
   image_view.o\
   invocation.o\
   input_view_controller.o\
-  list_view.o\
   list_view_cell.o\
   list_view_data_source.o\
   metric.o\

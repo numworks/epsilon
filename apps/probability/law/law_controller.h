@@ -27,7 +27,7 @@ private:
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
   ListViewCell m_cells[k_maxNumberOfCells];
-  ListView m_listView;
+  TableView m_tableView;
   const char ** m_messages;
   int m_activeCell;
 };

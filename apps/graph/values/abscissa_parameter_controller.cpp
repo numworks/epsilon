@@ -8,7 +8,7 @@ AbscissaParameterController::AbscissaParameterController(Responder * parentRespo
   m_deleteColumn(ListViewCell((char*)"Effacer la colonne")),
   m_copyColumn(ListViewCell((char*)"Copier la colonne dans une liste")),
   m_setInterval(ListViewCell((char*)"Regler l'intervalle")),
-  m_listView(ListView(this,Metric::TopMargin, Metric::RightMargin,
+  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_activeCell(0),
   m_valuesParameterController(valuesParameterController)
@@ -20,7 +20,7 @@ const char * AbscissaParameterController::title() const {
 }
 
 View * AbscissaParameterController::view() {
-  return &m_listView;
+  return &m_tableView;
 }
 
 void AbscissaParameterController::didBecomeFirstResponder() {
@@ -31,12 +31,12 @@ void AbscissaParameterController::setActiveCell(int index) {
   if (index < 0 || index >= k_totalNumberOfCell) {
     return;
   }
-  ListViewCell * previousCell = (ListViewCell *)(m_listView.cellAtIndex(m_activeCell));
+  ListViewCell * previousCell = (ListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
   previousCell->setHighlighted(false);
 
   m_activeCell = index;
-  m_listView.scrollToRow(index);
-  ListViewCell * cell = (ListViewCell *)(m_listView.cellAtIndex(index));
+  m_tableView.scrollToCell(0, index);
+  ListViewCell * cell = (ListViewCell *)(m_tableView.cellAtLocation(0, index));
   cell->setHighlighted(true);
 }
 

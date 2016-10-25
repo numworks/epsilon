@@ -28,7 +28,7 @@ private:
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   ListViewCell m_hideColumn;
   ListViewCell m_copyColumn;
-  ListView m_listView;
+  TableView m_tableView;
   int m_activeCell;
   Function * m_function;
 };

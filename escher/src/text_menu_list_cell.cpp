@@ -1,31 +1,31 @@
-#include <escher/text_list_view_cell.h>
+#include <escher/text_menu_list_cell.h>
 
-TextListViewCell::TextListViewCell(char * label) :
-  ListViewCell(label),
+TextMenuListCell::TextMenuListCell(char * label) :
+  MenuListCell(label),
   m_contentView(BufferTextView(1.0f, 0.5f))
 {
 }
 
-void TextListViewCell::setText(const char * textBody) {
+void TextMenuListCell::setText(const char * textBody) {
   m_contentView.setText(textBody);
 }
 
-const char * TextListViewCell::textContent() {
+const char * TextMenuListCell::textContent() {
   return m_contentView.text();
 }
 
-View * TextListViewCell::contentView() const {
+View * TextMenuListCell::contentView() const {
   return (View *)&m_contentView;
 }
 
-void TextListViewCell::reloadCell() {
-  ListViewCell::reloadCell();
+void TextMenuListCell::reloadCell() {
+  MenuListCell::reloadCell();
   KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_contentView.setBackgroundColor(backgroundColor);
 }
 
-void TextListViewCell::setHighlighted(bool highlight) {
-  ListViewCell::setHighlighted(highlight);
+void TextMenuListCell::setHighlighted(bool highlight) {
+  MenuListCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_contentView.setBackgroundColor(backgroundColor);
 }

@@ -25,8 +25,8 @@ private:
   constexpr static int k_totalNumberOfCell = 2;
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
-  SwitchListViewCell m_displayDerivativeColumn;
-  ListViewCell m_copyColumn;
+  SwitchMenuListCell m_displayDerivativeColumn;
+  MenuListCell m_copyColumn;
   SelectableTableView m_selectableTableView;
   Function * m_function;
 };

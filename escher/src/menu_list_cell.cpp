@@ -1,22 +1,22 @@
-#include <escher/list_view_cell.h>
+#include <escher/menu_list_cell.h>
 #include <assert.h>
 
-constexpr KDCoordinate ListViewCell::k_separatorThickness;
+constexpr KDCoordinate MenuListCell::k_separatorThickness;
 
-ListViewCell::ListViewCell(char * label) :
+MenuListCell::MenuListCell(char * label) :
   TableViewCell(),
   m_pointerTextView(PointerTextView(label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
 
-int ListViewCell::numberOfSubviews() const {
+int MenuListCell::numberOfSubviews() const {
   if (contentView() == nullptr) {
     return 1;
   }
   return 2;
 }
 
-View * ListViewCell::subviewAtIndex(int index) {
+View * MenuListCell::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_pointerTextView;
   }
@@ -24,7 +24,7 @@ View * ListViewCell::subviewAtIndex(int index) {
   return contentView();
 }
 
-void ListViewCell::layoutSubviews() {
+void MenuListCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDSize labelSize = m_pointerTextView.minimalSizeForOptimalDisplay();
@@ -35,21 +35,21 @@ void ListViewCell::layoutSubviews() {
   }
 }
 
-void ListViewCell::reloadCell() {
+void MenuListCell::reloadCell() {
   TableViewCell::reloadCell();
   KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_pointerTextView.setBackgroundColor(backgroundColor);
 }
 
-PointerTextView * ListViewCell::textView() {
+PointerTextView * MenuListCell::textView() {
   return &m_pointerTextView;
 }
 
-View * ListViewCell::contentView() const {
+View * MenuListCell::contentView() const {
   return nullptr;
 }
 
-void ListViewCell::drawRect(KDContext * ctx, KDRect rect) const {
+void MenuListCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;

@@ -25,9 +25,9 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   Interval * m_interval;
-  TextListViewCell m_intervalStartCell;
-  TextListViewCell m_intervalEndCell;
-  TextListViewCell m_intervalStepCell;
+  TextMenuListCell m_intervalStartCell;
+  TextMenuListCell m_intervalEndCell;
+  TextMenuListCell m_intervalStepCell;
   SelectableTableView m_selectableTableView;
 };
 

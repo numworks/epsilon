@@ -6,8 +6,8 @@ namespace Graph {
 DerivativeParameterController::DerivativeParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_pageTitle("Colonne f'(x)"),
-  m_hideColumn(ListViewCell((char*)"Masquer la colonne de la derivee")),
-  m_copyColumn(ListViewCell((char*)"Copier la colonne dans une liste")),
+  m_hideColumn(MenuListCell((char*)"Masquer la colonne de la derivee")),
+  m_copyColumn(MenuListCell((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_function(nullptr)

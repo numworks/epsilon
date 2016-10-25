@@ -1,5 +1,5 @@
-#ifndef ESCHER_LIST_VIEW_CELL_H
-#define ESCHER_LIST_VIEW_CELL_H
+#ifndef ESCHER_MENU_LIST_CELL_H
+#define ESCHER_MENU_LIST_CELL_H
 
 #include <escher/view.h>
 #include <escher/pointer_text_view.h>
@@ -7,9 +7,9 @@
 #include <escher/metric.h>
 #include <escher/table_view_cell.h>
 
-class ListViewCell : public TableViewCell {
+class MenuListCell : public TableViewCell {
 public:
-  ListViewCell(char * label = nullptr);
+  MenuListCell(char * label = nullptr);
   PointerTextView * textView();
   virtual View * contentView() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;

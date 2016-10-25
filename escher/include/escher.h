@@ -10,8 +10,8 @@
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
-#include <escher/list_view_cell.h>
 #include <escher/list_view_data_source.h>
+#include <escher/menu_list_cell.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/pointer_text_view.h>
@@ -24,9 +24,9 @@
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>
-#include <escher/switch_list_view_cell.h>
+#include <escher/switch_menu_list_cell.h>
 #include <escher/text_field.h>
-#include <escher/text_list_view_cell.h>
+#include <escher/text_menu_list_cell.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>
 #include <escher/table_view.h>

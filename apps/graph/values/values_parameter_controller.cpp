@@ -7,9 +7,9 @@ namespace Graph {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, Interval * interval) :
   ViewController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(TextListViewCell((char*)"X Debut")),
-  m_intervalEndCell(TextListViewCell((char*)"X Fin")),
-  m_intervalStepCell(TextListViewCell((char*)"Pas")),
+  m_intervalStartCell(TextMenuListCell((char*)"X Debut")),
+  m_intervalEndCell(TextMenuListCell((char*)"X Fin")),
+  m_intervalStepCell(TextMenuListCell((char*)"Pas")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin))
 {
@@ -37,7 +37,7 @@ int ValuesParameterController::activeCell() {
 }
 
 void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  TextListViewCell * myCell = (TextListViewCell *) cell;
+  TextMenuListCell * myCell = (TextMenuListCell *) cell;
   char buffer[14];
   switch (index) {
     case 0:
@@ -97,8 +97,8 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
   } else {
-    TextListViewCell * textListViewCell = (TextListViewCell *)reusableCell(activeCell());
-    strlcpy(initialTextContent, textListViewCell->textContent(), sizeof(initialTextContent));
+    TextMenuListCell * textMenuListCell = (TextMenuListCell *)reusableCell(activeCell());
+    strlcpy(initialTextContent, textMenuListCell->textContent(), sizeof(initialTextContent));
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
@@ -106,7 +106,7 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     [](void * context, void * sender){
     ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
     int activeCell = valuesParameterController->activeCell();
-    TextListViewCell * cell = (TextListViewCell *)valuesParameterController->reusableCell(activeCell);
+    TextMenuListCell * cell = (TextMenuListCell *)valuesParameterController->reusableCell(activeCell);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     App * myApp = (App *)valuesParameterController->app();

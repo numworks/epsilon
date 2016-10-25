@@ -24,7 +24,7 @@ private:
   constexpr static int k_maxNumberOfCells = 10;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
-  ListViewCell m_cells[k_maxNumberOfCells];
+  MenuListCell m_cells[k_maxNumberOfCells];
   SelectableTableView m_selectableTableView;
   const char ** m_messages;
 };

@@ -20,9 +20,9 @@ public:
 private:
   bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
-  ListViewCell m_deleteColumn;
-  ListViewCell m_copyColumn;
-  ListViewCell m_setInterval;
+  MenuListCell m_deleteColumn;
+  MenuListCell m_copyColumn;
+  MenuListCell m_setInterval;
   SelectableTableView m_selectableTableView;
   ValuesParameterController * m_valuesParameterController;
 };

@@ -1,12 +1,12 @@
-#ifndef ESCHER_TEXT_LIST_VIEW_CELL_H
-#define ESCHER_TEXT_LIST_VIEW_CELL_H
+#ifndef ESCHER_TEXT_MENU_LIST_CELL_H
+#define ESCHER_TEXT_MENU_LIST_CELL_H
 
-#include <escher/list_view_cell.h>
+#include <escher/menu_list_cell.h>
 #include <escher/buffer_text_view.h>
 
-class TextListViewCell : public ListViewCell {
+class TextMenuListCell : public MenuListCell {
 public:
-  TextListViewCell(char * label);
+  TextMenuListCell(char * label);
   void reloadCell() override;
   View * contentView() const override;
   void setHighlighted(bool highlight);

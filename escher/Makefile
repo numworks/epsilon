@@ -9,8 +9,8 @@ objs += $(addprefix escher/src/,\
   image_view.o\
   invocation.o\
   input_view_controller.o\
-  list_view_cell.o\
   list_view_data_source.o\
+  menu_list_cell.o\
   metric.o\
   palette.o\
   pointer_text_view.o\
@@ -23,7 +23,7 @@ objs += $(addprefix escher/src/,\
   solid_color_view.o\
   stack_view.o\
   stack_view_controller.o\
-  switch_list_view_cell.o\
+  switch_menu_list_cell.o\
   switch_view.o\
   tab_view.o\
   tab_view_cell.o\
@@ -32,7 +32,7 @@ objs += $(addprefix escher/src/,\
   table_view_cell.o\
   table_view_data_source.o\
   text_field.o\
-  text_list_view_cell.o\
+  text_menu_list_cell.o\
   text_view.o\
   tiled_view.o\
   view.o\

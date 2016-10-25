@@ -62,7 +62,7 @@ int Probability::LawController::reusableCellCount() {
 }
 
 void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  ListViewCell * myCell = (ListViewCell *)cell;
+  MenuListCell * myCell = (MenuListCell *)cell;
   myCell->textView()->setText(m_messages[index]);
   myCell->textView()->setAlignment(0., 0.5);
 }

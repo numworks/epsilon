@@ -13,9 +13,6 @@ namespace Graph {
 class ListController : public HeaderViewController, public TableViewDataSource {
 public:
   ListController(Responder * parentResponder, FunctionStore * functionStore);
-
-  void setActiveCell(int i, int j);
-
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEnter();
@@ -48,9 +45,7 @@ private:
   FunctionExpressionView m_expressionCells[k_maxNumberOfRows];
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
-  TableView m_tableView;
-  int m_activeCellx;
-  int m_activeCelly;
+  SelectableTableView m_selectableTableView;
   KDCoordinate m_manualScrolling;
   FunctionStore * m_functionStore;
   ParameterController m_parameterController;

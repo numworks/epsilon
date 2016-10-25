@@ -7,6 +7,7 @@
 class TextListViewCell : public ListViewCell {
 public:
   TextListViewCell(char * label);
+  void reloadCell() override;
   View * contentView() const override;
   void setHighlighted(bool highlight);
   void setText(const char * textBody);

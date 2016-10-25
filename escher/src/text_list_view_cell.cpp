@@ -18,6 +18,12 @@ View * TextListViewCell::contentView() const {
   return (View *)&m_contentView;
 }
 
+void TextListViewCell::reloadCell() {
+  ListViewCell::reloadCell();
+  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  m_contentView.setBackgroundColor(backgroundColor);
+}
+
 void TextListViewCell::setHighlighted(bool highlight) {
   ListViewCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;

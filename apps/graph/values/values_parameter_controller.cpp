@@ -10,9 +10,8 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   m_intervalStartCell(TextListViewCell((char*)"X Debut")),
   m_intervalEndCell(TextListViewCell((char*)"X Fin")),
   m_intervalStepCell(TextListViewCell((char*)"Pas")),
-  m_tableView(TableView(this,Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
-  m_activeCell(0)
+  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
+    Metric::BottomMargin, Metric::LeftMargin))
 {
 }
 
@@ -21,7 +20,7 @@ const char * ValuesParameterController::title() const {
 }
 
 View * ValuesParameterController::view() {
-  return &m_tableView;
+  return &m_selectableTableView;
 }
 
 Graph::Interval * ValuesParameterController::interval() {
@@ -29,11 +28,12 @@ Graph::Interval * ValuesParameterController::interval() {
 }
 
 void ValuesParameterController::didBecomeFirstResponder() {
-  setActiveCell(m_activeCell);
+  m_selectableTableView.setSelectedCellAtLocation(0, 0);
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 int ValuesParameterController::activeCell() {
-  return m_activeCell;
+  return m_selectableTableView.selectedRow();
 }
 
 void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
@@ -58,19 +58,6 @@ void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, in
   }
 }
 
-void ValuesParameterController::setActiveCell(int index) {
-  if (index < 0 || index >= k_totalNumberOfCell) {
-    return;
-  }
-  TextListViewCell * previousCell = (TextListViewCell *)(m_tableView.cellAtLocation(0, m_activeCell));
-  previousCell->setHighlighted(false);
-
-  m_activeCell = index;
-  m_tableView.scrollToCell(0, index);
-  TextListViewCell * cell = (TextListViewCell *)(m_tableView.cellAtLocation(0, index));
-  cell->setHighlighted(true);
-}
-
 void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, float f) {
   switch(parameterIndex) {
     case 0:
@@ -89,12 +76,6 @@ void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, 
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      setActiveCell(m_activeCell+1);
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      setActiveCell(m_activeCell-1);
-      return true;
     case Ion::Events::Event::ENTER:
       editInterval(false);
       return true;
@@ -116,7 +97,7 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
   } else {
-    TextListViewCell * textListViewCell = (TextListViewCell *)reusableCell(m_activeCell);
+    TextListViewCell * textListViewCell = (TextListViewCell *)reusableCell(activeCell());
     strlcpy(initialTextContent, textListViewCell->textContent(), sizeof(initialTextContent));
   }
   App * myApp = (App *)app();

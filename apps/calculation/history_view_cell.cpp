@@ -34,7 +34,7 @@ void HistoryViewCell::layoutSubviews() {
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_calculation = calculation;
   char buffer[7];
-  m_calculation->evaluation()->convertFloatToText(buffer, 14, 7);
+  Float(m_calculation->evaluation()).convertFloatToText(buffer, 14, 7);
   m_result.setText(buffer);
 }
 

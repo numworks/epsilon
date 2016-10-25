@@ -8,18 +8,20 @@ namespace Calculation {
 class Calculation {
 public:
   Calculation();
-  ~Calculation(); // Delete expression and layout, if needed
+    ~Calculation(); // Delete expression and layout, if needed
+  Calculation & operator= (const Calculation & other);
   const char * text();
   Expression * expression();
   ExpressionLayout * layout();
-  Float * evaluation();
+  float evaluation();
   void setContent(const char * c, Context * context);
+  bool isEmpty();
 private:
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];
   Expression * m_expression;
   ExpressionLayout * m_layout;
-  Float m_evaluation;
+  float m_evaluation;
 };
 
 }

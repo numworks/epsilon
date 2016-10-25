@@ -9,13 +9,12 @@ class CalculationStore {
 public:
   CalculationStore();
   Calculation * calculationAtIndex(int i);
-  Calculation * addEmptyCalculation();
-  void removeCalculation(Calculation * c);
+  Calculation * push(Calculation * c);
+  void deleteCalculationAtIndex(int i);
   int numberOfCalculations();
 private:
-  static constexpr int k_maxNumberOfCalculations = 10;
-  int m_numberOfCalculations;
-  int m_startIndex;
+  static constexpr int k_maxNumberOfCalculations = 5;
+  Calculation * m_start;
   Calculation m_calculations[k_maxNumberOfCalculations];
 };
 

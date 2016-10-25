@@ -4,46 +4,47 @@
 namespace Calculation {
 
 CalculationStore::CalculationStore() :
-  m_numberOfCalculations(0),
-  m_startIndex(0)
+  m_start(m_calculations)
 {
 }
 
-Calculation * CalculationStore::calculationAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfCalculations);
-  int index = (m_startIndex+i) - m_numberOfCalculations*(int)((m_startIndex+i)/m_numberOfCalculations);
-  return &m_calculations[index];
-}
-
-Calculation * CalculationStore::addEmptyCalculation() {
-  //TODO: change the model
-  if (m_numberOfCalculations >= k_maxNumberOfCalculations) {
-    for (int k = 0; k < k_maxNumberOfCalculations; k++) {
-      m_calculations[k] = m_calculations[k+1];
-    }
-    m_numberOfCalculations--;
+Calculation * CalculationStore::push(Calculation * c) {
+  Calculation * result = m_start;
+  *m_start++ = *c;
+  if (m_start >= m_calculations + k_maxNumberOfCalculations) {
+    m_start = m_calculations;
   }
-  Calculation addedCalculation = Calculation();
-  m_calculations[m_numberOfCalculations] = addedCalculation;
-  Calculation * result = &m_calculations[m_numberOfCalculations];
-  m_numberOfCalculations++;
   return result;
 }
 
-void CalculationStore::removeCalculation(Calculation * c) {
-  int i = 0;
-  while (&m_calculations[i] != c && i < m_numberOfCalculations) {
-    i++;
+Calculation * CalculationStore::calculationAtIndex(int i) {
+  int j = 0;
+  Calculation * currentCalc = m_start;
+  while (j<=i) {
+    if (currentCalc >= m_calculations + k_maxNumberOfCalculations) {
+      currentCalc = m_calculations;
+    }
+    if (!currentCalc->isEmpty()) {
+      j++;
+    }
+    currentCalc++;
   }
-  assert(i>=0 && i<m_numberOfCalculations);
-  m_numberOfCalculations--;
-  for (int j = i; j<m_numberOfCalculations; j++) {
-    m_calculations[j] = m_calculations[j+1];
-  }
+  return currentCalc-1;
 }
 
 int CalculationStore::numberOfCalculations() {
-  return m_numberOfCalculations;
+  Calculation * currentCalc= m_calculations;
+  int numberOfCalculations = 0;
+  while (currentCalc < m_calculations + k_maxNumberOfCalculations) {
+    if (!currentCalc++->isEmpty()) {
+      numberOfCalculations++;
+    }
+  }
+  return numberOfCalculations;
+}
+
+void CalculationStore::deleteCalculationAtIndex(int i) {
+  *calculationAtIndex(i) = Calculation();
 }
 
 }

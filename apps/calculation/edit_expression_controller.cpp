@@ -68,9 +68,10 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::ENTER:
     {
-      Calculation * calculation = m_calculationStore->addEmptyCalculation();
+      Calculation calculation = Calculation();
       App * calculationApp = (App *)app();
-      calculation->setContent(textBody(), calculationApp->globalContext());
+      calculation.setContent(textBody(), calculationApp->globalContext());
+      m_calculationStore->push(&calculation);
       m_historyController->reload();
       m_contentView.textField()->setTextBuffer("");
       return true;

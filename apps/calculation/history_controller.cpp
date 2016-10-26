@@ -6,7 +6,7 @@ namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, this)),
   m_calculationStore(calculationStore)
 {
 }
@@ -41,6 +41,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     default:
       return false;
   }
+}
+
+void HistoryController::tableViewDidChangeSelection(SelectableTableView * t) {
+  m_calculationHistory[t->selectedRow()].setParentResponder(t);
+  app()->setFirstResponder(&m_calculationHistory[t->selectedRow()]);
 }
 
 int HistoryController::numberOfRows() {

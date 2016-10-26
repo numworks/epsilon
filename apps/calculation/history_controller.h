@@ -10,7 +10,7 @@ namespace Calculation {
 
 class App;
 
-class HistoryController : public ViewController, ListViewDataSource {
+class HistoryController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate {
 public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
 
@@ -28,6 +28,7 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
+  void tableViewDidChangeSelection(SelectableTableView * t) override;
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;

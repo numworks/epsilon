@@ -67,9 +67,16 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
    * worst case has the form -1.999999e-38 (7+6+1 char). */
   assert(bufferSize > 6 + numberOfDigitsInMantissa);
 
-  // TO DO: if (isinf(m_float)) {
-  float maximalFloat = 3.4f*powf(10, 38);
-  if (m_float > maximalFloat || m_float < -maximalFloat) {
+  if (isinf(m_float)) {
+    buffer[0] = m_float > 0 ? '+' : '-';
+    buffer[1] = 'I';
+    buffer[2] = 'n';
+    buffer[3] = 'f';
+    buffer[4] = 0;
+    return;
+  }
+
+  if (isnan(m_float)) {
     buffer[0] = 'N';
     buffer[1] = 'a';
     buffer[2] = 'N';

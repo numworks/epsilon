@@ -31,8 +31,7 @@ public:
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;
-  constexpr static int k_defaultCalculationCellWidth = 320;
-  constexpr static int k_resultWidth = 7*14;
+  constexpr static int k_resultHeight = 12;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   SelectableTableView m_selectableTableView;
   CalculationStore * m_calculationStore;

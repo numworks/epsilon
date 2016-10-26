@@ -3,6 +3,7 @@
 
 #include <escher/table_view.h>
 #include <escher/app.h>
+#include <escher/selectable_table_view_delegate.h>
 #include <escher/table_view_data_source.h>
 #include <escher/responder.h>
 
@@ -16,7 +17,7 @@ class SelectableTableView : public TableView, public Responder {
 public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
-    KDCoordinate leftMargin = 0);
+    KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr);
   int selectedRow();
   int selectedColumn();
   virtual bool handleEvent(Ion::Events::Event event) override;
@@ -26,6 +27,7 @@ public:
 private:
   int m_selectedCellX;
   int m_selectedCellY;
+  SelectableTableViewDelegate * m_delegate;
 };
 
 #endif

@@ -12,7 +12,6 @@ public:
   HistoryViewCell();
   void reloadCell() override;
   KDColor backgroundColor() const override;
-  BufferTextView * result();
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

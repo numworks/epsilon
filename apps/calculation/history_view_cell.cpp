@@ -71,11 +71,9 @@ void HistoryViewCell::reloadCell() {
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
-  if (m_selectedView == HistoryViewCell::SelectedView::Result) {
-    //app()->setFirstResponder(&m_result);
-    return;
+  if (m_selectedView == HistoryViewCell::SelectedView::PrettyPrint) {
+    app()->setFirstResponder(&m_prettyPrint);
   }
-  app()->setFirstResponder(&m_prettyPrint);
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
@@ -83,7 +81,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::DOWN_ARROW:
       if (m_selectedView == HistoryViewCell::SelectedView::PrettyPrint) {
         m_selectedView = HistoryViewCell::SelectedView::Result;
-        //app()->setFirstResponder(&m_result);
+        app()->setFirstResponder(this);
         reloadCell();
         return true;
       }

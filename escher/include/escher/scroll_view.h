@@ -7,7 +7,7 @@
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
-    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true);
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset();
@@ -38,6 +38,7 @@ private:
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
+  bool m_showIndicators;
 };
 
 #endif

@@ -4,7 +4,7 @@
 namespace Calculation {
 
 PrettyPrintView::PrettyPrintView(Responder * parentResponder) :
-  ScrollView(&m_expressionView),
+  ScrollView(&m_expressionView, 0, 0, 0, 0, false),
   Responder(parentResponder),
   m_expressionView(ExpressionView()),
   m_manualScrolling(0)

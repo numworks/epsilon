@@ -7,7 +7,8 @@ extern "C" {
 
 constexpr KDCoordinate ScrollView::k_indicatorThickness;
 
-ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin,
+  KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators) :
   View(),
   m_offset(KDPointZero),
   m_contentView(contentView),
@@ -16,15 +17,22 @@ ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate 
   m_topMargin(topMargin),
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin)
+  m_leftMargin(leftMargin),
+  m_showIndicators(showIndicators)
 {
 }
 bool ScrollView::hasVerticalIndicator() const {
-  return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
+  if (m_showIndicators) {
+    return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
+  }
+  return false;
 }
 
 bool ScrollView::hasHorizontalIndicator() const {
-  return m_horizontalScrollIndicator.end() < 1 || m_horizontalScrollIndicator.start() > 0;
+  if (m_showIndicators) {
+    return m_horizontalScrollIndicator.end() < 1 || m_horizontalScrollIndicator.start() > 0;
+  }
+  return false;
 }
 
 int ScrollView::numberOfSubviews() const {
@@ -95,16 +103,18 @@ void ScrollView::layoutSubviews() {
 }
 
 void ScrollView::updateScrollIndicator() {
-  float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-  float verticalStart = m_offset.y();
-  float verticalEnd = m_offset.y() + m_frame.height();
-  m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-  m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
-  float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-  float horizontalStart = m_offset.x();
-  float horizontalEnd = m_offset.x() + m_frame.width();
-  m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-  m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
+  if (m_showIndicators) {
+    float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
+    float verticalStart = m_offset.y();
+    float verticalEnd = m_offset.y() + m_frame.height();
+    m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
+    m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
+    float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
+    float horizontalStart = m_offset.x();
+    float horizontalEnd = m_offset.x() + m_frame.width();
+    m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
+    m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
+  }
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {

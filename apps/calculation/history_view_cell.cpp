@@ -12,6 +12,12 @@ HistoryViewCell::HistoryViewCell() :
 {
 }
 
+KDColor HistoryViewCell::backgroundColor() const {
+  KDColor background = m_even ? EvenOddCell::k_evenLineBackgroundColor : EvenOddCell::k_oddLineBackgroundColor;
+  return background;
+}
+
+
 int HistoryViewCell::numberOfSubviews() const {
   return 2;
 }
@@ -32,9 +38,8 @@ void HistoryViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDSize prettyPrintSize = m_prettyPrint.minimalSizeForOptimalDisplay();
-  KDRect prettyPrintFrame(0, 0, width, prettyPrintSize.height());
-  m_prettyPrint.setFrame(prettyPrintFrame);
-  KDRect resultFrame(0, prettyPrintSize.height(), width, height - prettyPrintSize.height());
+  m_prettyPrint.setFrame(KDRect(0, 0, prettyPrintSize.width(), prettyPrintSize.height()));
+  KDRect resultFrame(width - k_resultWidth, prettyPrintSize.height(), k_resultWidth, height - prettyPrintSize.height());
   m_result.setFrame(resultFrame);
 }
 
@@ -46,17 +51,18 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
 }
 
 void HistoryViewCell::reloadCell() {
-  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
-  if (m_selectedView == HistoryViewCell::SelectedView::Result) {
-    m_result.setBackgroundColor(backgroundColor);
-    m_prettyPrint.setBackgroundColor(Palette::CellBackgroundColor);
-  } else {
-    m_result.setBackgroundColor(Palette::CellBackgroundColor);
-    m_prettyPrint.setBackgroundColor(backgroundColor);
+  m_result.setBackgroundColor(backgroundColor());
+  m_prettyPrint.setBackgroundColor(backgroundColor());
+  if (isHighlighted()) {
+    if (m_selectedView == HistoryViewCell::SelectedView::Result) {
+      m_result.setBackgroundColor(Palette::FocusCellBackgroundColor);
+    } else {
+      m_prettyPrint.setBackgroundColor(Palette::FocusCellBackgroundColor);
+    }
   }
-  m_prettyPrint.reloadCell();
-  TableViewCell::reloadCell();
   layoutSubviews();
+  EvenOddCell::reloadCell();
+  m_prettyPrint.reloadCell();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {

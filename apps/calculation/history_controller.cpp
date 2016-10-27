@@ -67,6 +67,7 @@ int HistoryController::reusableCellCount(int type) {
 void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
+  myCell->setEven(index%2 == 0);
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {

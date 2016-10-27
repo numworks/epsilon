@@ -7,10 +7,11 @@
 
 namespace Calculation {
 
-class HistoryViewCell : public TableViewCell, public Responder {
+class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   HistoryViewCell();
   void reloadCell() override;
+  KDColor backgroundColor() const override;
   BufferTextView * result();
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
@@ -19,6 +20,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
+  constexpr static int k_resultWidth = 80;
   enum class SelectedView {
     PrettyPrint,
     Result

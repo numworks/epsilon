@@ -95,20 +95,16 @@ void ScrollView::layoutSubviews() {
 }
 
 void ScrollView::updateScrollIndicator() {
-  if (hasVerticalIndicator()) {
-    float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-    float verticalStart = m_offset.y();
-    float verticalEnd = m_offset.y() + m_frame.height();
-    m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-    m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
-  }
-  if (hasHorizontalIndicator()) {
-    float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-    float horizontalStart = m_offset.x();
-    float horizontalEnd = m_offset.x() + m_frame.width();
-    m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-    m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
-  }
+  float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
+  float verticalStart = m_offset.y();
+  float verticalEnd = m_offset.y() + m_frame.height();
+  m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
+  m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
+  float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
+  float horizontalStart = m_offset.x();
+  float horizontalEnd = m_offset.x() + m_frame.width();
+  m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
+  m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {

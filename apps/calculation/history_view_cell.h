@@ -20,7 +20,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  constexpr static int k_resultWidth = 80;
+  constexpr static KDCoordinate k_resultWidth = 80;
   enum class SelectedView {
     PrettyPrint,
     Result

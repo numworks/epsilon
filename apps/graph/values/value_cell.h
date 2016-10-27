@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include <poincare.h>
-#include "../even_odd_cell.h"
 
 namespace Graph {
 class ValueCell : public EvenOddCell {

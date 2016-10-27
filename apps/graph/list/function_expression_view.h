@@ -2,7 +2,6 @@
 #define GRAPH_FUNCTION_EXPRESSION_H
 
 #include <escher.h>
-#include "../even_odd_cell.h"
 #include "../function.h"
 
 namespace Graph {

@@ -1,6 +1,5 @@
 app_objs += $(addprefix apps/graph/,\
   app.o\
-  even_odd_cell.o\
   evaluate_context.o\
   function.o\
   function_store.o\

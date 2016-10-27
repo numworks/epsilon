@@ -2,7 +2,6 @@
 #define GRAPH_NEW_FUNCTION_CELL_H
 
 #include <escher.h>
-#include "../even_odd_cell.h"
 
 namespace Graph {
 class NewFunctionCell : public EvenOddCell {

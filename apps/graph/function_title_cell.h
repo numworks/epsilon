@@ -2,7 +2,6 @@
 #define GRAPH_FUNCTION_TITLE_CELL_H
 
 #include <escher.h>
-#include "even_odd_cell.h"
 
 namespace Graph {
 class FunctionTitleCell : public EvenOddCell {

@@ -1,6 +1,4 @@
-#include "even_odd_cell.h"
-
-namespace Graph {
+#include <escher/even_odd_cell.h>
 
 constexpr KDColor EvenOddCell::k_evenLineBackgroundColor;
 constexpr KDColor EvenOddCell::k_oddLineBackgroundColor;
@@ -27,6 +25,4 @@ KDColor EvenOddCell::backgroundColor() const {
 void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = backgroundColor();
   ctx->fillRect(rect, background);
-}
-
 }

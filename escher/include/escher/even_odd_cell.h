@@ -1,9 +1,7 @@
-#ifndef GRAPH_EVEN_ODD_CELL_H
-#define GRAPH_EVEN_ODD_CELL_H
+#ifndef ESCHER_EVEN_ODD_CELL_H
+#define ESCHER_EVEN_ODD_CELL_H
 
-#include <escher.h>
-
-namespace Graph {
+#include <escher/table_view_cell.h>
 
 class EvenOddCell : public TableViewCell {
 public:
@@ -19,7 +17,5 @@ public:
 private:
   bool m_even;
 };
-
-}
 
 #endif

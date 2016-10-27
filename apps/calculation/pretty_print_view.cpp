@@ -41,14 +41,18 @@ bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::RIGHT_ARROW:
       if (rightViewIsInvisible()) {
-        m_manualScrolling += 10;
+        KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
+        KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;
+        m_manualScrolling += scrollAdd;
         setContentOffset({m_manualScrolling, 0});
         return true;
       }
       return false;
     case Ion::Events::Event::LEFT_ARROW:
       if (m_manualScrolling > 0) {
-        m_manualScrolling -= 10;
+        KDCoordinate leftSpace = m_manualScrolling;
+        KDCoordinate scrollSubstract = leftSpace > 10 ? 10 : leftSpace;
+        m_manualScrolling -= scrollSubstract;
         setContentOffset({m_manualScrolling, 0});
         return true;
       }

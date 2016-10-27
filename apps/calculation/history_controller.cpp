@@ -73,7 +73,7 @@ void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index)
 KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   KDCoordinate prettyPrintHeight = calculation->layout()->size().height();
-  return prettyPrintHeight + k_resultHeight;
+  return prettyPrintHeight + k_resultHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 
 KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {

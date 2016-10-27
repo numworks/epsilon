@@ -19,6 +19,8 @@ public:
   void layoutSubviews() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  constexpr static KDCoordinate k_digitHorizontalMargin = 10;
+  constexpr static KDCoordinate k_digitVerticalMargin = 5;
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   enum class SelectedView {

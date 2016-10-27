@@ -38,12 +38,12 @@ void HistoryViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDSize prettyPrintSize = m_prettyPrint.minimalSizeForOptimalDisplay();
-  if (prettyPrintSize.width() > width) {
-    m_prettyPrint.setFrame(KDRect(0, 0, width, prettyPrintSize.height()));
+  if (prettyPrintSize.width() + k_digitHorizontalMargin > width) {
+    m_prettyPrint.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, width - k_digitHorizontalMargin, prettyPrintSize.height()));
   } else {
-    m_prettyPrint.setFrame(KDRect(0, 0, prettyPrintSize.width(), prettyPrintSize.height()));
+    m_prettyPrint.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, prettyPrintSize.width(), prettyPrintSize.height()));
   }
-  KDRect resultFrame(width - k_resultWidth, prettyPrintSize.height(), k_resultWidth, height - prettyPrintSize.height());
+  KDRect resultFrame(width - k_resultWidth - k_digitHorizontalMargin, prettyPrintSize.height() + 2*k_digitVerticalMargin, k_resultWidth, height - prettyPrintSize.height() - 2*k_digitVerticalMargin);
   m_result.setFrame(resultFrame);
 }
 

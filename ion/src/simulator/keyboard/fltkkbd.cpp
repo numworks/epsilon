@@ -17,6 +17,19 @@ static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
   "ON",      "0",     ".",       "(-)",    "ENTER"
 };
 
+static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {
+  0, 0, 0, 0, 0,
+  0, 0, FL_Escape, FL_Left, FL_Up,
+  0, 0, 0, FL_Down, FL_Right,
+  0, 0, 0, FL_BackSpace, 0,
+  'x', 'y', 'z', 't', '^',
+  '=', '(', ')', ',', '/',
+  0, '7', '8', '9', '*',
+  0, '4', '5', '6', '-',
+  0, '1', '2', '3', '+',
+  0, '0', '.', 0, FL_Enter
+};
+
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
   assert(KeyboardRows*KeyboardColumns == Ion::Keyboard::NumberOfKeys);
   int key_width = w/KeyboardColumns;
@@ -27,6 +40,10 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
                                  key_width,
                                  key_height,
                                  kCharForKey[k]);
+    if (kShortcutForKey[k]) {
+      m_buttons[k]->shortcut(kShortcutForKey[k]);
+    }
+    m_buttons[k]->clear_visible_focus();
   }
   end();
 }

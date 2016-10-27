@@ -17,6 +17,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void edit(const char * initialContent);
   const char * textBody();
+  void setTextBody(const char * text);
 private:
   class ContentView : public View {
   public:
@@ -31,7 +32,6 @@ private:
     TextField m_textField;
     char m_textBody[255];
   };
-  void setTextBody(const char * text);
   ContentView m_contentView;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;

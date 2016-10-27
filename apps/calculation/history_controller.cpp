@@ -37,7 +37,23 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::UP_ARROW:
       return true;
     case Ion::Events::Event::ENTER:
-      return false;
+    {
+      int focusRow = m_selectableTableView.selectedRow();
+      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      EditExpressionController * editController = (EditExpressionController *)parentResponder();
+      Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+        editController->setTextBody(calculation->text());
+      } else {
+        char buffer[7];
+        Float(calculation->evaluation()).convertFloatToText(buffer, 14, 7);
+        editController->setTextBody(buffer);
+      }
+      m_selectableTableView.deselectTable();
+      app()->setFirstResponder(parentResponder());
+      return true;
+    }
     default:
       return false;
   }

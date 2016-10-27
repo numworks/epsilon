@@ -76,6 +76,14 @@ void HistoryViewCell::didBecomeFirstResponder() {
   }
 }
 
+HistoryViewCell::SelectedView HistoryViewCell::selectedView() {
+  return m_selectedView;
+}
+
+void HistoryViewCell::setSelectedView(HistoryViewCell::SelectedView selectedView) {
+  m_selectedView = selectedView;
+}
+
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:

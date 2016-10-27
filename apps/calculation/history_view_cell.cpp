@@ -7,7 +7,8 @@ namespace Calculation {
 HistoryViewCell::HistoryViewCell() :
   Responder(nullptr),
   m_prettyPrint(PrettyPrintView(this)),
-  m_result(BufferTextView(1.0f, 0.5f))
+  m_result(BufferTextView(1.0f, 0.5f)),
+  m_selectedView(HistoryViewCell::SelectedView::Result)
 {
 }
 
@@ -30,7 +31,6 @@ View * HistoryViewCell::subviewAtIndex(int index) {
 void HistoryViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  // Position the result
   KDSize prettyPrintSize = m_prettyPrint.minimalSizeForOptimalDisplay();
   KDRect prettyPrintFrame(0, 0, width, prettyPrintSize.height());
   m_prettyPrint.setFrame(prettyPrintFrame);
@@ -47,10 +47,46 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
 
 void HistoryViewCell::reloadCell() {
   KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
-  m_result.setBackgroundColor(backgroundColor);
-  m_prettyPrint.setBackgroundColor(backgroundColor);
+  if (m_selectedView == HistoryViewCell::SelectedView::Result) {
+    m_result.setBackgroundColor(backgroundColor);
+    m_prettyPrint.setBackgroundColor(Palette::CellBackgroundColor);
+  } else {
+    m_result.setBackgroundColor(Palette::CellBackgroundColor);
+    m_prettyPrint.setBackgroundColor(backgroundColor);
+  }
   TableViewCell::reloadCell();
   layoutSubviews();
+}
+
+void HistoryViewCell::didBecomeFirstResponder() {
+  if (m_selectedView == HistoryViewCell::SelectedView::Result) {
+    //app()->setFirstResponder(&m_result);
+    return;
+  }
+  app()->setFirstResponder(&m_prettyPrint);
+}
+
+bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
+  switch (event) {
+    case Ion::Events::Event::DOWN_ARROW:
+      if (m_selectedView == HistoryViewCell::SelectedView::PrettyPrint) {
+        m_selectedView = HistoryViewCell::SelectedView::Result;
+        //app()->setFirstResponder(&m_result);
+        reloadCell();
+        return true;
+      }
+      return false;
+    case Ion::Events::Event::UP_ARROW:
+      if (m_selectedView == HistoryViewCell::SelectedView::Result) {
+        m_selectedView = HistoryViewCell::SelectedView::PrettyPrint;
+        app()->setFirstResponder(&m_prettyPrint);
+        reloadCell();
+        return true;
+      }
+      return false;
+    default:
+      return false;
+  }
 }
 
 }

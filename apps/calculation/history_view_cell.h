@@ -16,9 +16,16 @@ public:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+  void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
+  enum class SelectedView {
+    PrettyPrint,
+    Result
+  };
   PrettyPrintView m_prettyPrint;
   BufferTextView m_result;
+  SelectedView m_selectedView;
 };
 
 }

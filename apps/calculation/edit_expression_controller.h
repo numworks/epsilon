@@ -21,14 +21,15 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(View * subview);
+    ContentView(TableView * subview);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     TextField * textField();
+    TableView * mainView();
   private:
     static constexpr KDCoordinate k_textFieldHeight = 20;
-    View * m_mainView;
+    TableView * m_mainView;
     TextField m_textField;
     char m_textBody[255];
   };

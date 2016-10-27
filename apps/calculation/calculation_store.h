@@ -13,7 +13,7 @@ public:
   void deleteCalculationAtIndex(int i);
   int numberOfCalculations();
 private:
-  static constexpr int k_maxNumberOfCalculations = 5;
+  static constexpr int k_maxNumberOfCalculations = 20;
   Calculation * m_start;
   Calculation m_calculations[k_maxNumberOfCalculations];
 };

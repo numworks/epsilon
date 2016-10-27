@@ -4,7 +4,7 @@
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(View * subview) :
+EditExpressionController::ContentView::ContentView(TableView * subview) :
   View(),
   m_mainView(subview),
   m_textField(nullptr, m_textBody, 255)
@@ -29,8 +29,8 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
 }
 
 void EditExpressionController::ContentView::layoutSubviews() {
-  KDRect mainViewFram(0, 0, bounds().width(), bounds().height() - k_textFieldHeight);
-  m_mainView->setFrame(mainViewFram);
+  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - k_textFieldHeight);
+  m_mainView->setFrame(mainViewFrame);
   KDRect inputViewFram(0, bounds().height() - k_textFieldHeight, bounds().width(), k_textFieldHeight);
   m_textField.setFrame(inputViewFram);
 }
@@ -39,9 +39,13 @@ TextField * EditExpressionController::ContentView::textField() {
   return &m_textField;
 }
 
+TableView * EditExpressionController::ContentView::mainView() {
+  return m_mainView;
+}
+
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_contentView(historyController->view()),
+  m_contentView((TableView *)historyController->view()),
   m_historyController(historyController),
   m_calculationStore(calculationStore)
 {
@@ -73,6 +77,7 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
       calculation.setContent(textBody(), calculationApp->globalContext());
       m_calculationStore->push(&calculation);
       m_historyController->reload();
+      m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
       m_contentView.textField()->setTextBuffer("");
       return true;
     }

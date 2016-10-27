@@ -13,6 +13,7 @@ public:
   void scrollToCell(int i, int j);
   TableViewCell * cellAtLocation(int i, int j);
   void reloadData();
+  KDSize size() const;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -27,6 +28,7 @@ private:
     TableViewCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();
+    KDSize size() const;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

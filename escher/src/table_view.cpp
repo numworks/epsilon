@@ -14,6 +14,10 @@ TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, K
 {
 }
 
+KDSize TableView::size() const {
+  return m_contentView.size();
+}
+
 TableViewDataSource * TableView::dataSource() {
   return m_contentView.dataSource();
 }
@@ -54,6 +58,10 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
   m_tableView(tableView),
   m_dataSource(dataSource)
 {
+}
+
+KDSize TableView::ContentView::size() const {
+  return KDSize(width(), height());
 }
 
 TableViewDataSource * TableView::ContentView::dataSource() {

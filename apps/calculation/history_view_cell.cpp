@@ -54,6 +54,7 @@ void HistoryViewCell::reloadCell() {
     m_result.setBackgroundColor(Palette::CellBackgroundColor);
     m_prettyPrint.setBackgroundColor(backgroundColor);
   }
+  m_prettyPrint.reloadCell();
   TableViewCell::reloadCell();
   layoutSubviews();
 }

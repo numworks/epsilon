@@ -13,6 +13,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   bool handleEvent(Ion::Events::Event event) override;
   KDSize minimalSizeForOptimalDisplay() override;
+  void reloadCell();
 private:
   ExpressionView m_expressionView;
   KDCoordinate m_manualScrolling;

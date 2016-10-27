@@ -34,6 +34,10 @@ KDSize PrettyPrintView::minimalSizeForOptimalDisplay() {
   return m_expressionView.minimalSizeForOptimalDisplay();
 }
 
+void PrettyPrintView::reloadCell() {
+  setContentOffset({0, 0});
+}
+
 bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::RIGHT_ARROW:

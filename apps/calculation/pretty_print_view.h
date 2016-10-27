@@ -15,6 +15,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() override;
   void reloadCell();
 private:
+	bool rightViewIsInvisible();
   ExpressionView m_expressionView;
   KDCoordinate m_manualScrolling;
 };

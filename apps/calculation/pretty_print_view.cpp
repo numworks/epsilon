@@ -21,12 +21,7 @@ void PrettyPrintView::setBackgroundColor(KDColor backgroundColor) {
 }
 
 void PrettyPrintView::layoutSubviews() {
-  KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
-  if (expressionSize.width() >= bounds().width()) {
-    m_expressionView.setSize(expressionSize);
-  } else {
-    m_expressionView.setSize(KDSize(bounds().width(), expressionSize.height()));
-  }
+  m_expressionView.setSize(m_expressionView.minimalSizeForOptimalDisplay());
   ScrollView::layoutSubviews();
 }
 
@@ -38,16 +33,26 @@ void PrettyPrintView::reloadCell() {
   setContentOffset({0, 0});
 }
 
+bool PrettyPrintView::rightViewIsInvisible() {
+  return m_expressionView.bounds().width() - m_manualScrolling > bounds().width();
+}
+
 bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::RIGHT_ARROW:
-      m_manualScrolling += 10;
-      setContentOffset({m_manualScrolling, 0});
-      return true;
+      if (rightViewIsInvisible()) {
+        m_manualScrolling += 10;
+        setContentOffset({m_manualScrolling, 0});
+        return true;
+      }
+      return false;
     case Ion::Events::Event::LEFT_ARROW:
-      m_manualScrolling -= 10;
-      setContentOffset({m_manualScrolling, 0});
-      return true;
+      if (m_manualScrolling > 0) {
+        m_manualScrolling -= 10;
+        setContentOffset({m_manualScrolling, 0});
+        return true;
+      }
+      return false;
     default:
       return false;
   }

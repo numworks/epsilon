@@ -6,7 +6,7 @@ namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, this)),
   m_calculationStore(calculationStore)
 {
 }
@@ -43,6 +43,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
 }
 
+void HistoryController::tableViewDidChangeSelection(SelectableTableView * t) {
+  m_calculationHistory[t->selectedRow()].setParentResponder(t);
+  app()->setFirstResponder(&m_calculationHistory[t->selectedRow()]);
+}
+
 int HistoryController::numberOfRows() {
   return m_calculationStore->numberOfCalculations();
 };
@@ -66,8 +71,8 @@ void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index)
 
 KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  KDCoordinate calculationHeight = calculation->layout()->size().height();
-  return calculationHeight;
+  KDCoordinate prettyPrintHeight = calculation->layout()->size().height();
+  return prettyPrintHeight + k_resultHeight;
 }
 
 KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {

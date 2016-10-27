@@ -1,11 +1,13 @@
 #include <escher/selectable_table_view.h>
 
-SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, 
-  KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
+  KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
+  SelectableTableViewDelegate * delegate) :
   TableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin),
   Responder(parentResponder),
   m_selectedCellX(0),
-  m_selectedCellY(-1)
+  m_selectedCellY(-1),
+  m_delegate(delegate)
 {
 }
 
@@ -19,6 +21,9 @@ int SelectableTableView::selectedColumn() {
 
 void SelectableTableView::didBecomeFirstResponder() {
   reloadData();
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this);
+  }
 }
 
 void SelectableTableView::deselectTable() {
@@ -53,13 +58,37 @@ bool SelectableTableView::setSelectedCellAtLocation(int i, int j) {
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
-      return setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY+1);
+      if (setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
+        if (m_delegate) {
+          m_delegate->tableViewDidChangeSelection(this);
+        }
+        return true;
+      }
+      return false;
     case Ion::Events::Event::UP_ARROW:
-      return setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY-1);
+      if (setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
+        if (m_delegate) {
+          m_delegate->tableViewDidChangeSelection(this);
+        }
+        return true;
+      }
+      return false;
     case Ion::Events::Event::LEFT_ARROW:
-      return setSelectedCellAtLocation(m_selectedCellX-1, m_selectedCellY);
+      if (setSelectedCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
+        if (m_delegate) {
+          m_delegate->tableViewDidChangeSelection(this);
+        }
+        return true;
+      }
+      return false;
     case Ion::Events::Event::RIGHT_ARROW:
-      return setSelectedCellAtLocation(m_selectedCellX+1, m_selectedCellY);
+      if (setSelectedCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
+        if (m_delegate) {
+          m_delegate->tableViewDidChangeSelection(this);
+        }
+        return true;
+      }
+      return false;
     default:
       return false;
   }

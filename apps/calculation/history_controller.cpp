@@ -1,5 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
+#include "../constant.h"
 #include <assert.h>
 
 namespace Calculation {
@@ -46,8 +47,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
         editController->setTextBody(calculation->text());
       } else {
-        char buffer[7];
-        Float(calculation->evaluation()).convertFloatToText(buffer, 14, 7);
+        char buffer[Constant::FloatBufferSizeInScientificMode];
+        Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
         editController->setTextBody(buffer);
       }
       m_selectableTableView.deselectTable();

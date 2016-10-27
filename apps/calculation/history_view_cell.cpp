@@ -1,4 +1,5 @@
 #include "history_view_cell.h"
+#include "../constant.h"
 #include <assert.h>
 #include <string.h>
 
@@ -50,8 +51,8 @@ void HistoryViewCell::layoutSubviews() {
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_prettyPrint.setExpression(calculation->layout());
-  char buffer[7];
-  Float(calculation->evaluation()).convertFloatToText(buffer, 14, 7);
+  char buffer[Constant::FloatBufferSizeInScientificMode];
+  Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_result.setText(buffer);
 }
 

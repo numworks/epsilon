@@ -10,7 +10,8 @@ public:
   void setText(const char * text);
   const char * text() const override;
 private:
-  char m_buffer[16];
+  static constexpr int k_maxNumberOfChar = 256;
+  char m_buffer[k_maxNumberOfChar];
 };
 
 #endif

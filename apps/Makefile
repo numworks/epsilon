@@ -6,6 +6,7 @@ include apps/calculation/Makefile
 
 app_objs += $(addprefix apps/,\
   apps_container.o\
+  constant.o\
   main.o\
 )
 

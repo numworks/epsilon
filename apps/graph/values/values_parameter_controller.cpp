@@ -1,5 +1,6 @@
 #include "values_parameter_controller.h"
 #include "../app.h"
+#include "../../constant.h"
 #include <assert.h>
 
 namespace Graph {
@@ -38,18 +39,18 @@ int ValuesParameterController::activeCell() {
 
 void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   TextMenuListCell * myCell = (TextMenuListCell *) cell;
-  char buffer[14];
+  char buffer[Constant::FloatBufferSizeInScientificMode];
   switch (index) {
     case 0:
-      Float(m_interval->start()).convertFloatToText(buffer, 14, 7);
+      Float(m_interval->start()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
       myCell->setText(buffer);
       break;
     case 1:
-      Float(m_interval->end()).convertFloatToText(buffer, 14, 7);
+      Float(m_interval->end()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
       myCell->setText(buffer);
       break;
     case 2:
-      Float(m_interval->step()).convertFloatToText(buffer, 14, 7);
+      Float(m_interval->step()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
       myCell->setText(buffer);
       break;
     default:
@@ -92,7 +93,7 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  char initialTextContent[16];
+  char initialTextContent[Constant::FloatBufferSizeInScientificMode];
   if (overwrite) {
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;

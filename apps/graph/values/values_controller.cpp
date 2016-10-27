@@ -1,4 +1,5 @@
 #include "values_controller.h"
+#include "../../constant.h"
 #include "../app.h"
 #include <assert.h>
 
@@ -264,7 +265,7 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  char initialTextContent[16];
+  char initialTextContent[Constant::FloatBufferSizeInScientificMode];
   if (overwrite) {
     initialTextContent[0] = initialDigit;
     initialTextContent[1] = 0;
@@ -272,7 +273,7 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
     if (activeRow() > m_interval.numberOfElements()) {
       initialTextContent[0] = 0;
     } else {
-      Float(m_interval.element(activeRow()-1)).convertFloatToText(initialTextContent, 14, 7);
+      Float(m_interval.element(activeRow()-1)).convertFloatToText(initialTextContent, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     }
   }
   App * myApp = (App *)app();
@@ -363,7 +364,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   }
   // The cell is a value cell:
   ValueCell * myValueCell = (ValueCell *)cell;
-  char buffer[14];
+  char buffer[Constant::FloatBufferSizeInScientificMode];
   // Special case 1: last row
   if (j == numberOfRows() - 1) {
     /* Display an empty line only if there is enough space for a new element in
@@ -377,16 +378,16 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   }
   // Special case 2: first column
   if (i == 0){
-    Float(m_interval.element(j-1)).convertFloatToText(buffer, 14, 7);
+    Float(m_interval.element(j-1)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     myValueCell->setText(buffer);
     return;
   }
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, m_evaluateContext)).convertFloatToText(buffer, 14, 3);
+    Float(function->approximateDerivative(x, m_evaluateContext)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
   } else {
-    Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, 14, 7);
+    Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   }
   myValueCell->setText(buffer);
 }

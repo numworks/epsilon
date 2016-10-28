@@ -5,6 +5,7 @@
 #include <poincare.h>
 #include "history_view_cell.h"
 #include "calculation_store.h"
+#include "selectable_table_view.h"
 
 namespace Calculation {
 
@@ -33,7 +34,7 @@ private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;
   constexpr static KDCoordinate k_resultHeight = 12;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
-  SelectableTableView m_selectableTableView;
+  CalculationSelectableTableView m_selectableTableView;
   CalculationStore * m_calculationStore;
 };
 

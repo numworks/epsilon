@@ -78,6 +78,32 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       app()->setFirstResponder(editController);
       return true;
     }
+    case Ion::Events::Event::DELETE:
+    {
+      int focusRow = m_selectableTableView.selectedRow();
+      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      EditExpressionController * editController = (EditExpressionController *)parentResponder();
+      m_calculationStore->deleteCalculationAtIndex(focusRow);
+      m_selectableTableView.deselectTable();
+      reload();
+      if (numberOfRows()== 0) {
+        app()->setFirstResponder(editController);
+        return true;
+      }
+      if (focusRow > 0) {
+        m_selectableTableView.selectCellAtLocation(0, focusRow-1);
+      } else {
+        m_selectableTableView.selectCellAtLocation(0, 0);
+      }
+      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+        tableViewDidChangeSelection(&m_selectableTableView, 0, m_selectableTableView.selectedRow());
+      } else {
+        tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
+      }
+      m_selectableTableView.scrollToCell(0, m_selectableTableView.selectedRow());
+      return true;
+    }
     default:
       return false;
   }

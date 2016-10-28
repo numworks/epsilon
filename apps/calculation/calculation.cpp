@@ -15,11 +15,15 @@ Calculation & Calculation::operator= (const Calculation & other) {
   if (m_expression != nullptr) {
     delete m_expression;
   }
-  m_expression = Expression::parse(m_text);
+  m_expression = nullptr;
+  if (other.m_expression) {
+    m_expression = Expression::parse(m_text);
+  }
   if (m_layout != nullptr) {
     delete m_layout;
   }
-  if (m_expression) {
+  m_layout = nullptr;
+  if (m_expression && other.m_layout) {
     m_layout = m_expression->createLayout();
   }
   m_evaluation = other.m_evaluation;

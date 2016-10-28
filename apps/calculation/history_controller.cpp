@@ -52,7 +52,30 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         editController->setTextBody(buffer);
       }
       m_selectableTableView.deselectTable();
-      app()->setFirstResponder(parentResponder());
+      app()->setFirstResponder(editController);
+      return true;
+    }
+    case Ion::Events::Event::EQUAL:
+    {
+      int focusRow = m_selectableTableView.selectedRow();
+      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      EditExpressionController * editController = (EditExpressionController *)parentResponder();
+      Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+      Calculation newCalculation;
+      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+        newCalculation = *calculation;
+      } else {
+        char buffer[Constant::FloatBufferSizeInScientificMode];
+        Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+        App * calculationApp = (App *)app();
+        newCalculation.setContent(buffer, calculationApp->globalContext());
+      }
+      m_selectableTableView.deselectTable();
+      m_calculationStore->push(&newCalculation);
+      reload();
+      m_selectableTableView.scrollToCell(0, numberOfRows()-1);
+      app()->setFirstResponder(editController);
       return true;
     }
     default:

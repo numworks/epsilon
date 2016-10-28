@@ -10,7 +10,7 @@ public:
   TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0,
     KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
 
-  void scrollToCell(int i, int j);
+  virtual void scrollToCell(int i, int j);
   TableViewCell * cellAtLocation(int i, int j);
   void reloadData();
   KDSize size() const;
@@ -19,7 +19,6 @@ protected:
   const char * className() const override;
 #endif
   TableViewDataSource * dataSource();
-private:
   class ContentView : public View {
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource);
@@ -65,10 +64,9 @@ private:
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
   };
-
-  void layoutSubviews() override;
-
   ContentView m_contentView;
+private:
+  void layoutSubviews() override;
 };
 
 #endif

@@ -10,11 +10,11 @@ constexpr KDCoordinate ScrollView::k_indicatorThickness;
 ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin,
   KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators) :
   View(),
+  m_topMargin(topMargin),
   m_offset(KDPointZero),
   m_contentView(contentView),
   m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical)),
   m_horizontalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Horizontal)),
-  m_topMargin(topMargin),
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),
   m_leftMargin(leftMargin),

@@ -19,6 +19,7 @@ protected:
   KDCoordinate maxContentHeightDisplayableWithoutScrolling();
   void layoutSubviews() override;
   void updateScrollIndicator();
+  KDCoordinate m_topMargin;
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;
@@ -34,7 +35,6 @@ private:
   ScrollViewIndicator m_horizontalScrollIndicator;
   bool hasVerticalIndicator() const;
   bool hasHorizontalIndicator() const;
-  KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;

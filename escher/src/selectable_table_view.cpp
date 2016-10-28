@@ -22,7 +22,7 @@ int SelectableTableView::selectedColumn() {
 void SelectableTableView::didBecomeFirstResponder() {
   reloadData();
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this);
+    m_delegate->tableViewDidChangeSelection(this, 0, -1);
   }
 }
 
@@ -64,7 +64,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::DOWN_ARROW:
       if (selectCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
         if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this);
+          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY - 1);
         }
         return true;
       }
@@ -72,7 +72,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::UP_ARROW:
       if (selectCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
         if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this);
+          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY + 1);
         }
         return true;
       }
@@ -80,7 +80,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::LEFT_ARROW:
       if (selectCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
         if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this);
+          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX + 1, m_selectedCellY);
         }
         return true;
       }
@@ -88,7 +88,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::RIGHT_ARROW:
       if (selectCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
         if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this);
+          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX - 1, m_selectedCellY);
         }
         return true;
       }

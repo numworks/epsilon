@@ -5,7 +5,7 @@ class SelectableTableView;
 
 class SelectableTableViewDelegate {
 public:
-  virtual void tableViewDidChangeSelection(SelectableTableView * t) = 0;
+  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) = 0;
 };
 
 #endif

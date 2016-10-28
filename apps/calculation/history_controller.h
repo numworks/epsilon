@@ -28,7 +28,7 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
-  void tableViewDidChangeSelection(SelectableTableView * t) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;
   constexpr static KDCoordinate k_resultHeight = 12;

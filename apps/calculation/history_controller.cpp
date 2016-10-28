@@ -60,10 +60,20 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
 }
 
-void HistoryController::tableViewDidChangeSelection(SelectableTableView * t) {
+void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   selectedCell->setParentResponder(t);
+  if (m_selectableTableView.selectedRow() < previousSelectedCellY) {
+    selectedCell->setSelectedView(HistoryViewCell::SelectedView::Result);
+  }
+  if (m_selectableTableView.selectedRow() >= previousSelectedCellY) {
+    selectedCell->setSelectedView(HistoryViewCell::SelectedView::PrettyPrint);
+  }
+  if (previousSelectedCellY == -1) {
+    selectedCell->setSelectedView(HistoryViewCell::SelectedView::Result);
+  }
   app()->setFirstResponder(selectedCell);
+  selectedCell->reloadCell();
 }
 
 int HistoryController::numberOfRows() {

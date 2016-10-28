@@ -61,8 +61,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t) {
-  m_calculationHistory[t->selectedRow()].setParentResponder(t);
-  app()->setFirstResponder(&m_calculationHistory[t->selectedRow()]);
+  HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
+  selectedCell->setParentResponder(t);
+  app()->setFirstResponder(selectedCell);
 }
 
 int HistoryController::numberOfRows() {

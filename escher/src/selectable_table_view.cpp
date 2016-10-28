@@ -55,6 +55,10 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   return true;
 }
 
+TableViewCell * SelectableTableView::selectedCell() {
+  return cellAtLocation(m_selectedCellX, m_selectedCellY);
+}
+
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:

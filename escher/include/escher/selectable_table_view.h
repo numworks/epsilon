@@ -24,6 +24,7 @@ public:
   virtual void didBecomeFirstResponder() override;
   void deselectTable();
   bool selectCellAtLocation(int i, int j);
+  TableViewCell * selectedCell();
 private:
   int m_selectedCellX;
   int m_selectedCellY;

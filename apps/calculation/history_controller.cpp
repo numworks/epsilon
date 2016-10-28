@@ -104,6 +104,13 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.scrollToCell(0, m_selectableTableView.selectedRow());
       return true;
     }
+    case Ion::Events::Event::CLEAR:
+    {
+      m_calculationStore->deleteAll();
+      reload();
+      app()->setFirstResponder(parentResponder());
+      return true;
+    }
     default:
       return false;
   }

@@ -48,4 +48,15 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
   *calculationAtIndex(i) = Calculation();
 }
 
+void CalculationStore::deleteAll() {
+  m_start = m_calculations;
+  Calculation * currentCalc= m_start;
+  while (currentCalc < m_calculations + k_maxNumberOfCalculations) {
+    if (!currentCalc->isEmpty()) {
+      *currentCalc = Calculation();
+    }
+    currentCalc++;
+  }
+}
+
 }

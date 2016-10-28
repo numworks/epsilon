@@ -20,16 +20,17 @@ Calculation * CalculationStore::push(Calculation * c) {
 Calculation * CalculationStore::calculationAtIndex(int i) {
   int j = 0;
   Calculation * currentCalc = m_start;
-  while (j<=i) {
+  Calculation * previousCalc = nullptr;
+  while (j <= i) {
+    if (!currentCalc++->isEmpty()) {
+      previousCalc = currentCalc - 1;
+      j++;
+    }
     if (currentCalc >= m_calculations + k_maxNumberOfCalculations) {
       currentCalc = m_calculations;
     }
-    if (!currentCalc->isEmpty()) {
-      j++;
-    }
-    currentCalc++;
   }
-  return currentCalc-1;
+  return previousCalc;
 }
 
 int CalculationStore::numberOfCalculations() {

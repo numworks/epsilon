@@ -5,6 +5,8 @@
 
 namespace Calculation {
 
+// TODO: make tests for the ring buffer
+
 class CalculationStore {
 public:
   CalculationStore();

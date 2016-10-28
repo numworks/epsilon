@@ -99,9 +99,9 @@ int ListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 
 void ListController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.setSelectedCellAtLocation(1, 0);
+    m_selectableTableView.selectCellAtLocation(1, 0);
   } else {
-    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

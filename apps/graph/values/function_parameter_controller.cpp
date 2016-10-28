@@ -33,7 +33,7 @@ void FunctionParameterController::setFunction(Function * function) {
 }
 
 void FunctionParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.setSelectedCellAtLocation(0, 0);
+  m_selectableTableView.selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

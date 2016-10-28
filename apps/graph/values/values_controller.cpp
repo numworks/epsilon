@@ -172,9 +172,9 @@ void ValuesController::didBecomeFirstResponder() {
   m_contentView.setTableState(ContentView::TableState::NonEmpty);
   setSelectedButton(-1);
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.setSelectedCellAtLocation(0, 0);
+    m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -191,7 +191,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     case Ion::Events::Event::DOWN_ARROW:
       if (activeRow() == -1) {
         setSelectedButton(-1);
-        m_selectableTableView.setSelectedCellAtLocation(0,0);
+        m_selectableTableView.selectCellAtLocation(0,0);
         app()->setFirstResponder(&m_selectableTableView);
         return true;
       }

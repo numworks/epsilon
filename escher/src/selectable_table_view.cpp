@@ -33,7 +33,7 @@ void SelectableTableView::deselectTable() {
   m_selectedCellY = -1;
 }
 
-bool SelectableTableView::setSelectedCellAtLocation(int i, int j) {
+bool SelectableTableView::selectCellAtLocation(int i, int j) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -58,7 +58,7 @@ bool SelectableTableView::setSelectedCellAtLocation(int i, int j) {
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
-      if (setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
+      if (selectCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
         if (m_delegate) {
           m_delegate->tableViewDidChangeSelection(this);
         }
@@ -66,7 +66,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       }
       return false;
     case Ion::Events::Event::UP_ARROW:
-      if (setSelectedCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
+      if (selectCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
         if (m_delegate) {
           m_delegate->tableViewDidChangeSelection(this);
         }
@@ -74,7 +74,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       }
       return false;
     case Ion::Events::Event::LEFT_ARROW:
-      if (setSelectedCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
+      if (selectCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
         if (m_delegate) {
           m_delegate->tableViewDidChangeSelection(this);
         }
@@ -82,7 +82,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       }
       return false;
     case Ion::Events::Event::RIGHT_ARROW:
-      if (setSelectedCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
+      if (selectCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
         if (m_delegate) {
           m_delegate->tableViewDidChangeSelection(this);
         }

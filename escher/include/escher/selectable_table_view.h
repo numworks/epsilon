@@ -23,7 +23,7 @@ public:
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual void didBecomeFirstResponder() override;
   void deselectTable();
-  bool setSelectedCellAtLocation(int i, int j);
+  bool selectCellAtLocation(int i, int j);
 private:
   int m_selectedCellX;
   int m_selectedCellY;

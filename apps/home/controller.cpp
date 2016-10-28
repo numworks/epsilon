@@ -25,9 +25,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 
 void Controller::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.setSelectedCellAtLocation(0, 0);
+    m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.setSelectedCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

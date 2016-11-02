@@ -334,6 +334,9 @@ ExpressionLayout * Integer::createLayout() const {
   Integer base = Integer(10);
   Division d = Division(*this, base);
   int size = 0;
+  if (*this == Integer((native_int_t)0)) {
+    buffer[size++] = '0';
+  }
   while (!(d.m_remainder == Integer((native_int_t)0) &&
         d.m_quotient == Integer((native_int_t)0))) {
     assert(size<255); //TODO: malloc an extra buffer

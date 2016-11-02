@@ -6,8 +6,8 @@ QUIZ_CASE(poincare_identity_simple_term) {
   assert(identical_to("1", "1"));
   assert(!identical_to("1", "2"));
 
-  assert(identical_to("a", "a"));
-  assert(!identical_to("a", "b"));
+  assert(identical_to("A", "A"));
+  assert(!identical_to("A", "B"));
 
   assert(identical_to("1+2", "1+2"));
   assert(!identical_to("1+2", "1+3"));

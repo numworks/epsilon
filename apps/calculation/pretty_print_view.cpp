@@ -30,7 +30,8 @@ KDSize PrettyPrintView::minimalSizeForOptimalDisplay() {
 }
 
 void PrettyPrintView::reloadCell() {
-  setContentOffset({0, 0});
+  m_manualScrolling = 0;
+  setContentOffset(KDPoint(m_manualScrolling, 0));
 }
 
 bool PrettyPrintView::rightViewIsInvisible() {
@@ -44,7 +45,7 @@ bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
         KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
         KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;
         m_manualScrolling += scrollAdd;
-        setContentOffset({m_manualScrolling, 0});
+        setContentOffset(KDPoint(m_manualScrolling, 0));
         return true;
       }
       return false;
@@ -53,7 +54,7 @@ bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
         KDCoordinate leftSpace = m_manualScrolling;
         KDCoordinate scrollSubstract = leftSpace > 10 ? 10 : leftSpace;
         m_manualScrolling -= scrollSubstract;
-        setContentOffset({m_manualScrolling, 0});
+        setContentOffset(KDPoint(m_manualScrolling, 0));
         return true;
       }
       return false;

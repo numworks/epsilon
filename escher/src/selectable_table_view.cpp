@@ -5,9 +5,9 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   SelectableTableViewDelegate * delegate) :
   TableView(dataSource, topMargin, rightMargin, bottomMargin, leftMargin),
   Responder(parentResponder),
+  m_delegate(delegate),
   m_selectedCellX(0),
-  m_selectedCellY(-1),
-  m_delegate(delegate)
+  m_selectedCellY(-1)
 {
 }
 

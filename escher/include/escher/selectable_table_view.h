@@ -25,10 +25,11 @@ public:
   void deselectTable();
   bool selectCellAtLocation(int i, int j);
   TableViewCell * selectedCell();
+protected:
+  SelectableTableViewDelegate * m_delegate;
 private:
   int m_selectedCellX;
   int m_selectedCellY;
-  SelectableTableViewDelegate * m_delegate;
 };
 
 #endif

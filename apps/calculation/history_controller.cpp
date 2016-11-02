@@ -41,10 +41,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     {
       int focusRow = m_selectableTableView.selectedRow();
       HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
       EditExpressionController * editController = (EditExpressionController *)parentResponder();
       Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
         editController->setTextBody(calculation->text());
       } else {
         char buffer[Constant::FloatBufferSizeInScientificMode];
@@ -59,11 +59,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     {
       int focusRow = m_selectableTableView.selectedRow();
       HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
       EditExpressionController * editController = (EditExpressionController *)parentResponder();
       Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
       Calculation newCalculation;
-      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
         newCalculation = *calculation;
       } else {
         char buffer[Constant::FloatBufferSizeInScientificMode];
@@ -82,7 +82,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     {
       int focusRow = m_selectableTableView.selectedRow();
       HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SelectedView selectedSubview = selectedCell->selectedView();
+      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
       EditExpressionController * editController = (EditExpressionController *)parentResponder();
       m_calculationStore->deleteCalculationAtIndex(focusRow);
       m_selectableTableView.deselectTable();
@@ -96,7 +96,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       } else {
         m_selectableTableView.selectCellAtLocation(0, 0);
       }
-      if (selectedSubview == HistoryViewCell::SelectedView::PrettyPrint) {
+      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
         tableViewDidChangeSelection(&m_selectableTableView, 0, m_selectableTableView.selectedRow());
       } else {
         tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
@@ -120,13 +120,13 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   selectedCell->setParentResponder(t);
   if (m_selectableTableView.selectedRow() < previousSelectedCellY) {
-    selectedCell->setSelectedView(HistoryViewCell::SelectedView::Result);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
   }
   if (m_selectableTableView.selectedRow() >= previousSelectedCellY) {
-    selectedCell->setSelectedView(HistoryViewCell::SelectedView::PrettyPrint);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
   }
   if (previousSelectedCellY == -1) {
-    selectedCell->setSelectedView(HistoryViewCell::SelectedView::Result);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
   }
   app()->setFirstResponder(selectedCell);
   selectedCell->reloadCell();

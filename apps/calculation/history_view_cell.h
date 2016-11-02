@@ -9,7 +9,7 @@ namespace Calculation {
 
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
-  enum class SelectedView {
+  enum class SubviewType {
     PrettyPrint,
     Result
   };
@@ -24,13 +24,13 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static KDCoordinate k_digitHorizontalMargin = 10;
   constexpr static KDCoordinate k_digitVerticalMargin = 5;
-  SelectedView selectedView();
-  void setSelectedView(HistoryViewCell::SelectedView selectedView);
+  SubviewType selectedSubviewType();
+  void setSelectedSubviewType(HistoryViewCell::SubviewType subviewType);
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   PrettyPrintView m_prettyPrint;
   BufferTextView m_result;
-  SelectedView m_selectedView;
+  SubviewType m_selectedSubviewType;
 };
 
 }

@@ -1,5 +1,6 @@
 #include "history_view_cell.h"
 #include "../constant.h"
+#include "selectable_table_view.h"
 #include <assert.h>
 #include <string.h>
 
@@ -9,7 +10,7 @@ HistoryViewCell::HistoryViewCell() :
   Responder(nullptr),
   m_prettyPrint(PrettyPrintView(this)),
   m_result(BufferTextView(1.0f, 0.5f)),
-  m_selectedView(HistoryViewCell::SelectedView::Result)
+  m_selectedSubviewType(HistoryViewCell::SubviewType::Result)
 {
 }
 
@@ -60,7 +61,7 @@ void HistoryViewCell::reloadCell() {
   m_result.setBackgroundColor(backgroundColor());
   m_prettyPrint.setBackgroundColor(backgroundColor());
   if (isHighlighted()) {
-    if (m_selectedView == HistoryViewCell::SelectedView::Result) {
+    if (m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
       m_result.setBackgroundColor(Palette::FocusCellBackgroundColor);
     } else {
       m_prettyPrint.setBackgroundColor(Palette::FocusCellBackgroundColor);
@@ -72,34 +73,40 @@ void HistoryViewCell::reloadCell() {
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
-  if (m_selectedView == HistoryViewCell::SelectedView::PrettyPrint) {
+  if (m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
     app()->setFirstResponder(&m_prettyPrint);
   }
 }
 
-HistoryViewCell::SelectedView HistoryViewCell::selectedView() {
-  return m_selectedView;
+HistoryViewCell::SubviewType HistoryViewCell::selectedSubviewType() {
+  return m_selectedSubviewType;
 }
 
-void HistoryViewCell::setSelectedView(HistoryViewCell::SelectedView selectedView) {
-  m_selectedView = selectedView;
+void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subviewType) {
+  m_selectedSubviewType = subviewType;
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   switch (event) {
     case Ion::Events::Event::DOWN_ARROW:
-      if (m_selectedView == HistoryViewCell::SelectedView::PrettyPrint) {
-        m_selectedView = HistoryViewCell::SelectedView::Result;
-        app()->setFirstResponder(this);
-        reloadCell();
+      if (m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+        CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
+        tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::Result, tableView->selectedColumn(), tableView->selectedRow());
+        HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
+        selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
+        app()->setFirstResponder(selectedCell);
+        selectedCell->reloadCell();
         return true;
       }
       return false;
     case Ion::Events::Event::UP_ARROW:
-      if (m_selectedView == HistoryViewCell::SelectedView::Result) {
-        m_selectedView = HistoryViewCell::SelectedView::PrettyPrint;
-        app()->setFirstResponder(&m_prettyPrint);
-        reloadCell();
+      if (m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
+        CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
+        tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::PrettyPrint, tableView->selectedColumn(), tableView->selectedRow());
+        HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
+        selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
+        app()->setFirstResponder(selectedCell);
+        selectedCell->reloadCell();
         return true;
       }
       return false;

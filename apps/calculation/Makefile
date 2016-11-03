@@ -2,6 +2,7 @@ app_objs += $(addprefix apps/calculation/,\
   app.o\
   calculation.o\
   calculation_store.o\
+  evaluate_context.o\
   selectable_table_view.o\
   history_view_cell.o\
   history_controller.o\

@@ -4,8 +4,11 @@
 #include <poincare/leaf_expression.h>
 
 class Symbol : public LeafExpression {
-  public:
-    Symbol(const char * name);
+public:
+    enum SpecialSymbols : char {
+        Ans = '^'
+    };
+    Symbol(char name);
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
     Type type() const override;

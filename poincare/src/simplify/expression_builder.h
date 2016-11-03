@@ -42,7 +42,7 @@ private:
         // m_expressionType == Integer
         int32_t m_integerValue;
         // m_expressionType == Symbol
-        char * m_symbolName;
+        char m_symbolName;
       };
     };
     // m_action == Clone or BringUpWildcard

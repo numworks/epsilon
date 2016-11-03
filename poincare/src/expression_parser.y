@@ -31,11 +31,12 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
   Expression * expression;
   Function * function;
   char * string;
+  char character;
 }
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <string> INTEGER
-%token <string> SYMBOL
+%token <character> SYMBOL
 %token <function> FUNCTION
 
 /* Operator tokens */

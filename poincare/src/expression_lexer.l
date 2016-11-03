@@ -67,7 +67,8 @@
 %%
 
 [0-9]+ { poincare_expression_yylval.string = yytext; return(INTEGER); }
-[A-Zxnt] { poincare_expression_yylval.string = yytext; return SYMBOL; }
+[A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }

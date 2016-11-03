@@ -53,7 +53,7 @@ private:
         // m_expressionType == Integer
         int32_t m_integerValue;
         // m_expressionType == Symbol
-        char * m_symbolName;
+        char m_symbolName;
         // Position of the other match we must be equal to.
         int32_t m_sameAsPosition;
       };

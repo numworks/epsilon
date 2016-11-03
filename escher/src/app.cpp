@@ -9,6 +9,7 @@ App::App(ViewController * rootViewController, const char * name, const Image * i
   m_magic(Magic),
   m_modalViewController(ModalViewController(this, rootViewController)),
   m_firstResponder(nullptr),
+  m_warningController(WarningController(this)),
   m_name(name),
   m_icon(icon)
 {
@@ -67,4 +68,9 @@ void App::displayModalViewController(ViewController * vc, float verticalAlignmen
 
 void App::dismissModalViewController() {
   m_modalViewController.dismissModalViewController();
+}
+
+void App::displayWarning(const char * warningMessage) {
+  m_warningController.setLabel(warningMessage);
+  m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }

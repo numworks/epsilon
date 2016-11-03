@@ -5,6 +5,7 @@
 #include <escher/responder.h>
 #include <escher/view_controller.h>
 #include <escher/image.h>
+#include <escher/warning_controller.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -25,6 +26,7 @@ public:
   void processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment);
   void dismissModalViewController();
+  void displayWarning(const char * warningMessage);
   const char * name();
   const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
@@ -32,6 +34,7 @@ protected:
   ModalViewController m_modalViewController;
 private:
   Responder * m_firstResponder;
+  WarningController m_warningController;
   const char * m_name;
   const Image * m_icon;
 };

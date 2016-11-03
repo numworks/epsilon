@@ -7,7 +7,6 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore) :
   HeaderViewController(parentResponder, &m_selectableTableView),
   m_selectableTableView(SelectableTableView(this, this)),
-  m_manualScrolling(0),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
 {
@@ -141,10 +140,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.deselectTable();
       assert(m_selectableTableView.selectedRow() == -1);
       app()->setFirstResponder(tabController());
-      return true;
-    case Ion::Events::Event::PLUS:
-      m_manualScrolling += 10;
-      m_selectableTableView.setContentOffset({0, m_manualScrolling});
       return true;
     case Ion::Events::Event::ENTER:
       return handleEnter();

@@ -46,7 +46,6 @@ private:
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
   SelectableTableView m_selectableTableView;
-  KDCoordinate m_manualScrolling;
   FunctionStore * m_functionStore;
   ParameterController m_parameterController;
 };

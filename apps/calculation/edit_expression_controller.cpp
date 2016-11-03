@@ -4,10 +4,10 @@
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(TableView * subview) :
+EditExpressionController::ContentView::ContentView(TableView * subview, TextFieldDelegate * textFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_textField(nullptr, m_textBody, 255)
+  m_textField(nullptr, m_textBody, 255, textFieldDelegate)
 {
   m_textBody[0] = 0;
 }
@@ -43,9 +43,9 @@ TableView * EditExpressionController::ContentView::mainView() {
   return m_mainView;
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore, TextFieldDelegate * textFieldDelegate) :
   ViewController(parentResponder),
-  m_contentView((TableView *)historyController->view()),
+  m_contentView((TableView *)historyController->view(), textFieldDelegate),
   m_historyController(historyController),
   m_calculationStore(calculationStore)
 {

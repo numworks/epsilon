@@ -3,11 +3,12 @@
 
 #include "edit_expression_controller.h"
 #include "history_controller.h"
+#include "../expression_text_field_delegate.h"
 #include <escher.h>
 
 namespace Calculation {
 
-class App : public ::App {
+class App : public ::App, public ExpressionTextFieldDelegate {
 public:
   App(Context * context);
   Context * globalContext();

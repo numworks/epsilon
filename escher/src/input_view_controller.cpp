@@ -2,10 +2,10 @@
 #include <escher/app.h>
 #include <assert.h>
 
-InputViewController::ContentView::ContentView() :
+InputViewController::ContentView::ContentView(TextFieldDelegate * textFieldDelegate) :
   View(),
   m_mainView(nullptr),
-  m_textField(nullptr, m_textBody, 255),
+  m_textField(nullptr, m_textBody, 255, textFieldDelegate),
   m_visibleInput(false)
 {
   m_textBody[0] = 0;
@@ -61,9 +61,9 @@ TextField * InputViewController::ContentView::textField() {
   return &m_textField;
 }
 
-InputViewController::InputViewController(Responder * parentResponder, ViewController * child) :
+InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate) :
   ViewController(parentResponder),
-  m_contentView(),
+  m_contentView(textFieldDelegate),
   m_previousResponder(nullptr),
   m_regularViewController(child),
   m_successAction(Invocation(nullptr, nullptr)),

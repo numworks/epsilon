@@ -10,7 +10,7 @@ class HistoryController;
 
 class EditExpressionController : public ViewController {
 public:
-  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore, TextFieldDelegate * textFieldDelegate);
   View * view() override;
   const char * title() const override;
   void didBecomeFirstResponder() override;
@@ -21,7 +21,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(TableView * subview);
+    ContentView(TableView * subview, TextFieldDelegate * textFieldDelegate);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

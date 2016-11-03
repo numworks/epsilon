@@ -8,7 +8,7 @@ App::App(Context * context) :
   m_globalContext(context),
   m_calculationStore(CalculationStore()),
   m_historyController(HistoryController(&m_editExpressionController, &m_calculationStore)),
-  m_editExpressionController(EditExpressionController(&m_modalViewController, &m_historyController, &m_calculationStore))
+  m_editExpressionController(EditExpressionController(&m_modalViewController, &m_historyController, &m_calculationStore, this))
 {
 }
 

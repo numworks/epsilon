@@ -4,10 +4,11 @@
 #include <escher/view_controller.h>
 #include <escher/invocation.h>
 #include <escher/text_field.h>
+#include <escher/text_field_delegate.h>
 
 class InputViewController : public ViewController {
 public:
-  InputViewController(Responder * parentResponder, ViewController * child);
+  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate = nullptr);
   View * view() override;
   const char * title() const override;
 
@@ -17,7 +18,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView();
+    ContentView(TextFieldDelegate * textFieldDelegate);
     void setMainView(View * subview);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

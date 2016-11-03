@@ -14,7 +14,7 @@ App::App(::Context * context) :
   m_valuesController(nullptr, &m_functionStore, &m_evaluateContext),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesController)),
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
 }
 

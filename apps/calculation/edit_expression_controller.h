@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "history_controller.h"
 #include "calculation_store.h"
+#include "text_field.h"
 
 namespace Calculation {
 class HistoryController;

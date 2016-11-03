@@ -2,13 +2,17 @@
 #include <escher/app.h>
 #include <assert.h>
 
-InputViewController::ContentView::ContentView(View * subview) :
+InputViewController::ContentView::ContentView() :
   View(),
-  m_mainView(subview),
+  m_mainView(nullptr),
   m_textField(nullptr, m_textBody, 255),
   m_visibleInput(false)
 {
   m_textBody[0] = 0;
+}
+
+void InputViewController::ContentView::setMainView(View * subview) {
+  m_mainView = subview;
 }
 
 int InputViewController::ContentView::numberOfSubviews() const {
@@ -59,8 +63,9 @@ TextField * InputViewController::ContentView::textField() {
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child) :
   ViewController(parentResponder),
-  m_contentView(child->view()),
+  m_contentView(),
   m_previousResponder(nullptr),
+  m_regularViewController(child),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr))
 {
@@ -68,6 +73,9 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 }
 
 View * InputViewController::view() {
+  if (m_contentView.subviewAtIndex(0) == nullptr) {
+    m_contentView.setMainView(m_regularViewController->view());
+  }
   return &m_contentView;
 }
 
@@ -77,10 +85,6 @@ const char * InputViewController::title() const {
 
 const char * InputViewController::textBody() {
   return m_contentView.textField()->textBuffer();
-}
-
-void InputViewController::setPreviousResponder(Responder * previousResponder) {
-  m_previousResponder = previousResponder;
 }
 
 void InputViewController::showInput(bool show) {
@@ -118,7 +122,6 @@ bool InputViewController::handleEvent(Ion::Events::Event event) {
 void InputViewController::edit(Responder * caller, const char * initialContent, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
-  setPreviousResponder(caller);
   setTextBody(initialContent);
   showInput(true);
 }

@@ -17,7 +17,8 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(View * subview);
+    ContentView();
+    void setMainView(View * subview);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
@@ -33,9 +34,9 @@ private:
   };
   void showInput(bool show);
   void setTextBody(const char * text);
-  void setPreviousResponder(Responder * previousResponder);
   ContentView m_contentView;
   Responder * m_previousResponder;
+  ViewController * m_regularViewController;
   Invocation m_successAction;
   Invocation m_failureAction;
 };

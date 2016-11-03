@@ -40,6 +40,7 @@ objs += $(addprefix escher/src/,\
   tiled_view.o\
   view.o\
   view_controller.o\
+  warning_controller.o\
   window.o\
 )
 

@@ -39,6 +39,7 @@
 #include <escher/tiled_view.h>
 #include <escher/view.h>
 #include <escher/view_controller.h>
+#include <escher/warning_controller.h>
 #include <escher/window.h>
 
 #endif

@@ -74,7 +74,7 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
     {
       Calculation calculation = Calculation();
       App * calculationApp = (App *)app();
-      calculation.setContent(textBody(), calculationApp->globalContext());
+      calculation.setContent(textBody(), calculationApp->evaluateContext());
       m_calculationStore->push(&calculation);
       m_historyController->reload();
       m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);

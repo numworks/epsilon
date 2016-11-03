@@ -69,7 +69,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         char buffer[Constant::FloatBufferSizeInScientificMode];
         Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
         App * calculationApp = (App *)app();
-        newCalculation.setContent(buffer, calculationApp->globalContext());
+        newCalculation.setContent(buffer, calculationApp->evaluateContext());
       }
       m_selectableTableView.deselectTable();
       m_calculationStore->push(&newCalculation);

@@ -4,8 +4,8 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, size_t text
   View(),
   Responder(parentResponder),
   m_textBuffer(textBuffer),
-  m_textBufferSize(textBufferSize),
   m_currentTextLength(0),
+  m_textBufferSize(textBufferSize),
   m_delegate(delegate)
 {
 }

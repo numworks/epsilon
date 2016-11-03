@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/calculation/,\
   history_controller.o\
   edit_expression_controller.o\
   pretty_print_view.o\
+  text_field.o\
 )
 
 inline_images += apps/calculation/calculation_icon.png

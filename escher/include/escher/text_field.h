@@ -22,10 +22,10 @@ protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
-private:
   char * m_textBuffer;
-  size_t m_textBufferSize;
   size_t m_currentTextLength;
+private:
+  size_t m_textBufferSize;
   TextFieldDelegate * m_delegate;
 };
 

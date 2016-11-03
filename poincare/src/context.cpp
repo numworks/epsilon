@@ -11,7 +11,7 @@ int Context::symbolIndex(const Symbol * symbol) const {
   return index;
 }
 
-const Expression * Context::expressionForSymbol(const Symbol * symbol) const {
+const Expression * Context::expressionForSymbol(const Symbol * symbol) {
   int index = symbolIndex(symbol);
   return m_expressions[index];
 }

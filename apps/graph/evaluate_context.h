@@ -9,7 +9,7 @@ class EvaluateContext : public ::Context {
   public:
     EvaluateContext(Context * parentContext);
     void setOverridenValueForSymbolX(float f);
-    const Expression * expressionForSymbol(const Symbol * symbol) const override;
+    const Expression * expressionForSymbol(const Symbol * symbol) override;
   private:
     Float m_xValue;
     ::Context * m_context;

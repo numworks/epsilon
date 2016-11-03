@@ -15,8 +15,6 @@ public:
   };
   App();
   void setLaw(Law l);
-protected:
-  ViewController * rootViewController() override;
 private:
   LawController m_lawController;
   ParametersController m_parametersController;

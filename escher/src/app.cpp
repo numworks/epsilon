@@ -4,9 +4,10 @@ extern "C" {
 #include <assert.h>
 }
 
-App::App(const char * name, const Image * icon) :
+App::App(ViewController * rootViewController, const char * name, const Image * icon) :
   Responder(nullptr),
   m_magic(Magic),
+  m_modalViewController(ModalViewController(this, rootViewController)),
   m_firstResponder(nullptr),
   m_name(name),
   m_icon(icon)
@@ -14,12 +15,11 @@ App::App(const char * name, const Image * icon) :
 }
 
 void App::setWindow(Window * window) {
-  ViewController * controller = rootViewController();
-  View * view = controller->view();
+  View * view = m_modalViewController.view();
   if (m_firstResponder == nullptr) {
-    setFirstResponder(controller);
+    setFirstResponder(&m_modalViewController);
   }
-  assert(controller->app() == this);
+  assert(m_modalViewController.app() == this);
 
   window->setContentView(view);
   view->setFrame(window->bounds());
@@ -59,4 +59,12 @@ const char * App::name() {
 
 const Image * App::icon() {
   return m_icon;
+}
+
+void App::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment) {
+  m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment);
+}
+
+void App::dismissModalViewController() {
+  m_modalViewController.dismissModalViewController();
 }

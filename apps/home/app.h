@@ -11,8 +11,6 @@ namespace Home {
 class App : public ::App {
 public:
   App(AppsContainer * container);
-protected:
-  ViewController * rootViewController() override;
 private:
   Controller m_controller;
 };

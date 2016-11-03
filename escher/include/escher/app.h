@@ -1,6 +1,7 @@
 #ifndef ESCHER_APP_H
 #define ESCHER_APP_H
 
+#include <escher/modal_view_controller.h>
 #include <escher/responder.h>
 #include <escher/view_controller.h>
 #include <escher/image.h>
@@ -17,16 +18,18 @@
 class App : public Responder {
 public:
   constexpr static uint8_t Magic = 0xA8;
-  App(const char * name = nullptr, const Image * icon = nullptr);
+  App(ViewController * rootViewController, const char * name = nullptr, const Image * icon = nullptr);
   void setWindow(Window * window);
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   void processEvent(Ion::Events::Event event);
+  void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment);
+  void dismissModalViewController();
   const char * name();
   const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
 protected:
-  virtual ViewController * rootViewController() = 0;
+  ModalViewController m_modalViewController;
 private:
   Responder * m_firstResponder;
   const char * m_name;

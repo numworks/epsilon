@@ -2,10 +2,10 @@
 #include "probability_icon.h"
 
 Probability::App::App() :
-  ::App("Probability", ImageStore::ProbabilityIcon),
+  ::App(&m_stackViewController, "Probability", ImageStore::ProbabilityIcon),
   m_lawController(LawController(nullptr)),
   m_parametersController(ParametersController(nullptr)),
-  m_stackViewController(this, &m_lawController, true)
+  m_stackViewController(&m_modalViewController, &m_lawController, true)
 {
 }
 
@@ -14,6 +14,3 @@ void Probability::App::setLaw(Law l) {
   m_stackViewController.push(&m_parametersController);
 }
 
-ViewController * Probability::App::rootViewController() {
-  return &m_stackViewController;
-}

@@ -7,8 +7,6 @@
 class PicViewApp : public App {
 public:
   PicViewApp();
-protected:
-  ViewController * rootViewController() override;
 private:
   PicViewController m_picViewController;
 };

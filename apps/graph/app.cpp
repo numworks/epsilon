@@ -4,7 +4,7 @@
 namespace Graph {
 
 App::App(::Context * context) :
-  ::App("Graph", ImageStore::GraphIcon),
+  ::App(&m_inputViewController, "Graph", ImageStore::GraphIcon),
   m_functionStore(FunctionStore()),
   m_globalContext(context),
   m_evaluateContext(EvaluateContext(context)),
@@ -14,12 +14,8 @@ App::App(::Context * context) :
   m_valuesController(nullptr, &m_functionStore, &m_evaluateContext),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesController)),
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphController, &m_valuesStackViewController),
-  m_inputViewController(this, &m_tabViewController)
+  m_inputViewController(&m_modalViewController, &m_tabViewController)
 {
-}
-
-ViewController * App::rootViewController() {
-  return &m_inputViewController;
 }
 
 InputViewController * App::inputViewController() {

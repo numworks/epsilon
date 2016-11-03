@@ -15,8 +15,6 @@ public:
   App(::Context * context);
   InputViewController * inputViewController();
   Context * globalContext();
-protected:
-  ViewController * rootViewController() override;
 private:
   FunctionStore m_functionStore;
   Context * m_globalContext;

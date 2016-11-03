@@ -11,8 +11,6 @@ class App : public ::App {
 public:
   App(Context * context);
   Context * globalContext();
-protected:
-  ViewController * rootViewController() override;
 private:
   Context * m_globalContext;
   CalculationStore m_calculationStore;

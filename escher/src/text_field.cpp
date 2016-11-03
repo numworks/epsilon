@@ -72,3 +72,8 @@ void TextField::setTextBuffer(const char * text) {
   m_currentTextLength = strlen(text);
   markRectAsDirty(bounds());
 }
+
+KDSize TextField::minimalSizeForOptimalDisplay() {
+  KDSize textSize = KDText::stringSize(m_textBuffer);
+  return KDSize(0, textSize.height());
+}

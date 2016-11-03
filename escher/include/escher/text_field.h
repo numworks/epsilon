@@ -17,6 +17,7 @@ public:
   const char * textBuffer() const;
   int bufferLength() const;
   void setTextBuffer(const char * text);
+   KDSize minimalSizeForOptimalDisplay() override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

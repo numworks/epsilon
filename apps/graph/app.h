@@ -16,6 +16,7 @@ public:
   App(::Context * context);
   InputViewController * inputViewController();
   Context * globalContext();
+  Context * evaluateContext();
 private:
   FunctionStore m_functionStore;
   Context * m_globalContext;

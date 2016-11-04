@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "../function_store.h"
-#include "../evaluate_context.h"
 #include "../function_title_cell.h"
 #include "value_cell.h"
 #include "title_cell.h"
@@ -17,7 +16,7 @@ namespace Graph {
 
 class ValuesController : public HeaderViewController, public TableViewDataSource {
 public:
-  ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
+  ValuesController(Responder * parentResponder, FunctionStore * functionStore);
 
   int activeRow();
   int activeColumn();
@@ -88,7 +87,6 @@ private:
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
   FunctionStore * m_functionStore;
-  EvaluateContext * m_evaluateContext;
   Interval m_interval;
   ValuesParameterController m_parameterController;
   AbscissaParameterController m_abscissaParameterController;

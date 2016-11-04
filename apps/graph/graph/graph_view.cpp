@@ -9,7 +9,7 @@ constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 
-GraphView::GraphView(FunctionStore * functionStore, EvaluateContext * evaluateContext) :
+GraphView::GraphView(FunctionStore * functionStore) :
 #if GRAPH_VIEW_IS_TILED
   TiledView(),
 #else
@@ -22,7 +22,7 @@ GraphView::GraphView(FunctionStore * functionStore, EvaluateContext * evaluateCo
   m_yMin(-2.0f),
   m_yMax(2.0f),
   m_functionStore(functionStore),
-  m_evaluateContext(evaluateContext)
+  m_evaluateContext(nullptr)
 {
 }
 
@@ -32,6 +32,14 @@ int GraphView::numberOfSubviews() const {
 
 View * GraphView::subviewAtIndex(int index) {
   return &m_cursorView;
+}
+
+void GraphView::setContext(Context * context) {
+  m_evaluateContext = (EvaluateContext *)context;
+}
+
+Context * GraphView::context() const {
+  return m_evaluateContext;
 }
 
 void GraphView::moveCursorRight() {

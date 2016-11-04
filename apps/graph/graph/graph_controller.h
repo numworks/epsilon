@@ -4,14 +4,13 @@
 #include <escher.h>
 #include "graph_view.h"
 #include "../function_store.h"
-#include "../evaluate_context.h"
 
 namespace Graph {
 class GraphController : public HeaderViewController {
 public:
-  GraphController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext);
+  GraphController(Responder * parentResponder, FunctionStore * functionStore);
   const char * title() const override;
-
+  View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 

@@ -18,7 +18,7 @@ class GraphView : public
 #endif
 {
 public:
-  GraphView(FunctionStore * functionStore, EvaluateContext * evaluateContext);
+  GraphView(FunctionStore * functionStore);
 
 #if GRAPH_VIEW_IS_TILED
   KDColor * tile() const override;
@@ -30,6 +30,8 @@ public:
 
 //  void drawRect(KDRect rect) const override;
   void moveCursorRight();
+  void setContext(Context * evaluateContext);
+  Context * context() const;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -47,11 +47,10 @@ ValuesController::ContentView::TableState ValuesController::ContentView::tableSt
 
 /* Value Controller */
 
-ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext) :
+ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore) :
   HeaderViewController(parentResponder, &m_contentView),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_functionStore(functionStore),
-  m_evaluateContext(evaluateContext),
   m_parameterController(ValuesParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_parameterController)),
   m_functionParameterController(FunctionParameterController(this)),
@@ -384,10 +383,11 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   }
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
+  App * graphApp = (Graph::App *)app();
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, m_evaluateContext)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    Float(function->approximateDerivative(x, (EvaluateContext *)graphApp->evaluateContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
   } else {
-    Float(function->evaluateAtAbscissa(x, m_evaluateContext)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(function->evaluateAtAbscissa(x, (EvaluateContext *)graphApp->evaluateContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   }
   myValueCell->setText(buffer);
 }

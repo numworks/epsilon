@@ -1,15 +1,24 @@
 #include "graph_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, EvaluateContext * evaluateContext) :
+GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore) :
   HeaderViewController(parentResponder, &m_view),
-  m_view(GraphView(functionStore, evaluateContext)),
+  m_view(GraphView(functionStore)),
   m_headerSelected(false),
   m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
   m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this))
 {
+}
+
+View * GraphController::view() {
+  if (m_view.context() == nullptr) {
+    App * graphApp = (Graph::App *)app();
+    m_view.setContext(graphApp->evaluateContext());
+  }
+  return HeaderViewController::view();
 }
 
 const char * GraphController::title() const {

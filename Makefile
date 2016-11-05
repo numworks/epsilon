@@ -7,6 +7,7 @@ ifndef USE_LIBA
 endif
 
 HOSTCC = gcc
+HOSTCXX = g++
 
 # Flags - Header search path
 SFLAGS += -Ilib -I.

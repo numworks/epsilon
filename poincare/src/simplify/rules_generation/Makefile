@@ -25,9 +25,6 @@ products += $(rulegen_objs) $(RULEGEN) $(addprefix $(dir)/,\
 
 GENERATOR_CXXFLAGS = -std=c++11 -Wno-deprecated-register
 
-HOSTCC = clang
-HOSTCXX = clang++
-
 $(rulegen_objs): %.o: %.cpp
 	@echo "HOSTCC  $@"
 	@$(HOSTCXX) $(GENERATOR_CXXFLAGS) -c $< -o $@

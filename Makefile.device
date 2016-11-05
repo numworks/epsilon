@@ -25,3 +25,4 @@ SFLAGS += -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
 
 # Platform configuration
 USE_LIBA=1
+EXE=elf

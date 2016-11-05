@@ -5,6 +5,9 @@ include Makefile.$(PLATFORM)
 ifndef USE_LIBA
   $(error Makefile.PLATFORM should define USE_LIBA)
 endif
+ifndef EXE
+  $(error Makefile.PLATFORM should define EXE, the extension for executables)
+endif
 
 HOSTCC = gcc
 HOSTCXX = g++
@@ -30,12 +33,12 @@ endif
 CFLAGS = -std=c99
 CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
-products := boot.elf boot.hex boot.bin test.elf test.hex test.bin
+products := boot.$(EXE) boot.$(EXE) boot.bin test.$(EXE) test.hex test.bin
 
 ifeq ($(VERBOSE),1)
 default: info clean app_size app_memory_map
 else
-default: app.elf
+default: app.$(EXE)
 endif
 run: app_run
 
@@ -71,26 +74,26 @@ dependencies = $(objs:.o=.d)
 
 -include $(dependencies)
 
-%.elf: $(objs)
+%.$(EXE): $(objs)
 	@echo "LD      $@"
 	@$(LD) $^ $(LDFLAGS) -o $@
 
 .PHONY: %_size
-%_size: %.elf
+%_size: %.$(EXE)
 	@echo "========= BUILD OUTPUT ========"
 	@echo "File:  $<"
 	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
 	@echo "==============================="
 
 .PHONY: %_run
-%_run: %.elf
+%_run: %.$(EXE)
 	$(GDB) -x gdb_script.gdb $<
 
-%.hex: %.elf
+%.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O ihex $< $@
 
-%.bin: %.elf
+%.bin: %.$(EXE)
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary $< $@
 

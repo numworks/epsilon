@@ -15,4 +15,4 @@ $(app_objs): $(inline_images:.png=.o)
 
 products += $(app_objs) app.elf app.hex app.bin
 
-app.elf: $(app_objs)
+app.$(EXE): $(app_objs)

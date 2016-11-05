@@ -5,7 +5,7 @@ namespace Graph {
 
 FunctionParameterController::FunctionParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_pageTitle("Colonne f(x)"),
+  m_pageTitle{"Colonne f(x)"},
   m_displayDerivativeColumn(SwitchMenuListCell((char*)"Colonne de la fonction derivee")),
   m_copyColumn(MenuListCell((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,

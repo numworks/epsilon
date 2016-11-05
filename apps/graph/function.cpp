@@ -4,7 +4,7 @@
 namespace Graph {
 
 Function::Function(const char * text, KDColor color) :
-  m_text(""),
+  m_text{0},
   m_name(text),
   m_color(color),
   m_expression(nullptr),

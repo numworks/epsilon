@@ -1,3 +1,5 @@
+include ion/src/shared/Makefile
+
 objs += $(addprefix ion/src/simulator/, \
   battery.o\
   init.o\

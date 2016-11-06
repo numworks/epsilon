@@ -24,11 +24,15 @@ void Container::run() {
   m_window.redraw();
 
   while (true) {
-    Ion::Events::Event event = Ion::Events::getEvent(); // This is a blocking call
-    if (handleEvent(event)) {
-      continue;
-    }
-    m_activeApp->processEvent(event);
-    m_window.redraw();
+    step();
   }
+}
+
+void Container::step() {
+  Ion::Events::Event event = Ion::Events::getEvent(); // This is a blocking call
+  if (handleEvent(event)) {
+    return;
+  }
+  m_activeApp->processEvent(event);
+  m_window.redraw();
 }

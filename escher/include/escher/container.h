@@ -22,6 +22,7 @@ public:
   virtual bool handleEvent(Ion::Events::Event event);
   void switchTo(App * app);
 private:
+  void step();
   App * m_activeApp;
   Window m_window;
 };

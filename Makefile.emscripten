@@ -1,0 +1,8 @@
+CC=emcc
+CXX=emcc
+LD=emcc
+SIZE=size
+DEBUG=0
+
+USE_LIBA=0
+EXE=html

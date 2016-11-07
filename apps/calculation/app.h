@@ -13,7 +13,7 @@ class App : public ::App, public ExpressionTextFieldDelegate {
 public:
   App(Context * context);
   Context * globalContext();
-  Context * evaluateContext();
+  Context * evaluateContext() override;
 private:
   Context * m_globalContext;
   EvaluateContext m_evaluateContext;

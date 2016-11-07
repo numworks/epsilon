@@ -12,7 +12,8 @@ public:
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment);
+  void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
+    KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
   bool isDisplayingModal();
 private:
@@ -23,7 +24,8 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment);
+    void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
+      KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
     void dismissModalView();
     bool isDisplayingModal() const;
   private:
@@ -33,6 +35,10 @@ private:
     bool m_isDisplayingModal;
     float m_verticalAlignment;
     float m_horizontalAlignment;
+    KDCoordinate m_topMargin;
+    KDCoordinate m_leftMargin;
+    KDCoordinate m_bottomMargin;
+    KDCoordinate m_rightMargin;
   };
   ContentView m_contentView;
   Responder * m_previousResponder;

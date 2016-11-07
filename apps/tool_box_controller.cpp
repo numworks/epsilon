@@ -15,6 +15,12 @@ static const char * labels[] = {
   "Trigonometrie hyperbolique"
 };
 
+static const char * mathCommands[] = {
+  "abs()",
+  "root(,)",
+  "log()"
+};
+
 ToolBoxController::ToolBoxController() :
   StackViewController(nullptr, this, true),
   m_selectableTableView(SelectableTableView(this, this))
@@ -26,6 +32,22 @@ const char * ToolBoxController::title() const {
 }
 
 bool ToolBoxController::handleEvent(Ion::Events::Event event) {
+  switch (event) {
+    case Ion::Events::Event::ENTER:
+      return handleEnter();
+    default:
+      return false;
+  }
+}
+
+bool ToolBoxController::handleEnter() {
+  if (m_selectableTableView.selectedRow() < 3) {
+    m_textFieldCaller->appendText(mathCommands[m_selectableTableView.selectedRow()]);
+    int cursorPosition = m_selectableTableView.selectedRow() == 1  ? -2 : -1;
+    m_textFieldCaller->moveCursor(cursorPosition);
+    app()->dismissModalViewController();
+    return true;
+  }
   return false;
 }
 

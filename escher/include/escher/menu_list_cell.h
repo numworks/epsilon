@@ -10,8 +10,8 @@
 class MenuListCell : public TableViewCell {
 public:
   MenuListCell(char * label = nullptr);
-  PointerTextView * textView();
   virtual View * contentView() const;
+  void setText(const char * text);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;
   int numberOfSubviews() const override;

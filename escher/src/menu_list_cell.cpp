@@ -41,8 +41,9 @@ void MenuListCell::reloadCell() {
   m_pointerTextView.setBackgroundColor(backgroundColor);
 }
 
-PointerTextView * MenuListCell::textView() {
-  return &m_pointerTextView;
+void MenuListCell::setText(const char * text) {
+  m_pointerTextView.setText(text);
+  layoutSubviews();
 }
 
 View * MenuListCell::contentView() const {

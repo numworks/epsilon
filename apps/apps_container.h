@@ -18,7 +18,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
-
+  ToolBoxController * toolBoxController();
   bool handleEvent(Ion::Events::Event event) override;
 private:
   static constexpr int k_numberOfApps = 4;

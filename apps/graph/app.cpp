@@ -3,8 +3,9 @@
 
 namespace Graph {
 
-App::App(::Context * context) :
-  ::App(&m_inputViewController, "Graph", ImageStore::GraphIcon),
+App::App(Container * container, Context * context) :
+  ::App(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
+  ExpressionTextFieldDelegate(),
   m_functionStore(FunctionStore()),
   m_globalContext(context),
   m_evaluateContext(EvaluateContext(context)),

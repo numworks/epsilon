@@ -13,7 +13,7 @@ namespace Graph {
 
 class App : public ::App, public ExpressionTextFieldDelegate {
 public:
-  App(::Context * context);
+  App(Container * container, Context * context);
   InputViewController * inputViewController();
   Context * globalContext();
   Context * evaluateContext() override;

@@ -13,7 +13,6 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-
   const char * textBuffer() const;
   int bufferLength() const;
   void setTextBuffer(const char * text);
@@ -24,6 +23,7 @@ protected:
 #endif
   char * m_textBuffer;
   size_t m_currentTextLength;
+  size_t m_currentCursorPosition;
 private:
   size_t m_textBufferSize;
   TextFieldDelegate * m_delegate;

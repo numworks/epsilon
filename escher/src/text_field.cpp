@@ -5,6 +5,7 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, size_t text
   Responder(parentResponder),
   m_textBuffer(textBuffer),
   m_currentTextLength(0),
+  m_currentCursorPosition(0),
   m_textBufferSize(textBufferSize),
   m_delegate(delegate)
 {
@@ -32,13 +33,26 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     }
   }
   switch (event) {
+    case Ion::Events::Event::LEFT_ARROW:
+      if (m_currentCursorPosition > 0) {
+        m_currentCursorPosition--;
+      }
+      return true;
+    case Ion::Events::Event::RIGHT_ARROW:
+      if (m_currentCursorPosition < m_currentTextLength) {
+        m_currentCursorPosition++;
+      }
+      return true;
     case Ion::Events::Event::DELETE:
-      if (m_currentTextLength > 0) {
+      if (m_currentCursorPosition > 0) {
         KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
         m_currentTextLength--;
+        m_currentCursorPosition--;
+        for (int k = m_currentCursorPosition; k < m_currentTextLength; k ++) {
+          m_textBuffer[k] = m_textBuffer[k+1];
+        }
         m_textBuffer[m_currentTextLength] = 0;
-        KDSize sizeText = KDText::stringSize(m_textBuffer);
-        KDRect dirtyZone(sizeText.width(), 0, sizePreviousText.width()-sizeText.width(), sizeText.height());
+        KDRect dirtyZone(0, 0, sizePreviousText.width(), sizePreviousText.height());
         markRectAsDirty(dirtyZone);
       }
       return true;
@@ -47,11 +61,13 @@ bool TextField::handleEvent(Ion::Events::Event event) {
         return false;
       }
       if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
-        KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
-        m_textBuffer[m_currentTextLength++] = (int)event;
-        m_textBuffer[m_currentTextLength] = 0;
+        for (int k = m_currentTextLength; k > m_currentCursorPosition; k--) {
+          m_textBuffer[k] = m_textBuffer[k-1];
+        }
+        m_textBuffer[++m_currentTextLength] = 0;
+        m_textBuffer[m_currentCursorPosition++] = (int)event;
         KDSize sizeText = KDText::stringSize(m_textBuffer);
-        KDRect dirtyZone(sizePreviousText.width(), 0, sizeText.width()-sizePreviousText.width(), sizeText.height());
+        KDRect dirtyZone(0, 0, sizeText.width(), sizeText.height());
         markRectAsDirty(dirtyZone);
       }
       return true;
@@ -69,7 +85,8 @@ int TextField::bufferLength () const {
 
 void TextField::setTextBuffer(const char * text) {
   strlcpy(m_textBuffer, text, m_textBufferSize);
-  m_currentTextLength = strlen(text);
+  m_currentCursorPosition = strlen(text);
+  m_currentTextLength = m_currentCursorPosition;
   markRectAsDirty(bounds());
 }
 

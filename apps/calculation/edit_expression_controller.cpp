@@ -61,11 +61,11 @@ const char * EditExpressionController::title() const {
 }
 
 const char * EditExpressionController::textBody() {
-  return m_contentView.textField()->textBuffer();
+  return m_contentView.textField()->text();
 }
 
 void EditExpressionController::setTextBody(const char * text) {
-  m_contentView.textField()->setTextBuffer(text);
+  m_contentView.textField()->setText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
@@ -78,7 +78,7 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
       m_calculationStore->push(&calculation);
       m_historyController->reload();
       m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-      m_contentView.textField()->setTextBuffer("");
+      m_contentView.textField()->setText("");
       return true;
     }
     case Ion::Events::Event::ESC:

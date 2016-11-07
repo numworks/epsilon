@@ -34,7 +34,7 @@ const char * InputViewController::title() const {
 }
 
 const char * InputViewController::textBody() {
-  return m_textFieldController.textField()->textBuffer();
+  return m_textFieldController.textField()->text();
 }
 
 void InputViewController::showInput() {
@@ -42,7 +42,7 @@ void InputViewController::showInput() {
 }
 
 void InputViewController::setTextBody(const char * text) {
- m_textFieldController.textField()->setTextBuffer(text);
+ m_textFieldController.textField()->setText(text);
 }
 
 bool InputViewController::handleEvent(Ion::Events::Event event) {

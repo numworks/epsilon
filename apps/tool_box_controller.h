@@ -2,6 +2,11 @@
 #define APPS_TOOL_BOX_CONTROLLER_H
 
 #include <escher.h>
+#include "node.h"
+
+/* m_toolBoxModel points at the node of the tree (describing the whole toolbox)
+ * where we are located. It enables to know which rows are leaves and which are
+ * subtrees. */
 
 class ToolBoxController : public StackViewController, public ListViewDataSource {
 public:
@@ -19,16 +24,14 @@ public:
   int typeAtLocation(int i, int j) override;
   void setTextFieldCaller(TextField * textField);
 private:
-  bool handleEnter();
-  constexpr static int k_numberOfCommandRows = 3;
-  constexpr static int k_numberOfMenuRows = 8;
-  constexpr static int k_maxNumberOfDisplayedRows = 6;
+  constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
   constexpr static KDCoordinate k_commandRowHeight = 50;
   constexpr static KDCoordinate k_menuRowHeight = 40;
-  MenuListCell m_commandCells[k_numberOfCommandRows];
+  MenuListCell m_commandCells[k_maxNumberOfDisplayedRows];
   MenuListCell m_menuCells[k_maxNumberOfDisplayedRows];
   SelectableTableView m_selectableTableView;
   TextField * m_textFieldCaller;
+  Node * m_toolBoxModel;
 };
 
 #endif

@@ -173,7 +173,11 @@ void ValuesController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    int selectedRow = m_selectableTableView.selectedRow();
+    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
+    int selectedColumn = m_selectableTableView.selectedColumn();
+    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
+    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

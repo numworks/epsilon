@@ -5,7 +5,7 @@ namespace Graph {
 
 ParameterController::ParameterController(Responder * parentResponder, FunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_colorCell(MenuListCell((char*)"Couleur de la fonction")),
+  m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
   m_deleteCell(MenuListCell((char*)"Supprimer la fonction")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,

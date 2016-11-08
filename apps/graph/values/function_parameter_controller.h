@@ -26,7 +26,7 @@ private:
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   SwitchMenuListCell m_displayDerivativeColumn;
-  MenuListCell m_copyColumn;
+  ChevronMenuListCell m_copyColumn;
   SelectableTableView m_selectableTableView;
   Function * m_function;
 };

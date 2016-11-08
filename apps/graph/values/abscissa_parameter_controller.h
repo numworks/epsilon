@@ -21,8 +21,8 @@ private:
   bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
   MenuListCell m_deleteColumn;
-  MenuListCell m_copyColumn;
-  MenuListCell m_setInterval;
+  ChevronMenuListCell m_copyColumn;
+  ChevronMenuListCell m_setInterval;
   SelectableTableView m_selectableTableView;
   ValuesParameterController * m_valuesParameterController;
 };

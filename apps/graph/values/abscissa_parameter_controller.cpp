@@ -6,8 +6,8 @@ namespace Graph {
 AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController) :
   ViewController(parentResponder),
   m_deleteColumn(MenuListCell((char*)"Effacer la colonne")),
-  m_copyColumn(MenuListCell((char*)"Copier la colonne dans une liste")),
-  m_setInterval(MenuListCell((char*)"Regler l'intervalle")),
+  m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
+  m_setInterval(ChevronMenuListCell((char*)"Regler l'intervalle")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_valuesParameterController(valuesParameterController)

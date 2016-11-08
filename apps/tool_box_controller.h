@@ -28,7 +28,7 @@ private:
   constexpr static KDCoordinate k_commandRowHeight = 50;
   constexpr static KDCoordinate k_menuRowHeight = 40;
   MenuListCell m_commandCells[k_maxNumberOfDisplayedRows];
-  MenuListCell m_menuCells[k_maxNumberOfDisplayedRows];
+  ChevronMenuListCell m_menuCells[k_maxNumberOfDisplayedRows];
   SelectableTableView m_selectableTableView;
   TextField * m_textFieldCaller;
   Node * m_toolBoxModel;

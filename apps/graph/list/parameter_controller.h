@@ -24,7 +24,7 @@ public:
 private:
   bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
-  MenuListCell m_colorCell;
+  ChevronMenuListCell m_colorCell;
   SwitchMenuListCell m_enableCell;
   MenuListCell m_deleteCell;
   SelectableTableView m_selectableTableView;

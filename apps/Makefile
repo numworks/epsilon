@@ -9,6 +9,7 @@ app_objs += $(addprefix apps/,\
   constant.o\
   expression_text_field_delegate.o\
   main.o\
+  node.o\
   tool_box_controller.o\
 )
 

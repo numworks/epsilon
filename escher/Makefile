@@ -4,6 +4,7 @@ objs += $(addprefix escher/src/,\
   app.o\
   buffer_text_view.o\
   button.o\
+  chevron_menu_list_cell.o\
   chevron_view.o\
   container.o\
   even_odd_cell.o\

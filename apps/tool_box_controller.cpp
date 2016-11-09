@@ -1,6 +1,4 @@
 #include "tool_box_controller.h"
-#include <assert.h>
-#include <string.h>
 
 /* TODO: find a shorter way to initiate tree models
  * We create one model tree: each node keeps the label of the row it refers to
@@ -23,129 +21,15 @@ const Node menu[11] = {Node("|x|", "abs()"), Node("root(x)", "root(,)"), Node("l
   Node("Approximation", nullptr, approximationChildren, 4), Node("Trigonometrie", nullptr, trigonometryChildren, 6)};
 const Node toolBoxModel = Node("ToolBox", nullptr, menu, 11);
 
-/* State */
-
-ToolBoxController::Stack::State::State(int selectedRow, KDCoordinate verticalScroll) :
-  m_selectedRow(selectedRow),
-  m_verticalScroll(verticalScroll)
-{
-}
-
-int ToolBoxController::Stack::State::selectedRow() {
-  return m_selectedRow;
-}
-
-KDCoordinate ToolBoxController::Stack::State::verticalScroll() {
-  return m_verticalScroll;
-}
-
-bool ToolBoxController::Stack::State::isNull(){
-  if (m_selectedRow == -1) {
-    return true;
-  }
-  return false;
-}
-
-/* Stack */
-
-void ToolBoxController::Stack::push(int selectedRow, KDCoordinate verticalScroll) {
-  int i = 0;
-  while (!m_statesStack[i].isNull() && i < k_maxModelTreeDepth) {
-    i++;
-  }
-  assert(m_statesStack[i].isNull());
-  m_statesStack[i] = State(selectedRow, verticalScroll);
-}
-
-ToolBoxController::Stack::State * ToolBoxController::Stack::stateAtIndex(int index) {
-  return &m_statesStack[index];
-}
-
-int ToolBoxController::Stack::depth() {
-  int depth = 0;
-  for (int i = 0; i < k_maxModelTreeDepth; i++) {
-    depth += (!m_statesStack[i].isNull());
-  }
-  return depth;
-}
-
-void ToolBoxController::Stack::pop() {
-  int stackDepth = depth();
-  if (stackDepth == 0) {
-    return;
-  }
-  m_statesStack[stackDepth-1] = State();
-}
-
-void ToolBoxController::Stack::resetStack() {
-  for (int i = 0; i < k_maxModelTreeDepth; i++) {
-    m_statesStack[i] = State();
-  }
-}
-
-/* ToolBoxController */
-
-ToolBoxController::ToolBoxController() :
-  StackViewController(nullptr, &m_listViewController, true),
-  m_listViewController(NodeListViewController(this))
-{
-}
-
 const char * ToolBoxController::title() const {
   return "ToolBoxController";
 }
 
-bool ToolBoxController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ESC:
-      return returnToPreviousMenu();
-    case Ion::Events::Event::ENTER:
-    {
-      int selectedRow = m_listViewController.selectedRow();
-      Node * selectedNode = (Node *)m_listViewController.nodeModel()->children(selectedRow);
-      if (selectedNode->numberOfChildren() == 0) {
-        return editMathFunction(selectedNode);
-      }
-      return selectSubMenu(selectedNode);
-    }
-    default:
-      return false;
-  }
+Node * ToolBoxController::nodeModel() {
+  return (Node *)&toolBoxModel;
 }
 
-bool ToolBoxController::returnToPreviousMenu() {
-  m_listViewController.deselectTable();
-  int depth = m_stack.depth();
-  if (depth == 0) {
-    app()->dismissModalViewController();
-    return true;
-  }
-  int index = 0;
-  Node * parentNode = (Node *)&toolBoxModel;
-  Stack::State * previousState = m_stack.stateAtIndex(index++);;
-  while (depth-- > 1) {
-    parentNode = (Node *)parentNode->children(previousState->selectedRow());
-    previousState = m_stack.stateAtIndex(index++);
-  }
-  m_listViewController.deselectTable();
-  m_listViewController.setNodeModel(parentNode);
-  m_listViewController.setFirstSelectedRow(previousState->selectedRow());
-  m_listViewController.setVerticalScroll(previousState->verticalScroll());
-  m_stack.pop();
-  app()->setFirstResponder(&m_listViewController);
-  return true;
-}
-
-bool ToolBoxController::selectSubMenu(Node * selectedNode) {
-  m_stack.push(m_listViewController.selectedRow(), m_listViewController.verticalScroll());
-  m_listViewController.deselectTable();
-  m_listViewController.setNodeModel(selectedNode);
-  m_listViewController.setFirstSelectedRow(0);
-  app()->setFirstResponder(&m_listViewController);
-  return true;
-}
-
-bool ToolBoxController::editMathFunction(Node * selectedNode){
+bool ToolBoxController::selectLeaf(Node * selectedNode){
   const char * editedText = selectedNode->text();
   m_textFieldCaller->appendText(editedText);
   int cursorPosition = 0;
@@ -159,15 +43,4 @@ bool ToolBoxController::editMathFunction(Node * selectedNode){
   m_textFieldCaller->moveCursor(cursorPosition);
   app()->dismissModalViewController();
   return true;
-}
-
-void ToolBoxController::didBecomeFirstResponder() {
-  m_stack.resetStack();
-  m_listViewController.setNodeModel((Node *)&toolBoxModel);
-  m_listViewController.setFirstSelectedRow(0);
-  app()->setFirstResponder(&m_listViewController);
-}
-
-void ToolBoxController::setTextFieldCaller(TextField * textField) {
-  m_textFieldCaller = textField;
 }

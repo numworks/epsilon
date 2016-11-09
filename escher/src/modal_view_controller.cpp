@@ -8,7 +8,11 @@ ModalViewController::ContentView::ContentView() :
   m_currentModalView(nullptr),
   m_isDisplayingModal(false),
   m_verticalAlignment(0.0f),
-  m_horizontalAlignment(0.0f)
+  m_horizontalAlignment(0.0f),
+  m_topMargin(0),
+  m_leftMargin(0),
+  m_bottomMargin(0),
+  m_rightMargin(0)
 {
 }
 
@@ -42,11 +46,11 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
 
 KDRect ModalViewController::ContentView::frame() {
   KDCoordinate modalHeight = m_currentModalView->minimalSizeForOptimalDisplay().height();
-  modalHeight = modalHeight == 0 ? bounds().height() : modalHeight;
+  modalHeight = modalHeight == 0 ? bounds().height()-m_topMargin-m_bottomMargin : modalHeight;
   KDCoordinate modalWidth = m_currentModalView->minimalSizeForOptimalDisplay().width();
-  modalWidth = modalWidth == 0 ? bounds().width() : modalWidth;
-  KDRect modalViewFrame(m_horizontalAlignment*(bounds().width()-modalWidth), m_verticalAlignment*(bounds().height()-modalHeight), 
-     modalWidth, modalHeight);
+  modalWidth = modalWidth == 0 ? bounds().width()-m_leftMargin-m_rightMargin : modalWidth;
+  KDRect modalViewFrame(m_leftMargin + m_horizontalAlignment*(bounds().width()-m_leftMargin-m_rightMargin-modalWidth),
+    m_topMargin+m_verticalAlignment*(bounds().height()-m_topMargin-m_bottomMargin-modalHeight), modalWidth, modalHeight);
   return modalViewFrame;
 }
 
@@ -57,11 +61,16 @@ void ModalViewController::ContentView::layoutSubviews() {
   }
 }
 
-void ModalViewController::ContentView::presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment) {
+void ModalViewController::ContentView::presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
+  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
   m_isDisplayingModal = true;
   m_currentModalView = modalView;
   m_horizontalAlignment = horizontalAlignment;
   m_verticalAlignment = verticalAlignment;
+  m_topMargin = topMargin;
+  m_leftMargin = leftMargin;
+  m_bottomMargin = bottomMargin;
+  m_rightMargin = rightMargin;
   markRectAsDirty(frame());
   layoutSubviews();
 }
@@ -101,12 +110,13 @@ const char * ModalViewController::title() const {
   return "Modal View Controller";
 }
 
-void ModalViewController::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment) {
+void ModalViewController::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
+  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
   app()->setFirstResponder(vc);
-  m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment);
+  m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
 }
 
 void ModalViewController::dismissModalViewController() {

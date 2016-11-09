@@ -6,6 +6,7 @@
 #include "probability/app.h"
 #include "calculation/app.h"
 #include "tool_box_controller.h"
+#include "variable_box_controller.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -19,6 +20,7 @@ public:
   int numberOfApps();
   App * appAtIndex(int index);
   ToolBoxController * toolBoxController();
+  VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
 private:
   static constexpr int k_numberOfApps = 4;
@@ -31,6 +33,7 @@ private:
 #endif
   Context m_context;
   ToolBoxController m_toolBoxController;
+  VariableBoxController m_variableBoxController;
 };
 
 #endif

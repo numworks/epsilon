@@ -33,6 +33,10 @@ ToolBoxController * AppsContainer::toolBoxController() {
   return &m_toolBoxController;
 }
 
+VariableBoxController * AppsContainer::variableBoxController() {
+  return &m_variableBoxController;
+}
+
 bool AppsContainer::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Event::F1) {
     switchTo(appAtIndex(0));

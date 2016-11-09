@@ -15,12 +15,21 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       textField->app()->displayWarning("Relis ton cours de maths, veux tu?");
       return true;
   }
+  // TODO: correct events
   //if (event == Ion::Events::Event::TOOL_BOX) {
   if (event == Ion::Events::Event::F5) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     ToolBoxController * toolBoxController = appsContainer->toolBoxController();
     toolBoxController->setTextFieldCaller(textField);
     textField->app()->displayModalViewController(toolBoxController, 0.f, 0.f, 50, 50, 0, 50);
+    return true;
+  }
+  //if (event == Ion::Events::Event::VARIABLE_BOX) {
+  if (event == Ion::Events::Event::SECOND) {
+    AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
+    VariableBoxController * variableBoxController = appsContainer->variableBoxController();
+    variableBoxController->setTextFieldCaller(textField);
+    textField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }
   return false;

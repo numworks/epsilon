@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/,\
   expression_text_field_delegate.o\
   main.o\
   node.o\
+  node_list_view_controller.o\
   tool_box_controller.o\
 )
 

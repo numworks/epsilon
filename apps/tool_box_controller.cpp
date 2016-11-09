@@ -31,6 +31,7 @@ Node * ToolBoxController::nodeModel() {
 }
 
 bool ToolBoxController::selectLeaf(Node * selectedNode){
+  m_listViewController.deselectTable();
   ToolBoxNode * node = (ToolBoxNode *)selectedNode;
   const char * editedText = node->text();
   m_textFieldCaller->appendText(editedText);

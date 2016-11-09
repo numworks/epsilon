@@ -14,6 +14,7 @@ public:
   void setTextFieldCaller(TextField * textField);
 protected:
   TextField * m_textFieldCaller;
+  NodeListViewController m_listViewController;
 private:
   class Stack {
   public:
@@ -40,7 +41,6 @@ private:
   virtual bool selectLeaf(Node * selectedNode) = 0;
   bool selectSubMenu(Node * selectedNode);
   bool returnToPreviousMenu();
-  NodeListViewController m_listViewController;
   Stack m_stack;
 };
 

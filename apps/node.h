@@ -3,22 +3,17 @@
 
 class Node {
 public:
-  constexpr Node(const char * label = nullptr, const char * text = nullptr, const Node * children = nullptr, int numberOfChildren = 0) :
+  constexpr Node(const char * label = nullptr, int numberOfChildren = 0) :
     m_label(label),
-    m_text(text),
-    m_children(children),
     m_numberOfChildren(numberOfChildren)
   {
   };
-  const Node * children(int index) const;
+  virtual const Node * children(int index) const = 0;
   const char * label() const;
-  const char * text() const;
   int numberOfChildren();
   bool isNull();
-private:
+protected:
   const char * m_label;
-  const char * m_text;
-  const Node * m_children;
   int m_numberOfChildren;
 };
 

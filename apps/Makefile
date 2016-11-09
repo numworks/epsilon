@@ -14,6 +14,7 @@ app_objs += $(addprefix apps/,\
   node_navigation_controller.o\
   tool_box_controller.o\
   tool_box_node.o\
+  variable_box_node.o\
 )
 
 $(app_objs): $(inline_images:.png=.o)

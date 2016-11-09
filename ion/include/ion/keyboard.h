@@ -1,23 +1,26 @@
 #ifndef ION_KEYBOARD_H
 #define ION_KEYBOARD_H
 
+extern "C" {
+#include <stdint.h>
+}
+
 namespace Ion {
 namespace Keyboard {
 
-enum class Key {
-  A1 =  0, A2 =  1, A3 =  2, A4 =  3, A5 =  4,
-  B1 =  5, B2 =  6, B3 =  7, B4 =  8, B5 =  9,
-  C1 = 10, C2 = 11, C3 = 12, C4 = 13, C5 = 14,
-  D1, D2, D3, D4, D5,
-  E1, E2, E3, E4, E5,
-  F1, F2, F3, F4, F5,
-  G1, G2, G3, G4, G5,
-  H1, H2, H3, H4, H5,
-  I1, I2, I3, I4, I5,
-  J1, J2, J3, J4, J5
+enum class Key : uint8_t {
+  A1=0,  A2=1,  A3=2,  A4=3,  A5=4,  A6=5,
+  B1=6,  B2=7, /*  B3=8,  B4=9,  B5=10, B6=11, */
+  C1=12, C2=13, C3=14, C4=15, C5=16, C6=17,
+  D1=18, D2=19, D3=20, D4=21, D5=22, D6=23,
+  E1=24, E2=25, E3=26, E4=27, E5=28, E6=29,
+  F1=30, F2=31, F3=32, F4=33, F5=34, // F6=35,
+  G1=36, G2=37, G3=38, G4=39, G5=40, // G6=41,
+  H1=42, H2=43, H3=44, H4=45, H5=46, // H6=47,
+  I1=48, I2=49, I3=50, I4=51, I5=52, // I6=53,
 };
 
-constexpr int NumberOfKeys  = 50;
+constexpr int NumberOfKeys  = 53;
 
 bool keyDown(Key k);
 

@@ -9,7 +9,7 @@ void Ion::Power::suspend() {
   Display::Device::suspend();
 
   CM4.SCR()->setSLEEPDEEP(true);
-  Keyboard::Device::generateWakeUpEventForKey(Ion::Keyboard::Key::J1);
+  Keyboard::Device::generateWakeUpEventForKey(Ion::Keyboard::Key::B2);
   msleep(300);
   asm("wfe");
 

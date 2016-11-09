@@ -77,17 +77,15 @@ void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, 
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      editInterval(false);
-      return true;
-    default:
-      if ((int)event >= 0x100) {
-        return false;
-      }
-      editInterval(true, (char)event);
-      return true;
+  if (event == Ion::Events::OK) {
+    editInterval(false);
+    return true;
   }
+  if (event.hasText()) {
+    editInterval(true, event.text()[0]); // FIXME: only first char
+    return true;
+  }
+  return false;
 }
 
 void ValuesParameterController::editInterval(bool overwrite, char initialDigit) {

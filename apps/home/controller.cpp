@@ -14,13 +14,11 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container)
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      m_container->switchTo(m_container->appAtIndex(m_selectableTableView.selectedRow()*k_numberOfColumns+m_selectableTableView.selectedColumn()+1));
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    m_container->switchTo(m_container->appAtIndex(m_selectableTableView.selectedRow()*k_numberOfColumns+m_selectableTableView.selectedColumn()+1));
+    return true;
   }
+  return false;
 }
 
 void Controller::didBecomeFirstResponder() {

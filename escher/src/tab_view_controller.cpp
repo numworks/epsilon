@@ -78,24 +78,23 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
   if (app()->firstResponder() != this) {
     return false;
   }
-  switch(event) {
-    case Ion::Events::Event::LEFT_ARROW:
-      if (m_selectedChildIndex > 0) {
-        setSelectedTab(m_selectedChildIndex-1);
-      }
-      return true;
-    case Ion::Events::Event::RIGHT_ARROW:
-      if (m_selectedChildIndex < m_numberOfChildren-1) {
-        setSelectedTab(m_selectedChildIndex+1);
-      }
-      return true;
-    case Ion::Events::Event::DOWN_ARROW:
-    case Ion::Events::Event::ENTER:
-      setActiveTab(m_selectedChildIndex);
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::Left) {
+    if (m_selectedChildIndex > 0) {
+      setSelectedTab(m_selectedChildIndex-1);
+    }
+    return true;
   }
+  if (event == Ion::Events::Right) {
+    if (m_selectedChildIndex < m_numberOfChildren-1) {
+      setSelectedTab(m_selectedChildIndex+1);
+    }
+    return true;
+  }
+  if (event == Ion::Events::Down || event == Ion::Events::OK) {
+    setActiveTab(m_selectedChildIndex);
+    return true;
+  }
+  return false;
 }
 
 /*

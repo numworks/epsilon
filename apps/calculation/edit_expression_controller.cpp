@@ -69,28 +69,26 @@ void EditExpressionController::setTextBody(const char * text) {
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-    {
-      Calculation calculation = Calculation();
-      App * calculationApp = (App *)app();
-      calculation.setContent(textBody(), calculationApp->evaluateContext());
-      m_calculationStore->push(&calculation);
-      m_historyController->reload();
-      m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-      m_contentView.textField()->setText("");
-      return true;
-    }
-    case Ion::Events::Event::ESC:
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      if (m_calculationStore->numberOfCalculations() > 0) {
-        app()->setFirstResponder(m_historyController);
-      }
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    Calculation calculation = Calculation();
+    App * calculationApp = (App *)app();
+    calculation.setContent(textBody(), calculationApp->evaluateContext());
+    m_calculationStore->push(&calculation);
+    m_historyController->reload();
+    m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+    m_contentView.textField()->setText("");
+    return true;
   }
+  if (event == Ion::Events::Back) {
+    return true;
+  }
+  if (event == Ion::Events::Up) {
+    if (m_calculationStore->numberOfCalculations() > 0) {
+      app()->setFirstResponder(m_historyController);
+    }
+    return true;
+  }
+  return false;
 }
 
 void EditExpressionController::didBecomeFirstResponder() {

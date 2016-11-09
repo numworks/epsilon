@@ -42,7 +42,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 bool AppsContainer::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Event::F1) {
+  if (event == Ion::Events::Home) {
     switchTo(appAtIndex(0));
     return true;
   }

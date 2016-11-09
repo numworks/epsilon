@@ -39,42 +39,43 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       return true;
     }
   }
-  switch (event) {
-    case Ion::Events::Event::LEFT_ARROW:
-      if (m_currentCursorPosition > 0) {
-        m_currentCursorPosition--;
-      }
-      return true;
-    case Ion::Events::Event::RIGHT_ARROW:
-      if (m_currentCursorPosition < m_currentTextLength) {
-        m_currentCursorPosition++;
-      }
-      return true;
-    case Ion::Events::Event::DELETE:
-      if (m_currentCursorPosition > 0) {
-        reload();
-        m_currentTextLength--;
-        m_currentCursorPosition--;
-        for (int k = m_currentCursorPosition; k < m_currentTextLength; k ++) {
-          m_textBuffer[k] = m_textBuffer[k+1];
-        }
-        m_textBuffer[m_currentTextLength] = 0;
-      }
-      return true;
-    default:
-      if ((int)event >= 0x100) {
-        return false;
-      }
-      if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
-        for (int k = m_currentTextLength; k > m_currentCursorPosition; k--) {
-          m_textBuffer[k] = m_textBuffer[k-1];
-        }
-        m_textBuffer[++m_currentTextLength] = 0;
-        m_textBuffer[m_currentCursorPosition++] = (int)event;
-        reload();
-      }
-      return true;
+  if (event == Ion::Events::Left) {
+    if (m_currentCursorPosition > 0) {
+      m_currentCursorPosition--;
+    }
+    return true;
   }
+  if (event == Ion::Events::Right) {
+    if (m_currentCursorPosition < m_currentTextLength) {
+      m_currentCursorPosition++;
+    }
+    return true;
+  }
+  if (event == Ion::Events::Backspace) {
+    if (m_currentCursorPosition > 0) {
+      reload();
+      m_currentTextLength--;
+      m_currentCursorPosition--;
+      for (int k = m_currentCursorPosition; k < m_currentTextLength; k ++) {
+      m_textBuffer[k] = m_textBuffer[k+1];
+      }
+      m_textBuffer[m_currentTextLength] = 0;
+    }
+    return true;
+  }
+  if (event.hasText()) {
+    // FIXME: Only inserting the first letter!
+    if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
+      for (int k = m_currentTextLength; k > m_currentCursorPosition; k--) {
+        m_textBuffer[k] = m_textBuffer[k-1];
+      }
+      m_textBuffer[++m_currentTextLength] = 0;
+      m_textBuffer[m_currentCursorPosition++] = event.text()[0];
+      reload();
+    }
+    return true;
+  }
+  return false;
 }
 
 const char * TextField::text() const {

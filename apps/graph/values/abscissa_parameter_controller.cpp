@@ -28,12 +28,10 @@ void AbscissaParameterController::didBecomeFirstResponder() {
 }
 
 bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      return handleEnter();
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    return handleEnter();
   }
+  return false;
 }
 
 bool AbscissaParameterController::handleEnter() {

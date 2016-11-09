@@ -75,21 +75,18 @@ const char * NodeNavigationController::title() const {
 }
 
 bool NodeNavigationController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ESC:
-      return returnToPreviousMenu();
-    case Ion::Events::Event::ENTER:
-    {
-      int selectedRow = m_listViewController.selectedRow();
-      Node * selectedNode = (Node *)m_listViewController.nodeModel()->children(selectedRow);
-      if (selectedNode->numberOfChildren() == 0) {
-        return selectLeaf(selectedNode);
-      }
-      return selectSubMenu(selectedNode);
-    }
-    default:
-      return false;
+  if (event == Ion::Events::Back) {
+    return returnToPreviousMenu();
   }
+  if (event == Ion::Events::OK) {
+    int selectedRow = m_listViewController.selectedRow();
+    Node * selectedNode = (Node *)m_listViewController.nodeModel()->children(selectedRow);
+    if (selectedNode->numberOfChildren() == 0) {
+      return selectLeaf(selectedNode);
+    }
+    return selectSubMenu(selectedNode);
+  }
+  return false;
 }
 
 bool NodeNavigationController::returnToPreviousMenu() {

@@ -60,40 +60,29 @@ TableViewCell * SelectableTableView::selectedCell() {
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      if (selectCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
-        if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY - 1);
-        }
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::UP_ARROW:
-      if (selectCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
-        if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY + 1);
-        }
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::LEFT_ARROW:
-      if (selectCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
-        if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX + 1, m_selectedCellY);
-        }
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::RIGHT_ARROW:
-      if (selectCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
-        if (m_delegate) {
-          m_delegate->tableViewDidChangeSelection(this, m_selectedCellX - 1, m_selectedCellY);
-        }
-        return true;
-      }
-      return false;
-    default:
-      return false;
+  if (event == Ion::Events::Down && selectCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
+    if (m_delegate) {
+      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY - 1);
+    }
+    return true;
   }
+  if (event == Ion::Events::Up && selectCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
+    if (m_delegate) {
+      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY + 1);
+    }
+    return true;
+  }
+  if (event == Ion::Events::Left && selectCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
+    if (m_delegate) {
+      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX + 1, m_selectedCellY);
+    }
+    return true;
+  }
+  if (event == Ion::Events::Right && selectCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
+    if (m_delegate) {
+      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX - 1, m_selectedCellY);
+    }
+    return true;
+  }
+  return false;
 }

@@ -185,64 +185,69 @@ void ValuesController::didBecomeFirstResponder() {
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (m_contentView.tableState() == ContentView::TableState::Empty) {
-    if (event == Ion::Events::Event::UP_ARROW) {
+    if (event == Ion::Events::Up) {
       app()->setFirstResponder(tabController());
       return true;
     }
     return false;
   }
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      if (activeRow() == -1) {
-        setSelectedButton(-1);
-        m_selectableTableView.selectCellAtLocation(0,0);
-        app()->setFirstResponder(&m_selectableTableView);
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::UP_ARROW:
-      if (activeRow() == -1) {
-        setSelectedButton(-1);
-        app()->setFirstResponder(tabController());
-        return true;
-      }
-      m_selectableTableView.deselectTable();
-      setSelectedButton(0);
+
+  if (event == Ion::Events::Down) {
+    if (activeRow() == -1) {
+      setSelectedButton(-1);
+      m_selectableTableView.selectCellAtLocation(0,0);
+      app()->setFirstResponder(&m_selectableTableView);
       return true;
-    case Ion::Events::Event::ENTER:
-      if (activeRow() == -1) {
-        return HeaderViewController::handleEvent(event);
-      }
-      if (activeRow() == 0) {
-        if (activeColumn() == 0) {
-          configureAbscissa();
-          return true;
-        }
-        if (isDerivativeColumn(activeColumn())) {
-          configureDerivativeFunction();
-        } else {
-          configureFunction();
-        }
-        return true;
-      }
-      if (activeColumn() == 0) {
-        editValue(false);
-        return true;
-      }
-      return false;
-    default:
-      if (activeRow() == -1) {
-        return HeaderViewController::handleEvent(event);
-      }
-      if ((int)event < 0x100) {
-        if (activeColumn() == 0 && activeRow() > 0) {
-          editValue(true, (char)event);
-          return true;
-        }
-        return false;
-      }
-      return false;
+    }
+    return false;
   }
+
+  if (event == Ion::Events::Up) {
+    if (activeRow() == -1) {
+      setSelectedButton(-1);
+      app()->setFirstResponder(tabController());
+      return true;
+    }
+    m_selectableTableView.deselectTable();
+    setSelectedButton(0);
+    return true;
+  }
+
+  if (event == Ion::Events::OK) {
+    if (activeRow() == -1) {
+      return HeaderViewController::handleEvent(event);
+    }
+    if (activeRow() == 0) {
+      if (activeColumn() == 0) {
+        configureAbscissa();
+        return true;
+      }
+      if (isDerivativeColumn(activeColumn())) {
+        configureDerivativeFunction();
+      } else {
+        configureFunction();
+      }
+      return true;
+    }
+    if (activeColumn() == 0) {
+      editValue(false);
+      return true;
+    }
+    return false;
+  }
+
+  if (activeRow() == -1) {
+    return HeaderViewController::handleEvent(event);
+  }
+  if (event.hasText()) {
+    if (activeColumn() == 0 && activeRow() > 0) {
+      // FIXME: Only first character!
+      editValue(true, event.text()[0]);
+      return true;
+    }
+    return false;
+  }
+  return false;
 }
 
 

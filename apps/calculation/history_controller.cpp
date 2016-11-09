@@ -30,90 +30,85 @@ void HistoryController::didBecomeFirstResponder() {
 }
 
 bool HistoryController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      m_selectableTableView.deselectTable();
-      app()->setFirstResponder(parentResponder());
-      return true;
-    case Ion::Events::Event::UP_ARROW:
-      return true;
-    case Ion::Events::Event::ENTER:
-    {
-      int focusRow = m_selectableTableView.selectedRow();
-      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-      EditExpressionController * editController = (EditExpressionController *)parentResponder();
-      Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
-        editController->setTextBody(calculation->text());
-      } else {
-        char buffer[Constant::FloatBufferSizeInScientificMode];
-        Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-        editController->setTextBody(buffer);
-      }
-      m_selectableTableView.deselectTable();
-      app()->setFirstResponder(editController);
-      return true;
-    }
-    case Ion::Events::Event::EQUAL:
-    {
-      int focusRow = m_selectableTableView.selectedRow();
-      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-      EditExpressionController * editController = (EditExpressionController *)parentResponder();
-      Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-      Calculation newCalculation;
-      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
-        newCalculation = *calculation;
-      } else {
-        char buffer[Constant::FloatBufferSizeInScientificMode];
-        Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-        App * calculationApp = (App *)app();
-        newCalculation.setContent(buffer, calculationApp->evaluateContext());
-      }
-      m_selectableTableView.deselectTable();
-      m_calculationStore->push(&newCalculation);
-      reload();
-      m_selectableTableView.scrollToCell(0, numberOfRows()-1);
-      app()->setFirstResponder(editController);
-      return true;
-    }
-    case Ion::Events::Event::DELETE:
-    {
-      int focusRow = m_selectableTableView.selectedRow();
-      HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
-      HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-      EditExpressionController * editController = (EditExpressionController *)parentResponder();
-      m_calculationStore->deleteCalculationAtIndex(focusRow);
-      m_selectableTableView.deselectTable();
-      reload();
-      if (numberOfRows()== 0) {
-        app()->setFirstResponder(editController);
-        return true;
-      }
-      if (focusRow > 0) {
-        m_selectableTableView.selectCellAtLocation(0, focusRow-1);
-      } else {
-        m_selectableTableView.selectCellAtLocation(0, 0);
-      }
-      if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
-        tableViewDidChangeSelection(&m_selectableTableView, 0, m_selectableTableView.selectedRow());
-      } else {
-        tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
-      }
-      m_selectableTableView.scrollToCell(0, m_selectableTableView.selectedRow());
-      return true;
-    }
-    case Ion::Events::Event::CLEAR:
-    {
-      m_calculationStore->deleteAll();
-      reload();
-      app()->setFirstResponder(parentResponder());
-      return true;
-    }
-    default:
-      return false;
+  if (event == Ion::Events::Down) {
+    m_selectableTableView.deselectTable();
+    app()->setFirstResponder(parentResponder());
+    return true;
   }
+  if (event == Ion::Events::Up) {
+    return true;
+  }
+  if (event == Ion::Events::OK) {
+    int focusRow = m_selectableTableView.selectedRow();
+    HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    EditExpressionController * editController = (EditExpressionController *)parentResponder();
+    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+      editController->setTextBody(calculation->text());
+    } else {
+      char buffer[Constant::FloatBufferSizeInScientificMode];
+      Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+      editController->setTextBody(buffer);
+    }
+    m_selectableTableView.deselectTable();
+    app()->setFirstResponder(editController);
+    return true;
+  }
+  if (event == Ion::Events::EXE) {
+    int focusRow = m_selectableTableView.selectedRow();
+    HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    EditExpressionController * editController = (EditExpressionController *)parentResponder();
+    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+    Calculation newCalculation;
+    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+      newCalculation = *calculation;
+    } else {
+      char buffer[Constant::FloatBufferSizeInScientificMode];
+      Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+      App * calculationApp = (App *)app();
+      newCalculation.setContent(buffer, calculationApp->evaluateContext());
+    }
+    m_selectableTableView.deselectTable();
+    m_calculationStore->push(&newCalculation);
+    reload();
+    m_selectableTableView.scrollToCell(0, numberOfRows()-1);
+    app()->setFirstResponder(editController);
+    return true;
+  }
+  if (event == Ion::Events::Backspace) {
+    int focusRow = m_selectableTableView.selectedRow();
+    HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
+    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    EditExpressionController * editController = (EditExpressionController *)parentResponder();
+    m_calculationStore->deleteCalculationAtIndex(focusRow);
+    m_selectableTableView.deselectTable();
+    reload();
+    if (numberOfRows()== 0) {
+      app()->setFirstResponder(editController);
+      return true;
+    }
+    if (focusRow > 0) {
+      m_selectableTableView.selectCellAtLocation(0, focusRow-1);
+    } else {
+      m_selectableTableView.selectCellAtLocation(0, 0);
+    }
+    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+      tableViewDidChangeSelection(&m_selectableTableView, 0, m_selectableTableView.selectedRow());
+    } else {
+      tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
+    }
+    m_selectableTableView.scrollToCell(0, m_selectableTableView.selectedRow());
+    return true;
+  }
+  if (event == Ion::Events::Clear) {
+    m_calculationStore->deleteAll();
+    reload();
+    app()->setFirstResponder(parentResponder());
+    return true;
+  }
+  return false;
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {

@@ -9,11 +9,11 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, size_t text
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   if (m_currentTextLength == 0 &&
-      (event == Ion::Events::Event::PRODUCT ||
-      event == Ion::Events::Event::PLUS ||
-      event == Ion::Events::Event::MINUS ||
-      event == Ion::Events::Event::DOT ||
-      event == Ion::Events::Event::DIVISION)) {
+      (event == Ion::Events::Multiplication ||
+      event == Ion::Events::Plus ||
+      event == Ion::Events::Minus ||
+      event == Ion::Events::Dot ||
+      event == Ion::Events::Division)) {
     KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
     m_textBuffer[m_currentTextLength++] = 'a';
     m_textBuffer[m_currentTextLength++] = 'n';

@@ -38,13 +38,11 @@ void Probability::LawController::didBecomeFirstResponder() {
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      ((Probability::App *)app())->setLaw(App::Law::Normal);
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    ((Probability::App *)app())->setLaw(App::Law::Normal);
+    return true;
   }
+  return false;
 }
 
 int Probability::LawController::numberOfRows() {

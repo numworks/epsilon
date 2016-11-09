@@ -87,32 +87,25 @@ void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subvie
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::DOWN_ARROW:
-      if (m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
-        CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-        tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::Result, tableView->selectedColumn(), tableView->selectedRow());
-        HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-        selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
-        app()->setFirstResponder(selectedCell);
-        selectedCell->reloadCell();
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::UP_ARROW:
-      if (m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
-        CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-        tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::PrettyPrint, tableView->selectedColumn(), tableView->selectedRow());
-        HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-        selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
-        app()->setFirstResponder(selectedCell);
-        selectedCell->reloadCell();
-        return true;
-      }
-      return false;
-    default:
-      return false;
+  if (event == Ion::Events::Down && m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+    CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
+    tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::Result, tableView->selectedColumn(), tableView->selectedRow());
+    HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
+    app()->setFirstResponder(selectedCell);
+    selectedCell->reloadCell();
+    return true;
   }
+  if (event == Ion::Events::Up && m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
+    CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
+    tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::PrettyPrint, tableView->selectedColumn(), tableView->selectedRow());
+    HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
+    app()->setFirstResponder(selectedCell);
+    selectedCell->reloadCell();
+    return true;
+  }
+  return false;
 }
 
 }

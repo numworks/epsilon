@@ -135,22 +135,22 @@ void ListController::editExpression(FunctionExpressionView * functionCell, bool 
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::UP_ARROW:
-      m_selectableTableView.deselectTable();
-      assert(m_selectableTableView.selectedRow() == -1);
-      app()->setFirstResponder(tabController());
-      return true;
-    case Ion::Events::Event::ENTER:
-      return handleEnter();
-    default:
-      if ((int)event >= 0x100 || m_selectableTableView.selectedColumn() == 0) {
-        return false;
-      }
-      FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
-      editExpression(functionCell, true, (char)event);
-      return true;
+  if (event == Ion::Events::Up) {
+    m_selectableTableView.deselectTable();
+    assert(m_selectableTableView.selectedRow() == -1);
+    app()->setFirstResponder(tabController());
+    return true;
   }
+  if (event == Ion::Events::OK) {
+    return handleEnter();
+  }
+  if (!event.hasText() || m_selectableTableView.selectedColumn() == 0) {
+    return false;
+  }
+  FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
+  // FIXME: Only first character handled!
+  editExpression(functionCell, true, event.text()[0]);
+  return true;
 }
 
 bool ListController::handleEnter() {

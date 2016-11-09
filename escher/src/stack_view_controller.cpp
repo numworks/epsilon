@@ -109,7 +109,7 @@ void StackViewController::didBecomeFirstResponder() {
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Event::ESC && m_numberOfChildren > 1) {
+  if (event == Ion::Events::Back && m_numberOfChildren > 1) {
     pop();
     return true;
   }

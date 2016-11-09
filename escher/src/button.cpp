@@ -27,13 +27,11 @@ void Button::layoutSubviews() {
 }
 
 bool Button::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      m_invocation.perform(this);
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    m_invocation.perform(this);
+    return true;
   }
+  return false;
 }
 
 void Button::setBackgroundColor(KDColor backgroundColor) {

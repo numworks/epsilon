@@ -49,18 +49,17 @@ bool InputViewController::handleEvent(Ion::Events::Event event) {
   if (!isDisplayingModal()) {
     return false;
   }
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      m_successAction.perform(this);
-      dismissModalViewController();
-      return true;
-    case Ion::Events::Event::ESC:
-      m_failureAction.perform(this);
-      dismissModalViewController();
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    m_successAction.perform(this);
+    dismissModalViewController();
+    return true;
   }
+  if (event == Ion::Events::Back) {
+    m_failureAction.perform(this);
+    dismissModalViewController();
+    return true;
+  }
+  return false;
 }
 
 void InputViewController::edit(Responder * caller, const char * initialContent, void * context, Invocation::Action successAction, Invocation::Action failureAction) {

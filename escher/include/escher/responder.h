@@ -1,7 +1,7 @@
 #ifndef ESCHER_RESPONDER_H
 #define ESCHER_RESPONDER_H
 
-#include <ion/events.h>
+#include <ion.h>
 
 class App;
 

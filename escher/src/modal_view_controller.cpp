@@ -136,11 +136,9 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
   if (!m_contentView.isDisplayingModal()) {
     return false;
   }
-  switch (event) {
-    case Ion::Events::Event::ESC:
-      dismissModalViewController();
-      return true;
-    default:
-      return false;
+  if (event == Ion::Events::Back) {
+    dismissModalViewController();
+    return true;
   }
+  return false;
 }

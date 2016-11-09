@@ -39,28 +39,21 @@ bool PrettyPrintView::rightViewIsInvisible() {
 }
 
 bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::RIGHT_ARROW:
-      if (rightViewIsInvisible()) {
-        KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
-        KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;
-        m_manualScrolling += scrollAdd;
-        setContentOffset(KDPoint(m_manualScrolling, 0));
-        return true;
-      }
-      return false;
-    case Ion::Events::Event::LEFT_ARROW:
-      if (m_manualScrolling > 0) {
-        KDCoordinate leftSpace = m_manualScrolling;
-        KDCoordinate scrollSubstract = leftSpace > 10 ? 10 : leftSpace;
-        m_manualScrolling -= scrollSubstract;
-        setContentOffset(KDPoint(m_manualScrolling, 0));
-        return true;
-      }
-      return false;
-    default:
-      return false;
+  if (event == Ion::Events::Right && rightViewIsInvisible()) {
+      KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
+      KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;
+      m_manualScrolling += scrollAdd;
+      setContentOffset(KDPoint(m_manualScrolling, 0));
+      return true;
   }
+  if (event == Ion::Events::Left && m_manualScrolling > 0) {
+    KDCoordinate leftSpace = m_manualScrolling;
+    KDCoordinate scrollSubstract = leftSpace > 10 ? 10 : leftSpace;
+    m_manualScrolling -= scrollSubstract;
+    setContentOffset(KDPoint(m_manualScrolling, 0));
+    return true;
+  }
+  return false;
 }
 
 }

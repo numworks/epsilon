@@ -39,12 +39,10 @@ void ParameterController::setFunction(Function * function) {
 }
 
 bool ParameterController::handleEvent(Ion::Events::Event event) {
-  switch (event) {
-    case Ion::Events::Event::ENTER:
-      return handleEnter();
-    default:
-      return false;
+  if (event == Ion::Events::OK) {
+    return handleEnter();
   }
+  return false;
 }
 
 bool ParameterController::handleEnter() {

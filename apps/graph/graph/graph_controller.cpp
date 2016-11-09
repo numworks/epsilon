@@ -51,29 +51,27 @@ void GraphController::didBecomeFirstResponder() {
 
 bool GraphController::handleEvent(Ion::Events::Event event) {
   if (m_headerSelected) {
-    switch (event) {
-      case Ion::Events::Event::DOWN_ARROW:
+    if (event == Ion::Events::Down) {
         setSelectedButton(-1);
         m_headerSelected = false;
         return true;
-      case Ion::Events::Event::UP_ARROW:
-        setSelectedButton(-1);
-        app()->setFirstResponder(tabController());
-      default:
-        return HeaderViewController::handleEvent(event);
     }
+    if (event == Ion::Events::Up) {
+      setSelectedButton(-1);
+      app()->setFirstResponder(tabController());
+    }
+    return HeaderViewController::handleEvent(event);
   } else {
-    switch (event) {
-      case Ion::Events::Event::ENTER:
-        m_view.moveCursorRight();
-        return true;
-      case Ion::Events::Event::UP_ARROW:
-        setSelectedButton(0);
-        m_headerSelected = true;
-        return true;
-      default:
-        return false;
+    if (event == Ion::Events::OK) {
+      m_view.moveCursorRight();
+      return true;
     }
+    if (event == Ion::Events::Up) {
+      setSelectedButton(0);
+      m_headerSelected = true;
+      return true;
+    }
+    return false;
   }
 }
 

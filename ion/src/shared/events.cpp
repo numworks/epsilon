@@ -1,36 +1,117 @@
 #include <ion.h>
 
-const Ion::Events::Event kEventForKeyDown[] = {
-  Ion::Events::Event::F1, Ion::Events::Event::F2, Ion::Events::Event::F3, Ion::Events::Event::F4, Ion::Events::Event::F5, Ion::Events::Event::SECOND, Ion::Events::Event::SHIFT, Ion::Events::Event::ESC, Ion::Events::Event::LEFT_ARROW, Ion::Events::Event::UP_ARROW, Ion::Events::Event::DIAMOND, Ion::Events::Event::ALPHA, Ion::Events::Event::APPS, Ion::Events::Event::DOWN_ARROW, Ion::Events::Event::RIGHT_ARROW, Ion::Events::Event::HOME, Ion::Events::Event::MODE, Ion::Events::Event::CATALOG, Ion::Events::Event::DELETE, Ion::Events::Event::CLEAR, Ion::Events::Event::LOWER_CASE_X, Ion::Events::Event::LOWER_CASE_Y, Ion::Events::Event::LOWER_CASE_Z, Ion::Events::Event::LOWER_CASE_T, Ion::Events::Event::POWER, Ion::Events::Event::EQUAL, Ion::Events::Event::LEFT_PARENTHESIS, Ion::Events::Event::RIGHT_PARENTHESIS, Ion::Events::Event::COMMA, Ion::Events::Event::DIVISION, Ion::Events::Event::DOT, Ion::Events::Event::SEVEN, Ion::Events::Event::EIGHT, Ion::Events::Event::NINE, Ion::Events::Event::PRODUCT, Ion::Events::Event::UPPER_CASE_E, Ion::Events::Event::FOUR, Ion::Events::Event::FIVE, Ion::Events::Event::SIX, Ion::Events::Event::MINUS, Ion::Events::Event::DOT, Ion::Events::Event::ONE, Ion::Events::Event::TWO, Ion::Events::Event::THREE, Ion::Events::Event::PLUS, Ion::Events::Event::DOT, Ion::Events::Event::ZERO, Ion::Events::Event::DOT, Ion::Events::Event::MINUS, Ion::Events::Event::ENTER
+extern "C" {
+#include <assert.h>
+}
+
+namespace Ion {
+namespace Events {
+
+class EventData {
+public:
+  static constexpr EventData Undefined() { return EventData(nullptr); }
+  static constexpr EventData Textless() { return EventData(k_textless); }
+  static constexpr EventData Text(const char * text) { return EventData(text); }
+  bool isUndefined() const { return (m_data == nullptr); }
+  const char * text() const;
+private:
+  static constexpr const char * k_textless = "";
+  constexpr EventData(const char * data) : m_data(data) {}
+  const char * m_data;
 };
 
-// Debouncing, qnd change to get_key event.
-Ion::Events::Event Ion::Events::getEvent() {
-  // Let's start by saving which keys we've seen up
-  bool key_seen_up[Ion::Keyboard::NumberOfKeys];
-  for (int k=0; k<Ion::Keyboard::NumberOfKeys; k++) {
-    key_seen_up[k] = !Ion::Keyboard::keyDown((Ion::Keyboard::Key)k);
-  }
+#define TL() EventData::Textless()
+#define U() EventData::Undefined()
+#define T(x) EventData::Text(x)
 
-  // Wait a little to debounce the button.
-  msleep(10);
+static constexpr EventData s_dataForEvent[] = {
+// Plain
+  TL(), TL(), TL(), TL(), TL(), TL(),
+  TL(), TL(), U(),   U(),  U(),  U(),
+  TL(), TL(), TL(), TL(), TL(), TL(),
+  T("exp()"), T("ln()"),  T("log()"), T("i"), T(","),      T("^"),
+  T("sin()"), T("cos()"), T("tan()"), T("p"), T("sqrt()"), T("^2"),
+  T("7"), T("8"), T("9"), T("("), T(")"), U(),
+  T("4"), T("5"), T("6"), T("*"), T("/"), U(),
+  T("1"), T("2"), T("3"), T("+"), T("-"), U(),
+  T("0"), T("."), T("E"), TL(), TL(), U(),
+// Shift
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), TL(), TL(), TL(), TL(),
+  T("["), T("]"), T("{"), T("}"), T("_"), T("sto"),
+  T("asin()"), T("acos()"), T("atan()"), T("="), T("<"), T(">"),
+  U(), U(), TL(), TL(), TL(), TL(),
+  U(), U(), TL(), TL(), TL(), TL(),
+  U(), U(), TL(), TL(), TL(), TL(),
+  U(), U(), TL(), TL(), TL(), TL(),
+// Alpha
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), T(":"), T(";"), U(),
+  T("a"), T("b"), T("c"), T("d"), T("e"), T("f"),
+  T("g"), T("h"), T("i"), T("j"), T("k"), T("l"),
+  T("m"), T("n"), T("o"), T("p"), T("q"), U(),
+  T("r"), T("s"), T("t"), T("u"), T("v"), U(),
+  T("w"), T("x"), T("y"), T("z"), T(" "), U(),
+  T("?"), T("!"), U(), U(), U(),
+// Shift+Alpha
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  T("A"), T("B"), T("C"), T("D"), T("E"), T("F"),
+  T("G"), T("H"), T("I"), T("J"), T("K"), T("L"),
+  T("M"), T("N"), T("O"), T("P"), T("Q"), U(),
+  T("R"), T("S"), T("T"), T("U"), T("V"), U(),
+  T("W"), T("X"), T("Y"), T("Z"), T(" "), U(),
+  U(), U(), U(), U(), U(), U(),
+};
 
-  /* Let's discard the keys we previously saw up but which aren't anymore: those
-   * were probably bouncing! */
-  for (int k=0; k<Ion::Keyboard::NumberOfKeys; k++) {
-    key_seen_up[k] &= !Ion::Keyboard::keyDown((Ion::Keyboard::Key)k);
+const char * EventData::text() const {
+  if (m_data == nullptr || m_data == k_textless) {
+    return nullptr;
   }
+  return m_data;
+}
 
-  while (1) {
-    for (int k=0; k<Ion::Keyboard::NumberOfKeys; k++) {
-      if (Ion::Keyboard::keyDown((Ion::Keyboard::Key)k)) {
-        if (key_seen_up[k]) {
-          return kEventForKeyDown[k];
-        }
-      } else {
-        key_seen_up[k] = true;
-      }
-    }
-    msleep(10);
-  }
+Event::Event(Keyboard::Key key, bool shift, bool alpha) {
+  // We're mapping a key, shift and alpha to an event
+  // This can be a bit more complicated than it seems since we want to fall back:
+  // for example, alpha-up is just plain up.
+  // Fallback order :
+  // shift-X -> X
+  // alpha-X -> X
+  // shift-alpha-X -> alpha-X -> X
+
+  constexpr uint8_t undefinedEventId = 4*k_eventPageSize;
+
+  m_id = undefinedEventId;
+
+  int noFallbackOffsets[] = {0};
+  int shiftFallbackOffsets[] = {k_eventPageSize, 0};
+  int alphaFallbackOffsets[] = {2*k_eventPageSize, 0};
+  int shiftAlphaFallbackOffsets[] = {3*k_eventPageSize, 2*k_eventPageSize, 0};
+
+  int * fallbackOffsets[] = {noFallbackOffsets, shiftFallbackOffsets, alphaFallbackOffsets, shiftAlphaFallbackOffsets};
+
+  int * fallbackOffset = fallbackOffsets[shift+2*alpha];
+  int i=0;
+  int offset = 0;
+  do {
+    offset = fallbackOffset[i++];
+    m_id = offset + (int)key;
+  } while (offset > 0 && s_dataForEvent[m_id].isUndefined());
+
+  assert(m_id != undefinedEventId);
+}
+
+const char * Event::text() const {
+  return s_dataForEvent[m_id].text();
+}
+
+bool Event::hasText() const {
+  return text() != nullptr;
+}
+
+}
 }

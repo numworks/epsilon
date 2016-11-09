@@ -69,13 +69,14 @@ void Ion::Device::initClocks() {
   // Peripheral clocks
 
   // AHB1 bus
-  // Our peripherals are using GPIO A, B, C and D.
+  // Our peripherals are using GPIO A, B, C, D and E.
   // We're not using the CRC nor DMA engines.
   class RCC::AHB1ENR ahb1enr(0); // Reset value
   ahb1enr.setGPIOAEN(true);
   ahb1enr.setGPIOBEN(true);
   ahb1enr.setGPIOCEN(true);
   ahb1enr.setGPIODEN(true);
+  ahb1enr.setGPIOEEN(true);
   RCC.AHB1ENR()->set(ahb1enr);
 
   // APB1 bus

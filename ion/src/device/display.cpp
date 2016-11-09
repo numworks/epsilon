@@ -37,8 +37,8 @@ namespace Device {
 
 void init() {
   // Turn on the reset pin
-  GPIOB.MODER()->setMode(13, GPIO::MODER::Mode::Output);
-  GPIOB.ODR()->set(13, true);
+  GPIOE.MODER()->setMode(9, GPIO::MODER::Mode::Output);
+  GPIOE.ODR()->set(9, true);
 
   msleep(120);
 
@@ -53,41 +53,52 @@ void initGPIO() {
   GPIOA.MODER()->setMode(2, GPIO::MODER::Mode::AlternateFunction);
   GPIOA.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
   GPIOA.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
-  GPIOA.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOB.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
+  GPIOB.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOC.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(6, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(0, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(1, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(7, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(9, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(10, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
+  GPIOD.MODER()->setMode(15, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOD.MODER()->setMode(2, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(10, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(13, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
+  GPIOE.MODER()->setMode(15, GPIO::MODER::Mode::AlternateFunction);
 
-  /* More precisely, we want to use the FSMC alternate function.
-   * Oddly enough, this isn't always the same AF number. That equals to:
-   * AF12 for PA2,3,4,5
-   * AF10 for PB14
-   * AF12 for PC3,4,5
-   * AF10 for PC6,11,12
-   * AF10 for PD2 */
+  /* More precisely, we want to use the FSMC alternate function. In our case,
+   * it is always Alternate Function number 12. */
   GPIOA.AFR()->setAlternateFunction(2, GPIO::AFR::AlternateFunction::AF12);
   GPIOA.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF12);
   GPIOA.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
 
-  GPIOB.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF10);
+  GPIOB.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF12);
 
-  GPIOC.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
-  GPIOC.AFR()->setAlternateFunction(6, GPIO::AFR::AlternateFunction::AF10);
-  GPIOC.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF10);
-  GPIOC.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF10);
+  GPIOD.AFR()->setAlternateFunction(0, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(1, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(7, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(9, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(10, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF12);
+  GPIOD.AFR()->setAlternateFunction(15, GPIO::AFR::AlternateFunction::AF12);
 
-  GPIOD.AFR()->setAlternateFunction(2, GPIO::AFR::AlternateFunction::AF10);
+  GPIOE.AFR()->setAlternateFunction(10, GPIO::AFR::AlternateFunction::AF12);
+  GPIOE.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF12);
+  GPIOE.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF12);
+  GPIOE.AFR()->setAlternateFunction(13, GPIO::AFR::AlternateFunction::AF12);
+  GPIOE.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF12);
+  GPIOE.AFR()->setAlternateFunction(15, GPIO::AFR::AlternateFunction::AF12);
 }
 
 void initFSMC() {
@@ -104,14 +115,14 @@ void initFSMC() {
 
 
   // Control register
-  FSMC.BCR(4)->setMWID(FSMC::BCR::MWID::EIGHT_BITS);
-  FSMC.BCR(4)->setWREN(true);
-  FSMC.BCR(4)->setMBKEN(true);
+  FSMC.BCR(FSMCMemoryBank)->setMWID(FSMC::BCR::MWID::SIXTEEN_BITS);
+  FSMC.BCR(FSMCMemoryBank)->setWREN(true);
+  FSMC.BCR(FSMCMemoryBank)->setMBKEN(true);
 
   // Timing register
-  FSMC.BTR(4)->setADDSET(0);
-  FSMC.BTR(4)->setDATAST(0);
-  FSMC.BTR(4)->setBUSTURN(0);
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(6);
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(6);
+  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(6);
 }
 
 void initPanel() {
@@ -180,20 +191,14 @@ void setDrawingArea(KDRect r) {
 }
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
-  uint8_t * bytePixelPointer = (uint8_t *)pixels;
-  size_t i = 2*numberOfPixels;
-  while (i--) {
-    *DataAddress = *bytePixelPointer++;
+  while (numberOfPixels--) {
+    *DataAddress = *pixels++;
   }
 }
 
 void pushColor(KDColor color, size_t numberOfPixels) {
-  uint8_t firstByte = color;
-  uint8_t secondByte = (color >> 8);
-  size_t i = numberOfPixels;
-  while (i--) {
-    *DataAddress = firstByte;
-    *DataAddress = secondByte;
+  while (numberOfPixels--) {
+    *DataAddress = color;
   }
 }
 

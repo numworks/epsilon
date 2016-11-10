@@ -1,7 +1,7 @@
 #include "picview_app.h"
 
-PicViewApp::PicViewApp() :
-  ::App(&m_picViewController),
+PicViewApp::PicViewApp(Container * container) :
+  ::App(container, &m_picViewController),
   m_picViewController(PicViewController(&m_modalViewController))
 {
 }

@@ -11,7 +11,7 @@ namespace Calculation {
 
 class App : public ::App, public ExpressionTextFieldDelegate {
 public:
-  App(Context * context);
+  App(Container * container, Context * context);
   Context * globalContext();
   Context * evaluateContext() override;
 private:

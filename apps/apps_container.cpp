@@ -6,8 +6,9 @@ extern "C" {
 AppsContainer::AppsContainer() :
   Container(),
   m_homeApp(this),
-  m_graphApp(&m_context),
-  m_calculationApp(&m_context),
+  m_graphApp(this, &m_context),
+  m_probabilityApp(this),
+  m_calculationApp(this, &m_context),
   m_context(Context())
 {
 }
@@ -26,6 +27,10 @@ App * AppsContainer::appAtIndex(int index) {
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);
   return apps[index];
+}
+
+ToolBoxController * AppsContainer::toolBoxController() {
+  return &m_toolBoxController;
 }
 
 bool AppsContainer::handleEvent(Ion::Events::Event event) {

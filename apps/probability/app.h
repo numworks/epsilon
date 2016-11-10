@@ -13,7 +13,7 @@ public:
     Normal,
     Student
   };
-  App();
+  App(Container * container);
   void setLaw(Law l);
 private:
   LawController m_lawController;

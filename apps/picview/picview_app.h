@@ -6,7 +6,7 @@
 
 class PicViewApp : public App {
 public:
-  PicViewApp();
+  PicViewApp(Container * container);
 private:
   PicViewController m_picViewController;
 };

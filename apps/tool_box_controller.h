@@ -19,6 +19,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void setTextFieldCaller(TextField * textField);
 private:
+  bool handleEnter();
   constexpr static int k_numberOfCommandRows = 3;
   constexpr static int k_numberOfMenuRows = 8;
   constexpr static int k_maxNumberOfDisplayedRows = 6;

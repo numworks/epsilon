@@ -13,11 +13,17 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  const char * textBuffer() const;
-  int bufferLength() const;
-  void setTextBuffer(const char * text);
-   KDSize minimalSizeForOptimalDisplay() override;
+  const char * text() const;
+  int textLength() const;
+  void setText(const char * text);
+  /* If the text to be appended is too long to be added without overflowing the
+   * buffer, nothing is done (not even adding few letters from the text to reach
+   * the maximum buffer capacity. */
+  void appendText(const char * text);
+  void moveCursor(int delta);
+  KDSize minimalSizeForOptimalDisplay() override;
 protected:
+  void reload();
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif

@@ -1,4 +1,5 @@
 #include <escher/text_field.h>
+#include <assert.h>
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, TextFieldDelegate * delegate) :
   View(),
@@ -24,6 +25,12 @@ const char * TextField::className() const {
 }
 #endif
 
+void TextField::reload() {
+  KDSize sizeText = KDText::stringSize(m_textBuffer);
+  KDRect dirtyZone(0, 0, sizeText.width(), sizeText.height());
+  markRectAsDirty(dirtyZone);
+}
+
 /* Responder */
 
 bool TextField::handleEvent(Ion::Events::Event event) {
@@ -45,15 +52,13 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       return true;
     case Ion::Events::Event::DELETE:
       if (m_currentCursorPosition > 0) {
-        KDSize sizePreviousText = KDText::stringSize(m_textBuffer);
+        reload();
         m_currentTextLength--;
         m_currentCursorPosition--;
         for (int k = m_currentCursorPosition; k < m_currentTextLength; k ++) {
           m_textBuffer[k] = m_textBuffer[k+1];
         }
         m_textBuffer[m_currentTextLength] = 0;
-        KDRect dirtyZone(0, 0, sizePreviousText.width(), sizePreviousText.height());
-        markRectAsDirty(dirtyZone);
       }
       return true;
     default:
@@ -66,28 +71,47 @@ bool TextField::handleEvent(Ion::Events::Event event) {
         }
         m_textBuffer[++m_currentTextLength] = 0;
         m_textBuffer[m_currentCursorPosition++] = (int)event;
-        KDSize sizeText = KDText::stringSize(m_textBuffer);
-        KDRect dirtyZone(0, 0, sizeText.width(), sizeText.height());
-        markRectAsDirty(dirtyZone);
+        reload();
       }
       return true;
   }
 }
 
-const char * TextField::textBuffer () const {
-  const char * textBuffer = (const char *)m_textBuffer;
-  return textBuffer;
+const char * TextField::text() const {
+  return (const char *)m_textBuffer;
 }
 
-int TextField::bufferLength () const {
+int TextField::textLength() const {
+  assert(strlen(text()) == m_currentTextLength);
   return m_currentTextLength;
 }
 
-void TextField::setTextBuffer(const char * text) {
+void TextField::setText(const char * text) {
   strlcpy(m_textBuffer, text, m_textBufferSize);
   m_currentCursorPosition = strlen(text);
   m_currentTextLength = m_currentCursorPosition;
-  markRectAsDirty(bounds());
+  reload();
+}
+
+void TextField::appendText(const char * text) {
+  int textSize = strlen(text);
+  if (m_currentTextLength + textSize > m_textBufferSize) {
+    return;
+  }
+  for (int k = m_currentTextLength; k > m_currentCursorPosition - 1; k--) {
+    m_textBuffer[k+textSize] = m_textBuffer[k];
+  }
+  strlcpy(&m_textBuffer[m_currentCursorPosition], text, textSize);
+  m_currentCursorPosition += textSize;
+  m_textBuffer[m_currentCursorPosition-1] = text[textSize-1];
+  m_currentTextLength += textSize;
+  reload();
+}
+
+void TextField::moveCursor(int position) {
+  assert(m_currentCursorPosition + position <= m_currentTextLength);
+  assert(m_currentCursorPosition + position >= 0);
+  m_currentCursorPosition += position;
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() {

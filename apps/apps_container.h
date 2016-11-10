@@ -5,6 +5,7 @@
 #include "graph/app.h"
 #include "probability/app.h"
 #include "calculation/app.h"
+#include "tool_box_controller.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -29,6 +30,7 @@ private:
   PicViewApp m_picViewApp;
 #endif
   Context m_context;
+  ToolBoxController m_toolBoxController;
 };
 
 #endif

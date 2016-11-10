@@ -1,5 +1,6 @@
 #include "values_controller.h"
 #include "../../constant.h"
+#include "../../apps_container.h"
 #include "../app.h"
 #include <assert.h>
 
@@ -289,8 +290,8 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
     ValueCell * cell = valuesController->abscisseCellAtRow(activeRow);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
-    App * myApp = (App *)valuesController->app();
-    Context * globalContext = myApp->globalContext();
+    AppsContainer * appsContainer = (AppsContainer *)valuesController->app()->container();
+    Context * globalContext = appsContainer->context();
     float floatBody = Expression::parse(textBody)->approximate(*globalContext);
     valuesController->interval()->setElement(activeRow-1, floatBody);
     valuesController->willDisplayCellAtLocation(cell, activeColumn, activeRow);

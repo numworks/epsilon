@@ -15,11 +15,9 @@ class App : public ::App, public ExpressionTextFieldDelegate {
 public:
   App(Container * container, Context * context);
   InputViewController * inputViewController();
-  Context * globalContext();
   Context * evaluateContext() override;
 private:
   FunctionStore m_functionStore;
-  Context * m_globalContext;
   EvaluateContext m_evaluateContext;
   ListController m_listController;
   StackViewController m_listStackViewController;

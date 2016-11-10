@@ -1,6 +1,7 @@
 #include "values_parameter_controller.h"
 #include "../app.h"
 #include "../../constant.h"
+#include "../../apps_container.h"
 #include <assert.h>
 
 namespace Graph {
@@ -110,8 +111,8 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     TextMenuListCell * cell = (TextMenuListCell *)valuesParameterController->reusableCell(activeCell);
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
-    App * myApp = (App *)valuesParameterController->app();
-    Context * globalContext = myApp->globalContext();
+    AppsContainer * appsContainer = (AppsContainer *)valuesParameterController->app()->container();
+    Context * globalContext = appsContainer->context();
     float floatBody = Expression::parse(textBody)->approximate(*globalContext);
     valuesParameterController->setIntervalParameterAtIndex(activeCell, floatBody);
     valuesParameterController->willDisplayCellForIndex(cell, activeCell);

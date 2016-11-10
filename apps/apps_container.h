@@ -19,6 +19,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
+  Context * context();
   ToolBoxController * toolBoxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;

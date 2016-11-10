@@ -29,6 +29,10 @@ App * AppsContainer::appAtIndex(int index) {
   return apps[index];
 }
 
+Context * AppsContainer::context() {
+  return &m_context;
+}
+
 ToolBoxController * AppsContainer::toolBoxController() {
   return &m_toolBoxController;
 }

@@ -7,7 +7,6 @@ App::App(Container * container, Context * context) :
   ::App(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
   ExpressionTextFieldDelegate(),
   m_functionStore(FunctionStore()),
-  m_globalContext(context),
   m_evaluateContext(EvaluateContext(context)),
   m_listController(ListController(nullptr, &m_functionStore)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listController)),
@@ -21,10 +20,6 @@ App::App(Container * container, Context * context) :
 
 InputViewController * App::inputViewController() {
   return &m_inputViewController;
-}
-
-Context * App::globalContext() {
-  return m_globalContext;
 }
 
 Context * App::evaluateContext() {

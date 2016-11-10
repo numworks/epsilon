@@ -16,12 +16,12 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       return true;
   }
   // TODO: correct events
-  //if (event == Ion::Events::Event::TOOL_BOX) {
+  //if (event == Ion::Events::Event::TOOLBOX) {
   if (event == Ion::Events::Event::F5) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
-    ToolBoxController * toolBoxController = appsContainer->toolBoxController();
-    toolBoxController->setTextFieldCaller(textField);
-    textField->app()->displayModalViewController(toolBoxController, 0.f, 0.f, 50, 50, 0, 50);
+    ToolboxController * toolboxController = appsContainer->toolboxController();
+    toolboxController->setTextFieldCaller(textField);
+    textField->app()->displayModalViewController(toolboxController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }
   //if (event == Ion::Events::Event::VARIABLE_BOX) {

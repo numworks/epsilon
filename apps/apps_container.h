@@ -5,7 +5,7 @@
 #include "graph/app.h"
 #include "probability/app.h"
 #include "calculation/app.h"
-#include "tool_box_controller.h"
+#include "toolbox_controller.h"
 #include "variable_box_controller.h"
 
 #define USE_PIC_VIEW_APP 0
@@ -20,7 +20,7 @@ public:
   int numberOfApps();
   App * appAtIndex(int index);
   Context * context();
-  ToolBoxController * toolBoxController();
+  ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
 private:
@@ -33,7 +33,7 @@ private:
   PicViewApp m_picViewApp;
 #endif
   Context m_context;
-  ToolBoxController m_toolBoxController;
+  ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;
 };
 

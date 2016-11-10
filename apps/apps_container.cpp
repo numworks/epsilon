@@ -33,8 +33,8 @@ Context * AppsContainer::context() {
   return &m_context;
 }
 
-ToolBoxController * AppsContainer::toolBoxController() {
-  return &m_toolBoxController;
+ToolboxController * AppsContainer::toolboxController() {
+  return &m_toolboxController;
 }
 
 VariableBoxController * AppsContainer::variableBoxController() {

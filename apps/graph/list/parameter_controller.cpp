@@ -29,7 +29,7 @@ void ParameterController::didBecomeFirstResponder() {
 
 void ParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_enableCell) {
-    SwitchView * switchView = (SwitchView *)m_enableCell.contentView();
+    SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
     switchView->setState(m_function->isActive());
   }
 }

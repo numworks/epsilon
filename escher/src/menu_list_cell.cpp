@@ -10,7 +10,7 @@ MenuListCell::MenuListCell(char * label) :
 }
 
 int MenuListCell::numberOfSubviews() const {
-  if (contentView() == nullptr) {
+  if (accessoryView() == nullptr) {
     return 1;
   }
   return 2;
@@ -21,7 +21,7 @@ View * MenuListCell::subviewAtIndex(int index) {
     return &m_pointerTextView;
   }
   assert(numberOfSubviews() == 2 && index == 1);
-  return contentView();
+  return accessoryView();
 }
 
 void MenuListCell::layoutSubviews() {
@@ -29,9 +29,9 @@ void MenuListCell::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDSize labelSize = m_pointerTextView.minimalSizeForOptimalDisplay();
   m_pointerTextView.setFrame(KDRect(k_separatorThickness, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));
-  View * content = contentView();
-  if (content) {
-    content->setFrame(KDRect(k_separatorThickness + labelSize.width(), k_separatorThickness, width - labelSize.width()-2*k_separatorThickness, height-2*k_separatorThickness));
+  View * accessory = accessoryView();
+  if (accessory) {
+    accessory->setFrame(KDRect(k_separatorThickness + labelSize.width(), k_separatorThickness, width - labelSize.width()-2*k_separatorThickness, height-2*k_separatorThickness));
   }
 }
 
@@ -46,7 +46,7 @@ void MenuListCell::setText(const char * text) {
   layoutSubviews();
 }
 
-View * MenuListCell::contentView() const {
+View * MenuListCell::accessoryView() const {
   return nullptr;
 }
 

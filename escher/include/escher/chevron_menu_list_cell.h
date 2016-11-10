@@ -7,10 +7,10 @@
 class ChevronMenuListCell : public MenuListCell {
 public:
   ChevronMenuListCell(char * label = nullptr);
-  View * contentView() const override;
+  View * accessoryView() const override;
   void reloadCell() override;
 private:
-  ChevronView m_contentView;
+  ChevronView m_accessoryView;
 };
 
 #endif

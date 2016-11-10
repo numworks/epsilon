@@ -2,15 +2,15 @@
 
 ChevronMenuListCell::ChevronMenuListCell(char * label) :
   MenuListCell(label),
-  m_contentView(ChevronView())
+  m_accessoryView(ChevronView())
 {
 }
 
-View * ChevronMenuListCell::contentView() const {
-  return (View *)&m_contentView;
+View * ChevronMenuListCell::accessoryView() const {
+  return (View *)&m_accessoryView;
 }
 
 void ChevronMenuListCell::reloadCell() {
   MenuListCell::reloadCell();
-  m_contentView.setHighlighted(isHighlighted());
+  m_accessoryView.setHighlighted(isHighlighted());
 }

@@ -10,7 +10,7 @@
 class MenuListCell : public TableViewCell {
 public:
   MenuListCell(char * label = nullptr);
-  virtual View * contentView() const;
+  virtual View * accessoryView() const;
   void setText(const char * text);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;

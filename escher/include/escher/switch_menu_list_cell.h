@@ -7,9 +7,9 @@
 class SwitchMenuListCell : public MenuListCell {
 public:
   SwitchMenuListCell(char * label);
-  View * contentView() const override;
+  View * accessoryView() const override;
 private:
-  SwitchView m_contentView;
+  SwitchView m_accessoryView;
 };
 
 #endif

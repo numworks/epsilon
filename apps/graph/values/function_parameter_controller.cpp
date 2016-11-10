@@ -83,7 +83,7 @@ KDCoordinate FunctionParameterController::cellHeight() {
 
 void FunctionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
-    SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.contentView();
+    SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
     switchView->setState(m_function->displayDerivative());
   }
 }

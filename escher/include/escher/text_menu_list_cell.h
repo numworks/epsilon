@@ -8,12 +8,12 @@ class TextMenuListCell : public MenuListCell {
 public:
   TextMenuListCell(char * label);
   void reloadCell() override;
-  View * contentView() const override;
+  View * accessoryView() const override;
   void setHighlighted(bool highlight);
-  void setText(const char * textBody);
-  const char * textContent();
+  void setAccessoryText(const char * textBody);
+  const char * accessoryText();
 private:
-  BufferTextView m_contentView;
+  BufferTextView m_accessoryView;
 };
 
 #endif

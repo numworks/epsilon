@@ -44,15 +44,15 @@ void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, in
   switch (index) {
     case 0:
       Float(m_interval->start()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setText(buffer);
+      myCell->setAccessoryText(buffer);
       break;
     case 1:
       Float(m_interval->end()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setText(buffer);
+      myCell->setAccessoryText(buffer);
       break;
     case 2:
       Float(m_interval->step()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setText(buffer);
+      myCell->setAccessoryText(buffer);
       break;
     default:
       assert(false);
@@ -100,7 +100,7 @@ void ValuesParameterController::editInterval(bool overwrite, char initialDigit) 
     initialTextContent[1] = 0;
   } else {
     TextMenuListCell * textMenuListCell = (TextMenuListCell *)reusableCell(activeCell());
-    strlcpy(initialTextContent, textMenuListCell->textContent(), sizeof(initialTextContent));
+    strlcpy(initialTextContent, textMenuListCell->accessoryText(), sizeof(initialTextContent));
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();

@@ -2,10 +2,10 @@
 
 SwitchMenuListCell::SwitchMenuListCell(char * label) :
   MenuListCell(label),
-  m_contentView(SwitchView())
+  m_accessoryView(SwitchView())
 {
 }
 
-View * SwitchMenuListCell::contentView() const {
-  return (View *)&m_contentView;
+View * SwitchMenuListCell::accessoryView() const {
+  return (View *)&m_accessoryView;
 }

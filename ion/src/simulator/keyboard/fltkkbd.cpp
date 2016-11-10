@@ -1,33 +1,31 @@
 #include <assert.h>
 #include "fltkkbd.h"
 
-constexpr int KeyboardRows = 10;
-constexpr int KeyboardColumns = 5;
+constexpr int KeyboardRows = 9;
+constexpr int KeyboardColumns = 6;
 
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
-  "F1",      "F2",    "F3",      "F4",     "F5",
-  "2nd",     "Shift", "ESC",     "LEFT",   "UP",
-  "Diamond", "alpha", "APPS",    "DOWN",   "RIGHT",
-  "HOME",    "MODE",  "CTLG", "Delete", "CLEAR",
-  "X",       "Y",     "Z",       "T",      "^",
-  "=",       "(",     ")",       ",",      "%",
-  "|",       "7",     "8",       "9",      "x",
-  "EE",      "4",     "5",       "6",      "-",
-  "STO",     "1",     "2",       "3",      "+",
-  "ON",      "0",     ".",       "(-)",    "ENTER"
+  "Left",   "Up",     "Down",   "Right",  "OK",     "Back",
+  "Home",   "Power",  "",       "",       "",       "",
+  "Shift",  "Alpha",  "x,n,t",  "Var",    "Toolbox",  "Clear",
+  "e^x",    "ln",     "log",    "i",      ",",      "x^y",
+  "sin",    "cos",    "tan",    "pi",     "root",   "square",
+  "7",      "8",      "9",      "(",      ")",      "",
+  "4",      "5",      "6",      "x",      "%",      "",
+  "1",      "2",      "3",      "+",      "-",      "",
+  "0",      ".",      "x10^x",  "Ans",    "EXE",    ""
 };
 
 static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {
-  0, 0, 0, 0, 0,
-  0, 0, FL_Escape, FL_Left, FL_Up,
-  0, 0, 0, FL_Down, FL_Right,
-  0, 0, 0, FL_BackSpace, 0,
-  'x', 'y', 'z', 't', '^',
-  '=', '(', ')', ',', '/',
-  0, '7', '8', '9', '*',
-  0, '4', '5', '6', '-',
-  0, '1', '2', '3', '+',
-  0, '0', '.', 0, FL_Enter
+  FL_Left, FL_Up, FL_Down, FL_Right, FL_Enter, FL_BackSpace,
+  FL_Escape, 0, 0, 0, 0, 0,
+  0, 0, 'x', 0, 0, 0,
+  0, 0, 0, 'i', ',', 0,
+  0, 0, 0, 0, 0, 0,
+  '7', '8', '0', '(',')', 0,
+  '4', '5', '6', '*', '%', 0,
+  '1', '2', '3', '+', '-', 0,
+  '0', '.', 0, 0, 0, 0
 };
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {

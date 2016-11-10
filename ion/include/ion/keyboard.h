@@ -20,7 +20,7 @@ enum class Key : uint8_t {
   I1=48, I2=49, I3=50, I4=51, I5=52, // I6=53,
 };
 
-constexpr int NumberOfKeys  = 53;
+constexpr int NumberOfKeys  = 54;
 
 bool keyDown(Key k);
 

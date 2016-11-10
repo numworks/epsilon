@@ -2,6 +2,7 @@
 #define ESCHER_STACK_VIEW_H
 
 #include <escher/view.h>
+#include <escher/pointer_text_view.h>
 
 class StackView : public View {
 public:
@@ -14,7 +15,10 @@ protected:
   void logAttributes(std::ostream &os) const override;
 #endif
 private:
-  const char * m_name;
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
+  PointerTextView m_textView;
 };
 
 #endif

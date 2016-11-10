@@ -18,7 +18,6 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
   MenuListCell m_deleteColumn;
   ChevronMenuListCell m_copyColumn;

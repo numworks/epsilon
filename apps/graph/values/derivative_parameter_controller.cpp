@@ -39,26 +39,22 @@ void DerivativeParameterController::didBecomeFirstResponder() {
 
 bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    return handleEnter();
+    switch (m_selectableTableView.selectedRow()) {
+      case 0:
+      {
+        m_function->setDisplayDerivative(false);
+        StackViewController * stack = (StackViewController *)(parentResponder());
+        stack->pop();
+        return true;
+      }
+      case 1:
+        return false;
+      default:
+        assert(false);
+        return false;
+    }
   }
   return false;
-}
-
-bool DerivativeParameterController::handleEnter() {
-  switch (m_selectableTableView.selectedRow()) {
-    case 0:
-    {
-      m_function->setDisplayDerivative(false);
-      StackViewController * stack = (StackViewController *)(parentResponder());
-      stack->pop();
-      return true;
-    }
-    case 1:
-      return false;
-    default:
-      assert(false);
-      return false;
-  }
 }
 
 int DerivativeParameterController::numberOfRows() {

@@ -39,25 +39,21 @@ void FunctionParameterController::didBecomeFirstResponder() {
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    return handleEnter();
+    switch (m_selectableTableView.selectedRow()) {
+      case 0:
+      {
+        m_function->setDisplayDerivative(!m_function->displayDerivative());
+        m_selectableTableView.reloadData();
+        return true;
+      }
+      case 1:
+        return false;
+      default:
+        assert(false);
+        return false;
+    }
   }
   return false;
-}
-
-bool FunctionParameterController::handleEnter() {
-  switch (m_selectableTableView.selectedRow()) {
-    case 0:
-    {
-      m_function->setDisplayDerivative(!m_function->displayDerivative());
-      m_selectableTableView.reloadData();
-      return true;
-    }
-    case 1:
-      return false;
-    default:
-      assert(false);
-      return false;
-  }
 }
 
 int FunctionParameterController::numberOfRows() {

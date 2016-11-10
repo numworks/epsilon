@@ -22,7 +22,6 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 private:
-  bool handleEnter();
   constexpr static int k_totalNumberOfCell = 3;
   ChevronMenuListCell m_colorCell;
   SwitchMenuListCell m_enableCell;

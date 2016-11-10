@@ -40,40 +40,30 @@ void ParameterController::setFunction(Function * function) {
 
 bool ParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    return handleEnter();
+    switch (m_selectableTableView.selectedRow()) {
+      case 0:
+        return true;
+      case 1:
+        m_function->setActive(!m_function->isActive());
+        m_selectableTableView.reloadData();
+        return true;
+      case 2:
+      {
+        if (m_functionStore->numberOfFunctions() > 1) {
+          m_functionStore->removeFunction(m_function);
+          StackViewController * stack = (StackViewController *)(parentResponder());
+          stack->pop();
+          return true;
+        } else {
+          // TODO: add an warning "no function to delete!"
+          return false;
+        }
+      }
+      default:
+        return false;
+    }
   }
   return false;
-}
-
-bool ParameterController::handleEnter() {
-  switch (m_selectableTableView.selectedRow()) {
-    case 0:
-    {
-      return true;
-    }
-    case 1:
-    {
-      m_function->setActive(!m_function->isActive());
-      m_selectableTableView.reloadData();
-      return true;
-    }
-    case 2:
-    {
-      if (m_functionStore->numberOfFunctions() > 1) {
-        m_functionStore->removeFunction(m_function);
-        StackViewController * stack = (StackViewController *)(parentResponder());
-        stack->pop();
-        return true;
-      } else {
-        // TODO: add an warning "no function to delete!"
-        return false;
-      }
-    }
-    default:
-    {
-      return false;
-    }
-  }
 }
 
 int ParameterController::numberOfRows() {

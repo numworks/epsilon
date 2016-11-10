@@ -6,7 +6,7 @@
 
 class TextMenuListCell : public MenuListCell {
 public:
-  TextMenuListCell(char * label);
+  TextMenuListCell(char * label = nullptr);
   void reloadCell() override;
   View * accessoryView() const override;
   void setHighlighted(bool highlight);

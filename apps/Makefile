@@ -25,8 +25,9 @@ app_objs += $(addprefix apps/,\
 # practice, this forces all the images to be before the app.
 
 app_image_objs := $(app_images:.png=.o)
+.SECONDARY: $(app_images:.png=.cpp)
 $(app_objs): $(app_image_objs)
 
-products += $(app_objs) $(call INLINER_PRODUCTS,$(app_images)) app.elf app.hex app.bin
-
 app.$(EXE): $(app_objs) $(app_image_objs)
+
+products += app.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))

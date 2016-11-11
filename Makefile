@@ -33,7 +33,7 @@ endif
 CFLAGS = -std=c99
 CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
-products := boot.$(EXE) boot.$(EXE) boot.bin test.$(EXE) test.hex test.bin
+products :=
 
 ifeq ($(VERBOSE),1)
 default: info clean app_size app_memory_map
@@ -56,6 +56,14 @@ info:
 	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "==============================="
 
+# Each sub-Makefile can either add objects to the $(objs) variable or define a
+# new executable target. The $(objs) variable lists the objects that will be
+# linked to every executable being generated. Each Makefile is also responsible
+# for keeping the $(product) variable updated. This variable lists all files
+# that could be generated during the build and that needs to be cleaned up
+# afterwards.
+
+# Library Makefiles
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
 else
@@ -67,14 +75,18 @@ include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
 include escher/Makefile
-
+# Executable Makefiles
 include apps/Makefile
-include quiz/Makefile # Quiz should be included at the end
+include quiz/Makefile # Quiz needs to be included at the end
 
-dependencies = $(objs:.o=.d)
+products += $(objs)
 
+all_objs = $(filter %.o, $(products))
+dependencies = $(all_objs:.o=.d)
 -include $(dependencies)
+products += $(dependencies)
 
+.SECONDARY: $(objs)
 %.$(EXE): $(objs)
 	@echo "LD      $@"
 	@$(LD) $^ $(LDFLAGS) -o $@
@@ -90,13 +102,15 @@ dependencies = $(objs:.o=.d)
 %_run: %.$(EXE)
 	$(GDB) -x gdb_script.gdb $<
 
+ifdef OBJCOPY
+products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin)
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O ihex $< $@
-
 %.bin: %.$(EXE)
 	@echo "OBJCOPY $@"
 	@$(OBJCOPY) -O binary $< $@
+endif
 
 %.o: %.c
 	@echo "CC      $@"
@@ -109,4 +123,4 @@ dependencies = $(objs:.o=.d)
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	@rm -f $(objs) $(products) $(dependencies)
+	@rm -f $(products)

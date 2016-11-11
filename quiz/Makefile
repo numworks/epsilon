@@ -9,6 +9,7 @@ $(symbols_file): $(tests)
 
 runner_objs += $(addprefix quiz/src/, runner.o symbols.o)
 test_objs = $(subst .c,.o, $(subst .cpp,.o,$(tests)))
-products += test.$(EXE) test.hex test.bin $(runner_objs) $(test_objs)
 
-test.$(EXE): $(objs) $(runner_objs) $(test_objs)
+test.$(EXE): $(runner_objs) $(test_objs)
+
+products += test.$(EXE) $(runner_objs) $(test_objs)

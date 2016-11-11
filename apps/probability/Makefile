@@ -4,4 +4,4 @@ app_objs += $(addprefix apps/probability/,\
   parameters/parameters_controller.o\
 )
 
-inline_images += apps/probability/probability_icon.png
+app_images += apps/probability/probability_icon.png

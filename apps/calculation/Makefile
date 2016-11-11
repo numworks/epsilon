@@ -11,5 +11,5 @@ app_objs += $(addprefix apps/calculation/,\
   text_field.o\
 )
 
-inline_images += apps/calculation/calculation_icon.png
+app_images += apps/calculation/calculation_icon.png
 

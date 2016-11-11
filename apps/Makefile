@@ -18,8 +18,15 @@ app_objs += $(addprefix apps/,\
   variable_box_node.o\
 )
 
-$(app_objs): $(inline_images:.png=.o)
+# Tracking which source file uses which image is painful. But we need to ensure
+# that a .png file has been inlined before building any source file that uses
+# said image (because it will expect the ".h" file to be there).
+# As a shortcut, we simply say that every app file depends on every image. In
+# practice, this forces all the images to be before the app.
 
-products += $(app_objs) app.elf app.hex app.bin
+app_image_objs := $(app_images:.png=.o)
+$(app_objs): $(app_image_objs)
 
-app.$(EXE): $(app_objs)
+products += $(app_objs) $(call INLINER_PRODUCTS,$(app_images)) app.elf app.hex app.bin
+
+app.$(EXE): $(app_objs) $(app_image_objs)

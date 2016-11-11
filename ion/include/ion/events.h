@@ -12,11 +12,12 @@ public:
   static constexpr Event ShiftKey(Keyboard::Key k) { return Event(k_eventPageSize+(int)k); }
   static constexpr Event AlphaKey(Keyboard::Key k) { return Event(2*k_eventPageSize+(int)k); }
   static constexpr Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*k_eventPageSize+(int)k); }
+  static constexpr Event Special(int i) { return Event(4*k_eventPageSize+i); }
 
   constexpr Event(int i) : m_id(i){}
   Event(Keyboard::Key key, bool shift, bool alpha);
 
-  bool operator ==(const Event &other) const {
+  bool operator==(const Event & other) const {
     return (m_id == other.m_id);
   }
   const char * text() const;
@@ -184,6 +185,8 @@ constexpr Event UpperW = Event::ShiftAlphaKey(Keyboard::Key::H1);
 constexpr Event UpperX = Event::ShiftAlphaKey(Keyboard::Key::H2);
 constexpr Event UpperY = Event::ShiftAlphaKey(Keyboard::Key::H3);
 constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::H4);
+
+constexpr Event None = Event::Special(0);
 
 }
 }

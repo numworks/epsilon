@@ -83,9 +83,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   // alpha-X -> X
   // shift-alpha-X -> alpha-X -> X
 
-  constexpr uint8_t undefinedEventId = 4*k_eventPageSize;
-
-  m_id = undefinedEventId;
+  m_id = Events::None.m_id;
 
   int noFallbackOffsets[] = {0};
   int shiftFallbackOffsets[] = {k_eventPageSize, 0};
@@ -102,7 +100,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
     m_id = offset + (int)key;
   } while (offset > 0 && s_dataForEvent[m_id].isUndefined());
 
-  assert(m_id != undefinedEventId);
+  assert(m_id != Events::None.m_id);
 }
 
 const char * Event::text() const {

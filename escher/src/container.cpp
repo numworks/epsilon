@@ -37,6 +37,9 @@ void Container::run() {
 
 void Container::step() {
   Ion::Events::Event event = Ion::Events::getEvent(); // This is a blocking call
+  if (event == Ion::Events::None) {
+    return;
+  }
   if (handleEvent(event)) {
     return;
   }

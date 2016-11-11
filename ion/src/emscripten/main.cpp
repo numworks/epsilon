@@ -6,7 +6,16 @@ extern "C" {
 #include <SDL/SDL.h>
 }
 
+extern "C" {
+void IonEmscriptenPushEvent(int e);
+}
+
 SDL_Surface * screen = nullptr;
+Ion::Events::Event sEvent = Ion::Events::None;
+
+void IonEmscriptenPushEvent(int eventNumber) {
+  sEvent = Ion::Events::Event(eventNumber);
+}
 
 int main(int argc, char * argv[]) {
   SDL_Init(SDL_INIT_VIDEO);
@@ -43,26 +52,31 @@ void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
 }
 
 Ion::Events::Event Ion::Events::getEvent() {
+  if (sEvent != Ion::Events::None) {
+    Ion::Events::Event event = sEvent;
+    sEvent = Ion::Events::None;
+    return event;
+  }
   SDL_Event event;
   if (SDL_PollEvent(&event)) {
     if (event.type == SDL_KEYDOWN) {
       switch(event.key.keysym.sym) {
         case SDLK_UP:
-          return Ion::Events::Event::UP_ARROW;
+          return Ion::Events::Up;
         case SDLK_DOWN:
-          return Ion::Events::Event::DOWN_ARROW;
+          return Ion::Events::Down;
         case SDLK_LEFT:
-          return Ion::Events::Event::LEFT_ARROW;
+          return Ion::Events::Left;
         case SDLK_RIGHT:
-          return Ion::Events::Event::RIGHT_ARROW;
+          return Ion::Events::Right;
         case SDLK_RETURN:
-          return Ion::Events::Event::ENTER;
+          return Ion::Events::OK;
         case SDLK_ESCAPE:
-          return Ion::Events::Event::ESC;
+          return Ion::Events::Back;
       }
     }
   }
-  return Ion::Events::Event::SHIFT;
+  return Ion::Events::None;
 }
 
 bool Ion::Keyboard::keyDown(Ion::Keyboard::Key key) {

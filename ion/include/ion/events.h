@@ -20,6 +20,9 @@ public:
   bool operator==(const Event & other) const {
     return (m_id == other.m_id);
   }
+  bool operator!=(const Event & other) const {
+    return (m_id != other.m_id);
+  }
   const char * text() const;
   bool hasText() const;
 private:

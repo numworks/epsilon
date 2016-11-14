@@ -69,6 +69,23 @@ void VariableBoxController::willDisplayCellForIndex(TableViewCell * cell, int in
   }
 }
 
+KDCoordinate VariableBoxController::leafRowHeight(int index) {
+  // TODO: add a constant to index if the node == matrice/liste
+  const char * parentNodeLabel = m_listViewController.nodeModel()->label();
+  const Expression * expression = m_context->scalarExpressionForIndex(index);
+  if (strcmp(parentNodeLabel, "Matrices") == 0) {
+  //expression = m_context->matrixExpressionForIndex(index);
+  }
+  if (strcmp(parentNodeLabel, "Listes") == 0) {
+    //expression = m_context->listExpressionForIndex(index);
+  }
+  if (expression) {
+    KDCoordinate expressionHeight = expression->createLayout()->size().height();
+    return expressionHeight;
+  }
+  return k_leafRowHeight;
+}
+
 Node * VariableBoxController::nodeModel() {
   return (Node *)&variableBoxModel;
 }

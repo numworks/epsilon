@@ -46,6 +46,10 @@ void ToolboxController::willDisplayCellForIndex(TableViewCell * cell, int index)
   myCell->setText(node->label());
 }
 
+KDCoordinate ToolboxController::leafRowHeight(int index) {
+  return k_leafRowHeight;
+}
+
 Node * ToolboxController::nodeModel() {
   return (Node *)&toolboxModel;
 }

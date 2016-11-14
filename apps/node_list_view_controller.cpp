@@ -80,7 +80,7 @@ void NodeListViewController::willDisplayCellForIndex(TableViewCell * cell, int i
 
 KDCoordinate NodeListViewController::rowHeight(int j) {
   if (typeAtLocation(0, j) == 0) {
-    return k_leafRowHeight;
+    return m_nodeNavigationController->leafRowHeight(j);
   }
   return k_nodeRowHeight;
 }

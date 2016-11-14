@@ -35,7 +35,6 @@ public:
   void deselectTable();
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
 private:
-  constexpr static KDCoordinate k_leafRowHeight = 50;
   constexpr static KDCoordinate k_nodeRowHeight = 40;
   NodeNavigationController * m_nodeNavigationController;
   SelectableTableView m_selectableTableView;

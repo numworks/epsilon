@@ -15,6 +15,7 @@ public:
   virtual TableViewCell * leafCellAtIndex(int index) = 0;
   virtual TableViewCell * nodeCellAtIndex(int index) = 0;
   virtual void willDisplayCellForIndex(TableViewCell * cell, int index);
+  virtual KDCoordinate leafRowHeight(int index) = 0;
 protected:
   TextField * m_textFieldCaller;
   NodeListViewController m_listViewController;

@@ -10,6 +10,7 @@ class Context {
   public:
     Context();
     virtual const Expression * expressionForSymbol(const Symbol * symbol);
+    virtual const Expression * scalarExpressionForIndex(int index);
     void setExpressionForSymbolName(Expression * expression, const Symbol * symbol);
   private:
     int symbolIndex(const Symbol * symbol) const;

@@ -4,11 +4,14 @@ extern "C" {
 #include <escher/stack_view_controller.h>
 #include <escher/app.h>
 
-StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader) :
+StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   View(),
   m_contentView(nullptr),
   m_numberOfStacks(0),
-  m_displayFirstStackHeader(displayFirstStackHeader)
+  m_displayFirstStackHeader(displayFirstStackHeader),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor),
+  m_separatorColor(separatorColor)
 {
 }
 
@@ -20,6 +23,9 @@ void StackViewController::ControllerView::setContentView(View * view) {
 
 void StackViewController::ControllerView::pushStack(const char * name) {
   m_stackViews[m_numberOfStacks].setName(name);
+  m_stackViews[m_numberOfStacks].setTextColor(m_textColor);
+  m_stackViews[m_numberOfStacks].setBackgroundColor(m_backgroundColor);
+  m_stackViews[m_numberOfStacks].setSeparatorColor(m_separatorColor);
   m_numberOfStacks++;
 }
 
@@ -63,9 +69,9 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
-  m_view(ControllerView(displayFirstStackHeader)),
+  m_view(ControllerView(displayFirstStackHeader, textColor, backgroundColor, separatorColor)),
   m_numberOfChildren(0),
   m_rootViewController(rootViewController)
 {

@@ -22,7 +22,7 @@ public:
   int activeColumn();
   Interval * interval();
   ValueCell * abscisseCellAtRow(int rowIndex);
-  void editValue(bool overwrite, char initialDigit = 0);
+  void editValue(const char * initialText = nullptr);
 
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

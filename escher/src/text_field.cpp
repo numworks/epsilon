@@ -64,15 +64,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event.hasText()) {
-    // FIXME: Only inserting the first letter!
-    if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
-      for (int k = m_currentTextLength; k > m_currentCursorLocation; k--) {
-        m_textBuffer[k] = m_textBuffer[k-1];
-      }
-      m_textBuffer[++m_currentTextLength] = 0;
-      m_textBuffer[m_currentCursorLocation++] = event.text()[0];
-      reload();
-    }
+    insertTextAtLocation(event.text(), cursorLocation());
+    int cursorDelta = strlen(event.text()) > 1 ? -1 : 0;
+    setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
     return true;
   }
   return false;

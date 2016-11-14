@@ -10,7 +10,7 @@ public:
   ValuesParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
   int activeCell();
-  void editInterval(bool overwrite, char initialDigit = 0);
+  void editInterval(const char * initialText = nullptr);
   void setIntervalParameterAtIndex(int parameterIndex, float f);
 
   View * view() override;

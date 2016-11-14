@@ -62,9 +62,10 @@ bool InputViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void InputViewController::edit(Responder * caller, const char * initialContent, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
+void InputViewController::edit(Responder * caller, const char * initialContent, int cursorPosition, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   setTextBody(initialContent);
+  m_textFieldController.textField()->setCursorLocation(cursorPosition);
   showInput();
 }

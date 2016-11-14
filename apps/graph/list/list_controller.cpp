@@ -111,17 +111,19 @@ void ListController::configureFunction(Function * function) {
   stack->push(&m_parameterController);
 }
 
-void ListController::editExpression(FunctionExpressionView * functionCell, bool overwrite, char initialDigit) {
+void ListController::editExpression(FunctionExpressionView * functionCell, const char * initialText) {
   char initialTextContent[255];
-  if (overwrite) {
-    initialTextContent[0] = initialDigit;
-    initialTextContent[1] = 0;
+  int cursorDelta = 0;
+  if (initialText) {
+    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
+    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
   } else {
     strlcpy(initialTextContent, functionCell->function()->text(), sizeof(initialTextContent));
   }
+  int cursorLocation = strlen(initialTextContent) + cursorDelta;
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, functionCell,
+  inputController->edit(this, initialTextContent, cursorLocation, functionCell,
     [](void * context, void * sender){
     FunctionExpressionView * myCell = (FunctionExpressionView *) context;
     Function * myFunction = myCell->function();
@@ -144,12 +146,15 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     return handleEnter();
   }
+  if (event == Ion::Events::XNT && m_selectableTableView.selectedColumn() == 1){
+    FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
+    editExpression(functionCell, "x");
+  }
   if (!event.hasText() || m_selectableTableView.selectedColumn() == 0) {
     return false;
   }
   FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
-  // FIXME: Only first character handled!
-  editExpression(functionCell, true, event.text()[0]);
+  editExpression(functionCell, event.text());
   return true;
 }
 
@@ -175,7 +180,7 @@ bool ListController::handleEnter() {
         return false;
       }
       FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
-      editExpression(functionCell, false);
+      editExpression(functionCell);
       return true;
     }
     default:

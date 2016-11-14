@@ -230,7 +230,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (activeColumn() == 0) {
-      editValue(false);
+      editValue();
       return true;
     }
     return false;
@@ -241,8 +241,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (event.hasText()) {
     if (activeColumn() == 0 && activeRow() > 0) {
-      // FIXME: Only first character!
-      editValue(true, event.text()[0]);
+      editValue(event.text());
       return true;
     }
     return false;
@@ -270,14 +269,15 @@ void ValuesController::configureDerivativeFunction() {
   stack->push(&m_derivativeParameterController);
 }
 
-void ValuesController::editValue(bool overwrite, char initialDigit) {
+void ValuesController::editValue(const char * initialText) {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  char initialTextContent[Constant::FloatBufferSizeInScientificMode];
-  if (overwrite) {
-    initialTextContent[0] = initialDigit;
-    initialTextContent[1] = 0;
+  char initialTextContent[255];
+  int cursorDelta = 0;
+  if (initialText) {
+    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
+    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
   } else {
     if (activeRow() > m_interval.numberOfElements()) {
       initialTextContent[0] = 0;
@@ -285,9 +285,10 @@ void ValuesController::editValue(bool overwrite, char initialDigit) {
       Float(m_interval.element(activeRow()-1)).convertFloatToText(initialTextContent, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     }
   }
+  int cursorLocation = strlen(initialTextContent) + cursorDelta;
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, this,
+  inputController->edit(this, initialTextContent, cursorLocation, this,
     [](void * context, void * sender){
     ValuesController * valuesController = (ValuesController *)context;
     int activeRow = valuesController->activeRow();

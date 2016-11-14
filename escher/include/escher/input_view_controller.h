@@ -11,7 +11,7 @@ public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate = nullptr);
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void edit(Responder * caller, const char * initialContent, void * context, Invocation::Action successAction, Invocation::Action failureAction);
+  void edit(Responder * caller, const char * initialContent, int cursorPosition, void * context, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
 private:
   class TextFieldController : public ViewController {

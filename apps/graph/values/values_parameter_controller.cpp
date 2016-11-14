@@ -78,31 +78,33 @@ void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, 
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    editInterval(false);
+    editInterval();
     return true;
   }
   if (event.hasText()) {
-    editInterval(true, event.text()[0]); // FIXME: only first char
+    editInterval(event.text());
     return true;
   }
   return false;
 }
 
-void ValuesParameterController::editInterval(bool overwrite, char initialDigit) {
+void ValuesParameterController::editInterval(const char * initialText) {
   /* This code assumes that the active cell remains the one which is edited
    * until the invocation is performed. This could lead to concurrency issue in
    * other cases. */
-  char initialTextContent[Constant::FloatBufferSizeInScientificMode];
-  if (overwrite) {
-    initialTextContent[0] = initialDigit;
-    initialTextContent[1] = 0;
+  char initialTextContent[255];
+  int cursorDelta = 0;
+  if (initialText) {
+    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
+    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
   } else {
     TextMenuListCell * textMenuListCell = (TextMenuListCell *)reusableCell(activeCell());
     strlcpy(initialTextContent, textMenuListCell->accessoryText(), sizeof(initialTextContent));
   }
+  int cursorLocation = strlen(initialTextContent) + cursorDelta;
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, this,
+  inputController->edit(this, initialTextContent, cursorLocation, this,
     [](void * context, void * sender){
     ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
     int activeCell = valuesParameterController->activeCell();

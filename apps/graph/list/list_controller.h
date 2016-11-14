@@ -31,7 +31,7 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void configureFunction(Function * function);
-  void editExpression(FunctionExpressionView * functionCell, bool overwrite, char initialDigit = 0);
+  void editExpression(FunctionExpressionView * functionCell, const char * initialText = nullptr);
 
 private:
   static constexpr KDCoordinate k_verticalFunctionMargin = 50-12;

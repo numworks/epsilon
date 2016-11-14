@@ -6,7 +6,7 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, size_t text
   Responder(parentResponder),
   m_textBuffer(textBuffer),
   m_currentTextLength(0),
-  m_currentCursorPosition(0),
+  m_currentCursorLocation(0),
   m_textBufferSize(textBufferSize),
   m_delegate(delegate)
 {
@@ -40,23 +40,23 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Left) {
-    if (m_currentCursorPosition > 0) {
-      m_currentCursorPosition--;
+    if (m_currentCursorLocation > 0) {
+      m_currentCursorLocation--;
     }
     return true;
   }
   if (event == Ion::Events::Right) {
-    if (m_currentCursorPosition < m_currentTextLength) {
-      m_currentCursorPosition++;
+    if (m_currentCursorLocation < m_currentTextLength) {
+      m_currentCursorLocation++;
     }
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (m_currentCursorPosition > 0) {
+    if (m_currentCursorLocation > 0) {
       reload();
       m_currentTextLength--;
-      m_currentCursorPosition--;
-      for (int k = m_currentCursorPosition; k < m_currentTextLength; k ++) {
+      m_currentCursorLocation--;
+      for (int k = m_currentCursorLocation; k < m_currentTextLength; k ++) {
       m_textBuffer[k] = m_textBuffer[k+1];
       }
       m_textBuffer[m_currentTextLength] = 0;
@@ -66,11 +66,11 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   if (event.hasText()) {
     // FIXME: Only inserting the first letter!
     if (m_currentTextLength == 0 || m_currentTextLength-1 < m_textBufferSize) {
-      for (int k = m_currentTextLength; k > m_currentCursorPosition; k--) {
+      for (int k = m_currentTextLength; k > m_currentCursorLocation; k--) {
         m_textBuffer[k] = m_textBuffer[k-1];
       }
       m_textBuffer[++m_currentTextLength] = 0;
-      m_textBuffer[m_currentCursorPosition++] = event.text()[0];
+      m_textBuffer[m_currentCursorLocation++] = event.text()[0];
       reload();
     }
     return true;
@@ -89,30 +89,33 @@ int TextField::textLength() const {
 
 void TextField::setText(const char * text) {
   strlcpy(m_textBuffer, text, m_textBufferSize);
-  m_currentCursorPosition = strlen(text);
-  m_currentTextLength = m_currentCursorPosition;
+  m_currentCursorLocation = strlen(text);
+  m_currentTextLength = m_currentCursorLocation;
   reload();
 }
 
-void TextField::appendText(const char * text) {
+int TextField::cursorLocation() const{
+  return m_currentCursorLocation;
+}
+
+void TextField::setCursorLocation(int location) {
+  location = location < 0 ? 0 : location;
+  location = location > m_currentTextLength ? m_currentTextLength : location;
+  m_currentCursorLocation = location;
+}
+
+void TextField::insertTextAtLocation(const char * text, int location) {
   int textSize = strlen(text);
   if (m_currentTextLength + textSize > m_textBufferSize) {
     return;
   }
-  for (int k = m_currentTextLength; k >= m_currentCursorPosition && k >= 0; k--) {
+  for (int k = m_currentTextLength; k >= location && k >= 0; k--) {
     m_textBuffer[k+textSize] = m_textBuffer[k];
   }
-  strlcpy(&m_textBuffer[m_currentCursorPosition], text, textSize);
-  m_currentCursorPosition += textSize;
-  m_textBuffer[m_currentCursorPosition-1] = text[textSize-1];
+  strlcpy(&m_textBuffer[location], text, textSize);
+  m_textBuffer[location+textSize-1] = text[textSize-1];
   m_currentTextLength += textSize;
   reload();
-}
-
-void TextField::moveCursor(int position) {
-  assert(m_currentCursorPosition + position <= m_currentTextLength);
-  assert(m_currentCursorPosition + position >= 0);
-  m_currentCursorPosition += position;
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() {

@@ -58,16 +58,16 @@ bool ToolboxController::selectLeaf(Node * selectedNode){
   m_listViewController.deselectTable();
   ToolboxNode * node = (ToolboxNode *)selectedNode;
   const char * editedText = node->label();
-  m_textFieldCaller->appendText(editedText);
-  int cursorPosition = 0;
+  m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
+  int cursorDelta = 0;
   int editedTextLength = strlen(editedText);
   for (int i = 0; i < editedTextLength; i++) {
     if (editedText[i] == '(') {
-      cursorPosition =  i + 1 - editedTextLength;
+      cursorDelta =  i + 1;
       break;
     }
   }
-  m_textFieldCaller->moveCursor(cursorPosition);
+  m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation()+cursorDelta);
   app()->dismissModalViewController();
   return true;
 }

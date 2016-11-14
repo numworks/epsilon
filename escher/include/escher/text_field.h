@@ -19,8 +19,9 @@ public:
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity. */
-  void appendText(const char * text);
-  void moveCursor(int delta);
+  int cursorLocation() const;
+  void setCursorLocation(int location);
+  void insertTextAtLocation(const char * text, int location);
   KDSize minimalSizeForOptimalDisplay() override;
 protected:
   void reload();
@@ -29,7 +30,7 @@ protected:
 #endif
   char * m_textBuffer;
   size_t m_currentTextLength;
-  size_t m_currentCursorPosition;
+  size_t m_currentCursorLocation;
 private:
   size_t m_textBufferSize;
   TextFieldDelegate * m_delegate;

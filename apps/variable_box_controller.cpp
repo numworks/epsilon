@@ -93,7 +93,8 @@ Node * VariableBoxController::nodeModel() {
 bool VariableBoxController::selectLeaf(Node * selectedNode){
   m_listViewController.deselectTable();
   const char * editedText = selectedNode->label();
-  m_textFieldCaller->appendText(editedText);
+  m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
+  m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation() + strlen(editedText));
   app()->dismissModalViewController();
   return true;
 }

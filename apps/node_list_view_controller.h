@@ -8,9 +8,11 @@
  * where we are located. It enables to know which rows are leaves and which are
  * subtrees. */
 
+class NodeNavigationController;
+
 class NodeListViewController : public ViewController, public ListViewDataSource {
 public:
-  NodeListViewController(Responder * parentResponder);
+  NodeListViewController(NodeNavigationController * parent);
   View * view() override;
   const char * title() const override;
   void didBecomeFirstResponder() override;
@@ -31,12 +33,11 @@ public:
   void setVerticalScroll(KDCoordinate verticalScroll);
   KDCoordinate verticalScroll();
   void deselectTable();
-private:
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
+private:
   constexpr static KDCoordinate k_leafRowHeight = 50;
   constexpr static KDCoordinate k_nodeRowHeight = 40;
-  MenuListCell m_commandCells[k_maxNumberOfDisplayedRows];
-  ChevronMenuListCell m_menuCells[k_maxNumberOfDisplayedRows];
+  NodeNavigationController * m_nodeNavigationController;
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
   int m_firstSelectedRow;

@@ -131,3 +131,6 @@ void NodeNavigationController::didBecomeFirstResponder() {
 void NodeNavigationController::setTextFieldCaller(TextField * textField) {
   m_textFieldCaller = textField;
 }
+
+void NodeNavigationController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+}

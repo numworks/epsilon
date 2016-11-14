@@ -26,6 +26,19 @@ const char * ToolboxController::title() const {
   return "ToolboxController";
 }
 
+TableViewCell * ToolboxController::leafCellAtIndex(int index) {
+  return &m_leafCells[index];
+}
+
+TableViewCell * ToolboxController::nodeCellAtIndex(int index) {
+  return & m_nodeCells[index];
+}
+
+void ToolboxController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+  MenuListCell * myCell = (MenuListCell *)cell;
+  myCell->setText(m_listViewController.nodeModel()->children(index)->label());
+}
+
 Node * ToolboxController::nodeModel() {
   return (Node *)&toolboxModel;
 }

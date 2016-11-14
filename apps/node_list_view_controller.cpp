@@ -3,8 +3,9 @@
 #include <assert.h>
 #include <string.h>
 
-NodeListViewController::NodeListViewController(Responder * parentResponder) :
-  ViewController(parentResponder),
+NodeListViewController::NodeListViewController(NodeNavigationController * parent) :
+  ViewController(parent),
+  m_nodeNavigationController(parent),
   m_selectableTableView(SelectableTableView(this, this)),
   m_nodeModel(nullptr),
   m_firstSelectedRow(0)
@@ -63,9 +64,9 @@ TableViewCell * NodeListViewController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
   if (type == 0) {
-    return &m_commandCells[index];
+    return m_nodeNavigationController->leafCellAtIndex(index);
   }
-  return &m_menuCells[index];
+  return m_nodeNavigationController->nodeCellAtIndex(index);
 }
 
 int NodeListViewController::reusableCellCount(int type) {
@@ -74,8 +75,7 @@ int NodeListViewController::reusableCellCount(int type) {
 }
 
 void NodeListViewController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  MenuListCell * myCell = (MenuListCell *)cell;
-  myCell->setText(m_nodeModel->children(index)->label());
+  m_nodeNavigationController->willDisplayCellForIndex(cell, index);
 }
 
 KDCoordinate NodeListViewController::rowHeight(int j) {

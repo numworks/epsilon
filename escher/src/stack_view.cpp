@@ -6,7 +6,7 @@ extern "C" {
 
 StackView::StackView() :
   View(),
-  m_textView(PointerTextView(nullptr, 0.5f, 0.5f, Palette::k_desactiveTextColor))
+  m_textView(PointerTextView(nullptr, 0.5f, 0.5f, Palette::DesactiveTextColor))
 {
 }
 

@@ -16,6 +16,7 @@ app_objs += $(addprefix apps/,\
   toolbox_leaf_cell.o\
   toolbox_node.o\
   variable_box_controller.o\
+  variable_box_leaf_cell.o\
   variable_box_node.o\
 )
 

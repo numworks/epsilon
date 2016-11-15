@@ -17,6 +17,7 @@ objs += $(addprefix poincare/src/,\
   integer.o\
   leaf_expression.o\
   logarithm.o\
+  parenthesis.o\
   power.o\
   product.o\
   sine.o\

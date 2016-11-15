@@ -15,6 +15,7 @@ class Expression {
       Integer,
       Logarithm,
       Fraction,
+      Parenthesis,
       Power,
       Product,
       Sine,

@@ -29,6 +29,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Fraction:
       std::cout << "Fraction";
       break;
+    case Expression::Type::Parenthesis:
+      std::cout << "Parenthesis";
+      break;
     case Expression::Type::Power:
       std::cout << "Power";
       break;

@@ -360,16 +360,19 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     }
     FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
     Function * function = functionAtColumn(i);
-    char bufferName[6] = "f'(x)";
-    bufferName[1] = *function->name();
-    myFunctionCell->setText(bufferName + 1);
+    char bufferName[6] = {0, 0, '(', 'x', ')', 0};
+    const char * name = bufferName;
+    if (isDerivativeColumn(i)) {
+      bufferName[0] = *function->name();
+      bufferName[1] = '\'';
+      name = bufferName;
+    } else {
+      bufferName[1] = *function->name();
+      name = &bufferName[1];
+    }
+    myFunctionCell->setText(name);
     myFunctionCell->setColor(function->color());
     myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
-    if (isDerivativeColumn(i)) {
-      bufferName[0] = bufferName[1];
-      bufferName[1] = '\'';
-      myFunctionCell->setText(bufferName);
-    }
     return;
   }
   // The cell is a value cell:

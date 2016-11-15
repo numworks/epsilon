@@ -8,14 +8,24 @@ Context::Context()
   }
 }
 
+Float * Context::defaultExpression() {
+  static Float * defaultExpression = new Float(0);
+  return defaultExpression;
+}
+
 int Context::symbolIndex(const Symbol * symbol) const {
   int index = symbol->name() - 'A';
-  assert(index < k_maxNumberOfExpressions);
   return index;
 }
 
 const Expression * Context::expressionForSymbol(const Symbol * symbol) {
   int index = symbolIndex(symbol);
+  if (index < 0 || index >= k_maxNumberOfExpressions) {
+    return nullptr;
+  }
+  if (m_expressions[index] == nullptr) {
+    return defaultExpression();
+  }
   return m_expressions[index];
 }
 

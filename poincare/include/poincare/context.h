@@ -3,6 +3,9 @@
 
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
+#include <poincare/float.h>
+
+class Integer;
 
 //TODO: We should probably make a COPY of the expressions we store
 
@@ -16,6 +19,7 @@ class Context {
     int symbolIndex(const Symbol * symbol) const;
     static constexpr uint16_t k_maxNumberOfExpressions = 26;
     Expression * m_expressions[k_maxNumberOfExpressions];
+    static Float * defaultExpression();
 };
 
 #endif

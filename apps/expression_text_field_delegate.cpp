@@ -1,9 +1,25 @@
 #include "expression_text_field_delegate.h"
 #include "apps_container.h"
 #include <math.h>
+#include <string.h>
 
 const char * ExpressionTextFieldDelegate::XNT() {
   return "x";
+}
+
+bool ExpressionTextFieldDelegate::cursorInToken(TextField * textField, const char * token) {
+  const char * text = textField->text();
+  int cursorLocation = textField->cursorLocation();
+  int tokenLength = strlen(token);
+  if (cursorLocation - tokenLength < 0) {
+    return false;
+  }
+  char previousToken[10];
+  strlcpy(previousToken, text+cursorLocation-tokenLength, tokenLength+1);
+  if (strcmp(previousToken, token) == 0) {
+    return true;
+  }
+  return false;
 }
 
 bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
@@ -34,6 +50,11 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
     return true;
   }
   if (event == Ion::Events::XNT) {
+    if (cursorInToken(textField, "sum(") || cursorInToken(textField, "product(")) {
+      textField->insertTextAtLocation("n", textField->cursorLocation());
+      textField->setCursorLocation(textField->cursorLocation()+strlen("n"));
+      return true;
+    }
     textField->insertTextAtLocation(XNT(), textField->cursorLocation());
     textField->setCursorLocation(textField->cursorLocation()+strlen(XNT()));
     return true;

@@ -9,6 +9,8 @@ public:
   virtual Context * evaluateContext() = 0;
   virtual const char * XNT();
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+private:
+  bool cursorInToken(TextField * textField, const char * token);
 };
 
 #endif

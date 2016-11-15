@@ -12,6 +12,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
+  virtual TableViewCell * leafCellAtIndex(int index) = 0;
+  virtual TableViewCell * nodeCellAtIndex(int index) = 0;
+  virtual void willDisplayCellForIndex(TableViewCell * cell, int index);
 protected:
   TextField * m_textFieldCaller;
   NodeListViewController m_listViewController;

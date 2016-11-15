@@ -10,8 +10,8 @@ public:
   };
   virtual const Node * children(int index) const = 0;
   const char * label() const;
-  int numberOfChildren();
-  bool isNull();
+  int numberOfChildren() const;
+  bool isNull() const;
 protected:
   const char * m_label;
   int m_numberOfChildren;

@@ -19,6 +19,19 @@ const char * VariableBoxController::title() const {
   return "VariableBoxController";
 }
 
+TableViewCell * VariableBoxController::leafCellAtIndex(int index) {
+  return &m_leafCells[index];
+}
+
+TableViewCell * VariableBoxController::nodeCellAtIndex(int index) {
+  return &m_nodeCells[index];
+}
+
+void VariableBoxController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+  MenuListCell * myCell = (MenuListCell *)cell;
+  myCell->setText(m_listViewController.nodeModel()->children(index)->label());
+}
+
 Node * VariableBoxController::nodeModel() {
   return (Node *)&variableBoxModel;
 }

@@ -4,4 +4,5 @@ constexpr KDColor Palette::LineColor;
 constexpr KDColor Palette::BackgroundColor;
 constexpr KDColor Palette::CellBackgroundColor;
 constexpr KDColor Palette::FocusCellBackgroundColor;
-constexpr KDColor Palette::k_desactiveTextColor;
+constexpr KDColor Palette::DesactiveTextColor;
+constexpr KDColor Palette::BoxTitleBackgroundColor;

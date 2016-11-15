@@ -13,8 +13,10 @@ app_objs += $(addprefix apps/,\
   node_list_view_controller.o\
   node_navigation_controller.o\
   toolbox_controller.o\
+  toolbox_leaf_cell.o\
   toolbox_node.o\
   variable_box_controller.o\
+  variable_box_leaf_cell.o\
   variable_box_node.o\
 )
 

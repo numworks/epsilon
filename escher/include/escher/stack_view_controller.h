@@ -3,12 +3,14 @@
 
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
+#include <escher/palette.h>
 
 constexpr uint8_t kMaxNumberOfStacks = 4;
 
 class StackViewController : public ViewController {
 public:
-  StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader = false);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader = false,
+    KDColor textColor = Palette::DesactiveTextColor, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::LineColor);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc);
@@ -22,7 +24,7 @@ public:
 private:
   class ControllerView : public View {
   public:
-    ControllerView(bool displayFirstStackHeader);
+    ControllerView(bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
     void setContentView(View * view);
     void pushStack(const char * name);
     void popStack();
@@ -39,6 +41,9 @@ private:
     View * m_contentView;
     int8_t m_numberOfStacks;
     bool m_displayFirstStackHeader;
+    KDColor m_textColor;
+    KDColor m_backgroundColor;
+    KDColor m_separatorColor;
   };
 
   ControllerView m_view;

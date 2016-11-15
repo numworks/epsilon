@@ -99,7 +99,7 @@ void TextField::appendText(const char * text) {
   if (m_currentTextLength + textSize > m_textBufferSize) {
     return;
   }
-  for (int k = m_currentTextLength; k > m_currentCursorPosition - 1; k--) {
+  for (int k = m_currentTextLength; k >= m_currentCursorPosition && k >= 0; k--) {
     m_textBuffer[k+textSize] = m_textBuffer[k];
   }
   strlcpy(&m_textBuffer[m_currentCursorPosition], text, textSize);

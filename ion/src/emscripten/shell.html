@@ -3,8 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width">
     <title>Emscripten-Generated Code</title>
     <style>
+      .buttons a {
+        display: block;
+        width: 100px;
+        height:50px;
+      }
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       textarea.emscripten { font-family: monospace; width: 80%; }
       div.emscripten { text-align: center; }
@@ -57,8 +63,11 @@
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     </div>
     <hr/>
-    <div>
+    <div class="buttons">
       <a href="#" onclick="Module._IonEmscriptenPushEvent(0);">Left</a>
+      <a href="#" onclick="Module._IonEmscriptenPushEvent(1);">Up</a>
+      <a href="#" onclick="Module._IonEmscriptenPushEvent(2);">Down</a>
+      <a href="#" onclick="Module._IonEmscriptenPushEvent(3);">Right</a>
       <a href="#" onclick="Module._IonEmscriptenPushEvent(4);">OK</a>
     </div>
     <div class="emscripten">

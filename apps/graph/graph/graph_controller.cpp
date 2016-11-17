@@ -45,7 +45,7 @@ Responder * GraphController::defaultController() {
 }
 
 Responder * GraphController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
 int GraphController::numberOfButtons() const {

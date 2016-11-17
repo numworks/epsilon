@@ -14,11 +14,12 @@ App::App(Container * container, Context * context) :
   m_graphController(GraphController(&m_graphHeader, &m_functionStore, &m_graphHeader)),
   m_graphHeader(HeaderViewController(&m_graphAlternateEmptyViewController, &m_graphController, &m_graphController)),
   m_graphAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_graphHeader, &m_graphController)),
+  m_graphStackViewController(StackViewController(&m_tabViewController, &m_graphAlternateEmptyViewController)),
   m_valuesController(&m_valuesHeader, &m_functionStore, &m_valuesHeader),
   m_valuesHeader(HeaderViewController(&m_valuesAlternateEmptyViewController, &m_valuesController, &m_valuesController)),
   m_valuesAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_valuesHeader, &m_valuesController)),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesAlternateEmptyViewController)),
-  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphAlternateEmptyViewController, &m_valuesStackViewController),
+  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
 }

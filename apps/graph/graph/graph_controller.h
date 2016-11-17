@@ -6,7 +6,7 @@
 #include "../function_store.h"
 
 namespace Graph {
-class GraphController : public ViewController, public HeaderViewDelegate {
+class GraphController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
 public:
   GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
@@ -16,12 +16,18 @@ public:
 
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
+
+  bool isEmpty() override;
+  const char * emptyMessage() override;
+  Responder * defaultController() override;
+
 private:
   Responder * tabController() const;
   GraphView m_view;
   bool m_headerSelected;
   Button m_windowButton;
   Button m_displayButton;
+  FunctionStore * m_functionStore;
 };
 
 }

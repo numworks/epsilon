@@ -12,12 +12,13 @@ App::App(Container * container, Context * context) :
   m_listHeader(HeaderViewController(nullptr, &m_listController, &m_listController)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listHeader)),
   m_graphController(GraphController(&m_graphHeader, &m_functionStore, &m_graphHeader)),
-  m_graphHeader(HeaderViewController(nullptr, &m_graphController, &m_graphController)),
+  m_graphHeader(HeaderViewController(&m_graphAlternateEmptyViewController, &m_graphController, &m_graphController)),
+  m_graphAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_graphHeader, &m_graphController)),
   m_valuesController(&m_valuesHeader, &m_functionStore, &m_valuesHeader),
   m_valuesHeader(HeaderViewController(&m_valuesAlternateEmptyViewController, &m_valuesController, &m_valuesController)),
   m_valuesAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_valuesHeader, &m_valuesController)),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesAlternateEmptyViewController)),
-  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphHeader, &m_valuesStackViewController),
+  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphAlternateEmptyViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
 }

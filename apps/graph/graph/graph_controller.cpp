@@ -8,9 +8,9 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_view(GraphView(functionStore)),
-  m_headerSelected(false),
   m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
-  m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this))
+  m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this)),
+  m_functionStore(functionStore)
 {
 }
 
@@ -26,8 +26,26 @@ const char * GraphController::title() const {
   return "Graphique";
 }
 
+bool GraphController::isEmpty() {
+  if (m_functionStore->numberOfActiveFunctions() == 0) {
+    return true;
+  }
+  return false;
+}
+
+const char * GraphController::emptyMessage() {
+  if (m_functionStore->numberOfDefinedFunctions() == 0) {
+    return "Aucune fonction";
+  }
+  return "Aucune fonction selectionnee";
+}
+
+Responder * GraphController::defaultController() {
+  return tabController();
+}
+
 Responder * GraphController::tabController() const{
-  return (parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder());
 }
 
 int GraphController::numberOfButtons() const {

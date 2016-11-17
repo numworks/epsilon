@@ -24,6 +24,7 @@ private:
   StackViewController m_listStackViewController;
   GraphController m_graphController;
   HeaderViewController m_graphHeader;
+  AlternateEmptyViewController m_graphAlternateEmptyViewController;
   ValuesController m_valuesController;
   HeaderViewController m_valuesHeader;
   AlternateEmptyViewController m_valuesAlternateEmptyViewController;

@@ -3,32 +3,25 @@
 
 #include <escher.h>
 #include "interval.h"
+#include "../float_parameter_controller.h"
 
 namespace Graph {
-class ValuesParameterController : public ViewController, public SimpleListViewDataSource {
+class ValuesParameterController : public FloatParameterController {
 public:
   ValuesParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
-  int activeCell();
-  void editInterval(const char * initialText = nullptr);
-  void setIntervalParameterAtIndex(int parameterIndex, float f);
-
-  View * view() override;
   const char * title() const override;
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   int numberOfRows() override;
-  KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 private:
+  float parameterAtIndex(int index) override;
+  void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_totalNumberOfCell = 3;
   Interval * m_interval;
   TextMenuListCell m_intervalStartCell;
   TextMenuListCell m_intervalEndCell;
   TextMenuListCell m_intervalStepCell;
-  SelectableTableView m_selectableTableView;
 };
 
 }

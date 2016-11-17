@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/graph/,\
   app.o\
   evaluate_context.o\
+  float_parameter_controller.o\
   function.o\
   function_store.o\
   function_title_cell.o\

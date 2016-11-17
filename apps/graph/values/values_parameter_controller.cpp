@@ -1,19 +1,14 @@
 #include "values_parameter_controller.h"
-#include "../app.h"
-#include "../../constant.h"
-#include "../../apps_container.h"
 #include <assert.h>
 
 namespace Graph {
 
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, Interval * interval) :
-  ViewController(parentResponder),
+  FloatParameterController(parentResponder),
   m_interval(interval),
   m_intervalStartCell(TextMenuListCell((char*)"X Debut")),
   m_intervalEndCell(TextMenuListCell((char*)"X Fin")),
-  m_intervalStepCell(TextMenuListCell((char*)"Pas")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin))
+  m_intervalStepCell(TextMenuListCell((char*)"Pas"))
 {
 }
 
@@ -21,46 +16,25 @@ const char * ValuesParameterController::title() const {
   return "Regler l'intervalle";
 }
 
-View * ValuesParameterController::view() {
-  return &m_selectableTableView;
-}
-
 Graph::Interval * ValuesParameterController::interval() {
   return m_interval;
 }
 
-void ValuesParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
-}
-
-int ValuesParameterController::activeCell() {
-  return m_selectableTableView.selectedRow();
-}
-
-void ValuesParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  TextMenuListCell * myCell = (TextMenuListCell *) cell;
-  char buffer[Constant::FloatBufferSizeInScientificMode];
+float ValuesParameterController::parameterAtIndex(int index) {
   switch (index) {
     case 0:
-      Float(m_interval->start()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setAccessoryText(buffer);
-      break;
+      return m_interval->start();
     case 1:
-      Float(m_interval->end()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setAccessoryText(buffer);
-      break;
+      return m_interval->end();
     case 2:
-      Float(m_interval->step()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-      myCell->setAccessoryText(buffer);
-      break;
+      return m_interval->step();
     default:
       assert(false);
-      return;
+      return 0.0f;
   }
 }
 
-void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, float f) {
+void ValuesParameterController::setParameterAtIndex(int parameterIndex, float f) {
   switch(parameterIndex) {
     case 0:
       m_interval->setStart(f);
@@ -76,51 +50,6 @@ void ValuesParameterController::setIntervalParameterAtIndex(int parameterIndex, 
   }
 }
 
-bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
-    editInterval();
-    return true;
-  }
-  if (event.hasText()) {
-    editInterval(event.text());
-    return true;
-  }
-  return false;
-}
-
-void ValuesParameterController::editInterval(const char * initialText) {
-  /* This code assumes that the active cell remains the one which is edited
-   * until the invocation is performed. This could lead to concurrency issue in
-   * other cases. */
-  char initialTextContent[255];
-  int cursorDelta = 0;
-  if (initialText) {
-    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
-    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
-  } else {
-    TextMenuListCell * textMenuListCell = (TextMenuListCell *)reusableCell(activeCell());
-    strlcpy(initialTextContent, textMenuListCell->accessoryText(), sizeof(initialTextContent));
-  }
-  int cursorLocation = strlen(initialTextContent) + cursorDelta;
-  App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, cursorLocation, this,
-    [](void * context, void * sender){
-    ValuesParameterController * valuesParameterController = (ValuesParameterController *)context;
-    int activeCell = valuesParameterController->activeCell();
-    TextMenuListCell * cell = (TextMenuListCell *)valuesParameterController->reusableCell(activeCell);
-    InputViewController * myInputViewController = (InputViewController *)sender;
-    const char * textBody = myInputViewController->textBody();
-    AppsContainer * appsContainer = (AppsContainer *)valuesParameterController->app()->container();
-    Context * globalContext = appsContainer->context();
-    float floatBody = Expression::parse(textBody)->approximate(*globalContext);
-    valuesParameterController->setIntervalParameterAtIndex(activeCell, floatBody);
-    valuesParameterController->willDisplayCellForIndex(cell, activeCell);
-    },
-    [](void * context, void * sender){
-    });
-}
-
 int ValuesParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
@@ -134,10 +63,6 @@ TableViewCell * ValuesParameterController::reusableCell(int index) {
 
 int ValuesParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
-}
-
-KDCoordinate ValuesParameterController::cellHeight() {
-  return 35;
 }
 
 }

@@ -8,8 +8,15 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_view(GraphView(functionStore)),
-  m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
-  m_displayButton(this, "Affichage", Invocation([](void * context, void * sender) {}, this)),
+  m_axisInterval(functionStore),
+  m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
+  m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
+    GraphController * graphController = (GraphController *) context;
+    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    stack->push(graphController->axisParameterController());
+  }, this)),
+  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {}, this)),
+  m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {}, this)),
   m_functionStore(functionStore)
 {
 }
@@ -18,6 +25,7 @@ View * GraphController::view() {
   if (m_view.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->evaluateContext());
+    m_axisInterval.setContext(graphApp->evaluateContext());
   }
   return &m_view;
 }
@@ -48,16 +56,27 @@ Responder * GraphController::tabController() const{
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
+StackViewController * GraphController::stackController() const{
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+
+ViewController * GraphController::axisParameterController() {
+  return &m_axisParameterController;
+}
+
 int GraphController::numberOfButtons() const {
-  return 2;
+  return 3;
 }
 
 Button * GraphController::buttonAtIndex(int index) {
   switch (index) {
     case 0:
-      return &m_windowButton;
+      return &m_axisButton;
     case 1:
-      return &m_displayButton;
+      return &m_zoomButton;
+    case 2:
+      return &m_defaultInitialisationButton;
     default:
       assert(false);
   }
@@ -65,6 +84,7 @@ Button * GraphController::buttonAtIndex(int index) {
 }
 
 void GraphController::didBecomeFirstResponder() {
+  headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
 }
 

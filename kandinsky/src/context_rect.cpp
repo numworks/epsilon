@@ -43,7 +43,8 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
 
 // Mask's size must be rect.size
 // WorkingBuffer, same deal
-void KDContext::fillRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer) {
+// TODO: should we avoid pullRect by giving a 'memory' working buffer?
+void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer) {
   KDRect absoluteRect = absoluteFillRect(rect);
 
   /* Caution:

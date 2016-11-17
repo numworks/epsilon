@@ -1,9 +1,9 @@
-#include "values_parameter_controller.h"
+#include "interval_parameter_controller.h"
 #include <assert.h>
 
 namespace Graph {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, Interval * interval) :
+IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
   m_intervalStartCell(TextMenuListCell((char*)"X Debut")),
@@ -12,15 +12,15 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
 {
 }
 
-const char * ValuesParameterController::title() const {
+const char * IntervalParameterController::title() const {
   return "Regler l'intervalle";
 }
 
-Graph::Interval * ValuesParameterController::interval() {
+Graph::Interval * IntervalParameterController::interval() {
   return m_interval;
 }
 
-float ValuesParameterController::parameterAtIndex(int index) {
+float IntervalParameterController::parameterAtIndex(int index) {
   switch (index) {
     case 0:
       return m_interval->start();
@@ -34,7 +34,7 @@ float ValuesParameterController::parameterAtIndex(int index) {
   }
 }
 
-void ValuesParameterController::setParameterAtIndex(int parameterIndex, float f) {
+void IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
   switch(parameterIndex) {
     case 0:
       m_interval->setStart(f);
@@ -50,18 +50,18 @@ void ValuesParameterController::setParameterAtIndex(int parameterIndex, float f)
   }
 }
 
-int ValuesParameterController::numberOfRows() {
+int IntervalParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * ValuesParameterController::reusableCell(int index) {
+TableViewCell * IntervalParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   TableViewCell * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
   return cells[index];
 }
 
-int ValuesParameterController::reusableCellCount() {
+int IntervalParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 

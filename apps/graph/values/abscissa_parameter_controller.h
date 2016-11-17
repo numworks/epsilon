@@ -2,12 +2,12 @@
 #define GRAPH_ABSCISSA_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "values_parameter_controller.h"
+#include "interval_parameter_controller.h"
 
 namespace Graph {
 class AbscissaParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController);
+  AbscissaParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
 
   View * view() override;
   const char * title() const override;
@@ -23,7 +23,7 @@ private:
   ChevronMenuListCell m_copyColumn;
   ChevronMenuListCell m_setInterval;
   SelectableTableView m_selectableTableView;
-  ValuesParameterController * m_valuesParameterController;
+  IntervalParameterController * m_intervalParameterController;
 };
 
 }

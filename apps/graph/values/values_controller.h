@@ -10,7 +10,7 @@
 #include "abscissa_parameter_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
-#include "values_parameter_controller.h"
+#include "interval_parameter_controller.h"
 
 namespace Graph {
 
@@ -28,7 +28,7 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  ViewController * parameterController();
+  ViewController * intervalParameterController();
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
 
@@ -75,7 +75,7 @@ private:
   ValueCell m_floatCells[k_maxNumberOfCells];
   FunctionStore * m_functionStore;
   Interval m_interval;
-  ValuesParameterController m_parameterController;
+  IntervalParameterController m_intervalParameterController;
   AbscissaParameterController m_abscissaParameterController;
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;

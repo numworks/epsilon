@@ -3,14 +3,14 @@
 
 namespace Graph {
 
-AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, ValuesParameterController * valuesParameterController) :
+AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
   ViewController(parentResponder),
   m_deleteColumn(MenuListCell((char*)"Effacer la colonne")),
   m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
   m_setInterval(ChevronMenuListCell((char*)"Regler l'intervalle")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_valuesParameterController(valuesParameterController)
+  m_intervalParameterController(intervalParameterController)
 {
 }
 
@@ -32,7 +32,7 @@ bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       {
-        Interval * interval = m_valuesParameterController->interval();
+        Interval * interval = m_intervalParameterController->interval();
         interval->setEnd(0.0f);
         interval->setStep(1.0f);
         interval->setStart(1.0f);
@@ -45,7 +45,7 @@ bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
       case 2:
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
-        stack->push(m_valuesParameterController);
+        stack->push(m_intervalParameterController);
         return true;
       }
       default:

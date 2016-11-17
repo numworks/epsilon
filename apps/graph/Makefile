@@ -18,10 +18,10 @@ app_objs += $(addprefix apps/graph/,\
   values/derivative_parameter_controller.o\
   values/function_parameter_controller.o\
   values/interval.o\
+  values/interval_parameter_controller.o\
   values/title_cell.o\
   values/value_cell.o\
   values/values_controller.o\
-  values/values_parameter_controller.o\
 )
 
 app_images += apps/graph/graph_icon.png

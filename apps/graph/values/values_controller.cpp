@@ -11,14 +11,14 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_functionStore(functionStore),
-  m_parameterController(ValuesParameterController(this, &m_interval)),
-  m_abscissaParameterController(AbscissaParameterController(this, &m_parameterController)),
+  m_intervalParameterController(IntervalParameterController(this, &m_interval)),
+  m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
   m_functionParameterController(FunctionParameterController(this)),
   m_derivativeParameterController(DerivativeParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    stack->push(valuesController->parameterController());
+    stack->push(valuesController->intervalParameterController());
   }, this)))
 {
   m_interval.setStart(0);
@@ -68,8 +68,8 @@ StackViewController * ValuesController::stackController() const {
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-ViewController * ValuesController::parameterController() {
-  return &m_parameterController;
+ViewController * ValuesController::intervalParameterController() {
+  return &m_intervalParameterController;
 }
 
 int ValuesController::numberOfRows() {

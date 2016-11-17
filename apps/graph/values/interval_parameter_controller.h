@@ -1,14 +1,15 @@
-#ifndef GRAPH_VALUES_PARAM_CONTROLLER_H
-#define GRAPH_VALUES_PARAM_CONTROLLER_H
+#ifndef GRAPH_INTERVAL_PARAM_CONTROLLER_H
+#define GRAPH_INTERVAL_PARAM_CONTROLLER_H
 
 #include <escher.h>
 #include "interval.h"
 #include "../float_parameter_controller.h"
 
 namespace Graph {
-class ValuesParameterController : public FloatParameterController {
+
+class IntervalParameterController : public FloatParameterController {
 public:
-  ValuesParameterController(Responder * parentResponder, Interval * interval);
+  IntervalParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
   const char * title() const override;
   int numberOfRows() override;

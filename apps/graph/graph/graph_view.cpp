@@ -166,21 +166,19 @@ KDCoordinate GraphView::floatToPixel(Axis axis, float f) const {
 
 void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
   KDColor workingBuffer[k_stampSize*k_stampSize];
-  for (int i=0; i<m_functionStore->numberOfDefinedFunctions(); i++) {
-    Function * f = m_functionStore->definedFunctionAtIndex(i);
-    if (f->isActive()) {
-      float y = 0.0f;
-      float x = 0.0f;
-      for (KDCoordinate px = rect.x()-k_stampSize; px<rect.right(); px++) {
-        float previousX = x;
-        x = pixelToFloat(Axis::Horizontal, px);
-        float previousY = y;
-        y = f->evaluateAtAbscissa(x, m_evaluateContext);
-        KDCoordinate py = floatToPixel(Axis::Vertical, y);
-        stampAtLocation(px, py, f->color(), ctx, workingBuffer);
-        if (px > rect.x()-k_stampSize) {
+  for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float y = 0.0f;
+    float x = 0.0f;
+    for (KDCoordinate px = rect.x()-k_stampSize; px<rect.right(); px++) {
+      float previousX = x;
+      x = pixelToFloat(Axis::Horizontal, px);
+      float previousY = y;
+      y = f->evaluateAtAbscissa(x, m_evaluateContext);
+      KDCoordinate py = floatToPixel(Axis::Vertical, y);
+      stampAtLocation(px, py, f->color(), ctx, workingBuffer);
+      if (px > rect.x()-k_stampSize) {
           jointDots(previousX, previousY, x, y, f, k_maxNumberOfIterations, ctx, workingBuffer);
-        }
       }
     }
   }

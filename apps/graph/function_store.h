@@ -15,7 +15,9 @@ public:
   Function * addEmptyFunction();
   void removeFunction(Function * f);
   int numberOfFunctions();
+  // Functions can be undefined when they have a color and a name but no content
   int numberOfDefinedFunctions();
+  // An active function must be defined to be counted
   int numberOfActiveFunctions();
   static constexpr int k_maxNumberOfFunctions = 8;
 private:

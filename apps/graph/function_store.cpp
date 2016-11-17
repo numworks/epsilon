@@ -80,7 +80,7 @@ int FunctionStore::numberOfFunctions() {
 int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (m_functions[i].isActive()) {
+    if (m_functions[i].layout() != nullptr && m_functions[i].isActive()) {
       result++;
     }
   }

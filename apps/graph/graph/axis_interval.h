@@ -22,6 +22,7 @@ public:
   /* Need to be public to be called when a function is added to the function
    * store. */
   void computeYaxes();
+  Context * context();
   void setContext(Context * context);
 private:
   float m_xMin;

@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "cursor_view.h"
+#include "axis_interval.h"
 #include "../function_store.h"
 #include "../evaluate_context.h"
 
@@ -18,7 +19,7 @@ class GraphView : public
 #endif
 {
 public:
-  GraphView(FunctionStore * functionStore);
+  GraphView(FunctionStore * functionStore, AxisInterval * axisInterval);
 
 #if GRAPH_VIEW_IS_TILED
   KDColor * tile() const override;
@@ -79,10 +80,7 @@ private:
   CursorView m_cursorView;
   KDPoint m_cursorPosition;
 
-  float m_xMin;
-  float m_xMax;
-  float m_yMin;
-  float m_yMax;
+  AxisInterval * m_axisInterval;
 
   FunctionStore * m_functionStore;
   EvaluateContext * m_evaluateContext;

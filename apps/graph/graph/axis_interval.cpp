@@ -85,6 +85,10 @@ void AxisInterval::computeYaxes() {
   }
 }
 
+Context * AxisInterval::context() {
+  return m_evaluateContext;
+}
+
 void AxisInterval::setContext(Context * context) {
   m_evaluateContext = (EvaluateContext *)context;
 }

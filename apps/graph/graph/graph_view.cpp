@@ -11,7 +11,7 @@ constexpr int kNumberOfSecondaryGridLines = 4;
 constexpr KDCoordinate GraphView::k_stampSize;
 constexpr uint8_t GraphView::k_mask[k_stampSize*k_stampSize];
 
-GraphView::GraphView(FunctionStore * functionStore) :
+GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval) :
 #if GRAPH_VIEW_IS_TILED
   TiledView(),
 #else
@@ -19,10 +19,7 @@ GraphView::GraphView(FunctionStore * functionStore) :
 #endif
   m_cursorView(CursorView()),
   m_cursorPosition(KDPointZero),
-  m_xMin(-2.0f),
-  m_xMax(2.0f),
-  m_yMin(-2.0f),
-  m_yMax(2.0f),
+  m_axisInterval(axisInterval),
   m_functionStore(functionStore),
   m_evaluateContext(nullptr)
 {
@@ -136,12 +133,12 @@ void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
 
 float GraphView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_xMin : m_yMin);
+  return (axis == Axis::Horizontal ? m_axisInterval->xMin() : m_axisInterval->yMin());
 }
 
 float GraphView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_xMax : m_yMax);
+  return (axis == Axis::Horizontal ? m_axisInterval->xMax() : m_axisInterval->yMax());
 }
 
 KDCoordinate GraphView::pixelLength(Axis axis) const {
@@ -178,7 +175,7 @@ void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
       KDCoordinate py = floatToPixel(Axis::Vertical, y);
       stampAtLocation(px, py, f->color(), ctx, workingBuffer);
       if (px > rect.x()-k_stampSize) {
-          jointDots(previousX, previousY, x, y, f, k_maxNumberOfIterations, ctx, workingBuffer);
+        jointDots(previousX, previousY, x, y, f, k_maxNumberOfIterations, ctx, workingBuffer);
       }
     }
   }

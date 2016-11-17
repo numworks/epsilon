@@ -7,7 +7,7 @@ namespace Graph {
 GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
-  m_view(GraphView(functionStore)),
+  m_view(GraphView(functionStore, &m_axisInterval)),
   m_axisInterval(functionStore),
   m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
@@ -25,7 +25,6 @@ View * GraphController::view() {
   if (m_view.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->evaluateContext());
-    m_axisInterval.setContext(graphApp->evaluateContext());
   }
   return &m_view;
 }
@@ -84,6 +83,12 @@ Button * GraphController::buttonAtIndex(int index) {
 }
 
 void GraphController::didBecomeFirstResponder() {
+  // if new functions were added to the store, the axis interval needs to be refresh
+  if (m_axisInterval.context() == nullptr) {
+    App * graphApp = (Graph::App *)app();
+    m_axisInterval.setContext(graphApp->evaluateContext());
+  }
+  m_axisInterval.computeYaxes();
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
 }

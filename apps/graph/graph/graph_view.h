@@ -6,7 +6,7 @@
 #include "../function_store.h"
 #include "../evaluate_context.h"
 
-#define GRAPH_VIEW_IS_TILED 1
+#define GRAPH_VIEW_IS_TILED 0
 
 namespace Graph {
 
@@ -33,6 +33,15 @@ public:
   void setContext(Context * evaluateContext);
   Context * context() const;
 private:
+  constexpr static int k_maxNumberOfIterations = 10;
+  constexpr static KDCoordinate k_stampSize = 5;
+  constexpr static uint8_t k_mask[k_stampSize*k_stampSize] = {
+    0xff, 0xfb, 0x73, 0xfb, 0xff,
+    0xfb, 0x30, 0x00, 0x30, 0xfb,
+    0x73, 0x00, 0x00, 0x00, 0x73,
+    0xfb, 0x30, 0x00, 0x30, 0xfb,
+    0xff, 0xfb, 0x73, 0xfb, 0xff
+  };
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -56,7 +65,13 @@ private:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const;
   void drawFunction(KDContext * ctx, KDRect rect) const;
-
+  /* Recursively join two dots (dichotomy). The method stops when the
+   * maxNumberOfRecursion in reached. */
+  void jointDots(float x, float y, float u, float v, Function * function, int maxNumberOfRecursion, KDContext * ctx, KDColor * workingBuffer) const;
+  /* Join two dots with a straight line (changing abscissa halfway). */
+  void straightJoinDots(KDCoordinate px, KDCoordinate py, KDCoordinate pu, KDCoordinate pv, Function * function, KDContext * ctx, KDColor * workingBuffer) const;
+  /* Stamp centered around (px, py). */
+  void stampAtLocation(KDCoordinate px, KDCoordinate py, KDColor color, KDContext * ctx, KDColor * workingBuffer) const;
 #if GRAPH_VIEW_IS_TILED
   static constexpr KDCoordinate kTileWidth = 32;
   static constexpr KDCoordinate kTileHeight = 32;

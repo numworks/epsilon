@@ -8,6 +8,8 @@ constexpr KDColor kMainGridColor = KDColor::RGB24(0xCCCCCC);
 constexpr KDColor kSecondaryGridColor = KDColor::RGB24(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
+constexpr KDCoordinate GraphView::k_stampSize;
+constexpr uint8_t GraphView::k_mask[k_stampSize*k_stampSize];
 
 GraphView::GraphView(FunctionStore * functionStore) :
 #if GRAPH_VIEW_IS_TILED
@@ -148,39 +150,90 @@ KDCoordinate GraphView::pixelLength(Axis axis) const {
 }
 
 float GraphView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  return min(axis) + p*(max(axis)-min(axis))/pixelLength(axis);
+  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
+  return min(axis) + pixels*(max(axis)-min(axis))/pixelLength(axis);
 }
 
 KDCoordinate GraphView::floatToPixel(Axis axis, float f) const {
-  return pixelLength(axis)*(max(axis)-f)/(max(axis)-min(axis));
+  float fraction = (f-min(axis))/(max(axis)-min(axis));
+  fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
+  /* KDCoordinate does not support as big number as float. We thus cap the
+   * fraction before casting. */
+  fraction = fraction > 2 ? 2.0f : fraction;
+  fraction = fraction < -1 ? -1.0f : fraction;
+  return pixelLength(axis)*fraction;
 }
 
 void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
-
-  constexpr KDCoordinate stampSize = 5;
-
-  uint8_t mask[stampSize*stampSize] = {
-    0x00, 0x30, 0x73, 0x30, 0x00,
-    0x30, 0xfb, 0xff, 0xfb, 0x30,
-    0x73, 0xff, 0xff, 0xff, 0x73,
-    0x30, 0xfb, 0xff, 0xfb, 0x30,
-    0x00, 0x30, 0x73, 0x30, 0x00
-  };
-
-  KDColor workingBuffer[stampSize*stampSize];
-
-  for (KDCoordinate px = rect.x()-stampSize; px<rect.right(); px++) {
-    float x = pixelToFloat(Axis::Horizontal, px);
-    for (int i=0; i<m_functionStore->numberOfDefinedFunctions(); i++) {
-      Function * f = m_functionStore->definedFunctionAtIndex(i);
-      if (f->isActive()) {
-        float y = f->evaluateAtAbscissa(x, m_evaluateContext);
+  KDColor workingBuffer[k_stampSize*k_stampSize];
+  for (int i=0; i<m_functionStore->numberOfDefinedFunctions(); i++) {
+    Function * f = m_functionStore->definedFunctionAtIndex(i);
+    if (f->isActive()) {
+      float y = 0.0f;
+      float x = 0.0f;
+      for (KDCoordinate px = rect.x()-k_stampSize; px<rect.right(); px++) {
+        float previousX = x;
+        x = pixelToFloat(Axis::Horizontal, px);
+        float previousY = y;
+        y = f->evaluateAtAbscissa(x, m_evaluateContext);
         KDCoordinate py = floatToPixel(Axis::Vertical, y);
-        KDRect stampRect(px, py, stampSize, stampSize);
-        ctx->blendRectWithMask(stampRect, f->color(), mask, workingBuffer);
+        stampAtLocation(px, py, f->color(), ctx, workingBuffer);
+        if (px > rect.x()-k_stampSize) {
+          jointDots(previousX, previousY, x, y, f, k_maxNumberOfIterations, ctx, workingBuffer);
+        }
       }
     }
   }
+}
+
+void GraphView::stampAtLocation(KDCoordinate px, KDCoordinate py, KDColor color, KDContext * ctx, KDColor * workingBuffer) const {
+  // We avoid drawing when no part of the stamp is visible
+  if (px < -k_stampSize || px > pixelLength(Axis::Horizontal)+k_stampSize || py < -k_stampSize || py > pixelLength(Axis::Vertical)+k_stampSize) {
+    return;
+  }
+  KDRect stampRect(px-k_stampSize/2, py-k_stampSize/2, k_stampSize, k_stampSize);
+  ctx->blendRectWithMask(stampRect, color, k_mask, workingBuffer);
+}
+
+void GraphView::jointDots(float x, float y, float u, float v, Function * function, int maxNumberOfRecursion, KDContext * ctx, KDColor * workingBuffer) const {
+  KDCoordinate px = floatToPixel(Axis::Horizontal, x);
+  KDCoordinate pu = floatToPixel(Axis::Horizontal, u);
+  KDCoordinate py = floatToPixel(Axis::Vertical, y);
+  KDCoordinate pv = floatToPixel(Axis::Vertical, v);
+  if (py - k_stampSize/2 < pv && pv < py + k_stampSize/2) {
+    // the dots are already joined
+    return;
+  }
+  float middleX = (x + u)/2;
+  float middleY = function->evaluateAtAbscissa(middleX, m_evaluateContext);
+  KDCoordinate pMiddleX = floatToPixel(Axis::Horizontal, middleX);
+  KDCoordinate pMiddleY = floatToPixel(Axis::Vertical, middleY);
+  if ((y < middleY && middleY < v) || (v < middleY && middleY < u)) {
+    /* As the middle dot is vertically between the two dots, we assume that we
+     * can draw a 'straight' line between the two */
+    straightJoinDots(px, py, pu, pv, function, ctx, workingBuffer);
+    return;
+  }
+  if (maxNumberOfRecursion > 0) {
+    stampAtLocation(pMiddleX, pMiddleY, function->color(), ctx, workingBuffer);
+    jointDots(x, y, middleX, middleY, function, maxNumberOfRecursion-1, ctx, workingBuffer);
+    jointDots(middleX, middleY, u, v, function, maxNumberOfRecursion-1, ctx, workingBuffer);
+  }
+}
+
+void GraphView::straightJoinDots(KDCoordinate px, KDCoordinate py, KDCoordinate pu, KDCoordinate pv, Function * function, KDContext * ctx, KDColor * workingBuffer) const {
+  if (py < pv) {
+    KDCoordinate pm = px;
+    KDCoordinate pVerticalMiddle = (py + pv)/2;
+    for (KDCoordinate pn = py; pn < pv; pn++) {
+      if (pn == pVerticalMiddle) {
+        pm = pu;
+      }
+      stampAtLocation(pm, pn, function->color(), ctx, workingBuffer);
+    }
+    return;
+  }
+  straightJoinDots(pu, pv, px, py, function, ctx, workingBuffer);
 }
 
 #if 0

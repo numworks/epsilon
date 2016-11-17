@@ -8,6 +8,7 @@ TextMenuListCell::TextMenuListCell(char * label) :
 
 void TextMenuListCell::setAccessoryText(const char * textBody) {
   m_accessoryView.setText(textBody);
+  reloadCell();
 }
 
 const char * TextMenuListCell::accessoryText() {

@@ -25,6 +25,8 @@ Graph::AxisInterval * AxisParameterController::axisInterval() {
 
 void AxisParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (index == 2) {
+    SwitchView * switchView = (SwitchView *)m_yAutoCell.accessoryView();
+    switchView->setState(m_axisInterval->yAuto());
     return;
   }
   FloatParameterController::willDisplayCellForIndex(cell, index);
@@ -33,6 +35,8 @@ void AxisParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
 bool AxisParameterController::handleEvent(Ion::Events::Event event) {
   if (activeCell() == 2) {
     if (event == Ion::Events::OK) {
+      m_axisInterval->setYAuto(!m_axisInterval->yAuto());
+      m_selectableTableView.reloadData();
       return true;
     }
     return false;

@@ -23,10 +23,11 @@ public:
   //TableViewCell * reusableCell(int index) override;
   //int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+protected:
+  SelectableTableView m_selectableTableView;
 private:
   virtual float parameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
-  SelectableTableView m_selectableTableView;
 
 };
 

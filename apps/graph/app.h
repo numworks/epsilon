@@ -20,9 +20,13 @@ private:
   FunctionStore m_functionStore;
   EvaluateContext m_evaluateContext;
   ListController m_listController;
+  HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;
   GraphController m_graphController;
+  HeaderViewController m_graphHeader;
   ValuesController m_valuesController;
+  HeaderViewController m_valuesHeader;
+  AlternateEmptyViewController m_valuesAlternateEmptyViewController;
   StackViewController m_valuesStackViewController;
   TabViewController m_tabViewController;
   InputViewController m_inputViewController;

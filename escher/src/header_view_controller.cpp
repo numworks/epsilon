@@ -4,32 +4,29 @@
 constexpr KDColor HeaderViewController::ContentView::k_separatorHeaderColor;
 constexpr KDColor HeaderViewController::ContentView::k_selectedBackgroundColor;
 
-HeaderViewController::ContentView::ContentView(View * subview, HeaderViewController * headerViewController) :
+HeaderViewController::ContentView::ContentView(ViewController * mainViewController, HeaderViewDelegate * delegate) :
   View(),
-  m_mainView(subview),
-  m_visibleHeader(true),
+  m_mainViewController(mainViewController),
   m_selectedButton(-1),
-  m_headerViewController(headerViewController)
+  m_delegate(delegate)
 {
 }
 
 int HeaderViewController::ContentView::numberOfButtons() const {
-  return m_headerViewController->numberOfButtons();
+  return m_delegate->numberOfButtons();
 }
+
 Button * HeaderViewController::ContentView::buttonAtIndex(int index) {
-  return m_headerViewController->buttonAtIndex(index);
+  return m_delegate->buttonAtIndex(index);
 }
 
 int HeaderViewController::ContentView::numberOfSubviews() const {
-  if (m_visibleHeader) {
-    return numberOfButtons() + 1;
-  }
-  return 1;
+  return numberOfButtons() + 1;
 }
 
 View * HeaderViewController::ContentView::subviewAtIndex(int index) {
   if (index == 0) {
-    return m_mainView;
+    return m_mainViewController->view();
   } else {
     return buttonAtIndex(index - 1);
   }
@@ -38,11 +35,11 @@ View * HeaderViewController::ContentView::subviewAtIndex(int index) {
 void HeaderViewController::ContentView::layoutSubviews() {
   if (numberOfButtons() == 0) {
     KDRect mainViewFrame(0, 1, bounds().width(), bounds().height() - 1);
-    m_mainView->setFrame(mainViewFrame);
+    m_mainViewController->view()->setFrame(mainViewFrame);
     return;
   }
   KDRect mainViewFrame(0, k_headerHeight + 1, bounds().width(), bounds().height() - k_headerHeight - 1);
-  m_mainView->setFrame(mainViewFrame);
+  m_mainViewController->view()->setFrame(mainViewFrame);
   int currentXOrigin = 0;
   for (int i = 0; i < numberOfButtons(); i++) {
     Button * button = buttonAtIndex(i);
@@ -54,18 +51,12 @@ void HeaderViewController::ContentView::layoutSubviews() {
 }
 
 void HeaderViewController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_visibleHeader) {
+  if (numberOfButtons() > 0) {
     ctx->fillRect(KDRect(0, 0, bounds().width(), k_headerHeight), KDColorWhite);
     ctx->fillRect(KDRect(0, k_headerHeight, bounds().width(), 1), k_separatorHeaderColor);
   } else {
     ctx->fillRect(KDRect(0, 0, bounds().width(), 1), k_separatorHeaderColor);
   }
-}
-
-void HeaderViewController::ContentView::setVisibleHeader(bool isVisibleHeader) {
-  m_visibleHeader = isVisibleHeader;
-  markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height()));
-  layoutSubviews();
 }
 
 bool HeaderViewController::ContentView::setSelectedButton(int selectedButton, App * application) {
@@ -90,19 +81,18 @@ int HeaderViewController::ContentView::selectedButton() {
   return m_selectedButton;
 }
 
-HeaderViewController::HeaderViewController(Responder * parentResponder, View * mainView) :
+ViewController * HeaderViewController::ContentView::mainViewController() const {
+  return m_mainViewController;
+}
+
+HeaderViewDelegate * HeaderViewController::ContentView::headerViewDelegate() const {
+  return m_delegate;
+}
+
+HeaderViewController::HeaderViewController(Responder * parentResponder, ViewController * mainViewController, HeaderViewDelegate * delegate) :
   ViewController(parentResponder),
-  m_contentView(ContentView(mainView, this))
+  m_contentView(ContentView(mainViewController, delegate))
 {
-}
-
-int HeaderViewController::numberOfButtons() const {
-  return 0;
-}
-
-Button * HeaderViewController::buttonAtIndex(int index) {
-  assert(false);
-  return nullptr;
 }
 
 View * HeaderViewController::view() {
@@ -110,11 +100,11 @@ View * HeaderViewController::view() {
 }
 
 const char * HeaderViewController::title() const {
-  return "HeaderViewController";
+  return m_contentView.mainViewController()->title();
 }
 
-void HeaderViewController::setVisibleHeader(bool isVisibleHeader) {
-  m_contentView.setVisibleHeader(isVisibleHeader);
+void HeaderViewController::didBecomeFirstResponder(){
+  app()->setFirstResponder(m_contentView.mainViewController());
 }
 
 bool HeaderViewController::setSelectedButton(int selectedButton) {

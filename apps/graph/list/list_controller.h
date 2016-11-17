@@ -10,13 +10,14 @@
 
 namespace Graph {
 
-class ListController : public HeaderViewController, public TableViewDataSource {
+class ListController : public ViewController, public HeaderViewDelegate, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder, FunctionStore * functionStore);
+  ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEnter();
   void didBecomeFirstResponder() override;
+  virtual View * view() override;
 
   int numberOfRows() override;
   int numberOfColumns() override;
@@ -38,6 +39,7 @@ private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   Responder * tabController() const;
+  StackViewController * stackController() const;
   constexpr static int k_maxNumberOfRows = 6;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!

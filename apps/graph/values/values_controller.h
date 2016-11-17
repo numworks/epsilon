@@ -14,9 +14,9 @@
 
 namespace Graph {
 
-class ValuesController : public HeaderViewController, public TableViewDataSource {
+class ValuesController : public ViewController, public HeaderViewDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, FunctionStore * functionStore);
+  ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
 
   int activeRow();
   int activeColumn();
@@ -24,6 +24,7 @@ public:
   ValueCell * abscisseCellAtRow(int rowIndex);
   void editValue(const char * initialText = nullptr);
 
+  View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -44,6 +45,10 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 
+  bool isEmpty() override;
+  const char * emptyMessage() override;
+  Responder * defaultController() override;
+
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
   static constexpr KDCoordinate k_leftMargin = 1;
@@ -53,28 +58,10 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 
 private:
-  class ContentView : public View {
-    public:
-      enum class TableState {
-        Empty,
-        NonEmpty
-      };
-      ContentView(View * mainView);
-      void drawRect(KDContext * ctx, KDRect rect) const override;
-      void setTableState(TableState tableState);
-      TableState tableState();
-    private:
-      PointerTextView m_noFunctionSelected;
-      View * m_mainView;
-      TableState m_tableState;
-      int numberOfSubviews() const override;
-      View * subviewAtIndex(int index) override;
-      void layoutSubviews() override;
-  };
-
   Function * functionAtColumn(int i);
   bool isDerivativeColumn(int i);
   Responder * tabController() const;
+  StackViewController * stackController() const;
   void configureAbscissa();
   void configureFunction();
   void configureDerivativeFunction();
@@ -93,7 +80,6 @@ private:
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
-  ContentView m_contentView;
 };
 
 }

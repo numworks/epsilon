@@ -6,50 +6,9 @@
 
 namespace Graph {
 
-/* Content View */
-
-ValuesController::ContentView::ContentView(View * mainView) :
-  m_noFunctionSelected(PointerTextView("Aucune fonction selectionnee", 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
-  m_mainView(mainView),
-  m_tableState(TableState::Empty)
-{
-}
-
-void ValuesController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_tableState == TableState::Empty) {
-    ctx->fillRect(bounds(), Palette::BackgroundColor);
-  }
-}
-
-int ValuesController::ContentView::numberOfSubviews() const {
-  return 1;
-}
-
-View * ValuesController::ContentView::subviewAtIndex(int index) {
-  assert(index == 0);
-  if (m_tableState == TableState::Empty) {
-    return &m_noFunctionSelected;
-  }
-  return m_mainView;
-}
-
-void ValuesController::ContentView::layoutSubviews() {
-  m_noFunctionSelected.setFrame(bounds());
-  m_mainView->setFrame(bounds());
-}
-
-void ValuesController::ContentView::setTableState(TableState tableState) {
-  m_tableState = tableState;
-}
-
-ValuesController::ContentView::TableState ValuesController::ContentView::tableState() {
-  return m_tableState;
-}
-
-/* Value Controller */
-
-ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore) :
-  HeaderViewController(parentResponder, &m_contentView),
+ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+  ViewController(parentResponder),
+  HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
   m_functionStore(functionStore),
   m_parameterController(ValuesParameterController(this, &m_interval)),
@@ -58,18 +17,39 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_derivativeParameterController(DerivativeParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
-    StackViewController * stack = ((StackViewController *)valuesController->parentResponder());
+    StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->parameterController());
-  }, this))),
-  m_contentView(&m_selectableTableView)
+  }, this)))
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
   m_interval.setStep(1);
 }
 
+View * ValuesController::view() {
+  return &m_selectableTableView;
+}
+
 const char * ValuesController::title() const {
   return "Valeurs";
+}
+
+bool ValuesController::isEmpty() {
+  if (m_functionStore->numberOfActiveFunctions() == 0) {
+    return true;
+  }
+  return false;
+}
+
+const char * ValuesController::emptyMessage() {
+  if (m_functionStore->numberOfDefinedFunctions() == 0) {
+    return "Aucune fonction";
+  }
+  return "Aucune fonction selectionnee";
+}
+
+Responder * ValuesController::defaultController() {
+  return tabController();
 }
 
 int ValuesController::numberOfButtons() const {
@@ -81,7 +61,11 @@ Button * ValuesController::buttonAtIndex(int index) {
 }
 
 Responder * ValuesController::tabController() const {
-  return (parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+StackViewController * ValuesController::stackController() const {
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
 ViewController * ValuesController::parameterController() {
@@ -165,12 +149,7 @@ ValueCell * ValuesController::abscisseCellAtRow(int rowIndex) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
-  if (m_functionStore->numberOfDefinedFunctions() == 0 || m_functionStore->numberOfActiveFunctions() == 0) {
-    m_contentView.setTableState(ValuesController::ContentView::TableState::Empty);
-    return;
-  }
-  m_contentView.setTableState(ContentView::TableState::NonEmpty);
-  setSelectedButton(-1);
+  headerViewController()->setSelectedButton(-1);
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
@@ -184,17 +163,9 @@ void ValuesController::didBecomeFirstResponder() {
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
-  if (m_contentView.tableState() == ContentView::TableState::Empty) {
-    if (event == Ion::Events::Up) {
-      app()->setFirstResponder(tabController());
-      return true;
-    }
-    return false;
-  }
-
   if (event == Ion::Events::Down) {
     if (activeRow() == -1) {
-      setSelectedButton(-1);
+      headerViewController()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0,0);
       app()->setFirstResponder(&m_selectableTableView);
       return true;
@@ -204,18 +175,18 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
   if (event == Ion::Events::Up) {
     if (activeRow() == -1) {
-      setSelectedButton(-1);
+      headerViewController()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
     m_selectableTableView.deselectTable();
-    setSelectedButton(0);
+    headerViewController()->setSelectedButton(0);
     return true;
   }
 
   if (event == Ion::Events::OK) {
     if (activeRow() == -1) {
-      return HeaderViewController::handleEvent(event);
+      return headerViewController()->handleEvent(event);
     }
     if (activeRow() == 0) {
       if (activeColumn() == 0) {
@@ -237,7 +208,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
 
   if (activeRow() == -1) {
-    return HeaderViewController::handleEvent(event);
+    return headerViewController()->handleEvent(event);
   }
   if (event.hasText()) {
     if (activeColumn() == 0 && activeRow() > 0) {
@@ -251,21 +222,21 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 
 void ValuesController::configureAbscissa() {
-  StackViewController * stack = ((StackViewController *)parentResponder());
+  StackViewController * stack = stackController();
   stack->push(&m_abscissaParameterController);
 }
 
 void ValuesController::configureFunction() {
   Function * function = functionAtColumn(activeColumn());
   m_functionParameterController.setFunction(function);
-  StackViewController * stack = ((StackViewController *)parentResponder());
+  StackViewController * stack = stackController();
   stack->push(&m_functionParameterController);
 }
 
 void ValuesController::configureDerivativeFunction() {
   Function * function = functionAtColumn(activeColumn());
   m_derivativeParameterController.setFunction(function);
-  StackViewController * stack = ((StackViewController *)parentResponder());
+  StackViewController * stack = stackController();
   stack->push(&m_derivativeParameterController);
 }
 

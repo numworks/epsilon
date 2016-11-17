@@ -1,6 +1,8 @@
 #ifndef ESCHER_H
 #define ESCHER_H
 
+#include <escher/alternate_empty_view_controller.h>
+#include <escher/alternate_empty_view_delegate.h>
 #include <escher/app.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>
@@ -10,6 +12,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/expression_view.h>
 #include <escher/header_view_controller.h>
+#include <escher/header_view_delegate.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>

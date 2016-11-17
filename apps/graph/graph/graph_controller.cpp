@@ -4,8 +4,9 @@
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore) :
-  HeaderViewController(parentResponder, &m_view),
+GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+  ViewController(parentResponder),
+  HeaderViewDelegate(header),
   m_view(GraphView(functionStore)),
   m_headerSelected(false),
   m_windowButton(Button(this, "Fenetre", Invocation([](void * context, void * sender) {}, this))),
@@ -18,7 +19,7 @@ View * GraphController::view() {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->evaluateContext());
   }
-  return HeaderViewController::view();
+  return &m_view;
 }
 
 const char * GraphController::title() const {
@@ -26,7 +27,7 @@ const char * GraphController::title() const {
 }
 
 Responder * GraphController::tabController() const{
-  return (parentResponder());
+  return (parentResponder()->parentResponder());
 }
 
 int GraphController::numberOfButtons() const {
@@ -52,22 +53,22 @@ void GraphController::didBecomeFirstResponder() {
 bool GraphController::handleEvent(Ion::Events::Event event) {
   if (m_headerSelected) {
     if (event == Ion::Events::Down) {
-        setSelectedButton(-1);
+        headerViewController()->setSelectedButton(-1);
         m_headerSelected = false;
         return true;
     }
     if (event == Ion::Events::Up) {
-      setSelectedButton(-1);
+      headerViewController()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
     }
-    return HeaderViewController::handleEvent(event);
+    return headerViewController()->handleEvent(event);
   } else {
     if (event == Ion::Events::OK) {
       m_view.moveCursorRight();
       return true;
     }
     if (event == Ion::Events::Up) {
-      setSelectedButton(0);
+      headerViewController()->setSelectedButton(0);
       m_headerSelected = true;
       return true;
     }

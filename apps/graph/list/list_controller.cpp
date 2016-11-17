@@ -4,21 +4,29 @@
 
 namespace Graph {
 
-ListController::ListController(Responder * parentResponder, FunctionStore * functionStore) :
-  HeaderViewController(parentResponder, &m_selectableTableView),
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+  ViewController(parentResponder),
+  HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
 {
-  setVisibleHeader(false);
 }
 
 const char * ListController::title() const {
   return "Fonctions";
 }
 
+View * ListController::view() {
+  return &m_selectableTableView;
+}
+
 Responder * ListController::tabController() const{
-  return (parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder());
+}
+
+StackViewController * ListController::stackController() const{
+  return (StackViewController *)(parentResponder()->parentResponder());
 }
 
 int ListController::numberOfRows() {
@@ -106,7 +114,7 @@ void ListController::didBecomeFirstResponder() {
 }
 
 void ListController::configureFunction(Function * function) {
-  StackViewController * stack = ((StackViewController *)parentResponder());
+  StackViewController * stack = stackController();
   m_parameterController.setFunction(function);
   stack->push(&m_parameterController);
 }

@@ -1,6 +1,7 @@
 SFLAGS += -Iescher/include
 
 objs += $(addprefix escher/src/,\
+  alternate_empty_view_controller.o\
   app.o\
   buffer_text_view.o\
   button.o\
@@ -10,6 +11,7 @@ objs += $(addprefix escher/src/,\
   even_odd_cell.o\
   expression_view.o\
   header_view_controller.o\
+  header_view_delegate.o\
   image_view.o\
   invocation.o\
   input_view_controller.o\

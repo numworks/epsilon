@@ -6,9 +6,9 @@
 #include "../function_store.h"
 
 namespace Graph {
-class GraphController : public HeaderViewController {
+class GraphController : public ViewController, public HeaderViewDelegate {
 public:
-  GraphController(Responder * parentResponder, FunctionStore * functionStore);
+  GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;

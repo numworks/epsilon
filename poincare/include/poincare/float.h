@@ -6,7 +6,6 @@
 class Float : public LeafExpression {
 public:
   Float(float f);
-  ~Float();
 
   ExpressionLayout * createLayout() const override;
   float approximate(Context& context) const override;

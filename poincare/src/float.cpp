@@ -10,9 +10,6 @@ extern "C" {
 Float::Float(float f) : m_float(f) {
 }
 
-Float::~Float() {
-}
-
 Expression * Float::clone() const {
   return new Float(m_float);
 }

@@ -29,6 +29,13 @@ void AxisParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
     switchView->setState(m_axisInterval->yAuto());
     return;
   }
+  if (index == 3 || index == 4) {
+    if (m_axisInterval->yAuto()) {
+      m_axisCells[index-1].setTextColor(Palette::DesactiveTextColor);
+    } else {
+      m_axisCells[index-1].setTextColor(KDColorBlack);
+    }
+  }
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -39,6 +46,9 @@ bool AxisParameterController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.reloadData();
       return true;
     }
+    return false;
+  }
+  if (m_axisInterval->yAuto() && (activeCell() == 3 || activeCell() == 4)) {
     return false;
   }
   return FloatParameterController::handleEvent(event);

@@ -47,6 +47,7 @@ void resume();
 void setDrawingArea(KDRect r);
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);
+void pullPixels(KDColor * pixels, size_t numberOfPixels);
 
 enum class Command : uint16_t {
   Nop = 0x00,
@@ -59,6 +60,7 @@ enum class Command : uint16_t {
   GammaSet = 0x26,
   PageAddressSet = 0x2B,
   MemoryWrite = 0x2C,
+  MemoryRead = 0x2E,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
   FrameRateControl = 0xB1,

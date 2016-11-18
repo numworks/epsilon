@@ -21,7 +21,8 @@ void pushRectUniform(KDRect r, KDColor c) {
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
-  //assert(0); // Unimplemented
+  Device::setDrawingArea(r);
+  Device::pullPixels(pixels, r.width()*r.height());
 }
 
 }
@@ -186,20 +187,48 @@ void setDrawingArea(KDRect r) {
   *DataAddress = (y_start & 0xFF);
   *DataAddress = (y_end >> 8);
   *DataAddress = (y_end & 0xFF);
-
-  *CommandAddress  = Command::MemoryWrite;
 }
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
+  *CommandAddress  = Command::MemoryWrite;
   while (numberOfPixels--) {
     *DataAddress = *pixels++;
   }
 }
 
 void pushColor(KDColor color, size_t numberOfPixels) {
+  *CommandAddress  = Command::MemoryWrite;
   while (numberOfPixels--) {
     *DataAddress = color;
   }
+}
+
+void pullPixels(KDColor * pixels, size_t numberOfPixels) {
+  if (numberOfPixels == 0) {
+    return;
+  }
+  SEND_COMMAND(PixelFormatSet, 0x66);
+  *CommandAddress  = Command::MemoryRead;
+  uint16_t dummy = *DataAddress; // First read is dummy data, per datasheet
+  while (true) {
+    if (numberOfPixels == 0) {
+      break;
+    }
+    uint16_t one = *DataAddress;
+    uint16_t two = *DataAddress;
+    uint16_t firstPixel  = (one & 0xF800) | (one & 0xFC) << 3 | (two & 0xF800) >> 11;
+    *pixels++ = KDColor::RGB16(firstPixel);
+    numberOfPixels--;
+
+    if (numberOfPixels == 0) {
+      break;
+    }
+    uint16_t three = *DataAddress;
+    uint16_t secondPixel = (two & 0xF8) << 8 | (three & 0xFC00) >> 5 | (three & 0xF8) >> 3;
+    *pixels++ = KDColor::RGB16(secondPixel);
+    numberOfPixels--;
+  }
+  SEND_COMMAND(PixelFormatSet, 0x55);
 }
 
 }

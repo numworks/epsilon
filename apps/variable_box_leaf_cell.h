@@ -6,6 +6,7 @@
 class VariableBoxLeafCell : public TableViewCell {
 public:
   VariableBoxLeafCell();
+  void displayExpression(bool displayExpression);
   void reloadCell() override;
   void setLabel(const char * text);
   void setSubtitle(const char * text);
@@ -15,9 +16,10 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  PointerTextView m_labelView;
+  BufferTextView m_labelView;
   BufferTextView m_subtitleView;
   ExpressionView m_expressionView;
+  bool m_displayExpression;
 };
 
 #endif

@@ -3,13 +3,18 @@
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   TableViewCell(),
-  m_labelView(PointerTextView(nullptr, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
-  m_subtitleView(BufferTextView(0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor))  
+  m_labelView(BufferTextView(0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
+  m_subtitleView(BufferTextView(0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor)),
+  m_displayExpression(false)
 {
 }
 
+void VariableBoxLeafCell::displayExpression(bool displayExpression) {
+  m_displayExpression = displayExpression;
+}
+
 int VariableBoxLeafCell::numberOfSubviews() const {
-  if (strlen(m_subtitleView.text()) > 0) {
+  if (m_displayExpression) {
     return 3;
   }
   return 2;
@@ -20,22 +25,26 @@ View * VariableBoxLeafCell::subviewAtIndex(int index) {
     return &m_labelView;
   }
   if (index == 1) {
-    return &m_expressionView;
+    return &m_subtitleView;
   }
   assert(numberOfSubviews() == 3 && index == 2);
-  return &m_subtitleView;
+  return &m_expressionView;
 }
 
 void VariableBoxLeafCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_expressionView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
   if (numberOfSubviews() == 3) {
     m_labelView.setFrame(KDRect(1, 1, width/2-1, height/2 - 1));
     m_subtitleView.setFrame(KDRect(1, height/2, width/2-1, height/2 - 1));
+    m_subtitleView.setAlignment(0.0f, 0.5f);
+    m_expressionView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
     return;
   }
   m_labelView.setFrame(KDRect(1, 1, width/2-1, height-2));
+  m_subtitleView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
+  m_subtitleView.setAlignment(1.0f, 0.5f);
+  return;
 }
 
 void VariableBoxLeafCell::reloadCell() {

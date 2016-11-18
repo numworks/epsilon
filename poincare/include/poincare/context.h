@@ -13,7 +13,6 @@ class Context {
   public:
     Context();
     virtual const Expression * expressionForSymbol(const Symbol * symbol);
-    virtual const Expression * scalarExpressionForIndex(int index);
     void setExpressionForSymbolName(Expression * expression, const Symbol * symbol);
     static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
     static constexpr uint16_t k_maxNumberOfListExpressions = 10;

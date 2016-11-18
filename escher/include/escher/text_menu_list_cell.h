@@ -12,6 +12,7 @@ public:
   void setHighlighted(bool highlight);
   void setAccessoryText(const char * textBody);
   const char * accessoryText();
+  void setTextColor(KDColor color) override;
 private:
   BufferTextView m_accessoryView;
 };

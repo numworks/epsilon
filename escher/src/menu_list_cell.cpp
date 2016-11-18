@@ -46,6 +46,10 @@ void MenuListCell::setText(const char * text) {
   layoutSubviews();
 }
 
+void MenuListCell::setTextColor(KDColor color) {
+  m_pointerTextView.setTextColor(color);
+}
+
 View * MenuListCell::accessoryView() const {
   return nullptr;
 }

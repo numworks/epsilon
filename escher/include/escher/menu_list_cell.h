@@ -12,6 +12,7 @@ public:
   MenuListCell(char * label = nullptr);
   virtual View * accessoryView() const;
   void setText(const char * text);
+  virtual void setTextColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;
   int numberOfSubviews() const override;

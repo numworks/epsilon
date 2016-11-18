@@ -30,3 +30,8 @@ void TextMenuListCell::setHighlighted(bool highlight) {
   KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
+
+void TextMenuListCell::setTextColor(KDColor color) {
+  m_accessoryView.setTextColor(color);
+  MenuListCell::setTextColor(color);
+}

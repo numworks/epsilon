@@ -3,7 +3,7 @@
 
 Context::Context()
 {
-  for (int i = 0; i < k_maxNumberOfExpressions; i++) {
+  for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
   }
 }
@@ -20,7 +20,7 @@ int Context::symbolIndex(const Symbol * symbol) const {
 
 const Expression * Context::expressionForSymbol(const Symbol * symbol) {
   int index = symbolIndex(symbol);
-  if (index < 0 || index >= k_maxNumberOfExpressions) {
+  if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return nullptr;
   }
   if (m_expressions[index] == nullptr) {
@@ -30,7 +30,7 @@ const Expression * Context::expressionForSymbol(const Symbol * symbol) {
 }
 
 const Expression * Context::scalarExpressionForIndex(int index) {
-  assert(index < k_maxNumberOfExpressions);
+  assert(index < k_maxNumberOfScalarExpressions);
   return m_expressions[index];
 }
 

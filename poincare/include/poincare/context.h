@@ -15,10 +15,12 @@ class Context {
     virtual const Expression * expressionForSymbol(const Symbol * symbol);
     virtual const Expression * scalarExpressionForIndex(int index);
     void setExpressionForSymbolName(Expression * expression, const Symbol * symbol);
+    static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
+    static constexpr uint16_t k_maxNumberOfListExpressions = 10;
+    static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
   private:
     int symbolIndex(const Symbol * symbol) const;
-    static constexpr uint16_t k_maxNumberOfExpressions = 26;
-    Expression * m_expressions[k_maxNumberOfExpressions];
+    Expression * m_expressions[k_maxNumberOfScalarExpressions];
     static Float * defaultExpression();
 };
 

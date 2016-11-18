@@ -2,7 +2,7 @@
 
 Probability::ParametersController::ParametersController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_view(SolidColorView(KDColor(0xF3619B)))
+  m_view(SolidColorView(KDColor::RGB24(0xF3619B)))
 {
 }
 

@@ -3,9 +3,9 @@
 
 namespace Graph {
 
-constexpr KDColor kAxisColor = KDColor(0x000000);
-constexpr KDColor kMainGridColor = KDColor(0xCCCCCC);
-constexpr KDColor kSecondaryGridColor = KDColor(0xEEEEEE);
+constexpr KDColor kAxisColor = KDColor::RGB24(0x000000);
+constexpr KDColor kMainGridColor = KDColor::RGB24(0xCCCCCC);
+constexpr KDColor kSecondaryGridColor = KDColor::RGB24(0xEEEEEE);
 constexpr int kNumberOfMainGridLines = 5;
 constexpr int kNumberOfSecondaryGridLines = 4;
 

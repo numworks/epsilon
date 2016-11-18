@@ -23,9 +23,9 @@ private:
   const KDColor firstAvailableColor();
   static constexpr int k_numberOfDefaultColors = 10;
   static constexpr KDColor k_defaultColors[k_numberOfDefaultColors] = {
-    KDColor(0xE5473E), KDColor(0x57B1D9), KDColor(0xE49832), KDColor(0x6DBE51),
-    KDColor(0x199B99), KDColor(0xF2A37C), KDColor(0x37C995), KDColor(0x6759D0),
-    KDColor(0xEF7138), KDColor(0x1774C5)
+    KDColor::RGB24(0xE5473E), KDColor::RGB24(0x57B1D9), KDColor::RGB24(0xE49832), KDColor::RGB24(0x6DBE51),
+    KDColor::RGB24(0x199B99), KDColor::RGB24(0xF2A37C), KDColor::RGB24(0x37C995), KDColor::RGB24(0x6759D0),
+    KDColor::RGB24(0xEF7138), KDColor::RGB24(0x1774C5)
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p", "q", "r", "s", "t"

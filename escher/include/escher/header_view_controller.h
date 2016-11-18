@@ -33,8 +33,8 @@ private:
     int selectedButton();
   private:
     constexpr static KDCoordinate k_headerHeight = 20;
-    constexpr static KDColor k_separatorHeaderColor = KDColor(0xDEE0E2);
-    constexpr static KDColor k_selectedBackgroundColor = KDColor(0x426DA7);
+    constexpr static KDColor k_separatorHeaderColor = KDColor::RGB24(0xDEE0E2);
+    constexpr static KDColor k_selectedBackgroundColor = KDColor::RGB24(0x426DA7);
     View * m_mainView;
     bool m_visibleHeader;
     int m_selectedButton;

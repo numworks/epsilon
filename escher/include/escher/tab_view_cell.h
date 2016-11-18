@@ -17,9 +17,9 @@ protected:
   void logAttributes(std::ostream &os) const override;
 #endif
 private:
-  constexpr static KDColor k_defaultTabColor = KDColor(0x426DA7);
-  constexpr static KDColor k_selectedTabColor = KDColor(0xC0D3EB);
-  constexpr static KDColor k_separatorTabColor = KDColor(0x567AA7);
+  constexpr static KDColor k_defaultTabColor = KDColor::RGB24(0x426DA7);
+  constexpr static KDColor k_selectedTabColor = KDColor::RGB24(0xC0D3EB);
+  constexpr static KDColor k_separatorTabColor = KDColor::RGB24(0x567AA7);
   bool m_active;
   bool m_selected;
   const char * m_name;

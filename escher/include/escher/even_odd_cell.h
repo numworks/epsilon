@@ -10,9 +10,9 @@ public:
   virtual KDColor backgroundColor() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-  static constexpr KDColor k_evenLineBackgroundColor = KDColor(0xF7F9FA);
+  static constexpr KDColor k_evenLineBackgroundColor = KDColor::RGB24(0xF7F9FA);
   static constexpr KDColor k_oddLineBackgroundColor = KDColorWhite;
-  static constexpr KDColor k_selectedLineBackgroundColor = KDColor(0xC0D3EA);
+  static constexpr KDColor k_selectedLineBackgroundColor = KDColor::RGB24(0xC0D3EA);
 
 protected:
   bool m_even;

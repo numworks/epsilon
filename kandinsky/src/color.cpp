@@ -19,7 +19,7 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
   uint16_t red = first.red()*alpha + second.red()*oneMinusAlpha;
   uint16_t green = first.green()*alpha + second.green()*oneMinusAlpha;
   uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
-  return KDColor(red>>8, green>>8, blue>>8);
+  return RGB888(red>>8, green>>8, blue>>8);
 
 
   // Blend White + black, ask for white

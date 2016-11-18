@@ -5,12 +5,12 @@
 
 class Palette {
 public:
-  constexpr static KDColor LineColor = KDColor(0xB4B7B9);
-  constexpr static KDColor BackgroundColor = KDColor(0xF0F3F5);
-  constexpr static KDColor CellBackgroundColor = KDColor(0xFCFCFC);
-  constexpr static KDColor FocusCellBackgroundColor = KDColor(0xBFD3EB);
-  constexpr static KDColor DesactiveTextColor = KDColor(0x646464);
-  constexpr static KDColor BoxTitleBackgroundColor = KDColor(0x656976);
+  constexpr static KDColor LineColor = KDColor::RGB24(0xB4B7B9);
+  constexpr static KDColor BackgroundColor = KDColor::RGB24(0xF0F3F5);
+  constexpr static KDColor CellBackgroundColor = KDColor::RGB24(0xFCFCFC);
+  constexpr static KDColor FocusCellBackgroundColor = KDColor::RGB24(0xBFD3EB);
+  constexpr static KDColor DesactiveTextColor = KDColor::RGB24(0x646464);
+  constexpr static KDColor BoxTitleBackgroundColor = KDColor::RGB24(0x656976);
 };
 
 #endif

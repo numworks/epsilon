@@ -34,13 +34,6 @@ public:
   void setContext(Context * evaluateContext);
   Context * context() const;
 private:
-  constexpr static int k_maxNumberOfIterations = 10;
-  constexpr static KDCoordinate k_stampSize = 3;
-  constexpr static uint8_t k_mask[k_stampSize*k_stampSize] = {
-    0xff, 0x73, 0xff,
-    0x73, 0x00, 0x73,
-    0xff, 0x73, 0xff,
-  };
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -55,7 +48,7 @@ private:
   KDCoordinate pixelLength(Axis axis) const;
 
   float pixelToFloat(Axis axis, KDCoordinate p) const;
-  KDCoordinate floatToPixel(Axis axis, float f) const;
+  float floatToPixel(Axis axis, float f) const;
 
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
@@ -66,11 +59,13 @@ private:
   void drawFunction(KDContext * ctx, KDRect rect) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(float x, float y, float u, float v, Function * function, int maxNumberOfRecursion, KDContext * ctx, KDColor * workingBuffer) const;
-  /* Join two dots with a straight line (changing abscissa halfway). */
-  void straightJoinDots(KDCoordinate px, KDCoordinate py, KDCoordinate pu, KDCoordinate pv, Function * function, KDContext * ctx, KDColor * workingBuffer) const;
-  /* Stamp centered around (px, py). */
-  void stampAtLocation(KDCoordinate px, KDCoordinate py, KDColor color, KDContext * ctx, KDColor * workingBuffer) const;
+  void jointDots(float x, float y, float u, float v, Function * function, int maxNumberOfRecursion, KDContext * ctx) const;
+  /* Join two dots with a straight line. */
+  void straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx) const;
+  /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the
+   * function shifts the stamp (by blending adjacent pixel colors) to draw with
+   * anti alising. */
+  void stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx) const;
 #if GRAPH_VIEW_IS_TILED
   static constexpr KDCoordinate kTileWidth = 32;
   static constexpr KDCoordinate kTileHeight = 32;

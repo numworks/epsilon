@@ -80,8 +80,12 @@ void AxisInterval::computeYaxes() {
         }
       }
     }
-  m_yMin = min;
-  m_yMax = max;
+    m_yMin = min;
+    m_yMax = max;
+    if (m_yMin == m_yMax) {
+      m_yMin = min - 1;
+      m_yMax = max + 1;
+    }
   }
 }
 

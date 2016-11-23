@@ -115,14 +115,16 @@ bool HeaderViewController::setSelectedButton(int selectedButton) {
 bool HeaderViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     if (m_contentView.selectedButton() == 0) {
-      return true;
     } else {
       setSelectedButton(m_contentView.selectedButton() - 1);
-      return true;
     }
+    return true;
   }
   if (event == Ion::Events::Right) {
-    setSelectedButton(m_contentView.selectedButton() + 1);
+    if (m_contentView.selectedButton() == - 1) {
+    } else {
+      setSelectedButton(m_contentView.selectedButton() + 1);
+    }
     return true;
   }
   if (event == Ion::Events::OK) {

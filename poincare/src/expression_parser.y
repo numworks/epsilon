@@ -29,6 +29,8 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
  * be useful to retrieve the value of Integers for example). */
 %union {
   Expression * expression;
+  List * list;
+  Matrix * matrix;
   Function * function;
   char * string;
   char character;
@@ -47,6 +49,11 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 %token POW
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
+%token LEFT_BRACE
+%token RIGHT_BRACE
+%token LEFT_BRACKET
+%token RIGHT_BRACKET
+%token COMMA
 
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
@@ -71,6 +78,10 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;
 
+%type <list> lst;
+
+%type <matrix> mtx;
+
 %%
 
 Root:
@@ -80,6 +91,15 @@ Root:
 
 /* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
  * one has the highest precedence. */
+
+lst:
+  exp { $$ = new List($1, false); }
+  | lst COMMA exp { $$ = $1; $$->pushExpression($3, false); }
+
+mtx:
+  LEFT_BRACKET lst RIGHT_BRACKET { $$ = new Matrix($2, false); }
+  | mtx LEFT_BRACKET lst RIGHT_BRACKET  { $$ = $1; $$->pushList($3, false); }
+
 exp:
   INTEGER            { $$ = new Integer($1);     }
   | SYMBOL           { $$ = new Symbol($1); }
@@ -89,6 +109,7 @@ exp:
   | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
   | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Parenthesis($2, false); }
+  | LEFT_BRACKET mtx RIGHT_BRACKET { $$ = $2; }
   | FUNCTION LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, false); }
 ;
 

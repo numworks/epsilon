@@ -80,5 +80,10 @@ log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; 
 \^ { return(POW); }
 \( { return(LEFT_PARENTHESIS); }
 \) { return(RIGHT_PARENTHESIS); }
+\{ { return(LEFT_BRACE); }
+\} { return(RIGHT_BRACE); }
+\[ { return(LEFT_BRACKET); }
+\] { return(RIGHT_BRACKET); }
+\, { return(COMMA); }
 
 %%

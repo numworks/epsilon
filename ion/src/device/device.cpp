@@ -8,6 +8,9 @@ extern "C" {
 #include "display.h"
 #include "keyboard.h"
 #include "battery.h"
+#include "sd_card.h"
+
+#define USE_SD_CARD 0
 
 // Public Ion methods
 
@@ -32,6 +35,9 @@ void Ion::Device::init() {
   Battery::Device::init();
 
   Display::setBacklightIntensity(0xFF);
+#if USE_SD_CARD
+  SDCard::Device::init();
+#endif
 }
 
 void Ion::Device::initClocks() {
@@ -64,6 +70,11 @@ void Ion::Device::initClocks() {
   RCC.CFGR()->setSW(RCC::CFGR::SW::PLL);
   while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
   }
+#else
+  // The high-speed internal oscillator runs at 16 MHz. By default we're not
+  // using the PLL and would feed 96 MHz into the SDIO bus. The easiest way
+  // to enable SDIO access is to just use the system clock (16 MHz) for SDIO.
+  RCC.DCKCFGR2()->setCKSDIOSEL(1);
 #endif
 
   // Peripheral clocks
@@ -85,6 +96,9 @@ void Ion::Device::initClocks() {
 
   RCC.APB2ENR()->setADC1EN(true);
   RCC.APB2ENR()->setSYSCFGEN(true);
+#if USE_SD_CARD
+  RCC.APB2ENR()->setSDIOEN(true);
+#endif
 }
 
 void Ion::Device::initFPU() {

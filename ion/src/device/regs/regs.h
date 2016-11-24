@@ -6,8 +6,9 @@
 #include "cm4.h"
 #include "fsmc.h"
 #include "flash.h"
-#include "rcc.h"
 #include "gpio.h"
+#include "rcc.h"
+#include "sdio.h"
 #include "syscfg.h"
 #include "tim.h"
 

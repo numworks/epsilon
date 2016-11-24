@@ -75,7 +75,14 @@ public:
   public:
     REGS_BOOL_FIELD(TIM1EN, 0);
     REGS_BOOL_FIELD(ADC1EN, 8);
+    REGS_BOOL_FIELD(SDIOEN, 11);
     REGS_BOOL_FIELD(SYSCFGEN, 14);
+  };
+
+  class DCKCFGR2 : Register32 {
+  public:
+    REGS_BOOL_FIELD(CK48MSEL, 27);
+    REGS_BOOL_FIELD(CKSDIOSEL, 28);
   };
 
   constexpr RCC() {};
@@ -86,6 +93,7 @@ public:
   REGS_REGISTER_AT(AHB3ENR, 0x38);
   REGS_REGISTER_AT(APB1ENR, 0x40);
   REGS_REGISTER_AT(APB2ENR, 0x44);
+  REGS_REGISTER_AT(DCKCFGR2, 0x94);
 private:
   constexpr uint32_t Base() const {
     return 0x40023800;

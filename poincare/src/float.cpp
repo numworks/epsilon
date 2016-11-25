@@ -4,10 +4,18 @@ extern "C" {
 #include <string.h>
 #include <math.h>
 }
-
+#include "layout/string_layout.h"
 #include <poincare/float.h>
 
-Float::Float(float f) : m_float(f) {
+
+Float::Float(float f) :
+  m_float(f),
+  m_numberOfDigitsInMantissa(7)
+{
+}
+
+void Float::setNumberOfDigitsInMantissa(int numberOfDigits) {
+  m_numberOfDigitsInMantissa = numberOfDigits;
 }
 
 Expression * Float::clone() const {
@@ -23,8 +31,13 @@ Expression::Type Float::type() const {
 }
 
 ExpressionLayout * Float::createLayout() const {
-  assert(0); // Should not come here, ever...
-  return nullptr;
+  char buffer[k_maxBufferLength];
+  convertFloatToText(buffer, k_maxBufferLength, m_numberOfDigitsInMantissa);
+  int size = 0;
+  while (buffer[size] != 0) {
+    size++;
+  }
+  return new StringLayout(buffer, size);
 }
 
 bool Float::valueEquals(const Expression * e) const {
@@ -58,7 +71,7 @@ void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  
 }
 
 void Float::convertFloatToText(char * buffer, int bufferSize,
-    int numberOfDigitsInMantissa, DisplayMode mode) {
+    int numberOfDigitsInMantissa, DisplayMode mode) const {
   /* We here assert that the buffer is long enough to display with the right
    * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
    * worst case has the form -1.999999e-38 (7+6+1 char). */

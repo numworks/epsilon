@@ -17,10 +17,11 @@ class Context {
     static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
     static constexpr uint16_t k_maxNumberOfListExpressions = 10;
     static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
+  protected:
+    static Float * defaultExpression();
   private:
     int symbolIndex(const Symbol * symbol) const;
     Expression * m_expressions[k_maxNumberOfScalarExpressions];
-    static Float * defaultExpression();
 };
 
 #endif

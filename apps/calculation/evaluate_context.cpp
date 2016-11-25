@@ -11,6 +11,9 @@ EvaluateContext::EvaluateContext(::Context * parentContext, CalculationStore * c
 }
 
 Float * EvaluateContext::ansValue() {
+  if (m_calculationStore->numberOfCalculations() == 0) {
+    return defaultExpression();
+  }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
   m_ansValue = Float(lastCalculation->evaluation());
   return &m_ansValue;

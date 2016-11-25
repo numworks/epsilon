@@ -39,7 +39,7 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
         case Expression::Type::Product:
           /* The children do not need to be cloned as they already have been
            * before. */
-          result = new Product(children_expressions, numberOfChildrenExpressions, false);
+          result = new Product(children_expressions, false);
           break;
         default:
           assert(false);

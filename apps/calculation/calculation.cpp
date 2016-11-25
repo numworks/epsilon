@@ -6,7 +6,8 @@ namespace Calculation {
 Calculation::Calculation() :
   m_expression(nullptr),
   m_layout(nullptr),
-  m_evaluation(0.0f)
+  m_evaluation(nullptr),
+  m_evaluationLayout(nullptr)
 {
 }
 
@@ -26,7 +27,20 @@ Calculation & Calculation::operator= (const Calculation & other) {
   if (m_expression && other.m_layout) {
     m_layout = m_expression->createLayout();
   }
-  m_evaluation = other.m_evaluation;
+  if (m_evaluation != nullptr) {
+    delete m_evaluation;
+  }
+  m_evaluation = nullptr;
+  if (other.m_evaluation) {
+    m_evaluation = other.m_evaluation->clone();
+  }
+  if (m_evaluationLayout != nullptr) {
+    delete m_evaluationLayout;
+  }
+  m_evaluationLayout = nullptr;
+  if (m_evaluation && other.m_evaluationLayout) {
+    m_evaluationLayout = m_evaluation->createLayout();
+  }
   return *this;
 }
 
@@ -39,8 +53,15 @@ void Calculation::setContent(const char * c, Context * context) {
   if (m_layout != nullptr) {
     delete m_layout;
   }
-  m_layout = expression()->createLayout();
-  m_evaluation = m_expression->approximate(*context);
+  m_layout = m_expression->createLayout();
+  if (m_evaluation != nullptr) {
+    delete m_evaluationLayout;
+  }
+  m_evaluation = m_expression->createEvaluation(*context);
+  if (m_evaluationLayout != nullptr) {
+    delete m_evaluationLayout;
+  }
+  m_evaluationLayout = m_evaluation->createLayout();
 }
 
 Calculation::~Calculation() {
@@ -49,6 +70,12 @@ Calculation::~Calculation() {
   }
   if (m_expression != nullptr) {
     delete m_expression;
+  }
+  if (m_evaluation != nullptr) {
+    delete m_evaluation;
+  }
+  if (m_evaluationLayout != nullptr) {
+    delete m_evaluationLayout;
   }
 }
 
@@ -64,8 +91,12 @@ ExpressionLayout * Calculation::layout() {
   return m_layout;
 }
 
-float Calculation::evaluation() {
+Expression * Calculation::evaluation() {
   return m_evaluation;
+}
+
+ExpressionLayout * Calculation::evaluationLayout() {
+  return m_evaluationLayout;
 }
 
 bool Calculation::isEmpty() {

@@ -23,17 +23,24 @@ bool ExpressionTextFieldDelegate::cursorInToken(TextField * textField, const cha
 }
 
 bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::OK && Expression::parse(textField->text()) == nullptr) {
-    if (textField->textLength() == 0) {
+  if (event == Ion::Events::OK) {
+    Expression * exp = Expression::parse(textField->text());
+    if (exp == nullptr) {
+      if (textField->textLength() == 0) {
+        return true;
+      }
+      textField->app()->displayWarning("Attention a la syntaxe jeune padawan");
       return true;
     }
-    textField->app()->displayWarning("Attention a la syntaxe jeune padawan");
-    return true;
-  }
-  if (event == Ion::Events::OK &&
-    isnan(Expression::parse(textField->text())->approximate(*evaluateContext()))) {
+    Expression * evaluation = exp->createEvaluation(*evaluateContext());
+    if (evaluation == nullptr) {
+      delete exp;
       textField->app()->displayWarning("Relis ton cours de maths, veux tu?");
       return true;
+    } else {
+      delete evaluation;
+      delete exp;
+    }
   }
   if (event == Ion::Events::Toolbox) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();

@@ -9,10 +9,10 @@ namespace Calculation {
 class EvaluateContext : public ::Context {
   public:
     EvaluateContext(Context * parentContext, CalculationStore * calculationStore);
-    Float * ansValue();
+    Expression * ansValue();
     const Expression * expressionForSymbol(const Symbol * symbol) override;
   private:
-    Float m_ansValue;
+    Expression * m_ansValue;
     CalculationStore * m_calculationStore;
     ::Context * m_context;
 };

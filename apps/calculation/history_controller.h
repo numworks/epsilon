@@ -32,7 +32,6 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 10;
-  constexpr static KDCoordinate k_resultHeight = 12;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationSelectableTableView m_selectableTableView;
   CalculationStore * m_calculationStore;

@@ -13,7 +13,8 @@ public:
   const char * text();
   Expression * expression();
   ExpressionLayout * layout();
-  float evaluation();
+  Expression * evaluation();
+  ExpressionLayout * evaluationLayout();
   void setContent(const char * c, Context * context);
   bool isEmpty();
 private:
@@ -21,7 +22,8 @@ private:
   char m_text[k_bodyLength];
   Expression * m_expression;
   ExpressionLayout * m_layout;
-  float m_evaluation;
+  Expression * m_evaluation;
+  ExpressionLayout * m_evaluationLayout;
 };
 
 }

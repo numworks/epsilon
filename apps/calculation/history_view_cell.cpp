@@ -9,7 +9,7 @@ namespace Calculation {
 HistoryViewCell::HistoryViewCell() :
   Responder(nullptr),
   m_prettyPrint(PrettyPrintView(this)),
-  m_result(BufferTextView(1.0f, 0.5f)),
+  m_result(ExpressionView()),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Result)
 {
 }
@@ -52,9 +52,7 @@ void HistoryViewCell::layoutSubviews() {
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_prettyPrint.setExpression(calculation->layout());
-  char buffer[Constant::FloatBufferSizeInScientificMode];
-  Float(calculation->evaluation()).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-  m_result.setText(buffer);
+  m_result.setExpression(calculation->evaluationLayout());
 }
 
 void HistoryViewCell::reloadCell() {

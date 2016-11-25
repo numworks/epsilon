@@ -29,7 +29,7 @@ public:
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   PrettyPrintView m_prettyPrint;
-  BufferTextView m_result;
+  ExpressionView m_result;
   SubviewType m_selectedSubviewType;
 };
 

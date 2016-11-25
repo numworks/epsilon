@@ -4,19 +4,19 @@
 namespace Calculation {
 
 EvaluateContext::EvaluateContext(::Context * parentContext, CalculationStore * calculationStore) :
-  m_ansValue(Float(0.0f)),
+  m_ansValue(nullptr),
   m_calculationStore(calculationStore),
   m_context(parentContext)
 {
 }
 
-Float * EvaluateContext::ansValue() {
+Expression * EvaluateContext::ansValue() {
   if (m_calculationStore->numberOfCalculations() == 0) {
     return defaultExpression();
   }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
-  m_ansValue = Float(lastCalculation->evaluation());
-  return &m_ansValue;
+  m_ansValue = lastCalculation->evaluation();
+  return m_ansValue;
 }
 
 const Expression * EvaluateContext::expressionForSymbol(const Symbol * symbol) {

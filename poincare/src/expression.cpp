@@ -170,3 +170,11 @@ bool Expression::valueEquals(const Expression * e) const {
 bool Expression::isCommutative() const {
   return false;
 }
+
+void Expression::setText() {
+}
+
+char * Expression::text() {
+  setText();
+  return m_text;
+}

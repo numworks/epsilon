@@ -69,6 +69,11 @@ class Expression {
 
     virtual Expression * createEvaluation(Context& context) const = 0;
     virtual float approximate(Context& context) const = 0;
+    char * text();
+  protected:
+    virtual void setText();
+    constexpr static int k_maxLength = 255;
+    char m_text[k_maxLength];
   private:
     bool sequentialOperandsIdentity(const Expression * e) const;
     bool commutativeOperandsIdentity(const Expression * e) const;

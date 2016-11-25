@@ -6,6 +6,7 @@ extern "C" {
 #include <poincare/float.h>
 #include "layout/matrix_layout.h"
 #include <math.h>
+#include <string.h>
 
 Matrix::Matrix(List * list, bool cloneOperands) :
   m_numberOfRows(1),
@@ -122,4 +123,24 @@ int Matrix::numberOfRows() {
 
 int Matrix::numberOfColumns() {
   return m_numberOfColumns;
+}
+
+void Matrix::setText() {
+  int currentChar = 0;
+  m_text[currentChar++] = '[';
+  for (int i = 0; i < m_numberOfRows; i++) {
+    m_text[currentChar++] = '[';
+    char * operandText = m_operands[i*m_numberOfColumns]->text();
+    strlcpy(m_text+currentChar, operandText, strlen(operandText)+1);
+    for (int j = 1; j < m_numberOfColumns; j++) {
+      currentChar += strlen(operandText);
+      m_text[currentChar++] = ',';
+      operandText = m_operands[i*m_numberOfColumns+j]->text();
+      strlcpy(m_text+currentChar, operandText, strlen(operandText)+1);
+    }
+    currentChar += strlen(operandText);
+    m_text[currentChar++] = ']';
+  }
+  m_text[currentChar++] = ']';
+  m_text[currentChar] = 0;
 }

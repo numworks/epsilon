@@ -49,6 +49,10 @@ bool Float::valueEquals(const Expression * e) const {
   return m_float == ((Float *)e)->m_float;
 }
 
+void Float::setText() {
+  convertFloatToText(m_text, k_maxBufferLength, m_numberOfDigitsInMantissa);
+}
+
 void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
    * in first position. When called by convertFloatToText, the buffer length is

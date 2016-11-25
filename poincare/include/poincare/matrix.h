@@ -23,6 +23,8 @@ class Matrix : public Expression {
     int numberOfRows();
     int numberOfColumns();
   protected:
+    void setText() override;
+  private:
     int m_numberOfRows;
     int m_numberOfColumns;
     Expression ** m_operands;

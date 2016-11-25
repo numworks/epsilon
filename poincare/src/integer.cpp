@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <poincare/float.h>
 #include "layout/string_layout.h"
 
 #define MAX(a,b) ((a)>(b)?a:b)
@@ -322,6 +323,10 @@ float Integer::approximate(Context& context) const {
   uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
 
   return float_result;
+}
+
+Expression * Integer::createEvaluation(Context& context) const {
+  return new Float(approximate(context));
 }
 
 Expression::Type Integer::type() const {

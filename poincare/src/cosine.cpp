@@ -1,4 +1,5 @@
 #include <poincare/cosine.h>
+#include <poincare/float.h>
 
 extern "C" {
 #include <assert.h>
@@ -25,4 +26,8 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
 
 float Cosine::approximate(Context& context) const {
   return cosf(m_arg->approximate(context));
+}
+
+Expression * Cosine::createEvaluation(Context& context) const {
+  return new Float(cosf(m_arg->approximate(context)));
 }

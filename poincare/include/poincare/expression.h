@@ -67,6 +67,7 @@ class Expression {
     virtual Type type() const = 0;
     virtual bool isCommutative() const;
 
+    virtual Expression * createEvaluation(Context& context) const = 0;
     virtual float approximate(Context& context) const = 0;
   private:
     bool sequentialOperandsIdentity(const Expression * e) const;

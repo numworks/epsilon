@@ -45,6 +45,10 @@ float Parenthesis::approximate(Context& context) const {
   return m_operand->approximate(context);
 }
 
+Expression * Parenthesis::createEvaluation(Context& context) const {
+  return m_operand->createEvaluation(context);
+}
+
 Expression::Type Parenthesis::type() const {
   return Expression::Type::Parenthesis;
 }

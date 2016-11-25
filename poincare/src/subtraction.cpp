@@ -30,3 +30,53 @@ ExpressionLayout * Subtraction::createLayout() const {
   children_layouts[2] = m_operands[1]->createLayout();
   return new HorizontalLayout(children_layouts, 3);
 }
+
+Expression * Subtraction::createEvaluation(Context& context) const {
+  Expression * leftOperand = m_operands[0]->createEvaluation(context);
+  Expression * rightOperand = m_operands[1]->createEvaluation(context);
+  if (leftOperand == nullptr || rightOperand == nullptr) {
+    return nullptr;
+  }
+  Expression * result = nullptr;
+  if (leftOperand->type() == Expression::Type::Float && rightOperand->type() == Expression::Type::Float) {
+    result = new Float(this->approximate(context));
+  }
+  if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Float) {
+    result = createEvaluationOnMatrixAndFloat((Matrix *)leftOperand, (Float *)rightOperand, context, true);
+  }
+  if (leftOperand->type() == Expression::Type::Float && rightOperand->type() == Expression::Type::Matrix) {
+    result = createEvaluationOnMatrixAndFloat((Matrix *)rightOperand, (Float *)leftOperand, context, false);
+  }
+  if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Matrix) {
+    result = createEvaluationOnMatrices((Matrix *)leftOperand, (Matrix *)rightOperand, context);
+  }
+  delete leftOperand;
+  delete rightOperand;
+  return result;
+}
+
+Expression * Subtraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Context& context, bool matrixMinusFloat) const {
+  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
+    if (matrixMinusFloat) {
+      operands[i] = new Float(m->operand(i)->approximate(context) - a->approximate(context));
+    } else {
+      operands[i] = new Float(a->approximate(context) - m->operand(i)->approximate(context));
+    }
+  }
+  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+}
+
+Expression * Subtraction::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+  if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfColumns()) {
+    return nullptr;
+  }
+  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
+    if (!m->operand(i)->approximate(context) || !n->operand(i)->approximate(context)) {
+      return nullptr;
+    }
+    operands[i] = new Float(m->operand(i)->approximate(context) - n->operand(i)->approximate(context));
+  }
+  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+}

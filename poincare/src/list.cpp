@@ -2,6 +2,8 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
+#include <math.h>
+#include <poincare/float.h>
 #include <poincare/list.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
@@ -79,7 +81,15 @@ ExpressionLayout * List::createLayout() const {
 }
 
 float List::approximate(Context& context) const {
-  return 0;
+  return NAN;
+}
+
+Expression * List::createEvaluation(Context& context) const {
+  Expression * operands[m_numberOfOperands];
+  for (int i = 0; i < m_numberOfOperands; i++) {
+    operands[i] = new Float(m_operands[i]->approximate(context));
+  }
+  return new List(operands, m_numberOfOperands, false);
 }
 
 Expression::Type List::type() const {

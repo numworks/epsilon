@@ -25,3 +25,49 @@ float Fraction::approximate(Context& context) const {
 Expression::Type Fraction::type() const {
   return Expression::Type::Fraction;
 }
+
+Expression * Fraction::createEvaluation(Context& context) const {
+  Expression * numerator = m_operands[0]->createEvaluation(context);
+  Expression * denominator = m_operands[1]->createEvaluation(context);
+  if (numerator == nullptr || denominator == nullptr) {
+    return nullptr;
+  }
+  Expression * result = nullptr;
+  if (numerator->type() == Expression::Type::Float && denominator->type() == Expression::Type::Float) {
+    result = new Float(this->approximate(context));
+  }
+  if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Float) {
+    result = createEvaluationOnMatrixAndFloat((Matrix *)numerator, (Float *)denominator, context);
+  }
+  if (numerator->type() == Expression::Type::Float && denominator->type() == Expression::Type::Matrix) {
+    result = nullptr;
+  }
+  if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Matrix) {
+    result = createEvaluationOnMatrices((Matrix *)numerator, (Matrix *)denominator, context);
+  }
+  delete numerator;
+  delete denominator;
+  return result;
+}
+
+Expression * Fraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
+    operands[i] = new Float(m->operand(i)->approximate(context)/a->approximate(context));
+  }
+  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  return result;
+}
+
+Expression * Fraction::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+  if (m->numberOfColumns() != n->numberOfColumns()) {
+    return nullptr;
+  }
+  /* TODO: implement matrix fraction
+  if (n->det() == 0) {
+    return new Float(NAN);
+  }
+  result = new Product(m, n->inv());
+  return result;*/
+  return nullptr;
+}

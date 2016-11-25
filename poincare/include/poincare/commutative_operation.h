@@ -10,11 +10,13 @@ class CommutativeOperation : public Expression {
     const Expression * operand(int i) const override;
     int numberOfOperands() const override;
     float approximate(Context& context) const override;
+    Expression * createEvaluation(Context& context) const override;
     ExpressionLayout * createLayout() const override;
     bool isCommutative() const override;
     Expression * clone() const override;
   protected:
     virtual float operateApproximatevelyOn(float a, float b) const = 0;
+    virtual Expression * createEvaluationOn(Expression * a, Expression * b, Context& context) const = 0;
     virtual char operatorChar() const = 0;
     const int m_numberOfOperands;
     Expression ** m_operands;

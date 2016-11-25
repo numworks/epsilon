@@ -3,7 +3,9 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix.h>
+#include <poincare/float.h>
 #include "layout/matrix_layout.h"
+#include <math.h>
 
 Matrix::Matrix(List * list, bool cloneOperands) :
   m_numberOfRows(1),
@@ -93,7 +95,15 @@ ExpressionLayout * Matrix::createLayout() const {
 }
 
 float Matrix::approximate(Context& context) const {
-  return 0;
+  return NAN;
+}
+
+Expression * Matrix::createEvaluation(Context& context) const {
+  Expression * operands[m_numberOfRows * m_numberOfColumns];
+  for (int i = 0; i < m_numberOfRows * m_numberOfColumns; i++) {
+    operands[i] = new Float(operand(i)->approximate(context));
+  }
+  return new Matrix(operands, m_numberOfRows * m_numberOfColumns, m_numberOfColumns, m_numberOfRows, false);
 }
 
 Expression::Type Matrix::type() const {
@@ -104,4 +114,12 @@ Expression * Matrix::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
   return new Matrix(newOperands, numberOfOperands, m_numberOfColumns, m_numberOfRows, cloneOperands);
+}
+
+int Matrix::numberOfRows() {
+  return m_numberOfRows;
+}
+
+int Matrix::numberOfColumns() {
+  return m_numberOfColumns;
 }

@@ -1,4 +1,5 @@
 #include <poincare/commutative_operation.h>
+#include <poincare/float.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -50,6 +51,19 @@ float CommutativeOperation::approximate(Context& context) const {
     float next = m_operands[i]->approximate(context);
     result = this->operateApproximatevelyOn(result, next);
   }
+  return result;
+}
+
+Expression * CommutativeOperation::createEvaluation(Context& context) const {
+  Expression * result = m_operands[0]->createEvaluation(context);
+  for (int i=1; i<m_numberOfOperands; i++) {
+    Expression * next = m_operands[i]->createEvaluation(context);
+    Expression * newResult = this->createEvaluationOn(result, next, context);
+    delete result;
+    result = newResult;
+    delete next;
+  }
+  assert(result == nullptr || result->type() == Expression::Type::Float || result->type() == Expression::Type::Matrix || result->type() == Expression::Type::List);
   return result;
 }
 

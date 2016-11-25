@@ -15,10 +15,13 @@ class Matrix : public Expression {
     Expression * clone() const override;
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
+    Expression * createEvaluation(Context& context) const override;
     Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numnerOfOperands, bool cloneOperands = true) const override;
+        int numberOfOperands, bool cloneOperands = true) const override;
     void pushList(List * list, bool cloneOperands = true);
+    int numberOfRows();
+    int numberOfColumns();
   protected:
     int m_numberOfRows;
     int m_numberOfColumns;

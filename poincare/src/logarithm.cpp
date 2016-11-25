@@ -1,5 +1,5 @@
 #include <poincare/logarithm.h>
-
+#include <poincare/float.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -25,4 +25,8 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
 
 float Logarithm::approximate(Context& context) const {
   return log10f(m_arg->approximate(context));
+}
+
+Expression * Logarithm::createEvaluation(Context& context) const {
+  return new Float(log10f(m_arg->approximate(context)));
 }

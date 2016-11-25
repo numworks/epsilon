@@ -1,5 +1,6 @@
 #include <poincare/symbol.h>
 #include <poincare/context.h>
+#include <math.h>
 #include "layout/string_layout.h"
 extern "C" {
 #include <assert.h>
@@ -11,7 +12,15 @@ Symbol::Symbol(char name) :
 }
 
 float Symbol::approximate(Context& context) const {
-  return context.expressionForSymbol(this)->approximate(context);
+  if (context.expressionForSymbol(this)) {
+    return context.expressionForSymbol(this)->approximate(context);
+  }
+  // TODO: decide with Leo what we should return
+  return NAN;
+}
+
+Expression * Symbol::createEvaluation(Context& context) const {
+  return context.expressionForSymbol(this)->createEvaluation(context);
 }
 
 Expression::Type Symbol::type() const {

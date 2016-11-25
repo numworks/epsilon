@@ -11,6 +11,7 @@ public:
     Symbol(char name);
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
+    Expression * createEvaluation(Context& context) const override;
     Type type() const override;
     const char name() const;
     Expression * clone() const override;

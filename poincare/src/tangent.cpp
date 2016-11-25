@@ -4,6 +4,7 @@ extern "C" {
 #include <assert.h>
 #include <math.h>
 }
+#include <poincare/float.h>
 
 Tangent::Tangent() :
   Function("tan")
@@ -25,4 +26,8 @@ Expression::Type Tangent::type() const {
 
 float Tangent::approximate(Context& context) const {
   return tanf(m_arg->approximate(context));
+}
+
+Expression * Tangent::createEvaluation(Context& context) const {
+  return new Float(tanf(m_arg->approximate(context)));
 }

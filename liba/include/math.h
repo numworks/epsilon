@@ -5,6 +5,8 @@
 
 LIBA_BEGIN_DECLS
 
+#define NAN (0.0F/0.0F)
+
 /* The C99 standard requires isinf and isnan to be defined as macros that can
  * handle arbitrary precision float numbers. The names of the functions called
  * by those macros (depending on the argument size) are not standardized though.

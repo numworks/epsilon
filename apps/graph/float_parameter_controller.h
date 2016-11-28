@@ -15,13 +15,9 @@ public:
   void editParameter(const char * initialText = nullptr);
 
   View * view() override;
-  //const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  //int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  //TableViewCell * reusableCell(int index) override;
-  //int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 protected:
   SelectableTableView m_selectableTableView;

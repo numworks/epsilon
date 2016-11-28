@@ -13,6 +13,8 @@ AxisInterval::AxisInterval(FunctionStore * functionStore) :
   m_yMin(-10.0f),
   m_yMax(10.0f),
   m_yAuto(true),
+  m_xScale(2.0f),
+  m_yScale(2.0f),
   m_functionStore(functionStore),
   m_evaluateContext(nullptr)
 {
@@ -38,22 +40,34 @@ bool AxisInterval::yAuto() {
   return m_yAuto;
 }
 
+float AxisInterval::xScale() {
+  return m_xScale;
+}
+
+float AxisInterval::yScale() {
+  return m_yScale;
+}
+
 void AxisInterval::setXMin(float xMin) {
   m_xMin = xMin;
   computeYaxes();
+  computeXScale();
 }
 
 void AxisInterval::setXMax(float xMax) {
   m_xMax = xMax;
   computeYaxes();
+  computeXScale();
 }
 
 void AxisInterval::setYMin(float yMin) {
   m_yMin = yMin;
+  computeYScale();
 }
 
 void AxisInterval::setYMax(float yMax) {
   m_yMax = yMax;
+  computeYScale();
 }
 
 void AxisInterval::setYAuto(bool yAuto) {
@@ -87,6 +101,45 @@ void AxisInterval::computeYaxes() {
       m_yMax = max + 1;
     }
   }
+  computeYScale();
+}
+
+void AxisInterval::computeXScale() {
+  int a = 0;
+  int b = 0;
+  float d = m_xMax - m_xMin;
+  if (floorf(log10f(d/90.0f)) != floorf(log10f(d/35.0f))) {
+    b = floorf(log10f(d/35.0f));
+    a = 5;
+  }
+  if (floorf(log10f(d/36.0f)) != floorf(log10f(d/14.0f))) {
+    b = floorf(log10f(d/14.0f));
+    a = 2;
+  }
+  if (floorf(log10f(d/18.0f)) != floorf(log10f(d/7.0f))) {
+    b = floorf(log10f(d/7.0f));
+    a = 1;
+  }
+  m_xScale = a*powf(10,b);
+}
+
+void AxisInterval::computeYScale() {
+  int a = 0;
+  int b = 0;
+  float d = m_yMax - m_yMin;
+  if (floorf(log10f(d/65.0f)) != floorf(log10f(d/25.0f))) {
+    b = floorf(log10f(d/25.0f));
+    a = 5;
+  }
+  if (floorf(log10f(d/26.0f)) != floorf(log10f(d/10.0f))) {
+    b = floorf(log10f(d/10.0f));
+    a = 2;
+  }
+  if (floorf(log10f(d/13.0f)) != floorf(log10f(d/5.0f))) {
+    b = floorf(log10f(d/5.0f));
+    a = 1;
+  }
+  m_yScale = a*powf(10,b);
 }
 
 Context * AxisInterval::context() {

@@ -14,6 +14,8 @@ public:
   float yMin();
   float yMax();
   bool yAuto();
+  float xScale();
+  float yScale();
   void setXMin(float f);
   void setXMax(float f);
   void setYMin(float f);
@@ -25,13 +27,15 @@ public:
   Context * context();
   void setContext(Context * context);
 private:
+  void computeXScale();
+  void computeYScale();
   float m_xMin;
   float m_xMax;
   float m_yMin;
   float m_yMax;
   bool m_yAuto;
-  //float xScale;
-  //float yScale;
+  float m_xScale;
+  float m_yScale;
   FunctionStore * m_functionStore;
   EvaluateContext * m_evaluateContext;
 };

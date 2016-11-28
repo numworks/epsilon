@@ -12,6 +12,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_axisInterval(functionStore),
   m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
   m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
+  m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = ((StackViewController *)graphController->stackController());
@@ -22,7 +23,11 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
     StackViewController * stack = ((StackViewController *)graphController->stackController());
     stack->push(graphController->zoomParameterController());
   }, this)),
-  m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {}, this)),
+  m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {
+    GraphController * graphController = (GraphController *) context;
+    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    stack->push(graphController->initialisationParameterController());
+  }, this)),
   m_functionStore(functionStore)
 {
 }
@@ -65,13 +70,16 @@ StackViewController * GraphController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-
 ViewController * GraphController::axisParameterController() {
   return &m_axisParameterController;
 }
 
 ViewController * GraphController::zoomParameterController() {
   return &m_zoomParameterController;
+}
+
+ViewController * GraphController::initialisationParameterController() {
+  return &m_initialisationParameterController;
 }
 
 int GraphController::numberOfButtons() const {

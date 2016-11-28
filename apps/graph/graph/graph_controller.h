@@ -5,6 +5,7 @@
 #include "graph_view.h"
 #include "axis_interval.h"
 #include "axis_parameter_controller.h"
+#include "initialisation_parameter_controller.h"
 #include "zoom_parameter_controller.h"
 #include "../function_store.h"
 
@@ -18,6 +19,7 @@ public:
   void didBecomeFirstResponder() override;
   ViewController * axisParameterController();
   ViewController * zoomParameterController();
+  ViewController * initialisationParameterController();
 
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
@@ -34,6 +36,7 @@ private:
   AxisInterval m_axisInterval;
   AxisParameterController m_axisParameterController;
   ZoomParameterController m_zoomParameterController;
+  InitialisationParameterController m_initialisationParameterController;
   Button m_axisButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

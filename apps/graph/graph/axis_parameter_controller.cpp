@@ -19,10 +19,6 @@ const char * AxisParameterController::title() const {
   return "Axes";
 }
 
-Graph::AxisInterval * AxisParameterController::axisInterval() {
-  return m_axisInterval;
-}
-
 void AxisParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (index == 2) {
     SwitchView * switchView = (SwitchView *)m_yAutoCell.accessoryView();

@@ -9,7 +9,6 @@ namespace Graph {
 class AxisParameterController : public FloatParameterController {
 public:
   AxisParameterController(Responder * parentResponder, AxisInterval * axisInterval);
-  AxisInterval * axisInterval();
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;

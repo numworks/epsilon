@@ -11,12 +11,17 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_view(GraphView(functionStore, &m_axisInterval)),
   m_axisInterval(functionStore),
   m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
+  m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = ((StackViewController *)graphController->stackController());
     stack->push(graphController->axisParameterController());
   }, this)),
-  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {}, this)),
+  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {
+    GraphController * graphController = (GraphController *) context;
+    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    stack->push(graphController->zoomParameterController());
+  }, this)),
   m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {}, this)),
   m_functionStore(functionStore)
 {
@@ -65,6 +70,10 @@ ViewController * GraphController::axisParameterController() {
   return &m_axisParameterController;
 }
 
+ViewController * GraphController::zoomParameterController() {
+  return &m_zoomParameterController;
+}
+
 int GraphController::numberOfButtons() const {
   return 3;
 }
@@ -84,14 +93,16 @@ Button * GraphController::buttonAtIndex(int index) {
 }
 
 void GraphController::didBecomeFirstResponder() {
-  // if new functions were added to the store, the axis interval needs to be refresh
   if (m_axisInterval.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_axisInterval.setContext(graphApp->evaluateContext());
   }
+  // if new functions were added to the store, the axis interval needs to be refresh
   m_axisInterval.computeYaxes();
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
+  // Layout view whe the graph view that might have been modified by the zoom page
+  headerViewController()->layoutView();
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {

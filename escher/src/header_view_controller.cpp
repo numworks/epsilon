@@ -132,3 +132,7 @@ bool HeaderViewController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
+void HeaderViewController::layoutView() {
+  m_contentView.layoutSubviews();
+}

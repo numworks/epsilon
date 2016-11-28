@@ -5,6 +5,7 @@
 #include "graph_view.h"
 #include "axis_interval.h"
 #include "axis_parameter_controller.h"
+#include "zoom_parameter_controller.h"
 #include "../function_store.h"
 
 namespace Graph {
@@ -16,6 +17,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   ViewController * axisParameterController();
+  ViewController * zoomParameterController();
 
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
@@ -31,6 +33,7 @@ private:
   bool m_headerSelected;
   AxisInterval m_axisInterval;
   AxisParameterController m_axisParameterController;
+  ZoomParameterController m_zoomParameterController;
   Button m_axisButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

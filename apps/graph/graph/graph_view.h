@@ -33,6 +33,7 @@ public:
   void moveCursorRight();
   void setContext(Context * evaluateContext);
   Context * context() const;
+  void reload();
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

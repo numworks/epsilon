@@ -40,6 +40,10 @@ Context * GraphView::context() const {
   return m_evaluateContext;
 }
 
+void GraphView::reload() {
+  markRectAsDirty(bounds());
+}
+
 void GraphView::moveCursorRight() {
   KDPoint offset = KDPoint(2,0);
   m_cursorPosition = m_cursorPosition.translatedBy(offset);

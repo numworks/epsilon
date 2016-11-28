@@ -1,6 +1,7 @@
 #include "graph_controller.h"
 #include "../app.h"
 #include <assert.h>
+#include <math.h>
 
 namespace Graph {
 
@@ -106,6 +107,28 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     }
     return headerViewController()->handleEvent(event);
   } else {
+    float xMin = m_axisInterval.xMin();
+    float xMax = m_axisInterval.xMax();
+    float yMin = m_axisInterval.yMin();
+    float yMax = m_axisInterval.yMax();
+    if (event == Ion::Events::Plus) {
+      m_axisInterval.setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
+      m_axisInterval.setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
+      m_axisInterval.setYAuto(false);
+      m_axisInterval.setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
+      m_axisInterval.setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+      m_view.reload();
+      return true;
+    }
+    if (event == Ion::Events::Minus) {
+      m_axisInterval.setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
+      m_axisInterval.setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
+      m_axisInterval.setYAuto(false);
+      m_axisInterval.setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
+      m_axisInterval.setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+      m_view.reload();
+      return true;
+    }
     if (event == Ion::Events::OK) {
       m_view.moveCursorRight();
       return true;

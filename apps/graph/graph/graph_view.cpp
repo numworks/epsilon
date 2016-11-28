@@ -4,11 +4,8 @@
 
 namespace Graph {
 
-constexpr KDColor kAxisColor = KDColor::RGB24(0x000000);
-constexpr KDColor kMainGridColor = KDColor::RGB24(0xCCCCCC);
-constexpr KDColor kSecondaryGridColor = KDColor::RGB24(0xEEEEEE);
-constexpr int kNumberOfMainGridLines = 5;
-constexpr int kNumberOfSecondaryGridLines = 4;
+constexpr KDColor GraphView::k_axisColor;
+constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval) :
 #if GRAPH_VIEW_IS_TILED
@@ -95,6 +92,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 void GraphView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
   KDRect lineRect = KDRectZero;
   switch(axis) {
+    // WARNING TODO: anti-aliasing?
     case Axis::Horizontal:
       lineRect = KDRect(
           rect.x(), floatToPixel(Axis::Vertical, coordinate),
@@ -112,26 +110,21 @@ void GraphView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
 }
 
 void GraphView::drawAxes(KDContext * ctx, KDRect rect) const {
-  drawLine(ctx, rect, Axis::Horizontal, 0.0f, kAxisColor, 2);
-  drawLine(ctx, rect, Axis::Vertical, 0.0f, kAxisColor, 2);
+  drawLine(ctx, rect, Axis::Horizontal, 0.0f, k_axisColor, 2);
+  drawLine(ctx, rect, Axis::Vertical, 0.0f, k_axisColor, 2);
 }
 
-void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const {
-  float range = max(axis)-min(axis);
-  float step = range/count;
+void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
   float start = step*((int)(min(axis)/step));
-  for (int i=0; i<count; i++) {
-    Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-    drawLine(ctx, rect, otherAxis, start+i*step, color);
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  for (float x =start; x < max(axis); x += step) {
+    drawLine(ctx, rect, otherAxis, x, color);
   }
 }
 
 void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
-  drawGridLines(ctx, rect, Axis::Vertical, kNumberOfMainGridLines*kNumberOfSecondaryGridLines, kSecondaryGridColor);
-
-  drawGridLines(ctx, rect, Axis::Horizontal, kNumberOfMainGridLines, kMainGridColor);
-  drawGridLines(ctx, rect, Axis::Vertical, kNumberOfMainGridLines, kMainGridColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_axisInterval->xScale(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_axisInterval->yScale(), k_gridColor);
 }
 
 float GraphView::min(Axis axis) const {

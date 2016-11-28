@@ -35,6 +35,8 @@ public:
   Context * context() const;
   void reload();
 private:
+  constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
+  constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -56,7 +58,7 @@ private:
 
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
-  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, int count, KDColor color) const;
+  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void drawFunction(KDContext * ctx, KDRect rect) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */

@@ -28,24 +28,24 @@ int GraphView::numberOfSubviews() const {
 };
 
 View * GraphView::subviewAtIndex(int index) {
-  if (index == 0) {
-    return &m_cursorView;
-  }
-  if (index <= numberOfXLabels()) {
+  if (index < numberOfXLabels()) {
     float step = m_axisInterval->xScale();
     char buffer[Constant::FloatBufferSizeInScientificMode];
     // TODO: change the number of digits in mantissa once the numerical mode is implemented
-    Float(2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)))+(index-1)*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    m_xLabels[index-1].setText(buffer);
-    return &m_xLabels[index-1];
+    Float(2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    m_xLabels[index].setText(buffer);
+    return &m_xLabels[index];
   }
-  if (index <= numberOfXLabels() + numberOfYLabels()) {
+  if (index < numberOfXLabels() + numberOfYLabels()) {
     float step = m_axisInterval->yScale();
     char buffer[Constant::FloatBufferSizeInScientificMode];
-    int newIndex = index - 1 - numberOfXLabels();
+    int newIndex = index - numberOfXLabels();
     Float(2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)))+newIndex*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     m_yLabels[newIndex].setText(buffer);
     return &m_yLabels[newIndex];
+  }
+  if (index == numberOfXLabels() + numberOfYLabels()) {
+    return &m_cursorView;
   }
   assert(false);
 }
@@ -142,7 +142,7 @@ Function * GraphView::moveCursorDown() {
 }
 
 void GraphView::layoutSubviews() {
-  KDRect cursorFrame(m_cursorPosition, 10, 10);
+  KDRect cursorFrame(m_cursorPosition.translatedBy(KDPoint(-k_cursorSize/2, -k_cursorSize/2)), k_cursorSize, k_cursorSize);
   m_cursorView.setFrame(cursorFrame);
   float step = m_axisInterval->xScale();
   float start = 2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)));

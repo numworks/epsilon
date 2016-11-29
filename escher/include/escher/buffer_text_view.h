@@ -5,6 +5,7 @@
 
 class BufferTextView : public TextView {
 public:
+  BufferTextView();
   BufferTextView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setText(const char * text);

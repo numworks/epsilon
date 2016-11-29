@@ -2,6 +2,11 @@
 #include <string.h>
 #include <assert.h>
 
+BufferTextView::BufferTextView() :
+  TextView(0.5f, 0.5f, KDColorBlack, KDColorWhite)
+{
+}
+
 BufferTextView::BufferTextView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)

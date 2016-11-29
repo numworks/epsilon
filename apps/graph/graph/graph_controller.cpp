@@ -33,10 +33,6 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 }
 
 View * GraphController::view() {
-  if (m_view.context() == nullptr) {
-    App * graphApp = (Graph::App *)app();
-    m_view.setContext(graphApp->evaluateContext());
-  }
   return &m_view;
 }
 
@@ -101,6 +97,10 @@ Button * GraphController::buttonAtIndex(int index) {
 }
 
 void GraphController::didBecomeFirstResponder() {
+  if (m_view.context() == nullptr) {
+    App * graphApp = (Graph::App *)app();
+    m_view.setContext(graphApp->evaluateContext());
+  }
   if (m_axisInterval.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_axisInterval.setContext(graphApp->evaluateContext());

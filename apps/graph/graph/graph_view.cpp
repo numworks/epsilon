@@ -90,6 +90,10 @@ void GraphView::layoutSubviews() {
   int i = 0;
   for (float x = start; x < max(Axis::Horizontal); x += 2.0f*step) {
     KDRect labelFrame(floatToPixel(Axis::Horizontal, x) - k_labelWidth/2, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin, k_labelWidth, k_labelHeight);
+    // TODO: Find another way to avoid float comparison.
+    if (x == 0.0f) {
+      labelFrame = KDRect(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin, k_labelWidth, k_labelHeight);
+    }
     m_xLabels[i++].setFrame(labelFrame);
   }
   for (int k = i; k < k_maxNumberOfXLabels; k++) {
@@ -100,6 +104,9 @@ void GraphView::layoutSubviews() {
   int j = 0;
   for (float y = start; y < max(Axis::Vertical); y += 2.0f*step) {
     KDRect labelFrame(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, y) - k_labelHeight/2, k_labelWidth, k_labelHeight);
+    if (y == 0.0f) {
+      labelFrame = KDRectZero;
+    }
     m_yLabels[j++].setFrame(labelFrame);
   }
   for (int k = j; k < k_maxNumberOfYLabels; k++) {

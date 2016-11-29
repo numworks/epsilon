@@ -111,6 +111,8 @@ void GraphController::didBecomeFirstResponder() {
   m_headerSelected = false;
   // Layout view whe the graph view that might have been modified by the zoom page
   headerViewController()->layoutView();
+  // Reload graph view
+  m_view.reload();
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {

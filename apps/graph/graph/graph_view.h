@@ -69,6 +69,8 @@ private:
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
   void stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx) const;
+  int numberOfXLabels() const;
+  int numberOfYLabels() const;
 #if GRAPH_VIEW_IS_TILED
   static constexpr KDCoordinate kTileWidth = 32;
   static constexpr KDCoordinate kTileHeight = 32;
@@ -77,6 +79,13 @@ private:
 
   CursorView m_cursorView;
   KDPoint m_cursorPosition;
+  constexpr static KDCoordinate k_labelWidth =  32;
+  constexpr static KDCoordinate k_labelHeight =  12;
+  constexpr static KDCoordinate k_labelMargin =  4;
+  constexpr static int k_maxNumberOfXLabels =  18;
+  constexpr static int k_maxNumberOfYLabels =  13;
+  BufferTextView m_xLabels[k_maxNumberOfXLabels];
+  BufferTextView m_yLabels[k_maxNumberOfYLabels];
 
   AxisInterval * m_axisInterval;
 

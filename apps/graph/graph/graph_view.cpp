@@ -1,4 +1,5 @@
 #include "graph_view.h"
+#include "../../constant.h"
 #include <assert.h>
 #include <math.h>
 
@@ -22,11 +23,30 @@ GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval)
 }
 
 int GraphView::numberOfSubviews() const {
-  return 1;
+  return 1 + numberOfXLabels() + numberOfYLabels();
 };
 
 View * GraphView::subviewAtIndex(int index) {
-  return &m_cursorView;
+  if (index == 0) {
+    return &m_cursorView;
+  }
+  if (index <= numberOfXLabels()) {
+    float step = m_axisInterval->xScale();
+    char buffer[Constant::FloatBufferSizeInScientificMode];
+    // TODO: change the number of digits in mantissa once the numerical mode is implemented
+    Float(2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)))+(index-1)*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    m_xLabels[index-1].setText(buffer);
+    return &m_xLabels[index-1];
+  }
+  if (index <= numberOfXLabels() + numberOfYLabels()) {
+    float step = m_axisInterval->yScale();
+    char buffer[Constant::FloatBufferSizeInScientificMode];
+    int newIndex = index - 1 - numberOfXLabels();
+    Float(2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)))+newIndex*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    m_yLabels[newIndex].setText(buffer);
+    return &m_yLabels[newIndex];
+  }
+  assert(false);
 }
 
 void GraphView::setContext(Context * context) {
@@ -39,6 +59,21 @@ Context * GraphView::context() const {
 
 void GraphView::reload() {
   markRectAsDirty(bounds());
+  layoutSubviews();
+}
+
+int GraphView::numberOfXLabels() const {
+  if (min(Axis::Vertical) > 0.0f || max(Axis::Vertical) < 0.0f) {
+    return 0;
+  }
+  return ceilf((max(Axis::Horizontal) - min(Axis::Horizontal))/(2*m_axisInterval->xScale()));
+}
+
+int GraphView::numberOfYLabels() const {
+  if (min(Axis::Horizontal) > 0.0f || max(Axis::Horizontal) < 0.0f) {
+    return 0;
+  }
+  return ceilf((max(Axis::Vertical) - min(Axis::Vertical))/(2*m_axisInterval->yScale()));
 }
 
 void GraphView::moveCursorRight() {
@@ -50,6 +85,26 @@ void GraphView::moveCursorRight() {
 void GraphView::layoutSubviews() {
   KDRect cursorFrame(m_cursorPosition, 10, 10);
   m_cursorView.setFrame(cursorFrame);
+  float step = m_axisInterval->xScale();
+  float start = 2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)));
+  int i = 0;
+  for (float x = start; x < max(Axis::Horizontal); x += 2.0f*step) {
+    KDRect labelFrame(floatToPixel(Axis::Horizontal, x) - k_labelWidth/2, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin, k_labelWidth, k_labelHeight);
+    m_xLabels[i++].setFrame(labelFrame);
+  }
+  for (int k = i; k < k_maxNumberOfXLabels; k++) {
+    m_xLabels[k].setFrame(KDRectZero);
+  }
+  step = m_axisInterval->yScale();
+  start = 2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)));
+  int j = 0;
+  for (float y = start; y < max(Axis::Vertical); y += 2.0f*step) {
+    KDRect labelFrame(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, y) - k_labelHeight/2, k_labelWidth, k_labelHeight);
+    m_yLabels[j++].setFrame(labelFrame);
+  }
+  for (int k = j; k < k_maxNumberOfYLabels; k++) {
+    m_yLabels[k].setFrame(KDRectZero);
+  }
 }
 
 #if GRAPH_VIEW_IS_TILED

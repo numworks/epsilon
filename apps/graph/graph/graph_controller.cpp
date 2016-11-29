@@ -150,13 +150,27 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       m_view.reload();
       return true;
     }
-    if (event == Ion::Events::OK) {
-      m_view.moveCursorRight();
+    if (event == Ion::Events::Left) {
+      m_view.moveCursorHorizontally(-2);
+      return true;
+    }
+    if (event == Ion::Events::Right) {
+      m_view.moveCursorHorizontally(2);
       return true;
     }
     if (event == Ion::Events::Up) {
-      headerViewController()->setSelectedButton(0);
-      m_headerSelected = true;
+      Function * f = m_view.moveCursorUp();
+      if (f == nullptr) {
+        headerViewController()->setSelectedButton(0);
+        m_headerSelected = true;
+      }
+      return true;
+    }
+    if (event == Ion::Events::Down) {
+      Function * f = m_view.moveCursorDown();
+      if (f == nullptr) {
+        return false;
+      }
       return true;
     }
     return false;

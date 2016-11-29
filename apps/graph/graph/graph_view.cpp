@@ -2,6 +2,7 @@
 #include "../../constant.h"
 #include <assert.h>
 #include <math.h>
+#include <float.h>
 
 namespace Graph {
 
@@ -59,6 +60,7 @@ Context * GraphView::context() const {
 
 void GraphView::reload() {
   markRectAsDirty(bounds());
+  initCursorPosition();
   layoutSubviews();
 }
 
@@ -76,10 +78,67 @@ int GraphView::numberOfYLabels() const {
   return ceilf((max(Axis::Vertical) - min(Axis::Vertical))/(2*m_axisInterval->yScale()));
 }
 
-void GraphView::moveCursorRight() {
-  KDPoint offset = KDPoint(2,0);
+void GraphView::initCursorPosition() {
+  float center = (min(Axis::Horizontal)+max(Axis::Horizontal))/2.0f;
+  m_indexFunctionSelectedByCursor = 0;
+  Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
+  float fCenter = firstFunction->evaluateAtAbscissa(center, m_evaluateContext);
+  m_cursorPosition = KDPoint(160, floatToPixel(Axis::Vertical, fCenter));
+}
+
+void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
+  KDPoint offset = KDPoint(xOffset,0);
   m_cursorPosition = m_cursorPosition.translatedBy(offset);
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  float ordinate = f->evaluateAtAbscissa(pixelToFloat(Axis::Horizontal, m_cursorPosition.x()), m_evaluateContext);
+  m_cursorPosition = KDPoint(m_cursorPosition.x(), floatToPixel(Axis::Vertical, ordinate));
   layoutSubviews();
+}
+
+Function * GraphView::moveCursorUp() {
+  float x = pixelToFloat(Axis::Horizontal, m_cursorPosition.x());
+  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  float y = actualFunction->evaluateAtAbscissa(x, m_evaluateContext);
+  Function * nextFunction = actualFunction;
+  float nextY = FLT_MAX;
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float newY = f->evaluateAtAbscissa(x, m_evaluateContext);
+    if (newY > y && newY < nextY) {
+      m_indexFunctionSelectedByCursor = i;
+      nextY = newY;
+      nextFunction = f;
+    }
+  }
+  if (nextFunction == actualFunction) {
+    return nullptr;
+  }
+  m_cursorPosition = KDPoint(m_cursorPosition.x(), floatToPixel(Axis::Vertical, nextY));
+  layoutSubviews();
+  return nextFunction;
+}
+
+Function * GraphView::moveCursorDown() {
+  float x = pixelToFloat(Axis::Horizontal, m_cursorPosition.x());
+  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  float y = actualFunction->evaluateAtAbscissa(x, m_evaluateContext);
+  Function * nextFunction = actualFunction;
+  float nextY = -FLT_MAX;
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float newY = f->evaluateAtAbscissa(x, m_evaluateContext);
+    if (newY < y && newY > nextY) {
+      m_indexFunctionSelectedByCursor = i;
+      nextY = newY;
+      nextFunction = f;
+    }
+  }
+  if (nextFunction == actualFunction) {
+    return nullptr;
+  }
+  m_cursorPosition = KDPoint(m_cursorPosition.x(), floatToPixel(Axis::Vertical, nextY));
+  layoutSubviews();
+  return nextFunction;
 }
 
 void GraphView::layoutSubviews() {

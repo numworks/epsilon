@@ -27,6 +27,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   k_rem_pio2f.o \
   k_sinf.o \
   k_tanf.o \
+  s_ceilf.o \
   s_copysignf.o \
   s_cosf.o \
   s_fabsf.o \

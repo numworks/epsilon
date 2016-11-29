@@ -81,7 +81,8 @@ private:
 #endif
 
   CursorView m_cursorView;
-  KDPoint m_cursorPosition;
+  float m_xCursorPosition;
+  float m_yCursorPosition;
   int m_indexFunctionSelectedByCursor;
   constexpr static KDCoordinate k_cursorSize =  10;
   constexpr static KDCoordinate k_labelWidth =  32;

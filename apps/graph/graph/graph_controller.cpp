@@ -13,6 +13,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
   m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
   m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval)),
+  m_curveParameterController(CurveParameterController(this)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();
@@ -172,6 +173,10 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
         return false;
       }
       return true;
+    }
+    if (event == Ion::Events::OK) {
+      StackViewController * stack = stackController();
+      stack->push(&m_curveParameterController);
     }
     return false;
   }

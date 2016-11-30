@@ -5,6 +5,7 @@
 #include "graph_view.h"
 #include "axis_interval.h"
 #include "axis_parameter_controller.h"
+#include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
 #include "zoom_parameter_controller.h"
 #include "../function_store.h"
@@ -37,6 +38,7 @@ private:
   AxisParameterController m_axisParameterController;
   ZoomParameterController m_zoomParameterController;
   InitialisationParameterController m_initialisationParameterController;
+  CurveParameterController m_curveParameterController;
   Button m_axisButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

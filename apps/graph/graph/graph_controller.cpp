@@ -13,7 +13,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_axisParameterController(AxisParameterController(this, &m_axisInterval, &m_view)),
   m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
   m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval, &m_view)),
-  m_curveParameterController(CurveParameterController(this)),
+  m_curveParameterController(CurveParameterController(this, &m_view)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();
@@ -34,7 +34,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 }
 
 View * GraphController::view() {
-  if (m_view.xCursorPosition() < 0.0f) {
+  if (m_view.xPixelCursorPosition() < 0.0f) {
     m_view.initCursorPosition();
   }
   return &m_view;
@@ -188,6 +188,8 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::OK) {
+      Function * f = m_functionStore->activeFunctionAtIndex(m_view.indexFunctionSelectedByCursor());
+      m_curveParameterController.setFunction(f);
       StackViewController * stack = stackController();
       stack->push(&m_curveParameterController);
     }

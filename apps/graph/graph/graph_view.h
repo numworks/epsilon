@@ -29,8 +29,9 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 #endif
 
-//  void drawRect(KDRect rect) const override;
+  float xPixelCursorPosition();
   float xCursorPosition();
+  void setXCursorPosition(float xPosition, Function * function);
   void setVisibleCursor(bool visibleCursor);
   void initCursorPosition();
   void moveCursorHorizontally(KDCoordinate xOffset);
@@ -38,6 +39,7 @@ public:
   Function * moveCursorDown();
   void setContext(Context * evaluateContext);
   Context * context() const;
+  int indexFunctionSelectedByCursor();
   void reload();
 private:
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);

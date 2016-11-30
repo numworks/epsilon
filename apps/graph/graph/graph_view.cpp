@@ -60,6 +60,10 @@ Context * GraphView::context() const {
   return m_evaluateContext;
 }
 
+int GraphView::indexFunctionSelectedByCursor() {
+  return m_indexFunctionSelectedByCursor;
+}
+
 void GraphView::reload() {
   markRectAsDirty(bounds());
   layoutSubviews();
@@ -79,8 +83,26 @@ int GraphView::numberOfYLabels() const {
   return ceilf((max(Axis::Vertical) - min(Axis::Vertical))/(2*m_axisInterval->yScale()));
 }
 
-float GraphView::xCursorPosition() {
+float GraphView::xPixelCursorPosition() {
   return m_xCursorPosition;
+}
+
+float GraphView::xCursorPosition() {
+  return min(Axis::Horizontal) + m_xCursorPosition*(max(Axis::Horizontal)-min(Axis::Horizontal))/pixelLength(Axis::Horizontal);
+}
+
+void GraphView::setXCursorPosition(float xPosition, Function * function) {
+  float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
+  float yRange = max(Axis::Horizontal) - min(Axis::Horizontal);
+  m_axisInterval->setXMin(xPosition - xRange/2.0f);
+  m_axisInterval->setXMax(xPosition + xRange/2.0f);
+  m_xCursorPosition = floatToPixel(Axis::Horizontal, xPosition);
+  float yPosition = function->evaluateAtAbscissa(xPosition, m_evaluateContext);
+  m_axisInterval->setYAuto(false);
+  m_axisInterval->setYMin(yPosition - yRange/2.0f);
+  m_axisInterval->setYMax(yPosition + yRange/2.0f);
+  m_yCursorPosition = floatToPixel(Axis::Vertical, yPosition);
+  reload();
 }
 
 void GraphView::setVisibleCursor(bool visibleCursor) {

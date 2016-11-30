@@ -3,14 +3,17 @@
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(Responder * parentResponder) :
+CurveParameterController::CurveParameterController(Responder * parentResponder, GraphView * graphView) :
   ViewController(parentResponder),
+  m_graphView(graphView),
+  m_displayDerivative(false),
+  m_function(nullptr),
   m_calculationCell(ChevronMenuListCell((char*)"Calculer")),
   m_goToCell(ChevronMenuListCell((char*)"Aller a")),
   m_derivativeCell(SwitchMenuListCell((char*)"Nombre derivee")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_displayDerivative(false)
+  m_goToParameterController(GoToParameterController(this, m_graphView))
 {
 }
 
@@ -40,7 +43,12 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
         return true;
       case 1:
+      {
+        m_goToParameterController.setFunction(m_function);
+        StackViewController * stack = (StackViewController *)parentResponder();
+        stack->push(&m_goToParameterController);
         return true;
+      }
       case 2:
         m_displayDerivative = !m_displayDerivative;
         m_selectableTableView.reloadData();
@@ -74,4 +82,9 @@ KDCoordinate CurveParameterController::cellHeight() {
 bool CurveParameterController::displayDerivative() const {
   return m_displayDerivative;
 }
+
+void CurveParameterController::setFunction(Function * function) {
+  m_function = function;
+}
+
 }

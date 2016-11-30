@@ -98,11 +98,36 @@ void GraphView::initCursorPosition() {
 }
 
 void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
+  bool outsideWindow = m_xCursorPosition < 0 || m_xCursorPosition > bounds().width() || m_yCursorPosition < 0 || m_yCursorPosition > bounds().height();
   m_xCursorPosition = m_xCursorPosition + xOffset;
+  if (!outsideWindow && m_xCursorPosition < k_cursorMarginToBorder) {
+    float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
+    m_axisInterval->setXMin(pixelToFloat(Axis::Horizontal, floorf(m_xCursorPosition)-k_cursorMarginToBorder));
+    m_axisInterval->setXMax(min(Axis::Horizontal) + xRange);
+    m_xCursorPosition = m_xCursorPosition - floorf(m_xCursorPosition) + k_cursorMarginToBorder;
+  }
+  if (!outsideWindow && m_xCursorPosition > bounds().width() - k_cursorMarginToBorder) {
+    float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
+    m_axisInterval->setXMax(pixelToFloat(Axis::Horizontal, ceilf(m_xCursorPosition)+k_cursorMarginToBorder));
+    m_axisInterval->setXMin(max(Axis::Horizontal) - xRange);
+    m_xCursorPosition = bounds().width() - k_cursorMarginToBorder - ceilf(m_xCursorPosition) + m_xCursorPosition;
+  }
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   float ordinate = f->evaluateAtAbscissa(pixelToFloat(Axis::Horizontal, m_xCursorPosition), m_evaluateContext);
   m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
-  layoutSubviews();
+  if (!outsideWindow && m_yCursorPosition < k_cursorMarginToBorder) {
+    float yRange = max(Axis::Vertical) - min(Axis::Vertical);
+    m_axisInterval->setYMax(pixelToFloat(Axis::Vertical, floorf(m_yCursorPosition)-k_cursorMarginToBorder));
+    m_axisInterval->setYMin(max(Axis::Vertical) - yRange);
+    m_yCursorPosition = m_yCursorPosition - floorf(m_yCursorPosition) + k_cursorMarginToBorder;
+  }
+  if (!outsideWindow && m_yCursorPosition > bounds().height() - k_cursorMarginToBorder) {
+    float yRange = max(Axis::Vertical) - min(Axis::Vertical);
+    m_axisInterval->setYMin(pixelToFloat(Axis::Vertical, ceilf(m_yCursorPosition)+k_cursorMarginToBorder));
+    m_axisInterval->setYMax(min(Axis::Vertical) + yRange);
+    m_yCursorPosition = bounds().height() - k_cursorMarginToBorder - ceilf(m_yCursorPosition) + m_yCursorPosition;
+  }
+  reload();
 }
 
 Function * GraphView::moveCursorUp() {

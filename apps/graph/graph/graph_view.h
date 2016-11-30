@@ -87,7 +87,8 @@ private:
   float m_yCursorPosition;
   int m_indexFunctionSelectedByCursor;
   bool m_visibleCursor;
-  constexpr static KDCoordinate k_cursorSize =  10;
+  constexpr static KDCoordinate k_cursorSize = 10;
+  constexpr static float k_cursorMarginToBorder = 5.0f;
   constexpr static KDCoordinate k_labelWidth =  32;
   constexpr static KDCoordinate k_labelHeight =  12;
   constexpr static KDCoordinate k_labelMargin =  4;

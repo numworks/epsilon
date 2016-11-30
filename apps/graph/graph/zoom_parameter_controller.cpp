@@ -34,6 +34,7 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
     m_axisInterval->setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
     m_axisInterval->setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
     m_axisInterval->setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
@@ -42,30 +43,35 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
     m_axisInterval->setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
     m_axisInterval->setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
     m_axisInterval->setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Up) {
     m_axisInterval->setYMin(yMin + m_axisInterval->yScale());
     m_axisInterval->setYMax(yMax + m_axisInterval->yScale());
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
     m_axisInterval->setYMin(yMin - m_axisInterval->yScale());
     m_axisInterval->setYMax(yMax - m_axisInterval->yScale());
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
     m_axisInterval->setXMin(xMin - m_axisInterval->xScale());
     m_axisInterval->setXMax(xMax - m_axisInterval->xScale());
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
     m_axisInterval->setXMin(xMin + m_axisInterval->xScale());
     m_axisInterval->setXMax(xMax + m_axisInterval->xScale());
+    m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }

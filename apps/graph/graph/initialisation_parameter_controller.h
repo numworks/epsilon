@@ -3,12 +3,13 @@
 
 #include <escher.h>
 #include "axis_interval.h"
+#include "graph_view.h"
 
 namespace Graph {
 
 class InitialisationParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, AxisInterval * axisInterval);
+  InitialisationParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -22,6 +23,7 @@ private:
   MenuListCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   AxisInterval * m_axisInterval;
+  GraphView * m_graphView;
 };
 
 }

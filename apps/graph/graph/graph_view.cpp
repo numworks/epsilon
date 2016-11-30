@@ -16,8 +16,9 @@ GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval)
   View(),
 #endif
   m_cursorView(CursorView()),
-  m_xCursorPosition(0.0f),
-  m_yCursorPosition(0.0f),
+  m_xCursorPosition(-1.0f),
+  m_yCursorPosition(-1.0f),
+  m_visibleCursor(true),
   m_axisInterval(axisInterval),
   m_functionStore(functionStore),
   m_evaluateContext(nullptr)
@@ -61,7 +62,6 @@ Context * GraphView::context() const {
 
 void GraphView::reload() {
   markRectAsDirty(bounds());
-  initCursorPosition();
   layoutSubviews();
 }
 
@@ -77,6 +77,15 @@ int GraphView::numberOfYLabels() const {
     return 0;
   }
   return ceilf((max(Axis::Vertical) - min(Axis::Vertical))/(2*m_axisInterval->yScale()));
+}
+
+float GraphView::xCursorPosition() {
+  return m_xCursorPosition;
+}
+
+void GraphView::setVisibleCursor(bool visibleCursor) {
+  m_visibleCursor = visibleCursor;
+  layoutSubviews();
 }
 
 void GraphView::initCursorPosition() {
@@ -144,6 +153,9 @@ Function * GraphView::moveCursorDown() {
 
 void GraphView::layoutSubviews() {
   KDRect cursorFrame((int)m_xCursorPosition - (k_cursorSize+1)/2+1, (int)m_yCursorPosition - (k_cursorSize+1)/2+1, k_cursorSize, k_cursorSize);
+  if (!m_visibleCursor) {
+    cursorFrame = KDRectZero;
+  }
   m_cursorView.setPosition(m_xCursorPosition, m_yCursorPosition);
   m_cursorView.setFrame(cursorFrame);
   float step = m_axisInterval->xScale();

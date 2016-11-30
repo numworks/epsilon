@@ -30,6 +30,8 @@ public:
 #endif
 
 //  void drawRect(KDRect rect) const override;
+  float xCursorPosition();
+  void setVisibleCursor(bool visibleCursor);
   void initCursorPosition();
   void moveCursorHorizontally(KDCoordinate xOffset);
   Function * moveCursorUp();
@@ -84,6 +86,7 @@ private:
   float m_xCursorPosition;
   float m_yCursorPosition;
   int m_indexFunctionSelectedByCursor;
+  bool m_visibleCursor;
   constexpr static KDCoordinate k_cursorSize =  10;
   constexpr static KDCoordinate k_labelWidth =  32;
   constexpr static KDCoordinate k_labelHeight =  12;

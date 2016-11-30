@@ -10,9 +10,9 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   HeaderViewDelegate(header),
   m_view(GraphView(functionStore, &m_axisInterval)),
   m_axisInterval(functionStore),
-  m_axisParameterController(AxisParameterController(this, &m_axisInterval)),
+  m_axisParameterController(AxisParameterController(this, &m_axisInterval, &m_view)),
   m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
-  m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval)),
+  m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval, &m_view)),
   m_curveParameterController(CurveParameterController(this)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
@@ -34,6 +34,9 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 }
 
 View * GraphController::view() {
+  if (m_view.xCursorPosition() < 0.0f) {
+    m_view.initCursorPosition();
+  }
   return &m_view;
 }
 
@@ -110,6 +113,8 @@ void GraphController::didBecomeFirstResponder() {
   m_axisInterval.computeYaxes();
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
+
+  m_view.setVisibleCursor(true);
   // Layout view whe the graph view that might have been modified by the zoom page
   headerViewController()->layoutView();
   // Reload graph view
@@ -121,6 +126,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
         headerViewController()->setSelectedButton(-1);
         m_headerSelected = false;
+        m_view.setVisibleCursor(true);
         return true;
     }
     if (event == Ion::Events::Up) {
@@ -129,11 +135,11 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     }
     return headerViewController()->handleEvent(event);
   } else {
-    float xMin = m_axisInterval.xMin();
-    float xMax = m_axisInterval.xMax();
-    float yMin = m_axisInterval.yMin();
-    float yMax = m_axisInterval.yMax();
     if (event == Ion::Events::Plus) {
+      float xMin = m_axisInterval.xMin();
+      float xMax = m_axisInterval.xMax();
+      float yMin = m_axisInterval.yMin();
+      float yMax = m_axisInterval.yMax();
       m_axisInterval.setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
       m_axisInterval.setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
       m_axisInterval.setYAuto(false);
@@ -143,6 +149,10 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::Minus) {
+      float xMin = m_axisInterval.xMin();
+      float xMax = m_axisInterval.xMax();
+      float yMin = m_axisInterval.yMin();
+      float yMax = m_axisInterval.yMax();
       m_axisInterval.setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
       m_axisInterval.setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
       m_axisInterval.setYAuto(false);
@@ -162,6 +172,8 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Up) {
       Function * f = m_view.moveCursorUp();
       if (f == nullptr) {
+        m_view.initCursorPosition();
+        m_view.setVisibleCursor(false);
         headerViewController()->setSelectedButton(0);
         m_headerSelected = true;
       }

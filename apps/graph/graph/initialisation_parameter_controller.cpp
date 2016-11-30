@@ -4,11 +4,12 @@
 
 namespace Graph {
 
-InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, AxisInterval * axisInterval) :
+InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_axisInterval(axisInterval)
+  m_axisInterval(axisInterval),
+  m_graphView(graphView)
 {
   m_cells[0].setText("Trigonometrique");
   m_cells[1].setText("Abscisses entieres");
@@ -69,6 +70,7 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
       default:
         return false;
     }
+    m_graphView->initCursorPosition();
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
     return true;

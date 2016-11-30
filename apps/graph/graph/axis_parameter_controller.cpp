@@ -3,10 +3,11 @@
 
 namespace Graph {
 
-AxisParameterController::AxisParameterController(Responder * parentResponder, AxisInterval * axisInterval) :
+AxisParameterController::AxisParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView) :
   FloatParameterController(parentResponder),
   m_axisInterval(axisInterval),
-  m_yAutoCell(SwitchMenuListCell((char*)"Y auto"))
+  m_yAutoCell(SwitchMenuListCell((char*)"Y auto")),
+  m_graphView(graphView)
 {
   m_axisCells[0].setText("Xmin");
   m_axisCells[1].setText("Xmax");
@@ -36,6 +37,7 @@ void AxisParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
 }
 
 bool AxisParameterController::handleEvent(Ion::Events::Event event) {
+  m_graphView->initCursorPosition();
   if (activeCell() == 2) {
     if (event == Ion::Events::OK) {
       m_axisInterval->setYAuto(!m_axisInterval->yAuto());

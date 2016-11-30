@@ -15,17 +15,17 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
-    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    StackViewController * stack = graphController->stackController();
     stack->push(graphController->axisParameterController());
   }, this)),
   m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
-    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    StackViewController * stack = graphController->stackController();
     stack->push(graphController->zoomParameterController());
   }, this)),
   m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
-    StackViewController * stack = ((StackViewController *)graphController->stackController());
+    StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
   }, this)),
   m_functionStore(functionStore)

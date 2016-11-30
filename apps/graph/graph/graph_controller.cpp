@@ -126,6 +126,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
         headerViewController()->setSelectedButton(-1);
         m_headerSelected = false;
+        app()->setFirstResponder(this);
         m_view.setVisibleCursor(true);
         return true;
     }

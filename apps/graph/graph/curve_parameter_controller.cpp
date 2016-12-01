@@ -3,8 +3,8 @@
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(Responder * parentResponder, GraphView * graphView) :
-  ViewController(parentResponder),
+CurveParameterController::CurveParameterController(GraphView * graphView) :
+  ViewController(nullptr),
   m_graphView(graphView),
   m_displayDerivative(false),
   m_function(nullptr),

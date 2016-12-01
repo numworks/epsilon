@@ -13,7 +13,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   m_axisParameterController(AxisParameterController(this, &m_axisInterval, &m_view)),
   m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
   m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval, &m_view)),
-  m_curveParameterController(CurveParameterController(this, &m_view)),
+  m_curveParameterController(CurveParameterController(&m_view)),
   m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();

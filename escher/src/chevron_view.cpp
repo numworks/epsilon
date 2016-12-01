@@ -39,6 +39,11 @@ const KDColor highlightedChevronPixel[] = {
   KDColorBlack, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor, Palette::FocusCellBackgroundColor,
 };
 
+ChevronView::ChevronView() :
+  m_highlighted(false)
+{
+}
+
 void ChevronView::setHighlighted(bool highlight) {
   m_highlighted = highlight;
   markRectAsDirty(bounds());

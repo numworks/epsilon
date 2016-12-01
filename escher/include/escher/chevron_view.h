@@ -5,6 +5,7 @@
 
 class ChevronView : public View {
 public:
+  ChevronView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlighted(bool highlight);
 private:

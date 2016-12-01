@@ -2,13 +2,15 @@
 #define PROBABILITY_LAW_CONTROLLER_H
 
 #include <escher.h>
+#include "cell.h"
+#include "law.h"
+#include "parameters_controller.h"
 
 namespace Probability {
 
 class LawController : public ViewController, public SimpleListViewDataSource {
 public:
   LawController(Responder * parentResponder);
-
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -20,13 +22,16 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  constexpr static int k_totalNumberOfModels = 7;
-  constexpr static int k_maxNumberOfCells = 10;
+  Law::Type typeAtIndex(int index);
+  constexpr static int k_totalNumberOfModels = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
-  MenuListCell m_cells[k_maxNumberOfCells];
+  Cell m_cells[k_totalNumberOfModels];
   SelectableTableView m_selectableTableView;
   const char ** m_messages;
+  Law m_law;
+  ParametersController m_parametersController;
+
 };
 
 }

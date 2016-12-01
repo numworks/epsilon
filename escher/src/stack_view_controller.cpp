@@ -87,11 +87,15 @@ const char * StackViewController::title() const {
   }
 }
 
+void StackViewController::updateTitle() {
+  m_view.popStack();
+  m_view.pushStack(m_children[m_numberOfChildren-1]->title());
+}
+
 void StackViewController::push(ViewController * vc) {
   m_view.pushStack(vc->title());
   m_children[m_numberOfChildren++] = vc;
   setupActiveViewController();
-  //vc->setParentResponder(this);
 }
 
 void StackViewController::pop() {

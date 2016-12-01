@@ -17,7 +17,6 @@ app_objs += $(addprefix apps/,\
   toolbox_node.o\
   variable_box_controller.o\
   variable_box_leaf_cell.o\
-  variable_box_node.o\
 )
 
 # Tracking which source file uses which image is painful. But we need to ensure

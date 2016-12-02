@@ -53,6 +53,7 @@ const char * LawController::title() const {
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
+  m_law.setType(Law::Type::NoType);
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->updateTitle();
   if (m_selectableTableView.selectedRow() == -1) {

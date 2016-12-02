@@ -27,8 +27,11 @@ void SelectableTableView::didBecomeFirstResponder() {
 }
 
 void SelectableTableView::deselectTable() {
-  TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
-  previousCell->setHighlighted(false);
+  if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
+      m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
+    TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
+    previousCell->setHighlighted(false);
+  }
   m_selectedCellX = 0;
   m_selectedCellY = -1;
 }
@@ -41,7 +44,8 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
     return false;
   }
 
-  if (m_selectedCellY >= 0) {
+  if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
+      m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
     TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
     previousCell->setHighlighted(false);
   }

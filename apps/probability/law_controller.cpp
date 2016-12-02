@@ -1,16 +1,16 @@
 #include "law_controller.h"
 #include <assert.h>
 #include "app.h"
-#include "binomial_icon.h"
-#include "exponential_icon.h"
-#include "normal_icon.h"
-#include "poisson_icon.h"
-#include "uniform_icon.h"
-#include "focused_binomial_icon.h"
-#include "focused_exponential_icon.h"
-#include "focused_normal_icon.h"
-#include "focused_poisson_icon.h"
-#include "focused_uniform_icon.h"
+#include "images/binomial_icon.h"
+#include "images/exponential_icon.h"
+#include "images/normal_icon.h"
+#include "images/poisson_icon.h"
+#include "images/uniform_icon.h"
+#include "images/focused_binomial_icon.h"
+#include "images/focused_exponential_icon.h"
+#include "images/focused_normal_icon.h"
+#include "images/focused_poisson_icon.h"
+#include "images/focused_uniform_icon.h"
 
 namespace Probability {
 

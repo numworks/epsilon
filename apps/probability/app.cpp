@@ -1,5 +1,5 @@
 #include "app.h"
-#include "probability_icon.h"
+#include "images/probability_icon.h"
 
 Probability::App::App(Container * container) :
   ::App(container, &m_stackViewController, "Probability", ImageStore::ProbabilityIcon),

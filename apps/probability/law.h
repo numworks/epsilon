@@ -17,7 +17,9 @@ public:
   };
   Law();
   int numberOfParameter();
-  float parameterAtIndex(int index);
+  float parameterValueAtIndex(int index);
+  const char * parameterNameAtIndex(int index);
+  const char * parameterDefinitionAtIndex(int index);
   void setParameterAtIndex(float f, int index);
   float evaluateAtAbscissa(float x, Graph::EvaluateContext * context) const;
   Type type() const;

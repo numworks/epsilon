@@ -30,12 +30,72 @@ int Law::numberOfParameter() {
   }
 }
 
-float Law::parameterAtIndex(int index) {
+float Law::parameterValueAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return m_parameter1;
   }
   return m_parameter2;
+}
+
+const char * Law::parameterNameAtIndex(int index) {
+  assert(index >= 0 && index < 2);
+  switch (m_type) {
+    case Law::Type::Binomial:
+      if (index == 0) {
+        return "n";
+      } else {
+        return "p";
+      }
+    case Law::Type::Uniform:
+      if (index == 0) {
+        return "a";
+      } else {
+        return "b";
+      }
+    case Law::Type::Exponential:
+      return "l";
+    case Law::Type::Normal:
+      if (index == 0) {
+        return "u";
+      } else {
+        return "o";
+      }
+    case Law::Type::Poisson:
+      return "l";
+    default:
+      return 0;
+  }
+}
+
+const char * Law::parameterDefinitionAtIndex(int index) {
+  assert(index >= 0 && index < 2);
+  switch (m_type) {
+    case Law::Type::Binomial:
+      if (index == 0) {
+        return "n : nombre de repetitions";
+      } else {
+        return "p : probabilites de succes";
+      }
+    case Law::Type::Uniform:
+      if (index == 0) {
+        return "[a, b] intervalle";
+      } else {
+        return nullptr;
+      }
+    case Law::Type::Exponential:
+      return "l : parametre";
+    case Law::Type::Normal:
+      if (index == 0) {
+        return "u : moyenne";
+      } else {
+        return "o : ecart-type";
+      }
+    case Law::Type::Poisson:
+      return "l : parametre";
+    default:
+      return 0;
+  }
 }
 
 void Law::setParameterAtIndex(float f, int index) {

@@ -3,21 +3,18 @@
 
 #include <escher.h>
 #include <poincare.h>
+#include "value_cell.h"
 
 namespace Graph {
-class EditableValueCell : public EvenOddCell, public Responder {
+class EditableValueCell : public ValueCell, public Responder {
 public:
   EditableValueCell();
-  void reloadCell() override;
-  void setText(const char * textContent);
   const char * editedText() const;
-  int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   bool handleEvent(Ion::Events::Event event) override;
   void editValue(const char * initialText, int cursorLocation, void * context, Invocation::Action successAction);
-protected:
-  BufferTextView m_bufferTextView;
+private:
   TextField m_textField;
   char m_textBody[255];
   bool m_isEditing;

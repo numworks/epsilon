@@ -5,30 +5,16 @@
 namespace Graph {
 
 EditableValueCell::EditableValueCell() :
-  EvenOddCell(),
+  ValueCell(),
   Responder(nullptr),
-  m_bufferTextView(BufferTextView(1.0f, 0.5f)),
   m_textField(TextField(this, m_textBody, 255, nullptr)),
   m_isEditing(false),
   m_successAction(Invocation(nullptr, nullptr))
 {
 }
 
-void EditableValueCell::reloadCell() {
-  EvenOddCell::reloadCell();
-  m_bufferTextView.setBackgroundColor(backgroundColor());
-}
-
-void EditableValueCell::setText(const char * textContent) {
-  m_bufferTextView.setText(textContent);
-}
-
 const char * EditableValueCell::editedText() const {
   return m_textField.text();
-}
-
-int EditableValueCell::numberOfSubviews() const {
-  return 1;
 }
 
 View * EditableValueCell::subviewAtIndex(int index) {

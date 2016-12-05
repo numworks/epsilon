@@ -5,6 +5,7 @@
 #include "../function_store.h"
 #include "../function_title_cell.h"
 #include "value_cell.h"
+#include "editable_value_cell.h"
 #include "title_cell.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
@@ -21,7 +22,6 @@ public:
   int activeRow();
   int activeColumn();
   Interval * interval();
-  ValueCell * abscisseCellAtRow(int rowIndex);
   void editValue(const char * initialText = nullptr);
 
   View * view() override;
@@ -65,6 +65,7 @@ private:
   void configureAbscissa();
   void configureFunction();
   void configureDerivativeFunction();
+  constexpr static int k_maxNumberOfAbscissaCells = 8;
   constexpr static int k_maxNumberOfCells = 40;
   constexpr static int k_maxNumberOfFunctions = 5;
   // !!! CAUTION: The order here is important
@@ -73,6 +74,7 @@ private:
   TitleCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
+  EditableValueCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionStore * m_functionStore;
   Interval m_interval;
   IntervalParameterController m_intervalParameterController;

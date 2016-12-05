@@ -143,11 +143,6 @@ Interval * ValuesController::interval() {
   return &m_interval;
 }
 
-ValueCell * ValuesController::abscisseCellAtRow(int rowIndex) {
-  assert(rowIndex > 0 && rowIndex < numberOfRows());
-  return &m_floatCells[rowIndex];
-}
-
 void ValuesController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   if (m_selectableTableView.selectedRow() == -1) {
@@ -257,23 +252,21 @@ void ValuesController::editValue(const char * initialText) {
     }
   }
   int cursorLocation = strlen(initialTextContent) + cursorDelta;
-  App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, cursorLocation, this,
+
+  EditableValueCell * cell = (EditableValueCell *)m_selectableTableView.cellAtLocation(0, activeRow());
+  cell->setParentResponder(&m_selectableTableView);
+  cell->editValue(initialTextContent, cursorLocation, this,
     [](void * context, void * sender){
     ValuesController * valuesController = (ValuesController *)context;
     int activeRow = valuesController->activeRow();
     int activeColumn = valuesController->activeColumn();
-    ValueCell * cell = valuesController->abscisseCellAtRow(activeRow);
-    InputViewController * myInputViewController = (InputViewController *)sender;
-    const char * textBody = myInputViewController->textBody();
+    EditableValueCell * cell = (EditableValueCell *)sender;
+    const char * textBody = cell->editedText();
     AppsContainer * appsContainer = (AppsContainer *)valuesController->app()->container();
     Context * globalContext = appsContainer->context();
     float floatBody = Expression::parse(textBody)->approximate(*globalContext);
     valuesController->interval()->setElement(activeRow-1, floatBody);
     valuesController->willDisplayCellAtLocation(cell, activeColumn, activeRow);
-    },
-    [](void * context, void * sender){
     });
 }
 
@@ -284,7 +277,10 @@ int ValuesController::typeAtLocation(int i, int j) {
     }
     return 1;
   }
-  return 2;
+  if (i == 0) {
+    return 2;
+  }
+  return 3;
 }
 
 TableViewCell * ValuesController::reusableCell(int index, int type) {
@@ -297,6 +293,9 @@ TableViewCell * ValuesController::reusableCell(int index, int type) {
       assert(index < k_maxNumberOfFunctions);
       return &m_functionTitleCells[index];
     case 2:
+      assert(index < k_maxNumberOfCells);
+      return &m_abscissaCells[index];
+    case 3:
       assert(index < k_maxNumberOfCells);
       return &m_floatCells[index];
     default:
@@ -312,6 +311,8 @@ int ValuesController::reusableCellCount(int type) {
     case 1:
       return k_maxNumberOfFunctions;
     case 2:
+      return k_maxNumberOfAbscissaCells;
+    case 3:
       return k_maxNumberOfCells;
     default:
       assert(false);
@@ -346,8 +347,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     return;
   }
-  // The cell is a value cell:
-  ValueCell * myValueCell = (ValueCell *)cell;
+  // The cell is not a title cell
   char buffer[Constant::FloatBufferSizeInScientificMode];
   // Special case 1: last row
   if (j == numberOfRows() - 1) {
@@ -356,16 +356,25 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     int numberOfIntervalElements = m_interval.numberOfElements();
     if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
       buffer[0] = 0;
-      myValueCell->setText(buffer);
+      if (i == 0) {
+        EditableValueCell * myEditableValueCell = (EditableValueCell *)cell;
+        myEditableValueCell->setText(buffer);
+      } else {
+        ValueCell * myValueCell = (ValueCell *)cell;
+        myValueCell->setText(buffer);
+      }
       return;
     }
   }
-  // Special case 2: first column
+  // Special case: first column
   if (i == 0){
+    EditableValueCell * myEditableValueCell = (EditableValueCell *)cell;
     Float(m_interval.element(j-1)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    myValueCell->setText(buffer);
+    myEditableValueCell->setText(buffer);
     return;
   }
+  // The cell is a value cell:
+  ValueCell * myValueCell = (ValueCell *)cell;
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
   App * graphApp = (Graph::App *)app();

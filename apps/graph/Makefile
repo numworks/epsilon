@@ -20,6 +20,7 @@ app_objs += $(addprefix apps/graph/,\
   list/parameter_controller.o\
   values/abscissa_parameter_controller.o\
   values/derivative_parameter_controller.o\
+  values/editable_value_cell.o\
   values/function_parameter_controller.o\
   values/interval.o\
   values/interval_parameter_controller.o\

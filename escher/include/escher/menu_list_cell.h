@@ -18,8 +18,9 @@ public:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-private:
+protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
+private:
   PointerTextView m_pointerTextView;
 };
 

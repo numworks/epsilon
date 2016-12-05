@@ -8,6 +8,7 @@ objs += $(addprefix escher/src/,\
   chevron_menu_list_cell.o\
   chevron_view.o\
   container.o\
+  editable_text_menu_list_cell.o\
   even_odd_cell.o\
   expression_view.o\
   header_view_controller.o\

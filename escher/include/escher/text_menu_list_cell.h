@@ -13,7 +13,7 @@ public:
   void setAccessoryText(const char * textBody);
   const char * accessoryText();
   void setTextColor(KDColor color) override;
-private:
+protected:
   BufferTextView m_accessoryView;
 };
 

@@ -20,9 +20,9 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_totalNumberOfCell = 3;
   Interval * m_interval;
-  TextMenuListCell m_intervalStartCell;
-  TextMenuListCell m_intervalEndCell;
-  TextMenuListCell m_intervalStepCell;
+  EditableTextMenuListCell m_intervalStartCell;
+  EditableTextMenuListCell m_intervalEndCell;
+  EditableTextMenuListCell m_intervalStepCell;
 };
 
 }

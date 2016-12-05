@@ -5,7 +5,7 @@ namespace Graph {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, GraphView * graphView) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(TextMenuListCell((char*)"x")),
+  m_abscisseCell(EditableTextMenuListCell((char*)"x")),
   m_graphView(graphView),
   m_function(nullptr)
 {

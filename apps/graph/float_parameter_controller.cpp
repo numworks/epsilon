@@ -59,22 +59,20 @@ void FloatParameterController::editParameter(const char * initialText) {
     strlcpy(initialTextContent, textMenuListCell->accessoryText(), sizeof(initialTextContent));
   }
   int cursorLocation = strlen(initialTextContent) + cursorDelta;
+  EditableTextMenuListCell * cell = (EditableTextMenuListCell *)m_selectableTableView.cellAtLocation(0, activeCell());
+  cell->setParentResponder(&m_selectableTableView);
   App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, initialTextContent, cursorLocation, this,
+  cell->editValue(myApp, initialTextContent, cursorLocation, this,
     [](void * context, void * sender){
     FloatParameterController * floatParameterController = (FloatParameterController *)context;
     int activeCell = floatParameterController->activeCell();
-    TextMenuListCell * cell = (TextMenuListCell *)floatParameterController->reusableCell(activeCell);
-    InputViewController * myInputViewController = (InputViewController *)sender;
-    const char * textBody = myInputViewController->textBody();
+    EditableTextMenuListCell * cell = (EditableTextMenuListCell *)sender;
+    const char * textBody = cell->editedText();
     AppsContainer * appsContainer = (AppsContainer *)floatParameterController->app()->container();
     Context * globalContext = appsContainer->context();
     float floatBody = Expression::parse(textBody)->approximate(*globalContext);
     floatParameterController->setParameterAtIndex(activeCell, floatBody);
     floatParameterController->willDisplayCellForIndex(cell, activeCell);
-    },
-    [](void * context, void * sender){
     });
 }
 

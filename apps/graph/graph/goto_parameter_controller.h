@@ -18,7 +18,7 @@ public:
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  TextMenuListCell m_abscisseCell;
+  EditableTextMenuListCell m_abscisseCell;
   GraphView * m_graphView;
   Function * m_function;
 };

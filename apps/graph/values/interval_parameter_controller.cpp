@@ -6,9 +6,9 @@ namespace Graph {
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(TextMenuListCell((char*)"X Debut")),
-  m_intervalEndCell(TextMenuListCell((char*)"X Fin")),
-  m_intervalStepCell(TextMenuListCell((char*)"Pas"))
+  m_intervalStartCell(EditableTextMenuListCell((char*)"X Debut")),
+  m_intervalEndCell(EditableTextMenuListCell((char*)"X Fin")),
+  m_intervalStepCell(EditableTextMenuListCell((char*)"Pas"))
 {
 }
 

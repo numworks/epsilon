@@ -21,7 +21,7 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
   AxisInterval * m_axisInterval;
-  TextMenuListCell m_axisCells[k_numberOfTextCell];
+  EditableTextMenuListCell m_axisCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
   GraphView * m_graphView;
 };

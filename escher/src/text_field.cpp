@@ -116,3 +116,7 @@ KDSize TextField::minimalSizeForOptimalDisplay() {
   KDSize textSize = KDText::stringSize(m_textBuffer);
   return KDSize(0, textSize.height());
 }
+
+void TextField::setTextFieldDelegate(TextFieldDelegate * delegate) {
+  m_delegate = delegate;
+}

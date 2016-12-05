@@ -16,6 +16,7 @@ public:
   const char * text() const;
   int textLength() const;
   void setText(const char * text);
+  void setTextFieldDelegate(TextFieldDelegate * delegate);
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity. */

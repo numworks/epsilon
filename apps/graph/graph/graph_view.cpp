@@ -10,11 +10,7 @@ constexpr KDColor GraphView::k_axisColor;
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval) :
-#if GRAPH_VIEW_IS_TILED
-  TiledView(),
-#else
   View(),
-#endif
   m_cursorView(CursorView()),
   m_xCursorPosition(-1.0f),
   m_yCursorPosition(-1.0f),
@@ -234,41 +230,11 @@ void GraphView::layoutSubviews() {
   }
 }
 
-#if GRAPH_VIEW_IS_TILED
-KDColor * GraphView::tile() const {
-  return (KDColor *)m_tile;
-}
-
-KDSize GraphView::tileSize() const {
-  return {kTileWidth, kTileHeight};
-}
-
-void GraphView::drawTile(KDContext * ctx, KDRect rect) const {
-#else
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-#endif
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
   drawFunction(ctx, rect);
-  /*
-
-  constexpr int maskLength = 3;
-  uint8_t mask[maskLength] = {
-#if 1
-    0x10, 0x70, 0xE0,
-#else
-    0x00, 0x30, 0x73, 0x30, 0x00,
-    0x30, 0xfb, 0xff, 0xfb, 0x30,
-    0x73, 0xff, 0xff, 0xff, 0x73,
-    0x30, 0xfb, 0xff, 0xfb, 0x30,
-    0x00, 0x30, 0x73, 0x30, 0x00
-#endif
-  };
-
-  KDColor red = KDColorRed;
-  KDBlitRect(rect, &red, 1, mask, maskLength);
-  */
 }
 
 void GraphView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
@@ -457,55 +423,5 @@ void GraphView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDC
   }
   straightJoinDots(puf, pvf, pxf, pyf, color, ctx);
 }
-
-#if 0
-
-void GraphView::drawFunction(KDRect rect) const {
-  /* Naive algorithm: iterate on pixels horizontally
-   * Actually, this is kinda optimal. If two consecutive pixels don't touch
-   * (i.e. they have a y-difference greater than 1), just draw a vertical line.
-   * This may seem stupid but is kinda good actually. */
-  KDCoordinate previousPixelY;
-  KDCoordinate pixelX;
-
-  KDColor curveColor = KDColorRGB(0xFF, 0, 0);
-#define ANTI_ALIASING
-#ifdef ANTI_ALIASING
-  KDColor antiAliasingColor = KDColorRGB(0, 0xFF, 0);
-#endif
-
-  for (pixelX=rect.x; pixelX<(rect.x+rect.width); pixelX++) {
-    float x = pixelToFloat(Axis::Horizontal, pixelX);
-    float y = (x-1)*(x+1)*x;
-    KDCoordinate pixelY = floatToPixel(Axis::Vertical, y);
-    KDRect r;
-    r.x = pixelX;
-    if (pixelY < previousPixelY) {
-      r.y = pixelY;
-      r.height = previousPixelY-pixelY;
-      KDPoint p;
-      p.x = pixelX-1;
-      p.y = previousPixelY+3;
-      KDSetPixel(p, KDColorRGB(0x00, 0xFF, 0x00));
-      p.x = pixelX;
-      p.y = pixelY-1;
-      KDSetPixel(p, KDColorRGB(0x00, 0xFF, 0x00));
-    } else {
-      r.y = previousPixelY;
-      r.height = pixelY - previousPixelY;
-    }
-    if (r.height == 0) {
-      r.height = 1;
-    }
-    r.width = 1;
-
-    r.width += 2;
-    r.height += 2;
-    //KDFillRectWithPattern(r, antialiasedDot);
-    KDFillRect(r, KDColorRGB(0xFF, 0, 0));
-    previousPixelY = pixelY;
-  }
-}
-#endif
 
 }

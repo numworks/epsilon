@@ -252,7 +252,6 @@ void ValuesController::editValue(const char * initialText) {
     }
   }
   int cursorLocation = strlen(initialTextContent) + cursorDelta;
-
   EditableValueCell * cell = (EditableValueCell *)m_selectableTableView.cellAtLocation(0, activeRow());
   cell->setParentResponder(&m_selectableTableView);
   cell->editValue(initialTextContent, cursorLocation, this,

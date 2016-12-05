@@ -7,27 +7,12 @@
 #include "../function_store.h"
 #include "../evaluate_context.h"
 
-#define GRAPH_VIEW_IS_TILED 0
-
 namespace Graph {
 
-class GraphView : public
-#if GRAPH_VIEW_IS_TILED
-                  TiledView
-#else
-                  View
-#endif
-{
+class GraphView : public View {
 public:
   GraphView(FunctionStore * functionStore, AxisInterval * axisInterval);
-
-#if GRAPH_VIEW_IS_TILED
-  KDColor * tile() const override;
-  KDSize tileSize() const override;
-  void drawTile(KDContext * ctx, KDRect rect) const override;
-#else
   void drawRect(KDContext * ctx, KDRect rect) const override;
-#endif
 
   float xPixelCursorPosition();
   float xCursorPosition();
@@ -78,12 +63,6 @@ private:
   void stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx) const;
   int numberOfXLabels() const;
   int numberOfYLabels() const;
-#if GRAPH_VIEW_IS_TILED
-  static constexpr KDCoordinate kTileWidth = 32;
-  static constexpr KDCoordinate kTileHeight = 32;
-  KDColor m_tile[kTileWidth*kTileHeight];
-#endif
-
   CursorView m_cursorView;
   float m_xCursorPosition;
   float m_yCursorPosition;

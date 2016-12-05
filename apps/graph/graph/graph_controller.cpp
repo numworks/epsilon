@@ -34,7 +34,7 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 }
 
 View * GraphController::view() {
-  if (m_view.xPixelCursorPosition() < 0.0f) {
+  if (m_view.xPixelCursorPosition() < 0.0f && !isEmpty()) {
     m_view.initCursorPosition();
   }
   return &m_view;

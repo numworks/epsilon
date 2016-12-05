@@ -3,13 +3,14 @@
 
 #include <escher.h>
 #include "interval.h"
-#include "../float_parameter_controller.h"
+#include "../../float_parameter_controller.h"
 
 namespace Graph {
 
 class IntervalParameterController : public FloatParameterController {
 public:
   IntervalParameterController(Responder * parentResponder, Interval * interval);
+  ExpressionTextFieldDelegate * textFieldDelegate() override;
   Interval * interval();
   const char * title() const override;
   int numberOfRows() override;

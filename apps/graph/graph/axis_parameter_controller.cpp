@@ -16,6 +16,11 @@ AxisParameterController::AxisParameterController(Responder * parentResponder, Ax
 
 }
 
+ExpressionTextFieldDelegate * AxisParameterController::textFieldDelegate() {
+  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
+  return myApp;
+}
+
 const char * AxisParameterController::title() const {
   return "Axes";
 }

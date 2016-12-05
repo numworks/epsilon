@@ -1,9 +1,8 @@
-#ifndef GRAPH_FLOAT_PARAMETER_CONTROLLER_H
-#define GRAPH_FLOAT_PARAMETER_CONTROLLER_H
+#ifndef APPS_FLOAT_PARAMETER_CONTROLLER_H
+#define APPS_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-
-namespace Graph {
+#include "expression_text_field_delegate.h"
 
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
@@ -13,7 +12,7 @@ public:
   FloatParameterController(Responder * parentResponder);
   int activeCell();
   void editParameter(const char * initialText = nullptr);
-
+  virtual ExpressionTextFieldDelegate * textFieldDelegate() = 0;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -26,7 +25,5 @@ private:
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
 
 };
-
-}
 
 #endif

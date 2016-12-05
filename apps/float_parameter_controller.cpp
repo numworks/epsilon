@@ -1,10 +1,7 @@
 #include "float_parameter_controller.h"
-#include "app.h"
-#include "../constant.h"
-#include "../apps_container.h"
+#include "constant.h"
+#include "apps_container.h"
 #include <assert.h>
-
-namespace Graph {
 
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
@@ -61,8 +58,7 @@ void FloatParameterController::editParameter(const char * initialText) {
   int cursorLocation = strlen(initialTextContent) + cursorDelta;
   EditableTextMenuListCell * cell = (EditableTextMenuListCell *)m_selectableTableView.cellAtLocation(0, activeCell());
   cell->setParentResponder(&m_selectableTableView);
-  App * myApp = (App *)app();
-  cell->editValue(myApp, initialTextContent, cursorLocation, this,
+  cell->editValue(textFieldDelegate(), initialTextContent, cursorLocation, this,
     [](void * context, void * sender){
     FloatParameterController * floatParameterController = (FloatParameterController *)context;
     int activeCell = floatParameterController->activeCell();
@@ -78,6 +74,4 @@ void FloatParameterController::editParameter(const char * initialText) {
 
 KDCoordinate FloatParameterController::cellHeight() {
   return 35;
-}
-
 }

@@ -4,12 +4,13 @@
 #include <escher.h>
 #include "axis_interval.h"
 #include "graph_view.h"
-#include "../float_parameter_controller.h"
+#include "../../float_parameter_controller.h"
 
 namespace Graph {
 class AxisParameterController : public FloatParameterController {
 public:
   AxisParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView);
+  ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;

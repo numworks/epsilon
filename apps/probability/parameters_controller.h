@@ -2,14 +2,15 @@
 #define PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <escher.h>
+#include "../float_parameter_controller.h"
 #include "law.h"
 
 namespace Probability {
 
-class ParametersController : public ViewController, public SimpleListViewDataSource {
+class ParametersController : public FloatParameterController {
 public:
   ParametersController(Responder * parentResponder, Law * law);
-
+  ExpressionTextFieldDelegate * textFieldDelegate() override;
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -17,10 +18,11 @@ public:
 
   int numberOfRows() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
+  float parameterAtIndex(int index) override;
+  void setParameterAtIndex(int parameterIndex, float f) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
@@ -38,8 +40,7 @@ private:
     PointerTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
   };
-  TextMenuListCell m_menuListCell[2];
-  SelectableTableView m_selectableTableView;
+  EditableTextMenuListCell m_menuListCell[2];
   ContentView m_contentView;
   Law * m_law;
   bool m_buttonSelected;

@@ -58,13 +58,16 @@ void ParametersController::ContentView::layoutSubviews() {
 /* Parameters Controller */
 
 ParametersController::ParametersController(Responder * parentResponder, Law * law) :
-  ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  FloatParameterController(parentResponder),
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(law),
   m_buttonSelected(false)
 {
+}
+
+ExpressionTextFieldDelegate * ParametersController::textFieldDelegate() {
+  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
+  return myApp;
 }
 
 View * ParametersController::view() {
@@ -81,14 +84,16 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
     m_contentView.button()->setBackgroundColor(Palette::FocusCellBackgroundColor);
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(m_contentView.button());
+    return true;
   }
   if (event == Ion::Events::Up && m_buttonSelected) {
     m_buttonSelected = false;
     m_contentView.button()->setBackgroundColor(KDColorWhite);
     m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
     app()->setFirstResponder(&m_selectableTableView);
+    return true;
   }
-  return false;
+  return FloatParameterController::handleEvent(event);
 }
 
 void ParametersController::didBecomeFirstResponder() {
@@ -98,8 +103,7 @@ void ParametersController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
   m_buttonSelected = false;
   m_contentView.button()->setBackgroundColor(KDColorWhite);
-  m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  FloatParameterController::didBecomeFirstResponder();
 }
 
 int ParametersController::numberOfRows() {
@@ -109,9 +113,10 @@ int ParametersController::numberOfRows() {
 void ParametersController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   TextMenuListCell * myCell = (TextMenuListCell *) cell;
   myCell->setText(m_law->parameterNameAtIndex(index));
-  char buffer[Constant::FloatBufferSizeInScientificMode];
+  FloatParameterController::willDisplayCellForIndex(cell, index);
+  /*char buffer[Constant::FloatBufferSizeInScientificMode];
   Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-  myCell->setAccessoryText(buffer);
+  myCell->setAccessoryText(buffer);*/
 }
 
 TableViewCell * ParametersController::reusableCell(int index) {
@@ -124,8 +129,12 @@ int ParametersController::reusableCellCount() {
   return m_law->numberOfParameter();
 }
 
-KDCoordinate ParametersController::cellHeight() {
-  return 35;
+float ParametersController::parameterAtIndex(int index) {
+  return m_law->parameterValueAtIndex(index);
+}
+
+void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+  m_law->setParameterAtIndex(f, parameterIndex);
 }
 
 }

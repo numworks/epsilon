@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "law_controller.h"
+#include "evaluate_context.h"
 #include "../expression_text_field_delegate.h"
 
 namespace Probability {
@@ -16,7 +17,7 @@ public:
   App(Container * container, Context * context);
   Context * evaluateContext() override;
 private:
-  Context * m_context;
+  EvaluateContext m_evaluateContext;
   LawController m_lawController;
   StackViewController m_stackViewController;
 };

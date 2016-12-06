@@ -22,10 +22,11 @@ static const char * sMessages[] = {
   "Poisson"
 };
 
-LawController::LawController(Responder * parentResponder) :
+LawController::LawController(Responder * parentResponder, EvaluateContext * evaluateContext) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
+  m_law(evaluateContext),
   m_parametersController(ParametersController(nullptr, &m_law))
 {
   m_messages = sMessages;

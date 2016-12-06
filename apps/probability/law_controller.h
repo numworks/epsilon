@@ -5,12 +5,13 @@
 #include "cell.h"
 #include "law.h"
 #include "parameters_controller.h"
+#include "evaluate_context.h"
 
 namespace Probability {
 
 class LawController : public ViewController, public SimpleListViewDataSource {
 public:
-  LawController(Responder * parentResponder);
+  LawController(Responder * parentResponder, EvaluateContext * EvaluateContext);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

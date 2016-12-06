@@ -1,5 +1,6 @@
 app_objs += $(addprefix apps/probability/,\
   app.o\
+  calculation_controller.o\
   cell.o\
   evaluate_context.o\
   law.o\

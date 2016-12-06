@@ -16,6 +16,8 @@ public:
   // Text
   void drawChar(char character, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void drawString(const char * text, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void blendChar(char character, KDPoint p, KDColor textColor = KDColorBlack);
+  void blendString(const char * text, KDPoint p, KDColor textColor = KDColorBlack);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);

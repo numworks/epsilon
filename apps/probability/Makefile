@@ -11,8 +11,14 @@ app_objs += $(addprefix apps/probability/,\
 
 app_images += $(addprefix apps/probability/images/,\
   binomial_icon.png\
+  calcul1_icon.png\
+  calcul2_icon.png\
+  calcul3_icon.png\
   exponential_icon.png\
   focused_binomial_icon.png\
+  focused_calcul1_icon.png\
+  focused_calcul2_icon.png\
+  focused_calcul3_icon.png\
   focused_exponential_icon.png\
   focused_normal_icon.png\
   focused_poisson_icon.png\

@@ -3,11 +3,13 @@
 
 #include <escher/view.h>
 #include <escher/scroll_view_indicator.h>
+#include <escher/palette.h>
 
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
-    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true);
+    KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true,
+    bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset();
@@ -39,6 +41,8 @@ private:
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
   bool m_showIndicators;
+  bool m_colorBackground;
+  KDColor m_backgroundColor;
 };
 
 #endif

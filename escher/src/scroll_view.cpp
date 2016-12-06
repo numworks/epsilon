@@ -1,5 +1,4 @@
 #include <escher/scroll_view.h>
-#include <escher/palette.h>
 
 extern "C" {
 #include <assert.h>
@@ -8,7 +7,8 @@ extern "C" {
 constexpr KDCoordinate ScrollView::k_indicatorThickness;
 
 ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin,
-  KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators) :
+  KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
+  KDColor backgroundColor) :
   View(),
   m_topMargin(topMargin),
   m_offset(KDPointZero),
@@ -18,9 +18,12 @@ ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate 
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),
   m_leftMargin(leftMargin),
-  m_showIndicators(showIndicators)
+  m_showIndicators(showIndicators),
+  m_colorBackground(colorBackground),
+  m_backgroundColor(backgroundColor)
 {
 }
+
 bool ScrollView::hasVerticalIndicator() const {
   if (m_showIndicators) {
     return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
@@ -52,9 +55,12 @@ View * ScrollView::subviewAtIndex(int index) {
 }
 
 void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!m_colorBackground) {
+    return;
+  }
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, 0, width, height), Palette::BackgroundColor);
+  ctx->fillRect(KDRect(0, 0, width, height), m_backgroundColor);
   // Future optimization: avoid drawing behind the content view/
   //ctx->fillRect(KDRect(m_leftMargin, m_contentView->bounds().height()+m_topMargin,  width-m_leftMargin-m_rightMargin, height- m_contentView->bounds().height())-m_topMargin, Palette::BackgroundColor);
 }

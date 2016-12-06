@@ -1,6 +1,7 @@
 #ifndef ESCHER_TABLE_VIEW_H
 #define ESCHER_TABLE_VIEW_H
 
+#include <escher/palette.h>
 #include <escher/scroll_view.h>
 #include <escher/table_view_cell.h>
 #include <escher/table_view_data_source.h>
@@ -8,7 +9,8 @@
 class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0,
-    KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+    KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0,
+    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
 
   virtual void scrollToCell(int i, int j);
   TableViewCell * cellAtLocation(int i, int j);

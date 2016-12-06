@@ -5,6 +5,7 @@
 #include <escher/app.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/table_view_data_source.h>
+#include <escher/palette.h>
 #include <escher/responder.h>
 
 /* SelectableTableView is a Table View that handles selection. To implement it,
@@ -17,7 +18,8 @@ class SelectableTableView : public TableView, public Responder {
 public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
-    KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr);
+    KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr,
+    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
   int selectedRow();
   int selectedColumn();
   virtual bool handleEvent(Ion::Events::Event event) override;

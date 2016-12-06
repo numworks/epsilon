@@ -8,8 +8,10 @@ extern "C" {
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
 TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
-    KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin),
+    KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
+    KDColor backgroundColor) :
+  ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
+    backgroundColor),
   m_contentView(TableView::ContentView(this, dataSource))
 {
 }

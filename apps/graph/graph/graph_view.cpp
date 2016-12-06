@@ -1,5 +1,4 @@
 #include "graph_view.h"
-#include "../../constant.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -21,30 +20,12 @@ GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval)
 }
 
 int GraphView::numberOfSubviews() const {
-  return 1 + numberOfXLabels() + numberOfYLabels();
+  return 1;
 };
 
 View * GraphView::subviewAtIndex(int index) {
-  if (index < numberOfXLabels()) {
-    float step = m_axisInterval->xScale();
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    // TODO: change the number of digits in mantissa once the numerical mode is implemented
-    Float(2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    m_xLabels[index].setText(buffer);
-    return &m_xLabels[index];
-  }
-  if (index < numberOfXLabels() + numberOfYLabels()) {
-    float step = m_axisInterval->yScale();
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    int newIndex = index - numberOfXLabels();
-    Float(2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)))+newIndex*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    m_yLabels[newIndex].setText(buffer);
-    return &m_yLabels[newIndex];
-  }
-  if (index == numberOfXLabels() + numberOfYLabels()) {
-    return &m_cursorView;
-  }
-  assert(false);
+  assert(index == 0);
+  return &m_cursorView;
 }
 
 void GraphView::setContext(Context * context) {
@@ -62,6 +43,7 @@ int GraphView::indexFunctionSelectedByCursor() {
 void GraphView::reload() {
   markRectAsDirty(bounds());
   layoutSubviews();
+  computeLabels();
 }
 
 int GraphView::numberOfXLabels() const {
@@ -76,6 +58,22 @@ int GraphView::numberOfYLabels() const {
     return 0;
   }
   return ceilf((max(Axis::Vertical) - min(Axis::Vertical))/(2*m_axisInterval->yScale()));
+}
+
+void GraphView::computeLabels() {
+  char buffer[Constant::FloatBufferSizeInScientificMode];
+  float step = m_axisInterval->xScale();
+  for (int index = 0; index < numberOfXLabels(); index++) {
+    // TODO: change the number of digits in mantissa once the numerical mode is implemented
+    Float(2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    strlcpy(m_xLabels[index], buffer, strlen(buffer)+1);
+  }
+  step = m_axisInterval->yScale();
+  for (int index = 0; index < numberOfYLabels(); index++) {
+    // TODO: change the number of digits in mantissa once the numerical mode is implemented
+    Float(2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    strlcpy(m_yLabels[index], buffer, strlen(buffer)+1);
+  }
 }
 
 float GraphView::xPixelCursorPosition() {
@@ -200,33 +198,6 @@ void GraphView::layoutSubviews() {
   }
   m_cursorView.setPosition(m_xCursorPosition, m_yCursorPosition);
   m_cursorView.setFrame(cursorFrame);
-  float step = m_axisInterval->xScale();
-  float start = 2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step)));
-  int i = 0;
-  for (float x = start; x < max(Axis::Horizontal); x += 2.0f*step) {
-    KDRect labelFrame(floatToPixel(Axis::Horizontal, x) - k_labelWidth/2, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin, k_labelWidth, k_labelHeight);
-    // TODO: Find another way to avoid float comparison.
-    if (x == 0.0f) {
-      labelFrame = KDRect(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin, k_labelWidth, k_labelHeight);
-    }
-    m_xLabels[i++].setFrame(labelFrame);
-  }
-  for (int k = i; k < k_maxNumberOfXLabels; k++) {
-    m_xLabels[k].setFrame(KDRectZero);
-  }
-  step = m_axisInterval->yScale();
-  start = 2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)));
-  int j = 0;
-  for (float y = start; y < max(Axis::Vertical); y += 2.0f*step) {
-    KDRect labelFrame(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, y) - k_labelHeight/2, k_labelWidth, k_labelHeight);
-    if (y == 0.0f) {
-      labelFrame = KDRectZero;
-    }
-    m_yLabels[j++].setFrame(labelFrame);
-  }
-  for (int k = j; k < k_maxNumberOfYLabels; k++) {
-    m_yLabels[k].setFrame(KDRectZero);
-  }
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -234,9 +205,31 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawGrid(ctx, rect);
   drawAxes(Axis::Horizontal, ctx, rect);
   drawAxes(Axis::Vertical, ctx, rect);
+  drawLabels(Axis::Horizontal, ctx, rect);
+  drawLabels(Axis::Vertical, ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
     drawExpression(f->expression(), f->color(), ctx, rect);
+  }
+}
+
+void GraphView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
+  float step = axis == Axis::Horizontal ? m_axisInterval->xScale() : m_axisInterval->yScale();
+  float start = axis == Axis::Horizontal ? 2.0f*step*(ceilf(min(Axis::Horizontal)/(2.0f*step))) : 2.0f*step*(ceilf(min(Axis::Vertical)/(2.0f*step)));
+  float end = axis == Axis::Horizontal ? max(Axis::Horizontal) : max(Axis::Vertical);
+  int i = 0;
+  for (float x = start; x < end; x += 2.0f*step) {
+    KDSize textSize = KDText::stringSize(m_xLabels[i]);
+    KDPoint origin(floatToPixel(Axis::Horizontal, x) - textSize.width()/2, floatToPixel(Axis::Vertical, 0.0f)  + k_labelMargin);
+    if (axis == Axis::Vertical) {
+      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
+    }
+    // TODO: Find another way to avoid float comparison.
+    if (x == 0.0f) {
+      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
+    }
+    const char * label = axis == Axis::Horizontal ? m_xLabels[i++] : m_yLabels[i++];
+    ctx->drawString(label, origin, KDColorBlack, KDColorWhite);
   }
 }
 

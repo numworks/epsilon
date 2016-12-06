@@ -5,6 +5,7 @@
 #include "cursor_view.h"
 #include "axis_interval.h"
 #include "../../curve_view.h"
+#include "../../constant.h"
 #include "../function_store.h"
 #include "../evaluate_context.h"
 
@@ -49,6 +50,8 @@ private:
 
   int numberOfXLabels() const;
   int numberOfYLabels() const;
+  void computeLabels();
+  void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
 
   CursorView m_cursorView;
   float m_xCursorPosition;
@@ -56,8 +59,8 @@ private:
   int m_indexFunctionSelectedByCursor;
   bool m_visibleCursor;
 
-  BufferTextView m_xLabels[k_maxNumberOfXLabels];
-  BufferTextView m_yLabels[k_maxNumberOfYLabels];
+  char m_xLabels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
+  char m_yLabels[k_maxNumberOfYLabels][Constant::FloatBufferSizeInScientificMode];
 
   AxisInterval * m_axisInterval;
   FunctionStore * m_functionStore;

@@ -7,6 +7,7 @@ include apps/calculation/Makefile
 app_objs += $(addprefix apps/,\
   apps_container.o\
   constant.o\
+  curve_view.o\
   expression_text_field_delegate.o\
   float_parameter_controller.o\
   main.o\

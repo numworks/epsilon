@@ -6,11 +6,10 @@
 
 namespace Graph {
 
-constexpr KDColor GraphView::k_axisColor;
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval) :
-  View(),
+  CurveView(),
   m_cursorView(CursorView()),
   m_xCursorPosition(-1.0f),
   m_yCursorPosition(-1.0f),
@@ -233,33 +232,12 @@ void GraphView::layoutSubviews() {
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  drawFunction(ctx, rect);
-}
-
-void GraphView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
-  KDRect lineRect = KDRectZero;
-  switch(axis) {
-    // WARNING TODO: anti-aliasing?
-    case Axis::Horizontal:
-      lineRect = KDRect(
-          rect.x(), floatToPixel(Axis::Vertical, coordinate),
-          rect.width(), thickness
-          );
-      break;
-    case Axis::Vertical:
-      lineRect = KDRect(
-          floatToPixel(Axis::Horizontal, coordinate), rect.y(),
-          thickness, rect.height()
-      );
-      break;
+  drawAxes(Axis::Horizontal, ctx, rect);
+  drawAxes(Axis::Vertical, ctx, rect);
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    drawExpression(f->expression(), f->color(), ctx, rect);
   }
-  ctx->fillRect(lineRect, color);
-}
-
-void GraphView::drawAxes(KDContext * ctx, KDRect rect) const {
-  drawLine(ctx, rect, Axis::Horizontal, 0.0f, k_axisColor, 2);
-  drawLine(ctx, rect, Axis::Vertical, 0.0f, k_axisColor, 2);
 }
 
 void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
@@ -285,143 +263,9 @@ float GraphView::max(Axis axis) const {
   return (axis == Axis::Horizontal ? m_axisInterval->xMax() : m_axisInterval->yMax());
 }
 
-KDCoordinate GraphView::pixelLength(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
-}
-
-float GraphView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
-  return min(axis) + pixels*(max(axis)-min(axis))/pixelLength(axis);
-}
-
-float GraphView::floatToPixel(Axis axis, float f) const {
-  float fraction = (f-min(axis))/(max(axis)-min(axis));
-  fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
-  return pixelLength(axis)*fraction;
-}
-
-#define LINE_THICKNESS 3
-
-#if LINE_THICKNESS == 3
-
-constexpr KDCoordinate circleDiameter = 3;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0x7A, 0x0C, 0x7A, 0xFF},
-  {0xFF, 0x0C, 0x00, 0x0C, 0xFF},
-  {0xFF, 0x7A, 0x0C, 0x7A, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF}
-};
-
-#elif LINE_THICKNESS == 5
-
-constexpr KDCoordinate circleDiameter = 5;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF},
-  {0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF},
-  {0xFF, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0xFF},
-  {0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF},
-  {0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
-};
-
-#endif
-
-constexpr static int k_maxNumberOfIterations = 10;
-
-void GraphView::drawFunction(KDContext * ctx, KDRect rect) const {
-  float xMin = m_axisInterval->xMin();
-  float xMax = m_axisInterval->xMax();
-  float xStep = (xMax-xMin)/320.0f;
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    Function * f = m_functionStore->activeFunctionAtIndex(i);
-    for (float x = xMin; x < xMax; x += xStep) {
-      float y = f->evaluateAtAbscissa(x, m_evaluateContext);
-      float pxf = floatToPixel(Axis::Horizontal, x);
-      float pyf = floatToPixel(Axis::Vertical, y);
-      stampAtLocation(pxf, pyf, f->color(), ctx);
-      if (x > xMin) {
-        jointDots(x - xStep, f->evaluateAtAbscissa(x-xStep, m_evaluateContext), x, y, f, k_maxNumberOfIterations, ctx);
-      }
-    }
-  }
-}
-
-void GraphView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx) const {
-  // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
-    return;
-  }
-  uint8_t shiftedMask[stampSize][stampSize];
-  KDColor workingBuffer[stampSize*stampSize];
-  KDCoordinate px = pxf;
-  KDCoordinate py = pyf;
-  float dx = pxf - floorf(pxf);
-  float dy = pyf - floorf(pyf);
-  /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
-   * dx and dy would be rounded to one tenth or one hundredth to choose the
-   * right shifted mask. */
-  for (int i=0; i<stampSize; i++) {
-    for (int j=0; j<stampSize; j++) {
-      shiftedMask[i][j] = dx * (stampMask[i][j]*dy+stampMask[i+1][j]*(1.0f-dy))
-        + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
-    }
-  }
-  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
-  ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
-}
-
-void GraphView::jointDots(float x, float y, float u, float v, Function * function, int maxNumberOfRecursion, KDContext * ctx) const {
-  float pyf = floatToPixel(Axis::Vertical, y);
-  float pvf = floatToPixel(Axis::Vertical, v);
-  // No need to draw if both dots are outside visible area
-  if ((pyf < -stampSize && pvf < -stampSize) || (pyf > pixelLength(Axis::Vertical)+stampSize && pvf > pixelLength(Axis::Vertical)+stampSize)) {
-    return;
-  }
-  // If one of the dot is infinite, we cap it with a dot outside area
-  if (isinf(pyf)) {
-    pyf = pyf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
-  }
-  if (isinf(pvf)) {
-    pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
-  }
-  if (pyf - (float)circleDiameter/2.0f < pvf && pvf < pyf + (float)circleDiameter/2.0f) {
-    // the dots are already joined
-    return;
-  }
-  // C is the dot whose abscissa is between x and u
-  float cx = (x + u)/2.0f;
-  float cy = function->evaluateAtAbscissa(cx, m_evaluateContext);
-  if ((y < cy && cy < v) || (v < cy && cy < y)) {
-    /* As the middle dot is vertically between the two dots, we assume that we
-     * can draw a 'straight' line between the two */
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float puf = floatToPixel(Axis::Horizontal, u);
-    straightJoinDots(pxf, pyf, puf, pvf, function->color(), ctx);
-    return;
-  }
-  float pcxf = floatToPixel(Axis::Horizontal, cx);
-  float pcyf = floatToPixel(Axis::Vertical, cy);
-  if (maxNumberOfRecursion > 0) {
-    stampAtLocation(pcxf, pcyf, function->color(), ctx);
-    jointDots(x, y, cx, cy, function, maxNumberOfRecursion-1, ctx);
-    jointDots(cx, cy, u, v, function, maxNumberOfRecursion-1, ctx);
-  }
-}
-
-void GraphView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx) const {
-  if (pyf < pvf) {
-    for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
-      float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
-      stampAtLocation(pmf, pnf, color, ctx);
-    }
-    return;
-  }
-  straightJoinDots(puf, pvf, pxf, pyf, color, ctx);
+float GraphView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {
+  m_evaluateContext->setOverridenValueForSymbolX(abscissa);
+  return expression->approximate(*m_evaluateContext);
 }
 
 }

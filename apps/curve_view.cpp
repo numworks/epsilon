@@ -66,7 +66,7 @@ void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
     if (x == 0.0f) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
-    ctx->drawString(label(axis, i++), origin, KDColorBlack, KDColorWhite);
+    ctx->blendString(label(axis, i++), origin, KDColorBlack);
   }
 }
 

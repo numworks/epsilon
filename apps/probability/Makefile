@@ -4,6 +4,7 @@ app_objs += $(addprefix apps/probability/,\
   evaluate_context.o\
   law.o\
   law_controller.o\
+  law_curve_view.o\
   parameters_controller.o\
 )
 

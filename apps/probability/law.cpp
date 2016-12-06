@@ -6,6 +6,7 @@ namespace Probability {
 
 Law::Law(EvaluateContext * evaluateContext):
   m_type(Law::Type::NoType),
+ m_calculationType(LeftIntegral),
   m_parameter1(0.0f),
   m_parameter2(0.0f),
   m_expression(nullptr),
@@ -65,6 +66,14 @@ void Law::setType(Type type) {
 
 Law::Type Law::type() const {
   return m_type;
+}
+
+void Law::setCalculationType(CalculationType calculationType) {
+  m_calculationType = calculationType;
+}
+
+Law::CalculationType Law::calculationType() const {
+  return m_calculationType;
 }
 
 Expression * Law::expression() {

@@ -15,11 +15,18 @@ public:
     Normal,
     Poisson
   };
+  enum CalculationType : uint8_t {
+    LeftIntegral = 0,
+    RightIntegral = 1,
+    FiniteIntegral = 2
+  };
   Law(EvaluateContext * evaluateContext);
   ~Law();
   EvaluateContext * evaluateContext();
   void setType(Type type);
   Type type() const;
+  void setCalculationType(CalculationType calculationType);
+  CalculationType calculationType() const;
   Expression * expression();
   bool isContinuous();
   float xMin();
@@ -37,6 +44,7 @@ private:
   void setWindow();
   void computeScale();
   Type m_type;
+  CalculationType m_calculationType;
   float m_parameter1;
   float m_parameter2;
   Expression * m_expression;

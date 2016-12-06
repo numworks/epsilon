@@ -20,13 +20,19 @@ private:
   public:
     ContentView(Responder * parentResponder, Law * law);
     void layoutSubviews() override;
+    void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();
     ImageTableView * imageTableView();
   private:
+    constexpr static KDCoordinate k_textFieldWidth = 50;
+    constexpr static KDCoordinate k_charWidth = 7;
+    constexpr static KDCoordinate k_textMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
+    PointerTextView m_text[3];
+    EditableTextCell m_calculationCell[3];
   };
   ContentView m_contentView;
   Law * m_law;

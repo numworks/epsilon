@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "law.h"
 #include "law_curve_view.h"
+#include "image_table_view.h"
 
 namespace Probability {
 
@@ -20,10 +21,12 @@ private:
     ContentView(Responder * parentResponder, Law * law);
     void layoutSubviews() override;
     LawCurveView * lawCurveView();
+    ImageTableView * imageTableView();
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     LawCurveView m_lawCurveView;
+    ImageTableView m_imageTableView;
   };
   ContentView m_contentView;
   Law * m_law;

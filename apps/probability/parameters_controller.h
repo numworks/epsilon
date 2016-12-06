@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../float_parameter_controller.h"
 #include "law.h"
+#include "calculation_controller.h"
 
 namespace Probability {
 
@@ -15,7 +16,8 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-
+  StackViewController * stackController();
+  CalculationController * calculationController();
   int numberOfRows() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   TableViewCell * reusableCell(int index) override;
@@ -23,6 +25,7 @@ public:
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
+  void updateTitle();
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
@@ -44,6 +47,9 @@ private:
   ContentView m_contentView;
   Law * m_law;
   bool m_buttonSelected;
+  CalculationController m_calculationController;
+  constexpr static int k_maxNumberOfTitleCharacters = 30;
+  char m_titleBuffer[k_maxNumberOfTitleCharacters];
 };
 
 }

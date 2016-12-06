@@ -1,11 +1,17 @@
 #include "parameters_controller.h"
 #include "../constant.h"
 #include <assert.h>
+#include <string.h>
 
 namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
-  m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {}, this))),
+  m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
+    ParametersController * parameterController = (ParametersController *) context;
+    StackViewController * stack = parameterController->stackController();
+    stack->updateTitle();
+    stack->push(parameterController->calculationController());
+  }, parentResponder))),
   m_firstParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
   m_secondParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
   m_selectableTableView(selectableTableView)
@@ -61,7 +67,8 @@ ParametersController::ParametersController(Responder * parentResponder, Law * la
   FloatParameterController(parentResponder),
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(law),
-  m_buttonSelected(false)
+  m_buttonSelected(false),
+  m_calculationController(CalculationController(nullptr, law))
 {
 }
 
@@ -75,7 +82,25 @@ View * ParametersController::view() {
 }
 
 const char * ParametersController::title() const {
-  return "Choisir les parametres";
+  if (!m_buttonSelected) {
+    return "Choisir les parametres";
+  }
+  return m_titleBuffer;
+}
+
+void ParametersController::updateTitle() {
+  int currentChar = 0;
+  for (int index = 0; index < m_law->numberOfParameter(); index++) {
+    m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
+    strlcpy(m_titleBuffer+currentChar, " = ", 4);
+    currentChar += 3;
+    char buffer[Constant::FloatBufferSizeInScientificMode];
+    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
+    currentChar += strlen(buffer);
+    m_titleBuffer[currentChar++] = ' ';
+  }
+  m_titleBuffer[currentChar-1] = 0;
 }
 
 bool ParametersController::handleEvent(Ion::Events::Event event) {
@@ -84,6 +109,7 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
     m_contentView.button()->setBackgroundColor(Palette::FocusCellBackgroundColor);
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(m_contentView.button());
+    updateTitle();
     return true;
   }
   if (event == Ion::Events::Up && m_buttonSelected) {
@@ -102,8 +128,17 @@ void ParametersController::didBecomeFirstResponder() {
   }
   m_contentView.layoutSubviews();
   m_buttonSelected = false;
+  stackController()->updateTitle();
   m_contentView.button()->setBackgroundColor(KDColorWhite);
   FloatParameterController::didBecomeFirstResponder();
+}
+
+StackViewController * ParametersController::stackController() {
+  return (StackViewController * )parentResponder();
+}
+
+CalculationController * ParametersController::calculationController() {
+  return &m_calculationController;
 }
 
 int ParametersController::numberOfRows() {
@@ -114,9 +149,6 @@ void ParametersController::willDisplayCellForIndex(TableViewCell * cell, int ind
   TextMenuListCell * myCell = (TextMenuListCell *) cell;
   myCell->setText(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
-  /*char buffer[Constant::FloatBufferSizeInScientificMode];
-  Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-  myCell->setAccessoryText(buffer);*/
 }
 
 TableViewCell * ParametersController::reusableCell(int index) {

@@ -3,6 +3,7 @@ app_objs += $(addprefix apps/probability/,\
   calculation_controller.o\
   cell.o\
   evaluate_context.o\
+  image_table_view.o\
   law.o\
   law_controller.o\
   law_curve_view.o\

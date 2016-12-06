@@ -26,6 +26,7 @@ public:
   float yMin();
   float xMax();
   float yMax();
+  float scale();
   int numberOfParameter();
   float parameterValueAtIndex(int index);
   const char * parameterNameAtIndex(int index);
@@ -34,6 +35,7 @@ public:
   float evaluateAtAbscissa(float x, EvaluateContext * context) const;
 private:
   void setWindow();
+  void computeScale();
   Type m_type;
   float m_parameter1;
   float m_parameter2;
@@ -42,6 +44,7 @@ private:
   float m_xMax;
   float m_yMin;
   float m_yMax;
+  float m_scale;
   EvaluateContext * m_evaluateContext;
 };
 

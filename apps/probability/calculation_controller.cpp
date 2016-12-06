@@ -21,6 +21,10 @@ void CalculationController::ContentView::layoutSubviews() {
   m_lawCurveView.setFrame(bounds());
 }
 
+LawCurveView * CalculationController::ContentView::lawCurveView() {
+  return &m_lawCurveView;
+}
+
 CalculationController::CalculationController(Responder * parentResponder, Law * law) :
   ViewController(parentResponder),
   m_contentView(ContentView(this, law)),
@@ -41,6 +45,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  m_contentView.lawCurveView()->reload();
 }
 
 }

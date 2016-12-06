@@ -13,6 +13,7 @@ Law::Law(EvaluateContext * evaluateContext):
   m_xMax(10.0f),
   m_yMin(-0.1f),
   m_yMax(1.0f),
+  m_scale(1.0f),
   m_evaluateContext(evaluateContext)
 {
 }
@@ -101,6 +102,10 @@ float Law::xMax() {
 
 float Law::yMax() {
   return m_yMax;
+}
+
+float Law::scale() {
+  return m_scale;
 }
 
 int Law::numberOfParameter() {
@@ -230,6 +235,26 @@ void Law::setWindow() {
     default:
       return;
   }
+  computeScale();
+}
+
+void Law::computeScale() {
+  int a = 0;
+  int b = 0;
+  float d = m_xMax - m_xMin;
+  if (floorf(log10f(d/90.0f)) != floorf(log10f(d/35.0f))) {
+    b = floorf(log10f(d/35.0f));
+    a = 5;
+  }
+  if (floorf(log10f(d/36.0f)) != floorf(log10f(d/14.0f))) {
+    b = floorf(log10f(d/14.0f));
+    a = 2;
+  }
+  if (floorf(log10f(d/18.0f)) != floorf(log10f(d/7.0f))) {
+    b = floorf(log10f(d/7.0f));
+    a = 1;
+  }
+  m_scale = a*powf(10,b);
 }
 
 }

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <string.h>
 
 constexpr KDColor CurveView::k_axisColor;
 
@@ -29,6 +30,44 @@ float CurveView::floatToPixel(Axis axis, float f) const {
   float fraction = (f-min(axis))/(max(axis)-min(axis));
   fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
   return pixelLength(axis)*fraction;
+}
+
+int CurveView::numberOfLabels(Axis axis) const {
+  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
+  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
+    return 0;
+  }
+  return ceilf((max(axis) - min(axis))/(2*scale(axis)));
+}
+
+void CurveView::computeLabels(Axis axis) {
+  char buffer[Constant::FloatBufferSizeInScientificMode];
+  float step = scale(axis);
+  for (int index = 0; index < numberOfLabels(axis); index++) {
+    // TODO: change the number of digits in mantissa once the numerical mode is implemented
+    Float(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    //TODO: check for size of label?
+    strlcpy(label(axis, index), buffer, strlen(buffer)+1);
+  }
+}
+
+void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
+  float step = scale(axis);
+  float start = 2.0f*step*(ceilf(min(axis)/(2.0f*step)));
+  float end = max(axis);
+  int i = 0;
+  for (float x = start; x < end; x += 2.0f*step) {
+    KDSize textSize = KDText::stringSize(label(axis, i));
+    KDPoint origin(floatToPixel(Axis::Horizontal, x) - textSize.width()/2, floatToPixel(Axis::Vertical, 0.0f)  + k_labelMargin);
+    if (axis == Axis::Vertical) {
+      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
+    }
+    // TODO: Find another way to avoid float comparison.
+    if (x == 0.0f) {
+      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
+    }
+    ctx->drawString(label(axis, i++), origin, KDColorBlack, KDColorWhite);
+  }
 }
 
 void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {

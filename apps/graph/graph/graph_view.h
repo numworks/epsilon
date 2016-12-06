@@ -32,11 +32,6 @@ private:
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_cursorSize = 10;
   constexpr static float k_cursorMarginToBorder = 5.0f;
-  constexpr static KDCoordinate k_labelWidth =  32;
-  constexpr static KDCoordinate k_labelHeight =  12;
-  constexpr static KDCoordinate k_labelMargin =  4;
-  constexpr static int k_maxNumberOfXLabels =  18;
-  constexpr static int k_maxNumberOfYLabels =  13;
 
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
@@ -44,14 +39,11 @@ private:
 
   float min(Axis axis) const override;
   float max(Axis axis) const override;
+  float scale(Axis axis) const override;
+  char * label(Axis axis, int index) const override;
   float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const override;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
-
-  int numberOfXLabels() const;
-  int numberOfYLabels() const;
-  void computeLabels();
-  void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
 
   CursorView m_cursorView;
   float m_xCursorPosition;

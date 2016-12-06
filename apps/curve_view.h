@@ -14,8 +14,13 @@ protected:
     Vertical = 1
   };
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
+  constexpr static KDCoordinate k_labelMargin =  4;
+  constexpr static int k_maxNumberOfXLabels =  18;
+  constexpr static int k_maxNumberOfYLabels =  13;
   virtual float min(Axis axis) const = 0;
   virtual float max(Axis axis) const = 0;
+  virtual float scale(Axis axis) const = 0;
+  virtual char * label(Axis axis, int index) const = 0;
   KDCoordinate pixelLength(Axis axis) const;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
@@ -23,7 +28,10 @@ protected:
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
   void drawExpression(Expression * expression, KDColor color, KDContext * ctx, KDRect rect) const;
+  void computeLabels(Axis axis);
+  void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
 private:
+  int numberOfLabels(Axis axis) const;
   virtual float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const = 0;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */

@@ -19,6 +19,7 @@ private:
   public:
     ContentView(Responder * parentResponder, Law * law);
     void layoutSubviews() override;
+    LawCurveView * lawCurveView();
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

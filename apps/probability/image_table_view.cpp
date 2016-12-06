@@ -42,12 +42,12 @@ void ImageTableView::ImageCell::setImage(const Image * image, const Image * focu
   m_focusedIcon = focusedImage;
 }
 
-ImageTableView::ImageTableView(Responder * parentResponder) :
+ImageTableView::ImageTableView(Responder * parentResponder, Law * law) :
   View(),
   Responder(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, false)),
-  m_selectedCalcul(0),
-  m_isSelected(false)
+  m_isSelected(false),
+  m_law(law)
 {
 }
 
@@ -63,7 +63,7 @@ void ImageTableView::didBecomeFirstResponder() {
 
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_selectedCalcul = m_selectableTableView.selectedRow();
+    m_law->setCalculationType((Law::CalculationType)m_selectableTableView.selectedRow());
     select(false);
     m_selectableTableView.reloadData();
     app()->setFirstResponder(parentResponder());
@@ -78,7 +78,7 @@ void ImageTableView::select(bool select) {
     m_isSelected = select;
   } else {
     m_isSelected = select;
-    m_selectableTableView.selectCellAtLocation(0, m_selectedCalcul);
+    m_selectableTableView.selectCellAtLocation(0, m_law->calculationType());
   }
 }
 
@@ -103,7 +103,7 @@ int ImageTableView::reusableCellCount() {
 void ImageTableView::willDisplayCellForIndex(TableViewCell * cell, int index) {
   ImageCell * myCell = (ImageCell *)cell;
   if (!m_isSelected) {
-    switch (m_selectedCalcul) {
+    switch (m_law->calculationType()) {
       case 0:
         myCell->setImage(ImageStore::Calcul1Icon, ImageStore::FocusedCalcul1Icon);
         break;

@@ -5,7 +5,7 @@ namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, Law * law) :
   m_lawCurveView(LawCurveView(law)),
-  m_imageTableView(ImageTableView(parentResponder))
+  m_imageTableView(ImageTableView(parentResponder, law))
 {
 }
 

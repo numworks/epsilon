@@ -146,6 +146,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       m_axisInterval.setYAuto(false);
       m_axisInterval.setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
       m_axisInterval.setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+      m_view.initCursorPosition();
       m_view.reload();
       return true;
     }
@@ -159,6 +160,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       m_axisInterval.setYAuto(false);
       m_axisInterval.setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
       m_axisInterval.setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+      m_view.initCursorPosition();
       m_view.reload();
       return true;
     }

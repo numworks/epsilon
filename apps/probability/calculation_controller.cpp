@@ -1,4 +1,5 @@
 #include "calculation_controller.h"
+#include "../constant.h"
 #include <assert.h>
 
 namespace Probability {
@@ -37,10 +38,6 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     m_text[0].setAlignment(0.5f, 0.5f);
     return &m_text[0];
   }
-  if (index == 3) {
-    m_calculationCell[0].setText("test2");
-    return &m_calculationCell[0];
-  }
   if (index == 4) {
     if ((int)m_law->calculationType() == 0) {
       m_text[1].setText(") = ");
@@ -54,18 +51,16 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     m_text[1].setAlignment(0.5f, 0.5f);
     return &m_text[1];
   }
-  if (index == 5) {
-    m_calculationCell[1].setText("test");
-    return &m_calculationCell[1];
-  }
   if (index == 6) {
     m_text[2].setText(" )= ");
     m_text[2].setAlignment(0.5f, 0.5f);
     return &m_text[2];
   }
-  if (index == 7) {
-    m_calculationCell[2].setText("test3");
-    return &m_calculationCell[2];
+  if (index == 3 || index == 5 || index == 7) {
+    char buffer[Constant::FloatBufferSizeInScientificMode];
+    Float(m_law->calculationElementAtIndex((index - 3)/2)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    m_calculationCell[(index - 3)/2].setText(buffer);
+    return &m_calculationCell[(index - 3)/2];
   }
   return nullptr;
 }

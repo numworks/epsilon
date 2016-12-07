@@ -9,9 +9,10 @@
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/integer.h>
-#include <poincare/list.h>
+#include <poincare/list_data.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_data.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
 #include <poincare/product.h>

@@ -14,7 +14,6 @@ class Expression {
       Float,
       Integer,
       Logarithm,
-      List,
       Matrix,
       Fraction,
       Parenthesis,

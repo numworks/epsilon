@@ -1,7 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/function.h>
-#include <poincare/list.h>
-#include <poincare/matrix.h>
+#include <poincare/list_data.h>
+#include <poincare/matrix_data.h>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 extern "C" {

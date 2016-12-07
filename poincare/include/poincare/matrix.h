@@ -3,11 +3,11 @@
 
 #include <poincare/expression.h>
 #include <poincare/integer.h>
-#include <poincare/list.h>
+#include <poincare/matrix_data.h>
 
 class Matrix : public Expression {
   public:
-    Matrix(List * list, bool cloneOperands = true);
+    Matrix(MatrixData * matrixData);
     Matrix(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
     ~Matrix();
     const Expression * operand(int i) const override;
@@ -19,15 +19,12 @@ class Matrix : public Expression {
     Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands = true) const override;
-    void pushList(List * list, bool cloneOperands = true);
-    int numberOfRows();
-    int numberOfColumns();
+    int numberOfRows() const;
+    int numberOfColumns() const;
   protected:
     void setText() override;
   private:
-    int m_numberOfRows;
-    int m_numberOfColumns;
-    Expression ** m_operands;
+    MatrixData * m_matrixData;
     static Integer * defaultExpression();
 };
 

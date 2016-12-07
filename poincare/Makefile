@@ -15,10 +15,11 @@ objs += $(addprefix poincare/src/,\
   fraction.o\
   function.o\
   integer.o\
-  list.o\
+  list_data.o\
   leaf_expression.o\
   logarithm.o\
   matrix.o\
+  matrix_data.o\
   parenthesis.o\
   power.o\
   product.o\

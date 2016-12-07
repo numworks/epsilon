@@ -63,7 +63,7 @@ Expression * CommutativeOperation::createEvaluation(Context& context) const {
     result = newResult;
     delete next;
   }
-  assert(result == nullptr || result->type() == Expression::Type::Float || result->type() == Expression::Type::Matrix || result->type() == Expression::Type::List);
+  assert(result == nullptr || result->type() == Expression::Type::Float || result->type() == Expression::Type::Matrix);
   return result;
 }
 

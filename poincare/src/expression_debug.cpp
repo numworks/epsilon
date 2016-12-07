@@ -29,9 +29,6 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Fraction:
       std::cout << "Fraction";
       break;
-    case Expression::Type::List:
-      std::cout << "List";
-      break;
     case Expression::Type::Matrix:
       std::cout << "Matrix";
       break;

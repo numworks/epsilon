@@ -8,9 +8,13 @@ namespace Probability {
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
     ParametersController * parameterController = (ParametersController *) context;
+    CalculationController * calculationController = parameterController->calculationController();
+    calculationController->selectSubview(1);
+    Law * law = calculationController->law();
+    law->setCalculationType(Law::CalculationType::LeftIntegral);
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
-    stack->push(parameterController->calculationController());
+    stack->push(calculationController);
   }, parentResponder))),
   m_firstParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
   m_secondParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),

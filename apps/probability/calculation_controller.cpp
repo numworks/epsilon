@@ -182,7 +182,12 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 
 void CalculationController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
+  for (int subviewIndex = 0; subviewIndex < 2; subviewIndex++) {
+    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);
+    calculCell->setHighlighted(false);
+  }
   if (m_highlightedSubviewIndex > 0) {
+    m_contentView.imageTableView()->setHighlight(false);
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
     calculCell->setHighlighted(true);
   } else {
@@ -199,5 +204,8 @@ int CalculationController::highlightedSubviewIndex() const {
   return m_highlightedSubviewIndex;
 }
 
+void CalculationController::selectSubview(int subviewIndex) {
+  m_highlightedSubviewIndex = subviewIndex;
+}
 
 }

@@ -17,6 +17,7 @@ public:
   void didBecomeFirstResponder() override;
   Law * law();
   int highlightedSubviewIndex() const;
+  void selectSubview(int subviewIndex);
 private:
   class ContentView : public View {
   public:

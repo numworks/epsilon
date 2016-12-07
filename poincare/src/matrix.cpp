@@ -3,8 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix.h>
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
+#include "layout/matrix_layout.h"
 
 Matrix::Matrix(List * list, bool cloneOperands) :
   m_numberOfRows(1),
@@ -86,19 +85,11 @@ Expression * Matrix::clone() const {
 }
 
 ExpressionLayout * Matrix::createLayout() const {
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc((2+m_numberOfRows*(1+2*m_numberOfColumns))*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new StringLayout("[", 1);
-  for (int i = 0; i < m_numberOfRows; i++) {
-    childrenLayouts[i*(2*m_numberOfColumns+1)+1] = new StringLayout("[", 1);
-    for (int j = 0; j < (m_numberOfColumns - 1); j++) {
-      childrenLayouts[i*(2*m_numberOfColumns+1)+2*(j+1)] = m_operands[i*m_numberOfColumns+j]->createLayout();
-      childrenLayouts[i*(2*m_numberOfColumns+1)+2*(j+1)+1] = new StringLayout(",", 1);
-    }
-    childrenLayouts[(i+1)*(2*m_numberOfColumns+1)-1] = m_operands[(i+1)*m_numberOfColumns-1]->createLayout();
-    childrenLayouts[(i+1)*(2*m_numberOfColumns+1)] = new StringLayout("]", 1);
+  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(m_numberOfColumns*m_numberOfRows*sizeof(ExpressionLayout *));
+  for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
+    childrenLayouts[i] = m_operands[i]->createLayout();
   }
-  childrenLayouts[m_numberOfRows*(2*m_numberOfColumns+1)+1] = new StringLayout("]", 1);
-  return new HorizontalLayout(childrenLayouts, 2+m_numberOfRows*(1+2*m_numberOfColumns));
+  return new MatrixLayout(childrenLayouts, m_numberOfRows, m_numberOfColumns);
 }
 
 float Matrix::approximate(Context& context) const {

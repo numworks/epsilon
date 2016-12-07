@@ -14,6 +14,9 @@ class MatrixLayout : public ExpressionLayout {
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
+    constexpr static KDCoordinate k_matrixEntryMargin = 4;
+    constexpr static KDCoordinate k_matrixBracketMargin = 2;
+    constexpr static KDCoordinate k_matrixBracketWidth = 2;
     KDCoordinate rowBaseline(int i);
     KDCoordinate rowHeight(int i);
     KDCoordinate height();

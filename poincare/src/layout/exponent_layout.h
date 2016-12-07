@@ -14,6 +14,7 @@ class ExponentLayout : public ExpressionLayout {
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
+    constexpr static KDCoordinate k_exponentHeight = 5;
     ExpressionLayout * m_base_layout;
     ExpressionLayout * m_exponent_layout;
 };

@@ -2,14 +2,11 @@
 #include <assert.h>
 #include "exponent_layout.h"
 
-// TODO(fraimundo): Find a better name.
-#define EXPONENT_HEIGHT 5
-
 ExponentLayout::ExponentLayout(ExpressionLayout * base_layout, ExpressionLayout * exponent_layout) :
 ExpressionLayout(), m_base_layout(base_layout), m_exponent_layout(exponent_layout) {
   m_base_layout->setParent(this);
   m_exponent_layout->setParent(this);
-  m_baseline = m_exponent_layout->baseline() + m_base_layout->baseline() - EXPONENT_HEIGHT;
+  m_baseline = m_exponent_layout->baseline() + m_base_layout->baseline() - k_exponentHeight;
 }
 
 ExponentLayout::~ExponentLayout() {
@@ -25,7 +22,7 @@ KDSize ExponentLayout::computeSize() {
   KDSize exponent_size = m_exponent_layout->size();
   KDSize base_size = m_base_layout->size();
   return KDSize(
-      base_size.height() + exponent_size.height() - EXPONENT_HEIGHT,
+      base_size.height() + exponent_size.height() - k_exponentHeight,
       base_size.width() + exponent_size.width()
       );
 }
@@ -46,7 +43,7 @@ KDPoint ExponentLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate y = 0;
   if (child == m_base_layout) {
     x = 0;
-    y = m_exponent_layout->baseline() - EXPONENT_HEIGHT;
+    y = m_exponent_layout->baseline() - k_exponentHeight;
   } else if (child == m_exponent_layout) {
     x = m_base_layout->size().width();
     y = 0;

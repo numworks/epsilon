@@ -2,16 +2,12 @@
 #include <assert.h>
 #include "fraction_layout.h"
 
-#define FRACTION_BORDER_LENGTH 2
-#define FRACTION_LINE_MARGIN 2
-#define FRACTION_LINE_HEIGHT 1
-
 FractionLayout::FractionLayout(ExpressionLayout * numerator_layout, ExpressionLayout * denominator_layout) :
 ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(denominator_layout) {
   m_numerator_layout->setParent(this);
   m_denominator_layout->setParent(this);
   m_baseline = m_numerator_layout->size().height()
-    + FRACTION_LINE_MARGIN
+    + k_fractionLineMargin
     + KDText::stringSize(" ").height()/2;
 }
 
@@ -21,15 +17,15 @@ FractionLayout::~FractionLayout() {
 }
 
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + FRACTION_LINE_MARGIN;
+  KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x(), fractionLineY, size().width(), 1), expressionColor);
 }
 
 KDSize FractionLayout::computeSize() {
   KDCoordinate width = max(m_numerator_layout->size().width(), m_denominator_layout->size().width())
-    + 2*FRACTION_BORDER_LENGTH;
+    + 2*k_fractionBorderLength;
   KDCoordinate height = m_numerator_layout->size().height()
-    + FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT + FRACTION_LINE_MARGIN
+    + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
     + m_denominator_layout->size().height();
   return KDSize(width, height);
 }
@@ -52,7 +48,7 @@ KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
     x = (KDCoordinate)((size().width() - m_numerator_layout->size().width())/2);
   } else if (child == m_denominator_layout) {
     x = (KDCoordinate)((size().width() - m_denominator_layout->size().width())/2);
-    y = (KDCoordinate)(m_numerator_layout->size().height() + 2*FRACTION_LINE_MARGIN + FRACTION_LINE_HEIGHT);
+    y = (KDCoordinate)(m_numerator_layout->size().height() + 2*k_fractionLineMargin + k_fractionLineHeight);
   } else {
     assert(false); // Should not happen
   }

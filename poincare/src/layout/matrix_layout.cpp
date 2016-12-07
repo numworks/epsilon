@@ -4,10 +4,6 @@ extern "C" {
 #include <stdlib.h>
 }
 
-#define MATRIX_ENTRY_MARGIN 4
-#define MATRIX_BRACKET_MARGIN 2
-#define MATRIX_BRACKET_WIDTH 2
-
 MatrixLayout::MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
   ExpressionLayout(),
   m_entryLayouts(entryLayouts),
@@ -50,7 +46,7 @@ KDCoordinate MatrixLayout::height() {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
   }
-  totalHeight += (m_numberOfRows-1)*MATRIX_ENTRY_MARGIN;
+  totalHeight += (m_numberOfRows-1)*k_matrixEntryMargin;
   return totalHeight;
 }
 
@@ -67,13 +63,13 @@ KDCoordinate MatrixLayout::width() {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);
   }
-  totalWidth += (m_numberOfColumns-1)*MATRIX_ENTRY_MARGIN;
-  return totalWidth + 2*MATRIX_BRACKET_WIDTH + 2*MATRIX_BRACKET_MARGIN;
+  totalWidth += (m_numberOfColumns-1)*k_matrixEntryMargin;
+  return totalWidth + 2*k_matrixBracketWidth + 2*k_matrixBracketMargin;
 }
 
 void MatrixLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x(), p.y(), MATRIX_BRACKET_WIDTH, height()), expressionColor);
-  ctx->fillRect(KDRect(p.x() + width() - MATRIX_BRACKET_WIDTH, p.y(), MATRIX_BRACKET_WIDTH, height()), expressionColor);
+  ctx->fillRect(KDRect(p.x(), p.y(), k_matrixBracketWidth, height()), expressionColor);
+  ctx->fillRect(KDRect(p.x() + width() - k_matrixBracketWidth, p.y(), k_matrixBracketWidth, height()), expressionColor);
 }
 
 KDSize MatrixLayout::computeSize() {
@@ -103,11 +99,11 @@ KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
   for (int j = 0; j < columnIndex; j++) {
     x += columnWidth(j);
   }
-  x += (columnWidth(columnIndex) - child->size().width())/2+ columnIndex * MATRIX_ENTRY_MARGIN + MATRIX_BRACKET_MARGIN + MATRIX_BRACKET_WIDTH;
+  x += (columnWidth(columnIndex) - child->size().width())/2+ columnIndex * k_matrixEntryMargin + k_matrixBracketMargin + k_matrixBracketWidth;
   KDCoordinate y = 0;
   for (int i = 0; i < rowIndex; i++) {
     y += rowHeight(i);
   }
-  y += rowBaseline(rowIndex) - child->baseline() + rowIndex * MATRIX_ENTRY_MARGIN;
+  y += rowBaseline(rowIndex) - child->baseline() + rowIndex * k_matrixEntryMargin;
   return KDPoint(x, y);
 }

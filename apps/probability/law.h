@@ -17,8 +17,8 @@ public:
   };
   enum CalculationType : uint8_t {
     LeftIntegral = 0,
-    RightIntegral = 1,
-    FiniteIntegral = 2
+    FiniteIntegral = 1,
+    RightIntegral = 2,
   };
   Law(EvaluateContext * evaluateContext);
   ~Law();
@@ -34,6 +34,8 @@ public:
   float xMax();
   float yMax();
   float scale();
+  float calculationElementAtIndex(int index);
+  void setCalculationElementAtIndex(float f, int index);
   int numberOfParameter();
   float parameterValueAtIndex(int index);
   const char * parameterNameAtIndex(int index);
@@ -43,6 +45,8 @@ public:
 private:
   void setWindow();
   void computeScale();
+  void computeCalculation(int indexKnownElement);
+  void initCalculationElements();
   Type m_type;
   CalculationType m_calculationType;
   float m_parameter1;
@@ -53,6 +57,9 @@ private:
   float m_yMin;
   float m_yMax;
   float m_scale;
+  float m_calculationElement1;
+  float m_calculationElement2;
+  float m_calculationElement3;
   EvaluateContext * m_evaluateContext;
 };
 

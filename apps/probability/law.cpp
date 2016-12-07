@@ -15,8 +15,12 @@ Law::Law(EvaluateContext * evaluateContext):
   m_yMin(-0.1f),
   m_yMax(1.0f),
   m_scale(1.0f),
+  m_calculationElement1(0.0f),
+  m_calculationElement2(0.0f),
+  m_calculationElement3(0.0f),
   m_evaluateContext(evaluateContext)
 {
+  computeCalculation(0);
 }
 
 Law::~Law() {
@@ -70,6 +74,7 @@ Law::Type Law::type() const {
 
 void Law::setCalculationType(CalculationType calculationType) {
   m_calculationType = calculationType;
+  initCalculationElements();
 }
 
 Law::CalculationType Law::calculationType() const {
@@ -115,6 +120,29 @@ float Law::yMax() {
 
 float Law::scale() {
   return m_scale;
+}
+
+float Law::calculationElementAtIndex(int index) {
+  if (index == 0) {
+    return m_calculationElement1;
+  }
+  if (index == 1) {
+    return m_calculationElement2;
+  }
+  return m_calculationElement3;
+}
+
+void Law::setCalculationElementAtIndex(float f, int index) {
+  if (index == 0) {
+    m_calculationElement1 = f;
+  }
+  if (index == 1) {
+    m_calculationElement2 = f;
+  }
+  if (index == 2) {
+    m_calculationElement3 = f;
+  }
+  computeCalculation(index);
 }
 
 int Law::numberOfParameter() {
@@ -264,6 +292,47 @@ void Law::computeScale() {
     a = 1;
   }
   m_scale = a*powf(10,b);
+}
+
+void Law::computeCalculation(int indexKnownElement) {
+  if (m_calculationType == LeftIntegral) {
+    if (indexKnownElement == 0) {
+      // TODO: compute integral from -Inf to m_calculationElement1
+      m_calculationElement2 = 3.0f;
+    } else {
+      // TODO: find m_calculationElement1
+      m_calculationElement1 = 4.0f;
+    }
+  }
+  if (m_calculationType == FiniteIntegral) {
+    // TODO: compute integral from m_calculationElement1 to m_calculationElement2
+    m_calculationElement3 = 5.0f;
+  }
+  if (m_calculationType == RightIntegral) {
+    if (indexKnownElement == 0) {
+      // TODO: compute integral from m_calculationElement1 to +Inf
+      m_calculationElement2 = 6.0f;
+    } else {
+      // TODO: find m_calculationElement1
+      m_calculationElement1 = 7.0f;
+    }
+  }
+}
+
+void Law::initCalculationElements() {
+  if (m_calculationType == LeftIntegral) {
+    m_calculationElement1 = 0.0f;
+    computeCalculation(0);
+  }
+  if (m_calculationType == FiniteIntegral) {
+    m_calculationElement1 = -1.0f;
+    m_calculationElement2 = 1.0f;
+    computeCalculation(0);
+  }
+  if (m_calculationType == RightIntegral) {
+    m_calculationElement1 = 0.0f;
+    computeCalculation(0);
+  }
 }
 
 }

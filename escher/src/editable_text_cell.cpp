@@ -1,5 +1,6 @@
 #include <escher/editable_text_cell.h>
 #include <escher/app.h>
+#include <escher/palette.h>
 #include <assert.h>
 
 EditableTextCell::EditableTextCell(Responder * parentResponder) :
@@ -10,6 +11,12 @@ EditableTextCell::EditableTextCell(Responder * parentResponder) :
   m_successAction(Invocation(nullptr, nullptr)),
   m_bufferText(BufferTextView())
 {
+}
+
+void EditableTextCell::reloadCell() {
+  TableViewCell::reloadCell();
+  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  m_bufferText.setBackgroundColor(backgroundColor);
 }
 
 const char * EditableTextCell::editedText() const {
@@ -37,6 +44,11 @@ void EditableTextCell::layoutSubviews() {
   KDCoordinate height = bounds().height();
   m_textField.setFrame(KDRect(k_separatorThickness, (height - k_textHeight)/2, width - k_separatorThickness, k_textHeight));
   m_bufferText.setFrame(KDRect(k_separatorThickness, (height - k_textHeight)/2, width - k_separatorThickness, k_textHeight));
+}
+
+void EditableTextCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  ctx->fillRect(rect, backgroundColor);
 }
 
 bool EditableTextCell::handleEvent(Ion::Events::Event event) {

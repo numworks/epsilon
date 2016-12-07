@@ -11,11 +11,13 @@
 class EditableTextCell : public TableViewCell, public Responder {
 public:
   EditableTextCell(Responder * parentResponder = nullptr);
+  void reloadCell() override;
   const char * editedText() const;
   void setText(const char * textContent);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void editValue(TextFieldDelegate * textFieldDelegate, const char * initialText, int cursorLocation, void * context, Invocation::Action successAction);
   bool handleEvent(Ion::Events::Event event) override;
 private:

@@ -23,6 +23,10 @@ const char * EditableTextCell::editedText() const {
   return m_textField.text();
 }
 
+const char * EditableTextCell::text() const {
+  return m_bufferText.text();
+}
+
 void EditableTextCell::setText(const char * text) {
   m_bufferText.setText(text);
 }

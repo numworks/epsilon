@@ -13,6 +13,7 @@ public:
   EditableTextCell(Responder * parentResponder = nullptr);
   void reloadCell() override;
   const char * editedText() const;
+  const char * text() const;
   void setText(const char * textContent);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

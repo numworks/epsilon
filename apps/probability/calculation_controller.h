@@ -15,6 +15,8 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  Law * law();
+  int highlightedSubviewIndex() const;
 private:
   class ContentView : public View {
   public:
@@ -39,6 +41,7 @@ private:
   };
   ContentView m_contentView;
   int m_highlightedSubviewIndex;
+  Law * m_law;
 };
 
 }

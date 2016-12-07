@@ -1,5 +1,6 @@
 #include "calculation_controller.h"
 #include "../constant.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace Probability {
@@ -118,7 +119,8 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
 CalculationController::CalculationController(Responder * parentResponder, Law * law) :
   ViewController(parentResponder),
   m_contentView(ContentView(this, law)),
-  m_highlightedSubviewIndex(1)
+  m_highlightedSubviewIndex(1),
+  m_law(law)
 {
 }
 
@@ -131,12 +133,31 @@ const char * CalculationController::title() const {
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
-    if (m_highlightedSubviewIndex == 0) {
-      m_contentView.imageTableView()->select(true);
-      app()->setFirstResponder(m_contentView.imageTableView());
-      return true;
+  if (event == Ion::Events::OK && m_highlightedSubviewIndex == 0) {
+    m_contentView.imageTableView()->select(true);
+    app()->setFirstResponder(m_contentView.imageTableView());
+    return true;
+  }
+  if ((event == Ion::Events::OK || event.hasText()) && m_highlightedSubviewIndex > 0) {
+    App * myApp = (App *)app();
+    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
+    const char * initialText = calculCell->text();
+    if (event.hasText()) {
+      initialText = event.text();
     }
+    calculCell->editValue(myApp, initialText, strlen(calculCell->text()), this,
+      [](void * context, void * sender){
+      CalculationController * calculationController = (CalculationController *)context;
+      Law * law = calculationController->law();
+      int highlightedSubviewIndex = calculationController->highlightedSubviewIndex();
+      EditableTextCell * cell = (EditableTextCell *)sender;
+      const char * textBody = cell->editedText();
+      AppsContainer * appsContainer = (AppsContainer *)calculationController->app()->container();
+      Context * globalContext = appsContainer->context();
+      float floatBody = Expression::parse(textBody)->approximate(*globalContext);
+      law->setCalculationElementAtIndex(floatBody, highlightedSubviewIndex-1);
+    });
+    return true;
   }
   if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1)) {
     if (m_highlightedSubviewIndex == 0) {
@@ -169,5 +190,14 @@ void CalculationController::didBecomeFirstResponder() {
   }
   m_contentView.lawCurveView()->reload();
 }
+
+Law * CalculationController::law() {
+  return m_law;
+}
+
+int CalculationController::highlightedSubviewIndex() const {
+  return m_highlightedSubviewIndex;
+}
+
 
 }

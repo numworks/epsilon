@@ -4,10 +4,6 @@ extern "C" {
 #include <stdlib.h>
 }
 
-static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
-  return (a > b ? a : b);
-}
-
 #define MATRIX_ENTRY_MARGIN 4
 #define MATRIX_BRACKET_MARGIN 2
 #define MATRIX_BRACKET_WIDTH 2

@@ -21,9 +21,6 @@ KDRect::KDRect(KDPoint p, KDCoordinate width, KDCoordinate height) :
 void KDRect::setOrigin(KDPoint p) { m_x = p.x(); m_y = p.y(); }
 void KDRect::setSize(KDSize s) { m_width = s.width(); m_height = s.height(); }
 
-static inline KDCoordinate min(KDCoordinate x, KDCoordinate y) { return (x<y ? x : y); }
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return (x>y ? x : y); }
-
 bool KDRect::intersects(const KDRect & other) const {
   return (
       other.right() >= left() &&

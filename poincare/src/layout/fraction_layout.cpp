@@ -2,10 +2,6 @@
 #include <assert.h>
 #include "fraction_layout.h"
 
-static inline KDCoordinate max(KDCoordinate a, KDCoordinate b) {
-  return (a > b ? a : b);
-}
-
 #define FRACTION_BORDER_LENGTH 2
 #define FRACTION_LINE_MARGIN 2
 #define FRACTION_LINE_HEIGHT 1

@@ -7,6 +7,9 @@ CalculationController::ContentView::ContentView(Responder * parentResponder, Law
   m_lawCurveView(LawCurveView(law)),
   m_imageTableView(ImageTableView(parentResponder, law))
 {
+  for (int k = 0; k < k_maxNumberOfEditableFields; k++) {
+    m_calculationCell[k].setParentResponder(parentResponder);
+  }
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
@@ -68,9 +71,14 @@ ImageTableView * CalculationController::ContentView::imageTableView() {
   return &m_imageTableView;
 }
 
+EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(int index) {
+  return &m_calculationCell[index];
+}
+
 CalculationController::CalculationController(Responder * parentResponder, Law * law) :
   ViewController(parentResponder),
   m_contentView(ContentView(this, law)),
+  m_highlightedSubviewIndex(1),
   m_law(law)
 {
 }
@@ -84,21 +92,41 @@ const char * CalculationController::title() const {
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left) {
-    //m_selectableTableView.deselectTable();
-    m_contentView.imageTableView()->select(true);
-    app()->setFirstResponder(m_contentView.imageTableView());
-    return true;
+  if (event == Ion::Events::OK) {
+    if (m_highlightedSubviewIndex == 0) {
+      m_contentView.imageTableView()->select(true);
+      app()->setFirstResponder(m_contentView.imageTableView());
+      return true;
+    }
   }
- if (event == Ion::Events::Right) {
-    m_contentView.imageTableView()->select(false);
-    app()->setFirstResponder(this);
+  if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1)) {
+    if (m_highlightedSubviewIndex == 0) {
+      app()->setFirstResponder(this);
+      m_contentView.imageTableView()->select(false);
+      m_contentView.imageTableView()->setHighlight(false);
+    } else {
+      EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
+      calculCell->setHighlighted(false);
+    }
+    m_highlightedSubviewIndex = event == Ion::Events::Left ? m_highlightedSubviewIndex - 1 : m_highlightedSubviewIndex + 1;
+    if (m_highlightedSubviewIndex > 0) {
+      EditableTextCell * newCalculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
+      newCalculCell->setHighlighted(true);
+    } else {
+      m_contentView.imageTableView()->setHighlight(true);
+    }
     return true;
   }
   return false;
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  if (m_highlightedSubviewIndex > 0) {
+    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
+    calculCell->setHighlighted(true);
+  } else {
+    m_contentView.imageTableView()->setHighlight(true);
+  }
   m_contentView.lawCurveView()->reload();
 }
 

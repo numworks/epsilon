@@ -65,6 +65,7 @@ bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     m_law->setCalculationType((Law::CalculationType)m_selectableTableView.selectedRow());
     select(false);
+    setHighlight(true);
     m_selectableTableView.reloadData();
     app()->setFirstResponder(parentResponder());
     return true;
@@ -82,6 +83,13 @@ void ImageTableView::select(bool select) {
   }
 }
 
+void ImageTableView::setHighlight(bool highlight) {
+  if (highlight) {
+    m_selectableTableView.selectCellAtLocation(0,0);
+  } else {
+    m_selectableTableView.deselectTable();
+  }
+}
 
 int ImageTableView::numberOfRows() {
   if (m_isSelected) {

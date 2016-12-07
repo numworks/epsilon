@@ -12,6 +12,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void select(bool select);
+  void setHighlight(bool highlight);
   int numberOfRows() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   KDCoordinate cellHeight() override;

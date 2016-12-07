@@ -23,6 +23,8 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();
     ImageTableView * imageTableView();
+    EditableTextCell * calculationCellAtIndex(int index);
+    constexpr static int k_maxNumberOfEditableFields = 3;
   private:
     constexpr static KDCoordinate k_textFieldWidth = 50;
     constexpr static KDCoordinate k_charWidth = 7;
@@ -31,10 +33,11 @@ private:
     View * subviewAtIndex(int index) override;
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
-    PointerTextView m_text[3];
-    EditableTextCell m_calculationCell[3];
+    PointerTextView m_text[k_maxNumberOfEditableFields];
+    EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
   };
   ContentView m_contentView;
+  int m_highlightedSubviewIndex;
   Law * m_law;
 };
 

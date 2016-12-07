@@ -26,7 +26,7 @@ private:
     EditableTextCell * calculationCellAtIndex(int index);
     constexpr static int k_maxNumberOfEditableFields = 3;
   private:
-    constexpr static KDCoordinate k_textFieldWidth = 50;
+    constexpr static KDCoordinate k_textFieldWidth = 35;
     constexpr static KDCoordinate k_charWidth = 7;
     constexpr static KDCoordinate k_textMargin = 5;
     int numberOfSubviews() const override;
@@ -35,10 +35,10 @@ private:
     ImageTableView m_imageTableView;
     PointerTextView m_text[k_maxNumberOfEditableFields];
     EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
+    Law * m_law;
   };
   ContentView m_contentView;
   int m_highlightedSubviewIndex;
-  Law * m_law;
 };
 
 }

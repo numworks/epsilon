@@ -58,3 +58,25 @@ QUIZ_CASE(poincare_integer_approximate) {
   assert(Integer("-0").approximate(context) == -0);
   assert(Integer(-1).approximate(context) == -1);
 }
+
+QUIZ_CASE(poincare_integer_evaluate) {
+  Context context;
+  Expression * e = Integer(1).evaluate(context);
+  assert(e->approximate(context) == 1.0f);
+  delete e;
+  e = Integer(12345678).evaluate(context);
+  assert(e->approximate(context) == 12345678.0f);
+  delete e;
+  e = Integer(0).evaluate(context);
+  assert(e->approximate(context) == 0.0f);
+  delete e;
+  e = Integer(-0).evaluate(context);
+  assert(e->approximate(context) == 0.0f);
+  delete e;
+  e = Integer(-0).evaluate(context);
+  assert(e->approximate(context) == 0.0f);
+  delete e;
+  e = Integer(-1).evaluate(context);
+  assert(e->approximate(context) == -1.0f);
+  delete e;
+}

@@ -42,7 +42,23 @@ tests += $(addprefix poincare/test/,\
   fraction.cpp\
   identity.cpp\
   integer.cpp\
+  matrix.cpp\
   product.cpp\
+  power.cpp\
+  simplify_utils.cpp\
+  subtraction.cpp\
+  trigo.cpp\
+)
+
+# tests += $(addprefix poincare/test/,\
+  addition.cpp\
+  float.cpp\
+  fraction.cpp\
+  identity.cpp\
+  integer.cpp\
+  matrix.cpp\
+  product.cpp\
+  power.cpp\
   simplify_utils.cpp\
   simplify_addition.cpp\
   simplify_product.cpp\

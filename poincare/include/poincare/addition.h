@@ -1,23 +1,31 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/commutative_operation.h>
+#include <poincare/expression.h>
 #include <poincare/float.h>
 #include <poincare/matrix.h>
 
-class Addition : public CommutativeOperation {
-  using CommutativeOperation::CommutativeOperation;
+class Addition : public Expression {
   public:
+    Addition(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
+    ~Addition();
+    const Expression * operand(int i) const override;
+    int numberOfOperands() const override;
     Type type() const override;
-    float operateApproximatevelyOn(float a, float b) const override;
-    Expression * createEvaluationOn(Expression * a, Expression * b, Context& context) const override;
+    float approximate(Context& context) const override;
+    Expression * createEvaluation(Context& context) const override;
+    Expression * clone() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands = true) const override;
-  protected:
-    char operatorChar() const override;
+    ExpressionLayout * createLayout() const override;
+    bool isCommutative() const override;
   private:
+    float operateApproximatevelyOn(float a, float b) const;
+    Expression * createEvaluationOn(Expression * a, Expression * b, Context& context) const;
     Expression * createEvaluationOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const;
     Expression * createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const;
+    const int m_numberOfOperands;
+    Expression ** m_operands;
 };
 
 #endif

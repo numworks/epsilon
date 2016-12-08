@@ -9,7 +9,7 @@ public:
 
   ExpressionLayout * createLayout() const override;
   float approximate(Context& context) const override;
-  Expression * createEvaluation(Context& context) const override;
+  Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * clone() const override;
   bool valueEquals(const Expression * e) const override;

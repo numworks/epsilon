@@ -325,7 +325,7 @@ float Integer::approximate(Context& context) const {
   return float_result;
 }
 
-Expression * Integer::createEvaluation(Context& context) const {
+Expression * Integer::evaluate(Context& context) const {
   return new Float(approximate(context));
 }
 

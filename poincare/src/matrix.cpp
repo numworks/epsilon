@@ -53,7 +53,7 @@ float Matrix::approximate(Context& context) const {
   return NAN;
 }
 
-Expression * Matrix::createEvaluation(Context& context) const {
+Expression * Matrix::evaluate(Context& context) const {
   Expression * operands[numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
     operands[i] = new Float(operand(i)->approximate(context));

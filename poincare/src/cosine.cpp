@@ -28,6 +28,6 @@ float Cosine::approximate(Context& context) const {
   return cosf(m_arg->approximate(context));
 }
 
-Expression * Cosine::createEvaluation(Context& context) const {
+Expression * Cosine::evaluate(Context& context) const {
   return new Float(cosf(m_arg->approximate(context)));
 }

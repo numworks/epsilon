@@ -32,7 +32,7 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       textField->app()->displayWarning("Attention a la syntaxe jeune padawan");
       return true;
     }
-    Expression * evaluation = exp->createEvaluation(*evaluateContext());
+    Expression * evaluation = exp->evaluate(*evaluateContext());
     if (evaluation == nullptr) {
       delete exp;
       textField->app()->displayWarning("Relis ton cours de maths, veux tu?");

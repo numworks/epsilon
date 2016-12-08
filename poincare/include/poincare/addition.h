@@ -13,7 +13,7 @@ class Addition : public Expression {
     int numberOfOperands() const override;
     Type type() const override;
     float approximate(Context& context) const override;
-    Expression * createEvaluation(Context& context) const override;
+    Expression * evaluate(Context& context) const override;
     Expression * clone() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands = true) const override;
@@ -21,9 +21,9 @@ class Addition : public Expression {
     bool isCommutative() const override;
   private:
     float operateApproximatevelyOn(float a, float b) const;
-    Expression * createEvaluationOn(Expression * a, Expression * b, Context& context) const;
-    Expression * createEvaluationOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const;
-    Expression * createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const;
+    Expression * evaluateOn(Expression * a, Expression * b, Context& context) const;
+    Expression * evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const;
+    Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const;
     const int m_numberOfOperands;
     Expression ** m_operands;
 };

@@ -57,7 +57,7 @@ void Calculation::setContent(const char * c, Context * context) {
   if (m_evaluation != nullptr) {
     delete m_evaluationLayout;
   }
-  m_evaluation = m_expression->createEvaluation(*context);
+  m_evaluation = m_expression->evaluate(*context);
   if (m_evaluationLayout != nullptr) {
     delete m_evaluationLayout;
   }

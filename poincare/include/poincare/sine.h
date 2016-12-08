@@ -7,7 +7,7 @@ class Sine : public Function {
 public:
   Sine();
   float approximate(Context & context) const override;
-  Expression * createEvaluation(Context& context) const override;
+  Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;

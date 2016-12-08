@@ -31,9 +31,9 @@ ExpressionLayout * Subtraction::createLayout() const {
   return new HorizontalLayout(children_layouts, 3);
 }
 
-Expression * Subtraction::createEvaluation(Context& context) const {
-  Expression * leftOperand = m_operands[0]->createEvaluation(context);
-  Expression * rightOperand = m_operands[1]->createEvaluation(context);
+Expression * Subtraction::evaluate(Context& context) const {
+  Expression * leftOperand = m_operands[0]->evaluate(context);
+  Expression * rightOperand = m_operands[1]->evaluate(context);
   if (leftOperand == nullptr || rightOperand == nullptr) {
     return nullptr;
   }
@@ -42,20 +42,20 @@ Expression * Subtraction::createEvaluation(Context& context) const {
     result = new Float(this->approximate(context));
   }
   if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Float) {
-    result = createEvaluationOnMatrixAndFloat((Matrix *)leftOperand, (Float *)rightOperand, context, true);
+    result = evaluateOnMatrixAndFloat((Matrix *)leftOperand, (Float *)rightOperand, context, true);
   }
   if (leftOperand->type() == Expression::Type::Float && rightOperand->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrixAndFloat((Matrix *)rightOperand, (Float *)leftOperand, context, false);
+    result = evaluateOnMatrixAndFloat((Matrix *)rightOperand, (Float *)leftOperand, context, false);
   }
   if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrices((Matrix *)leftOperand, (Matrix *)rightOperand, context);
+    result = evaluateOnMatrices((Matrix *)leftOperand, (Matrix *)rightOperand, context);
   }
   delete leftOperand;
   delete rightOperand;
   return result;
 }
 
-Expression * Subtraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Context& context, bool matrixMinusFloat) const {
+Expression * Subtraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, bool matrixMinusFloat) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     if (matrixMinusFloat) {
@@ -67,7 +67,7 @@ Expression * Subtraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Subtraction::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Subtraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfColumns()) {
     return nullptr;
   }

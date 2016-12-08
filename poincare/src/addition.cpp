@@ -53,11 +53,11 @@ float Addition::approximate(Context& context) const {
   return result;
 }
 
-Expression * Addition::createEvaluation(Context& context) const {
-  Expression * result = m_operands[0]->createEvaluation(context);
+Expression * Addition::evaluate(Context& context) const {
+  Expression * result = m_operands[0]->evaluate(context);
   for (int i=1; i<m_numberOfOperands; i++) {
-    Expression * next = m_operands[i]->createEvaluation(context);
-    Expression * newResult = this->createEvaluationOn(result, next, context);
+    Expression * next = m_operands[i]->evaluate(context);
+    Expression * newResult = this->evaluateOn(result, next, context);
     delete result;
     result = newResult;
     delete next;
@@ -94,7 +94,7 @@ float Addition::operateApproximatevelyOn(float a, float b) const {
   return a + b;
 }
 
-Expression * Addition::createEvaluationOn(Expression * a, Expression * b, Context& context) const {
+Expression * Addition::evaluateOn(Expression * a, Expression * b, Context& context) const {
   if (a == nullptr || b == nullptr) {
     return nullptr;
   }
@@ -105,18 +105,18 @@ Expression * Addition::createEvaluationOn(Expression * a, Expression * b, Contex
     result = new Float(a->approximate(context) + b->approximate(context));
   }
   if (a->type() == Expression::Type::Float && b->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnFloatAndMatrix((Float *)a, (Matrix *)b, context);
+    result = evaluateOnFloatAndMatrix((Float *)a, (Matrix *)b, context);
   }
   if (b->type() == Expression::Type::Float && a->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnFloatAndMatrix((Float *)b, (Matrix *)a, context);
+    result = evaluateOnFloatAndMatrix((Float *)b, (Matrix *)a, context);
   }
   if (b->type() == Expression::Type::Matrix && a->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrices((Matrix *)a, (Matrix *)b, context);
+    result = evaluateOnMatrices((Matrix *)a, (Matrix *)b, context);
   }
   return result;
 }
 
-Expression * Addition::createEvaluationOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
+Expression * Addition::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     operands[i] = new Float(a->approximate(context) + m->operand(i)->approximate(context));
@@ -124,7 +124,7 @@ Expression * Addition::createEvaluationOnFloatAndMatrix(Float * a, Matrix * m, C
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Addition::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Addition::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
     return nullptr;
   }

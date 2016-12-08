@@ -28,6 +28,6 @@ float Tangent::approximate(Context& context) const {
   return tanf(m_arg->approximate(context));
 }
 
-Expression * Tangent::createEvaluation(Context& context) const {
+Expression * Tangent::evaluate(Context& context) const {
   return new Float(tanf(m_arg->approximate(context)));
 }

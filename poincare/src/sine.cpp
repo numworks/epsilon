@@ -28,6 +28,6 @@ float Sine::approximate(Context& context) const {
   return sinf(m_arg->approximate(context));
 }
 
-Expression * Sine::createEvaluation(Context& context) const {
+Expression * Sine::evaluate(Context& context) const {
   return new Float(sinf(m_arg->approximate(context)));
 }

@@ -11,12 +11,12 @@ class Product : public BinaryOperation {
     Type type() const override;
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
-    Expression * createEvaluation(Context& context) const override;
+    Expression * evaluate(Context& context) const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numnerOfOperands, bool cloneOperands = true) const override;
   private:
-    Expression * createEvaluationOnMatrixAndFloat(Matrix * m, Float * f, Context& context) const;
-    Expression * createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const;
+    Expression * evaluateOnMatrixAndFloat(Matrix * m, Float * f, Context& context) const;
+    Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const;
 };
 
 #endif

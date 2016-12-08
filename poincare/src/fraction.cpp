@@ -26,9 +26,9 @@ Expression::Type Fraction::type() const {
   return Expression::Type::Fraction;
 }
 
-Expression * Fraction::createEvaluation(Context& context) const {
-  Expression * numerator = m_operands[0]->createEvaluation(context);
-  Expression * denominator = m_operands[1]->createEvaluation(context);
+Expression * Fraction::evaluate(Context& context) const {
+  Expression * numerator = m_operands[0]->evaluate(context);
+  Expression * denominator = m_operands[1]->evaluate(context);
   if (numerator == nullptr || denominator == nullptr) {
     return nullptr;
   }
@@ -37,20 +37,20 @@ Expression * Fraction::createEvaluation(Context& context) const {
     result = new Float(this->approximate(context));
   }
   if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Float) {
-    result = createEvaluationOnMatrixAndFloat((Matrix *)numerator, (Float *)denominator, context);
+    result = evaluateOnMatrixAndFloat((Matrix *)numerator, (Float *)denominator, context);
   }
   if (numerator->type() == Expression::Type::Float && denominator->type() == Expression::Type::Matrix) {
     result = nullptr;
   }
   if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrices((Matrix *)numerator, (Matrix *)denominator, context);
+    result = evaluateOnMatrices((Matrix *)numerator, (Matrix *)denominator, context);
   }
   delete numerator;
   delete denominator;
   return result;
 }
 
-Expression * Fraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Fraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     operands[i] = new Float(m->operand(i)->approximate(context)/a->approximate(context));
@@ -59,7 +59,7 @@ Expression * Fraction::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, C
   return result;
 }
 
-Expression * Fraction::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
   if (m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }

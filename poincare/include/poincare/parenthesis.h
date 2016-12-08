@@ -12,7 +12,7 @@ class Parenthesis : public Expression {
     Expression * clone() const override;
     ExpressionLayout * createLayout() const override;
     float approximate(Context& context) const override;
-    Expression * createEvaluation(Context& context) const override;
+    Expression * evaluate(Context& context) const override;
     Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numnerOfOperands, bool cloneOperands = true) const override;

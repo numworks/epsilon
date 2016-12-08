@@ -30,9 +30,9 @@ Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
   return new Product(newOperands, cloneOperands);
 }
 
-Expression * Product::createEvaluation(Context& context) const {
-  Expression * leftOperand = m_operands[0]->createEvaluation(context);
-  Expression * rightOperand = m_operands[1]->createEvaluation(context);
+Expression * Product::evaluate(Context& context) const {
+  Expression * leftOperand = m_operands[0]->evaluate(context);
+  Expression * rightOperand = m_operands[1]->evaluate(context);
   if (leftOperand == nullptr || rightOperand == nullptr) {
     return nullptr;
   }
@@ -41,20 +41,20 @@ Expression * Product::createEvaluation(Context& context) const {
     result = new Float(this->approximate(context));
   }
   if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Float) {
-    result = createEvaluationOnMatrixAndFloat((Matrix *)leftOperand, (Float *)rightOperand, context);
+    result = evaluateOnMatrixAndFloat((Matrix *)leftOperand, (Float *)rightOperand, context);
   }
   if (leftOperand->type() == Expression::Type::Float && rightOperand->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrixAndFloat((Matrix *)rightOperand, (Float *)leftOperand, context);
+    result = evaluateOnMatrixAndFloat((Matrix *)rightOperand, (Float *)leftOperand, context);
   }
   if (leftOperand->type() == Expression::Type::Matrix && rightOperand->type() == Expression::Type::Matrix) {
-    result = createEvaluationOnMatrices((Matrix *)leftOperand, (Matrix *)rightOperand, context);
+    result = evaluateOnMatrices((Matrix *)leftOperand, (Matrix *)rightOperand, context);
   }
   delete leftOperand;
   delete rightOperand;
   return result;
 }
 
-Expression * Product::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Product::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     operands[i] = new Float(m->operand(i)->approximate(context)*a->approximate(context));
@@ -62,7 +62,7 @@ Expression * Product::createEvaluationOnMatrixAndFloat(Matrix * m, Float * a, Co
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Product::createEvaluationOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Product::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
   if (m->numberOfColumns() != n->numberOfRows()) {
     return nullptr;
   }

@@ -65,8 +65,9 @@ class Expression {
 
     virtual Type type() const = 0;
     virtual bool isCommutative() const;
-
-    virtual Expression * createEvaluation(Context& context) const = 0;
+    /* The function evaluate creates a new expression and thus mallocs memory.
+     * Do not forget to delete the new expression to avoid leaking. */
+    virtual Expression * evaluate(Context& context) const = 0;
     virtual float approximate(Context& context) const = 0;
     char * text();
   protected:

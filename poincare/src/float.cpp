@@ -26,7 +26,7 @@ float Float::approximate(Context& context) const {
   return m_float;
 }
 
-Expression * Float::createEvaluation(Context& context) const {
+Expression * Float::evaluate(Context& context) const {
   return new Float(m_float);
 }
 

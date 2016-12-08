@@ -19,8 +19,8 @@ float Symbol::approximate(Context& context) const {
   return NAN;
 }
 
-Expression * Symbol::createEvaluation(Context& context) const {
-  return context.expressionForSymbol(this)->createEvaluation(context);
+Expression * Symbol::evaluate(Context& context) const {
+  return context.expressionForSymbol(this)->evaluate(context);
 }
 
 Expression::Type Symbol::type() const {

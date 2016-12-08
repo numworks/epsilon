@@ -69,11 +69,7 @@ class Expression {
      * Do not forget to delete the new expression to avoid leaking. */
     virtual Expression * evaluate(Context& context) const = 0;
     virtual float approximate(Context& context) const = 0;
-    char * text();
-  protected:
-    virtual void setText();
-    constexpr static int k_maxLength = 255;
-    char m_text[k_maxLength];
+    virtual int writeTextInBuffer(char * buffer, int bufferSize);
   private:
     bool sequentialOperandsIdentity(const Expression * e) const;
     bool commutativeOperandsIdentity(const Expression * e) const;

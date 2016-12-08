@@ -49,8 +49,8 @@ bool Float::valueEquals(const Expression * e) const {
   return m_float == ((Float *)e)->m_float;
 }
 
-void Float::setText() {
-  convertFloatToText(m_text, k_maxBufferLength, m_numberOfDigitsInMantissa);
+int Float::writeTextInBuffer(char * buffer, int bufferSize) {
+  return convertFloatToText(buffer, bufferSize, m_numberOfDigitsInMantissa);
 }
 
 void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
@@ -78,12 +78,15 @@ void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  
   }  while (endChar >= startChar);
 }
 
-void Float::convertFloatToText(char * buffer, int bufferSize,
+int Float::convertFloatToText(char * buffer, int bufferSize,
     int numberOfDigitsInMantissa, DisplayMode mode) const {
   /* We here assert that the buffer is long enough to display with the right
    * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
    * worst case has the form -1.999999e-38 (7+6+1 char). */
-  assert(bufferSize > 6 + numberOfDigitsInMantissa);
+  if (bufferSize <= 6 + numberOfDigitsInMantissa) {
+    buffer[0] = 0;
+    return 0;
+  }
 
   if (isinf(m_float)) {
     buffer[0] = m_float > 0 ? '+' : '-';
@@ -91,7 +94,7 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
     buffer[2] = 'n';
     buffer[3] = 'f';
     buffer[4] = 0;
-    return;
+    return 5;
   }
 
   if (isnan(m_float)) {
@@ -99,7 +102,7 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
     buffer[1] = 'a';
     buffer[2] = 'N';
     buffer[3] = 0;
-    return;
+    return 4;
   }
 
   float logBase10 = m_float != 0.0f ? log10f(fabsf(m_float)) : 0;
@@ -154,4 +157,5 @@ void Float::convertFloatToText(char * buffer, int bufferSize,
   buffer[availableCharsForMantissaWithSign] = 'e';
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
+  return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
 }

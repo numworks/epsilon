@@ -21,8 +21,9 @@ class Matrix : public Expression {
         int numberOfOperands, bool cloneOperands = true) const override;
     int numberOfRows() const;
     int numberOfColumns() const;
-  protected:
-    void setText() override;
+    /* If the buffer is too small, the function fills the buffer until reaching
+     * buffer size */
+    int writeTextInBuffer(char * buffer, int bufferSize) override;
   private:
     MatrixData * m_matrixData;
     static Integer * defaultExpression();

@@ -17,9 +17,9 @@ public:
   ExpressionLayout * evaluationLayout();
   void setContent(const char * c, Context * context);
   bool isEmpty();
+  constexpr static int k_maximalExpressionTextLength = 255;
 private:
-  constexpr static int k_bodyLength = 255;
-  char m_text[k_bodyLength];
+  char m_text[k_maximalExpressionTextLength];
   Expression * m_expression;
   ExpressionLayout * m_layout;
   Expression * m_evaluation;

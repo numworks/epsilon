@@ -171,10 +171,6 @@ bool Expression::isCommutative() const {
   return false;
 }
 
-void Expression::setText() {
-}
-
-char * Expression::text() {
-  setText();
-  return m_text;
+int Expression::writeTextInBuffer(char * buffer, int bufferSize) {
+  return 0;
 }

@@ -20,10 +20,10 @@ public:
   };
   void setNumberOfDigitsInMantissa(int numberOfDigits);
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific' or
-   * 'decimal'. The code only handles 'scientific' so far. */
-  void convertFloatToText(char * buffer, int bufferSize, int numberOfDigitsInMantissa, DisplayMode mode = DisplayMode::Scientific) const;
-protected:
-  void setText() override;
+   * 'decimal'. The code only handles 'scientific' so far. If the buffer size is
+   * small, the function does nothing. */
+  int convertFloatToText(char * buffer, int bufferSize, int numberOfDigitsInMantissa, DisplayMode mode = DisplayMode::Scientific) const;
+  int writeTextInBuffer(char * buffer, int bufferSize) override;
 private:
   constexpr static int k_maxBufferLength = 14;
   /* This function prints the int i in the buffer with a '.' at the position

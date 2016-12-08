@@ -79,22 +79,48 @@ int Matrix::numberOfColumns() const {
   return m_matrixData->numberOfColumns();
 }
 
-void Matrix::setText() {
+int Matrix::writeTextInBuffer(char * buffer, int bufferSize) {
+  buffer[bufferSize] = 0;
   int currentChar = 0;
-  m_text[currentChar++] = '[';
-  for (int i = 0; i < m_matrixData->numberOfRows(); i++) {
-    m_text[currentChar++] = '[';
-    char * operandText = m_matrixData->operands()[i*m_matrixData->numberOfColumns()]->text();
-    strlcpy(m_text+currentChar, operandText, strlen(operandText)+1);
-    for (int j = 1; j < numberOfColumns(); j++) {
-      currentChar += strlen(operandText);
-      m_text[currentChar++] = ',';
-      operandText = m_matrixData->operands()[i*m_matrixData->numberOfColumns()+j]->text();
-      strlcpy(m_text+currentChar, operandText, strlen(operandText)+1);
-    }
-    currentChar += strlen(operandText);
-    m_text[currentChar++] = ']';
+  if (currentChar >= bufferSize) {
+    return 0;
   }
-  m_text[currentChar++] = ']';
-  m_text[currentChar] = 0;
+  buffer[currentChar++] = '[';
+  if (currentChar >= bufferSize) {
+    return currentChar;
+  }
+  for (int i = 0; i < m_matrixData->numberOfRows(); i++) {
+    buffer[currentChar++] = '[';
+    if (currentChar >= bufferSize) {
+      return currentChar;
+    }
+    currentChar += m_matrixData->operands()[i*m_matrixData->numberOfColumns()]->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+    if (currentChar >= bufferSize) {
+      return currentChar;
+    }
+    for (int j = 1; j < numberOfColumns(); j++) {
+      buffer[currentChar++] = ',';
+      if (currentChar >= bufferSize) {
+        return currentChar;
+      }
+      currentChar += m_matrixData->operands()[i*m_matrixData->numberOfColumns()+j]->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+      if (currentChar >= bufferSize) {
+        return currentChar;
+      }
+    }
+    currentChar = strlen(buffer);
+    if (currentChar >= bufferSize) {
+      return currentChar;
+    }
+    buffer[currentChar++] = ']';
+    if (currentChar >= bufferSize) {
+      return currentChar;
+    }
+  }
+  buffer[currentChar++] = ']';
+  if (currentChar >= bufferSize) {
+    return currentChar;
+  }
+  buffer[currentChar] = 0;
+  return currentChar;
 }

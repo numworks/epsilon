@@ -1,6 +1,5 @@
 #include "history_controller.h"
 #include "app.h"
-#include "../constant.h"
 #include <assert.h>
 
 namespace Calculation {
@@ -47,7 +46,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
       editController->setTextBody(calculation->text());
     } else {
-      char * resultText = calculation->evaluation()->text();
+      char resultText[Calculation::k_maximalExpressionTextLength];
+      calculation->evaluation()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
       editController->setTextBody(resultText);
     }
     m_selectableTableView.deselectTable();
@@ -64,7 +64,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
       newCalculation = *calculation;
     } else {
-      char * resultText = calculation->evaluation()->text();
+      char resultText[Calculation::k_maximalExpressionTextLength];
+      calculation->evaluation()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
       /* TODO: this will work when we will parse float */
       //App * calculationApp = (App *)app();
       //newCalculation.setContent(resultText, calculationApp->evaluateContext());

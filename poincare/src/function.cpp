@@ -3,6 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/function.h>
+#include <poincare/float.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
 
@@ -49,4 +50,8 @@ const Expression * Function::operand(int i) const {
 
 int Function::numberOfOperands() const {
   return 1;
+}
+
+Expression * Function::evaluate(Context& context) const {
+  return new Float(approximate(context));
 }

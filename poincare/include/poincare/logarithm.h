@@ -7,7 +7,6 @@ class Logarithm : public Function {
 public:
   Logarithm();
   float approximate(Context & context) const override;
-  Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;

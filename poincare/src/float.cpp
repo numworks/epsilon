@@ -27,11 +27,11 @@ float Float::approximate(Context& context) const {
 }
 
 Expression * Float::evaluate(Context& context) const {
-  return new Float(m_float);
+  return clone();
 }
 
 Expression::Type Float::type() const {
-  return Expression::Type::Float;
+  return Type::Float;
 }
 
 ExpressionLayout * Float::createLayout() const {

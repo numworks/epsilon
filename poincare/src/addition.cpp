@@ -41,7 +41,7 @@ const Expression * Addition::operand(int i) const {
 }
 
 Expression::Type Addition::type() const {
-  return Expression::Type::Addition;
+  return Type::Addition;
 }
 
 float Addition::approximate(Context& context) const {
@@ -62,7 +62,7 @@ Expression * Addition::evaluate(Context& context) const {
     result = newResult;
     delete next;
   }
-  assert(result == nullptr || result->type() == Expression::Type::Float || result->type() == Expression::Type::Matrix);
+  assert(result == nullptr || result->type() == Type::Float || result->type() == Type::Matrix);
   return result;
 }
 
@@ -98,19 +98,19 @@ Expression * Addition::evaluateOn(Expression * a, Expression * b, Context& conte
   if (a == nullptr || b == nullptr) {
     return nullptr;
   }
-  assert(a->type() == Expression::Type::Float || a->type() == Expression::Type::Matrix);
-  assert(b->type() == Expression::Type::Float || b->type() == Expression::Type::Matrix);
+  assert(a->type() == Type::Float || a->type() == Type::Matrix);
+  assert(b->type() == Type::Float || b->type() == Type::Matrix);
   Expression * result = nullptr;
-  if (a->type() == Expression::Type::Float && b->type() == Expression::Type::Float) {
+  if (a->type() == Type::Float && b->type() == Type::Float) {
     result = new Float(a->approximate(context) + b->approximate(context));
   }
-  if (a->type() == Expression::Type::Float && b->type() == Expression::Type::Matrix) {
+  if (a->type() == Type::Float && b->type() == Type::Matrix) {
     result = evaluateOnFloatAndMatrix((Float *)a, (Matrix *)b, context);
   }
-  if (b->type() == Expression::Type::Float && a->type() == Expression::Type::Matrix) {
+  if (b->type() == Type::Float && a->type() == Type::Matrix) {
     result = evaluateOnFloatAndMatrix((Float *)b, (Matrix *)a, context);
   }
-  if (b->type() == Expression::Type::Matrix && a->type() == Expression::Type::Matrix) {
+  if (b->type() == Type::Matrix && a->type() == Type::Matrix) {
     result = evaluateOnMatrices((Matrix *)a, (Matrix *)b, context);
   }
   return result;

@@ -34,3 +34,39 @@ const Expression * BinaryOperation::operand(int i) const {
 Expression * BinaryOperation::clone() const {
   return this->cloneWithDifferentOperands((Expression**) m_operands, 2, true);
 }
+
+Expression * BinaryOperation::evaluate(Context& context) const {
+  Expression * leftOperandEvalutation = m_operands[0]->evaluate(context);
+  Expression * rightOperandEvalutation = m_operands[1]->evaluate(context);
+  if (leftOperandEvalutation == nullptr || rightOperandEvalutation == nullptr) {
+    return nullptr;
+  }
+  Expression * result = nullptr;
+  if (leftOperandEvalutation->type() == Type::Float && rightOperandEvalutation->type() == Type::Float) {
+    result = new Float(this->approximate(context));
+  }
+  if (leftOperandEvalutation->type() == Type::Matrix && rightOperandEvalutation->type() == Type::Float) {
+    result = evaluateOnMatrixAndFloat((Matrix *)leftOperandEvalutation, (Float *)rightOperandEvalutation, context);
+  }
+  if (leftOperandEvalutation->type() == Type::Float && rightOperandEvalutation->type() == Type::Matrix) {
+    result =  evaluateOnFloatAndMatrix((Float *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context);
+  }
+  if (leftOperandEvalutation->type() == Type::Matrix && rightOperandEvalutation->type() == Type::Matrix) {
+    result = evaluateOnMatrices((Matrix *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context);
+  }
+  delete leftOperandEvalutation;
+  delete rightOperandEvalutation;
+  return result;
+}
+
+Expression * BinaryOperation::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+  return nullptr;
+}
+
+Expression * BinaryOperation::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
+  return nullptr;
+}
+
+Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+  return nullptr;
+}

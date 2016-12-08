@@ -7,7 +7,6 @@ class Tangent : public Function {
 public:
   Tangent();
   float approximate(Context & context) const override;
-  Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;

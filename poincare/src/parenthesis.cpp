@@ -50,7 +50,7 @@ Expression * Parenthesis::evaluate(Context& context) const {
 }
 
 Expression::Type Parenthesis::type() const {
-  return Expression::Type::Parenthesis;
+  return Type::Parenthesis;
 }
 
 Expression * Parenthesis::cloneWithDifferentOperands(Expression** newOperands,

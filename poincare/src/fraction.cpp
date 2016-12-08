@@ -23,31 +23,7 @@ float Fraction::approximate(Context& context) const {
 }
 
 Expression::Type Fraction::type() const {
-  return Expression::Type::Fraction;
-}
-
-Expression * Fraction::evaluate(Context& context) const {
-  Expression * numerator = m_operands[0]->evaluate(context);
-  Expression * denominator = m_operands[1]->evaluate(context);
-  if (numerator == nullptr || denominator == nullptr) {
-    return nullptr;
-  }
-  Expression * result = nullptr;
-  if (numerator->type() == Expression::Type::Float && denominator->type() == Expression::Type::Float) {
-    result = new Float(this->approximate(context));
-  }
-  if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Float) {
-    result = evaluateOnMatrixAndFloat((Matrix *)numerator, (Float *)denominator, context);
-  }
-  if (numerator->type() == Expression::Type::Float && denominator->type() == Expression::Type::Matrix) {
-    result = nullptr;
-  }
-  if (numerator->type() == Expression::Type::Matrix && denominator->type() == Expression::Type::Matrix) {
-    result = evaluateOnMatrices((Matrix *)numerator, (Matrix *)denominator, context);
-  }
-  delete numerator;
-  delete denominator;
-  return result;
+  return Type::Fraction;
 }
 
 Expression * Fraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {

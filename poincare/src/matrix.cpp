@@ -62,7 +62,7 @@ Expression * Matrix::evaluate(Context& context) const {
 }
 
 Expression::Type Matrix::type() const {
-  return Expression::Type::Matrix;
+  return Type::Matrix;
 }
 
 Expression * Matrix::cloneWithDifferentOperands(Expression** newOperands,

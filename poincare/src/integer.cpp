@@ -330,7 +330,7 @@ Expression * Integer::evaluate(Context& context) const {
 }
 
 Expression::Type Integer::type() const {
-  return Expression::Type::Integer;
+  return Type::Integer;
 }
 
 ExpressionLayout * Integer::createLayout() const {
@@ -362,6 +362,6 @@ ExpressionLayout * Integer::createLayout() const {
 }
 
 bool Integer::valueEquals(const Expression * e) const {
-  assert(e->type() == Expression::Type::Integer);
+  assert(e->type() == Type::Integer);
   return (*this == *(Integer *)e); // FIXME: Remove operator overloading
 }

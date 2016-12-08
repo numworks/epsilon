@@ -6,11 +6,17 @@ extern "C" {
 #include <ion.h>
 #include "../device.h"
 
-extern char _data_section_start_flash;
-extern char _data_section_start_ram;
-extern char _data_section_end_ram;
-extern char _bss_section_start_ram;
-extern char _bss_section_end_ram;
+typedef void (*cxx_constructor)();
+
+extern "C" {
+  char _data_section_start_flash;
+  char _data_section_start_ram;
+  char _data_section_end_ram;
+  char _bss_section_start_ram;
+  char _bss_section_end_ram;
+  cxx_constructor _init_array_start;
+  cxx_constructor _init_array_end;
+}
 
 void abort() {
 #ifdef DEBUG
@@ -37,6 +43,16 @@ void start() {
    * Until we do, any uninitialized global variable will be unusable. */
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
+
+  /* Call static C++ object constructors
+   * The C++ compiler creates an initialization function for each static object.
+   * The linker then stores the address of each of those functions consecutively
+   * between _init_array_start and _init_array_end. So to initialize all C++
+   * static objects we just have to iterate between theses two addresses and
+   * call the pointed function. */
+  for (cxx_constructor * c = &_init_array_start; c<&_init_array_end; c++) {
+    (*c)();
+  }
 
   Ion::Device::init();
 

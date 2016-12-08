@@ -40,6 +40,13 @@ SECTIONS {
     *(.text.*)
   } >FLASH
 
+  .init_array : {
+    . = ALIGN(4);
+    _init_array_start = .;
+    KEEP (*(.init_array*))
+    _init_array_end = .;
+  } >FLASH
+
   .rodata : {
     . = ALIGN(4);
     *(.rodata)

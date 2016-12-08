@@ -40,13 +40,11 @@ Expression * Power::evaluateOnMatrixAndInteger(Matrix * m, Integer * i, Context&
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m;
-    Expression * next = new Product(operands, true);
-    /* We do not need to suppress next, as we suppress result and m is handle by
-     * another scope (TODO: something feels wrong. Check again) */
-    Expression * newResult = next->evaluate(context);
+    Expression * product = new Product(operands, true);
+    Expression * newResult = product->evaluate(context);
     delete result;
     result = newResult;
-    delete next;
+    delete product;
   }
   return result;
 }

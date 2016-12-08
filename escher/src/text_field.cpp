@@ -82,6 +82,7 @@ int TextField::textLength() const {
 }
 
 void TextField::setText(const char * text) {
+  reload();
   strlcpy(m_textBuffer, text, m_textBufferSize);
   m_currentCursorLocation = strlen(text);
   m_currentTextLength = m_currentCursorLocation;

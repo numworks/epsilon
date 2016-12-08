@@ -44,6 +44,10 @@ void start() {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
+  /* Initialize the FPU as early as possible.
+   * For example, static C++ objects are very likely to manipulate float values */
+  Ion::Device::initFPU();
+
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.
    * The linker then stores the address of each of those functions consecutively

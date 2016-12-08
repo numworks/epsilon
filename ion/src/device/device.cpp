@@ -27,7 +27,6 @@ void Ion::reset() {
 // Private Ion::Device methods
 
 void Ion::Device::init() {
-  initFPU();
   initClocks();
   LED::Device::init();
   Display::Device::init();

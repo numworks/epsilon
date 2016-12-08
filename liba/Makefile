@@ -56,6 +56,7 @@ tests += $(addprefix liba/test/, \
 # The use of aeabi-rt could be made conditional to an AEABI target.
 # In practice we're always using liba on such a target.
 objs += $(addprefix liba/src/aeabi-rt/, \
+  atexit.o \
   memclr.o \
   memcpy.o \
 )

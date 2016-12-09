@@ -43,12 +43,12 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+    if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->setTextBody(calculation->text());
     } else {
-      char resultText[Calculation::k_maximalExpressionTextLength];
-      calculation->output()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
-      editController->setTextBody(resultText);
+      char outputText[Calculation::k_maximalExpressionTextLength];
+      calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
+      editController->setTextBody(outputText);
     }
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(editController);
@@ -61,14 +61,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     Calculation newCalculation;
-    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+    if (subviewType == HistoryViewCell::SubviewType::Input) {
       newCalculation = *calculation;
     } else {
-      char resultText[Calculation::k_maximalExpressionTextLength];
-      calculation->output()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
+      char outputText[Calculation::k_maximalExpressionTextLength];
+      calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
       /* TODO: this will work when we will parse float */
       //App * calculationApp = (App *)app();
-      //newCalculation.setContent(resultText, calculationApp->evaluateContext());
+      //newCalculation.setContent(outputText, calculationApp->evaluateContext());
     }
     m_selectableTableView.deselectTable();
     m_calculationStore->push(&newCalculation);
@@ -94,7 +94,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else {
       m_selectableTableView.selectCellAtLocation(0, 0);
     }
-    if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+    if (subviewType == HistoryViewCell::SubviewType::Input) {
       tableViewDidChangeSelection(&m_selectableTableView, 0, m_selectableTableView.selectedRow());
     } else {
       tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
@@ -115,13 +115,13 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   selectedCell->setParentResponder(t);
   if (m_selectableTableView.selectedRow() < previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
   }
   if (m_selectableTableView.selectedRow() >= previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Input);
   }
   if (previousSelectedCellY == -1) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
   }
   app()->setFirstResponder(selectedCell);
   selectedCell->reloadCell();
@@ -151,9 +151,9 @@ void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index)
 
 KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  KDCoordinate prettyPrintHeight = calculation->inputLayout()->size().height();
-  KDCoordinate resultHeight = calculation->outputLayout()->size().height();
-  return prettyPrintHeight + resultHeight + 3*HistoryViewCell::k_digitVerticalMargin;
+  KDCoordinate inputHeight = calculation->inputLayout()->size().height();
+  KDCoordinate outputHeight = calculation->outputLayout()->size().height();
+  return inputHeight + outputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 
 KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {

@@ -1,9 +1,9 @@
-#include "pretty_print_view.h"
+#include "scrollable_expression_view.h"
 #include <assert.h>
 
 namespace Calculation {
 
-PrettyPrintView::PrettyPrintView(Responder * parentResponder) :
+ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) :
   ScrollView(&m_expressionView, 0, 0, 0, 0, false),
   Responder(parentResponder),
   m_expressionView(ExpressionView()),
@@ -11,34 +11,34 @@ PrettyPrintView::PrettyPrintView(Responder * parentResponder) :
 {
 }
 
-void PrettyPrintView::setExpression(ExpressionLayout * expressionLayout) {
+void ScrollableExpressionView::setExpression(ExpressionLayout * expressionLayout) {
   m_expressionView.setExpression(expressionLayout);
   layoutSubviews();
 }
 
-void PrettyPrintView::setBackgroundColor(KDColor backgroundColor) {
+void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
 }
 
-void PrettyPrintView::layoutSubviews() {
+void ScrollableExpressionView::layoutSubviews() {
   m_expressionView.setSize(m_expressionView.minimalSizeForOptimalDisplay());
   ScrollView::layoutSubviews();
 }
 
-KDSize PrettyPrintView::minimalSizeForOptimalDisplay() {
+KDSize ScrollableExpressionView::minimalSizeForOptimalDisplay() {
   return m_expressionView.minimalSizeForOptimalDisplay();
 }
 
-void PrettyPrintView::reloadCell() {
+void ScrollableExpressionView::reloadCell() {
   m_manualScrolling = 0;
   setContentOffset(KDPoint(m_manualScrolling, 0));
 }
 
-bool PrettyPrintView::rightViewIsInvisible() {
+bool ScrollableExpressionView::rightViewIsInvisible() {
   return m_expressionView.bounds().width() - m_manualScrolling > bounds().width();
 }
 
-bool PrettyPrintView::handleEvent(Ion::Events::Event event) {
+bool ScrollableExpressionView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right && rightViewIsInvisible()) {
       KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
       KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;

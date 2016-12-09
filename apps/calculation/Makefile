@@ -7,7 +7,7 @@ app_objs += $(addprefix apps/calculation/,\
   history_view_cell.o\
   history_controller.o\
   edit_expression_controller.o\
-  pretty_print_view.o\
+  scrollable_expression_view.o\
   text_field.o\
 )
 

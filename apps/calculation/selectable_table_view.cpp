@@ -48,7 +48,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   /* Main part of the scroll */
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY = contentOffset().y();
-  if (subviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+  if (subviewType == HistoryViewCell::SubviewType::Input) {
     if (j == 0) {
       contentOffsetY = 0;
     } else {

@@ -8,9 +8,9 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell() :
   Responder(nullptr),
-  m_prettyPrint(PrettyPrintView(this)),
-  m_result(ExpressionView()),
-  m_selectedSubviewType(HistoryViewCell::SubviewType::Result)
+  m_inputView(ScrollableExpressionView(this)),
+  m_outputView(ScrollableExpressionView(this)),
+  m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
 {
 }
 
@@ -27,9 +27,9 @@ int HistoryViewCell::numberOfSubviews() const {
 View * HistoryViewCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
-      return &m_prettyPrint;
+      return &m_inputView;
     case 1:
-      return &m_result;
+      return &m_outputView;
     default:
       assert(false);
       return nullptr;
@@ -39,40 +39,45 @@ View * HistoryViewCell::subviewAtIndex(int index) {
 void HistoryViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDSize prettyPrintSize = m_prettyPrint.minimalSizeForOptimalDisplay();
-  if (prettyPrintSize.width() + k_digitHorizontalMargin > width) {
-    m_prettyPrint.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, width - k_digitHorizontalMargin, prettyPrintSize.height()));
+  KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
+  if (inputSize.width() + k_digitHorizontalMargin > width) {
+    m_inputView.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, width - k_digitHorizontalMargin, inputSize.height()));
   } else {
-    m_prettyPrint.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, prettyPrintSize.width(), prettyPrintSize.height()));
+    m_inputView.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, inputSize.width(), inputSize.height()));
   }
-  KDSize resultSize = m_result.minimalSizeForOptimalDisplay();
-  KDRect resultFrame(width - resultSize.width() - k_digitHorizontalMargin, prettyPrintSize.height() + 2*k_digitVerticalMargin, resultSize.width(), height - prettyPrintSize.height() - 2*k_digitVerticalMargin);
-  m_result.setFrame(resultFrame);
+  KDSize outputSize = m_outputView.minimalSizeForOptimalDisplay();
+  if (outputSize.width() + k_digitHorizontalMargin > width) {
+    m_outputView.setFrame(KDRect(k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - k_digitHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
+  } else {
+    m_outputView.setFrame(KDRect(width - outputSize.width() - k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
+  }
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  m_prettyPrint.setExpression(calculation->inputLayout());
-  m_result.setExpression(calculation->outputLayout());
+  m_inputView.setExpression(calculation->inputLayout());
+  m_outputView.setExpression(calculation->outputLayout());
 }
 
 void HistoryViewCell::reloadCell() {
-  m_result.setBackgroundColor(backgroundColor());
-  m_prettyPrint.setBackgroundColor(backgroundColor());
+  m_outputView.setBackgroundColor(backgroundColor());
+  m_inputView.setBackgroundColor(backgroundColor());
   if (isHighlighted()) {
-    if (m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
-      m_result.setBackgroundColor(Palette::FocusCellBackgroundColor);
+    if (m_selectedSubviewType == SubviewType::Output) {
+      m_outputView.setBackgroundColor(Palette::FocusCellBackgroundColor);
     } else {
-      m_prettyPrint.setBackgroundColor(Palette::FocusCellBackgroundColor);
+      m_inputView.setBackgroundColor(Palette::FocusCellBackgroundColor);
     }
   }
   layoutSubviews();
   EvenOddCell::reloadCell();
-  m_prettyPrint.reloadCell();
+  m_inputView.reloadCell();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
-  if (m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
-    app()->setFirstResponder(&m_prettyPrint);
+  if (m_selectedSubviewType == SubviewType::Input) {
+    app()->setFirstResponder(&m_inputView);
+  } else {
+    app()->setFirstResponder(&m_outputView);
   }
 }
 
@@ -85,20 +90,13 @@ void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subvie
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Down && m_selectedSubviewType == HistoryViewCell::SubviewType::PrettyPrint) {
+  if ((event == Ion::Events::Down && m_selectedSubviewType == SubviewType::Input) ||
+    (event == Ion::Events::Up && m_selectedSubviewType == SubviewType::Output)) {
+    SubviewType otherSubviewType = m_selectedSubviewType == SubviewType::Input ? SubviewType::Output : SubviewType::Input;
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-    tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::Result, tableView->selectedColumn(), tableView->selectedRow());
+    tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
     HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Result);
-    app()->setFirstResponder(selectedCell);
-    selectedCell->reloadCell();
-    return true;
-  }
-  if (event == Ion::Events::Up && m_selectedSubviewType == HistoryViewCell::SubviewType::Result) {
-    CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-    tableView->scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType::PrettyPrint, tableView->selectedColumn(), tableView->selectedRow());
-    HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::PrettyPrint);
+    selectedCell->setSelectedSubviewType(otherSubviewType);
     app()->setFirstResponder(selectedCell);
     selectedCell->reloadCell();
     return true;

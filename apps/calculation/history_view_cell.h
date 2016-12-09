@@ -3,15 +3,15 @@
 
 #include <escher.h>
 #include "calculation.h"
-#include "pretty_print_view.h"
+#include "scrollable_expression_view.h"
 
 namespace Calculation {
 
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   enum class SubviewType {
-    PrettyPrint,
-    Result
+    Input,
+    Output
   };
   HistoryViewCell();
   void reloadCell() override;
@@ -28,8 +28,8 @@ public:
   void setSelectedSubviewType(HistoryViewCell::SubviewType subviewType);
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
-  PrettyPrintView m_prettyPrint;
-  ExpressionView m_result;
+  ScrollableExpressionView m_inputView;
+  ScrollableExpressionView m_outputView;
   SubviewType m_selectedSubviewType;
 };
 

@@ -1,13 +1,13 @@
-#ifndef CALCULATION_PRETTY_PRINT_VIEW_H
-#define CALCULATION_PRETTY_PRINT_VIEW_H
+#ifndef CALCULATION_SCROLLABLE_EXPRESSION_VIEW_H
+#define CALCULATION_SCROLLABLE_EXPRESSION_VIEW_H
 
 #include <escher.h>
 
 namespace Calculation {
 
-class PrettyPrintView : public ScrollView, public Responder {
+class ScrollableExpressionView : public ScrollView, public Responder {
 public:
-  PrettyPrintView(Responder * parentResponder);
+  ScrollableExpressionView(Responder * parentResponder);
   void setExpression(ExpressionLayout * expressionLayout);
   void layoutSubviews() override;
   void setBackgroundColor(KDColor backgroundColor);

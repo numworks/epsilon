@@ -22,8 +22,8 @@ KDSize ExponentLayout::computeSize() {
   KDSize exponent_size = m_exponent_layout->size();
   KDSize base_size = m_base_layout->size();
   return KDSize(
-      base_size.height() + exponent_size.height() - k_exponentHeight,
-      base_size.width() + exponent_size.width()
+      base_size.width() + exponent_size.width(),
+      base_size.height() + exponent_size.height() - k_exponentHeight
       );
 }
 

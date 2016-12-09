@@ -110,10 +110,11 @@ void GraphController::didBecomeFirstResponder() {
     m_graphWindow.setContext(graphApp->evaluateContext());
   }
   // if new functions were added to the store, the window parameters need to be refresh
-  m_graphWindow.computeYaxes();
+  if (m_graphWindow.computeYaxes()) {
+    m_view.initCursorPosition();
+  }
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
-
   m_view.setCursorVisible(true);
   // Layout view whe the graph view that might have been modified by the zoom page
   headerViewController()->layoutView();

@@ -75,9 +75,9 @@ void GraphWindow::setYAuto(bool yAuto) {
   computeYaxes();
 }
 
-void GraphWindow::computeYaxes() {
+bool GraphWindow::computeYaxes() {
   if (!m_yAuto) {
-    return;
+    return false;
   }
   if (m_functionStore->numberOfActiveFunctions() > 0) {
     float min = FLT_MAX;
@@ -94,6 +94,9 @@ void GraphWindow::computeYaxes() {
         }
       }
     }
+    if (m_yMin == min && m_yMax == max) {
+      return false;
+    }
     m_yMin = min;
     m_yMax = max;
     if (m_yMin == m_yMax) {
@@ -102,6 +105,7 @@ void GraphWindow::computeYaxes() {
     }
   }
   computeYScale();
+  return true;
 }
 
 Context * GraphWindow::context() {

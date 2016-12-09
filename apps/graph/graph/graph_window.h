@@ -33,7 +33,7 @@ public:
   void setYAuto(bool yAuto);
   /* Need to be public to be called when a function is added to the function
    * store. */
-  void computeYaxes();
+  bool computeYaxes();
   Context * context();
   void setContext(Context * context);
   void zoom(float ratio);

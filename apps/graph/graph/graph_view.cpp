@@ -128,11 +128,10 @@ Function * GraphView::moveCursorVertically(int direction) {
 }
 
 void GraphView::layoutSubviews() {
-  KDRect cursorFrame((int)m_xCursorPosition - (k_cursorSize+1)/2+1, (int)m_yCursorPosition - (k_cursorSize+1)/2+1, k_cursorSize, k_cursorSize);
+  KDRect cursorFrame(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition) - k_cursorSize/2, k_cursorSize, k_cursorSize);
   if (!m_visibleCursor) {
     cursorFrame = KDRectZero;
   }
-  m_cursorView.setPosition(m_xCursorPosition, m_yCursorPosition);
   m_cursorView.setFrame(cursorFrame);
 }
 

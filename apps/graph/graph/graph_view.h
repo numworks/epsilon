@@ -29,7 +29,7 @@ public:
   void reload();
 private:
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
-  constexpr static KDCoordinate k_cursorSize = 10;
+  constexpr static KDCoordinate k_cursorSize = 9;
   constexpr static float k_cursorMarginToBorder = 6.0f;
 
   int numberOfSubviews() const override;

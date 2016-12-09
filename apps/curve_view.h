@@ -19,7 +19,7 @@ protected:
   constexpr static int k_maxNumberOfYLabels =  13;
   virtual float min(Axis axis) const = 0;
   virtual float max(Axis axis) const = 0;
-  virtual float scale(Axis axis) const = 0;
+  virtual float gridUnit(Axis axis) const = 0;
   virtual char * label(Axis axis, int index) const = 0;
   KDCoordinate pixelLength(Axis axis) const;
   float pixelToFloat(Axis axis, KDCoordinate p) const;

@@ -24,8 +24,8 @@ public:
   float yMin();
   float yMax();
   bool yAuto();
-  float xScale();
-  float yScale();
+  float xGridUnit();
+  float yGridUnit();
   void setXMin(float f);
   void setXMax(float f);
   void setYMin(float f);
@@ -45,15 +45,15 @@ public:
   void setDefault();
   void panToMakePointVisible(float x, float y, float xMargin, float yMargin);
 private:
-  void computeXScale();
-  void computeYScale();
+  void computeXGridUnit();
+  void computeYGridUnit();
   float m_xMin;
   float m_xMax;
   float m_yMin;
   float m_yMax;
   bool m_yAuto;
-  float m_xScale;
-  float m_yScale;
+  float m_xGridUnit;
+  float m_yGridUnit;
   FunctionStore * m_functionStore;
   EvaluateContext * m_evaluateContext;
 };

@@ -47,8 +47,8 @@ void GraphView::reload() {
   computeLabels(Axis::Vertical);
 }
 
-float GraphView::scale(Axis axis) const {
-  return (axis == Axis::Horizontal ? m_graphWindow->xScale() : m_graphWindow->yScale());
+float GraphView::gridUnit(Axis axis) const {
+  return (axis == Axis::Horizontal ? m_graphWindow->xGridUnit() : m_graphWindow->yGridUnit());
 }
 
 char * GraphView::label(Axis axis, int index) const {
@@ -184,8 +184,8 @@ void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
 }
 
 void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, m_graphWindow->xScale(), k_gridColor);
-  drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yScale(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_graphWindow->xGridUnit(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yGridUnit(), k_gridColor);
 }
 
 float GraphView::min(Axis axis) const {

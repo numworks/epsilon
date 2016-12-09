@@ -33,7 +33,7 @@ public:
   float yMin();
   float xMax();
   float yMax();
-  float scale();
+  float gridUnit();
   float calculationElementAtIndex(int index);
   void setCalculationElementAtIndex(float f, int index);
   int numberOfParameter();
@@ -44,7 +44,7 @@ public:
   float evaluateAtAbscissa(float x, EvaluateContext * context) const;
 private:
   void setWindow();
-  void computeScale();
+  void computeGridUnit();
   void computeCalculation(int indexKnownElement);
   void initCalculationElements();
   Type m_type;
@@ -56,7 +56,7 @@ private:
   float m_xMax;
   float m_yMin;
   float m_yMax;
-  float m_scale;
+  float m_gridUnit;
   float m_calculationElement1;
   float m_calculationElement2;
   float m_calculationElement3;

@@ -37,12 +37,12 @@ int CurveView::numberOfLabels(Axis axis) const {
   if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
     return 0;
   }
-  return ceilf((max(axis) - min(axis))/(2*scale(axis)));
+  return ceilf((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
 void CurveView::computeLabels(Axis axis) {
   char buffer[Constant::FloatBufferSizeInScientificMode];
-  float step = scale(axis);
+  float step = gridUnit(axis);
   for (int index = 0; index < numberOfLabels(axis); index++) {
     // TODO: change the number of digits in mantissa once the numerical mode is implemented
     Float(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
@@ -52,7 +52,7 @@ void CurveView::computeLabels(Axis axis) {
 }
 
 void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
-  float step = scale(axis);
+  float step = gridUnit(axis);
   float start = 2.0f*step*(ceilf(min(axis)/(2.0f*step)));
   float end = max(axis);
   int i = 0;

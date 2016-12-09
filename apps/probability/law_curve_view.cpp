@@ -31,9 +31,9 @@ float LawCurveView::max(Axis axis) const {
   return (axis == Axis::Horizontal ? m_law->xMax() : m_law->yMax());
 }
 
-float LawCurveView::scale(Axis axis) const {
+float LawCurveView::gridUnit(Axis axis) const {
   assert(axis == Axis::Horizontal);
-  return m_law->scale();
+  return m_law->gridUnit();
 }
 
 char * LawCurveView::label(Axis axis, int index) const {

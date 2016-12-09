@@ -39,7 +39,7 @@ private:
 
   float min(Axis axis) const override;
   float max(Axis axis) const override;
-  float scale(Axis axis) const override;
+  float gridUnit(Axis axis) const override;
   char * label(Axis axis, int index) const override;
   float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const override;
   void drawGrid(KDContext * ctx, KDRect rect) const;

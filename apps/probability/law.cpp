@@ -14,7 +14,7 @@ Law::Law(EvaluateContext * evaluateContext):
   m_xMax(10.0f),
   m_yMin(-0.1f),
   m_yMax(1.0f),
-  m_scale(1.0f),
+  m_gridUnit(1.0f),
   m_calculationElement1(0.0f),
   m_calculationElement2(0.0f),
   m_calculationElement3(0.0f),
@@ -118,8 +118,8 @@ float Law::yMax() {
   return m_yMax;
 }
 
-float Law::scale() {
-  return m_scale;
+float Law::gridUnit() {
+  return m_gridUnit;
 }
 
 float Law::calculationElementAtIndex(int index) {
@@ -272,10 +272,10 @@ void Law::setWindow() {
     default:
       return;
   }
-  computeScale();
+  computeGridUnit();
 }
 
-void Law::computeScale() {
+void Law::computeGridUnit() {
   int a = 0;
   int b = 0;
   float d = m_xMax - m_xMin;
@@ -291,7 +291,7 @@ void Law::computeScale() {
     b = floorf(log10f(d/7.0f));
     a = 1;
   }
-  m_scale = a*powf(10,b);
+  m_gridUnit = a*powf(10,b);
 }
 
 void Law::computeCalculation(int indexKnownElement) {

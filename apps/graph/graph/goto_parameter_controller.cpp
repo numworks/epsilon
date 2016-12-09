@@ -27,7 +27,7 @@ float GoToParameterController::parameterAtIndex(int index) {
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
-  m_graphView->setXCursorPosition(f, m_function);
+  m_graphView->goToAbscissaOnFunction(f, m_function);
 }
 
 int GoToParameterController::numberOfRows() {

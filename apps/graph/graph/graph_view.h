@@ -18,8 +18,8 @@ public:
 
   float xPixelCursorPosition();
   float xCursorPosition();
-  void setXCursorPosition(float xPosition, Function * function);
-  void setVisibleCursor(bool visibleCursor);
+  void goToAbscissaOnFunction(float abscissa, Function * function);
+  void setCursorVisible(bool visibleCursor);
   void initCursorPosition();
   void moveCursorHorizontally(KDCoordinate xOffset);
   Function * moveCursorUp();
@@ -31,7 +31,7 @@ public:
 private:
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_cursorSize = 10;
-  constexpr static float k_cursorMarginToBorder = 5.0f;
+  constexpr static float k_cursorMarginToBorder = 6.0f;
 
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

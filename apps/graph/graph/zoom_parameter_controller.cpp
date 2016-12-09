@@ -24,53 +24,38 @@ View * ZoomParameterController::view() {
 }
 
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
-  float xMin = m_graphWindow->xMin();
-  float xMax = m_graphWindow->xMax();
-  float yMin = m_graphWindow->yMin();
-  float yMax = m_graphWindow->yMax();
-  m_graphWindow->setYAuto(false);
   if (event == Ion::Events::Plus) {
-    m_graphWindow->setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
-    m_graphWindow->setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
-    m_graphWindow->setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
-    m_graphWindow->setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+    m_graphWindow->zoom(1.0f/3.0f);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
-    m_graphWindow->setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
-    m_graphWindow->setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
-    m_graphWindow->setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
-    m_graphWindow->setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+    m_graphWindow->zoom(3.0f/4.0f);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Up) {
-    m_graphWindow->setYMin(yMin + m_graphWindow->yScale());
-    m_graphWindow->setYMax(yMax + m_graphWindow->yScale());
+    m_graphWindow->translateWindow(GraphWindow::Direction::Up);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
-    m_graphWindow->setYMin(yMin - m_graphWindow->yScale());
-    m_graphWindow->setYMax(yMax - m_graphWindow->yScale());
+    m_graphWindow->translateWindow(GraphWindow::Direction::Down);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
-    m_graphWindow->setXMin(xMin - m_graphWindow->xScale());
-    m_graphWindow->setXMax(xMax - m_graphWindow->xScale());
+    m_graphWindow->translateWindow(GraphWindow::Direction::Left);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
-    m_graphWindow->setXMin(xMin + m_graphWindow->xScale());
-    m_graphWindow->setXMax(xMax + m_graphWindow->xScale());
+    m_graphWindow->translateWindow(GraphWindow::Direction::Right);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;

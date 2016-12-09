@@ -6,13 +6,13 @@
 
 class CurveView : public View {
 public:
-  CurveView();
-  void reload();
-protected:
   enum class Axis {
     Horizontal = 0,
     Vertical = 1
   };
+  CurveView();
+  void reload();
+protected:
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static int k_maxNumberOfXLabels =  18;

@@ -8,6 +8,16 @@ namespace Graph {
 
 class GraphWindow {
 public:
+  enum class Axis {
+    X,
+    Y
+  };
+  enum class Direction {
+    Up,
+    Left,
+    Down,
+    Right
+  };
   GraphWindow(FunctionStore * functionStore);
   float xMin();
   float xMax();
@@ -26,6 +36,14 @@ public:
   void computeYaxes();
   Context * context();
   void setContext(Context * context);
+  void zoom(float ratio);
+  void centerAxisAround(Axis axis, float position);
+  void translateWindow(Direction direction);
+  void setTrigonometric();
+  void roundAbscissa();
+  void normalize();
+  void setDefault();
+  void panToMakePointVisible(float x, float y, float xMargin, float yMargin);
 private:
   void computeXScale();
   void computeYScale();

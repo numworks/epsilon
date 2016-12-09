@@ -36,36 +36,20 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       // TODO: if mode == degree, xmin = -600, xmax = 600
-        m_graphWindow->setXMin(-10.5f);
-        m_graphWindow->setXMax(10.5f);
-        m_graphWindow->setYAuto(false);
-        m_graphWindow->setYMin(-1.6f);
-        m_graphWindow->setYMax(1.6f);
+        m_graphWindow->setTrigonometric();
         break;
       case 1:
       {
-        float xMin = m_graphWindow->xMin();
-        float xMax =m_graphWindow->xMax();
-        m_graphWindow->setXMin(roundf((xMin+xMax)/2) - 160.0f);
-        m_graphWindow->setXMax(roundf((xMin+xMax)/2) + 159.0f);
+        m_graphWindow->roundAbscissa();
         break;
       }
       case 2:
       {
-        float xMin = m_graphWindow->xMin();
-        float xMax =m_graphWindow->xMax();
-        float yMin = m_graphWindow->yMin();
-        float yMax =m_graphWindow->yMax();
-        m_graphWindow->setXMin((xMin+xMax)/2 - 5.3f);
-        m_graphWindow->setXMax((xMin+xMax)/2 + 5.3f);
-        m_graphWindow->setYMin((yMin+yMax)/2 - 3.1f);
-        m_graphWindow->setYMax((yMin+yMax)/2 + 3.1f);
+        m_graphWindow->normalize();
         break;
       }
       case 3:
-        m_graphWindow->setXMin(-10.0f);
-        m_graphWindow->setXMax(10.0f);
-        m_graphWindow->setYAuto(true);
+        m_graphWindow->setDefault();
         break;
       default:
         return false;

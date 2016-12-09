@@ -114,7 +114,7 @@ void GraphController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
 
-  m_view.setVisibleCursor(true);
+  m_view.setCursorVisible(true);
   // Layout view whe the graph view that might have been modified by the zoom page
   headerViewController()->layoutView();
   // Reload graph view
@@ -127,7 +127,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
         headerViewController()->setSelectedButton(-1);
         m_headerSelected = false;
         app()->setFirstResponder(this);
-        m_view.setVisibleCursor(true);
+        m_view.setCursorVisible(true);
         return true;
     }
     if (event == Ion::Events::Up) {
@@ -137,29 +137,13 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     return headerViewController()->handleEvent(event);
   } else {
     if (event == Ion::Events::Plus) {
-      float xMin = m_graphWindow.xMin();
-      float xMax = m_graphWindow.xMax();
-      float yMin = m_graphWindow.yMin();
-      float yMax = m_graphWindow.yMax();
-      m_graphWindow.setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
-      m_graphWindow.setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
-      m_graphWindow.setYAuto(false);
-      m_graphWindow.setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
-      m_graphWindow.setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+      m_graphWindow.zoom(1.0f/3.0f);
       m_view.initCursorPosition();
       m_view.reload();
       return true;
     }
     if (event == Ion::Events::Minus) {
-      float xMin = m_graphWindow.xMin();
-      float xMax = m_graphWindow.xMax();
-      float yMin = m_graphWindow.yMin();
-      float yMax = m_graphWindow.yMax();
-      m_graphWindow.setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
-      m_graphWindow.setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
-      m_graphWindow.setYAuto(false);
-      m_graphWindow.setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
-      m_graphWindow.setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+      m_graphWindow.zoom(3.0f/4.0f);
       m_view.initCursorPosition();
       m_view.reload();
       return true;
@@ -176,7 +160,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       Function * f = m_view.moveCursorUp();
       if (f == nullptr) {
         m_view.initCursorPosition();
-        m_view.setVisibleCursor(false);
+        m_view.setCursorVisible(false);
         headerViewController()->setSelectedButton(0);
         m_headerSelected = true;
       }

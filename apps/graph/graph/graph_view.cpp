@@ -63,21 +63,16 @@ float GraphView::xCursorPosition() {
   return min(Axis::Horizontal) + m_xCursorPosition*(max(Axis::Horizontal)-min(Axis::Horizontal))/pixelLength(Axis::Horizontal);
 }
 
-void GraphView::setXCursorPosition(float xPosition, Function * function) {
-  float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-  float yRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-  m_graphWindow->setXMin(xPosition - xRange/2.0f);
-  m_graphWindow->setXMax(xPosition + xRange/2.0f);
-  m_xCursorPosition = floatToPixel(Axis::Horizontal, xPosition);
-  float yPosition = function->evaluateAtAbscissa(xPosition, m_evaluateContext);
-  m_graphWindow->setYAuto(false);
-  m_graphWindow->setYMin(yPosition - yRange/2.0f);
-  m_graphWindow->setYMax(yPosition + yRange/2.0f);
-  m_yCursorPosition = floatToPixel(Axis::Vertical, yPosition);
+void GraphView::goToAbscissaOnFunction(float abscissa, Function * function) {
+  m_graphWindow->centerAxisAround(GraphWindow::Axis::X, abscissa);
+  m_xCursorPosition = floatToPixel(Axis::Horizontal, abscissa);
+  float ordinate = function->evaluateAtAbscissa(abscissa, m_evaluateContext);
+  m_graphWindow->centerAxisAround(GraphWindow::Axis::Y, ordinate);
+  m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
   reload();
 }
 
-void GraphView::setVisibleCursor(bool visibleCursor) {
+void GraphView::setCursorVisible(bool visibleCursor) {
   m_visibleCursor = visibleCursor;
   layoutSubviews();
 }
@@ -92,35 +87,15 @@ void GraphView::initCursorPosition() {
 }
 
 void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
-  bool outsideWindow = m_xCursorPosition < 0 || m_xCursorPosition > bounds().width() || m_yCursorPosition < 0 || m_yCursorPosition > bounds().height();
   m_xCursorPosition = m_xCursorPosition + xOffset;
-  if (!outsideWindow && m_xCursorPosition < k_cursorMarginToBorder) {
-    float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-    m_graphWindow->setXMin(pixelToFloat(Axis::Horizontal, floorf(m_xCursorPosition)-k_cursorMarginToBorder));
-    m_graphWindow->setXMax(min(Axis::Horizontal) + xRange);
-    m_xCursorPosition = m_xCursorPosition - floorf(m_xCursorPosition) + k_cursorMarginToBorder;
-  }
-  if (!outsideWindow && m_xCursorPosition > bounds().width() - k_cursorMarginToBorder) {
-    float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-    m_graphWindow->setXMax(pixelToFloat(Axis::Horizontal, ceilf(m_xCursorPosition)+k_cursorMarginToBorder));
-    m_graphWindow->setXMin(max(Axis::Horizontal) - xRange);
-    m_xCursorPosition = bounds().width() - k_cursorMarginToBorder - ceilf(m_xCursorPosition) + m_xCursorPosition;
-  }
+  float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  float ordinate = f->evaluateAtAbscissa(pixelToFloat(Axis::Horizontal, m_xCursorPosition), m_evaluateContext);
-  m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
-  if (!outsideWindow && m_yCursorPosition < k_cursorMarginToBorder) {
-    float yRange = max(Axis::Vertical) - min(Axis::Vertical);
-    m_graphWindow->setYMax(pixelToFloat(Axis::Vertical, floorf(m_yCursorPosition)-k_cursorMarginToBorder));
-    m_graphWindow->setYMin(max(Axis::Vertical) - yRange);
-    m_yCursorPosition = m_yCursorPosition - floorf(m_yCursorPosition) + k_cursorMarginToBorder;
-  }
-  if (!outsideWindow && m_yCursorPosition > bounds().height() - k_cursorMarginToBorder) {
-    float yRange = max(Axis::Vertical) - min(Axis::Vertical);
-    m_graphWindow->setYMin(pixelToFloat(Axis::Vertical, ceilf(m_yCursorPosition)+k_cursorMarginToBorder));
-    m_graphWindow->setYMax(min(Axis::Vertical) + yRange);
-    m_yCursorPosition = bounds().height() - k_cursorMarginToBorder - ceilf(m_yCursorPosition) + m_yCursorPosition;
-  }
+  float y = f->evaluateAtAbscissa(x, m_evaluateContext);
+  float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
+  float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
+  m_graphWindow->panToMakePointVisible(x, y, xMargin, yMargin);
+  m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
+  m_yCursorPosition = floatToPixel(Axis::Vertical, y);
   reload();
 }
 
@@ -142,8 +117,12 @@ Function * GraphView::moveCursorUp() {
   if (nextFunction == actualFunction) {
     return nullptr;
   }
+  float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
+  float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
+  m_graphWindow->panToMakePointVisible(x, nextY, xMargin, yMargin);
+  m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, nextY);
-  layoutSubviews();
+  reload();
   return nextFunction;
 }
 
@@ -165,8 +144,12 @@ Function * GraphView::moveCursorDown() {
   if (nextFunction == actualFunction) {
     return nullptr;
   }
+  float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
+  float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
+  m_graphWindow->panToMakePointVisible(x, nextY, xMargin, yMargin);
+  m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, nextY);
-  layoutSubviews();
+  reload();
   return nextFunction;
 }
 

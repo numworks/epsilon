@@ -104,6 +104,137 @@ void GraphWindow::computeYaxes() {
   computeYScale();
 }
 
+Context * GraphWindow::context() {
+  return m_evaluateContext;
+}
+
+void GraphWindow::setContext(Context * context) {
+  m_evaluateContext = (EvaluateContext *)context;
+}
+
+void GraphWindow::zoom(float ratio) {
+  float xMin = m_xMin;
+  float xMax = m_xMax;
+  float yMin = m_yMin;
+  float yMax = m_yMax;
+  m_xMin = (xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin);
+  m_xMax = (xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin);
+  computeXScale();
+  m_yAuto = false;
+  m_yMin = (yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin);
+  m_yMax = (yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin);
+  computeYScale();
+}
+
+void GraphWindow::centerAxisAround(Axis axis, float position) {
+  if (axis == Axis::X) {
+    float range = m_xMax - m_xMin;
+    m_xMin = position - range/2.0f;
+    m_xMax = position + range/2.0f;
+    computeYaxes();
+    computeXScale();
+  } else {
+    m_yAuto = false;
+    float range = m_yMax - m_yMin;
+    m_yMin = position - range/2.0f;
+    m_yMax = position + range/2.0f;
+    computeYScale();
+  }
+}
+
+void GraphWindow::translateWindow(Direction direction) {
+  m_yAuto = false;
+  if (direction == Direction::Up) {
+    m_yMin = m_yMin + m_yScale;
+    m_yMax = m_yMax + m_yScale;
+    computeYScale();
+  }
+  if (direction == Direction::Down) {
+    m_yMin = m_yMin - m_yScale;
+    m_yMax = m_yMax - m_yScale;
+    computeYScale();
+  }
+  if (direction == Direction::Left) {
+    m_xMin = m_xMin - m_xScale;
+    m_xMax = m_xMax - m_xScale;
+    computeXScale();
+    computeYaxes();
+  }
+  if (direction == Direction::Right) {
+    m_xMin = m_xMin + m_xScale;
+    m_xMax = m_xMax + m_xScale;
+    computeXScale();
+    computeYaxes();
+  }
+}
+
+void GraphWindow::setTrigonometric() {
+  m_xMin = -10.5f;
+  m_xMax = 10.5f;
+  computeXScale();
+  m_yAuto = false;
+  m_yMin = -1.6f;
+  m_yMax = 1.6f;
+  computeYScale();
+}
+
+void GraphWindow::roundAbscissa() {
+  float xMin = m_xMin;
+  float xMax = m_xMax;
+  m_xMin = roundf((xMin+xMax)/2) - 160.0f;
+  m_xMax = roundf((xMin+xMax)/2) + 159.0f;
+  computeXScale();
+  computeYaxes();
+}
+
+void GraphWindow::normalize() {
+  float xMin = m_xMin;
+  float xMax = m_xMax;
+  float yMin = m_yMin;
+  float yMax = m_yMax;
+  m_xMin = (xMin+xMax)/2 - 5.3f;
+  m_xMax = (xMin+xMax)/2 + 5.3f;
+  computeXScale();
+  m_yAuto = false;
+  m_yMin = (yMin+yMax)/2 - 3.1f;
+  m_yMax = (yMin+yMax)/2 + 3.1f;
+  computeYScale();
+}
+
+void GraphWindow::setDefault() {
+  m_xMin = -10.0f;
+  m_xMax = 10.0f;
+  computeXScale();
+  setYAuto(true);
+}
+
+void GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
+  float xRange = m_xMax - m_xMin;
+  float yRange = m_yMax - m_yMin;
+  if (x < m_xMin + xMargin) {
+    m_xMin = x - xMargin;
+    m_xMax = m_xMin + xRange;
+    computeXScale();
+    computeYaxes();
+  }
+  if (x > m_xMax - xMargin) {
+    m_xMax = x + xMargin;
+    m_xMin = m_xMax - xRange;
+    computeXScale();
+    computeYaxes();
+  }
+  if (y < m_yMin + yMargin) {
+    m_yMin = y - yMargin;
+    m_yMax = m_yMin + yRange;
+    computeYScale();
+  }
+  if (y > m_yMax - yMargin) {
+    m_yMax = y + yMargin;
+    m_yMin = m_yMax - yRange;
+    computeYScale();
+  }
+}
+
 void GraphWindow::computeXScale() {
   int a = 0;
   int b = 0;
@@ -140,14 +271,6 @@ void GraphWindow::computeYScale() {
     a = 1;
   }
   m_yScale = a*powf(10,b);
-}
-
-Context * GraphWindow::context() {
-  return m_evaluateContext;
-}
-
-void GraphWindow::setContext(Context * context) {
-  m_evaluateContext = (EvaluateContext *)context;
 }
 
 }

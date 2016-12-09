@@ -4,11 +4,11 @@
 
 namespace Graph {
 
-InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView) :
+InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_axisInterval(axisInterval),
+  m_graphWindow(graphWindow),
   m_graphView(graphView)
 {
   m_cells[0].setText("Trigonometrique");
@@ -36,36 +36,36 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       // TODO: if mode == degree, xmin = -600, xmax = 600
-        m_axisInterval->setXMin(-10.5f);
-        m_axisInterval->setXMax(10.5f);
-        m_axisInterval->setYAuto(false);
-        m_axisInterval->setYMin(-1.6f);
-        m_axisInterval->setYMax(1.6f);
+        m_graphWindow->setXMin(-10.5f);
+        m_graphWindow->setXMax(10.5f);
+        m_graphWindow->setYAuto(false);
+        m_graphWindow->setYMin(-1.6f);
+        m_graphWindow->setYMax(1.6f);
         break;
       case 1:
       {
-        float xMin = m_axisInterval->xMin();
-        float xMax =m_axisInterval->xMax();
-        m_axisInterval->setXMin(roundf((xMin+xMax)/2) - 160.0f);
-        m_axisInterval->setXMax(roundf((xMin+xMax)/2) + 159.0f);
+        float xMin = m_graphWindow->xMin();
+        float xMax =m_graphWindow->xMax();
+        m_graphWindow->setXMin(roundf((xMin+xMax)/2) - 160.0f);
+        m_graphWindow->setXMax(roundf((xMin+xMax)/2) + 159.0f);
         break;
       }
       case 2:
       {
-        float xMin = m_axisInterval->xMin();
-        float xMax =m_axisInterval->xMax();
-        float yMin = m_axisInterval->yMin();
-        float yMax =m_axisInterval->yMax();
-        m_axisInterval->setXMin((xMin+xMax)/2 - 5.3f);
-        m_axisInterval->setXMax((xMin+xMax)/2 + 5.3f);
-        m_axisInterval->setYMin((yMin+yMax)/2 - 3.1f);
-        m_axisInterval->setYMax((yMin+yMax)/2 + 3.1f);
+        float xMin = m_graphWindow->xMin();
+        float xMax =m_graphWindow->xMax();
+        float yMin = m_graphWindow->yMin();
+        float yMax =m_graphWindow->yMax();
+        m_graphWindow->setXMin((xMin+xMax)/2 - 5.3f);
+        m_graphWindow->setXMax((xMin+xMax)/2 + 5.3f);
+        m_graphWindow->setYMin((yMin+yMax)/2 - 3.1f);
+        m_graphWindow->setYMax((yMin+yMax)/2 + 3.1f);
         break;
       }
       case 3:
-        m_axisInterval->setXMin(-10.0f);
-        m_axisInterval->setXMax(10.0f);
-        m_axisInterval->setYAuto(true);
+        m_graphWindow->setXMin(-10.0f);
+        m_graphWindow->setXMax(10.0f);
+        m_graphWindow->setYAuto(true);
         break;
       default:
         return false;

@@ -2,7 +2,6 @@
 #define GRAPH_GRAPH_GOTO_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "axis_interval.h"
 #include "graph_view.h"
 #include "../../float_parameter_controller.h"
 

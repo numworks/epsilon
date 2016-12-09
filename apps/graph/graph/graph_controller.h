@@ -3,8 +3,8 @@
 
 #include <escher.h>
 #include "graph_view.h"
-#include "axis_interval.h"
-#include "axis_parameter_controller.h"
+#include "graph_window.h"
+#include "window_parameter_controller.h"
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
 #include "zoom_parameter_controller.h"
@@ -18,7 +18,7 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  ViewController * axisParameterController();
+  ViewController * windowParameterController();
   ViewController * zoomParameterController();
   ViewController * initialisationParameterController();
 
@@ -34,12 +34,12 @@ private:
   StackViewController * stackController() const;
   GraphView m_view;
   bool m_headerSelected;
-  AxisInterval m_axisInterval;
-  AxisParameterController m_axisParameterController;
+  GraphWindow m_graphWindow;
+  WindowParameterController m_windowParameterController;
   ZoomParameterController m_zoomParameterController;
   InitialisationParameterController m_initialisationParameterController;
   CurveParameterController m_curveParameterController;
-  Button m_axisButton;
+  Button m_windowButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;
   FunctionStore * m_functionStore;

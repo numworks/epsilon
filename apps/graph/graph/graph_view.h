@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "cursor_view.h"
-#include "axis_interval.h"
+#include "graph_window.h"
 #include "../../curve_view.h"
 #include "../../constant.h"
 #include "../function_store.h"
@@ -13,7 +13,7 @@ namespace Graph {
 
 class GraphView : public CurveView {
 public:
-  GraphView(FunctionStore * functionStore, AxisInterval * axisInterval);
+  GraphView(FunctionStore * functionStore, GraphWindow * graphWindow);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   float xPixelCursorPosition();
@@ -54,7 +54,7 @@ private:
   char m_xLabels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   char m_yLabels[k_maxNumberOfYLabels][Constant::FloatBufferSizeInScientificMode];
 
-  AxisInterval * m_axisInterval;
+  GraphWindow * m_graphWindow;
   FunctionStore * m_functionStore;
   EvaluateContext * m_evaluateContext;
 };

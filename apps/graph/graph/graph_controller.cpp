@@ -8,16 +8,16 @@ namespace Graph {
 GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
-  m_view(GraphView(functionStore, &m_axisInterval)),
-  m_axisInterval(functionStore),
-  m_axisParameterController(AxisParameterController(this, &m_axisInterval, &m_view)),
-  m_zoomParameterController(ZoomParameterController(this, &m_axisInterval, &m_view)),
-  m_initialisationParameterController(InitialisationParameterController(this, &m_axisInterval, &m_view)),
+  m_view(GraphView(functionStore, &m_graphWindow)),
+  m_graphWindow(functionStore),
+  m_windowParameterController(WindowParameterController(this, &m_graphWindow, &m_view)),
+  m_zoomParameterController(ZoomParameterController(this, &m_graphWindow, &m_view)),
+  m_initialisationParameterController(InitialisationParameterController(this, &m_graphWindow, &m_view)),
   m_curveParameterController(CurveParameterController(&m_view)),
-  m_axisButton(this, "Axes", Invocation([](void * context, void * sender) {
+  m_windowButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();
-    stack->push(graphController->axisParameterController());
+    stack->push(graphController->windowParameterController());
   }, this)),
   m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
@@ -70,8 +70,8 @@ StackViewController * GraphController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-ViewController * GraphController::axisParameterController() {
-  return &m_axisParameterController;
+ViewController * GraphController::windowParameterController() {
+  return &m_windowParameterController;
 }
 
 ViewController * GraphController::zoomParameterController() {
@@ -89,7 +89,7 @@ int GraphController::numberOfButtons() const {
 Button * GraphController::buttonAtIndex(int index) {
   switch (index) {
     case 0:
-      return &m_axisButton;
+      return &m_windowButton;
     case 1:
       return &m_zoomButton;
     case 2:
@@ -105,12 +105,12 @@ void GraphController::didBecomeFirstResponder() {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->evaluateContext());
   }
-  if (m_axisInterval.context() == nullptr) {
+  if (m_graphWindow.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
-    m_axisInterval.setContext(graphApp->evaluateContext());
+    m_graphWindow.setContext(graphApp->evaluateContext());
   }
-  // if new functions were added to the store, the axis interval needs to be refresh
-  m_axisInterval.computeYaxes();
+  // if new functions were added to the store, the window parameters need to be refresh
+  m_graphWindow.computeYaxes();
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
 
@@ -137,29 +137,29 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     return headerViewController()->handleEvent(event);
   } else {
     if (event == Ion::Events::Plus) {
-      float xMin = m_axisInterval.xMin();
-      float xMax = m_axisInterval.xMax();
-      float yMin = m_axisInterval.yMin();
-      float yMax = m_axisInterval.yMax();
-      m_axisInterval.setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
-      m_axisInterval.setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
-      m_axisInterval.setYAuto(false);
-      m_axisInterval.setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
-      m_axisInterval.setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+      float xMin = m_graphWindow.xMin();
+      float xMax = m_graphWindow.xMax();
+      float yMin = m_graphWindow.yMin();
+      float yMax = m_graphWindow.yMax();
+      m_graphWindow.setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
+      m_graphWindow.setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
+      m_graphWindow.setYAuto(false);
+      m_graphWindow.setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
+      m_graphWindow.setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
       m_view.initCursorPosition();
       m_view.reload();
       return true;
     }
     if (event == Ion::Events::Minus) {
-      float xMin = m_axisInterval.xMin();
-      float xMax = m_axisInterval.xMax();
-      float yMin = m_axisInterval.yMin();
-      float yMax = m_axisInterval.yMax();
-      m_axisInterval.setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
-      m_axisInterval.setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
-      m_axisInterval.setYAuto(false);
-      m_axisInterval.setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
-      m_axisInterval.setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+      float xMin = m_graphWindow.xMin();
+      float xMax = m_graphWindow.xMax();
+      float yMin = m_graphWindow.yMin();
+      float yMax = m_graphWindow.yMax();
+      m_graphWindow.setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
+      m_graphWindow.setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
+      m_graphWindow.setYAuto(false);
+      m_graphWindow.setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
+      m_graphWindow.setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
       m_view.initCursorPosition();
       m_view.reload();
       return true;

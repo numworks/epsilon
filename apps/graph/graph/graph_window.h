@@ -6,9 +6,9 @@
 
 namespace Graph {
 
-class AxisInterval {
+class GraphWindow {
 public:
-  AxisInterval(FunctionStore * functionStore);
+  GraphWindow(FunctionStore * functionStore);
   float xMin();
   float xMax();
   float yMin();

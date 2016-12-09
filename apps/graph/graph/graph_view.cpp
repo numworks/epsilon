@@ -7,13 +7,13 @@ namespace Graph {
 
 constexpr KDColor GraphView::k_gridColor;
 
-GraphView::GraphView(FunctionStore * functionStore, AxisInterval * axisInterval) :
+GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
   CurveView(),
   m_cursorView(CursorView()),
   m_xCursorPosition(-1.0f),
   m_yCursorPosition(-1.0f),
   m_visibleCursor(true),
-  m_axisInterval(axisInterval),
+  m_graphWindow(graphWindow),
   m_functionStore(functionStore),
   m_evaluateContext(nullptr)
 {
@@ -48,7 +48,7 @@ void GraphView::reload() {
 }
 
 float GraphView::scale(Axis axis) const {
-  return (axis == Axis::Horizontal ? m_axisInterval->xScale() : m_axisInterval->yScale());
+  return (axis == Axis::Horizontal ? m_graphWindow->xScale() : m_graphWindow->yScale());
 }
 
 char * GraphView::label(Axis axis, int index) const {
@@ -66,13 +66,13 @@ float GraphView::xCursorPosition() {
 void GraphView::setXCursorPosition(float xPosition, Function * function) {
   float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
   float yRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-  m_axisInterval->setXMin(xPosition - xRange/2.0f);
-  m_axisInterval->setXMax(xPosition + xRange/2.0f);
+  m_graphWindow->setXMin(xPosition - xRange/2.0f);
+  m_graphWindow->setXMax(xPosition + xRange/2.0f);
   m_xCursorPosition = floatToPixel(Axis::Horizontal, xPosition);
   float yPosition = function->evaluateAtAbscissa(xPosition, m_evaluateContext);
-  m_axisInterval->setYAuto(false);
-  m_axisInterval->setYMin(yPosition - yRange/2.0f);
-  m_axisInterval->setYMax(yPosition + yRange/2.0f);
+  m_graphWindow->setYAuto(false);
+  m_graphWindow->setYMin(yPosition - yRange/2.0f);
+  m_graphWindow->setYMax(yPosition + yRange/2.0f);
   m_yCursorPosition = floatToPixel(Axis::Vertical, yPosition);
   reload();
 }
@@ -96,14 +96,14 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
   m_xCursorPosition = m_xCursorPosition + xOffset;
   if (!outsideWindow && m_xCursorPosition < k_cursorMarginToBorder) {
     float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-    m_axisInterval->setXMin(pixelToFloat(Axis::Horizontal, floorf(m_xCursorPosition)-k_cursorMarginToBorder));
-    m_axisInterval->setXMax(min(Axis::Horizontal) + xRange);
+    m_graphWindow->setXMin(pixelToFloat(Axis::Horizontal, floorf(m_xCursorPosition)-k_cursorMarginToBorder));
+    m_graphWindow->setXMax(min(Axis::Horizontal) + xRange);
     m_xCursorPosition = m_xCursorPosition - floorf(m_xCursorPosition) + k_cursorMarginToBorder;
   }
   if (!outsideWindow && m_xCursorPosition > bounds().width() - k_cursorMarginToBorder) {
     float xRange = max(Axis::Horizontal) - min(Axis::Horizontal);
-    m_axisInterval->setXMax(pixelToFloat(Axis::Horizontal, ceilf(m_xCursorPosition)+k_cursorMarginToBorder));
-    m_axisInterval->setXMin(max(Axis::Horizontal) - xRange);
+    m_graphWindow->setXMax(pixelToFloat(Axis::Horizontal, ceilf(m_xCursorPosition)+k_cursorMarginToBorder));
+    m_graphWindow->setXMin(max(Axis::Horizontal) - xRange);
     m_xCursorPosition = bounds().width() - k_cursorMarginToBorder - ceilf(m_xCursorPosition) + m_xCursorPosition;
   }
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
@@ -111,14 +111,14 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
   m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
   if (!outsideWindow && m_yCursorPosition < k_cursorMarginToBorder) {
     float yRange = max(Axis::Vertical) - min(Axis::Vertical);
-    m_axisInterval->setYMax(pixelToFloat(Axis::Vertical, floorf(m_yCursorPosition)-k_cursorMarginToBorder));
-    m_axisInterval->setYMin(max(Axis::Vertical) - yRange);
+    m_graphWindow->setYMax(pixelToFloat(Axis::Vertical, floorf(m_yCursorPosition)-k_cursorMarginToBorder));
+    m_graphWindow->setYMin(max(Axis::Vertical) - yRange);
     m_yCursorPosition = m_yCursorPosition - floorf(m_yCursorPosition) + k_cursorMarginToBorder;
   }
   if (!outsideWindow && m_yCursorPosition > bounds().height() - k_cursorMarginToBorder) {
     float yRange = max(Axis::Vertical) - min(Axis::Vertical);
-    m_axisInterval->setYMin(pixelToFloat(Axis::Vertical, ceilf(m_yCursorPosition)+k_cursorMarginToBorder));
-    m_axisInterval->setYMax(min(Axis::Vertical) + yRange);
+    m_graphWindow->setYMin(pixelToFloat(Axis::Vertical, ceilf(m_yCursorPosition)+k_cursorMarginToBorder));
+    m_graphWindow->setYMax(min(Axis::Vertical) + yRange);
     m_yCursorPosition = bounds().height() - k_cursorMarginToBorder - ceilf(m_yCursorPosition) + m_yCursorPosition;
   }
   reload();
@@ -201,18 +201,18 @@ void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
 }
 
 void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, m_axisInterval->xScale(), k_gridColor);
-  drawGridLines(ctx, rect, Axis::Vertical, m_axisInterval->yScale(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_graphWindow->xScale(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yScale(), k_gridColor);
 }
 
 float GraphView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_axisInterval->xMin() : m_axisInterval->yMin());
+  return (axis == Axis::Horizontal ? m_graphWindow->xMin() : m_graphWindow->yMin());
 }
 
 float GraphView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_axisInterval->xMax() : m_axisInterval->yMax());
+  return (axis == Axis::Horizontal ? m_graphWindow->xMax() : m_graphWindow->yMax());
 }
 
 float GraphView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {

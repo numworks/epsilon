@@ -8,10 +8,10 @@ constexpr KDColor ZoomParameterController::ContentView::LegendView::k_legendBack
 
 /* Zoom Parameter Controller */
 
-ZoomParameterController::ZoomParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView) :
+ZoomParameterController::ZoomParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView) :
   ViewController(parentResponder),
   m_contentView(ContentView(graphView)),
-  m_axisInterval(axisInterval)
+  m_graphWindow(graphWindow)
 {
 }
 
@@ -24,53 +24,53 @@ View * ZoomParameterController::view() {
 }
 
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
-  float xMin = m_axisInterval->xMin();
-  float xMax = m_axisInterval->xMax();
-  float yMin = m_axisInterval->yMin();
-  float yMax = m_axisInterval->yMax();
-  m_axisInterval->setYAuto(false);
+  float xMin = m_graphWindow->xMin();
+  float xMax = m_graphWindow->xMax();
+  float yMin = m_graphWindow->yMin();
+  float yMax = m_graphWindow->yMax();
+  m_graphWindow->setYAuto(false);
   if (event == Ion::Events::Plus) {
-    m_axisInterval->setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
-    m_axisInterval->setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
-    m_axisInterval->setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
-    m_axisInterval->setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
+    m_graphWindow->setXMin((xMax+xMin)/2.0f - fabsf(xMax-xMin)/3.0f);
+    m_graphWindow->setXMax((xMax+xMin)/2.0f + fabsf(xMax-xMin)/3.0f);
+    m_graphWindow->setYMin((yMax+yMin)/2.0f - fabsf(yMax-yMin)/3.0f);
+    m_graphWindow->setYMax((yMax+yMin)/2.0f + fabsf(yMax-yMin)/3.0f);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
-    m_axisInterval->setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
-    m_axisInterval->setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
-    m_axisInterval->setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
-    m_axisInterval->setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
+    m_graphWindow->setXMin((xMax+xMin)/2.0f - 3.0f*fabsf(xMax-xMin)/4.0f);
+    m_graphWindow->setXMax((xMax+xMin)/2.0f + 3.0f*fabsf(xMax-xMin)/4.0f);
+    m_graphWindow->setYMin((yMax+yMin)/2.0f - 3.0f*fabsf(yMax-yMin)/4.0f);
+    m_graphWindow->setYMax((yMax+yMin)/2.0f + 3.0f*fabsf(yMax-yMin)/4.0f);
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Up) {
-    m_axisInterval->setYMin(yMin + m_axisInterval->yScale());
-    m_axisInterval->setYMax(yMax + m_axisInterval->yScale());
+    m_graphWindow->setYMin(yMin + m_graphWindow->yScale());
+    m_graphWindow->setYMax(yMax + m_graphWindow->yScale());
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
-    m_axisInterval->setYMin(yMin - m_axisInterval->yScale());
-    m_axisInterval->setYMax(yMax - m_axisInterval->yScale());
+    m_graphWindow->setYMin(yMin - m_graphWindow->yScale());
+    m_graphWindow->setYMax(yMax - m_graphWindow->yScale());
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
-    m_axisInterval->setXMin(xMin - m_axisInterval->xScale());
-    m_axisInterval->setXMax(xMax - m_axisInterval->xScale());
+    m_graphWindow->setXMin(xMin - m_graphWindow->xScale());
+    m_graphWindow->setXMax(xMax - m_graphWindow->xScale());
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
-    m_axisInterval->setXMin(xMin + m_axisInterval->xScale());
-    m_axisInterval->setXMax(xMax + m_axisInterval->xScale());
+    m_graphWindow->setXMin(xMin + m_graphWindow->xScale());
+    m_graphWindow->setXMax(xMax + m_graphWindow->xScale());
     m_contentView.graphView()->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;

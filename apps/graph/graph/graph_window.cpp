@@ -1,4 +1,4 @@
-#include "axis_interval.h"
+#include "graph_window.h"
 #include "../../constant.h"
 #include <assert.h>
 #include <float.h>
@@ -7,7 +7,7 @@
 
 namespace Graph {
 
-AxisInterval::AxisInterval(FunctionStore * functionStore) :
+GraphWindow::GraphWindow(FunctionStore * functionStore) :
   m_xMin(-10.0f),
   m_xMax(10.0f),
   m_yMin(-10.0f),
@@ -20,62 +20,62 @@ AxisInterval::AxisInterval(FunctionStore * functionStore) :
 {
 }
 
-float AxisInterval::xMin() {
+float GraphWindow::xMin() {
   return m_xMin;
 }
 
-float AxisInterval::xMax() {
+float GraphWindow::xMax() {
   return m_xMax;
 }
 
-float AxisInterval::yMin() {
+float GraphWindow::yMin() {
   return m_yMin;
 }
 
-float AxisInterval::yMax() {
+float GraphWindow::yMax() {
   return m_yMax;
 }
 
-bool AxisInterval::yAuto() {
+bool GraphWindow::yAuto() {
   return m_yAuto;
 }
 
-float AxisInterval::xScale() {
+float GraphWindow::xScale() {
   return m_xScale;
 }
 
-float AxisInterval::yScale() {
+float GraphWindow::yScale() {
   return m_yScale;
 }
 
-void AxisInterval::setXMin(float xMin) {
+void GraphWindow::setXMin(float xMin) {
   m_xMin = xMin;
   computeYaxes();
   computeXScale();
 }
 
-void AxisInterval::setXMax(float xMax) {
+void GraphWindow::setXMax(float xMax) {
   m_xMax = xMax;
   computeYaxes();
   computeXScale();
 }
 
-void AxisInterval::setYMin(float yMin) {
+void GraphWindow::setYMin(float yMin) {
   m_yMin = yMin;
   computeYScale();
 }
 
-void AxisInterval::setYMax(float yMax) {
+void GraphWindow::setYMax(float yMax) {
   m_yMax = yMax;
   computeYScale();
 }
 
-void AxisInterval::setYAuto(bool yAuto) {
+void GraphWindow::setYAuto(bool yAuto) {
   m_yAuto = yAuto;
   computeYaxes();
 }
 
-void AxisInterval::computeYaxes() {
+void GraphWindow::computeYaxes() {
   if (!m_yAuto) {
     return;
   }
@@ -104,7 +104,7 @@ void AxisInterval::computeYaxes() {
   computeYScale();
 }
 
-void AxisInterval::computeXScale() {
+void GraphWindow::computeXScale() {
   int a = 0;
   int b = 0;
   float d = m_xMax - m_xMin;
@@ -123,7 +123,7 @@ void AxisInterval::computeXScale() {
   m_xScale = a*powf(10,b);
 }
 
-void AxisInterval::computeYScale() {
+void GraphWindow::computeYScale() {
   int a = 0;
   int b = 0;
   float d = m_yMax - m_yMin;
@@ -142,11 +142,11 @@ void AxisInterval::computeYScale() {
   m_yScale = a*powf(10,b);
 }
 
-Context * AxisInterval::context() {
+Context * GraphWindow::context() {
   return m_evaluateContext;
 }
 
-void AxisInterval::setContext(Context * context) {
+void GraphWindow::setContext(Context * context) {
   m_evaluateContext = (EvaluateContext *)context;
 }
 

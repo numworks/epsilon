@@ -2,14 +2,14 @@
 #define GRAPH_GRAPH_ZOOM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "axis_interval.h"
+#include "graph_window.h"
 #include "graph_view.h"
 
 namespace Graph {
 
 class ZoomParameterController : public ViewController {
 public:
-  ZoomParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView);
+  ZoomParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -41,7 +41,7 @@ private:
     constexpr static KDCoordinate k_legendHeight = 50;
   };
   ContentView m_contentView;
-  AxisInterval * m_axisInterval;
+  GraphWindow * m_graphWindow;
 };
 
 }

@@ -1,15 +1,15 @@
-#ifndef GRAPH_GRAPH_AXIS_PARAMETER_CONTROLLER_H
-#define GRAPH_GRAPH_AXIS_PARAMETER_CONTROLLER_H
+#ifndef GRAPH_GRAPH_WINDOW_PARAMETER_CONTROLLER_H
+#define GRAPH_GRAPH_WINDOW_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "axis_interval.h"
+#include "graph_window.h"
 #include "graph_view.h"
 #include "../../float_parameter_controller.h"
 
 namespace Graph {
-class AxisParameterController : public FloatParameterController {
+class WindowParameterController : public FloatParameterController {
 public:
-  AxisParameterController(Responder * parentResponder, AxisInterval * axisInterval, GraphView * graphView);
+  WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView);
   ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
@@ -21,8 +21,8 @@ private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
-  AxisInterval * m_axisInterval;
-  EditableTextMenuListCell m_axisCells[k_numberOfTextCell];
+  GraphWindow * m_graphWindow;
+  EditableTextMenuListCell m_windowCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
   GraphView * m_graphView;
 };

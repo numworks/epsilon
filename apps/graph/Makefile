@@ -4,8 +4,8 @@ app_objs += $(addprefix apps/graph/,\
   function.o\
   function_store.o\
   function_title_cell.o\
-  graph/axis_interval.o\
-  graph/axis_parameter_controller.o\
+  graph/graph_window.o\
+  graph/window_parameter_controller.o\
   graph/cursor_view.o\
   graph/curve_parameter_controller.o\
   graph/goto_parameter_controller.o\

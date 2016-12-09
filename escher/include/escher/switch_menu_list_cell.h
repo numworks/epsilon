@@ -6,7 +6,7 @@
 
 class SwitchMenuListCell : public MenuListCell {
 public:
-  SwitchMenuListCell(char * label);
+  SwitchMenuListCell(char * label = nullptr);
   View * accessoryView() const override;
 private:
   SwitchView m_accessoryView;

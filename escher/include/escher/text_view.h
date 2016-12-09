@@ -6,11 +6,11 @@
 
 class TextView : public View {
 public:
-  TextView();//;: TextView(nullptr, 0.0f, 0.0f);
   // alignment = 0 -> align left or top
   // alignment = 0.5 -> align center
   // alignment = 1.0 -> align right or bottom
-  TextView(float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
+  TextView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
+    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);

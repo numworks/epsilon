@@ -5,8 +5,7 @@
 
 class PointerTextView : public TextView {
 public:
-  PointerTextView();
-  PointerTextView(const char * text, float horizontalAlignment, float verticalAlignment,
+  PointerTextView(const char * text = nullptr, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setText(const char * text);
 protected:

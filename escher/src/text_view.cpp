@@ -1,9 +1,5 @@
 #include <escher/text_view.h>
 
-TextView::TextView() : TextView(0.0f, 0.0f, KDColorBlack, KDColorWhite)
-{
-}
-
 TextView::TextView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   View(),

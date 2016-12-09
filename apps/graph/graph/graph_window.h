@@ -45,8 +45,14 @@ public:
   void setDefault();
   void panToMakePointVisible(float x, float y, float xMargin, float yMargin);
 private:
-  void computeXGridUnit();
-  void computeYGridUnit();
+  constexpr static float k_minNumberOfXGridUnits = 7.0f;
+  constexpr static float k_maxNumberOfXGridUnits = 18.0f;
+  constexpr static float k_minNumberOfYGridUnits = 5.0f;
+  constexpr static float k_maxNumberOfYGridUnits = 13.0f;
+  constexpr static float k_oneUnit = 1.0f;
+  constexpr static float k_twoUnit = 2.0f;
+  constexpr static float k_fiveUnit = 5.0f;
+  void computeGridUnit(Axis axis);
   float m_xMin;
   float m_xMax;
   float m_yMin;

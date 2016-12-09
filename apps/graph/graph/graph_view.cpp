@@ -99,43 +99,17 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
   reload();
 }
 
-Function * GraphView::moveCursorUp() {
+Function * GraphView::moveCursorVertically(int direction) {
   float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
   Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   float y = actualFunction->evaluateAtAbscissa(x, m_evaluateContext);
   Function * nextFunction = actualFunction;
-  float nextY = FLT_MAX;
+  float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
     float newY = f->evaluateAtAbscissa(x, m_evaluateContext);
-    if (newY > y && newY < nextY) {
-      m_indexFunctionSelectedByCursor = i;
-      nextY = newY;
-      nextFunction = f;
-    }
-  }
-  if (nextFunction == actualFunction) {
-    return nullptr;
-  }
-  float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
-  float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
-  m_graphWindow->panToMakePointVisible(x, nextY, xMargin, yMargin);
-  m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
-  m_yCursorPosition = floatToPixel(Axis::Vertical, nextY);
-  reload();
-  return nextFunction;
-}
-
-Function * GraphView::moveCursorDown() {
-  float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
-  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  float y = actualFunction->evaluateAtAbscissa(x, m_evaluateContext);
-  Function * nextFunction = actualFunction;
-  float nextY = -FLT_MAX;
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    Function * f = m_functionStore->activeFunctionAtIndex(i);
-    float newY = f->evaluateAtAbscissa(x, m_evaluateContext);
-    if (newY < y && newY > nextY) {
+    bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
+    if (isNextFunction) {
       m_indexFunctionSelectedByCursor = i;
       nextY = newY;
       nextFunction = f;

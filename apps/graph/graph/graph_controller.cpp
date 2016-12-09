@@ -158,7 +158,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::Up) {
-      Function * f = m_view.moveCursorUp();
+      Function * f = m_view.moveCursorVertically(1.0f);
       if (f == nullptr) {
         m_view.initCursorPosition();
         m_view.setCursorVisible(false);
@@ -168,7 +168,7 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::Down) {
-      Function * f = m_view.moveCursorDown();
+      Function * f = m_view.moveCursorVertically(-1.0f);
       if (f == nullptr) {
         return false;
       }

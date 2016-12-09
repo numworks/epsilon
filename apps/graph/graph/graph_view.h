@@ -22,8 +22,7 @@ public:
   void setCursorVisible(bool visibleCursor);
   void initCursorPosition();
   void moveCursorHorizontally(KDCoordinate xOffset);
-  Function * moveCursorUp();
-  Function * moveCursorDown();
+  Function * moveCursorVertically(int direction);
   void setContext(Context * evaluateContext);
   Context * context() const;
   int indexFunctionSelectedByCursor();

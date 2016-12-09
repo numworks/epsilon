@@ -47,7 +47,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       editController->setTextBody(calculation->text());
     } else {
       char resultText[Calculation::k_maximalExpressionTextLength];
-      calculation->evaluation()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
+      calculation->output()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
       editController->setTextBody(resultText);
     }
     m_selectableTableView.deselectTable();
@@ -65,7 +65,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       newCalculation = *calculation;
     } else {
       char resultText[Calculation::k_maximalExpressionTextLength];
-      calculation->evaluation()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
+      calculation->output()->writeTextInBuffer(resultText, Calculation::k_maximalExpressionTextLength);
       /* TODO: this will work when we will parse float */
       //App * calculationApp = (App *)app();
       //newCalculation.setContent(resultText, calculationApp->evaluateContext());
@@ -151,8 +151,8 @@ void HistoryController::willDisplayCellForIndex(TableViewCell * cell, int index)
 
 KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  KDCoordinate prettyPrintHeight = calculation->layout()->size().height();
-  KDCoordinate resultHeight = calculation->evaluationLayout()->size().height();
+  KDCoordinate prettyPrintHeight = calculation->inputLayout()->size().height();
+  KDCoordinate resultHeight = calculation->outputLayout()->size().height();
   return prettyPrintHeight + resultHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 

@@ -4,78 +4,78 @@
 namespace Calculation {
 
 Calculation::Calculation() :
-  m_expression(nullptr),
-  m_layout(nullptr),
-  m_evaluation(nullptr),
-  m_evaluationLayout(nullptr)
+  m_input(nullptr),
+  m_inputLayout(nullptr),
+  m_output(nullptr),
+  m_outputLayout(nullptr)
 {
 }
 
 Calculation & Calculation::operator= (const Calculation & other) {
   strlcpy(m_text, other.m_text, sizeof(m_text));
-  if (m_expression != nullptr) {
-    delete m_expression;
+  if (m_input != nullptr) {
+    delete m_input;
   }
-  m_expression = nullptr;
-  if (other.m_expression) {
-    m_expression = Expression::parse(m_text);
+  m_input = nullptr;
+  if (other.m_input) {
+    m_input = Expression::parse(m_text);
   }
-  if (m_layout != nullptr) {
-    delete m_layout;
+  if (m_inputLayout != nullptr) {
+    delete m_inputLayout;
   }
-  m_layout = nullptr;
-  if (m_expression && other.m_layout) {
-    m_layout = m_expression->createLayout();
+  m_inputLayout = nullptr;
+  if (m_input && other.m_inputLayout) {
+    m_inputLayout = m_input->createLayout();
   }
-  if (m_evaluation != nullptr) {
-    delete m_evaluation;
+  if (m_output != nullptr) {
+    delete m_output;
   }
-  m_evaluation = nullptr;
-  if (other.m_evaluation) {
-    m_evaluation = other.m_evaluation->clone();
+  m_output = nullptr;
+  if (other.m_output) {
+    m_output = other.m_output->clone();
   }
-  if (m_evaluationLayout != nullptr) {
-    delete m_evaluationLayout;
+  if (m_outputLayout != nullptr) {
+    delete m_outputLayout;
   }
-  m_evaluationLayout = nullptr;
-  if (m_evaluation && other.m_evaluationLayout) {
-    m_evaluationLayout = m_evaluation->createLayout();
+  m_outputLayout = nullptr;
+  if (m_output && other.m_outputLayout) {
+    m_outputLayout = m_output->createLayout();
   }
   return *this;
 }
 
 void Calculation::setContent(const char * c, Context * context) {
   strlcpy(m_text, c, sizeof(m_text));
-  if (m_expression != nullptr) {
-    delete m_expression;
+  if (m_input != nullptr) {
+    delete m_input;
   }
-  m_expression = Expression::parse(m_text);
-  if (m_layout != nullptr) {
-    delete m_layout;
+  m_input = Expression::parse(m_text);
+  if (m_inputLayout != nullptr) {
+    delete m_inputLayout;
   }
-  m_layout = m_expression->createLayout();
-  if (m_evaluation != nullptr) {
-    delete m_evaluationLayout;
+  m_inputLayout = m_input->createLayout();
+  if (m_output != nullptr) {
+    delete m_outputLayout;
   }
-  m_evaluation = m_expression->evaluate(*context);
-  if (m_evaluationLayout != nullptr) {
-    delete m_evaluationLayout;
+  m_output = m_input->evaluate(*context);
+  if (m_outputLayout != nullptr) {
+    delete m_outputLayout;
   }
-  m_evaluationLayout = m_evaluation->createLayout();
+  m_outputLayout = m_output->createLayout();
 }
 
 Calculation::~Calculation() {
-  if (m_layout != nullptr) {
-    delete m_layout;
+  if (m_inputLayout != nullptr) {
+    delete m_inputLayout;
   }
-  if (m_expression != nullptr) {
-    delete m_expression;
+  if (m_input != nullptr) {
+    delete m_input;
   }
-  if (m_evaluation != nullptr) {
-    delete m_evaluation;
+  if (m_output != nullptr) {
+    delete m_output;
   }
-  if (m_evaluationLayout != nullptr) {
-    delete m_evaluationLayout;
+  if (m_outputLayout != nullptr) {
+    delete m_outputLayout;
   }
 }
 
@@ -83,24 +83,24 @@ const char * Calculation::text() {
   return m_text;
 }
 
-Expression * Calculation::expression() {
-  return m_expression;
+Expression * Calculation::input() {
+  return m_input;
 }
 
-ExpressionLayout * Calculation::layout() {
-  return m_layout;
+ExpressionLayout * Calculation::inputLayout() {
+  return m_inputLayout;
 }
 
-Expression * Calculation::evaluation() {
-  return m_evaluation;
+Expression * Calculation::output() {
+  return m_output;
 }
 
-ExpressionLayout * Calculation::evaluationLayout() {
-  return m_evaluationLayout;
+ExpressionLayout * Calculation::outputLayout() {
+  return m_outputLayout;
 }
 
 bool Calculation::isEmpty() {
-  if (m_expression == nullptr) {
+  if (m_input == nullptr) {
     return true;
   }
   return false;

@@ -15,7 +15,7 @@ Expression * EvaluateContext::ansValue() {
     return defaultExpression();
   }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
-  m_ansValue = lastCalculation->evaluation();
+  m_ansValue = lastCalculation->output();
   return m_ansValue;
 }
 

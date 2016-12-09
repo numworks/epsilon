@@ -51,8 +51,8 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  m_prettyPrint.setExpression(calculation->layout());
-  m_result.setExpression(calculation->evaluationLayout());
+  m_prettyPrint.setExpression(calculation->inputLayout());
+  m_result.setExpression(calculation->outputLayout());
 }
 
 void HistoryViewCell::reloadCell() {

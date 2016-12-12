@@ -43,7 +43,7 @@ public:
   void roundAbscissa();
   void normalize();
   void setDefault();
-  void panToMakePointVisible(float x, float y, float xMargin, float yMargin);
+  bool panToMakePointVisible(float x, float y, float xMargin, float yMargin);
 private:
   constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;

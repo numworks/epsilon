@@ -212,7 +212,8 @@ void GraphWindow::setDefault() {
   setYAuto(true);
 }
 
-void GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
+bool GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
+  bool windowMoved = false;
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
   if (x < m_xMin + xMargin) {
@@ -220,23 +221,28 @@ void GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float y
     m_xMax = m_xMin + xRange;
     computeGridUnit(Axis::X);
     computeYaxes();
+    windowMoved = true;
   }
   if (x > m_xMax - xMargin) {
     m_xMax = x + xMargin;
     m_xMin = m_xMax - xRange;
     computeGridUnit(Axis::X);
     computeYaxes();
+    windowMoved = true;
   }
   if (y < m_yMin + yMargin) {
     m_yMin = y - yMargin;
     m_yMax = m_yMin + yRange;
     computeGridUnit(Axis::Y);
+    windowMoved = true;
   }
   if (y > m_yMax - yMargin) {
     m_yMax = y + yMargin;
     m_yMin = m_yMax - yRange;
     computeGridUnit(Axis::Y);
+    windowMoved = true;
   }
+  return windowMoved;
 }
 
 void GraphWindow::computeGridUnit(Axis axis) {

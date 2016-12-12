@@ -46,10 +46,14 @@ void KDContext::drawString(const char * text, KDPoint p, KDColor textColor, KDCo
 void KDContext::blendChar(char character, KDPoint p, KDColor textColor) {
   KDRect absoluteRect = absoluteFillRect(KDRect(p, BITMAP_FONT_CHARACTER_WIDTH, BITMAP_FONT_CHARACTER_HEIGHT));
   pullRect(absoluteRect, characterBuffer);
+  KDCoordinate startingI = m_clippingRect.x() - p.translatedBy(m_origin).x();
+  KDCoordinate startingJ = m_clippingRect.y() - p.translatedBy(m_origin).y();
+  startingI = startingI > 0 ? startingI : 0;
+  startingJ = startingJ > 0 ? startingJ : 0;
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAdress = characterBuffer + i + absoluteRect.width()*j;
-      uint8_t intensity = bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i];
+      uint8_t intensity = bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j + startingJ][i +startingI];
       *currentPixelAdress = KDColor::blend(textColor, *currentPixelAdress, intensity);
     }
   }

@@ -33,9 +33,15 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
 
   /* At this point we need the working buffer */
   assert(workingBuffer != nullptr);
+  /* if the rect has been clipped, we want to fill the working buffer with the
+   * rect pixels starting from the top corner of the absolute rect. */
+  KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
+  KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
+  startingI = startingI > 0 ? startingI : 0;
+  startingJ = startingJ > 0 ? startingJ : 0;
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
-      workingBuffer[i+absoluteRect.width()*j] = pixels[i+rect.width()*j];
+      workingBuffer[i+absoluteRect.width()*j] = pixels[startingI+i+rect.width()*(startingJ+j)];
     }
   }
   pushRect(absoluteRect, workingBuffer);
@@ -53,10 +59,14 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * ma
    * continuous area. */
 
   pullRect(absoluteRect, workingBuffer);
+  KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
+  KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
+  startingI = startingI > 0 ? startingI : 0;
+  startingJ = startingJ > 0 ? startingJ : 0;
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAdress = workingBuffer + i + absoluteRect.width()*j;
-      const uint8_t * currentMaskAddress = mask + i + rect.width()*j;
+      const uint8_t * currentMaskAddress = mask + i + startingI + rect.width()*(j + startingJ);
       *currentPixelAdress = KDColor::blend(*currentPixelAdress, color, *currentMaskAddress);
       //*currentPixelAdress = KDColorBlend(*currentPixelAdress, color, *currentMaskAddress);
     }

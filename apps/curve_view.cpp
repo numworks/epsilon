@@ -66,7 +66,10 @@ void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
     if (x == 0.0f) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
-    ctx->blendString(label(axis, i++), origin, KDColorBlack);
+    if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i))))) {
+      ctx->blendString(label(axis, i), origin, KDColorBlack);
+    }
+    i++;
   }
 }
 
@@ -87,7 +90,9 @@ void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
       );
       break;
   }
-  ctx->fillRect(lineRect, color);
+  if (rect.intersects(lineRect)) {
+    ctx->fillRect(lineRect, color);
+  }
 }
 
 void CurveView::drawAxes(Axis axis, KDContext * ctx, KDRect rect) const {
@@ -125,31 +130,38 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 #endif
 
 constexpr static int k_maxNumberOfIterations = 10;
+constexpr static int k_resolution = 320.0f;
 
 void CurveView::drawExpression(Expression * expression, KDColor color, KDContext * ctx, KDRect rect) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
-  float xStep = (xMax-xMin)/320.0f;
-  for (float x = xMin; x < xMax; x += xStep) {
+  float xStep = (xMax-xMin)/k_resolution;
+  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
+  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  for (float x = rectMin; x < rectMax; x += xStep) {
     float y = evaluateExpressionAtAbscissa(expression, x);
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
-    stampAtLocation(pxf, pyf, color, ctx);
+    stampAtLocation(pxf, pyf, color, ctx, rect);
     if (x > xMin) {
-      jointDots(expression, x - xStep, evaluateExpressionAtAbscissa(expression, x-xStep), x, y, color, k_maxNumberOfIterations, ctx);
+      jointDots(expression, x - xStep, evaluateExpressionAtAbscissa(expression, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
     }
   }
 }
 
-void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx) const {
+void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx, KDRect rect) const {
   // We avoid drawing when no part of the stamp is visible
   if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
     return;
   }
-  uint8_t shiftedMask[stampSize][stampSize];
-  KDColor workingBuffer[stampSize*stampSize];
   KDCoordinate px = pxf;
   KDCoordinate py = pyf;
+  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
+  if (!rect.intersects(stampRect)) {
+    return;
+  }
+  uint8_t shiftedMask[stampSize][stampSize];
+  KDColor workingBuffer[stampSize*stampSize];
   float dx = pxf - floorf(pxf);
   float dy = pyf - floorf(pyf);
   /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
@@ -161,11 +173,10 @@ void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext *
         + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
     }
   }
-  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
 }
 
-void CurveView::jointDots(Expression * expression, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx) const {
+void CurveView::jointDots(Expression * expression, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
   // No need to draw if both dots are outside visible area
@@ -191,25 +202,25 @@ void CurveView::jointDots(Expression * expression, float x, float y, float u, fl
      * can draw a 'straight' line between the two */
     float pxf = floatToPixel(Axis::Horizontal, x);
     float puf = floatToPixel(Axis::Horizontal, u);
-    straightJoinDots(pxf, pyf, puf, pvf, color, ctx);
+    straightJoinDots(pxf, pyf, puf, pvf, color, ctx, rect);
     return;
   }
   float pcxf = floatToPixel(Axis::Horizontal, cx);
   float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
-    stampAtLocation(pcxf, pcyf, color, ctx);
-    jointDots(expression, x, y, cx, cy, color, maxNumberOfRecursion-1, ctx);
-    jointDots(expression, cx, cy, u, v, color, maxNumberOfRecursion-1, ctx);
+    stampAtLocation(pcxf, pcyf, color, ctx, rect);
+    jointDots(expression, x, y, cx, cy, color, maxNumberOfRecursion-1, ctx, rect);
+    jointDots(expression, cx, cy, u, v, color, maxNumberOfRecursion-1, ctx, rect);
   }
 }
 
-void CurveView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx) const {
+void CurveView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const {
   if (pyf < pvf) {
     for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
       float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
-      stampAtLocation(pmf, pnf, color, ctx);
+      stampAtLocation(pmf, pnf, color, ctx, rect);
     }
     return;
   }
-  straightJoinDots(puf, pvf, pxf, pyf, color, ctx);
+  straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
 }

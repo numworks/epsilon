@@ -47,6 +47,11 @@ void GraphView::reload() {
   computeLabels(Axis::Vertical);
 }
 
+void GraphView::reloadCursor() {
+  markRectAsDirty(KDRect(KDPoint(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition)- k_cursorSize/2), k_cursorSize, k_cursorSize));
+  layoutSubviews();
+}
+
 float GraphView::gridUnit(Axis axis) const {
   return (axis == Axis::Horizontal ? m_graphWindow->xGridUnit() : m_graphWindow->yGridUnit());
 }
@@ -87,16 +92,21 @@ void GraphView::initCursorPosition() {
 }
 
 void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
+  markRectAsDirty(KDRect(KDPoint(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition)- k_cursorSize/2), k_cursorSize, k_cursorSize));
   m_xCursorPosition = m_xCursorPosition + xOffset;
   float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   float y = f->evaluateAtAbscissa(x, m_evaluateContext);
   float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
   float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
-  m_graphWindow->panToMakePointVisible(x, y, xMargin, yMargin);
+  bool windowHasMoved = m_graphWindow->panToMakePointVisible(x, y, xMargin, yMargin);
   m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, y);
-  reload();
+  if (windowHasMoved) {
+    reload();
+  } else {
+    reloadCursor();
+  }
 }
 
 Function * GraphView::moveCursorVertically(int direction) {
@@ -120,10 +130,15 @@ Function * GraphView::moveCursorVertically(int direction) {
   }
   float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
   float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
-  m_graphWindow->panToMakePointVisible(x, nextY, xMargin, yMargin);
+  bool windowHasMoved = m_graphWindow->panToMakePointVisible(x, nextY, xMargin, yMargin);
+  markRectAsDirty(KDRect(KDPoint(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition)- k_cursorSize/2), k_cursorSize, k_cursorSize));
   m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, nextY);
-  reload();
+  if (windowHasMoved) {
+    reload();
+  } else {
+    reloadCursor();
+  }
   return nextFunction;
 }
 
@@ -149,10 +164,18 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
+  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
+  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  if (axis == Axis::Vertical) {
+    rectMax = pixelToFloat(Axis::Vertical, rect.top());
+    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
+  }
   float start = step*((int)(min(axis)/step));
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
   for (float x =start; x < max(axis); x += step) {
-    drawLine(ctx, rect, otherAxis, x, color);
+    if (rectMin <= x && x <= rectMax) {
+      drawLine(ctx, rect, otherAxis, x, color);
+    }
   }
 }
 

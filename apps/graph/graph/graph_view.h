@@ -27,6 +27,7 @@ public:
   Context * context() const;
   int indexFunctionSelectedByCursor();
   void reload();
+  void reloadCursor();
 private:
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_cursorSize = 9;

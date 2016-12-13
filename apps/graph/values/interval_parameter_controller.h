@@ -16,6 +16,7 @@ public:
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;

@@ -81,9 +81,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     int focusRow = m_selectableTableView.selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    m_selectableTableView.deselectTable();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_calculationStore->deleteCalculationAtIndex(focusRow);
-    m_selectableTableView.deselectTable();
     reload();
     if (numberOfRows()== 0) {
       app()->setFirstResponder(editController);

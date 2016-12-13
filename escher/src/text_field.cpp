@@ -1,22 +1,38 @@
 #include <escher/text_field.h>
 #include <assert.h>
 
-TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, TextFieldDelegate * delegate) :
+TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
+    size_t textBufferSize, TextFieldDelegate * delegate,
+    float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   View(),
   Responder(parentResponder),
+  m_isEditing(false),
   m_textBuffer(textBuffer),
+  m_draftTextBuffer(draftTextBuffer),
   m_currentTextLength(0),
   m_currentCursorLocation(0),
   m_textBufferSize(textBufferSize),
-  m_delegate(delegate)
+  m_delegate(delegate),
+  m_horizontalAlignment(horizontalAlignment),
+  m_verticalAlignment(verticalAlignment),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor)
 {
 }
 
-/* View */
+const char * TextField::text() const {
+  if (m_isEditing) {
+    return (const char *)m_draftTextBuffer;
+  }
+  return (const char *)m_textBuffer;
+}
 
 void TextField::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  ctx->drawString(m_textBuffer, KDPointZero);
+  ctx->fillRect(rect, m_backgroundColor);
+  KDSize textSize = KDText::stringSize(text());
+  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
+      m_verticalAlignment*(m_frame.height() - textSize.height()));
+  ctx->drawString(text(), origin, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -25,13 +41,29 @@ const char * TextField::className() const {
 }
 #endif
 
-void TextField::reload() {
-  KDSize sizeText = KDText::stringSize(m_textBuffer);
-  KDRect dirtyZone(0, 0, sizeText.width(), sizeText.height());
-  markRectAsDirty(dirtyZone);
+void TextField::setBackgroundColor(KDColor backgroundColor) {
+  m_backgroundColor = backgroundColor;
+  markRectAsDirty(bounds());
 }
 
-/* Responder */
+void TextField::setTextColor(KDColor textColor) {
+  m_textColor = textColor;
+  markRectAsDirty(bounds());
+}
+
+void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  m_horizontalAlignment = horizontalAlignment;
+  m_verticalAlignment = verticalAlignment;
+  markRectAsDirty(bounds());
+}
+
+void TextField::reload() {
+  KDSize textSize = KDText::stringSize(text());
+  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
+    m_verticalAlignment*(m_frame.height() - textSize.height()));
+  KDRect dirtyZone(origin, textSize);
+  markRectAsDirty(dirtyZone);
+}
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   if (m_delegate) {
@@ -39,41 +71,61 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       return true;
     }
   }
-  if (event == Ion::Events::Left) {
+  if (event == Ion::Events::OK) {
+    if (m_isEditing) {
+      strlcpy(m_textBuffer, m_draftTextBuffer, m_textBufferSize);
+      setEditing(false);
+      m_delegate->textFieldDidFinishEditing(this, text());
+      return true;
+    }
+    setEditing(true);
+    strlcpy(m_draftTextBuffer, m_textBuffer, m_textBufferSize);
+    setCursorLocation(strlen(m_draftTextBuffer));
+    return true;
+  }
+  if (event == Ion::Events::Left && m_isEditing) {
     if (m_currentCursorLocation > 0) {
       m_currentCursorLocation--;
     }
     return true;
   }
-  if (event == Ion::Events::Right) {
+  if (event == Ion::Events::Right && m_isEditing) {
     if (m_currentCursorLocation < m_currentTextLength) {
       m_currentCursorLocation++;
     }
     return true;
   }
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && m_isEditing) {
     if (m_currentCursorLocation > 0) {
       reload();
       m_currentTextLength--;
       m_currentCursorLocation--;
       for (int k = m_currentCursorLocation; k < m_currentTextLength; k ++) {
-      m_textBuffer[k] = m_textBuffer[k+1];
+      m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
       }
-      m_textBuffer[m_currentTextLength] = 0;
+      m_draftTextBuffer[m_currentTextLength] = 0;
     }
     return true;
   }
   if (event.hasText()) {
-    insertTextAtLocation(event.text(), cursorLocation());
+    if (m_isEditing) {
+      insertTextAtLocation(event.text(), cursorLocation());
+    } else {
+      strlcpy(m_draftTextBuffer, event.text(), m_textBufferSize);
+      m_currentTextLength = strlen(event.text());
+      setCursorLocation(0);
+    }
     int cursorDelta = strlen(event.text()) > 1 ? -1 : 0;
     setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
+    setEditing(true);
+    return true;
+  }
+  if (event == Ion::Events::Back && m_isEditing) {
+    m_delegate->textFieldDidAbortEditing(this, text());
+    setEditing(false);
     return true;
   }
   return false;
-}
-
-const char * TextField::text() const {
-  return (const char *)m_textBuffer;
 }
 
 int TextField::textLength() const {
@@ -83,9 +135,13 @@ int TextField::textLength() const {
 
 void TextField::setText(const char * text) {
   reload();
-  strlcpy(m_textBuffer, text, m_textBufferSize);
-  m_currentCursorLocation = strlen(text);
-  m_currentTextLength = m_currentCursorLocation;
+  if (m_isEditing) {
+    strlcpy(m_draftTextBuffer, text, m_textBufferSize);
+    m_currentCursorLocation = strlen(text);
+    m_currentTextLength = m_currentCursorLocation;
+  } else {
+    strlcpy(m_textBuffer, text, m_textBufferSize);
+  }
   reload();
 }
 
@@ -105,19 +161,31 @@ void TextField::insertTextAtLocation(const char * text, int location) {
     return;
   }
   for (int k = m_currentTextLength; k >= location && k >= 0; k--) {
-    m_textBuffer[k+textSize] = m_textBuffer[k];
+    m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
   }
-  strlcpy(&m_textBuffer[location], text, textSize);
-  m_textBuffer[location+textSize-1] = text[textSize-1];
+  strlcpy(&m_draftTextBuffer[location], text, textSize);
+  m_draftTextBuffer[location+textSize-1] = text[textSize-1];
   m_currentTextLength += textSize;
   reload();
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() {
-  KDSize textSize = KDText::stringSize(m_textBuffer);
+  KDSize textSize = KDText::stringSize(m_draftTextBuffer);
   return KDSize(0, textSize.height());
 }
 
 void TextField::setTextFieldDelegate(TextFieldDelegate * delegate) {
   m_delegate = delegate;
+}
+
+bool TextField::isEditing() const {
+  return m_isEditing;
+}
+
+void TextField::setEditing(bool isEditing) {
+  if (m_isEditing == isEditing) {
+    return;
+  }
+  m_isEditing = isEditing;
+  markRectAsDirty(bounds());
 }

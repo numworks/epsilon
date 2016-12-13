@@ -6,7 +6,7 @@
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin))
+    Metric::BottomMargin, Metric::LeftMargin, this))
 {
 }
 
@@ -24,52 +24,27 @@ int FloatParameterController::activeCell() {
 }
 
 void FloatParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  TextMenuListCell * myCell = (TextMenuListCell *) cell;
+  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
   char buffer[Constant::FloatBufferSizeInScientificMode];
   Float(parameterAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   myCell->setAccessoryText(buffer);
 }
 
-bool FloatParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
-    editParameter();
-    return true;
-  }
-  if (event.hasText()) {
-    editParameter(event.text());
-    return true;
-  }
-  return false;
+bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  Context * globalContext = appsContainer->context();
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
+  willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
+    m_selectableTableView.selectedRow()), activeCell());
+  return true;
 }
 
-void FloatParameterController::editParameter(const char * initialText) {
-  /* This code assumes that the active cell remains the one which is edited
-   * until the invocation is performed. This could lead to concurrency issue in
-   * other cases. */
-  char initialTextContent[255];
-  int cursorDelta = 0;
-  if (initialText) {
-    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
-    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
-  } else {
-    TextMenuListCell * textMenuListCell = (TextMenuListCell *)reusableCell(activeCell());
-    strlcpy(initialTextContent, textMenuListCell->accessoryText(), sizeof(initialTextContent));
-  }
-  int cursorLocation = strlen(initialTextContent) + cursorDelta;
-  EditableTextMenuListCell * cell = (EditableTextMenuListCell *)m_selectableTableView.cellAtLocation(0, activeCell());
-  cell->setParentResponder(&m_selectableTableView);
-  cell->editValue(textFieldDelegate(), initialTextContent, cursorLocation, this,
-    [](void * context, void * sender){
-    FloatParameterController * floatParameterController = (FloatParameterController *)context;
-    int activeCell = floatParameterController->activeCell();
-    EditableTextMenuListCell * cell = (EditableTextMenuListCell *)sender;
-    const char * textBody = cell->editedText();
-    AppsContainer * appsContainer = (AppsContainer *)floatParameterController->app()->container();
-    Context * globalContext = appsContainer->context();
-    float floatBody = Expression::parse(textBody)->approximate(*globalContext);
-    floatParameterController->setParameterAtIndex(activeCell, floatBody);
-    floatParameterController->willDisplayCellForIndex(cell, activeCell);
-    });
+void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  myCell->setEditing(false);
+  EditableTextMenuListCell * myNewCell = (EditableTextMenuListCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+  app()->setFirstResponder(myNewCell);
 }
 
 KDCoordinate FloatParameterController::cellHeight() {

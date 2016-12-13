@@ -22,6 +22,7 @@ public:
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
@@ -43,7 +44,8 @@ private:
     PointerTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
   };
-  EditableTextMenuListCell m_menuListCell[2];
+  constexpr static int k_maxNumberOfCells = 2;
+  EditableTextMenuListCell m_menuListCell[k_maxNumberOfCells];
   ContentView m_contentView;
   Law * m_law;
   bool m_buttonSelected;

@@ -4,7 +4,7 @@
 
 InputViewController::TextFieldController::TextFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate) :
   ViewController(parentResponder),
-  m_textField(parentResponder, m_textBody, 255, textFieldDelegate)
+  m_textField(parentResponder, m_textBody, m_textBody, 255, textFieldDelegate)
 {
   m_textBody[0] = 0;
 }
@@ -23,9 +23,10 @@ TextField * InputViewController::TextFieldController::textField() {
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_textFieldController(TextFieldController(this, textFieldDelegate)),
+  m_textFieldController(TextFieldController(this, this)),
   m_successAction(Invocation(nullptr, nullptr)),
-  m_failureAction(Invocation(nullptr, nullptr))
+  m_failureAction(Invocation(nullptr, nullptr)),
+  m_textFieldDelegate(textFieldDelegate)
 {
 }
 
@@ -37,35 +38,27 @@ const char * InputViewController::textBody() {
   return m_textFieldController.textField()->text();
 }
 
-void InputViewController::showInput() {
+void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
+  m_successAction = Invocation(successAction, context);
+  m_failureAction = Invocation(failureAction, context);
+  m_textFieldController.textField()->handleEvent(event);
   displayModalViewController(&m_textFieldController, 1.0f, 1.0f);
 }
 
-void InputViewController::setTextBody(const char * text) {
- m_textFieldController.textField()->setText(text);
+bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  m_successAction.perform(this);
+  m_textFieldController.textField()->setText("");
+  dismissModalViewController();
+  return true;
 }
 
-bool InputViewController::handleEvent(Ion::Events::Event event) {
-  if (!isDisplayingModal()) {
-    return false;
-  }
-  if (event == Ion::Events::OK) {
-    m_successAction.perform(this);
-    dismissModalViewController();
-    return true;
-  }
-  if (event == Ion::Events::Back) {
-    m_failureAction.perform(this);
-    dismissModalViewController();
-    return true;
-  }
-  return false;
+bool InputViewController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+  m_failureAction.perform(this);
+  m_textFieldController.textField()->setText("");
+  dismissModalViewController();
+  return true;
 }
 
-void InputViewController::edit(Responder * caller, const char * initialContent, int cursorPosition, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
-  m_successAction = Invocation(successAction, context);
-  m_failureAction = Invocation(failureAction, context);
-  setTextBody(initialContent);
-  m_textFieldController.textField()->setCursorLocation(cursorPosition);
-  showInput();
+bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }

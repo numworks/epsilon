@@ -23,7 +23,7 @@ bool ExpressionTextFieldDelegate::cursorInToken(TextField * textField, const cha
 }
 
 bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK && textField->isEditing()) {
     Expression * exp = Expression::parse(textField->text());
     if (exp == nullptr) {
       if (textField->textLength() == 0) {
@@ -42,14 +42,14 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       delete exp;
     }
   }
-  if (event == Ion::Events::Toolbox) {
+  if (event == Ion::Events::Toolbox && textField->isEditing()) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     ToolboxController * toolboxController = appsContainer->toolboxController();
     toolboxController->setTextFieldCaller(textField);
     textField->app()->displayModalViewController(toolboxController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }
-  if (event == Ion::Events::Var) {
+  if (event == Ion::Events::Var && textField->isEditing()) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
     variableBoxController->setTextFieldCaller(textField);
@@ -57,6 +57,10 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
     return true;
   }
   if (event == Ion::Events::XNT) {
+    if (!textField->isEditing()) {
+      textField->setEditing(true);
+      textField->setText("");
+    }
     if (cursorInToken(textField, "sum(") || cursorInToken(textField, "product(")) {
       textField->insertTextAtLocation("n", textField->cursorLocation());
       textField->setCursorLocation(textField->cursorLocation()+strlen("n"));

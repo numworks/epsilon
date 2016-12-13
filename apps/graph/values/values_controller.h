@@ -15,19 +15,17 @@
 
 namespace Graph {
 
-class ValuesController : public ViewController, public HeaderViewDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate {
+class ValuesController : public ViewController, public HeaderViewDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
-
-  int activeRow();
-  int activeColumn();
   Interval * interval();
-  void editValue(const char * initialText = nullptr);
-
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+
   ViewController * intervalParameterController();
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
@@ -48,6 +46,8 @@ public:
   bool isEmpty() override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+
 
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
@@ -58,6 +58,8 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 
 private:
+  int activeRow();
+  int activeColumn();
   Function * functionAtColumn(int i);
   bool isDerivativeColumn(int i);
   Responder * tabController() const;

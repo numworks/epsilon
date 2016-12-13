@@ -8,7 +8,8 @@
 
 class TextField : public View, public Responder {
 public:
-  TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, TextFieldDelegate * delegate = nullptr);
+  TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize, TextFieldDelegate * delegate = nullptr,
+    float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder
@@ -24,17 +25,28 @@ public:
   void setCursorLocation(int location);
   void insertTextAtLocation(const char * text, int location);
   KDSize minimalSizeForOptimalDisplay() override;
-protected:
+  void setBackgroundColor(KDColor backgroundColor);
+  void setTextColor(KDColor textColor);
+  void setAlignment(float horizontalAlignment, float verticalAlignment);
   void reload();
+  bool isEditing() const;
+  virtual void setEditing(bool isEditing);
+protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
+  bool m_isEditing;
   char * m_textBuffer;
+  char * m_draftTextBuffer;
   size_t m_currentTextLength;
   size_t m_currentCursorLocation;
 private:
   size_t m_textBufferSize;
   TextFieldDelegate * m_delegate;
+  float m_horizontalAlignment;
+  float m_verticalAlignment;
+  KDColor m_textColor;
+  KDColor m_backgroundColor;
 };
 
 #endif

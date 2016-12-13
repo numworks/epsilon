@@ -6,13 +6,15 @@
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 
-class InputViewController : public ModalViewController {
+class InputViewController : public ModalViewController, TextFieldDelegate {
 public:
-  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate = nullptr);
+  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate);
   const char * title() const override;
-  bool handleEvent(Ion::Events::Event event) override;
-  void edit(Responder * caller, const char * initialContent, int cursorPosition, void * context, Invocation::Action successAction, Invocation::Action failureAction);
+  void edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
 private:
   class TextFieldController : public ViewController {
   public:
@@ -24,11 +26,10 @@ private:
     TextField m_textField;
     char m_textBody[255];
   };
-  void showInput();
-  void setTextBody(const char * text);
   TextFieldController m_textFieldController;
   Invocation m_successAction;
   Invocation m_failureAction;
+  TextFieldDelegate * m_textFieldDelegate;
 };
 
 #endif

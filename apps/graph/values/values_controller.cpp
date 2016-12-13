@@ -9,7 +9,7 @@ namespace Graph {
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
-  m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this)),
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
@@ -24,6 +24,10 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_interval.setStart(0);
   m_interval.setEnd(10);
   m_interval.setStep(1);
+  for (int k = 0; k < k_maxNumberOfAbscissaCells; k++) {
+    m_abscissaCells[k].setParentResponder(&m_selectableTableView);
+    m_abscissaCells[k].setDelegate(this);
+  }
 }
 
 View * ValuesController::view() {
@@ -195,26 +199,29 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     }
-    if (activeColumn() == 0) {
-      editValue();
-      return true;
-    }
     return false;
   }
 
   if (activeRow() == -1) {
     return headerViewController()->handleEvent(event);
   }
-  if (event.hasText()) {
-    if (activeColumn() == 0 && activeRow() > 0) {
-      editValue(event.text());
-      return true;
-    }
-    return false;
-  }
   return false;
 }
 
+bool ValuesController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
+}
+
+bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  Context * globalContext = appsContainer->context();
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  m_interval.setElement(activeRow()-1, floatBody);
+  willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(activeColumn(), activeRow()), activeColumn(), activeRow());
+  m_selectableTableView.reloadData();
+  return true;
+}
 
 void ValuesController::configureAbscissa() {
   StackViewController * stack = stackController();
@@ -235,38 +242,16 @@ void ValuesController::configureDerivativeFunction() {
   stack->push(&m_derivativeParameterController);
 }
 
-void ValuesController::editValue(const char * initialText) {
-  /* This code assumes that the active cell remains the one which is edited
-   * until the invocation is performed. This could lead to concurrency issue in
-   * other cases. */
-  char initialTextContent[255];
-  int cursorDelta = 0;
-  if (initialText) {
-    strlcpy(initialTextContent, initialText, sizeof(initialTextContent));
-    cursorDelta = strlen(initialText) > 1 ? -1 : 0;
-  } else {
-    if (activeRow() > m_interval.numberOfElements()) {
-      initialTextContent[0] = 0;
-    } else {
-      Float(m_interval.element(activeRow()-1)).convertFloatToText(initialTextContent, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    }
+void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellX == 0 && previousSelectedCellY > 0) {
+    EditableValueCell * myCell = (EditableValueCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    myCell->setEditing(false);
+    app()->setFirstResponder(t);
   }
-  int cursorLocation = strlen(initialTextContent) + cursorDelta;
-  EditableValueCell * cell = (EditableValueCell *)m_selectableTableView.cellAtLocation(0, activeRow());
-  cell->setParentResponder(&m_selectableTableView);
-  cell->editValue(initialTextContent, cursorLocation, this,
-    [](void * context, void * sender){
-    ValuesController * valuesController = (ValuesController *)context;
-    int activeRow = valuesController->activeRow();
-    int activeColumn = valuesController->activeColumn();
-    EditableValueCell * cell = (EditableValueCell *)sender;
-    const char * textBody = cell->editedText();
-    AppsContainer * appsContainer = (AppsContainer *)valuesController->app()->container();
-    Context * globalContext = appsContainer->context();
-    float floatBody = Expression::parse(textBody)->approximate(*globalContext);
-    valuesController->interval()->setElement(activeRow-1, floatBody);
-    valuesController->willDisplayCellAtLocation(cell, activeColumn, activeRow);
-    });
+  if (t->selectedRow() > 0 && t->selectedColumn() == 0) {
+    EditableValueCell * myCell = (EditableValueCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myCell);
+  }
 }
 
 int ValuesController::typeAtLocation(int i, int j) {

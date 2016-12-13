@@ -33,8 +33,13 @@ void SelectableTableView::deselectTable() {
     TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
     previousCell->setHighlighted(false);
   }
+  int previousSelectedCellX = m_selectedCellX;
+  int previousSelectedCellY = m_selectedCellY;
   m_selectedCellX = 0;
   m_selectedCellY = -1;
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY);
+  }
 }
 
 bool SelectableTableView::selectCellAtLocation(int i, int j) {

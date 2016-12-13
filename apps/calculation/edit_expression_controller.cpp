@@ -4,10 +4,10 @@
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(TableView * subview, TextFieldDelegate * textFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_textField(nullptr, m_textBody, 255, textFieldDelegate)
+  m_textField(parentResponder, m_textBody, 255, textFieldDelegate)
 {
   m_textBody[0] = 0;
 }
@@ -43,13 +43,12 @@ TableView * EditExpressionController::ContentView::mainView() {
   return m_mainView;
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore, TextFieldDelegate * textFieldDelegate) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_contentView((TableView *)historyController->view(), textFieldDelegate),
+  m_contentView(this, (TableView *)historyController->view(), this),
   m_historyController(historyController),
   m_calculationStore(calculationStore)
 {
-  m_contentView.textField()->setParentResponder(this);
 }
 
 View * EditExpressionController::view() {
@@ -69,19 +68,6 @@ void EditExpressionController::setTextBody(const char * text) {
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
-    Calculation calculation = Calculation();
-    App * calculationApp = (App *)app();
-    calculation.setContent(textBody(), calculationApp->evaluateContext());
-    m_calculationStore->push(&calculation);
-    m_historyController->reload();
-    m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-    m_contentView.textField()->setText("");
-    return true;
-  }
-  if (event == Ion::Events::Back) {
-    return true;
-  }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       app()->setFirstResponder(m_historyController);
@@ -95,9 +81,20 @@ void EditExpressionController::didBecomeFirstResponder() {
   app()->setFirstResponder(m_contentView.textField());
 }
 
-void EditExpressionController::edit(const char * initialContent) {
-  setTextBody(initialContent);
-  app()->setFirstResponder(this);
+bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
+}
+
+bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
+  Calculation calculation = Calculation();
+  App * calculationApp = (App *)app();
+  calculation.setContent(textBody(), calculationApp->evaluateContext());
+  m_calculationStore->push(&calculation);
+  m_historyController->reload();
+  m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  m_contentView.textField()->setText("");
+  return true;
 }
 
 }

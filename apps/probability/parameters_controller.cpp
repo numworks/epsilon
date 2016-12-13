@@ -1,5 +1,6 @@
 #include "parameters_controller.h"
 #include "../constant.h"
+#include "app.h"
 #include <assert.h>
 #include <string.h>
 
@@ -74,6 +75,10 @@ ParametersController::ParametersController(Responder * parentResponder, Law * la
   m_buttonSelected(false),
   m_calculationController(CalculationController(nullptr, law))
 {
+  for (int k = 0; k < k_maxNumberOfCells; k++) {
+    m_menuListCell[k].setParentResponder(&m_selectableTableView);
+    m_menuListCell[k].setDelegate(this);
+  }
 }
 
 ExpressionTextFieldDelegate * ParametersController::textFieldDelegate() {
@@ -150,7 +155,7 @@ int ParametersController::numberOfRows() {
 };
 
 void ParametersController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  TextMenuListCell * myCell = (TextMenuListCell *) cell;
+  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
   myCell->setText(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
@@ -171,6 +176,11 @@ float ParametersController::parameterAtIndex(int index) {
 
 void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   m_law->setParameterAtIndex(f, parameterIndex);
+}
+
+bool ParametersController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
 }
 
 }

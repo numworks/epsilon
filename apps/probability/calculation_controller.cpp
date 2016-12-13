@@ -12,6 +12,8 @@ CalculationController::ContentView::ContentView(Responder * parentResponder, Law
 {
   for (int k = 0; k < k_maxNumberOfEditableFields; k++) {
     m_calculationCell[k].setParentResponder(parentResponder);
+    CalculationController * parentController = (CalculationController *)parentResponder;
+    m_calculationCell[k].setDelegate(parentController);
   }
 }
 
@@ -58,12 +60,15 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     return &m_text[2];
   }
   if (index == 3 || index == 5 || index == 7) {
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    Float(m_law->calculationElementAtIndex((index - 3)/2)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    m_calculationCell[(index - 3)/2].setText(buffer);
     return &m_calculationCell[(index - 3)/2];
   }
   return nullptr;
+}
+
+void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
+  char buffer[Constant::FloatBufferSizeInScientificMode];
+  Float(m_law->calculationElementAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  m_calculationCell[index].setText(buffer);
 }
 
 void CalculationController::ContentView::layoutSubviews() {
@@ -97,6 +102,10 @@ void CalculationController::ContentView::layoutSubviews() {
   m_text[2].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
   xCoordinate += numberOfCharacters*k_charWidth + k_textMargin;
   m_calculationCell[2].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
+
+  for (int k = 0; k < k_maxNumberOfEditableFields; k++) {
+    willDisplayEditableCellAtIndex(k);
+  }
 }
 
 
@@ -133,37 +142,12 @@ const char * CalculationController::title() const {
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK && m_highlightedSubviewIndex == 0) {
-    m_contentView.imageTableView()->select(true);
-    app()->setFirstResponder(m_contentView.imageTableView());
-    return true;
-  }
-  if ((event == Ion::Events::OK || event.hasText()) && m_highlightedSubviewIndex > 0) {
-    App * myApp = (App *)app();
-    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
-    const char * initialText = calculCell->text();
-    if (event.hasText()) {
-      initialText = event.text();
-    }
-    calculCell->editValue(myApp, initialText, strlen(calculCell->text()), this,
-      [](void * context, void * sender){
-      CalculationController * calculationController = (CalculationController *)context;
-      Law * law = calculationController->law();
-      int highlightedSubviewIndex = calculationController->highlightedSubviewIndex();
-      EditableTextCell * cell = (EditableTextCell *)sender;
-      const char * textBody = cell->editedText();
-      AppsContainer * appsContainer = (AppsContainer *)calculationController->app()->container();
-      Context * globalContext = appsContainer->context();
-      float floatBody = Expression::parse(textBody)->approximate(*globalContext);
-      law->setCalculationElementAtIndex(floatBody, highlightedSubviewIndex-1);
-    });
-    return true;
-  }
+
   if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1)) {
     if (m_highlightedSubviewIndex == 0) {
-      app()->setFirstResponder(this);
       m_contentView.imageTableView()->select(false);
       m_contentView.imageTableView()->setHighlight(false);
+      m_contentView.layoutSubviews();
     } else {
       EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
       calculCell->setHighlighted(false);
@@ -172,12 +156,36 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     if (m_highlightedSubviewIndex > 0) {
       EditableTextCell * newCalculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
       newCalculCell->setHighlighted(true);
+      app()->setFirstResponder(newCalculCell);
     } else {
       m_contentView.imageTableView()->setHighlight(true);
+      app()->setFirstResponder(this);
     }
     return true;
   }
+  if (event == Ion::Events::OK && m_highlightedSubviewIndex == 0) {
+    m_contentView.imageTableView()->select(true);
+    app()->setFirstResponder(m_contentView.imageTableView());
+    return true;
+  }
   return false;
+}
+
+
+bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
+}
+
+bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  Context * globalContext = appsContainer->context();
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  m_law->setCalculationElementAtIndex(floatBody, m_highlightedSubviewIndex-1);
+  for (int k = 0; k < ContentView::k_maxNumberOfEditableFields; k++) {
+    m_contentView.willDisplayEditableCellAtIndex(k);
+  }
+  return true;
 }
 
 void CalculationController::didBecomeFirstResponder() {
@@ -190,6 +198,7 @@ void CalculationController::didBecomeFirstResponder() {
     m_contentView.imageTableView()->setHighlight(false);
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
     calculCell->setHighlighted(true);
+    app()->setFirstResponder(calculCell);
   } else {
     m_contentView.imageTableView()->setHighlight(true);
   }
@@ -198,10 +207,6 @@ void CalculationController::didBecomeFirstResponder() {
 
 Law * CalculationController::law() {
   return m_law;
-}
-
-int CalculationController::highlightedSubviewIndex() const {
-  return m_highlightedSubviewIndex;
 }
 
 void CalculationController::selectSubview(int subviewIndex) {

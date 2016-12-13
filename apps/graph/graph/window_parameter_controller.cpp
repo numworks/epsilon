@@ -1,4 +1,6 @@
 #include "window_parameter_controller.h"
+#include "../app.h"
+#include "../../apps_container.h"
 #include <assert.h>
 
 namespace Graph {
@@ -13,6 +15,10 @@ WindowParameterController::WindowParameterController(Responder * parentResponder
   m_windowCells[1].setText("Xmax");
   m_windowCells[2].setText("Ymin");
   m_windowCells[3].setText("Ymax");
+  for (int k = 0; k < k_numberOfTextCell; k++) {
+    m_windowCells[k].setParentResponder(&m_selectableTableView);
+    m_windowCells[k].setDelegate(this);
+  }
 }
 
 ExpressionTextFieldDelegate * WindowParameterController::textFieldDelegate() {
@@ -40,6 +46,31 @@ void WindowParameterController::willDisplayCellForIndex(TableViewCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
+bool WindowParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  Context * globalContext = appsContainer->context();
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
+  willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
+    m_selectableTableView.selectedRow()), activeCell());
+  m_selectableTableView.reloadData();
+  return true;
+}
+
+void WindowParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellX == 0 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
+    EditableTextMenuListCell * myCell = (EditableTextMenuListCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    myCell->setEditing(false);
+    app()->setFirstResponder(t);
+  }
+  if (t->selectedColumn() == 0 && t->selectedRow() >= 0 && t->selectedRow() !=2) {
+    EditableTextMenuListCell * myNewCell = (EditableTextMenuListCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    if ((t->selectedRow() == 0 || t->selectedRow() == 1) || !m_graphWindow->yAuto()) {
+      app()->setFirstResponder(myNewCell);
+    }
+  }
+}
+
 bool WindowParameterController::handleEvent(Ion::Events::Event event) {
   m_graphView->initCursorPosition();
   if (activeCell() == 2) {
@@ -53,7 +84,7 @@ bool WindowParameterController::handleEvent(Ion::Events::Event event) {
   if (m_graphWindow->yAuto() && (activeCell() == 3 || activeCell() == 4)) {
     return false;
   }
-  return FloatParameterController::handleEvent(event);
+  return false;
 }
 
 float WindowParameterController::parameterAtIndex(int index) {
@@ -107,6 +138,11 @@ TableViewCell * WindowParameterController::reusableCell(int index) {
 
 int WindowParameterController::reusableCellCount() {
   return k_numberOfTextCell+1;
+}
+
+bool WindowParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
 }
 
 }

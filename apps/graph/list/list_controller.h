@@ -32,7 +32,7 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void configureFunction(Function * function);
-  void editExpression(FunctionExpressionView * functionCell, const char * initialText = nullptr);
+  void editExpression(FunctionExpressionView * functionCell, Ion::Events::Event event);
 
 private:
   static constexpr KDCoordinate k_verticalFunctionMargin = 50-12;

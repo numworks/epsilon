@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class CalculationController : public ViewController {
+class CalculationController : public ViewController, public TextFieldDelegate {
 public:
   CalculationController(Responder * parentResponder, Law * law);
   View * view() override;
@@ -16,8 +16,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   Law * law();
-  int highlightedSubviewIndex() const;
   void selectSubview(int subviewIndex);
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   class ContentView : public View {
   public:
@@ -27,6 +28,7 @@ private:
     LawCurveView * lawCurveView();
     ImageTableView * imageTableView();
     EditableTextCell * calculationCellAtIndex(int index);
+    void willDisplayEditableCellAtIndex(int index);
     constexpr static int k_maxNumberOfEditableFields = 3;
   private:
     constexpr static KDCoordinate k_textFieldWidth = 35;

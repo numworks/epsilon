@@ -1,4 +1,5 @@
 #include "interval_parameter_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
@@ -6,9 +7,9 @@ namespace Graph {
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(EditableTextMenuListCell((char*)"X Debut")),
-  m_intervalEndCell(EditableTextMenuListCell((char*)"X Fin")),
-  m_intervalStepCell(EditableTextMenuListCell((char*)"Pas"))
+  m_intervalStartCell(EditableTextMenuListCell((char*)"X Debut", &m_selectableTableView, this)),
+  m_intervalEndCell(EditableTextMenuListCell((char*)"X Fin", &m_selectableTableView, this)),
+  m_intervalStepCell(EditableTextMenuListCell((char*)"Pas", &m_selectableTableView, this))
 {
 }
 
@@ -68,6 +69,11 @@ TableViewCell * IntervalParameterController::reusableCell(int index) {
 
 int IntervalParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
+}
+
+bool IntervalParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
 }
 
 }

@@ -7,18 +7,18 @@
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public ViewController, public SimpleListViewDataSource {
+class FloatParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
-  int activeCell();
-  void editParameter(const char * initialText = nullptr);
   virtual ExpressionTextFieldDelegate * textFieldDelegate() = 0;
   View * view() override;
-  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
+  int activeCell();
   SelectableTableView m_selectableTableView;
 private:
   virtual float parameterAtIndex(int index) = 0;

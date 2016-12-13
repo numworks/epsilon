@@ -1,4 +1,5 @@
 #include "goto_parameter_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
@@ -9,6 +10,8 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, Gr
   m_graphView(graphView),
   m_function(nullptr)
 {
+  m_abscisseCell.setParentResponder(&m_selectableTableView);
+  m_abscisseCell.setDelegate(this);
 }
 
 ExpressionTextFieldDelegate * GoToParameterController::textFieldDelegate() {
@@ -46,4 +49,10 @@ int GoToParameterController::reusableCellCount() {
 void GoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
+
+bool GoToParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  App * myApp = (App *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
+}
+
 }

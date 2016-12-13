@@ -9,20 +9,21 @@
 namespace Calculation {
 class HistoryController;
 
-class EditExpressionController : public ViewController {
+class EditExpressionController : public ViewController, public TextFieldDelegate {
 public:
-  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore, TextFieldDelegate * textFieldDelegate);
+  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
   const char * title() const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void edit(const char * initialContent);
   const char * textBody();
   void setTextBody(const char * text);
+  bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(::TextField * textField, const char * text) override;
 private:
   class ContentView : public View {
   public:
-    ContentView(TableView * subview, TextFieldDelegate * textFieldDelegate);
+    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

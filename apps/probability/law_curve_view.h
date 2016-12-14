@@ -22,7 +22,7 @@ protected:
   char * label(Axis axis, int index) const override;
 private:
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
-  float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const override;
+  float evaluateCurveAtAbscissa(void * law, float abscissa) const override;
   Law * m_law;
 };
 

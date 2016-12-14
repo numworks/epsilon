@@ -159,7 +159,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(Axis::Vertical, ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
-    drawExpression(f->expression(), f->color(), ctx, rect);
+    drawCurve(f, f->color(), ctx, rect);
   }
 }
 
@@ -194,11 +194,9 @@ float GraphView::max(Axis axis) const {
   return (axis == Axis::Horizontal ? m_graphWindow->xMax() : m_graphWindow->yMax());
 }
 
-float GraphView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {
-  Symbol xSymbol = Symbol('x');
-  Float e = Float(abscissa);
-  m_context->setExpressionForSymbolName(&e, &xSymbol);
-  return expression->approximate(*m_context);
+float GraphView::evaluateCurveAtAbscissa(void * curve, float abscissa) const {
+  Function * f = (Function *)curve;
+  return f->evaluateAtAbscissa(abscissa, m_context);
 }
 
 }

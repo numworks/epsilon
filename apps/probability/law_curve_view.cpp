@@ -22,7 +22,7 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   drawAxes(Axis::Horizontal, ctx, rect);
   drawLabels(Axis::Horizontal, ctx, rect);
-  drawExpression(m_law->expression(), KDColorRed, ctx, rect);
+  drawCurve(m_law, KDColorRed, ctx, rect);
 }
 
 float LawCurveView::min(Axis axis) const {
@@ -45,7 +45,7 @@ char * LawCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float LawCurveView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {
+float LawCurveView::evaluateCurveAtAbscissa(void * law, float abscissa) const {
   return m_law->evaluateAtAbscissa(abscissa);
 }
 

@@ -132,19 +132,19 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
 
-void CurveView::drawExpression(Expression * expression, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
   for (float x = rectMin; x < rectMax; x += xStep) {
-    float y = evaluateExpressionAtAbscissa(expression, x);
+    float y = evaluateCurveAtAbscissa(curve, x);
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     stampAtLocation(pxf, pyf, color, ctx, rect);
     if (x > xMin) {
-      jointDots(expression, x - xStep, evaluateExpressionAtAbscissa(expression, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+      jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
     }
   }
 }
@@ -176,7 +176,7 @@ void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext *
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
 }
 
-void CurveView::jointDots(Expression * expression, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const {
+void CurveView::jointDots(void * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
   // No need to draw if both dots are outside visible area
@@ -196,7 +196,7 @@ void CurveView::jointDots(Expression * expression, float x, float y, float u, fl
   }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
-  float cy = evaluateExpressionAtAbscissa(expression, cx);
+  float cy = evaluateCurveAtAbscissa(curve, cx);
   if ((y < cy && cy < v) || (v < cy && cy < y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
@@ -209,8 +209,8 @@ void CurveView::jointDots(Expression * expression, float x, float y, float u, fl
   float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
     stampAtLocation(pcxf, pcyf, color, ctx, rect);
-    jointDots(expression, x, y, cx, cy, color, maxNumberOfRecursion-1, ctx, rect);
-    jointDots(expression, cx, cy, u, v, color, maxNumberOfRecursion-1, ctx, rect);
+    jointDots(curve, x, y, cx, cy, color, maxNumberOfRecursion-1, ctx, rect);
+    jointDots(curve, cx, cy, u, v, color, maxNumberOfRecursion-1, ctx, rect);
   }
 }
 

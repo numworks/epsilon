@@ -41,7 +41,7 @@ private:
   float max(Axis axis) const override;
   float gridUnit(Axis axis) const override;
   char * label(Axis axis, int index) const override;
-  float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const override;
+  float evaluateCurveAtAbscissa(void * expression, float abscissa) const override;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
 

@@ -27,15 +27,15 @@ protected:
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
-  void drawExpression(Expression * expression, KDColor color, KDContext * ctx, KDRect rect) const;
+  void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
   void computeLabels(Axis axis);
   void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
 private:
   int numberOfLabels(Axis axis) const;
-  virtual float evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const = 0;
+  virtual float evaluateCurveAtAbscissa(void * curve, float t) const = 0;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(Expression * expression, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const;
+  void jointDots(void * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const;
   /* Join two dots with a straight line. */
   void straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the

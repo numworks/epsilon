@@ -74,12 +74,14 @@ void Function::setDisplayDerivative(bool display) {
   m_displayDerivative = display;
 }
 
-float Function::evaluateAtAbscissa(float x, EvaluateContext * context) const {
-  context->setOverridenValueForSymbolX(x);
+float Function::evaluateAtAbscissa(float x, Context * context) const {
+  Symbol xSymbol = Symbol('x');
+  Float e = Float(x);
+  context->setExpressionForSymbolName(&e, &xSymbol);
   return m_expression->approximate(*context);
 }
 
-float Function::approximateDerivative(float x, EvaluateContext * context) const {
+float Function::approximateDerivative(float x, Context * context) const {
   float functionPlus = evaluateAtAbscissa(x + k_epsilon, context);
   float functionMinus = evaluateAtAbscissa(x - k_epsilon, context);
   float growthRate = (functionPlus - functionMinus)/(2*k_epsilon);

@@ -68,7 +68,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
       /* TODO: this will work when we will parse float */
       //App * calculationApp = (App *)app();
-      //newCalculation.setContent(outputText, calculationApp->evaluateContext());
+      //newCalculation.setContent(outputText, calculationApp->localContext());
     }
     m_selectableTableView.deselectTable();
     m_calculationStore->push(&newCalculation);

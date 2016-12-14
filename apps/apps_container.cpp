@@ -6,11 +6,11 @@ extern "C" {
 AppsContainer::AppsContainer() :
   Container(),
   m_homeApp(this),
-  m_graphApp(this, &m_context),
-  m_probabilityApp(this, &m_context),
-  m_calculationApp(this, &m_context),
-  m_context(Context()),
-  m_variableBoxController(&m_context)
+  m_graphApp(this, &m_globalContext),
+  m_probabilityApp(this, &m_globalContext),
+  m_calculationApp(this, &m_globalContext),
+  m_globalContext(GlobalContext()),
+  m_variableBoxController(&m_globalContext)
 {
 }
 
@@ -30,8 +30,8 @@ App * AppsContainer::appAtIndex(int index) {
   return apps[index];
 }
 
-Context * AppsContainer::context() {
-  return &m_context;
+Context * AppsContainer::globalContext() {
+  return &m_globalContext;
 }
 
 ToolboxController * AppsContainer::toolboxController() {

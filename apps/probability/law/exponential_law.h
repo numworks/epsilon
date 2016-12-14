@@ -7,7 +7,7 @@ namespace Probability {
 
 class ExponentialLaw : public OneParameterLaw {
 public:
-  ExponentialLaw(EvaluateContext * evaluateContext);
+  ExponentialLaw(Context * context);
   ~ExponentialLaw() override;
   const char * title() override;
   Expression * expression() const override;

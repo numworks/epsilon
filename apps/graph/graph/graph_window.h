@@ -2,7 +2,6 @@
 #define GRAPH_GRAPH_AXIS_INTERVAL_H
 
 #include "../function_store.h"
-#include "../evaluate_context.h"
 
 namespace Graph {
 
@@ -61,7 +60,7 @@ private:
   float m_xGridUnit;
   float m_yGridUnit;
   FunctionStore * m_functionStore;
-  EvaluateContext * m_evaluateContext;
+  Context * m_context;
 };
 
 }

@@ -3,11 +3,11 @@
 
 namespace Probability {
 
-ExponentialLaw::ExponentialLaw(EvaluateContext * evaluateContext) :
-  OneParameterLaw(evaluateContext),
-  m_expression(Expression::parse("p1*t"))
+ExponentialLaw::ExponentialLaw(Context * context) :
+  OneParameterLaw(context),
+  m_expression(Expression::parse("a*t"))
 {
-  //m_expression = Expression::parse("p1*exp(-p1*t)");
+  //m_expression = Expression::parse("a*exp(-a*t)");
   assert(m_expression != nullptr);
 }
 

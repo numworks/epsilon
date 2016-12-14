@@ -3,7 +3,6 @@
 
 #include <poincare.h>
 #include <kandinsky.h>
-#include "evaluate_context.h"
 
 namespace Graph {
 
@@ -24,8 +23,8 @@ public:
   void setDisplayDerivative(bool display);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  float evaluateAtAbscissa(float x, EvaluateContext * context) const;
-  float approximateDerivative(float x, EvaluateContext * context) const;
+  float evaluateAtAbscissa(float x, Context * context) const;
+  float approximateDerivative(float x, Context * context) const;
 private:
   constexpr static float k_epsilon = 0.0001f;
   constexpr static int k_bodyLength = 255;

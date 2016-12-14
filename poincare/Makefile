@@ -5,7 +5,7 @@ include poincare/src/simplify/Makefile
 objs += $(addprefix poincare/src/,\
   addition.o\
   binary_operation.o\
-  context.o\
+  global_context.o\
   cosine.o\
   expression.o\
   expression_lexer.o\

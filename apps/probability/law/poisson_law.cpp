@@ -4,11 +4,11 @@
 
 namespace Probability {
 
-PoissonLaw::PoissonLaw(EvaluateContext * evaluateContext) :
-  OneParameterLaw(evaluateContext),
-  m_expression(Expression::parse("p1*t"))
+PoissonLaw::PoissonLaw(Context * context) :
+  OneParameterLaw(context),
+  m_expression(Expression::parse("a*t"))
 {
-  //m_expression = Expression::parse("exp(-p1)*p1^t/t!");
+  //m_expression = Expression::parse("exp(-a)*a^t/t!");
   assert(m_expression != nullptr);
 }
 

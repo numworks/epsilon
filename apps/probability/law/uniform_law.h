@@ -7,7 +7,7 @@ namespace Probability {
 
 class UniformLaw : public TwoParameterLaw {
 public:
-  UniformLaw(EvaluateContext * evaluateContext);
+  UniformLaw(Context * context);
   ~UniformLaw() override;
   const char * title() override;
   Expression * expression() const override;

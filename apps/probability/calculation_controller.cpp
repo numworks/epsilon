@@ -190,7 +190,7 @@ bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion:
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->context();
+  Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
   m_calculation.setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < ContentView::k_maxNumberOfEditableFields; k++) {

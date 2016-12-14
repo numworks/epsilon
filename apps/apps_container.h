@@ -19,7 +19,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
-  Context * context();
+  Context * globalContext();
   ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
@@ -32,7 +32,7 @@ private:
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif
-  Context m_context;
+  GlobalContext m_globalContext;
   ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;
 };

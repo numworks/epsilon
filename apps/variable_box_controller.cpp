@@ -69,11 +69,11 @@ int VariableBoxController::ContentViewController::numberOfRows() {
     case Page::RootMenu:
       return 3;
     case Page::Scalar:
-      return Context::k_maxNumberOfScalarExpressions;
+      return GlobalContext::k_maxNumberOfScalarExpressions;
     case Page::List:
-      return Context::k_maxNumberOfListExpressions;
+      return GlobalContext::k_maxNumberOfListExpressions;
     case Page::Matrix:
-      return Context::k_maxNumberOfMatrixExpressions;
+      return GlobalContext::k_maxNumberOfMatrixExpressions;
     default:
       return 0;
   }

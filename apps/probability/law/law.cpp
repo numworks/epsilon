@@ -3,13 +3,13 @@
 
 namespace Probability {
 
-Law::Law(EvaluateContext * evaluateContext):
-  m_evaluateContext(evaluateContext)
+Law::Law(Context * context):
+  m_context(context)
 {
 }
 
-EvaluateContext * Law::evaluateContext() {
-  return m_evaluateContext;
+Context * Law::context() {
+  return m_context;
 }
 
 float Law::gridUnit() {
@@ -28,8 +28,10 @@ float Law::gridUnit() {
 }
 
 float Law::evaluateAtAbscissa(float t) const {
-  m_evaluateContext->setOverridenValueForSymbolT(t);
-  return expression()->approximate(*m_evaluateContext);
+  Symbol tSymbol = Symbol('t');
+  Float e = Float(t);
+  m_context->setExpressionForSymbolName(&e, &tSymbol);
+  return expression()->approximate(*m_context);
 }
 
 }

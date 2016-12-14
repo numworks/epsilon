@@ -103,11 +103,11 @@ Button * GraphController::buttonAtIndex(int index) {
 void GraphController::didBecomeFirstResponder() {
   if (m_view.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
-    m_view.setContext(graphApp->evaluateContext());
+    m_view.setContext(graphApp->localContext());
   }
   if (m_graphWindow.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
-    m_graphWindow.setContext(graphApp->evaluateContext());
+    m_graphWindow.setContext(graphApp->localContext());
   }
   // if new functions were added to the store, the window parameters need to be refresh
   if (m_graphWindow.computeYaxes()) {

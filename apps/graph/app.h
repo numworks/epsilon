@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "function_store.h"
-#include "evaluate_context.h"
+#include "local_context.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -15,10 +15,10 @@ class App : public ::App, public ExpressionTextFieldDelegate {
 public:
   App(Container * container, Context * context);
   InputViewController * inputViewController();
-  Context * evaluateContext() override;
+  Context * localContext() override;
 private:
   FunctionStore m_functionStore;
-  EvaluateContext m_evaluateContext;
+  LocalContext m_localContext;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

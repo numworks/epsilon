@@ -3,11 +3,11 @@
 
 namespace Probability {
 
-UniformLaw::UniformLaw(EvaluateContext * evaluateContext) :
-  TwoParameterLaw(evaluateContext)
+UniformLaw::UniformLaw(Context * context) :
+  TwoParameterLaw(context)
 {
   // TODO: parse indicator function
-  m_expression = Expression::parse("1/(p2-p1)");
+  m_expression = Expression::parse("1/(a-b)");
   assert(m_expression != nullptr);
 }
 

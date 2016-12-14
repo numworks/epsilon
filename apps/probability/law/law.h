@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_LAW_H
 #define PROBABILITE_LAW_H
 
-#include "../evaluate_context.h"
+#include <poincare.h>
 
 namespace Probability {
 
@@ -14,10 +14,10 @@ public:
     Normal,
     Poisson
   };
-  Law(EvaluateContext * evaluateContext);
+  Law(Context * context);
   virtual ~Law() {};
   virtual const char * title() = 0;
-  EvaluateContext * evaluateContext();
+  Context * context();
   virtual Type type() const = 0;
   virtual Expression * expression() const = 0;
   virtual bool isContinuous() = 0;
@@ -38,7 +38,7 @@ protected:
   constexpr static float k_oneUnit = 1.0f;
   constexpr static float k_twoUnit = 2.0f;
   constexpr static float k_fiveUnit = 5.0f;
-  EvaluateContext * m_evaluateContext;
+  Context * m_context;
 };
 
 }

@@ -42,7 +42,7 @@ void WindowParameterController::willDisplayCellForIndex(TableViewCell * cell, in
 
 bool WindowParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->context();
+  Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
   setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),

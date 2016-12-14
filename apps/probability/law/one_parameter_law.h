@@ -7,7 +7,7 @@ namespace Probability {
 
 class OneParameterLaw : public Law {
 public:
-  OneParameterLaw(EvaluateContext * evaluateContext);
+  OneParameterLaw(Context * context);
   virtual ~OneParameterLaw() {};
   int numberOfParameter() override;
   float parameterValueAtIndex(int index) override;

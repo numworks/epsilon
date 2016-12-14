@@ -217,7 +217,7 @@ bool ValuesController::textFieldDidReceiveEvent(TextField * textField, Ion::Even
 
 bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->context();
+  Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
   m_interval.setElement(activeRow()-1, floatBody);
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(activeColumn(), activeRow()), activeColumn(), activeRow());
@@ -365,9 +365,9 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   float x = m_interval.element(j-1);
   App * graphApp = (Graph::App *)app();
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, (EvaluateContext *)graphApp->evaluateContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
   } else {
-    Float(function->evaluateAtAbscissa(x, (EvaluateContext *)graphApp->evaluateContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   }
   myValueCell->setText(buffer);
 }

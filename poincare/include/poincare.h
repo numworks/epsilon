@@ -8,6 +8,7 @@
 #include <poincare/float.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
+#include <poincare/global_context.h>
 #include <poincare/integer.h>
 #include <poincare/list_data.h>
 #include <poincare/logarithm.h>

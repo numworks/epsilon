@@ -7,7 +7,7 @@ namespace Probability {
 
 class BinomialLaw : public TwoParameterLaw {
 public:
-  BinomialLaw(EvaluateContext * evaluateContext);
+  BinomialLaw(Context * context);
   ~BinomialLaw() override;
   const char * title() override;
   Expression * expression() const override;

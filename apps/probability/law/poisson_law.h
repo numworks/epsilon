@@ -7,7 +7,7 @@ namespace Probability {
 
 class PoissonLaw : public OneParameterLaw {
 public:
-  PoissonLaw(EvaluateContext * evaluateContext);
+  PoissonLaw(Context * context);
   ~PoissonLaw() override;
   const char * title() override;
   Expression * expression() const override;

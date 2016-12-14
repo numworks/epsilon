@@ -7,7 +7,7 @@ namespace Probability {
 
 class NormalLaw : public TwoParameterLaw {
 public:
-  NormalLaw(EvaluateContext * evaluateContext);
+  NormalLaw(Context * context);
   ~NormalLaw() override;
   const char * title() override;
   Expression * expression() const override;

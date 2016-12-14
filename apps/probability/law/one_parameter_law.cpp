@@ -3,11 +3,13 @@
 
 namespace Probability {
 
-OneParameterLaw::OneParameterLaw(EvaluateContext * evaluateContext) :
-  Law(evaluateContext),
+OneParameterLaw::OneParameterLaw(Context * context) :
+  Law(context),
   m_parameter1(0.5f)
 {
-  m_evaluateContext->setOverridenValueForFirstParameter(m_parameter1);
+  Symbol aSymbol = Symbol('a');
+  Float e = Float(m_parameter1);
+  m_context->setExpressionForSymbolName(&e, &aSymbol);
 }
 
 int OneParameterLaw::numberOfParameter() {
@@ -22,7 +24,9 @@ float OneParameterLaw::parameterValueAtIndex(int index) {
 void OneParameterLaw::setParameterAtIndex(float f, int index) {
   assert(index == 0);
   m_parameter1 = f;
-  m_evaluateContext->setOverridenValueForFirstParameter(f);
+  Symbol aSymbol = Symbol('a');
+  Float e = Float(f);
+  m_context->setExpressionForSymbolName(&e, &aSymbol);
 }
 
 }

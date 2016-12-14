@@ -28,17 +28,17 @@ QUIZ_CASE(poincare_float_to_text) {
 }
 
 QUIZ_CASE(poincare_float_approximate) {
-  Context context;
+  GlobalContext globalContext;
   Expression * a = new Float(123.456f);
-  assert(a->approximate(context) == 123.456f);
+  assert(a->approximate(globalContext) == 123.456f);
   delete a;
 }
 
 QUIZ_CASE(poincare_float_evaluate) {
-  Context context;
+  GlobalContext globalContext;
   Expression * a = new Float(123.456f);
-  Expression * e = a->evaluate(context);
-  assert(e->approximate(context) == 123.456f);
+  Expression * e = a->evaluate(globalContext);
+  assert(e->approximate(globalContext) == 123.456f);
   delete a;
   delete e;
 }

@@ -15,7 +15,7 @@ GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
   m_visibleCursor(true),
   m_graphWindow(graphWindow),
   m_functionStore(functionStore),
-  m_evaluateContext(nullptr)
+  m_context(nullptr)
 {
 }
 
@@ -29,11 +29,11 @@ View * GraphView::subviewAtIndex(int index) {
 }
 
 void GraphView::setContext(Context * context) {
-  m_evaluateContext = (EvaluateContext *)context;
+  m_context = context;
 }
 
 Context * GraphView::context() const {
-  return m_evaluateContext;
+  return m_context;
 }
 
 int GraphView::indexFunctionSelectedByCursor() {
@@ -71,7 +71,7 @@ float GraphView::xCursorPosition() {
 void GraphView::goToAbscissaOnFunction(float abscissa, Function * function) {
   m_graphWindow->centerAxisAround(GraphWindow::Axis::X, abscissa);
   m_xCursorPosition = floatToPixel(Axis::Horizontal, abscissa);
-  float ordinate = function->evaluateAtAbscissa(abscissa, m_evaluateContext);
+  float ordinate = function->evaluateAtAbscissa(abscissa, m_context);
   m_graphWindow->centerAxisAround(GraphWindow::Axis::Y, ordinate);
   m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
   reload();
@@ -86,7 +86,7 @@ void GraphView::initCursorPosition() {
   float center = (min(Axis::Horizontal)+max(Axis::Horizontal))/2.0f;
   m_indexFunctionSelectedByCursor = 0;
   Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
-  float fCenter = firstFunction->evaluateAtAbscissa(center, m_evaluateContext);
+  float fCenter = firstFunction->evaluateAtAbscissa(center, m_context);
   m_xCursorPosition = (bounds().width()-1.0f)/2.0f;
   m_yCursorPosition = floatToPixel(Axis::Vertical, fCenter);
 }
@@ -96,7 +96,7 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
   m_xCursorPosition = m_xCursorPosition + xOffset;
   float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  float y = f->evaluateAtAbscissa(x, m_evaluateContext);
+  float y = f->evaluateAtAbscissa(x, m_context);
   float xMargin = pixelToFloat(Axis::Horizontal, k_cursorMarginToBorder) - pixelToFloat(Axis::Horizontal, 0);
   float yMargin =  pixelToFloat(Axis::Vertical, 0) - pixelToFloat(Axis::Vertical, k_cursorMarginToBorder);
   bool windowHasMoved = m_graphWindow->panToMakePointVisible(x, y, xMargin, yMargin);
@@ -112,12 +112,12 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
 Function * GraphView::moveCursorVertically(int direction) {
   float x = pixelToFloat(Axis::Horizontal, m_xCursorPosition);
   Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  float y = actualFunction->evaluateAtAbscissa(x, m_evaluateContext);
+  float y = actualFunction->evaluateAtAbscissa(x, m_context);
   Function * nextFunction = actualFunction;
   float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
-    float newY = f->evaluateAtAbscissa(x, m_evaluateContext);
+    float newY = f->evaluateAtAbscissa(x, m_context);
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
       m_indexFunctionSelectedByCursor = i;
@@ -195,8 +195,10 @@ float GraphView::max(Axis axis) const {
 }
 
 float GraphView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {
-  m_evaluateContext->setOverridenValueForSymbolX(abscissa);
-  return expression->approximate(*m_evaluateContext);
+  Symbol xSymbol = Symbol('x');
+  Float e = Float(abscissa);
+  m_context->setExpressionForSymbolName(&e, &xSymbol);
+  return expression->approximate(*m_context);
 }
 
 }

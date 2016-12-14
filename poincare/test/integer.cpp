@@ -51,32 +51,32 @@ QUIZ_CASE(poincare_integer_divide) {
 }
 
 QUIZ_CASE(poincare_integer_approximate) {
-  Context context;
-  assert(Integer(1).approximate(context) == 1.0f);
-  assert(Integer("12345678").approximate(context) == 12345678.0f);
-  assert(Integer("0").approximate(context) == 0);
-  assert(Integer("-0").approximate(context) == -0);
-  assert(Integer(-1).approximate(context) == -1);
+  GlobalContext globalContext;
+  assert(Integer(1).approximate(globalContext) == 1.0f);
+  assert(Integer("12345678").approximate(globalContext) == 12345678.0f);
+  assert(Integer("0").approximate(globalContext) == 0);
+  assert(Integer("-0").approximate(globalContext) == -0);
+  assert(Integer(-1).approximate(globalContext) == -1);
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {
-  Context context;
-  Expression * e = Integer(1).evaluate(context);
-  assert(e->approximate(context) == 1.0f);
+  GlobalContext globalContext;
+  Expression * e = Integer(1).evaluate(globalContext);
+  assert(e->approximate(globalContext) == 1.0f);
   delete e;
-  e = Integer(12345678).evaluate(context);
-  assert(e->approximate(context) == 12345678.0f);
+  e = Integer(12345678).evaluate(globalContext);
+  assert(e->approximate(globalContext) == 12345678.0f);
   delete e;
-  e = Integer(0).evaluate(context);
-  assert(e->approximate(context) == 0.0f);
+  e = Integer(0).evaluate(globalContext);
+  assert(e->approximate(globalContext) == 0.0f);
   delete e;
-  e = Integer(-0).evaluate(context);
-  assert(e->approximate(context) == 0.0f);
+  e = Integer(-0).evaluate(globalContext);
+  assert(e->approximate(globalContext) == 0.0f);
   delete e;
-  e = Integer(-0).evaluate(context);
-  assert(e->approximate(context) == 0.0f);
+  e = Integer(-0).evaluate(globalContext);
+  assert(e->approximate(globalContext) == 0.0f);
   delete e;
-  e = Integer(-1).evaluate(context);
-  assert(e->approximate(context) == -1.0f);
+  e = Integer(-1).evaluate(globalContext);
+  assert(e->approximate(globalContext) == -1.0f);
   delete e;
 }

@@ -2,8 +2,9 @@
 #define PROBABILITY_PROBABILITY_APP_H
 
 #include <escher.h>
+#include <poincare.h>
 #include "law_controller.h"
-#include "evaluate_context.h"
+#include "local_context.h"
 #include "../expression_text_field_delegate.h"
 
 namespace Probability {
@@ -15,9 +16,9 @@ public:
     Student
   };
   App(Container * container, Context * context);
-  Context * evaluateContext() override;
+  Context * localContext() override;
 private:
-  EvaluateContext m_evaluateContext;
+  LocalContext m_localContext;
   LawController m_lawController;
   StackViewController m_stackViewController;
 };

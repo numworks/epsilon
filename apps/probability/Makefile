@@ -3,7 +3,6 @@ app_objs += $(addprefix apps/probability/,\
   calculation.o\
   calculation_controller.o\
   cell.o\
-  evaluate_context.o\
   image_table_view.o\
   law/binomial_law.o\
   law/exponential_law.o\
@@ -15,6 +14,7 @@ app_objs += $(addprefix apps/probability/,\
   law/uniform_law.o\
   law_controller.o\
   law_curve_view.o\
+  local_context.o\
   parameters_controller.o\
 )
 

@@ -5,14 +5,14 @@ namespace Probability {
 
 App::App(Container * container, Context * context) :
   ::App(container, &m_stackViewController, "Probability", ImageStore::ProbabilityIcon),
-  m_evaluateContext(EvaluateContext(context)),
-  m_lawController(LawController(nullptr, &m_evaluateContext)),
+  m_localContext(LocalContext(context)),
+  m_lawController(LawController(nullptr, &m_localContext)),
   m_stackViewController(&m_modalViewController, &m_lawController, true)
 {
 }
 
-Context * App::evaluateContext() {
-  return &m_evaluateContext;
+Context * App::localContext() {
+  return &m_localContext;
 }
 
 }

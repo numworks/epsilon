@@ -3,11 +3,11 @@
 
 namespace Probability {
 
-NormalLaw::NormalLaw(EvaluateContext * evaluateContext) :
-  TwoParameterLaw(evaluateContext),
-  m_expression(Expression::parse("p1-p2*t"))
+NormalLaw::NormalLaw(Context * context) :
+  TwoParameterLaw(context),
+  m_expression(Expression::parse("a-b*t"))
 {
-  //m_expression = Expression::parse("(1/(p2*sqrt(2*Pi))*exp(-0.5*((t-p1)/p2)^2)");
+  //m_expression = Expression::parse("(1/(b*sqrt(2*Pi))*exp(-0.5*((t-a)/b)^2)");
   assert(m_expression != nullptr);
 }
 

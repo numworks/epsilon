@@ -3,11 +3,11 @@
 
 namespace Probability {
 
-BinomialLaw::BinomialLaw(EvaluateContext * evaluateContext) :
-  TwoParameterLaw(evaluateContext),
-  m_expression(Expression::parse("p1-p2*t"))
+BinomialLaw::BinomialLaw(Context * context) :
+  TwoParameterLaw(context),
+  m_expression(Expression::parse("a-b*t"))
 {
-  //m_expression = Expression::parse("binomial(p1, p2)*p2^t*(1-p2)^(p1-t)");
+  //m_expression = Expression::parse("binomial(a, b)*b^t*(1-b)^(a-t)");
   assert(m_expression != nullptr);
 }
 

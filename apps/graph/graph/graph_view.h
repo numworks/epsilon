@@ -7,7 +7,7 @@
 #include "../../curve_view.h"
 #include "../../constant.h"
 #include "../function_store.h"
-#include "../evaluate_context.h"
+#include "../local_context.h"
 
 namespace Graph {
 
@@ -23,7 +23,7 @@ public:
   void initCursorPosition();
   void moveCursorHorizontally(KDCoordinate xOffset);
   Function * moveCursorVertically(int direction);
-  void setContext(Context * evaluateContext);
+  void setContext(Context * context);
   Context * context() const;
   int indexFunctionSelectedByCursor();
   void reload();
@@ -56,7 +56,7 @@ private:
 
   GraphWindow * m_graphWindow;
   FunctionStore * m_functionStore;
-  EvaluateContext * m_evaluateContext;
+  Context * m_context;
 };
 
 }

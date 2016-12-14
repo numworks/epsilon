@@ -16,7 +16,7 @@ GraphWindow::GraphWindow(FunctionStore * functionStore) :
   m_xGridUnit(2.0f),
   m_yGridUnit(2.0f),
   m_functionStore(functionStore),
-  m_evaluateContext(nullptr)
+  m_context(nullptr)
 {
 }
 
@@ -87,7 +87,7 @@ bool GraphWindow::computeYaxes() {
       Function * f = m_functionStore->activeFunctionAtIndex(i);
       float y = 0.0f;
       for (float x = m_xMin; x <= m_xMax; x += step) {
-        y = f->evaluateAtAbscissa(x, m_evaluateContext);
+        y = f->evaluateAtAbscissa(x, m_context);
         if (!isnan(y) && !isinf(y)) {
           min = min < y ? min : y;
           max = max > y ? max : y;
@@ -109,11 +109,11 @@ bool GraphWindow::computeYaxes() {
 }
 
 Context * GraphWindow::context() {
-  return m_evaluateContext;
+  return m_context;
 }
 
 void GraphWindow::setContext(Context * context) {
-  m_evaluateContext = (EvaluateContext *)context;
+  m_context = context;
 }
 
 void GraphWindow::zoom(float ratio) {

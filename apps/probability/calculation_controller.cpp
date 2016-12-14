@@ -5,16 +5,14 @@
 
 namespace Probability {
 
-CalculationController::ContentView::ContentView(Responder * parentResponder,Calculation * calculation) :
+CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation)),
+  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
   m_calculation(calculation)
 {
-  for (int k = 0; k < k_maxNumberOfEditableFields; k++) {
-    m_calculationCell[k].setParentResponder(parentResponder);
-    CalculationController * parentController = (CalculationController *)parentResponder;
-    m_calculationCell[k].setDelegate(parentController);
-  }
 }
 
 void CalculationController::ContentView::setLaw(Law * law) {
@@ -131,7 +129,7 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
 
 CalculationController::CalculationController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_contentView(ContentView(this, &m_calculation)),
+  m_contentView(ContentView(this, this, &m_calculation)),
   m_highlightedSubviewIndex(1),
   m_calculation(Calculation())
 {

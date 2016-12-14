@@ -7,7 +7,7 @@
 namespace Graph {
 class EditableValueCell : public EvenOddCell, public Responder {
 public:
-  EditableValueCell();
+  EditableValueCell(char * draftTextBuffer);
   void setDelegate(TextFieldDelegate * delegate);
   void reloadCell() override;
   const char * text() const;
@@ -17,10 +17,10 @@ public:
   void layoutSubviews() override;
   void didBecomeFirstResponder() override;
   void setEditing(bool isEditing);
+  constexpr static int k_bufferLength = 255;
 private:
   TextField m_textField;
-  char m_textBody[255];
-  char m_draftTextBody[255];
+  char m_textBody[k_bufferLength];
 };
 
 }

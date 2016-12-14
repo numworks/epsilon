@@ -46,6 +46,7 @@ private:
     SelectableTableView * m_selectableTableView;
   };
   constexpr static int k_maxNumberOfCells = 2;
+  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_menuListCell[k_maxNumberOfCells];
   ContentView m_contentView;
   Law * m_law;

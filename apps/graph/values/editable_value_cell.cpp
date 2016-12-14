@@ -5,10 +5,10 @@
 
 namespace Graph {
 
-EditableValueCell::EditableValueCell() :
+EditableValueCell::EditableValueCell(char * draftTextBuffer) :
   EvenOddCell(),
   Responder(nullptr),
-  m_textField(TextField(this, m_textBody, m_draftTextBody, 255, nullptr, 1.0f, 0.5f, KDColorBlack, KDColorWhite))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, nullptr, 1.0f, 0.5f, KDColorBlack, KDColorWhite))
 {
 }
 

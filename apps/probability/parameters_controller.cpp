@@ -70,15 +70,13 @@ void ParametersController::ContentView::layoutSubviews() {
 
 ParametersController::ParametersController(Responder * parentResponder) :
   FloatParameterController(parentResponder),
+  m_menuListCell{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer),
+    EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer)},
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(nullptr),
   m_buttonSelected(false),
   m_calculationController(CalculationController(nullptr))
 {
-  for (int k = 0; k < k_maxNumberOfCells; k++) {
-    m_menuListCell[k].setParentResponder(&m_selectableTableView);
-    m_menuListCell[k].setDelegate(this);
-  }
 }
 
 ExpressionTextFieldDelegate * ParametersController::textFieldDelegate() {

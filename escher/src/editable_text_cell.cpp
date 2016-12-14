@@ -3,15 +3,11 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate) :
+EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer) :
   TableViewCell(),
   Responder(parentResponder),
-  m_textField(TextField(this, m_textBody, m_draftTextBody, 255, delegate))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate))
 {
-}
-
-void EditableTextCell::setDelegate(TextFieldDelegate * delegate) {
-  m_textField.setTextFieldDelegate(delegate);
 }
 
 void EditableTextCell::reloadCell() {

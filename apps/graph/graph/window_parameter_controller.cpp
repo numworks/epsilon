@@ -8,17 +8,11 @@ namespace Graph {
 WindowParameterController::WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView) :
   FloatParameterController(parentResponder),
   m_graphWindow(graphWindow),
+  m_windowCells{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmax"),
+    EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymax")},
   m_yAutoCell(SwitchMenuListCell((char*)"Y auto")),
   m_graphView(graphView)
 {
-  m_windowCells[0].setText("Xmin");
-  m_windowCells[1].setText("Xmax");
-  m_windowCells[2].setText("Ymin");
-  m_windowCells[3].setText("Ymax");
-  for (int k = 0; k < k_numberOfTextCell; k++) {
-    m_windowCells[k].setParentResponder(&m_selectableTableView);
-    m_windowCells[k].setDelegate(this);
-  }
 }
 
 ExpressionTextFieldDelegate * WindowParameterController::textFieldDelegate() {

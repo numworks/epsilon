@@ -23,7 +23,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, Calculation * Calculation);
+    ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation);
     void setLaw(Law * law);
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -41,6 +41,7 @@ private:
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
     PointerTextView m_text[k_maxNumberOfEditableFields];
+    char m_draftTextBuffer[EditableTextCell::k_bufferLength];
     EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
     Calculation * m_calculation;
   };

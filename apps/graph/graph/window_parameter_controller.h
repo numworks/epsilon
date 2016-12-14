@@ -25,6 +25,7 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
   GraphWindow * m_graphWindow;
+  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_windowCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
   GraphView * m_graphView;

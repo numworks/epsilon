@@ -6,12 +6,10 @@ namespace Graph {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, GraphView * graphView) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(EditableTextMenuListCell((char*)"x")),
+  m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
   m_graphView(graphView),
   m_function(nullptr)
 {
-  m_abscisseCell.setParentResponder(&m_selectableTableView);
-  m_abscisseCell.setDelegate(this);
 }
 
 ExpressionTextFieldDelegate * GoToParameterController::textFieldDelegate() {

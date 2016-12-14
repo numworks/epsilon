@@ -10,6 +10,8 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this)),
+  m_abscissaCells{EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer),EditableValueCell(m_draftTextBuffer),
+    EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer)},
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),

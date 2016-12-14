@@ -1,15 +1,11 @@
 #include <escher/editable_text_menu_list_cell.h>
 #include <escher/app.h>
 
-EditableTextMenuListCell::EditableTextMenuListCell(char * label, Responder * parentResponder, TextFieldDelegate * textFieldDelegate) :
+EditableTextMenuListCell::EditableTextMenuListCell(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label) :
   Responder(parentResponder),
   MenuListCell(label),
-  m_textField(TextField(this, m_textBody, m_draftTextBody, 255, textFieldDelegate))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, textFieldDelegate))
 {
-}
-
-void EditableTextMenuListCell::setDelegate(TextFieldDelegate * delegate) {
-  m_textField.setTextFieldDelegate(delegate);
 }
 
 View * EditableTextMenuListCell::accessoryView() const {

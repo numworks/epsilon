@@ -76,6 +76,7 @@ private:
   TitleCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
+  char m_draftTextBuffer[EditableValueCell::k_bufferLength];
   EditableValueCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionStore * m_functionStore;
   Interval m_interval;

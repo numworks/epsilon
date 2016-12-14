@@ -46,10 +46,7 @@ char * LawCurveView::label(Axis axis, int index) const {
 }
 
 float LawCurveView::evaluateExpressionAtAbscissa(Expression * expression, float abscissa) const {
-  Symbol tSymbol = Symbol('t');
-  Float e = Float(abscissa);
-  m_law->context()->setExpressionForSymbolName(&e, &tSymbol);
-  return expression->approximate(*(m_law->context()));
+  return m_law->evaluateAtAbscissa(abscissa);
 }
 
 }

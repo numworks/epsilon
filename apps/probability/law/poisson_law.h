@@ -1,7 +1,6 @@
 #ifndef PROBABILITE_POISSON_LAW_H
 #define PROBABILITE_POISSON_LAW_H
 
-#include "evaluate_context.h"
 #include "one_parameter_law.h"
 
 namespace Probability {

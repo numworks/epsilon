@@ -3,7 +3,7 @@
 
 #include "../curve_view.h"
 #include "../constant.h"
-#include "law.h"
+#include "law/law.h"
 #include <escher.h>
 #include <poincare.h>
 

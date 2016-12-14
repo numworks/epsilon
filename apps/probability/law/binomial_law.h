@@ -1,7 +1,6 @@
 #ifndef PROBABILITE_BINOMIAL_LAW_H
 #define PROBABILITE_BINOMIAL_LAW_H
 
-#include "evaluate_context.h"
 #include "two_parameter_law.h"
 
 namespace Probability {

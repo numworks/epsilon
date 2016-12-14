@@ -1,7 +1,6 @@
 #ifndef PROBABILITE_UNIFORM_LAW_H
 #define PROBABILITE_UNIFORM_LAW_H
 
-#include "evaluate_context.h"
 #include "two_parameter_law.h"
 
 namespace Probability {

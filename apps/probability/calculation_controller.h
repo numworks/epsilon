@@ -2,7 +2,7 @@
 #define PROBABILITY_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
-#include "law.h"
+#include "law/law.h"
 #include "law_curve_view.h"
 #include "image_table_view.h"
 

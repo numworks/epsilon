@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "cell.h"
-#include "law.h"
+#include "law/law.h"
 #include "parameters_controller.h"
 #include "evaluate_context.h"
 

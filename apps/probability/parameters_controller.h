@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "../float_parameter_controller.h"
-#include "law.h"
+#include "law/law.h"
 #include "calculation_controller.h"
 
 namespace Probability {

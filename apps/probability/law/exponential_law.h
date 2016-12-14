@@ -1,15 +1,14 @@
-#ifndef PROBABILITE_NORMAL_LAW_H
-#define PROBABILITE_NORMAL_LAW_H
+#ifndef PROBABILITE_EXPONENTIAL_LAW_H
+#define PROBABILITE_EXPONENTIAL_LAW_H
 
-#include "evaluate_context.h"
-#include "two_parameter_law.h"
+#include "one_parameter_law.h"
 
 namespace Probability {
 
-class NormalLaw : public TwoParameterLaw {
+class ExponentialLaw : public OneParameterLaw {
 public:
-  NormalLaw(EvaluateContext * evaluateContext);
-  ~NormalLaw() override;
+  ExponentialLaw(EvaluateContext * evaluateContext);
+  ~ExponentialLaw() override;
   const char * title() override;
   Expression * expression() const override;
   Type type() const override;

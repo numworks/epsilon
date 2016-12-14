@@ -1,6 +1,11 @@
 #include "law_controller.h"
 #include <assert.h>
 #include "app.h"
+#include "binomial_law.h"
+#include "exponential_law.h"
+#include "normal_law.h"
+#include "poisson_law.h"
+#include "uniform_law.h"
 #include "images/binomial_icon.h"
 #include "images/exponential_icon.h"
 #include "images/normal_icon.h"
@@ -26,8 +31,9 @@ LawController::LawController(Responder * parentResponder, EvaluateContext * eval
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_law(evaluateContext),
-  m_parametersController(ParametersController(nullptr, &m_law))
+  m_law(nullptr),
+  m_evaluateContext(evaluateContext),
+  m_parametersController(ParametersController(nullptr))
 {
   m_messages = sMessages;
 }
@@ -37,24 +43,18 @@ View * LawController::view() {
 }
 
 const char * LawController::title() const {
-  switch (m_law.type()) {
-    case Law::Type::Binomial:
-      return "Loi binomiale";
-    case Law::Type::Uniform:
-      return "Loi uniforme";
-    case Law::Type::Exponential:
-      return "Loi exponentielle";
-    case Law::Type::Normal:
-      return "Loi normale";
-    case Law::Type::Poisson:
-      return "Loi Poisson";
-    default:
-      return "Choisir le type de Loi";
+  if (m_law == nullptr) {
+    return "Choisir le type de Loi";
   }
+  return m_law->title();
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
-  m_law.setType(Law::Type::NoType);
+  if (m_law != nullptr) {
+    delete m_law;
+    m_law = nullptr;
+    m_parametersController.setLaw(m_law);
+  }
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->updateTitle();
   if (m_selectableTableView.selectedRow() == -1) {
@@ -68,7 +68,7 @@ void Probability::LawController::didBecomeFirstResponder() {
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     StackViewController * stack = (StackViewController *)parentResponder();
-    m_law.setType(typeAtIndex(m_selectableTableView.selectedRow()));
+    setLawAccordingToIndex(m_selectableTableView.selectedRow());
     stack->updateTitle();
     stack->push(&m_parametersController);
     return true;
@@ -93,25 +93,11 @@ int Probability::LawController::reusableCellCount() {
 void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   Cell * myCell = (Cell *)cell;
   myCell->setLabel(m_messages[index]);
-  switch (typeAtIndex(index)) {
-    case Law::Type::Binomial:
-      myCell->setImage(ImageStore::BinomialIcon, ImageStore::FocusedBinomialIcon);
-      break;
-    case Law::Type::Uniform:
-      myCell->setImage(ImageStore::UniformIcon, ImageStore::FocusedUniformIcon);
-      break;
-    case Law::Type::Exponential:
-      myCell->setImage(ImageStore::ExponentialIcon, ImageStore::FocusedExponentialIcon);
-      break;
-    case Law::Type::Normal:
-      myCell->setImage(ImageStore::NormalIcon, ImageStore::FocusedNormalIcon);
-      break;
-    case Law::Type::Poisson:
-      myCell->setImage(ImageStore::PoissonIcon, ImageStore::FocusedPoissonIcon);
-      break;
-    default:
-      break;
-  }
+  const Image * images[5] = {ImageStore::BinomialIcon, ImageStore::UniformIcon, ImageStore::ExponentialIcon,
+    ImageStore::NormalIcon, ImageStore::PoissonIcon};
+  const Image * focusedImages[5] = {ImageStore::FocusedBinomialIcon, ImageStore::FocusedUniformIcon, ImageStore::FocusedExponentialIcon,
+    ImageStore::FocusedNormalIcon, ImageStore::FocusedPoissonIcon};
+  myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
 }
 
@@ -119,21 +105,31 @@ KDCoordinate Probability::LawController::cellHeight() {
   return 35;
 }
 
-Law::Type Probability::LawController::typeAtIndex(int index) {
+void Probability::LawController::setLawAccordingToIndex(int index) {
+  if (m_law != nullptr) {
+    delete m_law;
+    m_law = nullptr;
+  }
   switch (index) {
     case 0:
-     return Law::Type::Binomial;
+      m_law = new BinomialLaw(m_evaluateContext);
+      break;
     case 1:
-     return Law::Type::Uniform;
+      m_law = new UniformLaw(m_evaluateContext);
+      break;
     case 2:
-     return Law::Type::Exponential;
+      m_law = new ExponentialLaw(m_evaluateContext);
+      break;
     case 3:
-     return Law::Type::Normal;
+      m_law = new NormalLaw(m_evaluateContext);
+      break;
     case 4:
-     return Law::Type::Poisson;
+      m_law = new PoissonLaw(m_evaluateContext);
+      break;
     default:
-     return Law::Type::NoType;
+     return;
   }
+  m_parametersController.setLaw(m_law);
 }
 
 }

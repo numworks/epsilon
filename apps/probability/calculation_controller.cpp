@@ -5,10 +5,10 @@
 
 namespace Probability {
 
-CalculationController::ContentView::ContentView(Responder * parentResponder, Law * law) :
-  m_lawCurveView(LawCurveView(law)),
-  m_imageTableView(ImageTableView(parentResponder, law)),
-  m_law(law)
+CalculationController::ContentView::ContentView(Responder * parentResponder,Calculation * calculation) :
+  m_lawCurveView(LawCurveView()),
+  m_imageTableView(ImageTableView(parentResponder, calculation)),
+  m_calculation(calculation)
 {
   for (int k = 0; k < k_maxNumberOfEditableFields; k++) {
     m_calculationCell[k].setParentResponder(parentResponder);
@@ -17,8 +17,12 @@ CalculationController::ContentView::ContentView(Responder * parentResponder, Law
   }
 }
 
+void CalculationController::ContentView::setLaw(Law * law) {
+  m_lawCurveView.setLaw(law);
+}
+
 int CalculationController::ContentView::numberOfSubviews() const {
-  if ((int)m_law->calculationType() == 1) {
+  if ((int)m_calculation->type() == 1) {
     return 8;
   }
   return 6;
@@ -33,7 +37,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     return &m_imageTableView;
   }
   if (index == 2) {
-    if ((int)m_law->calculationType() == 0) {
+    if ((int)m_calculation->type() == 0) {
       m_text[0].setText("P(X <= ");
     } else {
       m_text[0].setText("P( ");
@@ -42,13 +46,13 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     return &m_text[0];
   }
   if (index == 4) {
-    if ((int)m_law->calculationType() == 0) {
+    if (m_calculation->type() == Calculation::Type::LeftIntegral) {
       m_text[1].setText(") = ");
     }
-    if ((int)m_law->calculationType() == 1) {
+    if (m_calculation->type() == Calculation::Type::FiniteIntegral) {
       m_text[1].setText(" <= X <= ");
     }
-    if ((int)m_law->calculationType() == 2) {
+    if (m_calculation->type() == Calculation::Type::RightIntegral) {
       m_text[1].setText(" <= X ) = ");
     }
     m_text[1].setAlignment(0.5f, 0.5f);
@@ -67,7 +71,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[Constant::FloatBufferSizeInScientificMode];
-  Float(m_law->calculationElementAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_calculationCell[index].setText(buffer);
 }
 
@@ -78,20 +82,20 @@ void CalculationController::ContentView::layoutSubviews() {
   m_imageTableView.setFrame(KDRect(xCoordinate, 0, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));
   xCoordinate += ImageTableView::k_imageWidth + k_textMargin;
   KDCoordinate numberOfCharacters = 7;
-  if ((int)m_law->calculationType() > 0) {
+  if ((int)m_calculation->type() > 0) {
     numberOfCharacters = 3;
   }
   m_text[0].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
   xCoordinate += numberOfCharacters*k_charWidth + k_textMargin;
   m_calculationCell[0].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
   xCoordinate += k_textFieldWidth + k_textMargin;
-  if ((int)m_law->calculationType() == 0) {
+  if (m_calculation->type() == Calculation::Type::LeftIntegral) {
     numberOfCharacters = 4;
   }
-  if ((int)m_law->calculationType() == 1) {
+  if (m_calculation->type() == Calculation::Type::FiniteIntegral) {
     numberOfCharacters = 9;
   }
-  if ((int)m_law->calculationType() == 2) {
+  if (m_calculation->type() == Calculation::Type::RightIntegral) {
     numberOfCharacters = 10;
   }
   m_text[1].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
@@ -125,11 +129,11 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
   return &m_calculationCell[index];
 }
 
-CalculationController::CalculationController(Responder * parentResponder, Law * law) :
+CalculationController::CalculationController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_contentView(ContentView(this, law)),
+  m_contentView(ContentView(this, &m_calculation)),
   m_highlightedSubviewIndex(1),
-  m_law(law)
+  m_calculation(Calculation())
 {
 }
 
@@ -139,6 +143,15 @@ View * CalculationController::view() {
 
 const char * CalculationController::title() const {
   return "Calculer les probabilites";
+}
+
+void CalculationController::setLaw(Law * law) {
+  m_contentView.setLaw(law);
+  m_calculation.setLaw(law);
+}
+
+Calculation * CalculationController::calculation() {
+  return &m_calculation;
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -181,7 +194,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
   Context * globalContext = appsContainer->context();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
-  m_law->setCalculationElementAtIndex(floatBody, m_highlightedSubviewIndex-1);
+  m_calculation.setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < ContentView::k_maxNumberOfEditableFields; k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);
   }
@@ -203,10 +216,6 @@ void CalculationController::didBecomeFirstResponder() {
     m_contentView.imageTableView()->setHighlight(true);
   }
   m_contentView.lawCurveView()->reload();
-}
-
-Law * CalculationController::law() {
-  return m_law;
 }
 
 void CalculationController::selectSubview(int subviewIndex) {

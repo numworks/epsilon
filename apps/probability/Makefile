@@ -1,13 +1,21 @@
 app_objs += $(addprefix apps/probability/,\
   app.o\
+  binomial_law.o\
+  calculation.o\
   calculation_controller.o\
   cell.o\
   evaluate_context.o\
+  exponential_law.o\
   image_table_view.o\
   law.o\
   law_controller.o\
   law_curve_view.o\
+  normal_law.o\
+  one_parameter_law.o\
   parameters_controller.o\
+  poisson_law.o\
+  two_parameter_law.o\
+  uniform_law.o\
 )
 
 app_images += $(addprefix apps/probability/images/,\

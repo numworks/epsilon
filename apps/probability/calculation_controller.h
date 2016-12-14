@@ -10,19 +10,21 @@ namespace Probability {
 
 class CalculationController : public ViewController, public TextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder, Law * law);
+  CalculationController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
+  void setLaw(Law * law);
+  Calculation * calculation();
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  Law * law();
   void selectSubview(int subviewIndex);
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, Law * law);
+    ContentView(Responder * parentResponder, Calculation * Calculation);
+    void setLaw(Law * law);
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();
@@ -40,11 +42,11 @@ private:
     ImageTableView m_imageTableView;
     PointerTextView m_text[k_maxNumberOfEditableFields];
     EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
-    Law * m_law;
+    Calculation * m_calculation;
   };
   ContentView m_contentView;
   int m_highlightedSubviewIndex;
-  Law * m_law;
+  Calculation m_calculation;
 };
 
 }

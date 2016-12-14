@@ -11,8 +11,8 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     ParametersController * parameterController = (ParametersController *) context;
     CalculationController * calculationController = parameterController->calculationController();
     calculationController->selectSubview(1);
-    Law * law = calculationController->law();
-    law->setCalculationType(Law::CalculationType::LeftIntegral);
+    Calculation * calculation = calculationController->calculation();
+    calculation->setType(Calculation::Type::LeftIntegral);
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
     stack->push(calculationController);
@@ -68,12 +68,12 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, Law * law) :
+ParametersController::ParametersController(Responder * parentResponder) :
   FloatParameterController(parentResponder),
   m_contentView(ContentView(this, &m_selectableTableView)),
-  m_law(law),
+  m_law(nullptr),
   m_buttonSelected(false),
-  m_calculationController(CalculationController(nullptr, law))
+  m_calculationController(CalculationController(nullptr))
 {
   for (int k = 0; k < k_maxNumberOfCells; k++) {
     m_menuListCell[k].setParentResponder(&m_selectableTableView);
@@ -95,6 +95,11 @@ const char * ParametersController::title() const {
     return "Choisir les parametres";
   }
   return m_titleBuffer;
+}
+
+void ParametersController::setLaw(Law * law) {
+  m_law = law;
+  m_calculationController.setLaw(law);
 }
 
 void ParametersController::updateTitle() {

@@ -10,10 +10,11 @@ namespace Probability {
 
 class ParametersController : public FloatParameterController {
 public:
-  ParametersController(Responder * parentResponder, Law * law);
+  ParametersController(Responder * parentResponder);
   ExpressionTextFieldDelegate * textFieldDelegate() override;
   View * view() override;
   const char * title() const override;
+  void setLaw(Law * law);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   StackViewController * stackController();

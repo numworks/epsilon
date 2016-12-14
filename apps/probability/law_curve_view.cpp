@@ -3,10 +3,14 @@
 
 namespace Probability {
 
-LawCurveView::LawCurveView(Law * law) :
+LawCurveView::LawCurveView() :
   CurveView(),
-  m_law(law)
+  m_law(nullptr)
 {
+}
+
+void LawCurveView::setLaw(Law * law) {
+  m_law = law;
 }
 
 void LawCurveView::reload() {

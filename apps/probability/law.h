@@ -7,59 +7,37 @@ namespace Probability {
 
 class Law {
 public:
-  enum class Type {
-    NoType,
+  enum class Type : uint8_t{
     Binomial,
     Uniform,
     Exponential,
     Normal,
     Poisson
   };
-  enum CalculationType : uint8_t {
-    LeftIntegral = 0,
-    FiniteIntegral = 1,
-    RightIntegral = 2,
-  };
   Law(EvaluateContext * evaluateContext);
-  ~Law();
+  virtual ~Law() {};
+  virtual const char * title() = 0;
   EvaluateContext * evaluateContext();
-  void setType(Type type);
-  Type type() const;
-  void setCalculationType(CalculationType calculationType);
-  CalculationType calculationType() const;
-  Expression * expression();
-  bool isContinuous();
-  float xMin();
-  float yMin();
-  float xMax();
-  float yMax();
+  virtual Type type() const = 0;
+  virtual Expression * expression() const = 0;
+  virtual bool isContinuous() = 0;
+  virtual float xMin() = 0;
+  virtual float yMin() = 0;
+  virtual float xMax() = 0;
+  virtual float yMax() = 0;
   float gridUnit();
-  float calculationElementAtIndex(int index);
-  void setCalculationElementAtIndex(float f, int index);
-  int numberOfParameter();
-  float parameterValueAtIndex(int index);
-  const char * parameterNameAtIndex(int index);
-  const char * parameterDefinitionAtIndex(int index);
-  void setParameterAtIndex(float f, int index);
-  float evaluateAtAbscissa(float x, EvaluateContext * context) const;
-private:
-  void setWindow();
-  void computeGridUnit();
-  void computeCalculation(int indexKnownElement);
-  void initCalculationElements();
-  Type m_type;
-  CalculationType m_calculationType;
-  float m_parameter1;
-  float m_parameter2;
-  Expression * m_expression;
-  float m_xMin;
-  float m_xMax;
-  float m_yMin;
-  float m_yMax;
-  float m_gridUnit;
-  float m_calculationElement1;
-  float m_calculationElement2;
-  float m_calculationElement3;
+  virtual int numberOfParameter() = 0;
+  virtual float parameterValueAtIndex(int index) = 0;
+  virtual const char * parameterNameAtIndex(int index) = 0;
+  virtual const char * parameterDefinitionAtIndex(int index) = 0;
+  virtual void setParameterAtIndex(float f, int index) = 0;
+  float evaluateAtAbscissa(float x) const;
+protected:
+  constexpr static float k_minNumberOfXGridUnits = 7.0f;
+  constexpr static float k_maxNumberOfXGridUnits = 18.0f;
+  constexpr static float k_oneUnit = 1.0f;
+  constexpr static float k_twoUnit = 2.0f;
+  constexpr static float k_fiveUnit = 5.0f;
   EvaluateContext * m_evaluateContext;
 };
 

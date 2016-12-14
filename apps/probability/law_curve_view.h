@@ -11,7 +11,8 @@ namespace Probability {
 
 class LawCurveView : public CurveView {
 public:
-  LawCurveView(Law * law);
+  LawCurveView();
+  void setLaw(Law * law);
   void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:

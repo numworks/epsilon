@@ -23,14 +23,15 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  Law::Type typeAtIndex(int index);
+  void setLawAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the listview!
   Cell m_cells[k_totalNumberOfModels];
   SelectableTableView m_selectableTableView;
   const char ** m_messages;
-  Law m_law;
+  Law * m_law;
+  EvaluateContext * m_evaluateContext;
   ParametersController m_parametersController;
 
 };

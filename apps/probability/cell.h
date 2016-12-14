@@ -22,6 +22,8 @@ private:
   void layoutSubviews() override;
   PointerTextView m_labelView;
   ImageView m_iconView;
+  /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two
+   * images (16bits/pixels)*/
   const Image * m_icon;
   const Image * m_focusedIcon;
   ChevronView m_chevronView;

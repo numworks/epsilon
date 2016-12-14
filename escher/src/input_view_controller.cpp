@@ -47,14 +47,12 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
 
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   m_successAction.perform(this);
-  m_textFieldController.textField()->setText("");
   dismissModalViewController();
   return true;
 }
 
 bool InputViewController::textFieldDidAbortEditing(TextField * textField, const char * text) {
   m_failureAction.perform(this);
-  m_textFieldController.textField()->setText("");
   dismissModalViewController();
   return true;
 }

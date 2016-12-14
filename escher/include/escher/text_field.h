@@ -41,6 +41,7 @@ protected:
   size_t m_currentTextLength;
   size_t m_currentCursorLocation;
 private:
+  void reinitDraftTextBuffer();
   size_t m_textBufferSize;
   TextFieldDelegate * m_delegate;
   float m_horizontalAlignment;

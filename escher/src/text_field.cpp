@@ -79,7 +79,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       return true;
     }
     setEditing(true);
-    strlcpy(m_draftTextBuffer, m_textBuffer, m_textBufferSize);
+    insertTextAtLocation(m_textBuffer, cursorLocation());
     setCursorLocation(strlen(m_draftTextBuffer));
     return true;
   }
@@ -111,13 +111,11 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     if (m_isEditing) {
       insertTextAtLocation(event.text(), cursorLocation());
     } else {
-      strlcpy(m_draftTextBuffer, event.text(), m_textBufferSize);
-      m_currentTextLength = strlen(event.text());
-      setCursorLocation(0);
+      setEditing(true);
+      insertTextAtLocation(event.text(), cursorLocation());
     }
     int cursorDelta = strlen(event.text()) > 1 ? -1 : 0;
     setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
-    setEditing(true);
     return true;
   }
   if (event == Ion::Events::Back && m_isEditing) {
@@ -186,6 +184,14 @@ void TextField::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return;
   }
+  if (m_isEditing == false) {
+    reinitDraftTextBuffer();
+  }
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
+}
+
+void TextField::reinitDraftTextBuffer() {
+  setCursorLocation(0);
+  m_draftTextBuffer[0] = 0;
 }

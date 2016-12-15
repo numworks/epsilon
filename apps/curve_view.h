@@ -28,6 +28,7 @@ protected:
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
   void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
+  void drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
   void computeLabels(Axis axis);
   void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
 private:

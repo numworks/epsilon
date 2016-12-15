@@ -149,6 +149,23 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
   }
 }
 
+void CurveView::drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect) const {
+  int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
+  int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  for (int x = rectMin; x < rectMax; x += 1) {
+    float y = evaluateCurveAtAbscissa(curve, x);
+    if (!isnan(y)) {
+      float pxf = floatToPixel(Axis::Horizontal, x);
+      float pyf = floatToPixel(Axis::Vertical, y);
+      KDRect binRect((int)pxf - 1, roundf(pyf), 3, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+        binRect = KDRect((int)pxf - 1, floatToPixel(Axis::Vertical, 0.0f), 3, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+      }
+      ctx->fillRect(binRect, color);
+    }
+  }
+}
+
 void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx, KDRect rect) const {
   // We avoid drawing when no part of the stamp is visible
   if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {

@@ -22,7 +22,11 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   drawAxes(Axis::Horizontal, ctx, rect);
   drawLabels(Axis::Horizontal, ctx, rect);
-  drawCurve(m_law, KDColorRed, ctx, rect);
+  if (m_law->isContinuous()) {
+    drawCurve(m_law, KDColorRed, ctx, rect);
+  } else {
+    drawHistogram(m_law, KDColorRed, ctx, rect);
+  }
 }
 
 float LawCurveView::min(Axis axis) const {

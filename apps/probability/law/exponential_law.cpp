@@ -55,4 +55,11 @@ float ExponentialLaw::evaluateAtAbscissa(float x) const {
   return m_parameter1*expf(-m_parameter1*x);
 }
 
+bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
+  if (x <= 0.0f) {
+    return false;
+  }
+  return true;
+}
+
 }

@@ -58,4 +58,11 @@ float PoissonLaw::evaluateAtAbscissa(float x) const {
   return expf(lResult);
 }
 
+bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
+  if (x <= 0.0f) {
+    return false;
+  }
+  return true;
+}
+
 }

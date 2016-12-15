@@ -29,6 +29,7 @@ public:
   virtual const char * parameterDefinitionAtIndex(int index) = 0;
   virtual void setParameterAtIndex(float f, int index) = 0;
   virtual float evaluateAtAbscissa(float x) const = 0;
+  virtual bool authorizedValueAtIndex(float x, int index) const = 0;
 protected:
   constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;

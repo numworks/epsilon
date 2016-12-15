@@ -178,6 +178,10 @@ float ParametersController::parameterAtIndex(int index) {
 }
 
 void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+  if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
+    app()->displayWarning("Cette valeur est interdite !");
+    return;
+  }
   m_law->setParameterAtIndex(f, parameterIndex);
 }
 

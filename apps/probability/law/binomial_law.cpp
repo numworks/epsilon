@@ -83,4 +83,18 @@ float BinomialLaw::evaluateAtAbscissa(float x) const {
   return expf(lResult);
 }
 
+bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
+  if (index == 0) {
+    if (x != (int)x) {
+      return false;
+    }
+    return true;
+  }
+  if (x < 0.0f || x > 1.0f) {
+    return false;
+  }
+  return true;
+}
+
+
 }

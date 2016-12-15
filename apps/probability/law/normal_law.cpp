@@ -78,4 +78,8 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
   return (1.0f/(fabsf(m_parameter2)*sqrtf(2.0f*M_PI)))*expf(-0.5f*powf((x-m_parameter1)/m_parameter2,2));
 }
 
+bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
+  return true;
+}
+
 }

@@ -62,4 +62,17 @@ float UniformLaw::evaluateAtAbscissa(float t) const {
   return 0.0f;
 }
 
+bool UniformLaw::authorizedValueAtIndex(float x, int index) const {
+  if (index == 0) {
+    if (x > m_parameter2) {
+      return false;
+    }
+    return true;
+  }
+  if (m_parameter1 > x) {
+    return false;
+  }
+  return true;
+}
+
 }

@@ -143,7 +143,7 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     stampAtLocation(pxf, pyf, color, ctx, rect);
-    if (x > xMin) {
+    if (x > rectMin) {
       jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
     }
   }
@@ -215,7 +215,7 @@ void CurveView::jointDots(void * curve, float x, float y, float u, float v, KDCo
 }
 
 void CurveView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const {
-  if (pyf < pvf) {
+  if (pyf <= pvf) {
     for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
       float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
       stampAtLocation(pmf, pnf, color, ctx, rect);

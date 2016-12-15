@@ -5,7 +5,7 @@
 namespace Probability {
 
 BinomialLaw::BinomialLaw() :
-  TwoParameterLaw()
+  TwoParameterLaw(20.0f, 0.5f)
 {
 }
 
@@ -44,23 +44,41 @@ float BinomialLaw::xMin() {
 }
 
 float BinomialLaw::xMax() {
-  if (m_parameter1 == 0) {
-    return 1.0f;
-  }
-  return m_parameter1;
+  return m_parameter1 + 1.0f;
 }
 
 float BinomialLaw::yMin() {
-  return -0.2f;
+  int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
+  float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  if (result >= 0.0f || isnan(result)) {
+    result = -0.2f;
+  }
+  return result;
 }
 
 float BinomialLaw::yMax() {
-  return 1.0f;
+  int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
+  float result = k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  if (result <= 0.0f || result == yMin() || isnan(result)) {
+    result = yMin() + 1.0f;
+  }
+  return result;
 }
 
 float BinomialLaw::evaluateAtAbscissa(float x) const {
-  //m_expression = Expression::parse("binomial(a, b)*b^t*(1-b)^(a-t)");
-  return powf(m_parameter2, (int)x)*powf(1-m_parameter2, m_parameter1-(int)x);
+  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
+    return NAN;
+  }
+  if (m_parameter2 == 1.0f) {
+    if ((int)x == m_parameter1) {
+      return 1.0f;
+    }
+    return 0.0f;
+  }
+  if (x > m_parameter1) {
+    return 0.0f;
+  }
+  return expf(lgammaf(m_parameter1+1) - lgammaf((int)x+1) - lgammaf(m_parameter1 - (int)x+1))*powf(m_parameter2, (int)x)*powf(1-m_parameter2, m_parameter1-(int)x);
 }
 
 }

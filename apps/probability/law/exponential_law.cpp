@@ -5,7 +5,7 @@
 namespace Probability {
 
 ExponentialLaw::ExponentialLaw() :
-  OneParameterLaw()
+  OneParameterLaw(1.0f)
 {
 }
 
@@ -36,23 +36,20 @@ float ExponentialLaw::xMin() {
 }
 
 float ExponentialLaw::xMax() {
-  if (m_parameter1 == 0.0f) {
-    return 100.0f;
-  }
+  assert(m_parameter1 != 0.0f);
   return 5.0f/m_parameter1;
 }
 
 float ExponentialLaw::yMin() {
-  return -0.2f;
+  return k_minMarginFactor*m_parameter1;
 }
 
 float ExponentialLaw::yMax() {
-  return 1.0f;
+  return k_maxMarginFactor*m_parameter1;
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {
-// TODO: change 2.7f for the right constant
-  return m_parameter1*powf(2.7f, -m_parameter1*x);
+  return m_parameter1*expf(-m_parameter1*x);
 }
 
 }

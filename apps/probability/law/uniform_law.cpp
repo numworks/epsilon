@@ -4,7 +4,7 @@
 namespace Probability {
 
 UniformLaw::UniformLaw() :
-  TwoParameterLaw()
+  TwoParameterLaw(-1.0f, 1.0f)
 {
 }
 
@@ -39,25 +39,20 @@ const char * UniformLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float UniformLaw::xMin() {
-  if (m_parameter2 < m_parameter1) {
-    return m_parameter2 - 3.0f;
-  }
-  return m_parameter1 - 3.0f;
+  assert(m_parameter2 >= m_parameter1);
+  return m_parameter1 - 0.6f*(m_parameter2 - m_parameter1);
 }
 
 float UniformLaw::xMax() {
-  if (m_parameter2 < m_parameter1) {
-    return m_parameter1 + 3.0f;
-  }
-  return m_parameter2 + 3.0f;;
+  return m_parameter2 + 0.6f*(m_parameter2 - m_parameter1);
 }
 
 float UniformLaw::yMin() {
-  return -0.2f;
+  return k_minMarginFactor*(1.0f/(m_parameter2-m_parameter1));
 }
 
 float UniformLaw::yMax() {
-  return 1.0f;
+  return k_maxMarginFactor*(1.0f/(m_parameter2-m_parameter1));
 }
 
 float UniformLaw::evaluateAtAbscissa(float t) const {

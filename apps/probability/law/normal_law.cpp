@@ -5,7 +5,7 @@
 namespace Probability {
 
 NormalLaw::NormalLaw() :
-  TwoParameterLaw()
+  TwoParameterLaw(0.0f, 1.0f)
 {
 }
 
@@ -54,16 +54,28 @@ float NormalLaw::xMax() {
 }
 
 float NormalLaw::yMin() {
-  return -0.2f;
+  float maxAbscissa = m_parameter1;
+  float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  if (result >= 0.0f) {
+    result = -0.2f;
+  }
+  return result;
 }
 
 float NormalLaw::yMax() {
-  return 1.0f;
+  float maxAbscissa = m_parameter1;
+  float result = k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  if (result <= 0.0f || result == yMin()) {
+    result = yMin() + 1.0f;
+  }
+  return result;
 }
 
 float NormalLaw::evaluateAtAbscissa(float x) const {
-  // TODO: 3.14f -> Pi and 2.7f -> e
-  return (1.0f/(m_parameter2*sqrtf(2*3.14f)))*powf(2.7f, -0.5f*powf((x-m_parameter1)/m_parameter2,2));
+  if (m_parameter2 == 0.0f) {
+    return NAN;
+  }
+  return (1.0f/(m_parameter2*sqrtf(2.0f*M_PI)))*expf(-0.5f*powf((x-m_parameter1)/m_parameter2,2));
 }
 
 }

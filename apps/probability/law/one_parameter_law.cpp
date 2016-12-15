@@ -3,8 +3,8 @@
 
 namespace Probability {
 
-OneParameterLaw::OneParameterLaw() :
-  m_parameter1(0.5f)
+OneParameterLaw::OneParameterLaw(float parameterValue) :
+  m_parameter1(parameterValue)
 {
 }
 

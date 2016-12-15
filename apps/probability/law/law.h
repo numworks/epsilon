@@ -35,6 +35,8 @@ protected:
   constexpr static float k_oneUnit = 1.0f;
   constexpr static float k_twoUnit = 2.0f;
   constexpr static float k_fiveUnit = 5.0f;
+  constexpr static float k_minMarginFactor = -0.2f;
+  constexpr static float k_maxMarginFactor = 1.2f;
 };
 
 }

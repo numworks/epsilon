@@ -5,7 +5,7 @@
 namespace Probability {
 
 PoissonLaw::PoissonLaw() :
-  OneParameterLaw()
+  OneParameterLaw(4.0f)
 {
 }
 
@@ -36,23 +36,22 @@ float PoissonLaw::xMin() {
 }
 
 float PoissonLaw::xMax() {
-  if (m_parameter1 == 0.0f) {
-    return 1.0f;
-  }
+  assert(m_parameter1 != 0);
   return m_parameter1 + 5.0f*sqrtf(m_parameter1);
 }
 
 float PoissonLaw::yMin() {
-  return -0.2f;
+  int maxAbscissa = (int)m_parameter1;
+  return k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
 }
 
 float PoissonLaw::yMax() {
-  return 1.0f;
+  int maxAbscissa = (int)m_parameter1;
+  return k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {
-  // TODO: 2.7f -> e and factio
-  return powf(2.7f, -m_parameter1)*powf(m_parameter1, x)/(x);
+  return expf(-m_parameter1)*powf(m_parameter1, (int)x)/expf(lgammaf((int)x+1));
 }
 
 }

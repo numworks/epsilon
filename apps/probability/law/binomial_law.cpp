@@ -78,7 +78,9 @@ float BinomialLaw::evaluateAtAbscissa(float x) const {
   if (x > m_parameter1) {
     return 0.0f;
   }
-  return expf(lgammaf(m_parameter1+1) - lgammaf((int)x+1) - lgammaf(m_parameter1 - (int)x+1))*powf(m_parameter2, (int)x)*powf(1-m_parameter2, m_parameter1-(int)x);
+  float lResult = lgammaf(m_parameter1+1) - lgammaf((int)x+1) - lgammaf(m_parameter1 - (int)x+1)+
+    (int)x*logf(m_parameter2) + (m_parameter1-(int)x)*logf(1-m_parameter2);
+  return expf(lResult);
 }
 
 }

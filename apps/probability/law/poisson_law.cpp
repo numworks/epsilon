@@ -51,7 +51,8 @@ float PoissonLaw::yMax() {
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {
-  return expf(-m_parameter1)*powf(m_parameter1, (int)x)/expf(lgammaf((int)x+1));
+  float lResult = -m_parameter1+(int)x*logf(m_parameter1)-lgammaf((int)x+1);
+  return expf(lResult);
 }
 
 }

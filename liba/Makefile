@@ -18,6 +18,8 @@ objs += $(addprefix liba/src/, \
 )
 
 objs += $(addprefix liba/src/external/openbsd/, \
+  e_expf.o \
+  e_lgammaf_r.o \
   e_log10f.o \
   e_logf.o \
   e_powf.o \
@@ -36,6 +38,8 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_scalbnf.o \
   s_sinf.o \
   s_tanf.o \
+  w_lgammaf.o \
+  gamma_extern_variable.o\
 )
 
 liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses -Wno-implicit-function-declaration
@@ -46,6 +50,7 @@ ifeq ($(DEBUG),1)
 # aeabi conversions when building in -O0 mode, and we really don't want to code
 # such functions. A simple workaround is to always build this file -Os.
 liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
+liba/src/external/openbsd/e_expf.o: CFLAGS += -Os
 endif
 
 tests += $(addprefix liba/test/, \

@@ -32,7 +32,7 @@ const char * PoissonLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float PoissonLaw::xMin() {
-  return 0.0f;
+  return -1.0f;
 }
 
 float PoissonLaw::xMax() {
@@ -51,6 +51,9 @@ float PoissonLaw::yMax() {
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {
+  if (x < 0.0f) {
+    return NAN;
+  }
   float lResult = -m_parameter1+(int)x*logf(m_parameter1)-lgammaf((int)x+1);
   return expf(lResult);
 }

@@ -40,18 +40,18 @@ const char * BinomialLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float BinomialLaw::xMin() {
-  return 0.0f;
+  return (int)(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
 }
 
 float BinomialLaw::xMax() {
-  return m_parameter1 + 1.0f;
+  return (int)(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
 }
 
 float BinomialLaw::yMin() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
   if (result >= 0.0f || isnan(result)) {
-    result = -0.2f;
+    result = k_minMarginFactor;
   }
   return result;
 }

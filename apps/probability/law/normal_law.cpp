@@ -43,21 +43,21 @@ float NormalLaw::xMin() {
   if (m_parameter2 == 0.0f) {
     return m_parameter1 - 1.0f;
   }
-  return m_parameter1 - 5.0f*m_parameter2;
+  return m_parameter1 - 5.0f*fabsf(m_parameter2);
 }
 
 float NormalLaw::xMax() {
   if (m_parameter2 == 0.0f) {
     return m_parameter1 + 1.0f;
   }
-  return m_parameter1 + 5.0f*m_parameter2;
+  return m_parameter1 + 5.0f*fabsf(m_parameter2);
 }
 
 float NormalLaw::yMin() {
   float maxAbscissa = m_parameter1;
   float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
   if (result >= 0.0f) {
-    result = -0.2f;
+    result = k_minMarginFactor;
   }
   return result;
 }
@@ -75,7 +75,7 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
   if (m_parameter2 == 0.0f) {
     return NAN;
   }
-  return (1.0f/(m_parameter2*sqrtf(2.0f*M_PI)))*expf(-0.5f*powf((x-m_parameter1)/m_parameter2,2));
+  return (1.0f/(fabsf(m_parameter2)*sqrtf(2.0f*M_PI)))*expf(-0.5f*powf((x-m_parameter1)/m_parameter2,2));
 }
 
 }

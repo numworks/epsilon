@@ -49,6 +49,9 @@ float ExponentialLaw::yMax() {
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {
+  if (x < 0.0f) {
+    return NAN;
+  }
   return m_parameter1*expf(-m_parameter1*x);
 }
 

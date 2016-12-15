@@ -1,26 +1,16 @@
 #include "binomial_law.h"
 #include <assert.h>
+#include <math.h>
 
 namespace Probability {
 
-BinomialLaw::BinomialLaw(Context * context) :
-  TwoParameterLaw(context),
-  m_expression(Expression::parse("a-b*t"))
+BinomialLaw::BinomialLaw() :
+  TwoParameterLaw()
 {
-  //m_expression = Expression::parse("binomial(a, b)*b^t*(1-b)^(a-t)");
-  assert(m_expression != nullptr);
-}
-
-BinomialLaw::~BinomialLaw() {
-  delete m_expression;
 }
 
 const char * BinomialLaw::title() {
   return "Loi binomiale";
-}
-
-Expression * BinomialLaw::expression() const {
-  return m_expression;
 }
 
 Law::Type BinomialLaw::type() const {
@@ -66,6 +56,11 @@ float BinomialLaw::yMin() {
 
 float BinomialLaw::yMax() {
   return 1.0f;
+}
+
+float BinomialLaw::evaluateAtAbscissa(float x) const {
+  //m_expression = Expression::parse("binomial(a, b)*b^t*(1-b)^(a-t)");
+  return powf(m_parameter2, (int)x)*powf(1-m_parameter2, m_parameter1-(int)x);
 }
 
 }

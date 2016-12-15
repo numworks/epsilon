@@ -1,26 +1,16 @@
 #include "exponential_law.h"
 #include <assert.h>
+#include <math.h>
 
 namespace Probability {
 
-ExponentialLaw::ExponentialLaw(Context * context) :
-  OneParameterLaw(context),
-  m_expression(Expression::parse("a*t"))
+ExponentialLaw::ExponentialLaw() :
+  OneParameterLaw()
 {
-  //m_expression = Expression::parse("a*exp(-a*t)");
-  assert(m_expression != nullptr);
-}
-
-ExponentialLaw::~ExponentialLaw() {
-  delete m_expression;
 }
 
 const char * ExponentialLaw::title() {
   return "Loi exponentielle";
-}
-
-Expression * ExponentialLaw::expression() const {
-  return m_expression;
 }
 
 Law::Type ExponentialLaw::type() const {
@@ -58,6 +48,11 @@ float ExponentialLaw::yMin() {
 
 float ExponentialLaw::yMax() {
   return 1.0f;
+}
+
+float ExponentialLaw::evaluateAtAbscissa(float x) const {
+// TODO: change 2.7f for the right constant
+  return m_parameter1*powf(2.7f, -m_parameter1*x);
 }
 
 }

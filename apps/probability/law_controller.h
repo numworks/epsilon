@@ -10,7 +10,7 @@ namespace Probability {
 
 class LawController : public ViewController, public SimpleListViewDataSource {
 public:
-  LawController(Responder * parentResponder, Context * context);
+  LawController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -30,7 +30,6 @@ private:
   SelectableTableView m_selectableTableView;
   const char ** m_messages;
   Law * m_law;
-  Context * m_context;
   ParametersController m_parametersController;
 
 };

@@ -3,15 +3,6 @@
 
 namespace Probability {
 
-Law::Law(Context * context):
-  m_context(context)
-{
-}
-
-Context * Law::context() {
-  return m_context;
-}
-
 float Law::gridUnit() {
   int a = 0;
   int b = 0;
@@ -25,13 +16,6 @@ float Law::gridUnit() {
     }
   }
   return a*powf(10,b);
-}
-
-float Law::evaluateAtAbscissa(float t) const {
-  Symbol tSymbol = Symbol('t');
-  Float e = Float(t);
-  m_context->setExpressionForSymbolName(&e, &tSymbol);
-  return expression()->approximate(*m_context);
 }
 
 }

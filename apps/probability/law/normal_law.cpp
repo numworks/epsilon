@@ -1,26 +1,16 @@
 #include "normal_law.h"
 #include <assert.h>
+#include <math.h>
 
 namespace Probability {
 
-NormalLaw::NormalLaw(Context * context) :
-  TwoParameterLaw(context),
-  m_expression(Expression::parse("a-b*t"))
+NormalLaw::NormalLaw() :
+  TwoParameterLaw()
 {
-  //m_expression = Expression::parse("(1/(b*sqrt(2*Pi))*exp(-0.5*((t-a)/b)^2)");
-  assert(m_expression != nullptr);
-}
-
-NormalLaw::~NormalLaw() {
-  delete m_expression;
 }
 
 const char * NormalLaw::title() {
   return "Loi normale";
-}
-
-Expression * NormalLaw::expression() const {
-  return m_expression;
 }
 
 Law::Type NormalLaw::type() const {
@@ -69,6 +59,11 @@ float NormalLaw::yMin() {
 
 float NormalLaw::yMax() {
   return 1.0f;
+}
+
+float NormalLaw::evaluateAtAbscissa(float x) const {
+  // TODO: 3.14f -> Pi and 2.7f -> e
+  return (1.0f/(m_parameter2*sqrtf(2*3.14f)))*powf(2.7f, -0.5f*powf((x-m_parameter1)/m_parameter2,2));
 }
 
 }

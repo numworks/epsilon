@@ -7,10 +7,9 @@ namespace Probability {
 
 class UniformLaw : public TwoParameterLaw {
 public:
-  UniformLaw(Context * context);
-  ~UniformLaw() override;
+  UniformLaw();
+  ~UniformLaw() override {};
   const char * title() override;
-  Expression * expression() const override;
   Type type() const override;
   bool isContinuous() override;
   float xMin() override;
@@ -19,8 +18,7 @@ public:
   float yMax() override;
   const char * parameterNameAtIndex(int index) override;
   const char * parameterDefinitionAtIndex(int index) override;
-private:
-  Expression * m_expression;
+  float evaluateAtAbscissa(float x) const override;
 };
 
 }

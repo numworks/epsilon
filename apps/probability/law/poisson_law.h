@@ -7,10 +7,9 @@ namespace Probability {
 
 class PoissonLaw : public OneParameterLaw {
 public:
-  PoissonLaw(Context * context);
-  ~PoissonLaw() override;
+  PoissonLaw();
+  ~PoissonLaw() override {};
   const char * title() override;
-  Expression * expression() const override;
   Type type() const override;
   bool isContinuous() override;
   float xMin() override;
@@ -19,8 +18,7 @@ public:
   float yMax() override;
   const char * parameterNameAtIndex(int index) override;
   const char * parameterDefinitionAtIndex(int index) override;
-private:
-  Expression * m_expression;
+  float evaluateAtAbscissa(float x) const override;
 };
 
 }

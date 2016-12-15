@@ -27,12 +27,11 @@ static const char * sMessages[] = {
   "Poisson"
 };
 
-LawController::LawController(Responder * parentResponder, Context * context) :
+LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_law(nullptr),
-  m_context(context),
   m_parametersController(ParametersController(nullptr))
 {
   m_messages = sMessages;
@@ -112,19 +111,19 @@ void Probability::LawController::setLawAccordingToIndex(int index) {
   }
   switch (index) {
     case 0:
-      m_law = new BinomialLaw(m_context);
+      m_law = new BinomialLaw();
       break;
     case 1:
-      m_law = new UniformLaw(m_context);
+      m_law = new UniformLaw();
       break;
     case 2:
-      m_law = new ExponentialLaw(m_context);
+      m_law = new ExponentialLaw();
       break;
     case 3:
-      m_law = new NormalLaw(m_context);
+      m_law = new NormalLaw();
       break;
     case 4:
-      m_law = new PoissonLaw(m_context);
+      m_law = new PoissonLaw();
       break;
     default:
      return;

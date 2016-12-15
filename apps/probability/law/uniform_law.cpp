@@ -3,24 +3,13 @@
 
 namespace Probability {
 
-UniformLaw::UniformLaw(Context * context) :
-  TwoParameterLaw(context)
+UniformLaw::UniformLaw() :
+  TwoParameterLaw()
 {
-  // TODO: parse indicator function
-  m_expression = Expression::parse("1/(a-b)");
-  assert(m_expression != nullptr);
-}
-
-UniformLaw::~UniformLaw() {
-  delete m_expression;
 }
 
 const char * UniformLaw::title() {
   return "Loi uniforme";
-}
-
-Expression * UniformLaw::expression() const {
-  return m_expression;
 }
 
 Law::Type UniformLaw::type() const {
@@ -69,6 +58,13 @@ float UniformLaw::yMin() {
 
 float UniformLaw::yMax() {
   return 1.0f;
+}
+
+float UniformLaw::evaluateAtAbscissa(float t) const {
+  if (m_parameter1 <= t && t <= m_parameter2) {
+    return (1.0f/(m_parameter2-m_parameter1));
+  }
+  return 0.0f;
 }
 
 }

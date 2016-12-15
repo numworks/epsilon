@@ -4,24 +4,13 @@
 
 namespace Probability {
 
-PoissonLaw::PoissonLaw(Context * context) :
-  OneParameterLaw(context),
-  m_expression(Expression::parse("a*t"))
+PoissonLaw::PoissonLaw() :
+  OneParameterLaw()
 {
-  //m_expression = Expression::parse("exp(-a)*a^t/t!");
-  assert(m_expression != nullptr);
-}
-
-PoissonLaw::~PoissonLaw() {
-  delete m_expression;
 }
 
 const char * PoissonLaw::title() {
   return "Loi Poisson";
-}
-
-Expression * PoissonLaw::expression() const {
-  return m_expression;
 }
 
 Law::Type PoissonLaw::type() const {
@@ -59,6 +48,11 @@ float PoissonLaw::yMin() {
 
 float PoissonLaw::yMax() {
   return 1.0f;
+}
+
+float PoissonLaw::evaluateAtAbscissa(float x) const {
+  // TODO: 2.7f -> e and factio
+  return powf(2.7f, -m_parameter1)*powf(m_parameter1, x)/(x);
 }
 
 }

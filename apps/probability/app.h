@@ -18,7 +18,6 @@ public:
   App(Container * container, Context * context);
   Context * localContext() override;
 private:
-  LocalContext m_localContext;
   LawController m_lawController;
   StackViewController m_stackViewController;
 };

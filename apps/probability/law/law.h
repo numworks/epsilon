@@ -43,6 +43,7 @@ protected:
   constexpr static float k_fiveUnit = 5.0f;
   constexpr static float k_minMarginFactor = -0.2f;
   constexpr static float k_maxMarginFactor = 1.2f;
+  constexpr static int k_maxNumberOfOperations = 1000000;
 };
 
 }

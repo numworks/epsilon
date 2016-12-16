@@ -66,8 +66,12 @@ float Law::cumulativeDistributiveInverseForProbability(float * probability) {
     }
     float p = 0.0f;
     int k = 0;
-    while (p < *probability) {
+    while (p < *probability && k < k_maxNumberOfOperations) {
       p += evaluateAtAbscissa(k++);
+    }
+    if (k == k_maxNumberOfOperations) {
+      p = 1.0f;
+      k = INFINITY;
     }
     *probability = p;
     return k-1;
@@ -88,8 +92,12 @@ float Law::rightIntegralInverseForProbability(float * probability) {
   }
   float p = 0.0f;
   int k = 0;
-  while (p < 1.0f - *probability) {
+  while (p < 1.0f - *probability && k < k_maxNumberOfOperations) {
     p += evaluateAtAbscissa(k++);
+  }
+  if (k == k_maxNumberOfOperations) {
+    p = 0.0f;
+    k = INFINITY;
   }
   *probability = 1.0f - (p - evaluateAtAbscissa(k-1));
   return k-1;

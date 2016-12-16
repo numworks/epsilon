@@ -132,7 +132,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
 
-void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
@@ -143,13 +143,20 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     stampAtLocation(pxf, pyf, color, ctx, rect);
+    if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
+      KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+      }
+      ctx->fillRect(colorRect, color);
+    }
     if (x > rectMin) {
       jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
     }
   }
 }
 
-void CurveView::drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, KDColor highlightColor, float colorLowerBound, float colorUpperBound) const {
   int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
   int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
   for (int x = rectMin; x < rectMax; x += 1) {
@@ -161,7 +168,11 @@ void CurveView::drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRe
       if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
         binRect = KDRect((int)pxf - 1, floatToPixel(Axis::Vertical, 0.0f), 3, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
-      ctx->fillRect(binRect, color);
+      KDColor binColor = color;
+      if (colorUnderCurve && x >= colorLowerBound && x <= colorUpperBound) {
+        binColor = highlightColor;
+      }
+      ctx->fillRect(binRect, binColor);
     }
   }
 }

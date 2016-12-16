@@ -51,7 +51,7 @@ void CurveView::computeLabels(Axis axis) {
   }
 }
 
-void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
+void CurveView::drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const {
   float step = gridUnit(axis);
   float start = 2.0f*step*(ceilf(min(axis)/(2.0f*step)));
   float end = max(axis);
@@ -63,7 +63,7 @@ void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
     }
     // TODO: Find another way to avoid float comparison.
-    if (x == 0.0f) {
+    if (x == 0.0f && shiftOrigin) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
     if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i))))) {

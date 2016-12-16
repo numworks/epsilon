@@ -21,7 +21,7 @@ void LawCurveView::reload() {
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   drawAxes(Axis::Horizontal, ctx, rect);
-  drawLabels(Axis::Horizontal, ctx, rect);
+  drawLabels(Axis::Horizontal, false, ctx, rect);
   if (m_law->isContinuous()) {
     drawCurve(m_law, KDColorRed, ctx, rect);
   } else {

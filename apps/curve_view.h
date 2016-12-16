@@ -30,7 +30,7 @@ protected:
   void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
   void drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
   void computeLabels(Axis axis);
-  void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
+  void drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const;
 private:
   int numberOfLabels(Axis axis) const;
   virtual float evaluateCurveAtAbscissa(void * curve, float t) const = 0;

@@ -39,7 +39,7 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(Axis::Horizontal, ctx, rect);
   drawLabels(Axis::Horizontal, false, ctx, rect);
   if (m_law->isContinuous()) {
-    drawCurve(m_law, KDColorRed, ctx, rect, true, lowerBound, upperBound);
+    drawCurve(m_law, KDColorRed, ctx, rect, true, lowerBound, upperBound, true);
   } else {
     drawHistogram(m_law, KDColorBlue, ctx, rect, true, KDColorRed, lowerBound, upperBound);
   }

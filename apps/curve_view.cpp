@@ -132,7 +132,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
 
-void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
@@ -142,7 +142,6 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
     float y = evaluateCurveAtAbscissa(curve, x);
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
-    stampAtLocation(pxf, pyf, color, ctx, rect);
     if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
       KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
       if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
@@ -150,8 +149,15 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
       }
       ctx->fillRect(colorRect, color);
     }
+    stampAtLocation(pxf, pyf, color, ctx, rect);
     if (x > rectMin) {
-      jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+      if (continuously) {
+        float puf = floatToPixel(Axis::Horizontal, x - xStep);
+        float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
+        straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
+      } else {
+        jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+      }
     }
   }
 }

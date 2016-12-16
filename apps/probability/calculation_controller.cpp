@@ -126,6 +126,11 @@ const char * CalculationController::title() const {
   return "Calculer les probabilites";
 }
 
+void CalculationController::reload() {
+  m_contentView.layoutSubviews();
+  m_contentView.lawCurveView()->reload();
+}
+
 void CalculationController::setLaw(Law * law) {
   m_law = law;
   m_contentView.setLaw(law);
@@ -155,7 +160,6 @@ void CalculationController::setCalculationAccordingToIndex(int index) {
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
-
   if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1)) {
     if (m_highlightedSubviewIndex == 0) {
       m_contentView.imageTableView()->select(false);
@@ -184,7 +188,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-
 bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   App * myApp = (App *)app();
   return myApp->textFieldDidReceiveEvent(textField, event);
@@ -198,16 +201,17 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);
   }
+  m_contentView.layoutSubviews();
   return true;
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  m_contentView.layoutSubviews();
   for (int subviewIndex = 0; subviewIndex < 2; subviewIndex++) {
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);
     calculCell->setHighlighted(false);
   }
   if (m_highlightedSubviewIndex > 0) {
+    m_contentView.imageTableView()->select(false);
     m_contentView.imageTableView()->setHighlight(false);
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
     calculCell->setHighlighted(true);
@@ -215,7 +219,6 @@ void CalculationController::didBecomeFirstResponder() {
   } else {
     m_contentView.imageTableView()->setHighlight(true);
   }
-  m_contentView.lawCurveView()->reload();
 }
 
 void CalculationController::selectSubview(int subviewIndex) {

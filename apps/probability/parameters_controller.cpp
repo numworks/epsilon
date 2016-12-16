@@ -10,8 +10,9 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
   m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
     ParametersController * parameterController = (ParametersController *) context;
     CalculationController * calculationController = parameterController->calculationController();
-    calculationController->selectSubview(1);
     calculationController->setCalculationAccordingToIndex(0);
+    calculationController->selectSubview(1);
+    calculationController->reload();
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
     stack->push(calculationController);

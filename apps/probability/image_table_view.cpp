@@ -72,6 +72,7 @@ bool ImageTableView::handleEvent(Ion::Events::Event event) {
     select(false);
     setHighlight(true);
     m_selectableTableView.reloadData();
+    m_calculationController->reload();
     app()->setFirstResponder(parentResponder());
     return true;
   }

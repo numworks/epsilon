@@ -14,6 +14,7 @@ public:
   CalculationController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
+  void reload();
   void setLaw(Law * law);
   void setCalculationAccordingToIndex(int index);
   bool handleEvent(Ion::Events::Event event) override;

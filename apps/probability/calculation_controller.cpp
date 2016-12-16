@@ -1,6 +1,9 @@
 #include "calculation_controller.h"
 #include "../constant.h"
 #include "../apps_container.h"
+#include "calculation/left_integral_calculation.h"
+#include "calculation/right_integral_calculation.h"
+#include "calculation/finite_integral_calculation.h"
 #include <assert.h>
 
 namespace Probability {

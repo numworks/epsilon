@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_CALCULATION_H
 #define PROBABILITE_CALCULATION_H
 
-#include "law/law.h"
+#include "../law/law.h"
 
 namespace Probability {
 

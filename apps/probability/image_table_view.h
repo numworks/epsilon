@@ -2,9 +2,7 @@
 #define PROBABILITY_IMAGE_TABLE_VIEW_H
 
 #include <escher.h>
-#include "left_integral_calculation.h"
-#include "right_integral_calculation.h"
-#include "finite_integral_calculation.h"
+#include "calculation/calculation.h"
 
 namespace Probability {
 

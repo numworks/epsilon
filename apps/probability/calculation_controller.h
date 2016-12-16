@@ -5,6 +5,7 @@
 #include "law/law.h"
 #include "law_curve_view.h"
 #include "image_table_view.h"
+#include "calculation/calculation.h"
 
 namespace Probability {
 

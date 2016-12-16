@@ -1,6 +1,7 @@
 #include "exponential_law.h"
 #include <assert.h>
 #include <math.h>
+#include <float.h>
 
 namespace Probability {
 
@@ -17,7 +18,7 @@ Law::Type ExponentialLaw::type() const {
   return Type::Exponential;
 }
 
-bool ExponentialLaw::isContinuous() {
+bool ExponentialLaw::isContinuous() const {
   return true;
 }
 
@@ -60,6 +61,20 @@ bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
     return false;
   }
   return true;
+}
+
+float ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+  return 1.0f - expf(-m_parameter1*x);
+}
+
+float ExponentialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+  if (*probability >= 1.0f) {
+    return FLT_MAX+1.0f;
+  }
+  if (*probability <= 0.0f) {
+    return 0.0f;
+  }
+  return -logf(1.0f - *probability)/m_parameter1;
 }
 
 }

@@ -11,7 +11,7 @@ public:
   ~PoissonLaw() override {};
   const char * title() override;
   Type type() const override;
-  bool isContinuous() override;
+  bool isContinuous() const override;
   float xMin() override;
   float yMin() override;
   float xMax() override;

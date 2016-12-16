@@ -56,24 +56,19 @@ void Calculation::computeCalculation(int indexKnownElement) {
   }
   if (m_type == LeftIntegral) {
     if (indexKnownElement == 0) {
-      // TODO: compute integral from -Inf to m_parameter1
-      m_parameter2 = m_law->evaluateAtAbscissa(m_parameter1);
+      m_parameter2 = m_law->cumulativeDistributiveFunctionAtAbscissa(m_parameter1);
     } else {
-      // TODO: find m_parameter1
-      m_parameter1 = m_law->evaluateAtAbscissa(m_parameter2);
+      m_parameter1 = m_law->cumulativeDistributiveInverseForProbability(&m_parameter2);
     }
   }
   if (m_type == FiniteIntegral) {
-    // TODO: compute integral from m_parameter1 to m_parameter2
-    m_parameter3 = m_law->evaluateAtAbscissa(m_parameter1 + m_parameter2);
+    m_parameter3 = m_law->finiteIntegralBetweenAbscissas(m_parameter1, m_parameter2);
   }
   if (m_type == RightIntegral) {
     if (indexKnownElement == 0) {
-      // TODO: compute integral from m_parameter1 to +Inf
-      m_parameter2 = m_law->evaluateAtAbscissa(m_parameter1);
+      m_parameter2 = m_law->rightIntegralFromAbscissa(m_parameter1);
     } else {
-      // TODO: find m_parameter1
-      m_parameter1 = m_law->evaluateAtAbscissa(m_parameter2);
+      m_parameter1 = m_law->rightIntegralInverseForProbability(&m_parameter2);
     }
   }
 }

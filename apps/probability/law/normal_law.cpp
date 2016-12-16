@@ -1,6 +1,7 @@
 #include "normal_law.h"
 #include <assert.h>
 #include <math.h>
+#include <float.h>
 
 namespace Probability {
 
@@ -17,7 +18,7 @@ Law::Type NormalLaw::type() const {
   return Type::Normal;
 }
 
-bool NormalLaw::isContinuous() {
+bool NormalLaw::isContinuous() const {
   return true;
 }
 
@@ -81,5 +82,40 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
 bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
   return true;
 }
+
+float NormalLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+  return standardNormalCumulativeDistributiveFunctionAtAbscissa((x-m_parameter1)/fabsf(m_parameter2));
+}
+
+float NormalLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+  return standardNormalCumulativeDistributiveInverseForProbability(*probability)*fabsf(m_parameter2) + m_parameter1;
+}
+
+float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float abscissa) const {
+  if (abscissa == 0.0f) {
+    return 0.5f;
+  }
+  if (abscissa < 0.0f) {
+    return 1.0f - standardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
+  }
+  if (abscissa > k_boundStandardNormalDistribution) {
+    return 1.0f;
+  }
+  return 1.0f/(1.0f+expf(-sqrtf(M_PI)*(k_beta1*powf(abscissa,5)+k_beta2*powf(abscissa,3)+k_beta3*abscissa)));
+}
+
+float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float probability) {
+  if (probability >= 1.0f) {
+    return FLT_MAX+1.0f;
+  }
+  if (probability <= 0.0f) {
+    return -FLT_MAX-1.0f;
+  }
+  if (probability < 0.5f) {
+    return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
+  }
+  return (k_alpha3/logf(k_alpha2))*logf(1.0f - logf(-logf(probability)/logf(2.0f))/logf(k_alpha1));
+}
+
 
 }

@@ -17,7 +17,7 @@ Law::Type BinomialLaw::type() const {
   return Type::Binomial;
 }
 
-bool BinomialLaw::isContinuous() {
+bool BinomialLaw::isContinuous() const {
   return false;
 }
 
@@ -95,6 +95,5 @@ bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
   }
   return true;
 }
-
 
 }

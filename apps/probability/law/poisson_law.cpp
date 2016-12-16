@@ -17,7 +17,7 @@ Law::Type PoissonLaw::type() const {
   return Type::Poisson;
 }
 
-bool PoissonLaw::isContinuous() {
+bool PoissonLaw::isContinuous() const {
   return false;
 }
 

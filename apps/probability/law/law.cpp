@@ -80,6 +80,12 @@ float Law::rightIntegralInverseForProbability(float * probability) {
     float f = 1.0f - *probability;
     return cumulativeDistributiveInverseForProbability(&f);
   }
+  if (*probability >= 1.0f) {
+    return 0.0f;
+  }
+  if (*probability <= 0.0f) {
+    return INFINITY;
+  }
   float p = 0.0f;
   int k = 0;
   while (p < 1.0f - *probability) {

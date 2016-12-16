@@ -96,4 +96,19 @@ bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
   return true;
 }
 
+float BinomialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+  if (*probability >= 1.0f) {
+    return m_parameter1;
+  }
+  return Law::cumulativeDistributiveInverseForProbability(probability);
+}
+
+float BinomialLaw::rightIntegralInverseForProbability(float * probability) {
+  if (*probability <= 0.0f) {
+    return m_parameter1;
+  }
+  return Law::rightIntegralInverseForProbability(probability);
+}
+
+
 }

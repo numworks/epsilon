@@ -34,7 +34,7 @@ public:
   float rightIntegralFromAbscissa(float x) const;
   float finiteIntegralBetweenAbscissas(float a, float b) const;
   virtual float cumulativeDistributiveInverseForProbability(float * probability);
-  float rightIntegralInverseForProbability(float * probability);
+  virtual float rightIntegralInverseForProbability(float * probability);
 protected:
   constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;

@@ -4,6 +4,7 @@
 #include "../curve_view.h"
 #include "../constant.h"
 #include "law/law.h"
+#include "calculation/calculation.h"
 #include <escher.h>
 #include <poincare.h>
 
@@ -13,6 +14,7 @@ class LawCurveView : public CurveView {
 public:
   LawCurveView();
   void setLaw(Law * law);
+  void setCalculation(Calculation * calculation);
   void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
@@ -24,6 +26,7 @@ private:
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   float evaluateCurveAtAbscissa(void * law, float abscissa) const override;
   Law * m_law;
+  Calculation * m_calculation;
 };
 
 }

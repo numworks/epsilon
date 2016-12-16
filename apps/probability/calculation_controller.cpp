@@ -24,6 +24,7 @@ void CalculationController::ContentView::setLaw(Law * law) {
 
 void CalculationController::ContentView::setCalculation(Calculation * calculation) {
   m_calculation = calculation;
+  m_lawCurveView.setCalculation(calculation);
   m_imageTableView.setCalculation(calculation);
 }
 

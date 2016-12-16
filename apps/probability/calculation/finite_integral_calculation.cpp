@@ -6,7 +6,7 @@ namespace Probability {
 
 FiniteIntegralCalculation::FiniteIntegralCalculation() :
   Calculation(),
-  m_lowerBound(-1.0f),
+  m_lowerBound(0.0f),
   m_upperBound(1.0f),
   m_result(0.0f)
 {

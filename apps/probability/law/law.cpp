@@ -58,7 +58,7 @@ float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
 
 float Law::cumulativeDistributiveInverseForProbability(float * probability) {
   if (*probability >= 1.0f) {
-    return FLT_MAX+1.0f;
+    return INFINITY;
   }
   if (!isContinuous()) {
     if (*probability <= 0.0f) {

@@ -69,7 +69,7 @@ float ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
 
 float ExponentialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
   if (*probability >= 1.0f) {
-    return FLT_MAX+1.0f;
+    return INFINITY;
   }
   if (*probability <= 0.0f) {
     return 0.0f;

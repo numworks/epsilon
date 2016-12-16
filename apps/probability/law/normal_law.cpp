@@ -106,10 +106,10 @@ float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float ab
 
 float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float probability) {
   if (probability >= 1.0f) {
-    return FLT_MAX+1.0f;
+    return INFINITY;
   }
   if (probability <= 0.0f) {
-    return -FLT_MAX-1.0f;
+    return -INFINITY;
   }
   if (probability < 0.5f) {
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);

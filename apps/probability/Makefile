@@ -1,6 +1,10 @@
 app_objs += $(addprefix apps/probability/,\
   app.o\
   calculation.o\
+  left_integral_calculation.o\
+  right_integral_calculation.o\
+  finite_integral_calculation.o\
+  calculation.o\
   calculation_controller.o\
   cell.o\
   image_table_view.o\

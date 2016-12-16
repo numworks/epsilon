@@ -11,8 +11,7 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     ParametersController * parameterController = (ParametersController *) context;
     CalculationController * calculationController = parameterController->calculationController();
     calculationController->selectSubview(1);
-    Calculation * calculation = calculationController->calculation();
-    calculation->setType(Calculation::Type::LeftIntegral);
+    calculationController->setCalculationAccordingToIndex(0);
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
     stack->push(calculationController);

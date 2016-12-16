@@ -7,24 +7,21 @@ namespace Probability {
 
 class Calculation {
 public:
-  enum Type : uint8_t {
+  enum class Type : uint8_t{
     LeftIntegral = 0,
     FiniteIntegral = 1,
-    RightIntegral = 2,
+    RightIntegral = 2
   };
   Calculation();
+  virtual ~Calculation() {};
   void setLaw(Law * law);
-  void setType(Type type);
-  Type type() const;
-  float parameterAtIndex(int index);
-  void setParameterAtIndex(float f, int index);
-private:
-  void computeCalculation(int indexKnownElement);
-  void initParameters();
-  Type m_type;
-  float m_parameter1;
-  float m_parameter2;
-  float m_parameter3;
+  virtual Type type() const = 0;
+  virtual int numberOfParameters() = 0;
+  virtual const char * legendForParameterAtIndex(int index) = 0;
+  virtual void setParameterAtIndex(float f, int index) = 0;
+  virtual float parameterAtIndex(int index) = 0;
+protected:
+  virtual void compute(int indexKnownElement) = 0;
   Law * m_law;
 };
 

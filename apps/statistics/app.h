@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
+#include "data.h"
 #include "data_controller.h"
 #include "histogram_controller.h"
 #include "../expression_text_field_delegate.h"
@@ -15,6 +16,7 @@ public:
   App(Container * container, Context * context);
   Context * localContext() override;
 private:
+  Data m_data;
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   StackViewController m_calculationStackViewController;

@@ -7,9 +7,8 @@
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
-  ViewController(parentResponder),
+  EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   HeaderViewDelegate(header),
-  m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this)),
   m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
   m_functionStore(functionStore),
@@ -28,135 +27,12 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_interval.setStep(1);
 }
 
-View * ValuesController::view() {
-  return &m_selectableTableView;
-}
-
 const char * ValuesController::title() const {
   return "Valeurs";
 }
 
-bool ValuesController::isEmpty() {
-  if (m_functionStore->numberOfActiveFunctions() == 0) {
-    return true;
-  }
-  return false;
-}
-
-const char * ValuesController::emptyMessage() {
-  if (m_functionStore->numberOfDefinedFunctions() == 0) {
-    return "Aucune fonction";
-  }
-  return "Aucune fonction selectionnee";
-}
-
-Responder * ValuesController::defaultController() {
-  return tabController();
-}
-
-int ValuesController::numberOfButtons() const {
-  return 1;
-}
-
-Button * ValuesController::buttonAtIndex(int index) {
-  return &m_setIntervalButton;
-}
-
-Responder * ValuesController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
-}
-
-StackViewController * ValuesController::stackController() const {
-  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
-}
-
-ViewController * ValuesController::intervalParameterController() {
-  return &m_intervalParameterController;
-}
-
-int ValuesController::numberOfRows() {
-  int numberOfIntervalElements = m_interval.numberOfElements();
-  if (numberOfIntervalElements >= Interval::k_maxNumberOfElements) {
-    return 1 + m_interval.numberOfElements();
-  }
-  return 2 + m_interval.numberOfElements();
-};
-
-int ValuesController::numberOfColumns() {
-  int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfDefinedFunctions(); i++) {
-    if (m_functionStore->definedFunctionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->definedFunctionAtIndex(i)->displayDerivative();
-    }
-  }
-  return result;
-};
-
-KDCoordinate ValuesController::rowHeight(int j) {
-  return k_cellHeight;
-}
-
-KDCoordinate ValuesController::columnWidth(int i) {
-  switch (i) {
-    case 0:
-      return k_abscissaCellWidth;
-    default:
-      return k_ordinateCellWidth;
-  }
-}
-
-KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
-  if (i == 0) {
-    return 0;
-  } else {
-    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
-  }
-}
-
-KDCoordinate ValuesController::cumulatedHeightFromIndex(int j) {
-  return j*k_cellHeight;
-}
-
-int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_abscissaCellWidth) {
-    return 0;
-  } else {
-    int index = 0;
-    while ((k_abscissaCellWidth+index*k_ordinateCellWidth) <= offsetX) {
-      index++;
-    }
-    return index;
-  }
-}
-
-int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY-1) / k_cellHeight;
-}
-
-int ValuesController::activeRow() {
-  return m_selectableTableView.selectedRow();
-}
-
-int ValuesController::activeColumn() {
-  return m_selectableTableView.selectedColumn();
-}
-
 Interval * ValuesController::interval() {
   return &m_interval;
-}
-
-void ValuesController::didBecomeFirstResponder() {
-  headerViewController()->setSelectedButton(-1);
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
-  } else {
-    int selectedRow = m_selectableTableView.selectedRow();
-    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = m_selectableTableView.selectedColumn();
-    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
-  }
-  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -206,63 +82,114 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool ValuesController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
+void ValuesController::didBecomeFirstResponder() {
+  headerViewController()->setSelectedButton(-1);
+  EditableCellTableViewController::didBecomeFirstResponder();
 }
 
-bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext);
-  m_interval.setElement(activeRow()-1, floatBody);
-  willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(activeColumn(), activeRow()), activeColumn(), activeRow());
-  m_selectableTableView.reloadData();
-  return true;
+ViewController * ValuesController::intervalParameterController() {
+  return &m_intervalParameterController;
 }
 
-void ValuesController::configureAbscissa() {
-  StackViewController * stack = stackController();
-  stack->push(&m_abscissaParameterController);
+int ValuesController::numberOfButtons() const {
+  return 1;
 }
 
-void ValuesController::configureFunction() {
-  Function * function = functionAtColumn(activeColumn());
-  m_functionParameterController.setFunction(function);
-  StackViewController * stack = stackController();
-  stack->push(&m_functionParameterController);
+Button * ValuesController::buttonAtIndex(int index) {
+  return &m_setIntervalButton;
 }
 
-void ValuesController::configureDerivativeFunction() {
-  Function * function = functionAtColumn(activeColumn());
-  m_derivativeParameterController.setFunction(function);
-  StackViewController * stack = stackController();
-  stack->push(&m_derivativeParameterController);
-}
-
-void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == 0 && previousSelectedCellY > 0) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
-    app()->setFirstResponder(t);
-  }
-  if (t->selectedRow() > 0 && t->selectedColumn() == 0) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-    app()->setFirstResponder(myCell);
-  }
-}
-
-int ValuesController::typeAtLocation(int i, int j) {
-  if (j == 0) {
-    if (i == 0) {
-      return 0;
+int ValuesController::numberOfColumns() {
+  int result = 1;
+  for (int i = 0; i < m_functionStore->numberOfDefinedFunctions(); i++) {
+    if (m_functionStore->definedFunctionAtIndex(i)->isActive()) {
+      result += 1 + m_functionStore->definedFunctionAtIndex(i)->displayDerivative();
     }
-    return 1;
   }
+  return result;
+}
+
+void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+  EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
+  if (cellAtLocationIsEditable(i, j)) {
+    return;
+  }
+  // The cell is a title cell:
+  if (j == 0) {
+    EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
+    if (i == 0) {
+      mytitleCell->setText("x");
+      return;
+    }
+    FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+    Function * function = functionAtColumn(i);
+    char bufferName[6] = {0, 0, '(', 'x', ')', 0};
+    const char * name = bufferName;
+    if (isDerivativeColumn(i)) {
+      bufferName[0] = *function->name();
+      bufferName[1] = '\'';
+      name = bufferName;
+    } else {
+      bufferName[1] = *function->name();
+      name = &bufferName[1];
+    }
+    myFunctionCell->setText(name);
+    myFunctionCell->setColor(function->color());
+    myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
+    return;
+  }
+  // The cell is not a title cell
+  char buffer[Constant::FloatBufferSizeInScientificMode];
+  // Special case: last row
+  if (j == numberOfRows() - 1) {
+    int numberOfIntervalElements = m_interval.numberOfElements();
+    if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
+      buffer[0] = 0;
+      ValueCell * myValueCell = (ValueCell *)cell;
+      myValueCell->setText(buffer);
+      return;
+    }
+  }
+  // The cell is a value cell
+  ValueCell * myValueCell = (ValueCell *)cell;
+  Function * function = functionAtColumn(i);
+  float x = m_interval.element(j-1);
+  App * graphApp = (Graph::App *)app();
+  if (isDerivativeColumn(i)) {
+    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+  } else {
+    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  }
+  myValueCell->setText(buffer);
+}
+
+KDCoordinate ValuesController::columnWidth(int i) {
+  switch (i) {
+    case 0:
+      return k_abscissaCellWidth;
+    default:
+      return k_ordinateCellWidth;
+  }
+}
+
+KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
   if (i == 0) {
-    return 2;
+    return 0;
+  } else {
+    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
   }
-  return 3;
+}
+
+int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  if (offsetX <= k_abscissaCellWidth) {
+    return 0;
+  } else {
+    int index = 0;
+    while ((k_abscissaCellWidth+index*k_ordinateCellWidth) <= offsetX) {
+      index++;
+    }
+    return index;
+  }
 }
 
 TableViewCell * ValuesController::reusableCell(int index, int type) {
@@ -302,70 +229,43 @@ int ValuesController::reusableCellCount(int type) {
   }
 }
 
-void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  EvenOddCell * myCell = (EvenOddCell *)cell;
-  myCell->setEven(j%2 == 0);
-  // The cell is a title cell:
+int ValuesController::typeAtLocation(int i, int j) {
   if (j == 0) {
-    EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
     if (i == 0) {
-      mytitleCell->setText("x");
-      return;
+      return 0;
     }
-    FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-    Function * function = functionAtColumn(i);
-    char bufferName[6] = {0, 0, '(', 'x', ')', 0};
-    const char * name = bufferName;
-    if (isDerivativeColumn(i)) {
-      bufferName[0] = *function->name();
-      bufferName[1] = '\'';
-      name = bufferName;
-    } else {
-      bufferName[1] = *function->name();
-      name = &bufferName[1];
-    }
-    myFunctionCell->setText(name);
-    myFunctionCell->setColor(function->color());
-    myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
-    return;
+    return 1;
   }
-  // The cell is not a title cell
-  char buffer[Constant::FloatBufferSizeInScientificMode];
-  // Special case 1: last row
-  if (j == numberOfRows() - 1) {
-    /* Display an empty line only if there is enough space for a new element in
-     * interval */
-    int numberOfIntervalElements = m_interval.numberOfElements();
-    if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
-      buffer[0] = 0;
-      if (i == 0) {
-        EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-        myEditableValueCell->setText(buffer);
-      } else {
-        ValueCell * myValueCell = (ValueCell *)cell;
-        myValueCell->setText(buffer);
-      }
-      return;
-    }
+  if (i == 0) {
+    return 2;
   }
-  // Special case: first column
-  if (i == 0){
-    EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-    Float(m_interval.element(j-1)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-    myEditableValueCell->setText(buffer);
-    return;
+  return 3;
+}
+
+bool ValuesController::isEmpty() {
+  if (m_functionStore->numberOfActiveFunctions() == 0) {
+    return true;
   }
-  // The cell is a value cell:
-  ValueCell * myValueCell = (ValueCell *)cell;
-  Function * function = functionAtColumn(i);
-  float x = m_interval.element(j-1);
-  App * graphApp = (Graph::App *)app();
-  if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
-  } else {
-    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  return false;
+}
+
+const char * ValuesController::emptyMessage() {
+  if (m_functionStore->numberOfDefinedFunctions() == 0) {
+    return "Aucune fonction";
   }
-  myValueCell->setText(buffer);
+  return "Aucune fonction selectionnee";
+}
+
+Responder * ValuesController::defaultController() {
+  return tabController();
+}
+
+int ValuesController::activeRow() {
+  return m_selectableTableView.selectedRow();
+}
+
+int ValuesController::activeColumn() {
+  return m_selectableTableView.selectedColumn();
 }
 
 Function * ValuesController::functionAtColumn(int i) {
@@ -408,6 +308,56 @@ bool ValuesController::isDerivativeColumn(int i) {
   }
   assert(false);
   return false;
+}
+
+Responder * ValuesController::tabController() const {
+  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+StackViewController * ValuesController::stackController() const {
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+void ValuesController::configureAbscissa() {
+  StackViewController * stack = stackController();
+  stack->push(&m_abscissaParameterController);
+}
+
+void ValuesController::configureFunction() {
+  Function * function = functionAtColumn(activeColumn());
+  m_functionParameterController.setFunction(function);
+  StackViewController * stack = stackController();
+  stack->push(&m_functionParameterController);
+}
+
+void ValuesController::configureDerivativeFunction() {
+  Function * function = functionAtColumn(activeColumn());
+  m_derivativeParameterController.setFunction(function);
+  StackViewController * stack = stackController();
+  stack->push(&m_derivativeParameterController);
+}
+
+bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
+  if (rowIndex > 0 && columnIndex == 0) {
+    return true;
+  }
+  return false;
+}
+
+void ValuesController::setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) {
+  m_interval.setElement(rowIndex-1, floatBody);
+}
+
+float ValuesController::elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) {
+  return m_interval.element(rowIndex-1);
+}
+
+int ValuesController::modelNumberOfElements() {
+  return m_interval.numberOfElements();
+}
+
+int ValuesController::modelMaxNumberOfElements() const {
+  return Interval::k_maxNumberOfElements;
 }
 
 }

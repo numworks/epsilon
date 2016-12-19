@@ -22,7 +22,6 @@ app_objs += $(addprefix apps/graph/,\
   values/function_parameter_controller.o\
   values/interval.o\
   values/interval_parameter_controller.o\
-  values/title_cell.o\
   values/value_cell.o\
   values/values_controller.o\
 )

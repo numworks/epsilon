@@ -5,7 +5,6 @@
 #include "../function_store.h"
 #include "../function_title_cell.h"
 #include "value_cell.h"
-#include "title_cell.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
 #include "derivative_parameter_controller.h"
@@ -72,7 +71,7 @@ private:
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
   SelectableTableView m_selectableTableView;
-  TitleCell m_abscissaTitleCell;
+  EvenOddPointerTextCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   ValueCell m_floatCells[k_maxNumberOfCells];
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];

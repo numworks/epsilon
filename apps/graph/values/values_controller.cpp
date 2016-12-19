@@ -311,7 +311,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   myCell->setEven(j%2 == 0);
   // The cell is a title cell:
   if (j == 0) {
-    TitleCell * mytitleCell = (TitleCell *)cell;
+    EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
     if (i == 0) {
       mytitleCell->setText("x");
       return;

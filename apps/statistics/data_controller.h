@@ -2,7 +2,6 @@
 #define STATISTICS_DATA_CONTROLLER_H
 
 #include <escher.h>
-#include "../graph/values/title_cell.h"
 
 namespace Statistics {
 
@@ -33,7 +32,7 @@ private:
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const;
   //EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
-  Graph::TitleCell m_titleCells[k_numberOfTitleCells];
+  EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
   SelectableTableView m_selectableTableView;
 };
 

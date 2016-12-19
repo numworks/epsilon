@@ -4,8 +4,7 @@
 namespace Graph {
 
 App::App(Container * container, Context * context) :
-  ::App(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
-  ExpressionTextFieldDelegate(),
+  TextFieldDelegateApp(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
   m_functionStore(FunctionStore()),
   m_localContext(LocalContext(context)),
   m_listController(ListController(&m_listHeader, &m_functionStore, &m_listHeader)),

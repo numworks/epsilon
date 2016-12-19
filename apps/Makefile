@@ -15,6 +15,7 @@ app_objs += $(addprefix apps/,\
   node.o\
   node_list_view_controller.o\
   node_navigation_controller.o\
+  text_field_delegate_app.o\
   toolbox_controller.o\
   toolbox_leaf_cell.o\
   toolbox_node.o\

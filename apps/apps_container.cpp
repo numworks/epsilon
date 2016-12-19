@@ -7,9 +7,9 @@ AppsContainer::AppsContainer() :
   Container(),
   m_homeApp(this),
   m_graphApp(this, &m_globalContext),
-  m_probabilityApp(this, &m_globalContext),
+  m_probabilityApp(this),
   m_calculationApp(this, &m_globalContext),
-  m_statisticsApp(this, &m_globalContext),
+  m_statisticsApp(this),
   m_globalContext(GlobalContext()),
   m_variableBoxController(&m_globalContext)
 {

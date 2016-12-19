@@ -7,14 +7,13 @@
 #include "data.h"
 #include "data_controller.h"
 #include "histogram_controller.h"
-#include "../expression_text_field_delegate.h"
+#include "../text_field_delegate_app.h"
 
 namespace Statistics {
 
-class App : public ::App, public ExpressionTextFieldDelegate {
+class App : public TextFieldDelegateApp {
 public:
-  App(Container * container, Context * context);
-  Context * localContext() override;
+  App(Container * container);
 private:
   Data m_data;
   CalculationController m_calculationController;

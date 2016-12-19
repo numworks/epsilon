@@ -7,11 +7,11 @@
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../expression_text_field_delegate.h"
+#include "../text_field_delegate_app.h"
 
 namespace Graph {
 
-class App : public ::App, public ExpressionTextFieldDelegate {
+class App : public TextFieldDelegateApp {
 public:
   App(Container * container, Context * context);
   InputViewController * inputViewController();

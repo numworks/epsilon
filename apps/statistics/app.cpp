@@ -1,12 +1,10 @@
 #include "app.h"
-#include "../apps_container.h"
 #include "stat_icon.h"
 
 namespace Statistics {
 
-App::App(Container * container, Context * context) :
-  ::App(container, &m_tabViewController, "Statistics", ImageStore::StatIcon),
-  ExpressionTextFieldDelegate(),
+App::App(Container * container) :
+  TextFieldDelegateApp(container, &m_tabViewController, "Statistics", ImageStore::StatIcon),
   m_data(),
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_calculationController, &m_calculationController)),
@@ -22,11 +20,6 @@ App::App(Container * container, Context * context) :
   m_dataStackViewController(StackViewController(&m_tabViewController, &m_dataController)),
   m_tabViewController(&m_modalViewController, 4, &m_dataStackViewController, &m_histogramStackViewController, &m_boxStackViewController, &m_calculationStackViewController)
 {
-}
-
-Context * App::localContext() {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  return appsContainer->globalContext();
 }
 
 }

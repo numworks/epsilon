@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "../graph/values/title_cell.h"
-#include "../graph/values/editable_value_cell.h"
 
 namespace Statistics {
 
@@ -33,7 +32,7 @@ private:
   constexpr static int k_maxNumberOfEditableCells = 20;
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const;
-  //Graph::EditableValueCell m_editableCells[k_maxNumberOfEditableCells];
+  //EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   Graph::TitleCell m_titleCells[k_numberOfTitleCells];
   SelectableTableView m_selectableTableView;
 };

@@ -10,8 +10,8 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this)),
-  m_abscissaCells{EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer),EditableValueCell(m_draftTextBuffer),
-    EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer), EditableValueCell(m_draftTextBuffer)},
+  m_abscissaCells{EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer),EvenOddEditableTextCell(m_draftTextBuffer),
+    EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer)},
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
@@ -246,12 +246,12 @@ void ValuesController::configureDerivativeFunction() {
 
 void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (previousSelectedCellX == 0 && previousSelectedCellY > 0) {
-    EditableValueCell * myCell = (EditableValueCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
     app()->setFirstResponder(t);
   }
   if (t->selectedRow() > 0 && t->selectedColumn() == 0) {
-    EditableValueCell * myCell = (EditableValueCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
     app()->setFirstResponder(myCell);
   }
 }
@@ -343,7 +343,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
       buffer[0] = 0;
       if (i == 0) {
-        EditableValueCell * myEditableValueCell = (EditableValueCell *)cell;
+        EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
         myEditableValueCell->setText(buffer);
       } else {
         ValueCell * myValueCell = (ValueCell *)cell;
@@ -354,7 +354,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   }
   // Special case: first column
   if (i == 0){
-    EditableValueCell * myEditableValueCell = (EditableValueCell *)cell;
+    EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
     Float(m_interval.element(j-1)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     myEditableValueCell->setText(buffer);
     return;

@@ -19,7 +19,7 @@ App::App(Container * container, Context * context) :
   m_valuesHeader(HeaderViewController(&m_valuesAlternateEmptyViewController, &m_valuesController, &m_valuesController)),
   m_valuesAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_valuesHeader, &m_valuesController)),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesAlternateEmptyViewController)),
-  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
+  m_tabViewController(&m_inputViewController, 3, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
 }

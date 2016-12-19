@@ -6,8 +6,7 @@
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three);
-  //TabViewController(ViewController ** children, uint8_t numberOfChildren);
+  TabViewController(Responder * parentResponder, uint8_t numberOfChildren, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
   View * view() override;
 
   void setSelectedTab(int8_t index);

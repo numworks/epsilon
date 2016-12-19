@@ -53,33 +53,21 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three) :
+TabViewController::TabViewController(Responder * parentResponder, uint8_t numberOfChildren, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
   ViewController(parentResponder),
-  m_numberOfChildren(3),
+  m_numberOfChildren(numberOfChildren),
   m_activeChildIndex(-1),
   m_selectedChildIndex(-1)
 {
   m_children[0] = one;
   m_children[1] = two;
   m_children[2] = three;
+  m_children[3] = four;
 
-  one->setParentResponder(this);
-  two->setParentResponder(this);
-  three->setParentResponder(this);
-}
-
-/*
-TabViewController::TabViewController(ViewController ** children, uint8_t numberOfChildren) :
-  m_children(children),
-  m_numberOfChildren(numberOfChildren),
-  m_activeChildIndex(-1)
-{
   for (int i=0; i<numberOfChildren; i++) {
     m_children[i]->setParentResponder(this);
-    m_view.m_tabView.addTabNamed(children[i]->title());
   }
 }
-*/
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
   if (app()->firstResponder() != this) {

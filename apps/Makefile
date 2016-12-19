@@ -2,6 +2,7 @@ include apps/home/Makefile
 include apps/graph/Makefile
 include apps/probability/Makefile
 include apps/calculation/Makefile
+include apps/statistics/Makefile
 #include apps/picview/Makefile
 
 app_objs += $(addprefix apps/,\

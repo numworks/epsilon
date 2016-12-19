@@ -5,6 +5,7 @@
 #include "graph/app.h"
 #include "probability/app.h"
 #include "calculation/app.h"
+#include "statistics/app.h"
 #include "toolbox_controller.h"
 #include "variable_box_controller.h"
 
@@ -24,11 +25,12 @@ public:
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  static constexpr int k_numberOfApps = 4;
+  static constexpr int k_numberOfApps = 5;
   Home::App m_homeApp;
   Graph::App m_graphApp;
   Probability::App m_probabilityApp;
   Calculation::App m_calculationApp;
+  Statistics::App m_statisticsApp;
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif

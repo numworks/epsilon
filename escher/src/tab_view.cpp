@@ -12,6 +12,10 @@ TabView::TabView() :
 {
 }
 
+int TabView::numberOfTabs() const {
+  return m_numberOfTabs;
+}
+
 void TabView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();

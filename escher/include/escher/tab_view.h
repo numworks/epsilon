@@ -9,7 +9,7 @@ class TabViewController;
 class TabView : public View {
 public:
   TabView();
-
+  int numberOfTabs() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void addTabNamed(const char * name);

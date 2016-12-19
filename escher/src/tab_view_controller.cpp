@@ -66,13 +66,20 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
   one->setParentResponder(this);
   two->setParentResponder(this);
   three->setParentResponder(this);
+}
 
-  // TODO: This should be lazy loaded!
-  // So this code should live in view()
-  for (int i=0; i<m_numberOfChildren; i++) {
-    m_view.m_tabView.addTabNamed(m_children[i]->title());
+/*
+TabViewController::TabViewController(ViewController ** children, uint8_t numberOfChildren) :
+  m_children(children),
+  m_numberOfChildren(numberOfChildren),
+  m_activeChildIndex(-1)
+{
+  for (int i=0; i<numberOfChildren; i++) {
+    m_children[i]->setParentResponder(this);
+    m_view.m_tabView.addTabNamed(children[i]->title());
   }
 }
+*/
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
   if (app()->firstResponder() != this) {
@@ -96,18 +103,6 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
-
-/*
-TabViewController::TabViewController(ViewController ** children, uint8_t numberOfChildren) :
-  m_children(children),
-  m_numberOfChildren(numberOfChildren),
-  m_activeChildIndex(-1)
-{
-  for (int i=0; i<numberOfChildren; i++) {
-    m_view.m_tabView.addTabNamed(children[i]->title());
-  }
-}
-*/
 
 void TabViewController::setActiveTab(int8_t i) {
   ViewController * activeVC = m_children[i];
@@ -141,10 +136,14 @@ void TabViewController::didResignFirstResponder() {
 View * TabViewController::view() {
   // We're asked for a view!
   // Let's populate our tabview
+  if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
+    for (int i=0; i<m_numberOfChildren; i++) {
+      m_view.m_tabView.addTabNamed(m_children[i]->title());
+    }
+  }
   if (m_activeChildIndex < 0) {
     setActiveTab(0);
   }
-
   return &m_view;
 }
 

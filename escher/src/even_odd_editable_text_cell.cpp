@@ -2,15 +2,11 @@
 #include <escher/app.h>
 #include <assert.h>
 
-EvenOddEditableTextCell::EvenOddEditableTextCell(char * draftTextBuffer) :
+EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer) :
   EvenOddCell(),
-  Responder(nullptr),
-  m_editableCell(this, nullptr, draftTextBuffer, 1.0f, 0.5f, KDColorBlack, KDColorWhite)
+  Responder(parentResponder),
+  m_editableCell(this, delegate, draftTextBuffer, 1.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
-}
-
-void EvenOddEditableTextCell::setDelegate(TextFieldDelegate * delegate) {
-  m_editableCell.textfield()->setTextFieldDelegate(delegate);
 }
 
 void EvenOddEditableTextCell::reloadCell() {

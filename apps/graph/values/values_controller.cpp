@@ -10,8 +10,8 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this)),
-  m_abscissaCells{EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer),EvenOddEditableTextCell(m_draftTextBuffer),
-    EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer), EvenOddEditableTextCell(m_draftTextBuffer)},
+  m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
+    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
@@ -26,10 +26,6 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_interval.setStart(0);
   m_interval.setEnd(10);
   m_interval.setStep(1);
-  for (int k = 0; k < k_maxNumberOfAbscissaCells; k++) {
-    m_abscissaCells[k].setParentResponder(&m_selectableTableView);
-    m_abscissaCells[k].setDelegate(this);
-  }
 }
 
 View * ValuesController::view() {

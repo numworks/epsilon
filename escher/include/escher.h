@@ -13,6 +13,7 @@
 #include <escher/editable_text_cell.h>
 #include <escher/even_odd_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_pointer_text_cell.h>
 #include <escher/expression_view.h>
 #include <escher/header_view_controller.h>
 #include <escher/header_view_delegate.h>

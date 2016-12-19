@@ -1,0 +1,9 @@
+app_objs += $(addprefix apps/statistics/,\
+  app.o\
+  box_controller.o\
+  calculation_controller.o\
+  data_controller.o\
+  histogram_controller.o\
+)
+
+app_images += apps/statistics/stat_icon.png

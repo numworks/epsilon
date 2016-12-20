@@ -14,6 +14,47 @@ Float::Float(float f) :
 {
 }
 
+static inline float setSign(float f, bool negative) {
+  if (negative) {
+    return -f;
+  }
+  return f;
+}
+
+/* Handles non-NULL terminated string */
+float digitsToFloat(const char * digits) {
+  if (digits == nullptr) {
+    return 0.0f;
+  }
+  float result = 0.0f;
+  const char * digit = digits;
+  while (*digit >= '0' && *digit <= '9') {
+    result = 10.0f * result;
+    result += *digit-'0';
+    digit++;
+  }
+  return result;
+}
+
+Float::Float(const char * integralPart, bool integralNegative,
+    const char * fractionalPart,
+    const char * exponent, bool exponentNegative) {
+  /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
+   * Indeed, this code is called by Bison to build Floats from user input.
+   * While Flex guarantees that yytext is NULL-terminated when building tokens,
+   * it does so by temporarily swapping in a NULL terminated in the input text.
+   * Of course that hack has vanished when the pointer is fed into Bison. */
+
+  float i = setSign(digitsToFloat(integralPart), integralNegative);
+  float j = digitsToFloat(fractionalPart);
+  float k = setSign(digitsToFloat(exponent), exponentNegative);
+
+  m_float =
+  (i + j*powf(10.0f, -ceilf(log10f(j))))
+    * powf(10.0f, k);
+  m_numberOfDigitsInMantissa = 7;
+}
+
 void Float::setNumberOfDigitsInMantissa(int numberOfDigits) {
   m_numberOfDigitsInMantissa = numberOfDigits;
 }

@@ -37,11 +37,13 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 }
 
 /* The INTEGER token uses the "string" part of the union to store its value */
-%token <string> INTEGER
+%token <string> DIGITS
+%token <string> FLOAT
 %token <character> SYMBOL
 %token <function> FUNCTION
 
 /* Operator tokens */
+%token DOT
 %token PLUS
 %token MINUS
 %token MULTIPLY
@@ -74,12 +76,10 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 %left DIVIDE
 %left POW
 
-
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;
-
+%type <expression> number;
 %type <listData> lstData;
-
 %type <matrixData> mtxData;
 
 %%
@@ -100,8 +100,14 @@ mtxData:
   LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new MatrixData($2); }
   | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3); }
 
+number:
+  DIGITS { $$ = new Integer($1, false); }
+  | MINUS DIGITS { $$ = new Integer($2, true); }
+  | DIGITS DOT DIGITS { $$ = new Float($1, false, $3, nullptr, false); }
+  | MINUS DIGITS DOT DIGITS { $$ = new Float($2, true, $4, nullptr, false); }
+
 exp:
-  INTEGER            { $$ = new Integer($1, false);     }
+  number             { $$ = $1; }
   | SYMBOL           { $$ = new Symbol($1); }
   | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, 2, false); }
   | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }

@@ -6,6 +6,9 @@
 class Float : public LeafExpression {
 public:
   Float(float f);
+  Float(const char * integralPart, bool integralNegative,
+        const char * fractionalPart,
+        const char * exponent, bool exponentNegative);
 
   ExpressionLayout * createLayout() const override;
   float approximate(Context& context) const override;

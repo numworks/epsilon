@@ -66,7 +66,17 @@
 
 %%
 
-[0-9]+ { poincare_expression_yylval.string = yytext; return(INTEGER); }
+ /* If two patterns can match the same input, flex resolves the ambiguity:
+  * - By matching the longest posible string
+  * - In a tie, by using the pattern that appears first
+  *
+  * Also note that yytext is guaranteed to be null-terminated when the token is
+  * being built, (i.e. when flex calls our code snippet), but this is achieved
+  * by flex temporarily swapping the last character. Afterwards the pointer is
+  * still valid but the string isn't null-terminated anymore.
+  */
+
+[0-9]+ { poincare_expression_yylval.string = yytext; return DIGITS; }
 [A-Zxntab] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
@@ -85,5 +95,6 @@ log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; 
 \[ { return(LEFT_BRACKET); }
 \] { return(RIGHT_BRACKET); }
 \, { return(COMMA); }
+\. { return DOT; }
 
 %%

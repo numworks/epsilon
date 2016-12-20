@@ -51,7 +51,12 @@ void Data::deletePairAtIndex(int index) {
   m_sizes[m_numberOfPairs] = 1;
 }
 
-int Data::sizeOfValuesBetweenBounds(float lowerBound, float upperBound) const {
+int Data::sizeAtValue(float value) {
+  float min = xMin();
+  float bin = binWidth();
+  int binNumber = (value - min)/bin;
+  float lowerBound = min + binNumber*bin;
+  float upperBound = min + (binNumber+1)*bin;
   int result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_values[k] < upperBound && lowerBound <= m_values[k]) {
@@ -91,9 +96,10 @@ float Data::yMin() {
 
 float Data::yMax() {
   float sizeMax = -FLT_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_sizes[k] > sizeMax) {
-      sizeMax = m_sizes[k];
+  for (float x = xMin(); x < xMax(); x += binWidth()) {
+    float size = sizeAtValue(x);
+    if (size > sizeMax) {
+      sizeMax = size;
     }
   }
   return sizeMax;

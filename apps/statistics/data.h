@@ -17,7 +17,7 @@ public:
   void setValueAtIndex(float value, int index);
   void setSizeAtIndex(int size, int index);
   void deletePairAtIndex(int index);
-  int sizeOfValuesBetweenBounds(float lowerBound, float upperBound) const;
+  int sizeAtValue(float value);
   float xMin() override;
   // if the range of value is to wide, value max returns valueMin + 10
   float xMax() override;

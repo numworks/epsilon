@@ -22,7 +22,7 @@ int Data::sizeAtIndex(int index) {
 void Data::setValueAtIndex(float value, int index) {
   m_values[index] = value;
   if (index >= m_numberOfPairs) {
-    m_sizes[index] = 0;
+    m_sizes[index] = 1;
     m_numberOfPairs++;
   }
 }
@@ -33,6 +33,16 @@ void Data::setSizeAtIndex(int size, int index) {
     m_values[index] = 0.0f;
     m_numberOfPairs++;
   }
+}
+
+void Data::deletePairAtIndex(int index) {
+  m_numberOfPairs--;
+  for (int k = index; k < m_numberOfPairs; k++) {
+    m_values[k] = m_values[k+1];
+    m_sizes[k] = m_sizes[k+1];
+  }
+  m_values[m_numberOfPairs] = 0.0f;
+  m_sizes[m_numberOfPairs] = 1;
 }
 
 }

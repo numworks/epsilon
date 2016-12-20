@@ -13,6 +13,7 @@ public:
   int sizeAtIndex(int index);
   void setValueAtIndex(float value, int index);
   void setSizeAtIndex(int size, int index);
+  void deletePairAtIndex(int index);
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfPairs = 500;
 private:

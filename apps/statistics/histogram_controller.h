@@ -15,6 +15,7 @@ public:
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
@@ -26,7 +27,6 @@ private:
   Responder * tabController() const;
   HistogramView m_view;
   Button m_settingButton;
-  int m_selectedBin;
   Data * m_data;
 };
 

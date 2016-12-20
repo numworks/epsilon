@@ -8,7 +8,6 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
   HeaderViewDelegate(headerViewController),
   m_view(HistogramView(data)),
   m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {}, this))),
-  m_selectedBin(0),
   m_data(data)
 {
 }
@@ -18,30 +17,41 @@ const char * HistogramController::title() const {
 }
 
 View * HistogramController::view() {
-  m_view.reload();
   return &m_view;
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    if (m_selectedBin == -1) {
+    if (m_view.selectedBin() < m_data->xMin()) {
       headerViewController()->setSelectedButton(-1);
-      m_selectedBin = 0;
+      m_view.initSelectedBin();
       return true;
     }
     return false;
   }
   if (event == Ion::Events::Up) {
-    if (m_selectedBin == -1) {
+    if (m_view.selectedBin() < m_data->xMin()) {
       headerViewController()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
-    m_selectedBin = -1;
+    m_view.unselectBin();
     headerViewController()->setSelectedButton(0);
     return true;
   }
+  if (event == Ion::Events::Left) {
+    m_view.selectNextBinToward(-1);
+    return true;
+  }
+  if (event == Ion::Events::Right) {
+    m_view.selectNextBinToward(1);
+    return true;
+  }
   return false;
+}
+
+void HistogramController::didBecomeFirstResponder() {
+  m_view.reload();
 }
 
 int HistogramController::numberOfButtons() const {

@@ -1,11 +1,12 @@
 #include "histogram_controller.h"
+#include <assert.h>
 
 namespace Statistics {
 
 HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * data) :
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
-  m_view(SolidColorView(KDColorGreen)),
+  m_view(HistogramView(data)),
   m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {}, this))),
   m_selectedBin(0),
   m_data(data)
@@ -17,6 +18,7 @@ const char * HistogramController::title() const {
 }
 
 View * HistogramController::view() {
+  m_view.reload();
   return &m_view;
 }
 
@@ -57,7 +59,7 @@ bool HistogramController::isEmpty() {
 }
 
 const char * HistogramController::emptyMessage() {
-  return "Aucune donnee à tracer";
+  return "Aucune donnee a tracer";
 }
 
 Responder * HistogramController::defaultController() {

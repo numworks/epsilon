@@ -3,6 +3,8 @@
 
 #include <escher.h>
 #include "data.h"
+#include "histogram_view.h"
+#include "../curve_view.h"
 
 namespace Statistics {
 
@@ -22,7 +24,7 @@ public:
   Responder * defaultController() override;
 private:
   Responder * tabController() const;
-  SolidColorView m_view;
+  HistogramView m_view;
   Button m_settingButton;
   int m_selectedBin;
   Data * m_data;

@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
+#include "curve_view_window.h"
 
 class CurveView : public View {
 public:
@@ -10,16 +11,17 @@ public:
     Horizontal = 0,
     Vertical = 1
   };
-  CurveView();
+  CurveView(CurveViewWindow * curveViewWindow = nullptr);
   void reload();
 protected:
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static int k_maxNumberOfXLabels =  18;
   constexpr static int k_maxNumberOfYLabels =  13;
-  virtual float min(Axis axis) const = 0;
-  virtual float max(Axis axis) const = 0;
-  virtual float gridUnit(Axis axis) const = 0;
+  void setCurveViewWindow(CurveViewWindow * curveViewWindow);
+  float min(Axis axis) const;
+  float max(Axis axis) const;
+  float gridUnit(Axis axis) const;
   virtual char * label(Axis axis, int index) const = 0;
   KDCoordinate pixelLength(Axis axis) const;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
@@ -43,6 +45,7 @@ private:
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
   void stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx, KDRect rect) const;
+  CurveViewWindow * m_curveViewWindow;
 };
 
 #endif

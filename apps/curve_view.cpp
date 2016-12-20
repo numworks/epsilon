@@ -7,13 +7,32 @@
 
 constexpr KDColor CurveView::k_axisColor;
 
-CurveView::CurveView() :
-  View()
+CurveView::CurveView(CurveViewWindow * curveViewWindow) :
+  View(),
+  m_curveViewWindow(curveViewWindow)
 {
+}
+
+void CurveView::setCurveViewWindow(CurveViewWindow * curveViewWindow) {
+  m_curveViewWindow = curveViewWindow;
 }
 
 void CurveView::reload() {
   markRectAsDirty(bounds());
+}
+
+float CurveView::min(Axis axis) const {
+  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
+  return (axis == Axis::Horizontal ? m_curveViewWindow->xMin() : m_curveViewWindow->yMin());
+}
+
+float CurveView::max(Axis axis) const {
+  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
+  return (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
+}
+
+float CurveView::gridUnit(Axis axis) const {
+  return (axis == Axis::Horizontal ? m_curveViewWindow->xGridUnit() : m_curveViewWindow->yGridUnit());
 }
 
 KDCoordinate CurveView::pixelLength(Axis axis) const {

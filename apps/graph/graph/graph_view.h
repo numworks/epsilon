@@ -40,9 +40,6 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 
-  float min(Axis axis) const override;
-  float max(Axis axis) const override;
-  float gridUnit(Axis axis) const override;
   char * label(Axis axis, int index) const override;
   float evaluateCurveAtAbscissa(void * expression, float abscissa) const override;
   void drawGrid(KDContext * ctx, KDRect rect) const;

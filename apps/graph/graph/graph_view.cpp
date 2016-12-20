@@ -8,7 +8,7 @@ namespace Graph {
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
-  CurveView(),
+  CurveView(graphWindow),
   m_cursorView(CursorView()),
   m_xCursorPosition(-1.0f),
   m_yCursorPosition(-1.0f),
@@ -58,10 +58,6 @@ void GraphView::reload() {
 void GraphView::reloadCursor() {
   markRectAsDirty(KDRect(KDPoint(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition)- k_cursorSize/2), k_cursorSize, k_cursorSize));
   layoutSubviews();
-}
-
-float GraphView::gridUnit(Axis axis) const {
-  return (axis == Axis::Horizontal ? m_graphWindow->xGridUnit() : m_graphWindow->yGridUnit());
 }
 
 char * GraphView::label(Axis axis, int index) const {
@@ -197,16 +193,6 @@ void GraphView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
 void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Horizontal, m_graphWindow->xGridUnit(), k_gridColor);
   drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yGridUnit(), k_gridColor);
-}
-
-float GraphView::min(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_graphWindow->xMin() : m_graphWindow->yMin());
-}
-
-float GraphView::max(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_graphWindow->xMax() : m_graphWindow->yMax());
 }
 
 float GraphView::evaluateCurveAtAbscissa(void * curve, float abscissa) const {

@@ -79,6 +79,18 @@ bool DataController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
+  if (event == Ion::Events::Clear) {
+    if (m_selectableTableView.selectedColumn() == 0) {
+      m_data->deletePairAtIndex(m_selectableTableView.selectedRow()-1);
+      m_selectableTableView.reloadData();
+    } else {
+      m_data->setSizeAtIndex(1, m_selectableTableView.selectedRow()-1);
+      EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      willDisplayCellAtLocation(myCell, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      myCell->editableTextCell()->textField()->handleEvent(Ion::Events::OK);
+    }
+    return true;
+  }
   return false;
 }
 

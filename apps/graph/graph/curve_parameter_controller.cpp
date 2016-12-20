@@ -6,7 +6,6 @@ namespace Graph {
 CurveParameterController::CurveParameterController(GraphView * graphView) :
   ViewController(nullptr),
   m_graphView(graphView),
-  m_displayDerivative(false),
   m_function(nullptr),
   m_calculationCell(ChevronMenuListCell((char*)"Calculer")),
   m_goToCell(ChevronMenuListCell((char*)"Aller a")),
@@ -33,7 +32,7 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_displayDerivative);
+    switchView->setState(m_graphView->bannerView()->displayDerivative());
   }
 }
 
@@ -50,7 +49,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       case 2:
-        m_displayDerivative = !m_displayDerivative;
+        m_graphView->bannerView()->setDisplayDerivative(!m_graphView->bannerView()->displayDerivative());
         m_selectableTableView.reloadData();
         return true;
       default:
@@ -77,10 +76,6 @@ int CurveParameterController::reusableCellCount() {
 
 KDCoordinate CurveParameterController::cellHeight() {
   return 35;
-}
-
-bool CurveParameterController::displayDerivative() const {
-  return m_displayDerivative;
 }
 
 void CurveParameterController::setFunction(Function * function) {

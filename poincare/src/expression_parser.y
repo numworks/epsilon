@@ -43,7 +43,6 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 %token <function> FUNCTION
 
 /* Operator tokens */
-%token DOT
 %token PLUS
 %token MINUS
 %token MULTIPLY
@@ -56,6 +55,8 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 %token LEFT_BRACKET
 %token RIGHT_BRACKET
 %token COMMA
+%token DOT
+%token EE
 
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
@@ -105,6 +106,10 @@ number:
   | MINUS DIGITS { $$ = new Integer($2, true); }
   | DIGITS DOT DIGITS { $$ = new Float($1, false, $3, nullptr, false); }
   | MINUS DIGITS DOT DIGITS { $$ = new Float($2, true, $4, nullptr, false); }
+  | DIGITS DOT DIGITS EE DIGITS { $$ = new Float($1, false, $3, $5, false); }
+  | MINUS DIGITS DOT DIGITS EE DIGITS { $$ = new Float($2, true, $4, $6, false); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($1, false, $3, $6, true); }
+  | MINUS DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($2, true, $4, $7, true); }
 
 exp:
   number             { $$ = $1; }

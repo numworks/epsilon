@@ -77,24 +77,25 @@
   */
 
 [0-9]+ { poincare_expression_yylval.string = yytext; return DIGITS; }
+E  { return EE; }
 [A-Zxntab] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
-\+ { return(PLUS); }
-\- { return(MINUS); }
-\* { return(MULTIPLY); }
-\/ { return(DIVIDE); }
-\^ { return(POW); }
-\( { return(LEFT_PARENTHESIS); }
-\) { return(RIGHT_PARENTHESIS); }
-\{ { return(LEFT_BRACE); }
-\} { return(RIGHT_BRACE); }
-\[ { return(LEFT_BRACKET); }
-\] { return(RIGHT_BRACKET); }
-\, { return(COMMA); }
+\+ { return PLUS; }
+\- { return MINUS; }
+\* { return MULTIPLY; }
+\/ { return DIVIDE; }
+\^ { return POW; }
+\( { return LEFT_PARENTHESIS; }
+\) { return RIGHT_PARENTHESIS; }
+\{ { return LEFT_BRACE; }
+\} { return RIGHT_BRACE; }
+\[ { return LEFT_BRACKET; }
+\] { return RIGHT_BRACKET; }
+\, { return COMMA; }
 \. { return DOT; }
 
 %%

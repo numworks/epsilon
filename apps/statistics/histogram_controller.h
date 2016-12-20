@@ -2,13 +2,14 @@
 #define STATISTICS_HISTOGRAM_CONTROLLER_H
 
 #include <escher.h>
+#include "data.h"
 
 namespace Statistics {
 
 class HistogramController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
 
 public:
-  HistogramController(Responder * parentResponder, HeaderViewController * headerViewController);
+  HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * m_data);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -24,6 +25,7 @@ private:
   SolidColorView m_view;
   Button m_settingButton;
   int m_selectedBin;
+  Data * m_data;
 };
 
 }

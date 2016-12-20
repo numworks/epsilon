@@ -12,7 +12,7 @@ class Integer : public LeafExpression {
   public:
     Integer(native_int_t i);
     Integer(Integer&& other); // C++11 move constructor
-    Integer(const char * string); // NULL-terminated
+    Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
     Type type() const override;
 
     ~Integer();

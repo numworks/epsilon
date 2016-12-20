@@ -101,7 +101,7 @@ mtxData:
   | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3); }
 
 exp:
-  INTEGER            { $$ = new Integer($1);     }
+  INTEGER            { $$ = new Integer($1, false);     }
   | SYMBOL           { $$ = new Symbol($1); }
   | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, 2, false); }
   | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }

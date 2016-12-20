@@ -46,46 +46,33 @@ Integer::Integer(native_int_t i) {
   *m_digits = (native_uint_t)(i>0 ? i : -i);
 }
 
-Integer::Integer(const char * string) {
-  int stringLength = strlen(string);
+/* Caution: string is NOT guaranteed to be NULL-terminated! */
+Integer::Integer(const char * digits, bool negative) {
+  m_negative = negative;
 
-  Integer base = Integer(10);
-
-  m_negative = false;
-
-  if (stringLength > 1 && string[0] == '-') {
+  if (digits != nullptr && digits[0] == '-') {
     m_negative = true;
-    string += 1;
-    stringLength -= 1;
+    digits++;
   }
-  if (stringLength > 2 && string[0] == '0') {
-    switch (string[1]) {
-      case 'x':
-        base = Integer(16);
-        string += 2;
-        stringLength -= 2;
-        break;
-      case 'b':
-        base = Integer(2);
-        string += 2;
-        stringLength -= 2;
-        break;
+
+  Integer result = Integer(0);
+
+  if (digits != nullptr) {
+    Integer base = Integer(10);
+    while (*digits >= '0' && *digits <= '9') {
+      result = result.multiply_by(base);
+      result = result.add(Integer(*digits-'0'));
+      digits++;
     }
   }
 
-  Integer v = Integer(digit_from_char(string[0]));
-  for (int i=1; i<stringLength; i++) {
-    v = v.multiply_by(base);
-    v = v.add(Integer(digit_from_char(string[i]))); // ASCII encoding
-  }
-
   // Pilfer v's ivars
-  m_numberOfDigits = v.m_numberOfDigits;
-  m_digits = v.m_digits;
+  m_numberOfDigits = result.m_numberOfDigits;
+  m_digits = result.m_digits;
 
   // Zero-out v
-  v.m_numberOfDigits = 0;
-  v.m_digits = NULL;
+  result.m_numberOfDigits = 0;
+  result.m_digits = NULL;
 }
 
 Integer::~Integer() {

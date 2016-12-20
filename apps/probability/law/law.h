@@ -2,10 +2,11 @@
 #define PROBABILITE_LAW_H
 
 #include <poincare.h>
+#include "../../curve_view_window.h"
 
 namespace Probability {
 
-class Law {
+class Law : public CurveViewWindow {
 public:
   enum class Type : uint8_t{
     Binomial,
@@ -18,11 +19,7 @@ public:
   virtual const char * title() = 0;
   virtual Type type() const = 0;
   virtual bool isContinuous() const = 0;
-  virtual float xMin() = 0;
-  virtual float yMin() = 0;
-  virtual float xMax() = 0;
-  virtual float yMax() = 0;
-  float gridUnit();
+  float xGridUnit() override;
   virtual int numberOfParameter() = 0;
   virtual float parameterValueAtIndex(int index) = 0;
   virtual const char * parameterNameAtIndex(int index) = 0;
@@ -36,11 +33,6 @@ public:
   virtual float cumulativeDistributiveInverseForProbability(float * probability);
   virtual float rightIntegralInverseForProbability(float * probability);
 protected:
-  constexpr static float k_minNumberOfXGridUnits = 7.0f;
-  constexpr static float k_maxNumberOfXGridUnits = 18.0f;
-  constexpr static float k_oneUnit = 1.0f;
-  constexpr static float k_twoUnit = 2.0f;
-  constexpr static float k_fiveUnit = 5.0f;
   constexpr static float k_minMarginFactor = -0.2f;
   constexpr static float k_maxMarginFactor = 1.2f;
   constexpr static int k_maxNumberOfOperations = 1000000;

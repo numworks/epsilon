@@ -1,4 +1,5 @@
 #include "data.h"
+#include <float.h>
 
 namespace Statistics {
 
@@ -43,6 +44,58 @@ void Data::deletePairAtIndex(int index) {
   }
   m_values[m_numberOfPairs] = 0.0f;
   m_sizes[m_numberOfPairs] = 1;
+}
+
+int Data::sizeOfValuesBetweenBounds(float lowerBound, float upperBound) const {
+  int result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] < upperBound && lowerBound <= m_values[k]) {
+      result += m_sizes[k];
+    }
+  }
+  return result;
+}
+
+float Data::xMin() {
+  float valueMin = FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] < valueMin) {
+      valueMin = m_values[k];
+    }
+  }
+  return valueMin;
+}
+
+float Data::xMax() {
+  float valueMax = -FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] > valueMax) {
+      valueMax = m_values[k];
+    }
+  }
+  float valueMin = xMin();
+  if (valueMax - valueMin >  k_maxRangeValue) {
+    valueMax = valueMin + 10.0f;
+  }
+  return valueMax;
+}
+
+float Data::yMin() {
+  return 0.0f;
+}
+
+float Data::yMax() {
+  float sizeMax = -FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_sizes[k] > sizeMax) {
+      sizeMax = m_sizes[k];
+    }
+  }
+  return sizeMax;
+}
+
+float Data::xGridUnit() {
+  return computeGridUnit(Axis::X);
 }
 
 }

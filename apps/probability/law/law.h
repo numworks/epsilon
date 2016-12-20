@@ -33,8 +33,6 @@ public:
   virtual float cumulativeDistributiveInverseForProbability(float * probability);
   virtual float rightIntegralInverseForProbability(float * probability);
 protected:
-  constexpr static float k_minMarginFactor = -0.2f;
-  constexpr static float k_maxMarginFactor = 1.2f;
   constexpr static int k_maxNumberOfOperations = 1000000;
 };
 

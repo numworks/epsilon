@@ -48,17 +48,12 @@ float BinomialLaw::xMax() {
 }
 
 float BinomialLaw::yMin() {
-  int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
-  float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
-  if (result >= 0.0f || isnan(result)) {
-    result = k_minMarginFactor;
-  }
-  return result;
+  return 0.0f;
 }
 
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
-  float result = k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  float result = evaluateAtAbscissa(maxAbscissa);
   if (result <= 0.0f || result == yMin() || isnan(result)) {
     result = yMin() + 1.0f;
   }

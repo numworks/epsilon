@@ -19,6 +19,8 @@ protected:
   constexpr static int k_maxNumberOfXLabels =  18;
   constexpr static int k_maxNumberOfYLabels =  13;
   void setCurveViewWindow(CurveViewWindow * curveViewWindow);
+  /* The window bounds are deduced from the model bounds but also take into
+  account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
@@ -34,6 +36,7 @@ protected:
   void computeLabels(Axis axis);
   void drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const;
 private:
+  constexpr static float k_marginFactor = 0.2f;
   int numberOfLabels(Axis axis) const;
   virtual float evaluateCurveAtAbscissa(void * curve, float t) const = 0;
   /* Recursively join two dots (dichotomy). The method stops when the

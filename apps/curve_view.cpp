@@ -23,12 +23,16 @@ void CurveView::reload() {
 
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_curveViewWindow->xMin() : m_curveViewWindow->yMin());
+  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
+  float absoluteMin = (axis == Axis::Horizontal ? m_curveViewWindow->xMin(): m_curveViewWindow->yMin());
+  return absoluteMin - k_marginFactor*range;
 }
 
 float CurveView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
+  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
+  float absoluteMax = (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
+  return absoluteMax + k_marginFactor*range;
 }
 
 float CurveView::gridUnit(Axis axis) const {

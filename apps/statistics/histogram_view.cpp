@@ -19,7 +19,7 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(Axis::Horizontal, ctx, rect);
   drawAxes(Axis::Vertical, ctx, rect);
   drawLabels(Axis::Horizontal, true, ctx, rect);
-  drawHistogram(nullptr, KDColorBlack, ctx, rect);
+  drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, 3.0f);
 }
 
 char * HistogramView::label(Axis axis, int index) const {

@@ -11,7 +11,7 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
 {
 }
 
-TextField * EditableTextCell::textfield() {
+TextField * EditableTextCell::textField() {
   return &m_textField;
 }
 

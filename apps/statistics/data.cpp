@@ -4,12 +4,17 @@
 namespace Statistics {
 
 Data::Data() :
-  m_numberOfPairs(0)
+  m_numberOfPairs(0),
+  m_binWidth(1.0f)
 {
 }
 
 int Data::numberOfPairs() const {
   return m_numberOfPairs;
+}
+
+float Data::binWidth() {
+  return m_binWidth;
 }
 
 float Data::valueAtIndex(int index) {
@@ -77,7 +82,7 @@ float Data::xMax() {
   if (valueMax - valueMin >  k_maxRangeValue) {
     valueMax = valueMin + 10.0f;
   }
-  return valueMax;
+  return valueMax + binWidth();
 }
 
 float Data::yMin() {

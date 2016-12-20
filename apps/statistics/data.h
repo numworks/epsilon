@@ -11,6 +11,7 @@ public:
   // Delete the implicit copy constructor: the object is heavy
   Data(const Data&) = delete;
   int numberOfPairs() const;
+  float binWidth();
   float valueAtIndex(int index);
   int sizeAtIndex(int index);
   void setValueAtIndex(float value, int index);
@@ -30,6 +31,7 @@ private:
   int m_sizes[k_maxNumberOfPairs];
   float m_values[k_maxNumberOfPairs];
   int m_numberOfPairs;
+  float m_binWidth;
 };
 
 }

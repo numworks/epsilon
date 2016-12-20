@@ -164,23 +164,25 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {
     float y = evaluateCurveAtAbscissa(curve, x);
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float pyf = floatToPixel(Axis::Vertical, y);
-    if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
-      KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
-      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
-        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+    if (!isnan(y)) {
+      float pxf = floatToPixel(Axis::Horizontal, x);
+      float pyf = floatToPixel(Axis::Vertical, y);
+      if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
+        KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+        if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+          colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+        }
+        ctx->fillRect(colorRect, color);
       }
-      ctx->fillRect(colorRect, color);
-    }
-    stampAtLocation(pxf, pyf, color, ctx, rect);
-    if (x > rectMin) {
-      if (continuously) {
-        float puf = floatToPixel(Axis::Horizontal, x - xStep);
-        float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
-        straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
-      } else {
-        jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+      stampAtLocation(pxf, pyf, color, ctx, rect);
+      if (x > rectMin && !isnan(evaluateCurveAtAbscissa(curve, x-xStep))) {
+        if (continuously) {
+          float puf = floatToPixel(Axis::Horizontal, x - xStep);
+          float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
+          straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
+        } else {
+          jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+        }
       }
     }
   }

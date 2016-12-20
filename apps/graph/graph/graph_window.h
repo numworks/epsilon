@@ -2,15 +2,12 @@
 #define GRAPH_GRAPH_AXIS_INTERVAL_H
 
 #include "../function_store.h"
+#include "../../curve_view_window.h"
 
 namespace Graph {
 
-class GraphWindow {
+class GraphWindow : public CurveViewWindow {
 public:
-  enum class Axis {
-    X,
-    Y
-  };
   enum class Direction {
     Up,
     Left,
@@ -18,13 +15,13 @@ public:
     Right
   };
   GraphWindow(FunctionStore * functionStore);
-  float xMin();
-  float xMax();
-  float yMin();
-  float yMax();
+  float xMin() override;
+  float xMax() override;
+  float yMin() override;
+  float yMax() override;
   bool yAuto();
-  float xGridUnit();
-  float yGridUnit();
+  float xGridUnit() override;
+  float yGridUnit() override;
   void setXMin(float f);
   void setXMax(float f);
   void setYMin(float f);
@@ -44,14 +41,6 @@ public:
   void setDefault();
   bool panToMakePointVisible(float x, float y, float xMargin, float yMargin);
 private:
-  constexpr static float k_minNumberOfXGridUnits = 7.0f;
-  constexpr static float k_maxNumberOfXGridUnits = 18.0f;
-  constexpr static float k_minNumberOfYGridUnits = 5.0f;
-  constexpr static float k_maxNumberOfYGridUnits = 13.0f;
-  constexpr static float k_oneUnit = 1.0f;
-  constexpr static float k_twoUnit = 2.0f;
-  constexpr static float k_fiveUnit = 5.0f;
-  void computeGridUnit(Axis axis);
   float m_xMin;
   float m_xMax;
   float m_yMin;

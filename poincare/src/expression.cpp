@@ -15,13 +15,21 @@ int poincare_expression_yyparse(Expression ** expressionOutput);
 Expression::~Expression() {
 }
 
+#include <stdio.h>
+
 Expression * Expression::parse(char const * string) {
   if (string[0] == 0) {
     return nullptr;
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
   Expression * expression = 0;
-  poincare_expression_yyparse(&expression);
+  if (poincare_expression_yyparse(&expression) != 0) {
+    // Parsing failed because of invalid input or memory exhaustion
+    if (expression != nullptr) {
+      delete expression;
+      expression = nullptr;
+    }
+  }
   poincare_expression_yy_delete_buffer(buf);
 
   return expression;

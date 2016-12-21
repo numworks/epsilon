@@ -34,7 +34,8 @@ public:
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfPairs = 500;
 private:
-  constexpr static int k_maxRangeValue = 300;
+  constexpr static int k_maxHistogramRangeValue = 300;
+  constexpr static float k_marginFactor = 0.2f;
   void computeTotalSize();
   void scrollToSelectedBin();
   void initWindowBounds();

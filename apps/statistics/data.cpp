@@ -163,7 +163,7 @@ float Data::xMax() {
 }
 
 float Data::yMin() {
-  return 0.0f;
+  return -k_marginFactor*m_yMax;
 }
 
 float Data::yMax() {
@@ -197,7 +197,7 @@ void Data::scrollToSelectedBin() {
 
 void Data::initWindowBounds() {
   m_xMin = m_minValue;
-  if (m_maxValue - m_xMin > k_maxRangeValue) {
+  if (m_maxValue - m_xMin > k_maxHistogramRangeValue) {
     m_xMax = m_xMin + 10.0f;
   } else {
     m_xMax = m_maxValue + m_binWidth;

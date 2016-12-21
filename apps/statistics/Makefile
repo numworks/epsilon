@@ -5,6 +5,7 @@ app_objs += $(addprefix apps/statistics/,\
   data.o\
   data_controller.o\
   histogram_controller.o\
+  histogram_parameter_controller.o\
   histogram_view.o\
 )
 

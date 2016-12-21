@@ -221,6 +221,7 @@ void Data::computeAbsoluteBoundValue() {
       m_maxValue = m_values[k];
     }
   }
+  m_binWidth = 1.0f;
   initWindowBounds();
   computeYMax();
 }
@@ -232,6 +233,7 @@ void Data::updateAbsoluteBoundsAfterAdding(float value) {
   if (m_maxValue < value) {
     m_maxValue = value;
   }
+  m_binWidth = 1.0f;
   initWindowBounds();
   computeYMax();
 }

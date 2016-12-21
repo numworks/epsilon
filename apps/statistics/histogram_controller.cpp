@@ -7,8 +7,13 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
   m_view(HistogramView(data)),
-  m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {}, this))),
-  m_data(data)
+  m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {
+    HistogramController * histogramController = (HistogramController *) context;
+    StackViewController * stack = ((StackViewController *)histogramController->stackController());
+    stack->push(histogramController->histogramParameterController());
+  }, this))),
+  m_data(data),
+  m_histogramParameterController(nullptr, data)
 {
 }
 
@@ -18,6 +23,15 @@ const char * HistogramController::title() const {
 
 View * HistogramController::view() {
   return &m_view;
+}
+
+StackViewController * HistogramController::stackController() {
+  StackViewController * stack = (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+  return stack;
+}
+
+HistogramParameterController * HistogramController::histogramParameterController() {
+  return &m_histogramParameterController;
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
@@ -54,6 +68,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::didBecomeFirstResponder() {
+  headerViewController()->setSelectedButton(-1);
   m_view.selectBins(true);
   m_view.reload();
 }

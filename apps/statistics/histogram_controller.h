@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "data.h"
 #include "histogram_view.h"
+#include "histogram_parameter_controller.h"
 #include "../curve_view.h"
 
 namespace Statistics {
@@ -14,6 +15,8 @@ public:
   HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * m_data);
   const char * title() const override;
   View * view() override;
+  StackViewController * stackController();
+  HistogramParameterController * histogramParameterController();
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
@@ -28,6 +31,7 @@ private:
   HistogramView m_view;
   Button m_settingButton;
   Data * m_data;
+  HistogramParameterController m_histogramParameterController;
 };
 
 }

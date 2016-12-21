@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "data.h"
+#include "banner_view.h"
 #include "../constant.h"
 #include "../curve_view.h"
 
@@ -16,11 +17,16 @@ public:
   void selectBins(bool selectedBins);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static KDCoordinate k_bannerHeight = 30;
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
   char * label(Axis axis, int index) const override;
   float evaluateCurveAtAbscissa(void * curve, float t) const override;
   Data * m_data;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   bool m_selectedBins;
+  BannerView m_bannerView;
 };
 
 }

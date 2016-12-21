@@ -43,6 +43,9 @@ int Data::sizeAtIndex(int index) {
 }
 
 void Data::setValueAtIndex(float value, int index) {
+  if (index >= k_maxNumberOfPairs) {
+    return;
+  }
   float formerValue =  index >= m_numberOfPairs ? value : m_values[index];
   m_values[index] = value;
   if (index >= m_numberOfPairs) {
@@ -56,6 +59,9 @@ void Data::setValueAtIndex(float value, int index) {
 }
 
 void Data::setSizeAtIndex(int size, int index) {
+  if (index >= k_maxNumberOfPairs) {
+    return;
+  }
   float formerValue =  index >= m_numberOfPairs ? 0.0f : m_values[index];
   int formerSize =  index >= m_numberOfPairs ? 0 : m_sizes[index];
   m_sizes[index] = size;

@@ -24,7 +24,7 @@ public:
   void setMinValue(float minValue);
   float selectedBin();
   void initSelectedBin();
-  void selectNextBinToward(int direction);
+  bool selectNextBinToward(int direction);
   float xMin() override;
   // if the range of value is to wide, value max returns valueMin + 10
   float xMax() override;
@@ -37,7 +37,7 @@ private:
   constexpr static int k_maxHistogramRangeValue = 300;
   constexpr static float k_marginFactor = 0.2f;
   void computeTotalSize();
-  void scrollToSelectedBin();
+  bool scrollToSelectedBin();
   void initWindowBounds();
   void computeYMax();
   void computeAbsoluteBoundValue();

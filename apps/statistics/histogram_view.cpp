@@ -1,6 +1,6 @@
 #include "histogram_view.h"
 #include <assert.h>
-#include <float.h>
+#include <math.h>
 
 namespace Statistics {
 
@@ -12,10 +12,19 @@ HistogramView::HistogramView(Data * data) :
 {
 }
 
-void HistogramView::reload() {
-  // TODO: optimize dirtiness
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
+void HistogramView::reload(float dirtyZoneCenter) {
+  if (isnan(dirtyZoneCenter)) {
+    markRectAsDirty(bounds());
+    computeLabels(Axis::Horizontal);
+  } else {
+    float pixelLowerBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter - m_data->binWidth())-1;
+    float pixelUpperBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter + m_data->binWidth())+1;
+    float selectedValueInPixels = floatToPixel(Axis::Vertical, (float)m_data->sizeAtValue(dirtyZoneCenter)/(float)m_data->totalSize())-1;
+    float horizontalAxisInPixels = floatToPixel(Axis::Vertical,  0.0f)+1;
+    KDRect dirtyZone(KDRect(pixelLowerBound, selectedValueInPixels, pixelUpperBound-pixelLowerBound,
+      horizontalAxisInPixels - selectedValueInPixels));
+    markRectAsDirty(dirtyZone);
+  }
   m_bannerView.reload();
 }
 
@@ -25,9 +34,9 @@ bool HistogramView::selectedBins() {
 
 void HistogramView::selectBins(bool selectedBins) {
   if (m_selectedBins != selectedBins) {
+    reload(m_data->selectedBin());
     m_selectedBins = selectedBins;
-    markRectAsDirty(bounds());
-    layoutSubviews();
+    reload(m_data->selectedBin());
   }
 }
 
@@ -38,7 +47,7 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_selectedBins) {
     drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, m_data->selectedBin());
   } else {
-    drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, FLT_MAX);
+    drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, NAN);
   }
 }
 

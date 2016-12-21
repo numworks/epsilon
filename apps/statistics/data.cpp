@@ -136,7 +136,7 @@ void Data::initSelectedBin() {
   initWindowBounds();
 }
 
-void Data::selectNextBinToward(int direction) {
+bool Data::selectNextBinToward(int direction) {
   float newSelectedBin = m_selectedBin;
   if (direction > 0.0f) {
     do {
@@ -150,8 +150,9 @@ void Data::selectNextBinToward(int direction) {
   }
   if (newSelectedBin > m_minValue && newSelectedBin < m_maxValue + m_binWidth) {
     m_selectedBin = newSelectedBin;
-    scrollToSelectedBin();
+    return scrollToSelectedBin();
   }
+  return false;
 }
 
 float Data::xMin() {
@@ -183,16 +184,19 @@ void Data::computeTotalSize() {
   }
 }
 
-void Data::scrollToSelectedBin() {
+bool Data::scrollToSelectedBin() {
   float range = m_xMax - m_xMin;
   if (m_xMin > m_selectedBin) {
     m_xMin = m_selectedBin - m_binWidth/2;
     m_xMax = m_xMin + range;
+    return true;
   }
   if (m_selectedBin > m_xMax) {
     m_xMax = m_selectedBin + m_binWidth/2;
     m_xMin = m_xMax - range;
+    return true;
   }
+  return false;
 }
 
 void Data::initWindowBounds() {

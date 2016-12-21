@@ -12,7 +12,7 @@ namespace Statistics {
 class HistogramView : public CurveView {
 public:
   HistogramView(Data * m_data);
-  void reload();
+  void reload(float dirtyZoneCenter);
   bool selectedBins();
   void selectBins(bool selectedBins);
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -1,5 +1,6 @@
 #include "histogram_controller.h"
 #include <assert.h>
+#include <math.h>
 
 namespace Statistics {
 
@@ -39,7 +40,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     if (!m_view.selectedBins()) {
       headerViewController()->setSelectedButton(-1);
       m_view.selectBins(true);
-      m_view.reload();
+      m_view.reload(m_data->selectedBin());
       return true;
     }
     return false;
@@ -54,14 +55,14 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     headerViewController()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::Left) {
-    m_data->selectNextBinToward(-1);
-    m_view.reload();
-    return true;
-  }
-  if (event == Ion::Events::Right) {
-    m_data->selectNextBinToward(1);
-    m_view.reload();
+  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+    int direction = event == Ion::Events::Left ? -1 : 1;
+    m_view.reload(m_data->selectedBin());
+    if (m_data->selectNextBinToward(direction)) {
+      m_view.reload(NAN);
+    } else {
+      m_view.reload(m_data->selectedBin());
+    }
     return true;
   }
   return false;
@@ -70,7 +71,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 void HistogramController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   m_view.selectBins(true);
-  m_view.reload();
+  m_view.reload(NAN);
 }
 
 int HistogramController::numberOfButtons() const {

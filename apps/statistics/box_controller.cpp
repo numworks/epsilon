@@ -2,9 +2,10 @@
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder) :
+BoxController::BoxController(Responder * parentResponder, Data * data) :
   ViewController(parentResponder),
-  m_view(SolidColorView(KDColorGreen))
+  m_view(SolidColorView(KDColorGreen)),
+  m_data(data)
 {
 }
 
@@ -25,11 +26,13 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 bool BoxController::isEmpty() {
+  if (m_data->numberOfPairs() == 0) {
+    return true;
+  }
   return false;
 }
-
 const char * BoxController::emptyMessage() {
-  return "Aucune donnée à tracer";
+  return "Aucune donnee a tracer";
 }
 
 Responder * BoxController::defaultController() {

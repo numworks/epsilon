@@ -9,7 +9,7 @@ App::App(Container * container) :
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_calculationController, &m_calculationController)),
   m_calculationStackViewController(StackViewController(&m_tabViewController, &m_calculationAlternateEmptyViewController)),
-  m_boxController(BoxController(&m_boxAlternateEmptyViewController)),
+  m_boxController(BoxController(&m_boxAlternateEmptyViewController, &m_data)),
   m_boxAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_boxController, &m_boxController)),
   m_boxStackViewController(StackViewController(&m_tabViewController, &m_boxAlternateEmptyViewController)),
   m_histogramController(HistogramController(&m_histogramHeader, &m_histogramHeader, &m_data)),

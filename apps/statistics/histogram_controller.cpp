@@ -22,35 +22,39 @@ View * HistogramController::view() {
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    if (m_view.selectedBin() < m_data->xMin()) {
+    if (!m_view.selectedBins()) {
       headerViewController()->setSelectedButton(-1);
-      m_view.initSelectedBin();
+      m_view.selectBins(true);
+      m_view.reload();
       return true;
     }
     return false;
   }
   if (event == Ion::Events::Up) {
-    if (m_view.selectedBin() < m_data->xMin()) {
+    if (!m_view.selectedBins()) {
       headerViewController()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
-    m_view.unselectBin();
+    m_view.selectBins(false);
     headerViewController()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::Left) {
-    m_view.selectNextBinToward(-1);
+    m_data->selectNextBinToward(-1);
+    m_view.reload();
     return true;
   }
   if (event == Ion::Events::Right) {
-    m_view.selectNextBinToward(1);
+    m_data->selectNextBinToward(1);
+    m_view.reload();
     return true;
   }
   return false;
 }
 
 void HistogramController::didBecomeFirstResponder() {
+  m_view.selectBins(true);
   m_view.reload();
 }
 

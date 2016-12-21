@@ -1,6 +1,7 @@
 #include "float_parameter_controller.h"
 #include "constant.h"
 #include "apps_container.h"
+#include "text_field_delegate_app.h"
 #include <assert.h>
 
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
@@ -38,6 +39,11 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
     m_selectableTableView.selectedRow()), activeCell());
   return true;
+}
+
+bool FloatParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  return myApp->textFieldDidReceiveEvent(textField, event);
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {

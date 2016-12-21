@@ -48,9 +48,4 @@ void GoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
-bool GoToParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 }

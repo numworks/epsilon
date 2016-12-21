@@ -185,10 +185,5 @@ void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   m_law->setParameterAtIndex(f, parameterIndex);
 }
 
-bool ParametersController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 }
 

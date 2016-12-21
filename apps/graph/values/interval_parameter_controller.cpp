@@ -71,9 +71,4 @@ int IntervalParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-bool IntervalParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 }

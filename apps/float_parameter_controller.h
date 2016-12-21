@@ -16,6 +16,7 @@ public:
   KDCoordinate cellHeight() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
   int activeCell();

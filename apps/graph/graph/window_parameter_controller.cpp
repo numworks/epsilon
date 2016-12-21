@@ -134,9 +134,4 @@ int WindowParameterController::reusableCellCount() {
   return k_numberOfTextCell+1;
 }
 
-bool WindowParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 }

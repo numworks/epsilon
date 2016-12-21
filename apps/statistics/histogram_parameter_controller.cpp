@@ -32,6 +32,10 @@ float HistogramParameterController::parameterAtIndex(int index) {
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
+    if (f <= 0.0f) {
+      app()->displayWarning("Value interdite");
+      return;
+    }
     m_data->setBinWidth(f);
   } else {
     m_data->setMinValue(f);

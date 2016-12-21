@@ -27,6 +27,9 @@ float Data::binWidth() {
 }
 
 void Data::setBinWidth(float binWidth) {
+  if (binWidth <= 0.0f) {
+    return;
+  }
   m_binWidth = binWidth;
   computeYMax();
   initSelectedBin();

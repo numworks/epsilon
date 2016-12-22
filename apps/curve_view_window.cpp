@@ -6,14 +6,13 @@ float CurveViewWindow::yGridUnit() {
   return 0.0f;
 }
 
-float CurveViewWindow::computeGridUnit(Axis axis) {
+float CurveViewWindow::computeGridUnit(Axis axis, float min, float max) {
   int a = 0;
   int b = 0;
-  float d = xMax() - xMin();
+  float d = max - min;
   float maxNumberOfUnits = k_maxNumberOfXGridUnits;
   float minNumberOfUnits = k_minNumberOfXGridUnits;
   if (axis == Axis::Y) {
-    d = yMax() - yMin();
     maxNumberOfUnits = k_maxNumberOfYGridUnits;
     minNumberOfUnits = k_minNumberOfYGridUnits;
   }

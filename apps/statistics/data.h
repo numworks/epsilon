@@ -10,48 +10,52 @@ public:
   Data();
   // Delete the implicit copy constructor: the object is heavy
   Data(const Data&) = delete;
+
+  // Raw numeric data
   int numberOfPairs() const;
-  float binWidth();
-  void setBinWidth(float binWidth);
   float valueAtIndex(int index);
   int sizeAtIndex(int index);
   void setValueAtIndex(float value, int index);
   void setSizeAtIndex(int size, int index);
   void deletePairAtIndex(int index);
-  int sizeAtValue(float value);
   int totalSize();
-  float minValue();
-  void setMinValue(float minValue);
-  float selectedBin();
-  void initSelectedBin();
-  bool selectNextBinToward(int direction);
+
+  // Histogram bars
+  float barWidth();
+  void setBarWidth(float barWidth);
+  float barStart();
+  void setBarStart(float barStart);
+  int heightForBarAtValue(float value);
+  float selectedBar();
+  bool selectNextBarToward(int direction);
+
+  //CurveViewWindow
   float xMin() override;
-  // if the range of value is to wide, value max returns valueMin + 10
+  // if the range of value is to wide compared to the bar width, value max is capped
   float xMax() override;
   float yMin() override;
   float yMax() override;
   float xGridUnit() override;
+
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfPairs = 500;
 private:
-  constexpr static int k_maxHistogramRangeValue = 300;
+  constexpr static int k_maxNumberOfBarsPerWindow = 300;
   constexpr static float k_marginFactor = 0.2f;
-  void computeTotalSize();
-  bool scrollToSelectedBin();
-  void initWindowBounds();
-  void computeYMax();
-  void computeAbsoluteBoundValue();
-  void updateAbsoluteBoundsAfterAdding(float value);
-  void updateAbsoluteBoundsAfterDeleting(float value);
+  float sumOfValuesBetween(float x1, float x2);
+  float maxValue();
+  float minValue();
+  bool scrollToSelectedBar();
+  void initBarParameters();
+  void initWindowParameters();
+  // Raw numeric data
   int m_sizes[k_maxNumberOfPairs];
   float m_values[k_maxNumberOfPairs];
   int m_numberOfPairs;
-  float m_binWidth;
-  int m_totalSize;
-  float m_selectedBin;
-  // Absolute bounds of the data
-  float m_minValue;
-  float m_maxValue;
+  // Histogram bars
+  float m_barWidth;
+  float m_selectedBar;
+  float m_barStart;
   // Window bounds of the data
   float m_xMin;
   float m_xMax;

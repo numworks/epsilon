@@ -40,7 +40,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     if (!m_view.selectedBins()) {
       headerViewController()->setSelectedButton(-1);
       m_view.selectBins(true);
-      m_view.reload(m_data->selectedBin());
+      m_view.reload(m_data->selectedBar());
       return true;
     }
     return false;
@@ -57,11 +57,11 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    m_view.reload(m_data->selectedBin());
-    if (m_data->selectNextBinToward(direction)) {
+    m_view.reload(m_data->selectedBar());
+    if (m_data->selectNextBarToward(direction)) {
       m_view.reload(NAN);
     } else {
-      m_view.reload(m_data->selectedBin());
+      m_view.reload(m_data->selectedBar());
     }
     return true;
   }

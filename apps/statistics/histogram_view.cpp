@@ -17,9 +17,9 @@ void HistogramView::reload(float dirtyZoneCenter) {
     markRectAsDirty(bounds());
     computeLabels(Axis::Horizontal);
   } else {
-    float pixelLowerBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter - m_data->binWidth())-1;
-    float pixelUpperBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter + m_data->binWidth())+1;
-    float selectedValueInPixels = floatToPixel(Axis::Vertical, (float)m_data->sizeAtValue(dirtyZoneCenter)/(float)m_data->totalSize())-1;
+    float pixelLowerBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter - m_data->barWidth())-1;
+    float pixelUpperBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter + m_data->barWidth())+1;
+    float selectedValueInPixels = floatToPixel(Axis::Vertical, (float)m_data->heightForBarAtValue(dirtyZoneCenter)/(float)m_data->totalSize())-1;
     float horizontalAxisInPixels = floatToPixel(Axis::Vertical,  0.0f)+1;
     KDRect dirtyZone(KDRect(pixelLowerBound, selectedValueInPixels, pixelUpperBound-pixelLowerBound,
       horizontalAxisInPixels - selectedValueInPixels));
@@ -34,9 +34,9 @@ bool HistogramView::selectedBins() {
 
 void HistogramView::selectBins(bool selectedBins) {
   if (m_selectedBins != selectedBins) {
-    reload(m_data->selectedBin());
+    reload(m_data->selectedBar());
     m_selectedBins = selectedBins;
-    reload(m_data->selectedBin());
+    reload(m_data->selectedBar());
   }
 }
 
@@ -45,9 +45,9 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(Axis::Horizontal, ctx, rect);
   drawLabels(Axis::Horizontal, true, ctx, rect);
   if (m_selectedBins) {
-    drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, m_data->selectedBin());
+    drawHistogram(m_data->barStart(), m_data->barWidth(), KDColorBlack, ctx, rect, KDColorRed, m_data->selectedBar());
   } else {
-    drawHistogram(m_data->binWidth(), KDColorBlack, ctx, rect, KDColorRed, NAN);
+    drawHistogram(m_data->barStart(), m_data->barWidth(), KDColorBlack, ctx, rect, KDColorRed, NAN);
   }
 }
 
@@ -76,7 +76,7 @@ char * HistogramView::label(Axis axis, int index) const {
 }
 
 float HistogramView::evaluateCurveAtAbscissa(void * curve, float t) const {
-  return (float)m_data->sizeAtValue(t)/(float)m_data->totalSize();
+  return (float)m_data->heightForBarAtValue(t)/(float)m_data->totalSize();
 }
 
 }

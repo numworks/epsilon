@@ -19,10 +19,10 @@ void BannerView::reload() {
   const char * legend = "Interval [";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float lowerBound = m_data->selectedBin() - m_data->binWidth()/2;
+  float lowerBound = m_data->selectedBar() - m_data->barWidth()/2;
   int lowerBoundNumberOfChar = Float(lowerBound).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   buffer[legendLength+lowerBoundNumberOfChar] = ';';
-  float upperBound = m_data->selectedBin() + m_data->binWidth()/2;
+  float upperBound = m_data->selectedBar() + m_data->barWidth()/2;
   int upperBoundNumberOfChar = Float(upperBound).convertFloatToText(buffer+legendLength+lowerBoundNumberOfChar+1, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+1] = '[';
   buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+2] = 0;
@@ -31,7 +31,7 @@ void BannerView::reload() {
   legend = "Effectif: ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float size = m_data->sizeAtValue(m_data->selectedBin());
+  float size = m_data->heightForBarAtValue(m_data->selectedBar());
   Float(size).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_sizeView.setText(buffer);
 

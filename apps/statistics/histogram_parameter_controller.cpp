@@ -24,9 +24,9 @@ const char * HistogramParameterController::title() const {
 float HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return m_data->binWidth();
+    return m_data->barWidth();
   }
-  return m_data->minValue();
+  return m_data->barStart();
 }
 
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
@@ -36,9 +36,9 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
       app()->displayWarning("Value interdite");
       return;
     }
-    m_data->setBinWidth(f);
+    m_data->setBarWidth(f);
   } else {
-    m_data->setMinValue(f);
+    m_data->setBarStart(f);
   }
 }
 

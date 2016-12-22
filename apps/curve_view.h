@@ -33,7 +33,7 @@ protected:
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
   void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawDiscreteHistogram(KDColor color, KDContext * ctx, KDRect rect, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawHistogram(float binWidth, KDColor color, KDContext * ctx, KDRect rect, KDColor highlightColor, float coloredBin) const;
+  void drawHistogram(float barStart, float barWidth, KDColor color, KDContext * ctx, KDRect rect, KDColor highlightColor, float coloredBin) const;
   void computeLabels(Axis axis);
   void drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const;
 private:

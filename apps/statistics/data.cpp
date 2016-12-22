@@ -1,16 +1,15 @@
 #include "data.h"
 #include <assert.h>
 #include <float.h>
+#include <math.h>
 
 namespace Statistics {
 
 Data::Data() :
   m_numberOfPairs(0),
-  m_binWidth(1.0f),
-  m_totalSize(0),
-  m_selectedBin(0.0f),
-  m_minValue(0.0f),
-  m_maxValue(0.0f),
+  m_barWidth(1.0f),
+  m_selectedBar(0.0f),
+  m_barStart(0.0f),
   m_xMin(0.0f),
   m_xMax(10.0f),
   m_yMax(1.0f),
@@ -18,23 +17,11 @@ Data::Data() :
 {
 }
 
+/* Raw numeric data */
+
 int Data::numberOfPairs() const {
   return m_numberOfPairs;
 }
-
-float Data::binWidth() {
-  return m_binWidth;
-}
-
-void Data::setBinWidth(float binWidth) {
-  if (binWidth <= 0.0f) {
-    return;
-  }
-  m_binWidth = binWidth;
-  computeYMax();
-  initSelectedBin();
-}
-
 float Data::valueAtIndex(int index) {
   assert(index < m_numberOfPairs);
   return m_values[index];
@@ -49,114 +36,104 @@ void Data::setValueAtIndex(float value, int index) {
   if (index >= k_maxNumberOfPairs) {
     return;
   }
-  float formerValue =  index >= m_numberOfPairs ? value : m_values[index];
   m_values[index] = value;
   if (index >= m_numberOfPairs) {
     m_sizes[index] = 1;
-    m_totalSize += 1;
     m_numberOfPairs++;
   }
-  updateAbsoluteBoundsAfterDeleting(formerValue);
-  updateAbsoluteBoundsAfterAdding(value);
-  initSelectedBin();
+  initBarParameters();
+  initWindowParameters();
 }
 
 void Data::setSizeAtIndex(int size, int index) {
   if (index >= k_maxNumberOfPairs) {
     return;
   }
-  float formerValue =  index >= m_numberOfPairs ? 0.0f : m_values[index];
-  int formerSize =  index >= m_numberOfPairs ? 0 : m_sizes[index];
   m_sizes[index] = size;
-  m_totalSize += size - formerSize;
   if (index >= m_numberOfPairs) {
     m_values[index] = 0.0f;
     m_numberOfPairs++;
   }
-  updateAbsoluteBoundsAfterDeleting(formerValue);
-  updateAbsoluteBoundsAfterAdding(m_values[index]);
-  initSelectedBin();
+  initBarParameters();
+  initWindowParameters();
 }
 
 void Data::deletePairAtIndex(int index) {
   m_numberOfPairs--;
-  float formerValue = m_values[index];
-  m_totalSize -= m_sizes[index];
   for (int k = index; k < m_numberOfPairs; k++) {
     m_values[k] = m_values[k+1];
     m_sizes[k] = m_sizes[k+1];
   }
   m_values[m_numberOfPairs] = 0.0f;
   m_sizes[m_numberOfPairs] = 0;
-  if (m_minValue == formerValue) {
-    computeAbsoluteBoundValue();
-  }
-  updateAbsoluteBoundsAfterDeleting(formerValue);
-  initSelectedBin();
-}
-
-int Data::sizeAtValue(float value) {
-  if (value < m_minValue) {
-    return 0;
-  }
-  float bin = binWidth();
-  int binNumber = (value - m_minValue)/bin;
-  float lowerBound = m_minValue + binNumber*bin;
-  float upperBound = m_minValue + (binNumber+1)*bin;
-  int result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_values[k] < upperBound && lowerBound <= m_values[k]) {
-      result += m_sizes[k];
-    }
-  }
-  return result;
+  initBarParameters();
+  initWindowParameters();
 }
 
 int Data::totalSize() {
-  return m_totalSize;
-}
-
-float Data::minValue() {
-  return m_minValue;
-}
-
-void Data::setMinValue(float minValue) {
-  m_minValue = minValue;
-  computeTotalSize();
-  computeYMax();
-  initSelectedBin();
-}
-
-float Data::selectedBin() {
-  return m_selectedBin;
-}
-
-void Data::initSelectedBin() {
-  m_selectedBin = m_minValue + m_binWidth/2;
-  while (sizeAtValue(m_selectedBin) == 0) {
-    m_selectedBin += m_binWidth;
+  int totalSize = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    totalSize += m_sizes[k];
   }
-  initWindowBounds();
+  return totalSize;
+}
+/* Histogram bars */
+
+float Data::barWidth() {
+  return m_barWidth;
 }
 
-bool Data::selectNextBinToward(int direction) {
-  float newSelectedBin = m_selectedBin;
+void Data::setBarWidth(float barWidth) {
+  if (barWidth <= 0.0f) {
+    return;
+  }
+  m_barWidth = barWidth;  
+  initWindowParameters();
+}
+
+float Data::barStart() {
+  return m_barStart;
+}
+
+void Data::setBarStart(float barStart) {
+  m_barStart = barStart;
+  initWindowParameters();
+}
+
+int Data::heightForBarAtValue(float value) {
+  float width = barWidth();
+  int barNumber = floorf((value - m_barStart)/width);
+  float lowerBound = m_barStart + barNumber*width;
+  float upperBound = m_barStart + (barNumber+1)*width;
+  return sumOfValuesBetween(lowerBound, upperBound);
+}
+
+float Data::selectedBar() {
+  return m_selectedBar;
+}
+
+bool Data::selectNextBarToward(int direction) {
+  float newSelectedBar = m_selectedBar;
+  float max = maxValue();
+  float min = minValue();
   if (direction > 0.0f) {
     do {
-      newSelectedBin += m_binWidth;
-    } while (sizeAtValue(newSelectedBin) == 0 && newSelectedBin < m_maxValue);
+      newSelectedBar += m_barWidth;
+    } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar < max + m_barWidth);
   }
   if (direction < 0.0f) {
     do {
-      newSelectedBin -= m_binWidth;
-    } while (sizeAtValue(newSelectedBin) == 0 && newSelectedBin > m_minValue);
+      newSelectedBar -= m_barWidth;
+    } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar > min - m_barWidth);
   }
-  if (newSelectedBin > m_minValue && newSelectedBin < m_maxValue + m_binWidth) {
-    m_selectedBin = newSelectedBin;
-    return scrollToSelectedBin();
+  if (newSelectedBar > min - m_barWidth && newSelectedBar < max + m_barWidth) {
+    m_selectedBar = newSelectedBar;
+    return scrollToSelectedBar();
   }
   return false;
 }
+
+/* CurveViewWindow */
 
 float Data::xMin() {
   return m_xMin;
@@ -178,82 +155,92 @@ float Data::xGridUnit() {
   return m_xGridUnit;
 }
 
-void Data::computeTotalSize() {
-  m_totalSize = 0;
+float Data::sumOfValuesBetween(float x1, float x2) {
+  int result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_values[k] >= m_minValue) {
-      m_totalSize += m_sizes[k];
+    if (m_values[k] < x2 && x1 <= m_values[k]) {
+      result += m_sizes[k];
     }
   }
+  return result;
 }
 
-bool Data::scrollToSelectedBin() {
+float Data::maxValue() {
+  float max = -FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] > max && m_sizes[k] > 0) {
+      max = m_values[k];
+    }
+  }
+  return max;
+}
+
+float Data::minValue() {
+  float min = FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] < min && m_sizes[k] > 0) {
+      min = m_values[k];
+    }
+  }
+  return min;
+}
+
+bool Data::scrollToSelectedBar() {
   float range = m_xMax - m_xMin;
-  if (m_xMin > m_selectedBin) {
-    m_xMin = m_selectedBin - m_binWidth/2;
+  if (m_xMin > m_selectedBar) {
+    m_xMin = m_selectedBar - m_barWidth/2;
     m_xMax = m_xMin + range;
     return true;
   }
-  if (m_selectedBin > m_xMax) {
-    m_xMax = m_selectedBin + m_binWidth/2;
+  if (m_selectedBar > m_xMax) {
+    m_xMax = m_selectedBar + m_barWidth/2;
     m_xMin = m_xMax - range;
     return true;
   }
   return false;
 }
 
-void Data::initWindowBounds() {
-  m_xMin = m_minValue;
-  if (m_maxValue - m_xMin > k_maxHistogramRangeValue) {
-    m_xMax = m_xMin + 10.0f;
-  } else {
-    m_xMax = m_maxValue + m_binWidth;
+void Data::initBarParameters() {
+  float min = minValue();
+  float max = maxValue();
+  m_barStart = min;
+  m_barWidth = computeGridUnit(Axis::X, min, max);
+  if (m_barWidth <= 0.0f) {
+    m_barWidth = 1.0f;
   }
-  m_xGridUnit = computeGridUnit(Axis::X);
 }
 
-void Data::computeYMax() {
+void Data::initWindowParameters() {
+  float min = minValue();
+  float max = maxValue();
+  m_xMin = m_barStart;
+  m_xMax = max + m_barWidth;
+  if ((m_xMax - m_xMin)/m_barWidth > k_maxNumberOfBarsPerWindow) {
+    m_xMax = m_xMin + k_maxNumberOfBarsPerWindow*m_barWidth;
+  }
+  if (m_xMin >= m_xMax) {
+    m_xMax = m_xMin + 10.0f*m_barWidth;
+  }
   m_yMax = -FLT_MAX;
-  for (float x = m_minValue; x <= m_maxValue; x += m_binWidth) {
-    float size = sizeAtValue(x);
+  for (float x = min; x <= max; x += m_barWidth) {
+    float size = heightForBarAtValue(x);
     if (size > m_yMax) {
       m_yMax = size;
     }
   }
-  m_yMax = m_yMax/m_totalSize;
-}
+  m_yMax = m_yMax/(float)totalSize();
+  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 
-void Data::computeAbsoluteBoundValue() {
-  m_minValue = FLT_MAX;
-  m_maxValue = -FLT_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_values[k] < m_minValue) {
-      m_minValue = m_values[k];
+  m_selectedBar = m_barStart + m_barWidth/2;
+  while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar < max + m_barWidth) {
+    m_selectedBar += m_barWidth;
+  }
+  if (m_selectedBar > max + m_barWidth) {
+    /* No bar is after m_barStart */
+    m_selectedBar = m_barStart + m_barWidth/2;
+    while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar > min - m_barWidth) {
+      m_selectedBar -= m_barWidth;
     }
-    if (m_values[k] > m_maxValue) {
-      m_maxValue = m_values[k];
-    }
-  }
-  m_binWidth = 1.0f;
-  initWindowBounds();
-  computeYMax();
-}
-
-void Data::updateAbsoluteBoundsAfterAdding(float value) {
-  if (m_minValue > value) {
-    m_minValue = value;
-  }
-  if (m_maxValue < value) {
-    m_maxValue = value;
-  }
-  m_binWidth = 1.0f;
-  initWindowBounds();
-  computeYMax();
-}
-
-void Data::updateAbsoluteBoundsAfterDeleting(float value) {
-  if (value == m_minValue || value == m_maxValue) {
-    computeAbsoluteBoundValue();
   }
 }
 

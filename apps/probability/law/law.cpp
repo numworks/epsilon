@@ -5,7 +5,7 @@
 namespace Probability {
 
 float Law::xGridUnit() {
-  return computeGridUnit(Axis::X);
+  return computeGridUnit(Axis::X, xMin(), xMax());
 }
 
 float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {

@@ -21,7 +21,7 @@ protected:
   constexpr static float k_oneUnit = 1.0f;
   constexpr static float k_twoUnit = 2.0f;
   constexpr static float k_fiveUnit = 5.0f;
-  float computeGridUnit(Axis axis);
+  float computeGridUnit(Axis axis, float min, float max);
 };
 
 #endif

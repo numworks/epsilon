@@ -82,7 +82,7 @@ Button * HistogramController::buttonAtIndex(int index) {
 }
 
 bool HistogramController::isEmpty() {
-  if (m_data->numberOfPairs() == 0) {
+  if (m_data->totalSize() == 0) {
     return true;
   }
   return false;

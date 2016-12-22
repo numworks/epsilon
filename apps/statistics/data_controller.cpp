@@ -60,6 +60,9 @@ int DataController::reusableCellCount(int type) {
 
 void DataController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
+  if (cellAtLocationIsEditable(i, j)) {
+    return;
+  }
   EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
   if (i == 0) {
     mytitleCell->setText("Valeurs");

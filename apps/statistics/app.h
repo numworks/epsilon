@@ -18,10 +18,8 @@ private:
   Data m_data;
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
-  StackViewController m_calculationStackViewController;
   BoxController m_boxController;
   AlternateEmptyViewController m_boxAlternateEmptyViewController;
-  StackViewController m_boxStackViewController;
   HistogramController m_histogramController;
   HeaderViewController m_histogramHeader;
   AlternateEmptyViewController m_histogramAlternateEmptyViewController;

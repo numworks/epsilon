@@ -1,10 +1,11 @@
 #include "box_controller.h"
+#include <math.h>
 
 namespace Statistics {
 
 BoxController::BoxController(Responder * parentResponder, Data * data) :
   ViewController(parentResponder),
-  m_view(SolidColorView(KDColorGreen)),
+  m_view(BoxView(data)),
   m_data(data)
 {
 }
@@ -25,6 +26,9 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void BoxController::didBecomeFirstResponder() {
+  m_view.reload(NAN);
+}
 bool BoxController::isEmpty() {
   if (m_data->totalSize() == 0) {
     return true;

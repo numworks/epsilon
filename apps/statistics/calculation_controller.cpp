@@ -12,6 +12,7 @@ CalculationController::CalculationController(Responder * parentResponder, Data *
 {
   for (int k = 0; k < k_maxNumberOfDisplayableRows; k++) {
     m_titleCells[k].setAlignment(1.0f, 0.5f);
+    m_calculationCells[k].setTextColor(Palette::DesactiveTextColor);
   }
 }
 

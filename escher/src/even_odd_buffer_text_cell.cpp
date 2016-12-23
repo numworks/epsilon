@@ -16,6 +16,9 @@ void EvenOddBufferTextCell::setText(const char * textContent) {
   m_bufferTextView.setText(textContent);
 }
 
+void EvenOddBufferTextCell::setTextColor(KDColor textColor) {
+  m_bufferTextView.setTextColor(textColor);
+}
 
 int EvenOddBufferTextCell::numberOfSubviews() const {
   return 1;

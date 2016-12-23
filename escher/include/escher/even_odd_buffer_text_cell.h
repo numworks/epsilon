@@ -1,13 +1,12 @@
-#ifndef GRAPH_VALUE_CELL_H
-#define GRAPH_VALUE_CELL_H
+#ifndef ESCHER_EVEN_ODD_BUFFER_TEXT_CELL_H
+#define ESCHER_EVEN_ODD_BUFFER_TEXT_CELL_H
 
-#include <escher.h>
-#include <poincare.h>
+#include <escher/even_odd_cell.h>
+#include <escher/buffer_text_view.h>
 
-namespace Graph {
-class ValueCell : public EvenOddCell {
+class EvenOddBufferTextCell : public EvenOddCell {
 public:
-  ValueCell();
+  EvenOddBufferTextCell();
   void reloadCell() override;
   void setText(const char * textContent);
   int numberOfSubviews() const override;
@@ -17,7 +16,5 @@ public:
 protected:
   BufferTextView m_bufferTextView;
 };
-
-}
 
 #endif

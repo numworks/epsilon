@@ -145,13 +145,13 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     int numberOfIntervalElements = m_interval.numberOfElements();
     if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
       buffer[0] = 0;
-      ValueCell * myValueCell = (ValueCell *)cell;
+      EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
       myValueCell->setText(buffer);
       return;
     }
   }
   // The cell is a value cell
-  ValueCell * myValueCell = (ValueCell *)cell;
+  EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
   App * graphApp = (Graph::App *)app();

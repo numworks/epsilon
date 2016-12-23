@@ -5,7 +5,6 @@
 #include "../function_store.h"
 #include "../function_title_cell.h"
 #include "../../editable_cell_table_view_controller.h"
-#include "value_cell.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
 #include "derivative_parameter_controller.h"
@@ -61,7 +60,7 @@ private:
   constexpr static int k_maxNumberOfFunctions = 5;
   EvenOddPointerTextCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
-  ValueCell m_floatCells[k_maxNumberOfCells];
+  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionStore * m_functionStore;

@@ -2,6 +2,7 @@ app_objs += $(addprefix apps/statistics/,\
   app.o\
   banner_view.o\
   box_controller.o\
+  box_view.o\
   box_window.o\
   calculation_controller.o\
   data.o\

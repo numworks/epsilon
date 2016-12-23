@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <float.h>
 #include <math.h>
+#include <string.h>
 
 namespace Statistics {
 
@@ -155,16 +156,6 @@ float Data::xGridUnit() {
   return m_xGridUnit;
 }
 
-float Data::sumOfValuesBetween(float x1, float x2) {
-  int result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_values[k] < x2 && x1 <= m_values[k]) {
-      result += m_sizes[k];
-    }
-  }
-  return result;
-}
-
 float Data::maxValue() {
   float max = -FLT_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {
@@ -183,6 +174,76 @@ float Data::minValue() {
     }
   }
   return min;
+}
+
+float Data::range() {
+  return maxValue()-minValue();
+}
+
+float Data::mean() {
+  return sum()/(float)totalSize();
+}
+
+float Data::variance() {
+  float m = mean();
+  return squaredValueSum()/(float)totalSize() - m*m;
+}
+
+float Data::standardDeviation() {
+  return sqrtf(variance());
+}
+
+float Data::firstQuartile() {
+  int firstQuartileIndex = floorf(totalSize()/4)+1;
+  return sortedElementNumber(firstQuartileIndex);
+}
+
+float Data::thirdQuartile() {
+  int thirdQuartileIndex = floorf(3*totalSize()/4)+1;
+  return sortedElementNumber(thirdQuartileIndex);
+}
+
+float Data::quartileRange() {
+  return thirdQuartile()-firstQuartile();
+}
+
+float Data::median() {
+  int total = totalSize();
+  int halfTotal = total/2;
+  int totalMod2 = total - 2*halfTotal;
+  if (totalMod2 == 0) {
+    float minusMedian = sortedElementNumber(halfTotal);
+    float maxMedian = sortedElementNumber(halfTotal+1);
+    return (minusMedian+maxMedian)/2.0f;
+  } else {
+    return sortedElementNumber(halfTotal+1);
+  }
+}
+
+float Data::sum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_values[k]*m_sizes[k];
+  }
+  return result;
+}
+
+float Data::squaredValueSum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_values[k]*m_values[k]*m_sizes[k];
+  }
+  return result;
+}
+
+float Data::sumOfValuesBetween(float x1, float x2) {
+  int result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_values[k] < x2 && x1 <= m_values[k]) {
+      result += m_sizes[k];
+    }
+  }
+  return result;
 }
 
 bool Data::scrollToSelectedBar() {
@@ -242,6 +303,30 @@ void Data::initWindowParameters() {
       m_selectedBar -= m_barWidth;
     }
   }
+}
+
+float Data::sortedElementNumber(int k) {
+  // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
+  float bufferValues[m_numberOfPairs];
+  memcpy(bufferValues, m_values, m_numberOfPairs*sizeof(float));
+  int sortedElementIndex = 0;
+  int cumulatedSize = 0;
+  while (cumulatedSize < k) {
+    sortedElementIndex = minIndex(bufferValues, m_numberOfPairs);
+    bufferValues[sortedElementIndex] = FLT_MAX;
+    cumulatedSize += m_sizes[sortedElementIndex];
+  }
+  return m_values[sortedElementIndex];
+}
+
+int Data::minIndex(float * bufferValues, int bufferLength) {
+  int index = 0;
+  for (int i = 1; i < bufferLength; i++) {
+    if (bufferValues[index] > bufferValues[i]) {
+      index = i;
+    }
+  }
+  return index;
 }
 
 }

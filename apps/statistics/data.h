@@ -37,17 +37,30 @@ public:
   float yMax() override;
   float xGridUnit() override;
 
+  // Calculation
+  float maxValue();
+  float minValue();
+  float range();
+  float mean();
+  float variance();
+  float standardDeviation();
+  float firstQuartile();
+  float thirdQuartile();
+  float quartileRange();
+  float median();
+  float sum();
+  float squaredValueSum();
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfPairs = 500;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 300;
   constexpr static float k_marginFactor = 0.2f;
   float sumOfValuesBetween(float x1, float x2);
-  float maxValue();
-  float minValue();
   bool scrollToSelectedBar();
   void initBarParameters();
   void initWindowParameters();
+  float sortedElementNumber(int k);
+  int minIndex(float * bufferValues, int bufferLength);
   // Raw numeric data
   int m_sizes[k_maxNumberOfPairs];
   float m_values[k_maxNumberOfPairs];

@@ -8,23 +8,48 @@ BoxView::BoxView(Data * data) :
   CurveView(&m_boxWindow),
   m_data(data),
   m_boxWindow(BoxWindow(data)),
-  m_selectedQuantile(-1)
+  m_anyQuantileSelected(true),
+  m_selectedQuantile(0)
 {
 }
 
-void BoxView::reload(float dirtyVertical) {
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
+void BoxView::reload(int selectedQuantile) {
+  if (selectedQuantile < 0) {
+    markRectAsDirty(bounds());
+    computeLabels(Axis::Horizontal);
+  } else {
+    float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
+    float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
+    float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
+    float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculations[selectedQuantile]);
+    KDRect dirtyZone(KDRect(selectedValueInPixels-1, pixelLowerBound, 2, pixelUpperBound - pixelLowerBound));
+    markRectAsDirty(dirtyZone);
+  }
 }
-
 int BoxView::selectedQuantile() {
   return m_selectedQuantile;
 }
 
-void BoxView::selectQuantile(int selectedQuantile) {
+bool BoxView::selectQuantile(int selectedQuantile) {
+  if (selectedQuantile < 0 || selectedQuantile > 4) {
+    return false;
+  }
   if (m_selectedQuantile != selectedQuantile) {
+    reload(m_selectedQuantile);
     m_selectedQuantile = selectedQuantile;
-    markRectAsDirty(bounds());
+    reload(m_selectedQuantile);
+  }
+  return true;
+}
+
+bool BoxView::isAnyQuantileSelected() {
+  return m_anyQuantileSelected;
+}
+
+void BoxView::selectAnyQuantile(bool anyQuantileSelected) {
+  if (m_anyQuantileSelected != anyQuantileSelected) {
+    m_anyQuantileSelected = anyQuantileSelected;
+    reload(m_selectedQuantile);
   }
 }
 
@@ -32,11 +57,15 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(Axis::Horizontal, ctx, rect);
   drawLabels(Axis::Horizontal, false, ctx, rect);
-  drawSegment(ctx, rect, Axis::Vertical, m_data->minValue(), 0.4f, 0.6f, KDColorBlack);
-  drawSegment(ctx, rect, Axis::Vertical, m_data->firstQuartile(), 0.2f, 0.8f, KDColorBlack);
-  drawSegment(ctx, rect, Axis::Vertical, m_data->median(), 0.2f, 0.8f, KDColorBlack);
-  drawSegment(ctx, rect, Axis::Vertical, m_data->thirdQuartile(), 0.2f, 0.8f, KDColorBlack);
-  drawSegment(ctx, rect, Axis::Vertical, m_data->maxValue(), 0.4f, 0.6f, KDColorBlack);
+  float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
+  float lowBounds[5] = {0.4f, 0.2f, 0.2f, 0.2f, 0.4f};
+  float upBounds[5] = {0.6f, 0.8f, 0.8f, 0.8f, 0.6f};
+  for (int k = 0; k < 5; k++) {
+    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBounds[k], upBounds[k], KDColorBlack);
+  }
+  if (m_anyQuantileSelected) {
+    drawSegment(ctx, rect, Axis::Vertical, calculations[m_selectedQuantile], lowBounds[m_selectedQuantile], upBounds[m_selectedQuantile], KDColorRed);
+  }
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_data->minValue(), m_data->firstQuartile(), KDColorBlack);
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_data->thirdQuartile(), m_data->maxValue(), KDColorBlack);
   drawSegment(ctx, rect, Axis::Horizontal, 0.2f, m_data->firstQuartile(), m_data->thirdQuartile(), KDColorBlack);

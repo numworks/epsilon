@@ -12,9 +12,11 @@ namespace Statistics {
 class BoxView : public CurveView {
 public:
   BoxView(Data * m_data);
-  void reload(float dirtyVertical);
+  void reload(int selectedQuantile);
   int selectedQuantile();
-  void selectQuantile(int selectedQuantile);
+  bool selectQuantile(int selectedQuantile);
+  bool isAnyQuantileSelected();
+  void selectAnyQuantile(bool selectAnyQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
@@ -23,6 +25,7 @@ private:
   BoxWindow m_boxWindow;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   // -1->Unselect 0->min 1->first quartile 2->median 3->third quartile 4->max
+  bool m_anyQuantileSelected;
   int m_selectedQuantile;
 };
 

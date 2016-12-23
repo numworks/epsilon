@@ -118,6 +118,28 @@ void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
   }
 }
 
+void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness) const {
+  KDRect lineRect = KDRectZero;
+  switch(axis) {
+    // WARNING TODO: anti-aliasing?
+    case Axis::Horizontal:
+      lineRect = KDRect(
+          floorf(floatToPixel(Axis::Horizontal, lowerBound)), floatToPixel(Axis::Vertical, coordinate),
+          ceilf(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
+          );
+      break;
+    case Axis::Vertical:
+      lineRect = KDRect(
+          floatToPixel(Axis::Horizontal, coordinate), floorf(floatToPixel(Axis::Vertical, upperBound)),
+          thickness,  ceilf(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
+      );
+      break;
+  }
+  if (rect.intersects(lineRect)) {
+    ctx->fillRect(lineRect, color);
+  }
+}
+
 void CurveView::drawAxes(Axis axis, KDContext * ctx, KDRect rect) const {
   drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);
 }

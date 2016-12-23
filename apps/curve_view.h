@@ -30,6 +30,9 @@ protected:
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
+  void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
+      float coordinate, float lowerBound, float upperBound,
+      KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
   void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawDiscreteHistogram(KDColor color, KDContext * ctx, KDRect rect, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;

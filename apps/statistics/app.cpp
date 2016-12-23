@@ -6,7 +6,7 @@ namespace Statistics {
 App::App(Container * container) :
   TextFieldDelegateApp(container, &m_tabViewController, "Statistics", ImageStore::StatIcon),
   m_data(),
-  m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController)),
+  m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController, &m_data)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_calculationController, &m_calculationController)),
   m_calculationStackViewController(StackViewController(&m_tabViewController, &m_calculationAlternateEmptyViewController)),
   m_boxController(BoxController(&m_boxAlternateEmptyViewController, &m_data)),

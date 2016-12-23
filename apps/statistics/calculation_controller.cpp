@@ -2,9 +2,10 @@
 
 namespace Statistics {
 
-CalculationController::CalculationController(Responder * parentResponder) :
+CalculationController::CalculationController(Responder * parentResponder, Data * data) :
   ViewController(parentResponder),
-  m_view(SolidColorView(KDColorGreen))
+  m_view(SolidColorView(KDColorGreen)),
+  m_data(data)
 {
 }
 
@@ -25,11 +26,14 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 bool CalculationController::isEmpty() {
+  if (m_data->totalSize() == 0) {
+    return true;
+  }
   return false;
 }
 
 const char * CalculationController::emptyMessage() {
-  return "Aucune donnée à tracer";
+  return "Aucune grandeur a calculer";
 }
 
 Responder * CalculationController::defaultController() {

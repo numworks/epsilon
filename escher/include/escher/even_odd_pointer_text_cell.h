@@ -9,6 +9,7 @@ public:
   EvenOddPointerTextCell();
   void reloadCell() override;
   void setText(const char * textContent, KDColor textColor = KDColorBlack);
+  void setAlignment(float horizontalAlignment, float verticalAlignment);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

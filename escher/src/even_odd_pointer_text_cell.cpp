@@ -17,6 +17,10 @@ void EvenOddPointerTextCell::setText(const char * title, KDColor textColor) {
   m_pointerTextView.setTextColor(textColor);
 }
 
+void EvenOddPointerTextCell::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  m_pointerTextView.setAlignment(horizontalAlignment, verticalAlignment);
+}
+
 int EvenOddPointerTextCell::numberOfSubviews() const {
   return 1;
 }

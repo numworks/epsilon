@@ -231,14 +231,14 @@ void CurveView::drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor colo
   }
 }
 
-void CurveView::drawHistogram(KDContext * ctx, KDRect rect, float barStart, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const {
+void CurveView::drawHistogram(KDContext * ctx, KDRect rect, float firsBarAbscissa, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const {
   KDCoordinate pixelBarWidth = floatToPixel(Axis::Horizontal, barWidth) - floatToPixel(Axis::Horizontal, 0.0f);
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  int rectMinBinNumber = floorf((rectMin - barStart)/barWidth);
-  float rectMinLowerBound = barStart + rectMinBinNumber*barWidth + barWidth/2;
+  int rectMinBinNumber = floorf((rectMin - firsBarAbscissa)/barWidth);
+  float rectMinLowerBound = firsBarAbscissa + rectMinBinNumber*barWidth + barWidth/2;
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  int rectMaxBinNumber = floorf((rectMax - barStart)/barWidth);
-  float rectMaxUpperBound = barStart + (rectMaxBinNumber+1)*barWidth + barWidth;
+  int rectMaxBinNumber = floorf((rectMax - firsBarAbscissa)/barWidth);
+  float rectMaxUpperBound = firsBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
     float y = evaluateCurveAtAbscissa(nullptr, x);
     if (!isnan(y)) {

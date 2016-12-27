@@ -10,7 +10,7 @@ Data::Data() :
   m_numberOfPairs(0),
   m_barWidth(1.0f),
   m_selectedBar(0.0f),
-  m_barStart(0.0f),
+  m_firstBarAbscissa(0.0f),
   m_xMin(0.0f),
   m_xMax(10.0f),
   m_yMax(1.0f),
@@ -92,20 +92,20 @@ void Data::setBarWidth(float barWidth) {
   initWindowParameters();
 }
 
-float Data::barStart() {
-  return m_barStart;
+float Data::firsBarAbscissa() {
+  return m_firstBarAbscissa;
 }
 
-void Data::setBarStart(float barStart) {
-  m_barStart = barStart;
+void Data::setFirsBarAbscissa(float firsBarAbscissa) {
+  m_firstBarAbscissa = firsBarAbscissa;
   initWindowParameters();
 }
 
 int Data::heightForBarAtValue(float value) {
   float width = barWidth();
-  int barNumber = floorf((value - m_barStart)/width);
-  float lowerBound = m_barStart + barNumber*width;
-  float upperBound = m_barStart + (barNumber+1)*width;
+  int barNumber = floorf((value - m_firstBarAbscissa)/width);
+  float lowerBound = m_firstBarAbscissa + barNumber*width;
+  float upperBound = m_firstBarAbscissa + (barNumber+1)*width;
   return sumOfValuesBetween(lowerBound, upperBound);
 }
 
@@ -264,7 +264,7 @@ bool Data::scrollToSelectedBar() {
 void Data::initBarParameters() {
   float min = minValue();
   float max = maxValue();
-  m_barStart = min;
+  m_firstBarAbscissa = min;
   m_barWidth = computeGridUnit(Axis::X, min, max);
   if (m_barWidth <= 0.0f) {
     m_barWidth = 1.0f;
@@ -274,7 +274,7 @@ void Data::initBarParameters() {
 void Data::initWindowParameters() {
   float min = minValue();
   float max = maxValue();
-  m_xMin = m_barStart;
+  m_xMin = m_firstBarAbscissa;
   m_xMax = max + m_barWidth;
   if ((m_xMax - m_xMin)/m_barWidth > k_maxNumberOfBarsPerWindow) {
     m_xMax = m_xMin + k_maxNumberOfBarsPerWindow*m_barWidth;
@@ -292,13 +292,13 @@ void Data::initWindowParameters() {
   m_yMax = m_yMax/(float)totalSize();
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 
-  m_selectedBar = m_barStart + m_barWidth/2;
+  m_selectedBar = m_firstBarAbscissa + m_barWidth/2;
   while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar < max + m_barWidth) {
     m_selectedBar += m_barWidth;
   }
   if (m_selectedBar > max + m_barWidth) {
-    /* No bar is after m_barStart */
-    m_selectedBar = m_barStart + m_barWidth/2;
+    /* No bar is after m_firstBarAbscissa */
+    m_selectedBar = m_firstBarAbscissa + m_barWidth/2;
     while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar > min - m_barWidth) {
       m_selectedBar -= m_barWidth;
     }

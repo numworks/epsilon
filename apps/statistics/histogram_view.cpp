@@ -45,9 +45,9 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, true);
   if (m_selectedBins) {
-    drawHistogram(ctx, rect, m_data->barStart(), m_data->barWidth(), KDColorBlack, KDColorRed, m_data->selectedBar());
+    drawHistogram(ctx, rect, m_data->firsBarAbscissa(), m_data->barWidth(), KDColorBlack, KDColorRed, m_data->selectedBar());
   } else {
-    drawHistogram(ctx, rect, m_data->barStart(), m_data->barWidth(), KDColorBlack, KDColorRed, NAN);
+    drawHistogram(ctx, rect, m_data->firsBarAbscissa(), m_data->barWidth(), KDColorBlack, KDColorRed, NAN);
   }
 }
 

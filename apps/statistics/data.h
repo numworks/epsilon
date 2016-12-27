@@ -23,8 +23,8 @@ public:
   // Histogram bars
   float barWidth();
   void setBarWidth(float barWidth);
-  float barStart();
-  void setBarStart(float barStart);
+  float firsBarAbscissa();
+  void setFirsBarAbscissa(float firsBarAbscissa);
   int heightForBarAtValue(float value);
   float selectedBar();
   bool selectNextBarToward(int direction);
@@ -68,7 +68,7 @@ private:
   // Histogram bars
   float m_barWidth;
   float m_selectedBar;
-  float m_barStart;
+  float m_firstBarAbscissa;
   // Window bounds of the data
   float m_xMin;
   float m_xMax;

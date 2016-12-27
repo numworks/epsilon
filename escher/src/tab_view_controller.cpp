@@ -53,9 +53,8 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(Responder * parentResponder, uint8_t numberOfChildren, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
+TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
   ViewController(parentResponder),
-  m_numberOfChildren(numberOfChildren),
   m_activeChildIndex(-1),
   m_selectedChildIndex(-1)
 {
@@ -64,8 +63,10 @@ TabViewController::TabViewController(Responder * parentResponder, uint8_t number
   m_children[2] = three;
   m_children[3] = four;
 
-  for (int i=0; i<numberOfChildren; i++) {
-    m_children[i]->setParentResponder(this);
+  for (int i = 0; i < k_maxNumberOfChildren; i++) {
+    if (m_children[i] != nullptr) {
+      m_numberOfChildren ++;
+    }
   }
 }
 

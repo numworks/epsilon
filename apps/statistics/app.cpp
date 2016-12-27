@@ -16,7 +16,7 @@ App::App(Container * container) :
   m_histogramStackViewController(StackViewController(&m_tabViewController, &m_histogramAlternateEmptyViewController)),
   m_dataController(nullptr, &m_data),
   m_dataStackViewController(StackViewController(&m_tabViewController, &m_dataController)),
-  m_tabViewController(&m_modalViewController, 4, &m_dataStackViewController, &m_histogramStackViewController, &m_boxAlternateEmptyViewController, &m_calculationAlternateEmptyViewController)
+  m_tabViewController(&m_modalViewController, &m_dataStackViewController, &m_histogramStackViewController, &m_boxAlternateEmptyViewController, &m_calculationAlternateEmptyViewController)
 {
 }
 

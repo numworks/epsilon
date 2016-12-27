@@ -75,7 +75,7 @@ char * HistogramView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float HistogramView::evaluateCurveAtAbscissa(Model * curve, float t) const {
+float HistogramView::evaluateModelWithParameter(Model * curve, float t) const {
   return (float)m_data->heightForBarAtValue(t)/(float)m_data->totalSize();
 }
 

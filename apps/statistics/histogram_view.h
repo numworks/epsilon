@@ -22,7 +22,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   char * label(Axis axis, int index) const override;
-  float evaluateCurveAtAbscissa(Model * curve, float t) const override;
+  float evaluateModelWithParameter(Model * curve, float t) const override;
   Data * m_data;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   bool m_selectedBins;

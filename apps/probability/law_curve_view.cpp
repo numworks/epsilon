@@ -51,7 +51,7 @@ char * LawCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float LawCurveView::evaluateCurveAtAbscissa(void * law, float abscissa) const {
+float LawCurveView::evaluateModelWithParameter(void * law, float abscissa) const {
   return m_law->evaluateAtAbscissa(abscissa);
 }
 

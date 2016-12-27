@@ -195,7 +195,7 @@ void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yGridUnit(), k_gridColor);
 }
 
-float GraphView::evaluateCurveAtAbscissa(Model * curve, float abscissa) const {
+float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {
   Function * f = (Function *)curve;
   return f->evaluateAtAbscissa(abscissa, m_context);
 }

@@ -43,7 +43,7 @@ protected:
 private:
   constexpr static float k_marginFactor = 0.2f;
   int numberOfLabels(Axis axis) const;
-  virtual float evaluateCurveAtAbscissa(Model * curve, float t) const;
+  virtual float evaluateModelWithParameter(Model * curve, float t) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
   void jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const;

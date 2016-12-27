@@ -185,7 +185,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {
-    float y = evaluateCurveAtAbscissa(curve, x);
+    float y = evaluateModelWithParameter(curve, x);
     if (!isnan(y)) {
       float pxf = floatToPixel(Axis::Horizontal, x);
       float pyf = floatToPixel(Axis::Vertical, y);
@@ -197,13 +197,13 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
         ctx->fillRect(colorRect, color);
       }
       stampAtLocation(ctx, rect, pxf, pyf, color);
-      if (x > rectMin && !isnan(evaluateCurveAtAbscissa(curve, x-xStep))) {
+      if (x > rectMin && !isnan(evaluateModelWithParameter(curve, x-xStep))) {
         if (continuously) {
           float puf = floatToPixel(Axis::Horizontal, x - xStep);
-          float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
+          float pvf = floatToPixel(Axis::Vertical, evaluateModelWithParameter(curve, x-xStep));
           straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
         } else {
-          jointDots(ctx, rect, curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
+          jointDots(ctx, rect, curve, x - xStep, evaluateModelWithParameter(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
         }
       }
     }
@@ -214,7 +214,7 @@ void CurveView::drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor colo
   int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
   int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
   for (int x = rectMin; x < rectMax; x += 1) {
-    float y = evaluateCurveAtAbscissa(nullptr, x);
+    float y = evaluateModelWithParameter(nullptr, x);
     if (!isnan(y)) {
       float pxf = floatToPixel(Axis::Horizontal, x);
       float pyf = floatToPixel(Axis::Vertical, y);
@@ -240,7 +240,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, float firsBarAbsciss
   int rectMaxBinNumber = floorf((rectMax - firsBarAbscissa)/barWidth);
   float rectMaxUpperBound = firsBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
-    float y = evaluateCurveAtAbscissa(nullptr, x);
+    float y = evaluateModelWithParameter(nullptr, x);
     if (!isnan(y)) {
       float pxf = floatToPixel(Axis::Horizontal, x);
       float pyf = floatToPixel(Axis::Vertical, y);
@@ -284,7 +284,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
 }
 
-float CurveView::evaluateCurveAtAbscissa(Model * curve, float t) const {
+float CurveView::evaluateModelWithParameter(Model * curve, float t) const {
   return 0.0f;
 }
 
@@ -308,7 +308,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
   }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
-  float cy = evaluateCurveAtAbscissa(curve, cx);
+  float cy = evaluateModelWithParameter(curve, cx);
   if ((y < cy && cy < v) || (v < cy && cy < y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */

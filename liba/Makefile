@@ -36,10 +36,10 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_floorf.o \
   s_roundf.o \
   s_scalbnf.o \
+  s_signgam.o \
   s_sinf.o \
   s_tanf.o \
   w_lgammaf.o \
-  gamma_extern_variable.o\
 )
 
 liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses -Wno-implicit-function-declaration

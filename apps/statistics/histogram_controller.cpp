@@ -55,7 +55,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     headerViewController()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+  if (m_view.selectedBins() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     m_view.reload(m_data->selectedBar());
     if (m_data->selectNextBarToward(direction)) {

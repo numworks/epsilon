@@ -37,6 +37,7 @@ void HistogramView::selectBins(bool selectedBins) {
     reload(m_data->selectedBar());
     m_selectedBins = selectedBins;
     reload(m_data->selectedBar());
+    layoutSubviews();
   }
 }
 

@@ -41,7 +41,7 @@ private:
   void layoutSubviews() override;
 
   char * label(Axis axis, int index) const override;
-  float evaluateCurveAtAbscissa(void * expression, float abscissa) const override;
+  float evaluateCurveAtAbscissa(Model * expression, float abscissa) const override;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void updateBannerView(Function * function);

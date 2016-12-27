@@ -74,7 +74,7 @@ void CurveView::computeLabels(Axis axis) {
   }
 }
 
-void CurveView::drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const {
+void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const {
   float step = gridUnit(axis);
   float start = 2.0f*step*(ceilf(min(axis)/(2.0f*step)));
   float end = max(axis);
@@ -140,7 +140,7 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
-void CurveView::drawAxes(Axis axis, KDContext * ctx, KDRect rect) const {
+void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);
 }
 
@@ -178,7 +178,7 @@ constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
 constexpr static int k_externRectMargin = 1;
 
-void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
@@ -196,21 +196,21 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
         }
         ctx->fillRect(colorRect, color);
       }
-      stampAtLocation(pxf, pyf, color, ctx, rect);
+      stampAtLocation(ctx, rect, pxf, pyf, color);
       if (x > rectMin && !isnan(evaluateCurveAtAbscissa(curve, x-xStep))) {
         if (continuously) {
           float puf = floatToPixel(Axis::Horizontal, x - xStep);
           float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
-          straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
+          straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
         } else {
-          jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+          jointDots(ctx, rect, curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
         }
       }
     }
   }
 }
 
-void CurveView::drawDiscreteHistogram(KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, KDColor highlightColor, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor color, bool colorUnderCurve, KDColor highlightColor, float colorLowerBound, float colorUpperBound) const {
   int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
   int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
   for (int x = rectMin; x < rectMax; x += 1) {
@@ -231,7 +231,7 @@ void CurveView::drawDiscreteHistogram(KDColor color, KDContext * ctx, KDRect rec
   }
 }
 
-void CurveView::drawHistogram(float barStart, float barWidth, KDColor color, KDContext * ctx, KDRect rect, KDColor highlightColor, float coloredBin) const {
+void CurveView::drawHistogram(KDContext * ctx, KDRect rect, float barStart, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const {
   KDCoordinate pixelBarWidth = floatToPixel(Axis::Horizontal, barWidth) - floatToPixel(Axis::Horizontal, 0.0f);
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   int rectMinBinNumber = floorf((rectMin - barStart)/barWidth);
@@ -257,7 +257,7 @@ void CurveView::drawHistogram(float barStart, float barWidth, KDColor color, KDC
   }
 }
 
-void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
   // We avoid drawing when no part of the stamp is visible
   if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
     return;
@@ -284,7 +284,11 @@ void CurveView::stampAtLocation(float pxf, float pyf, KDColor color, KDContext *
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
 }
 
-void CurveView::jointDots(void * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const {
+float CurveView::evaluateCurveAtAbscissa(Model * curve, float t) const {
+  return 0.0f;
+}
+
+void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
   // No need to draw if both dots are outside visible area
@@ -310,25 +314,25 @@ void CurveView::jointDots(void * curve, float x, float y, float u, float v, KDCo
      * can draw a 'straight' line between the two */
     float pxf = floatToPixel(Axis::Horizontal, x);
     float puf = floatToPixel(Axis::Horizontal, u);
-    straightJoinDots(pxf, pyf, puf, pvf, color, ctx, rect);
+    straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;
   }
   float pcxf = floatToPixel(Axis::Horizontal, cx);
   float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
-    stampAtLocation(pcxf, pcyf, color, ctx, rect);
-    jointDots(curve, x, y, cx, cy, color, maxNumberOfRecursion-1, ctx, rect);
-    jointDots(curve, cx, cy, u, v, color, maxNumberOfRecursion-1, ctx, rect);
+    stampAtLocation(ctx, rect, pcxf, pcyf, color);
+    jointDots(ctx, rect, curve, x, y, cx, cy, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, curve, cx, cy, u, v, color, maxNumberOfRecursion-1);
   }
 }
 
-void CurveView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
   if (pyf <= pvf) {
     for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
       float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
-      stampAtLocation(pmf, pnf, color, ctx, rect);
+      stampAtLocation(ctx, rect, pmf, pnf, color);
     }
     return;
   }
-  straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
+  straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
 }

@@ -7,6 +7,7 @@
 
 class CurveView : public View {
 public:
+  typedef void Model;
   enum class Axis {
     Horizontal = 0,
     Vertical = 1
@@ -33,25 +34,25 @@ protected:
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1) const;
-  void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
-  void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
-  void drawDiscreteHistogram(KDColor color, KDContext * ctx, KDRect rect, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawHistogram(float barStart, float barWidth, KDColor color, KDContext * ctx, KDRect rect, KDColor highlightColor, float coloredBin) const;
+  void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
+  void drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
+  void drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor color, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawHistogram(KDContext * ctx, KDRect rect, float barStart, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const;
   void computeLabels(Axis axis);
-  void drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const;
+  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
 private:
   constexpr static float k_marginFactor = 0.2f;
   int numberOfLabels(Axis axis) const;
-  virtual float evaluateCurveAtAbscissa(void * curve, float t) const = 0;
+  virtual float evaluateCurveAtAbscissa(Model * curve, float t) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(void * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion, KDContext * ctx, KDRect rect) const;
+  void jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const;
   /* Join two dots with a straight line. */
-  void straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const;
+  void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
-  void stampAtLocation(float pxf, float pyf, KDColor color, KDContext * ctx, KDRect rect) const;
+  void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
   CurveViewWindow * m_curveViewWindow;
 };
 

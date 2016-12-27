@@ -37,12 +37,12 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
     upperBound = m_calculation->parameterAtIndex(1);
   }
   ctx->fillRect(bounds(), KDColorWhite);
-  drawAxes(Axis::Horizontal, ctx, rect);
-  drawLabels(Axis::Horizontal, false, ctx, rect);
+  drawAxes(ctx, rect, Axis::Horizontal);
+  drawLabels(ctx, rect, Axis::Horizontal, false);
   if (m_law->isContinuous()) {
-    drawCurve(m_law, KDColorRed, ctx, rect, true, lowerBound, upperBound, true);
+    drawCurve(ctx, rect, m_law, KDColorRed, true, lowerBound, upperBound, true);
   } else {
-    drawDiscreteHistogram(KDColorBlue, ctx, rect, true, KDColorRed, lowerBound, upperBound);
+    drawDiscreteHistogram(ctx, rect, KDColorBlue, true, KDColorRed, lowerBound, upperBound);
   }
 }
 

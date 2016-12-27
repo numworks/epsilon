@@ -20,7 +20,6 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
-  float evaluateCurveAtAbscissa(void * curve, float t) const override;
   Data * m_data;
   BoxWindow m_boxWindow;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];

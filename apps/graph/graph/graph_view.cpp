@@ -164,13 +164,13 @@ void GraphView::layoutSubviews() {
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
-  drawAxes(Axis::Horizontal, ctx, rect);
-  drawAxes(Axis::Vertical, ctx, rect);
-  drawLabels(Axis::Horizontal, true, ctx, rect);
-  drawLabels(Axis::Vertical, true, ctx, rect);
+  drawAxes(ctx, rect, Axis::Horizontal);
+  drawAxes(ctx, rect, Axis::Vertical);
+  drawLabels(ctx, rect, Axis::Horizontal, true);
+  drawLabels(ctx, rect, Axis::Vertical, true);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
-    drawCurve(f, f->color(), ctx, rect);
+    drawCurve(ctx, rect, f, f->color());
   }
 }
 
@@ -195,7 +195,7 @@ void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yGridUnit(), k_gridColor);
 }
 
-float GraphView::evaluateCurveAtAbscissa(void * curve, float abscissa) const {
+float GraphView::evaluateCurveAtAbscissa(Model * curve, float abscissa) const {
   Function * f = (Function *)curve;
   return f->evaluateAtAbscissa(abscissa, m_context);
 }

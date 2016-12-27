@@ -55,8 +55,8 @@ void BoxView::selectAnyQuantile(bool anyQuantileSelected) {
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  drawAxes(Axis::Horizontal, ctx, rect);
-  drawLabels(Axis::Horizontal, false, ctx, rect);
+  drawAxes(ctx, rect, Axis::Horizontal);
+  drawLabels(ctx, rect, Axis::Horizontal, false);
   float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
   float lowBounds[5] = {0.4f, 0.2f, 0.2f, 0.2f, 0.4f};
   float upBounds[5] = {0.6f, 0.8f, 0.8f, 0.8f, 0.6f};
@@ -77,10 +77,6 @@ char * BoxView::label(Axis axis, int index) const {
     return nullptr;
   }
   return (char *)m_labels[index];
-}
-
-float BoxView::evaluateCurveAtAbscissa(void * curve, float t) const {
-  return 0.0f;
 }
 
 }

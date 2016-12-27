@@ -42,12 +42,12 @@ void HistogramView::selectBins(bool selectedBins) {
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  drawAxes(Axis::Horizontal, ctx, rect);
-  drawLabels(Axis::Horizontal, true, ctx, rect);
+  drawAxes(ctx, rect, Axis::Horizontal);
+  drawLabels(ctx, rect, Axis::Horizontal, true);
   if (m_selectedBins) {
-    drawHistogram(m_data->barStart(), m_data->barWidth(), KDColorBlack, ctx, rect, KDColorRed, m_data->selectedBar());
+    drawHistogram(ctx, rect, m_data->barStart(), m_data->barWidth(), KDColorBlack, KDColorRed, m_data->selectedBar());
   } else {
-    drawHistogram(m_data->barStart(), m_data->barWidth(), KDColorBlack, ctx, rect, KDColorRed, NAN);
+    drawHistogram(ctx, rect, m_data->barStart(), m_data->barWidth(), KDColorBlack, KDColorRed, NAN);
   }
 }
 
@@ -75,7 +75,7 @@ char * HistogramView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float HistogramView::evaluateCurveAtAbscissa(void * curve, float t) const {
+float HistogramView::evaluateCurveAtAbscissa(Model * curve, float t) const {
   return (float)m_data->heightForBarAtValue(t)/(float)m_data->totalSize();
 }
 

@@ -10,9 +10,9 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
   m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
     ParametersController * parameterController = (ParametersController *) context;
     CalculationController * calculationController = parameterController->calculationController();
+    calculationController->setCalculationAccordingToIndex(0);
     calculationController->selectSubview(1);
-    Calculation * calculation = calculationController->calculation();
-    calculation->setType(Calculation::Type::LeftIntegral);
+    calculationController->reload();
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
     stack->push(calculationController);
@@ -178,6 +178,10 @@ float ParametersController::parameterAtIndex(int index) {
 }
 
 void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+  if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
+    app()->displayWarning("Cette valeur est interdite !");
+    return;
+  }
   m_law->setParameterAtIndex(f, parameterIndex);
 }
 

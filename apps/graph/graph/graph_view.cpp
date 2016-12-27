@@ -155,8 +155,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawGrid(ctx, rect);
   drawAxes(Axis::Horizontal, ctx, rect);
   drawAxes(Axis::Vertical, ctx, rect);
-  drawLabels(Axis::Horizontal, ctx, rect);
-  drawLabels(Axis::Vertical, ctx, rect);
+  drawLabels(Axis::Horizontal, true, ctx, rect);
+  drawLabels(Axis::Vertical, true, ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
     drawCurve(f, f->color(), ctx, rect);

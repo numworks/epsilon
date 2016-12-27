@@ -4,8 +4,7 @@
 namespace Graph {
 
 App::App(Container * container, Context * context) :
-  ::App(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
-  ExpressionTextFieldDelegate(),
+  TextFieldDelegateApp(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
   m_functionStore(FunctionStore()),
   m_localContext(LocalContext(context)),
   m_listController(ListController(&m_listHeader, &m_functionStore, &m_listHeader)),
@@ -19,7 +18,7 @@ App::App(Container * container, Context * context) :
   m_valuesHeader(HeaderViewController(&m_valuesAlternateEmptyViewController, &m_valuesController, &m_valuesController)),
   m_valuesAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_valuesHeader, &m_valuesController)),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesAlternateEmptyViewController)),
-  m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
+  m_tabViewController(&m_inputViewController, 3, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
 }

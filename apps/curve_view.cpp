@@ -51,7 +51,7 @@ void CurveView::computeLabels(Axis axis) {
   }
 }
 
-void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
+void CurveView::drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const {
   float step = gridUnit(axis);
   float start = 2.0f*step*(ceilf(min(axis)/(2.0f*step)));
   float end = max(axis);
@@ -63,7 +63,7 @@ void CurveView::drawLabels(Axis axis, KDContext * ctx, KDRect rect) const {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
     }
     // TODO: Find another way to avoid float comparison.
-    if (x == 0.0f) {
+    if (x == 0.0f && shiftOrigin) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
     if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i))))) {
@@ -132,7 +132,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
 
-void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const {
+void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
@@ -142,9 +142,43 @@ void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect r
     float y = evaluateCurveAtAbscissa(curve, x);
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
+    if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
+      KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+      }
+      ctx->fillRect(colorRect, color);
+    }
     stampAtLocation(pxf, pyf, color, ctx, rect);
-    if (x > xMin) {
-      jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+    if (x > rectMin) {
+      if (continuously) {
+        float puf = floatToPixel(Axis::Horizontal, x - xStep);
+        float pvf = floatToPixel(Axis::Vertical, evaluateCurveAtAbscissa(curve, x-xStep));
+        straightJoinDots(puf, pvf, pxf, pyf, color, ctx, rect);
+      } else {
+        jointDots(curve, x - xStep, evaluateCurveAtAbscissa(curve, x-xStep), x, y, color, k_maxNumberOfIterations, ctx, rect);
+      }
+    }
+  }
+}
+
+void CurveView::drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, KDColor highlightColor, float colorLowerBound, float colorUpperBound) const {
+  int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
+  int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  for (int x = rectMin; x < rectMax; x += 1) {
+    float y = evaluateCurveAtAbscissa(curve, x);
+    if (!isnan(y)) {
+      float pxf = floatToPixel(Axis::Horizontal, x);
+      float pyf = floatToPixel(Axis::Vertical, y);
+      KDRect binRect((int)pxf - 1, roundf(pyf), 3, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+        binRect = KDRect((int)pxf - 1, floatToPixel(Axis::Vertical, 0.0f), 3, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+      }
+      KDColor binColor = color;
+      if (colorUnderCurve && x >= colorLowerBound && x <= colorUpperBound) {
+        binColor = highlightColor;
+      }
+      ctx->fillRect(binRect, binColor);
     }
   }
 }
@@ -215,7 +249,7 @@ void CurveView::jointDots(void * curve, float x, float y, float u, float v, KDCo
 }
 
 void CurveView::straightJoinDots(float pxf, float pyf, float puf, float pvf, KDColor color, KDContext * ctx, KDRect rect) const {
-  if (pyf < pvf) {
+  if (pyf <= pvf) {
     for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
       float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
       stampAtLocation(pmf, pnf, color, ctx, rect);

@@ -42,13 +42,18 @@ void ImageTableView::ImageCell::setImage(const Image * image, const Image * focu
   m_focusedIcon = focusedImage;
 }
 
-ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calculation) :
+ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController) :
   View(),
   Responder(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, false)),
   m_isSelected(false),
-  m_calculation(calculation)
+  m_calculation(calculation),
+  m_calculationController(calculationController)
 {
+}
+
+void ImageTableView::setCalculation(Calculation * calculation) {
+  m_calculation = calculation;
 }
 
 void ImageTableView::didBecomeFirstResponder() {
@@ -63,10 +68,11 @@ void ImageTableView::didBecomeFirstResponder() {
 
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_calculation->setType((Calculation::Type)m_selectableTableView.selectedRow());
+    m_calculationController->setCalculationAccordingToIndex(m_selectableTableView.selectedRow());
     select(false);
     setHighlight(true);
     m_selectableTableView.reloadData();
+    m_calculationController->reload();
     app()->setFirstResponder(parentResponder());
     return true;
   }
@@ -79,7 +85,7 @@ void ImageTableView::select(bool select) {
     m_isSelected = select;
   } else {
     m_isSelected = select;
-    m_selectableTableView.selectCellAtLocation(0, m_calculation->type());
+    m_selectableTableView.selectCellAtLocation(0, (int)m_calculation->type());
   }
 }
 
@@ -113,7 +119,7 @@ void ImageTableView::willDisplayCellForIndex(TableViewCell * cell, int index) {
   const Image *  images[3] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon};
   const Image * focusedImages[3] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon};
   if (!m_isSelected) {
-    myCell->setImage(images[m_calculation->type()], focusedImages[m_calculation->type()]);
+    myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
   } else {
     myCell->setImage(images[index], focusedImages[index]);
   }

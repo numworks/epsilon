@@ -1,6 +1,9 @@
 app_objs += $(addprefix apps/probability/,\
   app.o\
-  calculation.o\
+  calculation/calculation.o\
+  calculation/left_integral_calculation.o\
+  calculation/right_integral_calculation.o\
+  calculation/finite_integral_calculation.o\
   calculation_controller.o\
   cell.o\
   image_table_view.o\
@@ -14,7 +17,6 @@ app_objs += $(addprefix apps/probability/,\
   law/uniform_law.o\
   law_controller.o\
   law_curve_view.o\
-  local_context.o\
   parameters_controller.o\
 )
 

@@ -2,13 +2,16 @@
 #define PROBABILITY_IMAGE_TABLE_VIEW_H
 
 #include <escher.h>
-#include "calculation.h"
+#include "calculation/calculation.h"
 
 namespace Probability {
 
+class CalculationController;
+
 class ImageTableView : public View, public Responder, public SimpleListViewDataSource {
 public:
-  ImageTableView(Responder * parentResponder, Calculation * calculation);
+  ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
+  void setCalculation(Calculation * calculation);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void select(bool select);
@@ -24,6 +27,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+  void setCalculationAccordingToIndex(int index);
   class ImageCell : public TableViewCell {
   public:
     ImageCell();
@@ -42,6 +46,7 @@ private:
   SelectableTableView m_selectableTableView;
   bool m_isSelected;
   Calculation * m_calculation;
+  CalculationController * m_calculationController;
 };
 
 }

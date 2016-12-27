@@ -3,11 +3,16 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer) :
+EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
+   float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TableViewCell(),
   Responder(parentResponder),
-  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
 {
+}
+
+TextField * EditableTextCell::textfield() {
+  return &m_textField;
 }
 
 void EditableTextCell::reloadCell() {

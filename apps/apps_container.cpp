@@ -7,8 +7,9 @@ AppsContainer::AppsContainer() :
   Container(),
   m_homeApp(this),
   m_graphApp(this, &m_globalContext),
-  m_probabilityApp(this, &m_globalContext),
+  m_probabilityApp(this),
   m_calculationApp(this, &m_globalContext),
+  m_statisticsApp(this),
   m_globalContext(GlobalContext()),
   m_variableBoxController(&m_globalContext)
 {
@@ -24,6 +25,7 @@ App * AppsContainer::appAtIndex(int index) {
     &m_graphApp,
     &m_probabilityApp,
     &m_calculationApp,
+    &m_statisticsApp
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);

@@ -2,18 +2,21 @@ include apps/home/Makefile
 include apps/graph/Makefile
 include apps/probability/Makefile
 include apps/calculation/Makefile
+include apps/statistics/Makefile
 #include apps/picview/Makefile
 
 app_objs += $(addprefix apps/,\
   apps_container.o\
   constant.o\
   curve_view.o\
+  editable_cell_table_view_controller.o\
   expression_text_field_delegate.o\
   float_parameter_controller.o\
   main.o\
   node.o\
   node_list_view_controller.o\
   node_navigation_controller.o\
+  text_field_delegate_app.o\
   toolbox_controller.o\
   toolbox_leaf_cell.o\
   toolbox_node.o\

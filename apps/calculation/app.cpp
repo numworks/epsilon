@@ -4,8 +4,7 @@
 namespace Calculation {
 
 App::App(Container * container, Context * context) :
-  ::App(container, &m_editExpressionController, "Calcul", ImageStore::CalculationIcon),
-  ExpressionTextFieldDelegate(),
+  TextFieldDelegateApp(container, &m_editExpressionController, "Calcul", ImageStore::CalculationIcon),
   m_localContext(LocalContext((GlobalContext *)context, &m_calculationStore)),
   m_calculationStore(CalculationStore()),
   m_historyController(HistoryController(&m_editExpressionController, &m_calculationStore)),

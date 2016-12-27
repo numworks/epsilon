@@ -5,6 +5,7 @@
 #include "law/law.h"
 #include "law_curve_view.h"
 #include "image_table_view.h"
+#include "calculation/calculation.h"
 
 namespace Probability {
 
@@ -13,18 +14,21 @@ public:
   CalculationController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
+  void reload();
   void setLaw(Law * law);
-  Calculation * calculation();
+  void setCalculationAccordingToIndex(int index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
+  Calculation * m_calculation;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation);
     void setLaw(Law * law);
+    void setCalculation(Calculation * calculation);
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();
@@ -46,8 +50,8 @@ private:
     Calculation * m_calculation;
   };
   ContentView m_contentView;
+  Law * m_law;
   int m_highlightedSubviewIndex;
-  Calculation m_calculation;
 };
 
 }

@@ -4,19 +4,13 @@
 #include <escher.h>
 #include <poincare.h>
 #include "law_controller.h"
-#include "local_context.h"
-#include "../expression_text_field_delegate.h"
+#include "../text_field_delegate_app.h"
 
 namespace Probability {
 
-class App : public ::App, public ExpressionTextFieldDelegate {
+class App : public TextFieldDelegateApp {
 public:
-  enum class Law {
-    Normal,
-    Student
-  };
-  App(Container * container, Context * context);
-  Context * localContext() override;
+  App(Container * container);
 private:
   LawController m_lawController;
   StackViewController m_stackViewController;

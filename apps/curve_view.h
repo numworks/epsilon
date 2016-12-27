@@ -27,9 +27,10 @@ protected:
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(Axis axis, KDContext * ctx, KDRect rect) const;
-  void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect) const;
+  void drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
+  void drawHistogram(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
   void computeLabels(Axis axis);
-  void drawLabels(Axis axis, KDContext * ctx, KDRect rect) const;
+  void drawLabels(Axis axis, bool shiftOrigin, KDContext * ctx, KDRect rect) const;
 private:
   int numberOfLabels(Axis axis) const;
   virtual float evaluateCurveAtAbscissa(void * curve, float t) const = 0;

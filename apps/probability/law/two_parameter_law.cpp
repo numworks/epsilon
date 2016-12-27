@@ -3,9 +3,9 @@
 
 namespace Probability {
 
-TwoParameterLaw::TwoParameterLaw() :
-  m_parameter1(0.0f),
-  m_parameter2(0.0f)
+TwoParameterLaw::TwoParameterLaw(float parameterValue1, float parameterValue2) :
+  m_parameter1(parameterValue1),
+  m_parameter2(parameterValue2)
 {
 }
 

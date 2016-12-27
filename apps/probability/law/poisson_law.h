@@ -11,7 +11,7 @@ public:
   ~PoissonLaw() override {};
   const char * title() override;
   Type type() const override;
-  bool isContinuous() override;
+  bool isContinuous() const override;
   float xMin() override;
   float yMin() override;
   float xMax() override;
@@ -19,6 +19,7 @@ public:
   const char * parameterNameAtIndex(int index) override;
   const char * parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
+  bool authorizedValueAtIndex(float x, int index) const override;
 };
 
 }

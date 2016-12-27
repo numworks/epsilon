@@ -4,12 +4,12 @@
 #include "edit_expression_controller.h"
 #include "local_context.h"
 #include "history_controller.h"
-#include "../expression_text_field_delegate.h"
+#include "../text_field_delegate_app.h"
 #include <escher.h>
 
 namespace Calculation {
 
-class App : public ::App, public ExpressionTextFieldDelegate {
+class App : public TextFieldDelegateApp {
 public:
   App(Container * container, Context * context);
   Context * localContext() override;

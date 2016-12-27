@@ -5,7 +5,7 @@
 namespace Probability {
 
 PoissonLaw::PoissonLaw() :
-  OneParameterLaw()
+  OneParameterLaw(4.0f)
 {
 }
 
@@ -17,7 +17,7 @@ Law::Type PoissonLaw::type() const {
   return Type::Poisson;
 }
 
-bool PoissonLaw::isContinuous() {
+bool PoissonLaw::isContinuous() const {
   return false;
 }
 
@@ -32,27 +32,37 @@ const char * PoissonLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float PoissonLaw::xMin() {
-  return 0.0f;
+  return -1.0f;
 }
 
 float PoissonLaw::xMax() {
-  if (m_parameter1 == 0.0f) {
-    return 1.0f;
-  }
+  assert(m_parameter1 != 0);
   return m_parameter1 + 5.0f*sqrtf(m_parameter1);
 }
 
 float PoissonLaw::yMin() {
-  return -0.2f;
+  int maxAbscissa = (int)m_parameter1;
+  return k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
 }
 
 float PoissonLaw::yMax() {
-  return 1.0f;
+  int maxAbscissa = (int)m_parameter1;
+  return k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {
-  // TODO: 2.7f -> e and factio
-  return powf(2.7f, -m_parameter1)*powf(m_parameter1, x)/(x);
+  if (x < 0.0f) {
+    return NAN;
+  }
+  float lResult = -m_parameter1+(int)x*logf(m_parameter1)-lgammaf((int)x+1);
+  return expf(lResult);
+}
+
+bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
+  if (x <= 0.0f) {
+    return false;
+  }
+  return true;
 }
 
 }

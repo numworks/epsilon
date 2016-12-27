@@ -1,12 +1,12 @@
-#ifndef GRAPH_TITLE_CELL_H
-#define GRAPH_TITLE_CELL_H
+#ifndef ESCHER_EVEN_ODD_POINTER_TEXT_CELL_H
+#define ESCHER_EVEN_ODD_POINTER_TEXT_CELL_H
 
-#include <escher.h>
+#include <escher/even_odd_cell.h>
+#include <escher/pointer_text_view.h>
 
-namespace Graph {
-class TitleCell : public EvenOddCell {
+class EvenOddPointerTextCell : public EvenOddCell {
 public:
-  TitleCell();
+  EvenOddPointerTextCell();
   void reloadCell() override;
   void setText(const char * textContent, KDColor textColor = KDColorBlack);
   int numberOfSubviews() const override;
@@ -15,7 +15,5 @@ public:
 protected:
   PointerTextView m_pointerTextView;
 };
-
-}
 
 #endif

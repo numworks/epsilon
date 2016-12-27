@@ -42,11 +42,11 @@ float ExponentialLaw::xMax() {
 }
 
 float ExponentialLaw::yMin() {
-  return k_minMarginFactor*m_parameter1;
+  return 0.0f;
 }
 
 float ExponentialLaw::yMax() {
-  return k_maxMarginFactor*m_parameter1;
+  return m_parameter1;
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {

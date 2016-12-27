@@ -8,6 +8,7 @@
 class EvenOddEditableTextCell : public EvenOddCell, public Responder {
 public:
   EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer);
+  EditableTextCell * editableTextCell();
   void reloadCell() override;
   const char * text() const;
   void setText(const char * textContent);

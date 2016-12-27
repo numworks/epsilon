@@ -9,9 +9,13 @@ EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, Te
 {
 }
 
+EditableTextCell * EvenOddEditableTextCell::editableTextCell() {
+  return &m_editableCell;
+}
+
 void EvenOddEditableTextCell::reloadCell() {
   EvenOddCell::reloadCell();
-  m_editableCell.textfield()->setBackgroundColor(backgroundColor());
+  m_editableCell.textField()->setBackgroundColor(backgroundColor());
 }
 
 const char * EvenOddEditableTextCell::text() const {

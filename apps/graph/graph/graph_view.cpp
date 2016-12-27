@@ -8,7 +8,7 @@ namespace Graph {
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
-  CurveView(),
+  CurveView(graphWindow),
   m_cursorView(CursorView()),
   m_xCursorPosition(-1.0f),
   m_yCursorPosition(-1.0f),
@@ -19,17 +19,25 @@ GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
 {
 }
 
+BannerView * GraphView::bannerView() {
+  return &m_bannerView;
+}
+
 int GraphView::numberOfSubviews() const {
-  return 1;
+  return 2;
 };
 
 View * GraphView::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_cursorView;
+  assert(index >= 0 && index < 2);
+  if (index == 0) {
+    return &m_cursorView;
+  }
+  return &m_bannerView;
 }
 
 void GraphView::setContext(Context * context) {
   m_context = context;
+  m_bannerView.setContext(context);
 }
 
 Context * GraphView::context() const {
@@ -52,10 +60,6 @@ void GraphView::reloadCursor() {
   layoutSubviews();
 }
 
-float GraphView::gridUnit(Axis axis) const {
-  return (axis == Axis::Horizontal ? m_graphWindow->xGridUnit() : m_graphWindow->yGridUnit());
-}
-
 char * GraphView::label(Axis axis, int index) const {
   return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
 }
@@ -74,6 +78,7 @@ void GraphView::goToAbscissaOnFunction(float abscissa, Function * function) {
   float ordinate = function->evaluateAtAbscissa(abscissa, m_context);
   m_graphWindow->centerAxisAround(GraphWindow::Axis::Y, ordinate);
   m_yCursorPosition = floatToPixel(Axis::Vertical, ordinate);
+  updateBannerView(function);
   reload();
 }
 
@@ -89,6 +94,7 @@ void GraphView::initCursorPosition() {
   float fCenter = firstFunction->evaluateAtAbscissa(center, m_context);
   m_xCursorPosition = (bounds().width()-1.0f)/2.0f;
   m_yCursorPosition = floatToPixel(Axis::Vertical, fCenter);
+  updateBannerView(firstFunction);
 }
 
 void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
@@ -102,6 +108,7 @@ void GraphView::moveCursorHorizontally(KDCoordinate xOffset) {
   bool windowHasMoved = m_graphWindow->panToMakePointVisible(x, y, xMargin, yMargin);
   m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, y);
+  updateBannerView(f);
   if (windowHasMoved) {
     reload();
   } else {
@@ -134,6 +141,7 @@ Function * GraphView::moveCursorVertically(int direction) {
   markRectAsDirty(KDRect(KDPoint(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition)- k_cursorSize/2), k_cursorSize, k_cursorSize));
   m_xCursorPosition = floatToPixel(Axis::Horizontal, x);
   m_yCursorPosition = floatToPixel(Axis::Vertical, nextY);
+  updateBannerView(nextFunction);
   if (windowHasMoved) {
     reload();
   } else {
@@ -144,10 +152,13 @@ Function * GraphView::moveCursorVertically(int direction) {
 
 void GraphView::layoutSubviews() {
   KDRect cursorFrame(roundf(m_xCursorPosition) - k_cursorSize/2, roundf(m_yCursorPosition) - k_cursorSize/2, k_cursorSize, k_cursorSize);
+  KDRect bannerFrame(KDRect(0, bounds().height()- k_bannerHeight, bounds().width(), k_bannerHeight));
   if (!m_visibleCursor) {
     cursorFrame = KDRectZero;
+    bannerFrame = KDRectZero;
   }
   m_cursorView.setFrame(cursorFrame);
+  m_bannerView.setFrame(bannerFrame);
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -184,19 +195,14 @@ void GraphView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Vertical, m_graphWindow->yGridUnit(), k_gridColor);
 }
 
-float GraphView::min(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_graphWindow->xMin() : m_graphWindow->yMin());
-}
-
-float GraphView::max(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_graphWindow->xMax() : m_graphWindow->yMax());
-}
-
 float GraphView::evaluateCurveAtAbscissa(void * curve, float abscissa) const {
   Function * f = (Function *)curve;
   return f->evaluateAtAbscissa(abscissa, m_context);
+}
+
+void GraphView::updateBannerView(Function * function) {
+  m_bannerView.setAbscissa(xCursorPosition());
+  m_bannerView.setFunction(function);
 }
 
 }

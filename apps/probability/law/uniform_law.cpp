@@ -48,11 +48,11 @@ float UniformLaw::xMax() {
 }
 
 float UniformLaw::yMin() {
-  return k_minMarginFactor*(1.0f/(m_parameter2-m_parameter1));
+  return 0.0f;
 }
 
 float UniformLaw::yMax() {
-  return k_maxMarginFactor*(1.0f/(m_parameter2-m_parameter1));
+  return (1.0f/(m_parameter2-m_parameter1));
 }
 
 float UniformLaw::evaluateAtAbscissa(float t) const {

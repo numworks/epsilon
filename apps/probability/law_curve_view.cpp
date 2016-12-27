@@ -12,6 +12,7 @@ LawCurveView::LawCurveView() :
 }
 
 void LawCurveView::setLaw(Law * law) {
+  setCurveViewWindow(law);
   m_law = law;
 }
 
@@ -43,21 +44,6 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   } else {
     drawHistogram(m_law, KDColorBlue, ctx, rect, true, KDColorRed, lowerBound, upperBound);
   }
-}
-
-float LawCurveView::min(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_law->xMin() : m_law->yMin());
-}
-
-float LawCurveView::max(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_law->xMax() : m_law->yMax());
-}
-
-float LawCurveView::gridUnit(Axis axis) const {
-  assert(axis == Axis::Horizontal);
-  return m_law->gridUnit();
 }
 
 char * LawCurveView::label(Axis axis, int index) const {

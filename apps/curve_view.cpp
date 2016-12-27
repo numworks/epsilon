@@ -7,13 +7,36 @@
 
 constexpr KDColor CurveView::k_axisColor;
 
-CurveView::CurveView() :
-  View()
+CurveView::CurveView(CurveViewWindow * curveViewWindow) :
+  View(),
+  m_curveViewWindow(curveViewWindow)
 {
+}
+
+void CurveView::setCurveViewWindow(CurveViewWindow * curveViewWindow) {
+  m_curveViewWindow = curveViewWindow;
 }
 
 void CurveView::reload() {
   markRectAsDirty(bounds());
+}
+
+float CurveView::min(Axis axis) const {
+  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
+  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
+  float absoluteMin = (axis == Axis::Horizontal ? m_curveViewWindow->xMin(): m_curveViewWindow->yMin());
+  return absoluteMin - k_marginFactor*range;
+}
+
+float CurveView::max(Axis axis) const {
+  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
+  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
+  float absoluteMax = (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
+  return absoluteMax + k_marginFactor*range;
+}
+
+float CurveView::gridUnit(Axis axis) const {
+  return (axis == Axis::Horizontal ? m_curveViewWindow->xGridUnit() : m_curveViewWindow->yGridUnit());
 }
 
 KDCoordinate CurveView::pixelLength(Axis axis) const {
@@ -131,13 +154,14 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
+constexpr static int k_externRectMargin = 1;
 
 void CurveView::drawCurve(void * curve, KDColor color, KDContext * ctx, KDRect rect, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/k_resolution;
-  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {
     float y = evaluateCurveAtAbscissa(curve, x);
     float pxf = floatToPixel(Axis::Horizontal, x);

@@ -55,17 +55,12 @@ float NormalLaw::xMax() {
 }
 
 float NormalLaw::yMin() {
-  float maxAbscissa = m_parameter1;
-  float result = k_minMarginFactor*evaluateAtAbscissa(maxAbscissa);
-  if (result >= 0.0f) {
-    result = k_minMarginFactor;
-  }
-  return result;
+  return 0.0f;
 }
 
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
-  float result = k_maxMarginFactor*evaluateAtAbscissa(maxAbscissa);
+  float result = evaluateAtAbscissa(maxAbscissa);
   if (result <= 0.0f || result == yMin()) {
     result = yMin() + 1.0f;
   }

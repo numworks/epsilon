@@ -20,11 +20,9 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  bool displayDerivative() const;
   void setFunction(Function * function);
 private:
   GraphView * m_graphView;
-  bool m_displayDerivative;
   Function * m_function;
   constexpr static int k_totalNumberOfCells = 3;
   ChevronMenuListCell m_calculationCell;

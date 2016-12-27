@@ -2,12 +2,13 @@
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController) :
+HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * data) :
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
   m_view(SolidColorView(KDColorGreen)),
   m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {}, this))),
-  m_selectedBin(0)
+  m_selectedBin(0),
+  m_data(data)
 {
 }
 
@@ -49,11 +50,14 @@ Button * HistogramController::buttonAtIndex(int index) {
 }
 
 bool HistogramController::isEmpty() {
+  if (m_data->numberOfPairs() == 0) {
+    return true;
+  }
   return false;
 }
 
 const char * HistogramController::emptyMessage() {
-  return "Aucune donnée à tracer";
+  return "Aucune donnee à tracer";
 }
 
 Responder * HistogramController::defaultController() {

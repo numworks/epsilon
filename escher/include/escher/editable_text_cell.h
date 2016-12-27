@@ -10,7 +10,7 @@ class EditableTextCell : public TableViewCell, public Responder {
 public:
   EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
-  TextField * textfield();
+  TextField * textField();
   void reloadCell() override;
   const char * text() const;
   void setText(const char * textContent);

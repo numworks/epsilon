@@ -9,6 +9,7 @@ app_objs += $(addprefix apps/,\
   apps_container.o\
   constant.o\
   curve_view.o\
+  curve_view_window.o\
   editable_cell_table_view_controller.o\
   expression_text_field_delegate.o\
   float_parameter_controller.o\

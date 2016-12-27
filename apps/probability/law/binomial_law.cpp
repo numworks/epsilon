@@ -40,11 +40,11 @@ const char * BinomialLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float BinomialLaw::xMin() {
-  return (int)(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  return floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
 }
 
 float BinomialLaw::xMax() {
-  return (int)(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  return ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
 }
 
 float BinomialLaw::yMin() {

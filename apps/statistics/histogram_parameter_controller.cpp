@@ -32,7 +32,7 @@ float HistogramParameterController::parameterAtIndex(int index) {
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
-    if (f <= 0.0f) {
+    if (f <= 0.0f || isnan(f) || isinf(f)) {
       app()->displayWarning("Value interdite");
       return;
     }

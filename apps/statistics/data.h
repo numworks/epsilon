@@ -60,6 +60,7 @@ private:
   void initWindowParameters();
   float sortedElementNumber(int k);
   int minIndex(float * bufferValues, int bufferLength);
+  float closestMiddleBarTo(float f);
   // Raw numeric data
   int m_sizes[k_maxNumberOfPairs];
   float m_values[k_maxNumberOfPairs];

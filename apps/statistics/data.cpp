@@ -120,11 +120,13 @@ bool Data::selectNextBarToward(int direction) {
   if (direction > 0.0f) {
     do {
       newSelectedBar += m_barWidth;
+      newSelectedBar = closestMiddleBarTo(newSelectedBar);
     } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar < max + m_barWidth);
   }
   if (direction < 0.0f) {
     do {
       newSelectedBar -= m_barWidth;
+      newSelectedBar = closestMiddleBarTo(newSelectedBar);
     } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar > min - m_barWidth);
   }
   if (newSelectedBar > min - m_barWidth && newSelectedBar < max + m_barWidth) {
@@ -283,7 +285,7 @@ void Data::initWindowParameters() {
     m_xMax = m_xMin + 10.0f*m_barWidth;
   }
   m_yMax = -FLT_MAX;
-  for (float x = min; x <= max; x += m_barWidth) {
+  for (float x = min+m_barWidth/2.0f; x <= max; x += m_barWidth) {
     float size = heightForBarAtValue(x);
     if (size > m_yMax) {
       m_yMax = size;
@@ -292,15 +294,17 @@ void Data::initWindowParameters() {
   m_yMax = m_yMax/(float)totalSize();
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 
-  m_selectedBar = m_firstBarAbscissa + m_barWidth/2;
+  m_selectedBar = m_firstBarAbscissa + m_barWidth/2.0f;
   while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar < max + m_barWidth) {
     m_selectedBar += m_barWidth;
+    m_selectedBar = closestMiddleBarTo(m_selectedBar);
   }
   if (m_selectedBar > max + m_barWidth) {
     /* No bar is after m_firstBarAbscissa */
-    m_selectedBar = m_firstBarAbscissa + m_barWidth/2;
+    m_selectedBar = m_firstBarAbscissa + m_barWidth/2.0f;
     while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar > min - m_barWidth) {
       m_selectedBar -= m_barWidth;
+      m_selectedBar = closestMiddleBarTo(m_selectedBar);
     }
   }
 }
@@ -327,6 +331,10 @@ int Data::minIndex(float * bufferValues, int bufferLength) {
     }
   }
   return index;
+}
+
+float Data::closestMiddleBarTo(float f) {
+  return m_firstBarAbscissa + roundf((f-m_firstBarAbscissa - m_barWidth/2.0f) / m_barWidth) * m_barWidth + m_barWidth/2.0f;
 }
 
 }

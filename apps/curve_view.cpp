@@ -227,7 +227,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
   int rectMaxBinNumber = floorf((rectMax - firstBarAbscissa)/barWidth);
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
-    float y = evaluateModelWithParameter(model, x);
+    float y = evaluateModelWithParameter(model, x+barWidth/2.0f);
     if (!isnan(y)) {
       float pxf = floatToPixel(Axis::Horizontal, x);
       float pyf = floatToPixel(Axis::Vertical, y);
@@ -236,7 +236,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
         binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
       KDColor binColor = defaultColor;
-      if (x + barWidth/2 >= highlightLowerBound && x + barWidth/2 <= highlightUpperBound) {
+      if (x + barWidth/2.0f >= highlightLowerBound && x + barWidth/2.0f <= highlightUpperBound) {
         binColor = highlightColor;
       }
       ctx->fillRect(binRect, binColor);

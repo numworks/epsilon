@@ -12,10 +12,6 @@ RightIntegralCalculation::RightIntegralCalculation() :
   compute(0);
 }
 
-Calculation::Type RightIntegralCalculation::type() const {
-  return Type::RightIntegral;
-}
-
 int RightIntegralCalculation::numberOfParameters() {
   return 2;
 }

@@ -47,13 +47,15 @@ ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calcul
   Responder(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, false)),
   m_isSelected(false),
+  m_selectedIcon(0),
   m_calculation(calculation),
   m_calculationController(calculationController)
 {
 }
 
-void ImageTableView::setCalculation(Calculation * calculation) {
+void ImageTableView::setCalculation(Calculation * calculation, int index) {
   m_calculation = calculation;
+  m_selectedIcon = index;
 }
 
 void ImageTableView::didBecomeFirstResponder() {
@@ -83,9 +85,10 @@ void ImageTableView::select(bool select) {
   if (!select) {
     m_selectableTableView.deselectTable();
     m_isSelected = select;
+    willDisplayCellForIndex(m_selectableTableView.cellAtLocation(0,0), 0);
   } else {
     m_isSelected = select;
-    m_selectableTableView.selectCellAtLocation(0, (int)m_calculation->type());
+    m_selectableTableView.selectCellAtLocation(0, m_selectedIcon);
   }
 }
 
@@ -119,7 +122,7 @@ void ImageTableView::willDisplayCellForIndex(TableViewCell * cell, int index) {
   const Image *  images[3] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon};
   const Image * focusedImages[3] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon};
   if (!m_isSelected) {
-    myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
+    myCell->setImage(images[m_selectedIcon], focusedImages[m_selectedIcon]);
   } else {
     myCell->setImage(images[index], focusedImages[index]);
   }

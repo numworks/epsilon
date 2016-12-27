@@ -22,10 +22,10 @@ void CalculationController::ContentView::setLaw(Law * law) {
   m_lawCurveView.setLaw(law);
 }
 
-void CalculationController::ContentView::setCalculation(Calculation * calculation) {
+void CalculationController::ContentView::setCalculation(Calculation * calculation, int index) {
   m_calculation = calculation;
   m_lawCurveView.setCalculation(calculation);
-  m_imageTableView.setCalculation(calculation);
+  m_imageTableView.setCalculation(calculation, index);
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
@@ -157,7 +157,7 @@ void CalculationController::setCalculationAccordingToIndex(int index) {
      return;
   }
   m_calculation->setLaw(m_law);
-  m_contentView.setCalculation(m_calculation);
+  m_contentView.setCalculation(m_calculation, index);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {

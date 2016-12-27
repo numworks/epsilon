@@ -28,7 +28,7 @@ private:
   public:
     ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation);
     void setLaw(Law * law);
-    void setCalculation(Calculation * calculation);
+    void setCalculation(Calculation * calculation, int index);
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();

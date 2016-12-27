@@ -11,7 +11,7 @@ class CalculationController;
 class ImageTableView : public View, public Responder, public SimpleListViewDataSource {
 public:
   ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
-  void setCalculation(Calculation * calculation);
+  void setCalculation(Calculation * calculation, int index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void select(bool select);
@@ -45,6 +45,7 @@ private:
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;
   bool m_isSelected;
+  int m_selectedIcon;
   Calculation * m_calculation;
   CalculationController * m_calculationController;
 };

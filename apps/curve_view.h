@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "curve_view_window.h"
+#include <math.h>
 
 class CurveView : public View {
 public:
@@ -36,8 +37,8 @@ protected:
       KDColor color, KDCoordinate thickness = 1) const;
   void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
-  void drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor color, bool colorHighlightBin = false, KDColor highlightColor = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawHistogram(KDContext * ctx, KDRect rect, float firsBarAbscissa, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const;
+  void drawHistogram(KDContext * ctx, KDRect rect, Model * model,  float firstBarAbscissa, float barWidth,
+    bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
 private:

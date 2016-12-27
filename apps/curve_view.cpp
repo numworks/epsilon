@@ -210,46 +210,26 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
   }
 }
 
-void CurveView::drawDiscreteHistogram(KDContext * ctx, KDRect rect, KDColor color, bool colorUnderCurve, KDColor highlightColor, float colorLowerBound, float colorUpperBound) const {
-  int rectMin = ceilf(pixelToFloat(Axis::Horizontal, rect.left()));
-  int rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  for (int x = rectMin; x < rectMax; x += 1) {
-    float y = evaluateModelWithParameter(nullptr, x);
-    if (!isnan(y)) {
-      float pxf = floatToPixel(Axis::Horizontal, x);
-      float pyf = floatToPixel(Axis::Vertical, y);
-      KDRect binRect((int)pxf - 1, roundf(pyf), 3, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
-      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
-        binRect = KDRect((int)pxf - 1, floatToPixel(Axis::Vertical, 0.0f), 3, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
-      }
-      KDColor binColor = color;
-      if (colorUnderCurve && x >= colorLowerBound && x <= colorUpperBound) {
-        binColor = highlightColor;
-      }
-      ctx->fillRect(binRect, binColor);
-    }
-  }
-}
-
-void CurveView::drawHistogram(KDContext * ctx, KDRect rect, float firsBarAbscissa, float barWidth, KDColor color, KDColor highlightColor, float coloredBin) const {
-  KDCoordinate pixelBarWidth = floatToPixel(Axis::Horizontal, barWidth) - floatToPixel(Axis::Horizontal, 0.0f);
+void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float firstBarAbscissa, float barWidth,
+    bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
+  KDCoordinate pixelBarWidth = fillBar ? floatToPixel(Axis::Horizontal, barWidth) - floatToPixel(Axis::Horizontal, 0.0f) : 2;
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  int rectMinBinNumber = floorf((rectMin - firsBarAbscissa)/barWidth);
-  float rectMinLowerBound = firsBarAbscissa + rectMinBinNumber*barWidth + barWidth/2;
+  int rectMinBinNumber = floorf((rectMin - firstBarAbscissa)/barWidth);
+  float rectMinLowerBound = firstBarAbscissa + rectMinBinNumber*barWidth;
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  int rectMaxBinNumber = floorf((rectMax - firsBarAbscissa)/barWidth);
-  float rectMaxUpperBound = firsBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
+  int rectMaxBinNumber = floorf((rectMax - firstBarAbscissa)/barWidth);
+  float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
-    float y = evaluateModelWithParameter(nullptr, x);
+    float y = evaluateModelWithParameter(model, x);
     if (!isnan(y)) {
       float pxf = floatToPixel(Axis::Horizontal, x);
       float pyf = floatToPixel(Axis::Vertical, y);
-      KDRect binRect(pxf-pixelBarWidth/2, roundf(pyf), pixelBarWidth+1 , floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      KDRect binRect(pxf, roundf(pyf), pixelBarWidth+1 , floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
       if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
-        binRect = KDRect(pxf-pixelBarWidth/2, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+        binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
-      KDColor binColor = color;
-      if (x - barWidth/2 <= coloredBin &&  coloredBin < x+barWidth/2) {
+      KDColor binColor = defaultColor;
+      if (x + barWidth/2 >= highlightLowerBound && x + barWidth/2 <= highlightUpperBound) {
         binColor = highlightColor;
       }
       ctx->fillRect(binRect, binColor);

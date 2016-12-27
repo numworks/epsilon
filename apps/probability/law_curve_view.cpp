@@ -42,7 +42,7 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_law->isContinuous()) {
     drawCurve(ctx, rect, m_law, KDColorRed, true, lowerBound, upperBound, true);
   } else {
-    drawDiscreteHistogram(ctx, rect, KDColorBlue, true, KDColorRed, lowerBound, upperBound);
+    drawHistogram(ctx, rect, m_law, 0, 1, false, KDColorBlue, KDColorRed, lowerBound, upperBound+1);
   }
 }
 

@@ -54,7 +54,6 @@ public:
   constexpr static int k_maxNumberOfPairs = 500;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 300;
-  constexpr static float k_marginFactor = 0.2f;
   float sumOfValuesBetween(float x1, float x2);
   bool scrollToSelectedBar();
   void initBarParameters();

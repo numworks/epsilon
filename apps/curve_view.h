@@ -13,7 +13,8 @@ public:
     Horizontal = 0,
     Vertical = 1
   };
-  CurveView(CurveViewWindow * curveViewWindow = nullptr);
+  CurveView(CurveViewWindow * curveViewWindow = nullptr, float topMarginFactor = 0.0f,
+    float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
   void reload();
 protected:
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
@@ -42,7 +43,6 @@ protected:
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
 private:
-  constexpr static float k_marginFactor = 0.2f;
   int numberOfLabels(Axis axis) const;
   virtual float evaluateModelWithParameter(Model * curve, float t) const;
   /* Recursively join two dots (dichotomy). The method stops when the
@@ -55,6 +55,10 @@ private:
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
   CurveViewWindow * m_curveViewWindow;
+  float m_topMarginFactor;
+  float m_bottomMarginFactor;
+  float m_leftMarginFactor;
+  float m_rightMarginFactor;
 };
 
 #endif

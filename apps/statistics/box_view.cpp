@@ -5,7 +5,7 @@
 namespace Statistics {
 
 BoxView::BoxView(Data * data) :
-  CurveView(&m_boxWindow),
+  CurveView(&m_boxWindow, 0.0f, 0.2f, 0.4f, 0.2f),
   m_data(data),
   m_boxWindow(BoxWindow(data)),
   m_anyQuantileSelected(true),

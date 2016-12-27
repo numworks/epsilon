@@ -5,7 +5,7 @@
 namespace Statistics {
 
 HistogramView::HistogramView(Data * data) :
-  CurveView(data),
+  CurveView(data, 0.2f, 0.1f, 0.4f, 0.1f),
   m_data(data),
   m_selectedBins(true),
   m_bannerView(BannerView(data))

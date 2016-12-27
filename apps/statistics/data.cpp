@@ -145,7 +145,7 @@ float Data::xMax() {
 }
 
 float Data::yMin() {
-  return -k_marginFactor*m_yMax;
+  return 0.0f;
 }
 
 float Data::yMax() {

@@ -7,9 +7,14 @@
 
 constexpr KDColor CurveView::k_axisColor;
 
-CurveView::CurveView(CurveViewWindow * curveViewWindow) :
+CurveView::CurveView(CurveViewWindow * curveViewWindow, float topMarginFactor,
+    float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
   View(),
-  m_curveViewWindow(curveViewWindow)
+  m_curveViewWindow(curveViewWindow),
+  m_topMarginFactor(topMarginFactor),
+  m_bottomMarginFactor(bottomMarginFactor),
+  m_leftMarginFactor(leftMarginFactor),
+  m_rightMarginFactor(rightMarginFactor)
 {
 }
 
@@ -24,15 +29,17 @@ void CurveView::reload() {
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
-  float absoluteMin = (axis == Axis::Horizontal ? m_curveViewWindow->xMin(): m_curveViewWindow->yMin());
-  return absoluteMin - k_marginFactor*range;
+  float absoluteMin = axis == Axis::Horizontal ? m_curveViewWindow->xMin(): m_curveViewWindow->yMin();
+  float marginFactor = axis == Axis::Horizontal ? m_leftMarginFactor : m_bottomMarginFactor;
+  return absoluteMin - marginFactor*range;
 }
 
 float CurveView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
   float absoluteMax = (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
-  return absoluteMax + k_marginFactor*range;
+  float marginFactor = axis == Axis::Horizontal ? m_rightMarginFactor : m_topMarginFactor;
+  return absoluteMax + marginFactor*range;
 }
 
 float CurveView::gridUnit(Axis axis) const {

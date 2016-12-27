@@ -48,6 +48,10 @@ float LeftIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
+float LeftIntegralCalculation::lowerBound() {
+  return m_lowerBound;
+}
+
 void LeftIntegralCalculation::compute(int indexKnownElement) {
   if (m_law == nullptr) {
     return;

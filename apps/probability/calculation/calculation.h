@@ -20,6 +20,8 @@ public:
   virtual const char * legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(float f, int index) = 0;
   virtual float parameterAtIndex(int index) = 0;
+  virtual float lowerBound();
+  virtual float upperBound();
 protected:
   virtual void compute(int indexKnownElement) = 0;
   Law * m_law;

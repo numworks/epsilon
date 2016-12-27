@@ -26,16 +26,8 @@ void LawCurveView::reload() {
 }
 
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
-  float lowerBound = - INFINITY;
-  float upperBound = m_calculation->parameterAtIndex(0);
-  if (m_calculation->type() == Calculation::Type::RightIntegral) {
-    lowerBound = m_calculation->parameterAtIndex(0);
-    upperBound = +INFINITY;
-  }
-  if (m_calculation->type() == Calculation::Type::FiniteIntegral) {
-    lowerBound = m_calculation->parameterAtIndex(0);
-    upperBound = m_calculation->parameterAtIndex(1);
-  }
+  float lowerBound = m_calculation->lowerBound();
+  float upperBound = m_calculation->upperBound();
   ctx->fillRect(bounds(), KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);

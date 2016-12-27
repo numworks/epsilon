@@ -58,6 +58,14 @@ float FiniteIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
+float FiniteIntegralCalculation::lowerBound() {
+  return m_lowerBound;
+}
+
+float FiniteIntegralCalculation::upperBound() {
+  return m_upperBound;
+}
+
 void FiniteIntegralCalculation::compute(int indexKnownElement) {
   if (m_law == nullptr) {
     return;

@@ -14,4 +14,12 @@ void Calculation::setLaw(Law * law) {
   compute(0);
 }
 
+float Calculation::lowerBound() {
+  return -INFINITY;
+}
+
+float Calculation::upperBound() {
+  return INFINITY;
+}
+
 }

@@ -48,6 +48,10 @@ float RightIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
+float RightIntegralCalculation::upperBound() {
+  return m_upperBound;
+}
+
 void RightIntegralCalculation::compute(int indexKnownElement) {
   if (m_law == nullptr) {
     return;

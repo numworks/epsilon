@@ -24,7 +24,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
-  setElementLinkedToCellLocationInModel(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();
   return true;
@@ -43,8 +43,8 @@ void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTabl
 }
 
 int EditableCellTableViewController::numberOfRows() {
-  int numberOfModelElements = modelNumberOfElements();
-  if (numberOfModelElements >= modelMaxNumberOfElements()) {
+  int numberOfModelElements = numberOfElements();
+  if (numberOfModelElements >= maxNumberOfElements()) {
     return 1 + numberOfModelElements;
   }
   return 2 + numberOfModelElements;
@@ -73,14 +73,13 @@ void EditableCellTableViewController::willDisplayCellAtLocation(TableViewCell * 
     if (j == numberOfRows() - 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
-      int numberOfElements = modelNumberOfElements();
-      if (numberOfElements < modelMaxNumberOfElements()) {
+      if (numberOfElements() < maxNumberOfElements()) {
         buffer[0] = 0;
         myEditableValueCell->setText(buffer);
         return;
       }
     }
-    Float(elementInModelLinkedToCellLocation(i, j)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(dataAtLocation(i, j)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     myEditableValueCell->setText(buffer);
     return;
   }

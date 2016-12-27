@@ -26,10 +26,10 @@ private:
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  void setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) override;
-  float elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) override;
-  int modelNumberOfElements() override;
-  int modelMaxNumberOfElements() const override;
+  void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  float dataAtLocation(int columnIndex, int rowIndex) override;
+  int numberOfElements() override;
+  int maxNumberOfElements() const override;
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];

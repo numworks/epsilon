@@ -51,10 +51,10 @@ private:
   void configureFunction();
   void configureDerivativeFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  void setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) override;
-  float elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) override;
-  int modelNumberOfElements() override;
-  int modelMaxNumberOfElements() const override;
+  void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  float dataAtLocation(int columnIndex, int rowIndex) override;
+  int numberOfElements() override;
+  int maxNumberOfElements() const override;
   constexpr static int k_maxNumberOfAbscissaCells = 8;
   constexpr static int k_maxNumberOfCells = 40;
   constexpr static int k_maxNumberOfFunctions = 5;

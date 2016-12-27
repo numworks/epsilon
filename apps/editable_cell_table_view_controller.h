@@ -23,10 +23,10 @@ public:
 protected:
   static constexpr KDCoordinate k_cellHeight = 30;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
-  virtual void setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) = 0;
-  virtual float elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) = 0;
-  virtual int modelNumberOfElements() = 0;
-  virtual int modelMaxNumberOfElements() const = 0;
+  virtual void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) = 0;
+  virtual float dataAtLocation(int columnIndex, int rowIndex) = 0;
+  virtual int numberOfElements() = 0;
+  virtual int maxNumberOfElements() const = 0;
   SelectableTableView m_selectableTableView;
 };
 

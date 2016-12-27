@@ -344,19 +344,19 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   return false;
 }
 
-void ValuesController::setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) {
+void ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   m_interval.setElement(rowIndex-1, floatBody);
 }
 
-float ValuesController::elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) {
+float ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_interval.element(rowIndex-1);
 }
 
-int ValuesController::modelNumberOfElements() {
+int ValuesController::numberOfElements() {
   return m_interval.numberOfElements();
 }
 
-int ValuesController::modelMaxNumberOfElements() const {
+int ValuesController::maxNumberOfElements() const {
   return Interval::k_maxNumberOfElements;
 }
 

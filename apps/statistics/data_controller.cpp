@@ -108,7 +108,7 @@ bool DataController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   return false;
 }
 
-void DataController::setElementLinkedToCellLocationInModel(float floatBody, int columnIndex, int rowIndex) {
+void DataController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   if (columnIndex == 0) {
     m_data->setValueAtIndex(floatBody, rowIndex-1);
   } else {
@@ -116,7 +116,7 @@ void DataController::setElementLinkedToCellLocationInModel(float floatBody, int 
   }
 }
 
-float DataController::elementInModelLinkedToCellLocation(int columnIndex, int rowIndex) {
+float DataController::dataAtLocation(int columnIndex, int rowIndex) {
   if (columnIndex == 0) {
     return m_data->valueAtIndex(rowIndex-1);
   } else {
@@ -124,11 +124,11 @@ float DataController::elementInModelLinkedToCellLocation(int columnIndex, int ro
   }
 }
 
-int DataController::modelNumberOfElements() {
+int DataController::numberOfElements() {
   return m_data->numberOfPairs();
 }
 
-int DataController::modelMaxNumberOfElements() const {
+int DataController::maxNumberOfElements() const {
   return Data::k_maxNumberOfPairs;
 }
 

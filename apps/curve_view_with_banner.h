@@ -8,7 +8,7 @@ class CurveViewWithBanner : public CurveView {
 public:
   CurveViewWithBanner(CurveViewWindow * curveViewWindow = nullptr, float topMarginFactor = 0.0f,
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
-  virtual void reloadMainView() = 0;
+  virtual void reloadSelection() = 0;
   bool isMainViewSelected();
   void selectMainView(bool mainViewSelected);
 protected:

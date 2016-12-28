@@ -13,8 +13,8 @@ namespace Statistics {
 class BoxView : public CurveViewWithBanner {
 public:
   BoxView(Data * m_data);
-  void reloadMainView() override;
-  void reload(int selectedQuantile);
+  void reloadSelection() override;
+  void reload();
   int selectedQuantile();
   bool selectQuantile(int selectedQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;

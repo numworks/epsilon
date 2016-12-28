@@ -12,8 +12,8 @@ namespace Statistics {
 class HistogramView : public CurveViewWithBanner {
 public:
   HistogramView(Data * m_data);
-  void reloadMainView() override;
-  void reload(float dirtyZoneCenter);
+  void reloadSelection() override;
+  void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_bannerHeight = 30;

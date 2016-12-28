@@ -40,7 +40,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     if (!m_view.isMainViewSelected()) {
       headerViewController()->setSelectedButton(-1);
       m_view.selectMainView(true);
-      m_view.reload(m_data->selectedBar());
+      m_view.reloadSelection();
       return true;
     }
     return false;
@@ -57,11 +57,11 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   }
   if (m_view.isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    m_view.reload(m_data->selectedBar());
+    m_view.reloadSelection();
     if (m_data->selectNextBarToward(direction)) {
-      m_view.reload(NAN);
+      m_view.reload();
     } else {
-      m_view.reload(m_data->selectedBar());
+      m_view.reloadSelection();
     }
     return true;
   }
@@ -71,7 +71,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 void HistogramController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   m_view.selectMainView(true);
-  m_view.reload(NAN);
+  m_view.reload();
 }
 
 int HistogramController::numberOfButtons() const {

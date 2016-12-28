@@ -33,7 +33,7 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 
 void BoxController::didBecomeFirstResponder() {
   m_view.selectMainView(true);
-  m_view.reload(-1);
+  m_view.reload();
 }
 
 bool BoxController::isEmpty() {

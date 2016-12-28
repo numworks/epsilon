@@ -16,7 +16,7 @@ bool CurveViewWithBanner::isMainViewSelected() {
 void CurveViewWithBanner::selectMainView(bool mainViewSelected) {
   if (m_mainViewSelected != mainViewSelected) {
     m_mainViewSelected = mainViewSelected;
-    reloadMainView();
+    reloadSelection();
     layoutSubviews();
   }
 }

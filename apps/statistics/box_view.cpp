@@ -13,22 +13,19 @@ BoxView::BoxView(Data * data) :
 {
 }
 
-void BoxView::reloadMainView() {
-  reload(m_selectedQuantile);
+void BoxView::reloadSelection() {
+  float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
+  float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
+  float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
+  float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculations[m_selectedQuantile]);
+  KDRect dirtyZone(KDRect(selectedValueInPixels-1, pixelLowerBound, 2, pixelUpperBound - pixelLowerBound));
+  markRectAsDirty(dirtyZone);
+  m_bannerView.reload();
 }
 
-void BoxView::reload(int selectedQuantile) {
-  if (selectedQuantile < 0) {
-    markRectAsDirty(bounds());
-    computeLabels(Axis::Horizontal);
-  } else {
-    float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
-    float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
-    float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
-    float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculations[selectedQuantile]);
-    KDRect dirtyZone(KDRect(selectedValueInPixels-1, pixelLowerBound, 2, pixelUpperBound - pixelLowerBound));
-    markRectAsDirty(dirtyZone);
-  }
+void BoxView::reload() {
+  markRectAsDirty(bounds());
+  computeLabels(Axis::Horizontal);
   m_bannerView.reload();
 }
 
@@ -41,9 +38,9 @@ bool BoxView::selectQuantile(int selectedQuantile) {
     return false;
   }
   if (m_selectedQuantile != selectedQuantile) {
-    reload(m_selectedQuantile);
+    reloadSelection();
     m_selectedQuantile = selectedQuantile;
-    reload(m_selectedQuantile);
+    reloadSelection();
   }
   return true;
 }

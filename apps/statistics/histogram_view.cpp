@@ -11,23 +11,20 @@ HistogramView::HistogramView(Data * data) :
 {
 }
 
-void HistogramView::reloadMainView() {
-  reload(m_data->selectedBar());
+void HistogramView::reloadSelection() {
+  float pixelLowerBound = floatToPixel(Axis::Horizontal, m_data->selectedBar() - m_data->barWidth())-1;
+  float pixelUpperBound = floatToPixel(Axis::Horizontal, m_data->selectedBar() + m_data->barWidth())+1;
+  float selectedValueInPixels = floatToPixel(Axis::Vertical, (float)m_data->heightForBarAtValue(m_data->selectedBar())/(float)m_data->totalSize())-1;
+  float horizontalAxisInPixels = floatToPixel(Axis::Vertical,  0.0f)+1;
+  KDRect dirtyZone(KDRect(pixelLowerBound, selectedValueInPixels, pixelUpperBound-pixelLowerBound,
+    horizontalAxisInPixels - selectedValueInPixels));
+  markRectAsDirty(dirtyZone);
+  m_bannerView.reload();
 }
 
-void HistogramView::reload(float dirtyZoneCenter) {
-  if (isnan(dirtyZoneCenter)) {
-    markRectAsDirty(bounds());
-    computeLabels(Axis::Horizontal);
-  } else {
-    float pixelLowerBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter - m_data->barWidth())-1;
-    float pixelUpperBound = floatToPixel(Axis::Horizontal, dirtyZoneCenter + m_data->barWidth())+1;
-    float selectedValueInPixels = floatToPixel(Axis::Vertical, (float)m_data->heightForBarAtValue(dirtyZoneCenter)/(float)m_data->totalSize())-1;
-    float horizontalAxisInPixels = floatToPixel(Axis::Vertical,  0.0f)+1;
-    KDRect dirtyZone(KDRect(pixelLowerBound, selectedValueInPixels, pixelUpperBound-pixelLowerBound,
-      horizontalAxisInPixels - selectedValueInPixels));
-    markRectAsDirty(dirtyZone);
-  }
+void HistogramView::reload() {
+  markRectAsDirty(bounds());
+  computeLabels(Axis::Horizontal);
   m_bannerView.reload();
 }
 

@@ -52,6 +52,9 @@ Float::Float(const char * integralPart, bool integralNegative,
   m_float =
   (i + j*powf(10.0f, -ceilf(log10f(j))))
     * powf(10.0f, k);
+  if (j <= 0) {
+    m_float = i * powf(10.0f, k);
+  }
   m_numberOfDigitsInMantissa = 7;
 }
 
@@ -185,7 +188,7 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
   int dividend = fabsf((float)mantissa);
   int quotien = dividend/10;
   int digit = dividend - quotien*10;
-  while (digit == 0 && availableCharsForMantissaWithSign > 2) {
+  while (digit == 0 && availableCharsForMantissaWithSign > 3) {
     mantissa = mantissa/10;
     availableCharsForMantissaWithSign--;
     dividend = quotien;
@@ -195,7 +198,7 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
 
   // Print sequentially mantissa and exponent
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, 1);
-  buffer[availableCharsForMantissaWithSign] = 'e';
+  buffer[availableCharsForMantissaWithSign] = 'E';
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);

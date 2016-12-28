@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "data.h"
-#include "banner_view.h"
+#include "histogram_banner_view.h"
 #include "../constant.h"
 #include "../curve_view_with_banner.h"
 
@@ -22,7 +22,7 @@ private:
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Data * m_data;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
-  BannerView m_bannerView;
+  HistogramBannerView m_bannerView;
 };
 
 }

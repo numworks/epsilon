@@ -7,7 +7,7 @@ namespace Statistics {
 HistogramView::HistogramView(Data * data) :
   CurveViewWithBanner(data, 0.2f, 0.1f, 0.4f, 0.1f),
   m_data(data),
-  m_bannerView(BannerView(data))
+  m_bannerView(HistogramBannerView(data))
 {
 }
 

@@ -1,11 +1,11 @@
-#include "banner_view.h"
+#include "histogram_banner_view.h"
 #include "../constant.h"
 #include <assert.h>
 #include <poincare.h>
 
 namespace Statistics {
 
-BannerView::BannerView(Data * data) :
+HistogramBannerView::HistogramBannerView(Data * data) :
   m_intervalView(0.0f, 0.5f),
   m_sizeView(0.0f, 0.5f),
   m_frequencyView(1.0f, 0.5f),
@@ -13,7 +13,7 @@ BannerView::BannerView(Data * data) :
 {
 }
 
-void BannerView::reload() {
+void HistogramBannerView::reload() {
   markRectAsDirty(bounds());
   char buffer[k_maxNumberOfCharacters];
   const char * legend = "Interval [";
@@ -43,15 +43,15 @@ void BannerView::reload() {
   m_frequencyView.setText(buffer);
 }
 
-void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
+void HistogramBannerView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
 }
 
-int BannerView::numberOfSubviews() const {
+int HistogramBannerView::numberOfSubviews() const {
   return 3;
 }
 
-View * BannerView::subviewAtIndex(int index) {
+View * HistogramBannerView::subviewAtIndex(int index) {
   assert(index >= 0);
   if (index == 0) {
     return &m_intervalView;
@@ -62,7 +62,7 @@ View * BannerView::subviewAtIndex(int index) {
   return &m_frequencyView;
 }
 
-void BannerView::layoutSubviews() {
+void HistogramBannerView::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   m_intervalView.setFrame(KDRect(0, 0, width, height/2));

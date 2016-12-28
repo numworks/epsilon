@@ -1,14 +1,14 @@
-#ifndef STATISTICS_BANNER_VIEW_H
-#define STATISTICS_BANNER_VIEW_H
+#ifndef STATISTICS_HISTOGRAM_BANNER_VIEW_H
+#define STATISTICS_HISTOGRAM_BANNER_VIEW_H
 
 #include <escher.h>
 #include "data.h"
 
 namespace Statistics {
 
-class BannerView : public View {
+class HistogramBannerView : public View {
 public:
-  BannerView(Data * data);
+  HistogramBannerView(Data * data);
   void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:

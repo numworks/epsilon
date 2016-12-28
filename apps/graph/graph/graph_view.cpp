@@ -8,10 +8,9 @@ namespace Graph {
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
-  CurveView(graphWindow, 0.0f, 0.0f, 0.2f, 0.0f),
+  CurveViewWithBanner(graphWindow, 0.0f, 0.0f, 0.2f, 0.0f),
   m_bannerView(BannerView(graphWindow)),
   m_cursorView(CursorView()),
-  m_visibleCursor(true),
   m_graphWindow(graphWindow),
   m_functionStore(functionStore),
   m_context(nullptr)
@@ -35,11 +34,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void GraphView::setCursorVisible(bool visibleCursor) {
-  m_visibleCursor = visibleCursor;
-  reloadCursor();
-}
-
 void GraphView::setContext(Context * context) {
   m_context = context;
 }
@@ -56,7 +50,7 @@ void GraphView::reload() {
   m_bannerView.reload();
 }
 
-void GraphView::reloadCursor() {
+void GraphView::reloadSelection() {
   KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_graphWindow->xCursorPosition()));
   KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_graphWindow->yCursorPosition()));
   markRectAsDirty(KDRect(KDPoint(xCursorPixelPosition- k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2), k_cursorSize, k_cursorSize));
@@ -68,13 +62,11 @@ void GraphView::layoutSubviews() {
   KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_graphWindow->xCursorPosition()));
   KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_graphWindow->yCursorPosition()));
   KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
-  KDRect bannerFrame(KDRect(0, bounds().height()- k_bannerHeight, bounds().width(), k_bannerHeight));
-  if (!m_visibleCursor) {
+  if (!m_mainViewSelected) {
     cursorFrame = KDRectZero;
-    bannerFrame = KDRectZero;
   }
   m_cursorView.setFrame(cursorFrame);
-  m_bannerView.setFrame(bannerFrame);
+  CurveViewWithBanner::layoutSubviews();
 }
 
 int GraphView::numberOfSubviews() const {

@@ -33,7 +33,6 @@ private:
   Responder * tabController() const;
   StackViewController * stackController() const;
   GraphView m_view;
-  bool m_headerSelected;
   GraphWindow m_graphWindow;
   WindowParameterController m_windowParameterController;
   ZoomParameterController m_zoomParameterController;

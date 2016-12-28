@@ -114,8 +114,7 @@ void GraphController::didBecomeFirstResponder() {
     m_graphWindow.initCursorPosition();
   }
   headerViewController()->setSelectedButton(-1);
-  m_headerSelected = false;
-  m_view.setCursorVisible(true);
+  m_view.selectMainView(true);
   // Layout view whe the graph view that might have been modified by the zoom page
   headerViewController()->layoutView();
   // Reload graph view
@@ -123,12 +122,11 @@ void GraphController::didBecomeFirstResponder() {
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {
-  if (m_headerSelected) {
+  if (!m_view.isMainViewSelected()) {
     if (event == Ion::Events::Down) {
         headerViewController()->setSelectedButton(-1);
-        m_headerSelected = false;
         app()->setFirstResponder(this);
-        m_view.setCursorVisible(true);
+        m_view.selectMainView(true);
         return true;
     }
     if (event == Ion::Events::Up) {
@@ -151,11 +149,11 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     }
     if (event == Ion::Events::Right || event == Ion::Events::Left) {
       int direction = event == Ion::Events::Left ? -1 : 1;
-      m_view.reloadCursor();
+      m_view.reloadSelection();
       if (m_graphWindow.moveCursorHorizontally(direction)) {
         m_view.reload();
       } else {
-        m_view.reloadCursor();
+        m_view.reloadSelection();
       }
       return true;
     }
@@ -167,12 +165,11 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
           return false;
         }
         m_graphWindow.initCursorPosition();
-        m_view.setCursorVisible(false);
+        m_view.selectMainView(false);
         headerViewController()->setSelectedButton(0);
-        m_headerSelected = true;
       }
       if (result == 0) {
-        m_view.reloadCursor();
+        m_view.reloadSelection();
       }
       if (result == 1) {
         m_view.reload();

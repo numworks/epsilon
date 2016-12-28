@@ -5,13 +5,12 @@
 
 namespace Graph {
 
-WindowParameterController::WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView) :
+WindowParameterController::WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow) :
   FloatParameterController(parentResponder),
   m_graphWindow(graphWindow),
   m_windowCells{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmax"),
     EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymax")},
-  m_yAutoCell(SwitchMenuListCell((char*)"Y auto")),
-  m_graphView(graphView)
+  m_yAutoCell(SwitchMenuListCell((char*)"Y auto"))
 {
 }
 
@@ -66,7 +65,7 @@ void WindowParameterController::tableViewDidChangeSelection(SelectableTableView 
 }
 
 bool WindowParameterController::handleEvent(Ion::Events::Event event) {
-  m_graphView->initCursorPosition();
+  m_graphWindow->initCursorPosition();
   if (activeCell() == 2) {
     if (event == Ion::Events::OK) {
       m_graphWindow->setYAuto(!m_graphWindow->yAuto());

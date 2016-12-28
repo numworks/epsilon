@@ -9,7 +9,7 @@ namespace Graph {
 
 class CurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  CurveParameterController(GraphView * graphView);
+  CurveParameterController(GraphView * graphView, GraphWindow * graphWindow);
 
   View * view() override;
   const char * title() const override;

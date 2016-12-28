@@ -3,7 +3,7 @@
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(GraphView * graphView) :
+CurveParameterController::CurveParameterController(GraphView * graphView, GraphWindow * graphWindow) :
   ViewController(nullptr),
   m_graphView(graphView),
   m_function(nullptr),
@@ -12,7 +12,7 @@ CurveParameterController::CurveParameterController(GraphView * graphView) :
   m_derivativeCell(SwitchMenuListCell((char*)"Nombre derivee")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_goToParameterController(GoToParameterController(this, m_graphView))
+  m_goToParameterController(GoToParameterController(this, graphWindow))
 {
 }
 
@@ -32,7 +32,8 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_graphView->bannerView()->displayDerivative());
+    BannerView * bannerView = (BannerView *)m_graphView->bannerView();
+    switchView->setState(bannerView->displayDerivative());
   }
 }
 
@@ -49,9 +50,12 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       case 2:
-        m_graphView->bannerView()->setDisplayDerivative(!m_graphView->bannerView()->displayDerivative());
+      {
+        BannerView * bannerView = (BannerView *)m_graphView->bannerView();
+        bannerView->setDisplayDerivative(!bannerView->displayDerivative());
         m_selectableTableView.reloadData();
         return true;
+      }
       default:
         return false;
     }

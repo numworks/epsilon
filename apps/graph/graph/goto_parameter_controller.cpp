@@ -4,10 +4,10 @@
 
 namespace Graph {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, GraphView * graphView) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, GraphWindow * graphWindow) :
   FloatParameterController(parentResponder),
   m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
-  m_graphView(graphView),
+  m_graphWindow(graphWindow),
   m_function(nullptr)
 {
 }
@@ -23,12 +23,12 @@ const char * GoToParameterController::title() const {
 
 float GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
-  return m_graphView->xCursorPosition();
+  return m_graphWindow->xCursorPosition();
 }
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
-  m_graphView->goToAbscissaOnFunction(f, m_function);
+  m_graphWindow->setCursorPositionAtAbscissaWithFunction(f, m_function);
 }
 
 int GoToParameterController::numberOfRows() {

@@ -9,7 +9,7 @@ namespace Graph {
 
 class InitialisationParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView);
+  InitialisationParameterController(Responder * parentResponder, GraphWindow * graphWindow);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -23,7 +23,6 @@ private:
   MenuListCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   GraphWindow * m_graphWindow;
-  GraphView * m_graphView;
 };
 
 }

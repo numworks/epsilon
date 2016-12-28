@@ -8,7 +8,7 @@
 namespace Graph {
 class GoToParameterController : public FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, GraphView * graphView);
+  GoToParameterController(Responder * parentResponder, GraphWindow * graphWindow);
   ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
@@ -20,7 +20,7 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_abscisseCell;
-  GraphView * m_graphView;
+  GraphWindow * m_graphWindow;
   Function * m_function;
 };
 

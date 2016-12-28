@@ -15,6 +15,9 @@ GraphWindow::GraphWindow(FunctionStore * functionStore) :
   m_yAuto(true),
   m_xGridUnit(2.0f),
   m_yGridUnit(2.0f),
+  m_xCursorPosition(NAN),
+  m_yCursorPosition(NAN),
+  m_indexFunctionSelectedByCursor(0),
   m_functionStore(functionStore),
   m_context(nullptr)
 {
@@ -130,22 +133,6 @@ void GraphWindow::zoom(float ratio) {
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
-void GraphWindow::centerAxisAround(Axis axis, float position) {
-  if (axis == Axis::X) {
-    float range = m_xMax - m_xMin;
-    m_xMin = position - range/2.0f;
-    m_xMax = position + range/2.0f;
-    computeYaxes();
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  } else {
-    m_yAuto = false;
-    float range = m_yMax - m_yMin;
-    m_yMin = position - range/2.0f;
-    m_yMax = position + range/2.0f;
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
-  }
-}
-
 void GraphWindow::translateWindow(Direction direction) {
   m_yAuto = false;
   if (direction == Direction::Up) {
@@ -212,6 +199,74 @@ void GraphWindow::setDefault() {
   setYAuto(true);
 }
 
+float GraphWindow::xCursorPosition() {
+  return m_xCursorPosition;
+}
+
+float GraphWindow::yCursorPosition() {
+  return m_yCursorPosition;
+}
+
+float GraphWindow::derivativeAtCursorPosition() {
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  return f->approximateDerivative(m_xCursorPosition, m_context);
+}
+
+Function * GraphWindow::functionSelectedByCursor() {
+  return m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+}
+
+void GraphWindow::setCursorPositionAtAbscissaWithFunction(float abscissa, Function * function) {
+  m_xCursorPosition = abscissa;
+  centerAxisAround(GraphWindow::Axis::X, m_xCursorPosition);
+  m_yCursorPosition = function->evaluateAtAbscissa(m_xCursorPosition, m_context);
+  centerAxisAround(GraphWindow::Axis::Y, m_yCursorPosition);
+}
+
+
+void GraphWindow::initCursorPosition() {
+  m_xCursorPosition = (m_xMin+m_xMax)/2.0f;
+  m_indexFunctionSelectedByCursor = 0;
+  Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
+  m_yCursorPosition = firstFunction->evaluateAtAbscissa(m_xCursorPosition, m_context);
+}
+
+bool GraphWindow::moveCursorHorizontally(int direction) {
+  m_xCursorPosition = direction > 0 ? m_xCursorPosition + m_xGridUnit/k_numberOfCursorStepsInGradUnit :
+    m_xCursorPosition - m_xGridUnit/k_numberOfCursorStepsInGradUnit;
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  m_yCursorPosition = f->evaluateAtAbscissa(m_xCursorPosition, m_context);
+  float xMargin = k_cursorMarginFactorToBorder * (m_xMax - m_xMin);
+  float yMargin = k_cursorMarginFactorToBorder * (m_yMax - m_yMin);
+  bool windowHasMoved = panToMakePointVisible(m_xCursorPosition, m_yCursorPosition, xMargin, yMargin);
+  return windowHasMoved;
+}
+
+int GraphWindow::moveCursorVertically(int direction) {
+  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  float y = actualFunction->evaluateAtAbscissa(m_xCursorPosition, m_context);
+  Function * nextFunction = actualFunction;
+  float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float newY = f->evaluateAtAbscissa(m_xCursorPosition, m_context);
+    bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
+    if (isNextFunction) {
+      m_indexFunctionSelectedByCursor = i;
+      nextY = newY;
+      nextFunction = f;
+    }
+  }
+  if (nextFunction == actualFunction) {
+    return -1;
+  }
+  float xMargin = k_cursorMarginFactorToBorder * (m_xMax - m_xMin);
+  float yMargin = k_cursorMarginFactorToBorder * (m_yMax - m_yMin);
+  m_yCursorPosition = nextY;
+  bool windowHasMoved = panToMakePointVisible(m_xCursorPosition, m_yCursorPosition, xMargin, yMargin);
+  return windowHasMoved;
+}
+
 bool GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
   bool windowMoved = false;
   float xRange = m_xMax - m_xMin;
@@ -234,15 +289,33 @@ bool GraphWindow::panToMakePointVisible(float x, float y, float xMargin, float y
     m_yMin = y - yMargin;
     m_yMax = m_yMin + yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    computeYaxes();
     windowMoved = true;
   }
   if (y > m_yMax - yMargin) {
     m_yMax = y + yMargin;
     m_yMin = m_yMax - yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    computeYaxes();
     windowMoved = true;
   }
   return windowMoved;
+}
+
+void GraphWindow::centerAxisAround(Axis axis, float position) {
+  if (axis == Axis::X) {
+    float range = m_xMax - m_xMin;
+    m_xMin = position - range/2.0f;
+    m_xMax = position + range/2.0f;
+    computeYaxes();
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  } else {
+    m_yAuto = false;
+    float range = m_yMax - m_yMin;
+    m_yMin = position - range/2.0f;
+    m_yMax = position + range/2.0f;
+    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  }
 }
 
 }

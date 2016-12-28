@@ -1,50 +1,40 @@
 #include "banner_view.h"
 #include <assert.h>
+#include <string.h>
 #include "../../constant.h"
 
 namespace Graph {
 
-BannerView::BannerView() :
-  m_abscissa(0.0f),
-  m_function(nullptr),
+BannerView::BannerView(GraphWindow * graphWindow) :
   m_abscissaView(0.0f, 0.5f),
   m_functionView(0.5f, 0.5f),
   m_derivativeView(1.0f, 0.5f),
   m_displayDerivative(false),
-  m_context(nullptr)
+  m_graphWindow(graphWindow)
 {
+}
+
+void BannerView::reload() {
+  markRectAsDirty(bounds());
+  char buffer[k_maxNumberOfCharacters+Constant::FloatBufferSizeInScientificMode] = {'x', ' ', '=', ' ',0};
+  Float(m_graphWindow->xCursorPosition()).convertFloatToText(buffer+4, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  m_abscissaView.setText(buffer);
+
+  strlcpy(buffer, "00(x) = ", k_maxNumberOfCharacters+1);
+  buffer[1] = m_graphWindow->functionSelectedByCursor()->name()[0];
+  Float(m_graphWindow->yCursorPosition()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  m_functionView.setText(buffer+1);
+
+  if (m_displayDerivative) {
+    buffer[0] = m_graphWindow->functionSelectedByCursor()->name()[0];
+    buffer[1] = '\'';
+    Float(m_graphWindow->derivativeAtCursorPosition()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    m_derivativeView.setText(buffer);
+  }
 }
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-}
-
-void BannerView::setContext(Context * context) {
-  m_context = context;
-}
-
-void BannerView::setAbscissa(float x) {
-  markRectAsDirty(bounds());
-  m_abscissa = x;
-  char buffer[4+Constant::FloatBufferSizeInScientificMode] = {'x', ' ', '=', ' ',0};
-  Float(x).convertFloatToText(buffer+4, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-  m_abscissaView.setText(buffer);
-}
-
-void BannerView::setFunction(Function * f) {
-  markRectAsDirty(bounds());
-  m_function = f;
-  float y = f->evaluateAtAbscissa(m_abscissa, m_context);
-  char buffer[8+Constant::FloatBufferSizeInScientificMode] = {0, 0, '(', 'x', ')', ' ', '=', ' ',0};
-  buffer[1] = f->name()[0];
-  Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
-  m_functionView.setText(buffer+1);
-
-  y = f->approximateDerivative(m_abscissa, m_context);
-  buffer[0] = f->name()[0];
-  buffer[1] = '\'';
-  Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
-  m_derivativeView.setText(buffer);
 }
 
 void BannerView::setDisplayDerivative(bool displayDerivative) {

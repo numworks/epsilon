@@ -26,37 +26,37 @@ View * ZoomParameterController::view() {
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
     m_graphWindow->zoom(1.0f/3.0f);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
     m_graphWindow->zoom(3.0f/4.0f);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Up) {
     m_graphWindow->translateWindow(GraphWindow::Direction::Up);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
     m_graphWindow->translateWindow(GraphWindow::Direction::Down);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
     m_graphWindow->translateWindow(GraphWindow::Direction::Left);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
     m_graphWindow->translateWindow(GraphWindow::Direction::Right);
-    m_contentView.graphView()->initCursorPosition();
+    m_graphWindow->initCursorPosition();
     m_contentView.graphView()->reload();
     return true;
   }

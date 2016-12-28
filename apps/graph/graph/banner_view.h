@@ -2,30 +2,27 @@
 #define GRAPH_BANNER_VIEW_H
 
 #include <escher.h>
-#include "../function.h"
+#include "graph_window.h"
 
 namespace Graph {
 
 class BannerView : public View {
 public:
-  BannerView();
+  BannerView(GraphWindow * graphWindow);
+  void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setContext(Context * context);
-  void setAbscissa(float x);
-  void setFunction(Function * f);
   void setDisplayDerivative(bool displayDerivative);
   bool displayDerivative();
 private:
+  constexpr static int k_maxNumberOfCharacters = 8;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  float m_abscissa;
-  Function * m_function;
   BufferTextView m_abscissaView;
   BufferTextView m_functionView;
   BufferTextView m_derivativeView;
   bool m_displayDerivative;
-  Context * m_context;
+  GraphWindow * m_graphWindow;
 };
 
 }

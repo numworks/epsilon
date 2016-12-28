@@ -10,10 +10,10 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
   HeaderViewDelegate(header),
   m_view(GraphView(functionStore, &m_graphWindow)),
   m_graphWindow(functionStore),
-  m_windowParameterController(WindowParameterController(this, &m_graphWindow, &m_view)),
+  m_windowParameterController(WindowParameterController(this, &m_graphWindow)),
   m_zoomParameterController(ZoomParameterController(this, &m_graphWindow, &m_view)),
-  m_initialisationParameterController(InitialisationParameterController(this, &m_graphWindow, &m_view)),
-  m_curveParameterController(CurveParameterController(&m_view)),
+  m_initialisationParameterController(InitialisationParameterController(this, &m_graphWindow)),
+  m_curveParameterController(CurveParameterController(&m_view, &m_graphWindow)),
   m_windowButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();
@@ -34,8 +34,8 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 }
 
 View * GraphController::view() {
-  if (m_view.xPixelCursorPosition() < 0.0f && !isEmpty()) {
-    m_view.initCursorPosition();
+  if (isnan(m_graphWindow.xCursorPosition()) && !isEmpty()) {
+    m_graphWindow.initCursorPosition();
   }
   return &m_view;
 }
@@ -111,7 +111,7 @@ void GraphController::didBecomeFirstResponder() {
   }
   // if new functions were added to the store, the window parameters need to be refresh
   if (m_graphWindow.computeYaxes()) {
-    m_view.initCursorPosition();
+    m_graphWindow.initCursorPosition();
   }
   headerViewController()->setSelectedButton(-1);
   m_headerSelected = false;
@@ -139,43 +139,48 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
   } else {
     if (event == Ion::Events::Plus) {
       m_graphWindow.zoom(1.0f/3.0f);
-      m_view.initCursorPosition();
+      m_graphWindow.initCursorPosition();
       m_view.reload();
       return true;
     }
     if (event == Ion::Events::Minus) {
       m_graphWindow.zoom(3.0f/4.0f);
-      m_view.initCursorPosition();
+      m_graphWindow.initCursorPosition();
       m_view.reload();
       return true;
     }
-    if (event == Ion::Events::Left) {
-      m_view.moveCursorHorizontally(-2);
+    if (event == Ion::Events::Right || event == Ion::Events::Left) {
+      int direction = event == Ion::Events::Left ? -1 : 1;
+      m_view.reloadCursor();
+      if (m_graphWindow.moveCursorHorizontally(direction)) {
+        m_view.reload();
+      } else {
+        m_view.reloadCursor();
+      }
       return true;
     }
-    if (event == Ion::Events::Right) {
-      m_view.moveCursorHorizontally(2);
-      return true;
-    }
-    if (event == Ion::Events::Up) {
-      Function * f = m_view.moveCursorVertically(1.0f);
-      if (f == nullptr) {
-        m_view.initCursorPosition();
+    if (event == Ion::Events::Up || event == Ion::Events::Down) {
+      int direction = event == Ion::Events::Down ? -1 : 1;
+      int result = m_graphWindow.moveCursorVertically(direction);
+      if (result < 0) {
+        if (event == Ion::Events::Down) {
+          return false;
+        }
+        m_graphWindow.initCursorPosition();
         m_view.setCursorVisible(false);
         headerViewController()->setSelectedButton(0);
         m_headerSelected = true;
       }
-      return true;
-    }
-    if (event == Ion::Events::Down) {
-      Function * f = m_view.moveCursorVertically(-1.0f);
-      if (f == nullptr) {
-        return false;
+      if (result == 0) {
+        m_view.reloadCursor();
+      }
+      if (result == 1) {
+        m_view.reload();
       }
       return true;
     }
     if (event == Ion::Events::OK) {
-      Function * f = m_functionStore->activeFunctionAtIndex(m_view.indexFunctionSelectedByCursor());
+      Function * f = m_graphWindow.functionSelectedByCursor();
       m_curveParameterController.setFunction(f);
       StackViewController * stack = stackController();
       stack->push(&m_curveParameterController);

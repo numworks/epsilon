@@ -9,7 +9,7 @@
 namespace Graph {
 class WindowParameterController : public FloatParameterController {
 public:
-  WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView);
+  WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow);
   ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
@@ -27,7 +27,6 @@ private:
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_windowCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
-  GraphView * m_graphView;
 };
 
 }

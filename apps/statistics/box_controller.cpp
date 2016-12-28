@@ -20,7 +20,7 @@ View * BoxController::view() {
 
 bool BoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_view.selectAnyQuantile(false);
+    m_view.selectMainView(false);
     app()->setFirstResponder(tabController());
     return true;
   }
@@ -32,7 +32,7 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 void BoxController::didBecomeFirstResponder() {
-  m_view.selectAnyQuantile(true);
+  m_view.selectMainView(true);
   m_view.reload(-1);
 }
 

@@ -5,11 +5,14 @@
 namespace Statistics {
 
 HistogramView::HistogramView(Data * data) :
-  CurveView(data, 0.2f, 0.1f, 0.4f, 0.1f),
+  CurveViewWithBanner(data, 0.2f, 0.1f, 0.4f, 0.1f),
   m_data(data),
-  m_selectedBins(true),
   m_bannerView(BannerView(data))
 {
+}
+
+void HistogramView::reloadMainView() {
+  reload(m_data->selectedBar());
 }
 
 void HistogramView::reload(float dirtyZoneCenter) {
@@ -28,24 +31,11 @@ void HistogramView::reload(float dirtyZoneCenter) {
   m_bannerView.reload();
 }
 
-bool HistogramView::selectedBins() {
-  return m_selectedBins;
-}
-
-void HistogramView::selectBins(bool selectedBins) {
-  if (m_selectedBins != selectedBins) {
-    reload(m_data->selectedBar());
-    m_selectedBins = selectedBins;
-    reload(m_data->selectedBar());
-    layoutSubviews();
-  }
-}
-
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, true);
-  if (m_selectedBins) {
+  if (m_mainViewSelected) {
     drawHistogram(ctx, rect, nullptr, m_data->firsBarAbscissa(), m_data->barWidth(), true, KDColorBlack, KDColorRed,
       m_data->selectedBar() - m_data->barWidth()/2, m_data->selectedBar() + m_data->barWidth()/2);
   } else {
@@ -53,28 +43,15 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-int HistogramView::numberOfSubviews() const {
-  return 1;
-};
-
-View * HistogramView::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_bannerView;
-}
-
-void HistogramView::layoutSubviews() {
-  KDRect bannerFrame(KDRect(0, bounds().height()- k_bannerHeight, bounds().width(), k_bannerHeight));
-  if (!m_selectedBins) {
-    bannerFrame = KDRectZero;
-  }
-  m_bannerView.setFrame(bannerFrame);
-}
-
 char * HistogramView::label(Axis axis, int index) const {
   if (axis == Axis::Vertical) {
     return nullptr;
   }
   return (char *)m_labels[index];
+}
+
+View * HistogramView::bannerView() {
+  return &m_bannerView;
 }
 
 float HistogramView::evaluateModelWithParameter(Model * curve, float t) const {

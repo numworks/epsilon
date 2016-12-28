@@ -5,27 +5,23 @@
 #include "data.h"
 #include "banner_view.h"
 #include "../constant.h"
-#include "../curve_view.h"
+#include "../curve_view_with_banner.h"
 
 namespace Statistics {
 
-class HistogramView : public CurveView {
+class HistogramView : public CurveViewWithBanner {
 public:
   HistogramView(Data * m_data);
+  void reloadMainView() override;
   void reload(float dirtyZoneCenter);
-  bool selectedBins();
-  void selectBins(bool selectedBins);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_bannerHeight = 30;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
   char * label(Axis axis, int index) const override;
+  View * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Data * m_data;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
-  bool m_selectedBins;
   BannerView m_bannerView;
 };
 

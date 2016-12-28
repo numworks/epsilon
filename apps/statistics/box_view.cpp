@@ -5,13 +5,16 @@
 namespace Statistics {
 
 BoxView::BoxView(Data * data) :
-  CurveView(&m_boxWindow, 0.0f, 0.2f, 0.4f, 0.2f),
+  CurveViewWithBanner(&m_boxWindow, 0.0f, 0.2f, 0.4f, 0.2f),
   m_data(data),
   m_boxWindow(BoxWindow(data)),
-  m_anyQuantileSelected(true),
   m_selectedQuantile(0),
   m_bannerView(BoxBannerView(data, this))
 {
+}
+
+void BoxView::reloadMainView() {
+  reload(m_selectedQuantile);
 }
 
 void BoxView::reload(int selectedQuantile) {
@@ -28,6 +31,7 @@ void BoxView::reload(int selectedQuantile) {
   }
   m_bannerView.reload();
 }
+
 int BoxView::selectedQuantile() {
   return m_selectedQuantile;
 }
@@ -44,18 +48,6 @@ bool BoxView::selectQuantile(int selectedQuantile) {
   return true;
 }
 
-bool BoxView::isAnyQuantileSelected() {
-  return m_anyQuantileSelected;
-}
-
-void BoxView::selectAnyQuantile(bool anyQuantileSelected) {
-  if (m_anyQuantileSelected != anyQuantileSelected) {
-    m_anyQuantileSelected = anyQuantileSelected;
-    reload(m_selectedQuantile);
-    layoutSubviews();
-  }
-}
-
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
@@ -66,7 +58,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int k = 0; k < 5; k++) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBounds[k], upBounds[k], KDColorBlack);
   }
-  if (m_anyQuantileSelected) {
+  if (m_mainViewSelected) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[m_selectedQuantile], lowBounds[m_selectedQuantile], upBounds[m_selectedQuantile], KDColorRed);
   }
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_data->minValue(), m_data->firstQuartile(), KDColorBlack);
@@ -82,21 +74,8 @@ char * BoxView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-int BoxView::numberOfSubviews() const {
-  return 1;
-};
-
-View * BoxView::subviewAtIndex(int index) {
-  assert(index == 0);
+View * BoxView::bannerView() {
   return &m_bannerView;
-}
-
-void BoxView::layoutSubviews() {
-  KDRect bannerFrame(KDRect(0, bounds().height()- k_bannerHeight, bounds().width(), k_bannerHeight));
-  if (!m_anyQuantileSelected) {
-    bannerFrame = KDRectZero;
-  }
-  m_bannerView.setFrame(bannerFrame);
 }
 
 }

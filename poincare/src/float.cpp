@@ -36,6 +36,19 @@ float digitsToFloat(const char * digits) {
   return result;
 }
 
+int numberOfDigits(const char * digits) {
+  if (digits == nullptr) {
+    return 0;
+  }
+  int result = 0;
+  const char * digit = digits;
+  while (*digit >= '0' && *digit <= '9') {
+    result++;
+    digit++;
+  }
+  return result;
+}
+
 Float::Float(const char * integralPart, bool integralNegative,
     const char * fractionalPart,
     const char * exponent, bool exponentNegative) {
@@ -47,13 +60,14 @@ Float::Float(const char * integralPart, bool integralNegative,
 
   float i = setSign(digitsToFloat(integralPart), integralNegative);
   float j = digitsToFloat(fractionalPart);
-  float k = setSign(digitsToFloat(exponent), exponentNegative);
+  float k = numberOfDigits(fractionalPart);
+  float l = setSign(digitsToFloat(exponent), exponentNegative);
 
   m_float =
-  (i + j*powf(10.0f, -ceilf(log10f(j))))
-    * powf(10.0f, k);
+  (i + j*powf(10.0f, -ceilf(k)))
+    * powf(10.0f, l);
   if (j <= 0) {
-    m_float = i * powf(10.0f, k);
+    m_float = i * powf(10.0f, l);
   }
   m_numberOfDigitsInMantissa = 7;
 }

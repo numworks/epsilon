@@ -284,8 +284,9 @@ void Data::initWindowParameters() {
   if (m_xMin >= m_xMax) {
     m_xMax = m_xMin + 10.0f*m_barWidth;
   }
+
   m_yMax = -FLT_MAX;
-  for (float x = min+m_barWidth/2.0f; x <= max; x += m_barWidth) {
+  for (float x = min+m_barWidth/2.0f; x < max+m_barWidth; x += m_barWidth) {
     float size = heightForBarAtValue(x);
     if (size > m_yMax) {
       m_yMax = size;

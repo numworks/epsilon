@@ -12,6 +12,9 @@ float BoxWindow::xMin() {
 }
 
 float BoxWindow::xMax() {
+  if (m_data->minValue() >= m_data->maxValue()) {
+    return m_data->minValue() + 1.0f;
+  }
   return m_data->maxValue();
 }
 
@@ -24,7 +27,7 @@ float BoxWindow::yMax() {
 }
 
 float BoxWindow::xGridUnit() {
-  return computeGridUnit(Axis::X, m_data->minValue(), m_data->maxValue());
+  return computeGridUnit(Axis::X, xMin(), xMax());
 }
 
 }

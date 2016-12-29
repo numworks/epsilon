@@ -6,6 +6,8 @@ public:
   constexpr static int FloatBufferSizeInScientificMode = 14;
   constexpr static int NumberOfDigitsInMantissaInScientificMode = 7;
   constexpr static int NumberOfDigitsInMantissaForDerivativeNumberInScientificMode = 3;
+  constexpr static int FloatBufferSizeInDecimalMode = 11;
+  constexpr static int NumberOfDigitsInMantissaInDecimalMode = 4;
 };
 
 #endif

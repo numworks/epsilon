@@ -71,11 +71,11 @@ int CurveView::numberOfLabels(Axis axis) const {
 }
 
 void CurveView::computeLabels(Axis axis) {
-  char buffer[Constant::FloatBufferSizeInScientificMode];
+  char buffer[Constant::FloatBufferSizeInDecimalMode];
   float step = gridUnit(axis);
   for (int index = 0; index < numberOfLabels(axis); index++) {
     // TODO: change the number of digits in mantissa once the numerical mode is implemented
-    Float(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step).convertFloatToText(buffer, Constant::FloatBufferSizeInDecimalMode, Constant::NumberOfDigitsInMantissaInDecimalMode, Float::DisplayMode::Decimal);
     //TODO: check for size of label?
     strlcpy(label(axis, index), buffer, strlen(buffer)+1);
   }

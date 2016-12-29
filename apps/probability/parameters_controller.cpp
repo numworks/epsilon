@@ -106,8 +106,8 @@ void ParametersController::updateTitle() {
     m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    char buffer[Constant::FloatBufferSizeInDecimalMode];
+    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Constant::FloatBufferSizeInDecimalMode, Constant::NumberOfDigitsInMantissaInDecimalMode, Float::DisplayMode::Decimal);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';

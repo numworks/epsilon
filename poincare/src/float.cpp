@@ -140,8 +140,9 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
   }
 
   DisplayMode displayMode = mode;
-  if (exponentInBase10 >= numberOfDigitsInMantissa || exponentInBase10 <= -numberOfDigitsInMantissa) {
+  if ((exponentInBase10 >= numberOfDigitsInMantissa || exponentInBase10 <= -numberOfDigitsInMantissa) && mode == DisplayMode::Decimal) {
     displayMode = DisplayMode::Scientific;
+    numberOfDigitsInMantissa = numberOfDigitsInMantissa-2;
   }
 
   /* We here assert that the buffer is long enough to display with the right

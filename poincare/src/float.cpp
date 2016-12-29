@@ -111,41 +111,8 @@ int Float::writeTextInBuffer(char * buffer, int bufferSize) {
   return convertFloatToText(buffer, bufferSize, m_numberOfDigitsInMantissa);
 }
 
-void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
-  /* The decimal marker position is always preceded by a char, thus, it is never
-   * in first position. When called by convertFloatToText, the buffer length is
-   * always > 0 as we asserted a minimal number of available chars. */
-  assert(bufferSize > 0 && decimalMarkerPosition != 0);
-  int endChar = bufferSize - 1, startChar = 0;
-  int dividend = i, digit = 0, quotien = 0;
-  if (i < 0) {
-    buffer[startChar++] = '-';
-    dividend = -i;
-    decimalMarkerPosition += 1;
-  }
-  /* This loop acts correctly as we asserted the endChar >= 0 and
-   * decimalMarkerPosition != 0 */
-  do {
-    if (endChar == decimalMarkerPosition) {
-      buffer[endChar--] = '.';
-    }
-    quotien = dividend/10;
-    digit = dividend - quotien*10;
-    buffer[endChar--] = '0'+digit;
-    dividend = quotien;
-  }  while (endChar >= startChar);
-}
-
 int Float::convertFloatToText(char * buffer, int bufferSize,
     int numberOfDigitsInMantissa, DisplayMode mode) const {
-  /* We here assert that the buffer is long enough to display with the right
-   * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
-   * worst case has the form -1.999999e-38 (7+6+1 char). */
-  if (bufferSize <= 6 + numberOfDigitsInMantissa) {
-    buffer[0] = 0;
-    return 0;
-  }
-
   if (isinf(m_float)) {
     buffer[0] = m_float > 0 ? '+' : '-';
     buffer[1] = 'I';
@@ -172,8 +139,23 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
     exponentInBase10--;
   }
 
-  /* Future optimisation, if mode > 0, find the position of decimalMarker and
-   * decide whether to display the exponent. */
+  DisplayMode displayMode = mode;
+  if (exponentInBase10 >= numberOfDigitsInMantissa || exponentInBase10 <= -numberOfDigitsInMantissa) {
+    displayMode = DisplayMode::Scientific;
+  }
+
+  /* We here assert that the buffer is long enough to display with the right
+   * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
+   * worst case has the form -1.999999e-38 (7+6+1 char) for the scientific mode
+   * and -1.999999 (7+2+1 char) for the decimal mode. */
+  if ((bufferSize <= 6 + numberOfDigitsInMantissa && displayMode == DisplayMode::Scientific) ||
+      (bufferSize <= 2 + numberOfDigitsInMantissa && displayMode == DisplayMode::Decimal)) {
+    buffer[0] = 0;
+    return 0;
+  }
+
+  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == DisplayMode::Scientific ?
+    1 : exponentInBase10+1;
 
   // Number of char available for the mantissa
   int availableCharsForMantissaWithoutSign = numberOfDigitsInMantissa + 1;
@@ -185,9 +167,12 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
    * threshold during computation. */
   int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
   assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
-  int mantissa = roundf(m_float * powf(10, availableCharsForMantissaWithoutSign - exponentInBase10 - 2));
+  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == DisplayMode::Scientific ?
+                                   exponentInBase10 + 1 : 1;
+  int mantissa = roundf(m_float * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   // Correct the number of digits in mantissa after rounding
-  if ((int)(mantissa * powf(10, - availableCharsForMantissaWithoutSign + 1)) > 0) {
+  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == DisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
+  if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {
     mantissa = mantissa/10;
     exponentInBase10++;
   }
@@ -202,18 +187,57 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
   int dividend = fabsf((float)mantissa);
   int quotien = dividend/10;
   int digit = dividend - quotien*10;
-  while (digit == 0 && availableCharsForMantissaWithSign > 3) {
+  int minimumNumberOfCharsInMantissa = displayMode == DisplayMode::Scientific ? 3 : 1;
+  while (digit == 0 && availableCharsForMantissaWithSign > minimumNumberOfCharsInMantissa &&
+      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == DisplayMode::Scientific)) {
     mantissa = mantissa/10;
+    availableCharsForMantissaWithoutSign--;
     availableCharsForMantissaWithSign--;
     dividend = quotien;
     quotien = dividend/10;
     digit = dividend - quotien*10;
   }
 
-  // Print sequentially mantissa and exponent
-  printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, 1);
+  // Suppress the decimal marker if no fractional part
+  if (displayMode == DisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
+    availableCharsForMantissaWithSign--;
+  }
+
+  // Print mantissa
+  printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
+  if (displayMode == DisplayMode::Decimal) {
+    buffer[availableCharsForMantissaWithSign] = 0;
+    return availableCharsForMantissaWithSign;
+  }
+  // Print exponent
   buffer[availableCharsForMantissaWithSign] = 'E';
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
+}
+
+void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
+  /* The decimal marker position is always preceded by a char, thus, it is never
+   * in first position. When called by convertFloatToText, the buffer length is
+   * always > 0 as we asserted a minimal number of available chars. */
+  assert(bufferSize > 0 && decimalMarkerPosition != 0);
+  int endChar = bufferSize - 1, startChar = 0;
+  int dividend = i, digit = 0, quotien = 0;
+  if (i < 0) {
+    buffer[startChar++] = '-';
+    dividend = -i;
+    decimalMarkerPosition += 1;
+  }
+  /* This loop acts correctly as we asserted the endChar >= 0 and
+   * decimalMarkerPosition != 0 */
+  do {
+    if (endChar == decimalMarkerPosition) {
+      buffer[endChar--] = '.';
+    }
+    quotien = dividend/10;
+    digit = dividend - quotien*10;
+    buffer[endChar--] = '0'+digit;
+    dividend = quotien;
+  }  while (endChar >= startChar);
+
 }

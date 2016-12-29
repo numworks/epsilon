@@ -6,7 +6,7 @@ namespace Probability {
 
 RightIntegralCalculation::RightIntegralCalculation() :
   Calculation(),
-  m_upperBound(0.0f),
+  m_lowerBound(0.0f),
   m_result(0.0f)
 {
   compute(0);
@@ -27,7 +27,7 @@ const char * RightIntegralCalculation::legendForParameterAtIndex(int index) {
 void RightIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    m_upperBound = f;
+    m_lowerBound = f;
   }
   if (index == 1) {
     m_result = f;
@@ -39,13 +39,13 @@ void RightIntegralCalculation::setParameterAtIndex(float f, int index) {
 float RightIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return m_upperBound;
+    return m_lowerBound;
   }
   return m_result;
 }
 
-float RightIntegralCalculation::upperBound() {
-  return m_upperBound;
+float RightIntegralCalculation::lowerBound() {
+  return m_lowerBound;
 }
 
 void RightIntegralCalculation::compute(int indexKnownElement) {
@@ -53,9 +53,9 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
     return;
   }
   if (indexKnownElement == 0) {
-    m_result = m_law->rightIntegralFromAbscissa(m_upperBound);
+    m_result = m_law->rightIntegralFromAbscissa(m_lowerBound);
   } else {
-    m_upperBound = m_law->rightIntegralInverseForProbability(&m_result);
+    m_lowerBound = m_law->rightIntegralInverseForProbability(&m_result);
   }
 }
 

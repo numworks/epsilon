@@ -13,10 +13,10 @@ public:
   const char * legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;
   float parameterAtIndex(int index) override;
-  float lowerBound() override;
+  float upperBound() override;
 private:
   void compute(int indexKnownElement) override;
-  float m_lowerBound;
+  float m_upperBound;
   float m_result;
 };
 

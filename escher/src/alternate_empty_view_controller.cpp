@@ -32,8 +32,11 @@ View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
 }
 
 void AlternateEmptyViewController::ContentView::layoutSubviews() {
-  m_message.setFrame(bounds());
-  m_mainViewController->view()->setFrame(bounds());
+  if (alternateEmptyViewDelegate()->isEmpty()) {
+    m_message.setFrame(bounds());
+  } else {
+    m_mainViewController->view()->setFrame(bounds());
+  }
 }
 
 ViewController * AlternateEmptyViewController::ContentView::mainViewController() const {
@@ -72,6 +75,7 @@ bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
+  m_contentView.layoutSubviews();
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     app()->setFirstResponder(m_contentView.mainViewController());
   }

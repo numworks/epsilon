@@ -19,10 +19,10 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     ViewController * mainViewController() const;
     AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const;
+    void layoutSubviews() override;
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
     PointerTextView m_message;
     ViewController * m_mainViewController;
     AlternateEmptyViewDelegate * m_delegate;

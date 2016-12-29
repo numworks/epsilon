@@ -1,7 +1,7 @@
 app_objs += $(addprefix apps/regression/,\
   app.o\
   calculation_controller.o\
-  data_controller.o\
+  data.o\
   graph_controller.o\
 )
 

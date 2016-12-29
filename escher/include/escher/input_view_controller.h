@@ -10,7 +10,7 @@ class InputViewController : public ModalViewController, TextFieldDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate);
   const char * title() const override;
-  void edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction);
+  void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;

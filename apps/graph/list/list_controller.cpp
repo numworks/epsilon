@@ -120,9 +120,15 @@ void ListController::configureFunction(Function * function) {
 }
 
 void ListController::editExpression(FunctionExpressionView * functionCell, Ion::Events::Event event) {
+  char * initialText = nullptr;
+  char initialTextContent[255];
+  if (event == Ion::Events::OK) {
+    strlcpy(initialTextContent, functionCell->function()->text(), sizeof(initialTextContent));
+    initialText = initialTextContent;
+  }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, event, functionCell,
+  inputController->edit(this, event, functionCell, initialText,
     [](void * context, void * sender){
     FunctionExpressionView * myCell = (FunctionExpressionView *) context;
     Function * myFunction = myCell->function();

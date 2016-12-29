@@ -7,7 +7,7 @@
 namespace Statistics {
 
 Data::Data() :
-  m_numberOfPairs(0),
+  ::Data(),
   m_barWidth(1.0f),
   m_selectedBar(0.0f),
   m_firstBarAbscissa(0.0f),
@@ -20,9 +20,22 @@ Data::Data() :
 
 /* Raw numeric data */
 
-int Data::numberOfPairs() const {
-  return m_numberOfPairs;
+float Data::xValueAtIndex(int index) {
+  return valueAtIndex(index);
 }
+
+float Data::yValueAtIndex(int index) {
+  return sizeAtIndex(index);
+}
+
+void Data::setXValueAtIndex(float value, int index) {
+  setValueAtIndex(value, index);
+}
+
+void Data::setYValueAtIndex(float value, int index) {
+  setSizeAtIndex(value, index);
+}
+
 float Data::valueAtIndex(int index) {
   assert(index < m_numberOfPairs);
   return m_values[index];

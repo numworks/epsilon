@@ -2,22 +2,26 @@
 #define STATISTICS_DATA_H
 
 #include "../curve_view_window.h"
+#include "../data.h"
 
 namespace Statistics {
 
-class Data : public CurveViewWindow {
+class Data : public CurveViewWindow, public ::Data {
 public:
   Data();
   // Delete the implicit copy constructor: the object is heavy
   Data(const Data&) = delete;
 
   // Raw numeric data
-  int numberOfPairs() const;
+  float xValueAtIndex(int index) override;
+  float yValueAtIndex(int index) override;
+  void setXValueAtIndex(float value, int index) override;
+  void setYValueAtIndex(float value, int index) override;
   float valueAtIndex(int index);
   int sizeAtIndex(int index);
   void setValueAtIndex(float value, int index);
   void setSizeAtIndex(int size, int index);
-  void deletePairAtIndex(int index);
+  void deletePairAtIndex(int index) override;
   int totalSize();
 
   // Histogram bars
@@ -64,7 +68,6 @@ private:
   // Raw numeric data
   int m_sizes[k_maxNumberOfPairs];
   float m_values[k_maxNumberOfPairs];
-  int m_numberOfPairs;
   // Histogram bars
   float m_barWidth;
   float m_selectedBar;

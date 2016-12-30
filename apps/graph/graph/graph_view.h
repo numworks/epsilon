@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "banner_view.h"
-#include "cursor_view.h"
+#include "../../cursor_view.h"
 #include "graph_window.h"
 #include "../../curve_view_with_banner.h"
 #include "../../constant.h"

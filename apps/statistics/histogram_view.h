@@ -16,7 +16,6 @@ public:
   void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static KDCoordinate k_bannerHeight = 30;
   char * label(Axis axis, int index) const override;
   View * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;

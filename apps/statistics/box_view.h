@@ -19,7 +19,6 @@ public:
   bool selectQuantile(int selectedQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static KDCoordinate k_bannerHeight = 30;
   char * label(Axis axis, int index) const override;
   View * bannerView() override;
   Data * m_data;

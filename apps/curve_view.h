@@ -36,6 +36,7 @@ protected:
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1) const;
+  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, KDSize size) const;
   void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawHistogram(KDContext * ctx, KDRect rect, Model * model,  float firstBarAbscissa, float barWidth,
@@ -43,6 +44,7 @@ protected:
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
 private:
+  constexpr static int k_externRectMargin = 1;
   int numberOfLabels(Axis axis) const;
   virtual float evaluateModelWithParameter(Model * curve, float t) const;
   /* Recursively join two dots (dichotomy). The method stops when the

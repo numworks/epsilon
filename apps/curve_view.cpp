@@ -147,6 +147,18 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
+void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, KDSize size) const {
+  KDCoordinate px = roundf(floatToPixel(Axis::Horizontal, x));
+  KDCoordinate py = roundf(floatToPixel(Axis::Vertical, y));
+  if ((px - size.width() < rect.left() - k_externRectMargin || px + size.width() > rect.right() + k_externRectMargin) &&
+      (py - size.height() < rect.top() - k_externRectMargin || py + size.height() > rect.bottom() + k_externRectMargin)) {
+    return;
+  }
+  KDRect dotRect = KDRect(px - size.width()/2, py-size.height()/2, size.width(), size.height());
+  ctx->fillRect(dotRect, color);
+}
+
+
 void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);
 }
@@ -183,7 +195,6 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 constexpr static int k_resolution = 320.0f;
-constexpr static int k_externRectMargin = 1;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);

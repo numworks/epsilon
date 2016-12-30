@@ -36,7 +36,7 @@ private:
   constexpr static int k_totalNumberOfRows = 13;
   constexpr static int k_maxNumberOfDisplayableRows = 10;
   static constexpr KDCoordinate k_cellHeight = 25;
-  static constexpr KDCoordinate k_cellWidth = 320/2 - Metric::RightMargin;
+  static constexpr KDCoordinate k_cellWidth = 320/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
   EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows];
   SelectableTableView m_selectableTableView;

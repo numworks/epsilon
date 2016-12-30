@@ -8,7 +8,7 @@ class AppsContainer;
 
 namespace Home {
 
-class Controller : public ViewController, public SimpleTableViewDataSource {
+class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
   Controller(Responder * parentResponder, ::AppsContainer * container);
 
@@ -24,6 +24,7 @@ public:
   virtual TableViewCell * reusableCell(int index) override;
   virtual int reusableCellCount() override;
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   int numberOfIcons();
   AppsContainer * m_container;

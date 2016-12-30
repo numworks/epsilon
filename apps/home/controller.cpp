@@ -9,7 +9,7 @@ namespace Home {
 Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
   ViewController(parentResponder),
   m_container(container),
-  m_selectableTableView(SelectableTableView(this, this))
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, this))
 {
 }
 
@@ -73,6 +73,13 @@ void Controller::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
 int Controller::numberOfIcons() {
   assert(m_container->numberOfApps() > 0);
   return m_container->numberOfApps() - 1;
+}
+
+void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  int appIndex = (t->selectedRow()*k_numberOfColumns+t->selectedColumn())+1;
+  if (appIndex >= m_container->numberOfApps()) {
+    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  }
 }
 
 }

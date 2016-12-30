@@ -8,7 +8,7 @@ App::App(Container * container) :
   m_data(),
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(&m_tabViewController, &m_calculationController, &m_calculationController)),
-  m_graphController(GraphController(&m_graphHeader, &m_graphHeader)),
+  m_graphController(GraphController(&m_graphHeader, &m_graphHeader, &m_data)),
   m_graphHeader(HeaderViewController(&m_graphAlternateEmptyViewController, &m_graphController, &m_graphController)),
   m_graphAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_graphHeader, &m_graphController)),
   m_graphStackViewController(StackViewController(&m_tabViewController, &m_graphAlternateEmptyViewController)),

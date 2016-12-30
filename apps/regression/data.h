@@ -1,12 +1,12 @@
 #ifndef REGRESSION_DATA_H
 #define REGRESSION_DATA_H
 
-#include "../curve_view_window.h"
+#include "../curve_view_window_with_cursor.h"
 #include "../data.h"
 
 namespace Regression {
 
-class Data : public CurveViewWindow, public ::Data {
+class Data : public ::Data, public CurveViewWindowWithCursor {
 public:
   Data();
   // Delete the implicit copy constructor: the object is heavy
@@ -20,8 +20,6 @@ public:
   void deletePairAtIndex(int index) override;
 
   // Cursor
-  float xCursorPosition();
-  float yCursorPosition();
   bool cursorSelectUp();
   bool cursorSelectBottom();
   bool cursorSelectLeft();
@@ -71,8 +69,6 @@ private:
   int m_xValues[k_maxNumberOfPairs];
   float m_yValues[k_maxNumberOfPairs];
   // Cursor
-  float m_xCursorPosition;
-  float m_yCursorPosition;
   bool m_dotsSelected;
   // Window bounds of the data
   float m_xMin;

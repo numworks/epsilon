@@ -8,8 +8,7 @@ namespace Regression {
 
 Data::Data() :
   ::Data(),
-  m_xCursorPosition(NAN),
-  m_yCursorPosition(NAN),
+  CurveViewWindowWithCursor(),
   m_dotsSelected(false),
   m_xMin(0.0f),
   m_xMax(10.0f),
@@ -71,14 +70,6 @@ void Data::deletePairAtIndex(int index) {
 }
 
 /* Cursor */
-
-float Data::xCursorPosition() {
-  return m_xCursorPosition;
-}
-
-float Data::yCursorPosition() {
-  return m_yCursorPosition;
-}
 
 bool Data::cursorSelectUp() {
   float yRegressionCurve = yValueForXValue(m_xCursorPosition);

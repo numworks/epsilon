@@ -44,6 +44,7 @@ public:
   float covariance();
   float slope();
   float yIntercept();
+  float yValueForXValue(float x);
 
   constexpr static int k_maxNumberOfPairs = 500;
 private:

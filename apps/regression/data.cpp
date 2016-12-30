@@ -177,6 +177,10 @@ float Data::yIntercept() {
   return yMean() - slope()*xMean();
 }
 
+float Data::yValueForXValue(float x) {
+  return slope()*x+yIntercept();
+}
+
 float Data::maxXValue() {
   float max = -FLT_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {
@@ -219,6 +223,7 @@ float Data::minYValue() {
 
 void Data::initCursorPosition() {
   m_xCursorPosition = (m_xMin+m_xMax)/2.0f;
+  m_yCursorPosition = yValueForXValue(m_xCursorPosition);
 }
 
 void Data::initWindowParameters() {

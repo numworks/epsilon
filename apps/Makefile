@@ -13,6 +13,7 @@ app_objs += $(addprefix apps/,\
   curve_view.o\
   curve_view_with_banner.o\
   curve_view_window.o\
+  curve_view_window_with_cursor.o\
   data.o\
   data_controller.o\
   editable_cell_table_view_controller.o\

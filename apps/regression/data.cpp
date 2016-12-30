@@ -10,6 +10,7 @@ Data::Data() :
   ::Data(),
   m_xCursorPosition(NAN),
   m_yCursorPosition(NAN),
+  m_dotsSelected(false),
   m_xMin(0.0f),
   m_xMax(10.0f),
   m_yMin(0.0f),
@@ -79,6 +80,58 @@ float Data::yCursorPosition() {
   return m_yCursorPosition;
 }
 
+bool Data::cursorSelectUp() {
+  float yRegressionCurve = yValueForXValue(m_xCursorPosition);
+  if (m_dotsSelected && m_yCursorPosition < yRegressionCurve) {
+    m_dotsSelected = false;
+    m_yCursorPosition = yRegressionCurve;
+    return true;
+  }
+  if (!m_dotsSelected) {
+    if (selectClosestDotRelativelyToCurve(1)) {
+      m_dotsSelected = true;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Data::cursorSelectBottom() {
+  float yRegressionCurve = yValueForXValue(m_xCursorPosition);
+  if (m_dotsSelected && m_yCursorPosition > yRegressionCurve) {
+    m_dotsSelected = false;
+    m_yCursorPosition = yRegressionCurve;
+    return true;
+  }
+  if (!m_dotsSelected) {
+    if (selectClosestDotRelativelyToCurve(-1)) {
+      m_dotsSelected = true;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Data::cursorSelectLeft() {
+  if (m_dotsSelected) {
+    return selectNextDot(-1);
+  } else {
+    m_xCursorPosition -= m_xGridUnit;
+    m_yCursorPosition = yValueForXValue(m_xCursorPosition);
+    return true;
+  }
+}
+
+bool Data::cursorSelectRight() {
+  if (m_dotsSelected) {
+    return selectNextDot(1);
+  } else {
+    m_xCursorPosition += m_xGridUnit;
+    m_yCursorPosition = yValueForXValue(m_xCursorPosition);
+    return true;
+  }
+}
+
 /* CurveViewWindow */
 
 float Data::xMin() {
@@ -118,7 +171,7 @@ float Data::xSum() {
 float Data::ySum() {
   float result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
-    result += m_xValues[k];
+    result += m_yValues[k];
   }
   return result;
 }
@@ -165,6 +218,14 @@ float Data::yVariance() {
   return ySquaredValueSum()/m_numberOfPairs - mean*mean;
 }
 
+float Data::xStandardDeviation() {
+  return sqrtf(xVariance());
+}
+
+float Data::yStandardDeviation() {
+  return sqrtf(yVariance());
+}
+
 float Data::covariance() {
   return xyProductSum()/m_numberOfPairs - xMean()*yMean();
 }
@@ -179,6 +240,15 @@ float Data::yIntercept() {
 
 float Data::yValueForXValue(float x) {
   return slope()*x+yIntercept();
+}
+
+float Data::correlationCoefficient() {
+  return covariance()/(xStandardDeviation()*yStandardDeviation());
+}
+
+float Data::squaredCorrelationCoefficient() {
+  float cov = covariance();
+  return cov*cov/(xVariance()*yVariance());
 }
 
 float Data::maxXValue() {
@@ -224,6 +294,7 @@ float Data::minYValue() {
 void Data::initCursorPosition() {
   m_xCursorPosition = (m_xMin+m_xMax)/2.0f;
   m_yCursorPosition = yValueForXValue(m_xCursorPosition);
+  m_dotsSelected = false;
 }
 
 void Data::initWindowParameters() {
@@ -233,6 +304,42 @@ void Data::initWindowParameters() {
   m_yMax = maxYValue();
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+}
+
+bool Data::selectClosestDotRelativelyToCurve(int direction) {
+  float nextX = INFINITY;
+  float nextY = INFINITY;
+  for (int index = 0; index < m_numberOfPairs; index++) {
+    if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+        ((direction > 0 && m_yValues[index] >= yValueForXValue(m_xValues[index])) ||  (direction < 0 && m_yValues[index] <= yValueForXValue(m_xValues[index])))) {
+      nextX = m_xValues[index];
+      nextY = m_yValues[index];
+    }
+  }
+  if (!isinf(nextX) && !isinf(nextY)) {
+    m_xCursorPosition = nextX;
+    m_yCursorPosition = nextY;
+    return true;
+  }
+  return false;
+}
+
+bool Data::selectNextDot(int direction) {
+  float nextX = INFINITY;
+  float nextY = INFINITY;
+  for (int index = 0; index < m_numberOfPairs; index++) {
+    if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+        ((direction > 0 && m_xValues[index] > m_xCursorPosition) ||  (direction < 0 && m_xValues[index] < m_xCursorPosition))) {
+      nextX = m_xValues[index];
+      nextY = m_yValues[index];
+    }
+  }
+  if (!isinf(nextX) && !isinf(nextY)) {
+    m_xCursorPosition = nextX;
+    m_yCursorPosition = nextY;
+    return true;
+  }
+  return false;
 }
 
 }

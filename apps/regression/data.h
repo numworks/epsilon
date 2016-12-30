@@ -22,6 +22,10 @@ public:
   // Cursor
   float xCursorPosition();
   float yCursorPosition();
+  bool cursorSelectUp();
+  bool cursorSelectBottom();
+  bool cursorSelectLeft();
+  bool cursorSelectRight();
 
   //CurveViewWindow
   float xMin() override;
@@ -41,10 +45,14 @@ public:
   float yMean();
   float xVariance();
   float yVariance();
+  float xStandardDeviation();
+  float yStandardDeviation();
   float covariance();
   float slope();
   float yIntercept();
   float yValueForXValue(float x);
+  float correlationCoefficient();
+  float squaredCorrelationCoefficient();
 
   constexpr static int k_maxNumberOfPairs = 500;
 private:
@@ -55,12 +63,17 @@ private:
 
   void initWindowParameters();
   void initCursorPosition();
-  // Raw numeric data
+
+  bool selectClosestDotRelativelyToCurve(int direction);
+  bool selectNextDot(int direction);
+
+// Raw numeric data
   int m_xValues[k_maxNumberOfPairs];
   float m_yValues[k_maxNumberOfPairs];
   // Cursor
   float m_xCursorPosition;
   float m_yCursorPosition;
+  bool m_dotsSelected;
   // Window bounds of the data
   float m_xMin;
   float m_xMax;

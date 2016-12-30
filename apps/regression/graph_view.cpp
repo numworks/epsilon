@@ -5,7 +5,7 @@
 namespace Regression {
 
 GraphView::GraphView(Data * data) :
-  CurveViewWithBanner(data, 0.2f, 0.2f, 0.4f, 0.2f),
+  CurveViewWithBannerAndCursor(data, 0.2f, 0.2f, 0.4f, 0.2f),
   m_data(data),
   m_bannerView(BannerView(data))
 {
@@ -14,8 +14,9 @@ GraphView::GraphView(Data * data) :
 void GraphView::reloadSelection() {
   float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_data->xCursorPosition()));
   float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_data->yCursorPosition()));
-  KDRect dirtyZone(KDRect(pixelXSelection - k_dotSize/2, pixelYSelection - k_dotSize/2, k_dotSize, k_dotSize));
+  KDRect dirtyZone(KDRect(pixelXSelection - k_dotSize, pixelYSelection - k_dotSize, 2*k_dotSize, 2*k_dotSize));
   markRectAsDirty(dirtyZone);
+  layoutSubviews();
   m_bannerView.reload();
 }
 
@@ -23,6 +24,7 @@ void GraphView::reload() {
   markRectAsDirty(bounds());
   computeLabels(Axis::Horizontal);
   computeLabels(Axis::Vertical);
+  layoutSubviews();
   m_bannerView.reload();
 }
 

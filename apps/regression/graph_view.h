@@ -5,18 +5,19 @@
 #include "data.h"
 #include "banner_view.h"
 #include "../constant.h"
-#include "../curve_view_with_banner.h"
+#include "../cursor_view.h"
+#include "../curve_view_with_banner_and_cursor.h"
 
 namespace Regression {
 
-class GraphView : public CurveViewWithBanner {
+class GraphView : public CurveViewWithBannerAndCursor {
 public:
   GraphView(Data * m_data);
   void reloadSelection() override;
   void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static KDCoordinate k_dotSize = 4;
+  constexpr static KDCoordinate k_dotSize = 5;
   char * label(Axis axis, int index) const override;
   View * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;

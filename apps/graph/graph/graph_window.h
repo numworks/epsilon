@@ -2,11 +2,11 @@
 #define GRAPH_GRAPH_AXIS_INTERVAL_H
 
 #include "../function_store.h"
-#include "../../curve_view_window.h"
+#include "../../curve_view_window_with_cursor.h"
 
 namespace Graph {
 
-class GraphWindow : public CurveViewWindow {
+class GraphWindow : public CurveViewWindowWithCursor {
 public:
   enum class Direction {
     Up,
@@ -38,8 +38,6 @@ public:
   void roundAbscissa();
   void normalize();
   void setDefault();
-  float xCursorPosition();
-  float yCursorPosition();
   float derivativeAtCursorPosition();
   Function * functionSelectedByCursor();
   void setCursorPositionAtAbscissaWithFunction(float abscissa, Function * function);
@@ -60,8 +58,6 @@ private:
   bool m_yAuto;
   float m_xGridUnit;
   float m_yGridUnit;
-  float m_xCursorPosition;
-  float m_yCursorPosition;
   int m_indexFunctionSelectedByCursor;
   FunctionStore * m_functionStore;
   Context * m_context;

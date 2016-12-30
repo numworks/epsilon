@@ -8,6 +8,7 @@
 namespace Graph {
 
 GraphWindow::GraphWindow(FunctionStore * functionStore) :
+  CurveViewWindowWithCursor(),
   m_xMin(-10.0f),
   m_xMax(10.0f),
   m_yMin(-10.0f),
@@ -15,8 +16,6 @@ GraphWindow::GraphWindow(FunctionStore * functionStore) :
   m_yAuto(true),
   m_xGridUnit(2.0f),
   m_yGridUnit(2.0f),
-  m_xCursorPosition(NAN),
-  m_yCursorPosition(NAN),
   m_indexFunctionSelectedByCursor(0),
   m_functionStore(functionStore),
   m_context(nullptr)
@@ -197,14 +196,6 @@ void GraphWindow::setDefault() {
   m_xMax = 10.0f;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   setYAuto(true);
-}
-
-float GraphWindow::xCursorPosition() {
-  return m_xCursorPosition;
-}
-
-float GraphWindow::yCursorPosition() {
-  return m_yCursorPosition;
 }
 
 float GraphWindow::derivativeAtCursorPosition() {

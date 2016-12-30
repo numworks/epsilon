@@ -105,6 +105,78 @@ float Data::yGridUnit() {
   return m_yGridUnit;
 }
 
+/* Calculations */
+
+float Data::xSum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_xValues[k];
+  }
+  return result;
+}
+
+float Data::ySum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_xValues[k];
+  }
+  return result;
+}
+
+float Data::xSquaredValueSum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_xValues[k]*m_xValues[k];
+  }
+  return result;
+}
+
+float Data::ySquaredValueSum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_yValues[k]*m_yValues[k];
+  }
+  return result;
+}
+
+float Data::xyProductSum() {
+  float result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_xValues[k]*m_yValues[k];
+  }
+  return result;
+}
+
+float Data::xMean() {
+  return xSum()/m_numberOfPairs;
+}
+
+float Data::yMean() {
+  return ySum()/m_numberOfPairs;
+}
+
+float Data::xVariance() {
+  float mean = xMean();
+  return xSquaredValueSum()/m_numberOfPairs - mean*mean;
+}
+
+float Data::yVariance() {
+  float mean = yMean();
+  return ySquaredValueSum()/m_numberOfPairs - mean*mean;
+}
+
+float Data::covariance() {
+  return xyProductSum()/m_numberOfPairs - xMean()*yMean();
+}
+
+float Data::slope() {
+  return covariance()/xVariance();
+}
+
+float Data::yIntercept() {
+  return yMean() - slope()*xMean();
+}
+
 float Data::maxXValue() {
   float max = -FLT_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {

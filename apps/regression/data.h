@@ -31,6 +31,20 @@ public:
   float xGridUnit() override;
   float yGridUnit() override;
 
+  // Calculation
+  float xSum();
+  float ySum();
+  float xSquaredValueSum();
+  float ySquaredValueSum();
+  float xyProductSum();
+  float xMean();
+  float yMean();
+  float xVariance();
+  float yVariance();
+  float covariance();
+  float slope();
+  float yIntercept();
+
   constexpr static int k_maxNumberOfPairs = 500;
 private:
   float maxXValue();

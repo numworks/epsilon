@@ -8,9 +8,8 @@ namespace Graph {
 constexpr KDColor GraphView::k_gridColor;
 
 GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
-  CurveViewWithBanner(graphWindow, 0.0f, 0.0f, 0.2f, 0.0f),
+  CurveViewWithBannerAndCursor(graphWindow, 0.0f, 0.0f, 0.2f, 0.0f),
   m_bannerView(BannerView(graphWindow)),
-  m_cursorView(CursorView()),
   m_graphWindow(graphWindow),
   m_functionStore(functionStore),
   m_context(nullptr)
@@ -56,29 +55,6 @@ void GraphView::reloadSelection() {
   markRectAsDirty(KDRect(KDPoint(xCursorPixelPosition- k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2), k_cursorSize, k_cursorSize));
   layoutSubviews();
   m_bannerView.reload();
-}
-
-void GraphView::layoutSubviews() {
-  KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_graphWindow->xCursorPosition()));
-  KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_graphWindow->yCursorPosition()));
-  KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
-  if (!m_mainViewSelected) {
-    cursorFrame = KDRectZero;
-  }
-  m_cursorView.setFrame(cursorFrame);
-  CurveViewWithBanner::layoutSubviews();
-}
-
-int GraphView::numberOfSubviews() const {
-  return 2;
-};
-
-View * GraphView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return &m_cursorView;
-  }
-  return &m_bannerView;
 }
 
 char * GraphView::label(Axis axis, int index) const {

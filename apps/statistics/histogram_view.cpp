@@ -31,7 +31,7 @@ void HistogramView::reload() {
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, true);
+  drawLabels(ctx, rect, Axis::Horizontal, false);
   if (m_mainViewSelected) {
     drawHistogram(ctx, rect, nullptr, m_data->firsBarAbscissa(), m_data->barWidth(), true, KDColorBlack, KDColorRed,
       m_data->selectedBar() - m_data->barWidth()/2, m_data->selectedBar() + m_data->barWidth()/2);

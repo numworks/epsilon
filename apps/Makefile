@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/,\
   cursor_view.o\
   curve_view.o\
   curve_view_with_banner.o\
+  curve_view_with_banner_and_cursor.o\
   curve_view_window.o\
   curve_view_window_with_cursor.o\
   data.o\

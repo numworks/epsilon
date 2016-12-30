@@ -14,11 +14,11 @@ public:
 protected:
   void layoutSubviews() override;
   bool m_mainViewSelected;
+  virtual View * bannerView() = 0;
 private:
   constexpr static KDCoordinate k_bannerHeight = 30;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  virtual View * bannerView() = 0;
 };
 
 #endif

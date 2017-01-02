@@ -7,12 +7,17 @@ GraphController::GraphController(Responder * parentResponder, HeaderViewControll
   HeaderViewDelegate(headerViewController),
   m_view(GraphView(data)),
   m_windowParameterController(WindowParameterController(this, data)),
+  m_zoomParameterController(ZoomParameterController(this, data, &m_view)),
   m_windowButton(this, "Axes", Invocation([](void * context, void * sender) {
     GraphController * graphController = (GraphController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->windowParameterController());
   }, this)),
-  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {}, this)),
+  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {
+    GraphController * graphController = (GraphController *) context;
+    StackViewController * stack = graphController->stackController();
+    stack->push(graphController->zoomParameterController());
+  }, this)),
   m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {}, this)),
   m_data(data)
 {
@@ -74,9 +79,10 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
 void GraphController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   m_view.selectMainView(true);
+  // Layout view whe the graph view that might have been modified by the zoom page
+  headerViewController()->layoutView();
   m_view.reload();
 }
-
 
 int GraphController::numberOfButtons() const {
   return 3;
@@ -110,6 +116,10 @@ ViewController * GraphController::windowParameterController() {
   return &m_windowParameterController;
 }
 
+ViewController * GraphController::zoomParameterController() {
+  return &m_zoomParameterController;
+}
+
 Responder * GraphController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
@@ -119,4 +129,3 @@ StackViewController * GraphController::stackController() const{
 }
 
 }
-

@@ -5,6 +5,7 @@
 #include "data.h"
 #include "graph_view.h"
 #include "../window_parameter_controller.h"
+#include "../zoom_parameter_controller.h"
 
 namespace Regression {
 
@@ -25,11 +26,13 @@ public:
   Responder * defaultController() override;
 
   ViewController * windowParameterController();
+  ViewController * zoomParameterController();
 private:
   Responder * tabController() const;
   StackViewController * stackController() const;
   GraphView m_view;
   WindowParameterController m_windowParameterController;
+  ZoomParameterController m_zoomParameterController;
   Button m_windowButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

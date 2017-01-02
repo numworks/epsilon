@@ -150,8 +150,8 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, KDSize size) const {
   KDCoordinate px = roundf(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = roundf(floatToPixel(Axis::Vertical, y));
-  if ((px - size.width() < rect.left() - k_externRectMargin || px + size.width() > rect.right() + k_externRectMargin) &&
-      (py - size.height() < rect.top() - k_externRectMargin || py + size.height() > rect.bottom() + k_externRectMargin)) {
+  if ((px + size.width() < rect.left() - k_externRectMargin || px - size.width() > rect.right() + k_externRectMargin) &&
+      (py + size.height() < rect.top() - k_externRectMargin || py - size.height() > rect.bottom() + k_externRectMargin)) {
     return;
   }
   KDRect dotRect = KDRect(px - size.width()/2, py-size.height()/2, size.width(), size.height());

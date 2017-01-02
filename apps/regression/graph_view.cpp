@@ -14,7 +14,7 @@ GraphView::GraphView(Data * data) :
 void GraphView::reloadSelection() {
   float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_data->xCursorPosition()));
   float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_data->yCursorPosition()));
-  KDRect dirtyZone(KDRect(pixelXSelection - k_dotSize, pixelYSelection - k_dotSize, 2*k_dotSize, 2*k_dotSize));
+  KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
   markRectAsDirty(dirtyZone);
   layoutSubviews();
   m_bannerView.reload();

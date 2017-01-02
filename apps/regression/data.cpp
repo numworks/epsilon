@@ -273,10 +273,12 @@ bool Data::selectClosestDotRelativelyToCurve(int direction) {
   float nextX = INFINITY;
   float nextY = INFINITY;
   for (int index = 0; index < m_numberOfPairs; index++) {
-    if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
-        ((direction > 0 && m_yValues[index] >= yValueForXValue(m_xValues[index])) ||  (direction < 0 && m_yValues[index] <= yValueForXValue(m_xValues[index])))) {
-      nextX = m_xValues[index];
-      nextY = m_yValues[index];
+    if (m_xMin <= m_xValues[index] && m_xValues[index] <= m_xMax) {
+      if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+          ((m_yValues[index] - yValueForXValue(m_xValues[index]) >= 0) == (direction > 0))) {
+        nextX = m_xValues[index];
+        nextY = m_yValues[index];
+      }
     }
   }
   if (!isinf(nextX) && !isinf(nextY)) {

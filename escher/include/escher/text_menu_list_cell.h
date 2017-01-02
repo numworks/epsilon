@@ -9,7 +9,7 @@ public:
   TextMenuListCell(char * label = nullptr);
   void reloadCell() override;
   View * accessoryView() const override;
-  void setHighlighted(bool highlight);
+  void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * textBody);
   const char * accessoryText();
   void setTextColor(KDColor color) override;

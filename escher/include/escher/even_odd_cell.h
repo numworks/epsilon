@@ -6,7 +6,7 @@
 class EvenOddCell : public TableViewCell {
 public:
   EvenOddCell();
-  void setEven(bool even);
+  virtual void setEven(bool even);
   virtual KDColor backgroundColor() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 

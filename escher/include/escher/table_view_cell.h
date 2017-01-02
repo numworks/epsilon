@@ -6,7 +6,7 @@
 class TableViewCell : public View {
 public:
   TableViewCell();
-  void setHighlighted(bool highlight);
+  virtual void setHighlighted(bool highlight);
   bool isHighlighted() const;
   virtual void reloadCell();
 private:

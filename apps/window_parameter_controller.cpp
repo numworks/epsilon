@@ -1,11 +1,8 @@
 #include "window_parameter_controller.h"
-#include "../app.h"
-#include "../../apps_container.h"
+#include "apps_container.h"
 #include <assert.h>
 
-namespace Graph {
-
-WindowParameterController::WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow) :
+WindowParameterController::WindowParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow) :
   FloatParameterController(parentResponder),
   m_graphWindow(graphWindow),
   m_windowCells{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmax"),
@@ -125,6 +122,4 @@ TableViewCell * WindowParameterController::reusableCell(int index) {
 
 int WindowParameterController::reusableCellCount() {
   return k_numberOfTextCell+1;
-}
-
 }

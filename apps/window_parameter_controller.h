@@ -1,15 +1,13 @@
-#ifndef GRAPH_GRAPH_WINDOW_PARAMETER_CONTROLLER_H
-#define GRAPH_GRAPH_WINDOW_PARAMETER_CONTROLLER_H
+#ifndef APPS_WINDOW_PARAMETER_CONTROLLER_H
+#define APPS_WINDOW_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "graph_window.h"
-#include "graph_view.h"
-#include "../../float_parameter_controller.h"
+#include "curve_view_window_with_cursor.h"
+#include "float_parameter_controller.h"
 
-namespace Graph {
 class WindowParameterController : public FloatParameterController {
 public:
-  WindowParameterController(Responder * parentResponder, GraphWindow * graphWindow);
+  WindowParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow);
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
@@ -22,12 +20,10 @@ private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
-  GraphWindow * m_graphWindow;
+  CurveViewWindowWithCursor * m_graphWindow;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_windowCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
 };
-
-}
 
 #endif

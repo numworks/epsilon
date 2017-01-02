@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "graph_view.h"
 #include "graph_window.h"
-#include "window_parameter_controller.h"
+#include "../../window_parameter_controller.h"
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
 #include "zoom_parameter_controller.h"

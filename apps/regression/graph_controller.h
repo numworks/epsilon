@@ -4,38 +4,21 @@
 #include <escher.h>
 #include "data.h"
 #include "graph_view.h"
-#include "../window_parameter_controller.h"
-#include "../zoom_parameter_controller.h"
+#include "../curve_view_with_banner_and_cursor_controller.h"
 
 namespace Regression {
 
-class GraphController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
+class GraphController : public CurveViewWindowWithBannerAndCursorController {
 
 public:
   GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Data * data);
-  const char * title() const override;
-  View * view() override;
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
-
-  int numberOfButtons() const override;
-  Button * buttonAtIndex(int index) override;
+  ViewController * initialisationParameterController() override;
 
   bool isEmpty() override;
   const char * emptyMessage() override;
-  Responder * defaultController() override;
-
-  ViewController * windowParameterController();
-  ViewController * zoomParameterController();
 private:
-  Responder * tabController() const;
-  StackViewController * stackController() const;
+  bool handleEnter() override;
   GraphView m_view;
-  WindowParameterController m_windowParameterController;
-  ZoomParameterController m_zoomParameterController;
-  Button m_windowButton;
-  Button m_zoomButton;
-  Button m_defaultInitialisationButton;
   Data * m_data;
 };
 

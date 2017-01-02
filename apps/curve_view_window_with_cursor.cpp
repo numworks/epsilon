@@ -112,13 +112,11 @@ void CurveViewWindowWithCursor::translateWindow(Direction direction) {
     m_xMin = m_xMin - m_xGridUnit;
     m_xMax = m_xMax - m_xGridUnit;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-    computeYaxis();
   }
   if (direction == Direction::Right) {
     m_xMin = m_xMin + m_xGridUnit;
     m_xMax = m_xMax + m_xGridUnit;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-    computeYaxis();
   }
   initCursorPosition();
 }
@@ -164,28 +162,28 @@ bool CurveViewWindowWithCursor::panToMakePointVisible(float x, float y, float xM
     m_xMin = x - xMargin;
     m_xMax = m_xMin + xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-    computeYaxis();
+    m_yAuto = false;
     windowMoved = true;
   }
   if (x > m_xMax - xMargin) {
     m_xMax = x + xMargin;
     m_xMin = m_xMax - xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-    computeYaxis();
+    m_yAuto = false;
     windowMoved = true;
   }
   if (y < m_yMin + yMargin) {
     m_yMin = y - yMargin;
     m_yMax = m_yMin + yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
-    computeYaxis();
+    m_yAuto = false;
     windowMoved = true;
   }
   if (y > m_yMax - yMargin) {
     m_yMax = y + yMargin;
     m_yMin = m_yMax - yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
-    computeYaxis();
+    m_yAuto = false;
     windowMoved = true;
   }
   return windowMoved;
@@ -196,7 +194,6 @@ void CurveViewWindowWithCursor::centerAxisAround(Axis axis, float position) {
     float range = m_xMax - m_xMin;
     m_xMin = position - range/2.0f;
     m_xMax = position + range/2.0f;
-    computeYaxis();
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   } else {
     m_yAuto = false;

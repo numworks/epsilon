@@ -92,8 +92,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     if (axis == Axis::Vertical) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
     }
-    // TODO: Find another way to avoid float comparison.
-    if (x == 0.0f && shiftOrigin) {
+    if (-step < x && x < step && shiftOrigin) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
     if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i))))) {

@@ -65,7 +65,6 @@ void WindowParameterController::tableViewDidChangeSelection(SelectableTableView 
 }
 
 bool WindowParameterController::handleEvent(Ion::Events::Event event) {
-  m_graphWindow->initCursorPosition();
   if (activeCell() == 2) {
     if (event == Ion::Events::OK) {
       m_graphWindow->setYAuto(!m_graphWindow->yAuto());

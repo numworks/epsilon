@@ -137,13 +137,11 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
   } else {
     if (event == Ion::Events::Plus) {
       m_graphWindow.zoom(1.0f/3.0f);
-      m_graphWindow.initCursorPosition();
       m_view.reload();
       return true;
     }
     if (event == Ion::Events::Minus) {
       m_graphWindow.zoom(3.0f/4.0f);
-      m_graphWindow.initCursorPosition();
       m_view.reload();
       return true;
     }
@@ -164,7 +162,6 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
         if (event == Ion::Events::Down) {
           return false;
         }
-        m_graphWindow.initCursorPosition();
         m_view.selectMainView(false);
         headerViewController()->setSelectedButton(0);
       }

@@ -53,7 +53,6 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
       default:
         return false;
     }
-    m_graphWindow->initCursorPosition();
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
     return true;

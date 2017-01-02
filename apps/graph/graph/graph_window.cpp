@@ -54,22 +54,26 @@ void GraphWindow::setXMin(float xMin) {
   m_xMin = xMin;
   computeYaxes();
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  initCursorPosition();
 }
 
 void GraphWindow::setXMax(float xMax) {
   m_xMax = xMax;
   computeYaxes();
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  initCursorPosition();
 }
 
 void GraphWindow::setYMin(float yMin) {
   m_yMin = yMin;
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  initCursorPosition();
 }
 
 void GraphWindow::setYMax(float yMax) {
   m_yMax = yMax;
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  initCursorPosition();
 }
 
 void GraphWindow::setYAuto(bool yAuto) {
@@ -130,6 +134,7 @@ void GraphWindow::zoom(float ratio) {
   m_yMin = (yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin);
   m_yMax = (yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin);
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  initCursorPosition();
 }
 
 void GraphWindow::translateWindow(Direction direction) {
@@ -156,6 +161,7 @@ void GraphWindow::translateWindow(Direction direction) {
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
     computeYaxes();
   }
+  initCursorPosition();
 }
 
 void GraphWindow::setTrigonometric() {
@@ -166,6 +172,7 @@ void GraphWindow::setTrigonometric() {
   m_yMin = -1.6f;
   m_yMax = 1.6f;
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  initCursorPosition();
 }
 
 void GraphWindow::roundAbscissa() {
@@ -175,6 +182,7 @@ void GraphWindow::roundAbscissa() {
   m_xMax = roundf((xMin+xMax)/2) + 159.0f;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   computeYaxes();
+  initCursorPosition();
 }
 
 void GraphWindow::normalize() {
@@ -189,6 +197,7 @@ void GraphWindow::normalize() {
   m_yMin = (yMin+yMax)/2 - 3.1f;
   m_yMax = (yMin+yMax)/2 + 3.1f;
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  initCursorPosition();
 }
 
 void GraphWindow::setDefault() {
@@ -196,6 +205,7 @@ void GraphWindow::setDefault() {
   m_xMax = 10.0f;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   setYAuto(true);
+  initCursorPosition();
 }
 
 float GraphWindow::derivativeAtCursorPosition() {

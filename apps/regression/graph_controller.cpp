@@ -6,7 +6,12 @@ GraphController::GraphController(Responder * parentResponder, HeaderViewControll
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
   m_view(GraphView(data)),
-  m_windowButton(this, "Axes", Invocation([](void * context, void * sender) {}, this)),
+  m_windowParameterController(WindowParameterController(this, data)),
+  m_windowButton(this, "Axes", Invocation([](void * context, void * sender) {
+    GraphController * graphController = (GraphController *) context;
+    StackViewController * stack = graphController->stackController();
+    stack->push(graphController->windowParameterController());
+  }, this)),
   m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {}, this)),
   m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {}, this)),
   m_data(data)
@@ -101,8 +106,16 @@ Responder * GraphController::defaultController() {
   return tabController();
 }
 
+ViewController * GraphController::windowParameterController() {
+  return &m_windowParameterController;
+}
+
 Responder * GraphController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+StackViewController * GraphController::stackController() const{
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
 }

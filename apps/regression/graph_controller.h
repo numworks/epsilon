@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "data.h"
 #include "graph_view.h"
+#include "../window_parameter_controller.h"
 
 namespace Regression {
 
@@ -22,9 +23,13 @@ public:
   bool isEmpty() override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
+
+  ViewController * windowParameterController();
 private:
   Responder * tabController() const;
+  StackViewController * stackController() const;
   GraphView m_view;
+  WindowParameterController m_windowParameterController;
   Button m_windowButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

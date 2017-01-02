@@ -10,6 +10,8 @@ class CurveViewWithBannerAndCursor : public CurveViewWithBanner {
 public:
   CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor = nullptr, float topMarginFactor = 0.0f,
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
+  void reload() override;
+  void reloadSelection() override;
 protected:
   constexpr static KDCoordinate k_cursorSize = 9;
   void layoutSubviews() override;

@@ -22,12 +22,6 @@ void HistogramView::reloadSelection() {
   m_bannerView.reload();
 }
 
-void HistogramView::reload() {
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
-  m_bannerView.reload();
-}
-
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
@@ -47,7 +41,7 @@ char * HistogramView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-View * HistogramView::bannerView() {
+BannerView * HistogramView::bannerView() {
   return &m_bannerView;
 }
 

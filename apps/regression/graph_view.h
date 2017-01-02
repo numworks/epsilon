@@ -13,13 +13,11 @@ namespace Regression {
 class GraphView : public CurveViewWithBannerAndCursor {
 public:
   GraphView(Data * m_data);
-  void reloadSelection() override;
-  void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_dotSize = 5;
   char * label(Axis axis, int index) const override;
-  View * bannerView() override;
+  BannerView * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Data * m_data;
   char m_xLabels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];

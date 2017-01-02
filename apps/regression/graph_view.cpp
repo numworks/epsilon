@@ -11,23 +11,6 @@ GraphView::GraphView(Data * data) :
 {
 }
 
-void GraphView::reloadSelection() {
-  float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_data->xCursorPosition()));
-  float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_data->yCursorPosition()));
-  KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
-  markRectAsDirty(dirtyZone);
-  layoutSubviews();
-  m_bannerView.reload();
-}
-
-void GraphView::reload() {
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
-  computeLabels(Axis::Vertical);
-  layoutSubviews();
-  m_bannerView.reload();
-}
-
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
@@ -47,7 +30,7 @@ char * GraphView::label(Axis axis, int index) const {
   return (char *)m_xLabels[index];
 }
 
-View * GraphView::bannerView() {
+BannerView * GraphView::bannerView() {
   return &m_bannerView;
 }
 

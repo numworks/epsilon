@@ -32,8 +32,7 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    BannerView * bannerView = (BannerView *)m_graphView->bannerView();
-    switchView->setState(bannerView->displayDerivative());
+    switchView->setState(m_graphView->bannerView()->displayDerivative());
   }
 }
 

@@ -9,6 +9,23 @@ CurveViewWithBannerAndCursor::CurveViewWithBannerAndCursor(CurveViewWindowWithCu
 {
 }
 
+void CurveViewWithBannerAndCursor::reload() {
+  markRectAsDirty(bounds());
+  computeLabels(Axis::Horizontal);
+  computeLabels(Axis::Vertical);
+  layoutSubviews();
+  bannerView()->reload();
+}
+
+void CurveViewWithBannerAndCursor::reloadSelection() {
+  float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_curveViewWindowWithCursor->xCursorPosition()));
+  float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_curveViewWindowWithCursor->yCursorPosition()));
+  KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
+  markRectAsDirty(dirtyZone);
+  layoutSubviews();
+  bannerView()->reload();
+}
+
 void CurveViewWithBannerAndCursor::layoutSubviews() {
   KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewWindowWithCursor->xCursorPosition()));
   KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewWindowWithCursor->yCursorPosition()));

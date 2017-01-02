@@ -13,11 +13,10 @@ class HistogramView : public CurveViewWithBanner {
 public:
   HistogramView(Data * m_data);
   void reloadSelection() override;
-  void reload();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
-  View * bannerView() override;
+  BannerView * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Data * m_data;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];

@@ -15,12 +15,10 @@ namespace Graph {
 class GraphView : public CurveViewWithBannerAndCursor {
 public:
   GraphView(FunctionStore * functionStore, GraphWindow * graphWindow);
-  View * bannerView() override;
+  BannerView * bannerView() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Context * context);
   Context * context() const;
-  void reload();
-  void reloadSelection() override;
 private:
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   char * label(Axis axis, int index) const override;

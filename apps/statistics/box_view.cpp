@@ -23,12 +23,6 @@ void BoxView::reloadSelection() {
   m_bannerView.reload();
 }
 
-void BoxView::reload() {
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
-  m_bannerView.reload();
-}
-
 int BoxView::selectedQuantile() {
   return m_selectedQuantile;
 }
@@ -71,7 +65,7 @@ char * BoxView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-View * BoxView::bannerView() {
+BannerView * BoxView::bannerView() {
   return &m_bannerView;
 }
 

@@ -15,7 +15,7 @@ public:
   LawCurveView();
   void setLaw(Law * law);
   void setCalculation(Calculation * calculation);
-  void reload();
+  void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   char * label(Axis axis, int index) const override;

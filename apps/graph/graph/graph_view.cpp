@@ -16,7 +16,7 @@ GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
 {
 }
 
-View * GraphView::bannerView() {
+BannerView * GraphView::bannerView() {
   return &m_bannerView;
 }
 
@@ -39,22 +39,6 @@ void GraphView::setContext(Context * context) {
 
 Context * GraphView::context() const {
   return m_context;
-}
-
-void GraphView::reload() {
-  markRectAsDirty(bounds());
-  layoutSubviews();
-  computeLabels(Axis::Horizontal);
-  computeLabels(Axis::Vertical);
-  m_bannerView.reload();
-}
-
-void GraphView::reloadSelection() {
-  KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_graphWindow->xCursorPosition()));
-  KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_graphWindow->yCursorPosition()));
-  markRectAsDirty(KDRect(KDPoint(xCursorPixelPosition- k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2), k_cursorSize, k_cursorSize));
-  layoutSubviews();
-  m_bannerView.reload();
 }
 
 char * GraphView::label(Axis axis, int index) const {

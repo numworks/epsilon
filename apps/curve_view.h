@@ -15,7 +15,7 @@ public:
   };
   CurveView(CurveViewWindow * curveViewWindow = nullptr, float topMarginFactor = 0.0f,
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
-  void reload();
+  virtual void reload();
 protected:
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
   constexpr static KDCoordinate k_labelMargin =  4;

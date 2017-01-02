@@ -9,6 +9,12 @@ CurveViewWithBanner::CurveViewWithBanner(CurveViewWindow * curveViewWindow, floa
 {
 }
 
+void CurveViewWithBanner::reload() {
+  markRectAsDirty(bounds());
+  computeLabels(Axis::Horizontal);
+  bannerView()->reload();
+}
+
 bool CurveViewWithBanner::isMainViewSelected() {
   return m_mainViewSelected;
 }

@@ -14,11 +14,6 @@ WindowParameterController::WindowParameterController(Responder * parentResponder
 {
 }
 
-ExpressionTextFieldDelegate * WindowParameterController::textFieldDelegate() {
-  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
-  return myApp;
-}
-
 const char * WindowParameterController::title() const {
   return "Axes";
 }

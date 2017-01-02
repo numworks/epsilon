@@ -10,7 +10,6 @@
 class FloatParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
-  virtual ExpressionTextFieldDelegate * textFieldDelegate() = 0;
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;

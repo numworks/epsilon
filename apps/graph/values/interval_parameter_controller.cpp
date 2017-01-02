@@ -13,11 +13,6 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
 {
 }
 
-ExpressionTextFieldDelegate * IntervalParameterController::textFieldDelegate() {
-  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
-  return myApp;
-}
-
 const char * IntervalParameterController::title() const {
   return "Regler l'intervalle";
 }

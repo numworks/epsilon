@@ -10,7 +10,6 @@ namespace Statistics {
 class HistogramParameterController : public FloatParameterController {
 public:
   HistogramParameterController(Responder * parentResponder, Data * data);
-  ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;

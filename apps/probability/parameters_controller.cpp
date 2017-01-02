@@ -79,11 +79,6 @@ ParametersController::ParametersController(Responder * parentResponder) :
 {
 }
 
-ExpressionTextFieldDelegate * ParametersController::textFieldDelegate() {
-  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
-  return myApp;
-}
-
 View * ParametersController::view() {
   return &m_contentView;
 }

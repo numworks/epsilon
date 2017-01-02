@@ -9,7 +9,6 @@ namespace Graph {
 class GoToParameterController : public FloatParameterController {
 public:
   GoToParameterController(Responder * parentResponder, GraphWindow * graphWindow);
-  ExpressionTextFieldDelegate * textFieldDelegate() override;
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;

@@ -12,11 +12,6 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
 {
 }
 
-ExpressionTextFieldDelegate * HistogramParameterController::textFieldDelegate() {
-  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
-  return myApp;
-}
-
 const char * HistogramParameterController::title() const {
   return "Histogramme";
 }

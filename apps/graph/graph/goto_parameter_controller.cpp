@@ -12,11 +12,6 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, Gr
 {
 }
 
-ExpressionTextFieldDelegate * GoToParameterController::textFieldDelegate() {
-  ExpressionTextFieldDelegate * myApp = (ExpressionTextFieldDelegate *)app();
-  return myApp;
-}
-
 const char * GoToParameterController::title() const {
   return "Aller a";
 }

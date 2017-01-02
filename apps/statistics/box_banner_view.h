@@ -3,16 +3,16 @@
 
 #include <escher.h>
 #include "data.h"
+#include "../banner_view.h"
 
 namespace Statistics {
 
 class BoxView;
 
-class BoxBannerView : public View {
+class BoxBannerView : public ::BannerView {
 public:
   BoxBannerView(Data * data, BoxView * boxView);
-  void reload();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void reload() override;
 private:
   constexpr static int k_maxNumberOfCharacters = 50;
   int numberOfSubviews() const override;

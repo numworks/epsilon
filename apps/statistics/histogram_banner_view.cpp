@@ -43,10 +43,6 @@ void HistogramBannerView::reload() {
   m_frequencyView.setText(buffer);
 }
 
-void HistogramBannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
 int HistogramBannerView::numberOfSubviews() const {
   return 3;
 }

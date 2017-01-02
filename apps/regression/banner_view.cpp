@@ -48,10 +48,6 @@ void BannerView::reload() {
   m_yView.setText(buffer);
 }
 
-void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
 int BannerView::numberOfSubviews() const {
   return 5;
 }

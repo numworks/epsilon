@@ -42,10 +42,6 @@ void BoxBannerView::reload() {
   m_calculationValue.setText(buffer);
 }
 
-void BoxBannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
 int BoxBannerView::numberOfSubviews() const {
   return 2;
 }

@@ -3,14 +3,14 @@
 
 #include <escher.h>
 #include "graph_window.h"
+#include "../../banner_view.h"
 
 namespace Graph {
 
-class BannerView : public View {
+class BannerView : public ::BannerView {
 public:
   BannerView(GraphWindow * graphWindow);
-  void reload();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void reload() override;
   void setDisplayDerivative(bool displayDerivative);
   bool displayDerivative();
 private:

@@ -33,10 +33,6 @@ void BannerView::reload() {
   }
 }
 
-void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
 void BannerView::setDisplayDerivative(bool displayDerivative) {
   m_displayDerivative = displayDerivative;
 }

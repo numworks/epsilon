@@ -3,14 +3,14 @@
 
 #include <escher.h>
 #include "data.h"
+#include "../banner_view.h"
 
 namespace Statistics {
 
-class HistogramBannerView : public View {
+class HistogramBannerView : public ::BannerView {
 public:
   HistogramBannerView(Data * data);
-  void reload();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void reload() override;
 private:
   constexpr static int k_maxNumberOfCharacters = 50;
   int numberOfSubviews() const override;

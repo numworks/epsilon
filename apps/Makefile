@@ -9,6 +9,7 @@ include apps/statistics/Makefile
 app_objs += $(addprefix apps/,\
   apps_container.o\
   constant.o\
+  banner_view.o\
   cursor_view.o\
   curve_view.o\
   curve_view_with_banner.o\

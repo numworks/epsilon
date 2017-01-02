@@ -20,18 +20,10 @@ public:
   void deletePairAtIndex(int index) override;
 
   // Cursor
-  bool cursorSelectUp();
-  bool cursorSelectBottom();
-  bool cursorSelectLeft();
-  bool cursorSelectRight();
-
-  //CurveViewWindow
-  float xMin() override;
-  float xMax() override;
-  float yMin() override;
-  float yMax() override;
-  float xGridUnit() override;
-  float yGridUnit() override;
+  int moveCursorHorizontally(int direction) override;
+  // the result of moveCursorVertically means:
+  // 0-> the window has not changed  1->the window changed
+  int moveCursorVertically(int direction) override;
 
   // Calculation
   float xSum();
@@ -60,23 +52,17 @@ private:
   float minYValue();
 
   void initWindowParameters();
-  void initCursorPosition();
+  bool computeYaxis() override;
+  void initCursorPosition() override;
 
   bool selectClosestDotRelativelyToCurve(int direction);
   bool selectNextDot(int direction);
 
-// Raw numeric data
+  // Raw numeric data
   int m_xValues[k_maxNumberOfPairs];
   float m_yValues[k_maxNumberOfPairs];
   // Cursor
   bool m_dotsSelected;
-  // Window bounds of the data
-  float m_xMin;
-  float m_xMax;
-  float m_yMin;
-  float m_yMax;
-  float m_xGridUnit;
-  float m_yGridUnit;
 };
 
 }

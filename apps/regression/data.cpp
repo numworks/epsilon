@@ -9,13 +9,7 @@ namespace Regression {
 Data::Data() :
   ::Data(),
   CurveViewWindowWithCursor(),
-  m_dotsSelected(false),
-  m_xMin(0.0f),
-  m_xMax(10.0f),
-  m_yMin(0.0f),
-  m_yMax(10.0f),
-  m_xGridUnit(1.0f),
-  m_yGridUnit(1.0f)
+  m_dotsSelected(false)
 {
 }
 
@@ -71,82 +65,38 @@ void Data::deletePairAtIndex(int index) {
 
 /* Cursor */
 
-bool Data::cursorSelectUp() {
+int Data::moveCursorVertically(int direction) {
   float yRegressionCurve = yValueForXValue(m_xCursorPosition);
-  if (m_dotsSelected && m_yCursorPosition < yRegressionCurve) {
-    m_dotsSelected = false;
-    m_yCursorPosition = yRegressionCurve;
-    return true;
-  }
-  if (!m_dotsSelected) {
-    if (selectClosestDotRelativelyToCurve(1)) {
+  if (m_dotsSelected) {
+    if ((yRegressionCurve - m_yCursorPosition > 0) == (direction > 0)) {
+      m_dotsSelected = false;
+      m_yCursorPosition = yRegressionCurve;
+    } else {
+      return -1;
+    }
+  } else {
+    if (selectClosestDotRelativelyToCurve(direction)) {
       m_dotsSelected = true;
-      return true;
+    } else {
+      return -1;
     }
   }
-  return false;
+  bool windowHasMoved = panToMakePointVisible(m_xCursorPosition, m_yCursorPosition, 0.0f, 0.0f);
+  return windowHasMoved;
 }
 
-bool Data::cursorSelectBottom() {
-  float yRegressionCurve = yValueForXValue(m_xCursorPosition);
-  if (m_dotsSelected && m_yCursorPosition > yRegressionCurve) {
-    m_dotsSelected = false;
-    m_yCursorPosition = yRegressionCurve;
-    return true;
-  }
-  if (!m_dotsSelected) {
-    if (selectClosestDotRelativelyToCurve(-1)) {
-      m_dotsSelected = true;
-      return true;
+int Data::moveCursorHorizontally(int direction) {
+  if (m_dotsSelected) {
+    if (!selectNextDot(direction)) {
+      return -1;
     }
-  }
-  return false;
-}
-
-bool Data::cursorSelectLeft() {
-  if (m_dotsSelected) {
-    return selectNextDot(-1);
   } else {
-    m_xCursorPosition -= m_xGridUnit;
+    m_xCursorPosition = direction > 0 ? m_xCursorPosition + m_xGridUnit/CurveViewWindowWithCursor::k_numberOfCursorStepsInGradUnit :
+      m_xCursorPosition - m_xGridUnit/CurveViewWindowWithCursor::k_numberOfCursorStepsInGradUnit;
     m_yCursorPosition = yValueForXValue(m_xCursorPosition);
-    return true;
   }
-}
-
-bool Data::cursorSelectRight() {
-  if (m_dotsSelected) {
-    return selectNextDot(1);
-  } else {
-    m_xCursorPosition += m_xGridUnit;
-    m_yCursorPosition = yValueForXValue(m_xCursorPosition);
-    return true;
-  }
-}
-
-/* CurveViewWindow */
-
-float Data::xMin() {
-  return m_xMin;
-}
-
-float Data::xMax() {
-  return m_xMax;
-}
-
-float Data::yMin() {
-  return m_yMin;
-}
-
-float Data::yMax() {
-  return m_yMax;
-}
-
-float Data::xGridUnit() {
-  return m_xGridUnit;
-}
-
-float Data::yGridUnit() {
-  return m_yGridUnit;
+  bool windowHasMoved = panToMakePointVisible(m_xCursorPosition, m_yCursorPosition, 0.0f, 0.0f);
+  return windowHasMoved;
 }
 
 /* Calculations */
@@ -286,6 +236,28 @@ void Data::initCursorPosition() {
   m_xCursorPosition = (m_xMin+m_xMax)/2.0f;
   m_yCursorPosition = yValueForXValue(m_xCursorPosition);
   m_dotsSelected = false;
+}
+
+bool Data::computeYaxis() {
+  float min = m_yMin;
+  float max = m_yMax;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_xMin <= m_xValues[k] && m_xValues[k] <= m_xMax) {
+      if (m_yValues[k] < min) {
+        min = m_yValues[k];
+      }
+      if (m_yValues[k] > max) {
+        max = m_yValues[k];
+      }
+    }
+  }
+  if (min == m_yMin && max == m_yMax) {
+    return false;
+  }
+  m_yMin = min;
+  m_yMax = max;
+  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  return true;
 }
 
 void Data::initWindowParameters() {

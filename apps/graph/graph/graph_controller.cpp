@@ -110,7 +110,7 @@ void GraphController::didBecomeFirstResponder() {
     m_graphWindow.setContext(graphApp->localContext());
   }
   // if new functions were added to the store, the window parameters need to be refresh
-  if (m_graphWindow.computeYaxes()) {
+  if (m_graphWindow.computeYaxis()) {
     m_graphWindow.initCursorPosition();
   }
   headerViewController()->setSelectedButton(-1);

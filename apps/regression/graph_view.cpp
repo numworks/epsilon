@@ -5,7 +5,7 @@
 namespace Regression {
 
 GraphView::GraphView(Data * data) :
-  CurveViewWithBannerAndCursor(data, 0.2f, 0.2f, 0.4f, 0.2f),
+  CurveViewWithBannerAndCursor(data, 0.05f, 0.05f, 0.25f, 0.05f),
   m_data(data),
   m_bannerView(BannerView(data))
 {

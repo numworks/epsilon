@@ -36,33 +36,32 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (event == Ion::Events::Up) {
+  if (event == Ion::Events::Down || event == Ion::Events::Up) {
+    int direction = event == Ion::Events::Down ? -1 : 1;
     m_view.reloadSelection();
-    if (!m_data->cursorSelectUp()) {
+    int didMoveCursor = m_data->moveCursorVertically(direction);
+    if ( event == Ion::Events::Up && didMoveCursor < 0) {
       m_view.selectMainView(false);
       headerViewController()->setSelectedButton(0);
       return true;
     }
-    m_view.reloadSelection();
-    return true;
+    if (didMoveCursor == 0) {
+      m_view.reloadSelection();
+    } else {
+      m_view.reload();
+    }
+    return (didMoveCursor >= 0);
   }
-  if (event == Ion::Events::Down) {
+  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+    int direction = event == Ion::Events::Left ? -1 : 1;
     m_view.reloadSelection();
-    bool didMoveCursor = m_data->cursorSelectBottom();
-    m_view.reloadSelection();
-    return didMoveCursor;
-  }
-  if (event == Ion::Events::Left) {
-    m_view.reloadSelection();
-    bool didMoveCursor = m_data->cursorSelectLeft();
-    m_view.reloadSelection();
-    return didMoveCursor;
-  }
-  if (event == Ion::Events::Right) {
-    m_view.reloadSelection();
-    bool didMoveCursor = m_data->cursorSelectRight();
-    m_view.reloadSelection();
-    return didMoveCursor;
+    int didMoveCursor = m_data->moveCursorHorizontally(direction);
+    if (didMoveCursor == 0) {
+      m_view.reloadSelection();
+    } else {
+      m_view.reload();
+    }
+    return (didMoveCursor >= 0);
   }
   return false;
 }

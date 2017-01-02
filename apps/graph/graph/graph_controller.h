@@ -7,7 +7,7 @@
 #include "../../window_parameter_controller.h"
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
-#include "zoom_parameter_controller.h"
+#include "../../zoom_parameter_controller.h"
 #include "../function_store.h"
 
 namespace Graph {

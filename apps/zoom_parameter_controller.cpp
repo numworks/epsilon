@@ -2,13 +2,11 @@
 #include <assert.h>
 #include <math.h>
 
-namespace Graph {
-
 constexpr KDColor ZoomParameterController::ContentView::LegendView::k_legendBackgroundColor;
 
 /* Zoom Parameter Controller */
 
-ZoomParameterController::ZoomParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView) :
+ZoomParameterController::ZoomParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow, CurveViewWithBannerAndCursor * graphView) :
   ViewController(parentResponder),
   m_contentView(ContentView(graphView)),
   m_graphWindow(graphWindow)
@@ -35,22 +33,22 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Up) {
-    m_graphWindow->translateWindow(GraphWindow::Direction::Up);
+    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Up);
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
-    m_graphWindow->translateWindow(GraphWindow::Direction::Down);
+    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Down);
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
-    m_graphWindow->translateWindow(GraphWindow::Direction::Left);
+    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Left);
     m_contentView.graphView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
-    m_graphWindow->translateWindow(GraphWindow::Direction::Right);
+    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Right);
     m_contentView.graphView()->reload();
     return true;
   }
@@ -64,7 +62,7 @@ void ZoomParameterController::didBecomeFirstResponder() {
 
 /* Content View */
 
-ZoomParameterController::ContentView::ContentView(GraphView * graphView) :
+ZoomParameterController::ContentView::ContentView(CurveViewWithBannerAndCursor * graphView) :
   m_graphView(graphView)
 {
 }
@@ -86,7 +84,7 @@ void ZoomParameterController::ContentView::layoutSubviews() {
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
 }
 
-GraphView * ZoomParameterController::ContentView::graphView() {
+CurveViewWithBannerAndCursor * ZoomParameterController::ContentView::graphView() {
   return m_graphView;
 }
 
@@ -128,6 +126,4 @@ void ZoomParameterController::ContentView::LegendView::layoutSubviews() {
     m_legends[row].setFrame(KDRect(k_tokenWidth, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
     m_legends[3+row].setFrame(KDRect(width/2, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
   }
-}
-
 }

@@ -1,15 +1,13 @@
-#ifndef GRAPH_GRAPH_ZOOM_PARAMETER_CONTROLLER_H
-#define GRAPH_GRAPH_ZOOM_PARAMETER_CONTROLLER_H
+#ifndef APPS_ZOOM_PARAMETER_CONTROLLER_H
+#define APPS_ZOOM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "graph_window.h"
-#include "graph_view.h"
-
-namespace Graph {
+#include "curve_view_window_with_cursor.h"
+#include "curve_view_with_banner_and_cursor.h"
 
 class ZoomParameterController : public ViewController {
 public:
-  ZoomParameterController(Responder * parentResponder, GraphWindow * graphWindow, GraphView * graphView);
+  ZoomParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow, CurveViewWithBannerAndCursor * graphView);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -17,9 +15,9 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(GraphView * graphView);
+    ContentView(CurveViewWithBannerAndCursor * graphView);
     void layoutSubviews() override;
-    GraphView * graphView();
+    CurveViewWithBannerAndCursor * graphView();
   private:
     class LegendView : public View {
     public:
@@ -36,14 +34,12 @@ private:
     };
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    GraphView * m_graphView;
+    CurveViewWithBannerAndCursor * m_graphView;
     LegendView m_legendView;
     constexpr static KDCoordinate k_legendHeight = 50;
   };
   ContentView m_contentView;
-  GraphWindow * m_graphWindow;
+  CurveViewWindowWithCursor * m_graphWindow;
 };
-
-}
 
 #endif

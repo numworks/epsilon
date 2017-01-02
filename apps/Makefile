@@ -32,6 +32,7 @@ app_objs += $(addprefix apps/,\
   variable_box_controller.o\
   variable_box_leaf_cell.o\
   window_parameter_controller.o\
+  zoom_parameter_controller.o\
 )
 
 # Tracking which source file uses which image is painful. But we need to ensure

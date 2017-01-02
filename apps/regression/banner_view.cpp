@@ -43,7 +43,7 @@ void BannerView::reload() {
   legend = "y = ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float y = m_data->yValueForXValue(x);
+  float y = m_data->yCursorPosition();
   Float(y).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_yView.setText(buffer);
 }

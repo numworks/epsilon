@@ -1,6 +1,8 @@
 #include "curve_view_with_banner_and_cursor.h"
 #include <assert.h>
 
+constexpr KDColor CurveViewWithBannerAndCursor::k_gridColor;
+
 CurveViewWithBannerAndCursor::CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor, float topMarginFactor,
     float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
   CurveViewWithBanner(curveViewWindowWithCursor, topMarginFactor, rightMarginFactor, bottomMarginFactor, leftMarginFactor),
@@ -24,6 +26,11 @@ void CurveViewWithBannerAndCursor::reloadSelection() {
   markRectAsDirty(dirtyZone);
   layoutSubviews();
   bannerView()->reload();
+}
+
+void CurveViewWithBannerAndCursor::drawGrid(KDContext * ctx, KDRect rect) const {
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewWindowWithCursor->xGridUnit(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewWindowWithCursor->yGridUnit(), k_gridColor);
 }
 
 void CurveViewWithBannerAndCursor::layoutSubviews() {

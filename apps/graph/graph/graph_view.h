@@ -20,16 +20,11 @@ public:
   void setContext(Context * context);
   Context * context() const;
 private:
-  constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
-  void drawGrid(KDContext * ctx, KDRect rect) const;
-  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
-
   BannerView m_bannerView;
   char m_xLabels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   char m_yLabels[k_maxNumberOfYLabels][Constant::FloatBufferSizeInScientificMode];
-  GraphWindow * m_graphWindow;
   FunctionStore * m_functionStore;
   Context * m_context;
 };

@@ -37,6 +37,7 @@ protected:
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1) const;
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, KDSize size) const;
+  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawHistogram(KDContext * ctx, KDRect rect, Model * model,  float firstBarAbscissa, float barWidth,

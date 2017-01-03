@@ -12,8 +12,10 @@ public:
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
   void reload() override;
   void reloadSelection() override;
+  void drawGrid(KDContext * ctx, KDRect rect) const;
 protected:
   constexpr static KDCoordinate k_cursorSize = 9;
+  constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   void layoutSubviews() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

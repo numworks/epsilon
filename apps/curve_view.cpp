@@ -157,6 +157,21 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   ctx->fillRect(dotRect, color);
 }
 
+void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
+  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
+  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  if (axis == Axis::Vertical) {
+    rectMax = pixelToFloat(Axis::Vertical, rect.top());
+    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
+  }
+  float start = step*((int)(min(axis)/step));
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  for (float x =start; x < max(axis); x += step) {
+    if (rectMin <= x && x <= rectMax) {
+      drawLine(ctx, rect, otherAxis, x, color);
+    }
+  }
+}
 
 void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);

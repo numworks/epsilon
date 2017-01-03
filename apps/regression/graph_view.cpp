@@ -13,6 +13,7 @@ GraphView::GraphView(Data * data) :
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
+  drawGrid(ctx, rect);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawAxes(ctx, rect, Axis::Vertical);
   drawLabels(ctx, rect, Axis::Horizontal, true);

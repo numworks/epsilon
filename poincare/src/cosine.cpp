@@ -19,10 +19,10 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
   assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   Cosine * c = new Cosine();
-  c->setArgument(*newOperands, cloneOperands);
+  c->setArgument(newOperands, numberOfOperands, cloneOperands);
   return c;
 }
 
 float Cosine::approximate(Context& context) const {
-  return cosf(m_arg->approximate(context));
+  return cosf(m_args[0]->approximate(context));
 }

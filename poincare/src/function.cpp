@@ -8,48 +8,65 @@ extern "C" {
 #include "layout/string_layout.h"
 
 Function::Function(const char * name) :
-  m_arg(nullptr),
+  m_args(nullptr),
+  m_numberOfArguments(0),
   m_name(name)
 {
 }
 
-void Function::setArgument(Expression * arg, bool clone) {
-  if (m_arg != nullptr) {
-    delete m_arg;
+void Function::setArgument(Expression ** args, int numberOfArguments, bool clone) {
+  if (m_args != nullptr) {
+    for (int i = 0; i < m_numberOfArguments; i++) {
+      delete m_args[i];
+    }
+    free(m_args);
   }
-  if (clone) {
-    m_arg = arg->clone();
-  } else {
-    m_arg = arg;
+  m_numberOfArguments = numberOfArguments;
+  m_args = (Expression **)malloc(numberOfArguments*sizeof(Expression *));
+  for (int i = 0; i < numberOfArguments; i++) {
+    assert(args[i] != nullptr);
+    if (clone) {
+      m_args[i] = args[i]->clone();
+    } else {
+      m_args[i] = args[i];
+    }
   }
 }
 
 Function::~Function() {
-  if (m_arg != nullptr) {
-    delete m_arg;
+  if (m_args != nullptr) {
+    for (int i = 0; i < m_numberOfArguments; i++) {
+      delete m_args[i];
+    }
+    free(m_args);
   }
 }
 
 Expression * Function::clone() const {
-  return this->cloneWithDifferentOperands((Expression**)&m_arg, 1, true);
+  return this->cloneWithDifferentOperands(m_args, m_numberOfArguments, true);
 }
 
 ExpressionLayout * Function::createLayout() const {
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(4*sizeof(ExpressionLayout *));
+  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc((2*m_numberOfArguments+2)*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new StringLayout(m_name, strlen(m_name));
   childrenLayouts[1] = new StringLayout("(", 1);
-  childrenLayouts[2] = m_arg->createLayout();
-  childrenLayouts[3] = new StringLayout(")", 1);
-  return new HorizontalLayout(childrenLayouts, 4);
+  int layoutIndex = 2;
+  childrenLayouts[layoutIndex++] = m_args[0]->createLayout();
+  for (int i = 1; i < m_numberOfArguments; i++) {
+    childrenLayouts[layoutIndex++] = new StringLayout(",", 1);
+    childrenLayouts[layoutIndex++] = m_args[i]->createLayout();
+  }
+  childrenLayouts[layoutIndex] = new StringLayout(")", 1);
+  return new HorizontalLayout(childrenLayouts, 2*m_numberOfArguments+2);
 }
 
 const Expression * Function::operand(int i) const {
-  assert(i==0);
-  return m_arg;
+  assert(i >= 0 && i < m_numberOfArguments);
+  return m_args[i];
 }
 
 int Function::numberOfOperands() const {
-  return 1;
+  return m_numberOfArguments;
 }
 
 Expression * Function::evaluate(Context& context) const {

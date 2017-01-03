@@ -15,7 +15,7 @@ Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
   assert(newOperands != nullptr);
   assert(numberOfOperands == 1);
   Sine * s = new Sine();
-  s->setArgument(*newOperands, cloneOperands);
+  s->setArgument(newOperands, numberOfOperands, cloneOperands);
   return s;
 }
 
@@ -24,5 +24,5 @@ Expression::Type Sine::type() const {
 }
 
 float Sine::approximate(Context& context) const {
-  return sinf(m_arg->approximate(context));
+  return sinf(m_args[0]->approximate(context));
 }

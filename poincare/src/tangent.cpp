@@ -15,7 +15,7 @@ Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
   assert(newOperands != nullptr);
   assert(numberOfOperands == 1);
   Tangent * t = new Tangent();
-  t->setArgument(*newOperands, cloneOperands);
+  t->setArgument(newOperands, numberOfOperands, cloneOperands);
   return t;
 }
 
@@ -24,5 +24,5 @@ Expression::Type Tangent::type() const {
 }
 
 float Tangent::approximate(Context& context) const {
-  return tanf(m_arg->approximate(context));
+  return tanf(m_args[0]->approximate(context));
 }

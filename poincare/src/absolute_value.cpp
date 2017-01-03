@@ -18,11 +18,11 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
   assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
-  AbsoluteValue * c = new AbsoluteValue();
-  c->setArgument(*newOperands, cloneOperands);
-  return c;
+  AbsoluteValue * a = new AbsoluteValue();
+  a->setArgument(newOperands, numberOfOperands, cloneOperands);
+  return a;
 }
 
 float AbsoluteValue::approximate(Context& context) const {
-  return fabsf(m_arg->approximate(context));
+  return fabsf(m_args[0]->approximate(context));
 }

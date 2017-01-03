@@ -10,14 +10,15 @@ class Function : public Expression {
 public:
   Function(const char * name);
   ~Function();
-  void setArgument(Expression * arg, bool clone = true);
+  void setArgument(Expression ** args, int numberOfArguments, bool clone = true);
   ExpressionLayout * createLayout() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * clone() const override;
   Expression * evaluate(Context& context) const override;
 protected:
-  const Expression * m_arg;
+  Expression ** m_args;
+  int m_numberOfArguments;
 private:
   const char * m_name;
 };

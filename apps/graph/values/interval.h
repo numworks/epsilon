@@ -9,6 +9,7 @@ public:
   // Delete the implicit copy constructor: the object is heavy
   Interval(const Interval&) = delete;
   int numberOfElements();
+  void deleteElementAtIndex(int index);
   float element(int i);
   float start();
   float end();

@@ -16,6 +16,14 @@ int Interval::numberOfElements() {
   return m_numberOfElements;
 }
 
+void Interval::deleteElementAtIndex(int index) {
+  m_numberOfElements--;
+  for (int k = index; k < m_numberOfElements; k++) {
+    m_intervalBuffer[k] = m_intervalBuffer[k+1];
+  }
+  m_intervalBuffer[m_numberOfElements] = 0.0f;
+}
+
 float Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
   computeElements();

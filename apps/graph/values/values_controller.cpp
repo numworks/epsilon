@@ -56,7 +56,12 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     headerViewController()->setSelectedButton(0);
     return true;
   }
-
+  if (event == Ion::Events::Clear && activeRow() > 0 &&
+      (activeRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
+    m_interval.deleteElementAtIndex(m_selectableTableView.selectedRow()-1);
+    m_selectableTableView.reloadData();
+    return true;
+  }
   if (event == Ion::Events::OK) {
     if (activeRow() == -1) {
       return headerViewController()->handleEvent(event);

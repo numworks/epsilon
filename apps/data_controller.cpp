@@ -9,7 +9,8 @@ DataController::DataController(Responder * parentResponder, Data * data) :
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
-  m_data(data)
+  m_data(data),
+  m_dataParameterController(this, data)
 {
 }
 
@@ -77,6 +78,12 @@ bool DataController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.deselectTable();
     assert(m_selectableTableView.selectedRow() == -1);
     app()->setFirstResponder(tabController());
+    return true;
+  }
+  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 0) {
+    m_dataParameterController.selectXColumn(m_selectableTableView.selectedColumn() == 0);
+    StackViewController * stack = ((StackViewController *)parentResponder());
+    stack->push(&m_dataParameterController);
     return true;
   }
   if (event == Ion::Events::Clear) {

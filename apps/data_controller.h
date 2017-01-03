@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "data.h"
+#include "data_parameter_controller.h"
 #include "editable_cell_table_view_controller.h"
 
 class DataController : public EditableCellTableViewController {
@@ -32,6 +33,7 @@ protected:
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
   Data * m_data;
+  DataParameterController m_dataParameterController;
 };
 
 #endif

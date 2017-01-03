@@ -10,11 +10,6 @@ InitialisationParameterController::InitialisationParameterController(Responder *
     Metric::BottomMargin, Metric::LeftMargin)),
   m_graphWindow(graphWindow)
 {
-  m_cells[0].setText("Trigonometrique");
-  m_cells[1].setText("Abscisses entieres");
-  m_cells[2].setText("Orthonorme");
-  m_cells[3].setText("Reglage de base");
-
 }
 
 const char * InitialisationParameterController::title() const {
@@ -77,6 +72,12 @@ int InitialisationParameterController::reusableCellCount() {
 
 KDCoordinate InitialisationParameterController::cellHeight() {
   return 35;
+}
+
+void InitialisationParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+  MenuListCell * myCell = (MenuListCell *)cell;
+  const char * titles[4] = {"Trigonometrique", "Abscisses entieres", "Orthonorme", "Reglage de base"};
+  myCell->setText(titles[index]);
 }
 
 }

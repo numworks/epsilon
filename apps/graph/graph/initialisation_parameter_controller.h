@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "graph_window.h"
-#include "graph_view.h"
 
 namespace Graph {
 
@@ -18,6 +17,7 @@ public:
   KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 4;
   MenuListCell m_cells[k_totalNumberOfCells];

@@ -15,6 +15,7 @@ public:
   Context * context();
   void setContext(Context * context);
   void setTrigonometric();
+  void setDefault();
   float derivativeAtCursorPosition();
   Function * functionSelectedByCursor();
   void setCursorPositionAtAbscissaWithFunction(float abscissa, Function * function);

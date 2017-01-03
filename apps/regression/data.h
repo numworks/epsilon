@@ -25,6 +25,9 @@ public:
   // 0-> the window has not changed  1->the window changed
   int moveCursorVertically(int direction) override;
 
+  // Window
+  void setDefault();
+
   // Calculation
   float xSum();
   float ySum();

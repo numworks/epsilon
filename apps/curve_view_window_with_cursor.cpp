@@ -146,14 +146,6 @@ void CurveViewWindowWithCursor::normalize() {
   initCursorPosition();
 }
 
-void CurveViewWindowWithCursor::setDefault() {
-  m_xMin = -10.0f;
-  m_xMax = 10.0f;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  setYAuto(true);
-  initCursorPosition();
-}
-
 bool CurveViewWindowWithCursor::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
   bool windowMoved = false;
   float xRange = m_xMax - m_xMin;

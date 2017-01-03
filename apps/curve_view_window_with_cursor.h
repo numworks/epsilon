@@ -37,7 +37,6 @@ public:
   void translateWindow(Direction direction);
   void roundAbscissa();
   void normalize();
-  void setDefault();
 protected:
   constexpr static float k_cursorMarginFactorToBorder = 0.025f;
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;

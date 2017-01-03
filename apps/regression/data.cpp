@@ -99,6 +99,12 @@ int Data::moveCursorHorizontally(int direction) {
   return windowHasMoved;
 }
 
+/* Window */
+
+void Data::setDefault() {
+  initWindowParameters();
+}
+
 /* Calculations */
 
 float Data::xSum() {

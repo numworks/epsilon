@@ -67,6 +67,14 @@ void GraphWindow::setTrigonometric() {
   initCursorPosition();
 }
 
+void GraphWindow::setDefault() {
+  m_xMin = -10.0f;
+  m_xMax = 10.0f;
+  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  setYAuto(true);
+  initCursorPosition();
+}
+
 float GraphWindow::derivativeAtCursorPosition() {
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   return f->approximateDerivative(m_xCursorPosition, m_context);

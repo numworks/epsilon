@@ -7,6 +7,7 @@ app_objs += $(addprefix apps/regression/,\
   graph_controller.o\
   graph_view.o\
   initialisation_parameter_controller.o\
+  prediction_parameter_controller.o\
 )
 
 app_images += apps/regression/regression_icon.png

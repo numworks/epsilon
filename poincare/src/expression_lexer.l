@@ -67,7 +67,7 @@
 %%
 
  /* If two patterns can match the same input, flex resolves the ambiguity:
-  * - By matching the longest posible string
+  * - By matching the longest possible string
   * - In a tie, by using the pattern that appears first
   *
   * Also note that yytext is guaranteed to be null-terminated when the token is

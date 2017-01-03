@@ -107,6 +107,20 @@ int Data::selectedDotIndex() {
   return m_selectedDotIndex;
 }
 
+void Data::setCursorPositionAtAbscissa(float abscissa) {
+  m_xCursorPosition = abscissa;
+  centerAxisAround(CurveViewWindow::Axis::X, m_xCursorPosition);
+  m_yCursorPosition = yValueForXValue(m_xCursorPosition);
+  centerAxisAround(CurveViewWindow::Axis::Y, m_yCursorPosition);
+}
+
+void Data::setCursorPositionAtOrdinate(float ordinate) {
+  m_yCursorPosition = ordinate;
+  centerAxisAround(CurveViewWindow::Axis::Y, m_yCursorPosition);
+  m_xCursorPosition = xValueForYValue(m_yCursorPosition);
+  centerAxisAround(CurveViewWindow::Axis::X, m_xCursorPosition);
+}
+
 /* Window */
 
 void Data::setDefault() {
@@ -195,6 +209,10 @@ float Data::yIntercept() {
 
 float Data::yValueForXValue(float x) {
   return slope()*x+yIntercept();
+}
+
+float Data::xValueForYValue(float y) {
+  return (y - yIntercept())/slope();
 }
 
 float Data::correlationCoefficient() {

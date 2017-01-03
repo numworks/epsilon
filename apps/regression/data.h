@@ -27,6 +27,8 @@ public:
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int selectedDotIndex();
+  void setCursorPositionAtAbscissa(float abscissa);
+  void setCursorPositionAtOrdinate(float ordinate);
 
   // Window
   void setDefault();
@@ -47,6 +49,7 @@ public:
   float slope();
   float yIntercept();
   float yValueForXValue(float x);
+  float xValueForYValue(float y);
   float correlationCoefficient();
   float squaredCorrelationCoefficient();
 

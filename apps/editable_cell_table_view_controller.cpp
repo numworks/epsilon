@@ -27,6 +27,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();
+  m_selectableTableView.handleEvent(Ion::Events::Down);
   return true;
 }
 

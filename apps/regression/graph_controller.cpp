@@ -16,14 +16,17 @@ ViewController * GraphController::initialisationParameterController() {
 }
 
 bool GraphController::isEmpty() {
-  if (m_data->numberOfPairs() == 0) {
+  if (m_data->numberOfPairs() < 2 || isinf(m_data->slope()) || isnan(m_data->slope())) {
     return true;
   }
   return false;
 }
 
 const char * GraphController::emptyMessage() {
-  return "Aucune donnee a tracer";
+  if (m_data->numberOfPairs() == 0) {
+    return "Aucune donnee a tracer";
+  }
+  return "Pas assez de donnees pour un regression";
 }
 
 bool GraphController::handleEnter() {

@@ -9,7 +9,7 @@ namespace Regression {
 Data::Data() :
   ::Data(),
   CurveViewWindowWithCursor(),
-  m_dotsSelected(false)
+  m_selectedDotIndex(-1)
 {
 }
 
@@ -67,16 +67,17 @@ void Data::deletePairAtIndex(int index) {
 
 int Data::moveCursorVertically(int direction) {
   float yRegressionCurve = yValueForXValue(m_xCursorPosition);
-  if (m_dotsSelected) {
+  if (m_selectedDotIndex >= 0) {
     if ((yRegressionCurve - m_yCursorPosition > 0) == (direction > 0)) {
-      m_dotsSelected = false;
+      m_selectedDotIndex = -1;
       m_yCursorPosition = yRegressionCurve;
     } else {
       return -1;
     }
   } else {
-    if (selectClosestDotRelativelyToCurve(direction)) {
-      m_dotsSelected = true;
+    int dotSelected = selectClosestDotRelativelyToCurve(direction);
+    if (dotSelected >= 0) {
+      m_selectedDotIndex = dotSelected;
     } else {
       return -1;
     }
@@ -86,8 +87,11 @@ int Data::moveCursorVertically(int direction) {
 }
 
 int Data::moveCursorHorizontally(int direction) {
-  if (m_dotsSelected) {
-    if (!selectNextDot(direction)) {
+  if (m_selectedDotIndex >= 0) {
+    int dotSelected = selectNextDot(direction);
+    if (dotSelected >= 0) {
+      m_selectedDotIndex = dotSelected;
+    } else {
       return -1;
     }
   } else {
@@ -241,7 +245,7 @@ float Data::minYValue() {
 void Data::initCursorPosition() {
   m_xCursorPosition = (m_xMin+m_xMax)/2.0f;
   m_yCursorPosition = yValueForXValue(m_xCursorPosition);
-  m_dotsSelected = false;
+  m_selectedDotIndex = -1;
 }
 
 bool Data::computeYaxis() {
@@ -275,42 +279,108 @@ void Data::initWindowParameters() {
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
-bool Data::selectClosestDotRelativelyToCurve(int direction) {
+int Data::selectClosestDotRelativelyToCurve(int direction) {
   float nextX = INFINITY;
   float nextY = INFINITY;
+  int selectedDot = -1;
+  /* The conditions to test on all dots are in this order:
+  * - the next dot should be within the window abscissa bounds
+  * - the next dot is the closest one in abscissa
+  * - the next dot is above the selected one if direction == 1 and below
+  * otherwise */
   for (int index = 0; index < m_numberOfPairs; index++) {
-    if (m_xMin <= m_xValues[index] && m_xValues[index] <= m_xMax) {
-      if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
-          ((m_yValues[index] - yValueForXValue(m_xValues[index]) >= 0) == (direction > 0))) {
+    if ((m_xMin <= m_xValues[index] && m_xValues[index] <= m_xMax) &&
+        (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition)) &&
+        ((m_yValues[index] - yValueForXValue(m_xValues[index]) >= 0) == (direction > 0))) {
+      // Handle edge case: if 2 dots have the same abscissa but different ordinates
+      if (nextX != m_xValues[index] || ((nextY - m_yValues[index] >= 0) == (direction > 0))) {
         nextX = m_xValues[index];
         nextY = m_yValues[index];
+        selectedDot = index;
+      }
+    }
+  }
+  // Compare with the mean dot
+  if (m_xMin <= xMean() && xMean() <= m_xMax &&
+      (fabsf(xMean() - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition)) &&
+      ((yMean() - yValueForXValue(xMean()) >= 0) == (direction > 0))) { 
+    if (nextX != xMean() || ((nextY - yMean() >= 0) == (direction > 0))) {
+      nextX = xMean();
+      nextY = yMean();
+      selectedDot = m_numberOfPairs;
+    }
+  }
+  if (!isinf(nextX) && !isinf(nextY)) {
+    m_xCursorPosition = nextX;
+    m_yCursorPosition = nextY;
+    return selectedDot;
+  }
+  return selectedDot;
+}
+
+int Data::selectNextDot(int direction) {
+  float nextX = INFINITY;
+  float nextY = INFINITY;
+  int selectedDot = -1;
+  /* We have to scan the data in opposite ways for the 2 directions to ensure to
+   * select all dots (even with equal abscissa) */
+  if (direction > 0) {
+    for (int index = 0; index < m_numberOfPairs; index++) {
+      /* The conditions to test are in this order:
+       * - the next dot is the closest one in abscissa
+       * - the next dot is not the same as the selected one
+       * - the next dot is at the right of the selected one */
+      if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+          (index != m_selectedDotIndex) &&
+          (m_xValues[index] >= m_xCursorPosition)) {
+        // Handle edge case: 2 dots have same abscissa
+        if (m_xValues[index] != m_xCursorPosition || (index > m_selectedDotIndex)) {
+          nextX = m_xValues[index];
+          nextY = m_yValues[index];
+          selectedDot = index;
+        }
+      }
+    }
+    // Compare with the mean dot
+    if (fabsf(xMean() - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+          (m_numberOfPairs != m_selectedDotIndex) &&
+          (xMean() >= m_xCursorPosition)) {
+      if (xMean() != m_xCursorPosition || (m_numberOfPairs > m_selectedDotIndex)) {
+        nextX = xMean();
+        nextY = yMean();
+        selectedDot = m_numberOfPairs;
+      }
+    }
+  } else {
+    // Compare with the mean dot
+    if (fabsf(xMean() - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+          (m_numberOfPairs != m_selectedDotIndex) &&
+          (xMean() <= m_xCursorPosition)) {
+      if (xMean() != m_xCursorPosition || (m_numberOfPairs < m_selectedDotIndex)) {
+        nextX = xMean();
+        nextY = yMean();
+        selectedDot = m_numberOfPairs;
+      }
+    }
+    for (int index = m_numberOfPairs-1; index >= 0; index--) {
+      if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
+          (index != m_selectedDotIndex) &&
+          (m_xValues[index] <= m_xCursorPosition)) {
+        // Handle edge case: 2 dots have same abscissa
+        if (m_xValues[index] != m_xCursorPosition || (index < m_selectedDotIndex)) {
+          nextX = m_xValues[index];
+          nextY = m_yValues[index];
+          selectedDot = index;
+        }
       }
     }
   }
   if (!isinf(nextX) && !isinf(nextY)) {
     m_xCursorPosition = nextX;
     m_yCursorPosition = nextY;
-    return true;
+    return selectedDot;
   }
-  return false;
-}
-
-bool Data::selectNextDot(int direction) {
-  float nextX = INFINITY;
-  float nextY = INFINITY;
-  for (int index = 0; index < m_numberOfPairs; index++) {
-    if (fabsf(m_xValues[index] - m_xCursorPosition) < fabsf(nextX - m_xCursorPosition) &&
-        ((direction > 0 && m_xValues[index] > m_xCursorPosition) ||  (direction < 0 && m_xValues[index] < m_xCursorPosition))) {
-      nextX = m_xValues[index];
-      nextY = m_yValues[index];
-    }
-  }
-  if (!isinf(nextX) && !isinf(nextY)) {
-    m_xCursorPosition = nextX;
-    m_yCursorPosition = nextY;
-    return true;
-  }
-  return false;
+  return selectedDot;
 }
 
 }

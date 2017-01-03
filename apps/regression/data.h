@@ -58,14 +58,14 @@ private:
   bool computeYaxis() override;
   void initCursorPosition() override;
 
-  bool selectClosestDotRelativelyToCurve(int direction);
-  bool selectNextDot(int direction);
+  int selectClosestDotRelativelyToCurve(int direction);
+  int selectNextDot(int direction);
 
   // Raw numeric data
   int m_xValues[k_maxNumberOfPairs];
   float m_yValues[k_maxNumberOfPairs];
   // Cursor
-  bool m_dotsSelected;
+  int m_selectedDotIndex;
 };
 
 }

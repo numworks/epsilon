@@ -21,6 +21,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int index = 0; index < m_data->numberOfPairs(); index++) {
     drawDot(ctx, rect, m_data->xValueAtIndex(index), m_data->yValueAtIndex(index), KDColorBlue, KDSize(k_dotSize, k_dotSize));
   }
+  drawDot(ctx, rect, m_data->xMean(), m_data->yMean(), KDColorGreen, KDSize(k_dotSize, k_dotSize));
 }
 
 char * GraphView::label(Axis axis, int index) const {

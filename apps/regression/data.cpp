@@ -279,6 +279,14 @@ void Data::initWindowParameters() {
   m_xMax = maxXValue();
   m_yMin = minYValue();
   m_yMax = maxYValue();
+  if (m_xMin == m_xMax) {;
+    m_xMin = m_xMin - 1.0f;
+    m_xMax = m_xMax + 1.0f;
+  }
+  if (m_yMin == m_yMax) {
+    m_yMin = m_yMin - 1.0f;
+    m_yMax = m_yMax + 1.0f;
+  }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }

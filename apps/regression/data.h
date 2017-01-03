@@ -24,6 +24,9 @@ public:
   // the result of moveCursorVertically means:
   // 0-> the window has not changed  1->the window changed
   int moveCursorVertically(int direction) override;
+  /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
+   * the mean dot is selected and the dot index otherwise */
+  int selectedDotIndex();
 
   // Window
   void setDefault();

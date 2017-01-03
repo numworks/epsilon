@@ -103,6 +103,10 @@ int Data::moveCursorHorizontally(int direction) {
   return windowHasMoved;
 }
 
+int Data::selectedDotIndex() {
+  return m_selectedDotIndex;
+}
+
 /* Window */
 
 void Data::setDefault() {

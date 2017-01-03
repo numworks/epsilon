@@ -20,30 +20,39 @@ void BannerView::reload() {
   m_regressionTypeView.setText("y = ax+b");
   char buffer[k_maxNumberOfCharacters];
   const char * legend = "a = ";
+  float slope = m_data->slope();
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float slope = m_data->slope();
   Float(slope).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_slopeView.setText(buffer);
 
   legend = "b = ";
+  float yIntercept = m_data->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float yIntercept = m_data->yIntercept();
   Float(yIntercept).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_yInterceptView.setText(buffer);
 
   legend = "x = ";
+  float x = m_data->xCursorPosition();
+  // Display a specific legend if the mean dot is selected
+  if (m_data->selectedDotIndex() == m_data->numberOfPairs()) {
+    legend = "x^ = ";
+    x = m_data->xMean();
+  }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float x = m_data->xCursorPosition();
   Float(x).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_xView.setText(buffer);
 
   legend = "y = ";
+  float y = m_data->yCursorPosition();
+  if (m_data->selectedDotIndex() == m_data->numberOfPairs()) {
+    legend = "y^ = ";
+    y = m_data->yMean();
+  }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float y = m_data->yCursorPosition();
   Float(y).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_yView.setText(buffer);
 }

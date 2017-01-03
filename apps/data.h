@@ -9,6 +9,8 @@ public:
   virtual void setYValueAtIndex(float f, int index) = 0;
   virtual float xValueAtIndex(int index) = 0;
   virtual float yValueAtIndex(int index) = 0;
+  virtual void deleteAllXValues() = 0;
+  virtual void deleteAllYValues() = 0;
   int numberOfPairs();
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfPairs = 500;

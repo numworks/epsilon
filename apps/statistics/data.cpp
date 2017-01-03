@@ -91,6 +91,17 @@ int Data::totalSize() {
   }
   return totalSize;
 }
+
+void Data::deleteAllXValues() {
+  m_numberOfPairs = 0;
+}
+
+void Data::deleteAllYValues() {
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    m_sizes[k] = 1;
+  }
+}
+
 /* Histogram bars */
 
 float Data::barWidth() {

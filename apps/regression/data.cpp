@@ -63,6 +63,18 @@ void Data::deletePairAtIndex(int index) {
   initWindowParameters();
 }
 
+void Data::deleteAllXValues() {
+  m_numberOfPairs = 0;
+}
+
+void Data::deleteAllYValues() {
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    m_yValues[k] = 0.0f;
+    initCursorPosition();
+    initWindowParameters();
+  }
+}
+
 /* Cursor */
 
 int Data::moveCursorVertically(int direction) {

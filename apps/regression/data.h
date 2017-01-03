@@ -18,6 +18,8 @@ public:
   void setXValueAtIndex(float value, int index) override;
   void setYValueAtIndex(float value, int index) override;
   void deletePairAtIndex(int index) override;
+  void deleteAllXValues() override;
+  void deleteAllYValues() override;
 
   // Cursor
   int moveCursorHorizontally(int direction) override;

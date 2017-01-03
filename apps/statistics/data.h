@@ -23,6 +23,8 @@ public:
   void setSizeAtIndex(int size, int index);
   void deletePairAtIndex(int index) override;
   int totalSize();
+  void deleteAllXValues() override;
+  void deleteAllYValues() override;
 
   // Histogram bars
   float barWidth();

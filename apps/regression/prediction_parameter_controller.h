@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "data.h"
+#include "go_to_parameter_controller.h"
 
 namespace Regression {
 
@@ -22,6 +23,7 @@ private:
   constexpr static int k_totalNumberOfCells = 2;
   ChevronMenuListCell m_cells[2];
   SelectableTableView m_selectableTableView;
+  GoToParameterController m_goToParameterController;
 };
 
 }

@@ -6,7 +6,8 @@ namespace Regression {
 PredictionParameterController::PredictionParameterController(Responder * parentResponder, Data * data) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin))
+    Metric::BottomMargin, Metric::LeftMargin)),
+  m_goToParameterController(GoToParameterController(this, data))
 {
 }
 
@@ -25,7 +26,10 @@ void PredictionParameterController::didBecomeFirstResponder() {
 
 bool PredictionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    return false;
+    m_goToParameterController.setXPrediction(m_selectableTableView.selectedRow() == 0);
+    StackViewController * stack = (StackViewController *)parentResponder();
+    stack->push(&m_goToParameterController);
+    return true;
   }
   return false;
 }

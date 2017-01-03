@@ -20,6 +20,7 @@ objs += $(addprefix poincare/src/,\
   logarithm.o\
   matrix.o\
   matrix_data.o\
+  nth_root.o\
   parenthesis.o\
   power.o\
   product.o\

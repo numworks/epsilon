@@ -122,6 +122,7 @@ exp:
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Parenthesis($2, false); }
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Matrix($2); }
   | FUNCTION LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = $1; Expression * terms[1] = {$3}; $1->setArgument(terms, 1, false); }
+  | FUNCTION LEFT_PARENTHESIS exp COMMA exp RIGHT_PARENTHESIS { $$ = $1; Expression * terms[2] = {$3, $5}; $1->setArgument(terms, 2, false); }
 ;
 
 %%

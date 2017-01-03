@@ -15,6 +15,7 @@
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_data.h>
+#include <poincare/nth_root.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
 #include <poincare/product.h>

@@ -85,6 +85,7 @@ sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
+root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

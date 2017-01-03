@@ -54,5 +54,5 @@ void FloatParameterController::tableViewDidChangeSelection(SelectableTableView *
 }
 
 KDCoordinate FloatParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }

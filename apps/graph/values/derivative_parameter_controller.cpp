@@ -73,7 +73,7 @@ int DerivativeParameterController::reusableCellCount() {
 }
 
 KDCoordinate DerivativeParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 }

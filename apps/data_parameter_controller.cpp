@@ -73,5 +73,5 @@ int DataParameterController::reusableCellCount() {
 }
 
 KDCoordinate DataParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }

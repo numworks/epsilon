@@ -78,7 +78,7 @@ int CurveParameterController::reusableCellCount() {
 }
 
 KDCoordinate CurveParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 void CurveParameterController::setFunction(Function * function) {

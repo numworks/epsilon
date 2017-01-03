@@ -101,7 +101,7 @@ void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, i
 }
 
 KDCoordinate Probability::LawController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 void Probability::LawController::setLawAccordingToIndex(int index) {

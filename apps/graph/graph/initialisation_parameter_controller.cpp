@@ -71,7 +71,7 @@ int InitialisationParameterController::reusableCellCount() {
 }
 
 KDCoordinate InitialisationParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 void InitialisationParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {

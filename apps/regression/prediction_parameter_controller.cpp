@@ -49,7 +49,7 @@ int PredictionParameterController::reusableCellCount() {
 }
 
 KDCoordinate PredictionParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 void PredictionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {

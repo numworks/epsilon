@@ -72,7 +72,7 @@ int FunctionParameterController::reusableCellCount() {
 }
 
 KDCoordinate FunctionParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 void FunctionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {

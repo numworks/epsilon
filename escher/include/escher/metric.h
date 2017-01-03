@@ -10,6 +10,7 @@ public:
   constexpr static KDCoordinate TopMargin = 10;
   constexpr static KDCoordinate BottomMargin = 10;
   constexpr static KDCoordinate LabelMargin = 5;
+  constexpr static KDCoordinate ParameterCellHeight = 35;
 };
 
 #endif

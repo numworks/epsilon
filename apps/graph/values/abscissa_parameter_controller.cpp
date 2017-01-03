@@ -72,7 +72,7 @@ int AbscissaParameterController::reusableCellCount() {
 }
 
 KDCoordinate AbscissaParameterController::cellHeight() {
-  return 35;
+  return Metric::ParameterCellHeight;
 }
 
 }

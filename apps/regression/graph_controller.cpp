@@ -5,12 +5,13 @@ namespace Regression {
 GraphController::GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Data * data) :
   CurveViewWindowWithBannerAndCursorController(parentResponder, headerViewController, data, &m_view),
   m_view(GraphView(data)),
-  m_data(data)
+  m_data(data),
+  m_initialisationParameterController(InitialisationParameterController(this, m_data))
 {
 }
 
 ViewController * GraphController::initialisationParameterController() {
-  return &m_windowParameterController;
+  return &m_initialisationParameterController;
 }
 
 bool GraphController::isEmpty() {

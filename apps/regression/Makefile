@@ -4,6 +4,7 @@ app_objs += $(addprefix apps/regression/,\
   calculation_controller.o\
   data.o\
   even_odd_double_buffer_text_cell.o\
+  go_to_parameter_controller.o\
   graph_controller.o\
   graph_view.o\
   initialisation_parameter_controller.o\

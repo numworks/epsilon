@@ -1,6 +1,7 @@
 #ifndef POINCARE_H
 #define POINCARE_H
 
+#include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>

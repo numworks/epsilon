@@ -79,6 +79,7 @@
 [0-9]+ { poincare_expression_yylval.string = yytext; return DIGITS; }
 E  { return EE; }
 [A-Zxntab] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }

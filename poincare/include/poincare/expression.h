@@ -9,6 +9,7 @@ class Context;
 class Expression {
   public:
     enum class Type : uint8_t {
+      AbsoluteValue,
       Addition,
       Cosine,
       Float,

@@ -3,6 +3,7 @@ SFLAGS += -Ipoincare/include
 include poincare/src/simplify/Makefile
 
 objs += $(addprefix poincare/src/,\
+  absolute_value.o\
   addition.o\
   binary_operation.o\
   global_context.o\

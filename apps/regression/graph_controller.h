@@ -5,6 +5,7 @@
 #include "data.h"
 #include "graph_view.h"
 #include "initialisation_parameter_controller.h"
+#include "prediction_parameter_controller.h"
 #include "../curve_view_with_banner_and_cursor_controller.h"
 
 namespace Regression {
@@ -22,6 +23,7 @@ private:
   GraphView m_view;
   Data * m_data;
   InitialisationParameterController m_initialisationParameterController;
+  PredictionParameterController m_predictionParameterController;
 };
 
 }

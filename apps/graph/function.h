@@ -27,6 +27,7 @@ public:
   float approximateDerivative(float x, Context * context) const;
 private:
   constexpr static float k_epsilon = 0.0001f;
+  constexpr static float k_precision = 0.01f;
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];
   const char * m_name;

@@ -1,5 +1,6 @@
 #include "function.h"
 #include <string.h>
+#include <math.h>
 
 namespace Graph {
 
@@ -85,6 +86,7 @@ float Function::approximateDerivative(float x, Context * context) const {
   float functionPlus = evaluateAtAbscissa(x + k_epsilon, context);
   float functionMinus = evaluateAtAbscissa(x - k_epsilon, context);
   float growthRate = (functionPlus - functionMinus)/(2*k_epsilon);
+  growthRate = roundf(growthRate/k_precision)*k_precision;
   return growthRate;
 }
 

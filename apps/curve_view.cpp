@@ -218,26 +218,28 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {
     float y = evaluateModelWithParameter(curve, x);
-    if (!isnan(y)) {
-      float pxf = floatToPixel(Axis::Horizontal, x);
-      float pyf = floatToPixel(Axis::Vertical, y);
-      if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
-        KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
-        if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
-          colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 2, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
-        }
-        ctx->fillRect(colorRect, color);
+    if (isnan(y)) {
+      continue;
+    }
+    float pxf = floatToPixel(Axis::Horizontal, x);
+    float pyf = floatToPixel(Axis::Vertical, y);
+    if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
+      KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
+        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 2, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
-      stampAtLocation(ctx, rect, pxf, pyf, color);
-      if (x > rectMin && !isnan(evaluateModelWithParameter(curve, x-xStep))) {
-        if (continuously) {
-          float puf = floatToPixel(Axis::Horizontal, x - xStep);
-          float pvf = floatToPixel(Axis::Vertical, evaluateModelWithParameter(curve, x-xStep));
-          straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
-        } else {
-          jointDots(ctx, rect, curve, x - xStep, evaluateModelWithParameter(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
-        }
-      }
+      ctx->fillRect(colorRect, color);
+    }
+    stampAtLocation(ctx, rect, pxf, pyf, color);
+    if (x <= rectMin || isnan(evaluateModelWithParameter(curve, x-xStep))) {
+      continue;
+    }
+    if (continuously) {
+      float puf = floatToPixel(Axis::Horizontal, x - xStep);
+      float pvf = floatToPixel(Axis::Vertical, evaluateModelWithParameter(curve, x-xStep));
+      straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
+    } else {
+      jointDots(ctx, rect, curve, x - xStep, evaluateModelWithParameter(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
     }
   }
 }

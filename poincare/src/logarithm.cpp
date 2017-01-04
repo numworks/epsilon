@@ -15,7 +15,7 @@ Expression::Type Logarithm::type() const {
 
 Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 1 || numberOfOperands == 2);
   assert(newOperands != nullptr);
   Logarithm * l = new Logarithm();
   l->setArgument(newOperands, numberOfOperands, cloneOperands);
@@ -23,5 +23,8 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float Logarithm::approximate(Context& context) const {
-  return log10f(m_args[0]->approximate(context));
+  if (m_numberOfArguments == 1) {
+    return log10f(m_args[1]->approximate(context));
+  }
+  return log10f(m_args[1]->approximate(context))/log10f(m_args[0]->approximate(context));
 }

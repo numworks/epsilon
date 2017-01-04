@@ -21,7 +21,7 @@ NthRootLayout::NthRootLayout(ExpressionLayout * radicandLayout, ExpressionLayout
   m_radicandLayout->setParent(this);
   m_indexLayout->setParent(this);
   m_baseline = max(m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin,
-    m_indexLayout->size().height() + k_leftRadixHeight - m_radicandLayout->size().height() - k_heightMargin + m_radicandLayout->baseline());
+                   m_indexLayout->size().height() + k_indexHeight);
 }
 
 NthRootLayout::~NthRootLayout() {
@@ -34,20 +34,20 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   KDSize indexSize = m_indexLayout->size();
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
-    p.y() + max(indexSize.height(), k_radixLineThickness+2*k_heightMargin+radicandSize.height()-k_leftRadixHeight),
+    p.y() + m_baseline + radicandSize.height() - m_radicandLayout->baseline() + k_heightMargin - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
-  if (indexSize.height() + k_leftRadixHeight > k_radixLineThickness + radicandSize.height() + 2*k_heightMargin) {
+  if (m_indexLayout->size().height() + k_indexHeight > m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin) {
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() + k_leftRadixHeight - radicandSize.height() - k_radixLineThickness - 2*k_heightMargin,
+                         p.y() + indexSize.height() + k_indexHeight - m_radicandLayout->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
                          radicandSize.height() + 2*k_heightMargin + k_radixLineThickness), expressionColor);
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() + k_leftRadixHeight - radicandSize.height() - k_radixLineThickness - 2*k_heightMargin,
+                         p.y() + indexSize.height() + k_indexHeight - m_radicandLayout->baseline() - k_radixLineThickness - k_heightMargin,
                          radicandSize.width() + 2*k_widthMargin,
                          k_radixLineThickness), expressionColor);
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin,
-                         p.y() + indexSize.height() + k_leftRadixHeight - radicandSize.height() - k_radixLineThickness - 2*k_heightMargin,
+                         p.y() + indexSize.height() + k_indexHeight - m_radicandLayout->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
                          k_rightRadixHeight + k_radixLineThickness), expressionColor);
   } else {
@@ -72,7 +72,7 @@ KDSize NthRootLayout::computeSize() {
   KDSize indexSize = m_indexLayout->size();
   return KDSize(
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width(),
-      max(k_radixLineThickness + 2*k_heightMargin + radicandSize.height(), indexSize.height() + k_leftRadixHeight)
+      m_baseline + radicandSize.height() - m_radicandLayout->baseline() + k_heightMargin
       );
 }
 
@@ -90,22 +90,13 @@ ExpressionLayout * NthRootLayout::child(uint16_t index) {
 KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize radicandSize = m_radicandLayout->size();
   KDSize indexSize = m_indexLayout->size();
   if (child == m_indexLayout) {
     x = 0;
-    if (indexSize.height() + k_leftRadixHeight > k_radixLineThickness + radicandSize.height() + 2*k_heightMargin) {
-      y = 0;
-    } else {
-      y = k_radixLineThickness+2*k_heightMargin+radicandSize.height()-k_leftRadixHeight - indexSize.height();
-    }
+    y = m_baseline - indexSize.height() -  k_indexHeight;
   } else if (child == m_radicandLayout) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
-    if (indexSize.height() + k_leftRadixHeight > k_radixLineThickness + radicandSize.height() + 2*k_heightMargin) {
-      y = indexSize.height() + k_leftRadixHeight - radicandSize.height() - k_heightMargin;
-    } else {
-      y = k_radixLineThickness + k_heightMargin;
-    }
+    y = m_baseline - m_radicandLayout->baseline();
   } else {
     assert(false);
   }

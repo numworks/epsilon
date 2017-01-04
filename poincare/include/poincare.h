@@ -5,6 +5,7 @@
 #include <poincare/addition.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/expression.h>
 #include <poincare/float.h>
 #include <poincare/fraction.h>

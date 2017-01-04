@@ -12,6 +12,7 @@ class Expression {
       AbsoluteValue,
       Addition,
       Cosine,
+      Derivative,
       Float,
       Integer,
       Logarithm,

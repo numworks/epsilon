@@ -1,4 +1,5 @@
 #include <poincare/nth_root.h>
+#include "layout/nth_root_layout.h"
 
 extern "C" {
 #include <assert.h>
@@ -25,4 +26,8 @@ Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
 
 float NthRoot::approximate(Context& context) const {
   return powf(m_args[0]->approximate(context), 1.0f/m_args[1]->approximate(context));
+}
+
+ExpressionLayout * NthRoot::createLayout() const {
+  return new NthRootLayout(m_args[0]->createLayout(), m_args[1]->createLayout());
 }

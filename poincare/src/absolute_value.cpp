@@ -1,4 +1,5 @@
 #include <poincare/absolute_value.h>
+#include "layout/absolute_value_layout.h"
 
 extern "C" {
 #include <assert.h>
@@ -25,4 +26,8 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
 
 float AbsoluteValue::approximate(Context& context) const {
   return fabsf(m_args[0]->approximate(context));
+}
+
+ExpressionLayout * AbsoluteValue::createLayout() const {
+  return new AbsoluteValueLayout(m_args[0]->createLayout());
 }

@@ -30,6 +30,7 @@ objs += $(addprefix poincare/src/,\
   tangent.o\
 )
 objs += $(addprefix poincare/src/layout/,\
+  absolute_value_layout.o\
   exponent_layout.o\
   expression_layout.o\
   fraction_layout.o\

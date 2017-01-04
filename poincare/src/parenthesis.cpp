@@ -3,8 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/parenthesis.h>
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
+#include "layout/parenthesis_layout.h"
 
 Parenthesis::Parenthesis(Expression * operand, bool cloneOperands) {
   assert(operand != nullptr);
@@ -33,12 +32,7 @@ Expression * Parenthesis::clone() const {
 }
 
 ExpressionLayout * Parenthesis::createLayout() const {
-  // TODO: create a parenthesis layout to adjust parenthesis sizes to the operand
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new StringLayout("(", 1);
-  childrenLayouts[1] = m_operand->createLayout();
-  childrenLayouts[2] = new StringLayout(")", 1);
-  return new HorizontalLayout(childrenLayouts, 3);
+  return new ParenthesisLayout(m_operand->createLayout());
 }
 
 float Parenthesis::approximate(Context& context) const {

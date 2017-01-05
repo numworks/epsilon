@@ -5,16 +5,11 @@
 
 namespace Graph {
 
-GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow) :
-  CurveViewWithBannerAndCursor(graphWindow, 0.0f, 0.0f, 0.2f, 0.0f),
-  m_bannerView(BannerView(graphWindow)),
+GraphView::GraphView(FunctionStore * functionStore, GraphWindow * graphWindow, BannerView * bannerView, CursorView * cursorView) :
+  CurveViewWithBannerAndCursor(graphWindow, bannerView, cursorView, 0.0f, 0.0f, 0.2f, 0.0f),
   m_functionStore(functionStore),
   m_context(nullptr)
 {
-}
-
-BannerView * GraphView::bannerView() {
-  return &m_bannerView;
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {

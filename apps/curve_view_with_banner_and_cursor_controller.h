@@ -27,6 +27,7 @@ protected:
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
   StackViewController * stackController() const;
+  virtual void reloadBannerView() = 0;
   CurveViewWindowWithCursor * m_graphWindow;
   CurveViewWithBannerAndCursor * m_graphView;
   WindowParameterController m_windowParameterController;
@@ -34,6 +35,7 @@ protected:
   Button m_windowButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;
+  CursorView m_cursorView;
 };
 
 #endif

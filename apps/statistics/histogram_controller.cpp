@@ -7,7 +7,8 @@ namespace Statistics {
 HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
-  m_view(HistogramView(store)),
+  m_bannerView(HistogramBannerView()),
+  m_view(HistogramView(store, &m_bannerView)),
   m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
@@ -41,6 +42,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
       headerViewController()->setSelectedButton(-1);
       m_view.selectMainView(true);
       m_view.reloadSelection();
+      reloadBannerView();
       return true;
     }
     return false;
@@ -63,6 +65,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     } else {
       m_view.reloadSelection();
     }
+    reloadBannerView();
     return true;
   }
   return false;
@@ -78,6 +81,7 @@ void HistogramController::didBecomeFirstResponder() {
   headerViewController()->setSelectedButton(-1);
   m_view.selectMainView(true);
   m_view.reload();
+  reloadBannerView();
 }
 
 int HistogramController::numberOfButtons() const {
@@ -104,6 +108,36 @@ Responder * HistogramController::defaultController() {
 
 Responder * HistogramController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+void HistogramController::reloadBannerView() {
+  char buffer[k_maxNumberOfCharacters+ Constant::FloatBufferSizeInScientificMode*2];
+  const char * legend = "Interval [";
+  int legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  float lowerBound = m_store->selectedBar() - m_store->barWidth()/2;
+  int lowerBoundNumberOfChar = Float(lowerBound).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  buffer[legendLength+lowerBoundNumberOfChar] = ';';
+  float upperBound = m_store->selectedBar() + m_store->barWidth()/2;
+  int upperBoundNumberOfChar = Float(upperBound).convertFloatToText(buffer+legendLength+lowerBoundNumberOfChar+1, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+1] = '[';
+  buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+2] = 0;
+  m_bannerView.setLegendAtIndex(buffer, 0);
+
+  legend = "Effectif: ";
+  legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  float size = m_store->heightForBarAtValue(m_store->selectedBar());
+  Float(size).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  m_bannerView.setLegendAtIndex(buffer, 1);
+
+  legend = "Frequence: ";
+  legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  float frequency = size/m_store->sumOfColumn(1);
+  Float(frequency).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  m_bannerView.setLegendAtIndex(buffer, 2);
+  m_bannerView.layoutSubviews();
 }
 
 }

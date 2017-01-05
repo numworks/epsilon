@@ -2,6 +2,7 @@
 #define REGRESSION_GRAPH_CONTROLLER_H
 
 #include <escher.h>
+#include "banner_view.h"
 #include "store.h"
 #include "graph_view.h"
 #include "initialisation_parameter_controller.h"
@@ -19,7 +20,10 @@ public:
   bool isEmpty() override;
   const char * emptyMessage() override;
 private:
+  constexpr static int k_maxNumberOfCharacters = 8;
   bool handleEnter() override;
+  void reloadBannerView() override;
+  BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;
   uint32_t m_storeVersion;

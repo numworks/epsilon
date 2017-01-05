@@ -4,10 +4,9 @@
 
 namespace Regression {
 
-GraphView::GraphView(Store * store) :
-  CurveViewWithBannerAndCursor(store, 0.05f, 0.05f, 0.25f, 0.05f),
-  m_store(store),
-  m_bannerView(BannerView(store))
+GraphView::GraphView(Store * store, BannerView * bannerView, CursorView * cursorView) :
+  CurveViewWithBannerAndCursor(store, bannerView, cursorView, 0.05f, 0.05f, 0.25f, 0.05f),
+  m_store(store)
 {
 }
 
@@ -30,10 +29,6 @@ char * GraphView::label(Axis axis, int index) const {
     return (char *)m_yLabels[index];
   }
   return (char *)m_xLabels[index];
-}
-
-BannerView * GraphView::bannerView() {
-  return &m_bannerView;
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float t) const {

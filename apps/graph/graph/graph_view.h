@@ -2,8 +2,6 @@
 #define GRAPH_GRAPH_VIEW_H
 
 #include <escher.h>
-#include "banner_view.h"
-#include "../../cursor_view.h"
 #include "graph_window.h"
 #include "../../curve_view_with_banner_and_cursor.h"
 #include "../../constant.h"
@@ -14,15 +12,13 @@ namespace Graph {
 
 class GraphView : public CurveViewWithBannerAndCursor {
 public:
-  GraphView(FunctionStore * functionStore, GraphWindow * graphWindow);
-  BannerView * bannerView() override;
+  GraphView(FunctionStore * functionStore, GraphWindow * graphWindow, BannerView * bannerView, CursorView * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Context * context);
   Context * context() const;
 private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
-  BannerView m_bannerView;
   char m_xLabels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   char m_yLabels[k_maxNumberOfYLabels][Constant::FloatBufferSizeInScientificMode];
   FunctionStore * m_functionStore;

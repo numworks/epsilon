@@ -3,9 +3,9 @@
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(GraphView * graphView, GraphWindow * graphWindow) :
+CurveParameterController::CurveParameterController(GraphWindow * graphWindow, BannerView * bannerView) :
   ViewController(nullptr),
-  m_graphView(graphView),
+  m_bannerView(bannerView),
   m_function(nullptr),
   m_calculationCell(ChevronMenuListCell((char*)"Calculer")),
   m_goToCell(ChevronMenuListCell((char*)"Aller a")),
@@ -32,7 +32,7 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_graphView->bannerView()->displayDerivative());
+    switchView->setState(m_bannerView->displayDerivative());
   }
 }
 
@@ -50,8 +50,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       }
       case 2:
       {
-        BannerView * bannerView = (BannerView *)m_graphView->bannerView();
-        bannerView->setDisplayDerivative(!bannerView->displayDerivative());
+        m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
         m_selectableTableView.reloadData();
         return true;
       }

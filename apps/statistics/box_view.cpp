@@ -4,12 +4,11 @@
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store) :
-  CurveViewWithBanner(&m_boxWindow, 0.0f, 0.2f, 0.4f, 0.2f),
+BoxView::BoxView(Store * store, BannerView * bannerView) :
+  CurveViewWithBanner(&m_boxWindow, bannerView, 0.0f, 0.2f, 0.4f, 0.2f),
   m_store(store),
   m_boxWindow(BoxWindow(store)),
-  m_selectedQuantile(0),
-  m_bannerView(BoxBannerView(store, this))
+  m_selectedQuantile(0)
 {
 }
 
@@ -20,7 +19,6 @@ void BoxView::reloadSelection() {
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculations[m_selectedQuantile]);
   KDRect dirtyZone(KDRect(selectedValueInPixels-1, pixelLowerBound, 2, pixelUpperBound - pixelLowerBound));
   markRectAsDirty(dirtyZone);
-  m_bannerView.reload();
 }
 
 int BoxView::selectedQuantile() {
@@ -63,10 +61,6 @@ char * BoxView::label(Axis axis, int index) const {
     return nullptr;
   }
   return (char *)m_labels[index];
-}
-
-BannerView * BoxView::bannerView() {
-  return &m_bannerView;
 }
 
 }

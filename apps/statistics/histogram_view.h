@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "store.h"
-#include "histogram_banner_view.h"
 #include "../constant.h"
 #include "../curve_view_with_banner.h"
 
@@ -11,16 +10,14 @@ namespace Statistics {
 
 class HistogramView : public CurveViewWithBanner {
 public:
-  HistogramView(Store * store);
+  HistogramView(Store * store, BannerView * bannerView);
   void reloadSelection() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
-  BannerView * bannerView() override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
-  HistogramBannerView m_bannerView;
 };
 
 }

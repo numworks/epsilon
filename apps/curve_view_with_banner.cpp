@@ -2,17 +2,17 @@
 #include <assert.h>
 #include <math.h>
 
-CurveViewWithBanner::CurveViewWithBanner(CurveViewWindow * curveViewWindow, float topMarginFactor,
-    float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
+CurveViewWithBanner::CurveViewWithBanner(CurveViewWindow * curveViewWindow, BannerView * bannerView,
+    float topMarginFactor, float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
   CurveView(curveViewWindow, topMarginFactor, rightMarginFactor, bottomMarginFactor, leftMarginFactor),
-  m_mainViewSelected(true)
+  m_mainViewSelected(true),
+  m_bannerView(bannerView)
 {
 }
 
 void CurveViewWithBanner::reload() {
   markRectAsDirty(bounds());
   computeLabels(Axis::Horizontal);
-  bannerView()->reload();
 }
 
 bool CurveViewWithBanner::isMainViewSelected() {
@@ -33,13 +33,15 @@ int CurveViewWithBanner::numberOfSubviews() const {
 
 View * CurveViewWithBanner::subviewAtIndex(int index) {
   assert(index == 0);
-  return bannerView();
+  return m_bannerView;
 }
 
 void CurveViewWithBanner::layoutSubviews() {
-  KDRect bannerFrame(KDRect(0, bounds().height()- k_bannerHeight, bounds().width(), k_bannerHeight));
+  m_bannerView->setFrame(bounds());
+  KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
+  KDRect bannerFrame(KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight));
   if (!m_mainViewSelected) {
     bannerFrame = KDRectZero;
   }
-  bannerView()->setFrame(bannerFrame);
+  m_bannerView->setFrame(bannerFrame);
 }

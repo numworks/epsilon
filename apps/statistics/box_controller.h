@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "box_view.h"
+#include "box_banner_view.h"
 
 namespace Statistics {
 
@@ -20,6 +21,8 @@ public:
   Responder * defaultController() override;
 private:
   Responder * tabController() const;
+  void reloadBannerView();
+  BoxBannerView m_boxBannerView;
   BoxView m_view;
   Store * m_store;
   uint32_t m_storeVersion;

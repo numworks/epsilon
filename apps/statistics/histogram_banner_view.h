@@ -2,24 +2,19 @@
 #define STATISTICS_HISTOGRAM_BANNER_VIEW_H
 
 #include <escher.h>
-#include "store.h"
 #include "../banner_view.h"
 
 namespace Statistics {
 
 class HistogramBannerView : public ::BannerView {
 public:
-  HistogramBannerView(Store * store);
-  void reload() override;
+  HistogramBannerView();
 private:
-  constexpr static int k_maxNumberOfCharacters = 50;
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  TextView * textViewAtIndex(int i) override;
   BufferTextView m_intervalView;
   BufferTextView m_sizeView;
   BufferTextView m_frequencyView;
-  Store * m_store;
 };
 
 }

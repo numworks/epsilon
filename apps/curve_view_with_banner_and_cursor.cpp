@@ -3,10 +3,10 @@
 
 constexpr KDColor CurveViewWithBannerAndCursor::k_gridColor;
 
-CurveViewWithBannerAndCursor::CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor, float topMarginFactor,
-    float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
-  CurveViewWithBanner(curveViewWindowWithCursor, topMarginFactor, rightMarginFactor, bottomMarginFactor, leftMarginFactor),
-  m_cursorView(CursorView()),
+CurveViewWithBannerAndCursor::CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor,
+    BannerView * bannerView, CursorView * cursorView, float topMarginFactor, float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
+  CurveViewWithBanner(curveViewWindowWithCursor, bannerView, topMarginFactor, rightMarginFactor, bottomMarginFactor, leftMarginFactor),
+  m_cursorView(cursorView),
   m_curveViewWindowWithCursor(curveViewWindowWithCursor)
 {
 }
@@ -16,7 +16,6 @@ void CurveViewWithBannerAndCursor::reload() {
   computeLabels(Axis::Horizontal);
   computeLabels(Axis::Vertical);
   layoutSubviews();
-  bannerView()->reload();
 }
 
 void CurveViewWithBannerAndCursor::reloadSelection() {
@@ -25,7 +24,6 @@ void CurveViewWithBannerAndCursor::reloadSelection() {
   KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
   markRectAsDirty(dirtyZone);
   layoutSubviews();
-  bannerView()->reload();
 }
 
 void CurveViewWithBannerAndCursor::drawGrid(KDContext * ctx, KDRect rect) const {
@@ -40,7 +38,7 @@ void CurveViewWithBannerAndCursor::layoutSubviews() {
   if (!m_mainViewSelected) {
     cursorFrame = KDRectZero;
   }
-  m_cursorView.setFrame(cursorFrame);
+  m_cursorView->setFrame(cursorFrame);
   CurveViewWithBanner::layoutSubviews();
 }
 
@@ -51,7 +49,7 @@ int CurveViewWithBannerAndCursor::numberOfSubviews() const {
 View * CurveViewWithBannerAndCursor::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return &m_cursorView;
+    return m_cursorView;
   }
-  return bannerView();
+  return m_bannerView;
 }

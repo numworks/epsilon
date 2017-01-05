@@ -4,10 +4,9 @@
 
 namespace Statistics {
 
-HistogramView::HistogramView(Store * store) :
-  CurveViewWithBanner(store, 0.2f, 0.1f, 0.4f, 0.1f),
-  m_store(store),
-  m_bannerView(HistogramBannerView(store))
+HistogramView::HistogramView(Store * store, BannerView * bannerView) :
+  CurveViewWithBanner(store, bannerView, 0.2f, 0.1f, 0.4f, 0.1f),
+  m_store(store)
 {
 }
 
@@ -19,7 +18,6 @@ void HistogramView::reloadSelection() {
   KDRect dirtyZone(KDRect(pixelLowerBound, selectedValueInPixels, pixelUpperBound-pixelLowerBound,
     horizontalAxisInPixels - selectedValueInPixels));
   markRectAsDirty(dirtyZone);
-  m_bannerView.reload();
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -39,10 +37,6 @@ char * HistogramView::label(Axis axis, int index) const {
     return nullptr;
   }
   return (char *)m_labels[index];
-}
-
-BannerView * HistogramView::bannerView() {
-  return &m_bannerView;
 }
 
 float HistogramView::evaluateModelWithParameter(Model * curve, float t) const {

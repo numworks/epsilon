@@ -8,8 +8,8 @@
 
 class CurveViewWithBannerAndCursor : public CurveViewWithBanner {
 public:
-  CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor = nullptr, float topMarginFactor = 0.0f,
-    float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
+  CurveViewWithBannerAndCursor(CurveViewWindowWithCursor * curveViewWindowWithCursor = nullptr, BannerView * bannerView = nullptr,
+    CursorView * cursorView = nullptr, float topMarginFactor = 0.0f, float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
   void reload() override;
   void reloadSelection() override;
   void drawGrid(KDContext * ctx, KDRect rect) const;
@@ -20,7 +20,7 @@ protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
-  CursorView m_cursorView;
+  CursorView * m_cursorView;
   CurveViewWindowWithCursor * m_curveViewWindowWithCursor;
 };
 

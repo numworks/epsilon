@@ -7,7 +7,7 @@ class BufferTextView : public TextView {
 public:
   BufferTextView(float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void setText(const char * text);
+  void setText(const char * text) override;
   const char * text() const override;
 private:
   static constexpr int k_maxNumberOfChar = 256;

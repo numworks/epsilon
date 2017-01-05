@@ -24,7 +24,8 @@ CurveViewWindowWithBannerAndCursorController::CurveViewWindowWithBannerAndCursor
     CurveViewWindowWithBannerAndCursorController * graphController = (CurveViewWindowWithBannerAndCursorController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
-  }, this))
+  }, this)),
+  m_cursorView(CursorView())
 {
 }
 
@@ -42,6 +43,7 @@ bool CurveViewWindowWithBannerAndCursorController::handleEvent(Ion::Events::Even
       headerViewController()->setSelectedButton(-1);
       m_graphView->selectMainView(true);
       m_graphView->reloadSelection();
+      reloadBannerView();
       return true;
     }
     if (event == Ion::Events::Up) {
@@ -54,11 +56,13 @@ bool CurveViewWindowWithBannerAndCursorController::handleEvent(Ion::Events::Even
   if (event == Ion::Events::Plus) {
     m_graphWindow->zoom(1.0f/3.0f);
     m_graphView->reload();
+    reloadBannerView();
     return true;
   }
   if (event == Ion::Events::Minus) {
     m_graphWindow->zoom(3.0f/4.0f);
     m_graphView->reload();
+    reloadBannerView();
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
@@ -70,6 +74,7 @@ bool CurveViewWindowWithBannerAndCursorController::handleEvent(Ion::Events::Even
     } else {
       m_graphView->reload();
     }
+    reloadBannerView();
     return (didMoveCursor >= 0);
   }
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
@@ -90,6 +95,7 @@ bool CurveViewWindowWithBannerAndCursorController::handleEvent(Ion::Events::Even
     if (didMoveCursor == 1) {
       m_graphView->reload();
     }
+    reloadBannerView();
     return true;
   }
   if (event == Ion::Events::OK) {
@@ -105,6 +111,7 @@ void CurveViewWindowWithBannerAndCursorController::didBecomeFirstResponder() {
   headerViewController()->layoutView();
   // Reload graph view
   m_graphView->reload();
+  reloadBannerView();
 }
 
 ViewController * CurveViewWindowWithBannerAndCursorController::windowParameterController() {

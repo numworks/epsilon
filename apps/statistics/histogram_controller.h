@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "histogram_view.h"
+#include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"
 #include "../curve_view.h"
 
@@ -27,7 +28,10 @@ public:
   const char * emptyMessage() override;
   Responder * defaultController() override;
 private:
+  constexpr static int k_maxNumberOfCharacters = 12;
   Responder * tabController() const;
+  void reloadBannerView();
+  HistogramBannerView m_bannerView;
   HistogramView m_view;
   Button m_settingButton;
   Store * m_store;

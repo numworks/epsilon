@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "graph_view.h"
 #include "graph_window.h"
+#include "banner_view.h"
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
 #include "../../curve_view_with_banner_and_cursor_controller.h"
@@ -21,7 +22,10 @@ public:
   const char * emptyMessage() override;
 
 private:
+  constexpr static int k_maxNumberOfCharacters = 8;
   bool handleEnter() override;
+  void reloadBannerView() override;
+  BannerView m_bannerView;
   GraphView m_view;
   GraphWindow m_graphWindow;
   InitialisationParameterController m_initialisationParameterController;

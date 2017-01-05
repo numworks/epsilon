@@ -3,13 +3,14 @@
 
 #include <escher.h>
 #include "goto_parameter_controller.h"
+#include "banner_view.h"
 #include "../function.h"
 
 namespace Graph {
 
 class CurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  CurveParameterController(GraphView * graphView, GraphWindow * graphWindow);
+  CurveParameterController(GraphWindow * graphWindow, BannerView * bannerView);
 
   View * view() override;
   const char * title() const override;
@@ -22,7 +23,7 @@ public:
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   void setFunction(Function * function);
 private:
-  GraphView * m_graphView;
+  BannerView * m_bannerView;
   Function * m_function;
   constexpr static int k_totalNumberOfCells = 3;
   ChevronMenuListCell m_calculationCell;

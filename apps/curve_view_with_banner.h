@@ -7,8 +7,8 @@
 
 class CurveViewWithBanner : public CurveView {
 public:
-  CurveViewWithBanner(CurveViewWindow * curveViewWindow = nullptr, float topMarginFactor = 0.0f,
-    float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
+  CurveViewWithBanner(CurveViewWindow * curveViewWindow = nullptr, BannerView * bannerView = nullptr,
+    float topMarginFactor = 0.0f, float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
   virtual void reloadSelection() = 0;
   void reload() override;
   bool isMainViewSelected();
@@ -16,9 +16,8 @@ public:
 protected:
   void layoutSubviews() override;
   bool m_mainViewSelected;
-  virtual BannerView * bannerView() = 0;
+  BannerView * m_bannerView;
 private:
-  constexpr static KDCoordinate k_bannerHeight = 30;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 };

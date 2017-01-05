@@ -3,10 +3,10 @@
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, Data * data) :
+BoxController::BoxController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
-  m_view(BoxView(data)),
-  m_data(data)
+  m_view(BoxView(store)),
+  m_store(store)
 {
 }
 
@@ -32,12 +32,18 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 void BoxController::didBecomeFirstResponder() {
+  uint32_t storeChecksum = m_store->checksum();
+  if (m_storeVersion != storeChecksum) {
+    m_storeVersion = storeChecksum;
+    m_store->initWindowParameters();
+    m_store->initBarParameters();
+  }
   m_view.selectMainView(true);
   m_view.reload();
 }
 
 bool BoxController::isEmpty() {
-  if (m_data->totalSize() == 0) {
+  if (m_store->sumOfColumn(1) == 0) {
     return true;
   }
   return false;

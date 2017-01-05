@@ -2,7 +2,7 @@
 #define STATISTICS_BOX_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "box_view.h"
 
 namespace Statistics {
@@ -10,7 +10,7 @@ namespace Statistics {
 class BoxController : public ViewController, public AlternateEmptyViewDelegate {
 
 public:
-  BoxController(Responder * parentResponder, Data * data);
+  BoxController(Responder * parentResponder, Store * store);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -21,7 +21,8 @@ public:
 private:
   Responder * tabController() const;
   BoxView m_view;
-  Data * m_data;
+  Store * m_store;
+  uint32_t m_storeVersion;
 };
 
 }

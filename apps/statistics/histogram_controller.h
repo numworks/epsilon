@@ -2,7 +2,7 @@
 #define STATISTICS_HISTOGRAM_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "histogram_view.h"
 #include "histogram_parameter_controller.h"
 #include "../curve_view.h"
@@ -12,7 +12,7 @@ namespace Statistics {
 class HistogramController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
 
 public:
-  HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * m_data);
+  HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
   const char * title() const override;
   View * view() override;
   StackViewController * stackController();
@@ -30,7 +30,8 @@ private:
   Responder * tabController() const;
   HistogramView m_view;
   Button m_settingButton;
-  Data * m_data;
+  Store * m_store;
+  uint32_t m_storeVersion;
   HistogramParameterController m_histogramParameterController;
 };
 

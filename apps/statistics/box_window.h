@@ -2,13 +2,13 @@
 #define STATISTICS_BOX_WINDOW_H
 
 #include "../curve_view_window.h"
-#include "data.h"
+#include "store.h"
 
 namespace Statistics {
 
 class BoxWindow : public CurveViewWindow {
 public:
-  BoxWindow(Data * data);
+  BoxWindow(Store * store);
   float xMin() override;
   // if the range of value is to wide compared to the bar width, value max is capped
   float xMax() override;
@@ -16,7 +16,7 @@ public:
   float yMax() override;
   float xGridUnit() override;
 private:
-  Data * m_data;
+  Store * m_store;
 
 };
 

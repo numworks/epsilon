@@ -3,13 +3,13 @@
 
 #include <escher.h>
 #include "../float_parameter_controller.h"
-#include "data.h"
+#include "store.h"
 
 namespace Regression {
 
 class GoToParameterController : public FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, Data * data);
+  GoToParameterController(Responder * parentResponder, Store * store);
   void setXPrediction(bool xPrediction);
   const char * title() const override;
   int numberOfRows() override;
@@ -21,7 +21,7 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_abscisseCell;
-  Data * m_data;
+  Store * m_store;
   bool m_xPrediction;
 };
 

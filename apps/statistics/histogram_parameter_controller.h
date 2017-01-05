@@ -3,13 +3,13 @@
 
 #include <escher.h>
 #include "../float_parameter_controller.h"
-#include "data.h"
+#include "store.h"
 
 namespace Statistics {
 
 class HistogramParameterController : public FloatParameterController {
 public:
-  HistogramParameterController(Responder * parentResponder, Data * data);
+  HistogramParameterController(Responder * parentResponder, Store * store);
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
@@ -21,7 +21,7 @@ private:
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_binWidthCell;
   EditableTextMenuListCell m_minValueCell;
-  Data * m_data;
+  Store * m_store;
 };
 
 }

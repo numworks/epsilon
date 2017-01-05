@@ -1,12 +1,12 @@
-#ifndef APPS_DATA_PARAM_CONTROLLER_H
-#define APPS_DATA_PARAM_CONTROLLER_H
+#ifndef APPS_STORE_PARAM_CONTROLLER_H
+#define APPS_STORE_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "float_pair_store.h"
 
-class DataParameterController : public ViewController, public SimpleListViewDataSource {
+class StoreParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  DataParameterController(Responder * parentResponder, Data * data);
+  StoreParameterController(Responder * parentResponder, FloatPairStore * store);
   void selectXColumn(bool xColumnSelected);
   View * view() override;
   const char * title() const override;
@@ -22,7 +22,7 @@ private:
   ChevronMenuListCell m_copyColumn;
   ChevronMenuListCell m_importList;
   SelectableTableView m_selectableTableView;
-  Data * m_data;
+  FloatPairStore * m_store;
   bool m_xColumnSelected;
 };
 

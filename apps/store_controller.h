@@ -1,14 +1,14 @@
-#ifndef APPS_DATA_CONTROLLER_H
-#define APPS_DATA_CONTROLLER_H
+#ifndef APPS_STORE_CONTROLLER_H
+#define APPS_STORE_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
-#include "data_parameter_controller.h"
+#include "float_pair_store.h"
+#include "store_parameter_controller.h"
 #include "editable_cell_table_view_controller.h"
 
-class DataController : public EditableCellTableViewController {
+class StoreController : public EditableCellTableViewController {
 public:
-  DataController(Responder * parentResponder, Data * m_data);
+  StoreController(Responder * parentResponder, FloatPairStore * store);
   const char * title() const override;
   int numberOfColumns() override;
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
@@ -32,8 +32,8 @@ protected:
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
-  Data * m_data;
-  DataParameterController m_dataParameterController;
+  FloatPairStore * m_store;
+  StoreParameterController m_storeParameterController;
 };
 
 #endif

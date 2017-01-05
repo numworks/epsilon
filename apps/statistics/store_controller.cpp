@@ -1,4 +1,4 @@
-#include "data_controller.h"
+#include "store_controller.h"
 #include "app.h"
 #include "../apps_container.h"
 #include "../constant.h"
@@ -6,12 +6,12 @@
 
 namespace Statistics {
 
-DataController::DataController(Responder * parentResponder, Data * data) :
-  ::DataController(parentResponder, data)
+StoreController::StoreController(Responder * parentResponder, Store * store) :
+  ::StoreController(parentResponder, store)
 {
 }
 
-void DataController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
   if (cellAtLocationIsEditable(i, j)) {
     return;

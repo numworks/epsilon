@@ -5,11 +5,11 @@
 
 namespace Statistics {
 
-HistogramBannerView::HistogramBannerView(Data * data) :
+HistogramBannerView::HistogramBannerView(Store * store) :
   m_intervalView(0.0f, 0.5f),
   m_sizeView(0.0f, 0.5f),
   m_frequencyView(1.0f, 0.5f),
-  m_data(data)
+  m_store(store)
 {
 }
 
@@ -19,10 +19,10 @@ void HistogramBannerView::reload() {
   const char * legend = "Interval [";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float lowerBound = m_data->selectedBar() - m_data->barWidth()/2;
+  float lowerBound = m_store->selectedBar() - m_store->barWidth()/2;
   int lowerBoundNumberOfChar = Float(lowerBound).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   buffer[legendLength+lowerBoundNumberOfChar] = ';';
-  float upperBound = m_data->selectedBar() + m_data->barWidth()/2;
+  float upperBound = m_store->selectedBar() + m_store->barWidth()/2;
   int upperBoundNumberOfChar = Float(upperBound).convertFloatToText(buffer+legendLength+lowerBoundNumberOfChar+1, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+1] = '[';
   buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+2] = 0;
@@ -31,14 +31,14 @@ void HistogramBannerView::reload() {
   legend = "Effectif: ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float size = m_data->heightForBarAtValue(m_data->selectedBar());
+  float size = m_store->heightForBarAtValue(m_store->selectedBar());
   Float(size).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_sizeView.setText(buffer);
 
   legend = "Frequence: ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  float frequency = size/m_data->totalSize();
+  float frequency = size/m_store->sumOfColumn(1);
   Float(frequency).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_frequencyView.setText(buffer);
 }

@@ -2,7 +2,7 @@
 #define STATISTICS_BOX_BANNER_VIEW_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "../banner_view.h"
 
 namespace Statistics {
@@ -11,7 +11,7 @@ class BoxView;
 
 class BoxBannerView : public ::BannerView {
 public:
-  BoxBannerView(Data * data, BoxView * boxView);
+  BoxBannerView(Store * store, BoxView * boxView);
   void reload() override;
 private:
   constexpr static int k_maxNumberOfCharacters = 50;
@@ -20,7 +20,7 @@ private:
   void layoutSubviews() override;
   PointerTextView m_calculationName;
   BufferTextView m_calculationValue;
-  Data * m_data;
+  Store * m_store;
   BoxView * m_boxView;
 };
 

@@ -2,14 +2,14 @@
 #define REGRESSION_BANNER_VIEW_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "../banner_view.h"
 
 namespace Regression {
 
 class BannerView : public ::BannerView {
 public:
-  BannerView(Data * data);
+  BannerView(Store * store);
   void reload() override;
 private:
   constexpr static int k_maxNumberOfCharacters = 50;
@@ -21,7 +21,7 @@ private:
   BufferTextView m_yInterceptView;
   BufferTextView m_xView;
   BufferTextView m_yView;
-  Data * m_data;
+  Store * m_store;
 };
 
 }

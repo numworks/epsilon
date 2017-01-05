@@ -4,17 +4,17 @@
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Data * data) :
+HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
   ViewController(parentResponder),
   HeaderViewDelegate(headerViewController),
-  m_view(HistogramView(data)),
+  m_view(HistogramView(store)),
   m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
   }, this))),
-  m_data(data),
-  m_histogramParameterController(nullptr, data)
+  m_store(store),
+  m_histogramParameterController(nullptr, store)
 {
 }
 
@@ -58,7 +58,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (m_view.isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     m_view.reloadSelection();
-    if (m_data->selectNextBarToward(direction)) {
+    if (m_store->selectNextBarToward(direction)) {
       m_view.reload();
     } else {
       m_view.reloadSelection();
@@ -69,6 +69,12 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::didBecomeFirstResponder() {
+  uint32_t storeChecksum = m_store->checksum();
+  if (m_storeVersion != storeChecksum) {
+    m_storeVersion = storeChecksum;
+    m_store->initBarParameters();
+    m_store->initWindowParameters();
+  }
   headerViewController()->setSelectedButton(-1);
   m_view.selectMainView(true);
   m_view.reload();
@@ -82,7 +88,7 @@ Button * HistogramController::buttonAtIndex(int index) {
 }
 
 bool HistogramController::isEmpty() {
-  if (m_data->totalSize() == 0) {
+  if (m_store->sumOfColumn(1) == 0) {
     return true;
   }
   return false;

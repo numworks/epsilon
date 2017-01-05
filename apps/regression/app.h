@@ -3,8 +3,8 @@
 
 #include <escher.h>
 #include "../text_field_delegate_app.h"
-#include "data.h"
-#include "../data_controller.h"
+#include "store.h"
+#include "../store_controller.h"
 #include "graph_controller.h"
 #include "calculation_controller.h"
 
@@ -14,15 +14,15 @@ class App : public TextFieldDelegateApp {
 public:
   App(Container * container);
 private:
-  Data m_data;
+  Store m_store;
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   GraphController m_graphController;
   HeaderViewController m_graphHeader;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   StackViewController m_graphStackViewController;
-  ::DataController m_dataController;
-  StackViewController m_dataStackViewController;
+  ::StoreController m_storeController;
+  StackViewController m_storeStackViewController;
   TabViewController m_tabViewController;
 };
 

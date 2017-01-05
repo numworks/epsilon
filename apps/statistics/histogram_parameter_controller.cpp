@@ -4,11 +4,11 @@
 
 namespace Statistics {
 
-HistogramParameterController::HistogramParameterController(Responder * parentResponder, Data * data) :
+HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
   m_binWidthCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectanges : ")),
   m_minValueCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Debut de la serie : ")),
-  m_data(data)
+  m_store(store)
 {
 }
 
@@ -19,9 +19,9 @@ const char * HistogramParameterController::title() const {
 float HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return m_data->barWidth();
+    return m_store->barWidth();
   }
-  return m_data->firsBarAbscissa();
+  return m_store->firsBarAbscissa();
 }
 
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
@@ -31,9 +31,9 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
       app()->displayWarning("Value interdite");
       return;
     }
-    m_data->setBarWidth(f);
+    m_store->setBarWidth(f);
   } else {
-    m_data->setFirsBarAbscissa(f);
+    m_store->setFirsBarAbscissa(f);
   }
 }
 

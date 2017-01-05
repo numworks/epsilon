@@ -5,10 +5,10 @@
 
 namespace Regression {
 
-CalculationController::CalculationController(Responder * parentResponder, Data * data) :
+CalculationController::CalculationController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin, this)),
-  m_data(data)
+  m_store(store)
 {
   m_columnTitleCell.setParentResponder(&m_selectableTableView);
   for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {
@@ -71,7 +71,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 }
 
 bool CalculationController::isEmpty() {
-  if (m_data->numberOfPairs() == 0) {
+  if (m_store->numberOfPairs() == 0) {
     return true;
   }
   return false;
@@ -120,24 +120,24 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation2 = 0.0f;
     switch (j) {
       case 1:
-        calculation1 = m_data->xMean();
-        calculation2 = m_data->yMean();
+        calculation1 = m_store->meanOfColumn(0);
+        calculation2 = m_store->meanOfColumn(1);
         break;
       case 2:
-        calculation1 = m_data->xSum();
-        calculation2 = m_data->ySum();
+        calculation1 = m_store->sumOfColumn(0);
+        calculation2 = m_store->sumOfColumn(1);
         break;
       case 3:
-        calculation1 = m_data->xSquaredValueSum();
-        calculation2 = m_data->ySquaredValueSum();
+        calculation1 = m_store->squaredValueSumOfColumn(0);
+        calculation2 = m_store->squaredValueSumOfColumn(1);
         break;
       case 4:
-        calculation1 = m_data->xStandardDeviation();
-        calculation2 = m_data->yStandardDeviation();
+        calculation1 = m_store->standardDeviationOfColumn(0);
+        calculation2 = m_store->standardDeviationOfColumn(1);
         break;
       case 5:
-        calculation1 = m_data->xVariance();
-        calculation2 = m_data->yVariance();
+        calculation1 = m_store->varianceOfColumn(0);
+        calculation2 = m_store->varianceOfColumn(1);
         break;
       default:
         break;
@@ -154,19 +154,19 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation = 0.0f;
     switch (j) {
       case 6:
-        calculation = m_data->numberOfPairs();
+        calculation = m_store->numberOfPairs();
         break;
       case 7:
-        calculation = m_data->covariance();
+        calculation = m_store->covariance();
         break;
       case 8:
-        calculation = m_data->xyProductSum();
+        calculation = m_store->columnProductSum();
         break;
       case 9:
-        calculation = m_data->correlationCoefficient();
+        calculation = m_store->correlationCoefficient();
         break;
       case 10:
-        calculation = m_data->squaredCorrelationCoefficient();
+        calculation = m_store->squaredCorrelationCoefficient();
         break;
       default:
         break;

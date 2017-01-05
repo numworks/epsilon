@@ -2,14 +2,14 @@
 #define REGRESSION_PREDICTION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "go_to_parameter_controller.h"
 
 namespace Regression {
 
 class PredictionParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Data * data);
+  PredictionParameterController(Responder * parentResponder, Store * store);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

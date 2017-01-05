@@ -5,10 +5,10 @@
 
 namespace Statistics {
 
-CalculationController::CalculationController(Responder * parentResponder, Data * data) :
+CalculationController::CalculationController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin)),
-  m_data(data)
+  m_store(store)
 {
   for (int k = 0; k < k_maxNumberOfDisplayableRows; k++) {
     m_titleCells[k].setAlignment(1.0f, 0.5f);
@@ -43,7 +43,7 @@ void CalculationController::didBecomeFirstResponder() {
 }
 
 bool CalculationController::isEmpty() {
-  if (m_data->totalSize() == 0) {
+  if (m_store->sumOfColumn(1) == 0) {
     return true;
   }
   return false;
@@ -79,43 +79,43 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation = 0.0f;
     switch (j) {
       case 0:
-        calculation = m_data->totalSize();
+        calculation = m_store->sumOfColumn(1);
         break;
       case 1:
-        calculation = m_data->minValue();
+        calculation = m_store->minValue();
         break;
       case 2:
-        calculation = m_data->maxValue();
+        calculation = m_store->maxValue();
         break;
       case 3:
-        calculation = m_data->range();
+        calculation = m_store->range();
         break;
       case 4:
-        calculation = m_data->mean();
+        calculation = m_store->mean();
         break;
       case 5:
-        calculation = m_data->standardDeviation();
+        calculation = m_store->standardDeviation();
         break;
       case 6:
-        calculation = m_data->variance();
+        calculation = m_store->variance();
         break;
       case 7:
-        calculation = m_data->firstQuartile();
+        calculation = m_store->firstQuartile();
         break;
       case 8:
-        calculation = m_data->thirdQuartile();
+        calculation = m_store->thirdQuartile();
         break;
       case 9:
-        calculation = m_data->median();
+        calculation = m_store->median();
         break;
       case 10:
-        calculation = m_data->quartileRange();
+        calculation = m_store->quartileRange();
         break;
       case 11:
-        calculation = m_data->sum();
+        calculation = m_store->sum();
         break;
       case 12:
-        calculation = m_data->squaredValueSum();
+        calculation = m_store->squaredValueSum();
         break;
       default:
         break;

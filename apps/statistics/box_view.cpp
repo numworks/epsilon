@@ -4,17 +4,17 @@
 
 namespace Statistics {
 
-BoxView::BoxView(Data * data) :
+BoxView::BoxView(Store * store) :
   CurveViewWithBanner(&m_boxWindow, 0.0f, 0.2f, 0.4f, 0.2f),
-  m_data(data),
-  m_boxWindow(BoxWindow(data)),
+  m_store(store),
+  m_boxWindow(BoxWindow(store)),
   m_selectedQuantile(0),
-  m_bannerView(BoxBannerView(data, this))
+  m_bannerView(BoxBannerView(store, this))
 {
 }
 
 void BoxView::reloadSelection() {
-  float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
+  float calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
   float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculations[m_selectedQuantile]);
@@ -43,7 +43,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
-  float calculations[5] = {m_data->minValue(), m_data->firstQuartile(), m_data->median(), m_data->thirdQuartile(), m_data->maxValue()};
+  float calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
   float lowBounds[5] = {0.4f, 0.2f, 0.2f, 0.2f, 0.4f};
   float upBounds[5] = {0.6f, 0.8f, 0.8f, 0.8f, 0.6f};
   for (int k = 0; k < 5; k++) {
@@ -52,10 +52,10 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_mainViewSelected) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[m_selectedQuantile], lowBounds[m_selectedQuantile], upBounds[m_selectedQuantile], KDColorRed);
   }
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_data->minValue(), m_data->firstQuartile(), KDColorBlack);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_data->thirdQuartile(), m_data->maxValue(), KDColorBlack);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.2f, m_data->firstQuartile(), m_data->thirdQuartile(), KDColorBlack);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.8f, m_data->firstQuartile(), m_data->thirdQuartile(), KDColorBlack);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), KDColorBlack);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), KDColorBlack);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.2f, m_store->firstQuartile(), m_store->thirdQuartile(), KDColorBlack);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.8f, m_store->firstQuartile(), m_store->thirdQuartile(), KDColorBlack);
 }
 
 char * BoxView::label(Axis axis, int index) const {

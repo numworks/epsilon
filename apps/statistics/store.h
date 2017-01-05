@@ -1,32 +1,17 @@
-#ifndef STATISTICS_DATA_H
-#define STATISTICS_DATA_H
+#ifndef STATISTICS_STORE_H
+#define STATISTICS_STORE_H
 
 #include "../curve_view_window.h"
-#include "../data.h"
+#include "../float_pair_store.h"
 
 namespace Statistics {
 
-class Data : public CurveViewWindow, public ::Data {
+class Store : public CurveViewWindow, public FloatPairStore {
 public:
-  Data();
-  // Delete the implicit copy constructor: the object is heavy
-  Data(const Data&) = delete;
-
-  // Raw numeric data
-  float xValueAtIndex(int index) override;
-  float yValueAtIndex(int index) override;
-  void setXValueAtIndex(float value, int index) override;
-  void setYValueAtIndex(float value, int index) override;
-  float valueAtIndex(int index);
-  int sizeAtIndex(int index);
-  void setValueAtIndex(float value, int index);
-  void setSizeAtIndex(int size, int index);
-  void deletePairAtIndex(int index) override;
-  int totalSize();
-  void deleteAllXValues() override;
-  void deleteAllYValues() override;
+  Store();
 
   // Histogram bars
+  void initBarParameters();
   float barWidth();
   void setBarWidth(float barWidth);
   float firsBarAbscissa();
@@ -36,6 +21,7 @@ public:
   bool selectNextBarToward(int direction);
 
   //CurveViewWindow
+  void initWindowParameters();
   float xMin() override;
   // if the range of value is to wide compared to the bar width, value max is capped
   float xMax() override;
@@ -56,20 +42,14 @@ public:
   float median();
   float sum();
   float squaredValueSum();
-  // TODO: decide the max number of elements after optimization
-  constexpr static int k_maxNumberOfPairs = 500;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 300;
+  float defaultValue(int i) override;
   float sumOfValuesBetween(float x1, float x2);
   bool scrollToSelectedBar();
-  void initBarParameters();
-  void initWindowParameters();
   float sortedElementNumber(int k);
   int minIndex(float * bufferValues, int bufferLength);
   float closestMiddleBarTo(float f);
-  // Raw numeric data
-  int m_sizes[k_maxNumberOfPairs];
-  float m_values[k_maxNumberOfPairs];
   // Histogram bars
   float m_barWidth;
   float m_selectedBar;

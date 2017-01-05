@@ -4,11 +4,11 @@
 
 namespace Regression {
 
-InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, Data * data) :
+InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_data(data)
+  m_store(store)
 {
 }
 
@@ -30,16 +30,16 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       {
-        m_data->roundAbscissa();
+        m_store->roundAbscissa();
         break;
       }
       case 1:
       {
-        m_data->normalize();
+        m_store->normalize();
         break;
       }
       case 2:
-        m_data->setDefault();
+        m_store->setDefault();
         break;
       default:
         return false;

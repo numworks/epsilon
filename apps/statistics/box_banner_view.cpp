@@ -6,10 +6,10 @@
 
 namespace Statistics {
 
-BoxBannerView::BoxBannerView(Data * data, BoxView * boxView) :
+BoxBannerView::BoxBannerView(Store * store, BoxView * boxView) :
   m_calculationName(nullptr, 0.0f, 0.5f),
   m_calculationValue(1.0f, 0.5f),
-  m_data(data),
+  m_store(store),
   m_boxView(boxView)
 {
 }
@@ -23,19 +23,19 @@ void BoxBannerView::reload() {
   float calculation = 0.0f;
   switch(m_boxView->selectedQuantile()) {
     case 0:
-      calculation = m_data->minValue();
+      calculation = m_store->minValue();
       break;
     case 1:
-      calculation = m_data->firstQuartile();
+      calculation = m_store->firstQuartile();
       break;
     case 2:
-      calculation = m_data->median();
+      calculation = m_store->median();
       break;
     case 3:
-      calculation = m_data->thirdQuartile();
+      calculation = m_store->thirdQuartile();
       break;
     case 4:
-      calculation = m_data->maxValue();
+      calculation = m_store->maxValue();
       break;
   }
   Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);

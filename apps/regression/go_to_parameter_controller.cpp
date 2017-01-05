@@ -3,10 +3,10 @@
 
 namespace Regression {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, Data * data) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
   m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer)),
-  m_data(data),
+  m_store(store),
   m_xPrediction(true)
 {
 }
@@ -25,17 +25,17 @@ const char * GoToParameterController::title() const {
 float GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   if (m_xPrediction) {
-    return m_data->xCursorPosition();
+    return m_store->xCursorPosition();
   }
-  return m_data->yCursorPosition();
+  return m_store->yCursorPosition();
 }
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
   if (m_xPrediction) {
-    m_data->setCursorPositionAtAbscissa(f);
+    m_store->setCursorPositionAtAbscissa(f);
   } else {
-    m_data->setCursorPositionAtOrdinate(f);
+    m_store->setCursorPositionAtOrdinate(f);
   }
 }
 

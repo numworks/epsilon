@@ -5,13 +5,13 @@
 
 namespace Regression {
 
-BannerView::BannerView(Data * data) :
+BannerView::BannerView(Store * store) :
   m_regressionTypeView(nullptr, 0.5f, 0.5f),
   m_slopeView(0.5f, 0.5f),
   m_yInterceptView(0.5f, 0.5f),
   m_xView(0.5f, 0.5f),
   m_yView(0.5f, 0.5f),
-  m_data(data)
+  m_store(store)
 {
 }
 
@@ -20,25 +20,25 @@ void BannerView::reload() {
   m_regressionTypeView.setText("y = ax+b");
   char buffer[k_maxNumberOfCharacters];
   const char * legend = "a = ";
-  float slope = m_data->slope();
+  float slope = m_store->slope();
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   Float(slope).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_slopeView.setText(buffer);
 
   legend = "b = ";
-  float yIntercept = m_data->yIntercept();
+  float yIntercept = m_store->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   Float(yIntercept).convertFloatToText(buffer+legendLength, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_yInterceptView.setText(buffer);
 
   legend = "x = ";
-  float x = m_data->xCursorPosition();
+  float x = m_store->xCursorPosition();
   // Display a specific legend if the mean dot is selected
-  if (m_data->selectedDotIndex() == m_data->numberOfPairs()) {
+  if (m_store->selectedDotIndex() == m_store->numberOfPairs()) {
     legend = "x^ = ";
-    x = m_data->xMean();
+    x = m_store->meanOfColumn(0);
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
@@ -46,10 +46,10 @@ void BannerView::reload() {
   m_xView.setText(buffer);
 
   legend = "y = ";
-  float y = m_data->yCursorPosition();
-  if (m_data->selectedDotIndex() == m_data->numberOfPairs()) {
+  float y = m_store->yCursorPosition();
+  if (m_store->selectedDotIndex() == m_store->numberOfPairs()) {
     legend = "y^ = ";
-    y = m_data->yMean();
+    y = m_store->meanOfColumn(1);
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);

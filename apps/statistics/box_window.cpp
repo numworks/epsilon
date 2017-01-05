@@ -2,20 +2,20 @@
 
 namespace Statistics {
 
-BoxWindow::BoxWindow(Data * data) :
-  m_data(data)
+BoxWindow::BoxWindow(Store * store) :
+  m_store(store)
 {
 }
 
 float BoxWindow::xMin() {
-  return m_data->minValue();
+  return m_store->minValue();
 }
 
 float BoxWindow::xMax() {
-  if (m_data->minValue() >= m_data->maxValue()) {
-    return m_data->minValue() + 1.0f;
+  if (m_store->minValue() >= m_store->maxValue()) {
+    return m_store->minValue() + 1.0f;
   }
-  return m_data->maxValue();
+  return m_store->maxValue();
 }
 
 float BoxWindow::yMin() {

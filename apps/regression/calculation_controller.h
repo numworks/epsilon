@@ -2,7 +2,7 @@
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "even_odd_double_buffer_text_cell.h"
 
 namespace Regression {
@@ -10,7 +10,7 @@ namespace Regression {
 class CalculationController : public ViewController, public AlternateEmptyViewDelegate, public TableViewDataSource, public SelectableTableViewDelegate {
 
 public:
-  CalculationController(Responder * parentResponder, Data * data);
+  CalculationController(Responder * parentResponder, Store * store);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -45,7 +45,7 @@ private:
   EvenOddDoubleBufferTextCell m_doubleCalculationCells[k_maxNumberOfDisplayableRows/2];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows/2];
   SelectableTableView m_selectableTableView;
-  Data * m_data;
+  Store * m_store;
 };
 
 }

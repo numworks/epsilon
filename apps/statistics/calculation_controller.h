@@ -2,14 +2,14 @@
 #define STATISTICS_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 
 namespace Statistics {
 
 class CalculationController : public ViewController, public AlternateEmptyViewDelegate, public TableViewDataSource {
 
 public:
-  CalculationController(Responder * parentResponder, Data * data);
+  CalculationController(Responder * parentResponder, Store * store);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -40,7 +40,7 @@ private:
   EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows];
   SelectableTableView m_selectableTableView;
-  Data * m_data;
+  Store * m_store;
 };
 
 }

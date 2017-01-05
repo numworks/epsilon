@@ -2,7 +2,7 @@
 #define STATISTICS_BOX_VIEW_H
 
 #include <escher.h>
-#include "data.h"
+#include "store.h"
 #include "box_banner_view.h"
 #include "box_window.h"
 #include "../constant.h"
@@ -12,7 +12,7 @@ namespace Statistics {
 
 class BoxView : public CurveViewWithBanner {
 public:
-  BoxView(Data * m_data);
+  BoxView(Store * store);
   void reloadSelection() override;
   int selectedQuantile();
   bool selectQuantile(int selectedQuantile);
@@ -20,7 +20,7 @@ public:
 private:
   char * label(Axis axis, int index) const override;
   BannerView * bannerView() override;
-  Data * m_data;
+  Store * m_store;
   BoxWindow m_boxWindow;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   // -1->Unselect 0->min 1->first quartile 2->median 3->third quartile 4->max

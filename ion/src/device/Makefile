@@ -1,6 +1,7 @@
 include ion/src/shared/Makefile
 include ion/src/device/boot/Makefile
 objs += $(addprefix ion/src/device/, \
+  backlight.o \
   battery.o\
   device.o\
   display.o\

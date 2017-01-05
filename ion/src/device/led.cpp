@@ -11,9 +11,6 @@ void Ion::LED::setColor(KDColor c) {
   TIM3.CCR4()->set(Device::dutyCycleForUInt8(c.green()));
 }
 
-void Ion::Display::setBacklightIntensity(uint8_t intensity) {
-}
-
 // Private Ion::Device::LED methods
 
 namespace Ion {

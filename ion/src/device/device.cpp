@@ -9,6 +9,7 @@ extern "C" {
 #include "keyboard.h"
 #include "battery.h"
 #include "sd_card.h"
+#include "backlight.h"
 
 #define USE_SD_CARD 0
 
@@ -37,8 +38,7 @@ void Ion::Device::init() {
   Display::Device::init();
   Keyboard::Device::init();
   Battery::Device::init();
-
-  Display::setBacklightIntensity(0xFF);
+  Backlight::Device::init();
 #if USE_SD_CARD
   SDCard::Device::init();
 #endif

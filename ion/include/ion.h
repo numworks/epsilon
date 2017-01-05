@@ -20,6 +20,7 @@ void ion_app();
 namespace Ion {
 
 void msleep(long ms);
+void usleep(long us);
 
 /* CAUTION: This is a complete reset! */
 void reset();

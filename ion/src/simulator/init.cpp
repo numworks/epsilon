@@ -63,7 +63,7 @@ bool Ion::Keyboard::keyDown(Ion::Keyboard::Key key) {
 }
 
 void Ion::msleep(long ms) {
-  usleep(1000*ms);
+  ::usleep(1000*ms);
   sDisplay->redraw();
   Fl::wait();
 }

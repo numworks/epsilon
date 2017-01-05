@@ -19,6 +19,11 @@ void Ion::msleep(long ms) {
       __asm volatile("nop");
   }
 }
+void Ion::usleep(long us) {
+  for (volatile long i=0; i<us; i++) {
+    __asm volatile("nop");
+  }
+}
 
 void Ion::reset() {
   CM4.AIRCR()->requestReset();

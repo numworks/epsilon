@@ -2,6 +2,7 @@
 #define REGS_REGS_H
 
 #include "adc.h"
+#include "crc.h"
 #include "exti.h"
 #include "cm4.h"
 #include "fsmc.h"

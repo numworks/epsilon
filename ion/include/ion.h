@@ -8,6 +8,8 @@
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <stdint.h>
+#include <string.h>
 
 
 /* ION is not your regular library. It is a library you link against, but it
@@ -25,6 +27,10 @@ void usleep(long us);
 
 /* CAUTION: This is a complete reset! */
 void reset();
+
+// CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
+// Only accepts whole 32bit values
+uint32_t crc32(const uint32_t * data, size_t length);
 
 }
 

@@ -2,6 +2,14 @@
 #include "battery.h"
 #include "regs/regs.h"
 
+/* To measure the battery voltage, we're using the internal ADC. The ADC works
+ * by comparing the input voltage to a reference voltage. The only fixed voltage
+ * we have around is 2.8V, so that's the one we're using as a refrence. However,
+ * and ADC can only measure voltage that is lower than the reference voltage. So
+ * we need to use a voltage divider before sampling Vbat.
+ * To avoid draining the battery, we're using an high-impedence voltage divider,
+ * so we need to be careful when sampling the ADC. See AN2834 for more info. */
+
 namespace Ion {
 namespace Battery {
 
@@ -18,7 +26,6 @@ float voltage() {
   // The ADC is 12 bits by default
   return Device::ADCDividerBridgeRatio*(Device::ADCReferenceVoltage * value)/0xFFF;
 }
-
 
 }
 }
@@ -43,6 +50,10 @@ void initGPIO() {
   /* The BAT_SNS pin is connected to Vbat through a divider bridge. It therefore
    * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
   ADCGPIO.MODER()->setMode(ADCPin, GPIO::MODER::Mode::Analog);
+
+  ADC.SMPR()->setSamplingTime(ADCChannel, ADC::SMPR::SamplingTime::Cycles480);
+  // ADC.SQR1()->setL(0); // Default
+  ADC.SQR3()->setSQ1(ADCChannel);
 }
 
 void initADC() {

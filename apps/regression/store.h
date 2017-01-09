@@ -1,29 +1,26 @@
 #ifndef REGRESSION_STORE_H
 #define REGRESSION_STORE_H
 
-#include "../curve_view_window_with_cursor.h"
+#include "../interactive_curve_view_range.h"
 #include "../float_pair_store.h"
 
 namespace Regression {
 
-class Store : public CurveViewWindowWithCursor, public FloatPairStore {
+class Store : public InteractiveCurveViewRange, public FloatPairStore, public InteractiveCurveViewRangeDelegate {
 public:
   Store();
-  // Cursor
-  void initCursorPosition() override;
-  // the result of moveCursorVertically means:
-  // 0-> the window has not changed  1->the window changed
-  int moveCursorVertically(int direction) override;
-  int moveCursorHorizontally(int direction) override;
-  /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
-   * the mean dot is selected and the dot index otherwise */
-  int selectedDotIndex();
-  void setCursorPositionAtAbscissa(float abscissa);
-  void setCursorPositionAtOrdinate(float ordinate);
+  bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
+
+  // Dots
+  /* Return the closest dot to x above the regression curve if direction > 0,
+   * below otherwise*/
+  int closestVerticalDot(int direction, float x);
+  /* Return the closest dot to dot given on the right if direction > 0,
+   * on the left otherwise*/
+  int nextDot(int direction, int dot);
 
   // Window
-  void initWindowParameters();
-  void setDefault();
+  void setDefault() override;
 
   // Calculation
   float squaredValueSumOfColumn(int i);
@@ -41,13 +38,6 @@ public:
 private:
   float maxValueOfColumn(int i);
   float minValueOfColumn(int i);
-
-  bool computeYaxis() override;
-  int selectClosestDotRelativelyToCurve(int direction);
-  int selectNextDot(int direction);
-
-  // Cursor
-  int m_selectedDotIndex;
 };
 
 }

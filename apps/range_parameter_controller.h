@@ -1,13 +1,13 @@
-#ifndef APPS_WINDOW_PARAMETER_CONTROLLER_H
-#define APPS_WINDOW_PARAMETER_CONTROLLER_H
+#ifndef APPS_RANGE_PARAMETER_CONTROLLER_H
+#define APPS_RANGE_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "curve_view_window_with_cursor.h"
+#include "interactive_curve_view_range.h"
 #include "float_parameter_controller.h"
 
-class WindowParameterController : public FloatParameterController {
+class RangeParameterController : public FloatParameterController {
 public:
-  WindowParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow);
+  RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
@@ -20,9 +20,9 @@ private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
-  CurveViewWindowWithCursor * m_graphWindow;
+  InteractiveCurveViewRange * m_interactiveRange;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
-  EditableTextMenuListCell m_windowCells[k_numberOfTextCell];
+  EditableTextMenuListCell m_rangeCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
 };
 

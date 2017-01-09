@@ -25,7 +25,6 @@ private:
   BoxBannerView m_boxBannerView;
   BoxView m_view;
   Store * m_store;
-  uint32_t m_storeVersion;
 };
 
 }

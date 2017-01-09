@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <stddef.h>
 
 namespace Graph {
 
@@ -13,6 +14,13 @@ FunctionStore::FunctionStore() :
   m_numberOfFunctions(0)
 {
   addEmptyFunction();
+}
+
+uint32_t FunctionStore::storeChecksum() {
+  size_t dataLengthInBytes = m_numberOfFunctions*sizeof(Function);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  //return Ion::crc32((uint32_t *)m_functions, dataLengthInBytes>>2);
+  return m_numberOfFunctions;
 }
 
 Function * FunctionStore::functionAtIndex(int i) {

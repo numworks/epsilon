@@ -6,10 +6,10 @@ constexpr KDColor ZoomParameterController::ContentView::LegendView::k_legendBack
 
 /* Zoom Parameter Controller */
 
-ZoomParameterController::ZoomParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow, CurveViewWithBannerAndCursor * graphView) :
+ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
-  m_contentView(ContentView(graphView)),
-  m_graphWindow(graphWindow)
+  m_contentView(ContentView(curveView)),
+  m_interactiveRange(interactiveRange)
 {
 }
 
@@ -23,33 +23,33 @@ View * ZoomParameterController::view() {
 
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
-    m_graphWindow->zoom(1.0f/3.0f);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->zoom(1.0f/3.0f);
+    m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
-    m_graphWindow->zoom(3.0f/4.0f);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->zoom(3.0f/4.0f);
+    m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Up) {
-    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Up);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->panWithVector(0.0f, m_interactiveRange->yGridUnit());
+    m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Down) {
-    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Down);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->panWithVector(0.0f, -m_interactiveRange->yGridUnit());
+    m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Left) {
-    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Left);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->panWithVector(-m_interactiveRange->xGridUnit(), 0.0f);
+    m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Right) {
-    m_graphWindow->translateWindow(CurveViewWindowWithCursor::Direction::Right);
-    m_contentView.graphView()->reload();
+    m_interactiveRange->panWithVector(m_interactiveRange->xGridUnit(), 0.0f);
+    m_contentView.curveView()->reload();
     return true;
   }
 
@@ -62,8 +62,8 @@ void ZoomParameterController::didBecomeFirstResponder() {
 
 /* Content View */
 
-ZoomParameterController::ContentView::ContentView(CurveViewWithBannerAndCursor * graphView) :
-  m_graphView(graphView)
+ZoomParameterController::ContentView::ContentView(CurveView * curveView) :
+  m_curveView(curveView)
 {
 }
 
@@ -74,18 +74,18 @@ int ZoomParameterController::ContentView::numberOfSubviews() const {
 View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return m_graphView;
+    return m_curveView;
   }
   return &m_legendView;
 }
 
 void ZoomParameterController::ContentView::layoutSubviews() {
-  m_graphView->setFrame(bounds());
+  m_curveView->setFrame(bounds());
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
 }
 
-CurveViewWithBannerAndCursor * ZoomParameterController::ContentView::graphView() {
-  return m_graphView;
+CurveView * ZoomParameterController::ContentView::curveView() {
+  return m_curveView;
 }
 
 /* Legend View */

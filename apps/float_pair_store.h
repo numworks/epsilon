@@ -15,7 +15,7 @@ public:
   void deleteAllPairs();
   void resetColumn(int i);
   float sumOfColumn(int i);
-  uint32_t checksum();
+  uint32_t storeChecksum();
   constexpr static int k_maxNumberOfPairs = 500;
 protected:
   virtual float defaultValue(int ii);

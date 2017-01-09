@@ -3,7 +3,8 @@
 
 #include <escher.h>
 #include <poincare.h>
-#include "curve_view_window.h"
+#include "curve_view_range.h"
+#include "curve_view_cursor.h"
 #include <math.h>
 
 class CurveView : public View {
@@ -13,15 +14,26 @@ public:
     Horizontal = 0,
     Vertical = 1
   };
-  CurveView(CurveViewWindow * curveViewWindow = nullptr, float topMarginFactor = 0.0f,
+  CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
+    View * bannerView = nullptr, View * cursorView = nullptr, float topMarginFactor = 0.0f,
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
-  virtual void reload();
+  // Reload methods
+  void reload();
+  virtual void reloadSelection();
+  // When the main view is selected, the banner view is visible
+  bool isMainViewSelected() const;
+  void selectMainView(bool mainViewSelected);
+
 protected:
+  void setCurveViewRange(CurveViewRange * curveViewRange);
+
+  // Drawing methods
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
+  constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static int k_maxNumberOfXLabels =  18;
   constexpr static int k_maxNumberOfYLabels =  13;
-  void setCurveViewWindow(CurveViewWindow * curveViewWindow);
+  constexpr static KDCoordinate k_cursorSize = 9;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;
@@ -38,12 +50,14 @@ protected:
       KDColor color, KDCoordinate thickness = 1) const;
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, KDSize size) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
+  void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawHistogram(KDContext * ctx, KDRect rect, Model * model,  float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
+
 private:
   constexpr static int k_externRectMargin = 1;
   int numberOfLabels(Axis axis) const;
@@ -57,7 +71,16 @@ private:
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
-  CurveViewWindow * m_curveViewWindow;
+  void layoutSubviews() override;
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  /* m_curveViewRange has to be non null but the cursor model, the banner and
+   * cursor views may be nullptr if not needed. */
+  CurveViewRange * m_curveViewRange;
+  CurveViewCursor * m_curveViewCursor;
+  View * m_bannerView;
+  View * m_cursorView;
+  bool m_mainViewSelected;
   float m_topMarginFactor;
   float m_bottomMarginFactor;
   float m_leftMarginFactor;

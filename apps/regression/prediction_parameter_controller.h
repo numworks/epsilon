@@ -3,13 +3,14 @@
 
 #include <escher.h>
 #include "store.h"
+#include "../curve_view_cursor.h"
 #include "go_to_parameter_controller.h"
 
 namespace Regression {
 
 class PredictionParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Store * store);
+  PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

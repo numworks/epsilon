@@ -17,7 +17,6 @@ void StoreParameterController::selectXColumn(bool xColumnSelected) {
   m_xColumnSelected = xColumnSelected;
 }
 
-
 const char * StoreParameterController::title() const {
   return "Option de la colonne";
 }

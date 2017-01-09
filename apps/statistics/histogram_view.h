@@ -4,20 +4,23 @@
 #include <escher.h>
 #include "store.h"
 #include "../constant.h"
-#include "../curve_view_with_banner.h"
+#include "../curve_view.h"
 
 namespace Statistics {
 
-class HistogramView : public CurveViewWithBanner {
+class HistogramView : public CurveView {
 public:
-  HistogramView(Store * store, BannerView * bannerView);
+  HistogramView(Store * store, View * bannerView);
   void reloadSelection() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setHighlight(float start, float end);
 private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
+  float m_highlightedBarStart;
+  float m_highlightedBarEnd;
 };
 
 }

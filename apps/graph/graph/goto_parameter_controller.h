@@ -4,11 +4,13 @@
 #include <escher.h>
 #include "graph_view.h"
 #include "../../float_parameter_controller.h"
+#include "../../curve_view_cursor.h"
+#include "../../interactive_curve_view_range.h"
 
 namespace Graph {
 class GoToParameterController : public FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, GraphWindow * graphWindow);
+  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
@@ -19,7 +21,8 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_abscisseCell;
-  GraphWindow * m_graphWindow;
+  InteractiveCurveViewRange * m_graphRange;
+  CurveViewCursor * m_cursor;
   Function * m_function;
 };
 

@@ -4,10 +4,11 @@
 
 namespace Graph {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, GraphWindow * graphWindow) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
   m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
-  m_graphWindow(graphWindow),
+  m_graphRange(graphRange),
+  m_cursor(cursor),
   m_function(nullptr)
 {
 }
@@ -18,12 +19,16 @@ const char * GoToParameterController::title() const {
 
 float GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
-  return m_graphWindow->xCursorPosition();
+  return m_cursor->x();
 }
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
-  m_graphWindow->setCursorPositionAtAbscissaWithFunction(f, m_function);
+  App * graphApp = (Graph::App *)app();
+  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext());
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
+  m_graphRange->moveCursorTo(f, y);
 }
 
 int GoToParameterController::numberOfRows() {

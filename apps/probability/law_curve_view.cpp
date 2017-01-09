@@ -5,24 +5,19 @@
 namespace Probability {
 
 LawCurveView::LawCurveView() :
-  CurveView(nullptr, 0.2f, 0.1f, 0.2f, 0.1f),
+  CurveView(nullptr, nullptr, nullptr, nullptr, 0.2f, 0.1f, 0.2f, 0.1f),
   m_law(nullptr),
   m_calculation(nullptr)
 {
 }
 
 void LawCurveView::setLaw(Law * law) {
-  setCurveViewWindow(law);
+  setCurveViewRange(law);
   m_law = law;
 }
 
 void LawCurveView::setCalculation(Calculation * calculation) {
   m_calculation = calculation;
-}
-
-void LawCurveView::reload() {
-  markRectAsDirty(bounds());
-  computeLabels(Axis::Horizontal);
 }
 
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -39,7 +34,9 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 char * LawCurveView::label(Axis axis, int index) const {
-  assert(axis == Axis::Horizontal);
+  if (axis == Axis::Vertical) {
+    return nullptr;
+  }
   return (char *)m_labels[index];
 }
 

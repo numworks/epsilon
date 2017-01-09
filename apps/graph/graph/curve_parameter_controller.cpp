@@ -3,7 +3,7 @@
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(GraphWindow * graphWindow, BannerView * bannerView) :
+CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
   ViewController(nullptr),
   m_bannerView(bannerView),
   m_function(nullptr),
@@ -12,7 +12,7 @@ CurveParameterController::CurveParameterController(GraphWindow * graphWindow, Ba
   m_derivativeCell(SwitchMenuListCell((char*)"Nombre derivee")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_goToParameterController(GoToParameterController(this, graphWindow))
+  m_goToParameterController(GoToParameterController(this, graphRange, cursor))
 {
 }
 

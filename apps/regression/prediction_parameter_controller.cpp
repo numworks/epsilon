@@ -3,11 +3,11 @@
 
 namespace Regression {
 
-PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store) :
+PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_goToParameterController(GoToParameterController(this, store))
+  m_goToParameterController(GoToParameterController(this, store, cursor))
 {
 }
 

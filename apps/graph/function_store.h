@@ -2,6 +2,7 @@
 #define GRAPH_FUNCTION_STORE_H
 
 #include "function.h"
+#include <stdint.h>
 
 namespace Graph {
 /* FunctionStore is a dumb class.
@@ -9,6 +10,7 @@ namespace Graph {
 class FunctionStore {
 public:
   FunctionStore();
+  uint32_t storeChecksum();
   Function * functionAtIndex(int i);
   Function * activeFunctionAtIndex(int i);
   Function * definedFunctionAtIndex(int i);

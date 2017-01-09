@@ -2,11 +2,11 @@
 #define PROBABILITE_LAW_H
 
 #include <poincare.h>
-#include "../../curve_view_window.h"
+#include "../../curve_view_range.h"
 
 namespace Probability {
 
-class Law : public CurveViewWindow {
+class Law : public CurveViewRange {
 public:
   enum class Type : uint8_t{
     Binomial,

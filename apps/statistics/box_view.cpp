@@ -4,10 +4,10 @@
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, BannerView * bannerView) :
-  CurveViewWithBanner(&m_boxWindow, bannerView, 0.0f, 0.2f, 0.4f, 0.2f),
+BoxView::BoxView(Store * store, View * bannerView) :
+  CurveView(&m_boxRange, nullptr, bannerView, nullptr, 0.0f, 0.2f, 0.4f, 0.2f),
   m_store(store),
-  m_boxWindow(BoxWindow(store)),
+  m_boxRange(BoxRange(store)),
   m_selectedQuantile(0)
 {
 }
@@ -47,7 +47,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int k = 0; k < 5; k++) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBounds[k], upBounds[k], KDColorBlack);
   }
-  if (m_mainViewSelected) {
+  if (isMainViewSelected()) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[m_selectedQuantile], lowBounds[m_selectedQuantile], upBounds[m_selectedQuantile], KDColorRed);
   }
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), KDColorBlack);

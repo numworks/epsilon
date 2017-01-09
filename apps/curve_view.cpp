@@ -6,11 +6,16 @@
 #include <string.h>
 
 constexpr KDColor CurveView::k_axisColor;
+constexpr KDColor CurveView::k_gridColor;
 
-CurveView::CurveView(CurveViewWindow * curveViewWindow, float topMarginFactor,
-    float rightMarginFactor, float bottomMarginFactor, float leftMarginFactor) :
+CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, View * bannerView,
+    View * cursorView, float topMarginFactor, float rightMarginFactor, float bottomMarginFactor,
+    float leftMarginFactor) :
   View(),
-  m_curveViewWindow(curveViewWindow),
+  m_curveViewRange(curveViewRange),
+  m_curveViewCursor(curveViewCursor),
+  m_bannerView(bannerView),
+  m_cursorView(cursorView),
   m_topMarginFactor(topMarginFactor),
   m_bottomMarginFactor(bottomMarginFactor),
   m_leftMarginFactor(leftMarginFactor),
@@ -18,32 +23,61 @@ CurveView::CurveView(CurveViewWindow * curveViewWindow, float topMarginFactor,
 {
 }
 
-void CurveView::setCurveViewWindow(CurveViewWindow * curveViewWindow) {
-  m_curveViewWindow = curveViewWindow;
-}
-
 void CurveView::reload() {
   markRectAsDirty(bounds());
+  if (label(Axis::Horizontal, 0) != nullptr) {
+    computeLabels(Axis::Horizontal);
+  }
+  if (label(Axis::Vertical, 0) != nullptr) {
+    computeLabels(Axis::Vertical);
+  }
+  layoutSubviews();
+}
+
+void CurveView::reloadSelection() {
+  if (m_curveViewCursor != nullptr) {
+    float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+    KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
+    markRectAsDirty(dirtyZone);
+    layoutSubviews();
+  }
+}
+
+bool CurveView::isMainViewSelected() const {
+  return m_mainViewSelected;
+}
+
+void CurveView::selectMainView(bool mainViewSelected) {
+  if (m_mainViewSelected != mainViewSelected) {
+    m_mainViewSelected = mainViewSelected;
+    reloadSelection();
+    layoutSubviews();
+  }
+}
+
+void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
+  m_curveViewRange = curveViewRange;
 }
 
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
-  float absoluteMin = axis == Axis::Horizontal ? m_curveViewWindow->xMin(): m_curveViewWindow->yMin();
+  float range = axis == Axis::Horizontal ? m_curveViewRange->xMax() - m_curveViewRange->xMin() : m_curveViewRange->yMax() - m_curveViewRange->yMin();
+  float absoluteMin = axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin();
   float marginFactor = axis == Axis::Horizontal ? m_leftMarginFactor : m_bottomMarginFactor;
   return absoluteMin - marginFactor*range;
 }
 
 float CurveView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  float range = axis == Axis::Horizontal ? m_curveViewWindow->xMax() - m_curveViewWindow->xMin() : m_curveViewWindow->yMax() - m_curveViewWindow->yMin();
-  float absoluteMax = (axis == Axis::Horizontal ? m_curveViewWindow->xMax() : m_curveViewWindow->yMax());
+  float range = axis == Axis::Horizontal ? m_curveViewRange->xMax() - m_curveViewRange->xMin() : m_curveViewRange->yMax() - m_curveViewRange->yMin();
+  float absoluteMax = (axis == Axis::Horizontal ? m_curveViewRange->xMax() : m_curveViewRange->yMax());
   float marginFactor = axis == Axis::Horizontal ? m_rightMarginFactor : m_topMarginFactor;
   return absoluteMax + marginFactor*range;
 }
 
 float CurveView::gridUnit(Axis axis) const {
-  return (axis == Axis::Horizontal ? m_curveViewWindow->xGridUnit() : m_curveViewWindow->yGridUnit());
+  return (axis == Axis::Horizontal ? m_curveViewRange->xGridUnit() : m_curveViewRange->yGridUnit());
 }
 
 KDCoordinate CurveView::pixelLength(Axis axis) const {
@@ -60,14 +94,6 @@ float CurveView::floatToPixel(Axis axis, float f) const {
   float fraction = (f-min(axis))/(max(axis)-min(axis));
   fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
   return pixelLength(axis)*fraction;
-}
-
-int CurveView::numberOfLabels(Axis axis) const {
-  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
-  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
-    return 0;
-  }
-  return ceilf((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
 void CurveView::computeLabels(Axis axis) {
@@ -173,6 +199,11 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
   }
 }
 
+void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), k_gridColor);
+}
+
 void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);
 }
@@ -271,31 +302,12 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
   }
 }
 
-void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
-  // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
-    return;
+int CurveView::numberOfLabels(Axis axis) const {
+  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
+  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
+    return 0;
   }
-  KDCoordinate px = pxf;
-  KDCoordinate py = pyf;
-  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
-  if (!rect.intersects(stampRect)) {
-    return;
-  }
-  uint8_t shiftedMask[stampSize][stampSize];
-  KDColor workingBuffer[stampSize*stampSize];
-  float dx = pxf - floorf(pxf);
-  float dy = pyf - floorf(pyf);
-  /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
-   * dx and dy would be rounded to one tenth or one hundredth to choose the
-   * right shifted mask. */
-  for (int i=0; i<stampSize; i++) {
-    for (int j=0; j<stampSize; j++) {
-      shiftedMask[i][j] = dx * (stampMask[i][j]*dy+stampMask[i+1][j]*(1.0f-dy))
-        + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
-    }
-  }
-  ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
+  return ceilf((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
 float CurveView::evaluateModelWithParameter(Model * curve, float t) const {
@@ -349,4 +361,64 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
     return;
   }
   straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
+}
+
+void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
+  // We avoid drawing when no part of the stamp is visible
+  if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
+    return;
+  }
+  KDCoordinate px = pxf;
+  KDCoordinate py = pyf;
+  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
+  if (!rect.intersects(stampRect)) {
+    return;
+  }
+  uint8_t shiftedMask[stampSize][stampSize];
+  KDColor workingBuffer[stampSize*stampSize];
+  float dx = pxf - floorf(pxf);
+  float dy = pyf - floorf(pyf);
+  /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
+   * dx and dy would be rounded to one tenth or one hundredth to choose the
+   * right shifted mask. */
+  for (int i=0; i<stampSize; i++) {
+    for (int j=0; j<stampSize; j++) {
+      shiftedMask[i][j] = dx * (stampMask[i][j]*dy+stampMask[i+1][j]*(1.0f-dy))
+        + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
+    }
+  }
+  ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
+}
+
+void CurveView::layoutSubviews() {
+  if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
+    KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+    KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
+    if (!m_mainViewSelected) {
+      cursorFrame = KDRectZero;
+    }
+    m_cursorView->setFrame(cursorFrame);
+  }
+  if (m_bannerView != nullptr) {
+    m_bannerView->setFrame(bounds());
+    KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
+    KDRect bannerFrame(KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight));
+    if (!m_mainViewSelected) {
+      bannerFrame = KDRectZero;
+    }
+    m_bannerView->setFrame(bannerFrame);
+  }
+}
+
+int CurveView::numberOfSubviews() const {
+  return (m_bannerView != nullptr) + (m_cursorView != nullptr);
+};
+
+View * CurveView::subviewAtIndex(int index) {
+  assert(index >= 0 && index < 2);
+  if (index == 0) {
+    return m_bannerView;
+  }
+  return m_cursorView;
 }

@@ -2,12 +2,12 @@
 #define APPS_ZOOM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "curve_view_window_with_cursor.h"
-#include "curve_view_with_banner_and_cursor.h"
+#include "interactive_curve_view_range.h"
+#include "curve_view.h"
 
 class ZoomParameterController : public ViewController {
 public:
-  ZoomParameterController(Responder * parentResponder, CurveViewWindowWithCursor * graphWindow, CurveViewWithBannerAndCursor * graphView);
+  ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -15,9 +15,9 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(CurveViewWithBannerAndCursor * graphView);
+    ContentView(CurveView * curveView);
     void layoutSubviews() override;
-    CurveViewWithBannerAndCursor * graphView();
+    CurveView * curveView();
   private:
     class LegendView : public View {
     public:
@@ -34,12 +34,12 @@ private:
     };
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    CurveViewWithBannerAndCursor * m_graphView;
+    CurveView * m_curveView;
     LegendView m_legendView;
     constexpr static KDCoordinate k_legendHeight = 50;
   };
   ContentView m_contentView;
-  CurveViewWindowWithCursor * m_graphWindow;
+  InteractiveCurveViewRange * m_interactiveRange;
 };
 
 #endif

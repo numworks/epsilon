@@ -4,14 +4,13 @@
 #include <escher.h>
 #include "store.h"
 #include "../constant.h"
-#include "../cursor_view.h"
-#include "../curve_view_with_banner_and_cursor.h"
+#include "../curve_view.h"
 
 namespace Regression {
 
-class GraphView : public CurveViewWithBannerAndCursor {
+class GraphView : public CurveView {
 public:
-  GraphView(Store * store, ::BannerView * bannerView, CursorView * cursorView);
+  GraphView(Store * store, CurveViewCursor * cursor, View * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_dotSize = 5;

@@ -5,12 +5,14 @@
 #include "goto_parameter_controller.h"
 #include "banner_view.h"
 #include "../function.h"
+#include "../../curve_view_cursor.h"
+#include "../../interactive_curve_view_range.h"
 
 namespace Graph {
 
 class CurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  CurveParameterController(GraphWindow * graphWindow, BannerView * bannerView);
+  CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor);
 
   View * view() override;
   const char * title() const override;

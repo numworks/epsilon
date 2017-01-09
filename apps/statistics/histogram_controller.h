@@ -28,14 +28,24 @@ public:
   const char * emptyMessage() override;
   Responder * defaultController() override;
 private:
+  constexpr static int k_maxNumberOfBarsPerWindow = 280;
   constexpr static int k_maxNumberOfCharacters = 12;
   Responder * tabController() const;
   void reloadBannerView();
+  void initRangeParameters();
+  void initBarParameters();
+  void initBarSelection();
+  // return true if the window has scrolled
+  bool moveSelection(int deltaIndex);
   HistogramBannerView m_bannerView;
   HistogramView m_view;
   Button m_settingButton;
   Store * m_store;
+  CurveViewCursor m_cursor;
   uint32_t m_storeVersion;
+  uint32_t m_barVersion;
+  uint32_t m_rangeVersion;
+  int m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
 };
 

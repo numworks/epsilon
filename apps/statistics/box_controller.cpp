@@ -37,12 +37,6 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 void BoxController::didBecomeFirstResponder() {
-  uint32_t storeChecksum = m_store->checksum();
-  if (m_storeVersion != storeChecksum) {
-    m_storeVersion = storeChecksum;
-    m_store->initWindowParameters();
-    m_store->initBarParameters();
-  }
   m_view.selectMainView(true);
   m_view.reload();
   reloadBannerView();

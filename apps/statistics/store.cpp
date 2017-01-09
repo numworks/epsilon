@@ -7,28 +7,22 @@
 namespace Statistics {
 
 Store::Store() :
+  InteractiveCurveViewRange(nullptr, nullptr),
   FloatPairStore(),
   m_barWidth(1.0f),
-  m_selectedBar(0.0f),
-  m_firstBarAbscissa(0.0f),
-  m_xMin(0.0f),
-  m_xMax(10.0f),
-  m_yMax(1.0f),
-  m_xGridUnit(1.0f)
+  m_firstDrawnBarAbscissa(0.0f)
 {
 }
 
-/* Histogram bars */
-
-void Store::initBarParameters() {
-  float min = minValue();
-  float max = maxValue();
-  m_firstBarAbscissa = min;
-  m_barWidth = computeGridUnit(Axis::X, min, max);
-  if (m_barWidth <= 0.0f) {
-    m_barWidth = 1.0f;
-  }
+uint32_t Store::barChecksum() {
+  float data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
+  size_t dataLengthInBytes = 2*sizeof(float);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  //return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
+  return m_barWidth + m_firstDrawnBarAbscissa;
 }
+
+/* Histogram bars */
 
 float Store::barWidth() {
   return m_barWidth;
@@ -41,108 +35,57 @@ void Store::setBarWidth(float barWidth) {
   m_barWidth = barWidth;  
 }
 
-float Store::firsBarAbscissa() {
-  return m_firstBarAbscissa;
+float Store::firstDrawnBarAbscissa() {
+  return m_firstDrawnBarAbscissa;
 }
 
-void Store::setFirsBarAbscissa(float firsBarAbscissa) {
-  m_firstBarAbscissa = firsBarAbscissa;
+void Store::setFirstDrawnBarAbscissa(float firstBarAbscissa) {
+  m_firstDrawnBarAbscissa = firstBarAbscissa;
 }
 
-int Store::heightForBarAtValue(float value) {
+float Store::heightOfBarAtIndex(int index) {
+  return sumOfValuesBetween(startOfBarAtIndex(index), endOfBarAtIndex(index));
+}
+
+float Store::heightOfBarAtValue(float value) {
   float width = barWidth();
-  int barNumber = floorf((value - m_firstBarAbscissa)/width);
-  float lowerBound = m_firstBarAbscissa + barNumber*width;
-  float upperBound = m_firstBarAbscissa + (barNumber+1)*width;
+  int barNumber = floorf((value - m_firstDrawnBarAbscissa)/width);
+  float lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
+  float upperBound = m_firstDrawnBarAbscissa + (barNumber+1)*width;
   return sumOfValuesBetween(lowerBound, upperBound);
 }
 
-float Store::selectedBar() {
-  return m_selectedBar;
+float Store::startOfBarAtIndex(int index) {
+  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*floorf((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+  return firstBarAbscissa + index * m_barWidth;
 }
 
-bool Store::selectNextBarToward(int direction) {
-  float newSelectedBar = m_selectedBar;
-  float max = maxValue();
-  float min = minValue();
-  if (direction > 0.0f) {
-    do {
-      newSelectedBar += m_barWidth;
-      newSelectedBar = closestMiddleBarTo(newSelectedBar);
-    } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar < max + m_barWidth);
+float Store::endOfBarAtIndex(int index) {
+  return startOfBarAtIndex(index) + m_barWidth;
+}
+
+int Store::numberOfBars() {
+  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*floorf((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+  return ceilf((maxValue() - firstBarAbscissa)/m_barWidth)+1;
+}
+
+bool Store::scrollToSelectedBarIndex(int index) {
+  float startSelectedBar = startOfBarAtIndex(index);
+  float range = m_xMax - m_xMin;
+  if (m_xMin > startSelectedBar) {
+    m_xMin = startSelectedBar;
+    m_xMax = m_xMin + range;
+    return true;
   }
-  if (direction < 0.0f) {
-    do {
-      newSelectedBar -= m_barWidth;
-      newSelectedBar = closestMiddleBarTo(newSelectedBar);
-    } while (heightForBarAtValue(newSelectedBar) == 0 && newSelectedBar > min - m_barWidth);
-  }
-  if (newSelectedBar > min - m_barWidth && newSelectedBar < max + m_barWidth) {
-    m_selectedBar = newSelectedBar;
-    return scrollToSelectedBar();
+  float endSelectedBar = endOfBarAtIndex(index);
+  if (endSelectedBar > m_xMax) {
+    m_xMax = endSelectedBar;
+    m_xMin = m_xMax - range;
+    return true;
   }
   return false;
 }
 
-/* CurveViewWindow */
-
-void Store::initWindowParameters() {
-  float min = minValue();
-  float max = maxValue();
-  m_xMin = m_firstBarAbscissa;
-  m_xMax = max + m_barWidth;
-  if ((m_xMax - m_xMin)/m_barWidth > k_maxNumberOfBarsPerWindow) {
-    m_xMax = m_xMin + k_maxNumberOfBarsPerWindow*m_barWidth;
-  }
-  if (m_xMin >= m_xMax) {
-    m_xMax = m_xMin + 10.0f*m_barWidth;
-  }
-
-  m_yMax = -FLT_MAX;
-  for (float x = min+m_barWidth/2.0f; x < max+m_barWidth; x += m_barWidth) {
-    float size = heightForBarAtValue(x);
-    if (size > m_yMax) {
-      m_yMax = size;
-    }
-  }
-  m_yMax = m_yMax/sumOfColumn(1);
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-
-  m_selectedBar = m_firstBarAbscissa + m_barWidth/2.0f;
-  while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar < max + m_barWidth) {
-    m_selectedBar += m_barWidth;
-    m_selectedBar = closestMiddleBarTo(m_selectedBar);
-  }
-  if (m_selectedBar > max + m_barWidth) {
-    /* No bar is after m_firstBarAbscissa */
-    m_selectedBar = m_firstBarAbscissa + m_barWidth/2.0f;
-    while (heightForBarAtValue(m_selectedBar) == 0 && m_selectedBar > min - m_barWidth) {
-      m_selectedBar -= m_barWidth;
-      m_selectedBar = closestMiddleBarTo(m_selectedBar);
-    }
-  }
-}
-
-float Store::xMin() {
-  return m_xMin;
-}
-
-float Store::xMax() {
-  return m_xMax;
-}
-
-float Store::yMin() {
-  return 0.0f;
-}
-
-float Store::yMax() {
-  return m_yMax;
-}
-
-float Store::xGridUnit() {
-  return m_xGridUnit;
-}
-  
 /* Calculation */
 
 float Store::maxValue() {
@@ -244,21 +187,6 @@ float Store::sumOfValuesBetween(float x1, float x2) {
   return result;
 }
 
-bool Store::scrollToSelectedBar() {
-  float range = m_xMax - m_xMin;
-  if (m_xMin > m_selectedBar) {
-    m_xMin = m_selectedBar - m_barWidth/2;
-    m_xMax = m_xMin + range;
-    return true;
-  }
-  if (m_selectedBar > m_xMax) {
-    m_xMax = m_selectedBar + m_barWidth/2;
-    m_xMin = m_xMax - range;
-    return true;
-  }
-  return false;
-}
-
 float Store::sortedElementNumber(int k) {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   float bufferValues[m_numberOfPairs];
@@ -281,10 +209,6 @@ int Store::minIndex(float * bufferValues, int bufferLength) {
     }
   }
   return index;
-}
-
-float Store::closestMiddleBarTo(float f) {
-  return m_firstBarAbscissa + roundf((f-m_firstBarAbscissa - m_barWidth/2.0f) / m_barWidth) * m_barWidth + m_barWidth/2.0f;
 }
 
 }

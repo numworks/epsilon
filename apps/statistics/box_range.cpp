@@ -1,32 +1,32 @@
-#include "box_window.h"
+#include "box_range.h"
 
 namespace Statistics {
 
-BoxWindow::BoxWindow(Store * store) :
+BoxRange::BoxRange(Store * store) :
   m_store(store)
 {
 }
 
-float BoxWindow::xMin() {
+float BoxRange::xMin() {
   return m_store->minValue();
 }
 
-float BoxWindow::xMax() {
+float BoxRange::xMax() {
   if (m_store->minValue() >= m_store->maxValue()) {
     return m_store->minValue() + 1.0f;
   }
   return m_store->maxValue();
 }
 
-float BoxWindow::yMin() {
+float BoxRange::yMin() {
   return 0.0f;
 }
 
-float BoxWindow::yMax() {
+float BoxRange::yMax() {
   return 1.0f;
 }
 
-float BoxWindow::xGridUnit() {
+float BoxRange::xGridUnit() {
   return computeGridUnit(Axis::X, xMin(), xMax());
 }
 

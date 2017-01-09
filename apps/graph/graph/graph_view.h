@@ -2,17 +2,17 @@
 #define GRAPH_GRAPH_VIEW_H
 
 #include <escher.h>
-#include "graph_window.h"
-#include "../../curve_view_with_banner_and_cursor.h"
+#include "../../curve_view.h"
 #include "../../constant.h"
 #include "../function_store.h"
 #include "../local_context.h"
+#include "../../interactive_curve_view_range.h"
 
 namespace Graph {
 
-class GraphView : public CurveViewWithBannerAndCursor {
+class GraphView : public CurveView {
 public:
-  GraphView(FunctionStore * functionStore, GraphWindow * graphWindow, BannerView * bannerView, CursorView * cursorView);
+  GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, View * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Context * context);
   Context * context() const;

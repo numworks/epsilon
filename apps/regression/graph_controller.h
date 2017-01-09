@@ -7,28 +7,38 @@
 #include "graph_view.h"
 #include "initialisation_parameter_controller.h"
 #include "prediction_parameter_controller.h"
-#include "../curve_view_with_banner_and_cursor_controller.h"
+#include "../interactive_curve_view_controller.h"
 
 namespace Regression {
 
-class GraphController : public CurveViewWindowWithBannerAndCursorController {
+class GraphController : public InteractiveCurveViewController {
 
 public:
   GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
   ViewController * initialisationParameterController() override;
-  void didBecomeFirstResponder() override;
   bool isEmpty() override;
   const char * emptyMessage() override;
 private:
   constexpr static int k_maxNumberOfCharacters = 8;
+  BannerView * bannerView() override;
+  CurveView * curveView() override;
+  InteractiveCurveViewRange * interactiveCurveViewRange() override;
   bool handleEnter() override;
   void reloadBannerView() override;
+  void initRangeParameters() override;
+  void initCursorParameters() override;
+  int moveCursorHorizontally(int direction) override;
+  int moveCursorVertically(int direction) override;
+  uint32_t modelVersion() override;
+  uint32_t rangeVersion() override;
   BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;
-  uint32_t m_storeVersion;
   InitialisationParameterController m_initialisationParameterController;
   PredictionParameterController m_predictionParameterController;
+  /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
+   * the mean dot is selected and the dot index otherwise */
+  int m_selectedDotIndex;
 };
 
 }

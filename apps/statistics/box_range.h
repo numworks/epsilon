@@ -1,14 +1,14 @@
-#ifndef STATISTICS_BOX_WINDOW_H
-#define STATISTICS_BOX_WINDOW_H
+#ifndef STATISTICS_BOX_RANGE_H
+#define STATISTICS_BOX_RANGE_H
 
-#include "../curve_view_window.h"
+#include "../curve_view_range.h"
 #include "store.h"
 
 namespace Statistics {
 
-class BoxWindow : public CurveViewWindow {
+class BoxRange : public CurveViewRange {
 public:
-  BoxWindow(Store * store);
+  BoxRange(Store * store);
   float xMin() override;
   // if the range of value is to wide compared to the bar width, value max is capped
   float xMax() override;

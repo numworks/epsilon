@@ -8,23 +8,23 @@ include apps/statistics/Makefile
 
 app_objs += $(addprefix apps/,\
   apps_container.o\
-  constant.o\
   banner_view.o\
+  constant.o\
   cursor_view.o\
   curve_view.o\
-  curve_view_with_banner.o\
-  curve_view_with_banner_and_cursor.o\
-  curve_view_with_banner_and_cursor_controller.o\
-  curve_view_window.o\
-  curve_view_window_with_cursor.o\
+  curve_view_cursor.o\
+  curve_view_range.o\
   editable_cell_table_view_controller.o\
   expression_text_field_delegate.o\
   float_pair_store.o\
   float_parameter_controller.o\
+  interactive_curve_view_controller.o\
+  interactive_curve_view_range.o\
   main.o\
   node.o\
   node_list_view_controller.o\
   node_navigation_controller.o\
+  range_parameter_controller.o\
   store_controller.o\
   store_parameter_controller.o\
   text_field_delegate_app.o\
@@ -33,7 +33,6 @@ app_objs += $(addprefix apps/,\
   toolbox_node.o\
   variable_box_controller.o\
   variable_box_leaf_cell.o\
-  window_parameter_controller.o\
   zoom_parameter_controller.o\
 )
 

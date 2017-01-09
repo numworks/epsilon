@@ -1,12 +1,12 @@
-#include "curve_view_window.h"
+#include "curve_view_range.h"
 #include <math.h>
 #include <float.h>
 
-float CurveViewWindow::yGridUnit() {
+float CurveViewRange::yGridUnit() {
   return 0.0f;
 }
 
-float CurveViewWindow::computeGridUnit(Axis axis, float min, float max) {
+float CurveViewRange::computeGridUnit(Axis axis, float min, float max) {
   int a = 0;
   int b = 0;
   float d = max - min;

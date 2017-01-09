@@ -3,10 +3,11 @@
 
 namespace Regression {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
   m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer)),
   m_store(store),
+  m_cursor(cursor),
   m_xPrediction(true)
 {
 }
@@ -25,17 +26,23 @@ const char * GoToParameterController::title() const {
 float GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   if (m_xPrediction) {
-    return m_store->xCursorPosition();
+    return m_cursor->x();
   }
-  return m_store->yCursorPosition();
+  return m_cursor->y();
 }
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
   if (m_xPrediction) {
-    m_store->setCursorPositionAtAbscissa(f);
+    float y = m_store->yValueForXValue(f);
+    m_store->centerAxisAround(CurveViewRange::Axis::X, f);
+    m_store->centerAxisAround(CurveViewRange::Axis::Y, y);
+    m_store->moveCursorTo(f, y);
   } else {
-    m_store->setCursorPositionAtOrdinate(f);
+    float x = m_store->xValueForYValue(f);
+    m_store->centerAxisAround(CurveViewRange::Axis::X, x);
+    m_store->centerAxisAround(CurveViewRange::Axis::Y, f);
+    m_store->moveCursorTo(x, f);
   }
 }
 

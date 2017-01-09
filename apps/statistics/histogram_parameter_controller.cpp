@@ -21,7 +21,7 @@ float HistogramParameterController::parameterAtIndex(int index) {
   if (index == 0) {
     return m_store->barWidth();
   }
-  return m_store->firsBarAbscissa();
+  return m_store->firstDrawnBarAbscissa();
 }
 
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
@@ -33,7 +33,7 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
     }
     m_store->setBarWidth(f);
   } else {
-    m_store->setFirsBarAbscissa(f);
+    m_store->setFirstDrawnBarAbscissa(f);
   }
 }
 

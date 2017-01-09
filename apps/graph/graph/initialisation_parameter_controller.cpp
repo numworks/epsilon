@@ -4,11 +4,11 @@
 
 namespace Graph {
 
-InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, GraphWindow * graphWindow) :
+InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_graphWindow(graphWindow)
+  m_graphRange(graphRange)
 {
 }
 
@@ -30,20 +30,20 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       // TODO: if mode == degree, xmin = -600, xmax = 600
-        m_graphWindow->setTrigonometric();
+        m_graphRange->setTrigonometric();
         break;
       case 1:
       {
-        m_graphWindow->roundAbscissa();
+        m_graphRange->roundAbscissa();
         break;
       }
       case 2:
       {
-        m_graphWindow->normalize();
+        m_graphRange->normalize();
         break;
       }
       case 3:
-        m_graphWindow->setDefault();
+        m_graphRange->setDefault();
         break;
       default:
         return false;

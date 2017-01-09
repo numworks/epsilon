@@ -3,15 +3,15 @@
 
 #include <escher.h>
 #include "store.h"
-#include "box_window.h"
+#include "box_range.h"
 #include "../constant.h"
-#include "../curve_view_with_banner.h"
+#include "../curve_view.h"
 
 namespace Statistics {
 
-class BoxView : public CurveViewWithBanner {
+class BoxView : public CurveView {
 public:
-  BoxView(Store * store, BannerView * bannerView);
+  BoxView(Store * store, View * bannerView);
   void reloadSelection() override;
   int selectedQuantile();
   bool selectQuantile(int selectedQuantile);
@@ -19,7 +19,7 @@ public:
 private:
   char * label(Axis axis, int index) const override;
   Store * m_store;
-  BoxWindow m_boxWindow;
+  BoxRange m_boxRange;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
   // -1->Unselect 0->min 1->first quartile 2->median 3->third quartile 4->max
   int m_selectedQuantile;

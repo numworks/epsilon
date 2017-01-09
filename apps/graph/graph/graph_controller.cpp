@@ -2,24 +2,23 @@
 #include "../app.h"
 #include <assert.h>
 #include <math.h>
+#include <float.h>
 
 namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
-  CurveViewWindowWithBannerAndCursorController(parentResponder, header, &m_graphWindow, &m_view),
+  InteractiveCurveViewController(parentResponder, header, &m_graphRange, &m_view),
   m_bannerView(BannerView()),
-  m_view(GraphView(functionStore, &m_graphWindow, &m_bannerView, &m_cursorView)),
-  m_graphWindow(functionStore),
-  m_initialisationParameterController(InitialisationParameterController(this, &m_graphWindow)),
-  m_curveParameterController(CurveParameterController(&m_graphWindow, &m_bannerView)),
-  m_functionStore(functionStore)
+  m_view(GraphView(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),
+  m_graphRange(InteractiveCurveViewRange(&m_cursor, this)),
+  m_initialisationParameterController(InitialisationParameterController(this, &m_graphRange)),
+  m_curveParameterController(CurveParameterController(&m_graphRange, &m_bannerView, &m_cursor)),
+  m_functionStore(functionStore),
+  m_indexFunctionSelectedByCursor(0)
 {
 }
 
 View * GraphController::view() {
-  if (isnan(m_graphWindow.xCursorPosition()) && !isEmpty()) {
-    m_graphWindow.initCursorPosition();
-  }
   return &m_view;
 }
 
@@ -46,19 +45,50 @@ void GraphController::didBecomeFirstResponder() {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->localContext());
   }
-  if (m_graphWindow.context() == nullptr) {
-    App * graphApp = (Graph::App *)app();
-    m_graphWindow.setContext(graphApp->localContext());
+  InteractiveCurveViewController::didBecomeFirstResponder();
+}
+
+bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  if (!m_graphRange.yAuto()) {
+    return false;
   }
-  // if new functions were added to the store, the window parameters need to be refresh
-  if (m_graphWindow.computeYaxis()) {
-    m_graphWindow.initCursorPosition();
+  App * graphApp = (Graph::App *)app();
+  if (m_functionStore->numberOfActiveFunctions() > 0) {
+    float min = FLT_MAX;
+    float max = -FLT_MAX;
+    float xMin = m_graphRange.xMin();
+    float xMax = m_graphRange.xMax();
+    float step = (xMax - xMin)/Ion::Display::Width;
+    for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
+      Function * f = m_functionStore->activeFunctionAtIndex(i);
+      float y = 0.0f;
+      for (float x = xMin; x <= xMax; x += step) {
+        y = f->evaluateAtAbscissa(x, graphApp->localContext());
+        if (!isnan(y) && !isinf(y)) {
+          min = min < y ? min : y;
+          max = max > y ? max : y;
+        }
+      }
+    }
+    if (m_graphRange.yMin() == min && m_graphRange.yMax() == max) {
+      return false;
+    }
+    if (min == max) {
+      min = min - 1;
+      max = max + 1;
+    }
+    m_graphRange.setYMin(min);
+    m_graphRange.setYMax(max);
   }
-  CurveViewWindowWithBannerAndCursorController::didBecomeFirstResponder();
+  return true;
+}
+
+BannerView * GraphController::bannerView() {
+  return &m_bannerView;
 }
 
 bool GraphController::handleEnter() {
-  Function * f = m_graphWindow.functionSelectedByCursor();
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   m_curveParameterController.setFunction(f);
   StackViewController * stack = stackController();
   stack->push(&m_curveParameterController);
@@ -67,21 +97,87 @@ bool GraphController::handleEnter() {
 
 void GraphController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+Constant::FloatBufferSizeInScientificMode] = {'x', ' ', '=', ' ',0};
-  Float(m_graphWindow.xCursorPosition()).convertFloatToText(buffer+4, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  Float(m_cursor.x()).convertFloatToText(buffer+4, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_bannerView.setLegendAtIndex(buffer, 0);
 
   strlcpy(buffer, "00(x) = ", k_maxNumberOfCharacters+1);
-  buffer[1] = m_graphWindow.functionSelectedByCursor()->name()[0];
-  Float(m_graphWindow.yCursorPosition()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  buffer[1] = f->name()[0];
+  Float(m_cursor.y()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_bannerView.setLegendAtIndex(buffer+1, 1);
 
   if (m_bannerView.displayDerivative()) {
-    buffer[0] = m_graphWindow.functionSelectedByCursor()->name()[0];
+    buffer[0] = f->name()[0];
     buffer[1] = '\'';
-    Float(m_graphWindow.derivativeAtCursorPosition()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    App * graphApp = (Graph::App *)app();
+    float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext());
+    Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
   m_bannerView.layoutSubviews();
+}
+
+void GraphController::initRangeParameters() {
+  if (didChangeRange(&m_graphRange)) {
+    initCursorParameters();
+  }
+}
+
+void GraphController::initCursorParameters() {
+  float x = (m_graphRange.xMin()+m_graphRange.xMax())/2.0f;
+  m_indexFunctionSelectedByCursor = 0;
+  Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
+  App * graphApp = (Graph::App *)app();
+  float y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
+  m_graphRange.moveCursorTo(x, y);
+}
+
+int GraphController::moveCursorHorizontally(int direction) {
+  float xCursorPosition = m_cursor.x();
+  float x = direction > 0 ? xCursorPosition + m_graphRange.xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit :
+    xCursorPosition -  m_graphRange.xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit;
+  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  App * graphApp = (Graph::App *)app();
+  float y = f->evaluateAtAbscissa(x, graphApp->localContext());
+  return m_graphRange.moveCursorTo(x, y);;
+}
+
+int GraphController::moveCursorVertically(int direction) {
+  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  App * graphApp = (Graph::App *)app();
+  float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
+  Function * nextFunction = actualFunction;
+  float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float newY = f->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
+    bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
+    if (isNextFunction) {
+      m_indexFunctionSelectedByCursor = i;
+      nextY = newY;
+      nextFunction = f;
+    }
+  }
+  if (nextFunction == actualFunction) {
+    return -1;
+  }
+  return m_graphRange.moveCursorTo(m_cursor.x(), nextY);
+}
+
+uint32_t GraphController::modelVersion() {
+  return m_functionStore->storeChecksum();
+}
+
+uint32_t GraphController::rangeVersion() {
+  return m_graphRange.rangeChecksum();
+}
+
+InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
+  return &m_graphRange;
+}
+
+CurveView * GraphController::curveView() {
+  return &m_view;
 }
 
 }

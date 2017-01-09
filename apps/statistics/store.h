@@ -1,33 +1,27 @@
 #ifndef STATISTICS_STORE_H
 #define STATISTICS_STORE_H
 
-#include "../curve_view_window.h"
+#include "../interactive_curve_view_range.h"
 #include "../float_pair_store.h"
 
 namespace Statistics {
 
-class Store : public CurveViewWindow, public FloatPairStore {
+class Store : public InteractiveCurveViewRange, public FloatPairStore {
 public:
   Store();
-
+  uint32_t barChecksum();
   // Histogram bars
-  void initBarParameters();
   float barWidth();
   void setBarWidth(float barWidth);
-  float firsBarAbscissa();
-  void setFirsBarAbscissa(float firsBarAbscissa);
-  int heightForBarAtValue(float value);
-  float selectedBar();
-  bool selectNextBarToward(int direction);
-
-  //CurveViewWindow
-  void initWindowParameters();
-  float xMin() override;
-  // if the range of value is to wide compared to the bar width, value max is capped
-  float xMax() override;
-  float yMin() override;
-  float yMax() override;
-  float xGridUnit() override;
+  float firstDrawnBarAbscissa();
+  void setFirstDrawnBarAbscissa(float firstDrawnBarAbscissa);
+  float heightOfBarAtIndex(int index);
+  float heightOfBarAtValue(float value);
+  float startOfBarAtIndex(int index);
+  float endOfBarAtIndex(int index);
+  int numberOfBars();
+  // return true if the window has scrolled
+  bool scrollToSelectedBarIndex(int index);
 
   // Calculation
   float maxValue();
@@ -43,22 +37,13 @@ public:
   float sum();
   float squaredValueSum();
 private:
-  constexpr static int k_maxNumberOfBarsPerWindow = 300;
   float defaultValue(int i) override;
   float sumOfValuesBetween(float x1, float x2);
-  bool scrollToSelectedBar();
   float sortedElementNumber(int k);
   int minIndex(float * bufferValues, int bufferLength);
-  float closestMiddleBarTo(float f);
   // Histogram bars
   float m_barWidth;
-  float m_selectedBar;
-  float m_firstBarAbscissa;
-  // Window bounds of the data
-  float m_xMin;
-  float m_xMax;
-  float m_yMax;
-  float m_xGridUnit;
+  float m_firstDrawnBarAbscissa;
 };
 
 }

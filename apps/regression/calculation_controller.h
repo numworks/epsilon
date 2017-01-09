@@ -39,7 +39,7 @@ private:
   constexpr static int k_totalNumberOfColumns = 2;
   constexpr static int k_maxNumberOfDisplayableRows = 10;
   static constexpr KDCoordinate k_cellHeight = 25;
-  static constexpr KDCoordinate k_cellWidth = 320/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
+  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
   EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddDoubleBufferTextCell m_columnTitleCell;
   EvenOddDoubleBufferTextCell m_doubleCalculationCells[k_maxNumberOfDisplayableRows/2];

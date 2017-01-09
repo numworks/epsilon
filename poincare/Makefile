@@ -6,7 +6,6 @@ objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   binary_operation.o\
-  global_context.o\
   cosine.o\
   derivative.o\
   expression.o\
@@ -15,6 +14,7 @@ objs += $(addprefix poincare/src/,\
   float.o\
   fraction.o\
   function.o\
+  global_context.o\
   integer.o\
   list_data.o\
   leaf_expression.o\
@@ -29,6 +29,7 @@ objs += $(addprefix poincare/src/,\
   subtraction.o\
   symbol.o\
   tangent.o\
+  x_context.o\
 )
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\

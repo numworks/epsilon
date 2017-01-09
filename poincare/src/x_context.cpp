@@ -1,15 +1,12 @@
-#include "local_context.h"
-#include <string.h>
+#include <poincare/x_context.h>
 
-namespace Graph {
-
-LocalContext::LocalContext(::Context * parentContext) :
+XContext::XContext(::Context * parentContext) :
   m_xValue(Float(0.0f)),
   m_parentContext(parentContext)
 {
 }
 
-void LocalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void XContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   if (symbol->name() == 'x') {
   	m_xValue = Float(expression->approximate(*m_parentContext));
   } else {
@@ -17,7 +14,7 @@ void LocalContext::setExpressionForSymbolName(Expression * expression, const Sym
   }
 }
 
-const Expression * LocalContext::expressionForSymbol(const Symbol * symbol) {
+const Expression * XContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == 'x') {
     return &m_xValue;
   } else {
@@ -25,4 +22,3 @@ const Expression * LocalContext::expressionForSymbol(const Symbol * symbol) {
   }
 }
 
-}

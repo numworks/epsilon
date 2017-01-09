@@ -2,8 +2,8 @@
 #define GRAPH_APP_H
 
 #include <escher.h>
+#include <poincare.h>
 #include "function_store.h"
-#include "local_context.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -18,7 +18,7 @@ public:
   Context * localContext() override;
 private:
   FunctionStore m_functionStore;
-  LocalContext m_localContext;
+  XContext m_xContext;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

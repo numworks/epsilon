@@ -1,20 +1,17 @@
-#ifndef GRAPH_LOCAL_CONTEXT_H
-#define GRAPH_LOCAL_CONTEXT_H
+#ifndef POINCARE_LOCAL_CONTEXT_H
+#define POINCARE_LOCAL_CONTEXT_H
 
-#include <poincare.h>
+#include <poincare/context.h>
+#include <poincare/float.h>
 
-namespace Graph {
-
-class LocalContext : public Context {
+class XContext : public Context {
 public:
-  LocalContext(Context * parentContext);
+  XContext(Context * parentContext = nullptr);
   void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
   const Expression * expressionForSymbol(const Symbol * symbol) override;
 private:
   Float m_xValue;
   Context * m_parentContext;
 };
-
-}
 
 #endif

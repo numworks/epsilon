@@ -6,7 +6,7 @@ namespace Graph {
 App::App(Container * container, Context * context) :
   TextFieldDelegateApp(container, &m_inputViewController, "Graph", ImageStore::GraphIcon),
   m_functionStore(FunctionStore()),
-  m_localContext(LocalContext(context)),
+  m_xContext(XContext(context)),
   m_listController(ListController(&m_listHeader, &m_functionStore, &m_listHeader)),
   m_listHeader(HeaderViewController(nullptr, &m_listController, &m_listController)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listHeader)),
@@ -28,7 +28,7 @@ InputViewController * App::inputViewController() {
 }
 
 Context * App::localContext() {
-  return &m_localContext;
+  return &m_xContext;
 }
 
 }

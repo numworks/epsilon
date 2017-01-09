@@ -5,7 +5,6 @@
 #include "../../curve_view.h"
 #include "../../constant.h"
 #include "../function_store.h"
-#include "../local_context.h"
 #include "../../interactive_curve_view_range.h"
 
 namespace Graph {

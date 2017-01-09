@@ -13,7 +13,6 @@ app_objs += $(addprefix apps/graph/,\
   list/new_function_cell.o\
   list/list_controller.o\
   list/parameter_controller.o\
-  local_context.o\
   values/abscissa_parameter_controller.o\
   values/derivative_parameter_controller.o\
   values/function_parameter_controller.o\

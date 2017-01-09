@@ -2,6 +2,7 @@
 #include <math.h>
 #include <assert.h>
 #include <stddef.h>
+#include <ion.h>
 
 FloatPairStore::FloatPairStore() :
   m_numberOfPairs(0)
@@ -58,8 +59,7 @@ float FloatPairStore::sumOfColumn(int i) {
 uint32_t FloatPairStore::storeChecksum() {
   size_t dataLengthInBytes = m_numberOfPairs*2*sizeof(float);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  //return Ion::crc32((uint32_t *)m_data, dataLengthInBytes>>2);
-  return sumOfColumn(0)+sumOfColumn(1);
+  return Ion::crc32((uint32_t *)m_data, dataLengthInBytes>>2);
 }
 
 float FloatPairStore::defaultValue(int i) {

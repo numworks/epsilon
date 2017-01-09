@@ -3,6 +3,7 @@
 #include <float.h>
 #include <math.h>
 #include <string.h>
+#include <ion.h>
 
 namespace Statistics {
 
@@ -18,8 +19,7 @@ uint32_t Store::barChecksum() {
   float data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
   size_t dataLengthInBytes = 2*sizeof(float);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  //return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
-  return m_barWidth + m_firstDrawnBarAbscissa;
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
 /* Histogram bars */

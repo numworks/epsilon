@@ -239,7 +239,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 #endif
 
 constexpr static int k_maxNumberOfIterations = 10;
-constexpr static int k_resolution = 320.0f;
+constexpr static int k_resolution = 350.0f;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
@@ -257,7 +257,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
     if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
       KDRect colorRect((int)pxf, roundf(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - roundf(pyf));
       if (floatToPixel(Axis::Vertical, 0.0f) < roundf(pyf)) {
-        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 2, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, roundf(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
       ctx->fillRect(colorRect, color);
     }

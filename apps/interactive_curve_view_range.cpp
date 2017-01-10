@@ -58,6 +58,9 @@ float InteractiveCurveViewRange::yGridUnit() {
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
   m_xMin = xMin;
+  if (m_xMin >= m_xMax) {
+    m_xMax = xMin + 1.0f;
+  }
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
@@ -66,6 +69,9 @@ void InteractiveCurveViewRange::setXMin(float xMin) {
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
   m_xMax = xMax;
+  if (m_xMin >= m_xMax) {
+    m_xMin = xMax - 1.0f;
+  }
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
@@ -74,11 +80,17 @@ void InteractiveCurveViewRange::setXMax(float xMax) {
 
 void InteractiveCurveViewRange::setYMin(float yMin) {
   m_yMin = yMin;
+  if (m_yMin >= m_yMax) {
+    m_yMax = yMin + 1.0f;
+  }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
 void InteractiveCurveViewRange::setYMax(float yMax) {
   m_yMax = yMax;
+  if (m_yMin >= m_yMax) {
+    m_yMin = yMax - 1.0f;
+  }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
@@ -139,6 +151,7 @@ void InteractiveCurveViewRange::normalize() {
 }
 
 void InteractiveCurveViewRange::setTrigonometric() {
+  // TODO: if mode == degree, xmin = -600, xmax = 600
   m_xMin = -10.5f;
   m_xMax = 10.5f;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);

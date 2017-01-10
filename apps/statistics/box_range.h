@@ -10,7 +10,6 @@ class BoxRange : public CurveViewRange {
 public:
   BoxRange(Store * store);
   float xMin() override;
-  // if the range of value is to wide compared to the bar width, value max is capped
   float xMax() override;
   float yMin() override;
   float yMax() override;

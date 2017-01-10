@@ -131,7 +131,6 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
   KDRect lineRect = KDRectZero;
   switch(axis) {
-    // WARNING TODO: anti-aliasing?
     case Axis::Horizontal:
       lineRect = KDRect(
           rect.x(), floatToPixel(Axis::Vertical, coordinate),
@@ -153,7 +152,6 @@ void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
 void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness) const {
   KDRect lineRect = KDRectZero;
   switch(axis) {
-    // WARNING TODO: anti-aliasing?
     case Axis::Horizontal:
       lineRect = KDRect(
           floorf(floatToPixel(Axis::Horizontal, lowerBound)), floatToPixel(Axis::Vertical, coordinate),

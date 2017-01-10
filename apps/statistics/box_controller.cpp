@@ -26,7 +26,7 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    int nextSelectedQuantile = event == Ion::Events::Left ? m_view.selectedQuantile()-1 : m_view.selectedQuantile()+1;
+    int nextSelectedQuantile = event == Ion::Events::Left ? (int)m_view.selectedQuantile()-1 : (int)m_view.selectedQuantile()+1;
     if (m_view.selectQuantile(nextSelectedQuantile)) {
       reloadBannerView();
       return true;
@@ -62,25 +62,27 @@ Responder * BoxController::tabController() const {
 
 void BoxController::reloadBannerView() {
   const char * calculationName[5] = {"Minimum", "Premier quartile", "Mediane", "Troisieme quartile", "Maximum"};
-  m_boxBannerView.setLegendAtIndex((char *)calculationName[m_view.selectedQuantile()], 0);
+  m_boxBannerView.setLegendAtIndex((char *)calculationName[(int)m_view.selectedQuantile()], 0);
 
   char buffer[Constant::FloatBufferSizeInScientificMode];
   float calculation = 0.0f;
   switch(m_view.selectedQuantile()) {
-    case 0:
+    case BoxView::Quantile::Min:
       calculation = m_store->minValue();
       break;
-    case 1:
+    case BoxView::Quantile::FirstQuartile:
       calculation = m_store->firstQuartile();
       break;
-    case 2:
+    case BoxView::Quantile::Median:
       calculation = m_store->median();
       break;
-    case 3:
+    case BoxView::Quantile::ThirdQuartile:
       calculation = m_store->thirdQuartile();
       break;
-    case 4:
+    case BoxView::Quantile::Max:
       calculation = m_store->maxValue();
+      break;
+    default:
       break;
   }
   Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);

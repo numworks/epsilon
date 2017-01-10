@@ -11,9 +11,17 @@ namespace Statistics {
 
 class BoxView : public CurveView {
 public:
+  enum class Quantile : int {
+    None = -1,
+    Min = 0,
+    FirstQuartile = 1,
+    Median = 2,
+    ThirdQuartile = 3,
+    Max = 4
+  };
   BoxView(Store * store, View * bannerView);
   void reloadSelection() override;
-  int selectedQuantile();
+  Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
@@ -21,8 +29,7 @@ private:
   Store * m_store;
   BoxRange m_boxRange;
   char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
-  // -1->Unselect 0->min 1->first quartile 2->median 3->third quartile 4->max
-  int m_selectedQuantile;
+  Quantile m_selectedQuantile;
 };
 
 }

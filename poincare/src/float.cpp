@@ -21,14 +21,13 @@ static inline float setSign(float f, bool negative) {
   return f;
 }
 
-/* Handles non-NULL terminated string */
-float digitsToFloat(const char * digits) {
+float digitsToFloat(const char * digits, int length) {
   if (digits == nullptr) {
     return 0.0f;
   }
   float result = 0.0f;
   const char * digit = digits;
-  while (*digit >= '0' && *digit <= '9') {
+  for (int i = 0; i < length; i++) {
     result = 10.0f * result;
     result += *digit-'0';
     digit++;
@@ -36,39 +35,16 @@ float digitsToFloat(const char * digits) {
   return result;
 }
 
-int numberOfDigits(const char * digits) {
-  if (digits == nullptr) {
-    return 0;
-  }
-  int result = 0;
-  const char * digit = digits;
-  while (*digit >= '0' && *digit <= '9') {
-    result++;
-    digit++;
-  }
-  return result;
-}
-
-Float::Float(const char * integralPart, bool integralNegative,
-    const char * fractionalPart,
-    const char * exponent, bool exponentNegative) {
-  /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
-   * Indeed, this code is called by Bison to build Floats from user input.
-   * While Flex guarantees that yytext is NULL-terminated when building tokens,
-   * it does so by temporarily swapping in a NULL terminated in the input text.
-   * Of course that hack has vanished when the pointer is fed into Bison. */
-
-  float i = setSign(digitsToFloat(integralPart), integralNegative);
-  float j = digitsToFloat(fractionalPart);
-  float k = numberOfDigits(fractionalPart);
-  float l = setSign(digitsToFloat(exponent), exponentNegative);
+Float::Float(const char * integralPart, int integralPartLength, bool integralNegative,
+    const char * fractionalPart, int fractionalPartLength,
+    const char * exponent, int exponentLength, bool exponentNegative) {
+  float i = setSign(digitsToFloat(integralPart, integralPartLength), integralNegative);
+  float j = digitsToFloat(fractionalPart, fractionalPartLength);
+  float l = setSign(digitsToFloat(exponent, exponentLength), exponentNegative);
 
   m_float =
-  (i + j*powf(10.0f, -ceilf(k)))
+  (i + j*powf(10.0f, -ceilf(fractionalPartLength)))
     * powf(10.0f, l);
-  if (j <= 0) {
-    m_float = i * powf(10.0f, l);
-  }
   m_numberOfDigitsInMantissa = 7;
 }
 

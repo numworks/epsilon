@@ -32,7 +32,16 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
   ListData * listData;
   MatrixData * matrixData;
   Function * function;
-  char * string;
+  /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
+   * While Flex guarantees that yytext is NULL-terminated when building tokens,
+   * it does so by temporarily swapping in a NULL terminated in the input text.
+   * Of course that hack has vanished when the pointer is fed into Bison.
+   * We thus record the length of the char fed into Flex in a structure and give
+   * it to the object constructor called by Bison along with the char *. */
+  struct {
+     char * address;
+     int length;
+  } string;
   char character;
 }
 
@@ -102,14 +111,14 @@ mtxData:
   | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3); }
 
 number:
-  DIGITS { $$ = new Integer($1, false); }
-  | MINUS DIGITS { $$ = new Integer($2, true); }
-  | DIGITS DOT DIGITS { $$ = new Float($1, false, $3, nullptr, false); }
-  | MINUS DIGITS DOT DIGITS { $$ = new Float($2, true, $4, nullptr, false); }
-  | DIGITS DOT DIGITS EE DIGITS { $$ = new Float($1, false, $3, $5, false); }
-  | MINUS DIGITS DOT DIGITS EE DIGITS { $$ = new Float($2, true, $4, $6, false); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($1, false, $3, $6, true); }
-  | MINUS DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($2, true, $4, $7, true); }
+  DIGITS { $$ = new Integer($1.address, false); }
+  | MINUS DIGITS { $$ = new Integer($2.address, true); }
+  | DIGITS DOT DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
+  | MINUS DIGITS DOT DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, nullptr, 0, false); }
+  | DIGITS DOT DIGITS EE DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | MINUS DIGITS DOT DIGITS EE DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, $6.address, $6.length, false); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
+  | MINUS DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, $7.address, $7.length, true); }
 
 exp:
   number             { $$ = $1; }

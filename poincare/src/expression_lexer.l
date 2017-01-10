@@ -76,9 +76,9 @@
   * still valid but the string isn't null-terminated anymore.
   */
 
-[0-9]+ { poincare_expression_yylval.string = yytext; return DIGITS; }
+[0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
 E  { return EE; }
-[A-Zxntab] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+[A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }

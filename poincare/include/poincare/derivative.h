@@ -11,9 +11,8 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-//TODO: do something smarter to compute epsilon to gain in precision
-  constexpr static float k_epsilon = 0.0001f;
-  constexpr static float k_precision = 0.1f;
+// float precision ~ 2^-23 -> we chose eps ~ precision^(1/3) because (f(x+eps)-f(x-eps))/(2eps) < (precision/h)*f(x)
+  constexpr static float k_epsilon = 0.004921566601f;
 };
 
 #endif

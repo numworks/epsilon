@@ -116,32 +116,10 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     return;
   }
   if (i == 1 && j > 0 && j < 6) {
-    float calculation1 = 0.0f;
-    float calculation2 = 0.0f;
-    switch (j) {
-      case 1:
-        calculation1 = m_store->meanOfColumn(0);
-        calculation2 = m_store->meanOfColumn(1);
-        break;
-      case 2:
-        calculation1 = m_store->sumOfColumn(0);
-        calculation2 = m_store->sumOfColumn(1);
-        break;
-      case 3:
-        calculation1 = m_store->squaredValueSumOfColumn(0);
-        calculation2 = m_store->squaredValueSumOfColumn(1);
-        break;
-      case 4:
-        calculation1 = m_store->standardDeviationOfColumn(0);
-        calculation2 = m_store->standardDeviationOfColumn(1);
-        break;
-      case 5:
-        calculation1 = m_store->varianceOfColumn(0);
-        calculation2 = m_store->varianceOfColumn(1);
-        break;
-      default:
-        break;
-    }
+    ArgCalculPointer calculationMethods[(k_totalNumberOfRows-1)/2] = {&Store::meanOfColumn, &Store::sumOfColumn,
+      &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
+    float calculation1 = (m_store->*calculationMethods[j-1])(0);
+    float calculation2 = (m_store->*calculationMethods[j-1])(1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     char buffer[Constant::FloatBufferSizeInScientificMode];
     Float(calculation1).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
@@ -151,26 +129,9 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     return;
   }
   if (i == 1 && j > 5) {
-    float calculation = 0.0f;
-    switch (j) {
-      case 6:
-        calculation = m_store->numberOfPairs();
-        break;
-      case 7:
-        calculation = m_store->covariance();
-        break;
-      case 8:
-        calculation = m_store->columnProductSum();
-        break;
-      case 9:
-        calculation = m_store->correlationCoefficient();
-        break;
-      case 10:
-        calculation = m_store->squaredCorrelationCoefficient();
-        break;
-      default:
-        break;
-    }
+    CalculPointer calculationMethods[(k_totalNumberOfRows-1)/2] = {&Store::numberOfPairs, &Store::covariance,
+      &Store::columnProductSum, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
+    float calculation = (m_store->*calculationMethods[j-6])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Constant::FloatBufferSizeInScientificMode];
     Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);

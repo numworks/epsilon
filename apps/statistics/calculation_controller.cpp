@@ -76,50 +76,10 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;
     myCell->setText(titles[j]);
   } else {
-    float calculation = 0.0f;
-    switch (j) {
-      case 0:
-        calculation = m_store->sumOfColumn(1);
-        break;
-      case 1:
-        calculation = m_store->minValue();
-        break;
-      case 2:
-        calculation = m_store->maxValue();
-        break;
-      case 3:
-        calculation = m_store->range();
-        break;
-      case 4:
-        calculation = m_store->mean();
-        break;
-      case 5:
-        calculation = m_store->standardDeviation();
-        break;
-      case 6:
-        calculation = m_store->variance();
-        break;
-      case 7:
-        calculation = m_store->firstQuartile();
-        break;
-      case 8:
-        calculation = m_store->thirdQuartile();
-        break;
-      case 9:
-        calculation = m_store->median();
-        break;
-      case 10:
-        calculation = m_store->quartileRange();
-        break;
-      case 11:
-        calculation = m_store->sum();
-        break;
-      case 12:
-        calculation = m_store->squaredValueSum();
-        break;
-      default:
-        break;
-    }
+    CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+      &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
+      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum};
+    float calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Constant::FloatBufferSizeInScientificMode];
     Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);

@@ -23,6 +23,7 @@ public:
   void setDefault() override;
 
   // Calculation
+  float numberOfPairs();
   float squaredValueSumOfColumn(int i);
   float columnProductSum();
   float meanOfColumn(int i);
@@ -39,6 +40,10 @@ private:
   float maxValueOfColumn(int i);
   float minValueOfColumn(int i);
 };
+
+typedef float (Store::*ArgCalculPointer)(int);
+typedef float (Store::*CalculPointer)();
+typedef void (Store::*RangeMethodPointer)();
 
 }
 

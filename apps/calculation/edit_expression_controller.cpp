@@ -17,15 +17,8 @@ int EditExpressionController::ContentView::numberOfSubviews() const {
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return m_mainView;
-    case 1:
-      return &m_textField;
-    default:
-      assert(false);
-      return nullptr;
-  }
+  View * views[2] = {m_mainView, &m_textField};
+  return views[index];
 }
 
 void EditExpressionController::ContentView::layoutSubviews() {

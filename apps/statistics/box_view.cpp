@@ -13,26 +13,9 @@ BoxView::BoxView(Store * store, View * bannerView) :
 }
 
 void BoxView::reloadSelection() {
-  float calculation = 0.0f;
-  switch(m_selectedQuantile) {
-    case BoxView::Quantile::Min:
-      calculation = m_store->minValue();
-      break;
-    case BoxView::Quantile::FirstQuartile:
-      calculation = m_store->firstQuartile();
-      break;
-    case BoxView::Quantile::Median:
-      calculation = m_store->median();
-      break;
-    case BoxView::Quantile::ThirdQuartile:
-      calculation = m_store->thirdQuartile();
-      break;
-    case BoxView::Quantile::Max:
-      calculation = m_store->maxValue();
-      break;
-    default:
-      break;
-  }
+  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
+    &Store::maxValue};
+  float calculation = (m_store->*calculationMethods[(int)m_selectedQuantile])();
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
   float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation);

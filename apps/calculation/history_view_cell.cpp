@@ -25,15 +25,8 @@ int HistoryViewCell::numberOfSubviews() const {
 }
 
 View * HistoryViewCell::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return &m_inputView;
-    case 1:
-      return &m_outputView;
-    default:
-      assert(false);
-      return nullptr;
-  }
+  View * views[2] = {&m_inputView, &m_outputView};
+  return views[index];
 }
 
 void HistoryViewCell::layoutSubviews() {

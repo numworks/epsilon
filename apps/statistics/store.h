@@ -24,6 +24,7 @@ public:
   bool scrollToSelectedBarIndex(int index);
 
   // Calculation
+  float sumOfOccurrences();
   float maxValue();
   float minValue();
   float range();
@@ -45,6 +46,8 @@ private:
   float m_barWidth;
   float m_firstDrawnBarAbscissa;
 };
+
+typedef float (Store::*CalculPointer)();
 
 }
 

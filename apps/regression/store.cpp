@@ -158,6 +158,10 @@ void Store::setDefault() {
 
 /* Calculations */
 
+float Store::numberOfPairs() {
+  return m_numberOfPairs;
+}
+
 float Store::maxValueOfColumn(int i) {
   float max = -FLT_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {

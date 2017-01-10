@@ -88,6 +88,10 @@ bool Store::scrollToSelectedBarIndex(int index) {
 
 /* Calculation */
 
+float Store::sumOfOccurrences() {
+  return sumOfColumn(1);
+}
+
 float Store::maxValue() {
   float max = -FLT_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {

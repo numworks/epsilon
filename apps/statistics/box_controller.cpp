@@ -63,28 +63,10 @@ Responder * BoxController::tabController() const {
 void BoxController::reloadBannerView() {
   const char * calculationName[5] = {"Minimum", "Premier quartile", "Mediane", "Troisieme quartile", "Maximum"};
   m_boxBannerView.setLegendAtIndex((char *)calculationName[(int)m_view.selectedQuantile()], 0);
-
   char buffer[Constant::FloatBufferSizeInScientificMode];
-  float calculation = 0.0f;
-  switch(m_view.selectedQuantile()) {
-    case BoxView::Quantile::Min:
-      calculation = m_store->minValue();
-      break;
-    case BoxView::Quantile::FirstQuartile:
-      calculation = m_store->firstQuartile();
-      break;
-    case BoxView::Quantile::Median:
-      calculation = m_store->median();
-      break;
-    case BoxView::Quantile::ThirdQuartile:
-      calculation = m_store->thirdQuartile();
-      break;
-    case BoxView::Quantile::Max:
-      calculation = m_store->maxValue();
-      break;
-    default:
-      break;
-  }
+  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
+    &Store::maxValue};
+  float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
   Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   m_boxBannerView.setLegendAtIndex(buffer, 1);
   m_boxBannerView.layoutSubviews();

@@ -54,4 +54,8 @@ protected:
   InteractiveCurveViewRangeDelegate * m_delegate;
 };
 
+typedef void (InteractiveCurveViewRange::*ParameterSetterPointer)(float);
+typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)();
+typedef void (InteractiveCurveViewRange::*RangeMethodPointer)();
+
 #endif

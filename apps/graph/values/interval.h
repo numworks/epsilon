@@ -30,6 +30,9 @@ private:
   bool m_needCompute;
 };
 
+typedef void (Interval::*SetterPointer)(float);
+typedef float (Interval::*GetterPointer)();
+
 }
 
 #endif

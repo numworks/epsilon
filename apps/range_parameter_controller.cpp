@@ -71,39 +71,18 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-float RangeParameterController::parameterAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return m_interactiveRange->xMin();
-    case 1:
-      return m_interactiveRange->xMax();
-    case 3:
-      return m_interactiveRange->yMin();
-    case 4:
-      return m_interactiveRange->yMax();
-    default:
-      assert(false);
-      return 0.0f;
-  }
+float RangeParameterController::parameterAtIndex(int parameterIndex) {
+  ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
+    &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
+  int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
+  return (m_interactiveRange->*getters[index])();
 }
 
 void RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
-  switch(parameterIndex) {
-    case 0:
-      m_interactiveRange->setXMin(f);
-      break;
-    case 1:
-      m_interactiveRange->setXMax(f);
-      break;
-    case 3:
-      m_interactiveRange->setYMin(f);
-      break;
-    case 4:
-      m_interactiveRange->setYMax(f);
-      break;
-    default:
-      assert(false);
-  }
+  ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
+    &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
+  int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
+  (m_interactiveRange->*setters[index])(f);
 }
 
 int RangeParameterController::numberOfRows() {

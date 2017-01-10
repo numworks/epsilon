@@ -136,17 +136,8 @@ int InteractiveCurveViewController::numberOfButtons() const {
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return &m_rangeButton;
-    case 1:
-      return &m_zoomButton;
-    case 2:
-      return &m_defaultInitialisationButton;
-    default:
-      assert(false);
-  }
-  return nullptr;
+  Button * buttons[3] = {&m_rangeButton, &m_zoomButton, &m_defaultInitialisationButton};
+  return buttons[index];
 }
 
 Responder * InteractiveCurveViewController::defaultController() {

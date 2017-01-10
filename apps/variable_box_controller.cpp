@@ -186,17 +186,8 @@ const Expression * VariableBoxController::ContentViewController::expressionForIn
 }
 
 VariableBoxController::ContentViewController::Page VariableBoxController::ContentViewController::pageAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return Page::Scalar;
-    case 1:
-      return Page::List;
-    case 2:
-      return Page::Matrix;
-    default:
-      assert(false);
-      return Page::RootMenu;
-  }
+  Page pages[3] = {Page::Scalar, Page::List, Page::Matrix};
+  return pages[index];
 }
 
 void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int index, char * buffer) {
@@ -218,17 +209,8 @@ void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int i
 
 const char * VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
-  switch (index) {
-    case 0:
-      return "Nombre";
-    case 1:
-      return "Liste";
-    case 2:
-      return "Matrice";
-    default:
-      assert(false);
-      return nullptr;
-  }
+  const char * labels[3] = {"Nombre", "Liste", "Matrice"};
+  return labels[index];
 }
 
 void VariableBoxController::ContentViewController::setTextFieldCaller(TextField * textField) {

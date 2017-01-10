@@ -27,27 +27,9 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
-      case 0:
-      // TODO: if mode == degree, xmin = -600, xmax = 600
-        m_graphRange->setTrigonometric();
-        break;
-      case 1:
-      {
-        m_graphRange->roundAbscissa();
-        break;
-      }
-      case 2:
-      {
-        m_graphRange->normalize();
-        break;
-      }
-      case 3:
-        m_graphRange->setDefault();
-        break;
-      default:
-        return false;
-    }
+    RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::setTrigonometric,
+      &InteractiveCurveViewRange::roundAbscissa, &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
+    (m_graphRange->*rangeMethods[m_selectableTableView.selectedRow()])();
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
     return true;

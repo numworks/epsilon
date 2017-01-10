@@ -161,7 +161,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   float x = m_interval.element(j-1);
   App * graphApp = (Graph::App *)app();
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   } else {
     Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
   }

@@ -83,11 +83,11 @@ float Function::evaluateAtAbscissa(float x, Context * context) const {
 }
 
 float Function::approximateDerivative(float x, Context * context) const {
-  float functionPlus = evaluateAtAbscissa(x + k_epsilon, context);
-  float functionMinus = evaluateAtAbscissa(x - k_epsilon, context);
-  float growthRate = (functionPlus - functionMinus)/(2*k_epsilon);
-  growthRate = roundf(growthRate/k_precision)*k_precision;
-  return growthRate;
+  Float abscissa = Float(x);
+  Expression * args[2] = {m_expression, &abscissa};
+  Derivative derivative = Derivative();
+  derivative.setArgument(args, 2, true);
+  return derivative.approximate(*context);
 }
 
 }

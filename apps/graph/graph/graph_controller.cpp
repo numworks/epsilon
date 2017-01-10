@@ -111,7 +111,7 @@ void GraphController::reloadBannerView() {
     buffer[1] = '\'';
     App * graphApp = (Graph::App *)app();
     float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext());
-    Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaForDerivativeNumberInScientificMode);
+    Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
   m_bannerView.layoutSubviews();

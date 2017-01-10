@@ -16,9 +16,8 @@ public:
   float xGridUnit() override;
 private:
   Store * m_store;
-
 };
 
-#endif
-
 }
+
+#endif

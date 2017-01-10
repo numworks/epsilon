@@ -28,7 +28,7 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
     if (f <= 0.0f || isnan(f) || isinf(f)) {
-      app()->displayWarning("Value interdite");
+      app()->displayWarning("Valeur interdite");
       return;
     }
     m_store->setBarWidth(f);

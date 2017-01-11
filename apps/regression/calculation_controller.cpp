@@ -45,7 +45,12 @@ void CalculationController::didBecomeFirstResponder() {
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  // Avoid selecting empty cell
+  /* To prevent selecting cell with no content (top left corner of the table),
+   * as soon as the selected cell is the top left corner, we either reselect
+   * the previous cell or select the tab controller depending on from which cell
+   * the selection comes. This trick does not create an endless loop as the
+   * previous cell cannot be the top left corner cell if it also is the
+   * selected one. */
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
       m_selectableTableView.deselectTable();

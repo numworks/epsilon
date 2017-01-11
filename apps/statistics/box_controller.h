@@ -9,7 +9,6 @@
 namespace Statistics {
 
 class BoxController : public ViewController, public AlternateEmptyViewDelegate {
-
 public:
   BoxController(Responder * parentResponder, Store * store);
   const char * title() const override;

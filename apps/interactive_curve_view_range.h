@@ -34,7 +34,7 @@ public:
   void setTrigonometric();
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
-  
+
   //Cursor
   // moveCursorTo returns true if the window has moved
   bool moveCursorTo(float x, float y);

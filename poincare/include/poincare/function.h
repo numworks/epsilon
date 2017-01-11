@@ -2,6 +2,7 @@
 #define POINCARE_FUNCTION_H
 
 #include <poincare/expression.h>
+#include <poincare/list_data.h>
 
 /* The Function class represents the built-in math functions such as cos, sin,
  * tan, log, etc... */
@@ -11,6 +12,7 @@ public:
   Function(const char * name);
   ~Function();
   void setArgument(Expression ** args, int numberOfArguments, bool clone = true);
+  void setArgument(ListData * listData, bool clone = true);
   ExpressionLayout * createLayout() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;

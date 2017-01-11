@@ -33,6 +33,24 @@ void Function::setArgument(Expression ** args, int numberOfArguments, bool clone
   }
 }
 
+void Function::setArgument(ListData * listData, bool clone) {
+  if (m_args != nullptr) {
+    for (int i = 0; i < m_numberOfArguments; i++) {
+      delete m_args[i];
+    }
+    free(m_args);
+  }
+  m_numberOfArguments = listData->numberOfOperands();
+  m_args = (Expression **)malloc(m_numberOfArguments*sizeof(Expression *));
+  for (int i = 0; i < m_numberOfArguments; i++) {
+    if (clone) {
+      m_args[i] = (Expression *)listData->operand(i)->clone();
+    } else {
+      m_args[i] = (Expression *)listData->operand(i);
+    }
+  }
+}
+
 Function::~Function() {
   if (m_args != nullptr) {
     for (int i = 0; i < m_numberOfArguments; i++) {

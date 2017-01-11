@@ -81,8 +81,8 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum};
     float calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    Float(calculation).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
   }
 }

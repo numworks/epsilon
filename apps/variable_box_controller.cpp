@@ -112,8 +112,8 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Table
   const Expression * expression = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
-    char buffer[Constant::FloatBufferSizeInScientificMode];
-    ((Float *)expression)->convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    ((Float *)expression)->convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setSubtitle(buffer);
     return;
   }

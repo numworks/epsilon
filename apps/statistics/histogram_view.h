@@ -18,7 +18,7 @@ private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
-  char m_labels[k_maxNumberOfXLabels][Constant::FloatBufferSizeInScientificMode];
+  char m_labels[k_maxNumberOfXLabels][Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float m_highlightedBarStart;
   float m_highlightedBarEnd;
 };

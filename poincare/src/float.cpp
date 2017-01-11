@@ -7,10 +7,9 @@ extern "C" {
 #include "layout/string_layout.h"
 #include <poincare/float.h>
 
-
 Float::Float(float f) :
   m_float(f),
-  m_numberOfDigitsInMantissa(7)
+  m_numberOfSignificantDigits(7)
 {
 }
 
@@ -45,11 +44,11 @@ Float::Float(const char * integralPart, int integralPartLength, bool integralNeg
   m_float =
   (i + j*powf(10.0f, -ceilf(fractionalPartLength)))
     * powf(10.0f, l);
-  m_numberOfDigitsInMantissa = 7;
+  m_numberOfSignificantDigits = 7;
 }
 
-void Float::setNumberOfDigitsInMantissa(int numberOfDigits) {
-  m_numberOfDigitsInMantissa = numberOfDigits;
+void Float::setNumberOfSignificantDigits(int numberOfDigits) {
+  m_numberOfSignificantDigits = numberOfDigits;
 }
 
 Expression * Float::clone() const {
@@ -70,7 +69,7 @@ Expression::Type Float::type() const {
 
 ExpressionLayout * Float::createLayout() const {
   char buffer[k_maxBufferLength];
-  convertFloatToText(buffer, k_maxBufferLength, m_numberOfDigitsInMantissa);
+  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits);
   int size = 0;
   while (buffer[size] != 0) {
     size++;
@@ -84,11 +83,30 @@ bool Float::valueEquals(const Expression * e) const {
 }
 
 int Float::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertFloatToText(buffer, bufferSize, m_numberOfDigitsInMantissa);
+  return convertFloatToText(buffer, bufferSize, m_numberOfSignificantDigits);
 }
 
 int Float::convertFloatToText(char * buffer, int bufferSize,
-    int numberOfDigitsInMantissa, DisplayMode mode) const {
+    int numberOfSignificantDigits, DisplayMode mode) const {
+  char tempBuffer[k_maxBufferLength];
+  int requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits, mode);
+  /* if the required buffer size overflows the buffer size, we first force the
+   * display mode to scientific and decrease the number of significant digits to
+   * fit the buffer size. If the buffer size is still to small, we only write
+   * the beginning of the float and truncate it (which can result in a non sense
+   * text) */
+  if (mode == DisplayMode::Decimal && requiredLength >= bufferSize) {
+    requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits, DisplayMode::Scientific);
+  }
+  if (requiredLength >= bufferSize) {
+    requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, DisplayMode::Scientific);
+  }
+  requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
+  strlcpy(buffer, tempBuffer, bufferSize);
+  return requiredLength;
+}
+
+int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigits, DisplayMode mode) const {
   if (isinf(m_float)) {
     buffer[0] = m_float > 0 ? '+' : '-';
     buffer[1] = 'I';
@@ -116,26 +134,15 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
   }
 
   DisplayMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfDigitsInMantissa || exponentInBase10 <= -numberOfDigitsInMantissa) && mode == DisplayMode::Decimal) {
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == DisplayMode::Decimal) {
     displayMode = DisplayMode::Scientific;
-    numberOfDigitsInMantissa = numberOfDigitsInMantissa-2;
-  }
-
-  /* We here assert that the buffer is long enough to display with the right
-   * number of digits in the mantissa. If numberOfDigitsInMantissa = 7, the
-   * worst case has the form -1.999999e-38 (7+6+1 char) for the scientific mode
-   * and -1.999999 (7+2+1 char) for the decimal mode. */
-  if ((bufferSize <= 6 + numberOfDigitsInMantissa && displayMode == DisplayMode::Scientific) ||
-      (bufferSize <= 2 + numberOfDigitsInMantissa && displayMode == DisplayMode::Decimal)) {
-    buffer[0] = 0;
-    return 0;
   }
 
   int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == DisplayMode::Scientific ?
     1 : exponentInBase10+1;
 
   // Number of char available for the mantissa
-  int availableCharsForMantissaWithoutSign = numberOfDigitsInMantissa + 1;
+  int availableCharsForMantissaWithoutSign = numberOfSignificantDigits + 1;
   int availableCharsForMantissaWithSign = m_float >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
 
   // Compute mantissa
@@ -216,5 +223,4 @@ void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  
     buffer[endChar--] = '0'+digit;
     dividend = quotien;
   }  while (endChar >= startChar);
-
 }

@@ -1,6 +1,4 @@
 #include "constant.h"
 
-constexpr int Constant::FloatBufferSizeInScientificMode;
-constexpr int Constant::NumberOfDigitsInMantissaInScientificMode;
-constexpr int Constant::FloatBufferSizeInDecimalMode;
-constexpr int Constant::NumberOfDigitsInMantissaInDecimalMode;
+constexpr int Constant::LargeNumberOfSignificantDigits;
+constexpr int Constant::ShortNumberOfSignificantDigits;

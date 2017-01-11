@@ -3,10 +3,8 @@
 
 class Constant {
 public:
-  constexpr static int FloatBufferSizeInScientificMode = 14;
-  constexpr static int NumberOfDigitsInMantissaInScientificMode = 7;
-  constexpr static int FloatBufferSizeInDecimalMode = 11;
-  constexpr static int NumberOfDigitsInMantissaInDecimalMode = 4;
+  constexpr static int LargeNumberOfSignificantDigits = 7;
+  constexpr static int ShortNumberOfSignificantDigits = 4;
 };
 
 #endif

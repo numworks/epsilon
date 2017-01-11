@@ -144,7 +144,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     return;
   }
   // The cell is not a title cell
-  char buffer[Constant::FloatBufferSizeInScientificMode];
+  char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   // Special case: last row
   if (j == numberOfRows() - 1) {
     int numberOfIntervalElements = m_interval.numberOfElements();
@@ -161,9 +161,9 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   float x = m_interval.element(j-1);
   App * graphApp = (Graph::App *)app();
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   } else {
-    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
   myValueCell->setText(buffer);
 }

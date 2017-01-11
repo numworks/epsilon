@@ -96,14 +96,19 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  char buffer[k_maxNumberOfCharacters+Constant::FloatBufferSizeInScientificMode] = {'x', ' ', '=', ' ',0};
-  Float(m_cursor.x()).convertFloatToText(buffer+4, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  char buffer[k_maxNumberOfCharacters+Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  const char * legend = "x = ";
+  int legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  Float(m_cursor.x()).convertFloatToText(buffer+ legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Decimal);
   m_bannerView.setLegendAtIndex(buffer, 0);
 
-  strlcpy(buffer, "00(x) = ", k_maxNumberOfCharacters+1);
+  legend = "00(x) = ";
+  legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[1] = f->name()[0];
-  Float(m_cursor.y()).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+  Float(m_cursor.y()).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Decimal);
   m_bannerView.setLegendAtIndex(buffer+1, 1);
 
   if (m_bannerView.displayDerivative()) {
@@ -111,7 +116,7 @@ void GraphController::reloadBannerView() {
     buffer[1] = '\'';
     App * graphApp = (Graph::App *)app();
     float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext());
-    Float(y).convertFloatToText(buffer+8, Constant::FloatBufferSizeInScientificMode, Constant::NumberOfDigitsInMantissaInScientificMode);
+    Float(y).convertFloatToText(buffer + legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Decimal);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
   m_bannerView.layoutSubviews();

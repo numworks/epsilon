@@ -49,18 +49,22 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   if (j < 0 || j >= dataSource()->numberOfRows()) {
     return false;
   }
-
   if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
       m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
     TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
     previousCell->setHighlighted(false);
   }
+  int previousX = m_selectedCellX;
+  int previousY = m_selectedCellY;
   m_selectedCellX = i;
   m_selectedCellY = j;
   if (m_selectedCellY >= 0) {
     scrollToCell(i, j);
     TableViewCell * cell = cellAtLocation(i, j);
     cell->setHighlighted(true);
+  }
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
   }
   return true;
 }
@@ -70,29 +74,17 @@ TableViewCell * SelectableTableView::selectedCell() {
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Down && selectCellAtLocation(m_selectedCellX, m_selectedCellY+1)) {
-    if (m_delegate) {
-      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY - 1);
-    }
-    return true;
+  if (event == Ion::Events::Down) {
+    return selectCellAtLocation(m_selectedCellX, m_selectedCellY+1);
   }
-  if (event == Ion::Events::Up && selectCellAtLocation(m_selectedCellX, m_selectedCellY-1)) {
-    if (m_delegate) {
-      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX, m_selectedCellY + 1);
-    }
-    return true;
+  if (event == Ion::Events::Up) {
+    return selectCellAtLocation(m_selectedCellX, m_selectedCellY-1);
   }
-  if (event == Ion::Events::Left && selectCellAtLocation(m_selectedCellX-1, m_selectedCellY)) {
-    if (m_delegate) {
-      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX + 1, m_selectedCellY);
-    }
-    return true;
+  if (event == Ion::Events::Left) {
+    return selectCellAtLocation(m_selectedCellX-1, m_selectedCellY);
   }
-  if (event == Ion::Events::Right && selectCellAtLocation(m_selectedCellX+1, m_selectedCellY)) {
-    if (m_delegate) {
-      m_delegate->tableViewDidChangeSelection(this, m_selectedCellX - 1, m_selectedCellY);
-    }
-    return true;
+  if (event == Ion::Events::Right) {
+    return selectCellAtLocation(m_selectedCellX+1, m_selectedCellY);
   }
   return false;
 }

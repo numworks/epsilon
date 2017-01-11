@@ -37,13 +37,11 @@ float digitsToFloat(const char * digits, int length) {
 Float::Float(const char * integralPart, int integralPartLength, bool integralNegative,
     const char * fractionalPart, int fractionalPartLength,
     const char * exponent, int exponentLength, bool exponentNegative) {
-  float i = setSign(digitsToFloat(integralPart, integralPartLength), integralNegative);
+  float i = digitsToFloat(integralPart, integralPartLength);
   float j = digitsToFloat(fractionalPart, fractionalPartLength);
   float l = setSign(digitsToFloat(exponent, exponentLength), exponentNegative);
 
-  m_float =
-  (i + j*powf(10.0f, -ceilf(fractionalPartLength)))
-    * powf(10.0f, l);
+  m_float = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
   m_numberOfSignificantDigits = 7;
 }
 

@@ -44,7 +44,11 @@ float BinomialLaw::xMin() {
 }
 
 float BinomialLaw::xMax() {
-  return ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  float result = ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  if (result <= xMin()) {
+    result = xMin() + 1.0f;
+  }
+  return result;
 }
 
 float BinomialLaw::yMin() {
@@ -54,18 +58,30 @@ float BinomialLaw::yMin() {
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || result == yMin() || isnan(result)) {
+  if (result <= yMin() || isnan(result)) {
     result = yMin() + 1.0f;
   }
   return result;
 }
 
 float BinomialLaw::evaluateAtAbscissa(float x) const {
-  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
-    return NAN;
+  if (m_parameter1 == 0.0f) {
+    if (m_parameter2 == 0.0f || m_parameter2 == 1.0f) {
+      return NAN;
+    }
+    if ((int)x == 0) {
+      return 1.0f;
+    }
+    return 0.0f;
   }
   if (m_parameter2 == 1.0f) {
     if ((int)x == m_parameter1) {
+      return 1.0f;
+    }
+    return 0.0f;
+  }
+  if (m_parameter2 == 0.0f) {
+    if ((int)x == 0) {
       return 1.0f;
     }
     return 0.0f;
@@ -92,6 +108,9 @@ bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 float BinomialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
+    return NAN;
+  }
   if (*probability >= 1.0f) {
     return m_parameter1;
   }
@@ -99,6 +118,9 @@ float BinomialLaw::cumulativeDistributiveInverseForProbability(float * probabili
 }
 
 float BinomialLaw::rightIntegralInverseForProbability(float * probability) {
+  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
+    return NAN;
+  }
   if (*probability <= 0.0f) {
     return m_parameter1;
   }

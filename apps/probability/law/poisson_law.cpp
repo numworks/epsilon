@@ -46,7 +46,12 @@ float PoissonLaw::yMin() {
 
 float PoissonLaw::yMax() {
   int maxAbscissa = (int)m_parameter1;
-  return evaluateAtAbscissa(maxAbscissa);
+  assert(maxAbscissa >= 0.0f);
+  float result = evaluateAtAbscissa(maxAbscissa);
+  if (result <= yMin()) {
+    result = yMin() + 1.0f;
+  }
+  return result;
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {

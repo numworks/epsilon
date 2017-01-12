@@ -38,7 +38,11 @@ float ExponentialLaw::xMin() {
 
 float ExponentialLaw::xMax() {
   assert(m_parameter1 != 0.0f);
-  return 5.0f/m_parameter1;
+  float result = 5.0f/m_parameter1;
+  if (result <= xMin()) {
+    result = xMin() + 1.0f;
+  }
+  return result;
 }
 
 float ExponentialLaw::yMin() {
@@ -46,7 +50,11 @@ float ExponentialLaw::yMin() {
 }
 
 float ExponentialLaw::yMax() {
-  return m_parameter1;
+  float result = m_parameter1;
+  if (result <= yMin()) {
+    result = yMin() + 1.0f;
+  }
+  return result;
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {

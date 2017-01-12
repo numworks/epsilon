@@ -10,7 +10,7 @@ namespace Regression {
 
 class GraphView : public CurveView {
 public:
-  GraphView(Store * store, CurveViewCursor * cursor, View * bannerView, View * cursorView);
+  GraphView(Store * store, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_dotSize = 5;

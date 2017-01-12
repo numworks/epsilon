@@ -5,8 +5,8 @@
 
 namespace Graph {
 
-GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, View * bannerView, View * cursorView) :
-  CurveView(graphRange, cursor, bannerView, cursorView, 0.0f, 0.0f, 0.2f, 0.0f),
+GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
+  CurveView(graphRange, cursor, bannerView, cursorView, 0.0f, 0.0f, 0.1f, 0.0f),
   m_functionStore(functionStore),
   m_context(nullptr)
 {

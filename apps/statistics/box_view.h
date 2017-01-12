@@ -19,7 +19,7 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, View * bannerView);
+  BoxView(Store * store, ::BannerView * bannerView);
   void reloadSelection() override;
   Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);

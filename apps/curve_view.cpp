@@ -8,7 +8,7 @@
 constexpr KDColor CurveView::k_axisColor;
 constexpr KDColor CurveView::k_gridColor;
 
-CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, View * bannerView,
+CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, float topMarginFactor, float rightMarginFactor, float bottomMarginFactor,
     float leftMarginFactor) :
   View(),
@@ -40,7 +40,10 @@ void CurveView::reloadSelection() {
     float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
     KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
     markRectAsDirty(dirtyZone);
-    layoutSubviews();
+    layoutCursor();
+    if (m_bannerView != nullptr) {
+      m_bannerView->layoutSubviews();
+    }
   }
 }
 
@@ -392,15 +395,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
 }
 
 void CurveView::layoutSubviews() {
-  if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
-    KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
-    KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
-    if (!m_mainViewSelected) {
-      cursorFrame = KDRectZero;
-    }
-    m_cursorView->setFrame(cursorFrame);
-  }
+  layoutCursor();
   if (m_bannerView != nullptr) {
     m_bannerView->setFrame(bounds());
     KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
@@ -409,6 +404,18 @@ void CurveView::layoutSubviews() {
       bannerFrame = KDRectZero;
     }
     m_bannerView->setFrame(bannerFrame);
+  }
+}
+
+void CurveView::layoutCursor() {
+  if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
+    KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+    KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
+    if (!m_mainViewSelected) {
+      cursorFrame = KDRectZero;
+    }
+    m_cursorView->setFrame(cursorFrame);
   }
 }
 

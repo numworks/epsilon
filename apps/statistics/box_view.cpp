@@ -4,7 +4,7 @@
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, View * bannerView) :
+BoxView::BoxView(Store * store, ::BannerView * bannerView) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr, 0.0f, 0.2f, 0.4f, 0.2f),
   m_store(store),
   m_boxRange(BoxRange(store)),

@@ -5,6 +5,7 @@
 #include <poincare.h>
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
+#include "banner_view.h"
 #include <math.h>
 
 class CurveView : public View {
@@ -15,7 +16,7 @@ public:
     Vertical = 1
   };
   CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
-    View * bannerView = nullptr, View * cursorView = nullptr, float topMarginFactor = 0.0f,
+    BannerView * bannerView = nullptr, View * cursorView = nullptr, float topMarginFactor = 0.0f,
     float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
   // Reload methods
   void reload();
@@ -71,13 +72,14 @@ private:
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
   void layoutSubviews() override;
+  void layoutCursor();
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
    * cursor views may be nullptr if not needed. */
   CurveViewRange * m_curveViewRange;
   CurveViewCursor * m_curveViewCursor;
-  View * m_bannerView;
+  BannerView * m_bannerView;
   View * m_cursorView;
   bool m_mainViewSelected;
   float m_topMarginFactor;

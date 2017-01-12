@@ -11,7 +11,7 @@ namespace Graph {
 
 class GraphView : public CurveView {
 public:
-  GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, View * bannerView, View * cursorView);
+  GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Context * context);
   Context * context() const;

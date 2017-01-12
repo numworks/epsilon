@@ -2,6 +2,7 @@
 #define POINCARE_DERIVATIVE_H
 
 #include <poincare/function.h>
+#include <poincare/x_context.h>
 
 class Derivative : public Function {
 public:
@@ -11,8 +12,11 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-// float precision ~ 2^-23 -> we chose eps ~ precision^(1/3) because (f(x+eps)-f(x-eps))/(2eps) < (precision/h)*f(x)
-  constexpr static float k_epsilon = 0.004921566601f;
+  float growthRateAroundAbscissa(float x, float h, XContext xContext) const;
+  float approximateDerivate2(float x, float h, XContext xContext) const;
+  constexpr static float k_maxErrorRateOnApproximation = 0.001f;
+  constexpr static float k_minInitialRate = 0.01f;
+  constexpr static float k_rateStepSize = 1.4f;
 };
 
 #endif

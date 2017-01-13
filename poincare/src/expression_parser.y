@@ -112,13 +112,9 @@ mtxData:
 
 number:
   DIGITS { $$ = new Integer($1.address, false); }
-  | MINUS DIGITS { $$ = new Integer($2.address, true); }
   | DIGITS DOT DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
-  | MINUS DIGITS DOT DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, nullptr, 0, false); }
   | DIGITS DOT DIGITS EE DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
-  | MINUS DIGITS DOT DIGITS EE DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, $6.address, $6.length, false); }
   | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
-  | MINUS DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($2.address, $2.length, true, $4.address, $4.length, $7.address, $7.length, true); }
 
 exp:
   number             { $$ = $1; }
@@ -128,6 +124,7 @@ exp:
   | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Product(terms, false);  }
   | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
   | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
+  | MINUS exp        { $$ = new Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Parenthesis($2, false); }
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Matrix($2); }
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, false);}

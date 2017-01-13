@@ -19,6 +19,7 @@ class Expression {
       Logarithm,
       Matrix,
       NthRoot,
+      Opposite,
       Fraction,
       Parenthesis,
       Power,

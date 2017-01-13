@@ -7,6 +7,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/expression.h>
+#include <poincare/exponential.h>
 #include <poincare/float.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>

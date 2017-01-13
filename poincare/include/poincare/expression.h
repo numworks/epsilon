@@ -13,6 +13,7 @@ class Expression {
       Addition,
       Cosine,
       Derivative,
+      Exponential,
       Float,
       Integer,
       Logarithm,

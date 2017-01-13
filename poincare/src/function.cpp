@@ -5,6 +5,7 @@ extern "C" {
 #include <poincare/function.h>
 #include <poincare/float.h>
 #include "layout/horizontal_layout.h"
+#include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
 
 Function::Function(const char * name) :
@@ -65,17 +66,18 @@ Expression * Function::clone() const {
 }
 
 ExpressionLayout * Function::createLayout() const {
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc((2*m_numberOfArguments+2)*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new StringLayout(m_name, strlen(m_name));
-  childrenLayouts[1] = new StringLayout("(", 1);
-  int layoutIndex = 2;
-  childrenLayouts[layoutIndex++] = m_args[0]->createLayout();
+  ExpressionLayout ** grandChildrenLayouts = (ExpressionLayout **)malloc((2*m_numberOfArguments-1)*sizeof(ExpressionLayout *));
+  int layoutIndex = 0;
+  grandChildrenLayouts[layoutIndex++] = m_args[0]->createLayout();
   for (int i = 1; i < m_numberOfArguments; i++) {
-    childrenLayouts[layoutIndex++] = new StringLayout(",", 1);
-    childrenLayouts[layoutIndex++] = m_args[i]->createLayout();
+    grandChildrenLayouts[layoutIndex++] = new StringLayout(",", 1);
+    grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout();
   }
-  childrenLayouts[layoutIndex] = new StringLayout(")", 1);
-  return new HorizontalLayout(childrenLayouts, 2*m_numberOfArguments+2);
+  ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*m_numberOfArguments-1);
+  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  childrenLayouts[0] = new StringLayout(m_name, strlen(m_name));
+  childrenLayouts[1] = new ParenthesisLayout(argumentLayouts);
+  return new HorizontalLayout(childrenLayouts, 2);
 }
 
 const Expression * Function::operand(int i) const {

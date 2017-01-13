@@ -13,6 +13,7 @@
 #include <poincare/function.h>
 #include <poincare/global_context.h>
 #include <poincare/integer.h>
+#include <poincare/integral.h>
 #include <poincare/list_data.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>

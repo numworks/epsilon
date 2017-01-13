@@ -16,6 +16,7 @@ class Expression {
       Exponential,
       Float,
       Integer,
+      Integral,
       Logarithm,
       Matrix,
       NthRoot,

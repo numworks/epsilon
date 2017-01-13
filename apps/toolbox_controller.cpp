@@ -6,7 +6,7 @@
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at nullptr. */
 
-const ToolboxNode calculChildren[4] = {ToolboxNode("diff(,)", "Nombre derive"), ToolboxNode("Int(,,)", "Integrale"), ToolboxNode("sum(,,)", "Somme"), ToolboxNode("product(,,)", "Produit")};
+const ToolboxNode calculChildren[4] = {ToolboxNode("diff(,)", "Nombre derive"), ToolboxNode("int(,,)", "Integrale"), ToolboxNode("sum(,,)", "Somme"), ToolboxNode("product(,,)", "Produit")};
 const ToolboxNode complexChildren[5] = {ToolboxNode("abs()", "Module"), ToolboxNode("arg()", "Argument"), ToolboxNode("re()", "Partie reelle"), ToolboxNode("im()", "Partie imaginaire"), ToolboxNode("conj()", "Conjugue")};
 const ToolboxNode probabilityChildren[4] = {ToolboxNode("binomial()", "Combinaison"), ToolboxNode("permute(,)", "Arrangement"), ToolboxNode("random(,)", "Nombre aleatoire"), ToolboxNode("gamma()", "Fonction gamma")};
 const ToolboxNode arithmeticChildren[4] = {ToolboxNode("gcd()", "PGCD"), ToolboxNode("lcm()", "PPCM"), ToolboxNode("rem()", "Reste division euclidienne"), ToolboxNode("quo()","Quotien division euclidienne")};

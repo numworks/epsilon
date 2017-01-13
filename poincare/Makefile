@@ -17,6 +17,7 @@ objs += $(addprefix poincare/src/,\
   function.o\
   global_context.o\
   integer.o\
+  integral.o\
   list_data.o\
   leaf_expression.o\
   logarithm.o\

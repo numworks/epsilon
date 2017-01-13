@@ -21,7 +21,6 @@ public:
 protected:
   Expression ** m_args;
   int m_numberOfArguments;
-private:
   const char * m_name;
 };
 

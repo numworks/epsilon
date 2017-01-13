@@ -1,16 +1,16 @@
-#ifndef POINCARE_X_CONTEXT_H
-#define POINCARE_X_CONTEXT_H
+#ifndef POINCARE_N_CONTEXT_H
+#define POINCARE_N_CONTEXT_H
 
 #include <poincare/context.h>
 #include <poincare/float.h>
 
-class XContext : public Context {
+class NContext : public Context {
 public:
-  XContext(Context * parentContext = nullptr);
+  NContext(Context * parentContext = nullptr);
   void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
   const Expression * expressionForSymbol(const Symbol * symbol) override;
 private:
-  Float m_xValue;
+  Float m_nValue;
   Context * m_parentContext;
 };
 

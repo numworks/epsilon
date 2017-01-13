@@ -31,6 +31,7 @@ objs += $(addprefix poincare/src/,\
   product.o\
   sine.o\
   subtraction.o\
+  sum.o\
   symbol.o\
   tangent.o\
   x_context.o\

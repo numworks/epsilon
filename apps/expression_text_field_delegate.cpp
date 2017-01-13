@@ -9,13 +9,16 @@ const char * ExpressionTextFieldDelegate::XNT() {
 
 bool ExpressionTextFieldDelegate::cursorInToken(TextField * textField, const char * token) {
   const char * text = textField->text();
-  int cursorLocation = textField->cursorLocation();
+  int location = textField->cursorLocation();
   int tokenLength = strlen(token);
-  if (cursorLocation - tokenLength < 0) {
+  while (text[location] != '(') {
+    location --;
+  }
+  if (location - tokenLength < 0) {
     return false;
   }
   char previousToken[10];
-  strlcpy(previousToken, text+cursorLocation-tokenLength, tokenLength+1);
+  strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
   if (strcmp(previousToken, token) == 0) {
     return true;
   }
@@ -61,7 +64,7 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       textField->setEditing(true);
       textField->setText("");
     }
-    if (cursorInToken(textField, "sum(") || cursorInToken(textField, "product(")) {
+    if (cursorInToken(textField, "sum") || cursorInToken(textField, "product")) {
       textField->insertTextAtLocation("n", textField->cursorLocation());
       textField->setCursorLocation(textField->cursorLocation()+strlen("n"));
       return true;

@@ -11,6 +11,7 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
+  ExpressionLayout * createLayout() const override;
 private:
   float functionValueAtAbscissa(float x, XContext xcontext) const;
 };

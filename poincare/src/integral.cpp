@@ -5,7 +5,11 @@
 extern "C" {
 #include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 }
+#include "layout/horizontal_layout.h"
+#include "layout/string_layout.h"
+#include "layout/integral_layout.h"
 
 Integral::Integral() :
   Function("int")
@@ -50,6 +54,13 @@ float Integral::approximate(Context& context) const {
   }
   result *= xr;
   return result;
+}
+
+ExpressionLayout * Integral::createLayout() const {
+  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  childrenLayouts[0] = m_args[0]->createLayout();
+  childrenLayouts[1] = new StringLayout("dx", 2);
+  return new IntegralLayout(m_args[1]->createLayout(), m_args[2]->createLayout(), new HorizontalLayout(childrenLayouts, 2));
 }
 
 float Integral::functionValueAtAbscissa(float x, XContext xContext) const {

@@ -1,9 +1,12 @@
 #include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/float.h>
-
+#include "layout/sum_layout.h"
+#include "layout/string_layout.h"
+#include "layout/horizontal_layout.h"
 extern "C" {
 #include <assert.h>
+#include <stdlib.h>
 }
 
 Sum::Sum() :
@@ -36,4 +39,11 @@ float Sum::approximate(Context& context) const {
     result += m_args[0]->approximate(nContext);
   }
   return result;
+}
+
+ExpressionLayout * Sum::createLayout() const {
+  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  childrenLayouts[0] = new StringLayout("n=", 2);
+  childrenLayouts[1] = m_args[1]->createLayout();
+  return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(), m_args[0]->createLayout());
 }

@@ -47,6 +47,7 @@ objs += $(addprefix poincare/src/layout/,\
   nth_root_layout.o\
   parenthesis_layout.o\
   string_layout.o\
+  sum_layout.o\
   subscript_layout.o\
 )
 

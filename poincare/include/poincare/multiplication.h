@@ -1,11 +1,11 @@
-#ifndef POINCARE_PRODUCT_H
-#define POINCARE_PRODUCT_H
+#ifndef POINCARE_MULTIPLICATION_H
+#define POINCARE_MULTIPLICATION_H
 
 #include <poincare/binary_operation.h>
 #include <poincare/float.h>
 #include <poincare/matrix.h>
 
-class Product : public BinaryOperation {
+class Multiplication : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
   public:
     Type type() const override;

@@ -3,7 +3,7 @@ extern "C" {
 #include <math.h>
 }
 #include <poincare/power.h>
-#include <poincare/product.h>
+#include <poincare/multiplication.h>
 #include "layout/exponent_layout.h"
 
 float Power::approximate(Context& context) const {
@@ -24,11 +24,11 @@ Expression * Power::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& con
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m;
-    Expression * product = new Product(operands, true);
-    Expression * newResult = product->evaluate(context);
+    Expression * multiplication = new Multiplication(operands, true);
+    Expression * newResult = multiplication->evaluate(context);
     delete result;
     result = newResult;
-    delete product;
+    delete multiplication;
   }
   return result;
 }

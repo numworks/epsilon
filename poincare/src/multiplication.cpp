@@ -3,15 +3,15 @@ extern "C" {
 #include <stdlib.h>
 }
 
-#include <poincare/product.h>
+#include <poincare/multiplication.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 
-Expression::Type Product::type() const {
-  return Expression::Type::Product;
+Expression::Type Multiplication::type() const {
+  return Expression::Type::Multiplication;
 }
 
-ExpressionLayout * Product::createLayout() const {
+ExpressionLayout * Multiplication::createLayout() const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
   children_layouts[0] = m_operands[0]->createLayout();
   children_layouts[1] = new StringLayout("*", 1);
@@ -19,18 +19,18 @@ ExpressionLayout * Product::createLayout() const {
   return new HorizontalLayout(children_layouts, 3);
 }
 
-float Product::approximate(Context& context) const {
+float Multiplication::approximate(Context& context) const {
   return m_operands[0]->approximate(context)*m_operands[1]->approximate(context);;
 }
 
-Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
+Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
-  return new Product(newOperands, cloneOperands);
+  return new Multiplication(newOperands, cloneOperands);
 }
 
-Expression * Product::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Multiplication::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     operands[i] = new Float(m->operand(i)->approximate(context)*a->approximate(context));
@@ -38,11 +38,11 @@ Expression * Product::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& c
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Product::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
+Expression * Multiplication::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
   return evaluateOnMatrixAndFloat(m, a, context);
 }
 
-Expression * Product::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
   if (m->numberOfColumns() != n->numberOfRows()) {
     return nullptr;
   }

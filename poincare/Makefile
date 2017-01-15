@@ -49,6 +49,7 @@ objs += $(addprefix poincare/src/layout/,\
   string_layout.o\
   sum_layout.o\
   subscript_layout.o\
+  symbol_layout.o\
 )
 
 tests += $(addprefix poincare/test/,\

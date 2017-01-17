@@ -40,7 +40,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
       headerViewController()->setSelectedButton(-1);
       curveView()->selectMainView(true);
-      curveView()->reloadSelection();
+      curveView()->reload();
       reloadBannerView();
       return true;
     }
@@ -65,36 +65,25 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    curveView()->reloadSelection();
-    int didMoveCursor = moveCursorHorizontally(direction);
-    if (didMoveCursor == 0) {
-      curveView()->reloadSelection();
-    }
-    if (didMoveCursor == 1) {
+    if (moveCursorHorizontally(direction)) {
       curveView()->reload();
+      reloadBannerView();
+      return true;
     }
-    reloadBannerView();
-    return (didMoveCursor >= 0);
+    return false;
   }
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
-    curveView()->reloadSelection();
-    int didMoveCursor = moveCursorVertically(direction);
-    if (didMoveCursor < 0) {
-      if (event == Ion::Events::Down) {
-        return false;
-      }
-      curveView()->selectMainView(false);
-      headerViewController()->setSelectedButton(0);
+    if (moveCursorVertically(direction)) {
+      curveView()->reload();
+      reloadBannerView();
       return true;
     }
-    if (didMoveCursor == 0) {
-      curveView()->reloadSelection();
+    if (event == Ion::Events::Down) {
+      return false;
     }
-    if (didMoveCursor == 1) {
-      curveView()->reload();
-    }
-    reloadBannerView();
+    curveView()->selectMainView(false);
+    headerViewController()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::OK) {

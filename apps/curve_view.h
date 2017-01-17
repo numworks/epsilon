@@ -16,11 +16,8 @@ public:
     Vertical = 1
   };
   CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
-    BannerView * bannerView = nullptr, View * cursorView = nullptr, float topMarginFactor = 0.0f,
-    float rightMarginFactor = 0.0f, float bottomMarginFactor = 0.0f, float leftMarginFactor = 0.0f);
-  // Reload methods
-  void reload();
-  virtual void reloadSelection();
+    BannerView * bannerView = nullptr, View * cursorView = nullptr);
+  virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
@@ -72,7 +69,6 @@ private:
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
   void layoutSubviews() override;
-  void layoutCursor();
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
@@ -82,10 +78,7 @@ private:
   BannerView * m_bannerView;
   View * m_cursorView;
   bool m_mainViewSelected;
-  float m_topMarginFactor;
-  float m_bottomMarginFactor;
-  float m_leftMarginFactor;
-  float m_rightMarginFactor;
+  uint32_t m_drawnRangeVersion;
 };
 
 #endif

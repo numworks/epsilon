@@ -26,6 +26,7 @@ public:
 
   Responder * defaultController() override;
 protected:
+  constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual BannerView * bannerView() = 0;
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
@@ -34,11 +35,10 @@ protected:
   virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;
   /* the result of moveCursorVertically/Horizontally means:
-   * -1 -> the cursor cannot move in this direction 
-   * 0 -> the cursor moved but the window has not changed
-   * 1-> the cursor moved and the window changed */
-  virtual int moveCursorHorizontally(int direction) = 0;
-  virtual int moveCursorVertically(int direction) = 0;
+   * false -> the cursor cannot move in this direction
+   * true -> the cursor moved */
+  virtual bool moveCursorHorizontally(int direction) = 0;
+  virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;

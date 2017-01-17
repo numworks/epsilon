@@ -21,6 +21,7 @@ app_objs += $(addprefix apps/,\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
   main.o\
+  memoized_curve_view_range.o\
   node.o\
   node_list_view_controller.o\
   node_navigation_controller.o\

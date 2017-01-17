@@ -37,12 +37,12 @@ void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     float y = m_store->yValueForXValue(f);
     m_store->centerAxisAround(CurveViewRange::Axis::X, f);
     m_store->centerAxisAround(CurveViewRange::Axis::Y, y);
-    m_store->moveCursorTo(f, y);
+    m_cursor->moveTo(f, y);
   } else {
     float x = m_store->xValueForYValue(f);
     m_store->centerAxisAround(CurveViewRange::Axis::X, x);
     m_store->centerAxisAround(CurveViewRange::Axis::Y, f);
-    m_store->moveCursorTo(x, f);
+    m_cursor->moveTo(x, f);
   }
 }
 

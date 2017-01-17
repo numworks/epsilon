@@ -7,8 +7,14 @@ void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void BannerView::setLegendAtIndex(char * text, int index) {
+  /* The layout of the banner's subviews depends on their content.
+   * Indeed, we're using a "centered text" algorithm to layout the subviews.
+   * So changing a legend implies two things
+   *  - First, we need to update the textView to ensure it has the new content
+   *  - Second, we need to relayout *all* of our subviews. */
   TextView * textView = textViewAtIndex(index);
   textView->setText(text);
+  layoutSubviews();
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() {
@@ -20,7 +26,6 @@ int BannerView::numberOfSubviews() const {
 }
 
 void BannerView::layoutSubviews() {
-  markRectAsDirty(bounds());
   /* We iterate on subviews, adding their width until we exceed the view bound.
   * The last subview that exceeds the bound is recorded as the first subview of
   * the next line. For the current line, we scan again the subviews and frame

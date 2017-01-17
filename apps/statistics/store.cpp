@@ -8,7 +8,7 @@
 namespace Statistics {
 
 Store::Store() :
-  InteractiveCurveViewRange(nullptr, nullptr),
+  MemoizedCurveViewRange(),
   FloatPairStore(),
   m_barWidth(1.0f),
   m_firstDrawnBarAbscissa(0.0f)
@@ -72,14 +72,14 @@ int Store::numberOfBars() {
 bool Store::scrollToSelectedBarIndex(int index) {
   float startSelectedBar = startOfBarAtIndex(index);
   float range = m_xMax - m_xMin;
-  if (m_xMin > startSelectedBar) {
-    m_xMin = startSelectedBar;
+  if (m_xMin + k_displayLeftMarginRatio*range > startSelectedBar) {
+    m_xMin = startSelectedBar - k_displayLeftMarginRatio*range;
     m_xMax = m_xMin + range;
     return true;
   }
   float endSelectedBar = endOfBarAtIndex(index);
-  if (endSelectedBar > m_xMax) {
-    m_xMax = endSelectedBar;
+  if (endSelectedBar > m_xMax - k_displayRightMarginRatio*range) {
+    m_xMax = endSelectedBar + k_displayRightMarginRatio*range;
     m_xMin = m_xMax - range;
     return true;
   }

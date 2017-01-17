@@ -5,14 +5,15 @@
 namespace Statistics {
 
 BoxView::BoxView(Store * store, ::BannerView * bannerView) :
-  CurveView(&m_boxRange, nullptr, bannerView, nullptr, 0.0f, 0.2f, 0.4f, 0.2f),
+  CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_selectedQuantile(Quantile::Min)
 {
 }
 
-void BoxView::reloadSelection() {
+void BoxView::reload() {
+  CurveView::reload();
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)m_selectedQuantile])();
@@ -32,9 +33,9 @@ bool BoxView::selectQuantile(int selectedQuantile) {
     return false;
   }
   if ((int)m_selectedQuantile != selectedQuantile) {
-    reloadSelection();
+    reload();
     m_selectedQuantile = (Quantile)selectedQuantile;
-    reloadSelection();
+    reload();
   }
   return true;
 }

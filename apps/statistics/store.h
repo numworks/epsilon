@@ -1,12 +1,12 @@
 #ifndef STATISTICS_STORE_H
 #define STATISTICS_STORE_H
 
-#include "../interactive_curve_view_range.h"
+#include "../memoized_curve_view_range.h"
 #include "../float_pair_store.h"
 
 namespace Statistics {
 
-class Store : public InteractiveCurveViewRange, public FloatPairStore {
+class Store : public MemoizedCurveViewRange, public FloatPairStore {
 public:
   Store();
   uint32_t barChecksum();
@@ -37,6 +37,10 @@ public:
   float median();
   float sum();
   float squaredValueSum();
+  constexpr static float k_displayTopMarginRatio = 0.03f;
+  constexpr static float k_displayRightMarginRatio = 0.02f;
+  constexpr static float k_displayBottomMarginRatio = 0.3f;
+  constexpr static float k_displayLeftMarginRatio = 0.02f;
 private:
   float defaultValue(int i) override;
   float sumOfValuesBetween(float x1, float x2);

@@ -28,7 +28,7 @@ void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   float y = m_function->evaluateAtAbscissa(f, graphApp->localContext());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
-  m_graphRange->moveCursorTo(f, y);
+  m_cursor->moveTo(f, y);
 }
 
 int GoToParameterController::numberOfRows() {

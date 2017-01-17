@@ -43,7 +43,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     if (!m_view.isMainViewSelected()) {
       headerViewController()->setSelectedButton(-1);
       m_view.selectMainView(true);
-      m_view.reloadSelection();
+      m_view.reload();
       reloadBannerView();
       return true;
     }
@@ -146,7 +146,6 @@ void HistogramController::reloadBannerView() {
   float frequency = size/m_store->sumOfColumn(1);
   Float(frequency).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
-  m_bannerView.layoutSubviews();
 }
 
 bool HistogramController::moveSelection(int deltaIndex) {
@@ -182,9 +181,8 @@ void HistogramController::initRangeParameters() {
   if (xMin >= xMax) {
     xMax = xMin + 10.0f*barWidth;
   }
-  m_store->setXMin(xMin);
-  m_store->setXMax(xMax);
-  m_store->setYMin(0.0f);
+  m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
+  m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
   float yMax = -FLT_MAX;
   for (int index = 0; index < m_store->numberOfBars(); index++) {
     float size = m_store->heightOfBarAtIndex(index);
@@ -193,7 +191,8 @@ void HistogramController::initRangeParameters() {
     }
   }
   yMax = yMax/m_store->sumOfColumn(1);
-  m_store->setYMax(yMax);
+  m_store->setYMin(-Store::k_displayBottomMarginRatio*yMax);
+  m_store->setYMax(yMax*(1.0f+Store::k_displayTopMarginRatio));
 }
 
 void HistogramController::initBarParameters() {

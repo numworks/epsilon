@@ -91,8 +91,6 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   Float(y).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 4);
-
-  m_bannerView.layoutSubviews();
 }
 
 void GraphController::initRangeParameters() {
@@ -102,50 +100,62 @@ void GraphController::initRangeParameters() {
 void GraphController::initCursorParameters() {
   float x = (m_store->xMin() + m_store->xMax())/2.0f;
   float y = m_store->yValueForXValue(x);
-  m_store->moveCursorTo(x, y);
+  m_cursor.moveTo(x, y);
+  m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   m_selectedDotIndex = -1;
 }
 
-int GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction) {
   if (m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(direction, m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairs()) {
       m_selectedDotIndex = dotSelected;
-      return m_store->moveCursorTo(m_store->get(0, m_selectedDotIndex), m_store->get(1, m_selectedDotIndex));
+      m_cursor.moveTo(m_store->get(0, m_selectedDotIndex), m_store->get(1, m_selectedDotIndex));
+      m_store->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      return true;
     }
     if (dotSelected == m_store->numberOfPairs()) {
       m_selectedDotIndex = dotSelected;
-      return m_store->moveCursorTo(m_store->meanOfColumn(0), m_store->meanOfColumn(1));
+      m_cursor.moveTo(m_store->meanOfColumn(0), m_store->meanOfColumn(1));
+      m_store->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      return true;
     }
-    return -1;
-  } else {
-    float x = direction > 0 ? m_cursor.x() + m_store->xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit :
-      m_cursor.x() - m_store->xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit;
-    float y = m_store->yValueForXValue(x);
-    return m_store->moveCursorTo(x, y);
+    return false;
   }
+  float x = direction > 0 ? m_cursor.x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
+  m_cursor.x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+  float y = m_store->yValueForXValue(x);
+  m_cursor.moveTo(x, y);
+  m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return true;
 }
 
-int GraphController::moveCursorVertically(int direction) {
+bool GraphController::moveCursorVertically(int direction) {
   float yRegressionCurve = m_store->yValueForXValue(m_cursor.x());
   if (m_selectedDotIndex >= 0) {
     if ((yRegressionCurve - m_cursor.y() > 0) == (direction > 0)) {
       m_selectedDotIndex = -1;
-      return m_store->moveCursorTo(m_cursor.x(), yRegressionCurve);
+      m_cursor.moveTo(m_cursor.x(), yRegressionCurve);
+      m_store->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      return true;
     } else {
-      return -1;
+      return false;
     }
   } else {
     int dotSelected = m_store->closestVerticalDot(direction, m_cursor.x());
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairs()) {
       m_selectedDotIndex = dotSelected;
-      return m_store->moveCursorTo(m_store->get(0, m_selectedDotIndex), m_store->get(1, m_selectedDotIndex));
+      m_cursor.moveTo(m_store->get(0, m_selectedDotIndex), m_store->get(1, m_selectedDotIndex));
+      m_store->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      return true;
     }
     if (dotSelected == m_store->numberOfPairs()) {
       m_selectedDotIndex = dotSelected;
-      return m_store->moveCursorTo(m_store->meanOfColumn(0), m_store->meanOfColumn(1));
+      m_cursor.moveTo(m_store->meanOfColumn(0), m_store->meanOfColumn(1));
+      m_store->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      return true;
     }
-    return -1;
+    return false;
   }
 }
 

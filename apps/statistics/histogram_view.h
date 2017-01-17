@@ -11,7 +11,7 @@ namespace Statistics {
 class HistogramView : public CurveView {
 public:
   HistogramView(Store * store, ::BannerView * bannerView);
-  void reloadSelection() override;
+  void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlight(float start, float end);
 private:

@@ -5,14 +5,15 @@
 namespace Statistics {
 
 HistogramView::HistogramView(Store * store, ::BannerView * bannerView) :
-  CurveView(store, nullptr, bannerView, nullptr, 0.2f, 0.05f, 0.4f, 0.05f),
+  CurveView(store, nullptr, bannerView, nullptr),
   m_store(store),
   m_highlightedBarStart(NAN),
   m_highlightedBarEnd(NAN)
 {
 }
 
-void HistogramView::reloadSelection() {
+void HistogramView::reload() {
+  CurveView::reload();
   float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart)-2;
   float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd)+2;
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
@@ -34,10 +35,10 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void HistogramView::setHighlight(float start, float end) {
   if (m_highlightedBarStart != start || m_highlightedBarEnd != end) {
-    reloadSelection();
+    reload();
     m_highlightedBarStart = start;
     m_highlightedBarEnd = end;
-    reloadSelection();
+    reload();
   }
 }
 

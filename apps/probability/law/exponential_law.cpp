@@ -33,28 +33,32 @@ const char * ExponentialLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float ExponentialLaw::xMin() {
-  return 0.0f;
+  float max = xMax();
+  return - k_displayLeftMarginRatio * max;
 }
 
 float ExponentialLaw::xMax() {
   assert(m_parameter1 != 0.0f);
   float result = 5.0f/m_parameter1;
-  if (result <= xMin()) {
-    result = xMin() + 1.0f;
+  if (result <= 0.0f) {
+    result = 1.0f;
   }
-  return result;
+  return result*(1.0f+ k_displayRightMarginRatio);
 }
 
 float ExponentialLaw::yMin() {
-  return 0.0f;
+  return -k_displayBottomMarginRatio*yMax();
 }
 
 float ExponentialLaw::yMax() {
   float result = m_parameter1;
-  if (result <= yMin()) {
-    result = yMin() + 1.0f;
+  if (result <= 0.0f || isnan(result)) {
+    result = 1.0f;
   }
-  return result;
+  if (result <= 0.0f) {
+    result = 1.0f;
+  }
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {

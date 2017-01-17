@@ -69,7 +69,6 @@ void BoxController::reloadBannerView() {
   float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
   Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_boxBannerView.setLegendAtIndex(buffer, 1);
-  m_boxBannerView.layoutSubviews();
 }
 
 }

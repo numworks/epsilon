@@ -55,16 +55,16 @@ float NormalLaw::xMax() {
 }
 
 float NormalLaw::yMin() {
-  return 0.0f;
+  return -k_displayBottomMarginRatio*yMax();
 }
 
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (isnan(result) || result == yMin()) {
-    result = yMin() + 1.0f;
+  if (isnan(result) || result <= 0.0f) {
+    result = 1.0f;
   }
-  return result;
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float NormalLaw::evaluateAtAbscissa(float x) const {

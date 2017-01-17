@@ -1,12 +1,16 @@
 #ifndef APPS_CURVE_VIEW_RANGE_H
 #define APPS_CURVE_VIEW_RANGE_H
 
+#include <stdint.h>
+
 class CurveViewRange {
 public:
   enum class Axis {
     X,
     Y
   };
+  virtual uint32_t rangeChecksum();
+
   virtual float xMin() = 0;
   virtual float xMax() = 0;
   virtual float yMin() = 0;

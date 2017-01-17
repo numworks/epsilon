@@ -28,7 +28,7 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::setTrigonometric,
-      &InteractiveCurveViewRange::roundAbscissa, &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
+    &InteractiveCurveViewRange::roundAbscissa, &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
     (m_graphRange->*rangeMethods[m_selectableTableView.selectedRow()])();
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();

@@ -5,13 +5,8 @@
 #include <ion.h>
 
 InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
-  m_xMin(-10.0f),
-  m_xMax(10.0f),
-  m_yMin(-10.0f),
-  m_yMax(10.0f),
+  MemoizedCurveViewRange(),
   m_yAuto(true),
-  m_xGridUnit(2.0f),
-  m_yGridUnit(2.0f),
   m_cursor(cursor),
   m_delegate(delegate)
 {
@@ -28,70 +23,22 @@ uint32_t InteractiveCurveViewRange::rangeChecksum() {
   return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
-float InteractiveCurveViewRange::xMin() {
-  return m_xMin;
-}
-
-float InteractiveCurveViewRange::xMax() {
-  return m_xMax;
-}
-
-float InteractiveCurveViewRange::yMin() {
-  return m_yMin;
-}
-
-float InteractiveCurveViewRange::yMax() {
-  return m_yMax;
-}
-
 bool InteractiveCurveViewRange::yAuto() {
   return m_yAuto;
 }
 
-float InteractiveCurveViewRange::xGridUnit() {
-  return m_xGridUnit;
-}
-
-float InteractiveCurveViewRange::yGridUnit() {
-  return m_yGridUnit;
-}
-
 void InteractiveCurveViewRange::setXMin(float xMin) {
-  m_xMin = xMin;
-  if (m_xMin >= m_xMax) {
-    m_xMax = xMin + 1.0f;
-  }
+  MemoizedCurveViewRange::setXMin(xMin);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 }
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
-  m_xMax = xMax;
-  if (m_xMin >= m_xMax) {
-    m_xMin = xMax - 1.0f;
-  }
+  MemoizedCurveViewRange::setXMax(xMax);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-}
-
-void InteractiveCurveViewRange::setYMin(float yMin) {
-  m_yMin = yMin;
-  if (m_yMin >= m_yMax) {
-    m_yMax = yMin + 1.0f;
-  }
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
-}
-
-void InteractiveCurveViewRange::setYMax(float yMax) {
-  m_yMax = yMax;
-  if (m_yMin >= m_yMax) {
-    m_yMin = yMax - 1.0f;
-  }
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
 void InteractiveCurveViewRange::setYAuto(bool yAuto) {
@@ -183,48 +130,31 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
 }
 
-bool InteractiveCurveViewRange::moveCursorTo(float x, float y) {
-  if (m_cursor) {
-    m_cursor->moveTo(x, y);
-    float xMargin = k_cursorMarginFactorToBorder * (m_xMax - m_xMin);
-    float yMargin = k_cursorMarginFactorToBorder * (m_yMax - m_yMin);
-    bool windowHasMoved = panToMakePointVisible(x, y, xMargin, yMargin);
-    return windowHasMoved;
-  }
-  return false;
-}
-
-bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float xMargin, float yMargin) {
-  bool windowMoved = false;
+void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
-  if (x < m_xMin + xMargin) {
-    m_xMin = x - xMargin;
+  if (x < m_xMin + leftMarginRation*xRange) {
+    m_xMin = x - leftMarginRation*xRange;
     m_xMax = m_xMin + xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
     m_yAuto = false;
-    windowMoved = true;
   }
-  if (x > m_xMax - xMargin) {
-    m_xMax = x + xMargin;
+  if (x > m_xMax - rightMarginRatio*xRange) {
+    m_xMax = x + rightMarginRatio*xRange;
     m_xMin = m_xMax - xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
     m_yAuto = false;
-    windowMoved = true;
   }
-  if (y < m_yMin + yMargin) {
-    m_yMin = y - yMargin;
+  if (y < m_yMin + bottomMarginRation*yRange) {
+    m_yMin = y - bottomMarginRation*yRange;
     m_yMax = m_yMin + yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
     m_yAuto = false;
-    windowMoved = true;
   }
-  if (y > m_yMax - yMargin) {
-    m_yMax = y + yMargin;
+  if (y > m_yMax - topMarginRatio*yRange) {
+    m_yMax = y + topMarginRatio*yRange;
     m_yMin = m_yMax - yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
     m_yAuto = false;
-    windowMoved = true;
   }
-  return windowMoved;
 }

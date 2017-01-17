@@ -8,22 +8,25 @@ BoxRange::BoxRange(Store * store) :
 }
 
 float BoxRange::xMin() {
-  return m_store->minValue();
+  float min = m_store->minValue();
+  float max = m_store->maxValue();
+  max = min >= max ? min + 1 : max;
+  return min - k_displayLeftMarginRatio*(max-min);
 }
 
 float BoxRange::xMax() {
-  if (m_store->minValue() >= m_store->maxValue()) {
-    return m_store->minValue() + 1.0f;
-  }
-  return m_store->maxValue();
+  float min = m_store->minValue();
+  float max = m_store->maxValue();
+  max = min >= max ? min + 1 : max;
+  return max + k_displayRightMarginRatio*(max - min);
 }
 
 float BoxRange::yMin() {
-  return 0.0f;
+  return -k_displayBottomMarginRatio;
 }
 
 float BoxRange::yMax() {
-  return 1.0f;
+  return 1.0f+k_displayTopMarginRatio;
 }
 
 float BoxRange::xGridUnit() {

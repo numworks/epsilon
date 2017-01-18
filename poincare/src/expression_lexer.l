@@ -81,7 +81,7 @@ E  { return EE; }
 [A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
-ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
+ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
 exp { poincare_expression_yylval.expression = new Exponential(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
@@ -91,6 +91,7 @@ log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; 
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
+Pi { poincare_expression_yylval.character = Symbol::SpecialSymbols::Pi; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

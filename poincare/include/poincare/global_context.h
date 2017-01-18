@@ -20,6 +20,7 @@ public:
 private:
   int symbolIndex(const Symbol * symbol) const;
   Expression * m_expressions[k_maxNumberOfScalarExpressions];
+  Float m_pi;
 };
 
 #endif

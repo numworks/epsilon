@@ -27,6 +27,7 @@
 #include <poincare/power.h>
 #include <poincare/product.h>
 #include <poincare/sine.h>
+#include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
 #include <poincare/symbol.h>

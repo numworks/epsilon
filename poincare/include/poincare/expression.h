@@ -28,6 +28,7 @@ class Expression {
       Power,
       Product,
       Sine,
+      SquareRoot,
       Sum,
       Subtraction,
       Symbol,

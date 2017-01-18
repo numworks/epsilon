@@ -9,6 +9,8 @@ namespace Graph {
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   HeaderViewDelegate(header),
+  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
+    FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},
   m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
   m_functionStore(functionStore),
@@ -140,7 +142,6 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     }
     myFunctionCell->setText(name);
     myFunctionCell->setColor(function->color());
-    myFunctionCell->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     return;
   }
   // The cell is not a title cell

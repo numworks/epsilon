@@ -32,7 +32,7 @@ View * StackView::subviewAtIndex(int index) {
 }
 
 void StackView::layoutSubviews() {
-  m_textView.setFrame(bounds());
+  m_textView.setFrame(KDRect(0, 1,  bounds().width(), bounds().height()-2));
 }
 
 void StackView::setName(const char * name) {

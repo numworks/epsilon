@@ -7,6 +7,8 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
+  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
+    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_selectableTableView(SelectableTableView(this, this)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
@@ -233,7 +235,6 @@ void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int 
       myFunctionCell->setText(bufferName);
       KDColor functionNameColor = function->isActive() ? function->color() : Palette::DesactiveTextColor;
       myFunctionCell->setColor(functionNameColor);
-      myFunctionCell->setOrientation(FunctionTitleCell::Orientation::VerticalIndicator);
     } else {
       FunctionExpressionView * myCell = (FunctionExpressionView *)cell;
       myCell->setFunction(m_functionStore->functionAtIndex(j));

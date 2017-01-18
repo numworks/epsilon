@@ -12,12 +12,6 @@ AlternateEmptyViewController::ContentView::ContentView(ViewController * mainView
 {
 }
 
-void AlternateEmptyViewController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_delegate->isEmpty()) {
-    ctx->fillRect(bounds(), Palette::BackgroundColor);
-  }
-}
-
 int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
   return 1;
 }

@@ -16,7 +16,6 @@ private:
   class ContentView : public View {
   public:
     ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
-    void drawRect(KDContext * ctx, KDRect rect) const override;
     ViewController * mainViewController() const;
     AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const;
     void layoutSubviews() override;

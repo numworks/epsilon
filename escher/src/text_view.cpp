@@ -37,6 +37,7 @@ void TextView::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize textSize = KDText::stringSize(text());
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
     m_verticalAlignment*(m_frame.height() - textSize.height()));
+  ctx->fillRect(bounds(), m_backgroundColor);
   ctx->drawString(text(), origin, m_textColor, m_backgroundColor);
 }
 

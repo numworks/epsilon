@@ -10,9 +10,8 @@ public:
     HorizontalIndicator,
     VerticalIndicator
   };
-	FunctionTitleCell();
+	FunctionTitleCell(Orientation orientation);
   void setColor(KDColor color);
-  void setOrientation(Orientation orientation);
   void setText(const char * textContent);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;

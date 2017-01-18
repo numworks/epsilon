@@ -3,9 +3,10 @@
 
 namespace Graph {
 
-FunctionTitleCell::FunctionTitleCell() :
+FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
   EvenOddCell(),
-  m_bufferTextView(0.5f, 0.5f)
+  m_bufferTextView(0.5f, 0.5f),
+  m_orientation(orientation)
 {
 }
 
@@ -23,10 +24,6 @@ void FunctionTitleCell::setColor(KDColor color) {
   m_bufferTextView.setTextColor(color);
 }
 
-void FunctionTitleCell::setOrientation(Orientation orientation) {
-  m_orientation = orientation;
-}
-
 int FunctionTitleCell::numberOfSubviews() const {
   return 1;
 }
@@ -37,7 +34,11 @@ View * FunctionTitleCell::subviewAtIndex(int index) {
 }
 
 void FunctionTitleCell::layoutSubviews() {
-  m_bufferTextView.setFrame(bounds());
+  KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
+  if (m_orientation == Orientation::VerticalIndicator){
+    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, bounds().height());
+  }
+  m_bufferTextView.setFrame(textFrame);
 }
 
 void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {

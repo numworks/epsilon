@@ -20,6 +20,7 @@ class Expression {
       Logarithm,
       Matrix,
       Multiplication,
+      NaperianLogarithm,
       NthRoot,
       Opposite,
       Fraction,

@@ -88,6 +88,7 @@ cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
+ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }

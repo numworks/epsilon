@@ -19,6 +19,7 @@
 #include <poincare/matrix.h>
 #include <poincare/matrix_data.h>
 #include <poincare/multiplication.h>
+#include <poincare/naperian_logarithm.h>
 #include <poincare/n_context.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>

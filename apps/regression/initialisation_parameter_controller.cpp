@@ -1,5 +1,4 @@
 #include "initialisation_parameter_controller.h"
-#include "graph_controller.h"
 #include <assert.h>
 #include <math.h>
 

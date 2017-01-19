@@ -62,7 +62,8 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
     for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
       Function * f = m_functionStore->activeFunctionAtIndex(i);
       float y = 0.0f;
-      for (float x = xMin; x <= xMax; x += step) {
+      for (int i = 0; i <= Ion::Display::Width; i++) {
+        float x = xMin + i*step;
         y = f->evaluateAtAbscissa(x, graphApp->localContext());
         if (!isnan(y) && !isinf(y)) {
           min = min < y ? min : y;

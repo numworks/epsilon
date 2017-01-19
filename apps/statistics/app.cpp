@@ -14,7 +14,8 @@ App::App(Container * container) :
   m_histogramHeader(HeaderViewController(&m_histogramAlternateEmptyViewController, &m_histogramController, &m_histogramController)),
   m_histogramAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_histogramHeader, &m_histogramController)),
   m_histogramStackViewController(StackViewController(&m_tabViewController, &m_histogramAlternateEmptyViewController)),
-  m_storeController(nullptr, &m_store),
+  m_storeController(&m_storeHeader, &m_store, &m_storeHeader),
+  m_storeHeader(HeaderViewController(nullptr, &m_storeController, &m_storeController)),
   m_storeStackViewController(StackViewController(&m_tabViewController, &m_storeController)),
   m_tabViewController(&m_modalViewController, &m_storeStackViewController, &m_histogramStackViewController, &m_boxAlternateEmptyViewController, &m_calculationAlternateEmptyViewController)
 {

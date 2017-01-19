@@ -25,6 +25,7 @@ private:
   AlternateEmptyViewController m_histogramAlternateEmptyViewController;
   StackViewController m_histogramStackViewController;
   StoreController m_storeController;
+  HeaderViewController m_storeHeader;
   StackViewController m_storeStackViewController;
   TabViewController m_tabViewController;
 };

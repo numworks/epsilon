@@ -6,8 +6,8 @@
 
 namespace Statistics {
 
-StoreController::StoreController(Responder * parentResponder, Store * store) :
-  ::StoreController(parentResponder, store)
+StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :
+  ::StoreController(parentResponder, store, header)
 {
 }
 

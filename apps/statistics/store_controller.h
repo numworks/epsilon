@@ -9,7 +9,7 @@ namespace Statistics {
 
 class StoreController : public ::StoreController {
 public:
-  StoreController(Responder * parentResponder, Store * store);
+  StoreController(Responder * parentResponder, Store * store, HeaderViewController * header);
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
 };
 

@@ -12,8 +12,9 @@ App::App(Container * container) :
   m_graphHeader(HeaderViewController(&m_graphAlternateEmptyViewController, &m_graphController, &m_graphController)),
   m_graphAlternateEmptyViewController(AlternateEmptyViewController(nullptr, &m_graphHeader, &m_graphController)),
   m_graphStackViewController(StackViewController(&m_tabViewController, &m_graphAlternateEmptyViewController)),
-  m_storeController(StoreController(nullptr, &m_store)),
-  m_storeStackViewController(StackViewController(&m_tabViewController, &m_storeController)),
+  m_storeController(StoreController(&m_storeHeader, &m_store, &m_storeHeader)),
+  m_storeHeader(HeaderViewController(nullptr, &m_storeController, &m_storeController)),
+  m_storeStackViewController(StackViewController(&m_tabViewController, &m_storeHeader)),
   m_tabViewController(&m_modalViewController, &m_storeStackViewController, &m_graphStackViewController, &m_calculationAlternateEmptyViewController)
 {
 }

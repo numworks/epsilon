@@ -22,6 +22,7 @@ private:
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   StackViewController m_graphStackViewController;
   ::StoreController m_storeController;
+  HeaderViewController m_storeHeader;
   StackViewController m_storeStackViewController;
   TabViewController m_tabViewController;
 };

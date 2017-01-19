@@ -6,9 +6,9 @@
 #include "store_parameter_controller.h"
 #include "editable_cell_table_view_controller.h"
 
-class StoreController : public EditableCellTableViewController {
+class StoreController : public EditableCellTableViewController, public HeaderViewDelegate  {
 public:
-  StoreController(Responder * parentResponder, FloatPairStore * store);
+  StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header);
   const char * title() const override;
   int numberOfColumns() override;
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;

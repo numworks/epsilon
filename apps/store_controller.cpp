@@ -3,8 +3,9 @@
 #include "constant.h"
 #include <assert.h>
 
-StoreController::StoreController(Responder * parentResponder, FloatPairStore * store) :
+StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin),
+  HeaderViewDelegate(header),
   m_editableCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large),
@@ -83,7 +84,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 0) {
     m_storeParameterController.selectXColumn(m_selectableTableView.selectedColumn() == 0);
-    StackViewController * stack = ((StackViewController *)parentResponder());
+    StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;
   }
@@ -96,7 +97,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
 }
 
 Responder * StoreController::tabController() const {
-  return (parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder());
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {

@@ -3,9 +3,9 @@
 
 namespace Graph {
 
-FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
+FunctionTitleCell::FunctionTitleCell(Orientation orientation, KDText::FontSize size) :
   EvenOddCell(),
-  m_bufferTextView(0.5f, 0.5f),
+  m_bufferTextView(size, 0.5f, 0.5f),
   m_orientation(orientation)
 {
 }

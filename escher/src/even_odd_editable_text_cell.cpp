@@ -2,10 +2,10 @@
 #include <escher/app.h>
 #include <assert.h>
 
-EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer) :
+EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size) :
   EvenOddCell(),
   Responder(parentResponder),
-  m_editableCell(this, delegate, draftTextBuffer, 1.0f, 0.5f, KDColorBlack, KDColorWhite)
+  m_editableCell(this, delegate, draftTextBuffer, size, 1.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
 }
 

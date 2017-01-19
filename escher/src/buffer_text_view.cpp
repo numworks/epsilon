@@ -2,9 +2,9 @@
 #include <string.h>
 #include <assert.h>
 
-BufferTextView::BufferTextView(float horizontalAlignment, float verticalAlignment,
+BufferTextView::BufferTextView(KDText::FontSize size, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  TextView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
 }
 

@@ -1,50 +1,50 @@
 #include <kandinsky/context.h>
-#include "font.h"
+#include "small_font.h"
+#include "large_font.h"
 
-KDColor characterBuffer[BITMAP_FONT_CHARACTER_WIDTH*BITMAP_FONT_CHARACTER_HEIGHT];
+KDColor smallCharacterBuffer[BITMAP_SmallFont_CHARACTER_WIDTH*BITMAP_SmallFont_CHARACTER_HEIGHT];
+KDColor largeCharacterBuffer[BITMAP_LargeFont_CHARACTER_WIDTH*BITMAP_LargeFont_CHARACTER_HEIGHT];
 
-void KDContext::drawChar(char character, KDPoint p, KDColor textColor, KDColor backgroundColor) {
-  for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
-    for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
-      uint8_t intensity = bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i];
+void KDContext::drawChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor, KDColor backgroundColor) {
+  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_CHARACTER : BITMAP_SmallFont_FIRST_CHARACTER;
+  int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT : BITMAP_SmallFont_CHARACTER_HEIGHT;
+  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
+  KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;
+  for (int j=0; j<characterHeight;j++) {
+    for (int i=0; i<characterWidth;i++) {
+      uint8_t intensity = 0;
+      if (size == KDText::FontSize::Large) {
+        intensity = bitmapLargeFont[character-firstCharacter][j][i];
+      } else {
+       intensity = bitmapSmallFont[character-firstCharacter][j][i];
+      }
       KDColor color = KDColor::blend(textColor, backgroundColor, intensity);
-      //characterBuffer[j*BITMAP_FONT_CHARACTER_WIDTH+i] = color;
-      characterBuffer[j*BITMAP_FONT_CHARACTER_WIDTH+i] = color;
+      characterBuffer[j*characterWidth+i] = color;
     }
   }
-  fillRectWithPixels(KDRect(p, BITMAP_FONT_CHARACTER_WIDTH, BITMAP_FONT_CHARACTER_HEIGHT),
+  fillRectWithPixels(KDRect(p, characterWidth, characterHeight),
       characterBuffer,
       characterBuffer);
 }
-#if 0
-void KDContext::drawChar(char character, KDPoint p, uint8_t inverse) {
-  for (int j=0; j<BITMAP_FONT_CHARACTER_HEIGHT;j++) {
-    for (int i=0; i<BITMAP_FONT_CHARACTER_WIDTH;i++) {
-      uint8_t intensity = inverse ?
-        bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i] :
-        (0xFF-bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j][i]);
-      KDColor color(intensity * 0x010101);
-      characterBuffer[j*BITMAP_FONT_CHARACTER_WIDTH+i] = color;
-    }
-  }
-  fillRectWithPixels(KDRect(p, BITMAP_FONT_CHARACTER_WIDTH, BITMAP_FONT_CHARACTER_HEIGHT),
-      characterBuffer,
-      characterBuffer);
-}
-#endif
 
-void KDContext::drawString(const char * text, KDPoint p, KDColor textColor, KDColor backgroundColor) {
+void KDContext::drawString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor, KDColor backgroundColor) {
   KDPoint position = p;
-  KDPoint characterSize(BITMAP_FONT_CHARACTER_WIDTH, 0);
+  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
+  KDPoint characterSize(characterWidth, 0);
   while(*text != 0) {
-    drawChar(*text, position, textColor, backgroundColor);
+    drawChar(*text, size, position, textColor, backgroundColor);
     text++;
     position = position.translatedBy(characterSize);
   }
 }
 
-void KDContext::blendChar(char character, KDPoint p, KDColor textColor) {
-  KDRect absoluteRect = absoluteFillRect(KDRect(p, BITMAP_FONT_CHARACTER_WIDTH, BITMAP_FONT_CHARACTER_HEIGHT));
+void KDContext::blendChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor) {
+  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_CHARACTER : BITMAP_SmallFont_FIRST_CHARACTER;
+  int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT : BITMAP_SmallFont_CHARACTER_HEIGHT;
+  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
+  KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;
+
+  KDRect absoluteRect = absoluteFillRect(KDRect(p, characterWidth, characterHeight));
   pullRect(absoluteRect, characterBuffer);
   KDCoordinate startingI = m_clippingRect.x() - p.translatedBy(m_origin).x();
   KDCoordinate startingJ = m_clippingRect.y() - p.translatedBy(m_origin).y();
@@ -53,18 +53,24 @@ void KDContext::blendChar(char character, KDPoint p, KDColor textColor) {
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAdress = characterBuffer + i + absoluteRect.width()*j;
-      uint8_t intensity = bitmapFont[character-BITMAP_FONT_FIRST_CHARACTER][j + startingJ][i +startingI];
+      uint8_t intensity = 0;
+      if (size == KDText::FontSize::Large) {
+        intensity = bitmapLargeFont[character-firstCharacter][j + startingJ][i +startingI];
+      } else {
+       intensity = bitmapSmallFont[character-firstCharacter][j + startingJ][i +startingI];
+      }
       *currentPixelAdress = KDColor::blend(textColor, *currentPixelAdress, intensity);
     }
   }
   pushRect(absoluteRect, characterBuffer);
 }
 
-void KDContext::blendString(const char * text, KDPoint p, KDColor textColor) {
+void KDContext::blendString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor) {
   KDPoint position = p;
-  KDPoint characterSize(BITMAP_FONT_CHARACTER_WIDTH, 0);
+  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
+  KDPoint characterSize(characterWidth, 0);
   while(*text != 0) {
-    blendChar(*text, position, textColor);
+    blendChar(*text, size, position, textColor);
     text++;
     position = position.translatedBy(characterSize);
   }

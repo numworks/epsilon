@@ -4,10 +4,10 @@
 #include <assert.h>
 
 EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
-   float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+   KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TableViewCell(),
   Responder(parentResponder),
-  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, size, delegate, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
 {
 }
 

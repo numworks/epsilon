@@ -5,7 +5,11 @@
 
 class KDText {
 public:
-  static KDSize stringSize(const char * text);
+  enum class FontSize {
+    Small,
+    Large
+  };
+  static KDSize stringSize(const char * text, FontSize size);
 };
 
 #endif

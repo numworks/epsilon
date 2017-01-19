@@ -2,7 +2,7 @@
 #include <assert.h>
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, TextFieldDelegate * delegate,
+    size_t textBufferSize, KDText::FontSize size, TextFieldDelegate * delegate,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   View(),
   Responder(parentResponder),
@@ -16,7 +16,8 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
-  m_backgroundColor(backgroundColor)
+  m_backgroundColor(backgroundColor),
+  m_fontSize(size)
 {
 }
 
@@ -29,10 +30,10 @@ const char * TextField::text() const {
 
 void TextField::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
-  KDSize textSize = KDText::stringSize(text());
+  KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
       m_verticalAlignment*(m_frame.height() - textSize.height()));
-  ctx->drawString(text(), origin, m_textColor, m_backgroundColor);
+  ctx->drawString(text(), m_fontSize, origin, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -58,7 +59,7 @@ void TextField::setAlignment(float horizontalAlignment, float verticalAlignment)
 }
 
 void TextField::reload() {
-  KDSize textSize = KDText::stringSize(text());
+  KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
     m_verticalAlignment*(m_frame.height() - textSize.height()));
   KDRect dirtyZone(origin, textSize);
@@ -168,7 +169,7 @@ void TextField::insertTextAtLocation(const char * text, int location) {
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() {
-  KDSize textSize = KDText::stringSize(m_draftTextBuffer);
+  KDSize textSize = KDText::stringSize(m_draftTextBuffer, m_fontSize);
   return KDSize(0, textSize.height());
 }
 

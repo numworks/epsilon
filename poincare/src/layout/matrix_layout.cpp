@@ -13,7 +13,7 @@ MatrixLayout::MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, i
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     m_entryLayouts[i]->setParent(this);
   }
-  m_baseline = height()/2 + KDText::stringSize(" ").height()/2;
+  m_baseline = height()/2 + KDText::stringSize(" ", KDText::FontSize::Large).height()/2;
 }
 
 MatrixLayout::~MatrixLayout() {

@@ -6,7 +6,7 @@
 
 class EvenOddPointerTextCell : public EvenOddCell {
 public:
-  EvenOddPointerTextCell();
+  EvenOddPointerTextCell(KDText::FontSize size);
   void reloadCell() override;
   void setText(const char * textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);

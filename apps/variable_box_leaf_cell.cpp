@@ -3,8 +3,8 @@
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   TableViewCell(),
-  m_labelView(BufferTextView(0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
-  m_subtitleView(BufferTextView(0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor)),
+  m_labelView(BufferTextView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
+  m_subtitleView(BufferTextView(KDText::FontSize::Small, 0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor)),
   m_displayExpression(false)
 {
 }

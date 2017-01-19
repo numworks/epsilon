@@ -8,7 +8,7 @@ ExpressionLayout() {
   memcpy(m_string, string, length);
   m_string[length] = 0;
   // Height of the font.
-  m_baseline = KDText::stringSize(" ").height();
+  m_baseline = KDText::stringSize(" ", KDText::FontSize::Large).height();
 }
 
 StringLayout::~StringLayout() {
@@ -20,7 +20,7 @@ ExpressionLayout * StringLayout::child(uint16_t index) {
 }
 
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->drawString(m_string, p, expressionColor, backgroundColor);
+  ctx->drawString(m_string, KDText::FontSize::Large, p, expressionColor, backgroundColor);
 }
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
@@ -29,5 +29,5 @@ KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 KDSize StringLayout::computeSize() {
-  return KDText::stringSize(m_string);
+  return KDText::stringSize(m_string, KDText::FontSize::Large);
 }

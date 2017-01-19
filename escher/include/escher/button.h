@@ -8,7 +8,7 @@
 
 class Button : public View, public Responder {
 public:
-  Button(Responder * parentResponder, const char * textBody, Invocation invocation);
+  Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   bool handleEvent(Ion::Events::Event event) override;
   void setBackgroundColor(KDColor backgroundColor);

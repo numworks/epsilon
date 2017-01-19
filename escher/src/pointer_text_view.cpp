@@ -1,8 +1,8 @@
 #include <escher/pointer_text_view.h>
 
-PointerTextView::PointerTextView(const char * text, float horizontalAlignment, float verticalAlignment,
+PointerTextView::PointerTextView(KDText::FontSize size, const char * text, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  TextView(horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_textPointer(text)
 {
 }

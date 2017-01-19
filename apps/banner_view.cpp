@@ -18,7 +18,7 @@ void BannerView::setLegendAtIndex(char * text, int index) {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() {
-  return KDSize(0, KDText::stringSize(" ").height()*numberOfLines());
+  return KDSize(0, KDText::stringSize(" ", KDText::FontSize::Small).height()*numberOfLines());
 }
 
 int BannerView::numberOfSubviews() const {
@@ -73,7 +73,7 @@ int BannerView::numberOfLines() {
   KDCoordinate usedWidth = 0;
   KDCoordinate lineNumber = 0;
   for (int i = 0; i < numberOfSubviews(); i++) {
-    KDCoordinate textWidth = KDText::stringSize(textViewAtIndex(i)->text()).width();
+    KDCoordinate textWidth = KDText::stringSize(textViewAtIndex(i)->text(), KDText::FontSize::Small).width();
     if (usedWidth+textWidth > width) {
       usedWidth = textWidth;
       lineNumber++;

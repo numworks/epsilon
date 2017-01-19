@@ -7,10 +7,13 @@ namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
+  m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
+    EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
+  m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
+  m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin, this)),
   m_store(store)
 {
-  m_columnTitleCell.setParentResponder(&m_selectableTableView);
   for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {
     m_calculationCells[k].setTextColor(Palette::DesactiveTextColor);
     m_doubleCalculationCells[k].setTextColor(Palette::DesactiveTextColor);

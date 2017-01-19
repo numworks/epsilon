@@ -1,9 +1,9 @@
 #include <escher/even_odd_pointer_text_cell.h>
 #include <assert.h>
 
-EvenOddPointerTextCell::EvenOddPointerTextCell() :
+EvenOddPointerTextCell::EvenOddPointerTextCell(KDText::FontSize size) :
   EvenOddCell(),
-  m_pointerTextView(nullptr, 0.5f, 0.5f)
+  m_pointerTextView(size, nullptr, 0.5f, 0.5f)
 {
 }
 

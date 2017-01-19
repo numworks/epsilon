@@ -3,7 +3,7 @@
 namespace Calculation {
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, TextFieldDelegate * delegate) :
-  ::TextField(parentResponder, textBuffer, textBuffer, textBufferSize, delegate)
+  ::TextField(parentResponder, textBuffer, textBuffer, textBufferSize, KDText::FontSize::Large, delegate)
 {
   m_isEditing = true;
 }

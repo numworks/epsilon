@@ -6,7 +6,7 @@
 /* ContentView */
 
 AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  m_message(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
+  m_message(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
   m_mainViewController(mainViewController),
   m_delegate(delegate)
 {

@@ -11,9 +11,10 @@ namespace Probability {
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
-  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
+  m_text{PointerTextView(KDText::FontSize::Large), PointerTextView(KDText::FontSize::Large), PointerTextView(KDText::FontSize::Large)},
+  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large)},
   m_calculation(calculation)
 {
 }
@@ -69,24 +70,25 @@ void CalculationController::ContentView::willDisplayEditableCellAtIndex(int inde
 
 void CalculationController::ContentView::layoutSubviews() {
   markRectAsDirty(bounds());
+  KDSize charSize = KDText::stringSize(" ", KDText::FontSize::Large);
   KDCoordinate xCoordinate = 0;
   m_lawCurveView.setFrame(KDRect(0,  ImageTableView::k_imageHeight, bounds().width(), bounds().height() - ImageTableView::k_imageHeight));
   m_imageTableView.setFrame(KDRect(xCoordinate, 0, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));
   xCoordinate += ImageTableView::k_imageWidth + k_textMargin;
   KDCoordinate numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(0));
-  m_text[0].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
-  xCoordinate += numberOfCharacters*k_charWidth + k_textMargin;
+  m_text[0].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
   m_calculationCell[0].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
   xCoordinate += k_textFieldWidth + k_textMargin;
   numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(1));
-  m_text[1].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
-  xCoordinate += numberOfCharacters*k_charWidth + k_textMargin;
+  m_text[1].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
   m_calculationCell[1].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
   xCoordinate += k_textFieldWidth + k_textMargin;
   if (m_calculation->numberOfParameters() > 2) {
     numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(2));;
-    m_text[2].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*k_charWidth, ImageTableView::k_imageHeight));
-    xCoordinate += numberOfCharacters*k_charWidth + k_textMargin;
+    m_text[2].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+    xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
     m_calculationCell[2].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
   }
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {

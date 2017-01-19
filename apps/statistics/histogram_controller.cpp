@@ -10,11 +10,11 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
   HeaderViewDelegate(headerViewController),
   m_bannerView(HistogramBannerView()),
   m_view(HistogramView(store, &m_bannerView)),
-  m_settingButton(Button(this, "Reglages de l'histogramme",Invocation([](void * context, void * sender) {
+  m_settingButton(Button(this, "Reglages de l'histogramme", Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
-  }, this))),
+  }, this), KDText::FontSize::Small)),
   m_store(store),
   m_cursor(CurveViewCursor()),
   m_histogramParameterController(nullptr, store)

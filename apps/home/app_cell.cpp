@@ -5,6 +5,7 @@ namespace Home {
 
 AppCell::AppCell() :
   TableViewCell(),
+  m_nameView(PointerTextView(KDText::FontSize::Small)),
   m_visible(true)
 {
 }

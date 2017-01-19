@@ -90,20 +90,14 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 
 /* Legend View */
 
-ZoomParameterController::ContentView::LegendView::LegendView()
+ZoomParameterController::ContentView::LegendView::LegendView() :
+  m_legends{PointerTextView(KDText::FontSize::Small, "ZOOM+", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
+    PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
+    PointerTextView(KDText::FontSize::Small, "GAUCHE", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
+    PointerTextView(KDText::FontSize::Small, "ZOOM-", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
+    PointerTextView(KDText::FontSize::Small, "BAS", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
+    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor)}
 {
-  m_legends[0].setText("ZOOM+");
-  m_legends[1].setText("HAUT");
-  m_legends[2].setText("GAUCHE");
-  m_legends[3].setText("ZOOM-");
-  m_legends[4].setText("BAS");
-  m_legends[5].setText("DROITE");
-  for (int row = 0; row < 3; row++) {
-    m_legends[row].setAlignment(0.0f, 0.5f);
-    m_legends[3+row].setAlignment(1.0f, 0.5f);
-    m_legends[row].setBackgroundColor(k_legendBackgroundColor);
-    m_legends[3+row].setBackgroundColor(k_legendBackgroundColor);
-  }
 }
 
 void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {

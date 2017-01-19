@@ -3,11 +3,11 @@
 namespace Regression {
 
 BannerView::BannerView() :
-  m_regressionTypeView(nullptr, 0.5f, 0.5f),
-  m_slopeView(0.5f, 0.5f),
-  m_yInterceptView(0.5f, 0.5f),
-  m_xView(0.5f, 0.5f),
-  m_yView(0.5f, 0.5f)
+  m_regressionTypeView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f),
+  m_slopeView(KDText::FontSize::Small, 0.5f, 0.5f),
+  m_yInterceptView(KDText::FontSize::Small, 0.5f, 0.5f),
+  m_xView(KDText::FontSize::Small, 0.5f, 0.5f),
+  m_yView(KDText::FontSize::Small, 0.5f, 0.5f)
 {
 }
 

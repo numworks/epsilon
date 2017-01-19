@@ -5,8 +5,8 @@ EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(Responder * parentRespo
   EvenOddCell(),
   Responder(parentResponder),
   m_firstTextSelected(true),
-  m_firstBufferTextView(EvenOddBufferTextCell()),
-  m_secondBufferTextView(EvenOddBufferTextCell())
+  m_firstBufferTextView(EvenOddBufferTextCell(KDText::FontSize::Small)),
+  m_secondBufferTextView(EvenOddBufferTextCell(KDText::FontSize::Small))
 {
 }
 

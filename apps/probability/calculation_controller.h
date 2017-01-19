@@ -38,7 +38,6 @@ private:
     constexpr static int k_maxNumberOfEditableFields = 3;
   private:
     constexpr static KDCoordinate k_textFieldWidth = 50;
-    constexpr static KDCoordinate k_charWidth = 7;
     constexpr static KDCoordinate k_textMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

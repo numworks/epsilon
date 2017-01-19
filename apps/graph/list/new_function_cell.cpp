@@ -5,7 +5,7 @@ namespace Graph {
 
 NewFunctionCell::NewFunctionCell() :
   EvenOddCell(),
-  m_pointerTextView(PointerTextView("Ajouter une fonction", 0.5f, 0.5f))
+  m_pointerTextView(PointerTextView(KDText::FontSize::Large, "Ajouter une fonction", 0.5f, 0.5f))
 {
 }
 

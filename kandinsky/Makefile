@@ -6,12 +6,13 @@ objs += $(addprefix kandinsky/src/,\
   context_pixel.o\
   context_rect.o\
   context_text.o\
-  font.o\
   framebuffer.o\
   framebuffer_context.o\
   ion_context.o\
+  large_font.o\
   point.o\
   rect.o\
+  small_font.o\
   text.o\
 )
 tests += $(addprefix kandinsky/test/,\
@@ -24,30 +25,37 @@ FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
 # built w/o PNG support and simply won't output an image of the rasterization
 #LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.21
 
-kandinsky/src/text.cpp: kandinsky/src/font.h
-kandinsky/src/context_text.cpp: kandinsky/src/font.h
+kandinsky/src/text.cpp: kandinsky/src/small_font.h kandinsky/src/large_font.h
+kandinsky/src/context_text.cpp: kandinsky/src/small_font.h kandinsky/src/large_font.h
 
-font_files = $(addprefix kandinsky/src/, font.h font.c)
+small_font_files = $(addprefix kandinsky/src/, small_font.h small_font.c)
+large_font_files = $(addprefix kandinsky/src/, large_font.h large_font.c)
 
 RASTERIZER_CFLAGS := -std=c99 `freetype-config --cflags`
 RASTERIZER_LDFLAGS := `freetype-config --libs`
 
 ifdef LIBPNG_PATH
-  font_files += kandinsky/src/font.png
+  small_font_files += kandinsky/src/small_font.png
+  large_font_files += kandinsky/src/large_font.png
   RASTERIZER_CFLAGS += -I$(LIBPNG_PATH)/include -DGENERATE_PNG=1 -L$(LIBPNG_PATH)/lib -lpng
 endif
 
 # Even though raster will generate both .c and .h files, we don't declare it as
 # such to make. If we did, "make -jN" with N>1 may call "raster" twice.
 
-kandinsky/src/font.h: kandinsky/src/font.c
-kandinsky/src/font.c: kandinsky/fonts/rasterizer
-	@echo "RASTER  $(font_files)"
-	@$< kandinsky/fonts/ProggyClean.ttf 16 16 $(font_files)
+kandinsky/src/small_font.h: kandinsky/src/small_font.c
+kandinsky/src/small_font.c: kandinsky/fonts/rasterizer
+	@echo "RASTER  $(small_font_files)"
+	@$< kandinsky/fonts/smallPixelFont.ttf 12 12 SmallFont $(small_font_files)
+
+kandinsky/src/large_font.h: kandinsky/src/large_font.c
+kandinsky/src/large_font.c: kandinsky/fonts/rasterizer
+	@echo "RASTER  $(large_font_files)"
+	@$< kandinsky/fonts/largePixelFont.ttf 16 16 LargeFont $(large_font_files)
 
 kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c
 	@echo "HOSTCC  $@"
-	@$(HOSTCC) -std=c99 $(RASTERIZER_CFLAGS) $< $(RASTERIZER_LDFLAGS) -o $@
+	@$(HOSTCC) -std=c99 $(RASTERIZER_CFLAGS) $< $(RASTERIZER_LDFLAGS) -o$@
 
-products += $(font_files) kandinsky/fonts/rasterizer
+products += $(small_font_files) $(large_font_files) kandinsky/fonts/rasterizer
 

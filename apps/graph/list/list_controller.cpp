@@ -7,8 +7,8 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
-  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
-    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
+  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large),
+    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))

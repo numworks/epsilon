@@ -3,8 +3,8 @@
 
 ToolboxLeafCell::ToolboxLeafCell() :
   TableViewCell(),
-  m_labelView(PointerTextView(nullptr, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
-  m_subtitleView(PointerTextView(nullptr, 0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor))  
+  m_labelView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
+  m_subtitleView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor))
 {
 }
 

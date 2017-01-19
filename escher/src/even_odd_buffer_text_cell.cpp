@@ -1,9 +1,9 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <assert.h>
 
-EvenOddBufferTextCell::EvenOddBufferTextCell() :
+EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size) :
   EvenOddCell(),
-  m_bufferTextView(BufferTextView(1.0f, 0.5f))
+  m_bufferTextView(BufferTextView(size, 1.0f, 0.5f))
 {
 }
 

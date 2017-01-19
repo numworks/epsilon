@@ -9,10 +9,11 @@ namespace Graph {
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   HeaderViewDelegate(header),
-  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
-    FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},
-  m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
+  m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
+  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small),
+    FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small)},
+  m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
+    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
@@ -22,7 +23,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
-  }, this)))
+  }, this), KDText::FontSize::Small))
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);

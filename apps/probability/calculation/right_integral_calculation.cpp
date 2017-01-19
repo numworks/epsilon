@@ -19,9 +19,9 @@ int RightIntegralCalculation::numberOfParameters() {
 const char * RightIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "P( ";
+    return "P(";
   }
-  return " <= X ) = ";
+  return "<=X)=";
 }
 
 void RightIntegralCalculation::setParameterAtIndex(float f, int index) {

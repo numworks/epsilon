@@ -99,7 +99,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   float end = max(axis);
   int i = 0;
   for (float x = start; x < end; x += 2.0f*step) {
-    KDSize textSize = KDText::stringSize(label(axis, i));
+    KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
     KDPoint origin(floatToPixel(Axis::Horizontal, x) - textSize.width()/2, floatToPixel(Axis::Vertical, 0.0f)  + k_labelMargin);
     if (axis == Axis::Vertical) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
@@ -107,8 +107,8 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     if (-step < x && x < step && shiftOrigin) {
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
-    if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i))))) {
-      ctx->blendString(label(axis, i), origin, KDColorBlack);
+    if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i), KDText::FontSize::Small)))) {
+      ctx->blendString(label(axis, i), KDText::FontSize::Small, origin, KDColorBlack);
     }
     i++;
   }

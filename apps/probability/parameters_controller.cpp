@@ -16,9 +16,9 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     StackViewController * stack = parameterController->stackController();
     stack->updateTitle();
     stack->push(calculationController);
-  }, parentResponder))),
-  m_firstParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
-  m_secondParameterDefinition(PointerTextView(nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
+  }, parentResponder), KDText::FontSize::Large)),
+  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
+  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
   m_selectableTableView(selectableTableView)
 {
 }

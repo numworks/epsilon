@@ -5,7 +5,7 @@ constexpr KDCoordinate MenuListCell::k_separatorThickness;
 
 MenuListCell::MenuListCell(char * label) :
   TableViewCell(),
-  m_pointerTextView(PointerTextView(label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
+  m_pointerTextView(PointerTextView(KDText::FontSize::Small, label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
 {
 }
 

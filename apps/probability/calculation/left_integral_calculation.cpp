@@ -19,9 +19,9 @@ int LeftIntegralCalculation::numberOfParameters() {
 const char * LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "P(X <= ";
+    return "P(X<=";
   }
-  return ") = ";
+  return ")=";
 }
 
 void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {

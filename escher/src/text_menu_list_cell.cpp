@@ -2,7 +2,7 @@
 
 TextMenuListCell::TextMenuListCell(char * label) :
   MenuListCell(label),
-  m_accessoryView(BufferTextView(1.0f, 0.5f))
+  m_accessoryView(BufferTextView(KDText::FontSize::Large, 1.0f, 0.5f))
 {
 }
 

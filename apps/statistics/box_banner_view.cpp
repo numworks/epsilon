@@ -3,8 +3,8 @@
 namespace Statistics {
 
 BoxBannerView::BoxBannerView() :
-  m_calculationName(nullptr, 0.0f, 0.5f),
-  m_calculationValue(1.0f, 0.5f)
+  m_calculationName(KDText::FontSize::Small, nullptr, 0.0f, 0.5f),
+  m_calculationValue(KDText::FontSize::Small, 1.0f, 0.5f)
 {
 }
 

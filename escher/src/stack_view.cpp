@@ -5,7 +5,7 @@ extern "C" {
 
 StackView::StackView() :
   View(),
-  m_textView(PointerTextView(nullptr, 0.5f, 0.5f))
+  m_textView(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f))
 {
 }
 

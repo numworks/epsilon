@@ -9,7 +9,7 @@ public:
   // alignment = 0 -> align left or top
   // alignment = 0.5 -> align center
   // alignment = 1.0 -> align right or bottom
-  TextView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
+  TextView(KDText::FontSize size, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
@@ -27,6 +27,7 @@ private:
   float m_verticalAlignment;
   KDColor m_textColor;
   KDColor m_backgroundColor;
+  KDText::FontSize m_fontSize;
 };
 
 #endif

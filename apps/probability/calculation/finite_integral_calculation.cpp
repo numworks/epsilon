@@ -20,12 +20,12 @@ int FiniteIntegralCalculation::numberOfParameters() {
 const char * FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return "P( ";
+    return "P(";
   }
   if (index == 1) {
-    return " <= X <= ";
+    return "<=X<=";
   }
-  return " )= ";
+  return ")=";
 }
 
 void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {

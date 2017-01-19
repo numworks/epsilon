@@ -8,7 +8,7 @@
 
 class EditableTextCell : public TableViewCell, public Responder {
 public:
-  EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
+  EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
   TextField * textField();
   void reloadCell() override;

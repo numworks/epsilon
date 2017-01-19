@@ -3,6 +3,7 @@
 
 #include <kandinsky/color.h>
 #include <kandinsky/rect.h>
+#include <kandinsky/text.h>
 
 class KDContext {
 public:
@@ -14,10 +15,10 @@ public:
   KDColor getPixel(KDPoint p);
 
   // Text
-  void drawChar(char character, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void drawString(const char * text, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void blendChar(char character, KDPoint p, KDColor textColor = KDColorBlack);
-  void blendString(const char * text, KDPoint p, KDColor textColor = KDColorBlack);
+  void drawChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void drawString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void blendChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack);
+  void blendString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);

@@ -46,7 +46,7 @@ void CalculationController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CalculationController::isEmpty() {
+bool CalculationController::isEmpty() const {
   if (m_store->sumOfColumn(1) == 0) {
     return true;
   }

@@ -42,7 +42,7 @@ void BoxController::didBecomeFirstResponder() {
   reloadBannerView();
 }
 
-bool BoxController::isEmpty() {
+bool BoxController::isEmpty() const {
   if (m_store->sumOfColumn(1) == 0) {
     return true;
   }

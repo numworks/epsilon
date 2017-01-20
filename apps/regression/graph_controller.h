@@ -16,7 +16,7 @@ class GraphController : public InteractiveCurveViewController {
 public:
   GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
   ViewController * initialisationParameterController() override;
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
 private:
   constexpr static float k_cursorTopMarginRatio = 0.025f;

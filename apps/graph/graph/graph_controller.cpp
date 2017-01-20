@@ -22,7 +22,7 @@ View * GraphController::view() {
   return &m_view;
 }
 
-bool GraphController::isEmpty() {
+bool GraphController::isEmpty() const {
   if (m_functionStore->numberOfActiveFunctions() == 0) {
     return true;
   }

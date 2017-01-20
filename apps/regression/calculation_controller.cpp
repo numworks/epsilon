@@ -78,7 +78,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   }
 }
 
-bool CalculationController::isEmpty() {
+bool CalculationController::isEmpty() const {
   if (m_store->numberOfPairs() == 0) {
     return true;
   }

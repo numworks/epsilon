@@ -24,7 +24,7 @@ public:
   int numberOfButtons() const override;
   Button * buttonAtIndex(int index) override;
 
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
 private:

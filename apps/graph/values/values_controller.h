@@ -31,7 +31,7 @@ public:
   TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
   static constexpr KDCoordinate k_topMargin = 10;

@@ -15,7 +15,7 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
 private:

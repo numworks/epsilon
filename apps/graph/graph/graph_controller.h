@@ -17,7 +17,7 @@ public:
   void didBecomeFirstResponder() override;
   ViewController * initialisationParameterController() override;
 
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
 
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;

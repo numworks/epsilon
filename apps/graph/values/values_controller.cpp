@@ -249,7 +249,7 @@ int ValuesController::typeAtLocation(int i, int j) {
   return 3;
 }
 
-bool ValuesController::isEmpty() {
+bool ValuesController::isEmpty() const {
   if (m_functionStore->numberOfActiveFunctions() == 0) {
     return true;
   }

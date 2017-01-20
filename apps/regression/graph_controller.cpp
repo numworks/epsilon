@@ -18,7 +18,7 @@ ViewController * GraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
-bool GraphController::isEmpty() {
+bool GraphController::isEmpty() const {
   if (m_store->numberOfPairs() < 2 || isinf(m_store->slope()) || isnan(m_store->slope())) {
     return true;
   }

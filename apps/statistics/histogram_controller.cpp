@@ -100,7 +100,7 @@ Button * HistogramController::buttonAtIndex(int index) {
   return &m_settingButton;
 }
 
-bool HistogramController::isEmpty() {
+bool HistogramController::isEmpty() const {
   if (m_store->sumOfColumn(1) == 0) {
     return true;
   }

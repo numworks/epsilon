@@ -17,7 +17,7 @@ public:
   void didBecomeFirstResponder() override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
-  bool isEmpty() override;
+  bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
 

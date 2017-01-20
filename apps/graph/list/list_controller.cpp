@@ -48,7 +48,7 @@ KDCoordinate ListController::rowHeight(int j) {
     return k_emptyRowHeight;
   }
   KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize + k_verticalFunctionMargin;
+  return functionSize + k_emptyRowHeight - KDText::stringSize(" ", KDText::FontSize::Large).height();
 }
 
 KDCoordinate ListController::columnWidth(int i) {

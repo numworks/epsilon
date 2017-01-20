@@ -23,12 +23,12 @@ private:
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;
   GraphController m_graphController;
-  HeaderViewController m_graphHeader;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
+  HeaderViewController m_graphHeader;
   StackViewController m_graphStackViewController;
   ValuesController m_valuesController;
-  HeaderViewController m_valuesHeader;
   AlternateEmptyViewController m_valuesAlternateEmptyViewController;
+  HeaderViewController m_valuesHeader;
   StackViewController m_valuesStackViewController;
   TabViewController m_tabViewController;
   InputViewController m_inputViewController;

@@ -119,6 +119,9 @@ ViewController * InteractiveCurveViewController::zoomParameterController() {
 }
 
 int InteractiveCurveViewController::numberOfButtons() const {
+  if (isEmpty()) {
+    return 0;
+  }
   return 3;
 }
 

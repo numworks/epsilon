@@ -8,9 +8,9 @@
 
 namespace Statistics {
 
-class BoxController : public ViewController, public AlternateEmptyViewDelegate {
+class BoxController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
 public:
-  BoxController(Responder * parentResponder, Store * store);
+  BoxController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;

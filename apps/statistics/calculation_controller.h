@@ -6,10 +6,10 @@
 
 namespace Statistics {
 
-class CalculationController : public ViewController, public AlternateEmptyViewDelegate, public TableViewDataSource {
+class CalculationController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate, public TableViewDataSource {
 
 public:
-  CalculationController(Responder * parentResponder, Store * store);
+  CalculationController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;

@@ -100,6 +100,9 @@ ViewController * ValuesController::intervalParameterController() {
 }
 
 int ValuesController::numberOfButtons() const {
+  if (isEmpty()) {
+    return 0;
+  }
   return 1;
 }
 

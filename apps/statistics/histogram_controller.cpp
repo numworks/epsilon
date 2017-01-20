@@ -94,6 +94,9 @@ void HistogramController::didBecomeFirstResponder() {
 }
 
 int HistogramController::numberOfButtons() const {
+  if (isEmpty()) {
+    return 0;
+  }
   return 1;
 }
 Button * HistogramController::buttonAtIndex(int index) {

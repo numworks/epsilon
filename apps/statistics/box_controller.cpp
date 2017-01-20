@@ -3,8 +3,9 @@
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, Store * store) :
+BoxController::BoxController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
   ViewController(parentResponder),
+  HeaderViewDelegate(headerViewController),
   m_boxBannerView(BoxBannerView()),
   m_view(BoxView(store, &m_boxBannerView)),
   m_store(store)

@@ -18,11 +18,13 @@ private:
   Store m_store;
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
+  HeaderViewController m_calculationHeader;
   BoxController m_boxController;
   AlternateEmptyViewController m_boxAlternateEmptyViewController;
+  HeaderViewController m_boxHeader;
   HistogramController m_histogramController;
-  HeaderViewController m_histogramHeader;
   AlternateEmptyViewController m_histogramAlternateEmptyViewController;
+  HeaderViewController m_histogramHeader;
   StackViewController m_histogramStackViewController;
   StoreController m_storeController;
   HeaderViewController m_storeHeader;

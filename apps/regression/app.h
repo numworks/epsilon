@@ -17,9 +17,10 @@ private:
   Store m_store;
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
+  HeaderViewController m_calculationHeader;
   GraphController m_graphController;
-  HeaderViewController m_graphHeader;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
+  HeaderViewController m_graphHeader;
   StackViewController m_graphStackViewController;
   ::StoreController m_storeController;
   HeaderViewController m_storeHeader;

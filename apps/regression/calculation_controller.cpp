@@ -5,8 +5,9 @@
 
 namespace Regression {
 
-CalculationController::CalculationController(Responder * parentResponder, Store * store) :
+CalculationController::CalculationController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
   ViewController(parentResponder),
+  HeaderViewDelegate(headerViewController),
   m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
     EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),

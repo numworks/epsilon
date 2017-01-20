@@ -55,7 +55,14 @@ bool ParameterController::handleEvent(Ion::Events::Event event) {
           stack->pop();
           return true;
         } else {
-          // TODO: add an warning "no function to delete!"
+          if (m_functionStore->numberOfDefinedFunctions() == 1) {
+            Function * f = m_functionStore->definedFunctionAtIndex(0);
+            f->setContent("");
+            StackViewController * stack = (StackViewController *)(parentResponder());
+            stack->pop();
+            return true;
+          }
+          app()->displayWarning("Pas de fonction a supprimer");
           return false;
         }
       }

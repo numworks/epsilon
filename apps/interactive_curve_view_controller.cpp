@@ -105,8 +105,6 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
   }
   headerViewController()->setSelectedButton(-1);
   curveView()->selectMainView(true);
-  // Layout view whe the graph view that might have been modified by the zoom page
-  headerViewController()->layoutView();
   // Reload graph view
   curveView()->reload();
   reloadBannerView();

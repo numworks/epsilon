@@ -104,6 +104,7 @@ const char * HeaderViewController::title() const {
 }
 
 void HeaderViewController::didBecomeFirstResponder(){
+  m_contentView.layoutSubviews();
   app()->setFirstResponder(m_contentView.mainViewController());
 }
 
@@ -131,8 +132,4 @@ bool HeaderViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-void HeaderViewController::layoutView() {
-  m_contentView.layoutSubviews();
 }

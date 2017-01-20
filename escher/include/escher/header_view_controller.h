@@ -16,7 +16,6 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool setSelectedButton(int selectedButton);
-  void layoutView();
 private:
   class ContentView : public View {
   public:

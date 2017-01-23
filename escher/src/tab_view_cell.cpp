@@ -1,11 +1,8 @@
 #include <escher/tab_view_cell.h>
+#include <escher/palette.h>
 extern "C" {
 #include <assert.h>
 }
-
-constexpr KDColor TabViewCell::k_defaultTabColor;
-constexpr KDColor TabViewCell::k_selectedTabColor;
-constexpr KDColor TabViewCell::k_separatorTabColor;
 
 TabViewCell::TabViewCell() :
   View(),
@@ -38,15 +35,15 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // choose the background color
-  KDColor text = m_active ? k_defaultTabColor : KDColorWhite;
-  KDColor background = m_active ? KDColorWhite : k_defaultTabColor;
-  background = m_selected ? k_selectedTabColor : background;
+  KDColor text = m_active ? Palette::PurpleBright : KDColorWhite;
+  KDColor background = m_active ? KDColorWhite : Palette::PurpleBright;
+  background = m_selected ? Palette::Select : background;
   // Color the background according to the state of the tab cell
   if (m_active || m_selected) {
-    ctx->fillRect(KDRect(0, 0, width, height), background);
-  } else {
-    ctx->fillRect(KDRect(0, 0, width, 1), k_separatorTabColor);
+    ctx->fillRect(KDRect(0, 0, width, 1), Palette::PurpleBright);
     ctx->fillRect(KDRect(0, 1, width, height-1), background);
+  } else {
+    ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
   KDSize textSize = KDText::stringSize(m_name, KDText::FontSize::Small);

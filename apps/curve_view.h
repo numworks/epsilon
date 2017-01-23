@@ -25,8 +25,6 @@ public:
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
-  constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
-  constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;

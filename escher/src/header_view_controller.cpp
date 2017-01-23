@@ -1,8 +1,6 @@
 #include <escher/header_view_controller.h>
+#include <escher/palette.h>
 #include <assert.h>
-
-constexpr KDColor HeaderViewController::ContentView::k_separatorHeaderColor;
-constexpr KDColor HeaderViewController::ContentView::k_selectedBackgroundColor;
 
 HeaderViewController::ContentView::ContentView(ViewController * mainViewController, HeaderViewDelegate * delegate) :
   View(),
@@ -53,9 +51,9 @@ void HeaderViewController::ContentView::layoutSubviews() {
 void HeaderViewController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   if (numberOfButtons() > 0) {
     ctx->fillRect(KDRect(0, 0, bounds().width(), k_headerHeight), KDColorWhite);
-    ctx->fillRect(KDRect(0, k_headerHeight, bounds().width(), 1), k_separatorHeaderColor);
+    ctx->fillRect(KDRect(0, k_headerHeight, bounds().width(), 1), Palette::GreyWhite);
   } else {
-    ctx->fillRect(KDRect(0, 0, bounds().width(), 1), k_separatorHeaderColor);
+    ctx->fillRect(KDRect(0, 0, bounds().width(), 1), Palette::GreyWhite);
   }
 }
 
@@ -70,7 +68,7 @@ bool HeaderViewController::ContentView::setSelectedButton(int selectedButton, Ap
   m_selectedButton = selectedButton;
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(selectedButton);
-    button->setBackgroundColor(k_selectedBackgroundColor);
+    button->setBackgroundColor(Palette::Select);
     application->setFirstResponder(button);
     return true;
   }

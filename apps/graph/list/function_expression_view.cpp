@@ -3,8 +3,6 @@
 
 namespace Graph {
 
-constexpr KDColor FunctionExpressionView::k_separatorColor;
-
 FunctionExpressionView::FunctionExpressionView() :
   EvenOddCell(),
   m_function(nullptr),
@@ -48,7 +46,7 @@ void FunctionExpressionView::layoutSubviews() {
 void FunctionExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   EvenOddCell::drawRect(ctx, rect);
   // Color the separator
-  ctx->fillRect(KDRect(0, 0, k_separatorThickness, bounds().height()), k_separatorColor);
+  ctx->fillRect(KDRect(0, 0, k_separatorThickness, bounds().height()), Palette::GreyBright);
 }
 
 }

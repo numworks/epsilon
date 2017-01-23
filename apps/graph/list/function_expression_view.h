@@ -20,7 +20,6 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
-  constexpr static KDColor k_separatorColor = KDColor::RGB24(0xEFF2F4);
   constexpr static KDCoordinate k_separatorThickness = 1;
   Function * m_function;
   ExpressionView m_expressionView;

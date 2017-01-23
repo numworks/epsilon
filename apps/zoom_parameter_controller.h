@@ -24,7 +24,6 @@ private:
       LegendView();
       void drawRect(KDContext * ctx, KDRect rect) const override;
     private:
-      constexpr static KDColor k_legendBackgroundColor = KDColor::RGB24(0xECECEC);
       constexpr static int k_numberOfLegends = 6;
       constexpr static KDCoordinate k_tokenWidth = 30;
       void layoutSubviews() override;

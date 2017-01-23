@@ -2,10 +2,6 @@
 #include <assert.h>
 #include <math.h>
 
-constexpr KDColor ZoomParameterController::ContentView::LegendView::k_legendBackgroundColor;
-
-/* Zoom Parameter Controller */
-
 ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
   m_contentView(ContentView(curveView)),
@@ -91,17 +87,17 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 /* Legend View */
 
 ZoomParameterController::ContentView::LegendView::LegendView() :
-  m_legends{PointerTextView(KDText::FontSize::Small, "ZOOM+", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
-    PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
-    PointerTextView(KDText::FontSize::Small, "GAUCHE", 0.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
-    PointerTextView(KDText::FontSize::Small, "ZOOM-", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
-    PointerTextView(KDText::FontSize::Small, "BAS", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor),
-    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, k_legendBackgroundColor)}
+  m_legends{PointerTextView(KDText::FontSize::Small, "ZOOM+", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "GAUCHE", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "ZOOM-", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "BAS", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)}
 {
 }
 
 void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), k_legendBackgroundColor);
+  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyBright);
 }
 
 int ZoomParameterController::ContentView::LegendView::numberOfSubviews() const {

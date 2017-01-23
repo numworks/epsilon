@@ -5,9 +5,6 @@
 #include <float.h>
 #include <string.h>
 
-constexpr KDColor CurveView::k_axisColor;
-constexpr KDColor CurveView::k_gridColor;
-
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView) :
   View(),
@@ -184,12 +181,12 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), k_gridColor);
-  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), k_gridColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), Palette::GreyWhite);
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), Palette::GreyWhite);
 }
 
 void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
-  drawLine(ctx, rect, axis, 0.0f, k_axisColor, 2);
+  drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 2);
 }
 
 #define LINE_THICKNESS 3

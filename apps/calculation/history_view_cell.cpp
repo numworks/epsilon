@@ -15,7 +15,7 @@ HistoryViewCell::HistoryViewCell() :
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? EvenOddCell::k_evenLineBackgroundColor : EvenOddCell::k_oddLineBackgroundColor;
+  KDColor background = m_even ? Palette::WallScreen : KDColorWhite;
   return background;
 }
 

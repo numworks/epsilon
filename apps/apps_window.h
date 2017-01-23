@@ -2,14 +2,13 @@
 #define APPS_WINDOW_H
 
 #include <escher.h>
+#include "title_bar_view.h"
 
 class AppsWindow : public Window {
 public:
   AppsWindow();
+  void setTitle(const char * title);
 private:
-  class TitleBarView : public View {
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-  };
   constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;
   void layoutSubviews() override;

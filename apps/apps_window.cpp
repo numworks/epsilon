@@ -3,18 +3,14 @@ extern "C" {
 #include <assert.h>
 }
 
-/* Title Bar View */
-
-void AppsWindow::TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorBlack);
-}
-
-/* Window */
-
 AppsWindow::AppsWindow() :
   Window(),
   m_titleBarView(TitleBarView())
 {
+}
+
+void AppsWindow::setTitle(const char * title) {
+  m_titleBarView.setTitle(title);
 }
 
 int AppsWindow::numberOfSubviews() const {

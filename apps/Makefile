@@ -30,6 +30,7 @@ app_objs += $(addprefix apps/,\
   store_controller.o\
   store_parameter_controller.o\
   text_field_delegate_app.o\
+  title_bar_view.o\
   toolbox_controller.o\
   toolbox_leaf_cell.o\
   toolbox_node.o\

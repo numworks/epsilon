@@ -56,8 +56,8 @@ bool AppsContainer::handleEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App * app) {
+  m_window.setTitle(app->name());
   Container::switchTo(app);
-  /*do something with title bar*/
 }
 
 Window * AppsContainer::window() {

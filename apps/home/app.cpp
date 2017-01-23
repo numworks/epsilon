@@ -7,7 +7,7 @@ extern "C" {
 namespace Home {
 
 App::App(AppsContainer * container) :
-  ::App(container, &m_controller),
+  ::App(container, &m_controller, "Applications"),
   m_controller(Controller(&m_modalViewController, container))
 {
   assert(container->appAtIndex(0) == this);

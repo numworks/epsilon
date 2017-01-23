@@ -11,6 +11,7 @@ public:
   void setName(const char * name);
   void setActive(bool active);
   void setSelected(bool selected);
+  KDSize minimalSizeForOptimalDisplay() override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

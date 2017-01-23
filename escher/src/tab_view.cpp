@@ -68,14 +68,23 @@ View * TabView::subviewAtIndex(int index) {
 }
 
 void TabView::layoutSubviews() {
-  // Simple layout: all tabs have the same length
-  KDCoordinate tabLength = m_frame.width()/m_numberOfTabs;
+  KDCoordinate emptyWidth = bounds().width();
   for (int i=0; i<m_numberOfTabs; i++) {
+    emptyWidth -= m_cells[i].minimalSizeForOptimalDisplay().width();
+  }
+  KDCoordinate widthUsed = 0;
+  for (int i=0; i<m_numberOfTabs; i++) {
+    KDCoordinate tabWidth = m_cells[i].minimalSizeForOptimalDisplay().width() + emptyWidth/m_numberOfTabs;
+    /* Avoid a unused one-pixel-width vertical on the left due to rounding error */
+    if (i == m_numberOfTabs - 1) {
+      tabWidth = bounds().width() - widthUsed;
+    }
     KDRect cellFrame = KDRect(
-        i*tabLength, 0,
-        tabLength, m_frame.height() - 5
+        widthUsed, 0,
+        tabWidth, m_frame.height() - 5
         );
     m_cells[i].setFrame(cellFrame);
+    widthUsed += tabWidth;
   }
 }
 

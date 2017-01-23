@@ -30,6 +30,10 @@ void TabViewCell::setSelected(bool selected) {
   markRectAsDirty(bounds());
 }
 
+KDSize TabViewCell::minimalSizeForOptimalDisplay() {
+  return KDText::stringSize(m_name, KDText::FontSize::Small);
+}
+
 void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();

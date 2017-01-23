@@ -16,8 +16,9 @@ void Window::setContentView(View * contentView) {
   if (m_contentView != contentView) {
     m_contentView = contentView;
     markRectAsDirty(bounds());
+    layoutSubviews();
   }
-};
+}
 
 const Window * Window::window() const {
   return this;
@@ -34,7 +35,7 @@ View * Window::subviewAtIndex(int index) {
 
 void Window::layoutSubviews() {
   if (m_contentView != nullptr) {
-    m_contentView->setFrame(this->bounds());
+    m_contentView->setFrame(bounds());
   }
 }
 

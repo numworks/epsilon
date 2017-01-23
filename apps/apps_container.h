@@ -7,6 +7,7 @@
 #include "calculation/app.h"
 #include "regression/app.h"
 #include "statistics/app.h"
+#include "apps_window.h"
 #include "toolbox_controller.h"
 #include "variable_box_controller.h"
 
@@ -25,8 +26,11 @@ public:
   ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
+  void switchTo(App * app) override;
 private:
+  Window * window() override;
   static constexpr int k_numberOfApps = 6;
+  AppsWindow m_window;
   Home::App m_homeApp;
   Graph::App m_graphApp;
   Probability::App m_probabilityApp;

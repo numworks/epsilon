@@ -20,11 +20,12 @@ public:
   void run();
   App * activeApp();
   virtual bool handleEvent(Ion::Events::Event event);
-  void switchTo(App * app);
+  virtual void switchTo(App * app);
+protected:
+  virtual Window * window() = 0;
 private:
   void step();
   App * m_activeApp;
-  Window m_window;
 };
 
 #endif

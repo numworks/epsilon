@@ -11,7 +11,7 @@ Container::Container() :
 
 void Container::switchTo(App * app) {
   m_activeApp = app;
-  m_activeApp->setWindow(&m_window);
+  m_activeApp->setWindow(window());
 }
 
 App * Container::activeApp() {
@@ -23,8 +23,8 @@ bool Container::handleEvent(Ion::Events::Event event) {
 }
 
 void Container::run() {
-  m_window.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  m_window.redraw();
+  window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  window()->redraw();
 
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop_arg([](void * ctx){ ((Container *)ctx)->step(); }, this, 0, 1);
@@ -44,5 +44,5 @@ void Container::step() {
     return;
   }
   m_activeApp->processEvent(event);
-  m_window.redraw();
+  window()->redraw();
 }

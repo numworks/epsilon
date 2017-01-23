@@ -5,6 +5,7 @@ extern "C" {
 
 AppsContainer::AppsContainer() :
   Container(),
+  m_window(AppsWindow()),
   m_homeApp(this),
   m_graphApp(this, &m_globalContext),
   m_probabilityApp(this),
@@ -52,4 +53,13 @@ bool AppsContainer::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void AppsContainer::switchTo(App * app) {
+  Container::switchTo(app);
+  /*do something with title bar*/
+}
+
+Window * AppsContainer::window() {
+  return &m_window;
 }

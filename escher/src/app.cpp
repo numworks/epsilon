@@ -24,7 +24,6 @@ void App::setWindow(Window * window) {
   assert(m_modalViewController.app() == this);
 
   window->setContentView(view);
-  view->setFrame(window->bounds());
 
   window->redraw();
 }

@@ -8,6 +8,7 @@ class AppsWindow : public Window {
 public:
   AppsWindow();
   void setTitle(const char * title);
+  void updateBatteryLevel();
 private:
   constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;

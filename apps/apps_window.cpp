@@ -13,6 +13,11 @@ void AppsWindow::setTitle(const char * title) {
   m_titleBarView.setTitle(title);
 }
 
+void AppsWindow::updateBatteryLevel() {
+  // TODO: use Ion::Battery::level()
+  m_titleBarView.setChargeState(Ion::Battery::Charge::EMPTY);
+}
+
 int AppsWindow::numberOfSubviews() const {
   return (m_contentView == nullptr ? 1 : 2);
 }

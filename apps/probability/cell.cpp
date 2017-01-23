@@ -5,7 +5,7 @@ namespace Probability {
 
 Cell::Cell() :
   TableViewCell(),
-  m_labelView(PointerTextView(KDText::FontSize::Large, nullptr, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
+  m_labelView(PointerTextView(KDText::FontSize::Large, nullptr, 0, 0.5, KDColorBlack, KDColorWhite))
 {
 }
 
@@ -34,7 +34,7 @@ void Cell::layoutSubviews() {
 
 void Cell::reloadCell() {
   TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_chevronView.setHighlighted(isHighlighted());
   if (isHighlighted()) {
@@ -56,11 +56,11 @@ void Cell::setImage(const Image * image, const Image * focusedImage) {
 void Cell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(1, 1, width-2, height-1), backgroundColor);
-  ctx->fillRect(KDRect(0, 0, width, 1), Palette::LineColor);
-  ctx->fillRect(KDRect(0, 1, 1, height-1), Palette::LineColor);
-  ctx->fillRect(KDRect(width-1, 1, 1, height-1), Palette::LineColor);
+  ctx->fillRect(KDRect(0, 0, width, 1), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 1, 1, height-1), Palette::GreyBright);
+  ctx->fillRect(KDRect(width-1, 1, 1, height-1), Palette::GreyBright);
  }
 
 }

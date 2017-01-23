@@ -25,17 +25,18 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate switchHalfHeight = k_switchHeight/2;
   KDCoordinate switchHalfWidth = k_switchWidth/2;
 
+  KDColor mainColor = m_state ? Palette::YellowOne : Palette::GreyDark;
   // These 4 lines draw the outline of the switch.
-  ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight - k_separatorThickness, k_switchWidth + 2*k_separatorThickness, k_separatorThickness), Palette::LineColor);
-  ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight, k_separatorThickness, k_switchHeight+k_separatorThickness), Palette::LineColor);
-  ctx->fillRect(KDRect(width - k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter+switchHalfHeight, k_switchWidth+k_separatorThickness, k_separatorThickness), Palette::LineColor);
-  ctx->fillRect(KDRect(width - k_separatorThickness - k_switchMargin, heightCenter-switchHalfHeight, k_separatorThickness, k_switchHeight), Palette::LineColor);
+  ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight - k_separatorThickness, k_switchWidth + 2*k_separatorThickness, k_separatorThickness), mainColor);
+  ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight, k_separatorThickness, k_switchHeight+k_separatorThickness), mainColor);
+  ctx->fillRect(KDRect(width - k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter+switchHalfHeight, k_switchWidth+k_separatorThickness, k_separatorThickness), mainColor);
+  ctx->fillRect(KDRect(width - k_separatorThickness - k_switchMargin, heightCenter-switchHalfHeight, k_separatorThickness, k_switchHeight), mainColor);
   // These next lines fill the switch with black and green/red.
   if (m_state) {
-    ctx->fillRect(KDRect(width - k_switchMargin - k_switchWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorBlack);
-    ctx->fillRect(KDRect(width - k_switchMargin - switchHalfWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorGreen);
+    ctx->fillRect(KDRect(width - k_switchMargin - k_switchWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorWhite);
+    ctx->fillRect(KDRect(width - k_switchMargin - switchHalfWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), mainColor);
   } else {
-    ctx->fillRect(KDRect(width - k_switchMargin - k_switchWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorRed);
-    ctx->fillRect(KDRect(width - k_switchMargin - switchHalfWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorBlack);
+    ctx->fillRect(KDRect(width - k_switchMargin - k_switchWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), mainColor);
+    ctx->fillRect(KDRect(width - k_switchMargin - switchHalfWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorWhite);
   }
 }

@@ -21,13 +21,13 @@ View * TextMenuListCell::accessoryView() const {
 
 void TextMenuListCell::reloadCell() {
   MenuListCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 
 void TextMenuListCell::setHighlighted(bool highlight) {
   MenuListCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 

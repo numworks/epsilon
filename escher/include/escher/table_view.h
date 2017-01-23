@@ -10,7 +10,7 @@ class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0,
     KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0,
-    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
+    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen);
 
   virtual void scrollToCell(int i, int j);
   TableViewCell * cellAtLocation(int i, int j);

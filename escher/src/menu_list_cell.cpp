@@ -5,7 +5,7 @@ constexpr KDCoordinate MenuListCell::k_separatorThickness;
 
 MenuListCell::MenuListCell(char * label) :
   TableViewCell(),
-  m_pointerTextView(PointerTextView(KDText::FontSize::Small, label, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor))
+  m_pointerTextView(PointerTextView(KDText::FontSize::Small, label, 0, 0.5, KDColorBlack, KDColorWhite))
 {
 }
 
@@ -37,7 +37,7 @@ void MenuListCell::layoutSubviews() {
 
 void MenuListCell::reloadCell() {
   TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_pointerTextView.setBackgroundColor(backgroundColor);
 }
 
@@ -57,10 +57,10 @@ View * MenuListCell::accessoryView() const {
 void MenuListCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
 
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
-  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::LineColor);
-  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::LineColor);
-  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::LineColor);
+  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
  }

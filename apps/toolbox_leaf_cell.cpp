@@ -3,8 +3,8 @@
 
 ToolboxLeafCell::ToolboxLeafCell() :
   TableViewCell(),
-  m_labelView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
-  m_subtitleView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor))
+  m_labelView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, KDColorBlack, KDColorWhite)),
+  m_subtitleView(PointerTextView(KDText::FontSize::Small, nullptr, 0, 0.5, Palette::GreyDark, KDColorWhite))
 {
 }
 
@@ -29,7 +29,7 @@ void ToolboxLeafCell::layoutSubviews() {
 
 void ToolboxLeafCell::reloadCell() {
   TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
@@ -45,9 +45,9 @@ void ToolboxLeafCell::setSubtitle(const char * text) {
 void ToolboxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(1, 0, width-2, height-1), backgroundColor);
-  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::LineColor);
-  ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::LineColor);
-  ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::LineColor);
+  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::GreyBright);
+  ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::GreyBright);
  }

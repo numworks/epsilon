@@ -65,7 +65,7 @@ void NodeNavigationController::Stack::resetStack() {
 /* NodeNavigationController */
 
 NodeNavigationController::NodeNavigationController() :
-  StackViewController(nullptr, &m_listViewController, true, KDColorWhite, Palette::BoxTitleBackgroundColor, Palette::BoxTitleBackgroundColor),
+  StackViewController(nullptr, &m_listViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_listViewController(NodeListViewController(this))
 {
 }

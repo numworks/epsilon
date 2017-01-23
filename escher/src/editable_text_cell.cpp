@@ -17,7 +17,7 @@ TextField * EditableTextCell::textField() {
 
 void EditableTextCell::reloadCell() {
   TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_textField.setBackgroundColor(backgroundColor);
 }
 

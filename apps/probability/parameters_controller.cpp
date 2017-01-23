@@ -17,8 +17,8 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     stack->updateTitle();
     stack->push(calculationController);
   }, parentResponder), KDText::FontSize::Large)),
-  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
-  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::BackgroundColor)),
+  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -37,7 +37,7 @@ PointerTextView * ParametersController::ContentView::parameterDefinitionAtIndex(
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   int tableHeight = m_selectableTableView->size().height()+ Metric::TopMargin + Metric::BottomMargin;
-  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::BackgroundColor);
+  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
 int ParametersController::ContentView::numberOfSubviews() const {
@@ -113,7 +113,7 @@ void ParametersController::updateTitle() {
 bool ParametersController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down && !m_buttonSelected) {
     m_buttonSelected = true;
-    m_contentView.button()->setBackgroundColor(Palette::FocusCellBackgroundColor);
+    m_contentView.button()->setBackgroundColor(Palette::Select);
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(m_contentView.button());
     updateTitle();

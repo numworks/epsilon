@@ -22,7 +22,7 @@ void FunctionExpressionView::reloadCell() {
   m_expressionView.setBackgroundColor(backgroundColor());
   if (m_function) {
     bool active = m_function->isActive();
-    KDColor textColor = active ? KDColorBlack : Palette::DesactiveTextColor;
+    KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
     m_expressionView.setTextColor(textColor);
   }
 }

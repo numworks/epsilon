@@ -9,7 +9,7 @@ class ScrollView : public View {
 public:
   ScrollView(View * contentView, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true,
-    bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
+    bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen);
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset();

@@ -62,7 +62,7 @@ void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   ctx->fillRect(KDRect(0, 0, width, height), m_backgroundColor);
   // Future optimization: avoid drawing behind the content view/
-  //ctx->fillRect(KDRect(m_leftMargin, m_contentView->bounds().height()+m_topMargin,  width-m_leftMargin-m_rightMargin, height- m_contentView->bounds().height())-m_topMargin, Palette::BackgroundColor);
+  //ctx->fillRect(KDRect(m_leftMargin, m_contentView->bounds().height()+m_topMargin,  width-m_leftMargin-m_rightMargin, height- m_contentView->bounds().height())-m_topMargin, m_backgroundColor);
 }
 
 

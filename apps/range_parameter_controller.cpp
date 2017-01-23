@@ -23,7 +23,7 @@ void RangeParameterController::willDisplayCellForIndex(TableViewCell * cell, int
   }
   if (index == 3 || index == 4) {
     if (m_interactiveRange->yAuto()) {
-      m_rangeCells[index-1].setTextColor(Palette::DesactiveTextColor);
+      m_rangeCells[index-1].setTextColor(Palette::GreyDark);
     } else {
       m_rangeCells[index-1].setTextColor(KDColorBlack);
     }

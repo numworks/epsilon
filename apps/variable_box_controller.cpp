@@ -218,7 +218,7 @@ void VariableBoxController::ContentViewController::setTextFieldCaller(TextField 
 }
 
 VariableBoxController::VariableBoxController(Context * context) :
-  StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::BoxTitleBackgroundColor, Palette::BoxTitleBackgroundColor),
+  StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(ContentViewController(this, context))
 {
 }

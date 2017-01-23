@@ -3,8 +3,8 @@
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   TableViewCell(),
-  m_labelView(BufferTextView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, Palette::CellBackgroundColor)),
-  m_subtitleView(BufferTextView(KDText::FontSize::Small, 0, 0.5, Palette::DesactiveTextColor, Palette::CellBackgroundColor)),
+  m_labelView(BufferTextView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite)),
+  m_subtitleView(BufferTextView(KDText::FontSize::Small, 0, 0.5, Palette::GreyDark, KDColorWhite)),
   m_displayExpression(false)
 {
 }
@@ -49,7 +49,7 @@ void VariableBoxLeafCell::layoutSubviews() {
 
 void VariableBoxLeafCell::reloadCell() {
   TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_subtitleView.setBackgroundColor(backgroundColor);
   m_expressionView.setBackgroundColor(backgroundColor);
@@ -71,9 +71,9 @@ void VariableBoxLeafCell::setExpression(ExpressionLayout * expressionLayout) {
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::FocusCellBackgroundColor : Palette::CellBackgroundColor;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(1, 0, width-2, height-1), backgroundColor);
-  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::LineColor);
-  ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::LineColor);
-  ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::LineColor);
+  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::GreyBright);
+  ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::GreyBright);
  }

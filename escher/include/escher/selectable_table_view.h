@@ -19,7 +19,7 @@ public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
     KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr,
-    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::BackgroundColor);
+    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen);
   int selectedRow();
   int selectedColumn();
   virtual bool handleEvent(Ion::Events::Event event) override;

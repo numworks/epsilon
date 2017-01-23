@@ -56,9 +56,9 @@ void HistoryViewCell::reloadCell() {
   m_inputView.setBackgroundColor(backgroundColor());
   if (isHighlighted()) {
     if (m_selectedSubviewType == SubviewType::Output) {
-      m_outputView.setBackgroundColor(Palette::FocusCellBackgroundColor);
+      m_outputView.setBackgroundColor(Palette::Select);
     } else {
-      m_inputView.setBackgroundColor(Palette::FocusCellBackgroundColor);
+      m_inputView.setBackgroundColor(Palette::Select);
     }
   }
   layoutSubviews();

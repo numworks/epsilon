@@ -233,7 +233,7 @@ void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int 
       Function * function = m_functionStore->functionAtIndex(j);
       char bufferName[5] = {*function->name(),'(','x',')', 0};
       myFunctionCell->setText(bufferName);
-      KDColor functionNameColor = function->isActive() ? function->color() : Palette::DesactiveTextColor;
+      KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
       myFunctionCell->setColor(functionNameColor);
     } else {
       FunctionExpressionView * myCell = (FunctionExpressionView *)cell;

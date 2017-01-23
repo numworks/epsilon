@@ -16,8 +16,8 @@ CalculationController::CalculationController(Responder * parentResponder, Header
   m_store(store)
 {
   for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {
-    m_calculationCells[k].setTextColor(Palette::DesactiveTextColor);
-    m_doubleCalculationCells[k].setTextColor(Palette::DesactiveTextColor);
+    m_calculationCells[k].setTextColor(Palette::GreyDark);
+    m_doubleCalculationCells[k].setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[k].setParentResponder(&m_selectableTableView);
   }
 }

@@ -5,12 +5,18 @@
 
 class Palette {
 public:
-  constexpr static KDColor LineColor = KDColor::RGB24(0xB4B7B9);
-  constexpr static KDColor BackgroundColor = KDColor::RGB24(0xF0F3F5);
-  constexpr static KDColor CellBackgroundColor = KDColor::RGB24(0xFCFCFC);
-  constexpr static KDColor FocusCellBackgroundColor = KDColor::RGB24(0xDDDFE6);
-  constexpr static KDColor DesactiveTextColor = KDColor::RGB24(0x646464);
-  constexpr static KDColor BoxTitleBackgroundColor = KDColor::RGB24(0x656976);
+  constexpr static KDColor YellowOne = KDColor::RGB24(0xffb734);
+  constexpr static KDColor YellowTwo = KDColor::RGB24(0xffcc7b);
+  constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);
+  constexpr static KDColor PurpleDark = KDColor::RGB24(0x414147);
+  constexpr static KDColor GreyWhite = KDColor::RGB24(0xf5f5f5);
+  constexpr static KDColor GreyBright = KDColor::RGB24(0xececec);
+  constexpr static KDColor GreyMiddle = KDColor::RGB24(0xd9d9d9);
+  constexpr static KDColor GreyDark = KDColor::RGB24(0xa7a7a7);
+  constexpr static KDColor Select = KDColor::RGB24(0xd4d7e0);
+  constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);
+  constexpr static KDColor SubTab = KDColor::RGB24(0xb8bbc5);
+  constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);
 };
 
 #endif

@@ -14,6 +14,7 @@ namespace Device {
  */
 
 void init();
+void shutdown();
 void initGPIO();
 void initADC();
 

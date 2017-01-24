@@ -1,6 +1,8 @@
 #ifndef ION_DEVICE_LED_H
 #define ION_DEVICE_LED_H
 
+#include "regs/regs.h"
+
 namespace Ion {
 namespace LED {
 namespace Device {
@@ -13,10 +15,17 @@ namespace Device {
  */
 
 void init();
+void shutdown();
+
 void initGPIO();
+void shutdownGPIO();
 void initTimer();
-void suspend();
-void resume();
+void shutdownTimer();
+
+constexpr static GPIOPin RGBPins[] = {
+  GPIOPin(GPIOC, 7), GPIOPin(GPIOB, 1), GPIOPin(GPIOB, 0)
+};
+
 
 constexpr uint16_t PWMPeriod = 40000;
 

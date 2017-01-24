@@ -22,18 +22,26 @@ void init() {
   initTimer();
 }
 
+void shutdown() {
+  shutdownTimer();
+  shutdownGPIO();
+}
+
 void initGPIO() {
   /* RED_LED(PC7), GREEN_LED(PB1), and BLUE_LED(PB0) are driven using a timer,
-   * which is an alternate function. */
-  GPIOB.MODER()->setMode(0, GPIO::MODER::Mode::AlternateFunction);
-  GPIOB.MODER()->setMode(1, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(7, GPIO::MODER::Mode::AlternateFunction);
+   * which is an alternate function. More precisely, we will use AF2, which maps
+   * PB0 to TIM3_CH2, PB1 to TIM3_CH4, and PC7 to TIM3_CH2. */
+  for(const GPIOPin & g : RGBPins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
+    g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF2);
+  }
+}
 
-  /* More precisely, we will use AF2, which maps PB0 to TIM3_CH2, PB1 to
-   * TIM3_CH4, and PC7 to TIM3_CH2. */
-  GPIOB.AFR()->setAlternateFunction(0, GPIO::AFR::AlternateFunction::AF2);
-  GPIOB.AFR()->setAlternateFunction(1, GPIO::AFR::AlternateFunction::AF2);
-  GPIOC.AFR()->setAlternateFunction(7, GPIO::AFR::AlternateFunction::AF2);
+void shutdownGPIO() {
+  for(const GPIOPin & g : RGBPins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
+    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  }
 }
 
 void initTimer() {
@@ -72,16 +80,10 @@ void initTimer() {
   TIM3.CR1()->setCEN(true);
 }
 
-void suspend() {
+void shutdownTimer() {
   TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::ForceInactive);
   TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::ForceInactive);
   TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::ForceInactive);
-}
-
-void resume() {
-  TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::PWM1);
 }
 
 }

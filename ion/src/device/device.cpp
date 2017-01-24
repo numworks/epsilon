@@ -47,19 +47,49 @@ void Ion::reset() {
 
 // Private Ion::Device methods
 
-void Ion::Device::init() {
+namespace Ion {
+namespace Device {
+
+void initFPU() {
+  // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
+  CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
+  CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
+  // FIXME: The pipeline should be flushed at this point
+}
+
+void init() {
   initClocks();
-  LED::Device::init();
+  initPeripherals();
+}
+
+void shutdown() {
+  shutdownPeripherals();
+  shutdownClocks();
+}
+
+void initPeripherals() {
   Display::Device::init();
-  Keyboard::Device::init();
-  Battery::Device::init();
   Backlight::Device::init();
+  Keyboard::Device::init();
+  LED::Device::init();
+  Battery::Device::init();
 #if USE_SD_CARD
   SDCard::Device::init();
 #endif
 }
 
-void Ion::Device::initClocks() {
+void shutdownPeripherals() {
+#if USE_SD_CARD
+  SDCard::Device::shutdown();
+#endif
+  Battery::Device::shutdown();
+  LED::Device::shutdown();
+  Keyboard::Device::shutdown();
+  Backlight::Device::shutdown();
+  Display::Device::shutdown();
+}
+
+void initClocks() {
 #define USE_96MHZ_SYSTEM_CLOCK 0
 #if USE_96MHZ_SYSTEM_CLOCK
   /* System clock
@@ -120,9 +150,10 @@ void Ion::Device::initClocks() {
 #endif
 }
 
-void Ion::Device::initFPU() {
-  // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
-  CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
-  CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
-  // FIXME: The pipeline should be flushed at this point
+void shutdownClocks() {
+  RCC.AHB1ENR()->set(0);
 }
+
+}
+}
+

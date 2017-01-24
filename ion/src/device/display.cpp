@@ -43,69 +43,38 @@ namespace Device {
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
 void init() {
-  // Turn on the reset pin
-  GPIOE.MODER()->setMode(9, GPIO::MODER::Mode::Output);
-  GPIOE.ODR()->set(9, true);
-
-  msleep(120);
-
   initGPIO();
   initFSMC();
   initPanel();
 }
 
+void shutdown() {
+  shutdownPanel();
+  shutdownFSMC();
+  shutdownGPIO();
+}
+
 void initGPIO() {
-  // Configure GPIOs to use AF
+  // All the FSMC GPIO pins use the alternate function number 12
+  for(const GPIOPin & g : FSMCPins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
+    g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF12);
+  }
 
-  GPIOA.MODER()->setMode(2, GPIO::MODER::Mode::AlternateFunction);
-  GPIOA.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
-  GPIOA.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
+  // Turn on the reset pin
+  ResetPin.group().MODER()->setMode(ResetPin.pin(), GPIO::MODER::Mode::Output);
+  ResetPin.group().ODR()->set(ResetPin.pin(), true);
 
-  GPIOB.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
+  msleep(120);
+}
 
-  GPIOD.MODER()->setMode(0, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(1, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(7, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(9, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(10, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
-  GPIOD.MODER()->setMode(15, GPIO::MODER::Mode::AlternateFunction);
 
-  GPIOE.MODER()->setMode(10, GPIO::MODER::Mode::AlternateFunction);
-  GPIOE.MODER()->setMode(11, GPIO::MODER::Mode::AlternateFunction);
-  GPIOE.MODER()->setMode(12, GPIO::MODER::Mode::AlternateFunction);
-  GPIOE.MODER()->setMode(13, GPIO::MODER::Mode::AlternateFunction);
-  GPIOE.MODER()->setMode(14, GPIO::MODER::Mode::AlternateFunction);
-  GPIOE.MODER()->setMode(15, GPIO::MODER::Mode::AlternateFunction);
-
-  /* More precisely, we want to use the FSMC alternate function. In our case,
-   * it is always Alternate Function number 12. */
-  GPIOA.AFR()->setAlternateFunction(2, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF12);
-  GPIOA.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
-
-  GPIOB.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF12);
-
-  GPIOD.AFR()->setAlternateFunction(0, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(1, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(7, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(9, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(10, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF12);
-  GPIOD.AFR()->setAlternateFunction(15, GPIO::AFR::AlternateFunction::AF12);
-
-  GPIOE.AFR()->setAlternateFunction(10, GPIO::AFR::AlternateFunction::AF12);
-  GPIOE.AFR()->setAlternateFunction(11, GPIO::AFR::AlternateFunction::AF12);
-  GPIOE.AFR()->setAlternateFunction(12, GPIO::AFR::AlternateFunction::AF12);
-  GPIOE.AFR()->setAlternateFunction(13, GPIO::AFR::AlternateFunction::AF12);
-  GPIOE.AFR()->setAlternateFunction(14, GPIO::AFR::AlternateFunction::AF12);
-  GPIOE.AFR()->setAlternateFunction(15, GPIO::AFR::AlternateFunction::AF12);
+void shutdownGPIO() {
+  // All the FSMC GPIO pins use the alternate function number 12
+  for(const GPIOPin & g : FSMCPins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
+    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  }
 }
 
 void initFSMC() {
@@ -127,19 +96,22 @@ void initFSMC() {
   FSMC.BCR(FSMCMemoryBank)->setMBKEN(true);
 
   // Timing register
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(6);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(6);
-  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(6);
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(2);
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(2);
+  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(2);
+}
+
+void shutdownFSMC() {
+  // FSMC lives on the AHB3 bus. Let's enable its clock. */
+  RCC.AHB3ENR()->setFSMCEN(false);
 }
 
 void initPanel() {
-
   *CommandAddress = Command::Reset;
   msleep(5);
 
   *CommandAddress = Command::SleepOut;
   msleep(5);
-
 
   SEND_COMMAND(PixelFormatSet, 0x05);
   SEND_COMMAND(MemoryAccessControl, 0xA0);
@@ -148,13 +120,9 @@ void initPanel() {
   //msleep(50);
 }
 
-void suspend() {
+void shutdownPanel() {
+  *CommandAddress = Command::DisplayOff;
   *CommandAddress = Command::SleepIn;
-  msleep(5);
-}
-
-void resume() {
-  *CommandAddress = Command::SleepOut;
   msleep(5);
 }
 

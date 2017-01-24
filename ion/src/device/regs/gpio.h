@@ -69,7 +69,7 @@ public:
   };
 
   constexpr GPIO(int i) : m_index(i) {}
-  operator int() const { return m_index; }
+  constexpr operator int() const { return m_index; }
   REGS_REGISTER_AT(MODER, 0x00);
   REGS_REGISTER_AT(OTYPER, 0x04);
   REGS_REGISTER_AT(PUPDR, 0x0C);
@@ -91,5 +91,14 @@ constexpr GPIO GPIOE(4);
 constexpr GPIO GPIOF(5);
 constexpr GPIO GPIOG(6);
 constexpr GPIO GPIOH(7);
+
+class GPIOPin {
+public:
+  constexpr GPIOPin(GPIO group, uint8_t pin) : m_data(((group&0xF) << 4) | (pin&0xF)) {}
+  GPIO group() const { return GPIO(m_data>>4); }
+  uint8_t pin() const { return m_data & 0xF; }
+private:
+  uint8_t m_data;
+};
 
 #endif

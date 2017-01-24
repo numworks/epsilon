@@ -28,6 +28,7 @@ namespace Device {
  */
 
 void init();
+void shutdown();
 
 constexpr GPIO RowGPIO = GPIOE;
 constexpr uint8_t numberOfRows = 9;

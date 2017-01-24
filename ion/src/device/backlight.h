@@ -13,6 +13,7 @@ namespace Device {
  */
 
 void init();
+void shutdown();
 void suspend();
 void resume();
 void setLevel(uint8_t level);

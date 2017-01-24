@@ -21,7 +21,7 @@ class Container;
 class App : public Responder {
 public:
   constexpr static uint8_t Magic = 0xA8;
-  App(Container * container, ViewController * rootViewController, const char * name = nullptr, const Image * icon = nullptr);
+  App(Container * container, ViewController * rootViewController, const char * name = nullptr, const char * upperName = nullptr, const Image * icon = nullptr);
   void setWindow(Window * window);
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
@@ -32,6 +32,7 @@ public:
   void displayWarning(const char * warningMessage);
   const Container * container() const;
   const char * name();
+  const char * upperName();
   const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
 protected:
@@ -41,6 +42,7 @@ private:
   Responder * m_firstResponder;
   WarningController m_warningController;
   const char * m_name;
+  const char * m_upperName;
   const Image * m_icon;
 };
 

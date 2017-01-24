@@ -4,7 +4,7 @@ extern "C" {
 #include <assert.h>
 }
 
-App::App(Container * container, ViewController * rootViewController, const char * name, const Image * icon) :
+App::App(Container * container, ViewController * rootViewController, const char * name, const char * upperName, const Image * icon) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(ModalViewController(this, rootViewController)),
@@ -12,6 +12,7 @@ App::App(Container * container, ViewController * rootViewController, const char 
   m_firstResponder(nullptr),
   m_warningController(WarningController(this)),
   m_name(name),
+  m_upperName(upperName),
   m_icon(icon)
 {
 }
@@ -56,6 +57,10 @@ void App::setFirstResponder(Responder * responder) {
 
 const char * App::name() {
   return m_name;
+}
+
+const char * App::upperName() {
+  return m_upperName;
 }
 
 const Image * App::icon() {

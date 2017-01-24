@@ -4,7 +4,7 @@
 namespace Regression {
 
 App::App(Container * container) :
-  TextFieldDelegateApp(container, &m_tabViewController, "Resgression", ImageStore::RegressionIcon),
+  TextFieldDelegateApp(container, &m_tabViewController, "Regression", "REGRESSION", ImageStore::RegressionIcon),
   m_store(),
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController)),

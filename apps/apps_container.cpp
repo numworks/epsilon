@@ -56,7 +56,7 @@ bool AppsContainer::handleEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App * app) {
-  m_window.setTitle(app->name());
+  m_window.setTitle(app->upperName());
   // TODO: Update the battery icon every in a time frame
   m_window.updateBatteryLevel();
   Container::switchTo(app);

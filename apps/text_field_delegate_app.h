@@ -6,7 +6,7 @@
 
 class TextFieldDelegateApp : public ::App, public ExpressionTextFieldDelegate {
 public:
-  TextFieldDelegateApp(Container * container, ViewController * rootViewController, const char * name = nullptr, const Image * icon = nullptr);
+  TextFieldDelegateApp(Container * container, ViewController * rootViewController, const char * name = nullptr, const char * upperName = nullptr, const Image * icon = nullptr);
   virtual Context * localContext() override;
 };
 

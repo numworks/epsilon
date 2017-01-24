@@ -20,9 +20,9 @@ View * AppCell::subviewAtIndex(int index) {
 }
 
 void AppCell::layoutSubviews() {
-  m_iconView.setFrame(KDRect(0,0,k_iconSize,k_iconSize));
-  if (bounds().height() > k_iconSize) {
-    m_nameView.setFrame(KDRect(0, k_iconSize, bounds().width(), bounds().height()-k_iconSize));
+  m_iconView.setFrame(KDRect(0,0,k_iconWidth,k_iconHeight));
+  if (bounds().height() > k_iconHeight) {
+    m_nameView.setFrame(KDRect(0, k_iconHeight, bounds().width(), bounds().height()-k_iconHeight));
   }
 }
 

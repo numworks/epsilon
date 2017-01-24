@@ -43,11 +43,11 @@ int Controller::numberOfColumns() {
 }
 
 KDCoordinate Controller::cellHeight() {
-  return 50;
+  return 98;
 }
 
 KDCoordinate Controller::cellWidth() {
-  return 50;
+  return 104;
 }
 
 TableViewCell * Controller::reusableCell(int index) {

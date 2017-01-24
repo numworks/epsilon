@@ -23,6 +23,9 @@ void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t
 void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength);
 void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * upperSnakeCaseName, char * camelCaseName, size_t maxLength);
 
+// TODO: fix inliner to handle any png file
+// TODO: truncate the app image dimensions to 55x56 pixels
+
 int main(int argc, char * argv[]) {
   ERROR_IF(argc != 2, "Usage: inliner source.png");
   const char * inputPath = argv[1];

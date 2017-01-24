@@ -1,5 +1,5 @@
 #include "app.h"
-#include "images/probability_icon.h"
+#include "probability_icon.h"
 
 namespace Probability {
 

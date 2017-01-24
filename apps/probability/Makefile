@@ -20,6 +20,8 @@ app_objs += $(addprefix apps/probability/,\
   parameters_controller.o\
 )
 
+app_images += apps/probability/probability_icon.png
+
 app_images += $(addprefix apps/probability/images/,\
   binomial_icon.png\
   calcul1_icon.png\
@@ -36,6 +38,5 @@ app_images += $(addprefix apps/probability/images/,\
   focused_uniform_icon.png\
   normal_icon.png\
   poisson_icon.png\
-  probability_icon.png\
   uniform_icon.png\
 )

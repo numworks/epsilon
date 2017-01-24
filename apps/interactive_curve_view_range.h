@@ -41,7 +41,6 @@ public:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 protected:
   constexpr static float k_cursorMarginFactorToBorder = 0.025f;
-  bool panToMakePointVisible(float x, float y, float xMargin, float yMargin);
   // Window bounds of the data
   float m_xMin;
   float m_xMax;
@@ -50,6 +49,8 @@ protected:
   bool m_yAuto;
   float m_xGridUnit;
   float m_yGridUnit;
+private:
+  bool panToMakePointVisible(float x, float y, float xMargin, float yMargin);
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRangeDelegate * m_delegate;
 };

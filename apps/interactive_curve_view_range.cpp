@@ -186,8 +186,8 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 bool InteractiveCurveViewRange::moveCursorTo(float x, float y) {
   if (m_cursor) {
     m_cursor->moveTo(x, y);
-    float xMargin = InteractiveCurveViewRange::k_cursorMarginFactorToBorder * (m_xMax - m_xMin);
-    float yMargin = InteractiveCurveViewRange::k_cursorMarginFactorToBorder * (m_yMax - m_yMin);
+    float xMargin = k_cursorMarginFactorToBorder * (m_xMax - m_xMin);
+    float yMargin = k_cursorMarginFactorToBorder * (m_yMax - m_yMin);
     bool windowHasMoved = panToMakePointVisible(x, y, xMargin, yMargin);
     return windowHasMoved;
   }

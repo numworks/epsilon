@@ -26,21 +26,13 @@ public:
 
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
-
   // Drawing methods
   constexpr static KDColor k_axisColor = KDColor::RGB24(0x000000);
   constexpr static KDColor k_gridColor = KDColor::RGB24(0xEEEEEE);
   constexpr static KDCoordinate k_labelMargin =  4;
-  constexpr static int k_maxNumberOfXLabels =  18;
-  constexpr static int k_maxNumberOfYLabels =  13;
+  constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
+  constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static KDCoordinate k_cursorSize = 9;
-  /* The window bounds are deduced from the model bounds but also take into
-  account a margin (computed with k_marginFactor) */
-  float min(Axis axis) const;
-  float max(Axis axis) const;
-  float gridUnit(Axis axis) const;
-  virtual char * label(Axis axis, int index) const = 0;
-  KDCoordinate pixelLength(Axis axis) const;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
@@ -60,6 +52,13 @@ protected:
 
 private:
   constexpr static int k_externRectMargin = 1;
+  /* The window bounds are deduced from the model bounds but also take into
+  account a margin (computed with k_marginFactor) */
+  float min(Axis axis) const;
+  float max(Axis axis) const;
+  float gridUnit(Axis axis) const;
+  KDCoordinate pixelLength(Axis axis) const;
+  virtual char * label(Axis axis, int index) const = 0;
   int numberOfLabels(Axis axis) const;
   virtual float evaluateModelWithParameter(Model * curve, float t) const;
   /* Recursively join two dots (dichotomy). The method stops when the

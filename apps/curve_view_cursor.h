@@ -8,7 +8,7 @@ public:
   float x();
   float y();
   void moveTo(float x, float y);
-protected:
+private:
   float m_x;
   float m_y;
 };

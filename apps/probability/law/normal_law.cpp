@@ -61,7 +61,7 @@ float NormalLaw::yMin() {
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || result == yMin()) {
+  if (isnan(result) || result == yMin()) {
     result = yMin() + 1.0f;
   }
   return result;
@@ -79,10 +79,16 @@ bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 float NormalLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+  if (m_parameter2 ==  0.0f) {
+    return NAN;
+  }
   return standardNormalCumulativeDistributiveFunctionAtAbscissa((x-m_parameter1)/fabsf(m_parameter2));
 }
 
 float NormalLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+  if (m_parameter2 ==  0.0f) {
+    return NAN;
+  }
   return standardNormalCumulativeDistributiveInverseForProbability(*probability)*fabsf(m_parameter2) + m_parameter1;
 }
 

@@ -14,11 +14,11 @@ public:
   virtual float xGridUnit() = 0;
   virtual float yGridUnit();
   float computeGridUnit(Axis axis, float min, float max);
-protected:
-  constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
-  constexpr static float k_minNumberOfYGridUnits = 5.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
+private:
+  constexpr static float k_minNumberOfXGridUnits = 7.0f;
+  constexpr static float k_minNumberOfYGridUnits = 5.0f;
   constexpr static float k_oneUnit = 1.0f;
   constexpr static float k_twoUnit = 2.0f;
   constexpr static float k_fiveUnit = 5.0f;

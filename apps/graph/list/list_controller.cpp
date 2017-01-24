@@ -9,7 +9,7 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
   HeaderViewDelegate(header),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large),
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large)},
-  m_selectableTableView(SelectableTableView(this, this)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
 {

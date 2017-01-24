@@ -9,7 +9,7 @@ public:
     Horizontal,
     Vertical
   };
-  ScrollViewIndicator(Direction direction);
+  ScrollViewIndicator(Direction direction, KDColor indicatorColor, KDColor backgroundColor, KDCoordinate margin);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   float start() const;
@@ -22,9 +22,13 @@ protected:
   virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
+  constexpr static KDCoordinate k_indicatorThickness = 4;
   Direction m_direction;
   float m_start;
   float m_end;
+  KDColor m_indicatorColor;
+  KDColor m_backgroundColor;
+  KDCoordinate m_margin;
 };
 
 #endif

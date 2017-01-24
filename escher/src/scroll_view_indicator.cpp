@@ -3,33 +3,40 @@ extern "C" {
 #include <assert.h>
 }
 
-constexpr KDColor k_backgroundColor = KDColorBlack;
-constexpr KDColor k_indicatorColor = KDColorRed;
-
-ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction) :
+ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction, KDColor indicatorColor, KDColor backgroundColor, KDCoordinate margin) :
   View(),
   m_direction(direction),
   m_start(0),
-  m_end(0)
+  m_end(0),
+  m_indicatorColor(indicatorColor),
+  m_backgroundColor(backgroundColor),
+  m_margin(margin)
 {
 }
 
 void ScrollViewIndicator::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), k_backgroundColor);
-  KDRect indicatorFrame = KDRectZero;
+  KDRect frame = KDRectZero;
   if (m_direction == Direction::Horizontal) {
-    indicatorFrame = KDRect(
-        m_start*m_frame.width(), 0,
-        (m_end-m_start)*m_frame.width(), m_frame.height()
-        );
+    frame = KDRect(m_margin, (m_frame.height() - k_indicatorThickness)/2,
+        m_frame.width() - 2*m_margin, k_indicatorThickness);
   } else {
     assert(m_direction == Direction::Vertical);
-    indicatorFrame = KDRect(
-        0, m_start*m_frame.height(),
-        m_frame.width(), (m_end-m_start)*m_frame.height()
-        );
+    frame = KDRect((m_frame.width() - k_indicatorThickness)/2, m_margin,
+        k_indicatorThickness, m_frame.height() - 2*m_margin);
   }
-  ctx->fillRect(indicatorFrame, k_indicatorColor);
+  ctx->fillRect(frame, m_backgroundColor);
+  KDRect indicatorFrame = KDRectZero;
+  if (m_direction == Direction::Horizontal) {
+    KDCoordinate indicatorWidth = m_frame.width() - 2*m_margin;
+    indicatorFrame = KDRect(m_margin+m_start*indicatorWidth, (m_frame.height() - k_indicatorThickness)/2,
+        (m_end-m_start)*indicatorWidth, k_indicatorThickness);
+  } else {
+    assert(m_direction == Direction::Vertical);
+    KDCoordinate indicatorHeight = m_frame.height() - 2*m_margin;
+    indicatorFrame = KDRect((m_frame.width() - k_indicatorThickness)/2, m_margin+m_start*indicatorHeight,
+        k_indicatorThickness, (m_end-m_start)*indicatorHeight);
+  }
+  ctx->fillRect(indicatorFrame, m_indicatorColor);
 }
 
 float ScrollViewIndicator::start() const {

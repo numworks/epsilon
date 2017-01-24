@@ -9,7 +9,9 @@ class ScrollView : public View {
 public:
   ScrollView(View * contentView, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true,
-    bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen);
+    bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen, KDCoordinate indicatorThickness = 10,
+    KDColor indicatorColor = Palette::GreyMiddle, KDColor backgroundIndicatorColor = Palette::GreyWhite,
+    KDCoordinate indicatorMargin = 14);
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset();
@@ -28,7 +30,6 @@ protected:
 #endif
 private:
   KDPoint m_offset;
-  constexpr static KDCoordinate k_indicatorThickness = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
@@ -40,6 +41,7 @@ private:
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
+  KDCoordinate m_indicatorThickness;
   bool m_showIndicators;
   bool m_colorBackground;
   KDColor m_backgroundColor;

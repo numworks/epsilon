@@ -9,9 +9,10 @@ extern "C" {
 
 TableView::TableView(TableViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
-    KDColor backgroundColor) :
+    KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
+    KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
-    backgroundColor),
+    backgroundColor, indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   m_contentView(TableView::ContentView(this, dataSource))
 {
 }

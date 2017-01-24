@@ -4,20 +4,20 @@ extern "C" {
 #include <assert.h>
 }
 
-constexpr KDCoordinate ScrollView::k_indicatorThickness;
-
 ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin,
   KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
-  KDColor backgroundColor) :
+  KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
+  KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   View(),
   m_topMargin(topMargin),
   m_offset(KDPointZero),
   m_contentView(contentView),
-  m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical)),
-  m_horizontalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Horizontal)),
+  m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin)),
+  m_horizontalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin)),
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),
   m_leftMargin(leftMargin),
+  m_indicatorThickness(indicatorThickness),
   m_showIndicators(showIndicators),
   m_colorBackground(colorBackground),
   m_backgroundColor(backgroundColor)
@@ -81,27 +81,27 @@ void ScrollView::layoutSubviews() {
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
   if (hasHorizontalIndicator() && hasVerticalIndicator()) {
       KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - k_indicatorThickness, 0,
-      k_indicatorThickness, m_frame.height() - k_indicatorThickness
+      m_frame.width() - m_indicatorThickness, 0,
+      m_indicatorThickness, m_frame.height() - m_indicatorThickness
     );
     m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
     KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - k_indicatorThickness,
-      m_frame.width() - k_indicatorThickness, k_indicatorThickness
+      0, m_frame.height() - m_indicatorThickness,
+      m_frame.width() - m_indicatorThickness, m_indicatorThickness
     );
   m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
   } else {
     if (hasVerticalIndicator()) {
       KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - k_indicatorThickness, 0,
-      k_indicatorThickness, m_frame.height()
+      m_frame.width() - m_indicatorThickness, 0,
+      m_indicatorThickness, m_frame.height()
       );
       m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
     }
     if (hasHorizontalIndicator()) {
       KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - k_indicatorThickness,
-      m_frame.width(), k_indicatorThickness
+      0, m_frame.height() - m_indicatorThickness,
+      m_frame.width(), m_indicatorThickness
       );
       m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
     }

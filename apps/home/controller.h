@@ -29,7 +29,7 @@ private:
   int numberOfIcons();
   AppsContainer * m_container;
   SelectableTableView m_selectableTableView;
-  static constexpr int k_numberOfColumns = 3;
+  static constexpr int k_numberOfColumns = 4;
   static constexpr int k_numberOfApps = 10;
   static constexpr int k_maxNumberOfCells = 16;
   static constexpr int k_cellHeight = 98;

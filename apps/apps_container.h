@@ -29,7 +29,7 @@ public:
   void switchTo(App * app) override;
 private:
   Window * window() override;
-  static constexpr int k_numberOfApps = 6;
+  static constexpr int k_numberOfApps = 9;
   AppsWindow m_window;
   Home::App m_homeApp;
   Graph::App m_graphApp;

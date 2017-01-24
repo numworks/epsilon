@@ -24,11 +24,14 @@ int AppsContainer::numberOfApps() {
 App * AppsContainer::appAtIndex(int index) {
   static App * apps[] = {
     &m_homeApp,
-    &m_graphApp,
-    &m_probabilityApp,
     &m_calculationApp,
+    &m_graphApp,
+    &m_graphApp,
+    &m_graphApp,
+    &m_statisticsApp,
+    &m_probabilityApp,
     &m_regressionApp,
-    &m_statisticsApp
+    &m_regressionApp,
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);

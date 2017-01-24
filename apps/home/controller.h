@@ -32,6 +32,8 @@ private:
   static constexpr int k_numberOfColumns = 3;
   static constexpr int k_numberOfApps = 10;
   static constexpr int k_maxNumberOfCells = 16;
+  static constexpr int k_cellHeight = 98;
+  static constexpr int k_cellWidth = 104;
   AppCell m_cells[k_maxNumberOfCells];
 };
 

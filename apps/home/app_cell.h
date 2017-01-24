@@ -19,6 +19,8 @@ public:
 private:
   static constexpr KDCoordinate k_iconWidth = 55;
   static constexpr KDCoordinate k_iconHeight = 56;
+  static constexpr KDCoordinate k_nameWidthMargin = 4;
+  static constexpr KDCoordinate k_nameHeightMargin = 2;
   ImageView m_iconView;
   PointerTextView m_nameView;
   bool m_visible;

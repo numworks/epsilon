@@ -20,15 +20,15 @@ View * AppCell::subviewAtIndex(int index) {
 }
 
 void AppCell::layoutSubviews() {
-  m_iconView.setFrame(KDRect(0,0,k_iconWidth,k_iconHeight));
-  if (bounds().height() > k_iconHeight) {
-    m_nameView.setFrame(KDRect(0, k_iconHeight, bounds().width(), bounds().height()-k_iconHeight));
-  }
+  m_iconView.setFrame(KDRect((bounds().width()-k_iconWidth)/2, 18, k_iconWidth,k_iconHeight));
+  KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
+  m_nameView.setFrame(KDRect((bounds().width()-nameSize.width())/2-k_nameWidthMargin,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, nameSize.width()+2*k_nameWidthMargin, nameSize.height()+2*k_nameHeightMargin));
 }
 
 void AppCell::setApp(::App * app) {
   m_iconView.setImage(app->icon());
   m_nameView.setText(app->name());
+  layoutSubviews();
 }
 
 void AppCell::setVisible(bool visible) {

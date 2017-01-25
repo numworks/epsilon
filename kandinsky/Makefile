@@ -46,12 +46,12 @@ endif
 kandinsky/src/small_font.h: kandinsky/src/small_font.c
 kandinsky/src/small_font.c: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(small_font_files)"
-	@$< kandinsky/fonts/smallPixelFont.ttf 12 12 SmallFont $(small_font_files)
+	@$< kandinsky/fonts/SmallSourcePixel.ttf 12 12 SmallFont $(small_font_files)
 
 kandinsky/src/large_font.h: kandinsky/src/large_font.c
 kandinsky/src/large_font.c: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(large_font_files)"
-	@$< kandinsky/fonts/largePixelFont.ttf 16 16 LargeFont $(large_font_files)
+	@$< kandinsky/fonts/LargeSourcePixel.ttf 16 16 LargeFont $(large_font_files)
 
 kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c
 	@echo "HOSTCC  $@"

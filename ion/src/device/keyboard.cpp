@@ -110,18 +110,6 @@ void shutdown() {
 }
 
 void generateWakeUpEventForKey(Key k) {
-#if 0
-  // We're driving the rows and reading the columns.
-  int row = rowForKey(k);
-  for (uint8_t i=0; i<numberOfRows; i++) {
-    /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
-     * the pin floating (Hi-Z). So we want to set the current row to zero and
-     * all the others to 1. */
-    bool state = (i == row ? 0 : 1);
-    uint8_t pin = RowPins[i];
-    RowGPIO.ODR()->set(pin, state);
-  }
-#endif
   uint8_t rowPin = RowPins[rowForKey(k)];
   RowGPIO.MODER()->setMode(rowPin, GPIO::MODER::Mode::Output);
   RowGPIO.OTYPER()->setType(rowPin, GPIO::OTYPER::Type::OpenDrain);

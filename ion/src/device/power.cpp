@@ -8,10 +8,13 @@
 void Ion::Power::suspend() {
   Device::shutdownPeripherals();
 
+  PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
+  PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
   CM4.SCR()->setSLEEPDEEP(true);
+
   Keyboard::Device::generateWakeUpEventForKey(Ion::Keyboard::Key::B2);
 
-  // shutdownClocks();
+  Device::shutdownClocks();
 
   msleep(300);
 
@@ -24,7 +27,7 @@ void Ion::Power::suspend() {
   asm("wfe");
   asm("wfe");
 
-  // initClocks();
+  Device::initClocks();
 
   Device::initPeripherals();
 }

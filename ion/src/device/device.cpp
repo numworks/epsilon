@@ -59,6 +59,10 @@ void initFPU() {
 
 void init() {
   initClocks();
+  for (int g=0; g<5; g++) {
+    GPIO(g).MODER()->set(0xFFFFFFFF); // All to "Analog"
+    GPIO(g).PUPDR()->set(0x00000000); // All to "None"
+  }
   initPeripherals();
 }
 
@@ -142,15 +146,23 @@ void initClocks() {
   // APB1 bus
   // We're using TIM3
   RCC.APB1ENR()->setTIM3EN(true);
+  RCC.APB1ENR()->setPWREN(true);
 
-  RCC.APB2ENR()->setADC1EN(true);
-  RCC.APB2ENR()->setSYSCFGEN(true);
+  // APB2 bus
+  class RCC::APB2ENR apb2enr(0x00008000); // Reset value
+  apb2enr.setADC1EN(true);
+  apb2enr.setSYSCFGEN(true);
 #if USE_SD_CARD
-  RCC.APB2ENR()->setSDIOEN(true);
+  apb2enr.setSDIOEN(true);
 #endif
+  RCC.APB2ENR()->set(apb2enr);
 }
 
 void shutdownClocks() {
+  // Reset values, everything off
+  RCC.APB2ENR()->set(0x00008000);
+
+  // AHB1 bus
   RCC.AHB1ENR()->set(0);
 }
 

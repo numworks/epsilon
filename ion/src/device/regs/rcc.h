@@ -46,7 +46,7 @@ public:
 
   class AHB1ENR : public Register32 {
   public:
-    AHB1ENR(uint32_t v) : Register32(v) {}
+    using Register32::Register32;
     REGS_BOOL_FIELD(GPIOAEN, 0);
     REGS_BOOL_FIELD(GPIOBEN, 1);
     REGS_BOOL_FIELD(GPIOCEN, 2);
@@ -69,10 +69,12 @@ public:
   class APB1ENR : Register32 {
   public:
     REGS_BOOL_FIELD(TIM3EN, 1);
+    REGS_BOOL_FIELD(PWREN, 28);
   };
 
-  class APB2ENR : Register32 {
+  class APB2ENR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_BOOL_FIELD(TIM1EN, 0);
     REGS_BOOL_FIELD(ADC1EN, 8);
     REGS_BOOL_FIELD(SDIOEN, 11);

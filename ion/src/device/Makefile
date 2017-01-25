@@ -1,5 +1,5 @@
-include ion/src/shared/Makefile
 include ion/src/device/boot/Makefile
+
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\
@@ -9,6 +9,11 @@ objs += $(addprefix ion/src/device/, \
   led.o\
   power.o\
   sd_card.o\
+)
+
+objs += $(addprefix ion/src/shared/, \
+  events.o \
+  events_from_keyboard.o \
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

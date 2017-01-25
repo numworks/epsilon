@@ -1,15 +1,17 @@
-include ion/src/shared/Makefile
-
 objs += $(addprefix ion/src/simulator/, \
   battery.o\
   init.o\
 )
-objs += $(addprefix ion/src/shared/, \
-  crc32.o\
-)
 objs += $(addprefix ion/src/simulator/boot/, main.o)
 objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
 objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)
+
+objs += $(addprefix ion/src/shared/, \
+  crc32.o \
+  events.o \
+  events_from_keyboard.o \
+  power.o \
+)
 
 SFLAGS += `fltk-config --cflags`
 LDFLAGS += `fltk-config --ldflags`

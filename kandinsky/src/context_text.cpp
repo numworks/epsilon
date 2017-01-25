@@ -6,7 +6,7 @@ KDColor smallCharacterBuffer[BITMAP_SmallFont_CHARACTER_WIDTH*BITMAP_SmallFont_C
 KDColor largeCharacterBuffer[BITMAP_LargeFont_CHARACTER_WIDTH*BITMAP_LargeFont_CHARACTER_HEIGHT];
 
 void KDContext::drawChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor, KDColor backgroundColor) {
-  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_CHARACTER : BITMAP_SmallFont_FIRST_CHARACTER;
+  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_ASCII_CHARACTER : BITMAP_SmallFont_FIRST_ASCII_CHARACTER;
   int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT : BITMAP_SmallFont_CHARACTER_HEIGHT;
   int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
   KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;
@@ -39,7 +39,7 @@ void KDContext::drawString(const char * text, KDText::FontSize size, KDPoint p, 
 }
 
 void KDContext::blendChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor) {
-  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_CHARACTER : BITMAP_SmallFont_FIRST_CHARACTER;
+  int firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_ASCII_CHARACTER : BITMAP_SmallFont_FIRST_ASCII_CHARACTER;
   int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT : BITMAP_SmallFont_CHARACTER_HEIGHT;
   int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
   KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;

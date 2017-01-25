@@ -53,9 +53,9 @@ kandinsky/src/large_font.c: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(large_font_files)"
 	@$< kandinsky/fonts/largePixelFont.ttf 16 16 LargeFont $(large_font_files)
 
-kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c
+kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c
 	@echo "HOSTCC  $@"
-	@$(HOSTCC) -std=c99 $(RASTERIZER_CFLAGS) $< $(RASTERIZER_LDFLAGS) -o$@
+	@$(HOSTCC) $(RASTERIZER_CFLAGS) $^ $(RASTERIZER_LDFLAGS) -o $@
 
 products += $(small_font_files) $(large_font_files) kandinsky/fonts/rasterizer
 

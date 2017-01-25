@@ -1,6 +1,7 @@
 #include <poincare/global_context.h>
 #include <assert.h>
 #include <math.h>
+#include <ion.h>
 
 GlobalContext::GlobalContext() :
   m_pi(Float(M_PI))
@@ -21,7 +22,7 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
 }
 
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
-  if (symbol->name() == Symbol::SpecialSymbols::Pi) {
+  if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
   int index = symbolIndex(symbol);

@@ -35,9 +35,6 @@ ExpressionLayout * Symbol::createLayout() const {
   if (m_name == SpecialSymbols::Ans) {
     return new StringLayout("ans", 4);
   }
-  if (m_name == SpecialSymbols::Pi) {
-    return new StringLayout("Pi", 4);
-  }
   return new StringLayout(&m_name, 1);
 }
 

@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <ion.h>
 
 namespace Probability {
 
@@ -34,9 +35,11 @@ const char * NormalLaw::parameterNameAtIndex(int index) {
 const char * NormalLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "u : moyenne";
+    constexpr static char meanDef[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'm', 'o', 'y', 'e', 'n', 'n', 'e', 0};
+    return meanDef;
   } else {
-    return "o : ecart-type";
+    constexpr static char devDef[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'e', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
+    return devDef;
   }
 }
 

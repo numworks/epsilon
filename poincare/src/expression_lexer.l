@@ -75,6 +75,11 @@
   * by flex temporarily swapping the last character. Afterwards the pointer is
   * still valid but the string isn't null-terminated anymore.
   */
+  /* We designed our own extended-ASCII to include requiered symbols in less
+   * than 255 glyphs. The file ion/include/ion/charset.h lists all added
+   * non-ASCII symbols with their char associated. For example, the char \xa0
+   * refered to Pi symbols. This artefact leads to the following lexer rules
+   * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
 E  { return EE; }
@@ -92,8 +97,8 @@ ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUN
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
-Pi { poincare_expression_yylval.character = Symbol::SpecialSymbols::Pi; return SYMBOL; }
-v { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+\xa0 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\xa5 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

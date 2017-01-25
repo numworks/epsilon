@@ -6,8 +6,7 @@
 class Symbol : public LeafExpression {
 public:
     enum SpecialSymbols : char {
-        Ans = '^',
-        Pi = '*'
+        Ans = '^'
     };
     Symbol(char name);
     ExpressionLayout * createLayout() const override;

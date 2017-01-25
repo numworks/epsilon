@@ -1,5 +1,6 @@
 #include "right_integral_calculation.h"
 #include <assert.h>
+#include <ion.h>
 #include <math.h>
 
 namespace Probability {
@@ -21,7 +22,8 @@ const char * RightIntegralCalculation::legendForParameterAtIndex(int index) {
   if (index == 0) {
     return "P(";
   }
-  return "<=X)=";
+  constexpr static char comparison[] = {Ion::Charset::LessEqual, 'X', ')', '=', 0};
+  return comparison;
 }
 
 void RightIntegralCalculation::setParameterAtIndex(float f, int index) {

@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <ion.h>
 
 namespace Probability {
 
@@ -29,7 +30,8 @@ const char * ExponentialLaw::parameterNameAtIndex(int index) {
 
 const char * ExponentialLaw::parameterDefinitionAtIndex(int index) {
   assert(index == 0);
-  return "l : parametre";
+  constexpr static char def[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
+  return def;
 }
 
 float ExponentialLaw::xMin() {

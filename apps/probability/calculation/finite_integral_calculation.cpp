@@ -1,5 +1,6 @@
 #include "finite_integral_calculation.h"
 #include <assert.h>
+#include <ion.h>
 #include <math.h>
 
 namespace Probability {
@@ -23,7 +24,8 @@ const char * FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
     return "P(";
   }
   if (index == 1) {
-    return "<=X<=";
+    constexpr static char comparison[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
+    return comparison;
   }
   return ")=";
 }

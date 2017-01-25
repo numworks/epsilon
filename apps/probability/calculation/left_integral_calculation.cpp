@@ -1,5 +1,6 @@
 #include "left_integral_calculation.h"
 #include <assert.h>
+#include <ion.h>
 #include <math.h>
 
 namespace Probability {
@@ -19,7 +20,8 @@ int LeftIntegralCalculation::numberOfParameters() {
 const char * LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "P(X<=";
+    constexpr static char comparison[] = {'P', '(', 'X', Ion::Charset::LessEqual, 0};
+    return comparison;
   }
   return ")=";
 }

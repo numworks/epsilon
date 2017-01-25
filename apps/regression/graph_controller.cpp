@@ -73,7 +73,8 @@ void GraphController::reloadBannerView() {
   float x = m_cursor.x();
   // Display a specific legend if the mean dot is selected
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
-    legend = "x^ = ";
+    constexpr static char legX[] = {Ion::Charset::XBar, ' ', '=', ' ', 0};
+    legend = legX;
     x = m_store->meanOfColumn(0);
   }
   legendLength = strlen(legend);
@@ -84,7 +85,8 @@ void GraphController::reloadBannerView() {
   legend = "y = ";
   float y = m_cursor.y();
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
-    legend = "y^ = ";
+    constexpr static char legY[] = {Ion::Charset::YBar, ' ', '=', ' ', 0};
+    legend = legY;
     y = m_store->meanOfColumn(1);
   }
   legendLength = strlen(legend);

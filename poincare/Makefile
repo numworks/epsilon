@@ -8,7 +8,6 @@ objs += $(addprefix poincare/src/,\
   binary_operation.o\
   cosine.o\
   derivative.o\
-  exponential.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\

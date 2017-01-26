@@ -4,7 +4,8 @@
 #include <ion.h>
 
 GlobalContext::GlobalContext() :
-  m_pi(Float(M_PI))
+  m_pi(Float(M_PI)),
+  m_e(Float(M_E))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -24,6 +25,9 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
+  }
+  if (symbol->name() == 'e') {
+    return &m_e;
   }
   int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {

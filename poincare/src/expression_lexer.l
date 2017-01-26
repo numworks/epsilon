@@ -87,7 +87,6 @@ E  { return EE; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
-exp { poincare_expression_yylval.expression = new Exponential(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
@@ -99,6 +98,7 @@ sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 \xa0 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \xa5 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

@@ -8,6 +8,7 @@ objs += $(addprefix poincare/src/,\
   binary_operation.o\
   cosine.o\
   derivative.o\
+  exponential.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -16,12 +17,14 @@ objs += $(addprefix poincare/src/,\
   function.o\
   global_context.o\
   integer.o\
+  integral.o\
   list_data.o\
   leaf_expression.o\
   logarithm.o\
   matrix.o\
   matrix_data.o\
   nth_root.o\
+  opposite.o\
   parenthesis.o\
   power.o\
   product.o\

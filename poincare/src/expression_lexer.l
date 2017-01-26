@@ -82,8 +82,10 @@ E  { return EE; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::Ans; return SYMBOL; }
+exp { poincare_expression_yylval.expression = new Exponential(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
+int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }

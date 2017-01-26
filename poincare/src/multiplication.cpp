@@ -6,6 +6,7 @@ extern "C" {
 #include <poincare/multiplication.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
+#include "layout/parenthesis_layout.h"
 
 Expression::Type Multiplication::type() const {
   return Expression::Type::Multiplication;
@@ -15,7 +16,7 @@ ExpressionLayout * Multiplication::createLayout() const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
   children_layouts[0] = m_operands[0]->createLayout();
   children_layouts[1] = new StringLayout("*", 1);
-  children_layouts[2] = m_operands[1]->createLayout();
+  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout()) : m_operands[1]->createLayout();
   return new HorizontalLayout(children_layouts, 3);
 }
 

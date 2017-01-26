@@ -4,6 +4,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include "layout/horizontal_layout.h"
+#include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
 
 Opposite::Opposite(Expression * operand, bool cloneOperands) {
@@ -52,7 +53,7 @@ ExpressionLayout * Opposite::createLayout() const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->createLayout();
+  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout()) : m_operand->createLayout();
   return new HorizontalLayout(children_layouts, 2);
 }
 

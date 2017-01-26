@@ -6,6 +6,7 @@ extern "C" {
 }
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
+#include "layout/parenthesis_layout.h"
 
 Addition::Addition(Expression ** operands,
     int numberOfOperands,
@@ -81,7 +82,7 @@ ExpressionLayout * Addition::createLayout() const {
   children_layouts[0] = m_operands[0]->createLayout();
   for (int i=1; i<m_numberOfOperands; i++) {
     children_layouts[2*i-1] = new StringLayout("+", 1);
-    children_layouts[2*i] = m_operands[i]->createLayout();
+    children_layouts[2*i] = m_operands[i]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[i]->createLayout()) : m_operands[i]->createLayout();
   }
   return new HorizontalLayout(children_layouts, number_of_children);
 }

@@ -6,6 +6,7 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
+#include "layout/parenthesis_layout.h"
 
 Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
@@ -27,7 +28,7 @@ ExpressionLayout * Subtraction::createLayout() const {
   children_layouts[0] = m_operands[0]->createLayout();
   char string[2] = {'-', '\0'};
   children_layouts[1] = new StringLayout(string, 1);
-  children_layouts[2] = m_operands[1]->createLayout();
+  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout()) : m_operands[1]->createLayout();
   return new HorizontalLayout(children_layouts, 3);
 }
 

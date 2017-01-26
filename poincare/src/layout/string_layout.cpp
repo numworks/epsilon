@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include "string_layout.h"
 
-StringLayout::StringLayout(const char * string, size_t length) :
-ExpressionLayout() {
+StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize fontSize) :
+  ExpressionLayout(),
+  m_fontSize(fontSize)
+{
   m_string = (char *)malloc(sizeof(char)*(length+1));
   memcpy(m_string, string, length);
   m_string[length] = 0;
   // Height of the font.
-  m_baseline = KDText::stringSize(" ", KDText::FontSize::Large).height();
+  m_baseline = KDText::stringSize(" ", m_fontSize).height();
 }
 
 StringLayout::~StringLayout() {
@@ -20,7 +22,7 @@ ExpressionLayout * StringLayout::child(uint16_t index) {
 }
 
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->drawString(m_string, KDText::FontSize::Large, p, expressionColor, backgroundColor);
+  ctx->drawString(m_string, m_fontSize, p, expressionColor, backgroundColor);
 }
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
@@ -29,5 +31,5 @@ KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 KDSize StringLayout::computeSize() {
-  return KDText::stringSize(m_string, KDText::FontSize::Large);
+  return KDText::stringSize(m_string, m_fontSize);
 }

@@ -9,7 +9,7 @@ class StringLayout : public ExpressionLayout {
     // Here the inverse is a uint8_t instead of a bool, because the size of a bool is
     // not standardized, thus since we call a foreign C function with this value we want to be
     // sure about compatibility.
-    StringLayout(const char * string, size_t length);
+    StringLayout(const char * string, size_t length, KDText::FontSize fontSize = KDText::FontSize::Large);
     ~StringLayout();
   protected:
     void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
@@ -18,6 +18,7 @@ class StringLayout : public ExpressionLayout {
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
     char * m_string;
+    KDText::FontSize m_fontSize;
 };
 
 #endif

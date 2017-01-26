@@ -6,9 +6,9 @@
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :
-  m_intervalView(KDText::FontSize::Small, 0.5f, 0.5f),
-  m_sizeView(KDText::FontSize::Small, 0.5f, 0.5f),
-  m_frequencyView(KDText::FontSize::Small, 0.5f, 0.5f)
+  m_intervalView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_sizeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_frequencyView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
 {
 }
 

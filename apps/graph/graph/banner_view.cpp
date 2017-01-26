@@ -3,9 +3,9 @@
 namespace Graph {
 
 BannerView::BannerView() :
-  m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f),
-  m_functionView(KDText::FontSize::Small, 0.5f, 0.5f),
-  m_derivativeView(KDText::FontSize::Small, 0.5f, 0.5f),
+  m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_functionView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_derivativeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_displayDerivative(false)
 {
 }

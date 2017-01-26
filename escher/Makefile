@@ -13,6 +13,7 @@ objs += $(addprefix escher/src/,\
   even_odd_cell.o\
   even_odd_buffer_text_cell.o\
   even_odd_editable_text_cell.o\
+  even_odd_expression_cell.o\
   even_odd_pointer_text_cell.o\
   expression_view.o\
   header_view_controller.o\

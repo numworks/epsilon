@@ -9,7 +9,7 @@ class ScrollView : public View {
 public:
   ScrollView(View * contentView, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true,
-    bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen, KDCoordinate indicatorThickness = 10,
+    bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen, KDCoordinate indicatorThickness = 20,
     KDColor indicatorColor = Palette::GreyDark, KDColor backgroundIndicatorColor = Palette::GreyMiddle,
     KDCoordinate indicatorMargin = 14);
 

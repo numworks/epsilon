@@ -34,6 +34,7 @@ private:
   const char * className() const override;
 #endif
   private:
+    static constexpr KDCoordinate k_stackHeight = 20;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

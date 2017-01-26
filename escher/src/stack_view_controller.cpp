@@ -35,16 +35,15 @@ void StackViewController::ControllerView::popStack() {
 }
 
 void StackViewController::ControllerView::layoutSubviews() {
-  KDCoordinate stackHeight = 20;
   KDCoordinate width = m_frame.width();
   int indexFirstHeader = m_displayFirstStackHeader ? 0 : 1;
   for (int i=indexFirstHeader; i<m_numberOfStacks; i++) {
-    m_stackViews[i].setFrame(KDRect(0, stackHeight*(i-indexFirstHeader), width, stackHeight + 1));
+    m_stackViews[i].setFrame(KDRect(0, k_stackHeight*(i-indexFirstHeader), width, k_stackHeight + 1));
   }
   if (m_contentView) {
     bool separatorHeight = m_displayFirstStackHeader + (m_numberOfStacks > 1);
-    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-indexFirstHeader)*stackHeight + separatorHeight,
-        width, m_frame.height() - (m_numberOfStacks-indexFirstHeader)*stackHeight);
+    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-indexFirstHeader)*k_stackHeight + separatorHeight,
+        width, m_frame.height() - (m_numberOfStacks-indexFirstHeader)*k_stackHeight);
     m_contentView->setFrame(contentViewFrame);
   }
 }

@@ -17,11 +17,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Vertical);
   drawLabels(ctx, rect, Axis::Horizontal, true);
   drawLabels(ctx, rect, Axis::Vertical, true);
-  drawCurve(ctx, rect, nullptr, KDColorRed);
+  drawCurve(ctx, rect, nullptr, Palette::YellowOne);
   for (int index = 0; index < m_store->numberOfPairs(); index++) {
-    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), KDColorBlue, KDSize(k_dotSize, k_dotSize));
+    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::YellowOne);
   }
-  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), KDColorGreen, KDSize(k_dotSize, k_dotSize));
+  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::PurpleBright);
 }
 
 char * GraphView::label(Axis axis, int index) const {

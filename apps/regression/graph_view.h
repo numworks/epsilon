@@ -13,7 +13,6 @@ public:
   GraphView(Store * store, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static KDCoordinate k_dotSize = 5;
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;

@@ -44,5 +44,10 @@ Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 ExpressionLayout * Power::createLayout() const {
-  return new ExponentLayout(m_operands[0]->createLayout(), m_operands[1]->createLayout());
+  Expression * indiceOperand = m_operands[1];
+  // Delete eventual parentheses of the indice in the pretty print
+  if (m_operands[1]->type() == Type::Parenthesis) {
+    indiceOperand = (Expression *)m_operands[1]->operand(0);
+  }
+  return new ExponentLayout(m_operands[0]->createLayout(),indiceOperand->createLayout());
 }

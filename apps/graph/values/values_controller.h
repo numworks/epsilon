@@ -55,8 +55,8 @@ private:
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
-  constexpr static int k_maxNumberOfAbscissaCells = 8;
-  constexpr static int k_maxNumberOfCells = 40;
+  constexpr static int k_maxNumberOfAbscissaCells = 10;
+  constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
   EvenOddPointerTextCell m_abscissaTitleCell;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];

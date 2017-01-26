@@ -20,8 +20,8 @@ public:
   int typeAtLocation(int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
-  static constexpr KDCoordinate k_cellWidth = 100;
-  constexpr static int k_maxNumberOfEditableCells = 20;
+  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
+  constexpr static int k_maxNumberOfEditableCells = 22;
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

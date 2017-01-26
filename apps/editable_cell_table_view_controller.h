@@ -23,7 +23,7 @@ public:
 protected:
   SelectableTableView m_selectableTableView;
 private:
-  static constexpr KDCoordinate k_cellHeight = 30;
+  static constexpr KDCoordinate k_cellHeight = 20;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) = 0;
   virtual float dataAtLocation(int columnIndex, int rowIndex) = 0;

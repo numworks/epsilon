@@ -6,7 +6,7 @@
 NodeListViewController::NodeListViewController(NodeNavigationController * parent) :
   ViewController(parent),
   m_nodeNavigationController(parent),
-  m_selectableTableView(SelectableTableView(this, this)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false)),
   m_nodeModel(nullptr),
   m_firstSelectedRow(0)
 {

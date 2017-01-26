@@ -4,7 +4,7 @@ namespace Calculation {
 
 CalculationSelectableTableView::CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
  SelectableTableViewDelegate * delegate) :
-  ::SelectableTableView(parentResponder, dataSource, 0, 0, 0, 0, delegate)
+  ::SelectableTableView(parentResponder, dataSource, 0, 0, 0, 0, delegate, false)
 {
 }
 

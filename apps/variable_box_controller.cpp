@@ -10,7 +10,7 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(SelectableTableView(this, this))
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false))
 {
 }
 

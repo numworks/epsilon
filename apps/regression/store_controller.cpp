@@ -2,14 +2,18 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "../constant.h"
+#include "../../poincare/src/layout/subscript_layout.h"
+#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 
-namespace Statistics {
+namespace Regression {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :
   ::StoreController(parentResponder, store, header),
-  m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)}
+  m_titleCells{EvenOddExpressionCell(0.5f, 0.5f), EvenOddExpressionCell(0.5f, 0.5f)}
 {
+  m_titleLayout[0] = new SubscriptLayout(new StringLayout("X", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small));
+  m_titleLayout[1] = new SubscriptLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small));
 }
 
 void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
@@ -17,12 +21,8 @@ void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
-  EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
-  if (i == 0) {
-    mytitleCell->setText("Valeurs");
-    return;
-  }
-  mytitleCell->setText("Effectifs");
+  EvenOddExpressionCell * mytitleCell = (EvenOddExpressionCell *)cell;
+  mytitleCell->setExpression(m_titleLayout[i]);
 }
 
 TableViewCell * StoreController::titleCells(int index) {

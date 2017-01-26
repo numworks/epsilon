@@ -11,7 +11,6 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Large)},
-  m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
   m_store(store),
   m_storeParameterController(this, store)
 {
@@ -42,7 +41,7 @@ TableViewCell * StoreController::reusableCell(int index, int type) {
   switch (type) {
     case 0:
       assert(index < k_numberOfTitleCells);
-      return &m_titleCells[index];
+      return titleCells(index);
     case 1:
       assert(index < k_maxNumberOfEditableCells);
       return &m_editableCells[index];
@@ -57,19 +56,6 @@ int StoreController::reusableCellCount(int type) {
     return k_numberOfTitleCells;
   }
   return k_maxNumberOfEditableCells;
-}
-
-void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
-  if (cellAtLocationIsEditable(i, j)) {
-    return;
-  }
-  EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
-  if (i == 0) {
-    mytitleCell->setText("Xi");
-    return;
-  }
-  mytitleCell->setText("Yi");
 }
 
 int StoreController::typeAtLocation(int i, int j) {

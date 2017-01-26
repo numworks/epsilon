@@ -1,11 +1,11 @@
-#ifndef STATISTICS_STORE_CONTROLLER_H
-#define STATISTICS_STORE_CONTROLLER_H
+#ifndef REGRESSION_STORE_CONTROLLER_H
+#define REGRESSION_STORE_CONTROLLER_H
 
 #include <escher.h>
 #include "store.h"
 #include "../store_controller.h"
 
-namespace Statistics {
+namespace Regression {
 
 class StoreController : public ::StoreController {
 public:
@@ -13,7 +13,8 @@ public:
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
 private:
   TableViewCell * titleCells(int index) override;
-  EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
+  EvenOddExpressionCell m_titleCells[k_numberOfTitleCells];
+  ExpressionLayout * m_titleLayout[2];
 };
 
 }

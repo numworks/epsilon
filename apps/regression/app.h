@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../text_field_delegate_app.h"
 #include "store.h"
-#include "../store_controller.h"
+#include "store_controller.h"
 #include "graph_controller.h"
 #include "calculation_controller.h"
 
@@ -22,7 +22,7 @@ private:
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   HeaderViewController m_graphHeader;
   StackViewController m_graphStackViewController;
-  ::StoreController m_storeController;
+  StoreController m_storeController;
   HeaderViewController m_storeHeader;
   StackViewController m_storeStackViewController;
   TabViewController m_tabViewController;

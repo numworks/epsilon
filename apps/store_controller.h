@@ -11,7 +11,6 @@ public:
   StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header);
   const char * title() const override;
   int numberOfColumns() override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
@@ -29,9 +28,9 @@ protected:
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
+  virtual TableViewCell * titleCells(int index) = 0;
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
-  EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;
 };

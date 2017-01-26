@@ -20,8 +20,8 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
     KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr,
     bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
-    KDCoordinate indicatorThickness = 10, KDColor indicatorColor = Palette::GreyMiddle,
-    KDColor backgroundIndicatorColor = Palette::GreyWhite, KDCoordinate indicatorMargin = 14);
+    KDCoordinate indicatorThickness = 10, KDColor indicatorColor = Palette::GreyDark,
+    KDColor backgroundIndicatorColor = Palette::GreyMiddle, KDCoordinate indicatorMargin = 14);
 
   int selectedRow();
   int selectedColumn();

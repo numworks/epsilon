@@ -194,4 +194,5 @@ void TextField::setEditing(bool isEditing) {
 void TextField::reinitDraftTextBuffer() {
   setCursorLocation(0);
   m_draftTextBuffer[0] = 0;
+  m_currentTextLength = 0;
 }

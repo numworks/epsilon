@@ -19,9 +19,12 @@ public:
 private:
   constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_minNumberOfYGridUnits = 5.0f;
-  constexpr static float k_oneUnit = 1.0f;
-  constexpr static float k_twoUnit = 2.0f;
-  constexpr static float k_fiveUnit = 5.0f;
+  /* The grid units is constrained to be a number of type: k*10^n with k = 1,2 or 5
+   * and n a relative integer. The choice of x and y grid units depend on the
+   * grid range.*/
+  constexpr static float k_smallGridUnitMantissa = 1.0f;
+  constexpr static float k_mediumGridUnitMantissa = 2.0f;
+  constexpr static float k_largeGridUnitMantissa = 5.0f;
 };
 
 #endif

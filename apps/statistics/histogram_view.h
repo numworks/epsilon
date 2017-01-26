@@ -10,7 +10,7 @@ namespace Statistics {
 
 class HistogramView : public CurveView {
 public:
-  HistogramView(Store * store, View * bannerView);
+  HistogramView(Store * store, ::BannerView * bannerView);
   void reloadSelection() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlight(float start, float end);

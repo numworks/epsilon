@@ -37,10 +37,10 @@ public:
   float median();
   float sum();
   float squaredValueSum();
-  constexpr static float k_displayTopMarginRatio = 0.03f;
-  constexpr static float k_displayRightMarginRatio = 0.02f;
-  constexpr static float k_displayBottomMarginRatio = 0.3f;
-  constexpr static float k_displayLeftMarginRatio = 0.02f;
+  constexpr static float k_displayTopMarginRatio = 0.1f;
+  constexpr static float k_displayRightMarginRatio = 0.04f;
+  constexpr static float k_displayBottomMarginRatio = 0.4f;
+  constexpr static float k_displayLeftMarginRatio = 0.04f;
 private:
   float defaultValue(int i) override;
   float sumOfValuesBetween(float x1, float x2);

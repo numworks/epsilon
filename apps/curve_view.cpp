@@ -272,7 +272,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
     }
     KDCoordinate pxf = roundf(floatToPixel(Axis::Horizontal, x));
     KDCoordinate pyf = roundf(floatToPixel(Axis::Vertical, y));
-    KDCoordinate pixelBarWidth = fillBar ? roundf(floatToPixel(Axis::Horizontal, x+barWidth)) - roundf(floatToPixel(Axis::Horizontal, x)) : 2;
+    KDCoordinate pixelBarWidth = fillBar ? roundf(floatToPixel(Axis::Horizontal, x+barWidth)) - roundf(floatToPixel(Axis::Horizontal, x))-1 : 2;
     KDRect binRect(pxf, pyf, pixelBarWidth, floatToPixel(Axis::Vertical, 0.0f) - pyf);
     if (floatToPixel(Axis::Vertical, 0.0f) < pyf) {
       binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, pyf - floatToPixel(Axis::Vertical, 0.0f));

@@ -5,7 +5,6 @@
 
 class BannerView : public View {
 public:
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   void setLegendAtIndex(char * text, int index);
   KDSize minimalSizeForOptimalDisplay() override;
 private:

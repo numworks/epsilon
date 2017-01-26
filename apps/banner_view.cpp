@@ -2,10 +2,6 @@
 #include <string.h>
 #include <assert.h>
 
-void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
 void BannerView::setLegendAtIndex(char * text, int index) {
   /* The layout of the banner's subviews depends on their content.
    * Indeed, we're using a "centered text" algorithm to layout the subviews.
@@ -47,9 +43,13 @@ void BannerView::layoutSubviews() {
     // The subview exceed the total width
     if (lineWidth + currentViewWidth > totalWidth) {
       KDCoordinate x = 0;
+      int nbOfTextViewInLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
+      KDCoordinate roundingError = totalWidth-lineWidth-nbOfTextViewInLine*(int)((totalWidth-lineWidth)/nbOfTextViewInLine);
       for (int j = indexOfFirstViewOfCurrentLine; j < i; j++) {
         textViewPreviousLine = textViewAtIndex(j);
-        KDCoordinate textWidth = textViewPreviousLine->minimalSizeForOptimalDisplay().width() + (totalWidth - lineWidth)/(i-indexOfFirstViewOfCurrentLine);
+        KDCoordinate textWidth = textViewPreviousLine->minimalSizeForOptimalDisplay().width() + (totalWidth - lineWidth)/nbOfTextViewInLine;
+        // For the last text view, avoid letting a 1-pixel-wide empty vertical due to rounding error:
+        textWidth = j == i-1 ? textWidth + roundingError : textWidth;
         KDCoordinate textHeight = textViewPreviousLine->minimalSizeForOptimalDisplay().height();
         textViewPreviousLine->setFrame(KDRect(x, y, textWidth, textHeight));
         x += textWidth;

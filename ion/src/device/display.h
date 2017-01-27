@@ -6,11 +6,11 @@
 extern "C" {
 #include <stddef.h>
 }
+#include "regs/regs.h"
 
 namespace Ion {
 namespace Display {
 namespace Device {
-
 
 /*  Pin | Role              | Mode                  | Function | Note
  * -----+-------------------+-----------------------+----------|------
@@ -38,11 +38,14 @@ namespace Device {
  */
 
 void init();
+void shutdown();
+
 void initGPIO();
+void shutdownGPIO();
 void initFSMC();
+void shutdownFSMC();
 void initPanel();
-void suspend();
-void resume();
+void shutdownPanel();
 
 void setDrawingArea(KDRect r);
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
@@ -63,6 +66,17 @@ enum class Command : uint16_t {
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
 };
+
+constexpr static GPIOPin FSMCPins[] = {
+  GPIOPin(GPIOA, 2), GPIOPin(GPIOA, 3), GPIOPin(GPIOA, 4), GPIOPin(GPIOB, 12),
+  GPIOPin(GPIOB, 12), GPIOPin(GPIOD, 0), GPIOPin(GPIOD, 1), GPIOPin(GPIOD, 4),
+  GPIOPin(GPIOD, 5), GPIOPin(GPIOD, 7), GPIOPin(GPIOD, 9), GPIOPin(GPIOD, 10),
+  GPIOPin(GPIOD, 11), GPIOPin(GPIOD, 14), GPIOPin(GPIOD, 15), GPIOPin(GPIOE, 10),
+  GPIOPin(GPIOE, 11), GPIOPin(GPIOE, 12), GPIOPin(GPIOE, 13), GPIOPin(GPIOE, 14),
+  GPIOPin(GPIOE, 15)
+};
+
+constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 9);
 
 constexpr static int FSMCMemoryBank = 1;
 constexpr static int FSMCDataCommandAddressBit = 16;

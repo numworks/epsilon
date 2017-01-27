@@ -38,6 +38,10 @@ void init() {
   resume();
 }
 
+void shutdown() {
+  GPIOC.ODR()->set(6, false);
+}
+
 void suspend() {
   GPIOC.ODR()->set(6, false);
   msleep(3); // Might not need to be blocking

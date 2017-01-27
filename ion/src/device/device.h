@@ -5,8 +5,13 @@ namespace Ion {
 namespace Device {
 
 void init();
+void shutdown();
+
 void initFPU();
+void initPeripherals();
+void shutdownPeripherals();
 void initClocks();
+void shutdownClocks();
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------

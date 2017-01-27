@@ -95,7 +95,22 @@ void init() {
   }
 }
 
+void shutdown() {
+  for (uint8_t i=0; i<numberOfRows; i++) {
+    uint8_t pin = RowPins[i];
+    RowGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Analog);
+    RowGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::None);
+  }
+
+  for (uint8_t i=0; i<numberOfColumns; i++) {
+    uint8_t pin = ColumnPins[i];
+    ColumnGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Analog);
+    ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::None);
+  }
+}
+
 void generateWakeUpEventForKey(Key k) {
+#if 0
   // We're driving the rows and reading the columns.
   int row = rowForKey(k);
   for (uint8_t i=0; i<numberOfRows; i++) {
@@ -106,9 +121,17 @@ void generateWakeUpEventForKey(Key k) {
     uint8_t pin = RowPins[i];
     RowGPIO.ODR()->set(pin, state);
   }
+#endif
+  uint8_t rowPin = RowPins[rowForKey(k)];
+  RowGPIO.MODER()->setMode(rowPin, GPIO::MODER::Mode::Output);
+  RowGPIO.OTYPER()->setType(rowPin, GPIO::OTYPER::Type::OpenDrain);
+  RowGPIO.ODR()->set(rowPin, 0);
 
   uint8_t column = columnForKey(k);
   uint8_t columnPin = ColumnPins[column];
+
+  ColumnGPIO.MODER()->setMode(columnPin, GPIO::MODER::Mode::Input);
+  ColumnGPIO.PUPDR()->setPull(columnPin, GPIO::PUPDR::Pull::Up);
 
   SYSCFG.EXTICR1()->setEXTI(columnPin, ColumnGPIO);
 

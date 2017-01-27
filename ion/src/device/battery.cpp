@@ -35,12 +35,8 @@ namespace Battery {
 namespace Device {
 
 void init() {
-  initGPIO();
-  initADC();
-}
-
-void initGPIO() {
-  /* The BAT_CHRG pin is connected to the Li-Po charging IC. That pin uses an
+  /* Step 1 - Configure the GPIOs
+   * The BAT_CHRG pin is connected to the Li-Po charging IC. That pin uses an
    * open-drain output. Open-drain output are either connected to ground or left
    * floating. To interact with such an output, our input must therefore be
    * pulled up. */
@@ -51,13 +47,15 @@ void initGPIO() {
    * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
   ADCGPIO.MODER()->setMode(ADCPin, GPIO::MODER::Mode::Analog);
 
-  ADC.SMPR()->setSamplingTime(ADCChannel, ADC::SMPR::SamplingTime::Cycles480);
-  // ADC.SQR1()->setL(0); // Default
-  ADC.SQR3()->setSQ1(ADCChannel);
+  // Step 2 - Enable the ADC
+  RCC.APB2ENR()->setADC1EN(true);
+  ADC.CR2()->setADON(true);
 }
 
-void initADC() {
-  ADC.CR2()->setADON(true);
+void shutdown() {
+  // Disable the ADC
+  ADC.CR2()->setADON(false);
+  RCC.APB2ENR()->setADC1EN(false);
 }
 
 }

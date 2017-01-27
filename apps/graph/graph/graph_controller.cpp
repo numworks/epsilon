@@ -90,8 +90,9 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
    if (max == -FLT_MAX) {
     max = min+1.0f;
   }
-  m_graphRange.setYMin(min);
-  m_graphRange.setYMax(max);
+  float range = max - min;
+  m_graphRange.setYMin(min-k_displayBottomMarginRatio*range);
+  m_graphRange.setYMax(max+k_displayTopMarginRatio*range);
   return true;
 }
 

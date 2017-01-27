@@ -27,6 +27,11 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.11f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.015f;  // (cursorWidth/2)/graphViewWidth
 
+  /* When y auto is ticked, we use a display margin to be ensure that the user
+   * can move the cursor along the curve without panning the window */
+  constexpr static float k_displayTopMarginRatio = 0.03f;
+  constexpr static float k_displayBottomMarginRatio = 0.13f;
+
   constexpr static int k_maxNumberOfCharacters = 8;
   BannerView * bannerView() override;
   bool handleEnter() override;

@@ -12,6 +12,7 @@ AppsContainer::AppsContainer() :
   m_probabilityApp(this),
   m_calculationApp(this, &m_globalContext),
   m_regressionApp(this),
+  m_settingsApp(this),
   m_statisticsApp(this),
   m_globalContext(GlobalContext()),
   m_variableBoxController(&m_globalContext)
@@ -32,7 +33,7 @@ App * AppsContainer::appAtIndex(int index) {
     &m_statisticsApp,
     &m_probabilityApp,
     &m_regressionApp,
-    &m_regressionApp,
+    &m_settingsApp,
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);

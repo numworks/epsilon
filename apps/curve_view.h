@@ -26,6 +26,7 @@ protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   constexpr static KDCoordinate k_labelMargin =  4;
+  constexpr static KDCoordinate k_labelGraduationLength =  6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static KDCoordinate k_cursorSize = 9;

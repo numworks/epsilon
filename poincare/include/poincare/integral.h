@@ -19,9 +19,12 @@ private:
     float absoluteError;
   };
   constexpr static int k_maxNumberOfIterations = 100;
-  //float lagrangeGaussQuadrature(float a, float b, VariableContext xContext) const;
+#ifdef LAGRANGE_METHOD
+  float lagrangeGaussQuadrature(float a, float b, VariableContext xContext) const;
+#else
   DetailedResult kronrodGaussQuadrature(float a, float b, VariableContext xContext) const;
   float adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, VariableContext xContext) const;
+#endif
   float functionValueAtAbscissa(float x, VariableContext xcontext) const;
 };
 

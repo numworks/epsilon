@@ -93,10 +93,12 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {
+  curveView()->selectMainView(true);
   uint32_t newModelVersion = modelVersion();
   if (m_modelVersion != newModelVersion) {
     m_modelVersion = newModelVersion;
     initRangeParameters();
+    initCursorParameters();
   }
   uint32_t newRangeVersion = rangeVersion();
   if (m_rangeVersion != newRangeVersion) {
@@ -104,7 +106,6 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
     initCursorParameters();
   }
   headerViewController()->setSelectedButton(-1);
-  curveView()->selectMainView(true);
   // Reload graph view
   curveView()->reload();
   reloadBannerView();

@@ -80,6 +80,16 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
     min = min - 1;
     max = max + 1;
   }
+  if (min == FLT_MAX && max == -FLT_MAX) {
+    min = -1.0f;
+    max = 1.0f;
+  }
+  if (min == FLT_MAX) {
+    min = max-1.0f;
+  }
+   if (max == -FLT_MAX) {
+    max = min+1.0f;
+  }
   m_graphRange.setYMin(min);
   m_graphRange.setYMax(max);
   return true;
@@ -132,9 +142,13 @@ void GraphController::initRangeParameters() {
 void GraphController::initCursorParameters() {
   float x = (m_graphRange.xMin()+m_graphRange.xMax())/2.0f;
   m_indexFunctionSelectedByCursor = 0;
-  Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
   App * graphApp = (Graph::App *)app();
-  float y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
+  int functionIndex = 0;
+  float y = 0;
+  do {
+    Function * firstFunction = m_functionStore->activeFunctionAtIndex(functionIndex++);
+    y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
+  } while (isnan(y) && functionIndex < m_functionStore->numberOfActiveFunctions());
   m_cursor.moveTo(x, y);
   m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }

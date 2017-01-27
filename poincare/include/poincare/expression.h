@@ -26,6 +26,7 @@ class Expression {
       Power,
       Product,
       Sine,
+      Sum,
       Subtraction,
       Symbol,
       Tangent,

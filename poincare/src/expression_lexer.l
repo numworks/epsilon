@@ -89,6 +89,7 @@ int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
+sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

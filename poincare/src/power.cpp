@@ -4,7 +4,7 @@ extern "C" {
 }
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
-#include "layout/exponent_layout.h"
+#include "layout/baseline_relative_layout.h"
 
 float Power::approximate(Context& context) const {
   return powf(m_operands[0]->approximate(context), m_operands[1]->approximate(context));
@@ -49,5 +49,5 @@ ExpressionLayout * Power::createLayout() const {
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = (Expression *)m_operands[1]->operand(0);
   }
-  return new ExponentLayout(m_operands[0]->createLayout(),indiceOperand->createLayout());
+  return new BaselineRelativeLayout(m_operands[0]->createLayout(),indiceOperand->createLayout(), BaselineRelativeLayout::Type::Superscript);
 }

@@ -7,7 +7,7 @@ extern "C" {
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
-#include "layout/subscript_layout.h"
+#include "layout/baseline_relative_layout.h"
 
 Logarithm::Logarithm() :
   Function("log")
@@ -39,7 +39,7 @@ ExpressionLayout * Logarithm::createLayout() const {
     return Function::createLayout();
   }
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new SubscriptLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout());
+  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout());
   return new HorizontalLayout(childrenLayouts, 2);
 }

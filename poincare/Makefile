@@ -39,7 +39,7 @@ objs += $(addprefix poincare/src/,\
 )
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\
-  exponent_layout.o\
+  baseline_relative_layout.o\
   expression_layout.o\
   fraction_layout.o\
   horizontal_layout.o\
@@ -50,7 +50,6 @@ objs += $(addprefix poincare/src/layout/,\
   product_layout.o\
   string_layout.o\
   sum_layout.o\
-  subscript_layout.o\
   symbol_layout.o\
 )
 

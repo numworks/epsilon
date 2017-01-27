@@ -24,7 +24,7 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
 
 float Logarithm::approximate(Context& context) const {
   if (m_numberOfArguments == 1) {
-    return log10f(m_args[1]->approximate(context));
+    return log10f(m_args[0]->approximate(context));
   }
   return log10f(m_args[1]->approximate(context))/log10f(m_args[0]->approximate(context));
 }

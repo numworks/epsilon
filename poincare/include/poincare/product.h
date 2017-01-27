@@ -2,7 +2,6 @@
 #define POINCARE_PRODUCT_H
 
 #include <poincare/function.h>
-#include <poincare/n_context.h>
 
 class Product : public Function {
 public:

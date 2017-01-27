@@ -31,7 +31,7 @@ Expression * Integral::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float Integral::approximate(Context& context) const {
-  XContext xContext = XContext(&context);
+  VariableContext xContext = VariableContext('x', &context);
   float a = m_args[1]->approximate(context);
   float b = m_args[2]->approximate(context);
   return adaptiveQuadrature(a, b, 0.1, k_maxNumberOfIterations,xContext);
@@ -44,14 +44,14 @@ ExpressionLayout * Integral::createLayout() const {
   return new IntegralLayout(m_args[1]->createLayout(), m_args[2]->createLayout(), new HorizontalLayout(childrenLayouts, 2));
 }
 
-float Integral::functionValueAtAbscissa(float x, XContext xContext) const {
+float Integral::functionValueAtAbscissa(float x, VariableContext xContext) const {
   Float e = Float(x);
   Symbol xSymbol = Symbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   return m_args[0]->approximate(xContext);
 }
 
-/*float Integral::lagrangeGaussQuadrature(float a, float b, XContext xContext) const {
+/*float Integral::lagrangeGaussQuadrature(float a, float b, VariableContext xContext) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights taken from
    * http://www.holoborodko.com/pavel/numerical-methods/numerical-integration/
@@ -71,7 +71,7 @@ float Integral::functionValueAtAbscissa(float x, XContext xContext) const {
   return result;
 }*/
 
-Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, XContext xContext) const {
+Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, VariableContext xContext) const {
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */
   static float wg[5]= {0.066671344308688137593568809893332f, 0.149451349150580593145776339657697f,
@@ -139,7 +139,7 @@ Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, XCon
   return result;
 }
 
-float Integral::adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, XContext xContext) const {
+float Integral::adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, VariableContext xContext) const {
   DetailedResult quadKG = kronrodGaussQuadrature(a, b, xContext);
   float result = quadKG.integral;
   if (numberOfIterations < k_maxNumberOfIterations && quadKG.absoluteError > eps) {

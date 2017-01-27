@@ -2,7 +2,6 @@
 #define POINCARE_SUM_H
 
 #include <poincare/function.h>
-#include <poincare/n_context.h>
 
 class Sum : public Function {
 public:

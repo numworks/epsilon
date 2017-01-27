@@ -24,7 +24,6 @@ objs += $(addprefix poincare/src/,\
   matrix_data.o\
   multiplication.o\
   naperian_logarithm.o\
-  n_context.o\
   nth_root.o\
   opposite.o\
   parenthesis.o\
@@ -36,7 +35,7 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
-  x_context.o\
+  variable_context.o\
 )
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\

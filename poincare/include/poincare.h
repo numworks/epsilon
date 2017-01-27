@@ -19,7 +19,6 @@
 #include <poincare/matrix_data.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
-#include <poincare/n_context.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
@@ -31,6 +30,6 @@
 #include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
-#include <poincare/x_context.h>
+#include <poincare/variable_context.h>
 
 #endif

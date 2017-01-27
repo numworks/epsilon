@@ -27,7 +27,7 @@ Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float Derivative::approximate(Context& context) const {
-  XContext xContext = XContext(&context);
+  VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
   float x = m_args[1]->approximate(context);
   Float e = Float(x);
@@ -98,7 +98,7 @@ float Derivative::approximate(Context& context) const {
   return roundf(ans/err)*err;
 }
 
-float Derivative::growthRateAroundAbscissa(float x, float h, XContext xContext) const {
+float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext) const {
   Symbol xSymbol = Symbol('x');
   Float e = Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
@@ -109,7 +109,7 @@ float Derivative::growthRateAroundAbscissa(float x, float h, XContext xContext) 
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
-float Derivative::approximateDerivate2(float x, float h, XContext xContext) const {
+float Derivative::approximateDerivate2(float x, float h, VariableContext xContext) const {
   Symbol xSymbol = Symbol('x');
   Float e = Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);

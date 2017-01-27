@@ -1,16 +1,17 @@
-#ifndef POINCARE_X_CONTEXT_H
-#define POINCARE_X_CONTEXT_H
+#ifndef POINCARE_VARIABLE_CONTEXT_H
+#define POINCARE_VARIABLE_CONTEXT_H
 
 #include <poincare/context.h>
 #include <poincare/float.h>
 
-class XContext : public Context {
+class VariableContext : public Context {
 public:
-  XContext(Context * parentContext = nullptr);
+  VariableContext(char name, Context * parentContext = nullptr);
   void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
   const Expression * expressionForSymbol(const Symbol * symbol) override;
 private:
-  Float m_xValue;
+  char m_name;
+  Float m_value;
   Context * m_parentContext;
 };
 

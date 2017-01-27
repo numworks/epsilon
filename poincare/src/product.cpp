@@ -1,6 +1,7 @@
 #include <poincare/product.h>
 #include <poincare/symbol.h>
 #include <poincare/float.h>
+#include <poincare/variable_context.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/product_layout.h"
@@ -28,7 +29,7 @@ Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float Product::approximate(Context& context) const {
-  NContext nContext = NContext(&context);
+  VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
   int start = m_args[1]->approximate(context);
   int end = m_args[2]->approximate(context);

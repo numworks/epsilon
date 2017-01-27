@@ -18,7 +18,7 @@ public:
   Context * localContext() override;
 private:
   FunctionStore m_functionStore;
-  XContext m_xContext;
+  VariableContext m_xContext;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

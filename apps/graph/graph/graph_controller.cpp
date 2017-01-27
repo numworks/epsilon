@@ -53,34 +53,35 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
     return false;
   }
   App * graphApp = (Graph::App *)app();
-  if (m_functionStore->numberOfActiveFunctions() > 0) {
-    float min = FLT_MAX;
-    float max = -FLT_MAX;
-    float xMin = m_graphRange.xMin();
-    float xMax = m_graphRange.xMax();
-    float step = (xMax - xMin)/Ion::Display::Width;
-    for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
-      Function * f = m_functionStore->activeFunctionAtIndex(i);
-      float y = 0.0f;
-      for (int i = 0; i <= Ion::Display::Width; i++) {
-        float x = xMin + i*step;
-        y = f->evaluateAtAbscissa(x, graphApp->localContext());
-        if (!isnan(y) && !isinf(y)) {
-          min = min < y ? min : y;
-          max = max > y ? max : y;
-        }
+  if (m_functionStore->numberOfActiveFunctions() <= 0) {
+    return false;
+  }
+  float min = FLT_MAX;
+  float max = -FLT_MAX;
+  float xMin = m_graphRange.xMin();
+  float xMax = m_graphRange.xMax();
+  float step = (xMax - xMin)/Ion::Display::Width;
+  for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
+    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    float y = 0.0f;
+    for (int i = 0; i <= Ion::Display::Width; i++) {
+      float x = xMin + i*step;
+      y = f->evaluateAtAbscissa(x, graphApp->localContext());
+      if (!isnan(y) && !isinf(y)) {
+        min = min < y ? min : y;
+        max = max > y ? max : y;
       }
     }
-    if (m_graphRange.yMin() == min && m_graphRange.yMax() == max) {
-      return false;
-    }
-    if (min == max) {
-      min = min - 1;
-      max = max + 1;
-    }
-    m_graphRange.setYMin(min);
-    m_graphRange.setYMax(max);
   }
+  if (m_graphRange.yMin() == min && m_graphRange.yMax() == max) {
+    return false;
+  }
+  if (min == max) {
+    min = min - 1;
+    max = max + 1;
+  }
+  m_graphRange.setYMin(min);
+  m_graphRange.setYMax(max);
   return true;
 }
 

@@ -7,8 +7,8 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
-  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large),
-    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator, KDText::FontSize::Large)},
+  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
+    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))
@@ -48,7 +48,7 @@ KDCoordinate ListController::rowHeight(int j) {
     return k_emptyRowHeight;
   }
   KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize + k_emptyRowHeight - KDText::stringSize(" ", KDText::FontSize::Large).height();
+  return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
 }
 
 KDCoordinate ListController::columnWidth(int i) {

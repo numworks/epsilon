@@ -4,7 +4,7 @@
 
 InputViewController::TextFieldController::TextFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate) :
   ViewController(parentResponder),
-  m_textField(parentResponder, m_textBody, m_textBody, 255, KDText::FontSize::Large, textFieldDelegate)
+  m_textField(parentResponder, m_textBody, m_textBody, 255, textFieldDelegate)
 {
   m_textBody[0] = 0;
 }

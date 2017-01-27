@@ -7,7 +7,7 @@
 
 class EvenOddEditableTextCell : public EvenOddCell, public Responder {
 public:
-  EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size);
+  EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size = KDText::FontSize::Large);
   EditableTextCell * editableTextCell();
   void reloadCell() override;
   const char * text() const;

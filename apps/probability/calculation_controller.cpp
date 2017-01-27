@@ -11,10 +11,9 @@ namespace Probability {
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
-  m_text{PointerTextView(KDText::FontSize::Large), PointerTextView(KDText::FontSize::Large), PointerTextView(KDText::FontSize::Large)},
-  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer, KDText::FontSize::Large)},
+  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
+    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
   m_calculation(calculation)
 {
 }
@@ -70,7 +69,7 @@ void CalculationController::ContentView::willDisplayEditableCellAtIndex(int inde
 
 void CalculationController::ContentView::layoutSubviews() {
   markRectAsDirty(bounds());
-  KDSize charSize = KDText::stringSize(" ", KDText::FontSize::Large);
+  KDSize charSize = KDText::stringSize(" ");
   KDCoordinate xCoordinate = 0;
   m_lawCurveView.setFrame(KDRect(0,  ImageTableView::k_imageHeight, bounds().width(), bounds().height() - ImageTableView::k_imageHeight));
   m_imageTableView.setFrame(KDRect(xCoordinate, 0, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));

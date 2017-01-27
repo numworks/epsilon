@@ -10,7 +10,7 @@ public:
     HorizontalIndicator,
     VerticalIndicator
   };
-	FunctionTitleCell(Orientation orientation, KDText::FontSize size);
+  FunctionTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Small);
   void setColor(KDColor color);
   void setText(const char * textContent);
   void drawRect(KDContext * ctx, KDRect rect) const override;

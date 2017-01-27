@@ -7,7 +7,7 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
    KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TableViewCell(),
   Responder(parentResponder),
-  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, size, delegate, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
 {
 }
 

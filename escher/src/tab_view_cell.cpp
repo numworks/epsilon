@@ -48,7 +48,7 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Write title
   KDSize textSize = KDText::stringSize(m_name, KDText::FontSize::Small);
   KDPoint origin(0.5f*(m_frame.width() - textSize.width()),0.5f*(m_frame.height() - textSize.height()));
-  ctx->drawString(m_name, KDText::FontSize::Small, origin, text, background);
+  ctx->drawString(m_name, origin, KDText::FontSize::Small, text, background);
 }
 
 #if ESCHER_VIEW_LOGGING

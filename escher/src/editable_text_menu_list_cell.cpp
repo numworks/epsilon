@@ -4,7 +4,7 @@
 EditableTextMenuListCell::EditableTextMenuListCell(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label) :
   Responder(parentResponder),
   MenuListCell(label),
-  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, KDText::FontSize::Large, textFieldDelegate, 1.0f, 0.5f))
+  m_textField(TextField(this, m_textBody, draftTextBuffer, 255, textFieldDelegate, KDText::FontSize::Large, 1.0f, 0.5f))
 {
 }
 
@@ -20,7 +20,7 @@ void EditableTextMenuListCell::layoutSubviews() {
   MenuListCell::layoutSubviews();
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDSize charSize = KDText::stringSize(" ", KDText::FontSize::Large);
+  KDSize charSize = KDText::stringSize(" ");
   KDCoordinate textWidth = k_maxNumberOfEditableCharacters*charSize.width();
   m_textField.setFrame(KDRect(width - textWidth - k_separatorThickness, (height - charSize.height())/2, textWidth - k_separatorThickness, charSize.height()));
 }

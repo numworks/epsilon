@@ -9,7 +9,7 @@ public:
     Small,
     Large
   };
-  static KDSize stringSize(const char * text, FontSize size);
+  static KDSize stringSize(const char * text, FontSize size = FontSize::Large);
 };
 
 #endif

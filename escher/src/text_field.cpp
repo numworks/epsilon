@@ -2,7 +2,7 @@
 #include <assert.h>
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, KDText::FontSize size, TextFieldDelegate * delegate,
+    size_t textBufferSize, TextFieldDelegate * delegate, KDText::FontSize size,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   View(),
   Responder(parentResponder),
@@ -33,7 +33,7 @@ void TextField::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
       m_verticalAlignment*(m_frame.height() - textSize.height()));
-  ctx->drawString(text(), m_fontSize, origin, m_textColor, m_backgroundColor);
+  ctx->drawString(text(), origin, m_fontSize, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING

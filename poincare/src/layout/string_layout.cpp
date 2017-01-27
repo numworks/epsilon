@@ -22,7 +22,7 @@ ExpressionLayout * StringLayout::child(uint16_t index) {
 }
 
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->drawString(m_string, m_fontSize, p, expressionColor, backgroundColor);
+  ctx->drawString(m_string, p, m_fontSize, expressionColor, backgroundColor);
 }
 
 KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {

@@ -14,7 +14,7 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
-  }, this), KDText::FontSize::Small)),
+  }, this))),
   m_store(store),
   m_cursor(CurveViewCursor()),
   m_histogramParameterController(nullptr, store)

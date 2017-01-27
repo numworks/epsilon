@@ -15,10 +15,10 @@ public:
   KDColor getPixel(KDPoint p);
 
   // Text
-  void drawChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void drawString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void blendChar(char character, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack);
-  void blendString(const char * text, KDText::FontSize size, KDPoint p, KDColor textColor = KDColorBlack);
+  void drawChar(char character, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void blendChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
+  void blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);

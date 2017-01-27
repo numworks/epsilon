@@ -105,7 +105,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
     }
     if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i), KDText::FontSize::Small)))) {
-      ctx->blendString(label(axis, i), KDText::FontSize::Small, origin, KDColorBlack);
+      ctx->blendString(label(axis, i), origin, KDText::FontSize::Small, KDColorBlack);
     }
     i++;
   }

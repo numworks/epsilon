@@ -6,8 +6,8 @@
 void print(const char * message) {
   static int line_y = 0;
   KDContext * ctx = KDIonContext::sharedContext();
-  int line_height = KDText::stringSize("M", KDText::FontSize::Large).height();
-  ctx->drawString(message, KDText::FontSize::Large, KDPoint(0, line_y), KDColorBlack);
+  int line_height = KDText::stringSize("M").height();
+  ctx->drawString(message, KDPoint(0, line_y));
   line_y += line_height;
   if (line_y > Ion::Display::Height) {
     line_y = 0;

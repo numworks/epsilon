@@ -5,7 +5,7 @@
 
 class PointerTextView : public TextView {
 public:
-  PointerTextView(KDText::FontSize size, const char * text = nullptr, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
+  PointerTextView(KDText::FontSize size = KDText::FontSize::Large, const char * text = nullptr, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setText(const char * text) override;
 protected:

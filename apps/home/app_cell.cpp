@@ -40,7 +40,7 @@ void AppCell::setVisible(bool visible) {
 
 void AppCell::reloadCell() {
   TableViewCell::reloadCell();
-  m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowOne : KDColorWhite);
+  m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
 }
 
 }

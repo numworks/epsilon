@@ -69,7 +69,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::Select, 2);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)m_selectedQuantile], lowBound, upBound, Palette::YellowOne, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
   }
   // Draw the horizontal lines linking the box to the extreme bounds
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);

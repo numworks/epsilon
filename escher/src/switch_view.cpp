@@ -25,7 +25,7 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate switchHalfHeight = k_switchHeight/2;
   KDCoordinate switchHalfWidth = k_switchWidth/2;
 
-  KDColor mainColor = m_state ? Palette::YellowOne : Palette::GreyDark;
+  KDColor mainColor = m_state ? Palette::YellowDark : Palette::GreyDark;
   // These 4 lines draw the outline of the switch.
   ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight - k_separatorThickness, k_switchWidth + 2*k_separatorThickness, k_separatorThickness), mainColor);
   ctx->fillRect(KDRect(width - 2*k_separatorThickness - k_switchMargin - k_switchWidth, heightCenter-switchHalfHeight, k_separatorThickness, k_switchHeight+k_separatorThickness), mainColor);

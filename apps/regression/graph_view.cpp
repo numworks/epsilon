@@ -17,9 +17,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Vertical);
   drawLabels(ctx, rect, Axis::Horizontal, true);
   drawLabels(ctx, rect, Axis::Vertical, true);
-  drawCurve(ctx, rect, nullptr, Palette::YellowOne);
+  drawCurve(ctx, rect, nullptr, Palette::YellowDark);
   for (int index = 0; index < m_store->numberOfPairs(); index++) {
-    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::YellowOne);
+    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::YellowDark);
   }
   drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::PurpleBright);
 }

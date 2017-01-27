@@ -5,12 +5,12 @@ extern "C" {
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorWhite, Palette::YellowOne)
+  m_titleView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark)
 {
 }
 
 void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::YellowOne);
+  ctx->fillRect(bounds(), Palette::YellowDark);
 
 }
 

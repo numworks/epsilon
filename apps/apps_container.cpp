@@ -1,4 +1,5 @@
 #include "apps_container.h"
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -54,6 +55,9 @@ bool AppsContainer::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Home) {
     switchTo(appAtIndex(0));
     return true;
+  }
+  if (event == Ion::Events::OnOff) {
+    Ion::Power::suspend();
   }
   return false;
 }

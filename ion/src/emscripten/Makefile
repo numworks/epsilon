@@ -1,7 +1,9 @@
-#include ion/src/shared/Makefile
-
 objs += $(addprefix ion/src/emscripten/, \
   main.o\
 )
 
-objs += ion/src/shared/events.o
+objs += $(addprefix ion/src/shared/, \
+  crc32.o \
+  events.o \
+  power.o \
+)

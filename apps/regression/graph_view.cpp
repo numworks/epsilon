@@ -5,7 +5,7 @@
 namespace Regression {
 
 GraphView::GraphView(Store * store, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
-  CurveView(store, cursor, bannerView, cursorView, 0.05f, 0.05f, 0.25f, 0.05f),
+  CurveView(store, cursor, bannerView, cursorView),
   m_store(store)
 {
 }

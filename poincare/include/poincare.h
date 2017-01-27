@@ -24,6 +24,7 @@
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
+#include <poincare/product.h>
 #include <poincare/sine.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>

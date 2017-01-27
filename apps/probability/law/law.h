@@ -34,6 +34,10 @@ public:
   virtual float rightIntegralInverseForProbability(float * probability);
 protected:
   constexpr static int k_maxNumberOfOperations = 1000000;
+  constexpr static float k_displayTopMarginRatio = 0.05f;
+  constexpr static float k_displayBottomMarginRatio = 0.2f;
+  constexpr static float k_displayLeftMarginRatio = 0.05f;
+  constexpr static float k_displayRightMarginRatio = 0.05f;
 };
 
 }

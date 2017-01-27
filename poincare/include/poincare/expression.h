@@ -25,6 +25,7 @@ class Expression {
       Fraction,
       Parenthesis,
       Power,
+      Product,
       Sine,
       Sum,
       Subtraction,

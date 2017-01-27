@@ -140,10 +140,16 @@ int Store::nextDot(int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
-  m_xMin = minValueOfColumn(0);
-  m_xMax = maxValueOfColumn(0);
-  m_yMin = minValueOfColumn(1);
-  m_yMax = maxValueOfColumn(1);
+  float min = minValueOfColumn(0);
+  float max = maxValueOfColumn(0);
+  float range = max - min;
+  m_xMin = min - k_displayLeftMarginRatio*range;
+  m_xMax = max + k_displayRightMarginRatio*range;
+  min = minValueOfColumn(1);
+  max = maxValueOfColumn(1);
+  range = max - min;
+  m_yMin = min - k_displayBottomMarginRatio*range;
+  m_yMax = max + k_displayTopMarginRatio*range;
   if (m_xMin == m_xMax) {;
     m_xMin = m_xMin - 1.0f;
     m_xMax = m_xMax + 1.0f;

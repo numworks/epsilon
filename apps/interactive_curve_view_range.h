@@ -2,28 +2,20 @@
 #define APPS_INTERACTIVE_CURVE_VIEW_RANGE_H
 
 #include <stdint.h>
-#include "curve_view_range.h"
+#include "memoized_curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
 
-class InteractiveCurveViewRange : public CurveViewRange {
+class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate);
   void setCursor(CurveViewCursor * cursor);
-  uint32_t rangeChecksum();
+  uint32_t rangeChecksum() override;
 
   //CurveViewWindow
-  float xMin() override;
-  float xMax() override;
-  float yMin() override;
-  float yMax() override;
   bool yAuto();
-  float xGridUnit() override;
-  float yGridUnit() override;
-  void setXMin(float f);
-  void setXMax(float f);
-  void setYMin(float f);
-  void setYMax(float f);
+  void setXMin(float f) override;
+  void setXMax(float f) override;
   void setYAuto(bool yAuto);
 
   // Window
@@ -34,23 +26,10 @@ public:
   void setTrigonometric();
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
-
-  //Cursor
-  // moveCursorTo returns true if the window has moved
-  bool moveCursorTo(float x, float y);
-  constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
+  void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
 protected:
-  constexpr static float k_cursorMarginFactorToBorder = 0.025f;
-  // Window bounds of the data
-  float m_xMin;
-  float m_xMax;
-  float m_yMin;
-  float m_yMax;
   bool m_yAuto;
-  float m_xGridUnit;
-  float m_yGridUnit;
 private:
-  bool panToMakePointVisible(float x, float y, float xMargin, float yMargin);
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRangeDelegate * m_delegate;
 };

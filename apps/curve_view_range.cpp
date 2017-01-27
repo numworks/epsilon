@@ -1,6 +1,16 @@
 #include "curve_view_range.h"
 #include <math.h>
+#include <ion.h>
+#include <assert.h>
+#include <stddef.h>
 #include <float.h>
+
+uint32_t CurveViewRange::rangeChecksum() {
+  float data[4] = {xMin(), xMax(), yMin(), yMax()};
+  size_t dataLengthInBytes = 4*sizeof(float);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
+}
 
 float CurveViewRange::yGridUnit() {
   return 0.0f;

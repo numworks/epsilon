@@ -40,28 +40,31 @@ const char * BinomialLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float BinomialLaw::xMin() {
-  return floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  float min = floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  float max = xMax();
+  return min - k_displayLeftMarginRatio * (max - min);
 }
 
 float BinomialLaw::xMax() {
-  float result = ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
-  if (result <= xMin()) {
-    result = xMin() + 1.0f;
+  float min = floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  float max = ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  if (max <= min) {
+    max = min + 1.0f;
   }
-  return result;
+  return max + k_displayRightMarginRatio*(max - min);
 }
 
 float BinomialLaw::yMin() {
-  return 0.0f;
+  return -k_displayBottomMarginRatio*yMax();
 }
 
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= yMin() || isnan(result)) {
-    result = yMin() + 1.0f;
+  if (result <= 0.0f || isnan(result)) {
+    result = 1.0f;
   }
-  return result;
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float BinomialLaw::evaluateAtAbscissa(float x) const {

@@ -54,15 +54,15 @@ float UniformLaw::xMax() {
 }
 
 float UniformLaw::yMin() {
-  return 0.0f;
+  return -k_displayBottomMarginRatio*yMax();
 }
 
 float UniformLaw::yMax() {
   float result = m_parameter1 == m_parameter2 ? k_diracMaximum : 1.0f/(m_parameter2-m_parameter1);
-  if (result <= yMin()) {
-    result = yMin() + 1.0f;
+  if (result <= 0.0f) {
+    result = 1.0f;
   }
-  return result;
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float UniformLaw::evaluateAtAbscissa(float t) const {

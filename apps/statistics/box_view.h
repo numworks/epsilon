@@ -20,7 +20,7 @@ public:
     Max = 4
   };
   BoxView(Store * store, ::BannerView * bannerView);
-  void reloadSelection() override;
+  void reload() override;
   Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -119,7 +119,6 @@ void GraphController::reloadBannerView() {
     Float(y).convertFloatToText(buffer + legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Decimal);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
-  m_bannerView.layoutSubviews();
 }
 
 void GraphController::initRangeParameters() {
@@ -134,20 +133,23 @@ void GraphController::initCursorParameters() {
   Function * firstFunction = m_functionStore->activeFunctionAtIndex(0);
   App * graphApp = (Graph::App *)app();
   float y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
-  m_graphRange.moveCursorTo(x, y);
+  m_cursor.moveTo(x, y);
+  m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
-int GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction) {
   float xCursorPosition = m_cursor.x();
-  float x = direction > 0 ? xCursorPosition + m_graphRange.xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit :
-    xCursorPosition -  m_graphRange.xGridUnit()/InteractiveCurveViewRange::k_numberOfCursorStepsInGradUnit;
+  float x = direction > 0 ? xCursorPosition + m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit :
+    xCursorPosition -  m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit;
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
   float y = f->evaluateAtAbscissa(x, graphApp->localContext());
-  return m_graphRange.moveCursorTo(x, y);;
+  m_cursor.moveTo(x, y);
+  m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return true;
 }
 
-int GraphController::moveCursorVertically(int direction) {
+bool GraphController::moveCursorVertically(int direction) {
   Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
   float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
@@ -164,9 +166,11 @@ int GraphController::moveCursorVertically(int direction) {
     }
   }
   if (nextFunction == actualFunction) {
-    return -1;
+    return false;
   }
-  return m_graphRange.moveCursorTo(m_cursor.x(), nextY);
+  m_cursor.moveTo(m_cursor.x(), nextY);
+  m_graphRange.panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return true;
 }
 
 uint32_t GraphController::modelVersion() {

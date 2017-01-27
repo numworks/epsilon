@@ -32,26 +32,26 @@ const char * PoissonLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float PoissonLaw::xMin() {
-  return 0.0f;
+  return -k_displayLeftMarginRatio*xMax();
 }
 
 float PoissonLaw::xMax() {
   assert(m_parameter1 != 0);
-  return m_parameter1 + 5.0f*sqrtf(m_parameter1);
+  return (m_parameter1 + 5.0f*sqrtf(m_parameter1))*(1.0f+k_displayRightMarginRatio);
 }
 
 float PoissonLaw::yMin() {
-  return 0.0f;
+  return - k_displayBottomMarginRatio * yMax();
 }
 
 float PoissonLaw::yMax() {
   int maxAbscissa = (int)m_parameter1;
   assert(maxAbscissa >= 0.0f);
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= yMin()) {
-    result = yMin() + 1.0f;
+  if (result <= 0.0f) {
+    result = 1.0f;
   }
-  return result;
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float PoissonLaw::evaluateAtAbscissa(float x) const {

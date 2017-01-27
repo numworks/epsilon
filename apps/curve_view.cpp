@@ -9,42 +9,30 @@ constexpr KDColor CurveView::k_axisColor;
 constexpr KDColor CurveView::k_gridColor;
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
-    View * cursorView, float topMarginFactor, float rightMarginFactor, float bottomMarginFactor,
-    float leftMarginFactor) :
+    View * cursorView) :
   View(),
   m_curveViewRange(curveViewRange),
   m_curveViewCursor(curveViewCursor),
   m_bannerView(bannerView),
   m_cursorView(cursorView),
-  m_topMarginFactor(topMarginFactor),
-  m_bottomMarginFactor(bottomMarginFactor),
-  m_leftMarginFactor(leftMarginFactor),
-  m_rightMarginFactor(rightMarginFactor)
+  m_drawnRangeVersion(0)
 {
 }
 
 void CurveView::reload() {
-  markRectAsDirty(bounds());
-  if (label(Axis::Horizontal, 0) != nullptr) {
-    computeLabels(Axis::Horizontal);
-  }
-  if (label(Axis::Vertical, 0) != nullptr) {
-    computeLabels(Axis::Vertical);
-  }
-  layoutSubviews();
-}
-
-void CurveView::reloadSelection() {
-  if (m_curveViewCursor != nullptr) {
-    float pixelXSelection = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
-    float pixelYSelection = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    KDRect dirtyZone(KDRect(pixelXSelection - k_cursorSize/2, pixelYSelection - k_cursorSize/2, k_cursorSize, k_cursorSize));
-    markRectAsDirty(dirtyZone);
-    layoutCursor();
-    if (m_bannerView != nullptr) {
-      m_bannerView->layoutSubviews();
+  uint32_t rangeVersion = m_curveViewRange->rangeChecksum();
+  if (m_drawnRangeVersion != rangeVersion) {
+    // FIXME: This should also be called if the *curve* changed
+    m_drawnRangeVersion = rangeVersion;
+    markRectAsDirty(bounds());
+    if (label(Axis::Horizontal, 0) != nullptr) {
+      computeLabels(Axis::Horizontal);
+    }
+    if (label(Axis::Vertical, 0) != nullptr) {
+      computeLabels(Axis::Vertical);
     }
   }
+  layoutSubviews();
 }
 
 bool CurveView::isMainViewSelected() const {
@@ -54,7 +42,7 @@ bool CurveView::isMainViewSelected() const {
 void CurveView::selectMainView(bool mainViewSelected) {
   if (m_mainViewSelected != mainViewSelected) {
     m_mainViewSelected = mainViewSelected;
-    reloadSelection();
+    reload();
     layoutSubviews();
   }
 }
@@ -65,18 +53,12 @@ void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
 
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  float range = axis == Axis::Horizontal ? m_curveViewRange->xMax() - m_curveViewRange->xMin() : m_curveViewRange->yMax() - m_curveViewRange->yMin();
-  float absoluteMin = axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin();
-  float marginFactor = axis == Axis::Horizontal ? m_leftMarginFactor : m_bottomMarginFactor;
-  return absoluteMin - marginFactor*range;
+  return (axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin());
 }
 
 float CurveView::max(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  float range = axis == Axis::Horizontal ? m_curveViewRange->xMax() - m_curveViewRange->xMin() : m_curveViewRange->yMax() - m_curveViewRange->yMin();
-  float absoluteMax = (axis == Axis::Horizontal ? m_curveViewRange->xMax() : m_curveViewRange->yMax());
-  float marginFactor = axis == Axis::Horizontal ? m_rightMarginFactor : m_topMarginFactor;
-  return absoluteMax + marginFactor*range;
+  return (axis == Axis::Horizontal ? m_curveViewRange->xMax() : m_curveViewRange->yMax());
 }
 
 float CurveView::gridUnit(Axis axis) const {
@@ -395,19 +377,6 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
 }
 
 void CurveView::layoutSubviews() {
-  layoutCursor();
-  if (m_bannerView != nullptr) {
-    m_bannerView->setFrame(bounds());
-    KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
-    KDRect bannerFrame(KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight));
-    if (!m_mainViewSelected) {
-      bannerFrame = KDRectZero;
-    }
-    m_bannerView->setFrame(bannerFrame);
-  }
-}
-
-void CurveView::layoutCursor() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
     KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
@@ -416,6 +385,14 @@ void CurveView::layoutCursor() {
       cursorFrame = KDRectZero;
     }
     m_cursorView->setFrame(cursorFrame);
+  }
+  if (m_bannerView != nullptr) {
+    KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
+    KDRect bannerFrame(KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight));
+    if (!m_mainViewSelected) {
+      bannerFrame = KDRectZero;
+    }
+    m_bannerView->setFrame(bannerFrame);
   }
 }
 

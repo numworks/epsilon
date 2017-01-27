@@ -8,10 +8,10 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setLegendAtIndex(char * text, int index);
   KDSize minimalSizeForOptimalDisplay() override;
-  void layoutSubviews() override;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
+  void layoutSubviews() override;
   int numberOfLines();
   virtual TextView * textViewAtIndex(int i) = 0;
 };

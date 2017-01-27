@@ -19,6 +19,11 @@ public:
   bool isEmpty() override;
   const char * emptyMessage() override;
 private:
+  constexpr static float k_cursorTopMarginRatio = 0.025f;
+  constexpr static float k_cursorRightMarginRatio = 0.015f;
+  constexpr static float k_cursorBottomMarginRatio = 0.16f;
+  constexpr static float k_cursorLeftMarginRatio = 0.015f;
+
   constexpr static int k_maxNumberOfCharacters = 8;
   BannerView * bannerView() override;
   CurveView * curveView() override;
@@ -27,8 +32,8 @@ private:
   void reloadBannerView() override;
   void initRangeParameters() override;
   void initCursorParameters() override;
-  int moveCursorHorizontally(int direction) override;
-  int moveCursorVertically(int direction) override;
+  bool moveCursorHorizontally(int direction) override;
+  bool moveCursorVertically(int direction) override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   BannerView m_bannerView;

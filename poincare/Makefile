@@ -24,6 +24,7 @@ objs += $(addprefix poincare/src/,\
   matrix.o\
   matrix_data.o\
   multiplication.o\
+  naperian_logarithm.o\
   n_context.o\
   nth_root.o\
   opposite.o\
@@ -31,6 +32,7 @@ objs += $(addprefix poincare/src/,\
   power.o\
   product.o\
   sine.o\
+  square_root.o\
   subtraction.o\
   sum.o\
   symbol.o\

@@ -30,7 +30,7 @@ static constexpr EventData s_dataForEvent[] = {
   TL(), TL(), U(),   U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
   T("exp()"), T("ln()"),  T("log()"), T("i"), T(","),      T("^"),
-  T("sin()"), T("cos()"), T("tan()"), T("p"), T("sqrt()"), T("^2"),
+  T("sin()"), T("cos()"), T("tan()"), T("Pi"), T("v()"), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("*"), T("/"), U(),
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),

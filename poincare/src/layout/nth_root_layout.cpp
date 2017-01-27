@@ -19,25 +19,31 @@ NthRootLayout::NthRootLayout(ExpressionLayout * radicandLayout, ExpressionLayout
   m_indexLayout(indexLayout)
 {
   m_radicandLayout->setParent(this);
-  m_indexLayout->setParent(this);
-  m_baseline = max(m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin,
-                   m_indexLayout->size().height() + k_indexHeight);
+  if (m_indexLayout != nullptr) {
+    m_indexLayout->setParent(this);
+    m_baseline = max(m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin,
+      m_indexLayout->size().height() + k_indexHeight);
+  } else {
+    m_baseline = m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin;
+  }
 }
 
 NthRootLayout::~NthRootLayout() {
   delete m_radicandLayout;
-  delete m_indexLayout;
+  if (m_indexLayout != nullptr) {
+    delete m_indexLayout;
+  }
 }
 
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize radicandSize = m_radicandLayout->size();
-  KDSize indexSize = m_indexLayout->size();
+  KDSize indexSize = m_indexLayout != nullptr ? m_indexLayout->size() : KDSize(k_leftRadixWidth,0);
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
     p.y() + m_baseline + radicandSize.height() - m_radicandLayout->baseline() + k_heightMargin - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
-  if (m_indexLayout->size().height() + k_indexHeight > m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin) {
+  if (indexSize.height() + k_indexHeight > m_radicandLayout->baseline() + k_radixLineThickness + k_heightMargin) {
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y() + indexSize.height() + k_indexHeight - m_radicandLayout->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
@@ -69,7 +75,7 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
 
 KDSize NthRootLayout::computeSize() {
   KDSize radicandSize = m_radicandLayout->size();
-  KDSize indexSize = m_indexLayout->size();
+  KDSize indexSize = m_indexLayout != nullptr ? m_indexLayout->size() : KDSize(k_leftRadixWidth,0);
   return KDSize(
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width(),
       m_baseline + radicandSize.height() - m_radicandLayout->baseline() + k_heightMargin
@@ -79,9 +85,9 @@ KDSize NthRootLayout::computeSize() {
 ExpressionLayout * NthRootLayout::child(uint16_t index) {
   switch (index) {
     case 0:
-      return m_indexLayout;
-    case 1:
       return m_radicandLayout;
+    case 1:
+      return m_indexLayout;
     default:
       return nullptr;
   }
@@ -90,7 +96,7 @@ ExpressionLayout * NthRootLayout::child(uint16_t index) {
 KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize indexSize = m_indexLayout->size();
+  KDSize indexSize = m_indexLayout != nullptr ? m_indexLayout->size() : KDSize(k_leftRadixWidth,0);
   if (child == m_indexLayout) {
     x = 0;
     y = m_baseline - indexSize.height() -  k_indexHeight;

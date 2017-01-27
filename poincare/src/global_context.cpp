@@ -1,7 +1,9 @@
 #include <poincare/global_context.h>
 #include <assert.h>
+#include <math.h>
 
-GlobalContext::GlobalContext()
+GlobalContext::GlobalContext() :
+  m_pi(Float(M_PI))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -19,6 +21,9 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
 }
 
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
+  if (symbol->name() == Symbol::SpecialSymbols::Pi) {
+    return &m_pi;
+  }
   int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return nullptr;

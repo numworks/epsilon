@@ -1,7 +1,7 @@
 #include "expression_builder.h"
 #include <poincare/addition.h>
 #include <poincare/integer.h>
-#include <poincare/product.h>
+#include <poincare/multiplication.h>
 #include <poincare/symbol.h>
 extern "C" {
 #include <assert.h>
@@ -36,10 +36,10 @@ Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
            * before. */
           result = new Addition(children_expressions, numberOfChildrenExpressions, false);
           break;
-        case Expression::Type::Product:
+        case Expression::Type::Multiplication:
           /* The children do not need to be cloned as they already have been
            * before. */
-          result = new Product(children_expressions, false);
+          result = new Multiplication(children_expressions, false);
           break;
         default:
           assert(false);

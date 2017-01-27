@@ -121,7 +121,7 @@ exp:
   | SYMBOL           { $$ = new Symbol($1); }
   | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, 2, false); }
   | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }
-  | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Product(terms, false);  }
+  | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Multiplication(terms, false);  }
   | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
   | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
   | MINUS exp        { $$ = new Opposite($2, false); }

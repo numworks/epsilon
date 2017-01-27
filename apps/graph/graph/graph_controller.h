@@ -22,10 +22,10 @@ public:
 
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
 private:
-  constexpr static float k_cursorTopMarginRatio = 0.025f;
-  constexpr static float k_cursorRightMarginRatio = 0.015f;
-  constexpr static float k_cursorBottomMarginRatio = 0.08f;
-  constexpr static float k_cursorLeftMarginRatio = 0.015f;
+  constexpr static float k_cursorTopMarginRatio = 0.025f;   // (cursorHeight/2)/graphViewHeight
+  constexpr static float k_cursorRightMarginRatio = 0.015f; // (cursorWidth/2)/graphViewWidth
+  constexpr static float k_cursorBottomMarginRatio = 0.11f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
+  constexpr static float k_cursorLeftMarginRatio = 0.015f;  // (cursorWidth/2)/graphViewWidth
 
   constexpr static int k_maxNumberOfCharacters = 8;
   BannerView * bannerView() override;

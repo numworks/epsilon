@@ -1,8 +1,8 @@
-#include "symbol_layout.h"
+#include "sequence_layout.h"
 #include <string.h>
 #include <assert.h>
 
-SymbolLayout::SymbolLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout) :
+SequenceLayout::SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout) :
   ExpressionLayout(),
   m_lowerBoundLayout(lowerBoundLayout),
   m_upperBoundLayout(upperBoundLayout),
@@ -14,13 +14,13 @@ SymbolLayout::SymbolLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout
   m_baseline = max(m_upperBoundLayout->size().height()+k_boundHeightMargin+k_symbolHeight, m_argumentLayout->baseline());
 }
 
-SymbolLayout::~SymbolLayout() {
+SequenceLayout::~SequenceLayout() {
   delete m_lowerBoundLayout;
   delete m_upperBoundLayout;
   delete m_argumentLayout;
 }
 
-KDSize SymbolLayout::computeSize() {
+KDSize SequenceLayout::computeSize() {
   KDSize argumentSize = m_argumentLayout->size();
   KDSize lowerBoundSize = m_lowerBoundLayout->size();
   KDSize upperBoundSize = m_upperBoundLayout->size();
@@ -30,7 +30,7 @@ KDSize SymbolLayout::computeSize() {
   );
 }
 
-ExpressionLayout * SymbolLayout::child(uint16_t index) {
+ExpressionLayout * SequenceLayout::child(uint16_t index) {
   switch (index) {
     case 0:
       return m_upperBoundLayout;
@@ -43,7 +43,7 @@ ExpressionLayout * SymbolLayout::child(uint16_t index) {
   }
 }
 
-KDPoint SymbolLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
   KDSize lowerBoundSize = m_lowerBoundLayout->size();
   KDSize upperBoundSize = m_upperBoundLayout->size();
   KDCoordinate x = 0;

@@ -1,11 +1,11 @@
 #ifndef POINCARE_PRODUCT_LAYOUT_H
 #define POINCARE_PRODUCT_LAYOUT_H
 
-#include "symbol_layout.h"
+#include "sequence_layout.h"
 
-class ProductLayout : public SymbolLayout {
+class ProductLayout : public SequenceLayout {
 public:
-  using SymbolLayout::SymbolLayout;
+  using SequenceLayout::SequenceLayout;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 private:

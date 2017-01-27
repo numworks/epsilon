@@ -1,13 +1,13 @@
-#ifndef POINCARE_SYMBOL_LAYOUT_H
-#define POINCARE_SYMBOL_LAYOUT_H
+#ifndef POINCARE_SEQUENCE_LAYOUT_H
+#define POINCARE_SEQUENCE_LAYOUT_H
 
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
-class SymbolLayout : public ExpressionLayout {
+class SequenceLayout : public ExpressionLayout {
 public:
-  SymbolLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout);
-  ~SymbolLayout();
+  SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout);
+  ~SequenceLayout();
   constexpr static KDCoordinate k_symbolHeight = 15;
   constexpr static KDCoordinate k_symbolWidth = 9;
 protected:

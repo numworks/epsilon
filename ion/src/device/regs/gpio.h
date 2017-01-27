@@ -5,7 +5,7 @@
 
 class GPIO {
 public:
-  class MODER : Register32 {
+  class MODER : public Register32 {
   public:
     enum class Mode {
       Input = 0,
@@ -27,7 +27,7 @@ public:
     void setType(int index, Type type) volatile { setBitRange(index, index, (uint32_t)type); }
   };
 
-  class PUPDR : Register32 {
+  class PUPDR : public Register32 {
   public:
     enum class Pull {
       None = 0,

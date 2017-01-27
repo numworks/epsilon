@@ -75,6 +75,10 @@ void shutdownGPIO() {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
+
+  // Set to true : sleep consumption = 154 uA
+  // Set to false : sleep consumption = 92 uA
+  ResetPin.group().ODR()->set(ResetPin.pin(), false);
 }
 
 void initFSMC() {

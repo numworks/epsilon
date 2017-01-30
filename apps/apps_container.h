@@ -11,6 +11,7 @@
 #include "apps_window.h"
 #include "toolbox_controller.h"
 #include "variable_box_controller.h"
+#include "preferences.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -43,7 +44,7 @@ private:
   PicViewApp m_picViewApp;
 #endif
   GlobalContext m_globalContext;
-  Preference m_preference;
+  Preferences m_preferences;
   ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;
 };

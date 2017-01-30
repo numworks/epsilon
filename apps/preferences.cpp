@@ -1,6 +1,6 @@
-#include "preference.h"
+#include "preferences.h"
 
-Preference::Preference() :
+Preferences::Preferences() :
   m_angleUnit(AngleUnit::Degree),
   m_displayMode(DisplayMode::Auto),
   m_numberType(NumberType::Reel),
@@ -9,51 +9,51 @@ Preference::Preference() :
 {
 }
 
-Preference::AngleUnit Preference::angleUnit() const {
+Preferences::AngleUnit Preferences::angleUnit() const {
   return m_angleUnit;
 }
 
-void Preference::setAngleUnit(AngleUnit angleUnit) {
+void Preferences::setAngleUnit(AngleUnit angleUnit) {
   if (angleUnit != m_angleUnit) {
     m_angleUnit = angleUnit;
   }
 }
 
-Preference::DisplayMode Preference::displayMode() const {
+Preferences::DisplayMode Preferences::displayMode() const {
   return m_displayMode;
 }
 
-void Preference::setDisplayMode(DisplayMode displayMode) {
+void Preferences::setDisplayMode(DisplayMode displayMode) {
   if (displayMode != m_displayMode) {
     m_displayMode = displayMode;
   }
 }
 
-Preference::NumberType Preference::numberType() const {
+Preferences::NumberType Preferences::numberType() const {
   return m_numberType;
 }
 
-void Preference::setNumberType(NumberType numberType) {
+void Preferences::setNumberType(NumberType numberType) {
   if (numberType != m_numberType) {
     m_numberType = numberType;
   }
 }
 
-Preference::ComplexFormat Preference::complexFormat() const {
+Preferences::ComplexFormat Preferences::complexFormat() const {
   return m_complexFormat;
 }
 
-void Preference::setComplexFormat(ComplexFormat complexFormat) {
+void Preferences::setComplexFormat(ComplexFormat complexFormat) {
   if (complexFormat != m_complexFormat) {
     m_complexFormat = complexFormat;
   }
 }
 
-Preference::Language Preference::language() const {
+Preferences::Language Preferences::language() const {
   return m_language;
 }
 
-void Preference::setLanguage(Language language) {
+void Preferences::setLanguage(Language language) {
   if (language != m_language) {
     m_language = language;
   }

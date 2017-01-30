@@ -3,14 +3,14 @@
 
 namespace Settings {
 
-SubController::SubController(Responder * parentResponder, Preference * preference) :
+SubController::SubController(Responder * parentResponder, Preferences * preferences) :
   ViewController(parentResponder),
   m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel(nullptr),
   m_preferenceIndex(0),
-  m_preference(preference)
+  m_preferences(preferences)
 {
 }
 
@@ -77,19 +77,19 @@ StackViewController * SubController::stackController() const {
 void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex) {
   switch (preferenceIndex) {
     case 0:
-      m_preference->setAngleUnit((Preference::AngleUnit)valueIndex);
+      m_preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
       break;
     case 1:
-      m_preference->setDisplayMode((Preference::DisplayMode)valueIndex);
+      m_preferences->setDisplayMode((Preferences::DisplayMode)valueIndex);
       break;
     case 2:
-      m_preference->setNumberType((Preference::NumberType)valueIndex);
+      m_preferences->setNumberType((Preferences::NumberType)valueIndex);
       break;
     case 3:
-      m_preference->setComplexFormat((Preference::ComplexFormat)valueIndex);
+      m_preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
       break;
     case 4:
-      m_preference->setLanguage((Preference::Language)valueIndex);
+      m_preferences->setLanguage((Preferences::Language)valueIndex);
       break;
     }
 }
@@ -97,15 +97,15 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
 int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
   switch (preferenceIndex) {
     case 0:
-      return (int)m_preference->angleUnit();
+      return (int)m_preferences->angleUnit();
     case 1:
-      return (int)m_preference->displayMode();
+      return (int)m_preferences->displayMode();
     case 2:
-      return (int)m_preference->numberType();
+      return (int)m_preferences->numberType();
     case 3:
-      return (int)m_preference->complexFormat();
+      return (int)m_preferences->complexFormat();
     case 4:
-      return (int)m_preference->language();
+      return (int)m_preferences->language();
     default:
       assert(false);
       return 0;

@@ -1,7 +1,7 @@
-#ifndef APPS_PREFERENCE_H
-#define APPS_PREFERENCE_H
+#ifndef APPS_PREFERENCES_H
+#define APPS_PREFERENCES_H
 
-class Preference {
+class Preferences {
 public:
   enum class AngleUnit {
     Degree = 0,
@@ -23,7 +23,7 @@ public:
     French = 0,
     English = 1
   };
-  Preference();
+  Preferences();
   AngleUnit angleUnit() const;
   void setAngleUnit(AngleUnit angleUnit);
   DisplayMode displayMode() const;

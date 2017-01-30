@@ -5,13 +5,13 @@
 #include "sub_controller.h"
 #include "settings_node.h"
 #include "menu_cell.h"
-#include "../preference.h"
+#include "../preferences.h"
 
 namespace Settings {
 
 class MainController : public ViewController, public SimpleListViewDataSource {
 public:
-  MainController(Responder * parentResponder, Preference * preference);
+  MainController(Responder * parentResponder, Preferences * preferences);
 
   View * view() override;
   const char * title() const override;
@@ -28,7 +28,7 @@ private:
   MenuCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
-  Preference * m_preference;
+  Preferences * m_preferences;
   SubController m_subController;
 };
 

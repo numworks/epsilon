@@ -14,13 +14,13 @@ const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), 
   SettingsNode("Langue", languageChildren, 2)};
 const SettingsNode model = SettingsNode("Parametres", menu, 5);
 
-MainController::MainController(Responder * parentResponder, Preference * preference) :
+MainController::MainController(Responder * parentResponder, Preferences * preferences) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel((Node *)&model),
-  m_preference(preference),
-  m_subController(this, m_preference)
+  m_preferences(preferences),
+  m_subController(this, m_preferences)
 {
 }
 
@@ -71,19 +71,19 @@ void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   myCell->setText(m_nodeModel->children(index)->label());
   switch (index) {
     case 0:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->angleUnit())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->angleUnit())->label());
       break;
     case 1:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->displayMode())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->displayMode())->label());
       break;
     case 2:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->numberType())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->numberType())->label());
       break;
     case 3:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->complexFormat())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->complexFormat())->label());
       break;
     case 4:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->language())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->language())->label());
       break;
   }
 }

@@ -2,7 +2,7 @@
 
 Preferences::Preferences() :
   m_angleUnit(AngleUnit::Degree),
-  m_displayMode(DisplayMode::Auto),
+  m_displayMode(Float::DisplayMode::Auto),
   m_numberType(NumberType::Reel),
   m_complexFormat(ComplexFormat::Cartesian),
   m_language(Language::French)
@@ -19,11 +19,11 @@ void Preferences::setAngleUnit(AngleUnit angleUnit) {
   }
 }
 
-Preferences::DisplayMode Preferences::displayMode() const {
+Float::DisplayMode Preferences::displayMode() const {
   return m_displayMode;
 }
 
-void Preferences::setDisplayMode(DisplayMode displayMode) {
+void Preferences::setDisplayMode(Float::DisplayMode displayMode) {
   if (displayMode != m_displayMode) {
     m_displayMode = displayMode;
   }

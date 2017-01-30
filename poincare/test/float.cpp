@@ -25,21 +25,21 @@ QUIZ_CASE(poincare_float_to_text) {
   assert(strcmp(buffer, "0.0E0") == 0);
   Float(10000000000000000000000000000.0f).convertFloatToText(buffer, 14, 7);
   assert(strcmp(buffer, "1.0E28") == 0);
-  Float(10000000000000000000000000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Decimal);
+  Float(10000000000000000000000000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Auto);
   assert(strcmp(buffer, "1.0E28") == 0);
-  Float(1000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Decimal);
+  Float(1000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Auto);
   assert(strcmp(buffer, "1000000") == 0);
-  Float(10000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Decimal);
+  Float(10000000.0f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Auto);
   assert(strcmp(buffer, "1.0E7") == 0);
-  Float(0.000001f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Decimal);
+  Float(0.000001f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Auto);
   assert(strcmp(buffer, "0.000001") == 0);
-  Float(0.0000001f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Decimal);
+  Float(0.0000001f).convertFloatToText(buffer, 14, 7, Float::DisplayMode::Auto);
   assert(strcmp(buffer, "1.0E-7") == 0);
   char buffer2[6];
-  Float(123.421f).convertFloatToText(buffer2, 6, 4, Float::DisplayMode::Decimal);
+  Float(123.421f).convertFloatToText(buffer2, 6, 4, Float::DisplayMode::Auto);
   assert(strcmp(buffer2, "123.4") == 0);
   char buffer3[6];
-  Float(123.421f).convertFloatToText(buffer3, 6, 5, Float::DisplayMode::Decimal);
+  Float(123.421f).convertFloatToText(buffer3, 6, 5, Float::DisplayMode::Auto);
   assert(strcmp(buffer3, "1.2E2") == 0);
 }
 

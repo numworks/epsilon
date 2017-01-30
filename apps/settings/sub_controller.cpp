@@ -83,7 +83,7 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       m_preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
       break;
     case 1:
-      m_preferences->setDisplayMode((Preferences::DisplayMode)valueIndex);
+      m_preferences->setDisplayMode((Float::DisplayMode)valueIndex);
       break;
     case 2:
       m_preferences->setNumberType((Preferences::NumberType)valueIndex);

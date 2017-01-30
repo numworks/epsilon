@@ -63,7 +63,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Float::DisplayMode::Decimal);
+  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Float::DisplayMode::Auto);
   m_calculationCell[index].setText(buffer);
 }
 

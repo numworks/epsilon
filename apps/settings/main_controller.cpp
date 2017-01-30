@@ -3,17 +3,28 @@
 
 namespace Settings {
 
+const SettingsNode angleChildren[2] = {SettingsNode("Degre"), SettingsNode("Radian")};
+const SettingsNode displayModeChildren[2] = {SettingsNode("Auto"), SettingsNode("Scientifique")};
+const SettingsNode numberTypeChildren[2] = {SettingsNode("Reel"), SettingsNode("Complexe")};
+const SettingsNode complexFormatChildren[2] = {SettingsNode("Cartesien"), SettingsNode("Polaire")};
+const SettingsNode languageChildren[2] = {SettingsNode("Anglais"), SettingsNode("Francais")};
+
+const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), SettingsNode("Format resultat", displayModeChildren, 2),
+  SettingsNode("Reel ou complexe", numberTypeChildren, 2), SettingsNode("Format complexe", complexFormatChildren, 2),
+  SettingsNode("Langue", languageChildren, 2)};
+const SettingsNode model = SettingsNode("Parametres", menu, 5);
+
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{ChevronMenuListCell((char*)"Angles"), ChevronMenuListCell((char*)"Resultats"), ChevronMenuListCell((char*)"Forme nombre"),
-    ChevronMenuListCell((char*)"Forme complexe"), ChevronMenuListCell((char*)"Langue")},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin))
+    Metric::BottomMargin, Metric::LeftMargin)),
+  m_nodeModel((Node *)&model),
+  m_subController(this)
 {
 }
 
 const char * MainController::title() const {
-  return "Parametres";
+  return m_nodeModel->label();
 }
 
 View * MainController::view() {
@@ -28,11 +39,16 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK) {
+    m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()));
+    StackViewController * stack = stackController();
+    stack->push(&m_subController);
+  }
   return false;
 }
 
 int MainController::numberOfRows() {
-  return k_totalNumberOfCell;
+  return m_nodeModel->numberOfChildren();
 };
 
 TableViewCell * MainController::reusableCell(int index) {
@@ -47,6 +63,15 @@ int MainController::reusableCellCount() {
 
 KDCoordinate MainController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
+StackViewController * MainController::stackController() const {
+  return (StackViewController *)parentResponder();
+}
+
+void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+  ChevronMenuListCell * myCell = (ChevronMenuListCell *)cell;
+  myCell->setText(m_nodeModel->children(index)->label());
 }
 
 }

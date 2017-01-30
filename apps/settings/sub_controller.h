@@ -1,15 +1,14 @@
-#ifndef SETTINGS_MAIN_CONTROLLER_H
-#define SETTINGS_MAIN_CONTROLLER_H
+#ifndef SETTINGS_SUB_CONTROLLER_H
+#define SETTINGS_SUB_CONTROLLER_H
 
 #include <escher.h>
-#include "sub_controller.h"
+#include "settings_node.h"
 
 namespace Settings {
 
-class MainController : public ViewController, public SimpleListViewDataSource {
+class SubController : public ViewController, public SimpleListViewDataSource {
 public:
-  MainController(Responder * parentResponder);
-
+  SubController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -19,13 +18,12 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void setNodeModel(const Node * nodeModel);
 private:
-  StackViewController * stackController() const;
-  constexpr static int k_totalNumberOfCell = 5;
-  ChevronMenuListCell m_cells[k_totalNumberOfCell];
+  constexpr static int k_totalNumberOfCell = 2;
+  MenuListCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
-  SubController m_subController;
 };
 
 }

@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "battery_view.h"
+#include "preferences.h"
 
 class TitleBarView : public View {
 public:
@@ -10,6 +11,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setTitle(const char * title);
   void setChargeState(Ion::Battery::Charge chargeState);
+  void setPreferences(Preferences * preferences);
 private:
   constexpr static KDCoordinate k_batteryLeftMargin = 5;
   int numberOfSubviews() const override;
@@ -17,6 +19,7 @@ private:
   View * subviewAtIndex(int index) override;
   PointerTextView m_titleView;
   BatteryView m_batteryView;
+  BufferTextView m_preferenceView;
 };
 
 #endif

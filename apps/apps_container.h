@@ -29,6 +29,7 @@ public:
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
   void switchTo(App * app) override;
+  void refreshPreferences();
 private:
   Window * window() override;
   static constexpr int k_numberOfApps = 9;

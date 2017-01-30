@@ -1,4 +1,5 @@
 #include "sub_controller.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace Settings {
@@ -33,6 +34,8 @@ void SubController::didBecomeFirstResponder() {
 bool SubController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     setPreferenceAtIndexWithValueIndex(m_preferenceIndex, m_selectableTableView.selectedRow());
+    AppsContainer * myContainer = (AppsContainer * )app()->container();
+    myContainer->refreshPreferences();
     StackViewController * stack = stackController();
     stack->pop();
   }

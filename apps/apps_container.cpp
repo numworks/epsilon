@@ -18,6 +18,7 @@ AppsContainer::AppsContainer() :
   m_preferences(Preferences()),
   m_variableBoxController(&m_globalContext)
 {
+  refreshPreferences();
 }
 
 int AppsContainer::numberOfApps() {
@@ -69,6 +70,10 @@ void AppsContainer::switchTo(App * app) {
   // TODO: Update the battery icon every in a time frame
   m_window.updateBatteryLevel();
   Container::switchTo(app);
+}
+
+void AppsContainer::refreshPreferences() {
+  m_window.refreshPreferences(&m_preferences);
 }
 
 Window * AppsContainer::window() {

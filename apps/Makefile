@@ -28,6 +28,7 @@ app_objs += $(addprefix apps/,\
   node.o\
   node_list_view_controller.o\
   node_navigation_controller.o\
+  preference.o\
   range_parameter_controller.o\
   store_controller.o\
   store_parameter_controller.o\

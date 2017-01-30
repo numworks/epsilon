@@ -1,7 +1,5 @@
 #include "preference.h"
 
-namespace Settings {
-
 Preference::Preference() :
   m_angleUnit(AngleUnit::Degree),
   m_displayMode(DisplayMode::Auto),
@@ -59,6 +57,4 @@ void Preference::setLanguage(Language language) {
   if (language != m_language) {
     m_language = language;
   }
-}
-
 }

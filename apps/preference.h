@@ -1,7 +1,5 @@
-#ifndef SETTINGS_MODEL_H
-#define SETTINGS_MODEL_H
-
-namespace Settings {
+#ifndef APPS_PREFERENCE_H
+#define APPS_PREFERENCE_H
 
 class Preference {
 public:
@@ -43,7 +41,5 @@ private:
   ComplexFormat m_complexFormat;
   Language m_language;
 };
-
-}
 
 #endif

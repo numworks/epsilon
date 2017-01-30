@@ -5,7 +5,7 @@
 #include "sub_controller.h"
 #include "settings_node.h"
 #include "menu_cell.h"
-#include "preference.h"
+#include "../preference.h"
 
 namespace Settings {
 

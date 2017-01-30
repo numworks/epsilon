@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "settings_node.h"
-#include "preference.h"
+#include "../preference.h"
 
 namespace Settings {
 

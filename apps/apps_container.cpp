@@ -12,9 +12,10 @@ AppsContainer::AppsContainer() :
   m_probabilityApp(this),
   m_calculationApp(this, &m_globalContext),
   m_regressionApp(this),
-  m_settingsApp(this),
+  m_settingsApp(this, &m_preference),
   m_statisticsApp(this),
   m_globalContext(GlobalContext()),
+  m_preference(Preference()),
   m_variableBoxController(&m_globalContext)
 {
 }

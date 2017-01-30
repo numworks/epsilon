@@ -43,6 +43,7 @@ private:
   PicViewApp m_picViewApp;
 #endif
   GlobalContext m_globalContext;
+  Preference m_preference;
   ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;
 };

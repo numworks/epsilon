@@ -3,15 +3,14 @@
 
 #include <escher.h>
 #include "main_controller.h"
-#include "preference.h"
+#include "../preference.h"
 
 namespace Settings {
 
 class App : public ::App {
 public:
-  App(Container * container);
+  App(Container * container, Preference * preference);
 private:
-  Preference m_preference;
   MainController m_mainController;
   StackViewController m_stackViewController;
 };

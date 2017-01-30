@@ -1,6 +1,5 @@
 app_objs += $(addprefix apps/settings/,\
   app.o\
-  preference.o\
   main_controller.o\
   menu_cell.o\
   settings_node.o\

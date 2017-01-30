@@ -15,10 +15,10 @@ public:
   virtual void setTextColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;
+protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
 private:
   PointerTextView m_pointerTextView;

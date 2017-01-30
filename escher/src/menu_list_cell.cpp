@@ -3,9 +3,9 @@
 
 constexpr KDCoordinate MenuListCell::k_separatorThickness;
 
-MenuListCell::MenuListCell(char * label) :
+MenuListCell::MenuListCell(char * label, KDText::FontSize size) :
   TableViewCell(),
-  m_pointerTextView(PointerTextView(KDText::FontSize::Small, label, 0, 0.5, KDColorBlack, KDColorWhite))
+  m_pointerTextView(PointerTextView(size, label, 0, 0.5, KDColorBlack, KDColorWhite))
 {
 }
 
@@ -20,7 +20,7 @@ View * MenuListCell::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_pointerTextView;
   }
-  assert(numberOfSubviews() == 2 && index == 1);
+  assert(numberOfSubviews() >= 2 && index == 1);
   return accessoryView();
 }
 

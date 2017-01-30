@@ -9,7 +9,7 @@
 
 class MenuListCell : public TableViewCell {
 public:
-  MenuListCell(char * label = nullptr);
+  MenuListCell(char * label = nullptr, KDText::FontSize size = KDText::FontSize::Small);
   virtual View * accessoryView() const;
   void setText(const char * text);
   virtual void setTextColor(KDColor color);

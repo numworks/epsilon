@@ -63,3 +63,7 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRectWithPixels(frame, chevronPixel, (KDColor *)m_workingBuffer);
   }
 }
+
+KDSize ChevronView::minimalSizeForOptimalDisplay() {
+  return KDSize(k_chevronRightMargin, k_chevronHeight);
+}

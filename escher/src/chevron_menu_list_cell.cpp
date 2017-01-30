@@ -1,7 +1,7 @@
 #include <escher/chevron_menu_list_cell.h>
 
-ChevronMenuListCell::ChevronMenuListCell(char * label) :
-  MenuListCell(label),
+ChevronMenuListCell::ChevronMenuListCell(char * label, KDText::FontSize size) :
+  MenuListCell(label, size),
   m_accessoryView(ChevronView())
 {
 }

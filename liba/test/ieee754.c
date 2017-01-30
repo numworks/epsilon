@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <assert.h>
+#include <math.h>
 #include <private/ieee754.h>
 
 QUIZ_CASE(liba_ieee754) {
@@ -9,4 +10,5 @@ QUIZ_CASE(liba_ieee754) {
   assert(ieee754exp(555.555f) == 136);
   assert(ieee754man(0.007f) == 6643778);
   assert(ieee754exp(0.007f) == 119);
+  assert(isinf(INFINITY));
 }

@@ -3,12 +3,13 @@
 
 #include <escher.h>
 #include "settings_node.h"
+#include "preference.h"
 
 namespace Settings {
 
 class SubController : public ViewController, public SimpleListViewDataSource {
 public:
-  SubController(Responder * parentResponder);
+  SubController(Responder * parentResponder, Preference * preference);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -18,12 +19,17 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  void setNodeModel(const Node * nodeModel);
+  void setNodeModel(const Node * nodeModel, int preferenceIndex);
 private:
+  StackViewController * stackController() const;
+  void setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex);
+  int valueIndexAtPreferenceIndex(int preferenceIndex);
   constexpr static int k_totalNumberOfCell = 2;
   MenuListCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
+  int m_preferenceIndex;
+  Preference * m_preference;
 };
 
 }

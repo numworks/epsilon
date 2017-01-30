@@ -6,24 +6,24 @@ namespace Settings {
 class Preference {
 public:
   enum class AngleUnit {
-    Degree,
-    Radian
+    Degree = 0,
+    Radian = 1
   };
   enum class DisplayMode {
-    Auto,
-    Scientific
+    Auto = 0,
+    Scientific = 1
   };
   enum class NumberType {
-    Reel,
-    Complex
+    Reel = 0,
+    Complex = 1
   };
   enum class ComplexFormat {
-    Cartesian,
-    Polar
+    Cartesian = 0,
+    Polar = 1
   };
   enum class Language {
-    French,
-    English
+    French = 0,
+    English = 1
   };
   Preference();
   AngleUnit angleUnit() const;

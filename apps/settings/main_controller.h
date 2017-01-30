@@ -3,12 +3,15 @@
 
 #include <escher.h>
 #include "sub_controller.h"
+#include "settings_node.h"
+#include "menu_cell.h"
+#include "preference.h"
 
 namespace Settings {
 
 class MainController : public ViewController, public SimpleListViewDataSource {
 public:
-  MainController(Responder * parentResponder);
+  MainController(Responder * parentResponder, Preference * preference);
 
   View * view() override;
   const char * title() const override;
@@ -22,9 +25,10 @@ public:
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 5;
-  ChevronMenuListCell m_cells[k_totalNumberOfCell];
+  MenuCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
+  Preference * m_preference;
   SubController m_subController;
 };
 

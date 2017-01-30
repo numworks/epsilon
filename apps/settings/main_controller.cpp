@@ -14,12 +14,13 @@ const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), 
   SettingsNode("Langue", languageChildren, 2)};
 const SettingsNode model = SettingsNode("Parametres", menu, 5);
 
-MainController::MainController(Responder * parentResponder) :
+MainController::MainController(Responder * parentResponder, Preference * preference) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel((Node *)&model),
-  m_subController(this)
+  m_preference(preference),
+  m_subController(this, m_preference)
 {
 }
 
@@ -40,7 +41,7 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()));
+    m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()), m_selectableTableView.selectedRow());
     StackViewController * stack = stackController();
     stack->push(&m_subController);
   }
@@ -65,13 +66,30 @@ KDCoordinate MainController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-StackViewController * MainController::stackController() const {
-  return (StackViewController *)parentResponder();
+void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+  MenuCell * myCell = (MenuCell *)cell;
+  myCell->setText(m_nodeModel->children(index)->label());
+  switch (index) {
+    case 0:
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->angleUnit())->label());
+      break;
+    case 1:
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->displayMode())->label());
+      break;
+    case 2:
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->numberType())->label());
+      break;
+    case 3:
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->complexFormat())->label());
+      break;
+    case 4:
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preference->language())->label());
+      break;
+  }
 }
 
-void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  ChevronMenuListCell * myCell = (ChevronMenuListCell *)cell;
-  myCell->setText(m_nodeModel->children(index)->label());
+StackViewController * MainController::stackController() const {
+  return (StackViewController *)parentResponder();
 }
 
 }

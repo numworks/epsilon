@@ -169,7 +169,7 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
   }
   SEND_COMMAND(PixelFormatSet, 0x06);
   *CommandAddress  = Command::MemoryRead;
-  uint16_t dummy = *DataAddress; // First read is dummy data, per datasheet
+  *DataAddress; // First read is dummy data, per datasheet
   while (true) {
     if (numberOfPixels == 0) {
       break;

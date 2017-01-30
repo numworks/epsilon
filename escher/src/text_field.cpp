@@ -101,7 +101,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       reload();
       m_currentTextLength--;
       m_currentCursorLocation--;
-      for (int k = m_currentCursorLocation; k < m_currentTextLength; k ++) {
+      for (int k = m_currentCursorLocation; k < (signed char)m_currentTextLength; k ++) {
       m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
       }
       m_draftTextBuffer[m_currentTextLength] = 0;
@@ -150,7 +150,7 @@ int TextField::cursorLocation() const{
 
 void TextField::setCursorLocation(int location) {
   location = location < 0 ? 0 : location;
-  location = location > m_currentTextLength ? m_currentTextLength : location;
+  location = location > (signed char)m_currentTextLength ? m_currentTextLength : location;
   m_currentCursorLocation = location;
 }
 

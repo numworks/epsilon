@@ -56,8 +56,8 @@ float Law::cumulativeDistributiveInverseForProbability(float * probability) {
     p += evaluateAtAbscissa(k++);
   }
   if (k == k_maxNumberOfOperations) {
-    p = 1.0f;
-    k = INFINITY;
+    *probability = 1.0f;
+    return INFINITY;
   }
   *probability = p;
   if (isnan(*probability)) {
@@ -83,8 +83,8 @@ float Law::rightIntegralInverseForProbability(float * probability) {
     p += evaluateAtAbscissa(k++);
   }
   if (k == k_maxNumberOfOperations) {
-    p = 0.0f;
-    k = INFINITY;
+    *probability = 1.0f;
+    return INFINITY;
   }
   *probability = 1.0f - (p - evaluateAtAbscissa(k-1));
   if (isnan(*probability)) {

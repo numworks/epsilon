@@ -18,10 +18,6 @@ uint8_t log2(native_uint_t v) {
   return 32;
 }
 
-static inline native_uint_t digit_from_char(char c) {
-  return (c > '9' ? (c-'A'+10) : (c-'0'));
-}
-
 static inline char char_from_digit(native_uint_t digit) {
   return '0'+digit;
 }

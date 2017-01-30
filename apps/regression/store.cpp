@@ -75,7 +75,6 @@ int Store::closestVerticalDot(int direction, float x) {
 
 int Store::nextDot(int direction, int dot) {
   float nextX = INFINITY;
-  float nextY = INFINITY;
   int selectedDot = -1;
   float x = meanOfColumn(0);
   if (dot >= 0 && dot < m_numberOfPairs) {
@@ -95,7 +94,6 @@ int Store::nextDot(int direction, int dot) {
         // Handle edge case: 2 dots have same abscissa
         if (m_data[0][index] != x || (index > dot)) {
           nextX = m_data[0][index];
-          nextY = m_data[1][index];
           selectedDot = index;
         }
       }
@@ -106,7 +104,6 @@ int Store::nextDot(int direction, int dot) {
           (meanOfColumn(0) >= x)) {
       if (meanOfColumn(0) != x || (x > dot)) {
         nextX = meanOfColumn(0);
-        nextY = meanOfColumn(1);
         selectedDot = m_numberOfPairs;
       }
     }
@@ -117,7 +114,6 @@ int Store::nextDot(int direction, int dot) {
           (meanOfColumn(0) <= x)) {
       if (meanOfColumn(0) != x || (m_numberOfPairs < dot)) {
         nextX = meanOfColumn(0);
-        nextY = meanOfColumn(1);
         selectedDot = m_numberOfPairs;
       }
     }
@@ -128,7 +124,6 @@ int Store::nextDot(int direction, int dot) {
         // Handle edge case: 2 dots have same abscissa
         if (m_data[0][index] != x || (index < dot)) {
           nextX = m_data[0][index];
-          nextY = m_data[1][index];
           selectedDot = index;
         }
       }

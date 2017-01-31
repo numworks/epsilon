@@ -25,7 +25,6 @@ public:
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  void updateTitle();
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
@@ -33,12 +32,16 @@ private:
     PointerTextView * parameterDefinitionAtIndex(int index);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void layoutSubviews() override;
+    void setNumberOfParameters(int numberOfParameters);
   private:
     constexpr static KDCoordinate k_buttonHeight = 40;
-    constexpr static KDCoordinate k_textHeight = 30;
+    constexpr static KDCoordinate k_textMargin = 5;
+    constexpr static KDCoordinate k_titleMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
+    int m_numberOfParameters;
     Button m_nextButton;
+    PointerTextView m_titleView;
     PointerTextView m_firstParameterDefinition;
     PointerTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
@@ -50,8 +53,6 @@ private:
   Law * m_law;
   bool m_buttonSelected;
   CalculationController m_calculationController;
-  constexpr static int k_maxNumberOfTitleCharacters = 30;
-  char m_titleBuffer[k_maxNumberOfTitleCharacters];
 };
 
 }

@@ -14,7 +14,6 @@ public:
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc);
-  void updateTitle();
   void pop();
 
 

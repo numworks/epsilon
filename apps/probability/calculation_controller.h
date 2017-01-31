@@ -23,6 +23,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
+  void updateTitle();
   Calculation * m_calculation;
   class ContentView : public View {
   public:
@@ -38,9 +39,11 @@ private:
     constexpr static int k_maxNumberOfEditableFields = 3;
   private:
     constexpr static KDCoordinate k_textFieldWidth = 50;
-    constexpr static KDCoordinate k_textMargin = 5;
+    constexpr static KDCoordinate k_textWidthMargin = 5;
+    constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
+    PointerTextView m_titleView;
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
     PointerTextView m_text[k_maxNumberOfEditableFields];
@@ -51,6 +54,8 @@ private:
   ContentView m_contentView;
   Law * m_law;
   int m_highlightedSubviewIndex;
+  constexpr static int k_maxNumberOfTitleCharacters = 30;
+  char m_titleBuffer[k_maxNumberOfTitleCharacters];
 };
 
 }

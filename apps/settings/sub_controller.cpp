@@ -6,7 +6,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder, Preferences * preferences) :
   ViewController(parentResponder),
-  m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large)},
+  m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large),
+    MenuListCell(nullptr, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel(nullptr),

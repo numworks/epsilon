@@ -24,7 +24,7 @@ private:
   StackViewController * stackController() const;
   void setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex);
   int valueIndexAtPreferenceIndex(int preferenceIndex);
-  constexpr static int k_totalNumberOfCell = 2;
+  constexpr static int k_totalNumberOfCell = 3;
   MenuListCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;

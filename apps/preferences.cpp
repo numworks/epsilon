@@ -4,7 +4,7 @@ Preferences::Preferences() :
   m_angleUnit(AngleUnit::Degree),
   m_displayMode(Expression::DisplayMode::Auto),
   m_numberType(NumberType::Reel),
-  m_complexFormat(ComplexFormat::Cartesian),
+  m_complexFormat(ComplexFormat::Algebric),
   m_language(Language::French)
 {
 }

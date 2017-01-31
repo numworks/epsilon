@@ -14,7 +14,7 @@ public:
     Complex = 1
   };
   enum class ComplexFormat {
-    Cartesian = 0,
+    Algebric = 0,
     Polar = 1
   };
   enum class Language {

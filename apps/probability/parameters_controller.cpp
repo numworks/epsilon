@@ -15,7 +15,7 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     calculationController->selectSubview(1);
     calculationController->reload();
     StackViewController * stack = parameterController->stackController();
-    stack->push(calculationController);
+    stack->push(calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
   }, parentResponder), KDText::FontSize::Large)),
   m_titleView(PointerTextView(KDText::FontSize::Small, "Choisir les parametres", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),

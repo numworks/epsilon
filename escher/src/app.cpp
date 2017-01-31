@@ -19,13 +19,11 @@ App::App(Container * container, ViewController * rootViewController, const char 
 
 void App::setWindow(Window * window) {
   View * view = m_modalViewController.view();
+  assert(m_modalViewController.app() == this);
+  window->setContentView(view);
   if (m_firstResponder == nullptr) {
     setFirstResponder(&m_modalViewController);
   }
-  assert(m_modalViewController.app() == this);
-
-  window->setContentView(view);
-
   window->redraw();
 }
 

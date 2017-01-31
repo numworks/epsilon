@@ -224,6 +224,7 @@ VariableBoxController::VariableBoxController(Context * context) :
 }
 
 void VariableBoxController::didBecomeFirstResponder() {
+  StackViewController::didBecomeFirstResponder();
   app()->setFirstResponder(&m_contentViewController);
 }
 

@@ -110,6 +110,10 @@ void StackViewController::setupActiveViewController() {
 }
 
 void StackViewController::didBecomeFirstResponder() {
+  if (m_rootViewController != nullptr) {
+    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
+    m_rootViewController = nullptr;
+  }
   ViewController * vc = m_children[m_numberOfChildren-1];
   app()->setFirstResponder(vc);
 }
@@ -123,9 +127,5 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
 }
 
 View * StackViewController::view() {
-  if (m_rootViewController != nullptr) {
-    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
-    m_rootViewController = nullptr;
-  }
   return &m_view;
 }

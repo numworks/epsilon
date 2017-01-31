@@ -115,8 +115,8 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
-  app()->setFirstResponder(vc);
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
+  app()->setFirstResponder(vc);
 }
 
 void ModalViewController::dismissModalViewController() {

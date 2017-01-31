@@ -40,8 +40,8 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 
 void BoxController::didBecomeFirstResponder() {
   m_view.selectMainView(true);
-  m_view.reload();
   reloadBannerView();
+  m_view.reload();
 }
 
 bool BoxController::isEmpty() const {

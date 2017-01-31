@@ -65,9 +65,9 @@ Expression::Type Float::type() const {
   return Type::Float;
 }
 
-ExpressionLayout * Float::createLayout() const {
+ExpressionLayout * Float::createLayout(DisplayMode displayMode) const {
   char buffer[k_maxBufferLength];
-  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits);
+  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits, displayMode);
   int size = 0;
   while (buffer[size] != 0) {
     size++;

@@ -31,7 +31,7 @@ class Integer : public LeafExpression {
     bool valueEquals(const Expression * e) const override;
 
     Expression * clone() const override;
-    virtual ExpressionLayout * createLayout() const override;
+    virtual ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     float approximate(Context& context) const override;
     Expression * evaluate(Context& context) const override;
   private:

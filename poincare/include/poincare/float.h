@@ -10,17 +10,13 @@ public:
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
 
-  ExpressionLayout * createLayout() const override;
+  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
   float approximate(Context& context) const override;
   Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * clone() const override;
   bool valueEquals(const Expression * e) const override;
 
-  enum class DisplayMode {
-    Auto,
-    Scientific
-  };
   void setNumberOfSignificantDigits(int numberOfDigits);
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas

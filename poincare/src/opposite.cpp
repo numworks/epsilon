@@ -49,11 +49,11 @@ Expression * Opposite::evaluate(Context& context) const {
   return result;
 }
 
-ExpressionLayout * Opposite::createLayout() const {
+ExpressionLayout * Opposite::createLayout(DisplayMode displayMode) const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout()) : m_operand->createLayout();
+  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(displayMode)) : m_operand->createLayout(displayMode);
   return new HorizontalLayout(children_layouts, 2);
 }
 

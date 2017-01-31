@@ -76,13 +76,13 @@ Expression * Addition::cloneWithDifferentOperands(Expression** newOperands,
   return new Addition(newOperands, numberOfOperands, cloneOperands);
 }
 
-ExpressionLayout * Addition::createLayout() const {
+ExpressionLayout * Addition::createLayout(DisplayMode displayMode) const {
   int number_of_children = 2*m_numberOfOperands-1;
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(number_of_children*sizeof(ExpressionLayout *));
-  children_layouts[0] = m_operands[0]->createLayout();
+  children_layouts[0] = m_operands[0]->createLayout(displayMode);
   for (int i=1; i<m_numberOfOperands; i++) {
     children_layouts[2*i-1] = new StringLayout("+", 1);
-    children_layouts[2*i] = m_operands[i]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[i]->createLayout()) : m_operands[i]->createLayout();
+    children_layouts[2*i] = m_operands[i]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[i]->createLayout(displayMode)) : m_operands[i]->createLayout(displayMode);
   }
   return new HorizontalLayout(children_layouts, number_of_children);
 }

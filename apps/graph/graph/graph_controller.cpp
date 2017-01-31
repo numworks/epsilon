@@ -113,7 +113,7 @@ void GraphController::reloadBannerView() {
   const char * legend = "x = ";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Float(m_cursor.x()).convertFloatToText(buffer+ legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Auto);
+  Float(m_cursor.x()).convertFloatToText(buffer+ legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::DisplayMode::Auto);
   m_bannerView.setLegendAtIndex(buffer, 0);
 
   legend = "00(x) = ";
@@ -121,7 +121,7 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[1] = f->name()[0];
-  Float(m_cursor.y()).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Auto);
+  Float(m_cursor.y()).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::DisplayMode::Auto);
   m_bannerView.setLegendAtIndex(buffer+1, 1);
 
   if (m_bannerView.displayDerivative()) {
@@ -129,7 +129,7 @@ void GraphController::reloadBannerView() {
     buffer[1] = '\'';
     App * graphApp = (Graph::App *)app();
     float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext());
-    Float(y).convertFloatToText(buffer + legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Float::DisplayMode::Auto);
+    Float(y).convertFloatToText(buffer + legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::DisplayMode::Auto);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
 }

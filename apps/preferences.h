@@ -24,8 +24,8 @@ public:
   Preferences();
   AngleUnit angleUnit() const;
   void setAngleUnit(AngleUnit angleUnit);
-  Float::DisplayMode displayMode() const;
-  void setDisplayMode(Float::DisplayMode displayMode);
+  Expression::DisplayMode displayMode() const;
+  void setDisplayMode(Expression::DisplayMode displayMode);
   NumberType numberType() const;
   void setNumberType(NumberType numberType);
   ComplexFormat complexFormat() const;
@@ -34,7 +34,7 @@ public:
   void setLanguage(Language language);
 private:
   AngleUnit m_angleUnit;
-  Float::DisplayMode m_displayMode;
+  Expression::DisplayMode m_displayMode;
   NumberType m_numberType;
   ComplexFormat m_complexFormat;
   Language m_language;

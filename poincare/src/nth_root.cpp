@@ -28,6 +28,6 @@ float NthRoot::approximate(Context& context) const {
   return powf(m_args[0]->approximate(context), 1.0f/m_args[1]->approximate(context));
 }
 
-ExpressionLayout * NthRoot::createLayout() const {
-  return new NthRootLayout(m_args[0]->createLayout(), m_args[1]->createLayout());
+ExpressionLayout * NthRoot::createLayout(DisplayMode displayMode) const {
+  return new NthRootLayout(m_args[0]->createLayout(displayMode), m_args[1]->createLayout(displayMode));
 }

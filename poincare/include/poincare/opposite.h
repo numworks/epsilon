@@ -13,7 +13,7 @@ class Opposite : public Expression {
     int numberOfOperands() const override;
     Expression * clone() const override;
     Expression * evaluate(Context& context) const override;
-    ExpressionLayout * createLayout() const override;
+    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     float approximate(Context& context) const override;
     Type type() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,

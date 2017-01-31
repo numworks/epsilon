@@ -41,11 +41,11 @@ float Integral::approximate(Context& context) const {
 #endif
 }
 
-ExpressionLayout * Integral::createLayout() const {
+ExpressionLayout * Integral::createLayout(DisplayMode displayMode) const {
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = m_args[0]->createLayout();
+  childrenLayouts[0] = m_args[0]->createLayout(displayMode);
   childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(m_args[1]->createLayout(), m_args[2]->createLayout(), new HorizontalLayout(childrenLayouts, 2));
+  return new IntegralLayout(m_args[1]->createLayout(displayMode), m_args[2]->createLayout(displayMode), new HorizontalLayout(childrenLayouts, 2));
 }
 
 float Integral::functionValueAtAbscissa(float x, VariableContext xContext) const {

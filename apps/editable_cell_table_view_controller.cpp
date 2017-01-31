@@ -63,7 +63,7 @@ int EditableCellTableViewController::indexFromCumulatedHeight(KDCoordinate offse
   return (offsetY-1) / k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::DisplayMode displayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   // The cell is editable
@@ -80,7 +80,7 @@ void EditableCellTableViewController::willDisplayCellAtLocation(TableViewCell * 
         return;
       }
     }
-    Float(dataAtLocation(i, j)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Float(dataAtLocation(i, j)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
     myEditableValueCell->setText(buffer);
     return;
   }

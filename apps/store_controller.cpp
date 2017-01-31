@@ -62,6 +62,10 @@ int StoreController::typeAtLocation(int i, int j) {
   return j!=0;
 }
 
+void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::DisplayMode::Auto);
+}
+
 bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_selectableTableView.deselectTable();

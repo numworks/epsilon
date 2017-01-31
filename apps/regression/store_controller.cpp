@@ -17,7 +17,7 @@ StoreController::StoreController(Responder * parentResponder, Store * store, Hea
 }
 
 void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
+  ::StoreController::willDisplayCellAtLocation(cell, i, j);
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }

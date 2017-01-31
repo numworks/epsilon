@@ -1,5 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace Calculation {
@@ -70,7 +71,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     }
     m_selectableTableView.deselectTable();
     App * calculationApp = (App *)app();
-    m_calculationStore->push(text, calculationApp->localContext(), calculationApp->preferences());
+    AppsContainer * appsContainer = (AppsContainer *)calculationApp->container();
+    m_calculationStore->push(text, calculationApp->localContext(), appsContainer->preferences());
     reload();
     m_selectableTableView.scrollToCell(0, numberOfRows()-1);
     app()->setFirstResponder(editController);

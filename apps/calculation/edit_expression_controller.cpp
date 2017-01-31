@@ -1,5 +1,6 @@
 #include "edit_expression_controller.h"
 #include "app.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace Calculation {
@@ -81,7 +82,8 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
   App * calculationApp = (App *)app();
-  m_calculationStore->push(textBody(), calculationApp->localContext(), calculationApp->preferences());
+  AppsContainer * appsContainer = (AppsContainer *)calculationApp->container();
+  m_calculationStore->push(textBody(), calculationApp->localContext(), appsContainer->preferences());
   m_historyController->reload();
   m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   m_contentView.textField()->setText("");

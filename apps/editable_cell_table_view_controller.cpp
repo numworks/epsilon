@@ -88,7 +88,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
 
 void EditableCellTableViewController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    m_selectableTableView.selectCellAtLocation(0, 1);
   } else {
     int selectedRow = m_selectableTableView.selectedRow();
     selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;

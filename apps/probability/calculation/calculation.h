@@ -17,6 +17,7 @@ public:
   virtual float lowerBound();
   virtual float upperBound();
 protected:
+  constexpr static float k_precision = 0.001f;
   virtual void compute(int indexKnownElement) = 0;
   Law * m_law;
 };

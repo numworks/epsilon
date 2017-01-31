@@ -32,14 +32,16 @@ const char * FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 3);
+/* Parameters in probability application are rounder to 3 decimals */
+  float rf = roundf(f/k_precision)*k_precision;
   if (index == 0) {
-    m_lowerBound = f;
+    m_lowerBound = rf;
   }
   if (index == 1) {
-    m_upperBound = f;
+    m_upperBound = rf;
   }
   if (index == 2) {
-    m_result = f;
+    m_result = rf;
   }
   compute(index);
 }
@@ -69,6 +71,8 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
     return;
   }
   m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
+  /* Results in probability application are rounder to 3 decimals */
+  m_result = roundf(m_result/k_precision)*k_precision;
 }
 
 }

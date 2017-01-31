@@ -25,7 +25,8 @@ bool ExponentialLaw::isContinuous() const {
 
 const char * ExponentialLaw::parameterNameAtIndex(int index) {
   assert(index == 0);
-  return "l";
+  constexpr static char name[] = {Ion::Charset::SmallLambda, 0};
+  return name;
 }
 
 const char * ExponentialLaw::parameterDefinitionAtIndex(int index) {

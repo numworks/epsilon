@@ -26,9 +26,11 @@ bool NormalLaw::isContinuous() const {
 const char * NormalLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "u";
+    constexpr static char meanName[] = {Ion::Charset::SmallMu, 0};
+    return meanName;
   } else {
-    return "o";
+    constexpr static char devName[] = {Ion::Charset::SmallSigma, 0};
+    return devName;
   }
 }
 

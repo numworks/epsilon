@@ -1,6 +1,7 @@
 #include "poisson_law.h"
 #include <assert.h>
 #include <math.h>
+#include <ion.h>
 
 namespace Probability {
 
@@ -23,12 +24,14 @@ bool PoissonLaw::isContinuous() const {
 
 const char * PoissonLaw::parameterNameAtIndex(int index) {
   assert(index == 0);
-  return "l";
+  constexpr static char name[] = {Ion::Charset::SmallLambda, 0};
+  return name;
 }
 
 const char * PoissonLaw::parameterDefinitionAtIndex(int index) {
   assert(index == 0);
-  return "l : parametre";
+  constexpr static char meanDef[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
+  return meanDef;
 }
 
 float PoissonLaw::xMin() {

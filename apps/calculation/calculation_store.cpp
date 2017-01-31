@@ -8,9 +8,9 @@ CalculationStore::CalculationStore() :
 {
 }
 
-Calculation * CalculationStore::push(Calculation * c) {
+Calculation * CalculationStore::push(const char * text, Context * context, Preferences * preferences) {
   Calculation * result = m_start;
-  *m_start++ = *c;
+  m_start++->setContent(text, context, preferences);
   if (m_start >= m_calculations + k_maxNumberOfCalculations) {
     m_start = m_calculations;
   }
@@ -45,7 +45,7 @@ int CalculationStore::numberOfCalculations() {
 }
 
 void CalculationStore::deleteCalculationAtIndex(int i) {
-  *calculationAtIndex(i) = Calculation();
+  calculationAtIndex(i)->reset();
 }
 
 void CalculationStore::deleteAll() {
@@ -53,7 +53,7 @@ void CalculationStore::deleteAll() {
   Calculation * currentCalc= m_start;
   while (currentCalc < m_calculations + k_maxNumberOfCalculations) {
     if (!currentCalc->isEmpty()) {
-      *currentCalc = Calculation();
+      currentCalc->reset();
     }
     currentCalc++;
   }

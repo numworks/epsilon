@@ -30,11 +30,13 @@ public:
   void deselectTable();
   bool selectCellAtLocation(int i, int j);
   TableViewCell * selectedCell();
+  void dataHasChanged(bool dataHasChanged);
 protected:
   SelectableTableViewDelegate * m_delegate;
 private:
   int m_selectedCellX;
   int m_selectedCellY;
+  bool m_dataHasChanged;
 };
 
 #endif

@@ -28,6 +28,7 @@ View * SubController::view() {
 }
 
 void SubController::didBecomeFirstResponder() {
+  m_selectableTableView.dataHasChanged(true);
   m_selectableTableView.selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
   app()->setFirstResponder(&m_selectableTableView);
 }

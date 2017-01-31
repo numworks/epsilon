@@ -33,6 +33,7 @@ View * MainController::view() {
 }
 
 void MainController::didBecomeFirstResponder() {
+  m_selectableTableView.dataHasChanged(true);
   if (m_selectableTableView.selectedRow() < 0) {
     m_selectableTableView.selectCellAtLocation(0, 0);
   }
@@ -42,6 +43,7 @@ void MainController::didBecomeFirstResponder() {
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()), m_selectableTableView.selectedRow());
+    m_selectableTableView.dataHasChanged(true);
     StackViewController * stack = stackController();
     stack->push(&m_subController);
   }

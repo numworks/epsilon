@@ -34,6 +34,7 @@ public:
   bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
+  void hasChangedTableData();
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
   static constexpr KDCoordinate k_leftMargin = 1;

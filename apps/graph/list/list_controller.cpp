@@ -141,6 +141,7 @@ void ListController::editExpression(FunctionExpressionView * functionCell, Ion::
     },
     [](void * context, void * sender){
     });
+  m_selectableTableView.dataHasChanged(true);
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
@@ -170,6 +171,8 @@ bool ListController::handleEnter() {
         return true;
       }
       configureFunction(m_functionStore->functionAtIndex(m_selectableTableView.selectedRow()));
+      // Force to reload the table (deleted functions, desactivated function)
+      m_selectableTableView.dataHasChanged(true);
       return true;
     }
     case 1:

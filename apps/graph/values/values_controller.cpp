@@ -22,6 +22,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
   m_derivativeParameterController(DerivativeParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
+    valuesController->hasChangedTableData();
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
   }, this), KDText::FontSize::Small))
@@ -68,16 +69,20 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK) {
     if (activeRow() == -1) {
+      m_selectableTableView.dataHasChanged(true);
       return headerViewController()->handleEvent(event);
     }
     if (activeRow() == 0) {
       if (activeColumn() == 0) {
+        m_selectableTableView.dataHasChanged(true);
         configureAbscissa();
         return true;
       }
       if (isDerivativeColumn(activeColumn())) {
+        m_selectableTableView.dataHasChanged(true);
         configureDerivativeFunction();
       } else {
+        m_selectableTableView.dataHasChanged(true);
         configureFunction();
       }
       return true;
@@ -270,6 +275,10 @@ const char * ValuesController::emptyMessage() {
 
 Responder * ValuesController::defaultController() {
   return tabController();
+}
+
+void ValuesController::hasChangedTableData() {
+  m_selectableTableView.dataHasChanged(true);
 }
 
 int ValuesController::activeRow() {

@@ -8,7 +8,7 @@ AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
   m_homeApp(this),
-  m_graphApp(this, &m_globalContext),
+  m_graphApp(this, &m_globalContext, &m_preferences),
   m_probabilityApp(this),
   m_calculationApp(this, &m_globalContext, &m_preferences),
   m_regressionApp(this),

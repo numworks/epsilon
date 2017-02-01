@@ -25,7 +25,8 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     valuesController->hasChangedTableData();
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
-  }, this), KDText::FontSize::Small))
+  }, this), KDText::FontSize::Small)),
+  m_displayModeVersion(Expression::DisplayMode::Auto)
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -34,6 +35,16 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
 
 const char * ValuesController::title() const {
   return "Valeurs";
+}
+
+View * ValuesController::view() {
+  AppsContainer * myContainer = (AppsContainer *)app()->container();
+  Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
+  if (displayMode != m_displayModeVersion) {
+    m_selectableTableView.reloadData();
+    m_displayModeVersion = displayMode;
+  }
+  return EditableCellTableViewController::view();
 }
 
 Interval * ValuesController::interval() {

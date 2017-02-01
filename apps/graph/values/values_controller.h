@@ -17,6 +17,7 @@ class ValuesController : public EditableCellTableViewController, public HeaderVi
 public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
+  View * view() override;
   Interval * interval();
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -72,6 +73,7 @@ private:
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
+  Expression::DisplayMode m_displayModeVersion;
 };
 
 }

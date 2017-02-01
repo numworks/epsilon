@@ -1,4 +1,5 @@
 #include "interactive_curve_view_controller.h"
+#include "apps_container.h"
 #include <assert.h>
 #include <math.h>
 
@@ -23,7 +24,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
-  }, this), KDText::FontSize::Small)
+  }, this), KDText::FontSize::Small),
+  m_displayModeVersion(Expression::DisplayMode::Auto)
 {
 }
 
@@ -32,6 +34,13 @@ const char * InteractiveCurveViewController::title() const {
 }
 
 View * InteractiveCurveViewController::view() {
+  AppsContainer * myContainer = (AppsContainer *)app()->container();
+  Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
+  if (displayMode != m_displayModeVersion) {
+    reloadBannerView();
+    curveView()->reload();
+    m_displayModeVersion = displayMode;
+  }
   return curveView();
 }
 

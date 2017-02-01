@@ -75,19 +75,19 @@ void Function::setDisplayDerivative(bool display) {
   m_displayDerivative = display;
 }
 
-float Function::evaluateAtAbscissa(float x, Context * context) const {
+float Function::evaluateAtAbscissa(float x, Context * context, Expression::AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
   Float e = Float(x);
   context->setExpressionForSymbolName(&e, &xSymbol);
-  return m_expression->approximate(*context);
+  return m_expression->approximate(*context, angleUnit);
 }
 
-float Function::approximateDerivative(float x, Context * context) const {
+float Function::approximateDerivative(float x, Context * context, Expression::AngleUnit angleUnit) const {
   Float abscissa = Float(x);
   Expression * args[2] = {m_expression, &abscissa};
   Derivative derivative = Derivative();
   derivative.setArgument(args, 2, true);
-  return derivative.approximate(*context);
+  return derivative.approximate(*context, angleUnit);
 }
 
 }

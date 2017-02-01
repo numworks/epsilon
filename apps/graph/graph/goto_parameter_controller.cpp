@@ -1,5 +1,6 @@
 #include "goto_parameter_controller.h"
 #include "../app.h"
+#include "../../apps_container.h"
 #include <assert.h>
 
 namespace Graph {
@@ -25,7 +26,8 @@ float GoToParameterController::parameterAtIndex(int index) {
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
   App * graphApp = (Graph::App *)app();
-  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext());
+  AppsContainer * container = (AppsContainer *)graphApp->container();
+  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext(), container->preferences()->angleUnit());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
   m_cursor->moveTo(f, y);

@@ -23,6 +23,9 @@ Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-float Sine::approximate(Context& context) const {
-  return sinf(m_args[0]->approximate(context));
+float Sine::approximate(Context& context, AngleUnit angleUnit) const {
+  if (angleUnit == AngleUnit::Degree) {
+    return sinf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
+  }
+  return sinf(m_args[0]->approximate(context, angleUnit));
 }

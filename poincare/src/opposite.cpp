@@ -33,17 +33,17 @@ Expression * Opposite::clone() const {
   return this->cloneWithDifferentOperands((Expression**)&m_operand, 1, true);
 }
 
-Expression * Opposite::evaluate(Context& context) const {
-  Expression * operandEvalutation = m_operand->evaluate(context);
+Expression * Opposite::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * operandEvalutation = m_operand->evaluate(context, angleUnit);
   if (operandEvalutation == nullptr) {
     return nullptr;
   }
   Expression * result = nullptr;
   if (operandEvalutation->type() == Type::Float) {
-    result = new Float(this->approximate(context));
+    result = new Float(this->approximate(context, angleUnit));
   }
   if (operandEvalutation->type() == Type::Matrix) {
-    result = evaluateOnMatrix((Matrix *)operandEvalutation, context);
+    result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
   }
   delete operandEvalutation;
   return result;
@@ -57,8 +57,8 @@ ExpressionLayout * Opposite::createLayout(DisplayMode displayMode) const {
   return new HorizontalLayout(children_layouts, 2);
 }
 
-float Opposite::approximate(Context& context) const {
-  return -m_operand->approximate(context);
+float Opposite::approximate(Context& context, AngleUnit angleUnit) const {
+  return -m_operand->approximate(context, angleUnit);
 }
 
 Expression::Type Opposite::type() const {
@@ -72,10 +72,10 @@ Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
   return new Opposite(newOperands[0], cloneOperands);
 }
 
-Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context) const {
+Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(- m->operand(i)->approximate(context));
+    operands[i] = new Float(- m->operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }

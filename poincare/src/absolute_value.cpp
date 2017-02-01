@@ -24,8 +24,8 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
   return a;
 }
 
-float AbsoluteValue::approximate(Context& context) const {
-  return fabsf(m_args[0]->approximate(context));
+float AbsoluteValue::approximate(Context& context, AngleUnit angleUnit) const {
+  return fabsf(m_args[0]->approximate(context, angleUnit));
 }
 
 ExpressionLayout * AbsoluteValue::createLayout(DisplayMode displayMode) const {

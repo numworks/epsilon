@@ -17,7 +17,7 @@ public:
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * clone() const override;
-  Expression * evaluate(Context& context) const override;
+  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
 protected:
   Expression ** m_args;
   int m_numberOfArguments;

@@ -53,11 +53,11 @@ Expression * Float::clone() const {
   return new Float(m_float);
 }
 
-float Float::approximate(Context& context) const {
+float Float::approximate(Context& context, AngleUnit angleUnit) const {
   return m_float;
 }
 
-Expression * Float::evaluate(Context& context) const {
+Expression * Float::evaluate(Context& context, AngleUnit angleUnit) const {
   return clone();
 }
 

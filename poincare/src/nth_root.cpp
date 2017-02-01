@@ -24,8 +24,8 @@ Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
   return r;
 }
 
-float NthRoot::approximate(Context& context) const {
-  return powf(m_args[0]->approximate(context), 1.0f/m_args[1]->approximate(context));
+float NthRoot::approximate(Context& context, AngleUnit angleUnit) const {
+  return powf(m_args[0]->approximate(context, angleUnit), 1.0f/m_args[1]->approximate(context, angleUnit));
 }
 
 ExpressionLayout * NthRoot::createLayout(DisplayMode displayMode) const {

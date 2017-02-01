@@ -7,7 +7,7 @@
 class Integral : public Function {
 public:
   Integral();
-  float approximate(Context & context) const override;
+  float approximate(Context & context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
@@ -20,12 +20,12 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 100;
 #ifdef LAGRANGE_METHOD
-  float lagrangeGaussQuadrature(float a, float b, VariableContext xContext) const;
+  float lagrangeGaussQuadrature(float a, float b, VariableContext xContext, AngleUnit angleUnit) const;
 #else
-  DetailedResult kronrodGaussQuadrature(float a, float b, VariableContext xContext) const;
-  float adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, VariableContext xContext) const;
+  DetailedResult kronrodGaussQuadrature(float a, float b, VariableContext xContext, AngleUnit angleUnit) const;
+  float adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, VariableContext xContext, AngleUnit angleUnit) const;
 #endif
-  float functionValueAtAbscissa(float x, VariableContext xcontext) const;
+  float functionValueAtAbscissa(float x, VariableContext xcontext, AngleUnit angleUnit) const;
 };
 
 #endif

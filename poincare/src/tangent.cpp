@@ -23,6 +23,9 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-float Tangent::approximate(Context& context) const {
-  return tanf(m_args[0]->approximate(context));
+float Tangent::approximate(Context& context, AngleUnit angleUnit) const {
+  if (angleUnit == AngleUnit::Degree) {
+    return tanf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
+  }
+  return tanf(m_args[0]->approximate(context, angleUnit));
 }

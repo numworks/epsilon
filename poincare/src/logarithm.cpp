@@ -27,11 +27,11 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
   return l;
 }
 
-float Logarithm::approximate(Context& context) const {
+float Logarithm::approximate(Context& context, AngleUnit angleUnit) const {
   if (m_numberOfArguments == 1) {
-    return log10f(m_args[0]->approximate(context));
+    return log10f(m_args[0]->approximate(context, angleUnit));
   }
-  return log10f(m_args[1]->approximate(context))/log10f(m_args[0]->approximate(context));
+  return log10f(m_args[1]->approximate(context, angleUnit))/log10f(m_args[0]->approximate(context, angleUnit));
 }
 
 ExpressionLayout * Logarithm::createLayout(DisplayMode displayMode) const {

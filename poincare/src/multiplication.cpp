@@ -20,8 +20,8 @@ ExpressionLayout * Multiplication::createLayout(DisplayMode displayMode) const {
   return new HorizontalLayout(children_layouts, 3);
 }
 
-float Multiplication::approximate(Context& context) const {
-  return m_operands[0]->approximate(context)*m_operands[1]->approximate(context);;
+float Multiplication::approximate(Context& context, AngleUnit angleUnit) const {
+  return m_operands[0]->approximate(context, angleUnit)*m_operands[1]->approximate(context, angleUnit);;
 }
 
 Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands,
@@ -31,19 +31,19 @@ Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands
   return new Multiplication(newOperands, cloneOperands);
 }
 
-Expression * Multiplication::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Multiplication::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context)*a->approximate(context));
+    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit)*a->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Multiplication::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
-  return evaluateOnMatrixAndFloat(m, a, context);
+Expression * Multiplication::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
+  return evaluateOnMatrixAndFloat(m, a, context, angleUnit);
 }
 
-Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfRows()) {
     return nullptr;
   }
@@ -52,7 +52,7 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
     for (int j = 0; j < n->numberOfColumns(); j++) {
       float f = 0.0f;
       for (int k = 0; k < m->numberOfColumns(); k++) {
-        f += m->operand(i*m->numberOfColumns()+k)->approximate(context) * n->operand(k*n->numberOfColumns()+j)->approximate(context);
+        f += m->operand(i*m->numberOfColumns()+k)->approximate(context, angleUnit) * n->operand(k*n->numberOfColumns()+j)->approximate(context, angleUnit);
       }
       operands[i*n->numberOfColumns()+j] = new Float(f);
     }

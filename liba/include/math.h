@@ -7,8 +7,8 @@ LIBA_BEGIN_DECLS
 
 #define NAN (0.0f/0.0f)
 #define INFINITY __builtin_inff()
-#define M_E 2.71828182845904523536028747135266250
-#define M_PI 3.14159265358979323846264338327950288
+#define M_E 2.71828182845904523536028747135266250f
+#define M_PI 3.14159265358979323846264338327950288f
 
 /* The C99 standard requires isinf and isnan to be defined as macros that can
  * handle arbitrary precision float numbers. The names of the functions called

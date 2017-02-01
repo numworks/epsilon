@@ -24,8 +24,8 @@ Expression * SquareRoot::cloneWithDifferentOperands(Expression** newOperands,
   return sr;
 }
 
-float SquareRoot::approximate(Context& context) const {
-  return powf(m_args[0]->approximate(context), 1.0f/2.0f);
+float SquareRoot::approximate(Context& context, AngleUnit angleUnit) const {
+  return powf(m_args[0]->approximate(context, angleUnit), 1.0f/2.0f);
 }
 
 ExpressionLayout * SquareRoot::createLayout(DisplayMode displayMode) const {

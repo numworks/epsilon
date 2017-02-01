@@ -1,16 +1,18 @@
 #include "function_parameter_controller.h"
+#include "values_controller.h"
 #include <assert.h>
 
 namespace Graph {
 
-FunctionParameterController::FunctionParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
+FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
+  ViewController(nullptr),
   m_pageTitle{"Colonne f(x)"},
   m_displayDerivativeColumn(SwitchMenuListCell((char*)"Colonne de la fonction derivee")),
   m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_function(nullptr)
+  m_function(nullptr),
+  m_valuesController(valuesController)
 {
 }
 
@@ -44,6 +46,9 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         m_function->setDisplayDerivative(!m_function->displayDerivative());
+        if (m_function->displayDerivative()) {
+          m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()+1, m_valuesController->activeRow());
+        }
         m_selectableTableView.reloadData();
         return true;
       }

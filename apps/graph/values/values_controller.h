@@ -35,6 +35,9 @@ public:
   const char * emptyMessage() override;
   Responder * defaultController() override;
   void hasChangedTableData();
+  void selectCellAtLocation(int i, int j);
+  int activeRow();
+  int activeColumn();
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
   static constexpr KDCoordinate k_leftMargin = 1;
@@ -42,8 +45,6 @@ public:
   static constexpr KDCoordinate k_abscissaCellWidth = 150;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 private:
-  int activeRow();
-  int activeColumn();
   Function * functionAtColumn(int i);
   bool isDerivativeColumn(int i);
   Responder * tabController() const;

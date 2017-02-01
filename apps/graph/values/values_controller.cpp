@@ -281,6 +281,10 @@ void ValuesController::hasChangedTableData() {
   m_selectableTableView.dataHasChanged(true);
 }
 
+void ValuesController::selectCellAtLocation(int i, int j) {
+  m_selectableTableView.selectCellAtLocation(i, j);
+}
+
 int ValuesController::activeRow() {
   return m_selectableTableView.selectedRow();
 }

@@ -55,7 +55,7 @@ void TitleBarView::setPreferences(Preferences * preferences) {
     strlcpy(buffer+numberOfChar, "cplx/", 6);
     numberOfChar += 5;
   }
-  if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {
+  if (preferences->angleUnit() == Expression::AngleUnit::Radian) {
     strlcpy(buffer+numberOfChar, "rad", 4);
   } else {
     strlcpy(buffer+numberOfChar, "deg", 4);

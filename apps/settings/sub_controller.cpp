@@ -82,7 +82,7 @@ StackViewController * SubController::stackController() const {
 void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex) {
   switch (preferenceIndex) {
     case 0:
-      m_preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
+      m_preferences->setAngleUnit((Expression::AngleUnit)valueIndex);
       break;
     case 1:
       m_preferences->setDisplayMode((Expression::DisplayMode)valueIndex);

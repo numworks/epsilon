@@ -19,10 +19,6 @@ GraphController::GraphController(Responder * parentResponder, FunctionStore * fu
 {
 }
 
-View * GraphController::view() {
-  return &m_view;
-}
-
 bool GraphController::isEmpty() const {
   if (m_functionStore->numberOfActiveFunctions() == 0) {
     return true;

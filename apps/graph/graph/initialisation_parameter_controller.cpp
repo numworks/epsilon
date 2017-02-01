@@ -1,4 +1,5 @@
 #include "initialisation_parameter_controller.h"
+#include "../../apps_container.h"
 #include <assert.h>
 #include <math.h>
 
@@ -27,9 +28,14 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::setTrigonometric,
-    &InteractiveCurveViewRange::roundAbscissa, &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
-    (m_graphRange->*rangeMethods[m_selectableTableView.selectedRow()])();
+    if (m_selectableTableView.selectedRow() == 0) {
+      AppsContainer * container = (AppsContainer *)app()->container();
+      m_graphRange->setTrigonometric(container->preferences()->angleUnit());
+    } else {
+      RangeMethodPointer rangeMethods[k_totalNumberOfCells-1] = {&InteractiveCurveViewRange::roundAbscissa,
+        &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
+      (m_graphRange->*rangeMethods[m_selectableTableView.selectedRow()-1])();
+    }
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
     return true;

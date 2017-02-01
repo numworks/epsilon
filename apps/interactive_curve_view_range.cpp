@@ -97,10 +97,13 @@ void InteractiveCurveViewRange::normalize() {
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
-void InteractiveCurveViewRange::setTrigonometric() {
-  // TODO: if mode == degree, xmin = -600, xmax = 600
+void InteractiveCurveViewRange::setTrigonometric(Expression::AngleUnit angleUnit) {
   m_xMin = -10.5f;
   m_xMax = 10.5f;
+  if (angleUnit == Expression::AngleUnit::Degree) {
+    m_xMin = -600;
+    m_xMax = 600;
+  }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   m_yAuto = false;
   m_yMin = -1.6f;

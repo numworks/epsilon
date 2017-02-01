@@ -2,6 +2,7 @@
 #define APPS_INTERACTIVE_CURVE_VIEW_RANGE_H
 
 #include <stdint.h>
+#include <poincare.h>
 #include "memoized_curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
@@ -23,7 +24,7 @@ public:
   void panWithVector(float x, float y);
   void roundAbscissa();
   void normalize();
-  void setTrigonometric();
+  void setTrigonometric(Expression::AngleUnit angleUnit);
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);

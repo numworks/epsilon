@@ -73,7 +73,9 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
       }
     }
   }
-  if (m_graphRange.yMin() == min && m_graphRange.yMax() == max) {
+  float range = max - min;
+  if (m_graphRange.yMin() == min-k_displayBottomMarginRatio*range
+      && m_graphRange.yMax() == max+k_displayTopMarginRatio*range) {
     return false;
   }
   if (min == max) {
@@ -90,7 +92,6 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
    if (max == -FLT_MAX) {
     max = min+1.0f;
   }
-  float range = max - min;
   m_graphRange.setYMin(min-k_displayBottomMarginRatio*range);
   m_graphRange.setYMax(max+k_displayTopMarginRatio*range);
   return true;

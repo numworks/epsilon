@@ -1,4 +1,5 @@
 #include <poincare/absolute_value.h>
+#include <poincare/complex.h>
 #include "layout/absolute_value_layout.h"
 
 extern "C" {
@@ -25,7 +26,29 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 float AbsoluteValue::approximate(Context& context, AngleUnit angleUnit) const {
-  return fabsf(m_args[0]->approximate(context, angleUnit));
+  Expression * evaluation = evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  float result = 0.0f;
+  if (evaluation->type() == Type::Matrix) {
+    result = NAN;
+  } else {
+    result = ((Complex *)evaluation)->absoluteValue();
+  }
+  delete evaluation;
+  return result;
+}
+
+Expression * AbsoluteValue::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  if (evaluation->type() == Type::Matrix) {
+    delete evaluation;
+    return new Complex(NAN);
+  }
+  float absVal = ((Complex *)evaluation)->absoluteValue();
+  Complex * result = new Complex(absVal);
+  delete evaluation;
+  return result;
 }
 
 ExpressionLayout * AbsoluteValue::createLayout(DisplayMode displayMode) const {

@@ -3,11 +3,11 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/complex.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/expression.h>
-#include <poincare/float.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/global_context.h>

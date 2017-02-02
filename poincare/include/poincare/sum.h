@@ -11,6 +11,7 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
   ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
+  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
 };
 
 #endif

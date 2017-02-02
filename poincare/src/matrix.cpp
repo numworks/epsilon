@@ -3,7 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 #include "layout/matrix_layout.h"
 #include <math.h>
 #include <string.h>
@@ -22,8 +22,8 @@ Matrix::Matrix(Expression ** newOperands, int numberOfOperands, int numberOfColu
   m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfColumns, numberOfRows, cloneOperands);
 }
 
-Integer * Matrix::defaultExpression() {
-  static Integer * defaultExpression = new Integer(0);
+Complex * Matrix::defaultExpression() {
+  static Complex * defaultExpression = new Complex(0.0f);
   return defaultExpression;
 }
 
@@ -56,7 +56,13 @@ float Matrix::approximate(Context& context, AngleUnit angleUnit) const {
 Expression * Matrix::evaluate(Context& context, AngleUnit angleUnit) const {
   Expression * operands[numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    operands[i] = new Float(operand(i)->approximate(context, angleUnit));
+    operands[i] = operand(i)->evaluate(context, angleUnit);
+    assert(operands[i]->type() == Type::Matrix || operands[i]->type() == Type::Complex);
+    if (operands[i]->type() == Type::Matrix) {
+      delete operands[i];
+      operands[i] = new Complex(NAN);
+      continue;
+    }
   }
   return new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
 }

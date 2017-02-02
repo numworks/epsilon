@@ -2,7 +2,7 @@
 #define POINCARE_MATRIX_DATA_H
 
 #include <poincare/list_data.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 #include <poincare/expression.h>
 
 class MatrixData {
@@ -18,7 +18,7 @@ class MatrixData {
     int m_numberOfRows;
     int m_numberOfColumns;
     Expression ** m_operands;
-    static Float * defaultExpression();
+    static Complex * defaultExpression();
 };
 
 #endif

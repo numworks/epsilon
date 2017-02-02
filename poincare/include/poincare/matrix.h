@@ -2,7 +2,7 @@
 #define POINCARE_MATRIX_H
 
 #include <poincare/expression.h>
-#include <poincare/integer.h>
+#include <poincare/complex.h>
 #include <poincare/matrix_data.h>
 
 class Matrix : public Expression {
@@ -26,7 +26,7 @@ class Matrix : public Expression {
     int writeTextInBuffer(char * buffer, int bufferSize) override;
   private:
     MatrixData * m_matrixData;
-    static Integer * defaultExpression();
+    static Complex * defaultExpression();
 };
 
 #endif

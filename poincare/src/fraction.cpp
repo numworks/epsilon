@@ -18,7 +18,6 @@ ExpressionLayout * Fraction::createLayout(DisplayMode displayMode) const {
 }
 
 float Fraction::approximate(Context& context, AngleUnit angleUnit) const {
-  // TODO: handle division by zero
   return m_operands[0]->approximate(context, angleUnit)/m_operands[1]->approximate(context, angleUnit);
 }
 
@@ -26,13 +25,13 @@ Expression::Type Fraction::type() const {
   return Type::Fraction;
 }
 
-Expression * Fraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit)/a->approximate(context, angleUnit));
-  }
-  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-  return result;
+Expression * Fraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
+  float norm = d->a()*d->a() + d->b()*d->b();
+  return new Complex((c->a()*d->a()+c->b()*d->b())/norm, (d->a()*c->b()-c->a()*d->b())/norm);
+}
+
+Expression * Fraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
+  return nullptr;
 }
 
 Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
@@ -41,9 +40,9 @@ Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& conte
   }
   /* TODO: implement matrix fraction
   if (n->det() == 0) {
-    return new Float(NAN);
+    return new Complex(NAN);
   }
-  result = new Product(m, n->inv());
+  result = new Product(m, n->inv(), false);
   return result;*/
   return nullptr;
 }

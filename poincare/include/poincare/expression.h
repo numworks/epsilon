@@ -11,6 +11,7 @@ class Expression {
     enum class Type : uint8_t {
       AbsoluteValue,
       Addition,
+      Complex,
       Cosine,
       Derivative,
       Float,

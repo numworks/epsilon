@@ -4,6 +4,7 @@ extern "C" {
 }
 
 #include <poincare/subtraction.h>
+#include <poincare/opposite.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -32,32 +33,14 @@ ExpressionLayout * Subtraction::createLayout(DisplayMode displayMode) const {
   return new HorizontalLayout(children_layouts, 3);
 }
 
-Expression * Subtraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) - a->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+Expression * Subtraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
+  return new Complex(c->a() - d->a(), c->b() - d->b());
 }
 
-Expression * Subtraction::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(a->approximate(context, angleUnit) - m->operand(i)->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-}
-
-Expression * Subtraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
-  if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
-    return nullptr;
-  }
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    if (!m->operand(i)->approximate(context, angleUnit) || !n->operand(i)->approximate(context, angleUnit)) {
-      return nullptr;
-    }
-    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) - n->operand(i)->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+Expression * Subtraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
+  Expression * operand = evaluateOnMatrixAndComplex(m, c, context, angleUnit);
+  Opposite * opposite = new Opposite(operand, false);
+  Expression * result = opposite->evaluate(context, angleUnit);
+  delete opposite;
+  return result;
 }

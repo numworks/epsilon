@@ -73,12 +73,12 @@ Responder * BoxController::tabController() const {
 void BoxController::reloadBannerView() {
   const char * calculationName[5] = {"Minimum", "Premier quartile", "Mediane", "Troisieme quartile", "Maximum"};
   m_boxBannerView.setLegendAtIndex((char *)calculationName[(int)m_view.selectedQuantile()], 0);
-  char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
   AppsContainer * container = (AppsContainer *)app()->container();
-  Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+  Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_boxBannerView.setLegendAtIndex(buffer, 1);
 }
 

@@ -29,3 +29,5 @@ float Tangent::approximate(Context& context, AngleUnit angleUnit) const {
   }
   return tanf(m_args[0]->approximate(context, angleUnit));
 }
+
+//TODO: implement evaluate to handle tan complex

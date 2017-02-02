@@ -7,11 +7,11 @@ objs += $(addprefix poincare/src/,\
   addition.o\
   binary_operation.o\
   cosine.o\
+  complex.o\
   derivative.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
-  float.o\
   fraction.o\
   function.o\
   global_context.o\
@@ -55,7 +55,7 @@ objs += $(addprefix poincare/src/layout/,\
 
 tests += $(addprefix poincare/test/,\
   addition.cpp\
-  float.cpp\
+  complex.cpp\
   fraction.cpp\
   identity.cpp\
   integer.cpp\

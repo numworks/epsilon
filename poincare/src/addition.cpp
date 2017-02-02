@@ -32,25 +32,6 @@ bool Addition::isCommutative() const {
   return true;
 }
 
-Expression * Addition::evaluateOnMatrixAndFloat(Matrix * m, Float * f, Context& context, AngleUnit angleUnit) const {
-  return evaluateOnFloatAndMatrix(f, m, context, angleUnit);
-}
-
-Expression * Addition::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(a->approximate(context, angleUnit) + m->operand(i)->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-}
-
-Expression * Addition::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
-  if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
-    return nullptr;
-  }
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) + n->operand(i)->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+Expression * Addition::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
+  return new Complex(c->a()+ d->a(), c->b() + d->b());
 }

@@ -32,8 +32,8 @@ MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numb
   }
 }
 
-Integer * MatrixData::defaultExpression() {
-  static Integer * defaultExpression = new Integer(0);
+Float * MatrixData::defaultExpression() {
+  static Float * defaultExpression = new Float(0.0f);
   return defaultExpression;
 }
 

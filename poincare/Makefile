@@ -15,6 +15,7 @@ objs += $(addprefix poincare/src/,\
   fraction.o\
   function.o\
   global_context.o\
+  hyperbolic_cosine.o\
   integer.o\
   integral.o\
   list_data.o\

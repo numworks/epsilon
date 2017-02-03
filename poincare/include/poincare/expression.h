@@ -16,6 +16,7 @@ class Expression {
       Derivative,
       Float,
       HyperbolicCosine,
+      HyperbolicSine,
       Integer,
       Integral,
       Logarithm,

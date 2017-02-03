@@ -88,6 +88,7 @@ abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTI
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
+sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 cosh { poincare_expression_yylval.expression = new HyperbolicCosine(); return FUNCTION; }
 int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }

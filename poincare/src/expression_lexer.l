@@ -93,6 +93,7 @@ cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 cosh { poincare_expression_yylval.expression = new HyperbolicCosine(); return FUNCTION; }
 int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
+tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
 ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }

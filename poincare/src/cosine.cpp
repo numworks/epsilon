@@ -1,5 +1,6 @@
 #include <poincare/cosine.h>
-
+#include <poincare/hyperbolic_cosine.h>
+#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -30,4 +31,19 @@ float Cosine::approximate(Context& context, AngleUnit angleUnit) const {
   return cosf(m_args[0]->approximate(context, angleUnit));
 }
 
-//TODO: implement evaluate to handle cos complex
+Expression * Cosine::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  if (evaluation->type() == Type::Matrix) {
+    delete evaluation;
+    return new Complex(NAN);
+  }
+  Expression * arg = new Complex(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a());
+  Function * cosh = new HyperbolicCosine();
+  cosh->setArgument(&arg, 1, true);
+  delete evaluation;
+  delete arg;
+  Expression * resultEvaluation = cosh->evaluate(context, angleUnit);
+  delete cosh;
+  return resultEvaluation;
+}

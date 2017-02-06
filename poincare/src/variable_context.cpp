@@ -1,7 +1,9 @@
 #include <poincare/variable_context.h>
 #include <assert.h>
 
-VariableContext::VariableContext(char name, ::Context * parentContext) :
+namespace Poincare {
+
+VariableContext::VariableContext(char name, Context * parentContext) :
   m_name(name),
   m_value(Complex(0.0f)),
   m_parentContext(parentContext)
@@ -26,3 +28,4 @@ const Expression * VariableContext::expressionForSymbol(const Symbol * symbol) {
   }
 }
 
+}

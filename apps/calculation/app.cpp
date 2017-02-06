@@ -1,5 +1,7 @@
 #include "app.h"
 #include "calculation_icon.h"
+using namespace Poincare;
+
 
 namespace Calculation {
 

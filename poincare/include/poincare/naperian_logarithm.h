@@ -3,6 +3,8 @@
 
 #include <poincare/function.h>
 
+namespace Poincare {
+
 class NaperianLogarithm : public Function {
 public:
   NaperianLogarithm();
@@ -11,5 +13,7 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 };
+
+}
 
 #endif

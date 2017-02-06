@@ -7,6 +7,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Poincare {
+
 Expression * ExpressionBuilder::build(ExpressionMatch matches[]) {
   Expression * children_expressions[255]; // FIXME: <- The sized can be given by the compiler
   //Expression * children_expressions = malloc;
@@ -83,4 +85,6 @@ ExpressionBuilder * ExpressionBuilder::child(int index) {
     ExpressionBuilder * previousChild = this->child(index-1);
     return previousChild+previousChild->m_numberOfChildren+1; // Pointer arithm.
   }
+}
+
 }

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Poincare {
+
 SequenceLayout::SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout) :
   ExpressionLayout(),
   m_lowerBoundLayout(lowerBoundLayout),
@@ -61,4 +63,6 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
     assert(false);
   }
   return KDPoint(x,y);
+}
+
 }

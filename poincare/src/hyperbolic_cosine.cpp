@@ -9,6 +9,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 HyperbolicCosine::HyperbolicCosine() :
   Function("cosh")
 {
@@ -60,4 +62,6 @@ Expression * HyperbolicCosine::evaluate(Context& context, AngleUnit angleUnit) c
   Expression * resultEvaluation = result->evaluate(context, angleUnit);
   delete result;
   return resultEvaluation;
+}
+
 }

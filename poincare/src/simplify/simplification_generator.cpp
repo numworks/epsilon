@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Poincare {
+
 Expression * SimplificationGenerator::AddIntegers(Expression ** parameters, int numberOfParameters) {
   Integer * result = new Integer((native_int_t)0);
   for (int i=0; i<numberOfParameters; i++) {
@@ -26,4 +28,6 @@ Expression * SimplificationGenerator::MultiplyIntegers(Expression ** parameters,
     delete parameters[i];
   }
   return result;
+}
+
 }

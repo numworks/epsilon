@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class FractionLayout : public ExpressionLayout {
   public:
     FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator);
@@ -20,5 +22,7 @@ class FractionLayout : public ExpressionLayout {
     ExpressionLayout * m_numerator_layout;
     ExpressionLayout * m_denominator_layout;
 };
+
+}
 
 #endif

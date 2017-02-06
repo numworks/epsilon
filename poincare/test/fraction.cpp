@@ -3,6 +3,8 @@
 #include <ion.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_fraction_approximate) {
   GlobalContext globalContext;
   Expression * f = Expression::parse("1/2");

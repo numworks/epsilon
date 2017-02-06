@@ -1,5 +1,7 @@
 #include "simplification.h"
 
+namespace Poincare {
+
 Expression * Simplification::simplify(Expression * expression) const {
   ExpressionMatch matches[255]; // FIXME: The size ca be given by our compiler
   if (m_selector->match(expression, matches)) {
@@ -7,4 +9,6 @@ Expression * Simplification::simplify(Expression * expression) const {
   } else {
     return nullptr;
   }
+}
+
 }

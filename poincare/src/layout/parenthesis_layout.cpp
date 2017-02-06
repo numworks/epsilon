@@ -4,6 +4,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 const uint8_t topLeftCurve[ParenthesisLayout::k_parenthesisCurveHeight][ParenthesisLayout::k_parenthesisCurveWidth] = {
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
   {0xFF, 0xFF, 0xFF, 0x00, 0xFF},
@@ -89,4 +91,6 @@ ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(k_widthMargin+k_lineThickness, k_heightMargin);
+}
+
 }

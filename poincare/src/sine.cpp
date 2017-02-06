@@ -7,6 +7,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 Sine::Sine() :
   Function("sin")
 {
@@ -53,4 +55,6 @@ Expression * Sine::evaluate(Context& context, AngleUnit angleUnit) const {
   Expression * resultEvaluation = result->evaluate(context, angleUnit);
   delete result;
   return resultEvaluation;
+}
+
 }

@@ -6,6 +6,8 @@ extern "C" {
 #include <poincare/multiplication.h>
 #include "layout/baseline_relative_layout.h"
 
+namespace Poincare {
+
 float Power::approximate(Context& context, AngleUnit angleUnit) const {
   return powf(m_operands[0]->approximate(context, angleUnit), m_operands[1]->approximate(context, angleUnit));
 }
@@ -75,4 +77,6 @@ Expression * Power::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context&
 
 Expression * Power::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   return nullptr;
+}
+
 }

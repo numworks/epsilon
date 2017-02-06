@@ -14,7 +14,7 @@ public:
 private:
   TableViewCell * titleCells(int index) override;
   EvenOddExpressionCell m_titleCells[k_numberOfTitleCells];
-  ExpressionLayout * m_titleLayout[2];
+  Poincare::ExpressionLayout * m_titleLayout[2];
 };
 
 }

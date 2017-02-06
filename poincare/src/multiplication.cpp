@@ -9,6 +9,8 @@ extern "C" {
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 
+namespace Poincare {
+
 Expression::Type Multiplication::type() const {
   return Expression::Type::Multiplication;
 }
@@ -65,4 +67,6 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
     }
   }
   return new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);
+}
+
 }

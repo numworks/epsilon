@@ -8,6 +8,8 @@ extern "C" {
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
 
+namespace Poincare {
+
 Opposite::Opposite(Expression * operand, bool cloneOperands) {
   assert(operand != nullptr);
   if (cloneOperands) {
@@ -87,4 +89,6 @@ Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit 
     delete evaluation;
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+}
+
 }

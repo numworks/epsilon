@@ -5,6 +5,8 @@
 #include "expression_selector.h"
 #include "expression_builder.h"
 
+namespace Poincare {
+
 class Simplification {
 public:
   constexpr Simplification(ExpressionSelector * m_selector, ExpressionBuilder * m_builder);
@@ -20,6 +22,8 @@ constexpr Simplification::Simplification(
   :
   m_selector(selector),
   m_builder(builder) {
+}
+
 }
 
 #endif

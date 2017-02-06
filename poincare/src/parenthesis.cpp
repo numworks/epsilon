@@ -5,6 +5,8 @@ extern "C" {
 #include <poincare/parenthesis.h>
 #include "layout/parenthesis_layout.h"
 
+namespace Poincare {
+
 Parenthesis::Parenthesis(Expression * operand, bool cloneOperands) {
   assert(operand != nullptr);
   if (cloneOperands) {
@@ -52,4 +54,6 @@ Expression * Parenthesis::cloneWithDifferentOperands(Expression** newOperands,
   assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   return new Parenthesis(newOperands[0], cloneOperands);
+}
+
 }

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <math.h>
 
+using namespace Poincare;
+
 namespace Graph {
 
 Function::Function(const char * text, KDColor color) :

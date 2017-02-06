@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
+
 AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),

@@ -4,6 +4,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 MatrixLayout::MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
   ExpressionLayout(),
   m_entryLayouts(entryLayouts),
@@ -106,4 +108,6 @@ KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
   }
   y += rowBaseline(rowIndex) - child->baseline() + rowIndex * k_matrixEntryMargin;
   return KDPoint(x, y);
+}
+
 }

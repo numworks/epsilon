@@ -18,19 +18,19 @@ public:
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
   const char * text();
-  Expression * input();
-  ExpressionLayout * inputLayout();
-  Expression * output();
-  ExpressionLayout * outputLayout();
-  void setContent(const char * c, Context * context, Preferences * preferences);
+  Poincare::Expression * input();
+  Poincare::ExpressionLayout * inputLayout();
+  Poincare::Expression * output();
+  Poincare::ExpressionLayout * outputLayout();
+  void setContent(const char * c, Poincare::Context * context, Preferences * preferences);
   bool isEmpty();
   constexpr static int k_maximalExpressionTextLength = 255;
 private:
   char m_text[k_maximalExpressionTextLength];
-  Expression * m_input;
-  ExpressionLayout * m_inputLayout;
-  Expression * m_output;
-  ExpressionLayout * m_outputLayout;
+  Poincare::Expression * m_input;
+  Poincare::ExpressionLayout * m_inputLayout;
+  Poincare::Expression * m_output;
+  Poincare::ExpressionLayout * m_outputLayout;
 };
 
 }

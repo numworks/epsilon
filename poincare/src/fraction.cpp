@@ -6,6 +6,8 @@ extern "C" {
 #include <poincare/fraction.h>
 #include "layout/fraction_layout.h"
 
+namespace Poincare {
+
 Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
   assert(numberOfOperands == 2);
@@ -45,4 +47,6 @@ Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& conte
   result = new Product(m, n->inv(), false);
   return result;*/
   return nullptr;
+}
+
 }

@@ -4,6 +4,8 @@
 #include <poincare/expression_layout.h>
 #include <kandinsky.h>
 
+namespace Poincare {
+
 class Context;
 
 class Expression {
@@ -97,5 +99,7 @@ class Expression {
     bool combinatoryCommutativeOperandsIdentity(const Expression * e,
         bool * operandMatched, int leftToMatch) const;
 };
+
+}
 
 #endif

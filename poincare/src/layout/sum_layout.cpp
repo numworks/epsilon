@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Poincare {
+
 const uint8_t symbolPixel[SumLayout::k_symbolHeight][SumLayout::k_symbolWidth] = {
   {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
@@ -28,4 +30,6 @@ void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCo
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, m_argumentLayout->baseline()-k_symbolHeight),
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
+}
+
 }

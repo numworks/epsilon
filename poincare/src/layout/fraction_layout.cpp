@@ -2,6 +2,8 @@
 #include <assert.h>
 #include "fraction_layout.h"
 
+namespace Poincare {
+
 FractionLayout::FractionLayout(ExpressionLayout * numerator_layout, ExpressionLayout * denominator_layout) :
 ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(denominator_layout) {
   m_numerator_layout->setParent(this);
@@ -53,4 +55,6 @@ KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
     assert(false); // Should not happen
   }
   return KDPoint(x, y);
+}
+
 }

@@ -4,6 +4,8 @@ extern "C" {
 }
 #include <poincare/list_data.h>
 
+namespace Poincare {
+
 ListData::ListData(Expression * operand) :
   m_numberOfOperands(1),
   m_operands((Expression **)malloc(sizeof(Expression *)))
@@ -38,4 +40,6 @@ const Expression * ListData::operand(int i) const {
   assert(i >= 0);
   assert(i < m_numberOfOperands);
   return m_operands[i];
+}
+
 }

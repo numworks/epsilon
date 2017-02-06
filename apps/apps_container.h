@@ -24,7 +24,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
-  Context * globalContext();
+  Poincare::Context * globalContext();
   Preferences * preferences();
   ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
@@ -45,7 +45,7 @@ private:
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif
-  GlobalContext m_globalContext;
+  Poincare::GlobalContext m_globalContext;
   Preferences m_preferences;
   ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;

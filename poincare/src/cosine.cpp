@@ -6,6 +6,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 Cosine::Cosine() :
   Function("cos")
 {
@@ -46,4 +48,6 @@ Expression * Cosine::evaluate(Context& context, AngleUnit angleUnit) const {
   Expression * resultEvaluation = cosh->evaluate(context, angleUnit);
   delete cosh;
   return resultEvaluation;
+}
+
 }

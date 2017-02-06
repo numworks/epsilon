@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+using namespace Poincare;
 
 namespace Graph {
 

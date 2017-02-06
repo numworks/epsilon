@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class AbsoluteValueLayout : public ExpressionLayout {
 public:
   AbsoluteValueLayout(ExpressionLayout * operandLayout);
@@ -18,5 +20,7 @@ private:
   constexpr static KDCoordinate k_straightBracketMargin = 2;
   ExpressionLayout * m_operandLayout;
 };
+
+}
 
 #endif

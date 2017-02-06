@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 
+namespace Poincare {
+
 class ListData {
   public:
     ListData(Expression * operand);
@@ -14,5 +16,7 @@ class ListData {
     int m_numberOfOperands;
     Expression ** m_operands;
 };
+
+}
 
 #endif

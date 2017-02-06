@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Poincare {
+
 const uint8_t topSymbolPixel[IntegralLayout::k_symbolHeight][IntegralLayout::k_symbolWidth] = {
   {0x00, 0x00, 0xFF, 0xFF},
   {0xFF, 0xFF, 0x00, 0xFF},
@@ -90,4 +92,6 @@ KDPoint IntegralLayout::positionOfChild(ExpressionLayout * child) {
     assert(false);
   }
   return KDPoint(x,y);
+}
+
 }

@@ -6,7 +6,7 @@
 
 class ExpressionTextFieldDelegate : public TextFieldDelegate {
 public:
-  virtual Context * localContext() = 0;
+  virtual Poincare::Context * localContext() = 0;
   virtual const char * XNT();
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:

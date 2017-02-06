@@ -8,6 +8,8 @@
 #define MAX(a,b) ((a)>(b)?a:b)
 #define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
 
+namespace Poincare {
+
 uint8_t log2(native_uint_t v) {
   assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK
   for (uint8_t i=0; i<NATIVE_UINT_BIT_COUNT; i++) {
@@ -347,4 +349,6 @@ ExpressionLayout * Integer::createLayout(DisplayMode displayMode) const {
 bool Integer::valueEquals(const Expression * e) const {
   assert(e->type() == Type::Integer);
   return (*this == *(Integer *)e); // FIXME: Remove operator overloading
+}
+
 }

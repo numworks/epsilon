@@ -1,5 +1,6 @@
 #include "scrollable_expression_view.h"
 #include <assert.h>
+using namespace Poincare;
 
 namespace Calculation {
 

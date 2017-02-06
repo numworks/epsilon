@@ -5,6 +5,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 ExpressionMatch::ExpressionMatch() {
   m_numberOfExpressions = 0;
   m_expressions = nullptr;
@@ -40,4 +42,6 @@ ExpressionMatch& ExpressionMatch::operator=(ExpressionMatch&& other) {
   other.m_numberOfExpressions = 0;
   m_expressions = other.m_expressions;
   return *this;
+}
+
 }

@@ -3,6 +3,8 @@
 #include <ion.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_power_approximate) {
   GlobalContext globalContext;
   Expression * p = Expression::parse("2^3");

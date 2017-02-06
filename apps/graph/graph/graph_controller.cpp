@@ -5,6 +5,8 @@
 #include <math.h>
 #include <float.h>
 
+using namespace Poincare;
+
 namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :

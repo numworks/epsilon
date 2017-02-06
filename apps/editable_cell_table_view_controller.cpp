@@ -4,6 +4,8 @@
 #include "text_field_delegate_app.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),

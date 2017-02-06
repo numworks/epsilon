@@ -2,6 +2,8 @@
 #include <poincare.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_integer) {
   assert(Integer(123) == Integer(123));
   assert(Integer("123") == Integer(123));

@@ -5,6 +5,8 @@
 #include <float.h>
 #include <string.h>
 
+using namespace Poincare;
+
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView) :
   View(),

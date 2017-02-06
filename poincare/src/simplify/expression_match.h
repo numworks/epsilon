@@ -6,6 +6,8 @@ extern "C" {
 #include <stdint.h>
 }
 
+namespace Poincare {
+
 class ExpressionMatch {
 public:
   ExpressionMatch();
@@ -18,5 +20,7 @@ private:
   const Expression ** m_expressions;
   int m_numberOfExpressions;
 };
+
+}
 
 #endif

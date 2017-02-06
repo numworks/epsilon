@@ -4,6 +4,8 @@
 #include "text_field_delegate_app.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,

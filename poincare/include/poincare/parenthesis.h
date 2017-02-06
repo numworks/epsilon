@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 
+namespace Poincare {
+
 class Parenthesis : public Expression {
   public:
     Parenthesis(Expression * operand, bool cloneOperands = true);
@@ -19,5 +21,7 @@ class Parenthesis : public Expression {
   protected:
     Expression * m_operand;
 };
+
+}
 
 #endif

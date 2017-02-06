@@ -3,7 +3,11 @@
 
 #include "simplification.h"
 
+namespace Poincare {
+
 extern const Simplification simplifications[];
 extern const int knumberOfSimplifications;
+
+}
 
 #endif

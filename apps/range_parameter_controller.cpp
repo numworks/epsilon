@@ -2,6 +2,8 @@
 #include "apps_container.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),

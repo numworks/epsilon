@@ -40,7 +40,7 @@
  * requires feature. */
 #include <poincare.h>
 #include "expression_parser.hpp"
-
+using namespace Poincare;
 
 /* Flex has provision for reading files. We'll never use this, so we're defining
  * YY_INPUT which effectively disables taking input from a file. */

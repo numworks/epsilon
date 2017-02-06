@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <ion.h>
 
+using namespace Poincare;
+
 InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
   MemoizedCurveViewRange(),
   m_yAuto(true),

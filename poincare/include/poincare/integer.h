@@ -8,6 +8,8 @@ typedef int32_t native_int_t;
 typedef uint32_t native_uint_t;
 typedef uint64_t double_native_uint_t;
 
+namespace Poincare {
+
 class Integer : public LeafExpression {
   public:
     Integer(native_int_t i);
@@ -59,5 +61,7 @@ public:
   Integer m_quotient;
   Integer m_remainder;
 };
+
+}
 
 #endif

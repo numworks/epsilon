@@ -1,6 +1,8 @@
 #include "graph_controller.h"
 #include "../apps_container.h"
 
+using namespace Poincare;
+
 namespace Regression {
 
 GraphController::GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :

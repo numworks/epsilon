@@ -2,6 +2,8 @@
 #include <poincare.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_matrix_evaluate) {
   GlobalContext globalContext;
   Expression * f = Expression::parse("[[1,2,3][4,5,6]]");

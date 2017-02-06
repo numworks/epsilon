@@ -8,6 +8,8 @@ extern "C" {
 #include <float.h>
 }
 
+namespace Poincare {
+
 Derivative::Derivative() :
   Function("diff")
 {
@@ -127,3 +129,6 @@ float Derivative::approximateDerivate2(float x, float h, VariableContext xContex
   float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return expressionPlus - 2.0f*expression + expressionMinus;
 }
+
+}
+

@@ -4,6 +4,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 BinaryOperation::BinaryOperation(Expression ** operands, bool cloneOperands) {
   assert(operands != nullptr);
   assert(operands[0] != nullptr);
@@ -102,3 +104,6 @@ Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
+
+}
+

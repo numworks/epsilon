@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class SequenceLayout : public ExpressionLayout {
 public:
   SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout);
@@ -21,5 +23,7 @@ private:
   KDPoint positionOfChild(ExpressionLayout * child) override;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
 };
+
+}
 
 #endif

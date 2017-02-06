@@ -3,6 +3,8 @@
 #include <math.h>
 #include <string.h>
 
+using namespace Poincare;
+
 const char * ExpressionTextFieldDelegate::XNT() {
   return "x";
 }

@@ -10,7 +10,7 @@ public:
   void reloadCell() override;
   void setLabel(const char * text);
   void setSubtitle(const char * text);
-  void setExpression(ExpressionLayout * expressionLayout);
+  void setExpression(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   int numberOfSubviews() const override;

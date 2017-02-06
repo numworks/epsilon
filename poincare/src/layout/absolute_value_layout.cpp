@@ -4,6 +4,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 AbsoluteValueLayout::AbsoluteValueLayout(ExpressionLayout * operandLayout) :
   ExpressionLayout(),
   m_operandLayout(operandLayout)
@@ -36,4 +38,6 @@ ExpressionLayout * AbsoluteValueLayout::child(uint16_t index) {
 
 KDPoint AbsoluteValueLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(k_straightBracketWidth + k_straightBracketMargin, 0);
+}
+
 }

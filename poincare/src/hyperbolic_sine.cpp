@@ -9,6 +9,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 HyperbolicSine::HyperbolicSine() :
   Function("sinh")
 {
@@ -60,4 +62,6 @@ Expression * HyperbolicSine::evaluate(Context& context, AngleUnit angleUnit) con
   Expression * resultEvaluation = result->evaluate(context, angleUnit);
   delete result;
   return resultEvaluation;
+}
+
 }

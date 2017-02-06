@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Poincare {
+
 void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize upperBoundSize = m_upperBoundLayout->size();
   KDSize lowerBoundSize = m_lowerBoundLayout->size();
@@ -14,4 +16,6 @@ void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2)+k_symbolWidth,
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, m_argumentLayout->baseline()-k_symbolHeight),
     k_lineThickness, k_symbolHeight), expressionColor);
+}
+
 }

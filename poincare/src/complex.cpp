@@ -9,6 +9,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include <ion.h>
 
+namespace Poincare {
+
 Complex::Complex(float a, float b, bool polar) :
   m_a(a),
   m_b(b),
@@ -276,3 +278,6 @@ void Complex::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,
     dividend = quotien;
   }  while (endChar >= startChar);
 }
+
+}
+

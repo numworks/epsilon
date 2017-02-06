@@ -3,6 +3,8 @@
 
 #include <kandinsky.h>
 
+namespace Poincare {
+
 class ExpressionLayout {
   public:
     ExpressionLayout();
@@ -26,5 +28,7 @@ class ExpressionLayout {
     bool m_sized, m_positioned;
     KDRect m_frame;
 };
+
+}
 
 #endif

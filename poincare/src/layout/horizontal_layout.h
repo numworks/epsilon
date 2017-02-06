@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class HorizontalLayout : public ExpressionLayout {
   public:
     HorizontalLayout(ExpressionLayout ** layouts, int number_of_children);
@@ -17,5 +19,7 @@ class HorizontalLayout : public ExpressionLayout {
     int m_number_of_children;
     ExpressionLayout ** m_children_layouts;
 };
+
+}
 
 #endif

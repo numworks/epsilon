@@ -1,4 +1,5 @@
 #include <escher/expression_view.h>
+using namespace Poincare;
 
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :

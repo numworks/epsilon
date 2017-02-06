@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class MatrixLayout : public ExpressionLayout {
   public:
     MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns);
@@ -26,5 +28,7 @@ class MatrixLayout : public ExpressionLayout {
     int m_numberOfRows;
     int m_numberOfColumns;
 };
+
+}
 
 #endif

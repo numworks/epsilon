@@ -5,6 +5,8 @@
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
 
+namespace Poincare {
+
 class BinaryOperation : public Expression {
 public:
   BinaryOperation(Expression ** operands, bool cloneOperands = true);
@@ -20,5 +22,7 @@ protected:
   virtual Expression * evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const;
   virtual Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const;
 };
+
+}
 
 #endif

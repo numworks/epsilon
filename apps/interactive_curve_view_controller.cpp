@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <math.h>
 
+using namespace Poincare;
+
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),

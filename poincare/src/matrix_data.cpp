@@ -5,6 +5,8 @@ extern "C" {
 #include <poincare/matrix_data.h>
 #include <poincare/integer.h>
 
+namespace Poincare {
+
 MatrixData::MatrixData(ListData * listData) :
   m_numberOfRows(1),
   m_numberOfColumns(0)
@@ -73,4 +75,4 @@ Expression ** MatrixData::operands() const {
   return m_operands;
 }
 
-
+}

@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 
+namespace Poincare {
+
 class LeafExpression : public Expression {
   public:
     const Expression * operand(int i) const override;
@@ -10,5 +12,7 @@ class LeafExpression : public Expression {
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands = true) const override;
 };
+
+}
 
 #endif

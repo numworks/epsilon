@@ -2,6 +2,8 @@
 #include <assert.h>
 #include "nth_root_layout.h"
 
+namespace Poincare {
+
 const uint8_t radixPixel[NthRootLayout::k_leftRadixHeight][NthRootLayout::k_leftRadixWidth] = {
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF},
   {0xFF, 0x00, 0xFF, 0xFF, 0xFF},
@@ -108,3 +110,6 @@ KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   }
   return KDPoint(x,y);
 }
+
+}
+

@@ -3,6 +3,8 @@ extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
+
 TitleBarView::TitleBarView() :
   View(),
   m_titleView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),

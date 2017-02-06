@@ -4,6 +4,8 @@
 #include <poincare.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :

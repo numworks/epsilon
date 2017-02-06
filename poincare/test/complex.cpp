@@ -4,6 +4,8 @@
 #include <ion.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_complex_to_text) {
   char buffer[14];
   Complex::convertFloatToText(123.456f,buffer, 14, 7);

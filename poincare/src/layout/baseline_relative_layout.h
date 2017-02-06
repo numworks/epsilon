@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class BaselineRelativeLayout : public ExpressionLayout {
   public:
     enum class Type {
@@ -23,5 +25,7 @@ class BaselineRelativeLayout : public ExpressionLayout {
     ExpressionLayout * m_indiceLayout;
     Type m_type;
 };
+
+}
 
 #endif

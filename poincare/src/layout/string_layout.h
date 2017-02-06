@@ -4,6 +4,8 @@
 #include <poincare/expression_layout.h>
 #include <string.h>
 
+namespace Poincare {
+
 class StringLayout : public ExpressionLayout {
   public:
     // Here the inverse is a uint8_t instead of a bool, because the size of a bool is
@@ -20,5 +22,7 @@ class StringLayout : public ExpressionLayout {
     char * m_string;
     KDText::FontSize m_fontSize;
 };
+
+}
 
 #endif

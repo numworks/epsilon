@@ -11,8 +11,8 @@ namespace Calculation {
 
 class App : public TextFieldDelegateApp {
 public:
-  App(Container * container, Context * context);
-  Context * localContext() override;
+  App(Container * container, Poincare::Context * context);
+  Poincare::Context * localContext() override;
 private:
   LocalContext m_localContext;
   CalculationStore m_calculationStore;

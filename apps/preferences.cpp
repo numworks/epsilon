@@ -1,5 +1,7 @@
 #include "preferences.h"
 
+using namespace Poincare;
+
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::DisplayMode::Auto),

@@ -4,6 +4,8 @@
 #include <math.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_parser) {
   GlobalContext globalContext;
   Expression * a = Expression::parse("1.2*e^(1)");

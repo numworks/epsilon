@@ -7,6 +7,8 @@ extern "C" {
 #include <poincare/symbol.h>
 #include "expression_selector.h"
 
+namespace Poincare {
+
 const uint8_t kUnmatched = 0xff;
 
 int ExpressionSelector::numberOfNonWildcardChildren() {
@@ -325,4 +327,6 @@ ExpressionSelector * ExpressionSelector::child(int index) {
     ExpressionSelector * previousChild = this->child(index-1);
     return previousChild+previousChild->m_numberOfChildren+1; // Pointer arithm.
   }
+}
+
 }

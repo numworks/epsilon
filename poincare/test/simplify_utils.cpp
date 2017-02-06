@@ -1,6 +1,8 @@
 #include <poincare.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
 #include "../src/expression_debug.h"
 #include <iostream>

@@ -3,6 +3,8 @@
 
 #include <poincare/leaf_expression.h>
 
+namespace Poincare {
+
 class Symbol : public LeafExpression {
 public:
     enum SpecialSymbols : char {
@@ -19,5 +21,7 @@ public:
   private:
     const char m_name;
 };
+
+}
 
 #endif

@@ -15,16 +15,16 @@ public:
   GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
     CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setContext(Context * context);
+  void setContext(Poincare::Context * context);
   void setPreferences(Preferences * preferences);
-  Context * context() const;
+  Poincare::Context * context() const;
 private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
-  char m_xLabels[k_maxNumberOfXLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  char m_yLabels[k_maxNumberOfYLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_xLabels[k_maxNumberOfXLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_yLabels[k_maxNumberOfYLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   FunctionStore * m_functionStore;
-  Context * m_context;
+  Poincare::Context * m_context;
   Preferences * m_preferences;
 };
 

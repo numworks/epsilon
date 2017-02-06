@@ -7,6 +7,8 @@ extern "C" {
 #include <stdint.h>
 }
 
+namespace Poincare {
+
 class ExpressionBuilder {
 public:
   static constexpr ExpressionBuilder BuildFromType(Expression::Type type, uint8_t numberOfChildren);
@@ -122,6 +124,8 @@ constexpr ExpressionBuilder::ExpressionBuilder(ExternalGenerator * generator,
   m_action(ExpressionBuilder::Action::CallExternalGenerator),
   m_generator(generator),
   m_numberOfChildren(numberOfChildren) {
+}
+
 }
 
 #endif

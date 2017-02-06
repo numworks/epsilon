@@ -15,23 +15,23 @@ public:
   const char * text();
   const char * name();
   KDColor color() const { return m_color; }
-  Expression * expression();
-  ExpressionLayout * layout();
+  Poincare::Expression * expression();
+  Poincare::ExpressionLayout * layout();
   bool isActive();
   void setActive(bool active);
   bool displayDerivative();
   void setDisplayDerivative(bool display);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  float evaluateAtAbscissa(float x, Context * context, Expression::AngleUnit angleUnit) const;
-  float approximateDerivative(float x, Context * context, Expression::AngleUnit angleUnit) const;
+  float evaluateAtAbscissa(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const;
+  float approximateDerivative(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const;
 private:
   constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];
   const char * m_name;
   KDColor m_color;
-  Expression * m_expression;
-  ExpressionLayout * m_layout;
+  Poincare::Expression * m_expression;
+  Poincare::ExpressionLayout * m_layout;
   bool m_active;
   bool m_displayDerivative;
 };

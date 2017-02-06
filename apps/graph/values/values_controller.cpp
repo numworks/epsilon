@@ -4,6 +4,8 @@
 #include "../app.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :

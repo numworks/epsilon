@@ -9,6 +9,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/parenthesis_layout.h"
 
+namespace Poincare {
+
 Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
@@ -43,4 +45,6 @@ Expression * Subtraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Co
   Expression * result = opposite->evaluate(context, angleUnit);
   delete opposite;
   return result;
+}
+
 }

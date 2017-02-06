@@ -18,7 +18,6 @@ public:
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Function * function);
   void didBecomeFirstResponder() override;
   void reload();
   int numberOfRows() override;

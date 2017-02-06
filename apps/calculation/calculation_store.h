@@ -12,7 +12,7 @@ class CalculationStore {
 public:
   CalculationStore();
   Calculation * calculationAtIndex(int i);
-  Calculation * push(const char * text, Context * context, Preferences * preferences);
+  Calculation * push(const char * text, Poincare::Context * context, Preferences * preferences);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int numberOfCalculations();

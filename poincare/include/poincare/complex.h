@@ -3,6 +3,8 @@
 
 #include <poincare/leaf_expression.h>
 
+namespace Poincare {
+
 class Complex : public LeafExpression {
 public:
   Complex(float a, float b = 0.0f, bool polar = false);
@@ -62,5 +64,7 @@ private:
   float m_b;
   int m_numberOfSignificantDigits;
 };
+
+}
 
 #endif

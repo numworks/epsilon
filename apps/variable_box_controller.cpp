@@ -2,6 +2,8 @@
 #include "constant.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 /* ContentViewController */
 
 VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, Context * context) :

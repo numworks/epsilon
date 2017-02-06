@@ -4,6 +4,8 @@
 #include <poincare/context.h>
 #include <poincare/complex.h>
 
+namespace Poincare {
+
 class Integer;
 
 /* The global context only stores symbols A-Z, L1-L9 and M1-M9 */
@@ -25,5 +27,7 @@ private:
   Complex m_pi;
   Complex m_e;
 };
+
+}
 
 #endif

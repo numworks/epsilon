@@ -3,6 +3,7 @@ include apps/graph/Makefile
 include apps/home/Makefile
 include apps/probability/Makefile
 include apps/regression/Makefile
+include apps/sequence/Makefile
 include apps/settings/Makefile
 include apps/shared/Makefile
 include apps/statistics/Makefile

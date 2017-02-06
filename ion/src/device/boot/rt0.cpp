@@ -9,13 +9,13 @@ extern "C" {
 typedef void (*cxx_constructor)();
 
 extern "C" {
-  char _data_section_start_flash;
-  char _data_section_start_ram;
-  char _data_section_end_ram;
-  char _bss_section_start_ram;
-  char _bss_section_end_ram;
-  cxx_constructor _init_array_start;
-  cxx_constructor _init_array_end;
+  extern char _data_section_start_flash;
+  extern char _data_section_start_ram;
+  extern char _data_section_end_ram;
+  extern char _bss_section_start_ram;
+  extern char _bss_section_end_ram;
+  extern cxx_constructor _init_array_start;
+  extern cxx_constructor _init_array_end;
 }
 
 void abort() {

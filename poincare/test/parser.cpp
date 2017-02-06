@@ -24,4 +24,13 @@ QUIZ_CASE(poincare_parser) {
   a = Expression::parse("-sin(3)*2-3");
   f = -sinf(3.0f)*2.0f-3.0f;
   assert(a->approximate(globalContext) == f);
+
+  a = Expression::parse("-.003");
+  f = -0.003f;
+  assert(a->approximate(globalContext) == f);
+
+  char text[10] = {'.', '0', '2', 'E', '2', 0};
+  a = Expression::parse(text);
+  f = 2.0f;
+  assert(a->approximate(globalContext) == f);
 }

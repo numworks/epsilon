@@ -2,10 +2,10 @@
 #define GRAPH_GRAPH_VIEW_H
 
 #include <escher.h>
-#include "../../curve_view.h"
+#include "../../shared/curve_view.h"
 #include "../../constant.h"
 #include "../function_store.h"
-#include "../../interactive_curve_view_range.h"
+#include "../../shared/interactive_curve_view_range.h"
 #include "../../preferences.h"
 
 namespace Graph {

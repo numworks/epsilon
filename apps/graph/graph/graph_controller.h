@@ -6,7 +6,7 @@
 #include "banner_view.h"
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
-#include "../../interactive_curve_view_controller.h"
+#include "../../shared/interactive_curve_view_controller.h"
 #include "../function_store.h"
 
 namespace Graph {

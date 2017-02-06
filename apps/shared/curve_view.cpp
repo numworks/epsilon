@@ -1,5 +1,5 @@
 #include "curve_view.h"
-#include "constant.h"
+#include "../constant.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>

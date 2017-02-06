@@ -1,0 +1,19 @@
+app_objs += $(addprefix apps/shared/,\
+  banner_view.o\
+  cursor_view.o\
+  curve_view.o\
+  curve_view_cursor.o\
+  curve_view_range.o\
+  editable_cell_table_view_controller.o\
+  expression_text_field_delegate.o\
+  float_pair_store.o\
+  float_parameter_controller.o\
+  interactive_curve_view_controller.o\
+  interactive_curve_view_range.o\
+  memoized_curve_view_range.o\
+  range_parameter_controller.o\
+  store_controller.o\
+  store_parameter_controller.o\
+  text_field_delegate_app.o\
+  zoom_parameter_controller.o\
+)

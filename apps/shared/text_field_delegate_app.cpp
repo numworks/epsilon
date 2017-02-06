@@ -1,5 +1,5 @@
 #include "text_field_delegate_app.h"
-#include "apps_container.h"
+#include "../apps_container.h"
 
 using namespace Poincare;
 

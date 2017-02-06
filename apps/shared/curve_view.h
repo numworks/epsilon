@@ -1,5 +1,5 @@
-#ifndef APPS_CURVE_VIEW_H
-#define APPS_CURVE_VIEW_H
+#ifndef SHARED_CURVE_VIEW_H
+#define SHARED_CURVE_VIEW_H
 
 #include <escher.h>
 #include <poincare.h>

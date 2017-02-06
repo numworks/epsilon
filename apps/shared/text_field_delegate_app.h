@@ -1,5 +1,5 @@
-#ifndef APPS_TEXT_FIELD_DELEGATE_APP_H
-#define APPS_TEXT_FIELD_DELEGATE_APP_H
+#ifndef SHARED_TEXT_FIELD_DELEGATE_APP_H
+#define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
 #include <escher.h>
 #include "expression_text_field_delegate.h"

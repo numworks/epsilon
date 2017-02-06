@@ -2,7 +2,7 @@
 #define PROBABILITE_LAW_H
 
 #include <poincare.h>
-#include "../../curve_view_range.h"
+#include "../../shared/curve_view_range.h"
 
 namespace Probability {
 

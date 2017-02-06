@@ -2,7 +2,7 @@
 #define GRAPH_BANNER_VIEW_H
 
 #include <escher.h>
-#include "../../banner_view.h"
+#include "../../shared/banner_view.h"
 
 namespace Graph {
 

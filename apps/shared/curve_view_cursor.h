@@ -1,5 +1,5 @@
-#ifndef APPS_CURVE_VIEW_CURSOR_H
-#define APPS_CURVE_VIEW_CURSOR_H
+#ifndef SHARED_CURVE_VIEW_CURSOR_H
+#define SHARED_CURVE_VIEW_CURSOR_H
 
 
 class CurveViewCursor {

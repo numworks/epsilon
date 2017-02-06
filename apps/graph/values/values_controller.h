@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../function_store.h"
 #include "../function_title_cell.h"
-#include "../../editable_cell_table_view_controller.h"
+#include "../../shared/editable_cell_table_view_controller.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
 #include "derivative_parameter_controller.h"

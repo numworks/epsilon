@@ -2,7 +2,7 @@
 #define PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <escher.h>
-#include "../float_parameter_controller.h"
+#include "../shared/float_parameter_controller.h"
 #include "law/law.h"
 #include "calculation_controller.h"
 

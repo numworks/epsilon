@@ -5,7 +5,7 @@
 #include "store.h"
 #include "box_range.h"
 #include "../constant.h"
-#include "../curve_view.h"
+#include "../shared/curve_view.h"
 
 namespace Statistics {
 

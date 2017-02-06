@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "../constant.h"
-#include "../curve_view.h"
+#include "../shared/curve_view.h"
 
 namespace Statistics {
 

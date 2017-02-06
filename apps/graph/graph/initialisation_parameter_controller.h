@@ -2,7 +2,7 @@
 #define GRAPH_GRAPH_INITIALISATION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../../interactive_curve_view_range.h"
+#include "../../shared/interactive_curve_view_range.h"
 
 namespace Graph {
 

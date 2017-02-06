@@ -1,5 +1,5 @@
 #include "expression_text_field_delegate.h"
-#include "apps_container.h"
+#include "../apps_container.h"
 #include <math.h>
 #include <string.h>
 

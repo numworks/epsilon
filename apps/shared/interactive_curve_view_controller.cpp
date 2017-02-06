@@ -1,5 +1,5 @@
 #include "interactive_curve_view_controller.h"
-#include "apps_container.h"
+#include "../apps_container.h"
 #include <assert.h>
 #include <math.h>
 

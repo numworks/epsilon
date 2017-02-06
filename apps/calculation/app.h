@@ -4,7 +4,7 @@
 #include "edit_expression_controller.h"
 #include "local_context.h"
 #include "history_controller.h"
-#include "../text_field_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 #include <escher.h>
 
 namespace Calculation {

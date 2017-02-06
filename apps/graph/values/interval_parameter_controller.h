@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "interval.h"
-#include "../../float_parameter_controller.h"
+#include "../../shared/float_parameter_controller.h"
 
 namespace Graph {
 

@@ -7,7 +7,7 @@
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../text_field_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 
 namespace Graph {
 

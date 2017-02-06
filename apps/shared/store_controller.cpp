@@ -1,6 +1,6 @@
 #include "store_controller.h"
-#include "apps_container.h"
-#include "constant.h"
+#include "../apps_container.h"
+#include "../constant.h"
 #include <assert.h>
 
 using namespace Poincare;

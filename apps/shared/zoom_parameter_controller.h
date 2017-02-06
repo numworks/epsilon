@@ -1,5 +1,5 @@
-#ifndef APPS_ZOOM_PARAMETER_CONTROLLER_H
-#define APPS_ZOOM_PARAMETER_CONTROLLER_H
+#ifndef SHARED_ZOOM_PARAMETER_CONTROLLER_H
+#define SHARED_ZOOM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
 #include "interactive_curve_view_range.h"

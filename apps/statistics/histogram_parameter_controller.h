@@ -2,7 +2,7 @@
 #define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../float_parameter_controller.h"
+#include "../shared/float_parameter_controller.h"
 #include "store.h"
 
 namespace Statistics {

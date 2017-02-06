@@ -1,5 +1,5 @@
 #include "range_parameter_controller.h"
-#include "apps_container.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 using namespace Poincare;

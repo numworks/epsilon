@@ -246,7 +246,7 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     return availableCharsForMantissaWithSign;
   }
   // Print exponent
-  buffer[availableCharsForMantissaWithSign] = 'E';
+  buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);

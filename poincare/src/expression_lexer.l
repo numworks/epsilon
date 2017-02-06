@@ -82,7 +82,7 @@
    * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
-E  { return EE; }
+\xa2 { return EE; }
 [A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }

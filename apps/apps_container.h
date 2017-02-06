@@ -6,6 +6,7 @@
 #include "probability/app.h"
 #include "calculation/app.h"
 #include "regression/app.h"
+#include "sequence/app.h"
 #include "settings/app.h"
 #include "statistics/app.h"
 #include "apps_window.h"
@@ -40,6 +41,7 @@ private:
   Probability::App m_probabilityApp;
   Calculation::App m_calculationApp;
   Regression::App m_regressionApp;
+  Sequence::App m_sequenceApp;
   Settings::App m_settingsApp;
   Statistics::App m_statisticsApp;
 #if USE_PIC_VIEW_APP

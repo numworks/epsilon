@@ -2,6 +2,7 @@
 #include "calculation_icon.h"
 using namespace Poincare;
 
+using namespace Shared;
 
 namespace Calculation {
 

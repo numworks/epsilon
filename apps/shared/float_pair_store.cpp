@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <ion.h>
 
+namespace Shared {
+
 FloatPairStore::FloatPairStore() :
   m_numberOfPairs(0)
 {
@@ -64,4 +66,6 @@ uint32_t FloatPairStore::storeChecksum() {
 
 float FloatPairStore::defaultValue(int i) {
   return 0.0f;
+}
+
 }

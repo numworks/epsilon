@@ -7,6 +7,8 @@
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
 
+namespace Shared {
+
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate);
@@ -38,5 +40,7 @@ private:
 typedef void (InteractiveCurveViewRange::*ParameterSetterPointer)(float);
 typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)();
 typedef void (InteractiveCurveViewRange::*RangeMethodPointer)();
+
+}
 
 #endif

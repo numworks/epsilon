@@ -7,7 +7,7 @@
 
 namespace Statistics {
 
-class HistogramParameterController : public FloatParameterController {
+class HistogramParameterController : public Shared::FloatParameterController {
 public:
   HistogramParameterController(Responder * parentResponder, Store * store);
   const char * title() const override;

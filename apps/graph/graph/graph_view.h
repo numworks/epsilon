@@ -10,10 +10,10 @@
 
 namespace Graph {
 
-class GraphView : public CurveView {
+class GraphView : public Shared::CurveView {
 public:
-  GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
-    CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView);
+  GraphView(FunctionStore * functionStore, Shared::InteractiveCurveViewRange * graphRange,
+    Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);
   void setPreferences(Preferences * preferences);

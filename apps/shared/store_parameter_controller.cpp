@@ -1,6 +1,8 @@
 #include "store_parameter_controller.h"
 #include <assert.h>
 
+namespace Shared {
+
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
   m_deleteColumn(MenuListCell((char*)"Effacer la colonne")),
@@ -73,4 +75,6 @@ int StoreParameterController::reusableCellCount() {
 
 KDCoordinate StoreParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
 }

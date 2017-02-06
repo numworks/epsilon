@@ -7,11 +7,12 @@
 #include <assert.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :
-  ::StoreController(parentResponder, store, header),
+  Shared::StoreController(parentResponder, store, header),
   m_titleCells{EvenOddExpressionCell(0.5f, 0.5f), EvenOddExpressionCell(0.5f, 0.5f)}
 {
   m_titleLayout[0] = new BaselineRelativeLayout(new StringLayout("X", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);

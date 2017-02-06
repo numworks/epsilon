@@ -5,6 +5,8 @@
 #include "interactive_curve_view_range.h"
 #include "float_parameter_controller.h"
 
+namespace Shared {
+
 class RangeParameterController : public FloatParameterController {
 public:
   RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
@@ -25,5 +27,7 @@ private:
   EditableTextMenuListCell m_rangeCells[k_numberOfTextCell];
   SwitchMenuListCell m_yAutoCell;
 };
+
+}
 
 #endif

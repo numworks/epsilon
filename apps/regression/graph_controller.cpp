@@ -2,6 +2,7 @@
 #include "../apps_container.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 

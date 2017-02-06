@@ -6,6 +6,7 @@
 #include <float.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 

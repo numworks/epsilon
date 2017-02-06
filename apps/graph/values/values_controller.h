@@ -13,7 +13,7 @@
 
 namespace Graph {
 
-class ValuesController : public EditableCellTableViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
+class ValuesController : public Shared::EditableCellTableViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
 public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;

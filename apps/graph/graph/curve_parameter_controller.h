@@ -12,7 +12,7 @@ namespace Graph {
 
 class CurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor);
+  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor);
 
   View * view() override;
   const char * title() const override;

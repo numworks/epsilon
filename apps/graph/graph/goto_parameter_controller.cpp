@@ -3,6 +3,8 @@
 #include "../../apps_container.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :

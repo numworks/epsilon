@@ -1,6 +1,8 @@
 #include "prediction_parameter_controller.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Regression {
 
 PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :

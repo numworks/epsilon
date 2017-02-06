@@ -10,7 +10,7 @@ namespace Regression {
 
 class PredictionParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor);
+  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;

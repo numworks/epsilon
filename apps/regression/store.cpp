@@ -4,6 +4,8 @@
 #include <math.h>
 #include <string.h>
 
+using namespace Shared;
+
 namespace Regression {
 
 Store::Store() :

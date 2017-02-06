@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ion.h>
 
+using namespace Shared;
+
 namespace Statistics {
 
 Store::Store() :

@@ -2,6 +2,8 @@
 #include "../app.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :

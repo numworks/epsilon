@@ -5,6 +5,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 const char * ExpressionTextFieldDelegate::XNT() {
   return "x";
 }
@@ -76,4 +78,6 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
     return true;
   }
   return false;
+}
+
 }

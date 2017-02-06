@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class ParametersController : public FloatParameterController {
+class ParametersController : public Shared::FloatParameterController {
 public:
   ParametersController(Responder * parentResponder);
   View * view() override;

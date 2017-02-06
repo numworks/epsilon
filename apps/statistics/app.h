@@ -11,7 +11,7 @@
 
 namespace Statistics {
 
-class App : public TextFieldDelegateApp {
+class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container);
 private:

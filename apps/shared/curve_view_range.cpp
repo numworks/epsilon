@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <float.h>
 
+namespace Shared {
+
 uint32_t CurveViewRange::rangeChecksum() {
   float data[4] = {xMin(), xMax(), yMin(), yMax()};
   size_t dataLengthInBytes = 4*sizeof(float);
@@ -35,4 +37,6 @@ float CurveViewRange::computeGridUnit(Axis axis, float min, float max) {
     }
   }
   return a*powf(10,b);
+}
+
 }

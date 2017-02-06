@@ -5,6 +5,8 @@
 #include "interactive_curve_view_range.h"
 #include "curve_view.h"
 
+namespace Shared {
+
 class ZoomParameterController : public ViewController {
 public:
   ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
@@ -40,5 +42,7 @@ private:
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;
 };
+
+}
 
 #endif

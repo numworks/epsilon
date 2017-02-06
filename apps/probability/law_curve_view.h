@@ -10,7 +10,7 @@
 
 namespace Probability {
 
-class LawCurveView : public CurveView {
+class LawCurveView : public Shared::CurveView {
 public:
   LawCurveView();
   void setLaw(Law * law);

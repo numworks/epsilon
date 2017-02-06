@@ -9,7 +9,7 @@
 
 namespace Statistics {
 
-class BoxView : public CurveView {
+class BoxView : public Shared::CurveView {
 public:
   enum class Quantile : int {
     None = -1,
@@ -19,7 +19,7 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, ::BannerView * bannerView);
+  BoxView(Store * store, Shared::BannerView * bannerView);
   void reload() override;
   Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);

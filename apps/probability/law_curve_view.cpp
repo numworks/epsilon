@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <math.h>
 
+using namespace Shared;
+
 namespace Probability {
 
 LawCurveView::LawCurveView() :

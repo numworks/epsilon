@@ -6,6 +6,8 @@
 #include "store_parameter_controller.h"
 #include "editable_cell_table_view_controller.h"
 
+namespace Shared {
+
 class StoreController : public EditableCellTableViewController, public HeaderViewDelegate  {
 public:
   StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header);
@@ -35,5 +37,7 @@ protected:
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;
 };
+
+}
 
 #endif

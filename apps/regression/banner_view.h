@@ -6,7 +6,7 @@
 
 namespace Regression {
 
-class BannerView : public ::BannerView {
+class BannerView : public Shared::BannerView {
 public:
   BannerView();
 private:

@@ -7,6 +7,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView) :
   View(),
@@ -417,4 +419,6 @@ View * CurveView::subviewAtIndex(int index) {
     return m_bannerView;
   }
   return m_cursorView;
+}
+
 }

@@ -1,6 +1,8 @@
 #include "go_to_parameter_controller.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :

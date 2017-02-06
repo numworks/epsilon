@@ -3,6 +3,7 @@
 
 #include "curve_view_range.h"
 
+namespace Shared {
 
 class MemoizedCurveViewRange : public CurveViewRange {
 public:
@@ -28,5 +29,7 @@ protected:
   float m_xGridUnit;
   float m_yGridUnit;
 };
+
+}
 
 #endif

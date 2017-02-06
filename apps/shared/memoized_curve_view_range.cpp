@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <ion.h>
 
+namespace Shared {
+
 MemoizedCurveViewRange::MemoizedCurveViewRange() :
   m_xMin(-10.0f),
   m_xMax(10.0f),
@@ -67,4 +69,6 @@ void MemoizedCurveViewRange::setYMax(float yMax) {
     m_yMin = yMax - 1.0f;
   }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+}
+
 }

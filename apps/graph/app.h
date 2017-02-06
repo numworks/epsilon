@@ -11,7 +11,7 @@
 
 namespace Graph {
 
-class App : public TextFieldDelegateApp {
+class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController();

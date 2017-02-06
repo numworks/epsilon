@@ -7,7 +7,7 @@
 
 namespace Graph {
 
-class IntervalParameterController : public FloatParameterController {
+class IntervalParameterController : public Shared::FloatParameterController {
 public:
   IntervalParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();

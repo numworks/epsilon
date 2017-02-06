@@ -1,6 +1,8 @@
 #include "app.h"
 #include "regression_icon.h"
 
+using namespace Shared;
+
 namespace Regression {
 
 App::App(Container * container) :

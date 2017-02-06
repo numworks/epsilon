@@ -2,9 +2,11 @@
 #include <assert.h>
 #include <math.h>
 
+using namespace Shared;
+
 namespace Statistics {
 
-HistogramView::HistogramView(Store * store, ::BannerView * bannerView) :
+HistogramView::HistogramView(Store * store, BannerView * bannerView) :
   CurveView(store, nullptr, bannerView, nullptr),
   m_store(store),
   m_highlightedBarStart(NAN),

@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <math.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange) :

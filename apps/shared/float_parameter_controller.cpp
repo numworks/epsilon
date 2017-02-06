@@ -6,6 +6,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
@@ -57,4 +59,6 @@ void FloatParameterController::tableViewDidChangeSelection(SelectableTableView *
 
 KDCoordinate FloatParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
 }

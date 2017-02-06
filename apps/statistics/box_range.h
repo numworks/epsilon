@@ -6,7 +6,7 @@
 
 namespace Statistics {
 
-class BoxRange : public CurveViewRange {
+class BoxRange : public Shared::CurveViewRange {
 public:
   BoxRange(Store * store);
   float xMin() override;

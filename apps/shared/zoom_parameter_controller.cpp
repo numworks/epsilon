@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <math.h>
 
+namespace Shared {
+
 ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
   m_contentView(ContentView(curveView)),
@@ -116,4 +118,6 @@ void ZoomParameterController::ContentView::LegendView::layoutSubviews() {
     m_legends[row].setFrame(KDRect(k_tokenWidth, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
     m_legends[3+row].setFrame(KDRect(width/2, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
   }
+}
+
 }

@@ -4,6 +4,8 @@
 #include <escher.h>
 #include "expression_text_field_delegate.h"
 
+namespace Shared {
+
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
@@ -24,5 +26,7 @@ private:
   virtual float parameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
 };
+
+}
 
 #endif

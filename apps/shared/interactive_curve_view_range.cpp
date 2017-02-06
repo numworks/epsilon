@@ -6,6 +6,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
   MemoizedCurveViewRange(),
   m_yAuto(true),
@@ -162,4 +164,6 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
     m_yAuto = false;
   }
+}
+
 }

@@ -58,6 +58,9 @@ bool ToolboxController::selectLeaf(Node * selectedNode){
   m_listViewController.deselectTable();
   ToolboxNode * node = (ToolboxNode *)selectedNode;
   const char * editedText = node->label();
+  if (!m_textFieldCaller->isEditing()) {
+    m_textFieldCaller->setEditing(true);
+  }
   m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
   int cursorDelta = 0;
   int editedTextLength = strlen(editedText);

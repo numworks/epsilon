@@ -41,12 +41,12 @@ const char * InputViewController::textBody() {
 void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
+  displayModalViewController(&m_textFieldController, 1.0f, 1.0f);
   m_textFieldController.textField()->handleEvent(event);
   if (initialText != nullptr) {
     m_textFieldController.textField()->insertTextAtLocation(initialText, 0);
     m_textFieldController.textField()->setCursorLocation(strlen(initialText));
   }
-  displayModalViewController(&m_textFieldController, 1.0f, 1.0f);
 }
 
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {

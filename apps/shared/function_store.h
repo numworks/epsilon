@@ -23,6 +23,7 @@ public:
   int numberOfDefinedFunctions();
   // An active function must be defined to be counted
   int numberOfActiveFunctions();
+  virtual int maxNumberOfFunctions() = 0;
 protected:
   int m_numberOfFunctions;
 private:

@@ -16,6 +16,7 @@ public:
   Sequence * definedFunctionAtIndex(int i) override;
   Sequence * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
+  int maxNumberOfFunctions() override;
   static constexpr int k_maxNumberOfSequences = 3;
 private:
   const char * firstAvailableName() override;

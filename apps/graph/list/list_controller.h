@@ -6,7 +6,7 @@
 #include "../function_title_cell.h"
 #include "function_expression_view.h"
 #include "new_function_cell.h"
-#include "parameter_controller.h"
+#include "../../shared/list_parameter_controller.h"
 
 namespace Graph {
 
@@ -48,7 +48,7 @@ private:
   NewFunctionCell m_addNewFunction;
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
-  ParameterController m_parameterController;
+  Shared::ListParameterController m_parameterController;
 };
 
 }

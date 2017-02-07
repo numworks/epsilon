@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/shared/,\
   function_store.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
+  list_parameter_controller.o\
   memoized_curve_view_range.o\
   range_parameter_controller.o\
   store_controller.o\

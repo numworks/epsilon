@@ -2,6 +2,8 @@
 #include "../app.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
@@ -11,7 +13,7 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
-  m_parameterController(ParameterController(this, functionStore))
+  m_parameterController(ListParameterController(this, functionStore))
 {
 }
 

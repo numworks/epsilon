@@ -123,7 +123,7 @@ void ListController::configureFunction(Function * function) {
   stack->push(&m_parameterController);
 }
 
-void ListController::editExpression(FunctionExpressionView * functionCell, Ion::Events::Event event) {
+void ListController::editExpression(FunctionExpressionCell * functionCell, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[255];
   if (event == Ion::Events::OK) {
@@ -134,8 +134,8 @@ void ListController::editExpression(FunctionExpressionView * functionCell, Ion::
   InputViewController * inputController = myApp->inputViewController();
   inputController->edit(this, event, functionCell, initialText,
     [](void * context, void * sender){
-    FunctionExpressionView * myCell = (FunctionExpressionView *) context;
-    Function * myFunction = myCell->function();
+    FunctionExpressionCell * myCell = (FunctionExpressionCell *) context;
+    Shared::Function * myFunction = myCell->function();
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     myFunction->setContent(textBody);
@@ -160,7 +160,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       || m_selectableTableView.selectedRow() == numberOfRows() - 1) {
     return false;
   }
-  FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
+  FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
   editExpression(functionCell, event);
   return true;
 }
@@ -188,7 +188,7 @@ bool ListController::handleEnter() {
         // Add a warning to tell the user there is no more space for new functions
         return false;
       }
-      FunctionExpressionView * functionCell = (FunctionExpressionView *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
+      FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
       editExpression(functionCell, Ion::Events::OK);
       return true;
     }
@@ -241,7 +241,7 @@ void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int 
       KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
       myFunctionCell->setColor(functionNameColor);
     } else {
-      FunctionExpressionView * myCell = (FunctionExpressionView *)cell;
+      FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
       myCell->setFunction(m_functionStore->functionAtIndex(j));
     }
   }

@@ -9,7 +9,6 @@ app_objs += $(addprefix apps/graph/,\
   graph/graph_controller.o\
   graph/graph_view.o\
   graph/initialisation_parameter_controller.o\
-  list/function_expression_view.o\
   list/new_function_cell.o\
   list/list_controller.o\
   values/abscissa_parameter_controller.o\

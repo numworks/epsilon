@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../function_store.h"
 #include "../function_title_cell.h"
-#include "function_expression_view.h"
+#include "../../shared/function_expression_cell.h"
 #include "new_function_cell.h"
 #include "../../shared/list_parameter_controller.h"
 
@@ -32,7 +32,7 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void configureFunction(Function * function);
-  void editExpression(FunctionExpressionView * functionCell, Ion::Events::Event event);
+  void editExpression(Shared::FunctionExpressionCell * functionCell, Ion::Events::Event event);
 
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
@@ -43,7 +43,7 @@ private:
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
-  FunctionExpressionView m_expressionCells[k_maxNumberOfRows];
+  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
   SelectableTableView m_selectableTableView;

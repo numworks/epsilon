@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "sequence_store.h"
+#include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/text_field_delegate_app.h"
 
@@ -17,7 +18,7 @@ public:
 private:
   SequenceStore m_sequenceStore;
   Poincare::VariableContext m_nContext;
-  ValuesController m_listController;
+  ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;
   ValuesController m_graphController;

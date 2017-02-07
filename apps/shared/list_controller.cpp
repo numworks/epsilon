@@ -18,6 +18,9 @@ View * ListController::view() {
 }
 
 int ListController::numberOfRows() {
+  if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
+    return m_functionStore->numberOfFunctions();
+  }
   return 1 + m_functionStore->numberOfFunctions();
 };
 
@@ -26,7 +29,7 @@ int ListController::numberOfColumns() {
 };
 
 KDCoordinate ListController::rowHeight(int j) {
-  if (j == numberOfRows() - 1) {
+  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
     return k_emptyRowHeight;
   }
   Function * function = m_functionStore->functionAtIndex(j);
@@ -93,7 +96,8 @@ int ListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 }
 
 int ListController::typeAtLocation(int i, int j) {
-  if (j == numberOfRows() - 1) {
+  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions()
+      && j == numberOfRows() - 1) {
     return i + 2;
   }
   return i;
@@ -125,7 +129,7 @@ int ListController::reusableCellCount(int type) {
 }
 
 void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  if (j < numberOfRows() - 1) {
+  if (j < numberOfRows() - 1 || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
     if (i == 0) {
       FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
       Function * function = m_functionStore->functionAtIndex(j);

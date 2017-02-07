@@ -11,6 +11,7 @@ app_objs += $(addprefix apps/shared/,\
   function.o\
   function_expression_cell.o\
   function_store.o\
+  function_title_cell.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
   list_parameter_controller.o\

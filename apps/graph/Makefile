@@ -2,7 +2,6 @@ app_objs += $(addprefix apps/graph/,\
   app.o\
   function.o\
   function_store.o\
-  function_title_cell.o\
   graph/banner_view.o\
   graph/curve_parameter_controller.o\
   graph/goto_parameter_controller.o\

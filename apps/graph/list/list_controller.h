@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "../function_store.h"
-#include "../function_title_cell.h"
+#include "../../shared/function_title_cell.h"
 #include "../../shared/function_expression_cell.h"
 #include "../../shared/new_function_cell.h"
 #include "../../shared/list_parameter_controller.h"
@@ -42,7 +42,7 @@ private:
   constexpr static int k_maxNumberOfRows = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
-  FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
+  Shared::FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   EvenOddCell m_emptyCell;
   Shared::NewFunctionCell m_addNewFunction;

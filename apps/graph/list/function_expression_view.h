@@ -6,8 +6,6 @@
 
 namespace Graph {
 
-class FunctionCell;
-
 class FunctionExpressionView : public EvenOddCell {
 public:
   FunctionExpressionView();

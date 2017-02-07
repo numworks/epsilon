@@ -6,7 +6,7 @@ namespace Shared {
 FunctionExpressionCell::FunctionExpressionCell() :
   EvenOddCell(),
   m_function(nullptr),
-  m_expressionView(ExpressionView())
+  m_expressionView(EvenOddExpressionCell())
 {
 }
 
@@ -17,12 +17,21 @@ void FunctionExpressionCell::setFunction(Function * f) {
 
 void FunctionExpressionCell::reloadCell() {
   EvenOddCell::reloadCell();
-  m_expressionView.setBackgroundColor(backgroundColor());
   if (m_function) {
     bool active = m_function->isActive();
     KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
     m_expressionView.setTextColor(textColor);
   }
+}
+
+void FunctionExpressionCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
+  m_expressionView.setEven(even);
+}
+
+void FunctionExpressionCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_expressionView.setHighlighted(highlight);
 }
 
 Function * FunctionExpressionCell::function() {

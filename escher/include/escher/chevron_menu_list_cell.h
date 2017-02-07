@@ -8,7 +8,7 @@ class ChevronMenuListCell : public MenuListCell {
 public:
   ChevronMenuListCell(char * label = nullptr, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
-  void reloadCell() override;
+  void setHighlighted(bool highlight) override;
 private:
   ChevronView m_accessoryView;
 };

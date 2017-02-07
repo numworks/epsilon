@@ -6,7 +6,7 @@
 class ChevronTextMenuListCell : public ChevronMenuListCell {
 public:
   ChevronTextMenuListCell(KDText::FontSize size = KDText::FontSize::Small);
-  void reloadCell() override;
+  void setHighlighted(bool highlight) override;
   void setSubtitle(const char * text);
 private:
   static constexpr KDCoordinate k_margin = 8;

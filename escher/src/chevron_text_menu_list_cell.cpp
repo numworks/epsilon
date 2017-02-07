@@ -6,8 +6,8 @@ ChevronMenuListCell(nullptr, size),
 {
 }
 
-void ChevronTextMenuListCell::reloadCell() {
-  ChevronMenuListCell::reloadCell();
+void ChevronTextMenuListCell::setHighlighted(bool highlight) {
+  ChevronMenuListCell::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }

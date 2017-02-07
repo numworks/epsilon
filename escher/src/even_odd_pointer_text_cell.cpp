@@ -7,8 +7,13 @@ EvenOddPointerTextCell::EvenOddPointerTextCell(KDText::FontSize size) :
 {
 }
 
-void EvenOddPointerTextCell::reloadCell() {
-  EvenOddCell::reloadCell();
+void EvenOddPointerTextCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_pointerTextView.setBackgroundColor(backgroundColor());
+}
+
+void EvenOddPointerTextCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_pointerTextView.setBackgroundColor(backgroundColor());
 }
 

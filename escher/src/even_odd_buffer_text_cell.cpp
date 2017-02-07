@@ -7,8 +7,13 @@ EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizo
 {
 }
 
-void EvenOddBufferTextCell::reloadCell() {
-  EvenOddCell::reloadCell();
+void EvenOddBufferTextCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_bufferTextView.setBackgroundColor(backgroundColor());
+}
+
+void EvenOddBufferTextCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_bufferTextView.setBackgroundColor(backgroundColor());
 }
 

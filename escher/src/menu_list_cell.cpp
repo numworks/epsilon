@@ -35,9 +35,9 @@ void MenuListCell::layoutSubviews() {
   }
 }
 
-void MenuListCell::reloadCell() {
-  TableViewCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+void MenuListCell::setHighlighted(bool highlight) {
+  TableViewCell::setHighlighted(highlight);
+  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_pointerTextView.setBackgroundColor(backgroundColor);
 }
 

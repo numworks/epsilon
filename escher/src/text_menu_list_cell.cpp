@@ -19,15 +19,9 @@ View * TextMenuListCell::accessoryView() const {
   return (View *)&m_accessoryView;
 }
 
-void TextMenuListCell::reloadCell() {
-  MenuListCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_accessoryView.setBackgroundColor(backgroundColor);
-}
-
 void TextMenuListCell::setHighlighted(bool highlight) {
   MenuListCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 

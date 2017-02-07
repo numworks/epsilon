@@ -1,13 +1,11 @@
-#ifndef SETTINGS_MENU_CELL_H
-#define SETTINGS_MENU_CELL_H
+#ifndef ESCHER_CHEVRON_TEXT_MENU_LIST_CELL_H
+#define ESCHER_CHEVRON_TEXT_MENU_LIST_CELL_H
 
-#include <escher.h>
+#include <escher/chevron_menu_list_cell.h>
 
-namespace Settings {
-
-class MenuCell : public ChevronMenuListCell {
+class ChevronTextMenuListCell : public ChevronMenuListCell {
 public:
-  MenuCell();
+  ChevronTextMenuListCell(KDText::FontSize size = KDText::FontSize::Small);
   void reloadCell() override;
   void setSubtitle(const char * text);
 private:
@@ -17,7 +15,5 @@ private:
   void layoutSubviews() override;
   PointerTextView m_subtitleView;
 };
-
-}
 
 #endif

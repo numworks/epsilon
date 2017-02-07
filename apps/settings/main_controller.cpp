@@ -16,6 +16,8 @@ const SettingsNode model = SettingsNode("Parametres", menu, 5);
 
 MainController::MainController(Responder * parentResponder, Preferences * preferences) :
   ViewController(parentResponder),
+  m_cells{ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large),
+    ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel((Node *)&model),
@@ -69,7 +71,7 @@ KDCoordinate MainController::cellHeight() {
 }
 
 void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  MenuCell * myCell = (MenuCell *)cell;
+  ChevronTextMenuListCell * myCell = (ChevronTextMenuListCell *)cell;
   myCell->setText(m_nodeModel->children(index)->label());
   switch (index) {
     case 0:

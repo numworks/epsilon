@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "sub_controller.h"
 #include "settings_node.h"
-#include "menu_cell.h"
 #include "../preferences.h"
 
 namespace Settings {
@@ -25,7 +24,7 @@ public:
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 5;
-  MenuCell m_cells[k_totalNumberOfCell];
+  ChevronTextMenuListCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
   Preferences * m_preferences;

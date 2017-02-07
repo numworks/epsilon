@@ -9,7 +9,7 @@ namespace Shared {
 class FunctionExpressionCell : public EvenOddCell {
 public:
   FunctionExpressionCell();
-  void setFunction(Function * f);
+  virtual void setFunction(Function * f);
   Function * function();
   void reloadCell() override;
   int numberOfSubviews() const override;

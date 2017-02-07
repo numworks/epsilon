@@ -6,7 +6,7 @@
 
 class EvenOddBufferTextCell : public EvenOddCell {
 public:
-  EvenOddBufferTextCell(KDText::FontSize size = KDText::FontSize::Small);
+  EvenOddBufferTextCell(KDText::FontSize size = KDText::FontSize::Small, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
   void reloadCell() override;
   void setText(const char * textContent);
   void setTextColor(KDColor textColor);

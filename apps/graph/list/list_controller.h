@@ -5,7 +5,7 @@
 #include "../function_store.h"
 #include "../function_title_cell.h"
 #include "../../shared/function_expression_cell.h"
-#include "new_function_cell.h"
+#include "../../shared/new_function_cell.h"
 #include "../../shared/list_parameter_controller.h"
 
 namespace Graph {
@@ -45,7 +45,7 @@ private:
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   EvenOddCell m_emptyCell;
-  NewFunctionCell m_addNewFunction;
+  Shared::NewFunctionCell m_addNewFunction;
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
   Shared::ListParameterController m_parameterController;

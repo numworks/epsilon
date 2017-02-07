@@ -1,12 +1,13 @@
 #include "new_function_cell.h"
 #include "assert.h"
 
-namespace Graph {
+namespace Shared {
 
 NewFunctionCell::NewFunctionCell() :
   EvenOddCell(),
-  m_pointerTextView(PointerTextView(KDText::FontSize::Large, "Ajouter une fonction", 0.5f, 0.5f))
+  m_pointerTextView(PointerTextView(KDText::FontSize::Large, nullptr, 0.5f, 0.5f))
 {
+  m_pointerTextView.setText(text());
 }
 
 void NewFunctionCell::reloadCell() {
@@ -25,6 +26,10 @@ View * NewFunctionCell::subviewAtIndex(int index) {
 
 void NewFunctionCell::layoutSubviews() {
   m_pointerTextView.setFrame(bounds());
+}
+
+const char * NewFunctionCell::text() {
+  return "Ajouter une fonction";
 }
 
 }

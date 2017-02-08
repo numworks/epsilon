@@ -19,6 +19,7 @@ ListParameterController::~ListParameterController() {
     delete m_typeLayout;
   }
 }
+
 const char * ListParameterController::title() const {
   return "Options de la suite";
 }

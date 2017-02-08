@@ -4,7 +4,7 @@ using namespace Shared;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(Responder * parentResponder, Shared::ListParameterController * listParameterController) :
+SequenceTitleCell::SequenceTitleCell(Responder * parentResponder, ListParameterController * listParameterController) :
   SequenceCell(parentResponder),
   m_backgroungCell(FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)),
   m_definitionView(KDText::FontSize::Large, 0.5f, 0.5f),
@@ -76,7 +76,7 @@ bool SequenceTitleCell::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK) {
     StackViewController * stack = stackController();
-    m_listParameterController->setFunction(m_sequence);
+    m_listParameterController->setSequence(m_sequence);
     stack->push(m_listParameterController);
     SelectableTableView * table = (SelectableTableView *)parentResponder();
     table->dataHasChanged(true);

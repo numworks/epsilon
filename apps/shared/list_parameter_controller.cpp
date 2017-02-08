@@ -5,11 +5,11 @@ namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore) :
   ViewController(parentResponder),
+  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
+    Metric::BottomMargin, Metric::LeftMargin)),
   m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
   m_deleteCell(MenuListCell((char*)"Supprimer la fonction")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
   m_functionStore(functionStore)
 {
 }

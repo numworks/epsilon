@@ -21,12 +21,13 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+protected:
+  SelectableTableView m_selectableTableView;
 private:
   constexpr static int k_totalNumberOfCell = 3;
   ChevronMenuListCell m_colorCell;
   SwitchMenuListCell m_enableCell;
   MenuListCell m_deleteCell;
-  SelectableTableView m_selectableTableView;
   Function * m_function;
   FunctionStore * m_functionStore;
 };

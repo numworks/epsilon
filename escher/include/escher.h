@@ -44,7 +44,7 @@
 #include <escher/switch_menu_list_cell.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <escher/text_buffer_menu_list_cell.h>
+#include <escher/text_expression_menu_list_cell.h>
 #include <escher/text_menu_list_cell.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

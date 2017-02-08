@@ -1,16 +1,28 @@
 #include "type_parameter_controller.h"
 #include <assert.h>
+#include "../../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../../poincare/src/layout/string_layout.h"
+
+using namespace Poincare;
 
 namespace Sequence {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
   ViewController(parentResponder),
-  m_expliciteCell(TextBufferMenuListCell((char*)"Explicite")),
-  m_singleRecurrenceCell(TextBufferMenuListCell((char*)"Recurrence d'ordre 1")),
-  m_doubleRecurenceCell(TextBufferMenuListCell((char*)"Recurrence d'ordre 2")),
+  m_expliciteCell(TextExpressionMenuListCell((char*)"Explicite")),
+  m_singleRecurrenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 1")),
+  m_doubleRecurenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 2")),
   m_selectableTableView(SelectableTableView(this, this)),
   m_sequenceStore(sequenceStore)
 {
+}
+
+TypeParameterController::~TypeParameterController() {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    if (m_expressionLayouts[i]) {
+      delete m_expressionLayouts[i];
+    }
+  }
 }
 
 const char * TypeParameterController::title() const {
@@ -53,29 +65,22 @@ int TypeParameterController::reusableCellCount() {
 }
 
 KDCoordinate TypeParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
+  return 50;
 }
 
 void TypeParameterController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  char buffer[8];
-  char nextName = m_sequenceStore->firstAvailableName()[0];
-  buffer[0] = nextName;
-  if (j == 0) {
-    strlcpy(buffer+1, "(n)=", 7);
+  const char * nextName = m_sequenceStore->firstAvailableName();
+  const char * subscripts[3] = {"n", "n+1", "n+2"};
+  if (m_expressionLayouts[j]) {
+    delete m_expressionLayouts[j];
   }
-  if (j == 1) {
-    strlcpy(buffer+1, "(n+1)=", 7);
-  }
-  if (j == 2) {
-    strlcpy(buffer+1, "(n+2)=", 7);
-  }
-  TextBufferMenuListCell * myCell = (TextBufferMenuListCell *)cell;
-  myCell->setText(buffer);
+  m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  TextExpressionMenuListCell * myCell = (TextExpressionMenuListCell *)cell;
+  myCell->setExpression(m_expressionLayouts[j]);
 }
 
 StackViewController * TypeParameterController::stackController() const {
   return (StackViewController *)parentResponder();
 }
-
 
 }

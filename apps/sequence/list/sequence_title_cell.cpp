@@ -126,7 +126,19 @@ bool SequenceTitleCell::handleEvent(Ion::Events::Event event) {
     selectSubCell(m_selectedSubCell-1);
     return true;
   }
+  if (event == Ion::Events::OK) {
+    StackViewController * stack = stackController();
+    m_listParameterController->setFunction(m_sequence);
+    stack->push(m_listParameterController);
+    SelectableTableView * table = (SelectableTableView *)parentResponder();
+    table->dataHasChanged(true);
+    return true;
+  }
   return false;
+}
+
+StackViewController * SequenceTitleCell::stackController() {
+  return (StackViewController *)parentResponder()->parentResponder()->parentResponder()->parentResponder();
 }
 
 }

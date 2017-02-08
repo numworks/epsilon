@@ -148,14 +148,6 @@ void ListController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-void ListController::configureFunction(Function * function) {
-  StackViewController * stack = stackController();
-  parameterController()->setFunction(function);
-  stack->push(parameterController());
-  // Force to reload the table (deleted functions, desactivated function)
-  m_selectableTableView.dataHasChanged(true);
-}
-
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_selectableTableView.deselectTable();

@@ -23,6 +23,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
+  StackViewController * stackController();
   int m_numberOfSubCells;
   int m_selectedSubCell;
   EvenOddBufferTextCell m_definitionView;

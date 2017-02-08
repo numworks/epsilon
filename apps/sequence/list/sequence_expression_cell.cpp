@@ -1,4 +1,5 @@
 #include "sequence_expression_cell.h"
+#include "../app.h"
 
 using namespace Shared;
 
@@ -44,6 +45,10 @@ void SequenceExpressionCell::setSequence(Sequence * sequence) {
     m_secondInitialConditionView.setTextColor(textColor);
   }
   layoutSubviews();
+}
+
+Sequence * SequenceExpressionCell::sequence() {
+  return m_sequence;
 }
 
 void SequenceExpressionCell::setHighlighted(bool highlight) {
@@ -120,7 +125,78 @@ bool SequenceExpressionCell::handleEvent(Ion::Events::Event event) {
     selectSubCell(m_selectedSubCell-1);
     return true;
   }
+  if (event == Ion::Events::OK) {
+    editExpression(event);
+    return true;
+  }
+  if (event.hasText() || event == Ion::Events::XNT) {
+    editExpression(event);
+    return true;
+  }
   return false;
+}
+
+void SequenceExpressionCell::editExpression(Ion::Events::Event event) {
+  char * initialText = nullptr;
+  char initialTextContent[255];
+  if (event == Ion::Events::OK) {
+    char * text = (char *)m_sequence->text();
+    if (m_selectedSubCell == 1) {
+      text = (char *)m_sequence->firstInitialConditionText();
+    }
+    if (m_selectedSubCell == 2) {
+      text = (char *)m_sequence->secondInitialConditionText();
+    }
+    strlcpy(initialTextContent, text, sizeof(initialTextContent));
+    initialText = initialTextContent;
+  }
+  App * myApp = (App *)app();
+  InputViewController * inputController = myApp->inputViewController();
+  if (m_selectedSubCell == 0) {
+    inputController->edit(this, event, this, initialText,
+      [](void * context, void * sender){
+      SequenceExpressionCell * myCell = (SequenceExpressionCell *) context;
+      Sequence * sequence = myCell->sequence();
+      InputViewController * myInputViewController = (InputViewController *)sender;
+      const char * textBody = myInputViewController->textBody();
+      sequence->setContent(textBody);
+      myCell->reloadCell();
+      SelectableTableView * table = (SelectableTableView *)myCell->parentResponder();
+      table->reloadData();
+      },
+      [](void * context, void * sender){}
+    );
+  }
+  if (m_selectedSubCell == 1) {
+    inputController->edit(this, event, this, initialText,
+      [](void * context, void * sender){
+      SequenceExpressionCell * myCell = (SequenceExpressionCell *) context;
+      Sequence * sequence = myCell->sequence();
+      InputViewController * myInputViewController = (InputViewController *)sender;
+      const char * textBody = myInputViewController->textBody();
+      sequence->setFirstInitialConditionContent(textBody);
+      myCell->reloadCell();
+      SelectableTableView * table = (SelectableTableView *)myCell->parentResponder();
+      table->reloadData();
+      },
+      [](void * context, void * sender){}
+    );
+  }
+  if (m_selectedSubCell == 2) {
+    inputController->edit(this, event, this, initialText,
+      [](void * context, void * sender){
+      SequenceExpressionCell * myCell = (SequenceExpressionCell *) context;
+      Sequence * sequence = myCell->sequence();
+      InputViewController * myInputViewController = (InputViewController *)sender;
+      const char * textBody = myInputViewController->textBody();
+      sequence->setSecondInitialConditionContent(textBody);
+      myCell->reloadCell();
+      SelectableTableView * table = (SelectableTableView *)myCell->parentResponder();
+      table->reloadData();
+      },
+      [](void * context, void * sender){}
+    );
+  }
 }
 
 }

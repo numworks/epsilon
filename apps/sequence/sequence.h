@@ -16,6 +16,8 @@ public:
   ~Sequence();
   Type type();
   void setType(Type type);
+  const char * firstInitialConditionText();
+  const char * secondInitialConditionText();
   Poincare::Expression * firstInitialConditionExpression();
   Poincare::Expression * secondInitialConditionExpression();
   Poincare::ExpressionLayout * firstInitialConditionLayout();

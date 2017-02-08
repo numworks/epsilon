@@ -10,6 +10,7 @@ class SequenceExpressionCell : public Responder, public EvenOddCell {
 public:
   SequenceExpressionCell(Responder * parentResponder);
   void setSequence(Sequence * sequence);
+  Sequence * sequence();
   int selectedSubCell();
   void selectSubCell(int index);
   void setHighlighted(bool highlight) override;
@@ -21,6 +22,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
+  void editExpression(Ion::Events::Event event);
   Sequence * m_sequence;
   int m_numberOfSubCells;
   int m_selectedSubCell;

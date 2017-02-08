@@ -11,6 +11,7 @@ namespace Sequence {
 class SequenceTitleCell : public SequenceCell {
 public:
   SequenceTitleCell(Responder * parentResponder, ListParameterController * listParameterController);
+  ~SequenceTitleCell();
   void setSequence(Sequence * sequence) override;
   void setColor(KDColor color);
   int numberOfSubviews() const override;
@@ -22,9 +23,10 @@ private:
   EvenOddCell * viewAtIndex(int index) override;
   StackViewController * stackController();
   Shared::FunctionTitleCell m_backgroungCell;
-  EvenOddBufferTextCell m_definitionView;
-  EvenOddBufferTextCell m_firstInitialConditionView;
-  EvenOddBufferTextCell m_secondInitialConditionView;
+  EvenOddExpressionCell m_definitionView;
+  EvenOddExpressionCell m_firstInitialConditionView;
+  EvenOddExpressionCell m_secondInitialConditionView;
+  Poincare::ExpressionLayout * m_expressionLayouts[3];
   ListParameterController * m_listParameterController;
 };
 

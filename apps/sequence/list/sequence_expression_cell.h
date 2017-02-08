@@ -2,30 +2,21 @@
 #define SEQUENCE_SEQUENCE_EXPRESSION_CELL_H
 
 #include "../sequence.h"
+#include "sequence_cell.h"
 #include <escher.h>
 
 namespace Sequence {
 
-class SequenceExpressionCell : public Responder, public EvenOddCell {
+class SequenceExpressionCell : public Responder, public SequenceCell {
 public:
   SequenceExpressionCell(Responder * parentResponder);
-  void setSequence(Sequence * sequence);
+  void setSequence(Sequence * sequence) override;
   Sequence * sequence();
-  int selectedSubCell();
-  void selectSubCell(int index);
-  void setHighlighted(bool highlight) override;
-  void setEven(bool even) override;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  EvenOddCell * viewAtIndex(int index) override;
   void editExpression(Ion::Events::Event event);
-  Sequence * m_sequence;
-  int m_numberOfSubCells;
-  int m_selectedSubCell;
   EvenOddExpressionCell m_expressionView;
   EvenOddExpressionCell m_firstInitialConditionView;
   EvenOddExpressionCell m_secondInitialConditionView;

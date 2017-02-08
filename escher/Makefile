@@ -7,6 +7,7 @@ objs += $(addprefix escher/src/,\
   button.o\
   chevron_menu_list_cell.o\
   chevron_text_menu_list_cell.o\
+  chevron_expression_menu_list_cell.o\
   chevron_view.o\
   container.o\
   editable_text_menu_list_cell.o\

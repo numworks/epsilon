@@ -67,12 +67,20 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 
 void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions() || t->selectedRow() < numberOfRows() - 1) {
-    if (t->selectedColumn() == 0) {
-      SequenceTitleCell * myCell = (SequenceTitleCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-      app()->setFirstResponder(myCell);
+    SequenceCell * myCell = (SequenceCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myCell);
+    if (t->selectedRow() == -1) {
+      return;
+    }
+    if (t->selectedRow() == previousSelectedCellY) {
+      SequenceCell * otherCell = (SequenceCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+      myCell->selectSubCell(otherCell->selectedSubCell());
     } else {
-      SequenceExpressionCell * myCell = (SequenceExpressionCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-      app()->setFirstResponder(myCell);
+      if (t->selectedRow() < previousSelectedCellY) {
+        myCell->selectSubCell(myCell->numberOfSubCells()-1);
+      } else {
+        myCell->selectSubCell(0);
+      }
     }
   } else {
     if (app()->firstResponder() != t) {

@@ -7,7 +7,7 @@
 
 namespace Sequence {
 
-class SequenceExpressionCell : public Responder, public SequenceCell {
+class SequenceExpressionCell : public SequenceCell {
 public:
   SequenceExpressionCell(Responder * parentResponder);
   void setSequence(Sequence * sequence) override;

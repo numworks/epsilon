@@ -6,8 +6,7 @@ using namespace Shared;
 namespace Sequence {
 
 SequenceExpressionCell::SequenceExpressionCell(Responder * parentResponder) :
-  Responder(parentResponder),
-  SequenceCell(),
+  SequenceCell(parentResponder),
   m_expressionView(EvenOddExpressionCell()),
   m_firstInitialConditionView(EvenOddExpressionCell()),
   m_secondInitialConditionView(EvenOddExpressionCell())

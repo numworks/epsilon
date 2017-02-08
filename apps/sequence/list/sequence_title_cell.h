@@ -8,7 +8,7 @@
 
 namespace Sequence {
 
-class SequenceTitleCell : public SequenceCell, public Responder {
+class SequenceTitleCell : public SequenceCell {
 public:
   SequenceTitleCell(Responder * parentResponder, Shared::ListParameterController * listParameterController);
   void setSequence(Sequence * sequence) override;

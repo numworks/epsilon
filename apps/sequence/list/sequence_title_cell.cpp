@@ -5,8 +5,7 @@ using namespace Shared;
 namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell(Responder * parentResponder, Shared::ListParameterController * listParameterController) :
-  SequenceCell(),
-  Responder(parentResponder),
+  SequenceCell(parentResponder),
   m_backgroungCell(FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)),
   m_definitionView(KDText::FontSize::Large, 0.5f, 0.5f),
   m_firstInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),

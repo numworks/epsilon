@@ -6,9 +6,9 @@
 
 namespace Sequence {
 
-class SequenceCell : public EvenOddCell {
+class SequenceCell : public EvenOddCell, public Responder {
 public:
-  SequenceCell();
+  SequenceCell(Responder * parentResponder);
   virtual void setSequence(Sequence * sequence);
   int numberOfSubCells();
   int selectedSubCell();

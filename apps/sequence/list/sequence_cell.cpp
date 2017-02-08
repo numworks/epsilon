@@ -2,8 +2,9 @@
 
 namespace Sequence {
 
-SequenceCell::SequenceCell() :
+SequenceCell::SequenceCell(Responder * parentResponder) :
   EvenOddCell(),
+  Responder(parentResponder),
   m_numberOfSubCells(1),
   m_selectedSubCell(0),
   m_sequence(nullptr)

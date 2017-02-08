@@ -7,7 +7,7 @@ namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
   Shared::ListController(parentResponder, sequenceStore, header),
-  m_functionTitleCells{SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView)},
+  m_functionTitleCells{SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController)},
   m_expressionCells{SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView)},
   m_parameterController(ListParameterController(this, sequenceStore)),
   m_typeParameterController(this, sequenceStore),
@@ -102,19 +102,7 @@ TableViewCell * ListController::expressionCells(int index) {
 void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = ((SequenceStore *)m_functionStore)->functionAtIndex(j);
-  myCell->setNumberOfSubCells((int)sequence->type()+1);
-  char bufferName[5] = {*sequence->name(),'(',sequence->symbol(),')', 0};
-  myCell->setDefinitionText(bufferName);
-  if ((int)sequence->type() > 0) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','1',')', 0};
-    myCell->setFirstInitialConditionText(bufferName);
-  }
-  if ((int)sequence->type() > 1) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','2',')', 0};
-    myCell->setSecondInitialConditionText(bufferName);
-  }
-  KDColor functionNameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
-  myCell->setColor(functionNameColor);
+  myCell->setSequence(sequence);
 }
 
 void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {

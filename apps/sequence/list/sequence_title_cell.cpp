@@ -4,27 +4,35 @@ using namespace Shared;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(Responder * parentResponder) :
+SequenceTitleCell::SequenceTitleCell(Responder * parentResponder, Shared::ListParameterController * listParameterController) :
   FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
   Responder(parentResponder),
   m_numberOfSubCells(1),
   m_selectedSubCell(0),
   m_definitionView(KDText::FontSize::Large, 0.5f, 0.5f),
   m_firstInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),
-  m_secondInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f)
+  m_secondInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),
+  m_sequence(nullptr),
+  m_listParameterController(listParameterController)
 {
 }
 
-void SequenceTitleCell::setDefinitionText(const char * title) {
-  m_definitionView.setText(title);
-}
-
-void SequenceTitleCell::setFirstInitialConditionText(const char * textContent) {
-  m_firstInitialConditionView.setText(textContent);
-}
-
-void SequenceTitleCell::setSecondInitialConditionText(const char * textContent) {
-  m_secondInitialConditionView.setText(textContent);
+void SequenceTitleCell::setSequence(Sequence * sequence) {
+  m_sequence = sequence;
+  m_numberOfSubCells = (int)sequence->type()+1;
+  char bufferName[5] = {*sequence->name(),'(',sequence->symbol(),')', 0};
+  m_definitionView.setText(bufferName);
+  if (m_numberOfSubCells > 0) {
+    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','1',')', 0};
+    m_firstInitialConditionView.setText(bufferName);
+  }
+  if (m_numberOfSubCells > 1) {
+    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','2',')', 0};
+    m_secondInitialConditionView.setText(bufferName);
+  }
+  KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
+  setColor(nameColor);
+  layoutSubviews();
 }
 
 void SequenceTitleCell::setColor(KDColor color) {
@@ -32,11 +40,6 @@ void SequenceTitleCell::setColor(KDColor color) {
   m_definitionView.setTextColor(color);
   m_firstInitialConditionView.setTextColor(color);
   m_secondInitialConditionView.setTextColor(color);
-}
-
-void SequenceTitleCell::setNumberOfSubCells(int numberOfSubcells) {
-  m_numberOfSubCells = numberOfSubcells;
-  layoutSubviews();
 }
 
 int SequenceTitleCell::selectedSubCell() {

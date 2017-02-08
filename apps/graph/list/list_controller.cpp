@@ -50,7 +50,9 @@ bool ListController::handleEnter() {
     {
       if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
           m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        return addFunction();
+        m_functionStore->addEmptyFunction();
+        m_selectableTableView.reloadData();
+        return true;
       }
       FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
       editExpression(functionCell, Ion::Events::OK);

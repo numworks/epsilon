@@ -148,17 +148,6 @@ void ListController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool ListController::addFunction() {
-  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions()) {
-    m_functionStore->addEmptyFunction();
-    m_selectableTableView.reloadData();
-    return true;
-  }
-  // Add a warning to tell the user there is no more space for new functions
-  app()->displayWarning("Nombre maximal d'éléments atteint");
-  return false;
-}
-
 void ListController::configureFunction(Function * function) {
   StackViewController * stack = stackController();
   parameterController()->setFunction(function);

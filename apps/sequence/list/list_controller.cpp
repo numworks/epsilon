@@ -10,7 +10,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_functionTitleCells{SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView)},
   m_expressionCells{SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView)},
   m_parameterController(ListParameterController(this, sequenceStore)),
-  m_typeParameterController(this)
+  m_typeParameterController(this, sequenceStore)
 {
   m_selectableTableView.setDelegate(this);
 }
@@ -57,14 +57,10 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK && m_selectableTableView.selectedColumn() == 1
       && m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-    if (addFunction()){
-      m_selectableTableView.dataHasChanged(true);
-      m_typeParameterController.setSequence((Sequence *)m_functionStore->functionAtIndex(m_selectableTableView.selectedRow()));
-      StackViewController * stack = stackController();
-      stack->push(&m_typeParameterController);
-      return true;
-    }
-    return false;
+    m_selectableTableView.dataHasChanged(true);
+    StackViewController * stack = stackController();
+    stack->push(&m_typeParameterController);
+    return true;
   }
   return false;
 }

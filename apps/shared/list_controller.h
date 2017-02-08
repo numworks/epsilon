@@ -28,7 +28,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
-  bool addFunction();
   void configureFunction(Function * function);
   StackViewController * stackController() const;
   SelectableTableView m_selectableTableView;

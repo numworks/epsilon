@@ -17,9 +17,9 @@ public:
   Sequence * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
   int maxNumberOfFunctions() override;
+  const char * firstAvailableName() override;
   static constexpr int k_maxNumberOfSequences = 3;
 private:
-  const char * firstAvailableName() override;
   const KDColor firstAvailableColor() override;
   static constexpr KDColor k_defaultColors[k_maxNumberOfSequences] = {
     KDColor::RGB24(0xbe2727), KDColor::RGB24(0x3e6f3c), KDColor::RGB24(0x656975)

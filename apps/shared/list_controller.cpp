@@ -3,11 +3,12 @@
 
 namespace Shared {
 
-ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header, const char * text) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
-  m_functionStore(functionStore)
+  m_functionStore(functionStore),
+  m_addNewFunction(text)
 {
 }
 

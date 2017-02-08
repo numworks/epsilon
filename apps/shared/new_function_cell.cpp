@@ -3,11 +3,10 @@
 
 namespace Shared {
 
-NewFunctionCell::NewFunctionCell() :
+NewFunctionCell::NewFunctionCell(const char * text) :
   EvenOddCell(),
-  m_pointerTextView(PointerTextView(KDText::FontSize::Large, nullptr, 0.5f, 0.5f))
+  m_pointerTextView(PointerTextView(KDText::FontSize::Large, text, 0.5f, 0.5f))
 {
-  m_pointerTextView.setText(text());
 }
 
 void NewFunctionCell::reloadCell() {
@@ -26,10 +25,6 @@ View * NewFunctionCell::subviewAtIndex(int index) {
 
 void NewFunctionCell::layoutSubviews() {
   m_pointerTextView.setFrame(bounds());
-}
-
-const char * NewFunctionCell::text() {
-  return "Ajouter une fonction";
 }
 
 }

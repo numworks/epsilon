@@ -7,13 +7,12 @@ namespace Shared {
 
 class NewFunctionCell : public EvenOddCell {
 public:
-  NewFunctionCell();
+  NewFunctionCell(const char * text);
   void reloadCell() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-protected:
-  virtual const char * text();
+private:
   PointerTextView m_pointerTextView;
 };
 

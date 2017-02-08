@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
-  Shared::ListController(parentResponder, sequenceStore, header),
+  Shared::ListController(parentResponder, sequenceStore, header, "Ajouter une suite"),
   m_functionTitleCells{SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController)},
   m_expressionCells{SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView)},
   m_parameterController(ListParameterController(this, sequenceStore)),

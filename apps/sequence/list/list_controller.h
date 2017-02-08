@@ -32,6 +32,7 @@ private:
   SequenceExpressionCell m_expressionCells[k_maxNumberOfRows];
   Shared::ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
+  StackViewController m_typeStackController;
 };
 
 }

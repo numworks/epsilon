@@ -5,11 +5,12 @@ using namespace Shared;
 namespace Sequence {
 
 SequenceExpressionCell::SequenceExpressionCell(Responder * parentResponder) :
-  FunctionExpressionCell(),
   Responder(parentResponder),
+  EvenOddCell(),
   m_sequence(nullptr),
   m_numberOfSubCells(1),
   m_selectedSubCell(0),
+  m_expressionView(EvenOddExpressionCell()),
   m_firstInitialConditionView(EvenOddExpressionCell()),
   m_secondInitialConditionView(EvenOddExpressionCell())
 {
@@ -27,31 +28,26 @@ void SequenceExpressionCell::selectSubCell(int selectedSubCell) {
   reloadCell();
 }
 
-void SequenceExpressionCell::setFunction(Function * f) {
-  FunctionExpressionCell::setFunction(f);
-  m_sequence = (Sequence *)f;
+void SequenceExpressionCell::setSequence(Sequence * sequence) {
+  m_sequence = sequence;
   m_numberOfSubCells = (int)m_sequence->type()+1;
+  bool active = m_sequence->isActive();
+  KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
+  m_expressionView.setExpression(m_sequence->layout());
+  m_expressionView.setTextColor(textColor);
   if (m_numberOfSubCells > 1) {
     m_firstInitialConditionView.setExpression(m_sequence->firstInitialConditionLayout());
+    m_firstInitialConditionView.setTextColor(textColor);
   }
   if (m_numberOfSubCells > 2) {
     m_secondInitialConditionView.setExpression(m_sequence->secondInitialConditionLayout());
-  }
-}
-
-void SequenceExpressionCell::reloadCell() {
-  FunctionExpressionCell::reloadCell();
-  m_firstInitialConditionView.setBackgroundColor(backgroundColor());
-  m_secondInitialConditionView.setBackgroundColor(backgroundColor());
-  if (m_numberOfSubCells > 1 && m_sequence) {
-    bool active = m_sequence->isActive();
-    KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
-    m_firstInitialConditionView.setTextColor(textColor);
     m_secondInitialConditionView.setTextColor(textColor);
   }
+  layoutSubviews();
 }
 
 void SequenceExpressionCell::setHighlighted(bool highlight) {
+  TableViewCell::setHighlighted(highlight);
   m_expressionView.setHighlighted(false);
   m_firstInitialConditionView.setHighlighted(false);
   m_secondInitialConditionView.setHighlighted(false);
@@ -71,6 +67,7 @@ void SequenceExpressionCell::setHighlighted(bool highlight) {
 }
 
 void SequenceExpressionCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_expressionView.setEven(even);
   m_firstInitialConditionView.setEven(even);
   m_secondInitialConditionView.setEven(even);
@@ -92,17 +89,30 @@ View * SequenceExpressionCell::subviewAtIndex(int index) {
 }
 
 void SequenceExpressionCell::layoutSubviews() {
-  KDCoordinate cellHeight = bounds().height()/m_numberOfSubCells;
+  KDCoordinate cellHeight = (bounds().height()-(m_numberOfSubCells-1)*k_separatorThickness)/m_numberOfSubCells;
   KDRect expressionFrame(k_separatorThickness, 0, bounds().width() - k_separatorThickness, cellHeight);
   m_expressionView.setFrame(expressionFrame);
-  expressionFrame = KDRect(k_separatorThickness, cellHeight, bounds().width() - k_separatorThickness, cellHeight);
+  expressionFrame = KDRect(k_separatorThickness, cellHeight+k_separatorThickness, bounds().width() - k_separatorThickness, cellHeight);
   m_firstInitialConditionView.setFrame(expressionFrame);
-  expressionFrame = KDRect(k_separatorThickness, 2*cellHeight, bounds().width() - k_separatorThickness, cellHeight);
+  expressionFrame = KDRect(k_separatorThickness, 2*cellHeight+2*k_separatorThickness, bounds().width() - k_separatorThickness, cellHeight);
   m_secondInitialConditionView.setFrame(expressionFrame);
 }
 
+void SequenceExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
+  // Color the separators
+  ctx->fillRect(KDRect(0, 0, k_separatorThickness, bounds().height()), Palette::GreyBright);
+  KDCoordinate cellHeight = (bounds().height()-(m_numberOfSubCells-1)*k_separatorThickness)/m_numberOfSubCells;
+  if (m_numberOfSubCells > 1) {
+    ctx->fillRect(KDRect(k_separatorThickness, cellHeight, bounds().width() - k_separatorThickness, k_separatorThickness), separatorColor);
+  }
+  if (m_numberOfSubCells > 2) {
+    ctx->fillRect(KDRect(k_separatorThickness, 2*cellHeight+k_separatorThickness, bounds().width() - k_separatorThickness, k_separatorThickness), separatorColor);
+  }
+}
+
 bool SequenceExpressionCell::handleEvent(Ion::Events::Event event) {
-  if (m_selectedSubCell < 2 && event == Ion::Events::Down) {
+  if (m_selectedSubCell < m_numberOfSubCells - 1 && event == Ion::Events::Down) {
     selectSubCell(m_selectedSubCell+1);
     return true;
   }

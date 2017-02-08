@@ -1,6 +1,4 @@
 #include "list_controller.h"
-#include "function_title_cell.h"
-#include "function_expression_cell.h"
 #include <assert.h>
 
 namespace Shared {
@@ -131,15 +129,9 @@ int ListController::reusableCellCount(int type) {
 void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   if (j < numberOfRows() - 1 || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
     if (i == 0) {
-      FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-      Function * function = m_functionStore->functionAtIndex(j);
-      char bufferName[5] = {*function->name(),'(','x',')', 0};
-      myFunctionCell->setText(bufferName);
-      KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
-      myFunctionCell->setColor(functionNameColor);
+      willDisplayTitleCellAtIndex(cell, j);
     } else {
-      FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-      myCell->setFunction(m_functionStore->functionAtIndex(j));
+      willDisplayExpressionCellAtIndex(cell, j);
     }
   }
   EvenOddCell * myCell = (EvenOddCell *)cell;
@@ -185,12 +177,12 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-Responder * ListController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder());
-}
-
 StackViewController * ListController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder());
+}
+
+Responder * ListController::tabController() const{
+  return (parentResponder()->parentResponder()->parentResponder());
 }
 
 }

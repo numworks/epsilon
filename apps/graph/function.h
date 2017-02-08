@@ -13,8 +13,8 @@ public:
   bool displayDerivative();
   void setDisplayDerivative(bool display);
   float approximateDerivative(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const;
-private:
   char symbol() const override;
+private:
   bool m_displayDerivative;
 };
 

@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "../function_store.h"
-#include "../../shared/function_title_cell.h"
+#include "../function_title_cell.h"
 #include "../../shared/editable_cell_table_view_controller.h"
 #include "interval.h"
 #include "abscissa_parameter_controller.h"
@@ -62,7 +62,7 @@ private:
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
   EvenOddPointerTextCell m_abscissaTitleCell;
-  Shared::FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
+  FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];

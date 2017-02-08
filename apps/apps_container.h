@@ -13,7 +13,6 @@
 #include "toolbox_controller.h"
 #include "variable_box_controller.h"
 #include "preferences.h"
-
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
 #include "picview/picview_app.h"

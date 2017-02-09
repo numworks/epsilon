@@ -9,8 +9,7 @@ namespace Sequence {
 
 ListParameterController::ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
   Shared::ListParameterController(parentResponder, sequenceStore),
-  m_typeCell(ChevronExpressionMenuListCell((char *)"Type de suite")),
-  m_sequence(nullptr)
+  m_typeCell(ChevronExpressionMenuListCell((char *)"Type de suite"))
 {
 }
 
@@ -27,31 +26,35 @@ const char * ListParameterController::title() const {
 
 void ListParameterController::setSequence(Sequence * sequence) {
   setFunction(sequence);
-  m_sequence = sequence;
   if (m_typeLayout != nullptr) {
     delete m_typeLayout;
     m_typeLayout = nullptr;
   }
-  if (m_sequence->type() == Sequence::Type::Explicite) {
-    m_typeLayout = new BaselineRelativeLayout(new StringLayout(m_sequence->name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  if (sequence->type() == Sequence::Type::Explicite) {
+    m_typeLayout = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
-  if (m_sequence->type() == Sequence::Type::SingleRecurrence) {
-    m_typeLayout = new BaselineRelativeLayout(new StringLayout(m_sequence->name(), 1), new StringLayout("n+1", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  if (sequence->type() == Sequence::Type::SingleRecurrence) {
+    m_typeLayout = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n+1", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
-  if (m_sequence->type() == Sequence::Type::DoubleRecurrence) {
-    m_typeLayout = new BaselineRelativeLayout(new StringLayout(m_sequence->name(), 1), new StringLayout("n+2", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  if (sequence->type() == Sequence::Type::DoubleRecurrence) {
+    m_typeLayout = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n+2", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   m_typeCell.setExpression(m_typeLayout);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (Shared::ListParameterController::handleEvent(event)) {
-    return true;
-  }
-  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 4) {
+  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 3) {
     return false;
   }
-  return false;
+  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 2) {
+    if (m_functionStore->numberOfFunctions() > 0) {
+      m_functionStore->removeFunction(m_function);
+      StackViewController * stack = (StackViewController *)(parentResponder());
+      stack->pop();
+      return true;
+    }
+  }
+  return Shared::ListParameterController::handleEvent(event);
 }
 
 int ListParameterController::numberOfRows() {

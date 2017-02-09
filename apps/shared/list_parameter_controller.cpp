@@ -7,10 +7,10 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
+  m_functionStore(functionStore),
   m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
-  m_deleteCell(MenuListCell((char*)"Supprimer la fonction")),
-  m_functionStore(functionStore)
+  m_deleteCell(MenuListCell((char*)"Supprimer la fonction"))
 {
 }
 

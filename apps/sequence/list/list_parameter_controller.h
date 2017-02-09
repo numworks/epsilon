@@ -21,7 +21,6 @@ private:
   constexpr static int k_totalNumberOfCell = 4;
   ChevronExpressionMenuListCell m_typeCell;
   Poincare::ExpressionLayout * m_typeLayout;
-  Sequence * m_sequence;
 };
 
 }

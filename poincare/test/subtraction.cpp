@@ -20,7 +20,7 @@ QUIZ_CASE(poincare_substraction_evaluate) {
   delete a;
   delete e;
 
-  char expText1[10] ={'3','+',Ion::Charset::SmallIota, '-', '(', '4', '+', Ion::Charset::SmallIota, ')', 0};
+  char expText1[10] ={'3','+',Ion::Charset::IComplex, '-', '(', '4', '+', Ion::Charset::IComplex, ')', 0};
   a = Expression::parse(expText1);
   e = a->evaluate(globalContext);
   assert(((Complex *)e)->a() == -1.0f && ((Complex *)e)->b() == 0.0f);
@@ -38,7 +38,7 @@ QUIZ_CASE(poincare_substraction_evaluate) {
   delete a;
   delete e;
 
-  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::SmallIota,']','[','3',',','4',']','[','5',',','6',']',']','-','(', '4', '+', Ion::Charset::SmallIota, ')', 0};
+  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','-','(', '4', '+', Ion::Charset::IComplex, ')', 0};
   a = Expression::parse(expText2);
   e = a->evaluate(globalContext);
   assert(((Complex *)e->operand(0))->a() == -3.0f && ((Complex *)e->operand(0))->b() == -1.0f);
@@ -61,7 +61,7 @@ QUIZ_CASE(poincare_substraction_evaluate) {
   delete a;
   delete e;
 
-  char expText3[100] ={'3','+',Ion::Charset::SmallIota, '-','[','[','1',',','2','+', Ion::Charset::SmallIota,']','[','3',',','4',']','[','5',',','6',']',']', 0};
+  char expText3[100] ={'3','+',Ion::Charset::IComplex, '-','[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']', 0};
   a = Expression::parse(expText3);
   e = a->evaluate(globalContext);
   assert(((Complex *)e->operand(0))->a() == 2.0f && ((Complex *)e->operand(0))->b() == 1.0f);
@@ -84,8 +84,8 @@ QUIZ_CASE(poincare_substraction_evaluate) {
   delete a;
   delete e;
 
-  char expText4[100] ={'[','[','1',',','2','+', Ion::Charset::SmallIota,']','[','3',',','4',']','[','5',',','6',']',']','-',
-    '[','[','1',',','2','+', Ion::Charset::SmallIota,']','[','3',',','4',']','[','5',',','6','+', Ion::Charset::SmallIota,']',']',0};
+  char expText4[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','-',
+    '[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6','+', Ion::Charset::IComplex,']',']',0};
   a = Expression::parse(expText4);
   e = a->evaluate(globalContext);
   assert(((Complex *)e->operand(0))->a() == 0.0f && ((Complex *)e->operand(0))->b() == 0.0f);

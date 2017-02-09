@@ -20,7 +20,7 @@ QUIZ_CASE(poincare_power_evaluate) {
   delete a;
   delete e;
 
-  char expText1[15] ={'(','3','+',Ion::Charset::SmallIota, ')', '^', '4', 0};
+  char expText1[15] ={'(','3','+',Ion::Charset::IComplex, ')', '^', '4', 0};
   a = Expression::parse(expText1);
   e = a->evaluate(globalContext);
   assert(28.0f - 0.00001f <= (((Complex *)e)->a()) && (((Complex *)e)->a()) <= 28.0f + 0.00001f &&
@@ -28,7 +28,7 @@ QUIZ_CASE(poincare_power_evaluate) {
   delete a;
   delete e;
 
-  char expText2[15] ={'4', '^','(','3','+',Ion::Charset::SmallIota, ')', 0};
+  char expText2[15] ={'4', '^','(','3','+',Ion::Charset::IComplex, ')', 0};
   a = Expression::parse(expText2);
   e = a->evaluate(globalContext);
   assert(((Complex *)e)->a() == 11.7412464f && ((Complex *)e)->b() == 62.9137754f);

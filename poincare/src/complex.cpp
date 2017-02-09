@@ -153,7 +153,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, DisplayMode dis
     buffer[numberOfChars++] = '-';
   }
   if (m_b != 0.0f && bufferSize > numberOfChars+1) {
-    buffer[numberOfChars++] = Ion::Charset::SmallIota;
+    buffer[numberOfChars++] = Ion::Charset::IComplex;
     buffer[numberOfChars] = 0;
   }
   return numberOfChars;

@@ -26,7 +26,7 @@ private:
 
 static constexpr const char k_pi[2] = {Ion::Charset::SmallPi, 0};
 static constexpr const char k_root[4] = {Ion::Charset::Root, '(', ')', 0};
-static constexpr const char k_complexI[2] = {Ion::Charset::SmallIota, 0};
+static constexpr const char k_complexI[2] = {Ion::Charset::IComplex, 0};
 
 static constexpr EventData s_dataForEvent[] = {
 // Plain

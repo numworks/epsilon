@@ -59,13 +59,13 @@ QUIZ_CASE(poincare_complex_to_text) {
   assert(strcmp(buffer3, result13) == 0);
 
   Complex(1, 2).writeTextInBuffer(buffer, 14);
-  char text1[14] = {'1','+', '2', '*', Ion::Charset::SmallIota, 0};
+  char text1[14] = {'1','+', '2', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text1) == 0);
   Complex(-1.3, 2.444).writeTextInBuffer(buffer, 14);
-  char text2[14] = {'-','1','.','3','+', '2','.','4','4','4', '*', Ion::Charset::SmallIota, 0};
+  char text2[14] = {'-','1','.','3','+', '2','.','4','4','4', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text2) == 0);
   Complex(-1.3, -2.444).writeTextInBuffer(buffer, 14);
-  char text3[14] = {'-','1','.','3','-', '2','.','4','4','4', '*', Ion::Charset::SmallIota, 0};
+  char text3[14] = {'-','1','.','3','-', '2','.','4','4','4', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text3) == 0);
 }
 

@@ -21,6 +21,7 @@ SequenceTitleCell::~SequenceTitleCell() {
   for (int i = 0; i < 3; i++) {
     if (m_expressionLayouts[i]) {
       delete m_expressionLayouts[i];
+      m_expressionLayouts[i] = nullptr;
     }
   }
 }
@@ -28,8 +29,9 @@ SequenceTitleCell::~SequenceTitleCell() {
 void SequenceTitleCell::setSequence(Sequence * sequence) {
   SequenceCell::setSequence(sequence);
   for (int i = 0; i < 3; i++) {
-    if (m_expressionLayouts[i]) {
+    if (m_expressionLayouts[i]!= nullptr) {
       delete m_expressionLayouts[i];
+      m_expressionLayouts[i] = nullptr;
     }
   }
   if (m_numberOfSubCells == 1) {

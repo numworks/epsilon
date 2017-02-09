@@ -36,9 +36,11 @@ void Function::setColor(KDColor color) {
 Function::~Function() {
   if (m_layout != nullptr) {
     delete m_layout;
+    m_layout = nullptr;
   }
   if (m_expression != nullptr) {
     delete m_expression;
+    m_expression = nullptr;
   }
 }
 

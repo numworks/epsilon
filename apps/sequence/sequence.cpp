@@ -21,15 +21,19 @@ Sequence::~Sequence() {
   ((Function *)this)->Shared::Function::~Function();
   if (m_firstInitialConditionLayout != nullptr) {
     delete m_firstInitialConditionLayout;
+    m_firstInitialConditionLayout = nullptr;
   }
   if (m_secondInitialConditionLayout != nullptr) {
     delete m_secondInitialConditionLayout;
+    m_secondInitialConditionLayout = nullptr;
   }
   if (m_firstInitialConditionExpression != nullptr) {
     delete m_firstInitialConditionExpression;
+    m_firstInitialConditionExpression = nullptr;
   }
   if (m_secondInitialConditionExpression != nullptr) {
     delete m_secondInitialConditionExpression;
+    m_secondInitialConditionExpression = nullptr;
   }
 }
 

@@ -163,7 +163,9 @@ void TextField::insertTextAtLocation(const char * text, int location) {
     m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
   }
   strlcpy(&m_draftTextBuffer[location], text, textSize);
-  m_draftTextBuffer[location+textSize-1] = text[textSize-1];
+  if (location+textSize > 0) {
+    m_draftTextBuffer[location+textSize-1] = text[textSize-1];
+  }
   m_currentTextLength += textSize;
   reload();
 }

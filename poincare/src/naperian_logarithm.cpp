@@ -29,7 +29,7 @@ Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOpera
 }
 
 float NaperianLogarithm::approximate(Context& context, AngleUnit angleUnit) const {
-  return log10f(m_args[0]->approximate(context, angleUnit))/log10f(M_E);
+  return logf(m_args[0]->approximate(context, angleUnit));
 }
 
 }

@@ -102,7 +102,7 @@ product { poincare_expression_yylval.expression = new Product(); return FUNCTION
 \x9f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \xa6 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
 \xa2 { return ICOMPLEX; }
-e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\xa1 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

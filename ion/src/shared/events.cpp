@@ -27,13 +27,14 @@ private:
 static constexpr const char k_pi[2] = {Ion::Charset::SmallPi, 0};
 static constexpr const char k_root[4] = {Ion::Charset::Root, '(', ')', 0};
 static constexpr const char k_complexI[2] = {Ion::Charset::IComplex, 0};
+static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', '(', ')', 0};
 
 static constexpr EventData s_dataForEvent[] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), TL(), U(),   U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
-  T("e^()"), T("ln()"),  T("log()"), T(k_complexI), T(","),      T("^"),
+  T(k_exponential), T("ln()"),  T("log()"), T(k_complexI), T(","),      T("^"),
   T("sin()"), T("cos()"), T("tan()"), T(k_pi), T(k_root), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("*"), T("/"), U(),

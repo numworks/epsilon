@@ -28,7 +28,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
-  if (symbol->name() == 'e') {
+  if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
   }
   int index = symbolIndex(symbol);

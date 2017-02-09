@@ -36,7 +36,7 @@ enum Charset : char {
   SmallMu = (char)158,
   SmallPi = (char)159,
   SmallSigma = (char)160,
-  Exponentiel = (char)161,
+  Exponential = (char)161,
   IComplex = (char)162,
   Exponent = (char)163,
   Prime = (char)164,

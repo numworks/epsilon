@@ -24,7 +24,11 @@ View * ListParameterController::view() {
 
 void ListParameterController::didBecomeFirstResponder() {
   m_selectableTableView.dataHasChanged(true);
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.selectCellAtLocation(0, 0);
+  } else {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -37,6 +41,7 @@ void ListParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
 
 void ListParameterController::setFunction(Function * function) {
   m_function = function;
+  m_selectableTableView.selectCellAtLocation(0, 0);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

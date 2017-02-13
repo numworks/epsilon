@@ -13,7 +13,6 @@ namespace Graph {
 class GraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
 public:
   GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
-  View * view() override;
   void didBecomeFirstResponder() override;
   ViewController * initialisationParameterController() override;
 

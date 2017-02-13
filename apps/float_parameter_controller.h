@@ -23,7 +23,6 @@ protected:
 private:
   virtual float parameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
-
 };
 
 #endif

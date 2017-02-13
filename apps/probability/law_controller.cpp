@@ -19,6 +19,30 @@
 
 namespace Probability {
 
+LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
+  m_titleView(PointerTextView(KDText::FontSize::Small, "Choisir le type de loi", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_selectableTableView(selectableTableView)
+{
+}
+
+int LawController::ContentView::numberOfSubviews() const {
+  return 2;
+}
+
+View * LawController::ContentView::subviewAtIndex(int index) {
+  assert(index >= 0 && index < 2);
+  if (index == 0) {
+    return &m_titleView;
+  }
+  return m_selectableTableView;
+}
+
+void LawController::ContentView::layoutSubviews() {
+  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleMargin;
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
+}
+
 static const char * sMessages[] = {
   "Binomiale",
   "Uniforme",
@@ -29,8 +53,9 @@ static const char * sMessages[] = {
 
 LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
+  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin-ContentView::k_titleMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
+  m_contentView(&m_selectableTableView),
   m_law(nullptr),
   m_parametersController(ParametersController(nullptr))
 {
@@ -38,14 +63,7 @@ LawController::LawController(Responder * parentResponder) :
 }
 
 View * LawController::view() {
-  return &m_selectableTableView;
-}
-
-const char * LawController::title() const {
-  if (m_law == nullptr) {
-    return "Choisir le type de Loi";
-  }
-  return m_law->title();
+  return &m_contentView;
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
@@ -54,8 +72,6 @@ void Probability::LawController::didBecomeFirstResponder() {
     m_law = nullptr;
     m_parametersController.setLaw(m_law);
   }
-  StackViewController * stack = (StackViewController *)parentResponder();
-  stack->updateTitle();
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
@@ -68,8 +84,7 @@ bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     StackViewController * stack = (StackViewController *)parentResponder();
     setLawAccordingToIndex(m_selectableTableView.selectedRow());
-    stack->updateTitle();
-    stack->push(&m_parametersController);
+    stack->push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     return true;
   }
   return false;

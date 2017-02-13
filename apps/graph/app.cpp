@@ -3,10 +3,11 @@
 
 namespace Graph {
 
-App::App(Container * container, Context * context) :
+App::App(Container * container, Context * context, Preferences * preferences) :
   TextFieldDelegateApp(container, &m_inputViewController, "Fonctions", "FONCTIONS", ImageStore::GraphIcon),
   m_functionStore(FunctionStore()),
   m_xContext(VariableContext('x', context)),
+  m_preferences(preferences),
   m_listController(ListController(&m_listHeader, &m_functionStore, &m_listHeader)),
   m_listHeader(HeaderViewController(nullptr, &m_listController, &m_listController)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listHeader)),
@@ -29,6 +30,10 @@ InputViewController * App::inputViewController() {
 
 Context * App::localContext() {
   return &m_xContext;
+}
+
+Preferences * App::preferences() {
+  return m_preferences;
 }
 
 }

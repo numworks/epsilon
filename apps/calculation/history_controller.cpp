@@ -60,18 +60,17 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    Calculation newCalculation;
+    const char * text;
     if (subviewType == HistoryViewCell::SubviewType::Input) {
-      newCalculation = *calculation;
+      text = calculation->text();
     } else {
       char outputText[Calculation::k_maximalExpressionTextLength];
       calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
-      /* TODO: this will work when we will parse float */
-      //App * calculationApp = (App *)app();
-      //newCalculation.setContent(outputText, calculationApp->localContext());
+      text = outputText;
     }
     m_selectableTableView.deselectTable();
-    m_calculationStore->push(&newCalculation);
+    App * calculationApp = (App *)app();
+    m_calculationStore->push(text, calculationApp->localContext(), calculationApp->preferences());
     reload();
     m_selectableTableView.scrollToCell(0, numberOfRows()-1);
     app()->setFirstResponder(editController);

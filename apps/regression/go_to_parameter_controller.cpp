@@ -69,5 +69,12 @@ void GoToParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
+bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  FloatParameterController::textFieldDidFinishEditing(textField, text);
+  StackViewController * stack = (StackViewController *)parentResponder();
+  stack->pop();
+  stack->pop();
+  return true;
+}
 
 }

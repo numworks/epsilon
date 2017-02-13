@@ -9,6 +9,7 @@ public:
   AppsWindow();
   void setTitle(const char * title);
   void updateBatteryLevel();
+  void refreshPreferences(Preferences * preferences);
 private:
   constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;

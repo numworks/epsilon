@@ -7,6 +7,7 @@
 namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
+  m_numberOfParameters(1),
   m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
     ParametersController * parameterController = (ParametersController *) context;
     CalculationController * calculationController = parameterController->calculationController();
@@ -14,9 +15,9 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
     calculationController->selectSubview(1);
     calculationController->reload();
     StackViewController * stack = parameterController->stackController();
-    stack->updateTitle();
-    stack->push(calculationController);
+    stack->push(calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
   }, parentResponder), KDText::FontSize::Large)),
+  m_titleView(PointerTextView(KDText::FontSize::Small, "Choisir les parametres", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_selectableTableView(selectableTableView)
@@ -40,30 +41,45 @@ void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) c
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
+void ParametersController::ContentView::setNumberOfParameters(int numberOfParameters) {
+  m_numberOfParameters = numberOfParameters;
+}
+
 int ParametersController::ContentView::numberOfSubviews() const {
-  return 4;
+  return m_numberOfParameters+3;
 }
 
 View * ParametersController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 4);
+  assert(index >= 0 && index < 5);
   if (index == 0) {
-    return m_selectableTableView;
+    return &m_titleView;
   }
   if (index == 1) {
-    return &m_nextButton;
+    return m_selectableTableView;
   }
   if (index == 2) {
+    return &m_nextButton;
+  }
+  if (index == 3) {
     return &m_firstParameterDefinition;
   }
   return &m_secondParameterDefinition;
 }
 
 void ParametersController::ContentView::layoutSubviews() {
-  int tableHeight = m_selectableTableView->size().height() + Metric::TopMargin + Metric::BottomMargin;
-  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(),  tableHeight));
-  m_nextButton.setFrame(KDRect(Metric::LeftMargin, tableHeight, bounds().width() - Metric::RightMargin - Metric::LeftMargin, k_buttonHeight));
-  m_firstParameterDefinition.setFrame(KDRect(0, tableHeight + k_buttonHeight, bounds().width(), k_textHeight));
-  m_secondParameterDefinition.setFrame(KDRect(0, tableHeight + k_buttonHeight + k_textHeight, bounds().width(), k_textHeight));
+  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleMargin;
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
+  KDCoordinate tableHeight = m_selectableTableView->size().height() + Metric::TopMargin + Metric::BottomMargin;
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight));
+  m_nextButton.setFrame(KDRect(Metric::LeftMargin, titleHeight+tableHeight, bounds().width() - Metric::RightMargin - Metric::LeftMargin, k_buttonHeight));
+  KDCoordinate textHeight = KDText::stringSize("", KDText::FontSize::Small).height();
+  KDCoordinate defOrigin = (titleHeight+tableHeight+k_buttonHeight)/2+(bounds().height()-textHeight)/2;
+  m_secondParameterDefinition.setFrame(KDRectZero);
+  if (m_numberOfParameters == 2) {
+    defOrigin = (titleHeight+tableHeight+k_buttonHeight)/2+(bounds().height()-2*textHeight-k_textMargin)/2;
+    m_secondParameterDefinition.setFrame(KDRect(0, defOrigin+textHeight+k_textMargin, bounds().width(), textHeight));
+  }
+  m_firstParameterDefinition.setFrame(KDRect(0, defOrigin, bounds().width(), textHeight));
 }
 
 /* Parameters Controller */
@@ -84,30 +100,18 @@ View * ParametersController::view() {
 }
 
 const char * ParametersController::title() const {
-  if (!m_buttonSelected) {
-    return "Choisir les parametres";
+  if (m_law != nullptr) {
+    return m_law->title();
   }
-  return m_titleBuffer;
+  return "";
 }
 
 void ParametersController::setLaw(Law * law) {
   m_law = law;
-  m_calculationController.setLaw(law);
-}
-
-void ParametersController::updateTitle() {
-  int currentChar = 0;
-  for (int index = 0; index < m_law->numberOfParameter(); index++) {
-    m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", 4);
-    currentChar += 3;
-    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Float::DisplayMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
-    currentChar += strlen(buffer);
-    m_titleBuffer[currentChar++] = ' ';
+  if (m_law != nullptr) {
+    m_contentView.setNumberOfParameters(m_law->numberOfParameter());
   }
-  m_titleBuffer[currentChar-1] = 0;
+  m_calculationController.setLaw(law);
 }
 
 bool ParametersController::handleEvent(Ion::Events::Event event) {
@@ -116,7 +120,6 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
     m_contentView.button()->setBackgroundColor(Palette::Select);
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(m_contentView.button());
-    updateTitle();
     return true;
   }
   if (event == Ion::Events::Up && m_buttonSelected) {
@@ -135,7 +138,6 @@ void ParametersController::didBecomeFirstResponder() {
   }
   m_contentView.layoutSubviews();
   m_buttonSelected = false;
-  stackController()->updateTitle();
   m_contentView.button()->setBackgroundColor(KDColorWhite);
   FloatParameterController::didBecomeFirstResponder();
 }

@@ -8,9 +8,9 @@ AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
   m_homeApp(this),
-  m_graphApp(this, &m_globalContext),
+  m_graphApp(this, &m_globalContext, &m_preferences),
   m_probabilityApp(this),
-  m_calculationApp(this, &m_globalContext),
+  m_calculationApp(this, &m_globalContext, &m_preferences),
   m_regressionApp(this),
   m_settingsApp(this, &m_preferences),
   m_statisticsApp(this),
@@ -18,6 +18,7 @@ AppsContainer::AppsContainer() :
   m_preferences(Preferences()),
   m_variableBoxController(&m_globalContext)
 {
+  refreshPreferences();
 }
 
 int AppsContainer::numberOfApps() {
@@ -69,6 +70,10 @@ void AppsContainer::switchTo(App * app) {
   // TODO: Update the battery icon every in a time frame
   m_window.updateBatteryLevel();
   Container::switchTo(app);
+}
+
+void AppsContainer::refreshPreferences() {
+  m_window.refreshPreferences(&m_preferences);
 }
 
 Window * AppsContainer::window() {

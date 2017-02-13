@@ -10,7 +10,7 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
-  ExpressionLayout * createLayout() const override;
+  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
 };
 
 #endif

@@ -122,8 +122,9 @@ bool NodeNavigationController::selectSubMenu(Node * selectedNode) {
 }
 
 void NodeNavigationController::didBecomeFirstResponder() {
-  m_stack.resetStack();
   m_listViewController.setNodeModel(nodeModel());
+  StackViewController::didBecomeFirstResponder();
+  m_stack.resetStack();
   m_listViewController.setFirstSelectedRow(0);
   app()->setFirstResponder(&m_listViewController);
 }

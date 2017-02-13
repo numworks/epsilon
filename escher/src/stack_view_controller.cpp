@@ -4,14 +4,11 @@ extern "C" {
 #include <escher/stack_view_controller.h>
 #include <escher/app.h>
 
-StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
+StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader) :
   View(),
   m_contentView(nullptr),
   m_numberOfStacks(0),
-  m_displayFirstStackHeader(displayFirstStackHeader),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
-  m_separatorColor(separatorColor)
+  m_displayFirstStackHeader(displayFirstStackHeader)
 {
 }
 
@@ -21,11 +18,11 @@ void StackViewController::ControllerView::setContentView(View * view) {
   markRectAsDirty(bounds());
 }
 
-void StackViewController::ControllerView::pushStack(const char * name) {
+void StackViewController::ControllerView::pushStack(const char * name, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
   m_stackViews[m_numberOfStacks].setName(name);
-  m_stackViews[m_numberOfStacks].setTextColor(m_textColor);
-  m_stackViews[m_numberOfStacks].setBackgroundColor(m_backgroundColor);
-  m_stackViews[m_numberOfStacks].setSeparatorColor(m_separatorColor);
+  m_stackViews[m_numberOfStacks].setTextColor(textColor);
+  m_stackViews[m_numberOfStacks].setBackgroundColor(backgroundColor);
+  m_stackViews[m_numberOfStacks].setSeparatorColor(separatorColor);
   m_numberOfStacks++;
 }
 
@@ -68,11 +65,15 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController,
+    bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
-  m_view(ControllerView(displayFirstStackHeader, textColor, backgroundColor, separatorColor)),
+  m_view(ControllerView(displayFirstStackHeader)),
   m_numberOfChildren(0),
-  m_rootViewController(rootViewController)
+  m_rootViewController(rootViewController),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor),
+  m_separatorColor(separatorColor)
 {
   // push(rootViewController);
 }
@@ -86,13 +87,8 @@ const char * StackViewController::title() const {
   }
 }
 
-void StackViewController::updateTitle() {
-  m_view.popStack();
-  m_view.pushStack(m_children[m_numberOfChildren-1]->title());
-}
-
-void StackViewController::push(ViewController * vc) {
-  m_view.pushStack(vc->title());
+void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
+  m_view.pushStack(vc->title(), textColor, backgroundColor, separatorColor);
   m_children[m_numberOfChildren++] = vc;
   setupActiveViewController();
 }
@@ -114,6 +110,10 @@ void StackViewController::setupActiveViewController() {
 }
 
 void StackViewController::didBecomeFirstResponder() {
+  if (m_rootViewController != nullptr) {
+    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
+    m_rootViewController = nullptr;
+  }
   ViewController * vc = m_children[m_numberOfChildren-1];
   app()->setFirstResponder(vc);
 }
@@ -127,9 +127,5 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
 }
 
 View * StackViewController::view() {
-  if (m_rootViewController != nullptr) {
-    push(m_rootViewController);
-    m_rootViewController = nullptr;
-  }
   return &m_view;
 }

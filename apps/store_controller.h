@@ -17,6 +17,7 @@ public:
   TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;

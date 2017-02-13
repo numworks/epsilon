@@ -2,6 +2,7 @@
 #define APPS_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <escher.h>
+#include <poincare.h>
 
 class EditableCellTableViewController : public ViewController, public TableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
@@ -14,7 +15,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   int numberOfRows() override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::DisplayMode displayMode);
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

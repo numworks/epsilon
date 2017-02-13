@@ -33,10 +33,14 @@ class Expression {
       Symbol,
       Tangent,
     };
+    enum class DisplayMode {
+      Auto = 0,
+      Scientific = 1
+    };
     static Expression * parse(char const * string);
     virtual ~Expression();
 
-    virtual ExpressionLayout * createLayout() const = 0; // Returned object must be deleted
+    virtual ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const = 0; // Returned object must be deleted
     virtual const Expression * operand(int i) const = 0;
     virtual int numberOfOperands() const = 0;
     virtual Expression * clone() const = 0;

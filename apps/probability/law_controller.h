@@ -12,7 +12,6 @@ class LawController : public ViewController, public SimpleListViewDataSource {
 public:
   LawController(Responder * parentResponder);
   View * view() override;
-  const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
@@ -22,12 +21,22 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
+  class ContentView : public View {
+  public:
+    ContentView(SelectableTableView * selectableTableView);
+    constexpr static KDCoordinate k_titleMargin = 8;
+  private:
+    int numberOfSubviews() const override;
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+    PointerTextView m_titleView;;
+    SelectableTableView * m_selectableTableView;
+  };
   void setLawAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 5;
-  // !!! CAUTION: The order here is important
-  // The cells should be initialized *before* the listview!
   Cell m_cells[k_totalNumberOfModels];
   SelectableTableView m_selectableTableView;
+  ContentView m_contentView;
   const char ** m_messages;
   Law * m_law;
   ParametersController m_parametersController;

@@ -8,7 +8,7 @@
 class Fraction : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
 public:
-  ExpressionLayout * createLayout() const override;
+  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
   float approximate(Context& context) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,

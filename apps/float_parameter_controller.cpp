@@ -27,7 +27,7 @@ int FloatParameterController::activeCell() {
 void FloatParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
   char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Float(parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Float(parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::DisplayMode::Auto);
   myCell->setAccessoryText(buffer);
 }
 

@@ -9,7 +9,7 @@ public:
         Ans = '^'
     };
     Symbol(char name);
-    ExpressionLayout * createLayout() const override;
+    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     float approximate(Context& context) const override;
     Expression * evaluate(Context& context) const override;
     Type type() const override;

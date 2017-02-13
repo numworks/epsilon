@@ -13,8 +13,7 @@ public:
     KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
 
   /* Push creates a new StackView and adds it */
-  void push(ViewController * vc);
-  void updateTitle();
+  void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
   void pop();
 
 
@@ -25,9 +24,9 @@ public:
 private:
   class ControllerView : public View {
   public:
-    ControllerView(bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
+    ControllerView(bool displayFirstStackHeader);
     void setContentView(View * view);
-    void pushStack(const char * name);
+    void pushStack(const char * name, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
     void popStack();
   protected:
 #if ESCHER_VIEW_LOGGING
@@ -43,9 +42,6 @@ private:
     View * m_contentView;
     int8_t m_numberOfStacks;
     bool m_displayFirstStackHeader;
-    KDColor m_textColor;
-    KDColor m_backgroundColor;
-    KDColor m_separatorColor;
   };
 
   ControllerView m_view;
@@ -55,6 +51,9 @@ private:
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   ViewController * m_rootViewController;
+  KDColor m_textColor;
+  KDColor m_backgroundColor;
+  KDColor m_separatorColor;
 };
 
 #endif

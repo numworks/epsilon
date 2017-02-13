@@ -23,7 +23,7 @@ CalculationController::CalculationController(Responder * parentResponder, Header
 }
 
 const char * CalculationController::title() const {
-  return "Statistics";
+  return "Statistiques";
 }
 
 View * CalculationController::view() {

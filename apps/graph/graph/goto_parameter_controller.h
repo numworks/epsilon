@@ -16,6 +16,7 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void setFunction(Function * function);
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;

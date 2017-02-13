@@ -1,11 +1,13 @@
 #include "sub_controller.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace Settings {
 
 SubController::SubController(Responder * parentResponder, Preferences * preferences) :
   ViewController(parentResponder),
-  m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large)},
+  m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large),
+    MenuListCell(nullptr, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel(nullptr),
@@ -33,6 +35,8 @@ void SubController::didBecomeFirstResponder() {
 bool SubController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     setPreferenceAtIndexWithValueIndex(m_preferenceIndex, m_selectableTableView.selectedRow());
+    AppsContainer * myContainer = (AppsContainer * )app()->container();
+    myContainer->refreshPreferences();
     StackViewController * stack = stackController();
     stack->pop();
   }
@@ -80,7 +84,7 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       m_preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
       break;
     case 1:
-      m_preferences->setDisplayMode((Preferences::DisplayMode)valueIndex);
+      m_preferences->setDisplayMode((Expression::DisplayMode)valueIndex);
       break;
     case 2:
       m_preferences->setNumberType((Preferences::NumberType)valueIndex);

@@ -48,4 +48,12 @@ void GoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
+bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  FloatParameterController::textFieldDidFinishEditing(textField, text);
+  StackViewController * stack = (StackViewController *)parentResponder();
+  stack->pop();
+  stack->pop();
+  return true;
+}
+
 }

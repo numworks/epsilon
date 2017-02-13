@@ -10,21 +10,17 @@ public:
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
 
-  ExpressionLayout * createLayout() const override;
+  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
   float approximate(Context& context) const override;
   Expression * evaluate(Context& context) const override;
   Type type() const override;
   Expression * clone() const override;
   bool valueEquals(const Expression * e) const override;
 
-  enum class DisplayMode {
-    Scientific,
-    Decimal
-  };
   void setNumberOfSignificantDigits(int numberOfDigits);
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
-   * or 'decimal'. The scientific mode returns float with style -1.2E2 whereas
-   * the decimal mode tries to return 'natural' float like (0.021) and switches
+   * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
+   * the auto mode tries to return 'natural' float like (0.021) and switches
    * to scientific mode if the float is too small or too big regarding the
    * number of significant difits. If the buffer size is too small to display
    * the right number of significant digits, the function forces the scientific
@@ -42,7 +38,7 @@ public:
 private:
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
-   * has the form -1.999999e-38 (7+6+1 char) (the decimal mode is always
+   * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always
    * shorter. */
   constexpr static int k_maxBufferLength = 7+6+1;
   /* convertFloatToTextPrivate return the string length of the buffer (does not count the 0 last char)*/

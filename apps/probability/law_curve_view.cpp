@@ -23,13 +23,13 @@ void LawCurveView::setCalculation(Calculation * calculation) {
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowerBound = m_calculation->lowerBound();
   float upperBound = m_calculation->upperBound();
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::WallScreen);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
   if (m_law->isContinuous()) {
-    drawCurve(ctx, rect, m_law, KDColorRed, true, lowerBound, upperBound, true);
+    drawCurve(ctx, rect, m_law, Palette::YellowDark, true, lowerBound, upperBound, true);
   } else {
-    drawHistogram(ctx, rect, m_law, 0, 1, false, KDColorBlue, KDColorRed, lowerBound, upperBound);
+    drawHistogram(ctx, rect, m_law, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound);
   }
 }
 

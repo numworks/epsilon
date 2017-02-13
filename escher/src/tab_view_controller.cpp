@@ -113,6 +113,9 @@ void TabViewController::setSelectedTab(int8_t i) {
 
 void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_activeChildIndex);
+  if (m_activeChildIndex < 0) {
+    setActiveTab(0);
+  }
 }
 
 void TabViewController::didResignFirstResponder() {
@@ -127,9 +130,6 @@ View * TabViewController::view() {
     for (int i=0; i<m_numberOfChildren; i++) {
       m_view.m_tabView.addTabNamed(m_children[i]->title());
     }
-  }
-  if (m_activeChildIndex < 0) {
-    setActiveTab(0);
   }
   return &m_view;
 }

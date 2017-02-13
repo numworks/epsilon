@@ -65,9 +65,9 @@ Expression::Type Float::type() const {
   return Type::Float;
 }
 
-ExpressionLayout * Float::createLayout() const {
+ExpressionLayout * Float::createLayout(DisplayMode displayMode) const {
   char buffer[k_maxBufferLength];
-  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits);
+  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits, displayMode);
   int size = 0;
   while (buffer[size] != 0) {
     size++;
@@ -93,7 +93,7 @@ int Float::convertFloatToText(char * buffer, int bufferSize,
    * fit the buffer size. If the buffer size is still to small, we only write
    * the beginning of the float and truncate it (which can result in a non sense
    * text) */
-  if (mode == DisplayMode::Decimal && requiredLength >= bufferSize) {
+  if (mode == DisplayMode::Auto && requiredLength >= bufferSize) {
     requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits, DisplayMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
@@ -132,7 +132,7 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
   }
 
   DisplayMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == DisplayMode::Decimal) {
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == DisplayMode::Auto) {
     displayMode = DisplayMode::Scientific;
   }
 
@@ -181,13 +181,13 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
   }
 
   // Suppress the decimal marker if no fractional part
-  if (displayMode == DisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
+  if (displayMode == DisplayMode::Auto && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
     availableCharsForMantissaWithSign--;
   }
 
   // Print mantissa
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
-  if (displayMode == DisplayMode::Decimal) {
+  if (displayMode == DisplayMode::Auto) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }

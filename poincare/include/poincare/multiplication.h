@@ -9,7 +9,7 @@ class Multiplication : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
   public:
     Type type() const override;
-    ExpressionLayout * createLayout() const override;
+    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     float approximate(Context& context) const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numnerOfOperands, bool cloneOperands = true) const override;

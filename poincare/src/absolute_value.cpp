@@ -28,6 +28,6 @@ float AbsoluteValue::approximate(Context& context) const {
   return fabsf(m_args[0]->approximate(context));
 }
 
-ExpressionLayout * AbsoluteValue::createLayout() const {
-  return new AbsoluteValueLayout(m_args[0]->createLayout());
+ExpressionLayout * AbsoluteValue::createLayout(DisplayMode displayMode) const {
+  return new AbsoluteValueLayout(m_args[0]->createLayout(displayMode));
 }

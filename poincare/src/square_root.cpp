@@ -28,6 +28,6 @@ float SquareRoot::approximate(Context& context) const {
   return powf(m_args[0]->approximate(context), 1.0f/2.0f);
 }
 
-ExpressionLayout * SquareRoot::createLayout() const {
-  return new NthRootLayout(m_args[0]->createLayout(),nullptr);
+ExpressionLayout * SquareRoot::createLayout(DisplayMode displayMode) const {
+  return new NthRootLayout(m_args[0]->createLayout(displayMode),nullptr);
 }

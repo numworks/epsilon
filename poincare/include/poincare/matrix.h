@@ -13,7 +13,7 @@ class Matrix : public Expression {
     const Expression * operand(int i) const override;
     int numberOfOperands() const override;
     Expression * clone() const override;
-    ExpressionLayout * createLayout() const override;
+    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     float approximate(Context& context) const override;
     Expression * evaluate(Context& context) const override;
     Type type() const override;

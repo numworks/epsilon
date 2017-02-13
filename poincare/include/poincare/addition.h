@@ -17,7 +17,7 @@ class Addition : public Expression {
     Expression * clone() const override;
     Expression * cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands = true) const override;
-    ExpressionLayout * createLayout() const override;
+    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
     bool isCommutative() const override;
   private:
     float operateApproximatevelyOn(float a, float b) const;

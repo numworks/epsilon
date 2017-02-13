@@ -13,8 +13,8 @@ Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Fraction(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Fraction::createLayout() const {
-  return new FractionLayout(m_operands[0]->createLayout(), m_operands[1]->createLayout());
+ExpressionLayout * Fraction::createLayout(DisplayMode displayMode) const {
+  return new FractionLayout(m_operands[0]->createLayout(displayMode), m_operands[1]->createLayout(displayMode));
 }
 
 float Fraction::approximate(Context& context) const {

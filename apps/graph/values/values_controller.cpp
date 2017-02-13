@@ -122,7 +122,8 @@ int ValuesController::numberOfColumns() {
 }
 
 void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  EditableCellTableViewController::willDisplayCellAtLocation(cell, i, j);
+  App * graphApp = (Graph::App *)app();
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, graphApp->preferences()->displayMode());
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
@@ -165,11 +166,10 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
-  App * graphApp = (Graph::App *)app();
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->preferences()->displayMode());
   } else {
-    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->preferences()->displayMode());
   }
   myValueCell->setText(buffer);
 }

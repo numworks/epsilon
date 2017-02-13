@@ -34,12 +34,12 @@ float Logarithm::approximate(Context& context) const {
   return log10f(m_args[1]->approximate(context))/log10f(m_args[0]->approximate(context));
 }
 
-ExpressionLayout * Logarithm::createLayout() const {
+ExpressionLayout * Logarithm::createLayout(DisplayMode displayMode) const {
   if (m_numberOfArguments == 1) {
-    return Function::createLayout();
+    return Function::createLayout(displayMode);
   }
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout());
+  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(displayMode), BaselineRelativeLayout::Type::Subscript);
+  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(displayMode));
   return new HorizontalLayout(childrenLayouts, 2);
 }

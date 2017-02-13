@@ -42,9 +42,9 @@ float Sum::approximate(Context& context) const {
   return result;
 }
 
-ExpressionLayout * Sum::createLayout() const {
+ExpressionLayout * Sum::createLayout(DisplayMode displayMode) const {
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = m_args[1]->createLayout();
-  return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(), m_args[0]->createLayout());
+  childrenLayouts[1] = m_args[1]->createLayout(displayMode);
+  return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(displayMode), m_args[0]->createLayout(displayMode));
 }

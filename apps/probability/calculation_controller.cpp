@@ -9,6 +9,7 @@
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
+  m_titleView(PointerTextView(KDText::FontSize::Small, "Calculer les probabilites", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
   m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
@@ -29,66 +30,71 @@ void CalculationController::ContentView::setCalculation(Calculation * calculatio
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
-  return 2*m_calculation->numberOfParameters() + 2;
+  return 2*m_calculation->numberOfParameters() + 3;
 }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 8);
+  assert(index >= 0 && index < 9);
   if (index == 0) {
-    return &m_lawCurveView;
+    return &m_titleView;
   }
   if (index == 1) {
-    return &m_imageTableView;
+    return &m_lawCurveView;
   }
   if (index == 2) {
+    return &m_imageTableView;
+  }
+  if (index == 3) {
     m_text[0].setText(m_calculation->legendForParameterAtIndex(0));
     m_text[0].setAlignment(0.5f, 0.5f);
     return &m_text[0];
   }
-  if (index == 4) {
+  if (index == 5) {
     m_text[1].setText(m_calculation->legendForParameterAtIndex(1));
     m_text[1].setAlignment(0.5f, 0.5f);
     return &m_text[1];
   }
-  if (index == 6) {
+  if (index == 7) {
     m_text[2].setText(m_calculation->legendForParameterAtIndex(2));
     m_text[2].setAlignment(0.5f, 0.5f);
     return &m_text[2];
   }
-  if (index == 3 || index == 5 || index == 7) {
-    return &m_calculationCell[(index - 3)/2];
+  if (index == 4 || index == 6 || index == 8) {
+    return &m_calculationCell[(index - 4)/2];
   }
   return nullptr;
 }
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Float::DisplayMode::Decimal);
+  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
   m_calculationCell[index].setText(buffer);
 }
 
 void CalculationController::ContentView::layoutSubviews() {
   markRectAsDirty(bounds());
+  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDSize charSize = KDText::stringSize(" ");
   KDCoordinate xCoordinate = 0;
-  m_lawCurveView.setFrame(KDRect(0,  ImageTableView::k_imageHeight, bounds().width(), bounds().height() - ImageTableView::k_imageHeight));
-  m_imageTableView.setFrame(KDRect(xCoordinate, 0, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));
-  xCoordinate += ImageTableView::k_imageWidth + k_textMargin;
+  m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_imageHeight, bounds().width(), bounds().height() - ImageTableView::k_imageHeight-titleHeight));
+  m_imageTableView.setFrame(KDRect(xCoordinate, titleHeight, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));
+  xCoordinate += ImageTableView::k_imageWidth + k_textWidthMargin;
   KDCoordinate numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(0));
-  m_text[0].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
-  xCoordinate += k_textFieldWidth + k_textMargin;
+  m_text[0].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
+  xCoordinate += k_textFieldWidth + k_textWidthMargin;
   numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(1));
-  m_text[1].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
-  xCoordinate += k_textFieldWidth + k_textMargin;
+  m_text[1].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
+  xCoordinate += k_textFieldWidth + k_textWidthMargin;
   if (m_calculation->numberOfParameters() > 2) {
     numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(2));;
-    m_text[2].setFrame(KDRect(xCoordinate, 0, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
-    xCoordinate += numberOfCharacters*charSize.width() + k_textMargin;
-    m_calculationCell[2].setFrame(KDRect(xCoordinate, 0, k_textFieldWidth, ImageTableView::k_imageHeight));
+    m_text[2].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
+    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
   }
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     willDisplayEditableCellAtIndex(k);
@@ -125,7 +131,7 @@ View * CalculationController::view() {
 }
 
 const char * CalculationController::title() const {
-  return "Calculer les probabilites";
+  return m_titleBuffer;
 }
 
 void CalculationController::reload() {
@@ -208,6 +214,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  updateTitle();
   for (int subviewIndex = 0; subviewIndex < 2; subviewIndex++) {
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);
     calculCell->setHighlighted(false);
@@ -225,6 +232,21 @@ void CalculationController::didBecomeFirstResponder() {
 
 void CalculationController::selectSubview(int subviewIndex) {
   m_highlightedSubviewIndex = subviewIndex;
+}
+
+void CalculationController::updateTitle() {
+  int currentChar = 0;
+  for (int index = 0; index < m_law->numberOfParameter(); index++) {
+    m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
+    strlcpy(m_titleBuffer+currentChar, " = ", 4);
+    currentChar += 3;
+    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+    strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
+    currentChar += strlen(buffer);
+    m_titleBuffer[currentChar++] = ' ';
+  }
+  m_titleBuffer[currentChar-1] = 0;
 }
 
 }

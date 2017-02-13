@@ -9,7 +9,8 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   Responder(parentResponder),
   m_delegate(delegate),
   m_selectedCellX(0),
-  m_selectedCellY(-1)
+  m_selectedCellY(-1),
+  m_dataHasChanged(true)
 {
 }
 
@@ -22,7 +23,10 @@ int SelectableTableView::selectedColumn() {
 }
 
 void SelectableTableView::didBecomeFirstResponder() {
-  reloadData();
+  if (m_dataHasChanged) {
+    reloadData();
+    m_dataHasChanged = false;
+  }
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, 0, -1);
   }
@@ -88,4 +92,8 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     return selectCellAtLocation(m_selectedCellX+1, m_selectedCellY);
   }
   return false;
+}
+
+void SelectableTableView::dataHasChanged(bool dataHasChanged) {
+  m_dataHasChanged = dataHasChanged;
 }

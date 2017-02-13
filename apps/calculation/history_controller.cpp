@@ -71,8 +71,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     }
     m_selectableTableView.deselectTable();
     App * calculationApp = (App *)app();
-    AppsContainer * appsContainer = (AppsContainer *)calculationApp->container();
-    m_calculationStore->push(text, calculationApp->localContext(), appsContainer->preferences());
+    m_calculationStore->push(text, calculationApp->localContext(), calculationApp->container()->preferences());
     reload();
     m_selectableTableView.scrollToCell(0, numberOfRows()-1);
     app()->setFirstResponder(editController);

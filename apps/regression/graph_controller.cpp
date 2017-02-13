@@ -57,7 +57,7 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  AppsContainer * container = (AppsContainer *)app()->container();
+  AppsContainer * container = ((App *)app())->container();
   m_bannerView.setLegendAtIndex((char *)"y = ax+b", 0);
   char buffer[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "a = ";

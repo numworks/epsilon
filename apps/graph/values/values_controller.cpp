@@ -40,8 +40,8 @@ const char * ValuesController::title() const {
 }
 
 View * ValuesController::view() {
-  AppsContainer * myContainer = (AppsContainer *)app()->container();
-  Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
+  App * graphApp = (App *)app();
+  Expression::DisplayMode displayMode = graphApp->container()->preferences()->displayMode();
   if (displayMode != m_displayModeVersion) {
     m_selectableTableView.reloadData();
     m_displayModeVersion = displayMode;
@@ -136,8 +136,8 @@ int ValuesController::numberOfColumns() {
 }
 
 void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  AppsContainer * myContainer = (AppsContainer *)app()->container();
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, myContainer->preferences()->displayMode());
+  App * graphApp = (App *)app();
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, graphApp->container()->preferences()->displayMode());
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
@@ -179,12 +179,11 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   // The cell is a value cell
   EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
   Function * function = functionAtColumn(i);
-  App * graphApp = (Graph::App *)app();
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
-    Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext(), myContainer->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
   } else {
-    Complex::convertFloatToText(function->evaluateAtAbscissa(x, graphApp->localContext(), myContainer->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Complex::convertFloatToText(function->evaluateAtAbscissa(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
   }
   myValueCell->setText(buffer);
 }

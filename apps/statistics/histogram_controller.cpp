@@ -1,5 +1,6 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
+#include "app.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -31,8 +32,8 @@ const char * HistogramController::title() const {
 }
 
 View * HistogramController::view() {
-  AppsContainer * myContainer = (AppsContainer *)app()->container();
-  Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
+  AppsContainer * container = ((App *)app())->container();
+  Expression::DisplayMode displayMode = container->preferences()->displayMode();
   if (displayMode != m_displayModeVersion) {
     reloadBannerView();
     m_view.reload();
@@ -135,7 +136,7 @@ Responder * HistogramController::tabController() const {
 }
 
 void HistogramController::reloadBannerView() {
-  AppsContainer * container = (AppsContainer *)app()->container();
+  AppsContainer * container = ((App *)app())->container();
   char buffer[k_maxNumberOfCharacters+ Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2];
   const char * legend = "Interval [";
   int legendLength = strlen(legend);

@@ -1,5 +1,6 @@
 #include "box_controller.h"
 #include "../apps_container.h"
+#include "app.h"
 #include <math.h>
 
 using namespace Poincare;
@@ -21,7 +22,7 @@ const char * BoxController::title() const {
 }
 
 View * BoxController::view() {
-  AppsContainer * myContainer = (AppsContainer *)app()->container();
+  AppsContainer * myContainer = ((App *)app())->container();
   Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
   if (displayMode != m_displayModeVersion) {
     reloadBannerView();
@@ -79,7 +80,7 @@ void BoxController::reloadBannerView() {
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
-  AppsContainer * container = (AppsContainer *)app()->container();
+  AppsContainer * container = ((App *)app())->container();
   Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_boxBannerView.setLegendAtIndex(buffer, 1);
 }

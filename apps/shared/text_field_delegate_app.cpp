@@ -13,8 +13,11 @@ TextFieldDelegateApp::TextFieldDelegateApp(Container * container, ViewController
 }
 
 Context * TextFieldDelegateApp::localContext() {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  return appsContainer->globalContext();
+  return container()->globalContext();
+}
+
+AppsContainer * TextFieldDelegateApp::container() {
+  return (AppsContainer *)app()->container();
 }
 
 }

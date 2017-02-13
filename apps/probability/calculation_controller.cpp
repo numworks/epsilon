@@ -204,9 +204,9 @@ bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion:
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
+  App * probaApp = (App *)app();
+  Context * globalContext = probaApp->container()->globalContext();
+  float floatBody = Expression::parse(text)->approximate(*globalContext, probaApp->container()->preferences()->angleUnit());
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);

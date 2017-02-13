@@ -127,7 +127,7 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     myCell->setText(titles[j-1]);
     return;
   }
-  AppsContainer * container = (AppsContainer *)app()->container();
+  App * regApp = (App *)app();
   if (i == 1 && j > 0 && j < 6) {
     ArgCalculPointer calculationMethods[(k_totalNumberOfRows-1)/2] = {&Store::meanOfColumn, &Store::sumOfColumn,
       &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
@@ -135,9 +135,9 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation2 = (m_store->*calculationMethods[j-1])(1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex::convertFloatToText(calculation1, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+    Complex::convertFloatToText(calculation1, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, regApp->container()->preferences()->displayMode());
     myCell->setFirstText(buffer);
-    Complex::convertFloatToText(calculation2, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+    Complex::convertFloatToText(calculation2, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, regApp->container()->preferences()->displayMode());
     myCell->setSecondText(buffer);
     return;
   }
@@ -147,7 +147,7 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation = (m_store->*calculationMethods[j-6])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, regApp->container()->preferences()->displayMode());
     myCell->setText(buffer);
     return;
   }

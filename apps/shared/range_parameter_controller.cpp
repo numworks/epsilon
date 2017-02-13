@@ -1,4 +1,5 @@
 #include "range_parameter_controller.h"
+#include "text_field_delegate_app.h"
 #include "../apps_container.h"
 #include <assert.h>
 
@@ -36,7 +37,7 @@ void RangeParameterController::willDisplayCellForIndex(TableViewCell * cell, int
 }
 
 bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
   setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);

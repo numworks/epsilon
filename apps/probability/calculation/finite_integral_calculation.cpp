@@ -32,7 +32,6 @@ const char * FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 3);
-/* Parameters in probability application are rounder to 3 decimals */
   float rf = roundf(f/k_precision)*k_precision;
   if (index == 0) {
     m_lowerBound = rf;

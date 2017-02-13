@@ -24,7 +24,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   if (m_currentTextLength == 0 &&
       (event == Ion::Events::Multiplication ||
       event == Ion::Events::Plus ||
-      event == Ion::Events::Dot ||
       event == Ion::Events::Division)) {
     if (!isEditing()) {
       setEditing(true);

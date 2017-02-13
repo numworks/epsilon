@@ -28,15 +28,16 @@ const char * LeftIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 2);
+  /* Parameters in probability application are rounder to 3 decimals */
+  float rf = roundf(f/k_precision)*k_precision;
   if (index == 0) {
-    m_upperBound = f;
+    m_upperBound = rf;
   }
   if (index == 1) {
-    m_result = f;
+    m_result = rf;
   }
   compute(index);
 }
-
 
 float LeftIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
@@ -56,8 +57,11 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
   }
   if (indexKnownElement == 0) {
     m_result = m_law->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
+    /* Results in probability application are rounder to 3 decimals */
+    m_result = roundf(m_result/k_precision)*k_precision;
   } else {
     m_upperBound = m_law->cumulativeDistributiveInverseForProbability(&m_result);
+    m_upperBound = roundf(m_upperBound/k_precision)*k_precision;
   }
 }
 

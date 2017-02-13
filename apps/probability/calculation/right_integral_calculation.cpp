@@ -28,15 +28,16 @@ const char * RightIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void RightIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 2);
+/* Parameters in probability application are rounder to 3 decimals */
+  float rf = roundf(f/k_precision)*k_precision;
   if (index == 0) {
-    m_lowerBound = f;
+    m_lowerBound = rf;
   }
   if (index == 1) {
-    m_result = f;
+    m_result = rf;
   }
   compute(index);
 }
-
 
 float RightIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
@@ -56,8 +57,11 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
   }
   if (indexKnownElement == 0) {
     m_result = m_law->rightIntegralFromAbscissa(m_lowerBound);
+    /* Results in probability application are rounder to 3 decimals */
+    m_result = roundf(m_result/k_precision)*k_precision;
   } else {
     m_lowerBound = m_law->rightIntegralInverseForProbability(&m_result);
+    m_lowerBound = roundf(m_lowerBound/k_precision)*k_precision;
   }
 }
 

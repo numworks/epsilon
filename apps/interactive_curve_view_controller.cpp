@@ -40,8 +40,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
       headerViewController()->setSelectedButton(-1);
       curveView()->selectMainView(true);
-      curveView()->reload();
       reloadBannerView();
+      curveView()->reload();
       return true;
     }
     if (event == Ion::Events::Up) {
@@ -53,21 +53,21 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Plus) {
     interactiveCurveViewRange()->zoom(1.0f/3.0f);
-    curveView()->reload();
     reloadBannerView();
+    curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
     interactiveCurveViewRange()->zoom(3.0f/4.0f);
-    curveView()->reload();
     reloadBannerView();
+    curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     if (moveCursorHorizontally(direction)) {
-      curveView()->reload();
       reloadBannerView();
+      curveView()->reload();
       return true;
     }
     return false;
@@ -75,8 +75,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
     if (moveCursorVertically(direction)) {
-      curveView()->reload();
       reloadBannerView();
+      curveView()->reload();
       return true;
     }
     if (event == Ion::Events::Down) {
@@ -107,8 +107,8 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
   }
   headerViewController()->setSelectedButton(-1);
   // Reload graph view
-  curveView()->reload();
   reloadBannerView();
+  curveView()->reload();
 }
 
 ViewController * InteractiveCurveViewController::rangeParameterController() {

@@ -105,7 +105,7 @@ bool SequenceTitleCell::handleEvent(Ion::Events::Event event) {
     m_listParameterController->setSequence(m_sequence);
     stack->push(m_listParameterController);
     SelectableTableView * table = (SelectableTableView *)parentResponder();
-    table->dataHasChanged(true);
+    table->reloadData();
     return true;
   }
   return false;

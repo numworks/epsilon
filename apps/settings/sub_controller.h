@@ -20,6 +20,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   void setNodeModel(const Node * nodeModel, int preferenceIndex);
+  void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
   void setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex);

@@ -136,6 +136,10 @@ int CalculationController::typeAtLocation(int i, int j) {
   return i;
 }
 
+void CalculationController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }

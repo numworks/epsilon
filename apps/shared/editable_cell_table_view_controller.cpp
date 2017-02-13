@@ -78,14 +78,16 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
     if (j == numberOfRows() - 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
-      if (numberOfElements() < maxNumberOfElements()) {
+      if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->isEditing()) {
         buffer[0] = 0;
         myEditableValueCell->setText(buffer);
         return;
       }
     }
-    Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
-    myEditableValueCell->setText(buffer);
+    if (!myEditableValueCell->isEditing()) {
+      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
+      myEditableValueCell->setText(buffer);
+    }
     return;
   }
 }
@@ -101,6 +103,11 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
   }
   app()->setFirstResponder(&m_selectableTableView);
+}
+
+
+void EditableCellTableViewController::viewWillAppear() {
+  m_selectableTableView.reloadData();
 }
 
 }

@@ -48,6 +48,10 @@ void EvenOddEditableTextCell::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editableCell);
 }
 
+bool EvenOddEditableTextCell::isEditing() {
+  return m_editableCell.isEditing();
+}
+
 void EvenOddEditableTextCell::setEditing(bool isEditing) {
   m_editableCell.setEditing(isEditing);
 }

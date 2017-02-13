@@ -131,3 +131,11 @@ bool HeaderViewController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
+void HeaderViewController::viewWillAppear() {
+  m_contentView.mainViewController()->viewWillAppear();
+}
+
+void HeaderViewController::viewWillDisappear() {
+  m_contentView.mainViewController()->viewWillDisappear();
+}

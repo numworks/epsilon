@@ -74,3 +74,15 @@ void AlternateEmptyViewController::didBecomeFirstResponder() {
     app()->setFirstResponder(m_contentView.mainViewController());
   }
 }
+
+void AlternateEmptyViewController::viewWillAppear() {
+  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+    m_contentView.mainViewController()->viewWillAppear();
+  }
+}
+
+void AlternateEmptyViewController::viewWillDisappear() {
+  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+    m_contentView.mainViewController()->viewWillDisappear();
+  }
+}

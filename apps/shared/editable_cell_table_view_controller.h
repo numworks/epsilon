@@ -23,6 +23,7 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
 
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
 protected:
   SelectableTableView m_selectableTableView;
 private:

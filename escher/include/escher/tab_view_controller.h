@@ -17,6 +17,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void didResignFirstResponder() override;
+  void viewWillAppear() override;
+  void viewWillDisappear() override;
 private:
   class ContentView : public View {
   public:

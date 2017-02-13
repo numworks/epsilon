@@ -79,7 +79,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 0) {
     m_storeParameterController.selectXColumn(m_selectableTableView.selectedColumn() == 0);
-    m_selectableTableView.dataHasChanged(true);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;

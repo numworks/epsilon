@@ -22,7 +22,6 @@ class App : public Responder {
 public:
   constexpr static uint8_t Magic = 0xA8;
   App(Container * container, ViewController * rootViewController, const char * name = nullptr, const char * upperName = nullptr, const Image * icon = nullptr);
-  void setWindow(Window * window);
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   void processEvent(Ion::Events::Event event);
@@ -35,6 +34,11 @@ public:
   const char * upperName();
   const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
+
+
+  virtual void didBecomeActive(Window * window);
+  virtual void willBecomeInactive();
+
 protected:
   ModalViewController m_modalViewController;
 private:

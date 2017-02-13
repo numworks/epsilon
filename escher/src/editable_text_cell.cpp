@@ -48,6 +48,10 @@ void EditableTextCell::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
 }
 
+bool EditableTextCell::isEditing() {
+  return m_textField.isEditing();
+}
+
 void EditableTextCell::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
 }

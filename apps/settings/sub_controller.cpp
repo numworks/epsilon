@@ -30,7 +30,6 @@ View * SubController::view() {
 }
 
 void SubController::didBecomeFirstResponder() {
-  m_selectableTableView.dataHasChanged(true);
   m_selectableTableView.selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -75,6 +74,10 @@ void SubController::willDisplayCellForIndex(TableViewCell * cell, int index) {
 void SubController::setNodeModel(const Node * nodeModel, int preferenceIndex) {
   m_nodeModel = (Node *)nodeModel;
   m_preferenceIndex = preferenceIndex;
+}
+
+void SubController::viewWillAppear() {
+  m_selectableTableView.reloadData();
 }
 
 StackViewController * SubController::stackController() const {

@@ -85,7 +85,6 @@ void ListController::editExpression(FunctionExpressionCell * functionCell, Ion::
     },
     [](void * context, void * sender){
     });
-  m_selectableTableView.dataHasChanged(true);
 }
 
 ListParameterController * ListController::parameterController() {
@@ -110,8 +109,6 @@ void ListController::configureFunction(Shared::Function * function) {
   StackViewController * stack = stackController();
   parameterController()->setFunction(function);
   stack->push(parameterController());
-  // Force to reload the table (deleted functions, desactivated function)
-  m_selectableTableView.dataHasChanged(true);
 }
 
 void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {

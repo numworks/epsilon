@@ -159,6 +159,10 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void ListController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 StackViewController * ListController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder());
 }

@@ -17,16 +17,6 @@ App::App(Container * container, ViewController * rootViewController, const char 
 {
 }
 
-void App::setWindow(Window * window) {
-  View * view = m_modalViewController.view();
-  assert(m_modalViewController.app() == this);
-  window->setContentView(view);
-  if (m_firstResponder == nullptr) {
-    setFirstResponder(&m_modalViewController);
-  }
-  window->redraw();
-}
-
 void App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_firstResponder;
   bool didHandleEvent = false;
@@ -81,4 +71,19 @@ void App::displayWarning(const char * warningMessage) {
 
 const Container * App::container() const {
   return m_container;
+}
+
+void App::didBecomeActive(Window * window) {
+  View * view = m_modalViewController.view();
+  assert(m_modalViewController.app() == this);
+  window->setContentView(view);
+  if (m_firstResponder == nullptr) {
+    setFirstResponder(&m_modalViewController);
+  }
+  window->redraw();
+  m_modalViewController.viewWillAppear();
+}
+
+void App::willBecomeInactive() {
+  m_modalViewController.viewWillDisappear();
 }

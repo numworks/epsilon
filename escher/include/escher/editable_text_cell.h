@@ -18,6 +18,7 @@ public:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   void didBecomeFirstResponder() override;
+  bool isEditing();
   void setEditing(bool isEditing);
   constexpr static int k_bufferLength = 255;
 private:

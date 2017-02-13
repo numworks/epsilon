@@ -31,6 +31,7 @@ public:
   TableViewCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  void viewWillAppear() override;
 private:
   Responder * tabController() const;
   constexpr static int k_totalNumberOfRows = 13;

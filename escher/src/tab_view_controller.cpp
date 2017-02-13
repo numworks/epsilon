@@ -94,12 +94,17 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
 void TabViewController::setActiveTab(int8_t i) {
   ViewController * activeVC = m_children[i];
   if (i  != m_activeChildIndex) {
-    //TODO assert(i <= m_numberOfchildren);
+    assert(i <= m_numberOfChildren);
     m_view.setActiveView(activeVC->view());
     m_view.m_tabView.setActiveIndex(i);
+    if (m_activeChildIndex >= 0) {
+      m_children[m_activeChildIndex]->viewWillDisappear();
+    }
     m_activeChildIndex = i;
-  }
-
+    if (i >= 0) {
+      m_children[i]->viewWillAppear();
+    }
+  } else {}
   app()->setFirstResponder(activeVC);
 }
 
@@ -140,4 +145,14 @@ uint8_t TabViewController::numberOfTabs() {
 
 const char * TabViewController::tabName(uint8_t index) {
   return m_children[index]->title();
+}
+
+void TabViewController::viewWillAppear() {
+  ViewController * activeVC = m_children[m_activeChildIndex];
+  activeVC->viewWillAppear();
+}
+
+void TabViewController::viewWillDisappear() {
+  ViewController * activeVC = m_children[m_activeChildIndex];
+  activeVC->viewWillDisappear();
 }

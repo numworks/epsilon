@@ -8,20 +8,17 @@
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../text_field_delegate_app.h"
-#include "../preferences.h"
 
 namespace Graph {
 
 class App : public TextFieldDelegateApp {
 public:
-  App(Container * container, Context * context, Preferences * preferences);
+  App(Container * container, Context * context);
   InputViewController * inputViewController();
   Context * localContext() override;
-  Preferences * preferences();
 private:
   FunctionStore m_functionStore;
   VariableContext m_xContext;
-  Preferences * m_preferences;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

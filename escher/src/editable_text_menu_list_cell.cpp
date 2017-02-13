@@ -16,15 +16,6 @@ const char * EditableTextMenuListCell::editedText() const {
   return m_textField.text();
 }
 
-void EditableTextMenuListCell::layoutSubviews() {
-  MenuListCell::layoutSubviews();
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  KDSize charSize = KDText::stringSize(" ");
-  KDCoordinate textWidth = k_maxNumberOfEditableCharacters*charSize.width();
-  m_textField.setFrame(KDRect(width - textWidth - k_separatorThickness, (height - charSize.height())/2, textWidth - k_separatorThickness, charSize.height()));
-}
-
 void EditableTextMenuListCell::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
 }

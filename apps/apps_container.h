@@ -25,6 +25,7 @@ public:
   int numberOfApps();
   App * appAtIndex(int index);
   Context * globalContext();
+  Preferences * preferences();
   ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;

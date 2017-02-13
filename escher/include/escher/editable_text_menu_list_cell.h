@@ -10,7 +10,6 @@ public:
   EditableTextMenuListCell(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label = nullptr);
   View * accessoryView() const override;
   const char * editedText() const;
-  void layoutSubviews() override;
   void didBecomeFirstResponder() override;
   void setEditing(bool isEditing);
   void reloadCell() override;

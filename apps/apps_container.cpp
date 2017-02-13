@@ -8,9 +8,9 @@ AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
   m_homeApp(this),
-  m_graphApp(this, &m_globalContext, &m_preferences),
+  m_graphApp(this, &m_globalContext),
   m_probabilityApp(this),
-  m_calculationApp(this, &m_globalContext, &m_preferences),
+  m_calculationApp(this, &m_globalContext),
   m_regressionApp(this),
   m_settingsApp(this, &m_preferences),
   m_statisticsApp(this),
@@ -44,6 +44,10 @@ App * AppsContainer::appAtIndex(int index) {
 
 Context * AppsContainer::globalContext() {
   return &m_globalContext;
+}
+
+Preferences * AppsContainer::preferences() {
+  return &m_preferences;
 }
 
 ToolboxController * AppsContainer::toolboxController() {

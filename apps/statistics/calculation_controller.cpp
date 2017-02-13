@@ -1,5 +1,6 @@
 #include "calculation_controller.h"
 #include "../constant.h"
+#include "../apps_container.h"
 #include <poincare.h>
 #include <assert.h>
 
@@ -87,7 +88,8 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    AppsContainer * container = (AppsContainer *)app()->container();
+    Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
     myCell->setText(buffer);
   }
 }

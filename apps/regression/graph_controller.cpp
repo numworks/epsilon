@@ -1,4 +1,5 @@
 #include "graph_controller.h"
+#include "../apps_container.h"
 
 namespace Regression {
 
@@ -53,20 +54,21 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
+  AppsContainer * container = (AppsContainer *)app()->container();
   m_bannerView.setLegendAtIndex((char *)"y = ax+b", 0);
   char buffer[k_maxNumberOfCharacters + Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "a = ";
   float slope = m_store->slope();
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Float(slope).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Float(slope).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_bannerView.setLegendAtIndex(buffer, 1);
 
   legend = "b = ";
   float yIntercept = m_store->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Float(yIntercept).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Float(yIntercept).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_bannerView.setLegendAtIndex(buffer, 2);
 
   legend = "x = ";
@@ -79,7 +81,7 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Float(x).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Float(x).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_bannerView.setLegendAtIndex(buffer, 3);
 
   legend = "y = ";
@@ -91,7 +93,7 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Float(y).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Float(y).convertFloatToText(buffer+legendLength, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_bannerView.setLegendAtIndex(buffer, 4);
 }
 

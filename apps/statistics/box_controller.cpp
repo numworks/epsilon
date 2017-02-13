@@ -1,4 +1,5 @@
 #include "box_controller.h"
+#include "../apps_container.h"
 #include <math.h>
 
 namespace Statistics {
@@ -68,7 +69,8 @@ void BoxController::reloadBannerView() {
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
-  Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  AppsContainer * container = (AppsContainer *)app()->container();
+  Float(calculation).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_boxBannerView.setLegendAtIndex(buffer, 1);
 }
 

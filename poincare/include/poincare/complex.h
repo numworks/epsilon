@@ -5,7 +5,7 @@
 
 class Complex : public LeafExpression {
 public:
-  Complex(float a, float b = 0.0f);
+  Complex(float a, float b = 0.0f, bool polar = false);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
@@ -18,6 +18,8 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize) override;
   float a();
   float b();
+  float r();
+  float th();
   float absoluteValue();
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas

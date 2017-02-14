@@ -30,9 +30,20 @@ ExpressionLayout * Power::createLayout(DisplayMode displayMode) const {
 }
 
 Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  /* Check that d is a reel number first */
-  //TODO: implement r^(1/n)*e^(i*Pi/n)
-  return new Complex(0.0f);
+  if (d->b() != 0.0f) {
+    /* First case c and d is complex */
+    if (c->b() != 0.0f || c->a() <= 0) {
+      return new Complex(NAN);
+    }
+    /* Second case only d is complex */
+    float radius = powf(c->a(), d->a());
+    float theta = d->b()*logf(c->a());
+    return new Complex(radius, theta, true);
+  }
+  /* Third case only c is complex */
+  float radius = powf(c->r(), d->a());
+  float theta = d->a()*c->th();
+  return new Complex(radius, theta, true);
 }
 
 Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {

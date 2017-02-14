@@ -4,17 +4,21 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <float.h>
 }
 #include "layout/string_layout.h"
 #include <ion.h>
 
-Complex::Complex(float a, float b) :
+Complex::Complex(float a, float b, bool polar) :
   m_a(a),
   m_b(b),
   m_numberOfSignificantDigits(7)
 {
+  if (polar) {
+    m_a = a * cosf(b);
+    m_b = a * sinf(b);
+  }
 }
-
 
 static inline float setSign(float f, bool negative) {
   if (negative) {
@@ -88,6 +92,21 @@ float Complex::a() {
 
 float Complex::b() {
   return m_b;
+}
+
+float Complex::r() {
+  return sqrtf(m_a*m_a + m_b*m_b);
+}
+
+float Complex::th() {
+  float result = atanf(m_b/m_a) + M_PI;
+  if (m_a >= 0.0f) {
+    result = atanf(m_b/m_a);
+  }
+  if (result > M_PI + FLT_EPSILON) {
+    result = result - 2.0f*M_PI;
+  }
+  return result;
 }
 
 float Complex::absoluteValue() {

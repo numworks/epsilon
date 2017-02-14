@@ -1,7 +1,7 @@
 #include "function_title_cell.h"
 #include <assert.h>
 
-namespace Graph {
+namespace Shared {
 
 FunctionTitleCell::FunctionTitleCell(Orientation orientation, KDText::FontSize size) :
   EvenOddCell(),

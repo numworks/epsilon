@@ -9,10 +9,15 @@ app_objs += $(addprefix apps/shared/,\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\
+  function_expression_cell.o\
   function_store.o\
+  function_title_cell.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
+  list_controller.o\
+  list_parameter_controller.o\
   memoized_curve_view_range.o\
+  new_function_cell.o\
   range_parameter_controller.o\
   store_controller.o\
   store_parameter_controller.o\

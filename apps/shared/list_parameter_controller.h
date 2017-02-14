@@ -1,15 +1,15 @@
-#ifndef GRAPH_LIST_PARAM_CONTROLLER_H
-#define GRAPH_LIST_PARAM_CONTROLLER_H
+#ifndef SHARED_LIST_PARAM_CONTROLLER_H
+#define SHARED_LIST_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "../function.h"
-#include "../function_store.h"
+#include "function.h"
+#include "function_store.h"
 
-namespace Graph {
+namespace Shared {
 
-class ParameterController : public ViewController, public SimpleListViewDataSource {
+class ListParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  ParameterController(Responder * parentResponder, FunctionStore * functionStore);
+  ListParameterController(Responder * parentResponder, FunctionStore * functionStore);
 
   View * view() override;
   const char * title() const override;

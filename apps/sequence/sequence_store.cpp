@@ -52,6 +52,10 @@ void SequenceStore::removeFunction(Shared::Function * f) {
   }
 }
 
+int SequenceStore::maxNumberOfFunctions() {
+  return k_maxNumberOfSequences;
+}
+
 const char *  SequenceStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfSequences; k++) {
     int j = 0;

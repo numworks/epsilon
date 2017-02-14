@@ -1,14 +1,14 @@
-#ifndef GRAPH_FUNCTION_EXPRESSION_H
-#define GRAPH_FUNCTION_EXPRESSION_H
+#ifndef SHARED_FUNCTION_EXPRESSION_CELL_H
+#define SHARED_FUNCTION_EXPRESSION_CELL_H
 
 #include <escher.h>
-#include "../function.h"
+#include "function.h"
 
-namespace Graph {
+namespace Shared {
 
-class FunctionExpressionView : public EvenOddCell {
+class FunctionExpressionCell : public EvenOddCell {
 public:
-  FunctionExpressionView();
+  FunctionExpressionCell();
   void setFunction(Function * f);
   Function * function();
   void reloadCell() override;

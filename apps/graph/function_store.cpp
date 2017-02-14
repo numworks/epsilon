@@ -60,6 +60,10 @@ void FunctionStore::removeFunction(Shared::Function * f) {
   }
 }
 
+int FunctionStore::maxNumberOfFunctions() {
+  return k_maxNumberOfFunctions;
+}
+
 const char *  FunctionStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfFunctions; k++) {
     int j = 0;

@@ -1,9 +1,10 @@
-#ifndef GRAPH_FUNCTION_TITLE_CELL_H
-#define GRAPH_FUNCTION_TITLE_CELL_H
+#ifndef SEQUENCE_FUNCTION_TITLE_CELL_H
+#define SEQUENCE_FUNCTION_TITLE_CELL_H
 
 #include <escher.h>
 
-namespace Graph {
+namespace Shared {
+
 class FunctionTitleCell : public EvenOddCell {
 public:
   enum class Orientation {

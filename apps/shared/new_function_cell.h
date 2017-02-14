@@ -1,9 +1,10 @@
-#ifndef GRAPH_NEW_FUNCTION_CELL_H
-#define GRAPH_NEW_FUNCTION_CELL_H
+#ifndef SHARED_NEW_FUNCTION_CELL_H
+#define SHARED_NEW_FUNCTION_CELL_H
 
 #include <escher.h>
 
-namespace Graph {
+namespace Shared {
+
 class NewFunctionCell : public EvenOddCell {
 public:
   NewFunctionCell();
@@ -11,8 +12,8 @@ public:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-
 protected:
+  virtual const char * text();
   PointerTextView m_pointerTextView;
 };
 

@@ -16,6 +16,7 @@ public:
   Function * definedFunctionAtIndex(int i) override;
   Function * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
+  int maxNumberOfFunctions() override;
   static constexpr int k_maxNumberOfFunctions = 8;
 private:
   const char * firstAvailableName() override;

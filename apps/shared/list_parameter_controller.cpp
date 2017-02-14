@@ -1,9 +1,9 @@
-#include "parameter_controller.h"
+#include "list_parameter_controller.h"
 #include <assert.h>
 
-namespace Graph {
+namespace Shared {
 
-ParameterController::ParameterController(Responder * parentResponder, FunctionStore * functionStore) :
+ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore) :
   ViewController(parentResponder),
   m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
@@ -14,32 +14,32 @@ ParameterController::ParameterController(Responder * parentResponder, FunctionSt
 {
 }
 
-const char * ParameterController::title() const {
+const char * ListParameterController::title() const {
   return "Options de la fonction";
 }
 
-View * ParameterController::view() {
+View * ListParameterController::view() {
   return &m_selectableTableView;
 }
 
-void ParameterController::didBecomeFirstResponder() {
+void ListParameterController::didBecomeFirstResponder() {
   m_selectableTableView.dataHasChanged(true);
   m_selectableTableView.selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-void ParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void ListParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
     switchView->setState(m_function->isActive());
   }
 }
 
-void ParameterController::setFunction(Function * function) {
+void ListParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
-bool ParameterController::handleEvent(Ion::Events::Event event) {
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
@@ -74,23 +74,22 @@ bool ParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ParameterController::numberOfRows() {
+int ListParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-
-TableViewCell * ParameterController::reusableCell(int index) {
+TableViewCell * ListParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   TableViewCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
   return cells[index];
 }
 
-int ParameterController::reusableCellCount() {
+int ListParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-KDCoordinate ParameterController::cellHeight() {
+KDCoordinate ListParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 

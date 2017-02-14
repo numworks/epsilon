@@ -8,7 +8,7 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
   ViewController(parentResponder),
   HeaderViewDelegate(header),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
-    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
+    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
   m_parameterController(ParameterController(this, functionStore))

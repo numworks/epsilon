@@ -35,12 +35,11 @@ public:
   void editExpression(FunctionExpressionView * functionCell, Ion::Events::Event event);
 
 private:
-  static constexpr KDCoordinate k_verticalFunctionMargin = 50-12;
   static constexpr KDCoordinate k_functionNameWidth = 65;
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   Responder * tabController() const;
   StackViewController * stackController() const;
-  constexpr static int k_maxNumberOfRows = 6;
+  constexpr static int k_maxNumberOfRows = 5;
   // !!! CAUTION: The order here is important
   // The cells should be initialized *before* the TableView!
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];

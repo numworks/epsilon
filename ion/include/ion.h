@@ -8,10 +8,10 @@
 #include <ion/events.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
+#include <ion/log.h>
 #include <ion/power.h>
 #include <stdint.h>
 #include <string.h>
-
 
 /* ION is not your regular library. It is a library you link against, but it
  * will take care of configuring the whole environment for you. In POSIX terms,

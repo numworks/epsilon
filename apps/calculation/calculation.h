@@ -2,7 +2,6 @@
 #define CALCULATION_CALCULATION_H
 
 #include <poincare.h>
-#include "../preferences.h"
 
 namespace Calculation {
 
@@ -22,7 +21,7 @@ public:
   Poincare::ExpressionLayout * inputLayout();
   Poincare::Expression * output();
   Poincare::ExpressionLayout * outputLayout();
-  void setContent(const char * c, Poincare::Context * context, Preferences * preferences);
+  void setContent(const char * c, Poincare::Context * context);
   bool isEmpty();
   constexpr static int k_maximalExpressionTextLength = 255;
 private:

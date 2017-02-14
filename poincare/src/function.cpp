@@ -67,13 +67,14 @@ Expression * Function::clone() const {
   return this->cloneWithDifferentOperands(m_args, m_numberOfArguments, true);
 }
 
-ExpressionLayout * Function::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Function::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout ** grandChildrenLayouts = (ExpressionLayout **)malloc((2*m_numberOfArguments-1)*sizeof(ExpressionLayout *));
   int layoutIndex = 0;
-  grandChildrenLayouts[layoutIndex++] = m_args[0]->createLayout(FloatDisplayMode);
+  grandChildrenLayouts[layoutIndex++] = m_args[0]->createLayout(floatDisplayMode);
   for (int i = 1; i < m_numberOfArguments; i++) {
     grandChildrenLayouts[layoutIndex++] = new StringLayout(",", 1);
-    grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout(FloatDisplayMode);
+    grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout(floatDisplayMode);
   }
   ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*m_numberOfArguments-1);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
@@ -91,7 +92,8 @@ int Function::numberOfOperands() const {
   return m_numberOfArguments;
 }
 
-Expression * Function::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Function::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   /* Default function evaluation works for reel function */
   return new Complex(approximate(context, angleUnit));
 }

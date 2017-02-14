@@ -12,7 +12,7 @@
 #include "apps_window.h"
 #include "toolbox_controller.h"
 #include "variable_box_controller.h"
-#include "preferences.h"
+
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
 #include "picview/picview_app.h"
@@ -25,7 +25,6 @@ public:
   int numberOfApps();
   App * appAtIndex(int index);
   Poincare::Context * globalContext();
-  Preferences * preferences();
   ToolboxController * toolboxController();
   VariableBoxController * variableBoxController();
   bool handleEvent(Ion::Events::Event event) override;
@@ -47,7 +46,6 @@ private:
   PicViewApp m_picViewApp;
 #endif
   Poincare::GlobalContext m_globalContext;
-  Preferences m_preferences;
   ToolboxController m_toolboxController;
   VariableBoxController m_variableBoxController;
 };

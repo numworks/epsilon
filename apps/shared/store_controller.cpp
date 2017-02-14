@@ -67,7 +67,7 @@ int StoreController::typeAtLocation(int i, int j) {
 }
 
 void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Auto);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Decimal);
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {

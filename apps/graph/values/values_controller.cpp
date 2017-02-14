@@ -126,7 +126,7 @@ int ValuesController::numberOfColumns() {
 
 void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   App * graphApp = (App *)app();
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, graphApp->container()->preferences()->displayMode());
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Default);
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
@@ -170,9 +170,9 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   Function * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
-    Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
+    Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   } else {
-    Complex::convertFloatToText(function->evaluateAtAbscissa(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
+    Complex::convertFloatToText(function->evaluateAtAbscissa(x, graphApp->localContext()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
   myValueCell->setText(buffer);
 }

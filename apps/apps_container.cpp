@@ -15,10 +15,9 @@ AppsContainer::AppsContainer() :
   m_calculationApp(this, &m_globalContext),
   m_regressionApp(this),
   m_sequenceApp(this, &m_globalContext),
-  m_settingsApp(this, &m_preferences),
+  m_settingsApp(this),
   m_statisticsApp(this),
   m_globalContext(GlobalContext()),
-  m_preferences(Preferences()),
   m_variableBoxController(&m_globalContext)
 {
   refreshPreferences();
@@ -49,10 +48,6 @@ Context * AppsContainer::globalContext() {
   return &m_globalContext;
 }
 
-Preferences * AppsContainer::preferences() {
-  return &m_preferences;
-}
-
 ToolboxController * AppsContainer::toolboxController() {
   return &m_toolboxController;
 }
@@ -80,7 +75,7 @@ void AppsContainer::switchTo(App * app) {
 }
 
 void AppsContainer::refreshPreferences() {
-  m_window.refreshPreferences(&m_preferences);
+  m_window.refreshPreferences();
 }
 
 Window * AppsContainer::window() {

@@ -3,13 +3,12 @@
 
 #include <escher.h>
 #include "settings_node.h"
-#include "../preferences.h"
 
 namespace Settings {
 
 class SubController : public ViewController, public SimpleListViewDataSource {
 public:
-  SubController(Responder * parentResponder, Preferences * preferences);
+  SubController(Responder * parentResponder);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -30,7 +29,6 @@ private:
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
   int m_preferenceIndex;
-  Preferences * m_preferences;
 };
 
 }

@@ -15,11 +15,13 @@ Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Fraction(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Fraction::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new FractionLayout(m_operands[0]->createLayout(FloatDisplayMode), m_operands[1]->createLayout(FloatDisplayMode));
+ExpressionLayout * Fraction::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new FractionLayout(m_operands[0]->createLayout(floatDisplayMode), m_operands[1]->createLayout(floatDisplayMode));
 }
 
-float Fraction::approximate(Context& context, AngleUnit angleUnit) const {
+float Fraction::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return m_operands[0]->approximate(context, angleUnit)/m_operands[1]->approximate(context, angleUnit);
 }
 

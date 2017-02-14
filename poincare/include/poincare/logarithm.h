@@ -8,11 +8,12 @@ namespace Poincare {
 class Logarithm : public Function {
 public:
   Logarithm();
-  float approximate(Context & context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
-  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
+private:
+  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
 };
 
 }

@@ -1,14 +1,19 @@
-#include "preferences.h"
+#include <poincare/preferences.h>
 
-using namespace Poincare;
+namespace Poincare {
+
+static Preferences s_preferences;
 
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
-  m_displayMode(Expression::FloatDisplayMode::Auto),
+  m_displayMode(Expression::FloatDisplayMode::Decimal),
   m_numberType(NumberType::Reel),
-  m_complexFormat(ComplexFormat::Algebric),
-  m_language(Language::French)
+  m_complexFormat(ComplexFormat::Algebric)
 {
+}
+
+Preferences * Preferences::sharedPreferences() {
+  return &s_preferences;
 }
 
 Expression::AngleUnit Preferences::angleUnit() const {
@@ -51,12 +56,4 @@ void Preferences::setComplexFormat(ComplexFormat complexFormat) {
   }
 }
 
-Preferences::Language Preferences::language() const {
-  return m_language;
-}
-
-void Preferences::setLanguage(Language language) {
-  if (language != m_language) {
-    m_language = language;
-  }
 }

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <math.h>
 
+using namespace Poincare;
+
 namespace Shared {
 
 Function::Function(const char * text, KDColor color) :
@@ -25,7 +27,7 @@ void Function::setContent(const char * c) {
   }
   m_layout = nullptr;
   if (m_expression) {
-    m_layout = expression()->createLayout();
+    m_layout = expression()->createLayout(Expression::FloatDisplayMode::Decimal);
   }
 }
 
@@ -68,11 +70,11 @@ void Function::setActive(bool active) {
   m_active = active;
 }
 
-float Function::evaluateAtAbscissa(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const {
+float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   Poincare::Symbol xSymbol = Poincare::Symbol(symbol());
   Poincare::Complex e = Poincare::Complex(x);
   context->setExpressionForSymbolName(&e, &xSymbol);
-  return m_expression->approximate(*context, angleUnit);
+  return m_expression->approximate(*context);
 }
 
 }

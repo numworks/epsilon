@@ -36,7 +36,8 @@ Expression * Opposite::clone() const {
   return this->cloneWithDifferentOperands((Expression**)&m_operand, 1, true);
 }
 
-Expression * Opposite::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * operandEvalutation = m_operand->evaluate(context, angleUnit);
   if (operandEvalutation == nullptr) {
     return nullptr;
@@ -52,15 +53,17 @@ Expression * Opposite::evaluate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-ExpressionLayout * Opposite::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(FloatDisplayMode)) : m_operand->createLayout(FloatDisplayMode);
+  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(floatDisplayMode)) : m_operand->createLayout(floatDisplayMode);
   return new HorizontalLayout(children_layouts, 2);
 }
 
-float Opposite::approximate(Context& context, AngleUnit angleUnit) const {
+float Opposite::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return -m_operand->approximate(context, angleUnit);
 }
 

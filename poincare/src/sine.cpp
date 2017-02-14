@@ -27,14 +27,16 @@ Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-float Sine::approximate(Context& context, AngleUnit angleUnit) const {
+float Sine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (angleUnit == AngleUnit::Degree) {
     return sinf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
   }
   return sinf(m_args[0]->approximate(context, angleUnit));
 }
 
-Expression * Sine::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Sine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {

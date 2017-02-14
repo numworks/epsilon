@@ -13,7 +13,8 @@ Symbol::Symbol(char name) :
 {
 }
 
-float Symbol::approximate(Context& context, AngleUnit angleUnit) const {
+float Symbol::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (context.expressionForSymbol(this)) {
     return context.expressionForSymbol(this)->approximate(context, angleUnit);
   }
@@ -21,7 +22,8 @@ float Symbol::approximate(Context& context, AngleUnit angleUnit) const {
   return NAN;
 }
 
-Expression * Symbol::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return context.expressionForSymbol(this)->evaluate(context, angleUnit);
 }
 
@@ -33,7 +35,8 @@ const char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   if (m_name == SpecialSymbols::Ans) {
     return new StringLayout("ans", 4);
   }

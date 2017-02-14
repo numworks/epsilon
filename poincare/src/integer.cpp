@@ -259,7 +259,8 @@ Expression * Integer::clone() const {
   return clone;
 }
 
-float Integer::approximate(Context& context, AngleUnit angleUnit) const {
+float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   union {
     uint32_t uint_result;
     float float_result;
@@ -310,7 +311,8 @@ float Integer::approximate(Context& context, AngleUnit angleUnit) const {
   return float_result;
 }
 
-Expression * Integer::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return new Complex(approximate(context, angleUnit));
 }
 
@@ -318,7 +320,8 @@ Expression::Type Integer::type() const {
   return Type::Integer;
 }
 
-ExpressionLayout * Integer::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   char buffer[255];
 
   Integer base = Integer(10);

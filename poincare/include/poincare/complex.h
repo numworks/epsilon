@@ -12,9 +12,6 @@ public:
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
   void setNumberOfSignificantDigits(int numberOfDigits);
-  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
-  float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
-  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) override;
@@ -34,12 +31,15 @@ public:
    * is truncated at the end of the buffer.
    * ConvertFloat to Text return the number of characters that have been written
    * in buffer (excluding the last \O character) */
-  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Scientific);
+  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Default);
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The wors case is -1.234E-38
     return numberOfSignificantDigits + 7;
   }
 private:
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always

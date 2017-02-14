@@ -29,11 +29,13 @@ Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands
   return hs;
 }
 
-float HyperbolicSine::approximate(Context& context, AngleUnit angleUnit) const {
+float HyperbolicSine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return (expf(m_args[0]->approximate(context, angleUnit))-expf(-m_args[0]->approximate(context, angleUnit)))/2.0f;
 }
 
-Expression * HyperbolicSine::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * HyperbolicSine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {

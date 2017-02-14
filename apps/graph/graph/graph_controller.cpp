@@ -44,7 +44,6 @@ void GraphController::didBecomeFirstResponder() {
   if (m_view.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->localContext());
-    m_view.setPreferences(graphApp->container()->preferences());
   }
   InteractiveCurveViewController::didBecomeFirstResponder();
 }
@@ -67,7 +66,7 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
     float y = 0.0f;
     for (int i = 0; i <= Ion::Display::Width; i++) {
       float x = xMin + i*step;
-      y = f->evaluateAtAbscissa(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
+      y = f->evaluateAtAbscissa(x, graphApp->localContext());
       if (!isnan(y) && !isinf(y)) {
         min = min < y ? min : y;
         max = max > y ? max : y;
@@ -111,12 +110,11 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  App * graphApp = (App *)app();
   char buffer[k_maxNumberOfCharacters+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "x = ";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(m_cursor.x(), buffer+ legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
+  Complex::convertFloatToText(m_cursor.x(), buffer+ legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 0);
 
   legend = "00(x) = ";
@@ -127,15 +125,15 @@ void GraphController::reloadBannerView() {
   }
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[1] = f->name()[0];
-  Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
+  Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer+1, 1);
 
   if (m_bannerView.displayDerivative()) {
     buffer[0] = f->name()[0];
     buffer[1] = '\'';
     App * graphApp = (Graph::App *)app();
-    float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
-    Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());
+    float y = f->approximateDerivative(m_cursor.x(), graphApp->localContext());
+    Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     m_bannerView.setLegendAtIndex(buffer, 2);
   }
 }
@@ -154,7 +152,7 @@ void GraphController::initCursorParameters() {
   float y = 0;
   do {
     Function * firstFunction = m_functionStore->activeFunctionAtIndex(functionIndex++);
-    y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
+    y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
   } while (isnan(y) && functionIndex < m_functionStore->numberOfActiveFunctions());
   m_cursor.moveTo(x, y);
   m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
@@ -166,7 +164,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
     xCursorPosition -  m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit;
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
-  float y = f->evaluateAtAbscissa(x, graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
+  float y = f->evaluateAtAbscissa(x, graphApp->localContext());
   m_cursor.moveTo(x, y);
   m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
@@ -175,12 +173,12 @@ bool GraphController::moveCursorHorizontally(int direction) {
 bool GraphController::moveCursorVertically(int direction) {
   Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
-  float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
+  float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
   Function * nextFunction = actualFunction;
   float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
-    float newY = f->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
+    float newY = f->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
       m_indexFunctionSelectedByCursor = i;

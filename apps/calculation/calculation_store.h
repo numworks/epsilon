@@ -2,7 +2,6 @@
 #define CALCULATION_CALCULATION_STORE_H
 
 #include "calculation.h"
-#include "../preferences.h"
 
 namespace Calculation {
 
@@ -12,7 +11,7 @@ class CalculationStore {
 public:
   CalculationStore();
   Calculation * calculationAtIndex(int i);
-  Calculation * push(const char * text, Poincare::Context * context, Preferences * preferences);
+  Calculation * push(const char * text, Poincare::Context * context);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int numberOfCalculations();

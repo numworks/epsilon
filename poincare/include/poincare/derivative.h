@@ -9,11 +9,11 @@ namespace Poincare {
 class Derivative : public Function {
 public:
   Derivative();
-  float approximate(Context & context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
+  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
   float growthRateAroundAbscissa(float x, float h, VariableContext variableContext, AngleUnit angleUnit) const;
   float approximateDerivate2(float x, float h, VariableContext xContext, AngleUnit angleUnit) const;
   constexpr static float k_maxErrorRateOnApproximation = 0.001f;

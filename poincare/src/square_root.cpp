@@ -27,15 +27,18 @@ Expression * SquareRoot::cloneWithDifferentOperands(Expression** newOperands,
   return sr;
 }
 
-float SquareRoot::approximate(Context& context, AngleUnit angleUnit) const {
+float SquareRoot::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return powf(m_args[0]->approximate(context, angleUnit), 1.0f/2.0f);
 }
 
-ExpressionLayout * SquareRoot::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new NthRootLayout(m_args[0]->createLayout(FloatDisplayMode),nullptr);
+ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode),nullptr);
 }
 
-Expression * SquareRoot::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * SquareRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {

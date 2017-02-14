@@ -38,7 +38,8 @@ Expression * BinaryOperation::clone() const {
   return this->cloneWithDifferentOperands((Expression**) m_operands, 2, true);
 }
 
-Expression * BinaryOperation::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
   Expression * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
   if (leftOperandEvalutation == nullptr || rightOperandEvalutation == nullptr) {

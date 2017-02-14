@@ -14,10 +14,10 @@ app_objs += $(addprefix apps/,\
   apps_window.o\
   battery_view.o\
   constant.o\
+  global_preferences.o\
   main.o\
   node.o\
   node_list_view_controller.o\
-  preferences.o\
   title_bar_view.o\
   toolbox_controller.o\
   toolbox_leaf_cell.o\

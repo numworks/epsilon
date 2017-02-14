@@ -28,7 +28,8 @@ Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
   return d;
 }
 
-float Derivative::approximate(Context& context, AngleUnit angleUnit) const {
+float Derivative::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
   float x = m_args[1]->approximate(context, angleUnit);

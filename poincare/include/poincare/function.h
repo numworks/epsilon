@@ -15,12 +15,12 @@ public:
   ~Function();
   void setArgument(Expression ** args, int numberOfArguments, bool clone = true);
   void setArgument(ListData * listData, bool clone = true);
-  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * clone() const override;
-  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
 protected:
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   Expression ** m_args;
   int m_numberOfArguments;
   const char * m_name;

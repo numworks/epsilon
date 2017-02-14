@@ -1,4 +1,5 @@
 #include "sub_controller.h"
+#include "../global_preferences.h"
 #include "../apps_container.h"
 #include <assert.h>
 
@@ -6,15 +7,14 @@ using namespace Poincare;
 
 namespace Settings {
 
-SubController::SubController(Responder * parentResponder, Preferences * preferences) :
+SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large),
     MenuListCell(nullptr, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel(nullptr),
-  m_preferenceIndex(0),
-  m_preferences(preferences)
+  m_preferenceIndex(0)
 {
 }
 
@@ -87,19 +87,19 @@ StackViewController * SubController::stackController() const {
 void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex) {
   switch (preferenceIndex) {
     case 0:
-      m_preferences->setAngleUnit((Expression::AngleUnit)valueIndex);
+      Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
       break;
     case 1:
-      m_preferences->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
+      Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
       break;
     case 2:
-      m_preferences->setNumberType((Preferences::NumberType)valueIndex);
+      Preferences::sharedPreferences()->setNumberType((Preferences::NumberType)valueIndex);
       break;
     case 3:
-      m_preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+      Preferences::sharedPreferences()->setComplexFormat((Preferences::ComplexFormat)valueIndex);
       break;
     case 4:
-      m_preferences->setLanguage((Preferences::Language)valueIndex);
+      GlobalPreferences::sharedGlobalPreferences()->setLanguage((GlobalPreferences::Language)valueIndex);
       break;
     }
 }
@@ -107,15 +107,15 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
 int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
   switch (preferenceIndex) {
     case 0:
-      return (int)m_preferences->angleUnit();
+      return (int)Preferences::sharedPreferences()->angleUnit();
     case 1:
-      return (int)m_preferences->displayMode();
+      return (int)Preferences::sharedPreferences()->displayMode();
     case 2:
-      return (int)m_preferences->numberType();
+      return (int)Preferences::sharedPreferences()->numberType();
     case 3:
-      return (int)m_preferences->complexFormat();
+      return (int)Preferences::sharedPreferences()->complexFormat();
     case 4:
-      return (int)m_preferences->language();
+      return (int)GlobalPreferences::sharedGlobalPreferences()->language();
     default:
       assert(false);
       return 0;

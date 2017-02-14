@@ -28,7 +28,8 @@ Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOpera
   return l;
 }
 
-float NaperianLogarithm::approximate(Context& context, AngleUnit angleUnit) const {
+float NaperianLogarithm::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return logf(m_args[0]->approximate(context, angleUnit));
 }
 

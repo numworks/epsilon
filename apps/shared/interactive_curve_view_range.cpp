@@ -1,4 +1,5 @@
 #include "interactive_curve_view_range.h"
+#include <poincare.h>
 #include <math.h>
 #include <stddef.h>
 #include <assert.h>
@@ -101,10 +102,10 @@ void InteractiveCurveViewRange::normalize() {
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
-void InteractiveCurveViewRange::setTrigonometric(Expression::AngleUnit angleUnit) {
+void InteractiveCurveViewRange::setTrigonometric() {
   m_xMin = -10.5f;
   m_xMax = 10.5f;
-  if (angleUnit == Expression::AngleUnit::Degree) {
+  if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Degree) {
     m_xMin = -600;
     m_xMax = 600;
   }

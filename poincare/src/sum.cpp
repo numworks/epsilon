@@ -32,7 +32,8 @@ Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-float Sum::approximate(Context& context, AngleUnit angleUnit) const {
+float Sum::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
   int start = m_args[1]->approximate(context, angleUnit);
@@ -46,14 +47,16 @@ float Sum::approximate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-ExpressionLayout * Sum::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Sum::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = m_args[1]->createLayout(FloatDisplayMode);
-  return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(FloatDisplayMode), m_args[0]->createLayout(FloatDisplayMode));
+  childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode);
+  return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(floatDisplayMode), m_args[0]->createLayout(floatDisplayMode));
 }
 
-Expression * Sum::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Sum::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   float start = m_args[1]->approximate(context, angleUnit);
   float end = m_args[2]->approximate(context, angleUnit);
   if (isnan(start) || isnan(end)) {

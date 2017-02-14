@@ -29,15 +29,18 @@ Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
   return r;
 }
 
-float NthRoot::approximate(Context& context, AngleUnit angleUnit) const {
+float NthRoot::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return powf(m_args[0]->approximate(context, angleUnit), 1.0f/m_args[1]->approximate(context, angleUnit));
 }
 
-ExpressionLayout * NthRoot::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new NthRootLayout(m_args[0]->createLayout(FloatDisplayMode), m_args[1]->createLayout(FloatDisplayMode));
+ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode), m_args[1]->createLayout(floatDisplayMode));
 }
 
-Expression * NthRoot::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * baseEvaluation = m_args[0]->evaluate(context, angleUnit);
   Expression * indexEvaluation = m_args[1]->evaluate(context, angleUnit);
   assert(baseEvaluation->type() == Type::Matrix || baseEvaluation->type() == Type::Complex);

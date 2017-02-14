@@ -33,15 +33,18 @@ Expression * Parenthesis::clone() const {
   return this->cloneWithDifferentOperands((Expression**) &m_operand, 1, true);
 }
 
-ExpressionLayout * Parenthesis::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new ParenthesisLayout(m_operand->createLayout(FloatDisplayMode));
+ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode));
 }
 
-float Parenthesis::approximate(Context& context, AngleUnit angleUnit) const {
+float Parenthesis::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return m_operand->approximate(context, angleUnit);
 }
 
-Expression * Parenthesis::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Parenthesis::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return m_operand->evaluate(context, angleUnit);
 }
 

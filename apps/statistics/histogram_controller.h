@@ -27,6 +27,7 @@ public:
   bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
+  void viewWillAppear() override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 280;
   constexpr static int k_maxNumberOfCharacters = 12;
@@ -47,7 +48,6 @@ private:
   uint32_t m_rangeVersion;
   int m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
-  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

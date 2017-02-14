@@ -27,8 +27,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
-  }, this), KDText::FontSize::Small)),
-  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
+  }, this), KDText::FontSize::Small))
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -37,16 +36,6 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
 
 const char * ValuesController::title() const {
   return "Valeurs";
-}
-
-View * ValuesController::view() {
-  App * graphApp = (App *)app();
-  Expression::FloatDisplayMode FloatDisplayMode = graphApp->container()->preferences()->displayMode();
-  if (FloatDisplayMode != m_displayModeVersion) {
-    m_selectableTableView.reloadData();
-    m_displayModeVersion = FloatDisplayMode;
-  }
-  return EditableCellTableViewController::view();
 }
 
 Interval * ValuesController::interval() {
@@ -295,6 +284,10 @@ int ValuesController::activeRow() {
 
 int ValuesController::activeColumn() {
   return m_selectableTableView.selectedColumn();
+}
+
+void ValuesController::viewWillAppear() {
+  m_selectableTableView.reloadData();
 }
 
 Function * ValuesController::functionAtColumn(int i) {

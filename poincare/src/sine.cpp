@@ -1,5 +1,7 @@
 #include <poincare/sine.h>
-
+#include <poincare/hyperbolic_sine.h>
+#include <poincare/complex.h>
+#include <poincare/multiplication.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -30,4 +32,25 @@ float Sine::approximate(Context& context, AngleUnit angleUnit) const {
   return sinf(m_args[0]->approximate(context, angleUnit));
 }
 
-//TODO: implement evaluate to handle sin complex
+Expression * Sine::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  if (evaluation->type() == Type::Matrix) {
+    delete evaluation;
+    return new Complex(NAN);
+  }
+  Expression * arg = new Complex(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a());
+  Function * sinh = new HyperbolicSine();
+  sinh->setArgument(&arg, 1, true);
+  delete evaluation;
+  delete arg;
+  Expression * args[2];
+  args[0] = new Complex(0.0f, -1.0f);
+  args[1] = sinh;
+  Multiplication * result = new Multiplication(args, true);
+  delete args[0];
+  delete args[1];
+  Expression * resultEvaluation = result->evaluate(context, angleUnit);
+  delete result;
+  return resultEvaluation;
+}

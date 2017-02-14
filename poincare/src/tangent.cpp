@@ -1,5 +1,8 @@
 #include <poincare/tangent.h>
-
+#include <poincare/complex.h>
+#include <poincare/sine.h>
+#include <poincare/cosine.h>
+#include <poincare/fraction.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -30,4 +33,23 @@ float Tangent::approximate(Context& context, AngleUnit angleUnit) const {
   return tanf(m_args[0]->approximate(context, angleUnit));
 }
 
-//TODO: implement evaluate to handle tan complex
+Expression * Tangent::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  if (evaluation->type() == Type::Matrix) {
+    delete evaluation;
+    return new Complex(NAN);
+  }
+  Expression * arguments[2];
+  arguments[0] = new Sine();
+  ((Function *)arguments[0])->setArgument(&evaluation, 1, true);
+  arguments[1] = new Cosine();
+  ((Function *)arguments[1])->setArgument(&evaluation, 1, true);
+  delete evaluation;
+  Expression * result = new Fraction(arguments, true);
+  delete arguments[1];
+  delete arguments[0];
+  Expression * resultEvaluation = result->evaluate(context, angleUnit);
+  delete result;
+  return resultEvaluation;
+}

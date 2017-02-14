@@ -47,6 +47,7 @@ private:
   uint32_t m_rangeVersion;
   int m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
+  Expression::DisplayMode m_displayModeVersion;
 };
 
 }

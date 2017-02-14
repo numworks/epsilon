@@ -18,6 +18,7 @@ namespace Device {
  *  PA3 | LCD D5            | Alternate Function 12 | FSMC_D5  |
  *  PA4 | LCD D6            | Alternate Function 12 | FSMC_D6  |
  * PB12 | LCD D13           | Alternate Function 12 | FSMC_D13 |
+ * PB14 | LCD power         | Output                |          | LCD controller is powered directly from GPIO
  *  PD0 | LCD D2            | Alternate Function 12 | FSMC_D2  |
  *  PD1 | LCD D3            | Alternate Function 12 | FSMC_D3  |
  *  PD4 | LCD read signal   | Alternate Function 12 | FSMC_NOE |
@@ -76,6 +77,7 @@ constexpr static GPIOPin FSMCPins[] = {
   GPIOPin(GPIOE, 15)
 };
 
+constexpr static GPIOPin PowerPin = GPIOPin(GPIOB, 14);
 constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 9);
 
 constexpr static int FSMCMemoryBank = 1;

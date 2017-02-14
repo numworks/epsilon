@@ -61,6 +61,10 @@ void initGPIO() {
     g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF12);
   }
 
+  // Turn on the power
+  PowerPin.group().MODER()->setMode(PowerPin.pin(), GPIO::MODER::Mode::Output);
+  PowerPin.group().ODR()->set(PowerPin.pin(), true);
+
   // Turn on the reset pin
   ResetPin.group().MODER()->setMode(ResetPin.pin(), GPIO::MODER::Mode::Output);
   ResetPin.group().ODR()->set(ResetPin.pin(), true);
@@ -79,6 +83,9 @@ void shutdownGPIO() {
   // Set to true : sleep consumption = 154 uA
   // Set to false : sleep consumption = 92 uA
   ResetPin.group().ODR()->set(ResetPin.pin(), false);
+
+  PowerPin.group().MODER()->setMode(PowerPin.pin(), GPIO::MODER::Mode::Analog);
+  PowerPin.group().PUPDR()->setPull(PowerPin.pin(), GPIO::PUPDR::Pull::None);
 }
 
 void initFSMC() {

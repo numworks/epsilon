@@ -82,7 +82,7 @@ KDCoordinate CurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void CurveParameterController::setFunction(Function * function) {
+void CurveParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
 }
 

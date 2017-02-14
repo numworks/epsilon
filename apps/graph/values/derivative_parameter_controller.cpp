@@ -24,7 +24,7 @@ View * DerivativeParameterController::view() {
   return &m_selectableTableView;
 }
 
-void DerivativeParameterController::setFunction(Function * function) {
+void DerivativeParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
   for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
     if (m_pageTitle[currentChar] == '(') {

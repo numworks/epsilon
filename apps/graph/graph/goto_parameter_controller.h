@@ -15,7 +15,7 @@ public:
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void setFunction(Function * function);
+  void setFunction(CartesianFunction * function);
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   float parameterAtIndex(int index) override;
@@ -24,7 +24,7 @@ private:
   EditableTextMenuListCell m_abscisseCell;
   Shared::InteractiveCurveViewRange * m_graphRange;
   Shared::CurveViewCursor * m_cursor;
-  Function * m_function;
+  CartesianFunction * m_function;
 };
 
 }

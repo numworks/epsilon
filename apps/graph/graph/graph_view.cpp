@@ -7,7 +7,7 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
+GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
@@ -23,7 +23,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, true);
   drawLabels(ctx, rect, Axis::Vertical, true);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    CartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
     drawCurve(ctx, rect, f, f->color());
   }
 }
@@ -41,7 +41,7 @@ char * GraphView::label(Axis axis, int index) const {
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {
-  Function * f = (Function *)curve;
+  CartesianFunction * f = (CartesianFunction *)curve;
   return f->evaluateAtAbscissa(abscissa, m_context);
 }
 

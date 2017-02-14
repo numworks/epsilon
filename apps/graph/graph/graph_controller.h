@@ -7,12 +7,12 @@
 #include "curve_parameter_controller.h"
 #include "initialisation_parameter_controller.h"
 #include "../../shared/interactive_curve_view_controller.h"
-#include "../function_store.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 class GraphController : public Shared::InteractiveCurveViewController, public Shared::InteractiveCurveViewRangeDelegate {
 public:
-  GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
+  GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header);
   void didBecomeFirstResponder() override;
   ViewController * initialisationParameterController() override;
 
@@ -48,7 +48,7 @@ private:
   Shared::InteractiveCurveViewRange m_graphRange;
   InitialisationParameterController m_initialisationParameterController;
   CurveParameterController m_curveParameterController;
-  FunctionStore * m_functionStore;
+  CartesianFunctionStore * m_functionStore;
   int m_indexFunctionSelectedByCursor;
 };
 

@@ -10,7 +10,7 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header) :
   InteractiveCurveViewController(parentResponder, header, &m_graphRange, &m_view),
   m_bannerView(BannerView()),
   m_view(GraphView(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),
@@ -62,7 +62,7 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
   float xMax = m_graphRange.xMax();
   float step = (xMax - xMin)/Ion::Display::Width;
   for (int i=0; i<m_functionStore->numberOfActiveFunctions(); i++) {
-    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    CartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
     float y = 0.0f;
     for (int i = 0; i <= Ion::Display::Width; i++) {
       float x = xMin + i*step;
@@ -102,7 +102,7 @@ BannerView * GraphController::bannerView() {
 }
 
 bool GraphController::handleEnter() {
-  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   m_curveParameterController.setFunction(f);
   StackViewController * stack = stackController();
   stack->push(&m_curveParameterController);
@@ -123,7 +123,7 @@ void GraphController::reloadBannerView() {
   if (m_functionStore->numberOfActiveFunctions() == 0) {
     return;
   }
-  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[1] = f->name()[0];
   Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer+1, 1);
@@ -151,7 +151,7 @@ void GraphController::initCursorParameters() {
   int functionIndex = 0;
   float y = 0;
   do {
-    Function * firstFunction = m_functionStore->activeFunctionAtIndex(functionIndex++);
+    CartesianFunction * firstFunction = m_functionStore->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, graphApp->localContext());
   } while (isnan(y) && functionIndex < m_functionStore->numberOfActiveFunctions());
   m_cursor.moveTo(x, y);
@@ -162,7 +162,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   float xCursorPosition = m_cursor.x();
   float x = direction > 0 ? xCursorPosition + m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit :
     xCursorPosition -  m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
   float y = f->evaluateAtAbscissa(x, graphApp->localContext());
   m_cursor.moveTo(x, y);
@@ -171,13 +171,13 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  Function * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  CartesianFunction * actualFunction = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   App * graphApp = (Graph::App *)app();
   float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
-  Function * nextFunction = actualFunction;
+  CartesianFunction * nextFunction = actualFunction;
   float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    Function * f = m_functionStore->activeFunctionAtIndex(i);
+    CartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
     float newY = f->evaluateAtAbscissa(m_cursor.x(), graphApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {

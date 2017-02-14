@@ -112,8 +112,11 @@ mtxData:
 
 number:
   DIGITS { $$ = new Integer($1.address, false); }
+  | DOT DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
   | DIGITS DOT DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
+  | DOT DIGITS EE DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
   | DIGITS DOT DIGITS EE DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | DOT DIGITS EE MINUS DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
   | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
 
 exp:

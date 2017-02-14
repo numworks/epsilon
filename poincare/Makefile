@@ -63,6 +63,7 @@ tests += $(addprefix poincare/test/,\
   identity.cpp\
   integer.cpp\
   matrix.cpp\
+  parser.cpp\
   product.cpp\
   power.cpp\
   simplify_utils.cpp\

@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
+#include <ion.h>
 #include <assert.h>
 
 QUIZ_CASE(poincare_power_approximate) {
@@ -14,6 +15,21 @@ QUIZ_CASE(poincare_power_evaluate) {
   Expression * a = Expression::parse("2^3");
   Expression * e = a->evaluate(globalContext);
   assert(e->approximate(globalContext) == 8.0f);
+  delete a;
+  delete e;
+
+  char expText1[15] ={'(','3','+',Ion::Charset::SmallIota, ')', '^', '4', 0};
+  a = Expression::parse(expText1);
+  e = a->evaluate(globalContext);
+  assert(28.0f - 0.00001f <= (((Complex *)e)->a()) && (((Complex *)e)->a()) <= 28.0f + 0.00001f &&
+          96.0f - 0.00001f <= (((Complex *)e)->b()) && (((Complex *)e)->b()) <= 96.0f + 0.00001f);
+  delete a;
+  delete e;
+
+  char expText2[15] ={'4', '^','(','3','+',Ion::Charset::SmallIota, ')', 0};
+  a = Expression::parse(expText2);
+  e = a->evaluate(globalContext);
+  assert(((Complex *)e)->a() == 11.7412464f && ((Complex *)e)->b() == 62.9137754f);
   delete a;
   delete e;
 

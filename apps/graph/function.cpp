@@ -17,7 +17,7 @@ void Function::setDisplayDerivative(bool display) {
 }
 
 float Function::approximateDerivative(float x, Poincare::Context * context) const {
-  Poincare::Complex abscissa = Poincare::Complex(x);
+  Poincare::Complex abscissa = Poincare::Complex::Float(x);
   Poincare::Expression * args[2] = {m_expression, &abscissa};
   Poincare::Derivative derivative = Poincare::Derivative();
   derivative.setArgument(args, 2, true);

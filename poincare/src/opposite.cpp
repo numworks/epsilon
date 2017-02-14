@@ -44,7 +44,7 @@ Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) co
   }
   Expression * result = nullptr;
   if (operandEvalutation->type() == Type::Complex) {
-    result = new Complex(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b());
+    result = new Complex(Complex::Cartesian(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b()));
   }
   if (operandEvalutation->type() == Type::Matrix) {
     result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
@@ -84,11 +84,11 @@ Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit 
     Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
     assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
     if (evaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       delete evaluation;
       continue;
     }
-    operands[i] = new Complex(-((Complex *)evaluation)->a(), -((Complex *)evaluation)->b());
+    operands[i] = new Complex(Complex::Cartesian(-((Complex *)evaluation)->a(), -((Complex *)evaluation)->b()));
     delete evaluation;
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);

@@ -41,15 +41,15 @@ Expression * Sine::privateEvaluate(Context& context, AngleUnit angleUnit) const 
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
-  Expression * arg = new Complex(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a());
+  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
   Function * sinh = new HyperbolicSine();
   sinh->setArgument(&arg, 1, true);
   delete evaluation;
   delete arg;
   Expression * args[2];
-  args[0] = new Complex(0.0f, -1.0f);
+  args[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));
   args[1] = sinh;
   Multiplication * result = new Multiplication(args, true);
   delete args[0];

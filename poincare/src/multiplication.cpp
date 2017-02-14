@@ -37,7 +37,7 @@ Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands
 }
 
 Expression * Multiplication::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  return new Complex(c->a()*d->a()-c->b()*d->b(), c->b()*d->a() + c->a()*d->b());
+  return new Complex(Complex::Cartesian(c->a()*d->a()-c->b()*d->b(), c->b()*d->a() + c->a()*d->b()));
 }
 
 Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
@@ -55,7 +55,7 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
         assert(mEvaluation->type() == Type::Matrix || mEvaluation->type() == Type::Complex);
         assert(nEvaluation->type() == Type::Matrix || nEvaluation->type() == Type::Complex);
         if (mEvaluation->type() == Type::Matrix ||nEvaluation->type() == Type::Matrix) {
-          operands[i] = new Complex(NAN);
+          operands[i] = new Complex(Complex::Float(NAN));
           delete mEvaluation;
           delete nEvaluation;
           continue;
@@ -65,7 +65,7 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
         delete mEvaluation;
         delete nEvaluation;
       }
-      operands[i*n->numberOfColumns()+j] = new Complex(a, b);
+      operands[i*n->numberOfColumns()+j] = new Complex(Complex::Cartesian(a, b));
     }
   }
   return new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);

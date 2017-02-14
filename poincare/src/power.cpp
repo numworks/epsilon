@@ -37,17 +37,17 @@ Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context
   if (d->b() != 0.0f) {
     /* First case c and d is complex */
     if (c->b() != 0.0f || c->a() <= 0) {
-      return new Complex(NAN);
+      return new Complex(Complex::Float(NAN));
     }
     /* Second case only d is complex */
     float radius = powf(c->a(), d->a());
     float theta = d->b()*logf(c->a());
-    return new Complex(radius, theta, true);
+    return new Complex(Complex::Polar(radius, theta));
   }
   /* Third case only c is complex */
   float radius = powf(c->r(), d->a());
   float theta = d->a()*c->th();
-  return new Complex(radius, theta, true);
+  return new Complex(Complex::Polar(radius, theta));
 }
 
 Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
@@ -59,7 +59,7 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
   }
   // TODO: return identity matrix if i == 0
   int power = c->approximate(context, angleUnit);
-  Expression * result = new Complex(1);
+  Expression * result = new Complex(Complex::Float(1.0f));
   for (int k = 0; k < power; k++) {
     Expression * operands[2];
     operands[0] = result;

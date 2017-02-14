@@ -2,12 +2,15 @@
 #define POINCARE_COMPLEX_H
 
 #include <poincare/leaf_expression.h>
+#include <math.h>
 
 namespace Poincare {
 
 class Complex : public LeafExpression {
 public:
-  Complex(float a, float b = 0.0f, bool polar = false);
+  static Complex Float(float x);
+  static Complex Cartesian(float a, float b);
+  static Complex Polar(float r, float theta);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
@@ -36,6 +39,7 @@ public:
     return numberOfSignificantDigits + 7;
   }
 private:
+  Complex(float a, float b);
   constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;

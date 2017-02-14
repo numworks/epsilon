@@ -25,7 +25,7 @@ Matrix::Matrix(Expression ** newOperands, int numberOfOperands, int numberOfColu
 }
 
 Complex * Matrix::defaultExpression() {
-  static Complex * defaultExpression = new Complex(0.0f);
+  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
 }
 
@@ -65,7 +65,7 @@ Expression * Matrix::privateEvaluate(Context& context, AngleUnit angleUnit) cons
     assert(operands[i]->type() == Type::Matrix || operands[i]->type() == Type::Complex);
     if (operands[i]->type() == Type::Matrix) {
       delete operands[i];
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       continue;
     }
   }

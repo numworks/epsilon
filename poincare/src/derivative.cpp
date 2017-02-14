@@ -33,7 +33,7 @@ float Derivative::privateApproximate(Context& context, AngleUnit angleUnit) cons
   VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
   float x = m_args[1]->approximate(context, angleUnit);
-  Complex e = Complex(x);
+  Complex e = Complex::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float functionValue = m_args[0]->approximate(xContext, angleUnit);
 
@@ -108,10 +108,10 @@ float Derivative::privateApproximate(Context& context, AngleUnit angleUnit) cons
 
 float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
-  Complex e = Complex(x + h, 0.0f);
+  Complex e = Complex::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
-  e = Complex(x-h);
+  e = Complex::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
@@ -119,13 +119,13 @@ float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xCo
 
 float Derivative::approximateDerivate2(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
-  Complex e = Complex(x + h);
+  Complex e = Complex::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
-  e = Complex(x);
+  e = Complex::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expression = m_args[0]->approximate(xContext, angleUnit);
-  e = Complex(x-h);
+  e = Complex::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return expressionPlus - 2.0f*expression + expressionMinus;

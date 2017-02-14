@@ -43,11 +43,11 @@ Expression * SquareRoot::privateEvaluate(Context& context, AngleUnit angleUnit) 
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * operands[2];
   operands[0] = evaluation;
-  operands[1] = new Complex(0.5f);
+  operands[1] = new Complex(Complex::Float(0.5f));
   Expression * power = new Power(operands, true);
   Expression * newResult = power->evaluate(context, angleUnit);
   delete evaluation;

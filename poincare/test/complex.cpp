@@ -58,27 +58,27 @@ QUIZ_CASE(poincare_complex_to_text) {
   char result13[20] = {'1','.','2',Ion::Charset::Exponent,'2',0};
   assert(strcmp(buffer3, result13) == 0);
 
-  Complex(1, 2).writeTextInBuffer(buffer, 14);
+  Complex::Cartesian(1.0f, 2.0f).writeTextInBuffer(buffer, 14);
   char text1[14] = {'1','+', '2', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text1) == 0);
-  Complex(-1.3, 2.444).writeTextInBuffer(buffer, 14);
+  Complex::Cartesian(-1.3f, 2.444f).writeTextInBuffer(buffer, 14);
   char text2[14] = {'-','1','.','3','+', '2','.','4','4','4', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text2) == 0);
-  Complex(-1.3, -2.444).writeTextInBuffer(buffer, 14);
+  Complex::Cartesian(-1.3f, -2.444f).writeTextInBuffer(buffer, 14);
   char text3[14] = {'-','1','.','3','-', '2','.','4','4','4', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text3) == 0);
 }
 
 QUIZ_CASE(poincare_complex_approximate) {
   GlobalContext globalContext;
-  Expression * a = new Complex(123.456f);
+  Expression * a = new Complex(Complex::Float(123.456f));
   assert(a->approximate(globalContext) == 123.456f);
   delete a;
 }
 
 QUIZ_CASE(poincare_complex_evaluate) {
   GlobalContext globalContext;
-  Expression * a = new Complex(123.456f);
+  Expression * a = new Complex(Complex::Float(123.456f));
   Expression * e = a->evaluate(globalContext);
   assert(e->approximate(globalContext) == 123.456f);
   delete a;
@@ -86,12 +86,12 @@ QUIZ_CASE(poincare_complex_evaluate) {
 }
 
 QUIZ_CASE(poincare_complex_constructor) {
-  Complex * a = new Complex(2.0f, 3.0f, false);
+  Complex * a = new Complex(Complex::Cartesian(2.0f, 3.0f));
   assert(a->a() == 2.0f && a->b() == 3.0f);
   assert(a->r() == 3.60555124f && a->th() == 0.982793748f);
   delete a;
 
-  a = new Complex(3.60555124f, 0.982793748f, true);
+  a = new Complex(Complex::Polar(3.60555124f, 0.982793748f));
   assert(a->a() == 2.0f && a->b() == 3.0f);
   delete a;
 }

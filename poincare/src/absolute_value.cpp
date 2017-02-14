@@ -47,10 +47,10 @@ Expression * AbsoluteValue::privateEvaluate(Context& context, AngleUnit angleUni
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   float absVal = ((Complex *)evaluation)->absoluteValue();
-  Complex * result = new Complex(absVal);
+  Complex * result = new Complex(Complex::Float(absVal));
   delete evaluation;
   return result;
 }

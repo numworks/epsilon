@@ -40,7 +40,7 @@ float Product::privateApproximate(Context& context, AngleUnit angleUnit) const {
   int end = m_args[2]->approximate(context, angleUnit);
   float result = 1.0f;
   for (int i = start; i <= end; i++) {
-    Complex iExpression = Complex(i);
+    Complex iExpression = Complex::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
     result = result*m_args[0]->approximate(nContext, angleUnit);
   }
@@ -60,14 +60,15 @@ Expression * Product::privateEvaluate(Context& context, AngleUnit angleUnit) con
   float start = m_args[1]->approximate(context, angleUnit);
   float end = m_args[2]->approximate(context, angleUnit);
   if (isnan(start) || isnan(end)) {
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
-  Expression * result = new Complex(1);
+  Expression * result = new Complex(Complex::Float(1.0f));
   for (int i = (int)start; i <= (int)end; i++) {
-    Complex iExpression = Complex(i);
-    nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
+    Complex * iExpression = new Complex(Complex::Float(i));
+    nContext.setExpressionForSymbolName(iExpression, &nSymbol);
+    delete iExpression;
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m_args[0]->evaluate(nContext, angleUnit);

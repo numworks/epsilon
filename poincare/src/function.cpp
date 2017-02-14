@@ -95,7 +95,7 @@ int Function::numberOfOperands() const {
 Expression * Function::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   /* Default function evaluation works for reel function */
-  return new Complex(approximate(context, angleUnit));
+  return new Complex(Complex::Float(approximate(context, angleUnit)));
 }
 
 }

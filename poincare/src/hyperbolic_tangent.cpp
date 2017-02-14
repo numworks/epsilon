@@ -40,7 +40,7 @@ Expression * HyperbolicTangent::privateEvaluate(Context& context, AngleUnit angl
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * arguments[2];
   arguments[0] = new HyperbolicSine();

@@ -313,7 +313,7 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
 
 Expression * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  return new Complex(approximate(context, angleUnit));
+  return new Complex(Complex::Float(approximate(context, angleUnit)));
 }
 
 Expression::Type Integer::type() const {

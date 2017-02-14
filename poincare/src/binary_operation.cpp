@@ -69,7 +69,7 @@ Expression * BinaryOperation::evaluateOnMatrixAndComplex(Matrix * m, Complex * c
     Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
     assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
     if (evaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       delete evaluation;
       continue;
     }
@@ -94,7 +94,7 @@ Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context
     assert(mEvaluation->type() == Type::Matrix || mEvaluation->type() == Type::Complex);
     assert(nEvaluation->type() == Type::Matrix || nEvaluation->type() == Type::Complex);
     if (mEvaluation->type() == Type::Matrix ||nEvaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       delete mEvaluation;
       delete nEvaluation;
       continue;

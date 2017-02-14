@@ -48,12 +48,12 @@ Expression * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) con
   if (baseEvaluation->type() == Type::Matrix || indexEvaluation->type() == Type::Matrix) {
     delete baseEvaluation;
     delete indexEvaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * operands[2];
   operands[0] = baseEvaluation;
   Expression * operandChildren[2];
-  operandChildren[0] = new Complex(1.0f);
+  operandChildren[0] = new Complex(Complex::Float(1.0f));
   operandChildren[1] = indexEvaluation;
   Expression * fraction = new Fraction(operandChildren, true);
   operands[1] = fraction->evaluate(context, angleUnit);

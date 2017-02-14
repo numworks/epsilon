@@ -42,7 +42,7 @@ Expression * Tangent::privateEvaluate(Context& context, AngleUnit angleUnit) con
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * arguments[2];
   arguments[0] = new Sine();

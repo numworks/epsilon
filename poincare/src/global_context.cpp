@@ -6,8 +6,8 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
-  m_pi(Complex(M_PI)),
-  m_e(Complex(M_E))
+  m_pi(Complex::Float(M_PI)),
+  m_e(Complex::Float(M_E))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -15,7 +15,7 @@ GlobalContext::GlobalContext() :
 }
 
 Complex * GlobalContext::defaultExpression() {
-  static Complex * defaultExpression = new Complex(0.0f);
+  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
 }
 

@@ -38,7 +38,7 @@ ExpressionLayout * Subtraction::privateCreateLayout(FloatDisplayMode floatDispla
 }
 
 Expression * Subtraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  return new Complex(c->a() - d->a(), c->b() - d->b());
+  return new Complex(Complex::Cartesian(c->a() - d->a(), c->b() - d->b()));
 }
 
 Expression * Subtraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {

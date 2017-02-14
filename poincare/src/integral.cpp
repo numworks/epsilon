@@ -56,7 +56,7 @@ ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMo
 }
 
 float Integral::functionValueAtAbscissa(float x, VariableContext xContext, AngleUnit angleUnit) const {
-  Complex e = Complex(x);
+  Complex e = Complex::Float(x);
   Symbol xSymbol = Symbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   return m_args[0]->approximate(xContext, angleUnit);

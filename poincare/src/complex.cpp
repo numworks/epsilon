@@ -12,14 +12,16 @@ extern "C" {
 
 namespace Poincare {
 
-Complex::Complex(float a, float b, bool polar) :
-  m_a(a),
-  m_b(b)
-{
-  if (polar) {
-    m_a = a * cosf(b);
-    m_b = a * sinf(b);
-  }
+Complex Complex::Float(float x) {
+  return Complex(x,0.0f);
+}
+
+Complex Complex::Cartesian(float a, float b) {
+  return Complex(a,b);
+}
+
+Complex Complex::Polar(float r, float th)  {
+  return Complex(r*cosf(th),r*sinf(th));
 }
 
 static inline float setSign(float f, bool negative) {
@@ -55,7 +57,7 @@ Complex::Complex(const char * integralPart, int integralPartLength, bool integra
 }
 
 Expression * Complex::clone() const {
-  return new Complex(m_a, m_b);
+  return new Complex(Cartesian(m_a, m_b));
 }
 
 float Complex::privateApproximate(Context& context, AngleUnit angleUnit) const {
@@ -134,6 +136,12 @@ int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
   strlcpy(buffer, tempBuffer, bufferSize);
   return requiredLength;
+}
+
+Complex::Complex(float a, float b) :
+  m_a(a),
+  m_b(b)
+{
 }
 
 int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode) const {

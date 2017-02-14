@@ -1,16 +1,18 @@
 #include "derivative_parameter_controller.h"
+#include "values_controller.h"
 #include <assert.h>
 
 namespace Graph {
 
-DerivativeParameterController::DerivativeParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
+DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
+  ViewController(valuesController),
   m_pageTitle{"Colonne f'(x)"},
   m_hideColumn(MenuListCell((char*)"Masquer la colonne de la derivee")),
   m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
-  m_function(nullptr)
+  m_function(nullptr),
+  m_valuesController(valuesController)
 {
 }
 
@@ -42,7 +44,9 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       {
+        m_valuesController->selectCellAtLocation(0, -1);
         m_function->setDisplayDerivative(false);
+        m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()-1, m_valuesController->activeRow());
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;

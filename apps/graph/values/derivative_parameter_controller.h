@@ -5,9 +5,12 @@
 #include "../function.h"
 
 namespace Graph {
+
+class ValuesController;
+
 class DerivativeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  DerivativeParameterController(Responder * parentResponder);
+  DerivativeParameterController(ValuesController * valuesController);
 
   View * view() override;
   const char * title() const override;
@@ -27,6 +30,7 @@ private:
   ChevronMenuListCell m_copyColumn;
   SelectableTableView m_selectableTableView;
   Function * m_function;
+  ValuesController * m_valuesController;
 };
 
 }

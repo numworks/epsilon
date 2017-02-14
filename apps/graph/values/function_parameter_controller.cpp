@@ -47,6 +47,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       {
         m_function->setDisplayDerivative(!m_function->displayDerivative());
         if (m_function->displayDerivative()) {
+          m_valuesController->selectCellAtLocation(0, -1);
           m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()+1, m_valuesController->activeRow());
         }
         m_selectableTableView.reloadData();

@@ -6,6 +6,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
@@ -99,4 +101,6 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
   }
   app()->setFirstResponder(&m_selectableTableView);
+}
+
 }

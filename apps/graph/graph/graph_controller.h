@@ -10,7 +10,7 @@
 #include "../function_store.h"
 
 namespace Graph {
-class GraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
+class GraphController : public Shared::InteractiveCurveViewController, public Shared::InteractiveCurveViewRangeDelegate {
 public:
   GraphController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   void didBecomeFirstResponder() override;
@@ -19,7 +19,7 @@ public:
   bool isEmpty() const override;
   const char * emptyMessage() override;
 
-  bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  bool didChangeRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 private:
   constexpr static float k_cursorTopMarginRatio = 0.025f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorRightMarginRatio = 0.015f; // (cursorWidth/2)/graphViewWidth
@@ -41,11 +41,11 @@ private:
   bool moveCursorVertically(int direction) override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
-  InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  CurveView * curveView() override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::CurveView * curveView() override;
   BannerView m_bannerView;
   GraphView m_view;
-  InteractiveCurveViewRange m_graphRange;
+  Shared::InteractiveCurveViewRange m_graphRange;
   InitialisationParameterController m_initialisationParameterController;
   CurveParameterController m_curveParameterController;
   FunctionStore * m_functionStore;

@@ -8,6 +8,8 @@
 #include "banner_view.h"
 #include <math.h>
 
+namespace Shared {
+
 class CurveView : public View {
 public:
   typedef void Model;
@@ -79,5 +81,7 @@ private:
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
 };
+
+}
 
 #endif

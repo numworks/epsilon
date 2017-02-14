@@ -2,9 +2,11 @@
 #include <assert.h>
 #include <math.h>
 
+using namespace Shared;
+
 namespace Regression {
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(store, cursor, bannerView, cursorView),
   m_store(store)
 {

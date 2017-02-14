@@ -5,6 +5,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin),
   HeaderViewDelegate(header),
@@ -115,4 +117,6 @@ int StoreController::numberOfElements() {
 
 int StoreController::maxNumberOfElements() const {
   return FloatPairStore::k_maxNumberOfPairs;
+}
+
 }

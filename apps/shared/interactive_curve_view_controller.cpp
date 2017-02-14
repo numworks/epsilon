@@ -5,6 +5,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
   HeaderViewDelegate(header),
@@ -152,4 +154,6 @@ Responder * InteractiveCurveViewController::tabController() const{
 
 StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
 }

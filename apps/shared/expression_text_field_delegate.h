@@ -4,6 +4,8 @@
 #include <escher.h>
 #include <poincare.h>
 
+namespace Shared {
+
 class ExpressionTextFieldDelegate : public TextFieldDelegate {
 public:
   virtual Poincare::Context * localContext() = 0;
@@ -12,5 +14,7 @@ public:
 private:
   bool cursorInToken(TextField * textField, const char * token);
 };
+
+}
 
 #endif

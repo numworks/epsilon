@@ -3,11 +3,12 @@
 #include <math.h>
 #include <float.h>
 using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 
 GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
+  CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
   m_context(nullptr),

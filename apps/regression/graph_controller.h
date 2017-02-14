@@ -11,7 +11,7 @@
 
 namespace Regression {
 
-class GraphController : public InteractiveCurveViewController {
+class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
   GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
@@ -26,8 +26,8 @@ private:
 
   constexpr static int k_maxNumberOfCharacters = 8;
   BannerView * bannerView() override;
-  CurveView * curveView() override;
-  InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::CurveView * curveView() override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   bool handleEnter() override;
   void reloadBannerView() override;
   void initRangeParameters() override;

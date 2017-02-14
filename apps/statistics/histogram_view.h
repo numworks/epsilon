@@ -8,9 +8,9 @@
 
 namespace Statistics {
 
-class HistogramView : public CurveView {
+class HistogramView : public Shared::CurveView {
 public:
-  HistogramView(Store * store, ::BannerView * bannerView);
+  HistogramView(Store * store, Shared::BannerView * bannerView);
   void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlight(float start, float end);

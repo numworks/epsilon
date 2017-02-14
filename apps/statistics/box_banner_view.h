@@ -6,7 +6,7 @@
 
 namespace Statistics {
 
-class BoxBannerView : public ::BannerView {
+class BoxBannerView : public Shared::BannerView {
 public:
   BoxBannerView();
 private:

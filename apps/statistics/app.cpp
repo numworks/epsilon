@@ -1,6 +1,8 @@
 #include "app.h"
 #include "stat_icon.h"
 
+using namespace Shared;
+
 namespace Statistics {
 
 App::App(Container * container) :

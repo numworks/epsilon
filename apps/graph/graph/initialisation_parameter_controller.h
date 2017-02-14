@@ -8,7 +8,7 @@ namespace Graph {
 
 class InitialisationParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange);
+  InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -22,7 +22,7 @@ private:
   constexpr static int k_totalNumberOfCells = 4;
   MenuListCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
-  InteractiveCurveViewRange * m_graphRange;
+  Shared::InteractiveCurveViewRange * m_graphRange;
 };
 
 }

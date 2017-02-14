@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Shared {
+
 void BannerView::setLegendAtIndex(char * text, int index) {
   /* The layout of the banner's subviews depends on their content.
    * Indeed, we're using a "centered text" algorithm to layout the subviews.
@@ -82,4 +84,6 @@ int BannerView::numberOfLines() {
     }
   }
   return lineNumber+1;
+}
+
 }

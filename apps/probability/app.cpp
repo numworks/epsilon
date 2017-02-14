@@ -1,6 +1,8 @@
 #include "app.h"
 #include "probability_icon.h"
 
+using namespace Shared;
+
 namespace Probability {
 
 App::App(Container * container) :

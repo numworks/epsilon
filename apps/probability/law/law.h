@@ -6,7 +6,7 @@
 
 namespace Probability {
 
-class Law : public CurveViewRange {
+class Law : public Shared::CurveViewRange {
 public:
   enum class Type : uint8_t{
     Binomial,

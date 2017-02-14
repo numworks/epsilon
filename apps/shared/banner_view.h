@@ -3,6 +3,8 @@
 
 #include <escher.h>
 
+namespace Shared {
+
 class BannerView : public View {
 public:
   void setLegendAtIndex(char * text, int index);
@@ -14,5 +16,7 @@ private:
   int numberOfLines();
   virtual TextView * textViewAtIndex(int i) = 0;
 };
+
+}
 
 #endif

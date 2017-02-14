@@ -7,7 +7,7 @@
 
 namespace Regression {
 
-class StoreController : public ::StoreController {
+class StoreController : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, HeaderViewController * header);
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;

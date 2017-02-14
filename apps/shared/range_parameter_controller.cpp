@@ -4,6 +4,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),
@@ -103,4 +105,6 @@ TableViewCell * RangeParameterController::reusableCell(int index) {
 
 int RangeParameterController::reusableCellCount() {
   return k_numberOfTextCell+1;
+}
+
 }

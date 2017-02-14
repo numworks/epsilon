@@ -9,6 +9,8 @@
 #include "range_parameter_controller.h"
 #include "zoom_parameter_controller.h"
 
+namespace Shared {
+
 class InteractiveCurveViewController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
 public:
   InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView);
@@ -55,5 +57,7 @@ private:
   Button m_defaultInitialisationButton;
   Poincare::Expression::DisplayMode m_displayModeVersion;
 };
+
+}
 
 #endif

@@ -6,10 +6,10 @@
 
 namespace Regression {
 
-class Store : public InteractiveCurveViewRange, public FloatPairStore, public InteractiveCurveViewRangeDelegate {
+class Store : public Shared::InteractiveCurveViewRange, public Shared::FloatPairStore, public Shared::InteractiveCurveViewRangeDelegate {
 public:
   Store();
-  bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  bool didChangeRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
   // Dots
   /* Return the closest dot to x above the regression curve if direction > 0,

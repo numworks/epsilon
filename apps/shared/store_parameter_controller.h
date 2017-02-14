@@ -4,6 +4,8 @@
 #include <escher.h>
 #include "float_pair_store.h"
 
+namespace Shared {
+
 class StoreParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   StoreParameterController(Responder * parentResponder, FloatPairStore * store);
@@ -25,5 +27,7 @@ private:
   FloatPairStore * m_store;
   bool m_xColumnSelected;
 };
+
+}
 
 #endif

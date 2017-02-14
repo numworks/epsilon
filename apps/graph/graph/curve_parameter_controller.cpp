@@ -1,6 +1,8 @@
 #include "curve_parameter_controller.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :

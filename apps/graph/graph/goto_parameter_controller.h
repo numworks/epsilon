@@ -8,9 +8,9 @@
 #include "../../shared/interactive_curve_view_range.h"
 
 namespace Graph {
-class GoToParameterController : public FloatParameterController {
+class GoToParameterController : public Shared::FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  GoToParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() const override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
@@ -22,8 +22,8 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_abscisseCell;
-  InteractiveCurveViewRange * m_graphRange;
-  CurveViewCursor * m_cursor;
+  Shared::InteractiveCurveViewRange * m_graphRange;
+  Shared::CurveViewCursor * m_cursor;
   Function * m_function;
 };
 

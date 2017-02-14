@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace Shared {
+
 class CurveViewRange {
 public:
   enum class Axis {
@@ -30,5 +32,7 @@ private:
   constexpr static float k_mediumGridUnitMantissa = 2.0f;
   constexpr static float k_largeGridUnitMantissa = 5.0f;
 };
+
+}
 
 #endif

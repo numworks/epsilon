@@ -3,6 +3,8 @@
 
 using namespace Poincare;
 
+namespace Shared {
+
 TextFieldDelegateApp::TextFieldDelegateApp(Container * container, ViewController * rootViewController, const char * name,
   const char * upperName, const Image * icon) :
   ::App(container, rootViewController, name, upperName, icon),
@@ -15,3 +17,4 @@ Context * TextFieldDelegateApp::localContext() {
   return appsContainer->globalContext();
 }
 
+}

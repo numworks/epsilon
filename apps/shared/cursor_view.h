@@ -3,10 +3,14 @@
 
 #include <escher.h>
 
+namespace Shared {
+
 class CursorView : public View {
 public:
   using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
+
+}
 
 #endif

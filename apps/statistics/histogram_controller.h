@@ -41,7 +41,7 @@ private:
   HistogramView m_view;
   Button m_settingButton;
   Store * m_store;
-  CurveViewCursor m_cursor;
+  Shared::CurveViewCursor m_cursor;
   uint32_t m_storeVersion;
   uint32_t m_barVersion;
   uint32_t m_rangeVersion;

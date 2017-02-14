@@ -4,6 +4,8 @@
 #include <escher.h>
 #include <poincare.h>
 
+namespace Shared {
+
 class EditableCellTableViewController : public ViewController, public TableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
   EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
@@ -31,5 +33,7 @@ private:
   virtual int numberOfElements() = 0;
   virtual int maxNumberOfElements() const = 0;
 };
+
+}
 
 #endif

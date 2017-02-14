@@ -6,7 +6,7 @@
 
 namespace Statistics {
 
-class Store : public MemoizedCurveViewRange, public FloatPairStore {
+class Store : public Shared::MemoizedCurveViewRange, public Shared::FloatPairStore {
 public:
   Store();
   uint32_t barChecksum();

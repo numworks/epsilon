@@ -2,6 +2,8 @@
 #include "app.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :

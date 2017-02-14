@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace Shared {
+
 class FloatPairStore {
 public:
   FloatPairStore();
@@ -22,5 +24,7 @@ protected:
   int m_numberOfPairs;
   float m_data[2][k_maxNumberOfPairs];
 };
+
+}
 
 #endif

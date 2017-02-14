@@ -6,7 +6,7 @@
 
 namespace Graph {
 
-class BannerView : public ::BannerView {
+class BannerView : public Shared::BannerView {
 public:
   BannerView();
   void setDisplayDerivative(bool displayDerivative);

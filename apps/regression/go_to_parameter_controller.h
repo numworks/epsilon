@@ -8,9 +8,9 @@
 
 namespace Regression {
 
-class GoToParameterController : public FloatParameterController {
+class GoToParameterController : public Shared::FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor);
+  GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   void setXPrediction(bool xPrediction);
   const char * title() const override;
   int numberOfRows() override;
@@ -24,7 +24,7 @@ private:
   char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
   EditableTextMenuListCell m_abscisseCell;
   Store * m_store;
-  CurveViewCursor * m_cursor;
+  Shared::CurveViewCursor * m_cursor;
   bool m_xPrediction;
 };
 

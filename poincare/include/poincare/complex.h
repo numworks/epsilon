@@ -12,7 +12,7 @@ public:
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
   void setNumberOfSignificantDigits(int numberOfDigits);
-  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
+  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
   float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
@@ -34,7 +34,7 @@ public:
    * is truncated at the end of the buffer.
    * ConvertFloat to Text return the number of characters that have been written
    * in buffer (excluding the last \O character) */
-  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, DisplayMode mode = DisplayMode::Scientific);
+  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Scientific);
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The wors case is -1.234E-38
     return numberOfSignificantDigits + 7;
@@ -50,8 +50,8 @@ private:
   constexpr static int k_maxComplexBufferLength = 13+13+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, DisplayMode displayMode) const;
-  static int convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, DisplayMode mode);
+  int convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode FloatDisplayMode) const;
+  static int convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode);
   /* This function prints the int i in the buffer with a '.' at the position
    * specified by the decimalMarkerPosition. It starts printing at the end of the
    * buffer and print from right to left. The integer given should be of the right

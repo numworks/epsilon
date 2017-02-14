@@ -23,7 +23,7 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
   m_store(store),
   m_cursor(CurveViewCursor()),
   m_histogramParameterController(nullptr, store),
-  m_displayModeVersion(Expression::DisplayMode::Auto)
+  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
 {
 }
 
@@ -33,11 +33,11 @@ const char * HistogramController::title() const {
 
 View * HistogramController::view() {
   AppsContainer * container = ((App *)app())->container();
-  Expression::DisplayMode displayMode = container->preferences()->displayMode();
-  if (displayMode != m_displayModeVersion) {
+  Expression::FloatDisplayMode FloatDisplayMode = container->preferences()->displayMode();
+  if (FloatDisplayMode != m_displayModeVersion) {
     reloadBannerView();
     m_view.reload();
-    m_displayModeVersion = displayMode;
+    m_displayModeVersion = FloatDisplayMode;
   }
   return &m_view;
 }

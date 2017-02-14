@@ -46,11 +46,11 @@ float Product::approximate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-ExpressionLayout * Product::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Product::createLayout(FloatDisplayMode FloatDisplayMode) const {
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = m_args[1]->createLayout(displayMode);
-  return new ProductLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(displayMode), m_args[0]->createLayout(displayMode));
+  childrenLayouts[1] = m_args[1]->createLayout(FloatDisplayMode);
+  return new ProductLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(FloatDisplayMode), m_args[0]->createLayout(FloatDisplayMode));
 }
 
 Expression * Product::evaluate(Context& context, AngleUnit angleUnit) const {

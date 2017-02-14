@@ -17,7 +17,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   int numberOfRows() override;
-  void willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Poincare::Expression::DisplayMode displayMode);
+  void willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Poincare::Expression::FloatDisplayMode FloatDisplayMode);
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

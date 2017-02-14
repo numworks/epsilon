@@ -15,11 +15,11 @@ Expression::Type Multiplication::type() const {
   return Expression::Type::Multiplication;
 }
 
-ExpressionLayout * Multiplication::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Multiplication::createLayout(FloatDisplayMode FloatDisplayMode) const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
-  children_layouts[0] = m_operands[0]->createLayout(displayMode);
+  children_layouts[0] = m_operands[0]->createLayout(FloatDisplayMode);
   children_layouts[1] = new StringLayout("*", 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(displayMode)) : m_operands[1]->createLayout(displayMode);
+  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(FloatDisplayMode)) : m_operands[1]->createLayout(FloatDisplayMode);
   return new HorizontalLayout(children_layouts, 3);
 }
 

@@ -28,7 +28,7 @@ ValuesController::ValuesController(Responder * parentResponder, FunctionStore * 
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
   }, this), KDText::FontSize::Small)),
-  m_displayModeVersion(Expression::DisplayMode::Auto)
+  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -41,10 +41,10 @@ const char * ValuesController::title() const {
 
 View * ValuesController::view() {
   App * graphApp = (App *)app();
-  Expression::DisplayMode displayMode = graphApp->container()->preferences()->displayMode();
-  if (displayMode != m_displayModeVersion) {
+  Expression::FloatDisplayMode FloatDisplayMode = graphApp->container()->preferences()->displayMode();
+  if (FloatDisplayMode != m_displayModeVersion) {
     m_selectableTableView.reloadData();
-    m_displayModeVersion = displayMode;
+    m_displayModeVersion = FloatDisplayMode;
   }
   return EditableCellTableViewController::view();
 }

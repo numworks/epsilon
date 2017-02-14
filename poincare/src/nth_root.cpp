@@ -33,8 +33,8 @@ float NthRoot::approximate(Context& context, AngleUnit angleUnit) const {
   return powf(m_args[0]->approximate(context, angleUnit), 1.0f/m_args[1]->approximate(context, angleUnit));
 }
 
-ExpressionLayout * NthRoot::createLayout(DisplayMode displayMode) const {
-  return new NthRootLayout(m_args[0]->createLayout(displayMode), m_args[1]->createLayout(displayMode));
+ExpressionLayout * NthRoot::createLayout(FloatDisplayMode FloatDisplayMode) const {
+  return new NthRootLayout(m_args[0]->createLayout(FloatDisplayMode), m_args[1]->createLayout(FloatDisplayMode));
 }
 
 Expression * NthRoot::evaluate(Context& context, AngleUnit angleUnit) const {

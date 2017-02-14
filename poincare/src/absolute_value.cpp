@@ -53,8 +53,8 @@ Expression * AbsoluteValue::evaluate(Context& context, AngleUnit angleUnit) cons
   return result;
 }
 
-ExpressionLayout * AbsoluteValue::createLayout(DisplayMode displayMode) const {
-  return new AbsoluteValueLayout(m_args[0]->createLayout(displayMode));
+ExpressionLayout * AbsoluteValue::createLayout(FloatDisplayMode FloatDisplayMode) const {
+  return new AbsoluteValueLayout(m_args[0]->createLayout(FloatDisplayMode));
 }
 
 }

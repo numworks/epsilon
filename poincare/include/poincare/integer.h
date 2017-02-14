@@ -33,7 +33,7 @@ class Integer : public LeafExpression {
     bool valueEquals(const Expression * e) const override;
 
     Expression * clone() const override;
-    virtual ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
+    virtual ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
     float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
     Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   private:

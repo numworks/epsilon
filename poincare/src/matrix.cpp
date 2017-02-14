@@ -43,10 +43,10 @@ Expression * Matrix::clone() const {
   return this->cloneWithDifferentOperands(m_matrixData->operands(), numberOfOperands(), true);
 }
 
-ExpressionLayout * Matrix::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Matrix::createLayout(FloatDisplayMode FloatDisplayMode) const {
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(numberOfOperands()*sizeof(ExpressionLayout *));
   for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(displayMode);
+    childrenLayouts[i] = operand(i)->createLayout(FloatDisplayMode);
   }
   return new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns());
 }

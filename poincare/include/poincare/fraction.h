@@ -8,7 +8,7 @@ namespace Poincare {
 class Fraction : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
 public:
-  ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
+  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
   float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,

@@ -69,7 +69,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Auto);
   m_calculationCell[index].setText(buffer);
 }
 
@@ -243,7 +243,7 @@ void CalculationController::updateTitle() {
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Auto);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';

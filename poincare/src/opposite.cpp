@@ -52,11 +52,11 @@ Expression * Opposite::evaluate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-ExpressionLayout * Opposite::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Opposite::createLayout(FloatDisplayMode FloatDisplayMode) const {
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(displayMode)) : m_operand->createLayout(displayMode);
+  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(FloatDisplayMode)) : m_operand->createLayout(FloatDisplayMode);
   return new HorizontalLayout(children_layouts, 2);
 }
 

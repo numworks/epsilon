@@ -20,8 +20,8 @@ public:
   Preferences();
   Poincare::Expression::AngleUnit angleUnit() const;
   void setAngleUnit(Poincare::Expression::AngleUnit angleUnit);
-  Poincare::Expression::DisplayMode displayMode() const;
-  void setDisplayMode(Poincare::Expression::DisplayMode displayMode);
+  Poincare::Expression::FloatDisplayMode displayMode() const;
+  void setDisplayMode(Poincare::Expression::FloatDisplayMode FloatDisplayMode);
   NumberType numberType() const;
   void setNumberType(NumberType numberType);
   ComplexFormat complexFormat() const;
@@ -30,7 +30,7 @@ public:
   void setLanguage(Language language);
 private:
   Poincare::Expression::AngleUnit m_angleUnit;
-  Poincare::Expression::DisplayMode m_displayMode;
+  Poincare::Expression::FloatDisplayMode m_displayMode;
   NumberType m_numberType;
   ComplexFormat m_complexFormat;
   Language m_language;

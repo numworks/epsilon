@@ -1,6 +1,7 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 }
 
 #include <poincare/multiplication.h>
@@ -31,16 +32,8 @@ Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands
   return new Multiplication(newOperands, cloneOperands);
 }
 
-Expression * Multiplication::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit)*a->approximate(context, angleUnit));
-  }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-}
-
-Expression * Multiplication::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  return evaluateOnMatrixAndFloat(m, a, context, angleUnit);
+Expression * Multiplication::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
+  return new Complex(c->a()*d->a()-c->b()*d->b(), c->b()*d->a() + c->a()*d->b());
 }
 
 Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
@@ -50,11 +43,25 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
   Expression * operands[m->numberOfRows() * n->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows(); i++) {
     for (int j = 0; j < n->numberOfColumns(); j++) {
-      float f = 0.0f;
+      float a = 0.0f;
+      float b = 0.0f;
       for (int k = 0; k < m->numberOfColumns(); k++) {
-        f += m->operand(i*m->numberOfColumns()+k)->approximate(context, angleUnit) * n->operand(k*n->numberOfColumns()+j)->approximate(context, angleUnit);
+        Expression * mEvaluation = m->operand(i*m->numberOfColumns()+k)->evaluate(context, angleUnit);
+        Expression * nEvaluation = n->operand(k*n->numberOfColumns()+j)->evaluate(context, angleUnit);
+        assert(mEvaluation->type() == Type::Matrix || mEvaluation->type() == Type::Complex);
+        assert(nEvaluation->type() == Type::Matrix || nEvaluation->type() == Type::Complex);
+        if (mEvaluation->type() == Type::Matrix ||nEvaluation->type() == Type::Matrix) {
+          operands[i] = new Complex(NAN);
+          delete mEvaluation;
+          delete nEvaluation;
+          continue;
+        }
+        a += ((Complex *)mEvaluation)->a()*((Complex *)nEvaluation)->a() - ((Complex *)mEvaluation)->b()*((Complex *)nEvaluation)->b();
+        b += ((Complex *)mEvaluation)->b()*((Complex *)nEvaluation)->a() + ((Complex *)mEvaluation)->a()*((Complex *)nEvaluation)->b();
+        delete mEvaluation;
+        delete nEvaluation;
       }
-      operands[i*n->numberOfColumns()+j] = new Float(f);
+      operands[i*n->numberOfColumns()+j] = new Complex(a, b);
     }
   }
   return new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);

@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 }
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -39,8 +40,8 @@ Expression * Opposite::evaluate(Context& context, AngleUnit angleUnit) const {
     return nullptr;
   }
   Expression * result = nullptr;
-  if (operandEvalutation->type() == Type::Float) {
-    result = new Float(this->approximate(context, angleUnit));
+  if (operandEvalutation->type() == Type::Complex) {
+    result = new Complex(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b());
   }
   if (operandEvalutation->type() == Type::Matrix) {
     result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
@@ -75,7 +76,15 @@ Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
 Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(- m->operand(i)->approximate(context, angleUnit));
+    Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
+    assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+    if (evaluation->type() == Type::Matrix) {
+      operands[i] = new Complex(NAN);
+      delete evaluation;
+      continue;
+    }
+    operands[i] = new Complex(-((Complex *)evaluation)->a(), -((Complex *)evaluation)->b());
+    delete evaluation;
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }

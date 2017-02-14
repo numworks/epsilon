@@ -1,6 +1,7 @@
 #include <poincare/square_root.h>
+#include <poincare/complex.h>
+#include <poincare/power.h>
 #include "layout/nth_root_layout.h"
-
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -30,4 +31,22 @@ float SquareRoot::approximate(Context& context, AngleUnit angleUnit) const {
 
 ExpressionLayout * SquareRoot::createLayout(DisplayMode displayMode) const {
   return new NthRootLayout(m_args[0]->createLayout(displayMode),nullptr);
+}
+
+Expression * SquareRoot::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
+  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
+  if (evaluation->type() == Type::Matrix) {
+    delete evaluation;
+    return new Complex(NAN);
+  }
+  Expression * operands[2];
+  operands[0] = evaluation;
+  operands[1] = new Complex(0.5f);
+  Expression * power = new Power(operands, true);
+  Expression * newResult = power->evaluate(context, angleUnit);
+  delete evaluation;
+  delete operands[1];
+  delete power;
+  return newResult;
 }

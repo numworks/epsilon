@@ -10,29 +10,6 @@ float Power::approximate(Context& context, AngleUnit angleUnit) const {
   return powf(m_operands[0]->approximate(context, angleUnit), m_operands[1]->approximate(context, angleUnit));
 }
 
-Expression * Power::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
-  if (m_operands[1]->type() != Expression::Type::Integer) {
-    return nullptr;
-  }
- if (m->numberOfColumns() != m->numberOfRows()) {
-    return nullptr;
-  }
-  // TODO: return identity matrix if i == 0
-  int power = a->approximate(context, angleUnit);
-  Expression * result = new Float(1);
-  for (int k = 0; k < power; k++) {
-    Expression * operands[2];
-    operands[0] = result;
-    operands[1] = m;
-    Expression * multiplication = new Multiplication(operands, true);
-    Expression * newResult = multiplication->evaluate(context, angleUnit);
-    delete result;
-    result = newResult;
-    delete multiplication;
-  }
-  return result;
-}
-
 Expression::Type Power::type() const {
   return Type::Power;
 }
@@ -50,4 +27,41 @@ ExpressionLayout * Power::createLayout(DisplayMode displayMode) const {
     indiceOperand = (Expression *)m_operands[1]->operand(0);
   }
   return new BaselineRelativeLayout(m_operands[0]->createLayout(displayMode),indiceOperand->createLayout(displayMode), BaselineRelativeLayout::Type::Superscript);
+}
+
+Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
+  /* Check that d is a reel number first */
+  //TODO: implement r^(1/n)*e^(i*Pi/n)
+  return new Complex(0.0f);
+}
+
+Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
+  if (m_operands[1]->type() != Expression::Type::Integer) {
+    return nullptr;
+  }
+ if (m->numberOfColumns() != m->numberOfRows()) {
+    return nullptr;
+  }
+  // TODO: return identity matrix if i == 0
+  int power = c->approximate(context, angleUnit);
+  Expression * result = new Complex(1);
+  for (int k = 0; k < power; k++) {
+    Expression * operands[2];
+    operands[0] = result;
+    operands[1] = m;
+    Expression * multiplication = new Multiplication(operands, true);
+    Expression * newResult = multiplication->evaluate(context, angleUnit);
+    delete result;
+    result = newResult;
+    delete multiplication;
+  }
+  return result;
+}
+
+Expression * Power::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
+  return nullptr;
+}
+
+Expression * Power::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
+  return nullptr;
 }

@@ -29,3 +29,5 @@ float Sine::approximate(Context& context, AngleUnit angleUnit) const {
   }
   return sinf(m_args[0]->approximate(context, angleUnit));
 }
+
+//TODO: implement evaluate to handle sin complex

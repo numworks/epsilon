@@ -2,8 +2,6 @@
 #define POINCARE_FRACTION_H
 
 #include <poincare/binary_operation.h>
-#include <poincare/float.h>
-#include <poincare/matrix.h>
 
 class Fraction : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
@@ -14,7 +12,8 @@ public:
   Expression * cloneWithDifferentOperands(Expression** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
 private:
-  Expression * evaluateOnMatrixAndFloat(Matrix * m, Float * f, Context& context, AngleUnit angleUnit) const override;
+  Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const override;
+  Expression * evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const override;
   Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const override;
 };
 

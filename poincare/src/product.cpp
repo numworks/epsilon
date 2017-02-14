@@ -1,6 +1,7 @@
 #include <poincare/product.h>
 #include <poincare/symbol.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
+#include <poincare/multiplication.h>
 #include <poincare/variable_context.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
@@ -8,6 +9,7 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 }
 
 Product::Product() :
@@ -35,7 +37,7 @@ float Product::approximate(Context& context, AngleUnit angleUnit) const {
   int end = m_args[2]->approximate(context, angleUnit);
   float result = 1.0f;
   for (int i = start; i <= end; i++) {
-    Float iExpression = Float(i);
+    Complex iExpression = Complex(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
     result = result*m_args[0]->approximate(nContext, angleUnit);
   }
@@ -47,4 +49,29 @@ ExpressionLayout * Product::createLayout(DisplayMode displayMode) const {
   childrenLayouts[0] = new StringLayout("n=", 2);
   childrenLayouts[1] = m_args[1]->createLayout(displayMode);
   return new ProductLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(displayMode), m_args[0]->createLayout(displayMode));
+}
+
+Expression * Product::evaluate(Context& context, AngleUnit angleUnit) const {
+  float start = m_args[1]->approximate(context, angleUnit);
+  float end = m_args[2]->approximate(context, angleUnit);
+  if (isnan(start) || isnan(end)) {
+    return new Complex(NAN);
+  }
+  VariableContext nContext = VariableContext('n', &context);
+  Symbol nSymbol = Symbol('n');
+  Expression * result = new Complex(1);
+  for (int i = (int)start; i <= (int)end; i++) {
+    Complex iExpression = Complex(i);
+    nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
+    Expression * operands[2];
+    operands[0] = result;
+    operands[1] = m_args[0]->evaluate(nContext, angleUnit);
+    Expression * multiplication = new Multiplication(operands, true);
+    Expression * newResult = multiplication->evaluate(context, angleUnit);
+    delete result;
+    delete operands[1];
+    result = newResult;
+    delete multiplication;
+  }
+  return result;
 }

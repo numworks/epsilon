@@ -21,8 +21,8 @@ public:
 private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
-  char m_xLabels[k_maxNumberOfXLabels][Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  char m_yLabels[k_maxNumberOfYLabels][Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_xLabels[k_maxNumberOfXLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_yLabels[k_maxNumberOfYLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   FunctionStore * m_functionStore;
   Context * m_context;
   Preferences * m_preferences;

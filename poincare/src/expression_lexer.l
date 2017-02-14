@@ -98,6 +98,7 @@ sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 \xa0 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \xa5 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+\x9d { return ICOMPLEX; }
 e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }

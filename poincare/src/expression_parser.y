@@ -47,9 +47,9 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <string> DIGITS
-%token <string> FLOAT
 %token <character> SYMBOL
 %token <function> FUNCTION
+%token <complex> ICOMPLEX
 
 /* Operator tokens */
 %token PLUS
@@ -112,12 +112,13 @@ mtxData:
 
 number:
   DIGITS { $$ = new Integer($1.address, false); }
-  | DIGITS DOT DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
-  | DIGITS DOT DIGITS EE DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Float($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
+  | DIGITS DOT DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
+  | DIGITS DOT DIGITS EE DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
 
 exp:
   number             { $$ = $1; }
+  | ICOMPLEX         { $$ = new Complex(0.0f, 1.0f); }
   | SYMBOL           { $$ = new Symbol($1); }
   | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, false); }
   | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }

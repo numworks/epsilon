@@ -1,6 +1,6 @@
 #include <poincare/integral.h>
 #include <poincare/symbol.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 #include <poincare/context.h>
 extern "C" {
 #include <assert.h>
@@ -34,6 +34,9 @@ float Integral::approximate(Context& context, AngleUnit angleUnit) const {
   VariableContext xContext = VariableContext('x', &context);
   float a = m_args[1]->approximate(context, angleUnit);
   float b = m_args[2]->approximate(context, angleUnit);
+  if (isnan(a) || isnan(b)) {
+    return NAN;
+  }
 #ifdef LAGRANGE_METHOD
   return lagrangeGaussQuadrature(a, b, xContext, angleUnit);
 #else
@@ -49,7 +52,7 @@ ExpressionLayout * Integral::createLayout(DisplayMode displayMode) const {
 }
 
 float Integral::functionValueAtAbscissa(float x, VariableContext xContext, AngleUnit angleUnit) const {
-  Float e = Float(x);
+  Complex e = Complex(x);
   Symbol xSymbol = Symbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   return m_args[0]->approximate(xContext, angleUnit);

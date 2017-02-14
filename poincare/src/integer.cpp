@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 #include "layout/string_layout.h"
 
 #define MAX(a,b) ((a)>(b)?a:b)
@@ -309,7 +309,7 @@ float Integer::approximate(Context& context, AngleUnit angleUnit) const {
 }
 
 Expression * Integer::evaluate(Context& context, AngleUnit angleUnit) const {
-  return new Float(approximate(context, angleUnit));
+  return new Complex(approximate(context, angleUnit));
 }
 
 Expression::Type Integer::type() const {

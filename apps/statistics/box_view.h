@@ -28,7 +28,7 @@ private:
   char * label(Axis axis, int index) const override;
   Store * m_store;
   BoxRange m_boxRange;
-  char m_labels[k_maxNumberOfXLabels][Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_labels[k_maxNumberOfXLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   Quantile m_selectedQuantile;
 };
 

@@ -1,3 +1,4 @@
+#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -5,13 +6,15 @@ extern "C" {
 #include <math.h>
 }
 #include "layout/string_layout.h"
-#include <poincare/float.h>
+#include <ion.h>
 
-Float::Float(float f) :
-  m_float(f),
+Complex::Complex(float a, float b) :
+  m_a(a),
+  m_b(b),
   m_numberOfSignificantDigits(7)
 {
 }
+
 
 static inline float setSign(float f, bool negative) {
   if (negative) {
@@ -34,79 +37,111 @@ float digitsToFloat(const char * digits, int length) {
   return result;
 }
 
-Float::Float(const char * integralPart, int integralPartLength, bool integralNegative,
+Complex::Complex(const char * integralPart, int integralPartLength, bool integralNegative,
     const char * fractionalPart, int fractionalPartLength,
     const char * exponent, int exponentLength, bool exponentNegative) {
   float i = digitsToFloat(integralPart, integralPartLength);
   float j = digitsToFloat(fractionalPart, fractionalPartLength);
   float l = setSign(digitsToFloat(exponent, exponentLength), exponentNegative);
 
-  m_float = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
+  m_a = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
+  m_b = 0.0f;
   m_numberOfSignificantDigits = 7;
 }
 
-void Float::setNumberOfSignificantDigits(int numberOfDigits) {
+void Complex::setNumberOfSignificantDigits(int numberOfDigits) {
   m_numberOfSignificantDigits = numberOfDigits;
 }
 
-Expression * Float::clone() const {
-  return new Float(m_float);
+Expression * Complex::clone() const {
+  return new Complex(m_a, m_b);
 }
 
-float Float::approximate(Context& context, AngleUnit angleUnit) const {
-  return m_float;
+float Complex::approximate(Context& context, AngleUnit angleUnit) const {
+  if (m_b == 0.0f) {
+    return m_a;
+  }
+  return NAN;
 }
 
-Expression * Float::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Complex::evaluate(Context& context, AngleUnit angleUnit) const {
   return clone();
 }
 
-Expression::Type Float::type() const {
-  return Type::Float;
+Expression::Type Complex::type() const {
+  return Type::Complex;
 }
 
-ExpressionLayout * Float::createLayout(DisplayMode displayMode) const {
-  char buffer[k_maxBufferLength];
-  convertFloatToText(buffer, k_maxBufferLength, m_numberOfSignificantDigits, displayMode);
-  int size = 0;
-  while (buffer[size] != 0) {
-    size++;
-  }
-  return new StringLayout(buffer, size);
+ExpressionLayout * Complex::createLayout(DisplayMode displayMode) const {
+  char buffer[k_maxComplexBufferLength];
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, displayMode);
+  return new StringLayout(buffer, numberOfChars);
 }
 
-bool Float::valueEquals(const Expression * e) const {
-  assert(e->type() == Expression::Type::Float);
-  return m_float == ((Float *)e)->m_float;
+int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
+  return convertComplexToText(buffer, bufferSize, DisplayMode::Auto);
 }
 
-int Float::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertFloatToText(buffer, bufferSize, m_numberOfSignificantDigits, DisplayMode::Auto);
+float Complex::a() {
+  return m_a;
 }
 
-int Float::convertFloatToText(char * buffer, int bufferSize,
-    int numberOfSignificantDigits, DisplayMode mode) const {
-  char tempBuffer[k_maxBufferLength];
-  int requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits, mode);
+float Complex::b() {
+  return m_b;
+}
+
+float Complex::absoluteValue() {
+  return sqrtf(m_a*m_a+m_b*m_b);
+}
+
+int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
+    int numberOfSignificantDigits, DisplayMode mode) {
+  char tempBuffer[k_maxFloatBufferLength];
+  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
   /* if the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. If the buffer size is still to small, we only write
    * the beginning of the float and truncate it (which can result in a non sense
    * text) */
   if (mode == DisplayMode::Auto && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits, DisplayMode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, DisplayMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, DisplayMode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, DisplayMode::Scientific);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
   strlcpy(buffer, tempBuffer, bufferSize);
   return requiredLength;
 }
 
-int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigits, DisplayMode mode) const {
-  if (isinf(m_float)) {
-    buffer[0] = m_float > 0 ? '+' : '-';
+int Complex::convertComplexToText(char * buffer, int bufferSize, DisplayMode displayMode) const {
+  int numberOfChars = 0;
+  if (m_a != 0.0f || m_b == 0.0f) {
+    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, m_numberOfSignificantDigits, displayMode);
+    if (m_b > 0.0f && bufferSize > numberOfChars+1) {
+      buffer[numberOfChars++] = '+';
+      // Ensure that the string is null terminated even if buffer size is to small
+      buffer[numberOfChars] = 0;
+    }
+  }
+  if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f) {
+    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, m_numberOfSignificantDigits, displayMode);
+    buffer[numberOfChars++] = '*';
+  }
+  if (m_b == -1.0f && bufferSize > numberOfChars+1) {
+    buffer[numberOfChars++] = '-';
+  }
+  if (m_b != 0.0f && bufferSize > numberOfChars+1) {
+    buffer[numberOfChars++] = Ion::Charset::SmallIota;
+    buffer[numberOfChars] = 0;
+  }
+  return numberOfChars;
+}
+
+
+int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, DisplayMode mode) {
+  if (isinf(f)) {
+    buffer[0] = f > 0 ? '+' : '-';
     buffer[1] = 'I';
     buffer[2] = 'n';
     buffer[3] = 'f';
@@ -114,7 +149,7 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
     return 5;
   }
 
-  if (isnan(m_float)) {
+  if (isnan(f)) {
     buffer[0] = 'N';
     buffer[1] = 'a';
     buffer[2] = 'N';
@@ -122,9 +157,9 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
     return 4;
   }
 
-  float logBase10 = m_float != 0.0f ? log10f(fabsf(m_float)) : 0;
+  float logBase10 = f != 0.0f ? log10f(fabsf(f)) : 0;
   int exponentInBase10 = logBase10;
-  if ((int)m_float == 0 && logBase10 != exponentInBase10) {
+  if ((int)f == 0 && logBase10 != exponentInBase10) {
     /* For floats < 0, the exponent in base 10 is the inferior integer part of
      * log10(float). We thus decrement the exponent for float < 0 whose exponent
      * is not an integer. */
@@ -141,7 +176,7 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
 
   // Number of char available for the mantissa
   int availableCharsForMantissaWithoutSign = numberOfSignificantDigits + 1;
-  int availableCharsForMantissaWithSign = m_float >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
+  int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
 
   // Compute mantissa
   /* The number of digits in an integer is capped because the maximal integer is
@@ -151,7 +186,7 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
   assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == DisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
-  int mantissa = roundf(m_float * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  int mantissa = roundf(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == DisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
   if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {
@@ -198,7 +233,7 @@ int Float::convertFloatToTextPrivate(char * buffer, int numberOfSignificantDigit
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
 }
 
-void Float::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
+void Complex::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
    * in first position. When called by convertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */

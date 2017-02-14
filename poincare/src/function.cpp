@@ -3,7 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/function.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
@@ -90,5 +90,6 @@ int Function::numberOfOperands() const {
 }
 
 Expression * Function::evaluate(Context& context, AngleUnit angleUnit) const {
-  return new Float(approximate(context, angleUnit));
+  /* Default function evaluation works for reel function */
+  return new Complex(approximate(context, angleUnit));
 }

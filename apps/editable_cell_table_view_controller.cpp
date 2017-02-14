@@ -69,7 +69,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     // Special case 1: last row
     if (j == numberOfRows() - 1) {
       /* Display an empty line only if there is enough space for a new element in
@@ -80,7 +80,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
         return;
       }
     }
-    Float(dataAtLocation(i, j)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
+    Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
     myEditableValueCell->setText(buffer);
     return;
   }

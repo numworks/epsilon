@@ -1,6 +1,6 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 
 extern "C" {
 #include <assert.h>
@@ -30,9 +30,14 @@ float Derivative::approximate(Context& context, AngleUnit angleUnit) const {
   VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
   float x = m_args[1]->approximate(context, angleUnit);
-  Float e = Float(x);
+  Complex e = Complex(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float functionValue = m_args[0]->approximate(xContext, angleUnit);
+
+  // No complex/matrix version of Derivative
+  if (isnan(x) || isnan(functionValue)) {
+    return NAN;
+  }
 
   /* Ridders' Algorithm
    * Blibliography:
@@ -87,7 +92,6 @@ float Derivative::approximate(Context& context, AngleUnit angleUnit) const {
       break;
     }
   }
-  err = powf(10.0f, (int)log10f(fabsf(err))+2.0f);
   /* if the error is too big regarding the value, do not return the answer */
   if (err/ans > k_maxErrorRateOnApproximation || isnan(err)) {
     return NAN;
@@ -95,15 +99,16 @@ float Derivative::approximate(Context& context, AngleUnit angleUnit) const {
   if (err < FLT_MIN) {
     return ans;
   }
+  err = powf(10.0f, (int)log10f(fabsf(err))+2.0f);
   return roundf(ans/err)*err;
 }
 
 float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
-  Float e = Float(x + h);
+  Complex e = Complex(x + h, 0.0f);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
-  e = Float(x-h);
+  e = Complex(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
@@ -111,13 +116,13 @@ float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xCo
 
 float Derivative::approximateDerivate2(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
-  Float e = Float(x + h);
+  Complex e = Complex(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
-  e = Float(x);
+  e = Complex(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expression = m_args[0]->approximate(xContext, angleUnit);
-  e = Float(x-h);
+  e = Complex(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return expressionPlus - 2.0f*expression + expressionMinus;

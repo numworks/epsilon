@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/matrix.h>
-#include <poincare/float.h>
 
 class Opposite : public Expression {
   public:

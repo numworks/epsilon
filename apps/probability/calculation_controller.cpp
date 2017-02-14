@@ -66,8 +66,8 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 }
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
-  char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Float(m_calculation->parameterAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
   m_calculationCell[index].setText(buffer);
 }
 
@@ -240,8 +240,8 @@ void CalculationController::updateTitle() {
     m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
-    char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Float(m_law->parameterValueAtIndex(index)).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';

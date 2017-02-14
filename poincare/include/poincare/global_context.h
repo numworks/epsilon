@@ -2,7 +2,7 @@
 #define POINCARE_GLOBAL_CONTEXT_H
 
 #include <poincare/context.h>
-#include <poincare/float.h>
+#include <poincare/complex.h>
 
 class Integer;
 
@@ -18,12 +18,12 @@ public:
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
-  static Float * defaultExpression();
+  static Complex * defaultExpression();
 private:
   int symbolIndex(const Symbol * symbol) const;
   Expression * m_expressions[k_maxNumberOfScalarExpressions];
-  Float m_pi;
-  Float m_e;
+  Complex m_pi;
+  Complex m_e;
 };
 
 #endif

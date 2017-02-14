@@ -167,7 +167,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
     return;
   }
   // The cell is not a title cell
-  char buffer[Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   // Special case: last row
   if (j == numberOfRows() - 1) {
     int numberOfIntervalElements = m_interval.numberOfElements();
@@ -184,9 +184,9 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   App * graphApp = (Graph::App *)app();
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext(), myContainer->preferences()->angleUnit())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext(), myContainer->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
   } else {
-    Float(function->evaluateAtAbscissa(x, graphApp->localContext(), myContainer->preferences()->angleUnit())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Complex::convertFloatToText(function->evaluateAtAbscissa(x, graphApp->localContext(), myContainer->preferences()->angleUnit()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
   }
   myValueCell->setText(buffer);
 }

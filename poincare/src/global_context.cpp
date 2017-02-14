@@ -4,16 +4,16 @@
 #include <ion.h>
 
 GlobalContext::GlobalContext() :
-  m_pi(Float(M_PI)),
-  m_e(Float(M_E))
+  m_pi(Complex(M_PI)),
+  m_e(Complex(M_E))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
   }
 }
 
-Float * GlobalContext::defaultExpression() {
-  static Float * defaultExpression = new Float(0);
+Complex * GlobalContext::defaultExpression() {
+  static Complex * defaultExpression = new Complex(0.0f);
   return defaultExpression;
 }
 
@@ -41,6 +41,6 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 
 void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   int index = symbolIndex(symbol);
-  assert(expression->type() == Expression::Type::Float);
+  assert(expression->type() == Expression::Type::Complex);
   m_expressions[index] = expression;
 }

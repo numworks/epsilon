@@ -29,3 +29,5 @@ float Cosine::approximate(Context& context, AngleUnit angleUnit) const {
   }
   return cosf(m_args[0]->approximate(context, angleUnit));
 }
+
+//TODO: implement evaluate to handle cos complex

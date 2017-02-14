@@ -23,6 +23,9 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float Cosine::approximate(Context& context) const {
-  return cosf(m_args[0]->approximate(context));
+float Cosine::approximate(Context& context, AngleUnit angleUnit) const {
+  if (angleUnit == AngleUnit::Degree) {
+    return cosf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
+  }
+  return cosf(m_args[0]->approximate(context, angleUnit));
 }

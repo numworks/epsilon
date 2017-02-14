@@ -257,7 +257,7 @@ Expression * Integer::clone() const {
   return clone;
 }
 
-float Integer::approximate(Context& context) const {
+float Integer::approximate(Context& context, AngleUnit angleUnit) const {
   union {
     uint32_t uint_result;
     float float_result;
@@ -308,8 +308,8 @@ float Integer::approximate(Context& context) const {
   return float_result;
 }
 
-Expression * Integer::evaluate(Context& context) const {
-  return new Float(approximate(context));
+Expression * Integer::evaluate(Context& context, AngleUnit angleUnit) const {
+  return new Float(approximate(context, angleUnit));
 }
 
 Expression::Type Integer::type() const {

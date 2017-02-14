@@ -41,5 +41,6 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 
 void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   int index = symbolIndex(symbol);
+  assert(expression->type() == Expression::Type::Float);
   m_expressions[index] = expression;
 }

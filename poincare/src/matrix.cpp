@@ -49,14 +49,14 @@ ExpressionLayout * Matrix::createLayout(DisplayMode displayMode) const {
   return new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns());
 }
 
-float Matrix::approximate(Context& context) const {
+float Matrix::approximate(Context& context, AngleUnit angleUnit) const {
   return NAN;
 }
 
-Expression * Matrix::evaluate(Context& context) const {
+Expression * Matrix::evaluate(Context& context, AngleUnit angleUnit) const {
   Expression * operands[numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    operands[i] = new Float(operand(i)->approximate(context));
+    operands[i] = new Float(operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
 }

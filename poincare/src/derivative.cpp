@@ -26,13 +26,13 @@ Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
   return d;
 }
 
-float Derivative::approximate(Context& context) const {
+float Derivative::approximate(Context& context, AngleUnit angleUnit) const {
   VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
-  float x = m_args[1]->approximate(context);
+  float x = m_args[1]->approximate(context, angleUnit);
   Float e = Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float functionValue = m_args[0]->approximate(xContext);
+  float functionValue = m_args[0]->approximate(xContext, angleUnit);
 
   /* Ridders' Algorithm
    * Blibliography:
@@ -43,7 +43,7 @@ float Derivative::approximate(Context& context) const {
 
   // Initiate hh
   float h = fabsf(x) < FLT_MIN ? k_minInitialRate : x/1000.0f;
-  float f2 = approximateDerivate2(x, h, xContext);
+  float f2 = approximateDerivate2(x, h, xContext, angleUnit);
   f2 = fabsf(f2) < FLT_MIN ? k_minInitialRate : f2;
   float hh = sqrtf(fabsf(functionValue/(f2/(powf(h,2.0f)))))/10.0f;
   hh = fabsf(hh) <FLT_MIN ? k_minInitialRate : hh;
@@ -58,7 +58,7 @@ float Derivative::approximate(Context& context) const {
       a[i][j] = 1.0f;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, xContext);
+  a[0][0] = growthRateAroundAbscissa(x, hh, xContext, angleUnit);
   float err = FLT_MAX;
   float ans = 0.0f;
   float errt = 0.0f;
@@ -68,7 +68,7 @@ float Derivative::approximate(Context& context) const {
     /* Make hh an exactly representable number */
     volatile float temp =  x+hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, xContext);
+    a[0][i] = growthRateAroundAbscissa(x, hh, xContext, angleUnit);
     float fac = k_rateStepSize*k_rateStepSize;
     /* Loop on j: compute extrapolation for several orders */
     for (int j = 1; j < 10; j++) {
@@ -98,27 +98,27 @@ float Derivative::approximate(Context& context) const {
   return roundf(ans/err)*err;
 }
 
-float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext) const {
+float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
   Float e = Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionPlus = m_args[0]->approximate(xContext);
+  float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
   e = Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionMinus = m_args[0]->approximate(xContext);
+  float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
-float Derivative::approximateDerivate2(float x, float h, VariableContext xContext) const {
+float Derivative::approximateDerivate2(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
   Float e = Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionPlus = m_args[0]->approximate(xContext);
+  float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
   e = Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expression = m_args[0]->approximate(xContext);
+  float expression = m_args[0]->approximate(xContext, angleUnit);
   e = Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionMinus = m_args[0]->approximate(xContext);
+  float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
   return expressionPlus - 2.0f*expression + expressionMinus;
 }

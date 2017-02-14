@@ -15,8 +15,8 @@ Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Subtraction(newOperands, cloneOperands);
 }
 
-float Subtraction::approximate(Context& context) const {
-  return m_operands[0]->approximate(context) - m_operands[1]->approximate(context);
+float Subtraction::approximate(Context& context, AngleUnit angleUnit) const {
+  return m_operands[0]->approximate(context, angleUnit) - m_operands[1]->approximate(context, angleUnit);
 }
 
 Expression::Type Subtraction::type() const {
@@ -32,32 +32,32 @@ ExpressionLayout * Subtraction::createLayout(DisplayMode displayMode) const {
   return new HorizontalLayout(children_layouts, 3);
 }
 
-Expression * Subtraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Subtraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context) - a->approximate(context));
+    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) - a->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Subtraction::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
+Expression * Subtraction::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(a->approximate(context) - m->operand(i)->approximate(context));
+    operands[i] = new Float(a->approximate(context, angleUnit) - m->operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Subtraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Subtraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
     return nullptr;
   }
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    if (!m->operand(i)->approximate(context) || !n->operand(i)->approximate(context)) {
+    if (!m->operand(i)->approximate(context, angleUnit) || !n->operand(i)->approximate(context, angleUnit)) {
       return nullptr;
     }
-    operands[i] = new Float(m->operand(i)->approximate(context) - n->operand(i)->approximate(context));
+    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) - n->operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }

@@ -89,6 +89,6 @@ int Function::numberOfOperands() const {
   return m_numberOfArguments;
 }
 
-Expression * Function::evaluate(Context& context) const {
-  return new Float(approximate(context));
+Expression * Function::evaluate(Context& context, AngleUnit angleUnit) const {
+  return new Float(approximate(context, angleUnit));
 }

@@ -37,6 +37,10 @@ class Expression {
       Auto = 0,
       Scientific = 1
     };
+    enum class AngleUnit {
+      Degree = 0,
+      Radian = 1
+    };
     static Expression * parse(char const * string);
     virtual ~Expression();
 
@@ -80,8 +84,8 @@ class Expression {
     virtual bool isCommutative() const;
     /* The function evaluate creates a new expression and thus mallocs memory.
      * Do not forget to delete the new expression to avoid leaking. */
-    virtual Expression * evaluate(Context& context) const = 0;
-    virtual float approximate(Context& context) const = 0;
+    virtual Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const = 0;
+    virtual float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const = 0;
     virtual int writeTextInBuffer(char * buffer, int bufferSize);
   private:
     bool sequentialOperandsIdentity(const Expression * e) const;

@@ -17,25 +17,25 @@ ExpressionLayout * Fraction::createLayout(DisplayMode displayMode) const {
   return new FractionLayout(m_operands[0]->createLayout(displayMode), m_operands[1]->createLayout(displayMode));
 }
 
-float Fraction::approximate(Context& context) const {
+float Fraction::approximate(Context& context, AngleUnit angleUnit) const {
   // TODO: handle division by zero
-  return m_operands[0]->approximate(context)/m_operands[1]->approximate(context);
+  return m_operands[0]->approximate(context, angleUnit)/m_operands[1]->approximate(context, angleUnit);
 }
 
 Expression::Type Fraction::type() const {
   return Type::Fraction;
 }
 
-Expression * Fraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Fraction::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context)/a->approximate(context));
+    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit)/a->approximate(context, angleUnit));
   }
   Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
   return result;
 }
 
-Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }

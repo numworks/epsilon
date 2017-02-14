@@ -10,8 +10,8 @@ public:
     };
     Symbol(char name);
     ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
-    float approximate(Context& context) const override;
-    Expression * evaluate(Context& context) const override;
+    float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
+    Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
     Type type() const override;
     const char name() const;
     Expression * clone() const override;

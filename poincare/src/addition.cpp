@@ -45,20 +45,20 @@ Expression::Type Addition::type() const {
   return Type::Addition;
 }
 
-float Addition::approximate(Context& context) const {
-  float result = m_operands[0]->approximate(context);
+float Addition::approximate(Context& context, AngleUnit angleUnit) const {
+  float result = m_operands[0]->approximate(context, angleUnit);
   for (int i=1; i<m_numberOfOperands; i++) {
-    float next = m_operands[i]->approximate(context);
+    float next = m_operands[i]->approximate(context, angleUnit);
     result = this->operateApproximatevelyOn(result, next);
   }
   return result;
 }
 
-Expression * Addition::evaluate(Context& context) const {
-  Expression * result = m_operands[0]->evaluate(context);
+Expression * Addition::evaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * result = m_operands[0]->evaluate(context, angleUnit);
   for (int i=1; i<m_numberOfOperands; i++) {
-    Expression * next = m_operands[i]->evaluate(context);
-    Expression * newResult = this->evaluateOn(result, next, context);
+    Expression * next = m_operands[i]->evaluate(context, angleUnit);
+    Expression * newResult = this->evaluateOn(result, next, context, angleUnit);
     delete result;
     result = newResult;
     delete next;
@@ -95,7 +95,7 @@ float Addition::operateApproximatevelyOn(float a, float b) const {
   return a + b;
 }
 
-Expression * Addition::evaluateOn(Expression * a, Expression * b, Context& context) const {
+Expression * Addition::evaluateOn(Expression * a, Expression * b, Context& context, AngleUnit angleUnit) const {
   if (a == nullptr || b == nullptr) {
     return nullptr;
   }
@@ -103,35 +103,35 @@ Expression * Addition::evaluateOn(Expression * a, Expression * b, Context& conte
   assert(b->type() == Type::Float || b->type() == Type::Matrix);
   Expression * result = nullptr;
   if (a->type() == Type::Float && b->type() == Type::Float) {
-    result = new Float(a->approximate(context) + b->approximate(context));
+    result = new Float(a->approximate(context, angleUnit) + b->approximate(context, angleUnit));
   }
   if (a->type() == Type::Float && b->type() == Type::Matrix) {
-    result = evaluateOnFloatAndMatrix((Float *)a, (Matrix *)b, context);
+    result = evaluateOnFloatAndMatrix((Float *)a, (Matrix *)b, context, angleUnit);
   }
   if (b->type() == Type::Float && a->type() == Type::Matrix) {
-    result = evaluateOnFloatAndMatrix((Float *)b, (Matrix *)a, context);
+    result = evaluateOnFloatAndMatrix((Float *)b, (Matrix *)a, context, angleUnit);
   }
   if (b->type() == Type::Matrix && a->type() == Type::Matrix) {
-    result = evaluateOnMatrices((Matrix *)a, (Matrix *)b, context);
+    result = evaluateOnMatrices((Matrix *)a, (Matrix *)b, context, angleUnit);
   }
   return result;
 }
 
-Expression * Addition::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context) const {
+Expression * Addition::evaluateOnFloatAndMatrix(Float * a, Matrix * m, Context& context, AngleUnit angleUnit) const {
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(a->approximate(context) + m->operand(i)->approximate(context));
+    operands[i] = new Float(a->approximate(context, angleUnit) + m->operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }
 
-Expression * Addition::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const {
+Expression * Addition::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
     return nullptr;
   }
   Expression * operands[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    operands[i] = new Float(m->operand(i)->approximate(context) + n->operand(i)->approximate(context));
+    operands[i] = new Float(m->operand(i)->approximate(context, angleUnit) + n->operand(i)->approximate(context, angleUnit));
   }
   return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
 }

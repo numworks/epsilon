@@ -32,8 +32,8 @@ class Integer : public LeafExpression {
 
     Expression * clone() const override;
     virtual ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
-    float approximate(Context& context) const override;
-    Expression * evaluate(Context& context) const override;
+    float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
+    Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   private:
     Integer add(const Integer &other, bool inverse_other_negative) const;
     int8_t ucmp(const Integer &other) const; // -1, 0, or 1

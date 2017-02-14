@@ -12,12 +12,12 @@ class BinaryOperation : public Expression {
     const Expression * operand(int i) const override;
     int numberOfOperands() const override;
     Expression * clone() const override;
-    Expression * evaluate(Context& context) const override;
+    Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   protected:
     Expression * m_operands[2];
-    virtual Expression * evaluateOnMatrixAndFloat(Matrix * m, Float * f, Context& context) const;
-    virtual Expression * evaluateOnFloatAndMatrix(Float * f, Matrix * m, Context& context) const;
-    virtual Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context) const;
+    virtual Expression * evaluateOnMatrixAndFloat(Matrix * m, Float * f, Context& context, AngleUnit angleUnit) const;
+    virtual Expression * evaluateOnFloatAndMatrix(Float * f, Matrix * m, Context& context, AngleUnit angleUnit) const;
+    virtual Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const;
 };
 
 #endif

@@ -28,16 +28,16 @@ Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-float Sum::approximate(Context& context) const {
+float Sum::approximate(Context& context, AngleUnit angleUnit) const {
   VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
-  int start = m_args[1]->approximate(context);
-  int end = m_args[2]->approximate(context);
+  int start = m_args[1]->approximate(context, angleUnit);
+  int end = m_args[2]->approximate(context, angleUnit);
   float result = 0.0f;
   for (int i = start; i <= end; i++) {
     Float iExpression = Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
-    result += m_args[0]->approximate(nContext);
+    result += m_args[0]->approximate(nContext, angleUnit);
   }
   return result;
 }

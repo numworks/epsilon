@@ -11,16 +11,16 @@ Symbol::Symbol(char name) :
 {
 }
 
-float Symbol::approximate(Context& context) const {
+float Symbol::approximate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this)) {
-    return context.expressionForSymbol(this)->approximate(context);
+    return context.expressionForSymbol(this)->approximate(context, angleUnit);
   }
   // TODO: decide with Leo what we should return
   return NAN;
 }
 
-Expression * Symbol::evaluate(Context& context) const {
-  return context.expressionForSymbol(this)->evaluate(context);
+Expression * Symbol::evaluate(Context& context, AngleUnit angleUnit) const {
+  return context.expressionForSymbol(this)->evaluate(context, angleUnit);
 }
 
 Expression::Type Symbol::type() const {

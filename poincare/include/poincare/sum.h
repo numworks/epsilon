@@ -6,7 +6,7 @@
 class Sum : public Function {
 public:
   Sum();
-  float approximate(Context & context) const override;
+  float approximate(Context & context, AngleUnit angleUnit) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;

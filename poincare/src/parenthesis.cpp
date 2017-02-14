@@ -35,12 +35,12 @@ ExpressionLayout * Parenthesis::createLayout(DisplayMode displayMode) const {
   return new ParenthesisLayout(m_operand->createLayout(displayMode));
 }
 
-float Parenthesis::approximate(Context& context) const {
-  return m_operand->approximate(context);
+float Parenthesis::approximate(Context& context, AngleUnit angleUnit) const {
+  return m_operand->approximate(context, angleUnit);
 }
 
-Expression * Parenthesis::evaluate(Context& context) const {
-  return m_operand->evaluate(context);
+Expression * Parenthesis::evaluate(Context& context, AngleUnit angleUnit) const {
+  return m_operand->evaluate(context, angleUnit);
 }
 
 Expression::Type Parenthesis::type() const {

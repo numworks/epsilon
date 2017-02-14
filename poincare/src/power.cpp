@@ -6,11 +6,11 @@ extern "C" {
 #include <poincare/multiplication.h>
 #include "layout/baseline_relative_layout.h"
 
-float Power::approximate(Context& context) const {
-  return powf(m_operands[0]->approximate(context), m_operands[1]->approximate(context));
+float Power::approximate(Context& context, AngleUnit angleUnit) const {
+  return powf(m_operands[0]->approximate(context, angleUnit), m_operands[1]->approximate(context, angleUnit));
 }
 
-Expression * Power::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context) const {
+Expression * Power::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& context, AngleUnit angleUnit) const {
   if (m_operands[1]->type() != Expression::Type::Integer) {
     return nullptr;
   }
@@ -18,14 +18,14 @@ Expression * Power::evaluateOnMatrixAndFloat(Matrix * m, Float * a, Context& con
     return nullptr;
   }
   // TODO: return identity matrix if i == 0
-  int power = a->approximate(context);
+  int power = a->approximate(context, angleUnit);
   Expression * result = new Float(1);
   for (int k = 0; k < power; k++) {
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m;
     Expression * multiplication = new Multiplication(operands, true);
-    Expression * newResult = multiplication->evaluate(context);
+    Expression * newResult = multiplication->evaluate(context, angleUnit);
     delete result;
     result = newResult;
     delete multiplication;

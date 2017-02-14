@@ -6,7 +6,7 @@
 class NthRoot : public Function {
 public:
   NthRoot();
-  float approximate(Context & context) const override;
+  float approximate(Context & context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

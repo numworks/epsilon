@@ -1,8 +1,8 @@
 #include "function_store.h"
 extern "C" {
 #include <assert.h>
-}
 #include <stddef.h>
+}
 #include <ion.h>
 
 namespace Graph {
@@ -12,7 +12,7 @@ constexpr KDColor FunctionStore::k_defaultColors[k_numberOfDefaultColors];
 constexpr const char * FunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
 FunctionStore::FunctionStore() :
-  m_numberOfFunctions(0)
+  Shared::FunctionStore()
 {
   addEmptyFunction();
 }
@@ -29,34 +29,13 @@ Function * FunctionStore::functionAtIndex(int i) {
 }
 
 Function * FunctionStore::activeFunctionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfFunctions);
-  int index = 0;
-  for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (m_functions[k].isActive() && m_functions[k].layout() != nullptr) {
-      if (i == index) {
-        return &m_functions[k];
-      }
-      index++;
-    }
-  }
-  assert(false);
-  return nullptr;
+  return (Function *)Shared::FunctionStore::activeFunctionAtIndex(i);
 }
 
 Function * FunctionStore::definedFunctionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfFunctions);
-  int index = 0;
-  for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (m_functions[k].layout() != nullptr) {
-      if (i == index) {
-        return &m_functions[k];
-      }
-      index++;
-    }
-  }
-  assert(false);
-  return nullptr;
+  return (Function *)Shared::FunctionStore::definedFunctionAtIndex(i);
 }
+
 
 Function * FunctionStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
@@ -69,7 +48,7 @@ Function * FunctionStore::addEmptyFunction() {
   return result;
 }
 
-void FunctionStore::removeFunction(Function * f) {
+void FunctionStore::removeFunction(Shared::Function * f) {
   int i = 0;
   while (&m_functions[i] != f && i < m_numberOfFunctions) {
     i++;
@@ -79,30 +58,6 @@ void FunctionStore::removeFunction(Function * f) {
   for (int j = i; j<m_numberOfFunctions; j++) {
     m_functions[j] = m_functions[j+1];
   }
-}
-
-int FunctionStore::numberOfFunctions() {
-  return m_numberOfFunctions;
-}
-
-int FunctionStore::numberOfActiveFunctions() {
-  int result = 0;
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (m_functions[i].layout() != nullptr && m_functions[i].isActive()) {
-      result++;
-    }
-  }
-  return result;
-}
-
-int FunctionStore::numberOfDefinedFunctions() {
-  int result = 0;
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (m_functions[i].layout() != nullptr) {
-      result++;
-    }
-  }
-  return result;
 }
 
 const char *  FunctionStore::firstAvailableName() {

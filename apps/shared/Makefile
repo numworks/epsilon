@@ -8,6 +8,8 @@ app_objs += $(addprefix apps/shared/,\
   expression_text_field_delegate.o\
   float_pair_store.o\
   float_parameter_controller.o\
+  function.o\
+  function_store.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
   memoized_curve_view_range.o\

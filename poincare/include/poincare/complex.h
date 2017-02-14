@@ -11,7 +11,6 @@ public:
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
-  void setNumberOfSignificantDigits(int numberOfDigits);
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) override;
@@ -37,6 +36,7 @@ public:
     return numberOfSignificantDigits + 7;
   }
 private:
+  constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
@@ -62,7 +62,6 @@ private:
   static void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int i, int decimalMarkerPosition);
   float m_a;
   float m_b;
-  int m_numberOfSignificantDigits;
 };
 
 }

@@ -14,8 +14,7 @@ namespace Poincare {
 
 Complex::Complex(float a, float b, bool polar) :
   m_a(a),
-  m_b(b),
-  m_numberOfSignificantDigits(7)
+  m_b(b)
 {
   if (polar) {
     m_a = a * cosf(b);
@@ -53,11 +52,6 @@ Complex::Complex(const char * integralPart, int integralPartLength, bool integra
 
   m_a = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
   m_b = 0.0f;
-  m_numberOfSignificantDigits = 7;
-}
-
-void Complex::setNumberOfSignificantDigits(int numberOfDigits) {
-  m_numberOfSignificantDigits = numberOfDigits;
 }
 
 Expression * Complex::clone() const {
@@ -146,7 +140,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
   assert(displayMode != FloatDisplayMode::Default);
   int numberOfChars = 0;
   if (m_a != 0.0f || m_b == 0.0f) {
-    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, m_numberOfSignificantDigits, displayMode);
+    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
     if (m_b > 0.0f && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
@@ -154,7 +148,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
     }
   }
   if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f) {
-    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, m_numberOfSignificantDigits, displayMode);
+    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = '*';
   }
   if (m_b == -1.0f && bufferSize > numberOfChars+1) {

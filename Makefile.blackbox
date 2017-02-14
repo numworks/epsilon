@@ -3,6 +3,7 @@ CXX=clang++
 LD=clang++
 SIZE=size
 
-LDFLAGS =
+SFLAGS += -DLOG_DYNAMIC_MEMORY
 
 USE_LIBA=1
+EXE=elf

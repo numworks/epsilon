@@ -1,4 +1,13 @@
 objs += $(addprefix ion/src/blackbox/, boot.o ion.o)
+objs += $(addprefix ion/src/shared/, \
+  crc32.o \
+  events.o \
+  events_from_keyboard.o \
+  log.o \
+  power.o \
+)
+
+ion/src/shared/log.o: SFLAGS=-Iion/include
 #objs += $(addprefix ion/src/simulator/boot/, main.o)
 #objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
 #objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)

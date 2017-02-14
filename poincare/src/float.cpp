@@ -81,7 +81,7 @@ bool Float::valueEquals(const Expression * e) const {
 }
 
 int Float::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertFloatToText(buffer, bufferSize, m_numberOfSignificantDigits);
+  return convertFloatToText(buffer, bufferSize, m_numberOfSignificantDigits, DisplayMode::Auto);
 }
 
 int Float::convertFloatToText(char * buffer, int bufferSize,

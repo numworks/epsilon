@@ -5,10 +5,12 @@
 
 namespace Graph {
 
-GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
+GraphView::GraphView(FunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
+  CurveViewCursor * cursor, ::BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
-  m_context(nullptr)
+  m_context(nullptr),
+  m_preferences(nullptr)
 {
 }
 
@@ -29,6 +31,10 @@ void GraphView::setContext(Context * context) {
   m_context = context;
 }
 
+void GraphView::setPreferences(Preferences * preferences) {
+  m_preferences = preferences;
+}
+
 Context * GraphView::context() const {
   return m_context;
 }
@@ -39,7 +45,7 @@ char * GraphView::label(Axis axis, int index) const {
 
 float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {
   Function * f = (Function *)curve;
-  return f->evaluateAtAbscissa(abscissa, m_context);
+  return f->evaluateAtAbscissa(abscissa, m_context, m_preferences->angleUnit());
 }
 
 }

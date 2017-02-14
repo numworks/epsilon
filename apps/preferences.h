@@ -5,10 +5,6 @@
 
 class Preferences {
 public:
-  enum class AngleUnit {
-    Degree = 0,
-    Radian = 1
-  };
   enum class NumberType {
     Reel = 0,
     Complex = 1
@@ -22,8 +18,8 @@ public:
     English = 1
   };
   Preferences();
-  AngleUnit angleUnit() const;
-  void setAngleUnit(AngleUnit angleUnit);
+  Expression::AngleUnit angleUnit() const;
+  void setAngleUnit(Expression::AngleUnit angleUnit);
   Expression::DisplayMode displayMode() const;
   void setDisplayMode(Expression::DisplayMode displayMode);
   NumberType numberType() const;
@@ -33,7 +29,7 @@ public:
   Language language() const;
   void setLanguage(Language language);
 private:
-  AngleUnit m_angleUnit;
+  Expression::AngleUnit m_angleUnit;
   Expression::DisplayMode m_displayMode;
   NumberType m_numberType;
   ComplexFormat m_complexFormat;

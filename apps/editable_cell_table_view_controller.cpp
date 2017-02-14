@@ -23,7 +23,7 @@ bool EditableCellTableViewController::textFieldDidReceiveEvent(TextField * textF
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();

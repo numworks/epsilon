@@ -184,9 +184,9 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   App * graphApp = (Graph::App *)app();
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
-    Float(function->approximateDerivative(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Float(function->approximateDerivative(x, graphApp->localContext(), myContainer->preferences()->angleUnit())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
   } else {
-    Float(function->evaluateAtAbscissa(x, graphApp->localContext())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
+    Float(function->evaluateAtAbscissa(x, graphApp->localContext(), myContainer->preferences()->angleUnit())).convertFloatToText(buffer, Float::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, myContainer->preferences()->displayMode());
   }
   myValueCell->setText(buffer);
 }

@@ -1,7 +1,7 @@
 #include "preferences.h"
 
 Preferences::Preferences() :
-  m_angleUnit(AngleUnit::Degree),
+  m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::DisplayMode::Auto),
   m_numberType(NumberType::Reel),
   m_complexFormat(ComplexFormat::Algebric),
@@ -9,11 +9,11 @@ Preferences::Preferences() :
 {
 }
 
-Preferences::AngleUnit Preferences::angleUnit() const {
+Expression::AngleUnit Preferences::angleUnit() const {
   return m_angleUnit;
 }
 
-void Preferences::setAngleUnit(AngleUnit angleUnit) {
+void Preferences::setAngleUnit(Expression::AngleUnit angleUnit) {
   if (angleUnit != m_angleUnit) {
     m_angleUnit = angleUnit;
   }

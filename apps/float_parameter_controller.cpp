@@ -34,7 +34,7 @@ void FloatParameterController::willDisplayCellForIndex(TableViewCell * cell, int
 bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = (AppsContainer *)app()->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
   setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
     m_selectableTableView.selectedRow()), activeCell());

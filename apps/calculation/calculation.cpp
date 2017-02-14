@@ -59,7 +59,7 @@ void Calculation::setContent(const char * c, Context * context, Preferences * pr
   if (m_output != nullptr) {
     delete m_output;
   }
-  m_output = m_input->evaluate(*context);
+  m_output = m_input->evaluate(*context, preferences->angleUnit());
   if (m_outputLayout != nullptr) {
     delete m_outputLayout;
   }

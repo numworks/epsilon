@@ -8,6 +8,7 @@
 #include "flash.h"
 #include "fsmc.h"
 #include "gpio.h"
+#include "itm.h"
 #include "pwr.h"
 #include "rcc.h"
 #include "sdio.h"

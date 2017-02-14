@@ -10,6 +10,7 @@ objs += $(addprefix ion/src/shared/, \
   crc32.o \
   events.o \
   events_from_keyboard.o \
+  log.o \
   power.o \
 )
 

@@ -5,10 +5,10 @@
 extern "C" {
 #endif
 
-void ion_log_print(const char * message) {
+void ion_log_print(const char * message);
 
 #ifdef __cplusplus
-extern "C" {
+}
 #endif
 
 #endif

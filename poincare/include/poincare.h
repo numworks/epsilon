@@ -11,6 +11,9 @@
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/global_context.h>
+#include <poincare/hyperbolic_cosine.h>
+#include <poincare/hyperbolic_sine.h>
+#include <poincare/hyperbolic_tangent.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
 #include <poincare/list_data.h>

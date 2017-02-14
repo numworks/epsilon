@@ -1,5 +1,5 @@
-#ifndef APPS_FLOAT_PAIR_STORE_H
-#define APPS_FLOAT_PAIR_STORE_H
+#ifndef SHARED_FLOAT_PAIR_STORE_H
+#define SHARED_FLOAT_PAIR_STORE_H
 
 #include <stdint.h>
 

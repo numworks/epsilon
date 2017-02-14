@@ -1,9 +1,11 @@
 #include "curve_view.h"
-#include "constant.h"
+#include "../constant.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
 #include <string.h>
+
+using namespace Poincare;
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView) :

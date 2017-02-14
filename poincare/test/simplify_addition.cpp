@@ -2,6 +2,8 @@
 #include <quiz.h>
 #include "simplify_utils.h"
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_simplify_addition_integer) {
   assert(simplifies_to("1", "1"));
   assert(simplifies_to("1+2", "3"));

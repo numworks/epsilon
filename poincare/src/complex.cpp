@@ -9,6 +9,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include <ion.h>
 
+namespace Poincare {
+
 Complex::Complex(float a, float b, bool polar) :
   m_a(a),
   m_b(b),
@@ -246,7 +248,7 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     return availableCharsForMantissaWithSign;
   }
   // Print exponent
-  buffer[availableCharsForMantissaWithSign] = 'E';
+  buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
@@ -276,3 +278,6 @@ void Complex::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,
     dividend = quotien;
   }  while (endChar >= startChar);
 }
+
+}
+

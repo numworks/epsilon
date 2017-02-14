@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
-#include "../store_controller.h"
+#include "../shared/store_controller.h"
 
 namespace Regression {
 
@@ -14,7 +14,7 @@ public:
 private:
   TableViewCell * titleCells(int index) override;
   EvenOddExpressionCell m_titleCells[k_numberOfTitleCells];
-  ExpressionLayout * m_titleLayout[2];
+  Poincare::ExpressionLayout * m_titleLayout[2];
 };
 
 }

@@ -1,5 +1,5 @@
-#ifndef APPS_INTERACTIVE_CURVE_VIEW_RANGE_H
-#define APPS_INTERACTIVE_CURVE_VIEW_RANGE_H
+#ifndef SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
+#define SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
 
 #include <stdint.h>
 #include <poincare.h>
@@ -24,7 +24,7 @@ public:
   void panWithVector(float x, float y);
   void roundAbscissa();
   void normalize();
-  void setTrigonometric(Expression::AngleUnit angleUnit);
+  void setTrigonometric(Poincare::Expression::AngleUnit angleUnit);
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);

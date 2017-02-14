@@ -7,18 +7,18 @@
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../text_field_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 
 namespace Graph {
 
 class App : public TextFieldDelegateApp {
 public:
-  App(Container * container, Context * context);
+  App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController();
-  Context * localContext() override;
+  Poincare::Context * localContext() override;
 private:
   FunctionStore m_functionStore;
-  VariableContext m_xContext;
+  Poincare::VariableContext m_xContext;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

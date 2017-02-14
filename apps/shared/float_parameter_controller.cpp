@@ -1,8 +1,10 @@
 #include "float_parameter_controller.h"
-#include "constant.h"
-#include "apps_container.h"
+#include "../constant.h"
+#include "../apps_container.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
+
+using namespace Poincare;
 
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),

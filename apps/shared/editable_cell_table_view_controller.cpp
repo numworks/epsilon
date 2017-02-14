@@ -1,8 +1,10 @@
 #include "editable_cell_table_view_controller.h"
-#include "apps_container.h"
-#include "constant.h"
+#include "../apps_container.h"
+#include "../constant.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
+
+using namespace Poincare;
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :

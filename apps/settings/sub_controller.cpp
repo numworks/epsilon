@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Settings {
 
 SubController::SubController(Responder * parentResponder, Preferences * preferences) :

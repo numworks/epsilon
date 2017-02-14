@@ -1,6 +1,8 @@
 #include "variable_box_leaf_cell.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 VariableBoxLeafCell::VariableBoxLeafCell() :
   TableViewCell(),
   m_labelView(BufferTextView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite)),

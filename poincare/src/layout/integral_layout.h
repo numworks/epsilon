@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class IntegralLayout : public ExpressionLayout {
 public:
   IntegralLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * integrandLayout);
@@ -25,5 +27,7 @@ private:
   ExpressionLayout * m_upperBoundLayout;
   ExpressionLayout * m_integrandLayout;
 };
+
+}
 
 #endif

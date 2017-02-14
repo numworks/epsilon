@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/matrix.h>
 
+namespace Poincare {
+
 class Opposite : public Expression {
   public:
     Opposite(Expression * operand, bool cloneOperands = true);
@@ -21,5 +23,7 @@ class Opposite : public Expression {
     Expression * m_operand;
     Expression * evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const;
 };
+
+}
 
 #endif

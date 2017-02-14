@@ -2,8 +2,8 @@
 #define REGRESSION_GO_TO_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../float_parameter_controller.h"
-#include "../curve_view_cursor.h"
+#include "../shared/float_parameter_controller.h"
+#include "../shared/curve_view_cursor.h"
 #include "store.h"
 
 namespace Regression {

@@ -3,6 +3,8 @@
 #include <math.h>
 #include <ion.h>
 
+namespace Poincare {
+
 GlobalContext::GlobalContext() :
   m_pi(Complex(M_PI)),
   m_e(Complex(M_E))
@@ -43,4 +45,6 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
   int index = symbolIndex(symbol);
   assert(expression->type() == Expression::Type::Complex);
   m_expressions[index] = expression;
+}
+
 }

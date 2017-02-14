@@ -15,14 +15,14 @@ class ExpressionView : public View {
 public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void setExpression(ExpressionLayout * expressionLayout);
+  void setExpression(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() override;
 private:
-  ExpressionLayout * m_expressionLayout;
+  Poincare::ExpressionLayout * m_expressionLayout;
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

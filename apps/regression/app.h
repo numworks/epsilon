@@ -2,7 +2,7 @@
 #define REGRESSION_APP_H
 
 #include <escher.h>
-#include "../text_field_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 #include "store.h"
 #include "store_controller.h"
 #include "graph_controller.h"

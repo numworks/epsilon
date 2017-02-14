@@ -5,8 +5,8 @@
 #include "goto_parameter_controller.h"
 #include "banner_view.h"
 #include "../function.h"
-#include "../../curve_view_cursor.h"
-#include "../../interactive_curve_view_range.h"
+#include "../../shared/curve_view_cursor.h"
+#include "../../shared/interactive_curve_view_range.h"
 
 namespace Graph {
 

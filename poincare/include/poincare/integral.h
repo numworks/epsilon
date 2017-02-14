@@ -4,6 +4,8 @@
 #include <poincare/function.h>
 #include <poincare/variable_context.h>
 
+namespace Poincare {
+
 class Integral : public Function {
 public:
   Integral();
@@ -27,5 +29,7 @@ private:
 #endif
   float functionValueAtAbscissa(float x, VariableContext xcontext, AngleUnit angleUnit) const;
 };
+
+}
 
 #endif

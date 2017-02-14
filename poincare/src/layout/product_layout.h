@@ -3,6 +3,8 @@
 
 #include "sequence_layout.h"
 
+namespace Poincare {
+
 class ProductLayout : public SequenceLayout {
 public:
   using SequenceLayout::SequenceLayout;
@@ -11,5 +13,7 @@ protected:
 private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
+
+}
 
 #endif

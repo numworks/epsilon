@@ -4,7 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "law_controller.h"
-#include "../text_field_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 
 namespace Probability {
 

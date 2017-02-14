@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/list_data.h>
 
+namespace Poincare {
+
 /* The Function class represents the built-in math functions such as cos, sin,
  * tan, log, etc... */
 
@@ -23,5 +25,7 @@ protected:
   int m_numberOfArguments;
   const char * m_name;
 };
+
+}
 
 #endif

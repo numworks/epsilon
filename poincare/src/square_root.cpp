@@ -7,6 +7,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 SquareRoot::SquareRoot() :
   Function("v")
 {
@@ -49,4 +51,6 @@ Expression * SquareRoot::evaluate(Context& context, AngleUnit angleUnit) const {
   delete operands[1];
   delete power;
   return newResult;
+}
+
 }

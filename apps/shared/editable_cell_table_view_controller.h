@@ -1,5 +1,5 @@
-#ifndef APPS_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
-#define APPS_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
+#ifndef SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
+#define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <escher.h>
 #include <poincare.h>
@@ -15,7 +15,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   int numberOfRows() override;
-  void willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::DisplayMode displayMode);
+  void willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Poincare::Expression::DisplayMode displayMode);
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

@@ -3,6 +3,8 @@
 
 #include <poincare/function.h>
 
+namespace Poincare {
+
 class Sine : public Function {
 public:
   Sine();
@@ -12,5 +14,7 @@ public:
       int numberOfOperands, bool cloneOperands = true) const override;
   Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
 };
+
+}
 
 #endif

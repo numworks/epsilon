@@ -8,6 +8,8 @@ extern "C" {
 #include <math.h>
 #include <string.h>
 
+namespace Poincare {
+
 Matrix::Matrix(MatrixData * matrixData) :
   m_matrixData(matrixData)
 {
@@ -129,4 +131,6 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) {
   }
   buffer[currentChar] = 0;
   return currentChar;
+}
+
 }

@@ -4,6 +4,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 int LeafExpression::numberOfOperands() const {
   return 0;
 }
@@ -17,4 +19,6 @@ Expression * LeafExpression::cloneWithDifferentOperands(Expression** newOperands
         int numberOfOperands, bool cloneOperands) const {
   assert(numberOfOperands == 0);
   return this->clone();
+}
+
 }

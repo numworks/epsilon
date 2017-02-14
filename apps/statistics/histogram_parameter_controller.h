@@ -2,7 +2,7 @@
 #define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../float_parameter_controller.h"
+#include "../shared/float_parameter_controller.h"
 #include "store.h"
 
 namespace Statistics {
@@ -14,7 +14,6 @@ public:
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void setFunction(Function * function);
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;

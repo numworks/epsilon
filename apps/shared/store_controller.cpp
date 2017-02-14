@@ -1,7 +1,9 @@
 #include "store_controller.h"
-#include "apps_container.h"
-#include "constant.h"
+#include "../apps_container.h"
+#include "../constant.h"
 #include <assert.h>
+
+using namespace Poincare;
 
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, Metric::TopMargin, Metric::RightMargin, Metric::BottomMargin, Metric::LeftMargin),

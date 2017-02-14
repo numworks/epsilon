@@ -4,6 +4,8 @@
 #include <poincare/context.h>
 #include <poincare/complex.h>
 
+namespace Poincare {
+
 class VariableContext : public Context {
 public:
   VariableContext(char name, Context * parentContext = nullptr);
@@ -14,5 +16,7 @@ private:
   Complex m_value;
   Context * m_parentContext;
 };
+
+}
 
 #endif

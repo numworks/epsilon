@@ -3,6 +3,8 @@
 
 #include <poincare/binary_operation.h>
 
+namespace Poincare {
+
 class Subtraction : public BinaryOperation {
   using BinaryOperation::BinaryOperation;
 public:
@@ -15,5 +17,7 @@ private:
   Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const override;
   Expression * evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const override;
 };
+
+}
 
 #endif

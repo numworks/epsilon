@@ -4,6 +4,8 @@
 #include <math.h>
 #include <float.h>
 
+using namespace Poincare;
+
 namespace Statistics {
 
 HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :

@@ -1,5 +1,6 @@
 #include "local_context.h"
 #include <string.h>
+using namespace Poincare;
 
 namespace Calculation {
 

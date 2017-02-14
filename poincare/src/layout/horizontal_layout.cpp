@@ -6,6 +6,8 @@ extern "C" {
 #include "horizontal_layout.h"
 #include "string_layout.h"
 
+namespace Poincare {
+
 HorizontalLayout::HorizontalLayout(ExpressionLayout ** children_layouts, int number_of_children) :
   ExpressionLayout(), m_number_of_children(number_of_children), m_children_layouts(children_layouts) {
   assert(number_of_children > 0);
@@ -71,4 +73,6 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   }
   y = m_baseline - child->baseline();
   return KDPoint(x, y);
+}
+
 }

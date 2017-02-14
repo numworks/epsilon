@@ -8,6 +8,8 @@ extern "C" {
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
 
+namespace Poincare {
+
 NaperianLogarithm::NaperianLogarithm() :
   Function("ln")
 {
@@ -28,4 +30,6 @@ Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOpera
 
 float NaperianLogarithm::approximate(Context& context, AngleUnit angleUnit) const {
   return log10f(m_args[0]->approximate(context, angleUnit))/log10f(M_E);
+}
+
 }

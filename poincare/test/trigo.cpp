@@ -3,6 +3,8 @@
 #include <ion.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_parse_trigo) {
   {
     Expression * e = Expression::parse("sin(0)");

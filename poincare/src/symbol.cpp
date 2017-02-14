@@ -6,6 +6,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Poincare {
+
 Symbol::Symbol(char name) :
   m_name(name)
 {
@@ -45,4 +47,6 @@ Expression * Symbol::clone() const {
 bool Symbol::valueEquals(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
   return (m_name == ((Symbol *)e)->m_name);
+}
+
 }

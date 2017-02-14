@@ -1,5 +1,6 @@
 #include <escher/even_odd_expression_cell.h>
 #include <assert.h>
+using namespace Poincare;
 
 EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :

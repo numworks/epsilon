@@ -7,6 +7,8 @@ extern "C" {
 #include <stdint.h>
 }
 
+namespace Poincare {
+
 class ExpressionSelector {
 public:
   static constexpr ExpressionSelector Any(uint8_t numberOfChildren);
@@ -95,6 +97,8 @@ constexpr ExpressionSelector::ExpressionSelector(Match match,
   m_expressionType(type),
   m_integerValue(integerValue),
   m_numberOfChildren(numberOfChildren) {
+}
+
 }
 
 #endif

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "string_layout.h"
 
+namespace Poincare {
+
 StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize fontSize) :
   ExpressionLayout(),
   m_fontSize(fontSize)
@@ -32,4 +34,6 @@ KDPoint StringLayout::positionOfChild(ExpressionLayout * child) {
 
 KDSize StringLayout::computeSize() {
   return KDText::stringSize(m_string, m_fontSize);
+}
+
 }

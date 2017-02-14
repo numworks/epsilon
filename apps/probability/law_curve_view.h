@@ -1,7 +1,7 @@
 #ifndef PROBABILITY_LAW_CURVE_VIEW_H
 #define PROBABILITY_LAW_CURVE_VIEW_H
 
-#include "../curve_view.h"
+#include "../shared/curve_view.h"
 #include "../constant.h"
 #include "law/law.h"
 #include "calculation/calculation.h"
@@ -19,7 +19,7 @@ public:
 protected:
   char * label(Axis axis, int index) const override;
 private:
-  char m_labels[k_maxNumberOfXLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_labels[k_maxNumberOfXLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float evaluateModelWithParameter(Model * law, float abscissa) const override;
   Law * m_law;
   Calculation * m_calculation;

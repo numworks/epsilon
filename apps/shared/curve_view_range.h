@@ -1,5 +1,5 @@
-#ifndef APPS_CURVE_VIEW_RANGE_H
-#define APPS_CURVE_VIEW_RANGE_H
+#ifndef SHARED_CURVE_VIEW_RANGE_H
+#define SHARED_CURVE_VIEW_RANGE_H
 
 #include <stdint.h>
 

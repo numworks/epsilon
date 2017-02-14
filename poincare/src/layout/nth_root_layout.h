@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class NthRootLayout : public ExpressionLayout {
 public:
   NthRootLayout(ExpressionLayout * radicandLayout, ExpressionLayout * indexLayout);
@@ -24,5 +26,7 @@ private:
   ExpressionLayout * m_radicandLayout;
   ExpressionLayout * m_indexLayout;
 };
+
+}
 
 #endif

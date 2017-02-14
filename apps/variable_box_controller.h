@@ -7,13 +7,13 @@
 
 class VariableBoxController : public StackViewController {
 public:
-  VariableBoxController(Context * context);
+  VariableBoxController(Poincare::Context * context);
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
 private:
   class ContentViewController : public ViewController, public ListViewDataSource {
   public:
-    ContentViewController(Responder * parentResponder, Context * context);
+    ContentViewController(Responder * parentResponder, Poincare::Context * context);
     View * view() override;
     const char * title() const override;
     void didBecomeFirstResponder() override;
@@ -41,9 +41,9 @@ private:
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
     const char * nodeLabelAtIndex(int index);
-    const Expression * expressionForIndex(int index);
+    const Poincare::Expression * expressionForIndex(int index);
 
-    Context * m_context;
+    Poincare::Context * m_context;
     TextField * m_textFieldCaller;
     int m_firstSelectedRow;
     int m_previousSelectedRow;

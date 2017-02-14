@@ -12,6 +12,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 Product::Product() :
   Function("product")
 {
@@ -74,4 +76,6 @@ Expression * Product::evaluate(Context& context, AngleUnit angleUnit) const {
     delete multiplication;
   }
   return result;
+}
+
 }

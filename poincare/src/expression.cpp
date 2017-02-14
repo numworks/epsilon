@@ -10,7 +10,9 @@ extern "C" {
 
 #include "simplify/rules.h"
 
-int poincare_expression_yyparse(Expression ** expressionOutput);
+int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
+
+namespace Poincare {
 
 Expression::~Expression() {
 }
@@ -181,4 +183,6 @@ bool Expression::isCommutative() const {
 
 int Expression::writeTextInBuffer(char * buffer, int bufferSize) {
   return 0;
+}
+
 }

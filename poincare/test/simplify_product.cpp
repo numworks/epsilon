@@ -2,6 +2,8 @@
 #include <quiz.h>
 #include "simplify_utils.h"
 
+using namespace Poincare;
+
 QUIZ_CASE(poincare_simplify_product_by_zero) {
   assert(simplifies_to("3*0", "0"));
   assert(simplifies_to("A*0", "0"));

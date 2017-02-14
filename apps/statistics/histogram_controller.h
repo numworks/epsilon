@@ -6,7 +6,7 @@
 #include "histogram_view.h"
 #include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"
-#include "../curve_view.h"
+#include "../shared/curve_view.h"
 
 namespace Statistics {
 
@@ -47,7 +47,7 @@ private:
   uint32_t m_rangeVersion;
   int m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
-  Expression::DisplayMode m_displayModeVersion;
+  Poincare::Expression::DisplayMode m_displayModeVersion;
 };
 
 }

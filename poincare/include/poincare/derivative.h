@@ -4,6 +4,8 @@
 #include <poincare/function.h>
 #include <poincare/variable_context.h>
 
+namespace Poincare {
+
 class Derivative : public Function {
 public:
   Derivative();
@@ -18,5 +20,7 @@ private:
   constexpr static float k_minInitialRate = 0.01f;
   constexpr static float k_rateStepSize = 1.4f;
 };
+
+}
 
 #endif

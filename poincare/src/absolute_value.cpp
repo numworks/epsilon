@@ -7,6 +7,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 AbsoluteValue::AbsoluteValue() :
   Function("abs")
 {
@@ -53,4 +55,6 @@ Expression * AbsoluteValue::evaluate(Context& context, AngleUnit angleUnit) cons
 
 ExpressionLayout * AbsoluteValue::createLayout(DisplayMode displayMode) const {
   return new AbsoluteValueLayout(m_args[0]->createLayout(displayMode));
+}
+
 }

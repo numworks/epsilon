@@ -12,6 +12,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+namespace Poincare {
+
 Sum::Sum() :
   Function("sum")
 {
@@ -74,4 +76,6 @@ Expression * Sum::evaluate(Context& context, AngleUnit angleUnit) const {
     delete addition;
   }
   return result;
+}
+
 }

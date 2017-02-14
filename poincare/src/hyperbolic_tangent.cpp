@@ -8,6 +8,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 HyperbolicTangent::HyperbolicTangent() :
   Function("tanh")
 {
@@ -50,4 +52,6 @@ Expression * HyperbolicTangent::evaluate(Context& context, AngleUnit angleUnit) 
   Expression * resultEvaluation = result->evaluate(context, angleUnit);
   delete result;
   return resultEvaluation;
+}
+
 }

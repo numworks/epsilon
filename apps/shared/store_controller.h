@@ -1,5 +1,5 @@
-#ifndef APPS_STORE_CONTROLLER_H
-#define APPS_STORE_CONTROLLER_H
+#ifndef SHARED_STORE_CONTROLLER_H
+#define SHARED_STORE_CONTROLLER_H
 
 #include <escher.h>
 #include "float_pair_store.h"

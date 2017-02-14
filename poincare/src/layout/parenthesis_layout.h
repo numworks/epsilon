@@ -4,6 +4,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
+namespace Poincare {
+
 class ParenthesisLayout : public ExpressionLayout {
 public:
   ParenthesisLayout(ExpressionLayout * operandLayout);
@@ -21,5 +23,7 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
   ExpressionLayout * m_operandLayout;
 };
+
+}
 
 #endif

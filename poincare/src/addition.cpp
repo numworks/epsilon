@@ -7,6 +7,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/parenthesis_layout.h"
 
+namespace Poincare {
+
 Expression::Type Addition::type() const {
   return Type::Addition;
 }
@@ -34,4 +36,6 @@ bool Addition::isCommutative() const {
 
 Expression * Addition::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
   return new Complex(c->a()+ d->a(), c->b() + d->b());
+}
+
 }

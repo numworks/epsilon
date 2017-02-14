@@ -1,5 +1,5 @@
-#ifndef APPS_BANNER_VIEW_H
-#define APPS_BANNER_VIEW_H
+#ifndef SHARED_BANNER_VIEW_H
+#define SHARED_BANNER_VIEW_H
 
 #include <escher.h>
 

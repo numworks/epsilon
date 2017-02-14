@@ -3,7 +3,7 @@
 
 /* When calling the parser, we will provide yyparse with an extra parameter : a
  * backpointer to the resulting expression. */
-%parse-param { Expression ** expressionOutput }
+%parse-param { Poincare::Expression ** expressionOutput }
 
 %{
 #include <poincare.h>
@@ -14,7 +14,7 @@
 
 /* Declare our error-handling function. Since we're making a re-entrant parser,
  * it takes a context parameter as its first input. */
-void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg);
+void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char const *msg);
 
 /* Bison expects to use __builtin_memcpy. We don't want to provide this, but
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
@@ -28,10 +28,10 @@ void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg
  * when parsing (a/b) we want to create a new Fraction), or a string (this will
  * be useful to retrieve the value of Integers for example). */
 %union {
-  Expression * expression;
-  ListData * listData;
-  MatrixData * matrixData;
-  Function * function;
+  Poincare::Expression * expression;
+  Poincare::ListData * listData;
+  Poincare::MatrixData * matrixData;
+  Poincare::Function * function;
   /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
    * While Flex guarantees that yytext is NULL-terminated when building tokens,
    * it does so by temporarily swapping in a NULL terminated in the input text.
@@ -103,39 +103,39 @@ Root:
  * one has the highest precedence. */
 
 lstData:
-  exp { $$ = new ListData($1); }
+  exp { $$ = new Poincare::ListData($1); }
   | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
 
 mtxData:
-  LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new MatrixData($2); }
+  LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2); }
   | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3); }
 
 number:
-  DIGITS { $$ = new Integer($1.address, false); }
-  | DOT DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
-  | DIGITS DOT DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
-  | DOT DIGITS EE DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
-  | DIGITS DOT DIGITS EE DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
-  | DOT DIGITS EE MINUS DIGITS { $$ = new Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
+  DIGITS { $$ = new Poincare::Integer($1.address, false); }
+  | DOT DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
+  | DIGITS DOT DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
+  | DOT DIGITS EE DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
+  | DIGITS DOT DIGITS EE DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
 
 exp:
   number             { $$ = $1; }
-  | ICOMPLEX         { $$ = new Complex(0.0f, 1.0f); }
-  | SYMBOL           { $$ = new Symbol($1); }
-  | exp PLUS exp     { Expression * terms[2] = {$1,$3}; $$ = new Addition(terms, false); }
-  | exp MINUS exp    { Expression * terms[2] = {$1,$3}; $$ = new Subtraction(terms, false); }
-  | exp MULTIPLY exp { Expression * terms[2] = {$1,$3}; $$ = new Multiplication(terms, false);  }
-  | exp DIVIDE exp   { Expression * terms[2] = {$1,$3}; $$ = new Fraction(terms, false); }
-  | exp POW exp      { Expression * terms[2] = {$1,$3}; $$ = new Power(terms, false); }
-  | MINUS exp        { $$ = new Opposite($2, false); }
-  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Parenthesis($2, false); }
-  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Matrix($2); }
+  | ICOMPLEX         { $$ = new Poincare::Complex(0.0f, 1.0f); }
+  | SYMBOL           { $$ = new Poincare::Symbol($1); }
+  | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
+  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
+  | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }
+  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
+  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
+  | MINUS exp        { $$ = new Poincare::Opposite($2, false); }
+  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
+  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, false);}
 ;
 
 %%
 
-void poincare_expression_yyerror(Expression ** expressionOutput, char const *msg) {
+void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char const *msg) {
   // Handle the error!
 }

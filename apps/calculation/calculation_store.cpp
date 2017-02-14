@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 #include <assert.h>
+using namespace Poincare;
 
 namespace Calculation {
 

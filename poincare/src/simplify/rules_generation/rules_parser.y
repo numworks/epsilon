@@ -114,6 +114,8 @@ int main(void) {
   std::cout << "#include \"rules.h\"" << std::endl;
   std::cout << "#include \"simplification_generator.h\"" << std::endl;
   std::cout << std::endl;
+  std::cout << "using namespace Poincare;" << std::endl;
+  std::cout << std::endl;
 
   int counter = 0;
   for (int i=0; i<rules->size(); i++) {
@@ -122,7 +124,7 @@ int main(void) {
     rules->at(i)->generate(name.str());
     std::cout << std::endl;
   }
-  std::cout << "constexpr Simplification simplifications[" << rules->size() << "] = {" << std::endl;
+  std::cout << "constexpr Simplification Poincare::simplifications[" << rules->size() << "] = {" << std::endl;
   for (int i=0; i<rules->size(); i++) {
     std::stringstream name;
     name << "rule" << i;
@@ -131,7 +133,7 @@ std::cout << "  Simplification((ExpressionSelector *)" << name.str() << "Selecto
   std::cout << "};" << std::endl;
 
   std::cout << std::endl;
-  std::cout << "constexpr int knumberOfSimplifications = " << rules->size() << ";" << std::endl;
+  std::cout << "constexpr int Poincare::knumberOfSimplifications = " << rules->size() << ";" << std::endl;
 
   delete rules;
   return 0;

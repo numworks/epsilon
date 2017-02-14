@@ -1,5 +1,5 @@
-#ifndef APPS_CURSOR_VIEW_H
-#define APPS_CURSOR_VIEW_H
+#ifndef SHARED_CURSOR_VIEW_H
+#define SHARED_CURSOR_VIEW_H
 
 #include <escher.h>
 

@@ -3,9 +3,9 @@
 
 #include <escher.h>
 #include "graph_view.h"
-#include "../../float_parameter_controller.h"
-#include "../../curve_view_cursor.h"
-#include "../../interactive_curve_view_range.h"
+#include "../../shared/float_parameter_controller.h"
+#include "../../shared/curve_view_cursor.h"
+#include "../../shared/interactive_curve_view_range.h"
 
 namespace Graph {
 class GoToParameterController : public FloatParameterController {

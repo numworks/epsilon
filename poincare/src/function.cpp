@@ -8,6 +8,8 @@ extern "C" {
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
 
+namespace Poincare {
+
 Function::Function(const char * name) :
   m_args(nullptr),
   m_numberOfArguments(0),
@@ -92,4 +94,6 @@ int Function::numberOfOperands() const {
 Expression * Function::evaluate(Context& context, AngleUnit angleUnit) const {
   /* Default function evaluation works for reel function */
   return new Complex(approximate(context, angleUnit));
+}
+
 }

@@ -6,6 +6,8 @@
 #include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Regression {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :

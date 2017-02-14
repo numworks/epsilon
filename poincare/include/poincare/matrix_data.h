@@ -5,6 +5,8 @@
 #include <poincare/complex.h>
 #include <poincare/expression.h>
 
+namespace Poincare {
+
 class MatrixData {
   public:
     MatrixData(ListData * listData);
@@ -20,5 +22,7 @@ class MatrixData {
     Expression ** m_operands;
     static Complex * defaultExpression();
 };
+
+}
 
 #endif

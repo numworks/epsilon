@@ -1,7 +1,9 @@
 #include "interactive_curve_view_controller.h"
-#include "apps_container.h"
+#include "../apps_container.h"
 #include <assert.h>
 #include <math.h>
+
+using namespace Poincare;
 
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),

@@ -1,5 +1,6 @@
 #include "app.h"
 #include "graph_icon.h"
+using namespace Poincare;
 
 namespace Graph {
 

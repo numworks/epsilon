@@ -1,7 +1,10 @@
 #include <quiz.h>
 #include <poincare.h>
+#include <ion.h>
 #include <math.h>
 #include <assert.h>
+
+using namespace Poincare;
 
 QUIZ_CASE(poincare_parser) {
   GlobalContext globalContext;
@@ -29,7 +32,7 @@ QUIZ_CASE(poincare_parser) {
   f = -0.003f;
   assert(a->approximate(globalContext) == f);
 
-  char text[10] = {'.', '0', '2', 'E', '2', 0};
+  char text[10] = {'.', '0', '2', Ion::Charset::Exponent, '2', 0};
   a = Expression::parse(text);
   f = 2.0f;
   assert(a->approximate(globalContext) == f);

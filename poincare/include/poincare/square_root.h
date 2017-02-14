@@ -3,6 +3,8 @@
 
 #include <poincare/function.h>
 
+namespace Poincare {
+
 class SquareRoot : public Function {
 public:
   SquareRoot();
@@ -13,5 +15,7 @@ public:
   ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
   Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
 };
+
+}
 
 #endif

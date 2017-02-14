@@ -18,10 +18,10 @@ public:
     English = 1
   };
   Preferences();
-  Expression::AngleUnit angleUnit() const;
-  void setAngleUnit(Expression::AngleUnit angleUnit);
-  Expression::DisplayMode displayMode() const;
-  void setDisplayMode(Expression::DisplayMode displayMode);
+  Poincare::Expression::AngleUnit angleUnit() const;
+  void setAngleUnit(Poincare::Expression::AngleUnit angleUnit);
+  Poincare::Expression::DisplayMode displayMode() const;
+  void setDisplayMode(Poincare::Expression::DisplayMode displayMode);
   NumberType numberType() const;
   void setNumberType(NumberType numberType);
   ComplexFormat complexFormat() const;
@@ -29,8 +29,8 @@ public:
   Language language() const;
   void setLanguage(Language language);
 private:
-  Expression::AngleUnit m_angleUnit;
-  Expression::DisplayMode m_displayMode;
+  Poincare::Expression::AngleUnit m_angleUnit;
+  Poincare::Expression::DisplayMode m_displayMode;
   NumberType m_numberType;
   ComplexFormat m_complexFormat;
   Language m_language;

@@ -1,8 +1,8 @@
 #ifndef REGRESSION_STORE_H
 #define REGRESSION_STORE_H
 
-#include "../interactive_curve_view_range.h"
-#include "../float_pair_store.h"
+#include "../shared/interactive_curve_view_range.h"
+#include "../shared/float_pair_store.h"
 
 namespace Regression {
 

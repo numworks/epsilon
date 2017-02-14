@@ -9,6 +9,8 @@ extern "C" {
 #include <math.h>
 }
 
+namespace Poincare {
+
 NthRoot::NthRoot() :
   Function("root")
 {
@@ -61,4 +63,6 @@ Expression * NthRoot::evaluate(Context& context, AngleUnit angleUnit) const {
   delete operands[1];
   delete power;
   return newResult;
+}
+
 }

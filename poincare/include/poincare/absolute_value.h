@@ -3,6 +3,8 @@
 
 #include <poincare/function.h>
 
+namespace Poincare {
+
 class AbsoluteValue : public Function {
 public:
   AbsoluteValue();
@@ -13,5 +15,7 @@ public:
     int numberOfOperands, bool cloneOperands = true) const override;
   ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
 };
+
+}
 
 #endif

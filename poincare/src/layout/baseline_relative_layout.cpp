@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Poincare {
+
 BaselineRelativeLayout::BaselineRelativeLayout(ExpressionLayout * baseLayout, ExpressionLayout * indiceLayout, Type type) :
   ExpressionLayout(),
   m_baseLayout(baseLayout),
@@ -53,3 +55,6 @@ KDPoint BaselineRelativeLayout::positionOfChild(ExpressionLayout * child) {
   }
   return KDPoint(x,y);
 }
+
+}
+

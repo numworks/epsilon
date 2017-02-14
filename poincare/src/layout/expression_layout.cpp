@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "string_layout.h"
 
+namespace Poincare {
+
 ExpressionLayout::ExpressionLayout() :
   m_baseline(0),
   m_parent(nullptr),
@@ -56,4 +58,6 @@ KDSize ExpressionLayout::size() {
 
 void ExpressionLayout::setParent(ExpressionLayout* parent) {
   m_parent = parent;
+}
+
 }

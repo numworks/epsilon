@@ -12,6 +12,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/integral_layout.h"
 
+namespace Poincare {
+
 Integral::Integral() :
   Function("int")
 {
@@ -163,3 +165,5 @@ float Integral::adaptiveQuadrature(float a, float b, float eps, int numberOfIter
   return result;
 }
 #endif
+
+}

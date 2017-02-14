@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "../constant.h"
-#include "../curve_view.h"
+#include "../shared/curve_view.h"
 
 namespace Regression {
 
@@ -16,8 +16,8 @@ private:
   char * label(Axis axis, int index) const override;
   float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
-  char m_xLabels[k_maxNumberOfXLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  char m_yLabels[k_maxNumberOfYLabels][Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_xLabels[k_maxNumberOfXLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_yLabels[k_maxNumberOfYLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
 };
 
 }

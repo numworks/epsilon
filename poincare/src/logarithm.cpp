@@ -9,6 +9,8 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
 
+namespace Poincare {
+
 Logarithm::Logarithm() :
   Function("log")
 {
@@ -42,4 +44,6 @@ ExpressionLayout * Logarithm::createLayout(DisplayMode displayMode) const {
   childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(displayMode), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(displayMode));
   return new HorizontalLayout(childrenLayouts, 2);
+}
+
 }

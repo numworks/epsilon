@@ -6,6 +6,8 @@
 #include "calculation/finite_integral_calculation.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :

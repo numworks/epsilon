@@ -3,6 +3,8 @@
 
 #include <poincare/function.h>
 
+namespace Poincare {
+
 class Logarithm : public Function {
 public:
   Logarithm();
@@ -12,5 +14,7 @@ public:
       int numberOfOperands, bool cloneOperands = true) const override;
   ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
 };
+
+}
 
 #endif

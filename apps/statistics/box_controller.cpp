@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <math.h>
 
+using namespace Poincare;
+
 namespace Statistics {
 
 BoxController::BoxController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :

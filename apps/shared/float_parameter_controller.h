@@ -1,5 +1,5 @@
-#ifndef APPS_FLOAT_PARAMETER_CONTROLLER_H
-#define APPS_FLOAT_PARAMETER_CONTROLLER_H
+#ifndef SHARED_FLOAT_PARAMETER_CONTROLLER_H
+#define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
 #include "expression_text_field_delegate.h"

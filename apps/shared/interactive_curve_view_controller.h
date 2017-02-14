@@ -1,5 +1,5 @@
-#ifndef APPS_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
-#define APPS_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
+#ifndef SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
+#define SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
 #include <escher.h>
 #include "interactive_curve_view_range.h"
@@ -53,7 +53,7 @@ private:
   Button m_rangeButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;
-  Expression::DisplayMode m_displayModeVersion;
+  Poincare::Expression::DisplayMode m_displayModeVersion;
 };
 
 #endif

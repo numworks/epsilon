@@ -7,6 +7,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>
 #include <escher/chevron_menu_list_cell.h>
+#include <escher/chevron_text_menu_list_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/container.h>
 #include <escher/editable_text_menu_list_cell.h>

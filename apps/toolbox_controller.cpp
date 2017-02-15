@@ -118,6 +118,10 @@ void ToolboxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_listViewController);
 }
 
+void ToolboxController::viewWillDisappear() {
+  m_listViewController.deselectTable();
+}
+
 void ToolboxController::setTextFieldCaller(TextField * textField) {
   m_textFieldCaller = textField;
 }

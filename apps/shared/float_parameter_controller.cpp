@@ -45,16 +45,15 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   return true;
 }
 
-bool FloatParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   EditableTextMenuListCell * myCell = (EditableTextMenuListCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
   myCell->setEditing(false);
   EditableTextMenuListCell * myNewCell = (EditableTextMenuListCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
   app()->setFirstResponder(myNewCell);
+}
+
+TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
+  return (TextFieldDelegateApp *)app();
 }
 
 KDCoordinate FloatParameterController::cellHeight() {

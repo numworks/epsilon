@@ -21,6 +21,13 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
 {
 }
 
+Toolbox * TextField::toolbox() {
+  if (m_delegate) {
+    return m_delegate->toolboxForTextField(this);
+  }
+  return nullptr;
+}
+
 const char * TextField::text() const {
   if (m_isEditing) {
     return (const char *)m_draftTextBuffer;
@@ -67,6 +74,9 @@ void TextField::reload() {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
+  if (Responder::handleEvent(event)) {
+    return true;
+  }
   if (m_delegate) {
     if (m_delegate->textFieldDidReceiveEvent(this, event)) {
       return true;

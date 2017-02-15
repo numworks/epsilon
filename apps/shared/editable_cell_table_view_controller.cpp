@@ -19,11 +19,6 @@ View * EditableCellTableViewController::view() {
   return &m_selectableTableView;
 }
 
-bool EditableCellTableViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
@@ -105,9 +100,12 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-
 void EditableCellTableViewController::viewWillAppear() {
   m_selectableTableView.reloadData();
+}
+
+TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {
+  return (TextFieldDelegateApp *)app();
 }
 
 }

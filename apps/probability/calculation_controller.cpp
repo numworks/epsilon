@@ -7,6 +7,7 @@
 #include <assert.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Probability {
 
@@ -198,11 +199,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
@@ -249,6 +245,10 @@ void CalculationController::updateTitle() {
     m_titleBuffer[currentChar++] = ' ';
   }
   m_titleBuffer[currentChar-1] = 0;
+}
+
+TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
+  return (App *)app();
 }
 
 }

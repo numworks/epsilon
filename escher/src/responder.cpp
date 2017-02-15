@@ -1,5 +1,6 @@
 #include <escher/responder.h>
 #include <escher/app.h>
+#include <escher/toolbox.h>
 #include <assert.h>
 
 Responder::Responder(Responder * parentResponder) :
@@ -16,6 +17,11 @@ void Responder::setParentResponder(Responder * responder) {
 }
 
 bool Responder::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Toolbox && toolbox() != nullptr) {
+    toolbox()->setSender(this);
+    app()->displayModalViewController(toolbox(), 0.f, 0.f, 50, 50, 0, 50);
+    return true;
+  }
   return false;
 }
 
@@ -37,4 +43,8 @@ App * Responder::app() {
    App * result = (App *)rootResponder;
    assert(result->m_magic == App::Magic); // Poor man's RTTI
   return result;
+}
+
+Toolbox * Responder::toolbox() {
+  return nullptr;
 }

@@ -5,11 +5,12 @@
 #include "history_controller.h"
 #include "calculation_store.h"
 #include "text_field.h"
+#include "../shared/text_field_delegate.h"
 
 namespace Calculation {
 class HistoryController;
 
-class EditExpressionController : public ViewController, public TextFieldDelegate {
+class EditExpressionController : public ViewController, public Shared::TextFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
@@ -18,7 +19,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   const char * textBody();
   void setTextBody(const char * text);
-  bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(::TextField * textField, const char * text) override;
 private:
   class ContentView : public View {
@@ -35,6 +35,7 @@ private:
     TextField m_textField;
     char m_textBody[255];
   };
+  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   ContentView m_contentView;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;

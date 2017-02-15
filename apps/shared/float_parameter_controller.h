@@ -2,7 +2,7 @@
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "expression_text_field_delegate.h"
+#include "text_field_delegate.h"
 
 namespace Shared {
 
@@ -17,12 +17,12 @@ public:
   KDCoordinate cellHeight() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
   int activeCell();
   SelectableTableView m_selectableTableView;
 private:
+  TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual float parameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
 };

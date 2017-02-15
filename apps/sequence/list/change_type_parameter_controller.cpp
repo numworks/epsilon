@@ -43,7 +43,6 @@ bool ChangeTypeParameterController::handleEvent(Ion::Events::Event event) {
     m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
     StackViewController * stack = stackController();
     stack->pop();
-    stack->pop();
     return true;
   }
   return false;

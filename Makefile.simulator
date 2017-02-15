@@ -1,7 +1,0 @@
-CC=clang
-CXX=clang++
-LD=clang++
-SIZE=size
-
-USE_LIBA=0
-EXE=elf

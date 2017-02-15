@@ -1,9 +1,0 @@
-CC=clang
-CXX=clang++
-LD=clang++
-SIZE=size
-
-SFLAGS += -DLIBA_LOG_DYNAMIC_MEMORY
-
-USE_LIBA=1
-EXE=elf

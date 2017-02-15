@@ -51,8 +51,8 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
   }
   if (event == Ion::Events::Toolbox) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
-    ToolboxController * toolboxController = appsContainer->toolboxController();
-    toolboxController->setTextFieldCaller(textField);
+    MathToolbox * toolboxController = appsContainer->mathToolbox();
+    toolboxController->setSender(textField);
     textField->app()->displayModalViewController(toolboxController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }

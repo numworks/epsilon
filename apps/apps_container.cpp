@@ -48,8 +48,8 @@ Context * AppsContainer::globalContext() {
   return &m_globalContext;
 }
 
-ToolboxController * AppsContainer::toolboxController() {
-  return &m_toolboxController;
+MathToolbox * AppsContainer::mathToolbox() {
+  return &m_mathToolbox;
 }
 
 VariableBoxController * AppsContainer::variableBoxController() {

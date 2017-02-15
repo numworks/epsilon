@@ -52,6 +52,7 @@ objs += $(addprefix escher/src/,\
   text_menu_list_cell.o\
   text_view.o\
   tiled_view.o\
+  toolbox.o\
   view.o\
   view_controller.o\
   warning_controller.o\

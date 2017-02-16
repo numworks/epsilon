@@ -25,6 +25,10 @@ public:
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   char symbol() const override;
+  int numberOfElements();
+  Poincare::ExpressionLayout * definitionName();
+  Poincare::ExpressionLayout * firstInitialConditionName();
+  Poincare::ExpressionLayout * secondInitialConditionName();
 private:
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];
@@ -33,6 +37,9 @@ private:
   Poincare::Expression * m_secondInitialConditionExpression;
   Poincare::ExpressionLayout * m_firstInitialConditionLayout;
   Poincare::ExpressionLayout * m_secondInitialConditionLayout;
+  Poincare::ExpressionLayout * m_definitionName;
+  Poincare::ExpressionLayout * m_firstInitialConditionName;
+  Poincare::ExpressionLayout * m_secondInitialConditionName;
 };
 
 }

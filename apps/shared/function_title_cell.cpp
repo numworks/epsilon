@@ -3,7 +3,7 @@
 
 namespace Shared {
 
-FunctionTitleCell::FunctionTitleCell(Orientation orientation, KDText::FontSize size) :
+FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
   EvenOddCell(),
   m_orientation(orientation)
 {

@@ -4,17 +4,16 @@
 #include "../../shared/list_parameter_controller.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
-#include "change_type_parameter_controller.h"
+#include "type_parameter_controller.h"
 
 namespace Sequence {
 
 class ListParameterController : public Shared::ListParameterController {
 public:
   ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore);
-  ~ListParameterController();
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setSequence(Sequence * sequence);
+  void setFunction(Shared::Function * function) override;
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
@@ -22,8 +21,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 4;
   ChevronExpressionMenuListCell m_typeCell;
-  Poincare::ExpressionLayout * m_typeLayout;
-  ChangeTypeParameterController m_changeTypeParameterController;
+  TypeParameterController m_typeParameterController;
   Sequence * m_sequence;
 };
 

@@ -8,7 +8,9 @@ namespace Sequence {
 
 class TypeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore);
+  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore,
+    KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
+    KDCoordinate leftMargin = 0);
   ~TypeParameterController();
   const char * title() const override;
   View * view() override;
@@ -19,6 +21,7 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void setSequence(Sequence * sequence);
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 3;
@@ -28,6 +31,7 @@ private:
   Poincare::ExpressionLayout * m_expressionLayouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   SequenceStore * m_sequenceStore;
+  Sequence * m_sequence;
 };
 
 }

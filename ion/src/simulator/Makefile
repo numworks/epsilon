@@ -2,15 +2,14 @@ objs += $(addprefix ion/src/simulator/, \
   battery.o\
   init.o\
 )
+
 objs += $(addprefix ion/src/simulator/boot/, main.o)
 objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
 objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)
 
 objs += $(addprefix ion/src/shared/, \
   crc32.o \
-  events.o \
-  events_from_keyboard.o \
-  log.o \
+  log_printf.o \
   power.o \
 )
 

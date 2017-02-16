@@ -12,11 +12,6 @@ objs += $(addprefix ion/src/device/, \
   sd_card.o\
 )
 
-objs += $(addprefix ion/src/shared/, \
-  events.o \
-  events_from_keyboard.o \
-)
-
 # When using the register.h C++ file in production mode, we expect the compiler
 # to completely inline all bit manipulations. For some reason, if we build using
 # the -Os optimization flag, GCC doesn't inline everything and and ends up

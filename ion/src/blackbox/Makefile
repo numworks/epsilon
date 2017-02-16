@@ -2,15 +2,10 @@ objs += $(addprefix ion/src/blackbox/, boot.o ion.o)
 objs += $(addprefix ion/src/shared/, \
   crc32.o \
   events.o \
-  events_from_keyboard.o \
-  log.o \
+  log_printf.o \
   power.o \
 )
 
-ion/src/shared/log.o: SFLAGS=-Iion/include
-#objs += $(addprefix ion/src/simulator/boot/, main.o)
-#objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
-#objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)
-
-#SFLAGS += -I/usr/local/Cellar/fltk/1.3.3/include -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT
-#LDFLAGS += -L/usr/local/Cellar/fltk/1.3.3/lib -lfltk -lpthread -framework Cocoa
+ion/src/shared/log_printf.o: SFLAGS=-Iion/include
+ion/src/shared/events_stdin.o: SFLAGS=-Iion/include
+ion/src/shared/random.o: SFLAGS=-Iion/include

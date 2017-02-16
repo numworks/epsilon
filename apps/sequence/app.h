@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "sequence_store.h"
+#include "sequence_toolbox.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/text_field_delegate_app.h"
@@ -16,7 +17,10 @@ public:
   InputViewController * inputViewController();
   Poincare::Context * localContext() override;
   const char * XNT() override;
+  SequenceToolbox * sequenceToolbox();
+  SequenceStore * sequenceStore();
 private:
+  SequenceToolbox m_sequenceToolbox;
   SequenceStore m_sequenceStore;
   Poincare::VariableContext m_nContext;
   ListController m_listController;

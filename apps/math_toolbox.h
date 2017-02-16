@@ -25,6 +25,11 @@ public:
   int typeAtLocation(int i, int j) override;
 
   void viewWillDisappear() override;
+protected:
+  int stackDepth();
+  TextField * sender() override;
+  SelectableTableView m_selectableTableView;
+  constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
 private:
   class Stack {
   public:
@@ -60,8 +65,6 @@ private:
   };
   constexpr static KDCoordinate k_nodeRowHeight = 40;
   constexpr static KDCoordinate k_leafRowHeight = 40;
-  constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
-  TextField * sender() override;
   const ToolboxNode * rootModel();
   bool selectLeaf(ToolboxNode * selectedNode);
   bool selectSubMenu(ToolboxNode * selectedNode);
@@ -69,7 +72,6 @@ private:
   Stack m_stack;
   ToolboxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
   ChevronMenuListCell m_nodeCells[k_maxNumberOfDisplayedRows];
-  SelectableTableView m_selectableTableView;
   ListController m_listController;
   ToolboxNode * m_nodeModel;
 };

@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/sequence/,\
   values/values_controller.o\
   sequence.o\
   sequence_store.o\
+  sequence_toolbox.o\
 )
 
 app_images += apps/sequence/sequence_icon.png

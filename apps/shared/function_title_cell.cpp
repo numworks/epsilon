@@ -10,9 +10,14 @@ FunctionTitleCell::FunctionTitleCell(Orientation orientation, KDText::FontSize s
 {
 }
 
-void FunctionTitleCell::reloadCell() {
-  EvenOddCell::reloadCell();
-  m_bufferTextView.setBackgroundColor(backgroundColor());
+void FunctionTitleCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_bufferTextView.setHighlighted(highlight);
+}
+
+void FunctionTitleCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
+  m_bufferTextView.setEven(even);
 }
 
 void FunctionTitleCell::setText(const char * title) {

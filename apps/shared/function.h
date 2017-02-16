@@ -21,10 +21,10 @@ public:
   void setColor(KDColor m_color);
   float evaluateAtAbscissa(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const;
 protected:
+  constexpr static int k_bodyLength = 255;
   Poincare::Expression * m_expression;
 private:
   virtual char symbol() const = 0;
-  constexpr static int k_bodyLength = 255;
   char m_text[k_bodyLength];
   const char * m_name;
   KDColor m_color;

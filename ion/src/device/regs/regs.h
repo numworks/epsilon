@@ -11,6 +11,7 @@
 #include "itm.h"
 #include "pwr.h"
 #include "rcc.h"
+#include "rng.h"
 #include "sdio.h"
 #include "syscfg.h"
 #include "tim.h"

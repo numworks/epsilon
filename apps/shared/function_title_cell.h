@@ -15,6 +15,7 @@ public:
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
+  constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   Orientation m_orientation;
 private:

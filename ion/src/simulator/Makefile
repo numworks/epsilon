@@ -9,6 +9,7 @@ objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)
 
 objs += $(addprefix ion/src/shared/, \
   crc32.o \
+  events_keyboard.o \
   log_printf.o \
   power.o \
 )

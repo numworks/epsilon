@@ -5,5 +5,6 @@ objs += $(addprefix ion/src/emscripten/, \
 objs += $(addprefix ion/src/shared/, \
   crc32.o \
   events.o \
+  events_keyboard.o \
   power.o \
 )

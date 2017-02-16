@@ -1,9 +1,5 @@
 SFLAGS += -Iescher/include
 
-ifeq ($(ESCHER_LOG_EVENTS),1)
-SFLAGS += -DESCHER_LOG_EVENTS=1
-endif
-
 objs += $(addprefix escher/src/,\
   alternate_empty_view_controller.o\
   app.o\

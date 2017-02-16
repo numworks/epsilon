@@ -1,9 +1,5 @@
 SFLAGS += -Iliba/include
 
-ifeq ($(LIBA_LOG_DYNAMIC_MEMORY),1)
-SFLAGS += -DLIBA_LOG_DYNAMIC_MEMORY=1
-endif
-
 liba/src/external/sqlite/mem5.o: CFLAGS += -w
 
 objs += $(addprefix liba/src/, \

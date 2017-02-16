@@ -1,5 +1,9 @@
 include ion/src/device/boot/Makefile
 
+objs += $(addprefix ion/src/shared/, \
+  events_keyboard.o \
+)
+
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\

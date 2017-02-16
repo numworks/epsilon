@@ -7,7 +7,6 @@ namespace Sequence {
 
 App::App(Container * container, Context * context) :
   TextFieldDelegateApp(container, &m_inputViewController, "Suites", "SUITES", ImageStore::SequenceIcon),
-  m_sequenceToolbox(SequenceToolbox()),
   m_sequenceStore(SequenceStore()),
   m_nContext(VariableContext('n', context)),
   m_listController(&m_listHeader, &m_sequenceStore, &m_listHeader),
@@ -36,14 +35,6 @@ Context * App::localContext() {
 
 const char * App::XNT() {
   return "n";
-}
-
-SequenceToolbox * App::sequenceToolbox() {
-  return &m_sequenceToolbox;
-}
-
-SequenceStore * App::sequenceStore() {
-  return &m_sequenceStore;
 }
 
 }

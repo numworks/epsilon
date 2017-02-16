@@ -15,12 +15,28 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, sequenceStore)),
   m_typeParameterController(this, sequenceStore),
-  m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark))
+  m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
+  m_sequenceToolbox(SequenceToolbox(m_sequenceStore))
 {
 }
 
 const char * ListController::title() const {
   return "Suites";
+}
+
+Toolbox * ListController::toolboxForTextField(TextField * textField) {
+  int recurrenceDepth = 0;
+  int sequenceDefinition = sequenceDefinitionForRow(m_selectableTableView.selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow()));
+  if (sequenceDefinition == 0) {
+    recurrenceDepth = sequence->numberOfElements()-1;
+  }
+  m_sequenceToolbox.addCells(recurrenceDepth);
+  return &m_sequenceToolbox;
+}
+
+TextFieldDelegateApp * ListController::textFieldDelegateApp() {
+  return (App *)app();
 }
 
 int ListController::numberOfRows() {
@@ -116,6 +132,7 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
+  inputController->setTextFieldDelegate(this);
   if (sequenceDefinition == 0) {
     inputController->edit(this, event, sequence, initialText,
       [](void * context, void * sender){

@@ -8,11 +8,13 @@
 #include "type_parameter_controller.h"
 #include "../../shared/new_function_cell.h"
 #include "../../shared/list_controller.h"
+#include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
+#include "sequence_toolbox.h"
 
 namespace Sequence {
 
-class ListController : public Shared::ListController {
+class ListController : public Shared::ListController, public Shared::TextFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header);
   const char * title() const override;
@@ -20,7 +22,9 @@ public:
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
+  Toolbox * toolboxForTextField(TextField * textField) override;
 private:
+  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   bool handleEnter();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
@@ -39,6 +43,7 @@ private:
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   StackViewController m_typeStackController;
+  SequenceToolbox m_sequenceToolbox;
 };
 
 }

@@ -1,16 +1,17 @@
-PLATFORM ?= device
-DEBUG ?= 1
+include build/config.mak
 
-include Makefile.$(PLATFORM)
 ifndef USE_LIBA
-  $(error Makefile.PLATFORM should define USE_LIBA)
+  $(error platform.mak should define USE_LIBA)
 endif
 ifndef EXE
-  $(error Makefile.PLATFORM should define EXE, the extension for executables)
+  $(error platform.mak should define EXE, the extension for executables)
 endif
 
 HOSTCC = gcc
 HOSTCXX = g++
+
+# Flags - Optimizations
+SFLAGS += $(OPTIM_SFLAGS)
 
 # Flags - Header search path
 SFLAGS += -Ilib -I.
@@ -21,12 +22,8 @@ SFLAGS += -Wall
 # Flags - Header dependency tracking
 SFLAGS += -MD -MP
 
-# Flags - Optimizations
 ifeq ($(DEBUG),1)
-SFLAGS += -ggdb3 -DDEBUG=1 -O0
-else
-SFLAGS += -Os -fdata-sections -ffunction-sections
-LDFLAGS += --gc-sections
+SFLAGS += -DDEBUG=1
 endif
 
 # Language-specific flags

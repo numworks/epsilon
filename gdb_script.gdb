@@ -8,6 +8,8 @@ set pagination off
 load
 
 # Tell OpenOCD to reset and halt
+monitor itm ports on
+monitor tpiu config internal swo.log.bin uart off 16000000
 monitor reset halt
 
 break init

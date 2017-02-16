@@ -1,8 +1,0 @@
-CC=clang
-CXX=clang++
-LD=clang++
-SIZE=size
-
-LDFLAGS =
-
-USE_LIBA=1

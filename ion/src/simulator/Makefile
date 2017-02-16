@@ -12,6 +12,7 @@ objs += $(addprefix ion/src/shared/, \
   events_keyboard.o \
   log_printf.o \
   power.o \
+  random.o \
 )
 
 SFLAGS += `fltk-config --cflags`

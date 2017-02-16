@@ -41,6 +41,22 @@ uint32_t Ion::crc32(const uint32_t * data, size_t length) {
   return result;
 }
 
+uint32_t Ion::random() {
+  bool initialRNGEngineState = RCC.AHB2ENR()->getRNGEN();
+  RCC.AHB2ENR()->setRNGEN(true);
+
+  RNG.CR()->setRNGEN(true);
+
+  while (RNG.SR()->getDRDY() == 0) {
+  }
+  uint32_t result = RNG.DR()->get();
+
+  RNG.CR()->setRNGEN(false);
+  RCC.AHB2ENR()->setRNGEN(initialRNGEngineState);
+
+  return result;
+}
+
 void Ion::reset() {
   CM4.AIRCR()->requestReset();
 }

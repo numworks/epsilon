@@ -4,6 +4,7 @@ include ion/src/$(PLATFORM)/Makefile
 objs += $(addprefix ion/src/shared/, \
   c.o \
   events.o \
+  log_integer.o \
 )
 
 tests += $(addprefix ion/test/,\

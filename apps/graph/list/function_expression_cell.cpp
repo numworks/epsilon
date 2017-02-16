@@ -1,20 +1,21 @@
 #include "function_expression_cell.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Graph {
 
 FunctionExpressionCell::FunctionExpressionCell() :
   EvenOddCell(),
-  m_function(nullptr),
   m_expressionView(ExpressionView())
 {
 }
 
-void FunctionExpressionCell::setFunction(CartesianFunction * f) {
-  m_function = f;
-  m_expressionView.setExpression(m_function->layout());
-  bool active = m_function->isActive();
-  KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
+void FunctionExpressionCell::setExpression(ExpressionLayout * expressionLayout) {
+  m_expressionView.setExpression(expressionLayout);
+}
+
+void FunctionExpressionCell::setTextColor(KDColor textColor) {
   m_expressionView.setTextColor(textColor);
 }
 
@@ -26,10 +27,6 @@ void FunctionExpressionCell::setEven(bool even) {
 void FunctionExpressionCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   m_expressionView.setBackgroundColor(backgroundColor());
-}
-
-CartesianFunction * FunctionExpressionCell::function() {
-  return m_function;
 }
 
 int FunctionExpressionCell::numberOfSubviews() const {

@@ -18,7 +18,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   bool handleEnter();
-  void editExpression(FunctionExpressionCell * functionCell, Ion::Events::Event event);
+  void editExpression(Shared::Function * function, Ion::Events::Event event);
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   TableViewCell * titleCells(int index) override;

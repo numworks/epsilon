@@ -1,5 +1,5 @@
 #include <escher/container.h>
-#include <ion/display.h>
+#include <ion.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -37,6 +37,11 @@ void Container::run() {
 
 void Container::step() {
   Ion::Events::Event event = Ion::Events::getEvent(); // This is a blocking call
+#if ESCHER_LOG_EVENTS
+  char message[2] = { (char)event.id(), 0};
+  Ion::Log::print(message);
+#endif
+
   if (event == Ion::Events::None) {
     return;
   }

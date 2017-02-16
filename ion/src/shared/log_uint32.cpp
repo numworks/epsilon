@@ -1,7 +1,8 @@
 #include <ion/log.h>
-#include <stdio.h>
 
-void Ion::Log::print(uint32_t i) {
+#ifdef DEBUG
+
+void ion_log_uint32(uint32_t i) {
   char buffer[9];
   for (int j=0; j<8; j++) {
     uint8_t v = (i & 0xF);
@@ -9,5 +10,7 @@ void Ion::Log::print(uint32_t i) {
     i = i >> 4;
   }
   buffer[8] = 0;
-  print(buffer);
+  ion_log_string(buffer);
 }
+
+#endif

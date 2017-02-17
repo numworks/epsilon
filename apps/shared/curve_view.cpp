@@ -99,6 +99,11 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   float end = max(axis);
   int i = 0;
   for (float x = start; x < end; x += 2.0f*step) {
+    /* When |start| >> step, start + step = start. In that case, quit the
+     * infinite loop. */
+    if (x == x-step) {
+      return;
+    }
     KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
     KDPoint origin(floatToPixel(Axis::Horizontal, x) - textSize.width()/2, floatToPixel(Axis::Vertical, 0.0f)  + k_labelMargin);
     KDRect graduation((int)floatToPixel(Axis::Horizontal, x), (int)floatToPixel(Axis::Vertical, 0.0f) -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
@@ -190,6 +195,11 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
   float start = step*((int)(min(axis)/step));
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
   for (float x =start; x < max(axis); x += step) {
+    /* When |start| >> step, start + step = start. In that case, quit the
+     * infinite loop. */
+    if (x == x-step) {
+      return;
+    }
     if (rectMin <= x && x <= rectMax) {
       drawLine(ctx, rect, otherAxis, x, color);
     }
@@ -245,6 +255,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {
+    /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
+     * the infinite loop. */
+    if (x == x-xStep) {
+      return;
+    }
     float y = evaluateModelWithParameter(curve, x);
     if (isnan(y)) {
       continue;
@@ -281,6 +296,11 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
   int rectMaxBinNumber = floorf((rectMax - firstBarAbscissa)/barWidth);
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
+    /* When |rectMinLowerBound| >> barWidth, rectMinLowerBound + barWidth = rectMinLowerBound.
+     * In that case, quit the infinite loop. */
+    if (x == x-barWidth) {
+      return;
+    }
     float centerX = fillBar ? x+barWidth/2.0f : x;
     float y = evaluateModelWithParameter(model, centerX);
     if (isnan(y)) {

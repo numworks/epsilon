@@ -1,37 +1,32 @@
 #include "function_expression_cell.h"
 #include <assert.h>
 
-namespace Shared {
+namespace Graph {
 
 FunctionExpressionCell::FunctionExpressionCell() :
   EvenOddCell(),
   m_function(nullptr),
-  m_expressionView(EvenOddExpressionCell())
+  m_expressionView(ExpressionView())
 {
 }
 
 void FunctionExpressionCell::setFunction(Function * f) {
   m_function = f;
   m_expressionView.setExpression(m_function->layout());
-}
-
-void FunctionExpressionCell::reloadCell() {
-  EvenOddCell::reloadCell();
-  if (m_function) {
-    bool active = m_function->isActive();
-    KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
-    m_expressionView.setTextColor(textColor);
-  }
+  bool active = m_function->isActive();
+  KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
+  m_expressionView.setTextColor(textColor);
+  //layoutSubviews();
 }
 
 void FunctionExpressionCell::setEven(bool even) {
   EvenOddCell::setEven(even);
-  m_expressionView.setEven(even);
+  m_expressionView.setBackgroundColor(backgroundColor());
 }
 
 void FunctionExpressionCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
-  m_expressionView.setHighlighted(highlight);
+  m_expressionView.setBackgroundColor(backgroundColor());
 }
 
 Function * FunctionExpressionCell::function() {
@@ -53,7 +48,6 @@ void FunctionExpressionCell::layoutSubviews() {
 }
 
 void FunctionExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
-  EvenOddCell::drawRect(ctx, rect);
   // Color the separator
   ctx->fillRect(KDRect(0, 0, k_separatorThickness, bounds().height()), Palette::GreyBright);
 }

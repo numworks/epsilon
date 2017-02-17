@@ -14,7 +14,7 @@ public:
   View * view() override;
   int numberOfRows() override;
   int numberOfColumns() override;
-  KDCoordinate rowHeight(int j) override;
+  virtual KDCoordinate rowHeight(int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
@@ -27,19 +27,20 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
-  bool addFunction();
+  static constexpr KDCoordinate k_emptyRowHeight = 50;
   void configureFunction(Function * function);
+  StackViewController * stackController() const;
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
-  static constexpr KDCoordinate k_emptyRowHeight = 50;
   Responder * tabController() const;
-  StackViewController * stackController() const;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;
   virtual TableViewCell * titleCells(int index) = 0;
   virtual TableViewCell * expressionCells(int index) = 0;
+  virtual void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) = 0;
+  virtual void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) = 0;
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
 };

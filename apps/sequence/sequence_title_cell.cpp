@@ -9,9 +9,34 @@ SequenceTitleCell::SequenceTitleCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_numberOfSubCells(1),
   m_selectedSubCell(0),
+  m_definitionView(KDText::FontSize::Large, 0.5f, 0.5f),
   m_firstInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),
   m_secondInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f)
 {
+}
+
+void SequenceTitleCell::setDefinitionText(const char * title) {
+  m_definitionView.setText(title);
+}
+
+void SequenceTitleCell::setFirstInitialConditionText(const char * textContent) {
+  m_firstInitialConditionView.setText(textContent);
+}
+
+void SequenceTitleCell::setSecondInitialConditionText(const char * textContent) {
+  m_secondInitialConditionView.setText(textContent);
+}
+
+void SequenceTitleCell::setColor(KDColor color) {
+  FunctionTitleCell::setColor(color);
+  m_definitionView.setTextColor(color);
+  m_firstInitialConditionView.setTextColor(color);
+  m_secondInitialConditionView.setTextColor(color);
+}
+
+void SequenceTitleCell::setNumberOfSubCells(int numberOfSubcells) {
+  m_numberOfSubCells = numberOfSubcells;
+  layoutSubviews();
 }
 
 int SequenceTitleCell::selectedSubCell() {
@@ -20,20 +45,21 @@ int SequenceTitleCell::selectedSubCell() {
 
 void SequenceTitleCell::selectSubCell(int selectedSubCell) {
   m_selectedSubCell = selectedSubCell;
-  m_bufferTextView.setHighlighted(selectedSubCell == 0);
+  m_definitionView.setHighlighted(selectedSubCell == 0);
   m_firstInitialConditionView.setHighlighted(selectedSubCell == 1);
   m_secondInitialConditionView.setHighlighted(selectedSubCell == 2);
   reloadCell();
 }
 
 void SequenceTitleCell::setHighlighted(bool highlight) {
-  m_bufferTextView.setHighlighted(false);
+  TableViewCell::setHighlighted(highlight);
+  m_definitionView.setHighlighted(false);
   m_firstInitialConditionView.setHighlighted(false);
   m_secondInitialConditionView.setHighlighted(false);
   TableViewCell::setHighlighted(highlight);
   if (isHighlighted()) {
     if (m_selectedSubCell == 0) {
-      m_bufferTextView.setHighlighted(true);
+      m_definitionView.setHighlighted(true);
     }
     if (m_selectedSubCell == 1) {
       m_firstInitialConditionView.setHighlighted(true);
@@ -46,7 +72,8 @@ void SequenceTitleCell::setHighlighted(bool highlight) {
 }
 
 void SequenceTitleCell::setEven(bool even) {
-  m_bufferTextView.setEven(even);
+  EvenOddCell::setEven(even);
+  m_definitionView.setEven(even);
   m_firstInitialConditionView.setEven(even);
   m_secondInitialConditionView.setEven(even);
   reloadCell();
@@ -58,7 +85,7 @@ int SequenceTitleCell::numberOfSubviews() const {
 
 View * SequenceTitleCell::subviewAtIndex(int index) {
   if (index == 0) {
-    return &m_bufferTextView;
+    return &m_definitionView;
   }
   if (index == 1) {
     return &m_firstInitialConditionView;
@@ -67,17 +94,28 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
 }
 
 void SequenceTitleCell::layoutSubviews() {
-  KDCoordinate cellHeight = bounds().height()/m_numberOfSubCells;
+  KDCoordinate cellHeight = (bounds().height()-(m_numberOfSubCells-1)*k_separatorThickness)/m_numberOfSubCells;
   KDRect expressionFrame(k_colorIndicatorThickness, 0, bounds().width() - k_separatorThickness, cellHeight);
-  m_bufferTextView.setFrame(expressionFrame);
-  expressionFrame = KDRect(k_colorIndicatorThickness, cellHeight, bounds().width() - k_separatorThickness, cellHeight);
+  m_definitionView.setFrame(expressionFrame);
+  expressionFrame = KDRect(k_colorIndicatorThickness, cellHeight+k_separatorThickness, bounds().width() - k_separatorThickness, cellHeight);
   m_firstInitialConditionView.setFrame(expressionFrame);
-  expressionFrame = KDRect(k_colorIndicatorThickness, 2*cellHeight, bounds().width() - k_separatorThickness, cellHeight);
+  expressionFrame = KDRect(k_colorIndicatorThickness, 2*cellHeight+2*k_separatorThickness, bounds().width() - k_separatorThickness, cellHeight);
   m_secondInitialConditionView.setFrame(expressionFrame);
 }
 
+void SequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
+  KDCoordinate cellHeight = (bounds().height()-(m_numberOfSubCells-1)*k_separatorThickness)/m_numberOfSubCells;
+  if (m_numberOfSubCells > 1) {
+    ctx->fillRect(KDRect(k_separatorThickness, cellHeight, bounds().width() - k_separatorThickness, k_separatorThickness), separatorColor);
+  }
+  if (m_numberOfSubCells > 2) {
+    ctx->fillRect(KDRect(k_separatorThickness, 2*cellHeight+k_separatorThickness, bounds().width() - k_separatorThickness, k_separatorThickness), separatorColor);
+  }
+}
+
 bool SequenceTitleCell::handleEvent(Ion::Events::Event event) {
-  if (m_selectedSubCell < 2 && event == Ion::Events::Down) {
+  if (m_selectedSubCell < m_numberOfSubCells-1 && event == Ion::Events::Down) {
     selectSubCell(m_selectedSubCell+1);
     return true;
   }

@@ -6,7 +6,7 @@ using namespace Shared;
 
 namespace Graph {
 
-ListController::ListController(Responder * parentResponder, Shared::FunctionStore * functionStore, HeaderViewController * header) :
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
   Shared::ListController(parentResponder, functionStore, header),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
@@ -50,7 +50,9 @@ bool ListController::handleEnter() {
     {
       if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
           m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        return addFunction();
+        m_functionStore->addEmptyFunction();
+        m_selectableTableView.reloadData();
+        return true;
       }
       FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
       editExpression(functionCell, Ion::Events::OK);
@@ -102,6 +104,20 @@ TableViewCell * ListController::titleCells(int index) {
 TableViewCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_expressionCells[index];
+}
+
+void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
+  FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+  Function * function = ((FunctionStore *)m_functionStore)->functionAtIndex(j);
+  char bufferName[5] = {*function->name(),'(',function->symbol(),')', 0};
+  myFunctionCell->setText(bufferName);
+  KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
+  myFunctionCell->setColor(functionNameColor);
+}
+
+void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {
+  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
+  myCell->setFunction(((FunctionStore *)m_functionStore)->functionAtIndex(j));
 }
 
 }

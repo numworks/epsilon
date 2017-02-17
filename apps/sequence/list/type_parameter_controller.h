@@ -2,22 +2,22 @@
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher.h>
-#include "../sequence.h"
+#include "../sequence_store.h"
 
 namespace Sequence {
 
 class TypeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  TypeParameterController(Responder * parentResponder);
+  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore);
   const char * title() const override;
   View * view() override;
   void didBecomeFirstResponder() override;
-  void setSequence(Sequence * sequence);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 3;
@@ -25,7 +25,7 @@ private:
   TextBufferMenuListCell m_singleRecurrenceCell;
   TextBufferMenuListCell m_doubleRecurenceCell;
   SelectableTableView m_selectableTableView;
-  Sequence * m_sequence;
+  SequenceStore * m_sequenceStore;
 };
 
 }

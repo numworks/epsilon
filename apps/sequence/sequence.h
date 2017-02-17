@@ -22,8 +22,8 @@ public:
   Poincare::ExpressionLayout * secondInitialConditionLayout();
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
-private:
   char symbol() const override;
+private:
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];
   char m_secondInitialConditionText[Shared::Function::k_bodyLength];

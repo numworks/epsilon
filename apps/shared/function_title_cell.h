@@ -12,20 +12,13 @@ public:
     VerticalIndicator
   };
   FunctionTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Large);
-  void setColor(KDColor color);
-  void setText(const char * textContent);
+  virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setEven(bool even) override;
-  void setHighlighted(bool highlight) override;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
 protected:
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
-  EvenOddBufferTextCell m_bufferTextView;
+  Orientation m_orientation;
 private:
   KDColor m_functionColor;
-  Orientation m_orientation;
 };
 
 }

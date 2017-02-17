@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Graph {
 
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
-  Shared::ListController(parentResponder, functionStore, header),
+  Shared::ListController(parentResponder, functionStore, header, "Ajouter une fonction"),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, functionStore))

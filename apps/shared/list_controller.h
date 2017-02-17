@@ -10,7 +10,7 @@ namespace Shared {
 
 class ListController : public ViewController, public HeaderViewDelegate, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
+  ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header, const char * text);
   View * view() override;
   int numberOfRows() override;
   int numberOfColumns() override;

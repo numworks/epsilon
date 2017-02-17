@@ -37,54 +37,6 @@ KDCoordinate ListController::rowHeight(int j) {
   return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
 }
 
-bool ListController::handleEvent(Ion::Events::Event event) {
-  if (Shared::ListController::handleEvent(event)) {
-    return true;
-  }
-  if (event == Ion::Events::OK) {
-    return handleEnter();
-  }
-  if ((!event.hasText() && event != Ion::Events::XNT)
-      || m_selectableTableView.selectedColumn() == 0
-      || (m_selectableTableView.selectedRow() == numberOfRows() - 1
-         && m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions())) {
-    return false;
-  }
-  Shared::Function * function = m_functionStore->functionAtIndex(m_selectableTableView.selectedRow());
-  editExpression(function, event);
-  return true;
-}
-
-bool ListController::handleEnter() {
-  switch (m_selectableTableView.selectedColumn()) {
-    case 0:
-    {
-      if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        return true;
-      }
-      configureFunction(m_functionStore->functionAtIndex(m_selectableTableView.selectedRow()));
-      return true;
-    }
-    case 1:
-    {
-      if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        m_functionStore->addEmptyFunction();
-        m_selectableTableView.reloadData();
-        return true;
-      }
-      Shared::Function * function = m_functionStore->functionAtIndex(m_selectableTableView.selectedRow());
-      editExpression(function, Ion::Events::OK);
-      return true;
-    }
-    default:
-    {
-      return false;
-    }
-  }
-}
-
 void ListController::editExpression(Function * function, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[255];

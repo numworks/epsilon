@@ -140,6 +140,42 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
+  if (event == Ion::Events::OK) {
+      switch (m_selectableTableView.selectedColumn()) {
+      case 0:
+      {
+        if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+            m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+          return true;
+        }
+        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow())));
+        return true;
+      }
+      case 1:
+      {
+        if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+            m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+          addEmptyFunction();
+          return true;
+        }
+        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+        editExpression(function, Ion::Events::OK);
+        return true;
+      }
+      default:
+      {
+        return false;
+      }
+    }
+  }
+  if ((event.hasText() || event == Ion::Events::XNT)
+      && m_selectableTableView.selectedColumn() == 1
+      && (m_selectableTableView.selectedRow() != numberOfRows() - 1
+         || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+    editExpression(function, event);
+    return true;
+  }
   return false;
 }
 
@@ -159,6 +195,15 @@ void ListController::configureFunction(Shared::Function * function) {
 
 Responder * ListController::tabController() const{
   return (parentResponder()->parentResponder()->parentResponder());
+}
+
+int ListController::functionIndexForRow(int j) {
+  return j;
+}
+
+void ListController::addEmptyFunction() {
+  m_functionStore->addEmptyFunction();
+  m_selectableTableView.reloadData();
 }
 
 }

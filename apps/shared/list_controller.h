@@ -34,6 +34,9 @@ protected:
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
   Responder * tabController() const;
+  virtual int functionIndexForRow(int j);
+  virtual void addEmptyFunction();
+  virtual void editExpression(Function * function, Ion::Events::Event event) = 0;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;
   virtual HighlightCell * titleCells(int index) = 0;

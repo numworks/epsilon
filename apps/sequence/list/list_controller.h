@@ -21,11 +21,9 @@ public:
   int numberOfRows() override;
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  bool handleEvent(Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  bool handleEnter();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
@@ -33,8 +31,10 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  int sequenceIndexForRow(int j);
+  int functionIndexForRow(int j) override;
   int sequenceDefinitionForRow(int j);
+  void addEmptyFunction() override;
+  void editExpression(Shared::Function * function, Ion::Events::Event event) override;
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
   constexpr static int k_maxNumberOfRows = 9;
   SequenceStore * m_sequenceStore;

@@ -12,7 +12,7 @@ public:
   const char * editedText() const;
   void didBecomeFirstResponder() override;
   void setEditing(bool isEditing);
-  void reloadCell() override;
+  void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
   constexpr static int k_bufferLength = 255;

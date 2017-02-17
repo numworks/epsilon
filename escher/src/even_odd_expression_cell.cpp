@@ -9,8 +9,13 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float ve
 {
 }
 
-void EvenOddExpressionCell::reloadCell() {
-  EvenOddCell::reloadCell();
+void EvenOddExpressionCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_expressionView.setBackgroundColor(backgroundColor());
+}
+
+void EvenOddExpressionCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_expressionView.setBackgroundColor(backgroundColor());
 }
 

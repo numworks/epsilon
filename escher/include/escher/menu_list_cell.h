@@ -14,7 +14,7 @@ public:
   void setText(const char * text);
   virtual void setTextColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void reloadCell() override;
+  void setHighlighted(bool highlight) override;
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

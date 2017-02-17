@@ -38,7 +38,8 @@ bool ListController::handleEnter() {
   switch (m_selectableTableView.selectedColumn()) {
     case 0:
     {
-      if (m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+      if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
         return true;
       }
       configureFunction(m_functionStore->functionAtIndex(m_selectableTableView.selectedRow()));
@@ -46,7 +47,8 @@ bool ListController::handleEnter() {
     }
     case 1:
     {
-      if (m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+      if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
         return addFunction();
       }
       FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));

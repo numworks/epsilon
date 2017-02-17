@@ -10,7 +10,7 @@ View * ChevronMenuListCell::accessoryView() const {
   return (View *)&m_accessoryView;
 }
 
-void ChevronMenuListCell::reloadCell() {
-  MenuListCell::reloadCell();
+void ChevronMenuListCell::setHighlighted(bool highlight) {
+  MenuListCell::setHighlighted(highlight);
   m_accessoryView.setHighlighted(isHighlighted());
 }

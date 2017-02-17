@@ -13,8 +13,13 @@ EditableTextCell * EvenOddEditableTextCell::editableTextCell() {
   return &m_editableCell;
 }
 
-void EvenOddEditableTextCell::reloadCell() {
-  EvenOddCell::reloadCell();
+void EvenOddEditableTextCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_editableCell.textField()->setBackgroundColor(backgroundColor());
+}
+
+void EvenOddEditableTextCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_editableCell.textField()->setBackgroundColor(backgroundColor());
 }
 

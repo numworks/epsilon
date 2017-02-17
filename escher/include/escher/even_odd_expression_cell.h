@@ -8,7 +8,8 @@ class EvenOddExpressionCell : public EvenOddCell {
 public:
   EvenOddExpressionCell(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void reloadCell() override;
+  void setEven(bool even) override;
+  void setHighlighted(bool highlight) override;
   void setExpression(Poincare::ExpressionLayout * expressionLayout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);

@@ -24,9 +24,9 @@ void EditableTextMenuListCell::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
 }
 
-void EditableTextMenuListCell::reloadCell() {
-  MenuListCell::reloadCell();
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+void EditableTextMenuListCell::setHighlighted(bool highlight) {
+  MenuListCell::setHighlighted(highlight);
+  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_textField.setBackgroundColor(backgroundColor);
 }
 

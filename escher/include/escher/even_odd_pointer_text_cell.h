@@ -7,7 +7,8 @@
 class EvenOddPointerTextCell : public EvenOddCell {
 public:
   EvenOddPointerTextCell(KDText::FontSize size = KDText::FontSize::Large);
-  void reloadCell() override;
+  void setEven(bool even) override;
+  void setHighlighted(bool highlight) override;
   void setText(const char * textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   int numberOfSubviews() const override;

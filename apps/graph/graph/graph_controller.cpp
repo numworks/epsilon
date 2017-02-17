@@ -40,12 +40,12 @@ ViewController * GraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
-void GraphController::didBecomeFirstResponder() {
+void GraphController::viewWillAppear() {
   if (m_view.context() == nullptr) {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->localContext());
   }
-  InteractiveCurveViewController::didBecomeFirstResponder();
+  InteractiveCurveViewController::viewWillAppear();
 }
 
 bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

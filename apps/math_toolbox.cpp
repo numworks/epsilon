@@ -121,11 +121,6 @@ MathToolbox::MathToolbox() :
 }
 
 void MathToolbox::didBecomeFirstResponder() {
-  m_nodeModel = (ToolboxNode *)rootModel();
-  m_selectableTableView.reloadData();
-  StackViewController::didBecomeFirstResponder();
-  m_stack.resetStack();
-  m_listController.setFirstSelectedRow(0);
   app()->setFirstResponder(&m_listController);
 }
 
@@ -145,6 +140,9 @@ bool MathToolbox::handleEvent(Ion::Events::Event event) {
 }
 
 int MathToolbox::numberOfRows() {
+  if (m_nodeModel == nullptr) {
+    m_nodeModel = (ToolboxNode *)rootModel();
+  }
   return m_nodeModel->numberOfChildren();
 }
 
@@ -205,6 +203,14 @@ int MathToolbox::typeAtLocation(int i, int j) {
     return 0;
   }
   return 1;
+}
+
+void MathToolbox::viewWillAppear() {
+  Toolbox::viewWillAppear();
+  m_nodeModel = (ToolboxNode *)rootModel();
+  m_selectableTableView.reloadData();
+  m_stack.resetStack();
+  m_listController.setFirstSelectedRow(0);
 }
 
 void MathToolbox::viewWillDisappear() {

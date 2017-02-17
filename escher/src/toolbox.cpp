@@ -10,6 +10,10 @@ void Toolbox::setSender(Responder * sender) {
   m_sender = sender;
 }
 
+void Toolbox::viewWillAppear() {
+  StackViewController::viewWillAppear();
+}
+
 Responder * Toolbox::sender() {
   return m_sender;
 }

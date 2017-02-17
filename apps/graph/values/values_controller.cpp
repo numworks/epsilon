@@ -95,8 +95,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 }
 
 void ValuesController::didBecomeFirstResponder() {
-  headerViewController()->setSelectedButton(-1);
   EditableCellTableViewController::didBecomeFirstResponder();
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.deselectTable();
+    headerViewController()->setSelectedButton(0);
+  } else {
+    headerViewController()->setSelectedButton(-1);
+  }
 }
 
 ViewController * ValuesController::intervalParameterController() {
@@ -287,7 +292,8 @@ int ValuesController::activeColumn() {
 }
 
 void ValuesController::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  headerViewController()->setSelectedButton(-1);
+  EditableCellTableViewController::viewWillAppear();
 }
 
 CartesianFunction * ValuesController::functionAtColumn(int i) {

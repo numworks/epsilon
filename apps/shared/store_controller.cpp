@@ -70,6 +70,13 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Decimal);
 }
 
+void StoreController::didBecomeFirstResponder() {
+  if (m_selectableTableView.selectedRow() < 0) {
+    m_selectableTableView.selectCellAtLocation(0, 0);
+  }
+  EditableCellTableViewController::didBecomeFirstResponder();
+}
+
 bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_selectableTableView.deselectTable();

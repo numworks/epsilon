@@ -226,6 +226,14 @@ void VariableBoxController::ContentViewController::reloadData() {
   m_selectableTableView.reloadData();
 }
 
+void VariableBoxController::ContentViewController::resetPage() {
+  m_currentPage = Page::RootMenu;
+}
+
+void VariableBoxController::ContentViewController::deselectTable() {
+  m_selectableTableView.deselectTable();
+}
+
 VariableBoxController::VariableBoxController(Context * context) :
   StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(ContentViewController(this, context))
@@ -233,7 +241,6 @@ VariableBoxController::VariableBoxController(Context * context) :
 }
 
 void VariableBoxController::didBecomeFirstResponder() {
-  StackViewController::didBecomeFirstResponder();
   app()->setFirstResponder(&m_contentViewController);
 }
 
@@ -242,5 +249,11 @@ void VariableBoxController::setTextFieldCaller(TextField * textField) {
 }
 
 void VariableBoxController::viewWillAppear() {
+  StackViewController::viewWillAppear();
+  m_contentViewController.resetPage();
   m_contentViewController.reloadData();
+}
+
+void VariableBoxController::viewWillDisappear() {
+  m_contentViewController.deselectTable();
 }

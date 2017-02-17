@@ -23,6 +23,7 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
 
+  void viewWillAppear() override;
   void viewWillDisappear() override;
 protected:
   int stackDepth();

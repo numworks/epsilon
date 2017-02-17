@@ -14,6 +14,10 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
 {
 }
 
+void SelectableTableView::setDelegate(SelectableTableViewDelegate * delegate) {
+  m_delegate = delegate;
+}
+
 int SelectableTableView::selectedRow() {
   return m_selectedCellY;
 }

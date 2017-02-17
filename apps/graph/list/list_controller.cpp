@@ -25,7 +25,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     return handleEnter();
   }
-  if ((!event.hasText() && event != Ion::Events::XNT) || m_selectableTableView.selectedColumn() == 0
+  if ((!event.hasText() && event != Ion::Events::XNT)
+      || m_selectableTableView.selectedColumn() == 0
       || m_selectableTableView.selectedRow() == numberOfRows() - 1) {
     return false;
   }

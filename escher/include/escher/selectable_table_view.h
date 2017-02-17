@@ -22,7 +22,7 @@ public:
     bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
     KDCoordinate indicatorThickness = 20, KDColor indicatorColor = Palette::GreyDark,
     KDColor backgroundIndicatorColor = Palette::GreyMiddle, KDCoordinate indicatorMargin = 14);
-
+  void setDelegate(SelectableTableViewDelegate * delegate);
   int selectedRow();
   int selectedColumn();
   virtual bool handleEvent(Ion::Events::Event event) override;

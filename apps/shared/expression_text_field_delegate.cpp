@@ -49,14 +49,14 @@ bool ExpressionTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField
       delete exp;
     }
   }
-  if (event == Ion::Events::Toolbox && textField->isEditing()) {
+  if (event == Ion::Events::Toolbox) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     ToolboxController * toolboxController = appsContainer->toolboxController();
     toolboxController->setTextFieldCaller(textField);
     textField->app()->displayModalViewController(toolboxController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }
-  if (event == Ion::Events::Var && textField->isEditing()) {
+  if (event == Ion::Events::Var) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
     variableBoxController->setTextFieldCaller(textField);

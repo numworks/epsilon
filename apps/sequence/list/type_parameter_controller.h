@@ -9,6 +9,7 @@ namespace Sequence {
 class TypeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
   TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore);
+  ~TypeParameterController();
   const char * title() const override;
   View * view() override;
   void didBecomeFirstResponder() override;
@@ -21,9 +22,10 @@ public:
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 3;
-  TextBufferMenuListCell m_expliciteCell;
-  TextBufferMenuListCell m_singleRecurrenceCell;
-  TextBufferMenuListCell m_doubleRecurenceCell;
+  TextExpressionMenuListCell m_expliciteCell;
+  TextExpressionMenuListCell m_singleRecurrenceCell;
+  TextExpressionMenuListCell m_doubleRecurenceCell;
+  Poincare::ExpressionLayout * m_expressionLayouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   SequenceStore * m_sequenceStore;
 };

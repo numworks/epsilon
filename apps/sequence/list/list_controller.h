@@ -8,7 +8,7 @@
 #include "type_parameter_controller.h"
 #include "../../shared/new_function_cell.h"
 #include "../../shared/list_controller.h"
-#include "../../shared/list_parameter_controller.h"
+#include "list_parameter_controller.h"
 
 namespace Sequence {
 
@@ -21,7 +21,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
-  Shared::ListParameterController * parameterController() override;
+  ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   TableViewCell * titleCells(int index) override;
   TableViewCell * expressionCells(int index) override;
@@ -30,7 +30,7 @@ private:
   constexpr static int k_maxNumberOfRows = 3;
   SequenceTitleCell m_functionTitleCells[k_maxNumberOfRows];
   SequenceExpressionCell m_expressionCells[k_maxNumberOfRows];
-  Shared::ListParameterController m_parameterController;
+  ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   StackViewController m_typeStackController;
 };

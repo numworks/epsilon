@@ -8,6 +8,7 @@
 #include <escher/button.h>
 #include <escher/chevron_menu_list_cell.h>
 #include <escher/chevron_text_menu_list_cell.h>
+#include <escher/chevron_expression_menu_list_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/container.h>
 #include <escher/editable_text_menu_list_cell.h>
@@ -43,7 +44,7 @@
 #include <escher/switch_menu_list_cell.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <escher/text_buffer_menu_list_cell.h>
+#include <escher/text_expression_menu_list_cell.h>
 #include <escher/text_menu_list_cell.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

@@ -8,8 +8,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_expliciteCell(TextBufferMenuListCell((char*)"Explicite")),
   m_singleRecurrenceCell(TextBufferMenuListCell((char*)"Recurrence d'ordre 1")),
   m_doubleRecurenceCell(TextBufferMenuListCell((char*)"Recurrence d'ordre 2")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this)),
   m_sequenceStore(sequenceStore)
 {
 }
@@ -32,8 +31,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     Sequence * newSequence = m_sequenceStore->addEmptyFunction();
     newSequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
-    StackViewController * stack = stackController();
-    stack->pop();
+    app()->dismissModalViewController();
     return true;
   }
   return false;

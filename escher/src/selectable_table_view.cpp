@@ -29,6 +29,7 @@ int SelectableTableView::selectedColumn() {
 void SelectableTableView::didBecomeFirstResponder() {
   if (m_dataHasChanged) {
     reloadData();
+    scrollToCell(m_selectedCellX, m_selectedCellY);
     m_dataHasChanged = false;
   }
   if (m_delegate) {

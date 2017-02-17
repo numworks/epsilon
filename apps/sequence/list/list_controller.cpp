@@ -7,10 +7,11 @@ namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
   Shared::ListController(parentResponder, sequenceStore, header),
-  m_functionTitleCells{SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView),SequenceTitleCell(&m_selectableTableView)},
+  m_functionTitleCells{SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController),SequenceTitleCell(&m_selectableTableView, &m_parameterController)},
   m_expressionCells{SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView),SequenceExpressionCell(&m_selectableTableView)},
   m_parameterController(ListParameterController(this, sequenceStore)),
-  m_typeParameterController(this, sequenceStore)
+  m_typeParameterController(this, sequenceStore),
+  m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark))
 {
   m_selectableTableView.setDelegate(this);
 }
@@ -58,8 +59,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK && m_selectableTableView.selectedColumn() == 1
       && m_selectableTableView.selectedRow() == numberOfRows() - 1) {
     m_selectableTableView.dataHasChanged(true);
-    StackViewController * stack = stackController();
-    stack->push(&m_typeParameterController);
+    app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, 50, 50, 0, 50);
     return true;
   }
   return false;
@@ -67,12 +67,20 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 
 void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions() || t->selectedRow() < numberOfRows() - 1) {
-    if (t->selectedColumn() == 0) {
-      SequenceTitleCell * myCell = (SequenceTitleCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-      app()->setFirstResponder(myCell);
+    SequenceCell * myCell = (SequenceCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myCell);
+    if (t->selectedRow() == -1) {
+      return;
+    }
+    if (t->selectedRow() == previousSelectedCellY) {
+      SequenceCell * otherCell = (SequenceCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+      myCell->selectSubCell(otherCell->selectedSubCell());
     } else {
-      SequenceExpressionCell * myCell = (SequenceExpressionCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-      app()->setFirstResponder(myCell);
+      if (t->selectedRow() < previousSelectedCellY) {
+        myCell->selectSubCell(myCell->numberOfSubCells()-1);
+      } else {
+        myCell->selectSubCell(0);
+      }
     }
   } else {
     if (app()->firstResponder() != t) {
@@ -102,19 +110,7 @@ TableViewCell * ListController::expressionCells(int index) {
 void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = ((SequenceStore *)m_functionStore)->functionAtIndex(j);
-  myCell->setNumberOfSubCells((int)sequence->type()+1);
-  char bufferName[5] = {*sequence->name(),'(',sequence->symbol(),')', 0};
-  myCell->setDefinitionText(bufferName);
-  if ((int)sequence->type() > 0) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','1',')', 0};
-    myCell->setFirstInitialConditionText(bufferName);
-  }
-  if ((int)sequence->type() > 1) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','2',')', 0};
-    myCell->setSecondInitialConditionText(bufferName);
-  }
-  KDColor functionNameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
-  myCell->setColor(functionNameColor);
+  myCell->setSequence(sequence);
 }
 
 void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {

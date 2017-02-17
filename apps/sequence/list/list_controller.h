@@ -2,7 +2,7 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "../sequence_title_cell.h"
+#include "sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "sequence_expression_cell.h"
 #include "type_parameter_controller.h"
@@ -32,6 +32,7 @@ private:
   SequenceExpressionCell m_expressionCells[k_maxNumberOfRows];
   Shared::ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
+  StackViewController m_typeStackController;
 };
 
 }

@@ -33,6 +33,14 @@ Sequence::~Sequence() {
   }
 }
 
+const char * Sequence::firstInitialConditionText() {
+  return m_firstInitialConditionText;
+}
+
+const char * Sequence::secondInitialConditionText() {
+  return m_secondInitialConditionText;
+}
+
 Sequence::Type Sequence::type() {
   return m_type;
 }

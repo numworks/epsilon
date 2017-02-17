@@ -4,7 +4,7 @@
 TextBufferMenuListCell::TextBufferMenuListCell(char * accessoryText) :
   TableViewCell(),
   m_labelTextView(BufferTextView(KDText::FontSize::Large, 0.0f, 0.5f, KDColorBlack, KDColorWhite)),
-  m_accessoryView(PointerTextView(KDText::FontSize::Small, accessoryText, 0.0f, 0.5f, KDColorBlack, KDColorWhite))
+  m_accessoryView(PointerTextView(KDText::FontSize::Small, accessoryText, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite))
 {
 }
 

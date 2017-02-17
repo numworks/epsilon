@@ -23,6 +23,7 @@ private:
   int maxNumberOfRows() override;
   TableViewCell * titleCells(int index) override;
   TableViewCell * expressionCells(int index) override;
+  void configureFunction(Shared::Function * function);
   void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) override;
   constexpr static int k_maxNumberOfRows = 5;

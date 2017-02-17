@@ -4,6 +4,7 @@
 #include "cartesian_function.h"
 #include "../shared/function_store.h"
 #include <stdint.h>
+#include <escher.h>
 
 namespace Graph {
 
@@ -23,8 +24,8 @@ private:
   const KDColor firstAvailableColor() override;
   static constexpr int k_numberOfDefaultColors = 8;
   static constexpr KDColor k_defaultColors[k_numberOfDefaultColors] = {
-    KDColor::RGB24(0xbe2727), KDColor::RGB24(0x3e6f3c), KDColor::RGB24(0x656975), KDColor::RGB24(0x9ec580),
-    KDColor::RGB24(0xffb734), KDColor::RGB24(0x4a94ab), KDColor::RGB24(0xf98577), KDColor::RGB24(0xd4ac46)
+    Palette::Red, Palette::Blue,  Palette::YellowDark, Palette::Magenta,
+    Palette::Pink, Palette::Turquoise, Palette::Orange,  Palette::Green
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p", "q", "r", "s", "t"

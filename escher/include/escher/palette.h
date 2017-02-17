@@ -18,6 +18,13 @@ public:
   constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);
   constexpr static KDColor SubTab = KDColor::RGB24(0xb8bbc5);
   constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);
+  constexpr static KDColor Red = KDColor::RGB24(0xff000c);
+  constexpr static KDColor Magenta = KDColor::RGB24(0xff0588);
+  constexpr static KDColor Turquoise = KDColor::RGB24(0x60c1ec);
+  constexpr static KDColor Pink = KDColor::RGB24(0xffabb6);
+  constexpr static KDColor Blue = KDColor::RGB24(0x5075f2);
+  constexpr static KDColor Orange = KDColor::RGB24(0xfe871f);
+  constexpr static KDColor Green = KDColor::RGB24(0x76d435);
 };
 
 #endif

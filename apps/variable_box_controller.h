@@ -20,9 +20,9 @@ private:
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
     int numberOfRows() override;
-    TableViewCell * reusableCell(int index, int type) override;
+    HighlightCell * reusableCell(int index, int type) override;
     int reusableCellCount(int type) override;
-    void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+    void willDisplayCellForIndex(HighlightCell * cell, int index) override;
     KDCoordinate rowHeight(int j) override;
     KDCoordinate cumulatedHeightFromIndex(int j) override;
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -51,7 +51,7 @@ private:
     int m_previousSelectedRow;
     Page m_currentPage;
     VariableBoxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
-    ChevronMenuListCell m_nodeCells[k_numberOfMenuRows];
+    PointerTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;

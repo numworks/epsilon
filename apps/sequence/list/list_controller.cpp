@@ -14,7 +14,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, sequenceStore)),
-  m_typeParameterController(this, sequenceStore),
+  m_typeParameterController(this, sequenceStore, TableCell::Layout::Vertical),
   m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
   m_sequenceToolbox(SequenceToolbox(m_sequenceStore))
 {
@@ -71,7 +71,7 @@ KDCoordinate ListController::rowHeight(int j) {
   return sequenceSize + defaultHeight - KDText::stringSize(" ").height();
 }
 
-void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(sequenceIndexForRow(j)%2 == 0);
@@ -176,18 +176,18 @@ int ListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
-TableViewCell * ListController::titleCells(int index) {
+HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_sequenceTitleCells[index];
 }
 
-TableViewCell * ListController::expressionCells(int index) {
+HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_expressionCells[index];
 }
 
 
-void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
+void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
@@ -203,7 +203,7 @@ void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   myCell->setColor(nameColor);
 }
 
-void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {
+void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {

@@ -84,7 +84,7 @@ int VariableBoxController::ContentViewController::numberOfRows() {
   }
 }
 
-TableViewCell * VariableBoxController::ContentViewController::reusableCell(int index, int type) {
+HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
   if (type == 0) {
@@ -103,10 +103,10 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void VariableBoxController::ContentViewController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     const char * label = nodeLabelAtIndex(index);
-    MenuListCell * myCell = (MenuListCell *)cell;
+    PointerTableCell * myCell = (PointerTableCell *)cell;
     myCell->setText(label);
     return;
   }

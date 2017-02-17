@@ -15,12 +15,12 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 3;
-  MenuListCell m_cells[k_totalNumberOfCells];
+  PointerTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   Store * m_store;
 };

@@ -9,9 +9,9 @@ namespace Graph {
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
-  m_intervalStartCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Debut")),
-  m_intervalEndCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Fin")),
-  m_intervalStepCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Pas"))
+  m_intervalStartCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Debut")),
+  m_intervalEndCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Fin")),
+  m_intervalStepCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Pas"))
 {
 }
 
@@ -37,10 +37,10 @@ int IntervalParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * IntervalParameterController::reusableCell(int index) {
+HighlightCell * IntervalParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
+  HighlightCell * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
   return cells[index];
 }
 

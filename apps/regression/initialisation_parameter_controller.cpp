@@ -44,7 +44,7 @@ int InitialisationParameterController::numberOfRows() {
 };
 
 
-TableViewCell * InitialisationParameterController::reusableCell(int index) {
+HighlightCell * InitialisationParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
   return &m_cells[index];
@@ -58,8 +58,8 @@ KDCoordinate InitialisationParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void InitialisationParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  MenuListCell * myCell = (MenuListCell *)cell;
+void InitialisationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCell * myCell = (PointerTableCell *)cell;
   const char * titles[3] = {"Abscisses entieres", "Orthonorme", "Reglage de base"};
   myCell->setText(titles[index]);
 }

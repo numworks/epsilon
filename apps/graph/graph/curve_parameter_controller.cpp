@@ -9,9 +9,9 @@ CurveParameterController::CurveParameterController(InteractiveCurveViewRange * g
   ViewController(nullptr),
   m_bannerView(bannerView),
   m_function(nullptr),
-  m_calculationCell(ChevronMenuListCell((char*)"Calculer")),
-  m_goToCell(ChevronMenuListCell((char*)"Aller a")),
-  m_derivativeCell(SwitchMenuListCell((char*)"Nombre derivee")),
+  m_calculationCell(PointerTableCellWithChevron((char*)"Calculer")),
+  m_goToCell(PointerTableCellWithChevron((char*)"Aller a")),
+  m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_goToParameterController(GoToParameterController(this, graphRange, cursor))
@@ -31,7 +31,7 @@ void CurveParameterController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-void CurveParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
     switchView->setState(m_bannerView->displayDerivative());
@@ -67,10 +67,10 @@ int CurveParameterController::numberOfRows() {
   return k_totalNumberOfCells;
 };
 
-TableViewCell * CurveParameterController::reusableCell(int index) {
+HighlightCell * CurveParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
-  TableViewCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
+  HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
   return cells[index];
 }
 

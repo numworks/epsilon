@@ -21,9 +21,9 @@ public:
   virtual int numberOfColumns() override;
   virtual KDCoordinate cellHeight() override;
   virtual KDCoordinate cellWidth() override;
-  virtual TableViewCell * reusableCell(int index) override;
+  virtual HighlightCell * reusableCell(int index) override;
   virtual int reusableCellCount() override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   int numberOfIcons();

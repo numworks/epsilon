@@ -17,9 +17,9 @@ public:
   void select(bool select);
   void setHighlight(bool highlight);
   int numberOfRows() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   constexpr static KDCoordinate k_imageWidth = 35;
   constexpr static KDCoordinate k_imageHeight = 19;
@@ -28,7 +28,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   void setCalculationAccordingToIndex(int index);
-  class ImageCell : public TableViewCell {
+  class ImageCell : public HighlightCell {
   public:
     ImageCell();
     void reloadCell() override;

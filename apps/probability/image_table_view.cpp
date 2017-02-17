@@ -11,7 +11,7 @@
 namespace Probability {
 
 ImageTableView::ImageCell::ImageCell() :
-  TableViewCell()
+  HighlightCell()
 {
 }
 
@@ -29,7 +29,7 @@ void ImageTableView::ImageCell::layoutSubviews() {
 }
 
 void ImageTableView::ImageCell::reloadCell() {
-  TableViewCell::reloadCell();
+  HighlightCell::reloadCell();
   if (isHighlighted()) {
     m_iconView.setImage(m_focusedIcon);
   } else {
@@ -108,7 +108,7 @@ int ImageTableView::numberOfRows() {
   return 1;
 }
 
-TableViewCell * ImageTableView::reusableCell(int index) {
+HighlightCell * ImageTableView::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_numberOfImages);
   return &m_imageCells[index];
@@ -118,7 +118,7 @@ int ImageTableView::reusableCellCount() {
   return k_numberOfImages;
 }
 
-void ImageTableView::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void ImageTableView::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ImageCell * myCell = (ImageCell *)cell;
   const Image *  images[3] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon};
   const Image * focusedImages[3] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon};

@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 
 EvenOddCell::EvenOddCell() :
-  TableViewCell(),
+  HighlightCell(),
   m_even(false)
 {
 }

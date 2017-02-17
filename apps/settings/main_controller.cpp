@@ -20,8 +20,8 @@ const SettingsNode model = SettingsNode("Parametres", menu, 5);
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large),
-    ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large)},
+  m_cells{PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large),
+    PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel((Node *)&model),
@@ -57,7 +57,7 @@ int MainController::numberOfRows() {
   return m_nodeModel->numberOfChildren();
 };
 
-TableViewCell * MainController::reusableCell(int index) {
+HighlightCell * MainController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   return &m_cells[index];
@@ -71,8 +71,8 @@ KDCoordinate MainController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  ChevronTextMenuListCell * myCell = (ChevronTextMenuListCell *)cell;
+void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCellWithChevronAndPointer * myCell = (PointerTableCellWithChevronAndPointer *)cell;
   myCell->setText(m_nodeModel->children(index)->label());
   switch (index) {
     case 0:

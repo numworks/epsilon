@@ -1,15 +1,15 @@
-#ifndef ESCHER_TABLE_VIEW_CELL_H
-#define ESCHER_TABLE_VIEW_CELL_H
+#ifndef ESCHER_HIGHLIGHT_CELL_H
+#define ESCHER_HIGHLIGHT_CELL_H
 
 #include <escher/view.h>
 
-class TableViewCell : public View {
+class HighlightCell : public View {
 public:
-  TableViewCell();
+  HighlightCell();
   virtual void setHighlighted(bool highlight);
   bool isHighlighted() const;
   virtual void reloadCell();
-private:
+protected:
   bool m_highlighted;
 };
 

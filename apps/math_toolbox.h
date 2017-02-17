@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "toolbox_node.h"
-#include "toolbox_leaf_cell.h"
 
 /* m_nodeModel points at the node of the tree (describing the whole model)
  * where we are located. It enables to know which rows are leaves and which are
@@ -16,9 +15,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   int numberOfRows() override;
-  TableViewCell * reusableCell(int index, int type) override;
+  HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -70,8 +69,8 @@ private:
   bool selectSubMenu(ToolboxNode * selectedNode);
   bool returnToPreviousMenu();
   Stack m_stack;
-  ToolboxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
-  ChevronMenuListCell m_nodeCells[k_maxNumberOfDisplayedRows];
+  PointerTableCellWithPointer m_leafCells[k_maxNumberOfDisplayedRows];
+  PointerTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
   ListController m_listController;
   ToolboxNode * m_nodeModel;
 };

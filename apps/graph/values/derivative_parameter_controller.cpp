@@ -7,8 +7,8 @@ namespace Graph {
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ViewController(valuesController),
   m_pageTitle{"Colonne f'(x)"},
-  m_hideColumn(MenuListCell((char*)"Masquer la colonne de la derivee")),
-  m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
+  m_hideColumn(PointerTableCell((char*)"Masquer la colonne de la derivee")),
+  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_function(nullptr),
@@ -65,10 +65,10 @@ int DerivativeParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * DerivativeParameterController::reusableCell(int index) {
+HighlightCell * DerivativeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_hideColumn, &m_copyColumn};
+  HighlightCell * cells[] = {&m_hideColumn, &m_copyColumn};
   return cells[index];
 }
 

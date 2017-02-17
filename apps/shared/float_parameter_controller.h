@@ -15,7 +15,7 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:

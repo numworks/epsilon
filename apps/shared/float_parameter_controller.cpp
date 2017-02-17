@@ -28,8 +28,8 @@ int FloatParameterController::activeCell() {
   return m_selectableTableView.selectedRow();
 }
 
-void FloatParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
+void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   myCell->setAccessoryText(buffer);
@@ -46,9 +46,9 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
   myCell->setEditing(false);
-  EditableTextMenuListCell * myNewCell = (EditableTextMenuListCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+  PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
   app()->setFirstResponder(myNewCell);
 }
 

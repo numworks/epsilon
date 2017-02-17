@@ -4,7 +4,7 @@
 namespace Probability {
 
 Cell::Cell() :
-  TableViewCell(),
+  HighlightCell(),
   m_labelView(PointerTextView(KDText::FontSize::Large, nullptr, 0, 0.5, KDColorBlack, KDColorWhite))
 {
 }
@@ -33,7 +33,7 @@ void Cell::layoutSubviews() {
 }
 
 void Cell::reloadCell() {
-  TableViewCell::reloadCell();
+  HighlightCell::reloadCell();
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_chevronView.setHighlighted(isHighlighted());

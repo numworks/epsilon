@@ -7,7 +7,7 @@ namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer)),
+  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
   m_store(store),
   m_cursor(cursor),
   m_xPrediction(true)
@@ -52,7 +52,7 @@ int GoToParameterController::numberOfRows() {
   return 1;
 };
 
-TableViewCell * GoToParameterController::reusableCell(int index) {
+HighlightCell * GoToParameterController::reusableCell(int index) {
   assert(index == 0);
   return &m_abscisseCell;
 }
@@ -61,8 +61,8 @@ int GoToParameterController::reusableCellCount() {
   return 1;
 }
 
-void GoToParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
+void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   if (m_xPrediction) {
     myCell->setText("x");
   } else {

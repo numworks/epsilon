@@ -40,3 +40,7 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(width - k_switchMargin - switchHalfWidth - k_separatorThickness, heightCenter-switchHalfHeight, switchHalfWidth, k_switchHeight), KDColorWhite);
   }
 }
+
+KDSize SwitchView::minimalSizeForOptimalDisplay() {
+  return KDSize(2*k_separatorThickness + k_switchMargin + k_switchWidth, k_switchHeight);
+}

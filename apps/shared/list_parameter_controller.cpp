@@ -8,9 +8,9 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_functionStore(functionStore),
-  m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
-  m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
-  m_deleteCell(MenuListCell((char*)"Supprimer la fonction"))
+  m_colorCell(PointerTableCellWithChevron((char*)"Couleur de la fonction")),
+  m_enableCell(PointerTableCellWithSwitch((char*)"Activer/Desactiver")),
+  m_deleteCell(PointerTableCell((char*)"Supprimer la fonction"))
 {
 }
 
@@ -32,7 +32,7 @@ void ListParameterController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-void ListParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
     switchView->setState(m_function->isActive());
@@ -83,10 +83,10 @@ int ListParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * ListParameterController::reusableCell(int index) {
+HighlightCell * ListParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
+  HighlightCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
   return cells[index];
 }
 

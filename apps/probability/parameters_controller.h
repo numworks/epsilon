@@ -19,8 +19,8 @@ public:
   StackViewController * stackController();
   CalculationController * calculationController();
   int numberOfRows() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  TableViewCell * reusableCell(int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   float parameterAtIndex(int index) override;
@@ -47,8 +47,8 @@ private:
     SelectableTableView * m_selectableTableView;
   };
   constexpr static int k_maxNumberOfCells = 2;
-  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
-  EditableTextMenuListCell m_menuListCell[k_maxNumberOfCells];
+  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
+  PointerTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
   ContentView m_contentView;
   Law * m_law;
   bool m_buttonSelected;

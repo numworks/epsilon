@@ -10,9 +10,9 @@ namespace Statistics {
 class StoreController : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, HeaderViewController * header);
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
-  TableViewCell * titleCells(int index) override;
+  HighlightCell * titleCells(int index) override;
   EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
 };
 

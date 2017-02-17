@@ -42,7 +42,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   /* As we scroll, the selected calculation does not use the same history view
    * cell, thus, we want to deselect the previous used history view cell. */
   if (selectedRow() >= 0) {
-    TableViewCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
+    HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
     previousCell->setHighlighted(false);
   }
   /* Main part of the scroll */
@@ -61,7 +61,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
    * inform the delegate which history view cell is highlighted even if the
    * selected calculation has not changed. */
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
-  TableViewCell * cell = cellAtLocation(i, j);
+  HighlightCell * cell = cellAtLocation(i, j);
   cell->setHighlighted(true);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, selectedColumn(), selectedRow());

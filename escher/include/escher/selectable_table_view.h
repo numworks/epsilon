@@ -29,7 +29,7 @@ public:
   virtual void didBecomeFirstResponder() override;
   void deselectTable();
   bool selectCellAtLocation(int i, int j);
-  TableViewCell * selectedCell();
+  HighlightCell * selectedCell();
 protected:
   SelectableTableViewDelegate * m_delegate;
 private:

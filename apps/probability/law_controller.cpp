@@ -94,7 +94,7 @@ int Probability::LawController::numberOfRows() {
   return k_totalNumberOfModels;
 };
 
-TableViewCell * Probability::LawController::reusableCell(int index) {
+HighlightCell * Probability::LawController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfModels);
   return &m_cells[index];
@@ -104,7 +104,7 @@ int Probability::LawController::reusableCellCount() {
   return k_totalNumberOfModels;
 }
 
-void Probability::LawController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Cell * myCell = (Cell *)cell;
   myCell->setLabel(m_messages[index]);
   const Image * images[5] = {ImageStore::BinomialIcon, ImageStore::UniformIcon, ImageStore::ExponentialIcon,

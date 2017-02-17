@@ -20,7 +20,7 @@ public:
   const char * title() const override;
   int numberOfRows() override;
   virtual KDCoordinate rowHeight(int j) override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
 private:
@@ -29,10 +29,10 @@ private:
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
-  TableViewCell * titleCells(int index) override;
-  TableViewCell * expressionCells(int index) override;
-  void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) override;
-  void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) override;
+  HighlightCell * titleCells(int index) override;
+  HighlightCell * expressionCells(int index) override;
+  void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
+  void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   int sequenceIndexForRow(int j);
   int sequenceDefinitionForRow(int j);
   static constexpr KDCoordinate k_emptySubRowHeight = 30;

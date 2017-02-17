@@ -31,7 +31,7 @@ int SequenceToolbox::numberOfRows() {
   return MathToolbox::numberOfRows();
 }
 
-TableViewCell * SequenceToolbox::reusableCell(int index, int type) {
+HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
   assert(type < 3);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
@@ -41,9 +41,9 @@ TableViewCell * SequenceToolbox::reusableCell(int index, int type) {
   return MathToolbox::reusableCell(index, type);
 }
 
-void SequenceToolbox::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtLocation(0, index) == 2) {
-    ExpressionMenuListCell * myCell = (ExpressionMenuListCell *)cell;
+    ExpressionTableCell * myCell = (ExpressionTableCell *)cell;
     myCell->setExpression(m_addedCellLayout[index]);
     return;
   } else {

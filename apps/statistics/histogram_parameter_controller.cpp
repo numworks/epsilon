@@ -8,8 +8,8 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
-  m_binWidthCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectanges : ")),
-  m_minValueCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Debut de la serie : ")),
+  m_binWidthCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectanges : ")),
+  m_minValueCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Debut de la serie : ")),
   m_store(store)
 {
 }
@@ -43,7 +43,7 @@ int HistogramParameterController::numberOfRows() {
   return 2;
 };
 
-TableViewCell * HistogramParameterController::reusableCell(int index) {
+HighlightCell * HistogramParameterController::reusableCell(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return &m_binWidthCell;

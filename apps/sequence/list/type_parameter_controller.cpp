@@ -7,12 +7,12 @@ using namespace Poincare;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore,
+TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(TextExpressionMenuListCell((char*)"Explicite")),
-  m_singleRecurrenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 1")),
-  m_doubleRecurenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 2")),
+  m_expliciteCell(ExpressionTableCellWithPointer((char*)"Explicite", cellLayout)),
+  m_singleRecurrenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 1", cellLayout)),
+  m_doubleRecurenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 2", cellLayout)),
   m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin)),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr)
@@ -65,10 +65,10 @@ int TypeParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * TypeParameterController::reusableCell(int index) {
+HighlightCell * TypeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_expliciteCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
+  HighlightCell * cells[] = {&m_expliciteCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
   return cells[index];
 }
 
@@ -83,7 +83,7 @@ KDCoordinate TypeParameterController::cellHeight() {
   return 50;
 }
 
-void TypeParameterController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   const char * nextName = m_sequenceStore->firstAvailableName();
   KDText::FontSize size = KDText::FontSize::Large;
   if (m_sequence) {
@@ -96,7 +96,7 @@ void TypeParameterController::willDisplayCellAtLocation(TableViewCell * cell, in
     m_expressionLayouts[j] = nullptr;
   }
   m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1, size), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  TextExpressionMenuListCell * myCell = (TextExpressionMenuListCell *)cell;
+  ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setExpression(m_expressionLayouts[j]);
 }
 

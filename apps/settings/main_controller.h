@@ -17,14 +17,14 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 5;
-  ChevronTextMenuListCell m_cells[k_totalNumberOfCell];
+  PointerTableCellWithChevronAndPointer m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
   SubController m_subController;

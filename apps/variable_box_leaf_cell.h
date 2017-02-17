@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class VariableBoxLeafCell : public TableViewCell {
+class VariableBoxLeafCell : public HighlightCell {
 public:
   VariableBoxLeafCell();
   void displayExpression(bool displayExpression);

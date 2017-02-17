@@ -86,8 +86,8 @@ void ParametersController::ContentView::layoutSubviews() {
 
 ParametersController::ParametersController(Responder * parentResponder) :
   FloatParameterController(parentResponder),
-  m_menuListCell{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer)},
+  m_menuListCell{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
+    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(nullptr),
   m_buttonSelected(false),
@@ -154,13 +154,13 @@ int ParametersController::numberOfRows() {
   return m_law->numberOfParameter();
 };
 
-void ParametersController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  EditableTextMenuListCell * myCell = (EditableTextMenuListCell *) cell;
+void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   myCell->setText(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-TableViewCell * ParametersController::reusableCell(int index) {
+HighlightCell * ParametersController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < 2);
   return &m_menuListCell[index];

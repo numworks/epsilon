@@ -19,7 +19,6 @@ app_objs += $(addprefix apps/,\
   math_toolbox.o\
   node.o\
   title_bar_view.o\
-  toolbox_leaf_cell.o\
   toolbox_node.o\
   variable_box_controller.o\
   variable_box_leaf_cell.o\

@@ -7,8 +7,8 @@ namespace Sequence {
 
 ListParameterController::ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
   Shared::ListParameterController(parentResponder, sequenceStore),
-  m_typeCell(ChevronExpressionMenuListCell((char *)"Type de suite")),
-  m_typeParameterController(TypeParameterController(this, sequenceStore, Metric::TopMargin, Metric::RightMargin,
+  m_typeCell(PointerTableCellWithChevronAndExpression((char *)"Type de suite")),
+  m_typeParameterController(TypeParameterController(this, sequenceStore, TableCell::Layout::Horizontal, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin))
 {
 }
@@ -44,7 +44,7 @@ int ListParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * ListParameterController::reusableCell(int index) {
+HighlightCell * ListParameterController::reusableCell(int index) {
   if (index == 3) {
     return &m_typeCell;
   }
@@ -55,7 +55,7 @@ int ListParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-void ListParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && m_sequence != nullptr) {
     m_typeCell.setExpression(m_sequence->definitionName());

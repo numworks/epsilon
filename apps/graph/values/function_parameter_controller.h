@@ -18,17 +18,17 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   void setFunction(CartesianFunction * function);
 private:
   constexpr static int k_totalNumberOfCell = 2;
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
-  SwitchMenuListCell m_displayDerivativeColumn;
-  ChevronMenuListCell m_copyColumn;
+  PointerTableCellWithSwitch m_displayDerivativeColumn;
+  PointerTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
   CartesianFunction * m_function;
   ValuesController * m_valuesController;

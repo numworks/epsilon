@@ -2,13 +2,13 @@
 #define ESCHER_TABLE_VIEW_DATA_SOURCE_H
 
 #include <escher/view.h>
-#include <escher/table_view_cell.h>
+#include <escher/highlight_cell.h>
 
 class TableViewDataSource {
 public:
   virtual int numberOfRows() = 0;
   virtual int numberOfColumns() = 0;
-  virtual void willDisplayCellAtLocation(TableViewCell * cell, int i, int j);
+  virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j);
   virtual KDCoordinate columnWidth(int i) = 0;
   virtual KDCoordinate rowHeight(int j) = 0;
   /* return the number of pixels to include in offset to display the column i at
@@ -21,7 +21,7 @@ public:
    * returns n-1. */
   virtual int indexFromCumulatedWidth(KDCoordinate offsetX) = 0;
   virtual int indexFromCumulatedHeight(KDCoordinate offsetY) = 0;
-  virtual TableViewCell * reusableCell(int index, int type) = 0;
+  virtual HighlightCell * reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int i, int j) = 0;
 };

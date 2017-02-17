@@ -15,12 +15,12 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setFunction(Shared::Function * function) override;
   int numberOfRows() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCell = 4;
-  ChevronExpressionMenuListCell m_typeCell;
+  PointerTableCellWithChevronAndExpression m_typeCell;
   TypeParameterController m_typeParameterController;
   Sequence * m_sequence;
 };

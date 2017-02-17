@@ -148,7 +148,7 @@ int MathToolbox::numberOfRows() {
   return m_nodeModel->numberOfChildren();
 }
 
-TableViewCell * MathToolbox::reusableCell(int index, int type) {
+HighlightCell * MathToolbox::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
@@ -162,15 +162,16 @@ int MathToolbox::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedRows;
 }
 
-void MathToolbox::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxNode * node = (ToolboxNode *)m_nodeModel->children(index);
   if (node->numberOfChildren() == 0) {
-    ToolboxLeafCell * myCell = (ToolboxLeafCell *)cell;
-    myCell->setLabel(node->label());
-    myCell->setSubtitle(node->text());
+    PointerTableCellWithPointer * myCell = (PointerTableCellWithPointer *)cell;
+    myCell->setText(node->label());
+    myCell->setAccessoryText(node->text());
+    myCell->setAccessoryTextColor(Palette::GreyDark);
     return;
   }
-  MenuListCell * myCell = (MenuListCell *)cell;
+  PointerTableCell * myCell = (PointerTableCell *)cell;
   myCell->setText(node->label());
 }
 

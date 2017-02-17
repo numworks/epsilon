@@ -226,7 +226,7 @@ int ListController::sequenceIndexForRow(int j) {
   }
   if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
       j == numberOfRows() - 1) {
-    return j;
+    return sequenceIndexForRow(j-1)+1;
   }
   int rowIndex = 0;
   int sequenceIndex = -1;

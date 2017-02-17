@@ -20,7 +20,7 @@ View * AppCell::subviewAtIndex(int index) {
 }
 
 void AppCell::layoutSubviews() {
-  m_iconView.setFrame(KDRect((bounds().width()-k_iconWidth)/2, 18, k_iconWidth,k_iconHeight));
+  m_iconView.setFrame(KDRect((bounds().width()-k_iconWidth)/2, k_iconMargin, k_iconWidth,k_iconHeight));
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   m_nameView.setFrame(KDRect((bounds().width()-nameSize.width())/2-k_nameWidthMargin,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, nameSize.width()+2*k_nameWidthMargin, nameSize.height()+2*k_nameHeightMargin));
 }

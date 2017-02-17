@@ -12,8 +12,8 @@ CurveParameterController::CurveParameterController(InteractiveCurveViewRange * g
   m_calculationCell(PointerTableCellWithChevron((char*)"Calculer")),
   m_goToCell(PointerTableCellWithChevron((char*)"Aller a")),
   m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_goToParameterController(GoToParameterController(this, graphRange, cursor))
 {
 }

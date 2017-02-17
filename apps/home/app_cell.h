@@ -17,6 +17,7 @@ public:
   void reloadCell() override;
   void setApp(::App * app);
 private:
+  static constexpr KDCoordinate k_iconMargin = 18;
   static constexpr KDCoordinate k_iconWidth = 55;
   static constexpr KDCoordinate k_iconHeight = 56;
   static constexpr KDCoordinate k_nameWidthMargin = 4;

@@ -42,14 +42,14 @@ bool ScrollableExpressionView::rightViewIsInvisible() {
 bool ScrollableExpressionView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right && rightViewIsInvisible()) {
       KDCoordinate rightSpace = m_expressionView.bounds().width() - m_manualScrolling - bounds().width();
-      KDCoordinate scrollAdd = rightSpace > 10 ? 10 : rightSpace;
+      KDCoordinate scrollAdd = rightSpace > Metric::ScrollStep ? Metric::ScrollStep : rightSpace;
       m_manualScrolling += scrollAdd;
       setContentOffset(KDPoint(m_manualScrolling, 0));
       return true;
   }
   if (event == Ion::Events::Left && m_manualScrolling > 0) {
     KDCoordinate leftSpace = m_manualScrolling;
-    KDCoordinate scrollSubstract = leftSpace > 10 ? 10 : leftSpace;
+    KDCoordinate scrollSubstract = leftSpace > Metric::ScrollStep ? Metric::ScrollStep : leftSpace;
     m_manualScrolling -= scrollSubstract;
     setContentOffset(KDPoint(m_manualScrolling, 0));
     return true;

@@ -8,8 +8,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
   m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
   m_importList(PointerTableCellWithChevron((char*)"Importer une liste")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_store(store),
   m_xColumnSelected(true)
 {

@@ -10,8 +10,8 @@ namespace Shared {
 
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin, this))
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this))
 {
 }
 

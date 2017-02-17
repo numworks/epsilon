@@ -37,7 +37,7 @@ private:
   constexpr static int k_totalNumberOfRows = 13;
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   static constexpr KDCoordinate k_cellHeight = 20;
-  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
+  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows];
   SelectableTableView m_selectableTableView;

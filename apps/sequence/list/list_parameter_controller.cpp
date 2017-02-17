@@ -8,8 +8,8 @@ namespace Sequence {
 ListParameterController::ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
   Shared::ListParameterController(parentResponder, sequenceStore),
   m_typeCell(PointerTableCellWithChevronAndExpression((char *)"Type de suite")),
-  m_typeParameterController(TypeParameterController(this, sequenceStore, TableCell::Layout::Horizontal, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin))
+  m_typeParameterController(TypeParameterController(this, sequenceStore, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin))
 {
 }
 

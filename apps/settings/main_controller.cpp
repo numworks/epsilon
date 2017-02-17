@@ -22,8 +22,8 @@ MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large),
     PointerTableCellWithChevronAndPointer(KDText::FontSize::Large), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large)},
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel((Node *)&model),
   m_subController(this)
 {

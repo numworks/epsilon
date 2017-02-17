@@ -11,8 +11,8 @@ SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{PointerTableCell(nullptr, KDText::FontSize::Large), PointerTableCell(nullptr, KDText::FontSize::Large),
     PointerTableCell(nullptr, KDText::FontSize::Large)},
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel(nullptr),
   m_preferenceIndex(0)
 {

@@ -8,8 +8,8 @@ AbscissaParameterController::AbscissaParameterController(Responder * parentRespo
   m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
   m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
   m_setInterval(PointerTableCellWithChevron((char*)"Regler l'intervalle")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)
 {
 }

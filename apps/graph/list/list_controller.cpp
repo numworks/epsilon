@@ -46,7 +46,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if ((!event.hasText() && event != Ion::Events::XNT)
       || m_selectableTableView.selectedColumn() == 0
-      || m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+      || (m_selectableTableView.selectedRow() == numberOfRows() - 1
+         && m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions())) {
     return false;
   }
   Shared::Function * function = m_functionStore->functionAtIndex(m_selectableTableView.selectedRow());

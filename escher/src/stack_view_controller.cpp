@@ -90,11 +90,10 @@ const char * StackViewController::title() const {
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
   m_view.pushStack(vc->title(), textColor, backgroundColor, separatorColor);
   m_children[m_numberOfChildren++] = vc;
-  setupActiveViewController();
   if (m_numberOfChildren > 1) {
     m_children[m_numberOfChildren-2]->viewWillDisappear();
   }
-  vc->viewWillAppear();
+  setupActiveViewController();
 }
 
 void StackViewController::pop() {
@@ -103,23 +102,19 @@ void StackViewController::pop() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   vc->setParentResponder(nullptr);
   m_numberOfChildren--;
-  setupActiveViewController();
   vc->viewWillDisappear();
-  m_children[m_numberOfChildren-1]->viewWillAppear();
+  setupActiveViewController();
 }
 
 void StackViewController::setupActiveViewController() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   vc->setParentResponder(this);
   m_view.setContentView(vc->view());
+  vc->viewWillAppear();
   app()->setFirstResponder(vc);
 }
 
 void StackViewController::didBecomeFirstResponder() {
-  if (m_rootViewController != nullptr) {
-    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
-    m_rootViewController = nullptr;
-  }
   ViewController * vc = m_children[m_numberOfChildren-1];
   app()->setFirstResponder(vc);
 }
@@ -137,6 +132,10 @@ View * StackViewController::view() {
 }
 
 void StackViewController::viewWillAppear() {
+  if (m_rootViewController != nullptr) {
+    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
+    m_rootViewController = nullptr;
+  }
   ViewController * vc = m_children[m_numberOfChildren-1];
   if (m_numberOfChildren > 0 && vc) {
     vc->viewWillAppear();

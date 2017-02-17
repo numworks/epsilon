@@ -46,35 +46,7 @@ void ListParameterController::setFunction(Function * function) {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
-      case 0:
-        return true;
-      case 1:
-        m_function->setActive(!m_function->isActive());
-        m_selectableTableView.reloadData();
-        return true;
-      case 2:
-      {
-        if (m_functionStore->numberOfFunctions() > 1) {
-          m_functionStore->removeFunction(m_function);
-          StackViewController * stack = (StackViewController *)(parentResponder());
-          stack->pop();
-          return true;
-        } else {
-          if (m_functionStore->numberOfDefinedFunctions() == 1) {
-            Function * f = m_functionStore->definedFunctionAtIndex(0);
-            f->setContent("");
-            StackViewController * stack = (StackViewController *)(parentResponder());
-            stack->pop();
-            return true;
-          }
-          app()->displayWarning("Pas de fonction a supprimer");
-          return false;
-        }
-      }
-      default:
-        return false;
-    }
+    return handleEnterOnRow(m_selectableTableView.selectedRow());
   }
   return false;
 }
@@ -96,6 +68,38 @@ int ListParameterController::reusableCellCount() {
 
 KDCoordinate ListParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
+bool ListParameterController::handleEnterOnRow(int rowIndex) {
+  switch (rowIndex) {
+    case 0:
+      return true;
+    case 1:
+      m_function->setActive(!m_function->isActive());
+      m_selectableTableView.reloadData();
+      return true;
+    case 2:
+    {
+      if (m_functionStore->numberOfFunctions() > 1) {
+        m_functionStore->removeFunction(m_function);
+        StackViewController * stack = (StackViewController *)(parentResponder());
+        stack->pop();
+        return true;
+      } else {
+        if (m_functionStore->numberOfDefinedFunctions() == 1) {
+          Function * f = m_functionStore->definedFunctionAtIndex(0);
+          f->setContent("");
+          StackViewController * stack = (StackViewController *)(parentResponder());
+          stack->pop();
+          return true;
+        }
+        app()->displayWarning("Pas de fonction a supprimer");
+        return false;
+      }
+  }
+  default:
+    return false;
+  }
 }
 
 }

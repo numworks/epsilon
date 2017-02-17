@@ -23,21 +23,30 @@ void ListParameterController::setFunction(Shared::Function * function) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 3) {
-    StackViewController * stack = (StackViewController *)(parentResponder());
-    m_typeParameterController.setSequence(m_sequence);
-    stack->push(&m_typeParameterController);
-    return true;
-  }
-  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 2) {
-    if (m_functionStore->numberOfFunctions() > 0) {
-      m_functionStore->removeFunction(m_function);
-      StackViewController * stack = (StackViewController *)(parentResponder());
-      stack->pop();
-      return true;
+  if (event == Ion::Events::OK) {
+    int selectedRowIndex = m_selectableTableView.selectedRow();
+    switch (selectedRowIndex) {
+      case 0:
+        return handleEnterOnRow(selectedRowIndex);
+      case 1:
+      {
+        StackViewController * stack = (StackViewController *)(parentResponder());
+        m_typeParameterController.setSequence(m_sequence);
+        stack->push(&m_typeParameterController);
+        return true;
+      }
+      case 3:
+      if (m_functionStore->numberOfFunctions() > 0) {
+        m_functionStore->removeFunction(m_function);
+        StackViewController * stack = (StackViewController *)(parentResponder());
+        stack->pop();
+        return true;
+      }
+      default:
+        return handleEnterOnRow(selectedRowIndex-1);
     }
   }
-  return Shared::ListParameterController::handleEvent(event);
+  return false;
 }
 
 int ListParameterController::numberOfRows() {
@@ -45,10 +54,14 @@ int ListParameterController::numberOfRows() {
 };
 
 HighlightCell * ListParameterController::reusableCell(int index) {
-  if (index == 3) {
+  switch (index) {
+    case 0:
+      return Shared::ListParameterController::reusableCell(index);
+    case 1:
     return &m_typeCell;
+    default:
+      return Shared::ListParameterController::reusableCell(index-1);
   }
-  return Shared::ListParameterController::reusableCell(index);
 }
 
 int ListParameterController::reusableCellCount() {

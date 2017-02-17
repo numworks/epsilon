@@ -1,30 +1,54 @@
 #include "sequence_title_cell.h"
+#include "../../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../../poincare/src/layout/string_layout.h"
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell(Responder * parentResponder, ListParameterController * listParameterController) :
   SequenceCell(parentResponder),
   m_backgroungCell(FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)),
-  m_definitionView(KDText::FontSize::Large, 0.5f, 0.5f),
-  m_firstInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),
-  m_secondInitialConditionView(KDText::FontSize::Large, 0.5f, 0.5f),
+  m_definitionView(0.5f, 0.5f),
+  m_firstInitialConditionView(0.5f, 0.5f),
+  m_secondInitialConditionView(0.5f, 0.5f),
   m_listParameterController(listParameterController)
 {
 }
 
+SequenceTitleCell::~SequenceTitleCell() {
+  for (int i = 0; i < 3; i++) {
+    if (m_expressionLayouts[i]) {
+      delete m_expressionLayouts[i];
+    }
+  }
+}
+
 void SequenceTitleCell::setSequence(Sequence * sequence) {
   SequenceCell::setSequence(sequence);
-  char bufferName[5] = {*sequence->name(),'(',sequence->symbol(),')', 0};
-  m_definitionView.setText(bufferName);
-  if (m_numberOfSubCells > 0) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','1',')', 0};
-    m_firstInitialConditionView.setText(bufferName);
+  for (int i = 0; i < 3; i++) {
+    if (m_expressionLayouts[i]) {
+      delete m_expressionLayouts[i];
+    }
   }
-  if (m_numberOfSubCells > 1) {
-    char bufferName[7] = {*sequence->name(),'(',sequence->symbol(),'+','2',')', 0};
-    m_secondInitialConditionView.setText(bufferName);
+  if (m_numberOfSubCells == 1) {
+    m_expressionLayouts[0] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_definitionView.setExpression(m_expressionLayouts[0]);
+  }
+  if (m_numberOfSubCells == 2) {
+    m_expressionLayouts[0] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n+1", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_definitionView.setExpression(m_expressionLayouts[0]);
+    m_expressionLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_firstInitialConditionView.setExpression(m_expressionLayouts[1]);
+  }
+  if (m_numberOfSubCells == 3) {
+    m_expressionLayouts[0] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("n+2", 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_definitionView.setExpression(m_expressionLayouts[0]);
+    m_expressionLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_firstInitialConditionView.setExpression(m_expressionLayouts[1]);
+    m_expressionLayouts[2] = new BaselineRelativeLayout(new StringLayout(sequence->name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_secondInitialConditionView.setExpression(m_expressionLayouts[2]);
   }
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
   setColor(nameColor);

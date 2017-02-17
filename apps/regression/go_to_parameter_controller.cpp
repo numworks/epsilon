@@ -79,4 +79,8 @@ bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, c
   return true;
 }
 
+void GoToParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 }

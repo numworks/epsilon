@@ -44,6 +44,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
       headerViewController()->setSelectedButton(-1);
+      app()->setFirstResponder(this);
       curveView()->selectMainView(true);
       reloadBannerView();
       curveView()->reload();

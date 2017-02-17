@@ -1,7 +1,9 @@
 #include "go_to_parameter_controller.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Regression {
 
@@ -42,6 +44,9 @@ void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     m_cursor->moveTo(f, y);
   } else {
     float x = m_store->xValueForYValue(f);
+    if (isnan(x)) {
+      return;
+    }
     m_store->centerAxisAround(CurveViewRange::Axis::X, x);
     m_store->centerAxisAround(CurveViewRange::Axis::Y, f);
     m_cursor->moveTo(x, f);
@@ -72,6 +77,17 @@ void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 }
 
 bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  Context * globalContext = appsContainer->globalContext();
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  float parameter = m_store->yValueForXValue(floatBody);
+  if (!m_xPrediction) {
+    parameter = m_store->xValueForYValue(floatBody);
+  }
+  if (isnan(parameter)) {
+    app()->displayWarning("Valeur non atteinte par la regression");
+    return false;
+  }
   FloatParameterController::textFieldDidFinishEditing(textField, text);
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();

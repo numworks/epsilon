@@ -231,6 +231,9 @@ float Store::yValueForXValue(float x) {
 }
 
 float Store::xValueForYValue(float y) {
+  if (fabsf(slope()) < FLT_EPSILON) {
+    return NAN;
+  }
   return (y - yIntercept())/slope();
 }
 

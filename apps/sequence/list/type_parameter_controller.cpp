@@ -21,6 +21,7 @@ TypeParameterController::~TypeParameterController() {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     if (m_expressionLayouts[i]) {
       delete m_expressionLayouts[i];
+      m_expressionLayouts[i] = nullptr;
     }
   }
 }
@@ -73,6 +74,7 @@ void TypeParameterController::willDisplayCellAtLocation(TableViewCell * cell, in
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   if (m_expressionLayouts[j]) {
     delete m_expressionLayouts[j];
+    m_expressionLayouts[j] = nullptr;
   }
   m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   TextExpressionMenuListCell * myCell = (TextExpressionMenuListCell *)cell;

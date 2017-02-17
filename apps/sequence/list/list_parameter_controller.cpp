@@ -17,6 +17,7 @@ ListParameterController::ListParameterController(Responder * parentResponder, Se
 ListParameterController::~ListParameterController() {
   if (m_typeLayout) {
     delete m_typeLayout;
+    m_typeLayout = nullptr;
   }
 }
 
@@ -29,6 +30,7 @@ void ListParameterController::setSequence(Sequence * sequence) {
   m_sequence = sequence;
   if (m_typeLayout != nullptr) {
     delete m_typeLayout;
+    m_typeLayout = nullptr;
   }
   if (m_sequence->type() == Sequence::Type::Explicite) {
     m_typeLayout = new BaselineRelativeLayout(new StringLayout(m_sequence->name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);

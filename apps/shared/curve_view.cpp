@@ -1,9 +1,9 @@
 #include "curve_view.h"
 #include "../constant.h"
 #include <assert.h>
+#include <string.h>
 #include <math.h>
 #include <float.h>
-#include <string.h>
 
 using namespace Poincare;
 

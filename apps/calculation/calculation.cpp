@@ -15,15 +15,19 @@ Calculation::Calculation() :
 Calculation::~Calculation() {
   if (m_inputLayout != nullptr) {
     delete m_inputLayout;
+    m_inputLayout = nullptr;
   }
   if (m_input != nullptr) {
     delete m_input;
+    m_input = nullptr;
   }
   if (m_output != nullptr) {
     delete m_output;
+    m_output = nullptr;
   }
   if (m_outputLayout != nullptr) {
     delete m_outputLayout;
+    m_outputLayout = nullptr;
   }
 }
 

@@ -1,7 +1,7 @@
 #include "values_controller.h"
+#include "../app.h"
 #include "../../constant.h"
 #include "../../apps_container.h"
-#include "../app.h"
 #include <assert.h>
 
 using namespace Poincare;

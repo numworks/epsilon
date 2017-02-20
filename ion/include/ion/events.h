@@ -15,7 +15,10 @@ public:
   static constexpr Event Special(int i) { return Event(4*k_eventPageSize+i); }
 
   constexpr Event(int i) : m_id(i){}
+#ifdef DEBUG
   uint8_t id() const { return m_id; }
+  const char * name() const;
+#endif
   Event(Keyboard::Key key, bool shift, bool alpha);
 
   bool operator==(const Event & other) const {

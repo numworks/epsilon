@@ -11,6 +11,7 @@ public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
     float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+  Toolbox * toolbox() override;
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   // Responder

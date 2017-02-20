@@ -16,10 +16,9 @@ app_objs += $(addprefix apps/,\
   constant.o\
   global_preferences.o\
   main.o\
+  math_toolbox.o\
   node.o\
-  node_list_view_controller.o\
   title_bar_view.o\
-  toolbox_controller.o\
   toolbox_leaf_cell.o\
   toolbox_node.o\
   variable_box_controller.o\

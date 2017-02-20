@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
+#include "text_field_delegate.h"
 
 namespace Shared {
 
@@ -12,7 +13,6 @@ public:
     KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin);
   virtual View * view() override;
 
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
@@ -27,6 +27,7 @@ public:
 protected:
   SelectableTableView m_selectableTableView;
 private:
+  TextFieldDelegateApp * textFieldDelegateApp() override;
   static constexpr KDCoordinate k_cellHeight = 20;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) = 0;

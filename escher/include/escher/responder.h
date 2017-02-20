@@ -4,6 +4,7 @@
 #include <ion.h>
 
 class App;
+class Toolbox;
 
 class Responder {
 public:
@@ -15,6 +16,7 @@ public:
   Responder * parentResponder() const;
   void setParentResponder(Responder * responder);
   App * app();
+  virtual Toolbox * toolbox();
 private:
   Responder * m_parentResponder;
 };

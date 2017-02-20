@@ -64,3 +64,7 @@ bool InputViewController::textFieldDidAbortEditing(TextField * textField, const 
 bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
+
+Toolbox * InputViewController::toolboxForTextField(TextField * textField) {
+  return m_textFieldDelegate->toolboxForTextField(textField);
+}

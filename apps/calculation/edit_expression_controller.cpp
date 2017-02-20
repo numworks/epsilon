@@ -3,6 +3,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Calculation {
 
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate) :
@@ -75,11 +77,6 @@ void EditExpressionController::didBecomeFirstResponder() {
   app()->setFirstResponder(m_contentView.textField());
 }
 
-bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  App * myApp = (App *)app();
-  return myApp->textFieldDidReceiveEvent(textField, event);
-}
-
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
   App * calculationApp = (App *)app();
   m_calculationStore->push(textBody(), calculationApp->localContext());
@@ -87,6 +84,10 @@ bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField
   m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   m_contentView.textField()->setText("");
   return true;
+}
+
+TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
+  return (App *)app();
 }
 
 }

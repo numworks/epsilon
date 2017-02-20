@@ -33,4 +33,8 @@ Context * App::localContext() {
   return &m_nContext;
 }
 
+const char * App::XNT() {
+  return "n";
+}
+
 }

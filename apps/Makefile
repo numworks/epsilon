@@ -17,7 +17,6 @@ app_objs += $(addprefix apps/,\
   main.o\
   node.o\
   node_list_view_controller.o\
-  node_navigation_controller.o\
   preferences.o\
   title_bar_view.o\
   toolbox_controller.o\

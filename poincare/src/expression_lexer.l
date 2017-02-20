@@ -82,7 +82,7 @@ using namespace Poincare;
    * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
-\xa2 { return EE; }
+\xa3 { return EE; }
 [A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
@@ -99,10 +99,10 @@ ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUN
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
-\xa0 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\xa5 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
-\x9d { return ICOMPLEX; }
-e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x9f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\xa6 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+\xa2 { return ICOMPLEX; }
+\xa1 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

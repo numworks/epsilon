@@ -2,22 +2,45 @@
 #define APPS_TOOLBOX_CONTROLLER_H
 
 #include <escher.h>
-#include "node_navigation_controller.h"
-#include "toolbox_leaf_cell.h"
+#include "node.h"
+#include "node_list_view_controller.h"
 
-class ToolboxController : public NodeNavigationController {
+class ToolboxController : public StackViewController {
 public:
+  ToolboxController();
   const char * title() const override;
-  TableViewCell * leafCellAtIndex(int index) override;
-  TableViewCell * nodeCellAtIndex(int index) override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  KDCoordinate leafRowHeight(int index) override;
+  bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
+  void setTextFieldCaller(TextField * textField);
 private:
-  constexpr static KDCoordinate k_leafRowHeight = 40;
-  ToolboxLeafCell m_leafCells[NodeListViewController::k_maxNumberOfDisplayedRows];
-  ChevronMenuListCell m_nodeCells[NodeListViewController::k_maxNumberOfDisplayedRows];
-  Node * nodeModel() override;
-  bool selectLeaf(Node * selectedNode) override;
+  class Stack {
+  public:
+    class State {
+    public:
+      State(int selectedRow = -1, KDCoordinate verticalScroll = 0);
+      bool isNull();
+      int selectedRow();
+      KDCoordinate verticalScroll();
+    private:
+      int m_selectedRow;
+      KDCoordinate m_verticalScroll;
+    };
+    void push(int selectedRow, KDCoordinate verticalScroll);
+    void pop();
+    State * stateAtIndex(int index);
+    int depth();
+    void resetStack();
+  private:
+    constexpr static int k_maxModelTreeDepth = 2;
+    State m_statesStack[k_maxModelTreeDepth];
+  };
+  TextField * m_textFieldCaller;
+  NodeListViewController m_listViewController;
+  Node * rootModel();
+  bool selectLeaf(Node * selectedNode);
+  bool selectSubMenu(Node * selectedNode);
+  bool returnToPreviousMenu();
+  Stack m_stack;
 };
 
 #endif

@@ -60,6 +60,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   complex.cpp\
   fraction.cpp\
+  function.cpp\
   identity.cpp\
   integer.cpp\
   matrix.cpp\

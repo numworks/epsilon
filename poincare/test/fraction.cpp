@@ -20,7 +20,7 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   delete a;
   delete e;
 
-  char expText1[50] ={'(','3','+',Ion::Charset::SmallIota,')', '/', '(','4', '+', Ion::Charset::SmallIota, ')',0};
+  char expText1[50] ={'(','3','+',Ion::Charset::IComplex,')', '/', '(','4', '+', Ion::Charset::IComplex, ')',0};
   a = Expression::parse(expText1);
   e = a->evaluate(globalContext);
   assert(((Complex *)e)->a() == 13.0f/17.0f && ((Complex *)e)->b() == 1.0f/17.0f);
@@ -38,7 +38,7 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   delete a;
   delete e;
 
-  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::SmallIota,']','[','3',',','4',']','[','5',',','6',']',']','/','(','4','+',Ion::Charset::SmallIota, ')',0};
+  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','/','(','4','+',Ion::Charset::IComplex, ')',0};
   a = Expression::parse(expText2);
   e = a->evaluate(globalContext);
   assert(((Complex *)e->operand(0))->a() == 4.0f/17.0f && ((Complex *)e->operand(0))->b() == -1.0f/17.0f);

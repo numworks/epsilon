@@ -107,6 +107,7 @@ float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float ab
   if (abscissa > k_boundStandardNormalDistribution) {
     return 1.0f;
   }
+  /* Waissi & Rossin's formula (error less than 0.0001) */
   return 1.0f/(1.0f+expf(-sqrtf(M_PI)*(k_beta1*powf(abscissa,5)+k_beta2*powf(abscissa,3)+k_beta3*abscissa)));
 }
 
@@ -120,6 +121,7 @@ float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float
   if (probability < 0.5f) {
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
+  /* Soranzo & Epure (error less than 0.001) */
   return (k_alpha3/logf(k_alpha2))*logf(1.0f - logf(-logf(probability)/logf(2.0f))/logf(k_alpha1));
 }
 

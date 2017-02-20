@@ -1,11 +1,10 @@
 #include "node_list_view_controller.h"
-#include "toolbox_controller.h"
+#include "toolbox_node.h"
 #include <assert.h>
 #include <string.h>
 
-NodeListViewController::NodeListViewController(NodeNavigationController * parent) :
-  ViewController(parent),
-  m_nodeNavigationController(parent),
+NodeListViewController::NodeListViewController(Responder * parentResponder) :
+  ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false)),
   m_nodeModel(nullptr),
   m_firstSelectedRow(0)
@@ -64,9 +63,9 @@ TableViewCell * NodeListViewController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
   if (type == 0) {
-    return m_nodeNavigationController->leafCellAtIndex(index);
+    return &m_leafCells[index];
   }
-  return m_nodeNavigationController->nodeCellAtIndex(index);
+  return &m_nodeCells[index];
 }
 
 int NodeListViewController::reusableCellCount(int type) {
@@ -75,12 +74,20 @@ int NodeListViewController::reusableCellCount(int type) {
 }
 
 void NodeListViewController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  m_nodeNavigationController->willDisplayCellForIndex(cell, index);
+  ToolboxNode * node = (ToolboxNode *)m_nodeModel->children(index);
+  if (node->numberOfChildren() == 0) {
+    ToolboxLeafCell * myCell = (ToolboxLeafCell *)cell;
+    myCell->setLabel(node->label());
+    myCell->setSubtitle(node->text());
+    return;
+  }
+  MenuListCell * myCell = (MenuListCell *)cell;
+  myCell->setText(node->label());
 }
 
 KDCoordinate NodeListViewController::rowHeight(int j) {
   if (typeAtLocation(0, j) == 0) {
-    return m_nodeNavigationController->leafRowHeight(j);
+    return k_leafRowHeight;
   }
   return k_nodeRowHeight;
 }

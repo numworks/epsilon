@@ -8,11 +8,13 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_parser) {
   GlobalContext globalContext;
-  Expression * a = Expression::parse("1.2*e^(1)");
+  char text0[10] = {'1', '.', '2', '*', Ion::Charset::Exponential, '^', '(', '1', ')', 0};
+  Expression * a = Expression::parse(text0);
   float f =1.2f*M_E;
   assert(a->approximate(globalContext) == f);
 
-  a = Expression::parse("e^2*e^(1)");
+  char text1[10] = {Ion::Charset::Exponential, '^', '2', '*', Ion::Charset::Exponential, '^', '(', '1', ')', 0};
+  a = Expression::parse(text1);
   f = powf(M_E, 2.0f)*M_E;
   assert(a->approximate(globalContext) == f);
 
@@ -32,8 +34,8 @@ QUIZ_CASE(poincare_parser) {
   f = -0.003f;
   assert(a->approximate(globalContext) == f);
 
-  char text[10] = {'.', '0', '2', Ion::Charset::Exponent, '2', 0};
-  a = Expression::parse(text);
+  char text2[10] = {'.', '0', '2', Ion::Charset::Exponent, '2', 0};
+  a = Expression::parse(text2);
   f = 2.0f;
   assert(a->approximate(globalContext) == f);
 }

@@ -1,5 +1,6 @@
 #include "toolbox_controller.h"
 #include "toolbox_node.h"
+#include <assert.h>
 
 /* TODO: find a shorter way to initiate tree models
  * We create one model tree: each node keeps the label of the row it refers to
@@ -22,35 +23,106 @@ const ToolboxNode menu[11] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNod
   ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie", nullptr, trigonometryChildren, 6)};
 const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 11);
 
+/* State */
+
+ToolboxController::Stack::State::State(int selectedRow, KDCoordinate verticalScroll) :
+  m_selectedRow(selectedRow),
+  m_verticalScroll(verticalScroll)
+{
+}
+
+int ToolboxController::Stack::State::selectedRow() {
+  return m_selectedRow;
+}
+
+KDCoordinate ToolboxController::Stack::State::verticalScroll() {
+  return m_verticalScroll;
+}
+
+bool ToolboxController::Stack::State::isNull(){
+  if (m_selectedRow == -1) {
+    return true;
+  }
+  return false;
+}
+
+/* Stack */
+
+void ToolboxController::Stack::push(int selectedRow, KDCoordinate verticalScroll) {
+  int i = 0;
+  while (!m_statesStack[i].isNull() && i < k_maxModelTreeDepth) {
+    i++;
+  }
+  assert(m_statesStack[i].isNull());
+  m_statesStack[i] = State(selectedRow, verticalScroll);
+}
+
+ToolboxController::Stack::State * ToolboxController::Stack::stateAtIndex(int index) {
+  return &m_statesStack[index];
+}
+
+int ToolboxController::Stack::depth() {
+  int depth = 0;
+  for (int i = 0; i < k_maxModelTreeDepth; i++) {
+    depth += (!m_statesStack[i].isNull());
+  }
+  return depth;
+}
+
+void ToolboxController::Stack::pop() {
+  int stackDepth = depth();
+  if (stackDepth == 0) {
+    return;
+  }
+  m_statesStack[stackDepth-1] = State();
+}
+
+void ToolboxController::Stack::resetStack() {
+  for (int i = 0; i < k_maxModelTreeDepth; i++) {
+    m_statesStack[i] = State();
+  }
+}
+
+/* ToolboxController */
+
+ToolboxController::ToolboxController() :
+  StackViewController(nullptr, &m_listViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+  m_listViewController(NodeListViewController(this))
+{
+}
+
 const char * ToolboxController::title() const {
   return "ToolboxController";
 }
 
-TableViewCell * ToolboxController::leafCellAtIndex(int index) {
-  return &m_leafCells[index];
-}
-
-TableViewCell * ToolboxController::nodeCellAtIndex(int index) {
-  return & m_nodeCells[index];
-}
-
-void ToolboxController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  ToolboxNode * node = (ToolboxNode *)m_listViewController.nodeModel()->children(index);
-  if (node->numberOfChildren() == 0) {
-    ToolboxLeafCell * myCell = (ToolboxLeafCell *)cell;
-    myCell->setLabel(node->label());
-    myCell->setSubtitle(node->text());
-    return;
+bool ToolboxController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    return returnToPreviousMenu();
   }
-  MenuListCell * myCell = (MenuListCell *)cell;
-  myCell->setText(node->label());
+  if (event == Ion::Events::OK) {
+    int selectedRow = m_listViewController.selectedRow();
+    Node * selectedNode = (Node *)m_listViewController.nodeModel()->children(selectedRow);
+    if (selectedNode->numberOfChildren() == 0) {
+      return selectLeaf(selectedNode);
+    }
+    return selectSubMenu(selectedNode);
+  }
+  return false;
 }
 
-KDCoordinate ToolboxController::leafRowHeight(int index) {
-  return k_leafRowHeight;
+void ToolboxController::didBecomeFirstResponder() {
+  m_listViewController.setNodeModel(rootModel());
+  StackViewController::didBecomeFirstResponder();
+  m_stack.resetStack();
+  m_listViewController.setFirstSelectedRow(0);
+  app()->setFirstResponder(&m_listViewController);
 }
 
-Node * ToolboxController::nodeModel() {
+void ToolboxController::setTextFieldCaller(TextField * textField) {
+  m_textFieldCaller = textField;
+}
+
+Node * ToolboxController::rootModel() {
   return (Node *)&toolboxModel;
 }
 
@@ -72,5 +144,37 @@ bool ToolboxController::selectLeaf(Node * selectedNode){
   }
   m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation()+cursorDelta);
   app()->dismissModalViewController();
+  return true;
+}
+
+bool ToolboxController::returnToPreviousMenu() {
+  m_listViewController.deselectTable();
+  int depth = m_stack.depth();
+  if (depth == 0) {
+    app()->dismissModalViewController();
+    return true;
+  }
+  int index = 0;
+  Node * parentNode = rootModel();
+  Stack::State * previousState = m_stack.stateAtIndex(index++);;
+  while (depth-- > 1) {
+    parentNode = (Node *)parentNode->children(previousState->selectedRow());
+    previousState = m_stack.stateAtIndex(index++);
+  }
+  m_listViewController.deselectTable();
+  m_listViewController.setNodeModel(parentNode);
+  m_listViewController.setFirstSelectedRow(previousState->selectedRow());
+  m_listViewController.setVerticalScroll(previousState->verticalScroll());
+  m_stack.pop();
+  app()->setFirstResponder(&m_listViewController);
+  return true;
+}
+
+bool ToolboxController::selectSubMenu(Node * selectedNode) {
+  m_stack.push(m_listViewController.selectedRow(), m_listViewController.verticalScroll());
+  m_listViewController.deselectTable();
+  m_listViewController.setNodeModel(selectedNode);
+  m_listViewController.setFirstSelectedRow(0);
+  app()->setFirstResponder(&m_listViewController);
   return true;
 }

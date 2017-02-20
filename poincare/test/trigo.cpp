@@ -66,7 +66,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText1[10] ={'c','o', 's', '(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText1[10] ={'c','o', 's', '(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText1);
   e = a->evaluate(globalContext);
   assert((-1.0086248134f - 0.000001f) <= (((Complex *)e)->a()) &&
@@ -83,7 +83,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText2[10] ={'s','i', 'n', '(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText2[10] ={'s','i', 'n', '(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText2);
   e = a->evaluate(globalContext);
   assert((1.16780727488f - 0.000001f) <= (((Complex *)e)->a()) &&
@@ -100,7 +100,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText3[10] ={'t','a', 'n', '(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText3[10] ={'t','a', 'n', '(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText3);
   e = a->evaluate(globalContext);
   assert(-0.27355308280f - 0.000001f <= (((Complex *)e)->a()) &&
@@ -117,7 +117,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText4[10] ={'c','o', 's', 'h','(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText4[10] ={'c','o', 's', 'h','(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText4);
   e = a->evaluate(globalContext);
   assert((14.754701170f - 0.000001f) <= (((Complex *)e)->a()) &&
@@ -134,7 +134,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText5[10] ={'s','i', 'n', 'h', '(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText5[10] ={'s','i', 'n', 'h', '(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText5);
   e = a->evaluate(globalContext);
   assert((-14.74480518855f - 0.000001f) <= (((Complex *)e)->a()) &&
@@ -151,7 +151,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   delete a;
   delete e;
 
-  char expText6[10] ={'t','a', 'n', 'h','(', Ion::Charset::SmallIota, '-', '4',')', 0};
+  char expText6[10] ={'t','a', 'n', 'h','(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText6);
   e = a->evaluate(globalContext);
   assert(-1.0002790562f - 0.000001f <= (((Complex *)e)->a()) &&

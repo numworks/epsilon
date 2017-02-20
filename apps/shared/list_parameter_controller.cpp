@@ -7,10 +7,10 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
+  m_functionStore(functionStore),
   m_colorCell(ChevronMenuListCell((char*)"Couleur de la fonction")),
   m_enableCell(SwitchMenuListCell((char*)"Activer/Desactiver")),
-  m_deleteCell(MenuListCell((char*)"Supprimer la fonction")),
-  m_functionStore(functionStore)
+  m_deleteCell(MenuListCell((char*)"Supprimer la fonction"))
 {
 }
 
@@ -24,7 +24,11 @@ View * ListParameterController::view() {
 
 void ListParameterController::didBecomeFirstResponder() {
   m_selectableTableView.dataHasChanged(true);
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.selectCellAtLocation(0, 0);
+  } else {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -37,6 +41,7 @@ void ListParameterController::willDisplayCellForIndex(TableViewCell * cell, int 
 
 void ListParameterController::setFunction(Function * function) {
   m_function = function;
+  m_selectableTableView.selectCellAtLocation(0, 0);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

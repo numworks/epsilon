@@ -4,6 +4,7 @@
 #include "../../shared/list_parameter_controller.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
+#include "change_type_parameter_controller.h"
 
 namespace Sequence {
 
@@ -17,10 +18,12 @@ public:
   int numberOfRows() override;
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCell = 4;
   ChevronExpressionMenuListCell m_typeCell;
   Poincare::ExpressionLayout * m_typeLayout;
+  ChangeTypeParameterController m_changeTypeParameterController;
   Sequence * m_sequence;
 };
 

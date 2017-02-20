@@ -23,13 +23,13 @@ public:
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
 protected:
   SelectableTableView m_selectableTableView;
+  FunctionStore * m_functionStore;
+  Function * m_function;
 private:
   constexpr static int k_totalNumberOfCell = 3;
   ChevronMenuListCell m_colorCell;
   SwitchMenuListCell m_enableCell;
   MenuListCell m_deleteCell;
-  Function * m_function;
-  FunctionStore * m_functionStore;
 };
 
 }

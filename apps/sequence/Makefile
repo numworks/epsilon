@@ -1,5 +1,6 @@
 app_objs += $(addprefix apps/sequence/,\
   app.o\
+  list/change_type_parameter_controller.o\
   list/list_controller.o\
   list/list_parameter_controller.o\
   list/type_parameter_controller.o\

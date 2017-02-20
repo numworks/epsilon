@@ -21,7 +21,7 @@ bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
       return selectAddedCell(selectedRow);
     }
   }
-  return MathToolbox::handleEvent(event);
+  return MathToolbox::handleEventForRow(event, mathToolboxIndex(m_selectableTableView.selectedRow()));
 }
 
 int SequenceToolbox::numberOfRows() {
@@ -47,7 +47,7 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myCell->setExpression(m_addedCellLayout[index]);
     return;
   } else {
-    MathToolbox::willDisplayCellForIndex(cell, index);
+    MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
   }
 }
 
@@ -55,14 +55,14 @@ KDCoordinate SequenceToolbox::rowHeight(int j) {
   if (typeAtLocation(0, j) == 2) {
     return k_addedRowHeight;
   }
-  return MathToolbox::rowHeight(j);
+  return MathToolbox::rowHeight(mathToolboxIndex(j));
 }
 
 int SequenceToolbox::typeAtLocation(int i, int j) {
   if (stackDepth() == 0 && j < m_numberOfAddedCells) {
     return 2;
   }
-  return MathToolbox::typeAtLocation(i,j);
+  return MathToolbox::typeAtLocation(i,mathToolboxIndex(j));
 }
 
 void SequenceToolbox::addCells(int recurrenceDepth) {
@@ -93,6 +93,14 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   sender()->setCursorLocation(sender()->cursorLocation()+currentChar);
   app()->dismissModalViewController();
   return true;
+}
+
+int SequenceToolbox::mathToolboxIndex(int index) {
+  int indexMathToolbox = index;
+  if (stackDepth() == 0) {
+    indexMathToolbox = index - m_numberOfAddedCells;
+  }
+  return indexMathToolbox;
 }
 
 }

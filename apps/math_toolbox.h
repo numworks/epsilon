@@ -28,6 +28,7 @@ public:
 protected:
   int stackDepth();
   TextField * sender() override;
+  bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   SelectableTableView m_selectableTableView;
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
 private:

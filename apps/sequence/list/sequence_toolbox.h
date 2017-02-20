@@ -18,6 +18,7 @@ public:
   void addCells(int recurrenceDepth);
 private:
   bool selectAddedCell(int selectedRow);
+  int mathToolboxIndex(int index);
   constexpr static KDCoordinate k_addedRowHeight = 20;
   ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
   Poincare::ExpressionLayout * m_addedCellLayout[k_maxNumberOfDisplayedRows];

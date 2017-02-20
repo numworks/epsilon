@@ -2,7 +2,7 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include <escher.h>
-#include "../function_store.h"
+#include "../cartesian_function_store.h"
 #include "../function_title_cell.h"
 #include "../../shared/editable_cell_table_view_controller.h"
 #include "interval.h"
@@ -15,7 +15,7 @@ namespace Graph {
 
 class ValuesController : public Shared::EditableCellTableViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
+  ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
   Interval * interval();
   bool handleEvent(Ion::Events::Event event) override;
@@ -45,7 +45,7 @@ public:
   static constexpr KDCoordinate k_abscissaCellWidth = 150;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 private:
-  Function * functionAtColumn(int i);
+  CartesianFunction * functionAtColumn(int i);
   bool isDerivativeColumn(int i);
   Responder * tabController() const;
   StackViewController * stackController() const;
@@ -65,7 +65,7 @@ private:
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
-  FunctionStore * m_functionStore;
+  CartesianFunctionStore * m_functionStore;
   Interval m_interval;
   IntervalParameterController m_intervalParameterController;
   AbscissaParameterController m_abscissaParameterController;

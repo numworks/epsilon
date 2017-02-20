@@ -10,13 +10,12 @@ FunctionExpressionCell::FunctionExpressionCell() :
 {
 }
 
-void FunctionExpressionCell::setFunction(Function * f) {
+void FunctionExpressionCell::setFunction(CartesianFunction * f) {
   m_function = f;
   m_expressionView.setExpression(m_function->layout());
   bool active = m_function->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
   m_expressionView.setTextColor(textColor);
-  //layoutSubviews();
 }
 
 void FunctionExpressionCell::setEven(bool even) {
@@ -29,7 +28,7 @@ void FunctionExpressionCell::setHighlighted(bool highlight) {
   m_expressionView.setBackgroundColor(backgroundColor());
 }
 
-Function * FunctionExpressionCell::function() {
+CartesianFunction * FunctionExpressionCell::function() {
   return m_function;
 }
 

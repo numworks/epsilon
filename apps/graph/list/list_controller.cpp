@@ -6,7 +6,7 @@ using namespace Shared;
 
 namespace Graph {
 
-ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header) :
   Shared::ListController(parentResponder, functionStore, header, "Ajouter une fonction"),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
@@ -113,7 +113,7 @@ void ListController::configureFunction(Shared::Function * function) {
 
 void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-  Function * function = ((FunctionStore *)m_functionStore)->functionAtIndex(j);
+  CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j);
   char bufferName[5] = {*function->name(),'(',function->symbol(),')', 0};
   myFunctionCell->setText(bufferName);
   KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
@@ -122,7 +122,7 @@ void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  myCell->setFunction(((FunctionStore *)m_functionStore)->functionAtIndex(j));
+  myCell->setFunction(((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j));
 }
 
 }

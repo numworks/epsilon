@@ -11,6 +11,7 @@ public:
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void viewWillDisappear() override;
   void setTextFieldCaller(TextField * textField);
 private:
   class Stack {

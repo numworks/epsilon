@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
-#include "function_store.h"
+#include "cartesian_function_store.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -17,7 +17,7 @@ public:
   InputViewController * inputViewController();
   Poincare::Context * localContext() override;
 private:
-  FunctionStore m_functionStore;
+  CartesianFunctionStore m_functionStore;
   Poincare::VariableContext m_xContext;
   ListController m_listController;
   HeaderViewController m_listHeader;

@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "goto_parameter_controller.h"
 #include "banner_view.h"
-#include "../function.h"
+#include "../cartesian_function.h"
 #include "../../shared/curve_view_cursor.h"
 #include "../../shared/interactive_curve_view_range.h"
 
@@ -23,10 +23,10 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
-  void setFunction(Function * function);
+  void setFunction(CartesianFunction * function);
 private:
   BannerView * m_bannerView;
-  Function * m_function;
+  CartesianFunction * m_function;
   constexpr static int k_totalNumberOfCells = 3;
   ChevronMenuListCell m_calculationCell;
   ChevronMenuListCell m_goToCell;

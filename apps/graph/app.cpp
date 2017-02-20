@@ -8,7 +8,7 @@ namespace Graph {
 
 App::App(Container * container, Context * context) :
   TextFieldDelegateApp(container, &m_inputViewController, "Fonctions", "FONCTIONS", ImageStore::GraphIcon),
-  m_functionStore(FunctionStore()),
+  m_functionStore(CartesianFunctionStore()),
   m_xContext(VariableContext('x', context)),
   m_listController(ListController(&m_listHeader, &m_functionStore, &m_listHeader)),
   m_listHeader(HeaderViewController(&m_listStackViewController, &m_listController, &m_listController)),

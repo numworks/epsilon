@@ -24,7 +24,7 @@ View * FunctionParameterController::view() {
   return &m_selectableTableView;
 }
 
-void FunctionParameterController::setFunction(Function * function) {
+void FunctionParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
   for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
     if (m_pageTitle[currentChar] == '(') {

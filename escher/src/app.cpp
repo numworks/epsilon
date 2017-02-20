@@ -85,5 +85,8 @@ void App::didBecomeActive(Window * window) {
 }
 
 void App::willBecomeInactive() {
+  if (m_modalViewController.isDisplayingModal()) {
+    dismissModalViewController();
+  }
   m_modalViewController.viewWillDisappear();
 }

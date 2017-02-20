@@ -2,7 +2,7 @@
 #define GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "../function.h"
+#include "../cartesian_function.h"
 
 namespace Graph {
 
@@ -21,7 +21,7 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
 
-  void setFunction(Function * function);
+  void setFunction(CartesianFunction * function);
 private:
   constexpr static int k_totalNumberOfCell = 2;
   constexpr static int k_maxNumberOfCharsInTitle = 16;
@@ -29,7 +29,7 @@ private:
   MenuListCell m_hideColumn;
   ChevronMenuListCell m_copyColumn;
   SelectableTableView m_selectableTableView;
-  Function * m_function;
+  CartesianFunction * m_function;
   ValuesController * m_valuesController;
 };
 

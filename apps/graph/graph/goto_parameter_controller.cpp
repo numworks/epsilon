@@ -47,7 +47,7 @@ int GoToParameterController::reusableCellCount() {
   return 1;
 }
 
-void GoToParameterController::setFunction(Function * function) {
+void GoToParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
 }
 

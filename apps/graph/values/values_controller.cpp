@@ -9,7 +9,7 @@ using namespace Shared;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header) :
+ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   HeaderViewDelegate(header),
   m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
@@ -138,7 +138,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
       return;
     }
     FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-    Function * function = functionAtColumn(i);
+    CartesianFunction * function = functionAtColumn(i);
     char bufferName[6] = {0, 0, '(', 'x', ')', 0};
     const char * name = bufferName;
     if (isDerivativeColumn(i)) {
@@ -167,7 +167,7 @@ void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, in
   }
   // The cell is a value cell
   EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-  Function * function = functionAtColumn(i);
+  CartesianFunction * function = functionAtColumn(i);
   float x = m_interval.element(j-1);
   if (isDerivativeColumn(i)) {
     Complex::convertFloatToText(function->approximateDerivative(x, graphApp->localContext()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -290,7 +290,7 @@ void ValuesController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-Function * ValuesController::functionAtColumn(int i) {
+CartesianFunction * ValuesController::functionAtColumn(int i) {
   assert(i > 0);
   int index = 1;
   for (int k = 0; k < m_functionStore->numberOfDefinedFunctions(); k++) {
@@ -346,14 +346,14 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
-  Function * function = functionAtColumn(activeColumn());
+  CartesianFunction * function = functionAtColumn(activeColumn());
   m_functionParameterController.setFunction(function);
   StackViewController * stack = stackController();
   stack->push(&m_functionParameterController);
 }
 
 void ValuesController::configureDerivativeFunction() {
-  Function * function = functionAtColumn(activeColumn());
+  CartesianFunction * function = functionAtColumn(activeColumn());
   m_derivativeParameterController.setFunction(function);
   StackViewController * stack = stackController();
   stack->push(&m_derivativeParameterController);

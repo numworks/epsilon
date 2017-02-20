@@ -1,20 +1,20 @@
-#ifndef GRAPH_FUNCTION_STORE_H
-#define GRAPH_FUNCTION_STORE_H
+#ifndef GRAPH_CARTESIAN_FUNCTION_STORE_H
+#define GRAPH_CARTESIAN_FUNCTION_STORE_H
 
-#include "function.h"
+#include "cartesian_function.h"
 #include "../shared/function_store.h"
 #include <stdint.h>
 
 namespace Graph {
 
-class FunctionStore : public Shared::FunctionStore {
+class CartesianFunctionStore : public Shared::FunctionStore {
 public:
-  FunctionStore();
+  CartesianFunctionStore();
   uint32_t storeChecksum() override;
-  Function * functionAtIndex(int i) override;
-  Function * activeFunctionAtIndex(int i) override;
-  Function * definedFunctionAtIndex(int i) override;
-  Function * addEmptyFunction() override;
+  CartesianFunction * functionAtIndex(int i) override;
+  CartesianFunction * activeFunctionAtIndex(int i) override;
+  CartesianFunction * definedFunctionAtIndex(int i) override;
+  CartesianFunction * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
   int maxNumberOfFunctions() override;
   static constexpr int k_maxNumberOfFunctions = 8;
@@ -29,7 +29,7 @@ private:
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p", "q", "r", "s", "t"
   };
-  Function m_functions[k_maxNumberOfFunctions];
+  CartesianFunction m_functions[k_maxNumberOfFunctions];
 };
 
 }

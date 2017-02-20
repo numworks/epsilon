@@ -142,6 +142,7 @@ Responder * InteractiveCurveViewController::defaultController() {
 
 void InteractiveCurveViewController::viewWillAppear() {
   reloadBannerView();
+  initCursorParameters();
   curveView()->reload();
 }
 

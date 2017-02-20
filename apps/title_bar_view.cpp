@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <poincare.h>
 
 using namespace Poincare;
 
@@ -46,18 +47,18 @@ void TitleBarView::layoutSubviews() {
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryLeftMargin, (bounds().height()- batterySize.height())/2, batterySize));
 }
 
-void TitleBarView::setPreferences(Preferences * preferences) {
+void TitleBarView::refreshPreferences() {
   char buffer[13];
   int numberOfChar = 0;
-  if (preferences->displayMode() == Expression::FloatDisplayMode::Scientific) {
+  if (Preferences::sharedPreferences()->displayMode() == Expression::FloatDisplayMode::Scientific) {
     strlcpy(buffer, "sci/", 5);
     numberOfChar += 4;
   }
-  if (preferences->numberType() == Preferences::NumberType::Complex) {
+  if (Preferences::sharedPreferences()->numberType() == Preferences::NumberType::Complex) {
     strlcpy(buffer+numberOfChar, "cplx/", 6);
     numberOfChar += 5;
   }
-  if (preferences->angleUnit() == Expression::AngleUnit::Radian) {
+  if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Radian) {
     strlcpy(buffer+numberOfChar, "rad", 4);
   } else {
     strlcpy(buffer+numberOfChar, "deg", 4);

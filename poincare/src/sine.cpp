@@ -27,27 +27,29 @@ Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-float Sine::approximate(Context& context, AngleUnit angleUnit) const {
+float Sine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (angleUnit == AngleUnit::Degree) {
     return sinf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
   }
   return sinf(m_args[0]->approximate(context, angleUnit));
 }
 
-Expression * Sine::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Sine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
-  Expression * arg = new Complex(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a());
+  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
   Function * sinh = new HyperbolicSine();
   sinh->setArgument(&arg, 1, true);
   delete evaluation;
   delete arg;
   Expression * args[2];
-  args[0] = new Complex(0.0f, -1.0f);
+  args[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));
   args[1] = sinh;
   Multiplication * result = new Multiplication(args, true);
   delete args[0];

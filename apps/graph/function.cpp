@@ -16,12 +16,12 @@ void Function::setDisplayDerivative(bool display) {
   m_displayDerivative = display;
 }
 
-float Function::approximateDerivative(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const {
-  Poincare::Complex abscissa = Poincare::Complex(x);
+float Function::approximateDerivative(float x, Poincare::Context * context) const {
+  Poincare::Complex abscissa = Poincare::Complex::Float(x);
   Poincare::Expression * args[2] = {m_expression, &abscissa};
   Poincare::Derivative derivative = Poincare::Derivative();
   derivative.setArgument(args, 2, true);
-  return derivative.approximate(*context, angleUnit);
+  return derivative.approximate(*context);
 }
 
 char Function::symbol() const {

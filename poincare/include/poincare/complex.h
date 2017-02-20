@@ -2,19 +2,18 @@
 #define POINCARE_COMPLEX_H
 
 #include <poincare/leaf_expression.h>
+#include <math.h>
 
 namespace Poincare {
 
 class Complex : public LeafExpression {
 public:
-  Complex(float a, float b = 0.0f, bool polar = false);
+  static Complex Float(float x);
+  static Complex Cartesian(float a, float b);
+  static Complex Polar(float r, float theta);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
-  void setNumberOfSignificantDigits(int numberOfDigits);
-  ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
-  float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
-  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) override;
@@ -34,12 +33,17 @@ public:
    * is truncated at the end of the buffer.
    * ConvertFloat to Text return the number of characters that have been written
    * in buffer (excluding the last \O character) */
-  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Scientific);
+  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Default);
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The wors case is -1.234E-38
     return numberOfSignificantDigits + 7;
   }
 private:
+  Complex(float a, float b);
+  constexpr static int k_numberOfSignificantDigits = 7;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always
@@ -62,7 +66,6 @@ private:
   static void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int i, int decimalMarkerPosition);
   float m_a;
   float m_b;
-  int m_numberOfSignificantDigits;
 };
 
 }

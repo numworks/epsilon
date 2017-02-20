@@ -26,21 +26,23 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float Cosine::approximate(Context& context, AngleUnit angleUnit) const {
+float Cosine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (angleUnit == AngleUnit::Degree) {
     return cosf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
   }
   return cosf(m_args[0]->approximate(context, angleUnit));
 }
 
-Expression * Cosine::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Cosine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
-  Expression * arg = new Complex(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a());
+  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
   Function * cosh = new HyperbolicCosine();
   cosh->setArgument(&arg, 1, true);
   delete evaluation;

@@ -18,8 +18,8 @@ void AppsWindow::updateBatteryLevel() {
   m_titleBarView.setChargeState(Ion::Battery::Charge::EMPTY);
 }
 
-void AppsWindow::refreshPreferences(Preferences * preferences) {
-  m_titleBarView.setPreferences(preferences);
+void AppsWindow::refreshPreferences() {
+  m_titleBarView.refreshPreferences();
 }
 
 int AppsWindow::numberOfSubviews() const {

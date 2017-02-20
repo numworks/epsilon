@@ -28,17 +28,19 @@ Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOpera
   return ht;
 }
 
-float HyperbolicTangent::approximate(Context& context, AngleUnit angleUnit) const {
+float HyperbolicTangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return (expf(m_args[0]->approximate(context, angleUnit))-expf(-m_args[0]->approximate(context, angleUnit)))/
     (expf(m_args[0]->approximate(context, angleUnit))+expf(-m_args[0]->approximate(context, angleUnit)));
 }
 
-Expression * HyperbolicTangent::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * HyperbolicTangent::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * arguments[2];
   arguments[0] = new HyperbolicSine();

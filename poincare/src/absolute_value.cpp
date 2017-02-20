@@ -27,7 +27,8 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
   return a;
 }
 
-float AbsoluteValue::approximate(Context& context, AngleUnit angleUnit) const {
+float AbsoluteValue::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   float result = 0.0f;
@@ -40,21 +41,23 @@ float AbsoluteValue::approximate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-Expression * AbsoluteValue::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * AbsoluteValue::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   float absVal = ((Complex *)evaluation)->absoluteValue();
-  Complex * result = new Complex(absVal);
+  Complex * result = new Complex(Complex::Float(absVal));
   delete evaluation;
   return result;
 }
 
-ExpressionLayout * AbsoluteValue::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new AbsoluteValueLayout(m_args[0]->createLayout(FloatDisplayMode));
+ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new AbsoluteValueLayout(m_args[0]->createLayout(floatDisplayMode));
 }
 
 }

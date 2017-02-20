@@ -51,7 +51,7 @@ void Calculation::reset() {
   m_outputLayout = nullptr;
 }
 
-void Calculation::setContent(const char * c, Context * context, Preferences * preferences) {
+void Calculation::setContent(const char * c, Context * context) {
   strlcpy(m_text, c, sizeof(m_text));
   if (m_input != nullptr) {
     delete m_input;
@@ -60,15 +60,15 @@ void Calculation::setContent(const char * c, Context * context, Preferences * pr
   if (m_inputLayout != nullptr) {
     delete m_inputLayout;
   }
-  m_inputLayout = m_input->createLayout(preferences->displayMode());
+  m_inputLayout = m_input->createLayout();
   if (m_output != nullptr) {
     delete m_output;
   }
-  m_output = m_input->evaluate(*context, preferences->angleUnit());
+  m_output = m_input->evaluate(*context);
   if (m_outputLayout != nullptr) {
     delete m_outputLayout;
   }
-  m_outputLayout = m_output->createLayout(preferences->displayMode());
+  m_outputLayout = m_output->createLayout();
 }
 
 const char * Calculation::text() {

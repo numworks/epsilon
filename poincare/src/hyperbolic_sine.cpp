@@ -29,19 +29,21 @@ Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands
   return hs;
 }
 
-float HyperbolicSine::approximate(Context& context, AngleUnit angleUnit) const {
+float HyperbolicSine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return (expf(m_args[0]->approximate(context, angleUnit))-expf(-m_args[0]->approximate(context, angleUnit)))/2.0f;
 }
 
-Expression * HyperbolicSine::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * HyperbolicSine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * arguments[2];
-  arguments[0] = new Complex(M_E);
+  arguments[0] = new Complex(Complex::Float(M_E));
   arguments[1] = evaluation;
   Expression * exp1 = new Power(arguments, true);
   arguments[1] = new Opposite(evaluation, true);
@@ -55,7 +57,7 @@ Expression * HyperbolicSine::evaluate(Context& context, AngleUnit angleUnit) con
   delete exp1;
   delete exp2;
   arguments[0] = sub;
-  arguments[1] = new Complex(2.0f);
+  arguments[1] = new Complex(Complex::Float(2.0f));
   Expression * result = new Fraction(arguments, true);
   delete arguments[1];
   delete arguments[0];

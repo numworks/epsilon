@@ -13,15 +13,17 @@ Expression::Type Addition::type() const {
   return Type::Addition;
 }
 
-ExpressionLayout * Addition::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
-  children_layouts[0] = m_operands[0]->createLayout(FloatDisplayMode);
+  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode);
   children_layouts[1] = new StringLayout("+", 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(FloatDisplayMode)) : m_operands[1]->createLayout(FloatDisplayMode);
+  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode)) : m_operands[1]->createLayout(floatDisplayMode);
   return new HorizontalLayout(children_layouts, 3);
 }
 
-float Addition::approximate(Context& context, AngleUnit angleUnit) const {
+float Addition::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return m_operands[0]->approximate(context, angleUnit)+m_operands[1]->approximate(context, angleUnit);;
 }
 
@@ -35,7 +37,7 @@ bool Addition::isCommutative() const {
 }
 
 Expression * Addition::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  return new Complex(c->a()+ d->a(), c->b() + d->b());
+  return new Complex(Complex::Cartesian(c->a()+ d->a(), c->b() + d->b()));
 }
 
 }

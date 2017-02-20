@@ -4,13 +4,12 @@
 #include <escher.h>
 #include "sub_controller.h"
 #include "settings_node.h"
-#include "../preferences.h"
 
 namespace Settings {
 
 class MainController : public ViewController, public SimpleListViewDataSource {
 public:
-  MainController(Responder * parentResponder, Preferences * preferences);
+  MainController(Responder * parentResponder);
 
   View * view() override;
   const char * title() const override;
@@ -28,7 +27,6 @@ private:
   ChevronTextMenuListCell m_cells[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
-  Preferences * m_preferences;
   SubController m_subController;
 };
 

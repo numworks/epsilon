@@ -2,6 +2,7 @@
 #include <string.h>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Sequence {
 
@@ -80,7 +81,7 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
   }
   m_firstInitialConditionLayout = nullptr;
   if (m_firstInitialConditionExpression) {
-    m_firstInitialConditionLayout = m_firstInitialConditionExpression->createLayout();
+    m_firstInitialConditionLayout = m_firstInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
   }
 }
 
@@ -95,7 +96,7 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
   }
   m_secondInitialConditionLayout = nullptr;
   if (m_secondInitialConditionExpression) {
-    m_secondInitialConditionLayout = m_secondInitialConditionExpression->createLayout();
+    m_secondInitialConditionLayout = m_secondInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
   }
 }
 

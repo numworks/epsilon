@@ -28,7 +28,7 @@ QUIZ_CASE(poincare_parser) {
 
   a = Expression::parse("-sin(3)*2-3");
   f = -sinf(3.0f)*2.0f-3.0f;
-  assert(a->approximate(globalContext) == f);
+  assert(a->approximate(globalContext, Expression::AngleUnit::Radian) == f);
 
   a = Expression::parse("-.003");
   f = -0.003f;

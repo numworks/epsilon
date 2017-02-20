@@ -28,19 +28,21 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-float Tangent::approximate(Context& context, AngleUnit angleUnit) const {
+float Tangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (angleUnit == AngleUnit::Degree) {
     return tanf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
   }
   return tanf(m_args[0]->approximate(context, angleUnit));
 }
 
-Expression * Tangent::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Tangent::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Matrix) {
     delete evaluation;
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   Expression * arguments[2];
   arguments[0] = new Sine();

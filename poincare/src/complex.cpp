@@ -1,4 +1,5 @@
 #include <poincare/complex.h>
+#include <poincare/preferences.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -11,15 +12,16 @@ extern "C" {
 
 namespace Poincare {
 
-Complex::Complex(float a, float b, bool polar) :
-  m_a(a),
-  m_b(b),
-  m_numberOfSignificantDigits(7)
-{
-  if (polar) {
-    m_a = a * cosf(b);
-    m_b = a * sinf(b);
-  }
+Complex Complex::Float(float x) {
+  return Complex(x,0.0f);
+}
+
+Complex Complex::Cartesian(float a, float b) {
+  return Complex(a,b);
+}
+
+Complex Complex::Polar(float r, float th)  {
+  return Complex(r*cosf(th),r*sinf(th));
 }
 
 static inline float setSign(float f, bool negative) {
@@ -52,25 +54,22 @@ Complex::Complex(const char * integralPart, int integralPartLength, bool integra
 
   m_a = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
   m_b = 0.0f;
-  m_numberOfSignificantDigits = 7;
-}
-
-void Complex::setNumberOfSignificantDigits(int numberOfDigits) {
-  m_numberOfSignificantDigits = numberOfDigits;
 }
 
 Expression * Complex::clone() const {
-  return new Complex(m_a, m_b);
+  return new Complex(Cartesian(m_a, m_b));
 }
 
-float Complex::approximate(Context& context, AngleUnit angleUnit) const {
+float Complex::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (m_b == 0.0f) {
     return m_a;
   }
   return NAN;
 }
 
-Expression * Complex::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Complex::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return clone();
 }
 
@@ -78,14 +77,15 @@ Expression::Type Complex::type() const {
   return Type::Complex;
 }
 
-ExpressionLayout * Complex::createLayout(FloatDisplayMode displayMode) const {
+ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, displayMode);
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode);
   return new StringLayout(buffer, numberOfChars);
 }
 
 int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertComplexToText(buffer, bufferSize, FloatDisplayMode::Auto);
+  return convertComplexToText(buffer, bufferSize, FloatDisplayMode::Decimal);
 }
 
 float Complex::a() {
@@ -117,6 +117,9 @@ float Complex::absoluteValue() {
 
 int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, FloatDisplayMode mode) {
+  if (mode == FloatDisplayMode::Default) {
+    return convertFloatToText(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+  }
   char tempBuffer[k_maxFloatBufferLength];
   int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
   /* if the required buffer size overflows the buffer size, we first force the
@@ -124,7 +127,7 @@ int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
    * fit the buffer size. If the buffer size is still to small, we only write
    * the beginning of the float and truncate it (which can result in a non sense
    * text) */
-  if (mode == FloatDisplayMode::Auto && requiredLength >= bufferSize) {
+  if (mode == FloatDisplayMode::Decimal && requiredLength >= bufferSize) {
     requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, FloatDisplayMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
@@ -135,10 +138,17 @@ int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
   return requiredLength;
 }
 
+Complex::Complex(float a, float b) :
+  m_a(a),
+  m_b(b)
+{
+}
+
 int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode) const {
+  assert(displayMode != FloatDisplayMode::Default);
   int numberOfChars = 0;
   if (m_a != 0.0f || m_b == 0.0f) {
-    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, m_numberOfSignificantDigits, displayMode);
+    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
     if (m_b > 0.0f && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
@@ -146,7 +156,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
     }
   }
   if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f) {
-    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, m_numberOfSignificantDigits, displayMode);
+    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = '*';
   }
   if (m_b == -1.0f && bufferSize > numberOfChars+1) {
@@ -161,6 +171,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
 
 
 int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode) {
+  assert(mode != FloatDisplayMode::Default);
   if (isinf(f)) {
     buffer[0] = f > 0 ? '+' : '-';
     buffer[1] = 'I';
@@ -188,7 +199,7 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   FloatDisplayMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == FloatDisplayMode::Auto) {
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == FloatDisplayMode::Decimal) {
     displayMode = FloatDisplayMode::Scientific;
   }
 
@@ -237,13 +248,13 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   // Suppress the decimal marker if no fractional part
-  if (displayMode == FloatDisplayMode::Auto && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
+  if (displayMode == FloatDisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
     availableCharsForMantissaWithSign--;
   }
 
   // Print mantissa
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
-  if (displayMode == FloatDisplayMode::Auto) {
+  if (displayMode == FloatDisplayMode::Decimal) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }

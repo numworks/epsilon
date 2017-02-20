@@ -1,4 +1,5 @@
 #include <poincare/expression.h>
+#include <poincare/preferences.h>
 #include <poincare/function.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
@@ -35,6 +36,33 @@ Expression * Expression::parse(char const * string) {
   poincare_expression_yy_delete_buffer(buf);
 
   return expression;
+}
+
+ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode) const {
+  switch (floatDisplayMode) {
+    case FloatDisplayMode::Default:
+      return privateCreateLayout(Preferences::sharedPreferences()->displayMode());
+    default:
+      return privateCreateLayout(floatDisplayMode);
+  }
+}
+
+Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+  switch (angleUnit) {
+    case AngleUnit::Default:
+      return privateEvaluate(context, Preferences::sharedPreferences()->angleUnit());
+    default:
+      return privateEvaluate(context, angleUnit);
+  }
+}
+
+float Expression::approximate(Context& context, AngleUnit angleUnit) const {
+  switch (angleUnit) {
+    case AngleUnit::Default:
+      return privateApproximate(context, Preferences::sharedPreferences()->angleUnit());
+    default:
+      return privateApproximate(context, angleUnit);
+  }
 }
 
 Expression * Expression::simplify() const {

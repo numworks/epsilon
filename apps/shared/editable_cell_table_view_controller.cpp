@@ -27,7 +27,7 @@ bool EditableCellTableViewController::textFieldDidReceiveEvent(TextField * textF
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
+  float floatBody = Expression::parse(text)->approximate(*globalContext);
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();
@@ -67,7 +67,7 @@ int EditableCellTableViewController::indexFromCumulatedHeight(KDCoordinate offse
   return (offsetY-1) / k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::FloatDisplayMode FloatDisplayMode) {
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   // The cell is editable
@@ -85,7 +85,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
       }
     }
     if (!myEditableValueCell->isEditing()) {
-      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, FloatDisplayMode);
+      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
       myEditableValueCell->setText(buffer);
     }
     return;

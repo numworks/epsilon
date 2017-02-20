@@ -25,7 +25,7 @@ Matrix::Matrix(Expression ** newOperands, int numberOfOperands, int numberOfColu
 }
 
 Complex * Matrix::defaultExpression() {
-  static Complex * defaultExpression = new Complex(0.0f);
+  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
 }
 
@@ -43,26 +43,29 @@ Expression * Matrix::clone() const {
   return this->cloneWithDifferentOperands(m_matrixData->operands(), numberOfOperands(), true);
 }
 
-ExpressionLayout * Matrix::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(numberOfOperands()*sizeof(ExpressionLayout *));
   for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(FloatDisplayMode);
+    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode);
   }
   return new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns());
 }
 
-float Matrix::approximate(Context& context, AngleUnit angleUnit) const {
+float Matrix::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return NAN;
 }
 
-Expression * Matrix::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Matrix::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * operands[numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
     operands[i] = operand(i)->evaluate(context, angleUnit);
     assert(operands[i]->type() == Type::Matrix || operands[i]->type() == Type::Complex);
     if (operands[i]->type() == Type::Matrix) {
       delete operands[i];
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       continue;
     }
   }

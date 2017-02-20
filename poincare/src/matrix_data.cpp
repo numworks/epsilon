@@ -35,7 +35,7 @@ MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numb
 }
 
 Complex * MatrixData::defaultExpression() {
-  static Complex * defaultExpression = new Complex(0.0f);
+  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
 }
 

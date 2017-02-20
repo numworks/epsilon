@@ -57,21 +57,20 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  AppsContainer * container = ((App *)app())->container();
   m_bannerView.setLegendAtIndex((char *)"y = ax+b", 0);
   char buffer[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "a = ";
   float slope = m_store->slope();
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(slope, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+  Complex::convertFloatToText(slope, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 1);
 
   legend = "b = ";
   float yIntercept = m_store->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(yIntercept, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+  Complex::convertFloatToText(yIntercept, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 
   legend = "x = ";
@@ -84,7 +83,7 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(x, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+  Complex::convertFloatToText(x, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 3);
 
   legend = "y = ";
@@ -96,7 +95,7 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(y, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+  Complex::convertFloatToText(y, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 4);
 }
 

@@ -8,7 +8,8 @@ extern "C" {
 
 namespace Poincare {
 
-float Power::approximate(Context& context, AngleUnit angleUnit) const {
+float Power::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return powf(m_operands[0]->approximate(context, angleUnit), m_operands[1]->approximate(context, angleUnit));
 }
 
@@ -22,30 +23,31 @@ Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
   return new Power(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Power::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = (Expression *)m_operands[1]->operand(0);
   }
-  return new BaselineRelativeLayout(m_operands[0]->createLayout(FloatDisplayMode),indiceOperand->createLayout(FloatDisplayMode), BaselineRelativeLayout::Type::Superscript);
+  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode),indiceOperand->createLayout(floatDisplayMode), BaselineRelativeLayout::Type::Superscript);
 }
 
 Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
   if (d->b() != 0.0f) {
     /* First case c and d is complex */
     if (c->b() != 0.0f || c->a() <= 0) {
-      return new Complex(NAN);
+      return new Complex(Complex::Float(NAN));
     }
     /* Second case only d is complex */
     float radius = powf(c->a(), d->a());
     float theta = d->b()*logf(c->a());
-    return new Complex(radius, theta, true);
+    return new Complex(Complex::Polar(radius, theta));
   }
   /* Third case only c is complex */
   float radius = powf(c->r(), d->a());
   float theta = d->a()*c->th();
-  return new Complex(radius, theta, true);
+  return new Complex(Complex::Polar(radius, theta));
 }
 
 Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
@@ -57,7 +59,7 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
   }
   // TODO: return identity matrix if i == 0
   int power = c->approximate(context, angleUnit);
-  Expression * result = new Complex(1);
+  Expression * result = new Complex(Complex::Float(1.0f));
   for (int k = 0; k < power; k++) {
     Expression * operands[2];
     operands[0] = result;

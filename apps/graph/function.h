@@ -12,7 +12,7 @@ public:
   Function(const char * text = nullptr, KDColor color = KDColorBlack);
   bool displayDerivative();
   void setDisplayDerivative(bool display);
-  float approximateDerivative(float x, Poincare::Context * context, Poincare::Expression::AngleUnit angleUnit) const;
+  float approximateDerivative(float x, Poincare::Context * context) const;
   char symbol() const override;
 private:
   bool m_displayDerivative;

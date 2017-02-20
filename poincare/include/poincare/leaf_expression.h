@@ -6,11 +6,11 @@
 namespace Poincare {
 
 class LeafExpression : public Expression {
-  public:
-    const Expression * operand(int i) const override;
-    int numberOfOperands() const override;
-    Expression * cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands = true) const override;
+public:
+  const Expression * operand(int i) const override;
+  int numberOfOperands() const override;
+  Expression * cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands = true) const override;
 };
 
 }

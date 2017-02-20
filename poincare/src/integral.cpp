@@ -32,7 +32,8 @@ Expression * Integral::cloneWithDifferentOperands(Expression** newOperands,
   return i;
 }
 
-float Integral::approximate(Context& context, AngleUnit angleUnit) const {
+float Integral::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   VariableContext xContext = VariableContext('x', &context);
   float a = m_args[1]->approximate(context, angleUnit);
   float b = m_args[2]->approximate(context, angleUnit);
@@ -46,15 +47,16 @@ float Integral::approximate(Context& context, AngleUnit angleUnit) const {
 #endif
 }
 
-ExpressionLayout * Integral::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = m_args[0]->createLayout(FloatDisplayMode);
+  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode);
   childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(m_args[1]->createLayout(FloatDisplayMode), m_args[2]->createLayout(FloatDisplayMode), new HorizontalLayout(childrenLayouts, 2));
+  return new IntegralLayout(m_args[1]->createLayout(floatDisplayMode), m_args[2]->createLayout(floatDisplayMode), new HorizontalLayout(childrenLayouts, 2));
 }
 
 float Integral::functionValueAtAbscissa(float x, VariableContext xContext, AngleUnit angleUnit) const {
-  Complex e = Complex(x);
+  Complex e = Complex::Float(x);
   Symbol xSymbol = Symbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
   return m_args[0]->approximate(xContext, angleUnit);

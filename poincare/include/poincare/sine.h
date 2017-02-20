@@ -8,11 +8,12 @@ namespace Poincare {
 class Sine : public Function {
 public:
   Sine();
-  float approximate(Context & context, AngleUnit angleUnit) const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
-  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
+private:
+  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
+  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
 };
 
 }

@@ -91,8 +91,7 @@ void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int 
     float calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    AppsContainer * container = ((App *)app())->container();
-    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
+    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
   }
 }

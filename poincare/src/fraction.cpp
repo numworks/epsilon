@@ -15,11 +15,13 @@ Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Fraction(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Fraction::createLayout(FloatDisplayMode FloatDisplayMode) const {
-  return new FractionLayout(m_operands[0]->createLayout(FloatDisplayMode), m_operands[1]->createLayout(FloatDisplayMode));
+ExpressionLayout * Fraction::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  return new FractionLayout(m_operands[0]->createLayout(floatDisplayMode), m_operands[1]->createLayout(floatDisplayMode));
 }
 
-float Fraction::approximate(Context& context, AngleUnit angleUnit) const {
+float Fraction::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   return m_operands[0]->approximate(context, angleUnit)/m_operands[1]->approximate(context, angleUnit);
 }
 
@@ -29,7 +31,7 @@ Expression::Type Fraction::type() const {
 
 Expression * Fraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
   float norm = d->a()*d->a() + d->b()*d->b();
-  return new Complex((c->a()*d->a()+c->b()*d->b())/norm, (d->a()*c->b()-c->a()*d->b())/norm);
+  return new Complex(Complex::Cartesian((c->a()*d->a()+c->b()*d->b())/norm, (d->a()*c->b()-c->a()*d->b())/norm));
 }
 
 Expression * Fraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
@@ -42,7 +44,7 @@ Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& conte
   }
   /* TODO: implement matrix fraction
   if (n->det() == 0) {
-    return new Complex(NAN);
+    return new Complex(Complex::Float(NAN));
   }
   result = new Product(m, n->inv(), false);
   return result;*/

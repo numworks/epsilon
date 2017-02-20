@@ -38,7 +38,8 @@ Expression * BinaryOperation::clone() const {
   return this->cloneWithDifferentOperands((Expression**) m_operands, 2, true);
 }
 
-Expression * BinaryOperation::evaluate(Context& context, AngleUnit angleUnit) const {
+Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   Expression * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
   Expression * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
   if (leftOperandEvalutation == nullptr || rightOperandEvalutation == nullptr) {
@@ -68,7 +69,7 @@ Expression * BinaryOperation::evaluateOnMatrixAndComplex(Matrix * m, Complex * c
     Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
     assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
     if (evaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       delete evaluation;
       continue;
     }
@@ -93,7 +94,7 @@ Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context
     assert(mEvaluation->type() == Type::Matrix || mEvaluation->type() == Type::Complex);
     assert(nEvaluation->type() == Type::Matrix || nEvaluation->type() == Type::Complex);
     if (mEvaluation->type() == Type::Matrix ||nEvaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(NAN);
+      operands[i] = new Complex(Complex::Float(NAN));
       delete mEvaluation;
       delete nEvaluation;
       continue;

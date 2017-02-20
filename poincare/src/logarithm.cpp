@@ -29,20 +29,22 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
   return l;
 }
 
-float Logarithm::approximate(Context& context, AngleUnit angleUnit) const {
+float Logarithm::privateApproximate(Context& context, AngleUnit angleUnit) const {
+  assert(angleUnit != AngleUnit::Default);
   if (m_numberOfArguments == 1) {
     return log10f(m_args[0]->approximate(context, angleUnit));
   }
   return log10f(m_args[1]->approximate(context, angleUnit))/log10f(m_args[0]->approximate(context, angleUnit));
 }
 
-ExpressionLayout * Logarithm::createLayout(FloatDisplayMode FloatDisplayMode) const {
+ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
   if (m_numberOfArguments == 1) {
-    return Function::createLayout(FloatDisplayMode);
+    return Function::createLayout(floatDisplayMode);
   }
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(FloatDisplayMode), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(FloatDisplayMode));
+  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(floatDisplayMode), BaselineRelativeLayout::Type::Subscript);
+  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(floatDisplayMode));
   return new HorizontalLayout(childrenLayouts, 2);
 }
 

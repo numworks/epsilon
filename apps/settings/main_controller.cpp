@@ -1,5 +1,9 @@
 #include "main_controller.h"
+#include "../global_preferences.h"
 #include <assert.h>
+#include <poincare.h>
+
+using namespace Poincare;
 
 namespace Settings {
 
@@ -14,15 +18,14 @@ const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), 
   SettingsNode("Langue", languageChildren, 3)};
 const SettingsNode model = SettingsNode("Parametres", menu, 5);
 
-MainController::MainController(Responder * parentResponder, Preferences * preferences) :
+MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large),
     ChevronTextMenuListCell(KDText::FontSize::Large), ChevronTextMenuListCell(KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel((Node *)&model),
-  m_preferences(preferences),
-  m_subController(this, m_preferences)
+  m_subController(this)
 {
 }
 
@@ -73,19 +76,19 @@ void MainController::willDisplayCellForIndex(TableViewCell * cell, int index) {
   myCell->setText(m_nodeModel->children(index)->label());
   switch (index) {
     case 0:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->angleUnit())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->angleUnit())->label());
       break;
     case 1:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->displayMode())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
       break;
     case 2:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->numberType())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->numberType())->label());
       break;
     case 3:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->complexFormat())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->complexFormat())->label());
       break;
     case 4:
-      myCell->setSubtitle(m_nodeModel->children(index)->children((int)m_preferences->language())->label());
+      myCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language())->label());
       break;
   }
 }

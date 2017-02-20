@@ -121,7 +121,7 @@ number:
 
 exp:
   number             { $$ = $1; }
-  | ICOMPLEX         { $$ = new Poincare::Complex(0.0f, 1.0f); }
+  | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
   | SYMBOL           { $$ = new Poincare::Symbol($1); }
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }

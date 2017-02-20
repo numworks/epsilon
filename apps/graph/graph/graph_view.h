@@ -6,7 +6,6 @@
 #include "../../constant.h"
 #include "../function_store.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../../preferences.h"
 
 namespace Graph {
 
@@ -16,7 +15,6 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);
-  void setPreferences(Preferences * preferences);
   Poincare::Context * context() const;
 private:
   char * label(Axis axis, int index) const override;
@@ -25,7 +23,6 @@ private:
   char m_yLabels[k_maxNumberOfYLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   FunctionStore * m_functionStore;
   Poincare::Context * m_context;
-  Preferences * m_preferences;
 };
 
 }

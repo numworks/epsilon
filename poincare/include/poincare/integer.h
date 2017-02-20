@@ -11,40 +11,40 @@ typedef uint64_t double_native_uint_t;
 namespace Poincare {
 
 class Integer : public LeafExpression {
-  public:
-    Integer(native_int_t i);
-    Integer(Integer&& other); // C++11 move constructor
-    Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
-    Type type() const override;
+public:
+  Integer(native_int_t i);
+  Integer(Integer&& other); // C++11 move constructor
+  Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
+  Type type() const override;
 
-    ~Integer();
+  ~Integer();
 
-    Integer& operator=(Integer&& other); // C++11 move assignment operator
+  Integer& operator=(Integer&& other); // C++11 move assignment operator
 
-    // Arithmetic
-    Integer add(const Integer &other) const;
-    Integer subtract(const Integer &other) const;
-    Integer multiply_by(const Integer &other) const;
-    Integer divide_by(const Integer &other) const;
+  // Arithmetic
+  Integer add(const Integer &other) const;
+  Integer subtract(const Integer &other) const;
+  Integer multiply_by(const Integer &other) const;
+  Integer divide_by(const Integer &other) const;
 
-    bool operator<(const Integer &other) const;
-    bool operator==(const Integer &other) const;
+  bool operator<(const Integer &other) const;
+  bool operator==(const Integer &other) const;
 
-    bool valueEquals(const Expression * e) const override;
+  bool valueEquals(const Expression * e) const override;
 
-    Expression * clone() const override;
-    virtual ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
-    float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
-    Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
-  private:
-    Integer add(const Integer &other, bool inverse_other_negative) const;
-    int8_t ucmp(const Integer &other) const; // -1, 0, or 1
-    Integer usum(const Integer &other, bool subtract, bool output_negative) const;
-    /* WARNING: This constructor takes ownership of the bits array and will free it! */
-    Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
-    native_uint_t * m_digits; // LITTLE-ENDIAN
-    uint16_t m_numberOfDigits; // In base native_uint_max
-    bool m_negative;
+  Expression * clone() const override;
+private:
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
+  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  Integer add(const Integer &other, bool inverse_other_negative) const;
+  int8_t ucmp(const Integer &other) const; // -1, 0, or 1
+  Integer usum(const Integer &other, bool subtract, bool output_negative) const;
+  /* WARNING: This constructor takes ownership of the bits array and will free it! */
+  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
+  native_uint_t * m_digits; // LITTLE-ENDIAN
+  uint16_t m_numberOfDigits; // In base native_uint_max
+  bool m_negative;
 
     /*
      // TODO: Small-int optimization

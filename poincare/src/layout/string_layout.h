@@ -13,6 +13,7 @@ class StringLayout : public ExpressionLayout {
     // sure about compatibility.
     StringLayout(const char * string, size_t length, KDText::FontSize fontSize = KDText::FontSize::Large);
     ~StringLayout();
+    char * text();
   protected:
     void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
     KDSize computeSize() override;

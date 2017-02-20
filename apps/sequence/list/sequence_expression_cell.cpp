@@ -66,6 +66,32 @@ bool SequenceExpressionCell::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+Toolbox * SequenceExpressionCell::toolboxForTextField(TextField * textField) {
+  SequenceToolbox * toolbox = ((App *)app())->sequenceToolbox();
+  SequenceStore * sequenceStore = ((App *)app())->sequenceStore();
+  int numberOfToolboxAddedCells = 0;
+  char * toolboxCellNames[6];
+  char * toolboxCellSubscript[6];
+  int recurrenceDepth = 0;
+  if (m_selectedSubCell == 0) {
+    recurrenceDepth = m_numberOfSubCells-1;
+  }
+  for (int k = 0; k < sequenceStore->numberOfFunctions(); k++) {
+    Sequence * s = sequenceStore->functionAtIndex(k);
+    for (int j = 0; j < recurrenceDepth; j++) {
+      toolboxCellNames[numberOfToolboxAddedCells] = (char *)s->name();
+      toolboxCellSubscript[numberOfToolboxAddedCells] = (char *)(j == 0? "n" : "n+1");
+      numberOfToolboxAddedCells++;
+    }
+  }
+  toolbox->addCells(numberOfToolboxAddedCells, toolboxCellNames, toolboxCellSubscript);
+  return toolbox;
+}
+
+TextFieldDelegateApp * SequenceExpressionCell::textFieldDelegateApp() {
+  return (App *)app();
+}
+
 EvenOddCell * SequenceExpressionCell::viewAtIndex(int index) {
   if (index == 0) {
     return &m_expressionView;
@@ -92,6 +118,7 @@ void SequenceExpressionCell::editExpression(Ion::Events::Event event) {
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
+  inputController->setTextFieldDelegate(this);
   if (m_selectedSubCell == 0) {
     inputController->edit(this, event, this, initialText,
       [](void * context, void * sender){

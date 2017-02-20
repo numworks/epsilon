@@ -30,8 +30,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       || m_selectableTableView.selectedRow() == numberOfRows() - 1) {
     return false;
   }
-  FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
-  editExpression(functionCell, event);
+  Shared::Function * function = m_functionStore->functionAtIndex(m_selectableTableView.selectedRow());
+  editExpression(function, event);
   return true;
 }
 
@@ -54,8 +54,8 @@ bool ListController::handleEnter() {
         m_selectableTableView.reloadData();
         return true;
       }
-      FunctionExpressionCell * functionCell = (FunctionExpressionCell *)(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()));
-      editExpression(functionCell, Ion::Events::OK);
+      Shared::Function * function = m_functionStore->functionAtIndex(m_selectableTableView.selectedRow());
+      editExpression(function, Ion::Events::OK);
       return true;
     }
     default:
@@ -65,23 +65,21 @@ bool ListController::handleEnter() {
   }
 }
 
-void ListController::editExpression(FunctionExpressionCell * functionCell, Ion::Events::Event event) {
+void ListController::editExpression(Function * function, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[255];
   if (event == Ion::Events::OK) {
-    strlcpy(initialTextContent, functionCell->function()->text(), sizeof(initialTextContent));
+    strlcpy(initialTextContent, function->text(), sizeof(initialTextContent));
     initialText = initialTextContent;
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, event, functionCell, initialText,
+  inputController->edit(this, event, function, initialText,
     [](void * context, void * sender){
-    FunctionExpressionCell * myCell = (FunctionExpressionCell *) context;
-    Shared::Function * myFunction = myCell->function();
+    Shared::Function * myFunction = (Shared::Function *)context;
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     myFunction->setContent(textBody);
-    myCell->reloadCell();
     },
     [](void * context, void * sender){
     });
@@ -122,7 +120,12 @@ void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  myCell->setFunction(((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j));
+  Function * f = m_functionStore->functionAtIndex(j);
+  myCell->setExpression(f->layout());
+  bool active = f->isActive();
+  KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
+  myCell->setTextColor(textColor);
 }
+
 
 }

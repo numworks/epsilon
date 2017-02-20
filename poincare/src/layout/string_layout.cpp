@@ -19,6 +19,10 @@ StringLayout::~StringLayout() {
   free(m_string);
 }
 
+char * StringLayout::text() {
+  return m_string;
+}
+
 ExpressionLayout * StringLayout::child(uint16_t index) {
   return nullptr;
 }

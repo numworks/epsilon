@@ -67,11 +67,11 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 
 void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions() || t->selectedRow() < numberOfRows() - 1) {
-    SequenceCell * myCell = (SequenceCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-    app()->setFirstResponder(myCell);
     if (t->selectedRow() == -1) {
       return;
     }
+    SequenceCell * myCell = (SequenceCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myCell);
     if (t->selectedRow() == previousSelectedCellY) {
       SequenceCell * otherCell = (SequenceCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       myCell->selectSubCell(otherCell->selectedSubCell());

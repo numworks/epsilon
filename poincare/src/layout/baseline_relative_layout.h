@@ -14,6 +14,8 @@ class BaselineRelativeLayout : public ExpressionLayout {
     };
     BaselineRelativeLayout(ExpressionLayout * baseLayout, ExpressionLayout * indiceLayout, Type type);
     ~BaselineRelativeLayout();
+    ExpressionLayout * baseLayout();
+    ExpressionLayout * indiceLayout();
   protected:
     void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
     KDSize computeSize() override;

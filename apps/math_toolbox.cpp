@@ -122,6 +122,7 @@ MathToolbox::MathToolbox() :
 
 void MathToolbox::didBecomeFirstResponder() {
   m_nodeModel = (ToolboxNode *)rootModel();
+  m_selectableTableView.reloadData();
   StackViewController::didBecomeFirstResponder();
   m_stack.resetStack();
   m_listController.setFirstSelectedRow(0);
@@ -158,7 +159,6 @@ TableViewCell * MathToolbox::reusableCell(int index, int type) {
 }
 
 int MathToolbox::reusableCellCount(int type) {
-  assert(type < 2);
   return k_maxNumberOfDisplayedRows;
 }
 
@@ -208,6 +208,10 @@ int MathToolbox::typeAtLocation(int i, int j) {
 
 void MathToolbox::viewWillDisappear() {
   m_selectableTableView.deselectTable();
+}
+
+int MathToolbox::stackDepth() {
+  return m_stack.depth();
 }
 
 TextField * MathToolbox::sender() {

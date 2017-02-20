@@ -21,6 +21,14 @@ BaselineRelativeLayout::~BaselineRelativeLayout() {
   delete m_indiceLayout;
 }
 
+ExpressionLayout * BaselineRelativeLayout::baseLayout() {
+  return m_baseLayout;
+}
+
+ExpressionLayout * BaselineRelativeLayout::indiceLayout() {
+  return m_indiceLayout;
+}
+
 void BaselineRelativeLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // There is nothing to draw for a subscript/superscript, only the position of the children matters
 }

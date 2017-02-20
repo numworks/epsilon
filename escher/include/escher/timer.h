@@ -1,7 +1,6 @@
 #ifndef ESCHER_TIMER_H
 #define ESCHER_TIMER_H
 
-#include <escher/invocation.h>
 #include <stdint.h>
 
 /* Timers we'll need
@@ -16,12 +15,12 @@
 class Timer {
 public:
   static constexpr int TickDuration = 100; // In Miliseconds
-  Timer(Invocation invocation, uint32_t period); // Period is in ticks
+  Timer(uint32_t period); // Period is in ticks
   void tick();
   void reset();
+protected:
+  virtual void fire() = 0;
 private:
-  void fire();
-  Invocation m_invocation;
   uint32_t m_period;
   uint32_t m_numberOfTicksBeforeFire;
 };

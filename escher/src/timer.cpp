@@ -1,7 +1,6 @@
 #include <escher/timer.h>
 
-Timer::Timer(Invocation invocation, uint32_t period) :
-  m_invocation(invocation),
+Timer::Timer(uint32_t period) :
   m_period(period),
   m_numberOfTicksBeforeFire(period)
 {
@@ -17,8 +16,4 @@ void Timer::tick() {
 
 void Timer::reset() {
   m_numberOfTicksBeforeFire = m_period;
-}
-
-void Timer::fire() {
-  m_invocation.perform(this);
 }

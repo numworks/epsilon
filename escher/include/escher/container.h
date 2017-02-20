@@ -15,7 +15,7 @@
 #include <escher/window.h>
 #include <ion/events.h>
 
-class Container : private RunLoop {
+class Container : public RunLoop {
 public:
   Container();
   void run();

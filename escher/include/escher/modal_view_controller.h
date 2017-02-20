@@ -16,6 +16,8 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
   bool isDisplayingModal();
+  void viewWillAppear() override;
+  void viewWillDisappear() override;
 private:
   class ContentView : public View {
   public:

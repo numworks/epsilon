@@ -58,7 +58,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK && m_selectableTableView.selectedColumn() == 1
       && m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-    m_selectableTableView.dataHasChanged(true);
+    m_selectableTableView.reloadData();
     app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, 32, 20, 20, 20);
     return true;
   }

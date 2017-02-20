@@ -10,8 +10,13 @@ Container::Container() :
 }
 
 void Container::switchTo(App * app) {
+  if (m_activeApp) {
+    m_activeApp->willBecomeInactive();
+  }
   m_activeApp = app;
-  m_activeApp->setWindow(window());
+  if (m_activeApp) {
+    m_activeApp->didBecomeActive(window());
+  }
 }
 
 App * Container::activeApp() {

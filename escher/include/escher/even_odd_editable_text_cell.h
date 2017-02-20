@@ -17,6 +17,7 @@ public:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   void didBecomeFirstResponder() override;
+  bool isEditing();
   void setEditing(bool isEditing);
 private:
   EditableTextCell m_editableCell;

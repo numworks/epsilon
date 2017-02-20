@@ -25,6 +25,7 @@ Node * NodeListViewController::nodeModel() {
 
 void NodeListViewController::setNodeModel(Node * nodeModel) {
   m_nodeModel = nodeModel;
+  m_selectableTableView.reloadData();
 }
 
 void NodeListViewController::setFirstSelectedRow(int firstSelectedRow) {

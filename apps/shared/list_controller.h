@@ -26,6 +26,7 @@ public:
   void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;

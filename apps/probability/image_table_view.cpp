@@ -59,7 +59,7 @@ void ImageTableView::setCalculation(Calculation * calculation, int index) {
 }
 
 void ImageTableView::didBecomeFirstResponder() {
-  m_selectableTableView.dataHasChanged(true);
+  m_selectableTableView.reloadData();
   m_isSelected = true;
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 0);

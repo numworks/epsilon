@@ -35,7 +35,6 @@ public:
   bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
-  void hasChangedTableData();
   void selectCellAtLocation(int i, int j);
   int activeRow();
   int activeColumn();

@@ -23,7 +23,7 @@ View * ListParameterController::view() {
 }
 
 void ListParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.dataHasChanged(true);
+  m_selectableTableView.reloadData();
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 0);
   } else {

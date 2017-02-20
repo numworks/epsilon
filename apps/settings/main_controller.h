@@ -21,6 +21,7 @@ public:
   TableViewCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 5;

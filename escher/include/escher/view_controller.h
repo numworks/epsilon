@@ -19,6 +19,8 @@ public:
   ViewController(Responder * parentResponder);
   virtual const char * title() const;
   virtual View * view() = 0;
+  virtual void viewWillAppear();
+  virtual void viewWillDisappear();
 };
 
 #endif

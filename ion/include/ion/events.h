@@ -34,7 +34,8 @@ private:
   uint8_t m_id;
 };
 
-Event getEvent();
+// Timeout is decremented
+Event getEvent(int * timeout);
 
 bool isShiftActive();
 bool isAlphaActive();

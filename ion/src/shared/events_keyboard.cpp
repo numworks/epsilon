@@ -38,8 +38,20 @@ void updateModifiersFromEvent(Event e) {
   }
 }
 
+static bool sleepWithTimeout(int duration, int * timeout) {
+  if (*timeout >= duration) {
+    msleep(duration);
+    *timeout -= duration;
+    return false;
+  } else {
+    msleep(*timeout);
+    *timeout = 0;
+    return true;
+  }
+}
+
 // Debouncing, and change to get_key event.
-Event getEvent() {
+Event getEvent(int * timeout) {
   // Let's start by saving which keys we've seen up
   bool keySeenUp[Keyboard::NumberOfKeys];
   for (int k=0; k<Keyboard::NumberOfKeys; k++) {
@@ -47,7 +59,9 @@ Event getEvent() {
   }
 
   // Wait a little to debounce the button.
-  msleep(10);
+  if (sleepWithTimeout(10, timeout)) {
+    return Ion::Events::None;
+  }
 
   /* Let's discard the keys we previously saw up but which aren't anymore: those
    * were probably bouncing! */
@@ -55,7 +69,7 @@ Event getEvent() {
     keySeenUp[k] &= !Keyboard::keyDown((Ion::Keyboard::Key)k);
   }
 
-  while (1) {
+  while (true) {
     for (int k=0; k<Keyboard::NumberOfKeys; k++) {
       if (Keyboard::keyDown((Ion::Keyboard::Key)k)) {
         if (keySeenUp[k]) {
@@ -67,7 +81,9 @@ Event getEvent() {
         keySeenUp[k] = true;
       }
     }
-    msleep(10);
+    if (sleepWithTimeout(10, timeout)) {
+      return Ion::Events::None;
+    }
   }
 }
 

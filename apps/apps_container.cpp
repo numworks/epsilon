@@ -57,15 +57,16 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-bool AppsContainer::handleEvent(Ion::Events::Event event) {
+void AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Home) {
     switchTo(appAtIndex(0));
-    return true;
+    return;
   }
   if (event == Ion::Events::OnOff) {
     Ion::Power::suspend();
+    return;
   }
-  return false;
+  Container::dispatchEvent(event);
 }
 
 void AppsContainer::switchTo(App * app) {

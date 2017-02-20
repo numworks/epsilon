@@ -10,16 +10,17 @@
  * When writing an Escher program, you typically subclass Container, and your
  * subclass owns one or more App. You then call "run()" on your container. */
 
+#include <escher/run_loop.h>
 #include <escher/app.h>
 #include <escher/window.h>
 #include <ion/events.h>
 
-class Container {
+class Container : private RunLoop {
 public:
   Container();
   void run();
   App * activeApp();
-  virtual bool handleEvent(Ion::Events::Event event);
+  virtual void dispatchEvent(Ion::Events::Event event) override;
   virtual void switchTo(App * app);
 protected:
   virtual Window * window() = 0;

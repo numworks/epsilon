@@ -36,6 +36,7 @@ objs += $(addprefix escher/src/,\
   pointer_table_cell_with_switch.o\
   pointer_text_view.o\
   responder.o\
+  run_loop.o\
   scroll_view.o\
   scroll_view_indicator.o\
   selectable_table_view.o\
@@ -55,6 +56,7 @@ objs += $(addprefix escher/src/,\
   text_view.o\
   tiled_view.o\
   toolbox.o\
+  timer.o\
   view.o\
   view_controller.o\
   warning_controller.o\

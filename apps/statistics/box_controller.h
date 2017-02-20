@@ -24,7 +24,7 @@ private:
   BoxBannerView m_boxBannerView;
   BoxView m_view;
   Store * m_store;
-  Poincare::Expression::DisplayMode m_displayModeVersion;
+  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

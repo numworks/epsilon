@@ -318,7 +318,7 @@ Expression::Type Integer::type() const {
   return Type::Integer;
 }
 
-ExpressionLayout * Integer::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Integer::createLayout(FloatDisplayMode FloatDisplayMode) const {
   char buffer[255];
 
   Integer base = Integer(10);

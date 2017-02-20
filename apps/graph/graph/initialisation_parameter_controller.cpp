@@ -1,4 +1,5 @@
 #include "initialisation_parameter_controller.h"
+#include "../app.h"
 #include "../../apps_container.h"
 #include <assert.h>
 #include <math.h>
@@ -31,8 +32,8 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (m_selectableTableView.selectedRow() == 0) {
-      AppsContainer * container = (AppsContainer *)app()->container();
-      m_graphRange->setTrigonometric(container->preferences()->angleUnit());
+      App * graphApp = (App *)app();
+      m_graphRange->setTrigonometric(graphApp->container()->preferences()->angleUnit());
     } else {
       RangeMethodPointer rangeMethods[k_totalNumberOfCells-1] = {&InteractiveCurveViewRange::roundAbscissa,
         &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};

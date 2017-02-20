@@ -55,7 +55,7 @@ private:
   Button m_rangeButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;
-  Poincare::Expression::DisplayMode m_displayModeVersion;
+  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

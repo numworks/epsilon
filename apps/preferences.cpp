@@ -4,7 +4,7 @@ using namespace Poincare;
 
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
-  m_displayMode(Expression::DisplayMode::Auto),
+  m_displayMode(Expression::FloatDisplayMode::Auto),
   m_numberType(NumberType::Reel),
   m_complexFormat(ComplexFormat::Algebric),
   m_language(Language::French)
@@ -21,13 +21,13 @@ void Preferences::setAngleUnit(Expression::AngleUnit angleUnit) {
   }
 }
 
-Expression::DisplayMode Preferences::displayMode() const {
+Expression::FloatDisplayMode Preferences::displayMode() const {
   return m_displayMode;
 }
 
-void Preferences::setDisplayMode(Expression::DisplayMode displayMode) {
-  if (displayMode != m_displayMode) {
-    m_displayMode = displayMode;
+void Preferences::setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode) {
+  if (FloatDisplayMode != m_displayMode) {
+    m_displayMode = FloatDisplayMode;
   }
 }
 

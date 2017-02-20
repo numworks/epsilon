@@ -15,7 +15,7 @@ class Matrix : public Expression {
     const Expression * operand(int i) const override;
     int numberOfOperands() const override;
     Expression * clone() const override;
-    ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const override;
+    ExpressionLayout * createLayout(FloatDisplayMode FloatDisplayMode = FloatDisplayMode::Auto) const override;
     float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
     Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Radian) const override;
     Type type() const override;

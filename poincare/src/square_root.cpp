@@ -31,8 +31,8 @@ float SquareRoot::approximate(Context& context, AngleUnit angleUnit) const {
   return powf(m_args[0]->approximate(context, angleUnit), 1.0f/2.0f);
 }
 
-ExpressionLayout * SquareRoot::createLayout(DisplayMode displayMode) const {
-  return new NthRootLayout(m_args[0]->createLayout(displayMode),nullptr);
+ExpressionLayout * SquareRoot::createLayout(FloatDisplayMode FloatDisplayMode) const {
+  return new NthRootLayout(m_args[0]->createLayout(FloatDisplayMode),nullptr);
 }
 
 Expression * SquareRoot::evaluate(Context& context, AngleUnit angleUnit) const {

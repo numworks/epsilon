@@ -49,7 +49,7 @@ void TitleBarView::layoutSubviews() {
 void TitleBarView::setPreferences(Preferences * preferences) {
   char buffer[13];
   int numberOfChar = 0;
-  if (preferences->displayMode() == Expression::DisplayMode::Scientific) {
+  if (preferences->displayMode() == Expression::FloatDisplayMode::Scientific) {
     strlcpy(buffer, "sci/", 5);
     numberOfChar += 4;
   }

@@ -69,7 +69,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Auto);
   m_calculationCell[index].setText(buffer);
 }
 
@@ -204,9 +204,9 @@ bool CalculationController::textFieldDidReceiveEvent(TextField * textField, Ion:
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
+  App * probaApp = (App *)app();
+  Context * globalContext = probaApp->container()->globalContext();
+  float floatBody = Expression::parse(text)->approximate(*globalContext, probaApp->container()->preferences()->angleUnit());
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);
@@ -243,7 +243,7 @@ void CalculationController::updateTitle() {
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Auto);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';

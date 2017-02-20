@@ -87,7 +87,7 @@ void CurveView::computeLabels(Axis axis) {
   for (int index = 0; index < numberOfLabels(axis); index++) {
     Complex::convertFloatToText(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step, buffer,
       Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
-      Constant::ShortNumberOfSignificantDigits, Expression::DisplayMode::Auto);
+      Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Auto);
     //TODO: check for size of label?
     strlcpy(label(axis, index), buffer, strlen(buffer)+1);
   }

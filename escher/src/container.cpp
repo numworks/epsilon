@@ -10,6 +10,9 @@ Container::Container() :
 }
 
 void Container::switchTo(App * app) {
+  if (m_activeApp == app) {
+    return;
+  }
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
   }

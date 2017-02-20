@@ -72,7 +72,7 @@ private:
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
-  Poincare::Expression::DisplayMode m_displayModeVersion;
+  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

@@ -4,12 +4,12 @@
 namespace Settings {
 
 const SettingsNode angleChildren[2] = {SettingsNode("Degre"), SettingsNode("Radian")};
-const SettingsNode displayModeChildren[2] = {SettingsNode("Auto"), SettingsNode("Scientifique")};
+const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode("Auto"), SettingsNode("Scientifique")};
 const SettingsNode numberTypeChildren[2] = {SettingsNode("Reel"), SettingsNode("Complexe")};
 const SettingsNode complexFormatChildren[2] = {SettingsNode("Algebrique"), SettingsNode("Polaire")};
 const SettingsNode languageChildren[3] = {SettingsNode("Anglais"), SettingsNode("Francais"), SettingsNode("Espagnol")};
 
-const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), SettingsNode("Format resultat", displayModeChildren, 2),
+const SettingsNode menu[5] = {SettingsNode("Unite d'angles", angleChildren, 2), SettingsNode("Format resultat", FloatDisplayModeChildren, 2),
   SettingsNode("Reel ou complexe", numberTypeChildren, 2), SettingsNode("Format complexe", complexFormatChildren, 2),
   SettingsNode("Langue", languageChildren, 3)};
 const SettingsNode model = SettingsNode("Parametres", menu, 5);

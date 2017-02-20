@@ -82,8 +82,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
   App * calculationApp = (App *)app();
-  AppsContainer * appsContainer = (AppsContainer *)calculationApp->container();
-  m_calculationStore->push(textBody(), calculationApp->localContext(), appsContainer->preferences());
+  m_calculationStore->push(textBody(), calculationApp->localContext(), calculationApp->container()->preferences());
   m_historyController->reload();
   m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   m_contentView.textField()->setText("");

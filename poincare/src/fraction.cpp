@@ -15,8 +15,8 @@ Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Fraction(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Fraction::createLayout(DisplayMode displayMode) const {
-  return new FractionLayout(m_operands[0]->createLayout(displayMode), m_operands[1]->createLayout(displayMode));
+ExpressionLayout * Fraction::createLayout(FloatDisplayMode FloatDisplayMode) const {
+  return new FractionLayout(m_operands[0]->createLayout(FloatDisplayMode), m_operands[1]->createLayout(FloatDisplayMode));
 }
 
 float Fraction::approximate(Context& context, AngleUnit angleUnit) const {

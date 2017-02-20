@@ -39,18 +39,18 @@ class Expression {
       Symbol,
       Tangent,
     };
-    enum class DisplayMode {
-      Auto = 0,
-      Scientific = 1
-    };
     enum class AngleUnit {
       Degree = 0,
       Radian = 1
     };
+    enum class FloatDisplayMode {
+      Auto = 0,
+      Scientific = 1
+    };
     static Expression * parse(char const * string);
     virtual ~Expression();
 
-    virtual ExpressionLayout * createLayout(DisplayMode displayMode = DisplayMode::Auto) const = 0; // Returned object must be deleted
+    virtual ExpressionLayout * createLayout(Expression::FloatDisplayMode FloatDisplayMode = Expression::FloatDisplayMode::Auto) const = 0; // Returned object must be deleted
     virtual const Expression * operand(int i) const = 0;
     virtual int numberOfOperands() const = 0;
     virtual Expression * clone() const = 0;

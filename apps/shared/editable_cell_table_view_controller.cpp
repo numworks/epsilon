@@ -25,7 +25,7 @@ bool EditableCellTableViewController::textFieldDidReceiveEvent(TextField * textF
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext, appsContainer->preferences()->angleUnit());
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -67,7 +67,7 @@ int EditableCellTableViewController::indexFromCumulatedHeight(KDCoordinate offse
   return (offsetY-1) / k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::DisplayMode displayMode) {
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::FloatDisplayMode FloatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   // The cell is editable
@@ -85,7 +85,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(T
       }
     }
     if (!myEditableValueCell->isEditing()) {
-      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, displayMode);
+      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, FloatDisplayMode);
       myEditableValueCell->setText(buffer);
     }
     return;

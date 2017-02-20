@@ -1,4 +1,5 @@
 #include "interactive_curve_view_controller.h"
+#include "text_field_delegate_app.h"
 #include "../apps_container.h"
 #include <assert.h>
 #include <math.h>
@@ -29,7 +30,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
   }, this), KDText::FontSize::Small),
-  m_displayModeVersion(Expression::DisplayMode::Auto)
+  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
 {
 }
 
@@ -38,12 +39,12 @@ const char * InteractiveCurveViewController::title() const {
 }
 
 View * InteractiveCurveViewController::view() {
-  AppsContainer * myContainer = (AppsContainer *)app()->container();
-  Expression::DisplayMode displayMode = myContainer->preferences()->displayMode();
-  if (displayMode != m_displayModeVersion) {
+  AppsContainer * myContainer = ((TextFieldDelegateApp *)app())->container();
+  Expression::FloatDisplayMode FloatDisplayMode = myContainer->preferences()->displayMode();
+  if (FloatDisplayMode != m_displayModeVersion) {
     reloadBannerView();
     curveView()->reload();
-    m_displayModeVersion = displayMode;
+    m_displayModeVersion = FloatDisplayMode;
   }
   return curveView();
 }

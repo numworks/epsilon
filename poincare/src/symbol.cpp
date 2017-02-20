@@ -33,7 +33,7 @@ const char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Symbol::createLayout(FloatDisplayMode FloatDisplayMode) const {
   if (m_name == SpecialSymbols::Ans) {
     return new StringLayout("ans", 4);
   }

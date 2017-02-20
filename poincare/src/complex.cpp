@@ -78,14 +78,14 @@ Expression::Type Complex::type() const {
   return Type::Complex;
 }
 
-ExpressionLayout * Complex::createLayout(DisplayMode displayMode) const {
+ExpressionLayout * Complex::createLayout(FloatDisplayMode displayMode) const {
   char buffer[k_maxComplexBufferLength];
   int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, displayMode);
   return new StringLayout(buffer, numberOfChars);
 }
 
 int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertComplexToText(buffer, bufferSize, DisplayMode::Auto);
+  return convertComplexToText(buffer, bufferSize, FloatDisplayMode::Auto);
 }
 
 float Complex::a() {
@@ -116,7 +116,7 @@ float Complex::absoluteValue() {
 }
 
 int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
-    int numberOfSignificantDigits, DisplayMode mode) {
+    int numberOfSignificantDigits, FloatDisplayMode mode) {
   char tempBuffer[k_maxFloatBufferLength];
   int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
   /* if the required buffer size overflows the buffer size, we first force the
@@ -124,18 +124,18 @@ int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
    * fit the buffer size. If the buffer size is still to small, we only write
    * the beginning of the float and truncate it (which can result in a non sense
    * text) */
-  if (mode == DisplayMode::Auto && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, DisplayMode::Scientific);
+  if (mode == FloatDisplayMode::Auto && requiredLength >= bufferSize) {
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, FloatDisplayMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, DisplayMode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, FloatDisplayMode::Scientific);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
   strlcpy(buffer, tempBuffer, bufferSize);
   return requiredLength;
 }
 
-int Complex::convertComplexToText(char * buffer, int bufferSize, DisplayMode displayMode) const {
+int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode) const {
   int numberOfChars = 0;
   if (m_a != 0.0f || m_b == 0.0f) {
     numberOfChars = convertFloatToText(m_a, buffer, bufferSize, m_numberOfSignificantDigits, displayMode);
@@ -160,7 +160,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, DisplayMode dis
 }
 
 
-int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, DisplayMode mode) {
+int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode) {
   if (isinf(f)) {
     buffer[0] = f > 0 ? '+' : '-';
     buffer[1] = 'I';
@@ -187,12 +187,12 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     exponentInBase10--;
   }
 
-  DisplayMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == DisplayMode::Auto) {
-    displayMode = DisplayMode::Scientific;
+  FloatDisplayMode displayMode = mode;
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == FloatDisplayMode::Auto) {
+    displayMode = FloatDisplayMode::Scientific;
   }
 
-  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == DisplayMode::Scientific ?
+  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == FloatDisplayMode::Scientific ?
     1 : exponentInBase10+1;
 
   // Number of char available for the mantissa
@@ -205,11 +205,11 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
    * threshold during computation. */
   int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
   assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
-  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == DisplayMode::Scientific ?
+  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
   int mantissa = roundf(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   // Correct the number of digits in mantissa after rounding
-  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == DisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
+  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
   if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {
     mantissa = mantissa/10;
     exponentInBase10++;
@@ -225,9 +225,9 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   int dividend = fabsf((float)mantissa);
   int quotien = dividend/10;
   int digit = dividend - quotien*10;
-  int minimumNumberOfCharsInMantissa = displayMode == DisplayMode::Scientific ? 3 : 1;
+  int minimumNumberOfCharsInMantissa = displayMode == FloatDisplayMode::Scientific ? 3 : 1;
   while (digit == 0 && availableCharsForMantissaWithSign > minimumNumberOfCharsInMantissa &&
-      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == DisplayMode::Scientific)) {
+      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == FloatDisplayMode::Scientific)) {
     mantissa = mantissa/10;
     availableCharsForMantissaWithoutSign--;
     availableCharsForMantissaWithSign--;
@@ -237,13 +237,13 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   // Suppress the decimal marker if no fractional part
-  if (displayMode == DisplayMode::Auto && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
+  if (displayMode == FloatDisplayMode::Auto && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
     availableCharsForMantissaWithSign--;
   }
 
   // Print mantissa
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
-  if (displayMode == DisplayMode::Auto) {
+  if (displayMode == FloatDisplayMode::Auto) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }

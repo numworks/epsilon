@@ -28,8 +28,7 @@ float GoToParameterController::parameterAtIndex(int index) {
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
   App * graphApp = (Graph::App *)app();
-  AppsContainer * container = (AppsContainer *)graphApp->container();
-  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext(), container->preferences()->angleUnit());
+  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext(), graphApp->container()->preferences()->angleUnit());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
   m_cursor->moveTo(f, y);

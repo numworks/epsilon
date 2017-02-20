@@ -1,8 +1,7 @@
 #include "interactive_curve_view_controller.h"
 #include "text_field_delegate_app.h"
-#include "../apps_container.h"
-#include <assert.h>
 #include <math.h>
+#include <assert.h>
 
 using namespace Poincare;
 
@@ -29,8 +28,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
-  }, this), KDText::FontSize::Small),
-  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
+  }, this), KDText::FontSize::Small)
 {
 }
 
@@ -39,13 +37,6 @@ const char * InteractiveCurveViewController::title() const {
 }
 
 View * InteractiveCurveViewController::view() {
-  AppsContainer * myContainer = ((TextFieldDelegateApp *)app())->container();
-  Expression::FloatDisplayMode FloatDisplayMode = myContainer->preferences()->displayMode();
-  if (FloatDisplayMode != m_displayModeVersion) {
-    reloadBannerView();
-    curveView()->reload();
-    m_displayModeVersion = FloatDisplayMode;
-  }
   return curveView();
 }
 
@@ -147,6 +138,11 @@ Button * InteractiveCurveViewController::buttonAtIndex(int index) {
 
 Responder * InteractiveCurveViewController::defaultController() {
   return tabController();
+}
+
+void InteractiveCurveViewController::viewWillAppear() {
+  reloadBannerView();
+  curveView()->reload();
 }
 
 Responder * InteractiveCurveViewController::tabController() const{

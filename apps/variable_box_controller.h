@@ -10,6 +10,7 @@ public:
   VariableBoxController(Poincare::Context * context);
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
+  void viewWillAppear() override;
 private:
   class ContentViewController : public ViewController, public ListViewDataSource {
   public:
@@ -27,6 +28,7 @@ private:
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
     void setTextFieldCaller(TextField * textField);
+    void reloadData();
   private:
     enum class Page {
       RootMenu,

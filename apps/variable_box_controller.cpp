@@ -222,6 +222,10 @@ void VariableBoxController::ContentViewController::setTextFieldCaller(TextField 
   m_textFieldCaller = textField;
 }
 
+void VariableBoxController::ContentViewController::reloadData() {
+  m_selectableTableView.reloadData();
+}
+
 VariableBoxController::VariableBoxController(Context * context) :
   StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(ContentViewController(this, context))
@@ -235,4 +239,8 @@ void VariableBoxController::didBecomeFirstResponder() {
 
 void VariableBoxController::setTextFieldCaller(TextField * textField) {
   m_contentViewController.setTextFieldCaller(textField);
+}
+
+void VariableBoxController::viewWillAppear() {
+  m_contentViewController.reloadData();
 }

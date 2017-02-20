@@ -12,8 +12,7 @@ BoxController::BoxController(Responder * parentResponder, HeaderViewController *
   HeaderViewDelegate(headerViewController),
   m_boxBannerView(BoxBannerView()),
   m_view(BoxView(store, &m_boxBannerView)),
-  m_store(store),
-  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
+  m_store(store)
 {
 }
 
@@ -22,13 +21,6 @@ const char * BoxController::title() const {
 }
 
 View * BoxController::view() {
-  AppsContainer * myContainer = ((App *)app())->container();
-  Expression::FloatDisplayMode FloatDisplayMode = myContainer->preferences()->displayMode();
-  if (FloatDisplayMode != m_displayModeVersion) {
-    reloadBannerView();
-    m_view.reload();
-    m_displayModeVersion = FloatDisplayMode;
-  }
   return &m_view;
 }
 
@@ -83,6 +75,11 @@ void BoxController::reloadBannerView() {
   AppsContainer * container = ((App *)app())->container();
   Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, container->preferences()->displayMode());
   m_boxBannerView.setLegendAtIndex(buffer, 1);
+}
+
+void BoxController::viewWillAppear() {
+  reloadBannerView();
+  m_view.reload();
 }
 
 }

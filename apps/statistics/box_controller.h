@@ -18,13 +18,13 @@ public:
   bool isEmpty() const override;
   const char * emptyMessage() override;
   Responder * defaultController() override;
+  void viewWillAppear() override;
 private:
   Responder * tabController() const;
   void reloadBannerView();
   BoxBannerView m_boxBannerView;
   BoxView m_view;
   Store * m_store;
-  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

@@ -27,6 +27,8 @@ public:
   Button * buttonAtIndex(int index) override;
 
   Responder * defaultController() override;
+
+  void viewWillAppear() override;
 protected:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual BannerView * bannerView() = 0;
@@ -55,7 +57,6 @@ private:
   Button m_rangeButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;
-  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

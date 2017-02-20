@@ -17,7 +17,6 @@ class ValuesController : public Shared::EditableCellTableViewController, public 
 public:
   ValuesController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
-  View * view() override;
   Interval * interval();
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -38,6 +37,7 @@ public:
   void selectCellAtLocation(int i, int j);
   int activeRow();
   int activeColumn();
+  void viewWillAppear() override;
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
   static constexpr KDCoordinate k_leftMargin = 1;
@@ -72,7 +72,6 @@ private:
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
-  Poincare::Expression::FloatDisplayMode m_displayModeVersion;
 };
 
 }

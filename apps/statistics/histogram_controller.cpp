@@ -22,8 +22,7 @@ HistogramController::HistogramController(Responder * parentResponder, HeaderView
   }, this))),
   m_store(store),
   m_cursor(CurveViewCursor()),
-  m_histogramParameterController(nullptr, store),
-  m_displayModeVersion(Expression::FloatDisplayMode::Auto)
+  m_histogramParameterController(nullptr, store)
 {
 }
 
@@ -32,13 +31,6 @@ const char * HistogramController::title() const {
 }
 
 View * HistogramController::view() {
-  AppsContainer * container = ((App *)app())->container();
-  Expression::FloatDisplayMode FloatDisplayMode = container->preferences()->displayMode();
-  if (FloatDisplayMode != m_displayModeVersion) {
-    reloadBannerView();
-    m_view.reload();
-    m_displayModeVersion = FloatDisplayMode;
-  }
   return &m_view;
 }
 
@@ -129,6 +121,11 @@ const char * HistogramController::emptyMessage() {
 
 Responder * HistogramController::defaultController() {
   return tabController();
+}
+
+void HistogramController::viewWillAppear() {
+  reloadBannerView();
+  m_view.reload();
 }
 
 Responder * HistogramController::tabController() const {

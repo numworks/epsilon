@@ -122,6 +122,9 @@ void GraphController::reloadBannerView() {
   legend = "00(x) = ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
+  if (m_functionStore->numberOfActiveFunctions() == 0) {
+    return;
+  }
   Function * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[1] = f->name()[0];
   Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, graphApp->container()->preferences()->displayMode());

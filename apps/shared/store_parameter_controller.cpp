@@ -40,7 +40,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         if (m_xColumnSelected) {
           m_store->deleteAllPairs();
         } else {
-          m_store->resetColumn(m_xColumnSelected);
+          m_store->resetColumn(!m_xColumnSelected);
         }
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->pop();

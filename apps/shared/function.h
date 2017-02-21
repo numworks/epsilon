@@ -15,6 +15,7 @@ public:
   KDColor color() const { return m_color; }
   Poincare::Expression * expression();
   Poincare::ExpressionLayout * layout();
+  virtual bool isDefined();
   bool isActive();
   void setActive(bool active);
   void setContent(const char * c);

@@ -29,6 +29,7 @@ public:
   Poincare::ExpressionLayout * definitionName();
   Poincare::ExpressionLayout * firstInitialConditionName();
   Poincare::ExpressionLayout * secondInitialConditionName();
+  bool isDefined() override;
 private:
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];

@@ -12,7 +12,7 @@ Function * FunctionStore::activeFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
   for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (functionAtIndex(k)->isActive() && functionAtIndex(k)->layout() != nullptr) {
+    if (functionAtIndex(k)->isActive() && functionAtIndex(k)->isDefined()) {
       if (i == index) {
         return functionAtIndex(k);
       }
@@ -27,7 +27,7 @@ Function * FunctionStore::definedFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
   for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (functionAtIndex(k)->layout() != nullptr) {
+    if (functionAtIndex(k)->isDefined()) {
       if (i == index) {
         return functionAtIndex(k);
       }
@@ -45,7 +45,7 @@ int FunctionStore::numberOfFunctions() {
 int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (functionAtIndex(i)->layout() != nullptr && functionAtIndex(i)->isActive()) {
+    if (functionAtIndex(i)->isDefined() && functionAtIndex(i)->isActive()) {
       result++;
     }
   }
@@ -55,7 +55,7 @@ int FunctionStore::numberOfActiveFunctions() {
 int FunctionStore::numberOfDefinedFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (functionAtIndex(i)->layout() != nullptr) {
+    if (functionAtIndex(i)->isDefined()) {
       result++;
     }
   }

@@ -83,7 +83,13 @@ using namespace Poincare;
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
 \xa2 { return EE; }
-[A-Zxnt] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+[A-Zxn] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
+u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
+v\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn; return SYMBOL; }
+v\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn1; return SYMBOL; }
+w\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::wn; return SYMBOL; }
+w\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::wn1; return SYMBOL; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }

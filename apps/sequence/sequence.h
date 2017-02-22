@@ -30,6 +30,7 @@ public:
   Poincare::ExpressionLayout * firstInitialConditionName();
   Poincare::ExpressionLayout * secondInitialConditionName();
   bool isDefined() override;
+  float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
 private:
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];

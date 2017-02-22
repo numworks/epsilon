@@ -20,7 +20,7 @@ public:
   void setActive(bool active);
   void setContent(const char * c);
   void setColor(KDColor m_color);
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const;
+  virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
 protected:
   constexpr static int k_bodyLength = 255;
   Poincare::Expression * m_expression;

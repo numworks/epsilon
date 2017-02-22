@@ -6,29 +6,15 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
-  ViewController(nullptr),
+  FunctionCurveParameterController(graphRange, cursor),
   m_bannerView(bannerView),
-  m_function(nullptr),
   m_calculationCell(PointerTableCellWithChevron((char*)"Calculer")),
-  m_goToCell(PointerTableCellWithChevron((char*)"Aller a")),
-  m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_goToParameterController(GoToParameterController(this, graphRange, cursor))
+  m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee"))
 {
 }
 
 const char * CurveParameterController::title() const {
   return "Options de la courbe";
-}
-
-View * CurveParameterController::view() {
-  return &m_selectableTableView;
-}
-
-void CurveParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -44,12 +30,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
         return true;
       case 1:
-      {
-        m_goToParameterController.setFunction(m_function);
-        StackViewController * stack = (StackViewController *)parentResponder();
-        stack->push(&m_goToParameterController);
-        return true;
-      }
+        return handleGotoSelection();
       case 2:
       {
         m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
@@ -76,14 +57,6 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
 
 int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
-}
-
-KDCoordinate CurveParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
-}
-
-void CurveParameterController::setFunction(CartesianFunction * function) {
-  m_function = function;
 }
 
 }

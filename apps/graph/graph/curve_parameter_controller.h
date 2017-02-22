@@ -1,38 +1,25 @@
 #ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
-#include "goto_parameter_controller.h"
+#include "../../shared/function_curve_parameter_controller.h"
 #include "banner_view.h"
-#include "../cartesian_function.h"
-#include "../../shared/curve_view_cursor.h"
-#include "../../shared/interactive_curve_view_range.h"
 
 namespace Graph {
 
-class CurveParameterController : public ViewController, public SimpleListViewDataSource {
+class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor);
-
-  View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   int numberOfRows() override;
-  KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setFunction(CartesianFunction * function);
 private:
   BannerView * m_bannerView;
-  CartesianFunction * m_function;
   constexpr static int k_totalNumberOfCells = 3;
   PointerTableCellWithChevron m_calculationCell;
-  PointerTableCellWithChevron m_goToCell;
   PointerTableCellWithSwitch m_derivativeCell;
-  SelectableTableView m_selectableTableView;
-  GoToParameterController m_goToParameterController;
 };
 
 }

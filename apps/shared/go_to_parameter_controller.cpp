@@ -1,11 +1,8 @@
-#include "goto_parameter_controller.h"
-#include "../app.h"
-#include "../../apps_container.h"
+#include "go_to_parameter_controller.h"
+#include "text_field_delegate_app.h"
 #include <assert.h>
 
-using namespace Shared;
-
-namespace Graph {
+namespace Shared {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
@@ -27,8 +24,8 @@ float GoToParameterController::parameterAtIndex(int index) {
 
 void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
-  App * graphApp = (Graph::App *)app();
-  float y = m_function->evaluateAtAbscissa(f, graphApp->localContext());
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
   m_cursor->moveTo(f, y);
@@ -47,7 +44,7 @@ int GoToParameterController::reusableCellCount() {
   return 1;
 }
 
-void GoToParameterController::setFunction(CartesianFunction * function) {
+void GoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
 

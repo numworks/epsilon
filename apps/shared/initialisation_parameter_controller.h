@@ -1,10 +1,10 @@
-#ifndef GRAPH_GRAPH_INITIALISATION_PARAMETER_CONTROLLER_H
-#define GRAPH_GRAPH_INITIALISATION_PARAMETER_CONTROLLER_H
+#ifndef SHARED_INITIALISATION_PARAMETER_CONTROLLER_H
+#define SHARED_INITIALISATION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../../shared/interactive_curve_view_range.h"
+#include "interactive_curve_view_range.h"
 
-namespace Graph {
+namespace Shared {
 
 class InitialisationParameterController : public ViewController, public SimpleListViewDataSource {
 public:
@@ -22,7 +22,7 @@ private:
   constexpr static int k_totalNumberOfCells = 4;
   PointerTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
-  Shared::InteractiveCurveViewRange * m_graphRange;
+  InteractiveCurveViewRange * m_graphRange;
 };
 
 }

@@ -2,9 +2,9 @@
 #define ESCHER_APP_H
 
 #include <escher/modal_view_controller.h>
+#include <escher/image.h>
 #include <escher/responder.h>
 #include <escher/view_controller.h>
-#include <escher/image.h>
 #include <escher/warning_controller.h>
 
 /* An app is fed events and outputs drawing calls.

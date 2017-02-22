@@ -1,11 +1,8 @@
 #include "initialisation_parameter_controller.h"
-#include "../app.h"
 #include <assert.h>
 #include <math.h>
 
-using namespace Shared;
-
-namespace Graph {
+namespace Shared {
 
 InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange) :
   ViewController(parentResponder),

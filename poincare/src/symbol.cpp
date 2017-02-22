@@ -45,22 +45,22 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
     return new StringLayout("ans", 4);
   }
   if (m_name == SpecialSymbols::un) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (m_name == SpecialSymbols::un1) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n+1",3), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (m_name == SpecialSymbols::vn) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n",1), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (m_name == SpecialSymbols::vn1) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (m_name == SpecialSymbols::wn) {
-    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n",1), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (m_name == SpecialSymbols::wn1) {
-    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n+1",3), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   return new StringLayout(&m_name, 1);
 }

@@ -414,7 +414,8 @@ void CurveView::layoutSubviews() {
     KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
     KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
-    if (!m_mainViewSelected || isnan(m_curveViewCursor->x()) || isnan(m_curveViewCursor->y())) {
+    if (!m_mainViewSelected || isnan(m_curveViewCursor->x()) || isnan(m_curveViewCursor->y())
+        || isinf(m_curveViewCursor->x()) || isinf(m_curveViewCursor->y())) {
       cursorFrame = KDRectZero;
     }
     m_cursorView->setFrame(cursorFrame);

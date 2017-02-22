@@ -94,6 +94,12 @@ bool GraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurv
   }
   m_graphRange.setYMin(min-k_displayBottomMarginRatio*range);
   m_graphRange.setYMax(max+k_displayTopMarginRatio*range);
+  if (isinf(m_graphRange.xMin())) {
+    m_graphRange.setYMin(-FLT_MAX);
+  }
+  if (isinf(m_graphRange.xMax())) {
+    m_graphRange.setYMax(FLT_MAX);
+  }
   return true;
 }
 

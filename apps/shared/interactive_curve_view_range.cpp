@@ -141,25 +141,25 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
-  if (x < m_xMin + leftMarginRation*xRange) {
+  if (x < m_xMin + leftMarginRation*xRange && !isinf(x) && !isnan(x)) {
     m_xMin = x - leftMarginRation*xRange;
     m_xMax = m_xMin + xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
     m_yAuto = false;
   }
-  if (x > m_xMax - rightMarginRatio*xRange) {
+  if (x > m_xMax - rightMarginRatio*xRange && !isinf(x) && !isnan(x)) {
     m_xMax = x + rightMarginRatio*xRange;
     m_xMin = m_xMax - xRange;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
     m_yAuto = false;
   }
-  if (y < m_yMin + bottomMarginRation*yRange) {
+  if (y < m_yMin + bottomMarginRation*yRange && !isinf(y) && !isnan(y)) {
     m_yMin = y - bottomMarginRation*yRange;
     m_yMax = m_yMin + yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
     m_yAuto = false;
   }
-  if (y > m_yMax - topMarginRatio*yRange) {
+  if (y > m_yMax - topMarginRatio*yRange && !isinf(y) && !isnan(y)) {
     m_yMax = y + topMarginRatio*yRange;
     m_yMin = m_yMax - yRange;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);

@@ -75,10 +75,11 @@ void Function::setActive(bool active) {
 }
 
 float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
+  Poincare::VariableContext variableContext = Poincare::VariableContext(symbol(), context);
   Poincare::Symbol xSymbol = Poincare::Symbol(symbol());
   Poincare::Complex e = Poincare::Complex::Float(x);
-  context->setExpressionForSymbolName(&e, &xSymbol);
-  return m_expression->approximate(*context);
+  variableContext.setExpressionForSymbolName(&e, &xSymbol);
+  return m_expression->approximate(variableContext);
 }
 
 }

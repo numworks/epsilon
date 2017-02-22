@@ -1,6 +1,6 @@
 #include "box_controller.h"
-#include "../apps_container.h"
 #include "app.h"
+#include "../apps_container.h"
 #include <math.h>
 
 using namespace Poincare;

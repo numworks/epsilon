@@ -13,6 +13,7 @@ class FloatParameterController : public ViewController, public SimpleListViewDat
 public:
   FloatParameterController(Responder * parentResponder);
   View * view() override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

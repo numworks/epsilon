@@ -55,9 +55,9 @@ void KDContext::blendChar(char character, KDPoint p, KDText::FontSize size, KDCo
       KDColor * currentPixelAdress = characterBuffer + i + absoluteRect.width()*j;
       uint8_t intensity = 0;
       if (size == KDText::FontSize::Large) {
-        intensity = bitmapLargeFont[character-firstCharacter][j + startingJ][i +startingI];
+        intensity = bitmapLargeFont[(uint8_t)character-(uint8_t)firstCharacter][j + startingJ][i +startingI];
       } else {
-       intensity = bitmapSmallFont[character-firstCharacter][j + startingJ][i +startingI];
+       intensity = bitmapSmallFont[(uint8_t)character-(uint8_t)firstCharacter][j + startingJ][i +startingI];
       }
       *currentPixelAdress = KDColor::blend(textColor, *currentPixelAdress, intensity);
     }

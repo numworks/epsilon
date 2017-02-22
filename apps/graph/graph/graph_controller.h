@@ -50,6 +50,7 @@ private:
   CurveParameterController m_curveParameterController;
   CartesianFunctionStore * m_functionStore;
   int m_indexFunctionSelectedByCursor;
+  Poincare::Expression::AngleUnit m_angleUnitVersion;
 };
 
 }

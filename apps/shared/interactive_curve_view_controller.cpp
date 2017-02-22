@@ -103,7 +103,10 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
   if (m_modelVersion != newModelVersion) {
     m_modelVersion = newModelVersion;
     initRangeParameters();
+    /* Warning: init cursor parameter before reloading banner view. Indeed,
+     * reloading banner view needs an updated cursor to load the right data. */
     initCursorParameters();
+    centerCursorVertically();
     reloadBannerView();
     curveView()->reload();
   }
@@ -146,9 +149,6 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   curveView()->selectMainView(true);
   headerViewController()->setSelectedButton(-1);
-  /* Warning: init cursor parameter before reloading banner view. Indeed,
-   * reloading banner view needs an updated cursor to load the right data. */
-  initCursorParameters();
   reloadBannerView();
   curveView()->reload();
 }
@@ -161,4 +161,9 @@ StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
+void InteractiveCurveViewController::centerCursorVertically() {
+  if (!interactiveCurveViewRange()->yAuto()) {
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor.y());
+  }
+}
 }

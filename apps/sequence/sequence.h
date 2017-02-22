@@ -24,7 +24,6 @@ public:
   Poincare::ExpressionLayout * secondInitialConditionLayout();
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
-  char symbol() const override;
   int numberOfElements();
   Poincare::ExpressionLayout * definitionName();
   Poincare::ExpressionLayout * firstInitialConditionName();
@@ -32,6 +31,7 @@ public:
   bool isDefined() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
 private:
+  char symbol() const override;
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];
   char m_secondInitialConditionText[Shared::Function::k_bodyLength];

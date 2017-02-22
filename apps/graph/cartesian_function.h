@@ -7,7 +7,6 @@ namespace Graph {
 
 class CartesianFunction : public Shared::Function {
 public:
-  static constexpr const char * Parameter = "(x)";
   using Shared::Function::Function;
   CartesianFunction(const char * text = nullptr, KDColor color = KDColorBlack);
   bool displayDerivative();

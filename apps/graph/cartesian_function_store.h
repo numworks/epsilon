@@ -18,6 +18,7 @@ public:
   CartesianFunction * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
   int maxNumberOfFunctions() override;
+  char symbol() const override;
   static constexpr int k_maxNumberOfFunctions = 8;
 private:
   const char * firstAvailableName() override;

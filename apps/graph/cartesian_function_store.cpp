@@ -63,6 +63,10 @@ int CartesianFunctionStore::maxNumberOfFunctions() {
   return k_maxNumberOfFunctions;
 }
 
+char CartesianFunctionStore::symbol() const {
+  return 'x';
+}
+
 const char *  CartesianFunctionStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfFunctions; k++) {
     int j = 0;

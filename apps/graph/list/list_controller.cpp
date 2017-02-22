@@ -79,7 +79,7 @@ HighlightCell * ListController::expressionCells(int index) {
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
   CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j);
-  char bufferName[5] = {*function->name(),'(',function->symbol(),')', 0};
+  char bufferName[5] = {*function->name(),'(', m_functionStore->symbol(),')', 0};
   myFunctionCell->setText(bufferName);
   KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
   myFunctionCell->setColor(functionNameColor);

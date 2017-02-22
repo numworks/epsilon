@@ -19,6 +19,7 @@ public:
   void removeFunction(Shared::Function * f) override;
   int maxNumberOfFunctions() override;
   const char * firstAvailableName() override;
+  char symbol() const override;
   static constexpr int k_maxNumberOfSequences = 3;
 private:
   const KDColor firstAvailableColor() override;

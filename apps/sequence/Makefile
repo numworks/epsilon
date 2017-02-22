@@ -6,6 +6,7 @@ app_objs += $(addprefix apps/sequence/,\
   list/sequence_toolbox.o\
   list/type_parameter_controller.o\
   values/values_controller.o\
+  local_context.o\
   sequence.o\
   sequence_store.o\
   sequence_title_cell.o\

@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/sequence/,\
   app.o\
   graph/banner_view.o\
+  graph/curve_view_range.o\
   graph/graph_view.o\
   list/list_controller.o\
   list/list_parameter_controller.o\

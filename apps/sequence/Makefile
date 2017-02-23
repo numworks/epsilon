@@ -5,6 +5,7 @@ app_objs += $(addprefix apps/sequence/,\
   graph/curve_view_range.o\
   graph/graph_controller.o\
   graph/graph_view.o\
+  graph/term_sum_controller.o\
   graph/vertical_cursor_view.o\
   list/list_controller.o\
   list/list_parameter_controller.o\

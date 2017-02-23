@@ -12,11 +12,19 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setVerticalCursor(bool verticalCursor);
+  void reload() override;
+  void selectSequence(Sequence * sequence);
+  void setHighlight(int start, int end);
+  void setHighlightColor(bool highlightColor);
 private:
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
   KDSize cursorSize() override;
   SequenceStore * m_sequenceStore;
   bool m_verticalCursor;
+  int m_highlightedDotStart;
+  int m_highlightedDotEnd;
+  bool m_highlightColor;
+  Sequence * m_selectedSequence;
 };
 
 }

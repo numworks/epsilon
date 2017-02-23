@@ -19,6 +19,7 @@ void GraphController::viewWillAppear() {
   m_view.setVerticalCursor(false);
   m_view.setCursorView(&m_cursorView);
   m_view.setBannerView(&m_bannerView);
+  m_view.setHighlight(-1.0f, -1.0f);
   FunctionGraphController::viewWillAppear();
 }
 

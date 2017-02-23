@@ -39,6 +39,8 @@ void TermSumController::viewWillAppear() {
   m_contentView.graphView()->setCursorView(&m_cursorView);
   m_contentView.graphView()->setBannerView(nullptr);
   m_contentView.graphView()->selectMainView(true);
+  m_contentView.graphView()->setHighlightColor(false);
+  m_contentView.graphView()->setHighlight(-1.0f,-1.0f);
   m_contentView.graphView()->reload();
   m_contentView.layoutSubviews();
 
@@ -101,6 +103,8 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     float sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
     Complex::convertFloatToText(sum, buffer+2, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    m_contentView.graphView()->setHighlightColor(true);
+    m_contentView.graphView()->selectMainView(false);
     m_contentView.legendView()->setLegendText(buffer);
   }
   return false;
@@ -121,6 +125,7 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
     m_contentView.legendView()->setSumSubscript(m_cursor->x());
   }
   if (m_step == 1) {
+    m_contentView.graphView()->setHighlight(m_startSum, m_cursor->x());
     m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
   }
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
@@ -128,6 +133,7 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
 }
 
 void TermSumController::setSequence(Sequence * sequence) {
+  m_contentView.graphView()->selectSequence(sequence);
   m_sequence = sequence;
 }
 

@@ -14,7 +14,7 @@ App::App(Container * container, Context * context) :
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listHeader)),
   m_graphController(&m_graphAlternateEmptyViewController, &m_sequenceStore, &m_graphHeader),
   m_graphAlternateEmptyViewController(AlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController)),
-  m_graphHeader(HeaderViewController(nullptr, &m_graphAlternateEmptyViewController, &m_graphController)),
+  m_graphHeader(HeaderViewController(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController)),
   m_graphStackViewController(StackViewController(&m_tabViewController, &m_graphHeader)),
   m_valuesController(&m_valuesAlternateEmptyViewController, &m_sequenceStore, &m_valuesHeader),
   m_valuesAlternateEmptyViewController(AlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController)),

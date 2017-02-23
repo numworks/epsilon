@@ -6,9 +6,11 @@
 
 namespace Sequence {
 
+class GraphController;
+
 class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
-  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
+  CurveParameterController(GraphController * graphController, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
@@ -17,6 +19,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCells = 2;
   PointerTableCell m_sumCell;
+  GraphController * m_graphController;
 };
 
 }

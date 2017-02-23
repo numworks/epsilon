@@ -9,9 +9,17 @@ GraphController::GraphController(Responder * parentResponder, SequenceStore * se
   m_bannerView(BannerView()),
   m_view(GraphView(sequenceStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),
   m_graphRange(CurveViewRange(&m_cursor, this)),
-  m_curveParameterController(CurveParameterController(&m_graphRange, &m_cursor)),
+  m_curveParameterController(CurveParameterController(this, &m_graphRange, &m_cursor)),
+  m_termSumController(TermSumController(this, &m_view, &m_graphRange, &m_cursor)),
   m_sequenceStore(sequenceStore)
 {
+}
+
+void GraphController::viewWillAppear() {
+  m_view.setVerticalCursor(false);
+  m_view.setCursorView(&m_cursorView);
+  m_view.setBannerView(&m_bannerView);
+  FunctionGraphController::viewWillAppear();
 }
 
 const char * GraphController::emptyMessage() {
@@ -19,6 +27,11 @@ const char * GraphController::emptyMessage() {
     return "Aucune suite";
   }
   return "Aucune suite activee";
+}
+
+void GraphController::displayTermSumController() {
+  m_termSumController.setSequence(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  stackController()->push(&m_termSumController);
 }
 
 BannerView * GraphController::bannerView() {

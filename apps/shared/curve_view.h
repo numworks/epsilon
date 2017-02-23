@@ -23,7 +23,8 @@ public:
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
-
+  void setCursorView(View * cursorView);
+  void setBannerView(BannerView * bannerView);
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
@@ -49,7 +50,7 @@ protected:
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
-
+  virtual KDSize cursorSize();
 private:
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

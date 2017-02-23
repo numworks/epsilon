@@ -24,6 +24,7 @@ protected:
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
   constexpr static int k_maxNumberOfCharacters = 8;
   void reloadBannerView() override;
+  bool handleEnter() override;
   int m_indexFunctionSelectedByCursor;
 private:
   /* When y auto is ticked, we use a display margin to be ensure that the user
@@ -31,7 +32,6 @@ private:
   constexpr static float k_displayTopMarginRatio = 0.09f;
   constexpr static float k_displayBottomMarginRatio = 0.2f;
 
-  bool handleEnter() override;
   void initRangeParameters() override;
   bool moveCursorVertically(int direction) override;
   CurveView * curveView() override;

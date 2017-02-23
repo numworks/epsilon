@@ -24,7 +24,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       {
         StackViewController * stack = (StackViewController *)parentResponder();
         stack->pop();
-        m_graphController->displayTermSumController();
+        stack->push(m_graphController->termSumController());
         return true;
       }
       case 1:

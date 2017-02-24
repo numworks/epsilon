@@ -3,8 +3,9 @@
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, char symbol) :
   ViewController(parentResponder),
+  m_pageTitle("Colonne 0"),
   m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
   m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
   m_setInterval(PointerTableCellWithChevron((char*)"Regler l'intervalle")),
@@ -12,10 +13,16 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)
 {
+  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
+    if (m_pageTitle[currentChar] == ' ') {
+      m_pageTitle[currentChar+1] = symbol;
+      return;
+    }
+  }
 }
 
 const char * ValuesParameterController::title() const {
-  return "Colonne x";
+  return m_pageTitle;
 }
 
 View * ValuesParameterController::view() {

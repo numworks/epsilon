@@ -25,6 +25,7 @@ public:
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   int numberOfElements();
+  Poincare::ExpressionLayout * nameLayout();
   Poincare::ExpressionLayout * definitionName();
   Poincare::ExpressionLayout * firstInitialConditionName();
   Poincare::ExpressionLayout * secondInitialConditionName();
@@ -40,6 +41,7 @@ private:
   Poincare::Expression * m_secondInitialConditionExpression;
   Poincare::ExpressionLayout * m_firstInitialConditionLayout;
   Poincare::ExpressionLayout * m_secondInitialConditionLayout;
+  Poincare::ExpressionLayout * m_nameLayout;
   Poincare::ExpressionLayout * m_definitionName;
   Poincare::ExpressionLayout * m_firstInitialConditionName;
   Poincare::ExpressionLayout * m_secondInitialConditionName;

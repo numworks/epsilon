@@ -14,7 +14,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, HeaderViewController * header);
+  ValuesController(Responder * parentResponder, HeaderViewController * header, char symbol);
   const char * title() const override;
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;

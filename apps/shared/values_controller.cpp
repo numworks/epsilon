@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, HeaderViewController * header) :
+ValuesController::ValuesController(Responder * parentResponder, HeaderViewController * header, char symbol) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   HeaderViewDelegate(header),
   m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
@@ -16,7 +16,7 @@ ValuesController::ValuesController(Responder * parentResponder, HeaderViewContro
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
-  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController)),
+  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController, symbol)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());

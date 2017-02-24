@@ -1,13 +1,13 @@
-#ifndef GRAPH_ABSCISSA_PARAM_CONTROLLER_H
-#define GRAPH_ABSCISSA_PARAM_CONTROLLER_H
+#ifndef SHARED_VALUES_PARAM_CONTROLLER_H
+#define SHARED_VALUES_PARAM_CONTROLLER_H
 
 #include <escher.h>
 #include "interval_parameter_controller.h"
 
-namespace Graph {
-class AbscissaParameterController : public ViewController, public SimpleListViewDataSource {
+namespace Shared {
+class ValuesParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  AbscissaParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
+  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
 
   View * view() override;
   const char * title() const override;

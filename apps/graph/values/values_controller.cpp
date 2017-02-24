@@ -20,7 +20,7 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
   m_functionStore(functionStore),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
-  m_abscissaParameterController(AbscissaParameterController(this, &m_intervalParameterController)),
+  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController)),
   m_functionParameterController(FunctionParameterController(this)),
   m_derivativeParameterController(DerivativeParameterController(this)),
   m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {

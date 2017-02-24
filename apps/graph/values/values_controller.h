@@ -5,11 +5,11 @@
 #include "../cartesian_function_store.h"
 #include "../function_title_cell.h"
 #include "../../shared/editable_cell_table_view_controller.h"
-#include "interval.h"
-#include "abscissa_parameter_controller.h"
+#include "../../shared/interval.h"
+#include "../../shared/values_parameter_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
-#include "interval_parameter_controller.h"
+#include "../../shared/interval_parameter_controller.h"
 
 namespace Graph {
 
@@ -17,7 +17,7 @@ class ValuesController : public Shared::EditableCellTableViewController, public 
 public:
   ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header);
   const char * title() const override;
-  Interval * interval();
+  Shared::Interval * interval();
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   ViewController * intervalParameterController();
@@ -66,9 +66,9 @@ private:
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   CartesianFunctionStore * m_functionStore;
-  Interval m_interval;
-  IntervalParameterController m_intervalParameterController;
-  AbscissaParameterController m_abscissaParameterController;
+  Shared::Interval m_interval;
+  Shared::IntervalParameterController m_intervalParameterController;
+  Shared::ValuesParameterController m_abscissaParameterController;
   FunctionParameterController m_functionParameterController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;

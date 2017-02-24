@@ -8,11 +8,8 @@ app_objs += $(addprefix apps/graph/,\
   graph/graph_controller.o\
   graph/graph_view.o\
   list/list_controller.o\
-  values/abscissa_parameter_controller.o\
   values/derivative_parameter_controller.o\
   values/function_parameter_controller.o\
-  values/interval.o\
-  values/interval_parameter_controller.o\
   values/values_controller.o\
 )
 

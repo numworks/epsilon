@@ -1,9 +1,9 @@
-#include "abscissa_parameter_controller.h"
+#include "values_parameter_controller.h"
 #include <assert.h>
 
-namespace Graph {
+namespace Shared {
 
-AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
   ViewController(parentResponder),
   m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
   m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
@@ -14,20 +14,20 @@ AbscissaParameterController::AbscissaParameterController(Responder * parentRespo
 {
 }
 
-const char * AbscissaParameterController::title() const {
+const char * ValuesParameterController::title() const {
   return "Colonne x";
 }
 
-View * AbscissaParameterController::view() {
+View * ValuesParameterController::view() {
   return &m_selectableTableView;
 }
 
-void AbscissaParameterController::didBecomeFirstResponder() {
+void ValuesParameterController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
+bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
@@ -56,22 +56,22 @@ bool AbscissaParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int AbscissaParameterController::numberOfRows() {
+int ValuesParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * AbscissaParameterController::reusableCell(int index) {
+HighlightCell * ValuesParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
 }
 
-int AbscissaParameterController::reusableCellCount() {
+int ValuesParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-KDCoordinate AbscissaParameterController::cellHeight() {
+KDCoordinate ValuesParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 

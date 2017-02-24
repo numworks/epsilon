@@ -1,10 +1,7 @@
 #include "interval_parameter_controller.h"
-#include "../app.h"
 #include <assert.h>
 
-using namespace Shared;
-
-namespace Graph {
+namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
@@ -19,7 +16,7 @@ const char * IntervalParameterController::title() const {
   return "Regler l'intervalle";
 }
 
-Graph::Interval * IntervalParameterController::interval() {
+Interval * IntervalParameterController::interval() {
   return m_interval;
 }
 

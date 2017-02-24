@@ -2,42 +2,21 @@
 #include "values_controller.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Graph {
 
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
-  ViewController(nullptr),
-  m_pageTitle{"Colonne f(x)"},
+  ValuesFunctionParameterController('x'),
   m_displayDerivativeColumn(PointerTableCellWithSwitch((char*)"Colonne de la fonction derivee")),
-  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_function(nullptr),
+  m_cartesianFunction(nullptr),
   m_valuesController(valuesController)
 {
 }
 
-const char * FunctionParameterController::title() const {
-  return m_pageTitle;
-}
-
-View * FunctionParameterController::view() {
-  return &m_selectableTableView;
-}
-
-void FunctionParameterController::setFunction(CartesianFunction * function) {
-  m_function = function;
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar-1] = *m_function->name();
-      return;
-    }
-  }
-}
-
-void FunctionParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+void FunctionParameterController::setFunction(Function * function) {
+  m_cartesianFunction = (CartesianFunction *)function;
+  ValuesFunctionParameterController::setFunction(function);
 }
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
@@ -45,8 +24,8 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       {
-        m_function->setDisplayDerivative(!m_function->displayDerivative());
-        if (m_function->displayDerivative()) {
+        m_cartesianFunction->setDisplayDerivative(!m_cartesianFunction->displayDerivative());
+        if (m_cartesianFunction->displayDerivative()) {
           m_valuesController->selectCellAtLocation(0, -1);
           m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()+1, m_valuesController->activeRow());
         }
@@ -78,14 +57,10 @@ int FunctionParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-KDCoordinate FunctionParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
-}
-
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
-    switchView->setState(m_function->displayDerivative());
+    switchView->setState(m_cartesianFunction->displayDerivative());
   }
 }
 

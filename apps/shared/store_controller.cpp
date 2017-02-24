@@ -90,7 +90,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     stack->push(&m_storeParameterController);
     return true;
   }
-  if (event == Ion::Events::Clear) {
+  if (event == Ion::Events::Backspace) {
     m_store->deletePairAtIndex(m_selectableTableView.selectedRow()-1);
     m_selectableTableView.reloadData();
     return true;

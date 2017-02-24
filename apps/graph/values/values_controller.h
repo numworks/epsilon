@@ -1,7 +1,6 @@
 #ifndef GRAPH_VALUES_CONTROLLER_H
 #define GRAPH_VALUES_CONTROLLER_H
 
-#include <escher.h>
 #include "../cartesian_function_store.h"
 #include "../function_title_cell.h"
 #include "../../shared/values_controller.h"

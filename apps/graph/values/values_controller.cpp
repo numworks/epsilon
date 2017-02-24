@@ -1,7 +1,6 @@
 #include "values_controller.h"
 #include <assert.h>
 
-using namespace Poincare;
 using namespace Shared;
 
 namespace Graph {
@@ -27,9 +26,9 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 int ValuesController::numberOfColumns() {
   int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfDefinedFunctions(); i++) {
-    if (m_functionStore->definedFunctionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->definedFunctionAtIndex(i)->displayDerivative();
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
+      result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
     }
   }
   return result;

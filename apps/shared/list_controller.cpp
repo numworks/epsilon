@@ -168,6 +168,10 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       }
     }
   }
+  if (event == Ion::Events::Backspace && m_selectableTableView.selectedColumn() == 1) {
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+    reinitExpression(function);
+  }
   if ((event.hasText() || event == Ion::Events::XNT)
       && m_selectableTableView.selectedColumn() == 1
       && (m_selectableTableView.selectedRow() != numberOfRows() - 1
@@ -191,6 +195,11 @@ void ListController::configureFunction(Shared::Function * function) {
   StackViewController * stack = stackController();
   parameterController()->setFunction(function);
   stack->push(parameterController());
+}
+
+void ListController::reinitExpression(Function * function) {
+  function->setContent("");
+  m_selectableTableView.reloadData();
 }
 
 Responder * ListController::tabController() const{

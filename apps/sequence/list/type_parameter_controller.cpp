@@ -48,7 +48,13 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (m_sequence) {
-      m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+      Sequence::Type sequenceType = (Sequence::Type)m_selectableTableView.selectedRow();
+      if (m_sequence->type() != sequenceType) {
+        m_sequence->setContent("");
+        m_sequence->setFirstInitialConditionContent("");
+        m_sequence->setSecondInitialConditionContent("");
+        m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+      }
       StackViewController * stack = stackController();
       stack->pop();
       return true;

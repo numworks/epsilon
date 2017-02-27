@@ -104,15 +104,22 @@ bool FunctionGraphController::handleEnter() {
 
 void FunctionGraphController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "0 = ";
+  const char * legend = "0=";
   int legendLength = strlen(legend);
+  int numberOfChar = 0;
   strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
   buffer[0] = functionStore()->symbol();
-  Complex::convertFloatToText(m_cursor.x(), buffer+ legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(m_cursor.x(), buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   bannerView()->setLegendAtIndex(buffer, 0);
 
-  legend = "0(x) = ";
+  numberOfChar = 0;
+  legend = "0(x)=";
   legendLength = strlen(legend);
+  numberOfChar += legendLength;
   strlcpy(buffer, legend, legendLength+1);
   buffer[2] = functionStore()->symbol();
   if (functionStore()->numberOfActiveFunctions() == 0) {
@@ -120,7 +127,10 @@ void FunctionGraphController::reloadBannerView() {
   }
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[0] = f->name()[0];
-  Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   bannerView()->setLegendAtIndex(buffer, 1);
 }
 

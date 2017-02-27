@@ -32,7 +32,7 @@ void GraphController::reloadBannerView() {
     return;
   }
   char buffer[k_maxNumberOfCharacters+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "00(x) = ";
+  const char * legend = "00(x)=";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   if (m_functionStore->numberOfActiveFunctions() == 0) {

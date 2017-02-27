@@ -135,30 +135,41 @@ Responder * HistogramController::tabController() const {
 
 void HistogramController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+ Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2];
-  const char * legend = "Interval [";
+  int numberOfChar = 0;
+  const char * legend = "Intervalle [";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
   float lowerBound = m_store->startOfBarAtIndex(m_selectedBarIndex);
-  int lowerBoundNumberOfChar = Complex::convertFloatToText(lowerBound, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  buffer[legendLength+lowerBoundNumberOfChar] = ';';
+  numberOfChar += Complex::convertFloatToText(lowerBound, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  buffer[numberOfChar++] = ';';
   float upperBound = m_store->endOfBarAtIndex(m_selectedBarIndex);
-  int upperBoundNumberOfChar = Complex::convertFloatToText(upperBound, buffer+legendLength+lowerBoundNumberOfChar+1, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+1] = '[';
-  buffer[legendLength+lowerBoundNumberOfChar+upperBoundNumberOfChar+2] = 0;
+  numberOfChar += Complex::convertFloatToText(upperBound, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  buffer[numberOfChar++] = '[';
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 0);
 
+  numberOfChar = 0;
   legend = "Effectif: ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
   float size = m_store->heightOfBarAtIndex(m_selectedBarIndex);
-  Complex::convertFloatToText(size, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(size, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 1);
 
+  numberOfChar = 0;
   legend = "Frequence: ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
   float frequency = size/m_store->sumOfColumn(1);
-  Complex::convertFloatToText(frequency, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(frequency, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 }
 

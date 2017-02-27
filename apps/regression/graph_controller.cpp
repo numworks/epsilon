@@ -54,23 +54,34 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  m_bannerView.setLegendAtIndex((char *)"y = ax+b", 0);
+  m_bannerView.setLegendAtIndex((char *)"   y=ax+b   ", 0);
   char buffer[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "a = ";
+  int numberOfChar = 0;
+  const char * legend = "a=";
   float slope = m_store->slope();
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(slope, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(slope, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 1);
 
-  legend = "b = ";
+  numberOfChar = 0;
+  legend = "b=";
   float yIntercept = m_store->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(yIntercept, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(yIntercept, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 2);
 
-  legend = "x = ";
+  numberOfChar = 0;
+  legend = "   x=";
   float x = m_cursor.x();
   // Display a specific legend if the mean dot is selected
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
@@ -80,10 +91,15 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(x, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(x, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 3);
 
-  legend = "y = ";
+  numberOfChar = 0;
+  legend = "   y=";
   float y = m_cursor.y();
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
     constexpr static char legY[] = {Ion::Charset::YBar, ' ', '=', ' ', 0};
@@ -92,7 +108,11 @@ void GraphController::reloadBannerView() {
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
-  Complex::convertFloatToText(y, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(y, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
   m_bannerView.setLegendAtIndex(buffer, 4);
 }
 

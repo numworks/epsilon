@@ -16,5 +16,6 @@
 #include "spi.h"
 #include "syscfg.h"
 #include "tim.h"
+#include "usart.h"
 
 #endif

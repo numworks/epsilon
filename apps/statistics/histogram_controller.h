@@ -29,7 +29,7 @@ public:
   Responder * defaultController() override;
   void viewWillAppear() override;
 private:
-  constexpr static int k_maxNumberOfBarsPerWindow = 280;
+  constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxNumberOfCharacters = 12;
   Responder * tabController() const;
   void reloadBannerView();

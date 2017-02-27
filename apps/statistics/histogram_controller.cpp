@@ -65,11 +65,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (m_view.isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
-    reloadBannerView();
     int direction = event == Ion::Events::Left ? -1 : 1;
-    if (moveSelection(direction)) {
-      m_view.reload();
-    }
+    moveSelection(direction);
+    reloadBannerView();
+    m_view.reload();
     return true;
   }
   return false;

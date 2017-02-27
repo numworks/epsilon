@@ -34,7 +34,7 @@ void Store::setBarWidth(float barWidth) {
   if (barWidth <= 0.0f) {
     return;
   }
-  m_barWidth = barWidth;  
+  m_barWidth = barWidth;
 }
 
 float Store::firstDrawnBarAbscissa() {

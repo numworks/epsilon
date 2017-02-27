@@ -10,6 +10,7 @@ extern "C" {
 #include "battery.h"
 #include "sd_card.h"
 #include "backlight.h"
+#include "console.h"
 
 #define USE_SD_CARD 0
 
@@ -85,6 +86,7 @@ void initPeripherals() {
 #if USE_SD_CARD
   SDCard::Device::init();
 #endif
+  Console::Device::init();
 }
 
 void shutdownPeripherals() {

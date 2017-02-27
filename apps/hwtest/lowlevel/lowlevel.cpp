@@ -1,88 +1,6 @@
 #include <stddef.h>
 #include <ion.h>
 
-#include "../../../ion/src/device/regs/regs.h"
-
-// PB3 = UART1_RX = SWO
-// PB6 = UART1_TX = QuadSPI NCS
-
-// On Rpi, from top to bottom
-// 6 = GND
-// 8 = TX
-// 10 = RX
-
-constexpr USART uartPort = USART(1);
-
-void init_uart_port() {
-  RCC.APB2ENR()->setUSART1EN(true);
-
-  GPIOB.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
-  GPIOB.MODER()->setMode(6, GPIO::MODER::Mode::AlternateFunction);
-
-  GPIOB.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF7);
-  GPIOB.AFR()->setAlternateFunction(6, GPIO::AFR::AlternateFunction::AF7);
-
-  uartPort.CR1()->setUE(true);
-  uartPort.CR1()->setTE(true);
-  uartPort.CR1()->setRE(true);
-
-  // Set the Baud rate
-  // base clock = 16 MHz
-  // Baud rate = fAPB2/(16*USARTDIV)
-  // USARTDIV = 104.16667
-  //
-  // DIV_Fraction = 16*0.16666667
-  //  = 2.666667 -> 3
-  // DIV_Mantissa = 104 = 0x68
-  // USART_BRR = 0x683
-  uartPort.BRR()->setDIV_FRAC(3);
-  uartPort.BRR()->setDIV_MANTISSA(104);
-}
-
-char uart_read_char() {
-  while (uartPort.SR()->getRXNE() == 0) {
-  }
-  return (char)uartPort.DR()->get();
-}
-
-void uart_write_char(char c) {
-  while (uartPort.SR()->getTXE() == 0) {
-  }
-  uartPort.DR()->set(c);
-}
-
-bool readLine(char * buffer, int bufferSize) {
-  char * endBuffer = buffer + bufferSize - 1;
-  while (true) {
-    *buffer = uart_read_char();
-    if (*buffer == NULL) {
-      /* Time for a comment :
-       * - Building DEBUG=0 might make the device fast enough
-       * - Reading on the HOST... ALSO sends data to the device !!
-       *   So we were being overflowed with zeroes here... */
-      continue;
-    }
-    if (*buffer == '\r') {
-      break;
-    }
-    buffer++;
-    if (buffer == endBuffer) {
-      return false;
-    }
-  }
-  *buffer = 0;
-  return true;
-}
-
-void reply(const char * buffer) {
-  while (*buffer != NULL) {
-    uart_write_char(*buffer);
-    buffer++;
-  }
-  uart_write_char('\r');
-  uart_write_char('\n');
-}
-
 typedef void (*CommandFunction)(const char * input);
 
 void command_ping(const char * input);
@@ -150,17 +68,17 @@ void CommandList::dispatch(const char * command) const {
     }
     handler++;
   }
-  reply("NOT_FOUND");
+  Ion::Console::writeLine("NOT_FOUND");
 }
 
 
 
 void command_ping(const char * input) {
-  reply("PONG");
+  Ion::Console::writeLine("PONG");
 }
 
 void command_mcu_serial(const char * input) {
-  reply("UNKNOWN");
+  Ion::Console::writeLine("UNKNOWN");
 }
 
 
@@ -185,13 +103,13 @@ static inline uint32_t hexNumber(const char * s) {
 void command_led(const char * input) {
   // Input must be of the form "0xAABBCC"
   if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || !isHex(input[4]) || !isHex(input[5]) || !isHex(input[6]) || !isHex(input[7]) || input[8] != NULL) {
-    reply("SYNTAX_ERROR");
+    Ion::Console::writeLine("SYNTAX_ERROR");
     return;
   }
   uint32_t hexColor = hexNumber(input+2);
   KDColor ledColor = KDColor::RGB24(hexColor);
   Ion::LED::setColor(ledColor);
-  reply("OK");
+  Ion::Console::writeLine("OK");
 }
 
 constexpr CommandHandler handles[] = {
@@ -205,12 +123,10 @@ constexpr const CommandList sCommandList = CommandList(handles);
 constexpr int kMaxCommandLength = 255;
 
 void ion_app() {
-  init_uart_port();
   char command[kMaxCommandLength];
   while (true) {
-    if (readLine(command, kMaxCommandLength)) {
-      sCommandList.dispatch(command);
-    }
+    Ion::Console::readLine(command, kMaxCommandLength);
+    sCommandList.dispatch(command);
   }
 }
 

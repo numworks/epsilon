@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <ion.h>
 
 #include "../../../ion/src/device/regs/regs.h"
 
@@ -105,7 +106,12 @@ bool CommandHandler::valid() const {
 
 bool CommandHandler::handle(const char * command) const {
   if (matches(command)) {
-    m_function(command);
+    size_t nameLength = strlen(m_name);
+    if (command[nameLength] == '=') {
+      m_function(command+nameLength+1); // Skip the "Equal character"
+    } else {
+      m_function(nullptr);
+    }
     return true;
   }
   return false;
@@ -115,13 +121,13 @@ bool CommandHandler::matches(const char * command) const {
   const char * c = command;
   const char * n = m_name;
   while (true) {
-    if (*c != *n) {
-      return false;
-    }
     if (*n == NULL) {
       if (*c == NULL || *c == '=') {
         return true;
       }
+    }
+    if (*c != *n) {
+      return false;
     }
     c++;
     n++;
@@ -147,13 +153,7 @@ void CommandList::dispatch(const char * command) const {
   reply("NOT_FOUND");
 }
 
-constexpr CommandHandler handles[] = {
-  CommandHandler("PING", command_ping),
-  CommandHandler("MCU_SERIAL", command_mcu_serial),
-  CommandHandler(nullptr, nullptr)
-};
 
-constexpr const CommandList sCommandList = CommandList(handles);
 
 void command_ping(const char * input) {
   reply("PONG");
@@ -162,6 +162,45 @@ void command_ping(const char * input) {
 void command_mcu_serial(const char * input) {
   reply("UNKNOWN");
 }
+
+
+static inline int8_t hexChar(char c) {
+  if (c >= '0' && c <= '9') {
+    return (c - '0');
+  }
+  if (c >= 'A' && c <= 'F') {
+    return (c - 'A') + 0xA;
+  }
+  return -1;
+}
+static inline bool isHex(char c) { return hexChar(c) >= 0; }
+static inline uint32_t hexNumber(const char * s) {
+  uint32_t result = 0;
+  while (*s != NULL) {
+    result = (result << 4) | hexChar(*s++);
+  }
+  return result;
+}
+
+void command_led(const char * input) {
+  // Input must be of the form "0xAABBCC"
+  if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || !isHex(input[4]) || !isHex(input[5]) || !isHex(input[6]) || !isHex(input[7]) || input[8] != NULL) {
+    reply("SYNTAX_ERROR");
+    return;
+  }
+  uint32_t hexColor = hexNumber(input+2);
+  KDColor ledColor = KDColor::RGB24(hexColor);
+  Ion::LED::setColor(ledColor);
+  reply("OK");
+}
+
+constexpr CommandHandler handles[] = {
+  CommandHandler("PING", command_ping),
+  CommandHandler("MCU_SERIAL", command_mcu_serial),
+  CommandHandler("LED", command_led),
+  CommandHandler(nullptr, nullptr)
+};
+constexpr const CommandList sCommandList = CommandList(handles);
 
 constexpr int kMaxCommandLength = 255;
 

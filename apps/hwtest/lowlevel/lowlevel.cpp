@@ -2,58 +2,58 @@
 
 #include "../../../ion/src/device/regs/regs.h"
 
-// SDIOCK -> SPI2_MOSI
-// SDIO_D2 -> SPI3_CLK == PC10
-// SDIO_D0 -> SPI3_MISO = PB4
-// SDIO_D3 -> SPI3_MOSI = PB5
-//
-//
-
-// On SD card, from left to right
-// D1 - D0 - .... - D3 - D2
-// X - MISO - .... - MOSI - CLK
+// PB3 = UART1_RX = SWO
+// PB6 = UART1_TX = QuadSPI NCS
 
 // On Rpi, from top to bottom
-// MOSI 19
-// MISO 21
-// CLK 23
-// GND 25
-constexpr SPI spiPort = SPI(3);
+// 6 = GND
+// 8 = TX
+// 10 = RX
 
-void init_spi_port() {
-  RCC.APB1ENR()->setSPI3EN(true);
+constexpr USART uartPort = USART(1);
 
-  GPIOB.MODER()->setMode(4, GPIO::MODER::Mode::AlternateFunction);
-  GPIOB.MODER()->setMode(5, GPIO::MODER::Mode::AlternateFunction);
-  GPIOC.MODER()->setMode(10, GPIO::MODER::Mode::AlternateFunction);
+void init_uart_port() {
+  RCC.APB2ENR()->setUSART1EN(true);
 
-  GPIOB.AFR()->setAlternateFunction(4, GPIO::AFR::AlternateFunction::AF6);
-  GPIOB.AFR()->setAlternateFunction(5, GPIO::AFR::AlternateFunction::AF6);
-  GPIOC.AFR()->setAlternateFunction(10, GPIO::AFR::AlternateFunction::AF6);
+  GPIOB.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
+  GPIOB.MODER()->setMode(6, GPIO::MODER::Mode::AlternateFunction);
 
-  spiPort.CR1()->setSPE(true);
+  GPIOB.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF7);
+  GPIOB.AFR()->setAlternateFunction(6, GPIO::AFR::AlternateFunction::AF7);
 
-  // We don't use a CS wire
-  spiPort.CR1()->setSSM(true);
-  spiPort.CR1()->setSSI(0);
+  uartPort.CR1()->setUE(true);
+  uartPort.CR1()->setTE(true);
+  uartPort.CR1()->setRE(true);
+
+  // Set the Baud rate
+  // base clock = 16 MHz
+  // Baud rate = fAPB2/(16*USARTDIV)
+  // USARTDIV = 104.16667
+  //
+  // DIV_Fraction = 16*0.16666667
+  //  = 2.666667 -> 3
+  // DIV_Mantissa = 104 = 0x68
+  // USART_BRR = 0x683
+  uartPort.BRR()->setDIV_FRAC(3);
+  uartPort.BRR()->setDIV_MANTISSA(104);
 }
 
-char spi_read_char() {
-  while (spiPort.SR()->getRXNE() == 0) {
+char uart_read_char() {
+  while (uartPort.SR()->getRXNE() == 0) {
   }
-  return (char)spiPort.DR()->get();
+  return (char)uartPort.DR()->get();
 }
 
-void spi_write_char(char c) {
-  spiPort.DR()->set(c);
-  while (spiPort.SR()->getTXE() == 0) {
+void uart_write_char(char c) {
+  while (uartPort.SR()->getTXE() == 0) {
   }
+  uartPort.DR()->set(c);
 }
 
 bool readLine(char * buffer, int bufferSize) {
   char * endBuffer = buffer + bufferSize - 1;
   while (true) {
-    *buffer = spi_read_char();
+    *buffer = uart_read_char();
     if (*buffer == NULL) {
       /* Time for a comment :
        * - Building DEBUG=0 might make the device fast enough
@@ -61,7 +61,7 @@ bool readLine(char * buffer, int bufferSize) {
        *   So we were being overflowed with zeroes here... */
       continue;
     }
-    if (*buffer == '\n') {
+    if (*buffer == '\r') {
       break;
     }
     buffer++;
@@ -75,11 +75,11 @@ bool readLine(char * buffer, int bufferSize) {
 
 void reply(const char * buffer) {
   while (*buffer != NULL) {
-    spi_write_char(*buffer);
+    uart_write_char(*buffer);
     buffer++;
   }
-  spi_write_char('\n');
-  spi_write_char(0);
+  uart_write_char('\r');
+  uart_write_char('\n');
 }
 
 typedef void (*CommandFunction)(const char * input);
@@ -166,7 +166,7 @@ void command_mcu_serial(const char * input) {
 constexpr int kMaxCommandLength = 255;
 
 void ion_app() {
-  init_spi_port();
+  init_uart_port();
   char command[kMaxCommandLength];
   while (true) {
     if (readLine(command, kMaxCommandLength)) {

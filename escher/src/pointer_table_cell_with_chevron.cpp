@@ -10,7 +10,3 @@ View * PointerTableCellWithChevron::accessoryView() const {
   return (View *)&m_accessoryView;
 }
 
-void PointerTableCellWithChevron::setHighlighted(bool highlight) {
-  PointerTableCell::setHighlighted(highlight);
-  m_accessoryView.setHighlighted(isHighlighted());
-}

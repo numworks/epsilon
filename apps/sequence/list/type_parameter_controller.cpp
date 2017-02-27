@@ -1,4 +1,5 @@
 #include "type_parameter_controller.h"
+#include "list_controller.h"
 #include <assert.h>
 #include "../../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../../poincare/src/layout/string_layout.h"
@@ -7,7 +8,7 @@ using namespace Poincare;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, TableCell::Layout cellLayout,
+TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
   m_expliciteCell(ExpressionTableCellWithPointer((char*)"Explicite", cellLayout)),
@@ -15,7 +16,8 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_doubleRecurenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 2", cellLayout)),
   m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin)),
   m_sequenceStore(sequenceStore),
-  m_sequence(nullptr)
+  m_sequence(nullptr),
+  m_listController(list)
 {
 }
 
@@ -54,6 +56,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         m_sequence->setFirstInitialConditionContent("");
         m_sequence->setSecondInitialConditionContent("");
         m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+        m_listController->selectPreviousNewSequenceCell();
       }
       StackViewController * stack = stackController();
       stack->pop();

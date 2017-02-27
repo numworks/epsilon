@@ -22,6 +22,7 @@ public:
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
+  void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);

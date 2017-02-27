@@ -1,14 +1,15 @@
 #include "list_parameter_controller.h"
+#include "list_controller.h"
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
-  Shared::ListParameterController(parentResponder, sequenceStore),
+ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
+  Shared::ListParameterController(listController, sequenceStore),
   m_typeCell(PointerTableCellWithChevronAndExpression((char *)"Type de suite")),
-  m_typeParameterController(TypeParameterController(this, sequenceStore, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_typeParameterController(TypeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin))
 {
 }

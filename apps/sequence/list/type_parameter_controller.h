@@ -6,9 +6,11 @@
 
 namespace Sequence {
 
+class ListController;
+
 class TypeParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore,
+  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list,
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   ~TypeParameterController();
@@ -32,6 +34,7 @@ private:
   SelectableTableView m_selectableTableView;
   SequenceStore * m_sequenceStore;
   Sequence * m_sequence;
+  ListController * m_listController;
 };
 
 }

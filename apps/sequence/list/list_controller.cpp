@@ -14,7 +14,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, sequenceStore)),
-  m_typeParameterController(this, sequenceStore, TableCell::Layout::Vertical),
+  m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
   m_sequenceToolbox(SequenceToolbox(m_sequenceStore))
 {
@@ -75,6 +75,12 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   Shared::ListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(functionIndexForRow(j)%2 == 0);
+}
+
+void ListController::selectPreviousNewSequenceCell() {
+  if (sequenceDefinitionForRow(m_selectableTableView.selectedRow()) >= 0) {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedRow()-sequenceDefinitionForRow(m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn());
+  }
 }
 
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {

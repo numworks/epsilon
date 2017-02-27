@@ -8,9 +8,11 @@
 
 namespace Sequence {
 
+class ListController;
+
 class ListParameterController : public Shared::ListParameterController {
 public:
-  ListParameterController(Responder * parentResponder, SequenceStore * sequenceStore);
+  ListParameterController(ListController * list, SequenceStore * sequenceStore);
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void setFunction(Shared::Function * function) override;

@@ -151,6 +151,7 @@ void InteractiveCurveViewController::viewWillAppear() {
   headerViewController()->setSelectedButton(-1);
   reloadBannerView();
   curveView()->reload();
+  curveView()->setOkView(&m_okView);
 }
 
 Responder * InteractiveCurveViewController::tabController() const{

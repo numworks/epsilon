@@ -13,6 +13,7 @@ public:
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 private:
   class ContentView : public View {

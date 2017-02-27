@@ -49,11 +49,8 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
 }
 
 bool GraphController::handleEnter() {
-  if (m_selectedDotIndex == -1) {
-    stackController()->push(&m_predictionParameterController);
-    return true;
-  }
-  return false;
+  stackController()->push(&m_predictionParameterController);
+  return true;
 }
 
 void GraphController::reloadBannerView() {

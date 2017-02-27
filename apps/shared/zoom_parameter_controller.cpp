@@ -89,12 +89,14 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 /* Legend View */
 
 ZoomParameterController::ContentView::LegendView::LegendView() :
-  m_legends{PointerTextView(KDText::FontSize::Small, "ZOOM+", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+  m_legends{PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
     PointerTextView(KDText::FontSize::Small, "GAUCHE", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "ZOOM-", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, "ZOOM", 0.5f, 0.5f, KDColorBlack, Palette::GreyBright),
     PointerTextView(KDText::FontSize::Small, "BAS", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)}
+    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)},
+  m_legendPictograms{KeyView(KeyView::Type::Up), KeyView(KeyView::Type::Left),
+    KeyView(KeyView::Type::Plus), KeyView(KeyView::Type::Minus),
+    KeyView(KeyView::Type::Down), KeyView(KeyView::Type::Right)}
 {
 }
 
@@ -103,21 +105,31 @@ void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx,
 }
 
 int ZoomParameterController::ContentView::LegendView::numberOfSubviews() const {
-  return 6;
+  return 2*k_numberOfLegends-1;
 }
 
 View * ZoomParameterController::ContentView::LegendView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 6);
-  return &m_legends[index];
+  assert(index >= 0 && index < 2*k_numberOfLegends);
+  if (index < k_numberOfLegends-1) {
+    return &m_legends[index];
+  }
+  return &m_legendPictograms[index-k_numberOfLegends+1];
 }
 
 void ZoomParameterController::ContentView::LegendView::layoutSubviews() {
   KDCoordinate width = bounds().width();
-  KDCoordinate heigth = bounds().height();
-  for (int row = 0; row < 3; row++) {
-    m_legends[row].setFrame(KDRect(k_tokenWidth, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
-    m_legends[3+row].setFrame(KDRect(width/2, row*heigth/3, width/2 - k_tokenWidth, heigth/3));
+  KDCoordinate height = bounds().height();
+  for (int row = 0; row < 2; row++) {
+    m_legends[row].setFrame(KDRect(k_tokenWidth, row*height/2, width/3 - k_tokenWidth, height/2));
+    m_legends[3+row].setFrame(KDRect(2*width/3, row*height/2, width/3 - k_tokenWidth, height/2));
   }
+  m_legends[2].setFrame(KDRect(width/3, 0, width/3, height));
+  for (int row = 0; row < 2; row++) {
+    m_legendPictograms[row].setFrame(KDRect(0, row*height/2, k_tokenWidth, height/2));
+    m_legendPictograms[4+row].setFrame(KDRect(width-k_tokenWidth, row*height/2, k_tokenWidth, height/2));
+  }
+  m_legendPictograms[2].setFrame(KDRect(width/3, 0, k_tokenWidth, height));
+  m_legendPictograms[3].setFrame(KDRect(2*width/3-k_tokenWidth, 0, k_tokenWidth, height));
 }
 
 }

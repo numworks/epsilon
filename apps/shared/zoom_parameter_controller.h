@@ -27,17 +27,18 @@ private:
       void drawRect(KDContext * ctx, KDRect rect) const override;
     private:
       constexpr static int k_numberOfLegends = 6;
-      constexpr static KDCoordinate k_tokenWidth = 30;
+      constexpr static KDCoordinate k_tokenWidth = 35;
       void layoutSubviews() override;
       int numberOfSubviews() const override;
       View * subviewAtIndex(int index) override;
-      PointerTextView m_legends[k_numberOfLegends];
+      PointerTextView m_legends[k_numberOfLegends-1];
+      KeyView m_legendPictograms[k_numberOfLegends];
     };
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     CurveView * m_curveView;
     LegendView m_legendView;
-    constexpr static KDCoordinate k_legendHeight = 50;
+    constexpr static KDCoordinate k_legendHeight = 30;
   };
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;

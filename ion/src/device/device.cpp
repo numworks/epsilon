@@ -46,6 +46,27 @@ void Ion::reset() {
   CM4.AIRCR()->requestReset();
 }
 
+static inline char hex(uint8_t d) {
+  if (d > 9) {
+    return 'A'+d;
+  }
+  return '0'+d;
+}
+
+const char * Ion::serialNumber() {
+  static char serialNumber[25] = {0};
+  if (serialNumber[0] == 0) {
+    uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
+    for (int i=0; i<24; i++) {
+      uint8_t d = *rawUniqueID++;
+      serialNumber[2*i] = hex(d & 0xF);
+      serialNumber[2*i+1] = hex(d >> 4);
+    }
+    serialNumber[24] = 0;
+  }
+  return serialNumber;
+}
+
 // Private Ion::Device methods
 
 namespace Ion {

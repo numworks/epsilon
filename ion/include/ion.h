@@ -27,6 +27,8 @@ namespace Ion {
 void msleep(long ms);
 void usleep(long us);
 
+const char * serialNumber();
+
 /* CAUTION: This is a complete reset! */
 void reset();
 

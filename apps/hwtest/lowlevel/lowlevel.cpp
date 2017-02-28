@@ -79,9 +79,10 @@ void command_ping(const char * input) {
 }
 
 void command_mcu_serial(const char * input) {
-  Ion::Console::writeLine("UNKNOWN");
+  char response[11+24+1] = {'M', 'C', 'U', '_', 'S', 'E', 'R', 'I', 'A', 'L', '=', 0};
+  strlcpy(response+11, Ion::serialNumber(), 25);
+  Ion::Console::writeLine(response);
 }
-
 
 static inline int8_t hexChar(char c) {
   if (c >= '0' && c <= '9') {

@@ -41,7 +41,8 @@ View * EditableTextCell::subviewAtIndex(int index) {
 void EditableTextCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_textField.setFrame(KDRect(k_separatorThickness, (height - k_textHeight)/2, width - k_separatorThickness, k_textHeight));
+  KDCoordinate textHeight = m_textField.minimalSizeForOptimalDisplay().height();
+  m_textField.setFrame(KDRect(k_separatorThickness, (height - textHeight)/2, width - k_separatorThickness, textHeight));
 }
 
 void EditableTextCell::didBecomeFirstResponder() {

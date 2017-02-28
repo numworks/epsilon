@@ -23,7 +23,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() override;
   constexpr static int k_bufferLength = 255;
 private:
-  constexpr static KDCoordinate k_textHeight = 12;
   constexpr static KDCoordinate k_separatorThickness = 1;
   TextField m_textField;
   char m_textBody[k_bufferLength];

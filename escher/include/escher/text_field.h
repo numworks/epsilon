@@ -69,6 +69,7 @@ protected:
   };
   ContentView m_contentView;
 private:
+  void deleteCharPrecedingCursor();
   bool cursorIsBeforeScrollingFrame();
   bool cursorIsAfterScrollingFrame();
   void scrollToCursor();

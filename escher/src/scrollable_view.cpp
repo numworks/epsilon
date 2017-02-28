@@ -34,8 +34,8 @@ void ScrollableView::reloadScroll() {
 
 void ScrollableView::layoutSubviews() {
   KDSize viewSize = view()->minimalSizeForOptimalDisplay();
-  KDCoordinate viewWidth = viewSize.width() == 0 ? bounds().width() : viewSize.width();
-  KDCoordinate viewHeight = viewSize.height() == 0 ? bounds().height() : viewSize.height();
+  KDCoordinate viewWidth = viewSize.width() < bounds().width() ? bounds().width() : viewSize.width();
+  KDCoordinate viewHeight = viewSize.height() < bounds().height() ? bounds().height() : viewSize.height();
   view()->setSize(KDSize(viewWidth, viewHeight));
   ScrollView::layoutSubviews();
 }

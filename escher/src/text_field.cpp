@@ -198,7 +198,9 @@ int TextField::cursorLocation() const{
 }
 
 void TextField::setText(const char * text) {
+  reloadScroll();
   m_contentView.setText(text);
+  scrollToCursor();
   layoutSubviews();
 }
 
@@ -248,8 +250,8 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     if (isEditing()) {
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
       setEditing(false);
-      reloadScroll();
       m_delegate->textFieldDidFinishEditing(this, text());
+      reloadScroll();
       return true;
     }
     setEditing(true);
@@ -270,8 +272,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
-    m_contentView.deleteCharPrecedingCursor();
-    scrollToAvoidWhiteSpace();
+    deleteCharPrecedingCursor();
     return true;
   }
   if (event.hasText()) {
@@ -294,6 +295,11 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void TextField::deleteCharPrecedingCursor() {
+  m_contentView.deleteCharPrecedingCursor();
+  scrollToAvoidWhiteSpace();
+}
+
 bool TextField::cursorIsBeforeScrollingFrame() {
   return cursorLocation() * m_contentView.charWidth() < m_manualScrolling;
 }
@@ -304,6 +310,9 @@ bool TextField::cursorIsAfterScrollingFrame() {
 
 
 void TextField::scrollToCursor() {
+  if (!isEditing()) {
+    return;
+  }
   if (cursorIsBeforeScrollingFrame()) {
     m_manualScrolling = cursorLocation() * m_contentView.charWidth();
     setContentOffset(KDPoint(m_manualScrolling, 0));

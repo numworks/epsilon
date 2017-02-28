@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <ion.h>
+#include <poincare.h>
 
 typedef void (*CommandFunction)(const char * input);
 
@@ -112,10 +113,32 @@ void command_led(const char * input) {
   Ion::Console::writeLine("OK");
 }
 
+void command_backlight(const char * input) {
+  // Input must be of the form "0xAA"
+  if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || input[4] != NULL) {
+    Ion::Console::writeLine("SYNTAX_ERROR");
+    return;
+  }
+  uint32_t brightness = hexNumber(input+2);
+  Ion::Backlight::setBrightness(brightness);
+  Ion::Console::writeLine("OK");
+}
+
+void command_adc(const char * input) {
+  float result = Ion::Battery::voltage();
+  constexpr int precision = 8;
+  constexpr int bufferSize = Poincare::Complex::bufferSizeForFloatsWithPrecision(precision);
+  char responseBuffer[bufferSize+4] = {'A', 'D', 'C', '='}; // ADC=
+  Poincare::Complex::convertFloatToText(result, responseBuffer+4, bufferSize, precision);
+  Ion::Console::writeLine(responseBuffer);
+}
+
 constexpr CommandHandler handles[] = {
   CommandHandler("PING", command_ping),
   CommandHandler("MCU_SERIAL", command_mcu_serial),
   CommandHandler("LED", command_led),
+  CommandHandler("BACKLIGHT", command_backlight),
+  CommandHandler("ADC", command_adc),
   CommandHandler(nullptr, nullptr)
 };
 constexpr const CommandList sCommandList = CommandList(handles);

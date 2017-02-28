@@ -5,19 +5,15 @@
 
 namespace Calculation {
 
-class ScrollableExpressionView : public ScrollView, public Responder {
+class ScrollableExpressionView : public ScrollableView {
 public:
   ScrollableExpressionView(Responder * parentResponder);
   void setExpression(Poincare::ExpressionLayout * expressionLayout);
-  void layoutSubviews() override;
   void setBackgroundColor(KDColor backgroundColor);
-  bool handleEvent(Ion::Events::Event event) override;
   KDSize minimalSizeForOptimalDisplay() override;
-  void reloadCell();
 private:
-	bool rightViewIsInvisible();
+  View * view() override;
   ExpressionView m_expressionView;
-  KDCoordinate m_manualScrolling;
 };
 
 }

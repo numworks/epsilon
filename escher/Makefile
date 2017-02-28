@@ -40,6 +40,7 @@ objs += $(addprefix escher/src/,\
   run_loop.o\
   scroll_view.o\
   scroll_view_indicator.o\
+  scrollable_view.o\
   selectable_table_view.o\
   simple_list_view_data_source.o\
   simple_table_view_data_source.o\

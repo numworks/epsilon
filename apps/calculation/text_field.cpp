@@ -5,7 +5,7 @@ namespace Calculation {
 TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, TextFieldDelegate * delegate) :
   ::TextField(parentResponder, textBuffer, textBuffer, textBufferSize, delegate)
 {
-  m_isEditing = true;
+  setEditing(true);
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
@@ -13,15 +13,11 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    if (!isEditing()) {
-      setEditing(true);
-      setText("");
-    }
     insertTextAtLocation("ans", cursorLocation());
     setCursorLocation(cursorLocation() + strlen("ans"));
     return true;
   }
-  if (m_currentTextLength == 0 &&
+  if (textLength() == 0 &&
       (event == Ion::Events::Multiplication ||
       event == Ion::Events::Plus ||
       event == Ion::Events::Division)) {
@@ -36,7 +32,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
 }
 
 void TextField::setEditing(bool isEditing) {
-  m_isEditing = true;
+  ::TextField::setEditing(true);
 }
 
 }

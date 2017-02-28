@@ -63,7 +63,7 @@ void HistoryViewCell::reloadCell() {
   }
   layoutSubviews();
   EvenOddCell::reloadCell();
-  m_inputView.reloadCell();
+  m_inputView.reloadScroll();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {

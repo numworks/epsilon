@@ -18,7 +18,7 @@ QUIZ_CASE(poincare_parse_function) {
   e = Expression::parse("int(x, 2, 3)");
   assert(e->type() == Expression::Type::Integral);
   delete e;
-  
+
   e = Expression::parse("log(2)");
   assert(e->type() == Expression::Type::Logarithm);
   delete e;
@@ -30,10 +30,18 @@ QUIZ_CASE(poincare_parse_function) {
   e = Expression::parse("root(2,3)");
   assert(e->type() == Expression::Type::NthRoot);
   delete e;
-  
+
   char text[5] = {Ion::Charset::Root, '(', '2', ')', 0};
   e = Expression::parse(text);
   assert(e->type() == Expression::Type::SquareRoot);
+  delete e;
+
+  e = Expression::parse("det([[1,2,3][4,5,6][7,8,9]])");
+  assert(e->type() == Expression::Type::Determinant);
+  delete e;
+
+  e = Expression::parse("inverse([[1,2,3][4,5,6][7,8,9]])");
+  assert(e->type() == Expression::Type::MatrixInverse);
   delete e;
 }
 
@@ -62,6 +70,10 @@ QUIZ_CASE(poincare_function_approximate) {
   char text[5] = {Ion::Charset::Root, '(', '2', ')', 0};
   e = Expression::parse(text);
   assert(e->approximate(globalContext) == sqrtf(2.0f));
+  delete e;
+
+  e = Expression::parse("det([[1,2,3][4,5,-6][7,8,9]])");
+  assert(fabsf(e->approximate(globalContext)-(-72.0f)) <= 0.00001f);
   delete e;
 }
 
@@ -92,6 +104,20 @@ QUIZ_CASE(poincare_function_evaluate) {
      (((Complex *)e)->a()) <= (1.75532f + 0.00001f) &&
       0.28485f - 0.00001f <= (((Complex *)e)->b()) &&
      (((Complex *)e)->b()) <= 0.28485f + 0.00001f);
+  delete a;
+  delete e;
+
+  a = Expression::parse("inverse([[1,2,3][4,5,-6][7,8,9]])");
+  e = a->evaluate(globalContext);
+  assert(fabsf(e->operand(0)->approximate(globalContext)-(-31.0f/24.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(1)->approximate(globalContext) -(-1.0f/12.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(2)->approximate(globalContext) -(3.0f/8.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(3)->approximate(globalContext) -(13.0f/12.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(4)->approximate(globalContext) -(1.0f/6.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(5)->approximate(globalContext) -(-1.0f/4.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(6)->approximate(globalContext) -(1.0f/24.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(7)->approximate(globalContext) -(-1.0f/12.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(8)->approximate(globalContext) -(1.0f/24.0f)) <= 0.00001f);
   delete a;
   delete e;
 }

@@ -187,7 +187,6 @@ const char * ButtonRowController::title() const {
 }
 
 void ButtonRowController::didBecomeFirstResponder(){
-  m_contentView.layoutSubviews();
   app()->setFirstResponder(m_contentView.mainViewController());
 }
 
@@ -218,6 +217,9 @@ bool ButtonRowController::handleEvent(Ion::Events::Event event) {
 }
 
 void ButtonRowController::viewWillAppear() {
+  /* We need to layout subviews at first appearance because the number of
+   * buttons might have changed between 2 appearences. */
+  m_contentView.layoutSubviews();
   m_contentView.mainViewController()->viewWillAppear();
 }
 

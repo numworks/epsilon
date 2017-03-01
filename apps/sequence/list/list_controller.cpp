@@ -16,7 +16,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_parameterController(ListParameterController(this, sequenceStore)),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
-  m_sequenceToolbox(SequenceToolbox(m_sequenceStore))
+  m_sequenceToolbox(SequenceToolbox())
 {
 }
 
@@ -31,7 +31,7 @@ Toolbox * ListController::toolboxForTextField(TextField * textField) {
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
-  m_sequenceToolbox.addCells(recurrenceDepth);
+  m_sequenceToolbox.addCells(sequence->name(), recurrenceDepth);
   return &m_sequenceToolbox;
 }
 

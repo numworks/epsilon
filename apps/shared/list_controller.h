@@ -36,7 +36,7 @@ protected:
   FunctionStore * m_functionStore;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
-  Responder * tabController() const;
+  TabViewController * tabController() const;
   virtual int functionIndexForRow(int j);
   virtual void addEmptyFunction();
   virtual void editExpression(Function * function, Ion::Events::Event event) = 0;

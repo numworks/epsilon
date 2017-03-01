@@ -10,8 +10,14 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
   m_functionStore(functionStore),
   m_addNewFunction(text),
   m_plotButton(this, "Tracer", Invocation([](void * context, void * sender) {
+    ListController * list = (ListController *)context;
+    TabViewController * tabController = list->tabController();
+    tabController->setActiveTab(1);
   }, this), KDText::FontSize::Large),
   m_valuesButton(this, "Afficher les valeurs", Invocation([](void * context, void * sender) {
+    ListController * list = (ListController *)context;
+    TabViewController * tabController = list->tabController();
+    tabController->setActiveTab(2);
   }, this), KDText::FontSize::Large)
 {
 }
@@ -149,6 +155,7 @@ void ListController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() >= numberOfRows()) {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
   }
+  footer()->setSelectedButton(-1);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -235,8 +242,8 @@ void ListController::reinitExpression(Function * function) {
   m_selectableTableView.reloadData();
 }
 
-Responder * ListController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+TabViewController * ListController::tabController() const{
+  return (TabViewController *)(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
 int ListController::functionIndexForRow(int j) {

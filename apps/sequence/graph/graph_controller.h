@@ -13,7 +13,7 @@ namespace Sequence {
 
 class GraphController : public Shared::FunctionGraphController {
 public:
-  GraphController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header);
+  GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header);
   void viewWillAppear() override;
   const char * emptyMessage() override;
   TermSumController * termSumController();

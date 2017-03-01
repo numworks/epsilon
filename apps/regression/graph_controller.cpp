@@ -6,8 +6,8 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
-  InteractiveCurveViewController(parentResponder, headerViewController, store, &m_view),
+GraphController::GraphController(Responder * parentResponder, ButtonRowController * header, Store * store) :
+  InteractiveCurveViewController(parentResponder, header, store, &m_view),
   m_bannerView(BannerView()),
   m_view(GraphView(store, &m_cursor, &m_bannerView, &m_cursorView)),
   m_store(store),

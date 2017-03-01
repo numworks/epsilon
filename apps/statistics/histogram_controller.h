@@ -10,10 +10,10 @@
 
 namespace Statistics {
 
-class HistogramController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
+class HistogramController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 
 public:
-  HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
+  HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store);
   const char * title() const override;
   View * view() override;
   StackViewController * stackController();
@@ -21,8 +21,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  int numberOfButtons() const override;
-  Button * buttonAtIndex(int index) override;
+  int numberOfButtons(ButtonRowController::Position) const override;
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
   bool isEmpty() const override;
   const char * emptyMessage() override;

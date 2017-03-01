@@ -4,7 +4,7 @@ using namespace Shared;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
+GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
   m_bannerView(BannerView()),
   m_view(GraphView(sequenceStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),

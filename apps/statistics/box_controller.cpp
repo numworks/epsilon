@@ -7,9 +7,9 @@ using namespace Poincare;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   ViewController(parentResponder),
-  HeaderViewDelegate(headerViewController),
+  ButtonRowDelegate(header, nullptr),
   m_boxBannerView(BoxBannerView()),
   m_view(BoxView(store, &m_boxBannerView)),
   m_store(store)

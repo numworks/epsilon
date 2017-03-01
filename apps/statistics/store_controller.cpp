@@ -8,7 +8,7 @@ using namespace Shared;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :
+StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)}
 {

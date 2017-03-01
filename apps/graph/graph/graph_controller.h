@@ -11,7 +11,7 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController {
 public:
-  GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header);
+  GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header);
   const char * emptyMessage() override;
 private:
   BannerView * bannerView() override;

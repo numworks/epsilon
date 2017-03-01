@@ -12,9 +12,9 @@
 
 namespace Shared {
 
-class InteractiveCurveViewController : public ViewController, public HeaderViewDelegate, public AlternateEmptyViewDelegate {
+class InteractiveCurveViewController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView);
+  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView);
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -24,8 +24,8 @@ public:
   ViewController * zoomParameterController();
   virtual ViewController * initialisationParameterController() = 0;
 
-  int numberOfButtons() const override;
-  Button * buttonAtIndex(int index) override;
+  int numberOfButtons(ButtonRowController::Position position) const override;
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
   Responder * defaultController() override;
 

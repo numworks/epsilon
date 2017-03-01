@@ -7,8 +7,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
-  Shared::ListController(parentResponder, sequenceStore, header, "Ajouter une suite"),
+ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
+  Shared::ListController(parentResponder, sequenceStore, header, footer, "Ajouter une suite"),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),

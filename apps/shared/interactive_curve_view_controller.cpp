@@ -7,9 +7,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
-  HeaderViewDelegate(header),
+  ButtonRowDelegate(header, nullptr),
   m_cursor(),
   m_cursorView(CursorView()),
   m_rangeParameterController(RangeParameterController(this, interactiveRange)),
@@ -43,7 +43,7 @@ View * InteractiveCurveViewController::view() {
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       curveView()->selectMainView(true);
       app()->setFirstResponder(this);
       reloadBannerView();
@@ -51,7 +51,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::Up) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
@@ -89,7 +89,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     curveView()->selectMainView(false);
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::OK) {
@@ -118,7 +118,7 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
     curveView()->reload();
   }
   if (!curveView()->isMainViewSelected()) {
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
   }
 }
 
@@ -130,16 +130,16 @@ ViewController * InteractiveCurveViewController::zoomParameterController() {
   return &m_zoomParameterController;
 }
 
-int InteractiveCurveViewController::numberOfButtons() const {
+int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Position) const {
   if (isEmpty()) {
     return 0;
   }
   return 3;
 }
 
-Button * InteractiveCurveViewController::buttonAtIndex(int index) {
-  Button * buttons[3] = {&m_rangeButton, &m_zoomButton, &m_defaultInitialisationButton};
-  return buttons[index];
+Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  const Button * buttons[3] = {&m_rangeButton, &m_zoomButton, &m_defaultInitialisationButton};
+  return (Button *)buttons[index];
 }
 
 Responder * InteractiveCurveViewController::defaultController() {
@@ -148,7 +148,7 @@ Responder * InteractiveCurveViewController::defaultController() {
 
 void InteractiveCurveViewController::viewWillAppear() {
   curveView()->selectMainView(true);
-  headerViewController()->setSelectedButton(-1);
+  header()->setSelectedButton(-1);
   reloadBannerView();
   curveView()->reload();
   curveView()->setOkView(&m_okView);

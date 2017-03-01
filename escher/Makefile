@@ -5,6 +5,7 @@ objs += $(addprefix escher/src/,\
   app.o\
   buffer_text_view.o\
   button.o\
+  button_row_controller.o\
   chevron_view.o\
   container.o\
   editable_text_cell.o\
@@ -16,8 +17,6 @@ objs += $(addprefix escher/src/,\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
   expression_view.o\
-  header_view_controller.o\
-  header_view_delegate.o\
   highlight_cell.o\
   image_view.o\
   invocation.o\

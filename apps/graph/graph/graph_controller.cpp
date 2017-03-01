@@ -5,7 +5,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header) :
+GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
   FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
   m_bannerView(BannerView()),
   m_view(GraphView(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),

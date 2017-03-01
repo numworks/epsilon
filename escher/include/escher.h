@@ -6,6 +6,7 @@
 #include <escher/app.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>
+#include <escher/button_row_controller.h>
 #include <escher/chevron_view.h>
 #include <escher/container.h>
 #include <escher/editable_text_cell.h>
@@ -17,8 +18,6 @@
 #include <escher/expression_table_cell.h>
 #include <escher/expression_table_cell_with_pointer.h>
 #include <escher/expression_view.h>
-#include <escher/header_view_controller.h>
-#include <escher/header_view_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/image.h>
 #include <escher/image_view.h>

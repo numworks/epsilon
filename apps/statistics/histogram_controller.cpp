@@ -10,9 +10,9 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
+HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   ViewController(parentResponder),
-  HeaderViewDelegate(headerViewController),
+  ButtonRowDelegate(header, nullptr),
   m_bannerView(HistogramBannerView()),
   m_view(HistogramView(store, &m_bannerView)),
   m_settingButton(Button(this, "Reglages de l'histogramme", Invocation([](void * context, void * sender) {
@@ -46,7 +46,7 @@ HistogramParameterController * HistogramController::histogramParameterController
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     if (!m_view.isMainViewSelected()) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       m_view.selectMainView(true);
       reloadBannerView();
       m_view.reload();
@@ -56,12 +56,12 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Up) {
     if (!m_view.isMainViewSelected()) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
     m_view.selectMainView(false);
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
     return true;
   }
   if (m_view.isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
@@ -91,20 +91,20 @@ void HistogramController::didBecomeFirstResponder() {
     initBarSelection();
   }
   if (!m_view.isMainViewSelected()) {
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
   } else {
     m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
   }
 }
 
-int HistogramController::numberOfButtons() const {
+int HistogramController::numberOfButtons(ButtonRowController::Position) const {
   if (isEmpty()) {
     return 0;
   }
   return 1;
 }
-Button * HistogramController::buttonAtIndex(int index) {
-  return &m_settingButton;
+Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position) const {
+  return (Button *)&m_settingButton;
 }
 
 bool HistogramController::isEmpty() const {
@@ -124,7 +124,7 @@ Responder * HistogramController::defaultController() {
 
 void HistogramController::viewWillAppear() {
   m_view.selectMainView(true);
-  headerViewController()->setSelectedButton(-1);
+  header()->setSelectedButton(-1);
   reloadBannerView();
   m_view.reload();
 }

@@ -8,9 +8,9 @@
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public HeaderViewDelegate  {
+class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
-  StoreController(Responder * parentResponder, FloatPairStore * store, HeaderViewController * header);
+  StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
   const char * title() const override;
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;

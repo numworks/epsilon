@@ -12,16 +12,16 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
+class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, HeaderViewController * header, char symbol);
+  ValuesController(Responder * parentResponder, ButtonRowController * header, char symbol);
   const char * title() const override;
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   ViewController * intervalParameterController();
-  int numberOfButtons() const override;
-  Button * buttonAtIndex(int index) override;
+  int numberOfButtons(ButtonRowController::Position) const override;
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;

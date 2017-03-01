@@ -9,10 +9,6 @@ Button::Button(Responder * parentResponder, const char * textBody, Invocation in
 {
 }
 
-void Button::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
-}
-
 int Button::numberOfSubviews() const {
   return 1;
 }

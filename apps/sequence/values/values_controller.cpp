@@ -5,7 +5,7 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header) :
+ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, 'n'),
   m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},

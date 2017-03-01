@@ -11,7 +11,7 @@ using namespace Shared;
 
 namespace Regression {
 
-StoreController::StoreController(Responder * parentResponder, Store * store, HeaderViewController * header) :
+StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{EvenOddExpressionCell(0.5f, 0.5f), EvenOddExpressionCell(0.5f, 0.5f)}
 {

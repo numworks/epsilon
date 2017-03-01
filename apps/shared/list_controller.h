@@ -8,9 +8,9 @@
 
 namespace Shared {
 
-class ListController : public ViewController, public HeaderViewDelegate, public TableViewDataSource {
+class ListController : public ViewController, public ButtonRowDelegate, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header, const char * text);
+  ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, const char * text);
   View * view() override;
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
@@ -22,6 +22,8 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  int numberOfButtons(ButtonRowController::Position position) const override;
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -46,6 +48,8 @@ private:
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) = 0;
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
+  Button m_plotButton;
+  Button m_valuesButton;
 };
 
 }

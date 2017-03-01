@@ -5,7 +5,7 @@ using namespace Shared;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header) :
+ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, 'x'),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small),
     FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small)},

@@ -11,7 +11,7 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, HeaderViewController * header);
+  ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;

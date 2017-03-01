@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, HeaderViewController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView),
   m_indexFunctionSelectedByCursor(0),
   m_initialisationParameterController(InitialisationParameterController(this, interactiveRange))

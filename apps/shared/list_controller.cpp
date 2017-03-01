@@ -3,12 +3,16 @@
 
 namespace Shared {
 
-ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header, const char * text) :
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, const char * text) :
   ViewController(parentResponder),
-  HeaderViewDelegate(header),
+  ButtonRowDelegate(header, footer),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
-  m_addNewFunction(text)
+  m_addNewFunction(text),
+  m_plotButton(this, "Tracer", Invocation([](void * context, void * sender) {
+  }, this), KDText::FontSize::Large),
+  m_valuesButton(this, "Afficher les valeurs", Invocation([](void * context, void * sender) {
+  }, this), KDText::FontSize::Large)
 {
 }
 
@@ -121,6 +125,21 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
 }
 
+int ListController::numberOfButtons(ButtonRowController::Position position) const {
+  if (position == ButtonRowController::Position::Bottom) {
+    return 2;
+  }
+  return 0;
+}
+
+Button * ListController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  if (position == ButtonRowController::Position::Top) {
+    return nullptr;
+  }
+  const Button * buttons[2] = {&m_plotButton, &m_valuesButton};
+  return (Button *)buttons[index];
+}
+
 void ListController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(1, 0);
@@ -135,9 +154,23 @@ void ListController::didBecomeFirstResponder() {
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
+    if (m_selectableTableView.selectedRow() == -1) {
+      footer()->setSelectedButton(-1);
+      m_selectableTableView.selectCellAtLocation(1, numberOfRows()-1);
+      app()->setFirstResponder(&m_selectableTableView);
+      return true;
+    }
     m_selectableTableView.deselectTable();
     assert(m_selectableTableView.selectedRow() == -1);
     app()->setFirstResponder(tabController());
+    return true;
+  }
+  if (event == Ion::Events::Down) {
+    if (m_selectableTableView.selectedRow() == -1) {
+      return false;
+    }
+    m_selectableTableView.deselectTable();
+    footer()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::OK) {
@@ -188,7 +221,7 @@ void ListController::viewWillAppear() {
 }
 
 StackViewController * ListController::stackController() const{
-  return (StackViewController *)(parentResponder()->parentResponder());
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
 void ListController::configureFunction(Shared::Function * function) {
@@ -203,7 +236,7 @@ void ListController::reinitExpression(Function * function) {
 }
 
 Responder * ListController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder());
+  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
 int ListController::functionIndexForRow(int j) {

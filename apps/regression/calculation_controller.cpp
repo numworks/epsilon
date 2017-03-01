@@ -8,9 +8,9 @@ using namespace Poincare;
 
 namespace Regression {
 
-CalculationController::CalculationController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store) :
+CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   ViewController(parentResponder),
-  HeaderViewDelegate(headerViewController),
+  ButtonRowDelegate(header, nullptr),
   m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
     EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),

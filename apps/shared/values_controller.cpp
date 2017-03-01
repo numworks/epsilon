@@ -8,9 +8,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, HeaderViewController * header, char symbol) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, char symbol) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
-  HeaderViewDelegate(header),
+  ButtonRowDelegate(header, nullptr),
   m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
   m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
@@ -39,7 +39,7 @@ Interval * ValuesController::interval() {
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     if (m_selectableTableView.selectedRow() == -1) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0,0);
       app()->setFirstResponder(&m_selectableTableView);
       return true;
@@ -49,12 +49,12 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
   if (event == Ion::Events::Up) {
     if (m_selectableTableView.selectedRow() == -1) {
-      headerViewController()->setSelectedButton(-1);
+      header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
     m_selectableTableView.deselectTable();
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::Backspace && m_selectableTableView.selectedRow() > 0 &&
@@ -65,7 +65,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK) {
     if (m_selectableTableView.selectedRow() == -1) {
-      return headerViewController()->handleEvent(event);
+      return header()->handleEvent(event);
     }
     if (m_selectableTableView.selectedRow() == 0) {
       if (m_selectableTableView.selectedColumn() == 0) {
@@ -78,7 +78,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (m_selectableTableView.selectedRow() == -1) {
-    return headerViewController()->handleEvent(event);
+    return header()->handleEvent(event);
   }
   return false;
 }
@@ -87,9 +87,9 @@ void ValuesController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.deselectTable();
-    headerViewController()->setSelectedButton(0);
+    header()->setSelectedButton(0);
   } else {
-    headerViewController()->setSelectedButton(-1);
+    header()->setSelectedButton(-1);
   }
 }
 
@@ -97,15 +97,15 @@ ViewController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
 
-int ValuesController::numberOfButtons() const {
+int ValuesController::numberOfButtons(ButtonRowController::Position) const {
   if (isEmpty()) {
     return 0;
   }
   return 1;
 }
 
-Button * ValuesController::buttonAtIndex(int index) {
-  return &m_setIntervalButton;
+Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  return (Button *)&m_setIntervalButton;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -225,7 +225,7 @@ Responder * ValuesController::defaultController() {
 }
 
 void ValuesController::viewWillAppear() {
-  headerViewController()->setSelectedButton(-1);
+  header()->setSelectedButton(-1);
   EditableCellTableViewController::viewWillAppear();
 }
 

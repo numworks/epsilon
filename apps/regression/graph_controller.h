@@ -14,7 +14,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Responder * parentResponder, HeaderViewController * headerViewController, Store * store);
+  GraphController(Responder * parentResponder, ButtonRowController * header, Store * store);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   const char * emptyMessage() override;

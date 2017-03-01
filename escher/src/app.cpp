@@ -35,7 +35,7 @@ Responder * App::firstResponder() {
 
 void App::setFirstResponder(Responder * responder) {
   if (m_firstResponder) {
-    m_firstResponder->didResignFirstResponder();
+    m_firstResponder->willResignFirstResponder();
   }
   m_firstResponder = responder;
   if (m_firstResponder) {

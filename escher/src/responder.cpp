@@ -28,7 +28,7 @@ bool Responder::handleEvent(Ion::Events::Event event) {
 void Responder::didBecomeFirstResponder() {
 }
 
-void Responder::didResignFirstResponder() {
+void Responder::willResignFirstResponder() {
 }
 
 /* We assume the app is the root parent. */

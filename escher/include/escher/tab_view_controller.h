@@ -16,7 +16,7 @@ public:
   const char * tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void didResignFirstResponder() override;
+  void willResignFirstResponder() override;
   void viewWillAppear() override;
   void viewWillDisappear() override;
 private:

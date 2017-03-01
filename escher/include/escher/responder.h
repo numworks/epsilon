@@ -11,7 +11,7 @@ public:
   Responder(Responder * parentResponder);
   virtual bool handleEvent(Ion::Events::Event event); // Default implementation does nothing
   virtual void didBecomeFirstResponder();
-  virtual void didResignFirstResponder();
+  virtual void willResignFirstResponder();
 
   Responder * parentResponder() const;
   void setParentResponder(Responder * responder);

@@ -121,7 +121,7 @@ void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_activeChildIndex);
 }
 
-void TabViewController::didResignFirstResponder() {
+void TabViewController::willResignFirstResponder() {
   setSelectedTab(-1);
 }
 

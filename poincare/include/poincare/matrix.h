@@ -23,6 +23,8 @@ public:
   /* If the buffer is too small, the function fills the buffer until reaching
    * buffer size */
   int writeTextInBuffer(char * buffer, int bufferSize) override;
+  float determinant(Context& context, AngleUnit angleUnit) const;
+  Expression * inverse(Context& context, AngleUnit angleUnit) const;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;

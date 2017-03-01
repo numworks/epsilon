@@ -9,6 +9,7 @@ objs += $(addprefix poincare/src/,\
   cosine.o\
   complex.o\
   derivative.o\
+  determinant.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -25,6 +26,7 @@ objs += $(addprefix poincare/src/,\
   logarithm.o\
   matrix.o\
   matrix_data.o\
+  matrix_inverse.o\
   multiplication.o\
   naperian_logarithm.o\
   nth_root.o\

@@ -7,6 +7,7 @@
 #include <poincare/context.h>
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
+#include <poincare/determinant.h>
 #include <poincare/expression.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
@@ -20,6 +21,7 @@
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_data.h>
+#include <poincare/matrix_inverse.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/nth_root.h>

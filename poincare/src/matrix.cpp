@@ -6,6 +6,7 @@ extern "C" {
 #include <poincare/complex.h>
 #include "layout/matrix_layout.h"
 #include <math.h>
+#include <float.h>
 #include <string.h>
 
 namespace Poincare {
@@ -134,6 +135,139 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) {
   }
   buffer[currentChar] = 0;
   return currentChar;
+}
+
+float Matrix::determinant(Context& context, AngleUnit angleUnit) const {
+  if (numberOfColumns() != numberOfRows()) {
+    return NAN;
+  }
+  int dim = numberOfRows();
+  float ** tempMat = (float **)malloc(dim*sizeof(float*));
+  for (int i = 0; i < dim; i++) {
+    tempMat[i] = (float *)malloc(dim*sizeof(float));
+  }
+  float det = 1.0f;
+  /* Copy the matrix */
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      tempMat[i][j] = m_matrixData->operands()[i*dim+j]->approximate(context, angleUnit);
+    }
+  }
+
+/* Main Loop: Gauss pivot */
+  for (int i = 0; i < dim-1; i++) {
+  /* Search for pivot */
+    int rowWithPivot = i;
+    for (int row = i+1; row < dim; row++) {
+      if (fabsf(tempMat[rowWithPivot][i]) < fabsf(tempMat[row][i])) {
+        rowWithPivot = row;
+      }
+    }
+    float valuePivot = tempMat[rowWithPivot][i];
+  /* if the pivot is null, det = 0. */
+    if (fabsf(valuePivot) <= FLT_EPSILON) {
+      for (int i = 0; i < dim; i++) {
+        free(tempMat[i]);
+      }
+      free(tempMat);
+      return 0.0f;
+    }
+/* Switch rows to have the pivot row as first row */
+    if (rowWithPivot != i) {
+      for (int col = i; col < dim; col++) {
+        float temp = tempMat[i][col];
+        tempMat[i][col] = tempMat[rowWithPivot][col];
+        tempMat[rowWithPivot][col] = temp;
+      }
+      det *= -1;
+    }
+    det *= valuePivot;
+/* Set to 0 all A[][i] by linear combination */
+    for (int row = i+1; row < dim; row++) {
+      float factor = tempMat[row][i]/valuePivot;
+      for (int col = i; col < dim; col++) {
+        tempMat[row][col] -= factor*tempMat[i][col];
+      }
+    }
+  }
+  det *= tempMat[dim-1][dim-1];
+  for (int i = 0; i < dim; i++) {
+    free(tempMat[i]);
+  }
+  free(tempMat);
+  return det;
+}
+
+Expression * Matrix::inverse(Context& context, AngleUnit angleUnit) const {
+  if (numberOfColumns() != numberOfRows()) {
+    return nullptr;
+  }
+  int dim = numberOfRows();
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
+  float ** inv = (float **)malloc(dim*sizeof(float*));
+  for (int i = 0; i < dim; i++) {
+    inv[i] = (float *)malloc(2*dim*sizeof(float));
+  }
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      inv[i][j] = m_matrixData->operands()[i*dim+j]->approximate(context, angleUnit);
+    }
+    for (int j = dim; j < 2*dim; j++) {
+      inv[i][j] = (i+dim == j);
+    }
+  }
+/* Main Loop: Gauss pivot */
+  for (int i = 0; i < dim; i++) {
+  /* Search for pivot */
+    int rowWithPivot = i;
+    for (int row = i+1; row < dim; row++) {
+      if (fabsf(inv[rowWithPivot][i]) < fabsf(inv[row][i])) {
+        rowWithPivot = row;
+      }
+    }
+    float valuePivot = inv[rowWithPivot][i];
+  /* if the pivot is null, the matrix in not invertible. */
+    if (fabsf(valuePivot) <= FLT_EPSILON) {
+      for (int i = 0; i < dim; i++) {
+        free(inv[i]);
+      }
+      free(inv);
+      return new Complex(Complex::Float(NAN));
+    }
+  /* Switch rows to have the pivot row as first row */
+    if (rowWithPivot != i) {
+      for (int col = i; col < 2*dim; col++) {
+        float temp = inv[i][col];
+        inv[i][col] = inv[rowWithPivot][col];
+        inv[rowWithPivot][col] = temp;
+      }
+    }
+  /* A[pivot][] = A[pivot][]/valuePivot */
+   for (int col = 0; col < 2*dim; col++) {
+     inv[i][col] /= valuePivot;
+   }
+  /* Set to 0 all A[][row] by linear combination */
+    for (int row = 0; row < dim; row++) {
+      if (row == i) {
+        continue;
+      }
+      float factor = inv[row][i];
+      for (int col = 0; col < 2*dim; col++) {
+        inv[row][col] -= factor*inv[i][col];
+      }
+    }
+  }
+  Expression * operands[numberOfOperands()];
+  for (int i = 0; i < numberOfRows(); i++) {
+    for (int j = 0; j < numberOfColumns(); j++) {
+      operands[i*dim+j] = new Complex(Complex::Float(inv[i][j+dim]));
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    free(inv[i]);
+  }
+  free(inv);
+  return new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
 }
 
 }

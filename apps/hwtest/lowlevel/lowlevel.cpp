@@ -72,13 +72,21 @@ void CommandList::dispatch(const char * command) const {
   Ion::Console::writeLine("NOT_FOUND");
 }
 
-
+static const char * sSyntaxError = "SYNTAX_ERROR";
 
 void command_ping(const char * input) {
+  if (input != nullptr) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
   Ion::Console::writeLine("PONG");
 }
 
 void command_mcu_serial(const char * input) {
+  if (input != nullptr) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
   char response[11+24+1] = {'M', 'C', 'U', '_', 'S', 'E', 'R', 'I', 'A', 'L', '=', 0};
   strlcpy(response+11, Ion::serialNumber(), 25);
   Ion::Console::writeLine(response);
@@ -105,7 +113,7 @@ static inline uint32_t hexNumber(const char * s) {
 void command_led(const char * input) {
   // Input must be of the form "0xAABBCC"
   if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || !isHex(input[4]) || !isHex(input[5]) || !isHex(input[6]) || !isHex(input[7]) || input[8] != NULL) {
-    Ion::Console::writeLine("SYNTAX_ERROR");
+    Ion::Console::writeLine(sSyntaxError);
     return;
   }
   uint32_t hexColor = hexNumber(input+2);
@@ -117,7 +125,7 @@ void command_led(const char * input) {
 void command_backlight(const char * input) {
   // Input must be of the form "0xAA"
   if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || input[4] != NULL) {
-    Ion::Console::writeLine("SYNTAX_ERROR");
+    Ion::Console::writeLine(sSyntaxError);
     return;
   }
   uint32_t brightness = hexNumber(input+2);
@@ -126,6 +134,10 @@ void command_backlight(const char * input) {
 }
 
 void command_adc(const char * input) {
+  if (input != nullptr) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
   float result = Ion::Battery::voltage();
   constexpr int precision = 8;
   constexpr int bufferSize = Poincare::Complex::bufferSizeForFloatsWithPrecision(precision);
@@ -134,12 +146,39 @@ void command_adc(const char * input) {
   Ion::Console::writeLine(responseBuffer);
 }
 
+void command_charge(const char * input) {
+  if (input != nullptr) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
+  if (Ion::Battery::isCharging()) {
+    Ion::Console::writeLine("CHARGE=ON");
+  } else {
+    Ion::Console::writeLine("CHARGE=OFF");
+  }
+}
+
+void command_keyboard(const char * input) {
+  if (input != nullptr) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
+  char result[9+Ion::Keyboard::NumberOfKeys+1] = { 'K', 'E', 'Y', 'B', 'O', 'A', 'R', 'D', '=' };
+  for (uint8_t i=0; i<Ion::Keyboard::NumberOfKeys; i++) {
+    result[9+i] = Ion::Keyboard::keyDown((Ion::Keyboard::Key)i) ? '1' : '0';
+  }
+  result[9+Ion::Keyboard::NumberOfKeys] = 0;
+  Ion::Console::writeLine(result);
+}
+
 constexpr CommandHandler handles[] = {
   CommandHandler("PING", command_ping),
   CommandHandler("MCU_SERIAL", command_mcu_serial),
   CommandHandler("LED", command_led),
   CommandHandler("BACKLIGHT", command_backlight),
   CommandHandler("ADC", command_adc),
+  CommandHandler("CHARGE", command_charge),
+  CommandHandler("KEYBOARD", command_keyboard),
   CommandHandler(nullptr, nullptr)
 };
 constexpr const CommandList sCommandList = CommandList(handles);

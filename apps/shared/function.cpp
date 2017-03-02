@@ -62,6 +62,10 @@ Poincare::ExpressionLayout * Function::layout() {
   return m_layout;
 }
 
+bool Function::isDefined() {
+  return m_layout != nullptr;
+}
+
 bool Function::isActive() {
   return m_active;
 }

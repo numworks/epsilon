@@ -46,7 +46,13 @@ void GraphView::setVerticalCursor(bool verticalCursor) {
 
 void GraphView::reload() {
   FunctionGraphView::reload();
-  markRectAsDirty(bounds());
+  if (m_highlightedDotStart >= 0 && m_shouldColorHighlighted) {
+    float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedDotStart)-1;
+    float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedDotEnd)+2;
+    KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
+    bounds().height()));
+    markRectAsDirty(dirtyZone);
+  }
 }
 
 void GraphView::selectSequence(Sequence * sequence) {

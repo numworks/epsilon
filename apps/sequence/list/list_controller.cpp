@@ -27,7 +27,7 @@ const char * ListController::title() const {
 Toolbox * ListController::toolboxForTextField(TextField * textField) {
   int recurrenceDepth = 0;
   int sequenceDefinition = sequenceDefinitionForRow(m_selectableTableView.selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow()));
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -55,7 +55,7 @@ KDCoordinate ListController::rowHeight(int j) {
   if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
     return k_emptyRowHeight;
   }
-  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicite ? k_emptyRowHeight : k_emptySubRowHeight;
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
@@ -74,78 +74,42 @@ KDCoordinate ListController::rowHeight(int j) {
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
-  myCell->setEven(sequenceIndexForRow(j)%2 == 0);
-}
-
-bool ListController::handleEvent(Ion::Events::Event event) {
-  if (Shared::ListController::handleEvent(event)) {
-    return true;
-  }
-  if (event == Ion::Events::OK) {
-    return handleEnter();
-  }
-  if ((!event.hasText() && event != Ion::Events::XNT)
-      || m_selectableTableView.selectedColumn() == 0
-      || (m_selectableTableView.selectedRow() == numberOfRows() - 1
-         && m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions())) {
-    return false;
-  }
-  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow()));
-  editExpression(sequence, sequenceDefinitionForRow(m_selectableTableView.selectedRow()), event);
-  return true;
-}
-
-bool ListController::handleEnter() {
-  switch (m_selectableTableView.selectedColumn()) {
-    case 0:
-    {
-      if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
-          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        return true;
-      }
-      configureFunction(m_functionStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow())));
-      return true;
-    }
-    case 1:
-    {
-      if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
-          m_selectableTableView.selectedRow() == numberOfRows() - 1) {
-        app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, 32, 20, 20, 20);
-        return true;
-      }
-      Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow()));
-      editExpression(sequence, sequenceDefinitionForRow(m_selectableTableView.selectedRow()), Ion::Events::OK);
-      return true;
-    }
-    default:
-    {
-      return false;
-    }
-  }
+  myCell->setEven(functionIndexForRow(j)%2 == 0);
 }
 
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[255];
   if (event == Ion::Events::OK) {
-    strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
+    switch (sequenceDefinition) {
+      case 0:
+        strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
+        break;
+      case 1:
+        strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
+        break;
+      default:
+        strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
+        break;
+    }
     initialText = initialTextContent;
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   inputController->setTextFieldDelegate(this);
-  if (sequenceDefinition == 0) {
-    inputController->edit(this, event, sequence, initialText,
-      [](void * context, void * sender){
-      Sequence * mySequence = (Sequence *)context;
-      InputViewController * myInputViewController = (InputViewController *)sender;
-      const char * textBody = myInputViewController->textBody();
-      mySequence->setContent(textBody);
-      },
-      [](void * context, void * sender){
-    });
-  }
-  if (sequenceDefinition == 1) {
+  switch (sequenceDefinition) {
+    case 0:
+      inputController->edit(this, event, sequence, initialText,
+        [](void * context, void * sender){
+        Sequence * mySequence = (Sequence *)context;
+        InputViewController * myInputViewController = (InputViewController *)sender;
+        const char * textBody = myInputViewController->textBody();
+        mySequence->setContent(textBody);
+        },
+        [](void * context, void * sender){
+      });
+      break;
+  case 1:
     inputController->edit(this, event, sequence, initialText,
       [](void * context, void * sender){
       Sequence * mySequence = (Sequence *)context;
@@ -155,8 +119,8 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       },
       [](void * context, void * sender){
     });
-  }
-  if (sequenceDefinition == 2) {
+    break;
+  default:
     inputController->edit(this, event, sequence, initialText,
       [](void * context, void * sender){
       Sequence * mySequence = (Sequence *)context;
@@ -190,7 +154,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpression(sequence->definitionName());
   }
@@ -206,7 +170,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpression(sequence->layout());
   }
@@ -221,13 +185,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   myCell->setTextColor(textColor);
 }
 
-int ListController::sequenceIndexForRow(int j) {
+int ListController::functionIndexForRow(int j) {
   if (j < 0) {
     return j;
   }
   if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
       j == numberOfRows() - 1) {
-    return sequenceIndexForRow(j-1)+1;
+    return functionIndexForRow(j-1)+1;
   }
   int rowIndex = 0;
   int sequenceIndex = -1;
@@ -256,6 +220,15 @@ int ListController::sequenceDefinitionForRow(int j) {
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequence->numberOfElements()-rowIndex+j;
+}
+
+void ListController::addEmptyFunction() {
+  app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, 32, 20, 20, 20);
+}
+
+void ListController::editExpression(Shared::Function * function, Ion::Events::Event event) {
+  Sequence * sequence = (Sequence *)function;
+  editExpression(sequence, sequenceDefinitionForRow(m_selectableTableView.selectedRow()), event);
 }
 
 }

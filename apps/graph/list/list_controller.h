@@ -17,10 +17,8 @@ public:
   const char * title() const override;
   int numberOfRows() override;
   KDCoordinate rowHeight(int j) override;
-  bool handleEvent(Ion::Events::Event event) override;
 private:
-  bool handleEnter();
-  void editExpression(Shared::Function * function, Ion::Events::Event event);
+  void editExpression(Shared::Function * function, Ion::Events::Event event) override;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   HighlightCell * titleCells(int index) override;

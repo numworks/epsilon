@@ -9,7 +9,7 @@ namespace Graph {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
+  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
   m_graphRange(graphRange),
   m_cursor(cursor),
   m_function(nullptr)
@@ -38,7 +38,7 @@ int GoToParameterController::numberOfRows() {
   return 1;
 };
 
-TableViewCell * GoToParameterController::reusableCell(int index) {
+HighlightCell * GoToParameterController::reusableCell(int index) {
   assert(index == 0);
   return &m_abscisseCell;
 }

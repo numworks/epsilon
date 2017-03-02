@@ -16,9 +16,9 @@ public:
   void didBecomeFirstResponder() override;
 
   int numberOfRows() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   class ContentView : public View {

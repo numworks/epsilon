@@ -4,7 +4,7 @@
 namespace Home {
 
 AppCell::AppCell() :
-  TableViewCell(),
+  HighlightCell(),
   m_nameView(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, KDColorWhite)),
   m_visible(true)
 {
@@ -39,7 +39,7 @@ void AppCell::setVisible(bool visible) {
 }
 
 void AppCell::reloadCell() {
-  TableViewCell::reloadCell();
+  HighlightCell::reloadCell();
   m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
 }
 

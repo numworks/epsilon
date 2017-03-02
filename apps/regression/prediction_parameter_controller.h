@@ -17,12 +17,12 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
-  ChevronMenuListCell m_cells[2];
+  PointerTableCellWithChevron m_cells[2];
   SelectableTableView m_selectableTableView;
   GoToParameterController m_goToParameterController;
 };

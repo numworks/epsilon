@@ -29,7 +29,7 @@ void EvenOddDoubleBufferTextCell::reloadCell() {
 void EvenOddDoubleBufferTextCell::setHighlighted(bool highlight) {
   m_firstBufferTextView.setHighlighted(false);
   m_secondBufferTextView.setHighlighted(false);
-  TableViewCell::setHighlighted(highlight);
+  HighlightCell::setHighlighted(highlight);
   if (isHighlighted()) {
     if (m_firstTextSelected) {
       m_firstBufferTextView.setHighlighted(true);

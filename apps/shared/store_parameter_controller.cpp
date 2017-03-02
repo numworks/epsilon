@@ -5,9 +5,9 @@ namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
-  m_deleteColumn(MenuListCell((char*)"Effacer la colonne")),
-  m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
-  m_importList(ChevronMenuListCell((char*)"Importer une liste")),
+  m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
+  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
+  m_importList(PointerTableCellWithChevron((char*)"Importer une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_store(store),
@@ -62,10 +62,10 @@ int StoreParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * StoreParameterController::reusableCell(int index) {
+HighlightCell * StoreParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_importList};
+  HighlightCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_importList};
   return cells[index];
 }
 

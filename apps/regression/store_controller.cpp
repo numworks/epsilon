@@ -19,7 +19,7 @@ StoreController::StoreController(Responder * parentResponder, Store * store, Hea
   m_titleLayout[1] = new BaselineRelativeLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
 }
 
-void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   ::StoreController::willDisplayCellAtLocation(cell, i, j);
   if (cellAtLocationIsEditable(i, j)) {
     return;
@@ -28,7 +28,7 @@ void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int
   mytitleCell->setExpression(m_titleLayout[i]);
 }
 
-TableViewCell * StoreController::titleCells(int index) {
+HighlightCell * StoreController::titleCells(int index) {
   assert(index >= 0 && index < k_numberOfTitleCells);
   return &m_titleCells[index];
 }

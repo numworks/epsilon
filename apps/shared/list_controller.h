@@ -19,9 +19,9 @@ public:
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
-  TableViewCell * reusableCell(int index, int type) override;
+  HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -36,10 +36,10 @@ private:
   Responder * tabController() const;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;
-  virtual TableViewCell * titleCells(int index) = 0;
-  virtual TableViewCell * expressionCells(int index) = 0;
-  virtual void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) = 0;
-  virtual void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) = 0;
+  virtual HighlightCell * titleCells(int index) = 0;
+  virtual HighlightCell * expressionCells(int index) = 0;
+  virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
+  virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) = 0;
   EvenOddCell m_emptyCell;
   NewFunctionCell m_addNewFunction;
 };

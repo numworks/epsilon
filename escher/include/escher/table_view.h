@@ -3,7 +3,7 @@
 
 #include <escher/palette.h>
 #include <escher/scroll_view.h>
-#include <escher/table_view_cell.h>
+#include <escher/highlight_cell.h>
 #include <escher/table_view_data_source.h>
 
 class TableView : public ScrollView {
@@ -15,7 +15,7 @@ public:
     KDColor backgroundIndicatorColor = Palette::GreyMiddle, KDCoordinate indicatorMargin = 14);
 
   virtual void scrollToCell(int i, int j);
-  TableViewCell * cellAtLocation(int i, int j);
+  HighlightCell * cellAtLocation(int i, int j);
   void reloadData();
   KDSize size() const;
 protected:
@@ -28,7 +28,7 @@ protected:
     ContentView(TableView * tableView, TableViewDataSource * dataSource);
 
     void scrollToCell(int i, int j) const;
-    TableViewCell * cellAtLocation(int i, int j);
+    HighlightCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();
     KDSize size() const;

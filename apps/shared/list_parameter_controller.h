@@ -18,18 +18,18 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
   Function * m_function;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  ChevronMenuListCell m_colorCell;
-  SwitchMenuListCell m_enableCell;
-  MenuListCell m_deleteCell;
+  PointerTableCellWithChevron m_colorCell;
+  PointerTableCellWithSwitch m_enableCell;
+  PointerTableCell m_deleteCell;
 };
 
 }

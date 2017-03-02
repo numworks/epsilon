@@ -105,7 +105,7 @@ int CalculationController::numberOfColumns() {
   return k_totalNumberOfColumns;
 }
 
-void CalculationController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
@@ -176,7 +176,7 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (offsetY-1) / k_cellHeight;
 }
 
-TableViewCell * CalculationController::reusableCell(int index, int type) {
+HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == 0) {
     assert(index < k_totalNumberOfRows + 2);
     return &m_titleCells[index];

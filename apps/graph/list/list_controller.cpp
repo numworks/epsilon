@@ -112,18 +112,18 @@ int ListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
-TableViewCell * ListController::titleCells(int index) {
+HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_functionTitleCells[index];
 }
 
-TableViewCell * ListController::expressionCells(int index) {
+HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_expressionCells[index];
 }
 
 
-void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
+void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
   CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j);
   char bufferName[5] = {*function->name(),'(',function->symbol(),')', 0};
@@ -132,7 +132,7 @@ void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   myFunctionCell->setColor(functionNameColor);
 }
 
-void ListController::willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) {
+void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Function * f = m_functionStore->functionAtIndex(j);
   myCell->setExpression(f->layout());

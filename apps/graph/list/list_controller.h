@@ -23,10 +23,10 @@ private:
   void editExpression(Shared::Function * function, Ion::Events::Event event);
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
-  TableViewCell * titleCells(int index) override;
-  TableViewCell * expressionCells(int index) override;
-  void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) override;
-  void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) override;
+  HighlightCell * titleCells(int index) override;
+  HighlightCell * expressionCells(int index) override;
+  void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
+  void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   constexpr static int k_maxNumberOfRows = 5;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];

@@ -16,10 +16,10 @@ public:
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  TableViewCell * reusableCell(int index, int type) override;
+  HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::RightMargin/2 - Metric::LeftMargin/2;
@@ -31,7 +31,7 @@ protected:
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
-  virtual TableViewCell * titleCells(int index) = 0;
+  virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;

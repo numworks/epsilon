@@ -40,13 +40,8 @@ const KDColor highlightedChevronPixel[] = {
 };
 
 ChevronView::ChevronView() :
-  m_highlighted(false)
+  HighlightCell()
 {
-}
-
-void ChevronView::setHighlighted(bool highlight) {
-  m_highlighted = highlight;
-  markRectAsDirty(bounds());
 }
 
 KDColor s_workingBuffer[ChevronView::k_chevronWidth*ChevronView::k_chevronHeight];

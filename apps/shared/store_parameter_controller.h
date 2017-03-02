@@ -16,13 +16,13 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  MenuListCell m_deleteColumn;
-  ChevronMenuListCell m_copyColumn;
-  ChevronMenuListCell m_importList;
+  PointerTableCell m_deleteColumn;
+  PointerTableCellWithChevron m_copyColumn;
+  PointerTableCellWithChevron m_importList;
   SelectableTableView m_selectableTableView;
   FloatPairStore * m_store;
   bool m_xColumnSelected;

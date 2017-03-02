@@ -4,7 +4,7 @@
 using namespace Poincare;
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
-  TableViewCell(),
+  HighlightCell(),
   m_labelView(BufferTextView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite)),
   m_subtitleView(BufferTextView(KDText::FontSize::Small, 0, 0.5, Palette::GreyDark, KDColorWhite)),
   m_displayExpression(false)
@@ -50,7 +50,7 @@ void VariableBoxLeafCell::layoutSubviews() {
 }
 
 void VariableBoxLeafCell::reloadCell() {
-  TableViewCell::reloadCell();
+  HighlightCell::reloadCell();
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_subtitleView.setBackgroundColor(backgroundColor);

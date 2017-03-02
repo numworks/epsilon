@@ -37,7 +37,7 @@ int SimpleTableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (offsetY - 1) / height;
 }
 
-TableViewCell * SimpleTableViewDataSource::reusableCell(int index, int type) {
+HighlightCell * SimpleTableViewDataSource::reusableCell(int index, int type) {
   assert(type == 0);
   return reusableCell(index);
 }

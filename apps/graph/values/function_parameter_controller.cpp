@@ -7,8 +7,8 @@ namespace Graph {
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
   ViewController(nullptr),
   m_pageTitle{"Colonne f(x)"},
-  m_displayDerivativeColumn(SwitchMenuListCell((char*)"Colonne de la fonction derivee")),
-  m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
+  m_displayDerivativeColumn(PointerTableCellWithSwitch((char*)"Colonne de la fonction derivee")),
+  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_function(nullptr),
@@ -67,10 +67,10 @@ int FunctionParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * FunctionParameterController::reusableCell(int index) {
+HighlightCell * FunctionParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
+  HighlightCell * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
   return cells[index];
 }
 
@@ -82,7 +82,7 @@ KDCoordinate FunctionParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void FunctionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
     switchView->setState(m_function->displayDerivative());

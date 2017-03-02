@@ -12,9 +12,9 @@ public:
   RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() const override;
   int numberOfRows() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -23,9 +23,9 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
   InteractiveCurveViewRange * m_interactiveRange;
-  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
-  EditableTextMenuListCell m_rangeCells[k_numberOfTextCell];
-  SwitchMenuListCell m_yAutoCell;
+  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
+  PointerTableCellWithEditableText m_rangeCells[k_numberOfTextCell];
+  PointerTableCellWithSwitch m_yAutoCell;
 };
 
 }

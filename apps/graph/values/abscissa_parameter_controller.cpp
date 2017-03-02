@@ -5,9 +5,9 @@ namespace Graph {
 
 AbscissaParameterController::AbscissaParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
   ViewController(parentResponder),
-  m_deleteColumn(MenuListCell((char*)"Effacer la colonne")),
-  m_copyColumn(ChevronMenuListCell((char*)"Copier la colonne dans une liste")),
-  m_setInterval(ChevronMenuListCell((char*)"Regler l'intervalle")),
+  m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
+  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
+  m_setInterval(PointerTableCellWithChevron((char*)"Regler l'intervalle")),
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_intervalParameterController(intervalParameterController)
@@ -60,10 +60,10 @@ int AbscissaParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-TableViewCell * AbscissaParameterController::reusableCell(int index) {
+HighlightCell * AbscissaParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  TableViewCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
+  HighlightCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
 }
 

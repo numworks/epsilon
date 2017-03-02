@@ -12,11 +12,11 @@ int ListViewDataSource::numberOfColumns() {
   return 1;
 }
 
-void ListViewDataSource::willDisplayCellAtLocation(TableViewCell * cell, int x, int y) {
+void ListViewDataSource::willDisplayCellAtLocation(HighlightCell * cell, int x, int y) {
   willDisplayCellForIndex(cell, y);
 }
 
-void ListViewDataSource::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void ListViewDataSource::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate ListViewDataSource::cumulatedWidthFromIndex(int i) {

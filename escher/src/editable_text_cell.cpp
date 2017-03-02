@@ -5,7 +5,7 @@
 
 EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
    KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TableViewCell(),
+  HighlightCell(),
   Responder(parentResponder),
   m_textField(TextField(this, m_textBody, draftTextBuffer, 255, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
 {
@@ -16,7 +16,7 @@ TextField * EditableTextCell::textField() {
 }
 
 void EditableTextCell::setHighlighted(bool highlight) {
-  TableViewCell::setHighlighted(highlight);
+  HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_textField.setBackgroundColor(backgroundColor);
 }
@@ -56,3 +56,6 @@ void EditableTextCell::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
 }
 
+KDSize EditableTextCell::minimalSizeForOptimalDisplay() {
+  return m_textField.minimalSizeForOptimalDisplay();
+}

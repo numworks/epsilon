@@ -62,7 +62,7 @@ int EditableCellTableViewController::indexFromCumulatedHeight(KDCoordinate offse
   return (offsetY-1) / k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(TableViewCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   // The cell is editable

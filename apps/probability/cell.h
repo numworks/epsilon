@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class Cell : public TableViewCell {
+class Cell : public HighlightCell {
 public:
   Cell();
   void reloadCell() override;

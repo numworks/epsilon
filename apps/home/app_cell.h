@@ -5,7 +5,7 @@
 
 namespace Home {
 
-class AppCell : public TableViewCell {
+class AppCell : public HighlightCell {
 public:
   AppCell();
 

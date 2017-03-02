@@ -13,15 +13,15 @@ public:
   GoToParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() const override;
   int numberOfRows() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void setFunction(CartesianFunction * function);
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
-  EditableTextMenuListCell m_abscisseCell;
+  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
+  PointerTableCellWithEditableText m_abscisseCell;
   Shared::InteractiveCurveViewRange * m_graphRange;
   Shared::CurveViewCursor * m_cursor;
   CartesianFunction * m_function;

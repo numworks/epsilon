@@ -1,13 +1,13 @@
-#ifndef ESCHER_EDITABLE_TEXT_MENU_LIST_CELL_H
-#define ESCHER_EDITABLE_TEXT_MENU_LIST_CELL_H
+#ifndef ESCHER_POINTER_TABLE_CELL_WITH_EDITABLE_TEXT_H
+#define ESCHER_POINTER_TABLE_CELL_WITH_EDITABLE_TEXT_H
 
 #include <escher/editable_text_cell.h>
-#include <escher/menu_list_cell.h>
+#include <escher/pointer_table_cell.h>
 #include <escher/responder.h>
 
-class EditableTextMenuListCell : public Responder, public MenuListCell {
+class PointerTableCellWithEditableText : public Responder, public PointerTableCell {
 public:
-  EditableTextMenuListCell(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label = nullptr);
+  PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label = nullptr);
   View * accessoryView() const override;
   const char * editedText() const;
   void didBecomeFirstResponder() override;

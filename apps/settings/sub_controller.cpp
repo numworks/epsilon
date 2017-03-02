@@ -9,8 +9,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{MenuListCell(nullptr, KDText::FontSize::Large), MenuListCell(nullptr, KDText::FontSize::Large),
-    MenuListCell(nullptr, KDText::FontSize::Large)},
+  m_cells{PointerTableCell(nullptr, KDText::FontSize::Large), PointerTableCell(nullptr, KDText::FontSize::Large),
+    PointerTableCell(nullptr, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
     Metric::BottomMargin, Metric::LeftMargin)),
   m_nodeModel(nullptr),
@@ -52,7 +52,7 @@ int SubController::numberOfRows() {
   return 0;
 }
 
-TableViewCell * SubController::reusableCell(int index) {
+HighlightCell * SubController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   return &m_cells[index];
@@ -66,8 +66,8 @@ KDCoordinate SubController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void SubController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  MenuListCell * myCell = (MenuListCell *)cell;
+void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCell * myCell = (PointerTableCell *)cell;
   myCell->setText(m_nodeModel->children(index)->label());
 }
 

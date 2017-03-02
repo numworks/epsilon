@@ -5,30 +5,35 @@ objs += $(addprefix escher/src/,\
   app.o\
   buffer_text_view.o\
   button.o\
-  chevron_menu_list_cell.o\
-  chevron_text_menu_list_cell.o\
-  chevron_expression_menu_list_cell.o\
   chevron_view.o\
   container.o\
-  editable_text_menu_list_cell.o\
   editable_text_cell.o\
   even_odd_cell.o\
   even_odd_buffer_text_cell.o\
   even_odd_editable_text_cell.o\
   even_odd_expression_cell.o\
   even_odd_pointer_text_cell.o\
-  expression_menu_list_cell.o\
+  expression_table_cell.o\
+  expression_table_cell_with_pointer.o\
   expression_view.o\
   header_view_controller.o\
   header_view_delegate.o\
+  highlight_cell.o\
   image_view.o\
   invocation.o\
   input_view_controller.o\
   list_view_data_source.o\
-  menu_list_cell.o\
   metric.o\
   modal_view_controller.o\
   palette.o\
+  pointer_table_cell.o\
+  pointer_table_cell_with_buffer.o\
+  pointer_table_cell_with_chevron.o\
+  pointer_table_cell_with_chevron_and_pointer.o\
+  pointer_table_cell_with_chevron_and_expression.o\
+  pointer_table_cell_with_editable_text.o\
+  pointer_table_cell_with_pointer.o\
+  pointer_table_cell_with_switch.o\
   pointer_text_view.o\
   responder.o\
   scroll_view.o\
@@ -39,17 +44,14 @@ objs += $(addprefix escher/src/,\
   solid_color_view.o\
   stack_view.o\
   stack_view_controller.o\
-  switch_menu_list_cell.o\
   switch_view.o\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\
+  table_cell.o\
   table_view.o\
-  table_view_cell.o\
   table_view_data_source.o\
   text_field.o\
-  text_expression_menu_list_cell.o\
-  text_menu_list_cell.o\
   text_view.o\
   tiled_view.o\
   toolbox.o\

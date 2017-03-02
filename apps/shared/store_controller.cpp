@@ -40,7 +40,7 @@ int StoreController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return (offsetX-1) / k_cellWidth;
 }
 
-TableViewCell * StoreController::reusableCell(int index, int type) {
+HighlightCell * StoreController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
     case 0:
@@ -66,7 +66,7 @@ int StoreController::typeAtLocation(int i, int j) {
   return j!=0;
 }
 
-void StoreController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Decimal);
 }
 

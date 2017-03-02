@@ -40,7 +40,7 @@ int PredictionParameterController::numberOfRows() {
   return k_totalNumberOfCells;
 };
 
-TableViewCell * PredictionParameterController::reusableCell(int index) {
+HighlightCell * PredictionParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
   return &m_cells[index];
@@ -54,8 +54,8 @@ KDCoordinate PredictionParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void PredictionParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
-  ChevronMenuListCell * myCell = (ChevronMenuListCell *)cell;
+void PredictionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  PointerTableCellWithChevron * myCell = (PointerTableCellWithChevron *)cell;
   const char * titles[3] = {"Prediction sachant x", "Prediction sachant y"};
   myCell->setText(titles[index]);
 }

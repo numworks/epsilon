@@ -34,7 +34,7 @@ void SelectableTableView::didBecomeFirstResponder() {
 void SelectableTableView::deselectTable() {
   if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
       m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
-    TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
+    HighlightCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
     previousCell->setHighlighted(false);
   }
   int previousSelectedCellX = m_selectedCellX;
@@ -55,7 +55,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   }
   if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
       m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
-    TableViewCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
+    HighlightCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
     previousCell->setHighlighted(false);
   }
   int previousX = m_selectedCellX;
@@ -64,7 +64,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   m_selectedCellY = j;
   if (m_selectedCellY >= 0) {
     scrollToCell(i, j);
-    TableViewCell * cell = cellAtLocation(i, j);
+    HighlightCell * cell = cellAtLocation(i, j);
     cell->setHighlighted(true);
   }
   if (m_delegate) {
@@ -73,7 +73,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   return true;
 }
 
-TableViewCell * SelectableTableView::selectedCell() {
+HighlightCell * SelectableTableView::selectedCell() {
   return cellAtLocation(m_selectedCellX, m_selectedCellY);
 }
 

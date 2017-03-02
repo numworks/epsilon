@@ -14,15 +14,15 @@ public:
   void setXPrediction(bool xPrediction);
   const char * title() const override;
   int numberOfRows() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  char m_draftTextBuffer[EditableTextMenuListCell::k_bufferLength];
-  EditableTextMenuListCell m_abscisseCell;
+  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
+  PointerTableCellWithEditableText m_abscisseCell;
   Store * m_store;
   Shared::CurveViewCursor * m_cursor;
   bool m_xPrediction;

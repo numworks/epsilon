@@ -2,11 +2,11 @@
 #define ESCHER_EDITABLE_TEXT_CELL_H
 
 #include <escher/responder.h>
-#include <escher/table_view_cell.h>
+#include <escher/highlight_cell.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_field.h>
 
-class EditableTextCell : public TableViewCell, public Responder {
+class EditableTextCell : public HighlightCell, public Responder {
 public:
   EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size = KDText::FontSize::Large,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
@@ -20,6 +20,7 @@ public:
   void didBecomeFirstResponder() override;
   bool isEditing();
   void setEditing(bool isEditing);
+  KDSize minimalSizeForOptimalDisplay() override;
   constexpr static int k_bufferLength = 255;
 private:
   constexpr static KDCoordinate k_textHeight = 12;

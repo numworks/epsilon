@@ -10,9 +10,9 @@ namespace Shared {
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),
-  m_rangeCells{EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmax"),
-    EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymin"), EditableTextMenuListCell(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymax")},
-  m_yAutoCell(SwitchMenuListCell((char*)"Y auto"))
+  m_rangeCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmin"), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Xmax"),
+    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymin"), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char *)"Ymax")},
+  m_yAutoCell(PointerTableCellWithSwitch((char*)"Y auto"))
 {
 }
 
@@ -20,7 +20,7 @@ const char * RangeParameterController::title() const {
   return "Axes";
 }
 
-void RangeParameterController::willDisplayCellForIndex(TableViewCell * cell, int index) {
+void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 2) {
     SwitchView * switchView = (SwitchView *)m_yAutoCell.accessoryView();
     switchView->setState(m_interactiveRange->yAuto());
@@ -49,12 +49,12 @@ bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, 
 
 void RangeParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (previousSelectedCellX == 0 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
-    EditableTextMenuListCell * myCell = (EditableTextMenuListCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
     app()->setFirstResponder(t);
   }
   if (t->selectedColumn() == 0 && t->selectedRow() >= 0 && t->selectedRow() !=2) {
-    EditableTextMenuListCell * myNewCell = (EditableTextMenuListCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
     if ((t->selectedRow() == 0 || t->selectedRow() == 1) || !m_interactiveRange->yAuto()) {
       app()->setFirstResponder(myNewCell);
     }
@@ -94,7 +94,7 @@ int RangeParameterController::numberOfRows() {
   return k_numberOfTextCell+1;
 };
 
-TableViewCell * RangeParameterController::reusableCell(int index) {
+HighlightCell * RangeParameterController::reusableCell(int index) {
   if (index == 2) {
     return &m_yAutoCell;
   }

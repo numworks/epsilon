@@ -15,13 +15,13 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  MenuListCell m_deleteColumn;
-  ChevronMenuListCell m_copyColumn;
-  ChevronMenuListCell m_setInterval;
+  PointerTableCell m_deleteColumn;
+  PointerTableCellWithChevron m_copyColumn;
+  PointerTableCellWithChevron m_setInterval;
   SelectableTableView m_selectableTableView;
   IntervalParameterController * m_intervalParameterController;
 };

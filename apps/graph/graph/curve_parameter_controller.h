@@ -20,17 +20,17 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
-  TableViewCell * reusableCell(int index) override;
+  HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void willDisplayCellForIndex(TableViewCell * cell, int index) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setFunction(CartesianFunction * function);
 private:
   BannerView * m_bannerView;
   CartesianFunction * m_function;
   constexpr static int k_totalNumberOfCells = 3;
-  ChevronMenuListCell m_calculationCell;
-  ChevronMenuListCell m_goToCell;
-  SwitchMenuListCell m_derivativeCell;
+  PointerTableCellWithChevron m_calculationCell;
+  PointerTableCellWithChevron m_goToCell;
+  PointerTableCellWithSwitch m_derivativeCell;
   SelectableTableView m_selectableTableView;
   GoToParameterController m_goToParameterController;
 };

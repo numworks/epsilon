@@ -124,7 +124,7 @@ int ValuesController::numberOfColumns() {
   return result;
 }
 
-void ValuesController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   App * graphApp = (App *)app();
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Default);
   if (cellAtLocationIsEditable(i, j)) {
@@ -206,7 +206,7 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   }
 }
 
-TableViewCell * ValuesController::reusableCell(int index, int type) {
+HighlightCell * ValuesController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
     case 0:

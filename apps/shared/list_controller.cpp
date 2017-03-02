@@ -83,7 +83,7 @@ int ListController::typeAtLocation(int i, int j) {
   return i;
 }
 
-TableViewCell * ListController::reusableCell(int index, int type) {
+HighlightCell * ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < maxNumberOfRows());
   switch (type) {
@@ -108,7 +108,7 @@ int ListController::reusableCellCount(int type) {
   return maxNumberOfRows();
 }
 
-void ListController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
+void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (j < numberOfRows() - 1 || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
     if (i == 0) {
       willDisplayTitleCellAtIndex(cell, j);

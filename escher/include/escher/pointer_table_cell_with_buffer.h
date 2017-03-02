@@ -1,12 +1,12 @@
-#ifndef ESCHER_TEXT_MENU_LIST_CELL_H
-#define ESCHER_TEXT_MENU_LIST_CELL_H
+#ifndef ESCHER_POINTER_TABLE_CELL_WITH_BUFFER_H
+#define ESCHER_POINTER_TABLE_CELL_WITH_BUFFER_H
 
-#include <escher/menu_list_cell.h>
+#include <escher/pointer_table_cell.h>
 #include <escher/buffer_text_view.h>
 
-class TextMenuListCell : public MenuListCell {
+class PointerTableCellWithBuffer : public PointerTableCell {
 public:
-  TextMenuListCell(char * label = nullptr);
+  PointerTableCellWithBuffer(char * label = nullptr);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * textBody);

@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
+#include "local_context.h"
 #include "sequence_store.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -14,11 +15,11 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController();
-  Poincare::Context * localContext() override;
+  LocalContext * localContext() override;
   const char * XNT() override;
 private:
   SequenceStore m_sequenceStore;
-  Poincare::VariableContext m_nContext;
+  LocalContext m_nContext;
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;

@@ -6,7 +6,7 @@ namespace Poincare {
 
 VariableContext::VariableContext(char name, Context * parentContext) :
   m_name(name),
-  m_value(Complex::Float(0.0f)),
+  m_value(Complex::Float(NAN)),
   m_parentContext(parentContext)
 {
 }

@@ -15,6 +15,10 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController();
+  /* This local context can parse x. However, it always stores NAN
+   * as x value. When we need to evaluate expression with a specific x value, we
+   * use a temporary local context (on the stack). That way, we avoid keeping
+   * weird x values after drawing curves or displaying the value table. */
   Poincare::Context * localContext() override;
 private:
   CartesianFunctionStore m_functionStore;

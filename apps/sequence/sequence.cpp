@@ -1,4 +1,5 @@
 #include "sequence.h"
+#include "local_context.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include <string.h>
@@ -169,6 +170,62 @@ bool Sequence::isDefined() {
       return layout() != nullptr && m_firstInitialConditionLayout != nullptr;
     default:
       return layout() != nullptr && m_firstInitialConditionLayout != nullptr && m_secondInitialConditionLayout != nullptr;
+  }
+}
+
+
+float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
+  float n = roundf(x);
+  switch (m_type) {
+    case Type::Explicite:
+      if (n < 0) {
+        return NAN;
+      }
+      return Shared::Function::evaluateAtAbscissa(n, context);
+    case Type::SingleRecurrence:
+    {
+      if (n < 0) {
+        return NAN;
+      }
+      if (n == 0) {
+        return m_firstInitialConditionExpression->approximate(*context);
+      }
+      float un = m_firstInitialConditionExpression->approximate(*context);
+      LocalContext subContext = LocalContext(context);
+      Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
+      for (int i = 0; i < n; i++) {
+        subContext.setSequenceRankValue(un, 0);
+        Poincare::Complex e = Poincare::Complex::Float(i);
+        subContext.setExpressionForSymbolName(&e, &nSymbol);
+        un = m_expression->approximate(subContext);
+      }
+      return un;
+    }
+    default:
+    {
+      if (n < 0) {
+        return NAN;
+      }
+      if (n == 0) {
+        return m_firstInitialConditionExpression->approximate(*context);
+      }
+      if (n == 1) {
+        return m_secondInitialConditionExpression->approximate(*context);
+      }
+      float un = m_firstInitialConditionExpression->approximate(*context);
+      float un1 = m_secondInitialConditionExpression->approximate(*context);
+      LocalContext subContext = LocalContext(context);
+      Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
+      for (int i = 0; i < n-1; i++) {
+        subContext.setSequenceRankValue(un, 0);
+        subContext.setSequenceRankValue(un1, 1);
+        Poincare::Complex e = Poincare::Complex::Float(i);
+        subContext.setExpressionForSymbolName(&e, &nSymbol);
+        un = un1;
+        un1 = m_expression->approximate(subContext);
+      }
+      return un1;
+    }
   }
 }
 

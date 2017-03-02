@@ -8,7 +8,7 @@ namespace Sequence {
 App::App(Container * container, Context * context) :
   TextFieldDelegateApp(container, &m_inputViewController, "Suites", "SUITES", ImageStore::SequenceIcon),
   m_sequenceStore(SequenceStore()),
-  m_nContext(VariableContext('n', context)),
+  m_nContext(LocalContext(context)),
   m_listController(&m_listHeader, &m_sequenceStore, &m_listHeader),
   m_listHeader(HeaderViewController(nullptr, &m_listController, &m_listController)),
   m_listStackViewController(StackViewController(&m_tabViewController, &m_listHeader)),
@@ -29,7 +29,7 @@ InputViewController * App::inputViewController() {
   return &m_inputViewController;
 }
 
-Context * App::localContext() {
+LocalContext * App::localContext() {
   return &m_nContext;
 }
 

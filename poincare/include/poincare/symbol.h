@@ -8,7 +8,13 @@ namespace Poincare {
 class Symbol : public LeafExpression {
 public:
   enum SpecialSymbols : char {
-    Ans = '^'
+    Ans = '^',
+    un = 1,
+    un1 = 2,
+    vn = 3,
+    vn1 = 4,
+    wn = 5,
+    wn1 = 6
   };
   Symbol(char name);
   Type type() const override;

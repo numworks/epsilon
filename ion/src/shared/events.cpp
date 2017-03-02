@@ -53,7 +53,7 @@ static constexpr EventData s_dataForEvent[] = {
 // Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
-  U(), U(), U(), T(":"), T(";"), U(),
+  U(), U(), T(":"), T(";"), T("\""), U(),
   T("a"), T("b"), T("c"), T("d"), T("e"), T("f"),
   T("g"), T("h"), T("i"), T("j"), T("k"), T("l"),
   T("m"), T("n"), T("o"), T("p"), T("q"), U(),
@@ -115,6 +115,57 @@ const char * Event::text() const {
 bool Event::hasText() const {
   return text() != nullptr;
 }
+
+#ifdef DEBUG
+
+static constexpr const char * s_nameForEvent[] = {
+ // Plain
+  "Left", "Up", "Down", "Right", "OK", "Back",
+  "Home", "OnOff", nullptr, nullptr, nullptr, nullptr,
+  "Shift", "Alpha", "XNT", "Var", "Toolbox", "Backspace",
+  "Exp", "Ln", "Log", "Imaginary", "Comma", "Power",
+  "Sine", "Cosine", "Tangent", "Pi", "Sqrt", "Square",
+  "Seven", "Eight", "Nine", "LeftParenthesis", "RightParenthesis", nullptr,
+  "Four", "Five", "Six", "Multiplication", "Division", nullptr,
+  "One", "Two", "Three", "Plus", "Minus", nullptr,
+  "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
+  //Shift,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
+  "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",
+  "Arcsine", "Arccosine", "Arctangent", "Equal", "Lower", "Greater",
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  //Alpha,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, "Colon", "SemiColon", "DoubleQuotes", nullptr,
+  "LowerA", "LowerB", "LowerC", "LowerD", "LowerE", "LowerF",
+  "LowerG", "LowerH", "LowerI", "LowerJ", "LowerK", "LowerL",
+  "LowerM", "LowerN", "LowerO", "LowerP", "LowerQ", nullptr,
+  "LowerR", "LowerS", "LowerT", "LowerU", "LowerV", nullptr,
+  "LowerW", "LowerX", "LowerY", "LowerZ", "Space", nullptr,
+  "Question", "Exclamation", nullptr, nullptr, nullptr, nullptr,
+  //Shift+Alpha,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "UpperA", "UpperB", "UpperC", "UpperD", "UpperE", "UpperF",
+  "UpperG", "UpperH", "UpperI", "UpperJ", "UpperK", "UpperL",
+  "UpperM", "UpperN", "UpperO", "UpperP", "UpperQ", nullptr,
+  "UpperR", "UpperS", "UpperT", "UpperU", "UpperV", nullptr,
+  "UpperW", "UpperX", "UpperY", "UpperZ", nullptr, nullptr,
+  "None", nullptr, nullptr, nullptr, nullptr, nullptr
+};
+
+const char * Event::name() const {
+  return s_nameForEvent[m_id];
+}
+
+#endif
 
 }
 }

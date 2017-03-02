@@ -11,7 +11,7 @@ GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * 
   m_verticalCursor(false),
   m_highlightedDotStart(-1),
   m_highlightedDotEnd(-1),
-  m_highlightColor(false),
+  m_shouldColorHighlighted(false),
   m_selectedSequence(nullptr)
 {
 }
@@ -29,7 +29,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       drawDot(ctx, rect, x, y, s->color());
       if (x >= m_highlightedDotStart && x <= m_highlightedDotEnd && s == m_selectedSequence) {
-        KDColor color = m_highlightColor ? s->color() : KDColorBlack;
+        KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
         if (y >= 0.0f) {
           drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
         } else {
@@ -67,9 +67,9 @@ void GraphView::setHighlight(int start, int end) {
 }
 
 void GraphView::setHighlightColor(bool highlightColor) {
-  if (m_highlightColor != highlightColor) {
+  if (m_shouldColorHighlighted != highlightColor) {
     reload();
-    m_highlightColor = highlightColor;
+    m_shouldColorHighlighted = highlightColor;
     reload();
   }
 }

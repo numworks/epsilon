@@ -23,7 +23,7 @@ private:
   bool m_verticalCursor;
   int m_highlightedDotStart;
   int m_highlightedDotEnd;
-  bool m_highlightColor;
+  bool m_shouldColorHighlighted;
   Sequence * m_selectedSequence;
 };
 

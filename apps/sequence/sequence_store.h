@@ -4,6 +4,7 @@
 #include "sequence.h"
 #include "../shared/function_store.h"
 #include <stdint.h>
+#include <escher.h>
 
 namespace Sequence {
 
@@ -22,7 +23,7 @@ public:
 private:
   const KDColor firstAvailableColor() override;
   static constexpr KDColor k_defaultColors[k_maxNumberOfSequences] = {
-    KDColor::RGB24(0xbe2727), KDColor::RGB24(0x3e6f3c), KDColor::RGB24(0x656975)
+    Palette::Red, Palette::Blue, Palette::YellowDark
   };
   static constexpr const char * k_sequenceNames[k_maxNumberOfSequences] = {
     "u", "v", "w"

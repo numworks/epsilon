@@ -31,7 +31,7 @@ protected:
   constexpr static KDCoordinate k_labelGraduationLength =  6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
-  constexpr static KDCoordinate k_cursorSize = 9;
+  constexpr static KDCoordinate k_cursorSize = 25;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,

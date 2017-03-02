@@ -37,10 +37,10 @@ public:
   float correlationCoefficient();
   float squaredCorrelationCoefficient();
 private:
-  constexpr static float k_displayTopMarginRatio = 0.1f;
-  constexpr static float k_displayRightMarginRatio = 0.04f;
+  constexpr static float k_displayTopMarginRatio = 0.11f;
+  constexpr static float k_displayRightMarginRatio = 0.05f;
   constexpr static float k_displayBottomMarginRatio = 0.4f;
-  constexpr static float k_displayLeftMarginRatio = 0.04f;
+  constexpr static float k_displayLeftMarginRatio = 0.05f;
   float maxValueOfColumn(int i);
   float minValueOfColumn(int i);
 };

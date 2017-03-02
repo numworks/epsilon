@@ -1,6 +1,7 @@
 #include "term_sum_controller.h"
 #include "../../shared/text_field_delegate.h"
 #include "../../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../../poincare/src/layout/condensed_sum_layout.h"
 #include "../../../poincare/src/layout/string_layout.h"
 #include "../../../poincare/src/layout/horizontal_layout.h"
 
@@ -203,7 +204,7 @@ void TermSumController::ContentView::LegendView::setSumSubscript(float start) {
   const char sigma[2] = {Ion::Charset::CapitalSigma, 0};
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(start, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  m_sumLayout = new BaselineRelativeLayout(new StringLayout(sigma, 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
  m_sum.setExpression(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
  layoutSubviews();
@@ -219,8 +220,7 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
   Complex::convertFloatToText(start, bufferStart, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   char bufferEnd[Complex::bufferSizeForFloatsWithPrecision(1)];
   Complex::convertFloatToText(end, bufferEnd, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  ExpressionLayout * sigmaLayout = new BaselineRelativeLayout(new StringLayout(sigma, 1), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  m_sumLayout = new BaselineRelativeLayout(sigmaLayout, new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 1), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);
   layoutSubviews();
 }

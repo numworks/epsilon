@@ -40,7 +40,7 @@ float Logarithm::privateApproximate(Context& context, AngleUnit angleUnit) const
 ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   if (m_numberOfArguments == 1) {
-    return Function::createLayout(floatDisplayMode);
+    return Function::privateCreateLayout(floatDisplayMode);
   }
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(floatDisplayMode), BaselineRelativeLayout::Type::Subscript);

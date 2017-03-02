@@ -86,7 +86,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if ((!event.hasText() && event != Ion::Events::XNT)
       || m_selectableTableView.selectedColumn() == 0
-      || m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+      || (m_selectableTableView.selectedRow() == numberOfRows() - 1
+         && m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions())) {
     return false;
   }
   Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndexForRow(m_selectableTableView.selectedRow()));

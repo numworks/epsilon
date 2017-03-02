@@ -49,6 +49,8 @@ void ChevronView::setHighlighted(bool highlight) {
   markRectAsDirty(bounds());
 }
 
+KDColor s_workingBuffer[ChevronView::k_chevronWidth*ChevronView::k_chevronHeight];
+
 void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   /* Draw the chevron aligned on the right of the view and vertically centered.
    * The heightCenter is the coordinate of the vertical middle of the view. That
@@ -58,9 +60,9 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate chevronHalfHeight = k_chevronHeight/2;
   KDRect frame(width - k_chevronRightMargin, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
   if (m_highlighted) {
-    ctx->fillRectWithPixels(frame, highlightedChevronPixel, (KDColor *)m_workingBuffer);
+    ctx->fillRectWithPixels(frame, highlightedChevronPixel, (KDColor *)s_workingBuffer);
   } else {
-    ctx->fillRectWithPixels(frame, chevronPixel, (KDColor *)m_workingBuffer);
+    ctx->fillRectWithPixels(frame, chevronPixel, (KDColor *)s_workingBuffer);
   }
 }
 

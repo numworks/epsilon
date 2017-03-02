@@ -4,9 +4,9 @@
 
 namespace Shared {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"x")),
+  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)symbol)),
   m_graphRange(graphRange),
   m_cursor(cursor),
   m_function(nullptr)

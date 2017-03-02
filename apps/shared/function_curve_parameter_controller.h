@@ -11,7 +11,7 @@ namespace Shared {
 
 class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol);
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;

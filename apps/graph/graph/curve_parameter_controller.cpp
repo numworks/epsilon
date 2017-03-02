@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor),
+  FunctionCurveParameterController(graphRange, cursor, "x"),
   m_bannerView(bannerView),
   m_calculationCell(PointerTableCellWithChevron((char*)"Calculer")),
   m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee"))

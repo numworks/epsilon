@@ -3,12 +3,12 @@
 
 namespace Shared {
 
-FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol) :
   ViewController(nullptr),
   m_goToCell(PointerTableCellWithChevron((char*)"Aller a")),
   m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_goToParameterController(GoToParameterController(this, graphRange, cursor)),
+  m_goToParameterController(GoToParameterController(this, graphRange, cursor, symbol)),
   m_function(nullptr)
 {
 }

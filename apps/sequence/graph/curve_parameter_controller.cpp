@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Sequence {
 
 CurveParameterController::CurveParameterController(GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor),
+  FunctionCurveParameterController(graphRange, cursor, "n"),
   m_sumCell(PointerTableCell((char*)"Somme des termes")),
   m_graphController(graphController)
 {

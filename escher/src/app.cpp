@@ -38,13 +38,13 @@ void App::setFirstResponder(Responder * responder) {
   Responder * previousResponder = m_firstResponder;
   m_firstResponder = responder;
   if (previousResponder) {
-    previousResponder->willResignFirstResponder();
     Responder * commonAncestor = previousResponder->commonAncestorWith(m_firstResponder);
     Responder * leafResponder = previousResponder;
     while (leafResponder != commonAncestor) {
       leafResponder->willExitResponderChain(m_firstResponder);
       leafResponder = leafResponder->parentResponder();
     }
+    previousResponder->willResignFirstResponder();
   }
   if (m_firstResponder) {
     Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);

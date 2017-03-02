@@ -9,7 +9,19 @@ extern "C" {
 /* ViewControllers are reponsible for
  *  - Building the view hierarchy
  *  - Handling user input
- */
+ *
+ * The methods viewWillAppear is called in the following order relatively to
+ * Responder's methods -didBecomeFirstResponder and didEnterResponderChain:
+ * - viewWillAppear
+ * - didEnterResponderChain
+ * - didBecomeFirstResponder
+ * The methods viewWillDisappear is called in the following order relatively to
+ * Responder's methods -willResignFirstResponder and willExitResponderChain:
+ * - viewWillDisappear
+ * - willExitResponderChain
+ * - willResignFirstResponder
+ * Both methods are always called after setting a view and layouting it
+ * subviews. */
 
 #include <escher/view.h>
 #include <escher/responder.h>

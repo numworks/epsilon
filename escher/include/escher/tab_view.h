@@ -22,7 +22,7 @@ protected:
   void logAttributes(std::ostream &os) const override;
 #endif
 private:
-  constexpr static KDCoordinate k_activeTabWidth = 5;
+  constexpr static KDCoordinate k_activeTabHeight = 5;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

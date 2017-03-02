@@ -18,6 +18,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  void viewWillAppear() override;
 private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;

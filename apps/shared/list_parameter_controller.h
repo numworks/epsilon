@@ -22,6 +22,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
+  bool handleEnterOnRow(int rowIndex);
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
   Function * m_function;

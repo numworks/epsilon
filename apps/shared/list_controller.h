@@ -12,9 +12,7 @@ class ListController : public ViewController, public HeaderViewDelegate, public 
 public:
   ListController(Responder * parentResponder, FunctionStore * functionStore, HeaderViewController * header, const char * text);
   View * view() override;
-  int numberOfRows() override;
   int numberOfColumns() override;
-  virtual KDCoordinate rowHeight(int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
@@ -30,6 +28,7 @@ public:
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
+  void configureFunction(Shared::Function * function);
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
 private:

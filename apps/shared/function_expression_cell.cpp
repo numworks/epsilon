@@ -3,7 +3,7 @@
 
 using namespace Poincare;
 
-namespace Graph {
+namespace Shared {
 
 FunctionExpressionCell::FunctionExpressionCell() :
   EvenOddCell(),

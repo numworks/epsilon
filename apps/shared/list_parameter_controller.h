@@ -14,7 +14,7 @@ public:
   View * view() override;
   const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Function * function);
+  virtual void setFunction(Function * function);
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;

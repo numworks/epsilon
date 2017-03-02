@@ -2,9 +2,9 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "sequence_title_cell.h"
+#include "../sequence_title_cell.h"
 #include "../sequence_store.h"
-#include "sequence_expression_cell.h"
+#include "../../shared/function_expression_cell.h"
 #include "type_parameter_controller.h"
 #include "../../shared/new_function_cell.h"
 #include "../../shared/list_controller.h"
@@ -12,24 +12,30 @@
 
 namespace Sequence {
 
-class ListController : public Shared::ListController, public SelectableTableViewDelegate {
+class ListController : public Shared::ListController {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header);
   const char * title() const override;
-  KDCoordinate rowHeight(int j) override;
+  int numberOfRows() override;
+  virtual KDCoordinate rowHeight(int j) override;
+  void willDisplayCellAtLocation(TableViewCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
-  static constexpr KDCoordinate k_emptySubRowHeight = 30;
+  bool handleEnter();
+  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   TableViewCell * titleCells(int index) override;
   TableViewCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(TableViewCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(TableViewCell * cell, int j) override;
-  constexpr static int k_maxNumberOfRows = 3;
-  SequenceTitleCell m_functionTitleCells[k_maxNumberOfRows];
-  SequenceExpressionCell m_expressionCells[k_maxNumberOfRows];
+  int sequenceIndexForRow(int j);
+  int sequenceDefinitionForRow(int j);
+  static constexpr KDCoordinate k_emptySubRowHeight = 30;
+  constexpr static int k_maxNumberOfRows = 9;
+  SequenceStore * m_sequenceStore;
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
+  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   StackViewController m_typeStackController;

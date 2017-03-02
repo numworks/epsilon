@@ -1,9 +1,10 @@
-#ifndef GRAPH_FUNCTION_EXPRESSION_CELL_H
-#define GRAPH_FUNCTION_EXPRESSION_CELL_H
+#ifndef SHARED_FUNCTION_EXPRESSION_CELL_H
+#define SHARED_FUNCTION_EXPRESSION_CELL_H
 
 #include <escher.h>
+#include "function.h"
 
-namespace Graph {
+namespace Shared {
 
 class FunctionExpressionCell : public EvenOddCell {
 public:

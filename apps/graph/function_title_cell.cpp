@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Graph {
 
 FunctionTitleCell::FunctionTitleCell(Orientation orientation, KDText::FontSize size) :
-  Shared::FunctionTitleCell(orientation, size),
+  Shared::FunctionTitleCell(orientation),
   m_bufferTextView(size, 0.5f, 0.5f)
 {
 }

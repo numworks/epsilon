@@ -7,13 +7,15 @@ using namespace Poincare;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore) :
+TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore,
+  KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
   m_expliciteCell(TextExpressionMenuListCell((char*)"Explicite")),
   m_singleRecurrenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 1")),
   m_doubleRecurenceCell(TextExpressionMenuListCell((char*)"Recurrence d'ordre 2")),
-  m_selectableTableView(SelectableTableView(this, this)),
-  m_sequenceStore(sequenceStore)
+  m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin)),
+  m_sequenceStore(sequenceStore),
+  m_sequence(nullptr)
 {
 }
 
@@ -27,6 +29,9 @@ TypeParameterController::~TypeParameterController() {
 }
 
 const char * TypeParameterController::title() const {
+  if (m_sequence) {
+    return "Type de suite";
+  }
   return "Choisir le type de suite";
 }
 
@@ -42,6 +47,12 @@ void TypeParameterController::didBecomeFirstResponder() {
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
+    if (m_sequence) {
+      m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+      StackViewController * stack = stackController();
+      stack->pop();
+      return true;
+    }
     Sequence * newSequence = m_sequenceStore->addEmptyFunction();
     newSequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
     app()->dismissModalViewController();
@@ -66,19 +77,31 @@ int TypeParameterController::reusableCellCount() {
 }
 
 KDCoordinate TypeParameterController::cellHeight() {
+  if (m_sequence) {
+    return Metric::ParameterCellHeight;
+  }
   return 50;
 }
 
 void TypeParameterController::willDisplayCellAtLocation(TableViewCell * cell, int i, int j) {
   const char * nextName = m_sequenceStore->firstAvailableName();
+  KDText::FontSize size = KDText::FontSize::Large;
+  if (m_sequence) {
+    nextName = m_sequence->name();
+    size = KDText::FontSize::Small;
+  }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   if (m_expressionLayouts[j]) {
     delete m_expressionLayouts[j];
     m_expressionLayouts[j] = nullptr;
   }
-  m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1, size), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   TextExpressionMenuListCell * myCell = (TextExpressionMenuListCell *)cell;
   myCell->setExpression(m_expressionLayouts[j]);
+}
+
+void TypeParameterController::setSequence(Sequence * sequence) {
+  m_sequence = sequence;
 }
 
 StackViewController * TypeParameterController::stackController() const {

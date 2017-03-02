@@ -9,6 +9,7 @@ app_objs += $(addprefix apps/shared/,\
   float_parameter_controller.o\
   function.o\
   function_store.o\
+  function_expression_cell.o\
   function_title_cell.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\

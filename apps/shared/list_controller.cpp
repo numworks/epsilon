@@ -16,28 +16,9 @@ View * ListController::view() {
   return &m_selectableTableView;
 }
 
-int ListController::numberOfRows() {
-  if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
-    return m_functionStore->numberOfFunctions();
-  }
-  return 1 + m_functionStore->numberOfFunctions();
-};
-
 int ListController::numberOfColumns() {
   return 2;
 };
-
-KDCoordinate ListController::rowHeight(int j) {
-  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
-    return k_emptyRowHeight;
-  }
-  Function * function = m_functionStore->functionAtIndex(j);
-  if (function->layout() == nullptr) {
-    return k_emptyRowHeight;
-  }
-  KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
-}
 
 KDCoordinate ListController::columnWidth(int i) {
   switch (i) {
@@ -146,6 +127,9 @@ void ListController::didBecomeFirstResponder() {
   } else {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
+  if (m_selectableTableView.selectedRow() >= numberOfRows()) {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -165,6 +149,12 @@ void ListController::viewWillAppear() {
 
 StackViewController * ListController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder());
+}
+
+void ListController::configureFunction(Shared::Function * function) {
+  StackViewController * stack = stackController();
+  parameterController()->setFunction(function);
+  stack->push(parameterController());
 }
 
 Responder * ListController::tabController() const{

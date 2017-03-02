@@ -18,6 +18,25 @@ const char * ListController::title() const {
   return "Fonctions";
 }
 
+int ListController::numberOfRows() {
+  if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
+    return m_functionStore->numberOfFunctions();
+  }
+  return 1 + m_functionStore->numberOfFunctions();
+};
+
+KDCoordinate ListController::rowHeight(int j) {
+  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
+    return k_emptyRowHeight;
+  }
+  Function * function = m_functionStore->functionAtIndex(j);
+  if (function->layout() == nullptr) {
+    return k_emptyRowHeight;
+  }
+  KDCoordinate functionSize = function->layout()->size().height();
+  return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
+}
+
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (Shared::ListController::handleEvent(event)) {
     return true;
@@ -103,11 +122,6 @@ TableViewCell * ListController::expressionCells(int index) {
   return &m_expressionCells[index];
 }
 
-void ListController::configureFunction(Shared::Function * function) {
-  StackViewController * stack = stackController();
-  parameterController()->setFunction(function);
-  stack->push(parameterController());
-}
 
 void ListController::willDisplayTitleCellAtIndex(TableViewCell * cell, int j) {
   FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;

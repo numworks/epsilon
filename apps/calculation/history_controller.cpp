@@ -108,6 +108,12 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(parentResponder());
     return true;
   }
+  if (event == Ion::Events::Back) {
+    EditExpressionController * editController = (EditExpressionController *)parentResponder();
+    m_selectableTableView.deselectTable();
+    app()->setFirstResponder(editController);
+    return true;
+  }
   return false;
 }
 

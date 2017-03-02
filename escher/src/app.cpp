@@ -17,16 +17,17 @@ App::App(Container * container, ViewController * rootViewController, const char 
 {
 }
 
-void App::processEvent(Ion::Events::Event event) {
+bool App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_firstResponder;
   bool didHandleEvent = false;
   while (responder) {
     didHandleEvent = responder->handleEvent(event);
     if (didHandleEvent) {
-      break;
+      return true;
     }
     responder = responder->parentResponder();
   }
+  return false;
 }
 
 Responder * App::firstResponder() {

@@ -57,16 +57,22 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::dispatchEvent(Ion::Events::Event event) {
+bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  // Home and Power buttons are not sent to apps. We handle them straight away.
   if (event == Ion::Events::Home) {
     switchTo(appAtIndex(0));
-    return;
+    return true;
   }
   if (event == Ion::Events::OnOff) {
     Ion::Power::suspend();
-    return;
+    return true;
   }
-  Container::dispatchEvent(event);
+  bool didProcessEvent = Container::dispatchEvent(event);
+  if (!didProcessEvent && event == Ion::Events::Back) {
+    switchTo(appAtIndex(0));
+    return true;
+  }
+  return didProcessEvent;
 }
 
 void AppsContainer::switchTo(App * app) {

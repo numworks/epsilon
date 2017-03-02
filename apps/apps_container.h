@@ -27,7 +27,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
-  void dispatchEvent(Ion::Events::Event event) override;
+  virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App * app) override;
   void refreshPreferences();
 private:

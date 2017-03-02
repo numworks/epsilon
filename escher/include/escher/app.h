@@ -24,7 +24,7 @@ public:
   App(Container * container, ViewController * rootViewController, const char * name = nullptr, const char * upperName = nullptr, const Image * icon = nullptr);
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
-  void processEvent(Ion::Events::Event event);
+  bool processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();

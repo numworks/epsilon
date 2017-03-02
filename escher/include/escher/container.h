@@ -20,7 +20,7 @@ public:
   Container();
   void run();
   App * activeApp();
-  virtual void dispatchEvent(Ion::Events::Event event) override;
+  virtual bool dispatchEvent(Ion::Events::Event event) override;
   virtual void switchTo(App * app);
 protected:
   virtual Window * window() = 0;

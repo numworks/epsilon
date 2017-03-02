@@ -24,22 +24,12 @@ App * Container::activeApp() {
   return m_activeApp;
 }
 
-void Container::dispatchEvent(Ion::Events::Event event) {
-#if ESCHER_LOG_EVENTS_BINARY
-  char message[2] = { (char)event.id(), 0};
-  ion_log_string(message);
-#endif
-#if ESCHER_LOG_EVENTS_NAME
-  const char * name = event.name();
-  if (name == nullptr) {
-    name = "UNDEFINED";
+bool Container::dispatchEvent(Ion::Events::Event event) {
+  if (m_activeApp->processEvent(event)) {
+    window()->redraw();
+    return true;
   }
-  ion_log_string("Ion::Events::");
-  ion_log_string(name);
-  ion_log_string("\n");
-#endif
-  m_activeApp->processEvent(event);
-  window()->redraw();
+  return false;
 }
 
 void Container::run() {

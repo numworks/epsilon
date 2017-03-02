@@ -32,6 +32,9 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
 }
 
 void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
+    return;
+  }
   if (cellAtLocationIsEditable(previousSelectedCellX, previousSelectedCellY)) {
     EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);

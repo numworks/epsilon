@@ -43,6 +43,12 @@ Expression * Sine::privateEvaluate(Context& context, AngleUnit angleUnit) const 
     delete evaluation;
     return new Complex(Complex::Float(NAN));
   }
+  /* Float case */
+  if (((Complex *)evaluation)->b() == 0) {
+    delete evaluation;
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  /* Complex case */
   Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
   Function * sinh = new HyperbolicSine();
   sinh->setArgument(&arg, 1, true);

@@ -42,6 +42,12 @@ Expression * Cosine::privateEvaluate(Context& context, AngleUnit angleUnit) cons
     delete evaluation;
     return new Complex(Complex::Float(NAN));
   }
+  /* Float case */
+  if (((Complex *)evaluation)->b() == 0) {
+    delete evaluation;
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  /* Complex case */
   Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
   Function * cosh = new HyperbolicCosine();
   cosh->setArgument(&arg, 1, true);

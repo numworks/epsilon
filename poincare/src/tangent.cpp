@@ -44,6 +44,12 @@ Expression * Tangent::privateEvaluate(Context& context, AngleUnit angleUnit) con
     delete evaluation;
     return new Complex(Complex::Float(NAN));
   }
+  /* Float case */
+  if (((Complex *)evaluation)->b() == 0) {
+    delete evaluation;
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  /* Complex case */
   Expression * arguments[2];
   arguments[0] = new Sine();
   ((Function *)arguments[0])->setArgument(&evaluation, 1, true);

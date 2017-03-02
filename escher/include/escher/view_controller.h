@@ -1,9 +1,9 @@
 #ifndef ESCHER_VIEW_CONTROLLER_H
 #define ESCHER_VIEW_CONTROLLER_H
 
+#include <kandinsky.h>
 extern "C" {
 #include <stdint.h>
-#include <kandinsky.h>
 }
 
 /* ViewControllers are reponsible for

@@ -179,11 +179,11 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
 bool Sequence::isDefined() {
   switch (m_type) {
     case Type::Explicite:
-      return layout() != nullptr;
+      return expression() != nullptr;
     case Type::SingleRecurrence:
-      return layout() != nullptr && m_firstInitialConditionLayout != nullptr;
+      return expression() != nullptr && m_firstInitialConditionExpression != nullptr;
     default:
-      return layout() != nullptr && m_firstInitialConditionLayout != nullptr && m_secondInitialConditionLayout != nullptr;
+      return expression() != nullptr && m_firstInitialConditionExpression != nullptr && m_secondInitialConditionExpression != nullptr;
   }
 }
 

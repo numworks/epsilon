@@ -1,15 +1,16 @@
 #include "sequence_toolbox.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include "../../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 
 using namespace Poincare;
 
 namespace Sequence {
 
-SequenceToolbox::SequenceToolbox() :
+SequenceToolbox::SequenceToolbox(SequenceStore * sequenceStore) :
   MathToolbox(),
-  m_numberOfAddedCells(0)
+  m_numberOfAddedCells(0),
+  m_sequenceStore(sequenceStore)
 {
 }
 
@@ -64,10 +65,14 @@ int SequenceToolbox::typeAtLocation(int i, int j) {
   return MathToolbox::typeAtLocation(i,j);
 }
 
-void SequenceToolbox::addCells(int numberOfAddedCells, char ** cellNames, char ** cellSubscript) {
-  m_numberOfAddedCells = numberOfAddedCells;
-  for (int i = 0; i < numberOfAddedCells; i++) {
-    m_addedCellLayout[i] = new BaselineRelativeLayout(new StringLayout(cellNames[i], 1, KDText::FontSize::Large), new StringLayout(cellSubscript[i], strlen(cellSubscript[i]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+void SequenceToolbox::addCells(int recurrenceDepth) {
+  m_numberOfAddedCells = 0;
+  for (int k = 0; k < m_sequenceStore->numberOfFunctions(); k++) {
+    Sequence * s = m_sequenceStore->functionAtIndex(k);
+    for (int j = 0; j < recurrenceDepth; j++) {
+      m_addedCellLayout[m_numberOfAddedCells] = new BaselineRelativeLayout(new StringLayout((char *)s->name(), 1, KDText::FontSize::Large), new StringLayout((char *)(j == 0? "n" : "n+1"), strlen((char *)(j == 0? "n" : "n+1")), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_numberOfAddedCells++;
+    }
   }
 }
 

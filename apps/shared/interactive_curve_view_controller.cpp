@@ -142,8 +142,10 @@ Responder * InteractiveCurveViewController::defaultController() {
 }
 
 void InteractiveCurveViewController::viewWillAppear() {
-  reloadBannerView();
+  /* Warning: init cursor parameter before reloading banner view. Indeed,
+   * reloading banner view needs an updated cursor to load the right data. */
   initCursorParameters();
+  reloadBannerView();
   curveView()->reload();
 }
 

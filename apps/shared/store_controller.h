@@ -21,6 +21,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   constexpr static int k_maxNumberOfEditableCells = 22;

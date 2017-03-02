@@ -86,15 +86,15 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Down || event == Ion::Events::OK) {
-    setActiveTab(m_selectedChildIndex);
+    setActiveTab(m_selectedChildIndex, event == Ion::Events::OK);
     return true;
   }
   return false;
 }
 
-void TabViewController::setActiveTab(int8_t i) {
+void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
   ViewController * activeVC = m_children[i];
-  if (i  != m_activeChildIndex) {
+  if (i  != m_activeChildIndex || forceReactive) {
     assert(i <= m_numberOfChildren);
     m_view.setActiveView(activeVC->view());
     m_view.m_tabView.setActiveIndex(i);
@@ -105,7 +105,7 @@ void TabViewController::setActiveTab(int8_t i) {
     if (i >= 0) {
       m_children[i]->viewWillAppear();
     }
-  } else {}
+  }
   app()->setFirstResponder(activeVC);
 }
 
@@ -119,9 +119,6 @@ void TabViewController::setSelectedTab(int8_t i) {
 
 void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_activeChildIndex);
-  if (m_activeChildIndex < 0) {
-    setActiveTab(0);
-  }
 }
 
 void TabViewController::didResignFirstResponder() {
@@ -149,6 +146,9 @@ const char * TabViewController::tabName(uint8_t index) {
 }
 
 void TabViewController::viewWillAppear() {
+  if (m_activeChildIndex < 0) {
+    setActiveTab(0);
+  }
   ViewController * activeVC = m_children[m_activeChildIndex];
   activeVC->viewWillAppear();
 }

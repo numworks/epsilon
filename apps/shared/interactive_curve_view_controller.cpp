@@ -44,8 +44,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
       headerViewController()->setSelectedButton(-1);
-      app()->setFirstResponder(this);
       curveView()->selectMainView(true);
+      app()->setFirstResponder(this);
       reloadBannerView();
       curveView()->reload();
       return true;
@@ -99,22 +99,24 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {
-  curveView()->selectMainView(true);
   uint32_t newModelVersion = modelVersion();
   if (m_modelVersion != newModelVersion) {
     m_modelVersion = newModelVersion;
     initRangeParameters();
     initCursorParameters();
+    reloadBannerView();
+    curveView()->reload();
   }
   uint32_t newRangeVersion = rangeVersion();
   if (m_rangeVersion != newRangeVersion) {
     m_rangeVersion = newRangeVersion;
     initCursorParameters();
+    reloadBannerView();
+    curveView()->reload();
   }
-  headerViewController()->setSelectedButton(-1);
-  // Reload graph view
-  reloadBannerView();
-  curveView()->reload();
+  if (!curveView()->isMainViewSelected()) {
+    headerViewController()->setSelectedButton(0);
+  }
 }
 
 ViewController * InteractiveCurveViewController::rangeParameterController() {
@@ -142,6 +144,8 @@ Responder * InteractiveCurveViewController::defaultController() {
 }
 
 void InteractiveCurveViewController::viewWillAppear() {
+  curveView()->selectMainView(true);
+  headerViewController()->setSelectedButton(-1);
   /* Warning: init cursor parameter before reloading banner view. Indeed,
    * reloading banner view needs an updated cursor to load the right data. */
   initCursorParameters();

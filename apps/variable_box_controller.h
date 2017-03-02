@@ -11,6 +11,7 @@ public:
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
   void viewWillAppear() override;
+  void viewWillDisappear() override;
 private:
   class ContentViewController : public ViewController, public ListViewDataSource {
   public:
@@ -29,6 +30,8 @@ private:
     int typeAtLocation(int i, int j) override;
     void setTextFieldCaller(TextField * textField);
     void reloadData();
+    void resetPage();
+    void deselectTable();
   private:
     enum class Page {
       RootMenu,

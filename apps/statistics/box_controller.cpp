@@ -43,8 +43,6 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 
 void BoxController::didBecomeFirstResponder() {
   m_view.selectMainView(true);
-  reloadBannerView();
-  m_view.reload();
 }
 
 bool BoxController::isEmpty() const {
@@ -77,6 +75,7 @@ void BoxController::reloadBannerView() {
 }
 
 void BoxController::viewWillAppear() {
+  m_view.selectMainView(true);
   reloadBannerView();
   m_view.reload();
 }

@@ -89,6 +89,18 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
 }
 
 void EditableCellTableViewController::didBecomeFirstResponder() {
+  if (m_selectableTableView.selectedRow() >= 0) {
+    int selectedRow = m_selectableTableView.selectedRow();
+    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
+    int selectedColumn = m_selectableTableView.selectedColumn();
+    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
+    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+    app()->setFirstResponder(&m_selectableTableView);
+  }
+}
+
+void EditableCellTableViewController::viewWillAppear() {
+  m_selectableTableView.reloadData();
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 1);
   } else {
@@ -98,11 +110,6 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
   }
-  app()->setFirstResponder(&m_selectableTableView);
-}
-
-void EditableCellTableViewController::viewWillAppear() {
-  m_selectableTableView.reloadData();
 }
 
 TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {

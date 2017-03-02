@@ -77,11 +77,11 @@ void App::didBecomeActive(Window * window) {
   View * view = m_modalViewController.view();
   assert(m_modalViewController.app() == this);
   window->setContentView(view);
+  m_modalViewController.viewWillAppear();
   if (m_firstResponder == nullptr) {
     setFirstResponder(&m_modalViewController);
   }
   window->redraw();
-  m_modalViewController.viewWillAppear();
 }
 
 void App::willBecomeInactive() {

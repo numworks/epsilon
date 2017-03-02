@@ -91,11 +91,11 @@ void HistogramController::didBecomeFirstResponder() {
     m_rangeVersion = rangeChecksum;
     initBarSelection();
   }
-  m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
-  headerViewController()->setSelectedButton(-1);
-  m_view.selectMainView(true);
-  reloadBannerView();
-  m_view.reload();
+  if (!m_view.isMainViewSelected()) {
+    headerViewController()->setSelectedButton(0);
+  } else {
+    m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
+  }
 }
 
 int HistogramController::numberOfButtons() const {
@@ -124,6 +124,8 @@ Responder * HistogramController::defaultController() {
 }
 
 void HistogramController::viewWillAppear() {
+  m_view.selectMainView(true);
+  headerViewController()->setSelectedButton(-1);
   reloadBannerView();
   m_view.reload();
 }

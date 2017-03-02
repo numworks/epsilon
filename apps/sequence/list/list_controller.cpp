@@ -31,7 +31,7 @@ Toolbox * ListController::toolboxForTextField(TextField * textField) {
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
-  m_sequenceToolbox.addCells(sequence->name(), recurrenceDepth);
+  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
   return &m_sequenceToolbox;
 }
 

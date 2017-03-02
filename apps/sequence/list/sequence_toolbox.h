@@ -14,7 +14,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
-  void addCells(const char * sequenceName, int recurrenceDepth);
+  void setExtraCells(const char * sequenceName, int recurrenceDepth);
 private:
   bool selectAddedCell(int selectedRow);
   int mathToolboxIndex(int index);

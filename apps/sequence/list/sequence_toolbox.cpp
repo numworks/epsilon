@@ -64,7 +64,7 @@ int SequenceToolbox::typeAtLocation(int i, int j) {
   return MathToolbox::typeAtLocation(i,mathToolboxIndex(j));
 }
 
-void SequenceToolbox::addCells(const char * sequenceName, int recurrenceDepth) {
+void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDepth) {
   m_numberOfAddedCells = recurrenceDepth;
   for (int j = 0; j < recurrenceDepth; j++) {
     m_addedCellLayout[j] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Large), new StringLayout((char *)(j == 0? "n" : "n+1"), strlen((char *)(j == 0? "n" : "n+1")), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);

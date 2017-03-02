@@ -129,10 +129,15 @@ void initClocks() {
   while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
   }
 #else
-  // The high-speed internal oscillator runs at 16 MHz. By default we're not
-  // using the PLL and would feed 96 MHz into the SDIO bus. The easiest way
-  // to enable SDIO access is to just use the system clock (16 MHz) for SDIO.
-  RCC.DCKCFGR2()->setCKSDIOSEL(1);
+  /* Some parts of the chip (USB, RNG, SDIO) use the PLL48CLK clock source which
+   * is not valid in the default configuration. It provides 96 MHz which is too
+   * high. Let's configure the PLL so that it feeds 48 MHz to PLL48CLK. */
+  RCC.PLLCFGR()->setPLLQ(4);
+
+  // Enable the PLL and wait for it to be ready
+  RCC.CR()->setPLLON(true);
+  while(!RCC.CR()->getPLLRDY()) {
+  }
 #endif
 
   // Peripheral clocks

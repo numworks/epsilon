@@ -2,9 +2,8 @@ SFLAGS += -Iion/include -DKD_CONFIG_H=1
 include ion/src/$(PLATFORM)/Makefile
 
 objs += $(addprefix ion/src/shared/, \
-  c.o \
   events.o \
-  log_integer.o \
+  log_uint32.o \
 )
 
 tests += $(addprefix ion/test/,\

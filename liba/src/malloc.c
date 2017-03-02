@@ -3,7 +3,7 @@
 #include <private/memconfig.h>
 
 #if LIBA_LOG_DYNAMIC_MEMORY
-#include <ion/c.h>
+#include <ion/log.h>
 #endif
 
 extern char _heap_start;

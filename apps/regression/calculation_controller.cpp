@@ -78,7 +78,10 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     app()->setFirstResponder(myCell);
   } else {
     if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY < 6) {
-      app()->setFirstResponder(t);
+      EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+      if (app()->firstResponder()->commonAncestorWith(myPreviousCell) == myPreviousCell) {
+        app()->setFirstResponder(t);
+      }
     }
   }
 }
@@ -222,6 +225,12 @@ int CalculationController::typeAtLocation(int i, int j) {
 
 void CalculationController::viewWillAppear() {
   m_selectableTableView.reloadData();
+}
+
+void CalculationController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_selectableTableView.deselectTable();
+  }
 }
 
 Responder * CalculationController::tabController() const {

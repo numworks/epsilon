@@ -42,7 +42,7 @@ protected:
   StackViewController * stackController() const;
 private:
   virtual Function * functionAtColumn(int i);
-  Responder * tabController() const;
+  Responder * tabController() const override;
   void configureAbscissa();
   void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

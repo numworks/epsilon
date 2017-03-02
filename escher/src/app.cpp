@@ -34,11 +34,24 @@ Responder * App::firstResponder() {
 }
 
 void App::setFirstResponder(Responder * responder) {
-  if (m_firstResponder) {
-    m_firstResponder->willResignFirstResponder();
-  }
+  Responder * previousResponder = m_firstResponder;
   m_firstResponder = responder;
+  if (previousResponder) {
+    previousResponder->willResignFirstResponder();
+    Responder * commonAncestor = previousResponder->commonAncestorWith(m_firstResponder);
+    Responder * leafResponder = previousResponder;
+    while (leafResponder != commonAncestor) {
+      leafResponder->willExitResponderChain(m_firstResponder);
+      leafResponder = leafResponder->parentResponder();
+    }
+  }
   if (m_firstResponder) {
+    Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);
+    Responder * leafResponder = m_firstResponder;
+    while (leafResponder != commonAncestor) {
+      leafResponder->didEnterResponderChain(previousResponder);
+      leafResponder = leafResponder->parentResponder();
+    }
     m_firstResponder->didBecomeFirstResponder();
   }
 }

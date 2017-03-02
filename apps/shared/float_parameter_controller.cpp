@@ -54,10 +54,14 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-  myCell->setEditing(false);
-  PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-  app()->setFirstResponder(myNewCell);
+  if (previousSelectedCellY >= 0) {
+    PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    myCell->setEditing(false);
+  }
+  if (t->selectedRow() >= 0) {
+    PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myNewCell);
+  }
 }
 
 TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {

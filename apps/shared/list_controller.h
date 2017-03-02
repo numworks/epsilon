@@ -27,6 +27,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;

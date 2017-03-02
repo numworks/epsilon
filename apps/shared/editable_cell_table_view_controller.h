@@ -24,6 +24,7 @@ public:
 
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   SelectableTableView m_selectableTableView;
 private:
@@ -34,6 +35,7 @@ private:
   virtual float dataAtLocation(int columnIndex, int rowIndex) = 0;
   virtual int numberOfElements() = 0;
   virtual int maxNumberOfElements() const = 0;
+  virtual Responder * tabController() const = 0;
 };
 
 }

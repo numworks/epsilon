@@ -28,6 +28,7 @@ public:
   const char * emptyMessage() override;
   Responder * defaultController() override;
   void viewWillAppear() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxNumberOfCharacters = 12;

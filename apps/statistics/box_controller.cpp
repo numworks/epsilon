@@ -81,4 +81,11 @@ void BoxController::viewWillAppear() {
   m_view.reload();
 }
 
+void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_view.selectMainView(false);
+    m_view.reload();
+  }
+}
+
 }

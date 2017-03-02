@@ -38,7 +38,9 @@ void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTabl
   if (cellAtLocationIsEditable(previousSelectedCellX, previousSelectedCellY)) {
     EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
-    app()->setFirstResponder(t);
+    if (app()->firstResponder() == myCell->editableTextCell()->textField()) {
+      app()->setFirstResponder(t);
+    }
   }
   if (cellAtLocationIsEditable(t->selectedColumn(), t->selectedRow())) {
     EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
@@ -112,6 +114,12 @@ void EditableCellTableViewController::viewWillAppear() {
     int selectedColumn = m_selectableTableView.selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+  }
+}
+
+void EditableCellTableViewController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_selectableTableView.deselectTable();
   }
 }
 

@@ -228,6 +228,13 @@ void ListController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
+void ListController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_selectableTableView.deselectTable();
+    footer()->setSelectedButton(-1);
+  }
+}
+
 StackViewController * ListController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }

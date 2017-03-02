@@ -19,6 +19,7 @@ public:
   const char * emptyMessage() override;
   Responder * defaultController() override;
   void viewWillAppear() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   Responder * tabController() const;
   void reloadBannerView();

@@ -70,6 +70,13 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    if (app()->firstResponder() != this) {
+      app()->setFirstResponder(this);
+      return true;
+    }
+    return false;
+  }
   if (app()->firstResponder() != this) {
     return false;
   }

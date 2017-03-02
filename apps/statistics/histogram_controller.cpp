@@ -129,6 +129,14 @@ void HistogramController::viewWillAppear() {
   m_view.reload();
 }
 
+void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_view.selectMainView(false);
+    header()->setSelectedButton(-1);
+    m_view.reload();
+  }
+}
+
 Responder * HistogramController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }

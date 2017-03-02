@@ -141,6 +141,12 @@ void CalculationController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
+void CalculationController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_selectableTableView.deselectTable();
+  }
+}
+
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }

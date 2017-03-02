@@ -12,8 +12,10 @@ public:
   virtual bool handleEvent(Ion::Events::Event event); // Default implementation does nothing
   virtual void didBecomeFirstResponder();
   virtual void willResignFirstResponder();
-
+  virtual void didEnterResponderChain(Responder * previousFirstResponder);
+  virtual void willExitResponderChain(Responder * nextFirstResponder);
   Responder * parentResponder() const;
+  Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder);
   App * app();
   virtual Toolbox * toolbox();

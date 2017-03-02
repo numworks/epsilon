@@ -9,7 +9,8 @@ namespace Home {
 Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
   ViewController(parentResponder),
   m_container(container),
-  m_selectableTableView(SelectableTableView(this, this, 0, 4, 0, 4, this, true, true, KDColorWhite, 28, Palette::YellowDark, Palette::GreyMiddle, 116))
+  m_selectableTableView(SelectableTableView(this, this, 0, k_sideMargin, 0, k_sideMargin, this, true, true,
+    KDColorWhite, k_indicatorThickness, Palette::YellowDark, Palette::GreyMiddle, k_indicatorMargin))
 {
 }
 

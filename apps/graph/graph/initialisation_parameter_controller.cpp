@@ -9,8 +9,8 @@ namespace Graph {
 
 InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_graphRange(graphRange)
 {
 }

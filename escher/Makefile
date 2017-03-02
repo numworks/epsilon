@@ -23,7 +23,6 @@ objs += $(addprefix escher/src/,\
   invocation.o\
   input_view_controller.o\
   list_view_data_source.o\
-  metric.o\
   modal_view_controller.o\
   palette.o\
   pointer_table_cell.o\

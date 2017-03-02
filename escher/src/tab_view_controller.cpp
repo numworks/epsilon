@@ -2,6 +2,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/tab_view_controller.h>
+#include <escher/metric.h>
 #include <escher/app.h>
 
 TabViewController::ContentView::ContentView() :
@@ -19,14 +20,14 @@ void TabViewController::ContentView::setActiveView(View * view) {
 void TabViewController::ContentView::layoutSubviews() {
   KDRect tabViewFrame = KDRect(
       0, 0,
-      m_frame.width(), k_tabHeight
+      m_frame.width(), Metric::TabHeight
       );
   m_tabView.setFrame(tabViewFrame);
   if (m_activeView) {
     KDRect activeViewFrame = KDRect(
-        0, k_tabHeight,
+        0, Metric::TabHeight,
         m_frame.width(),
-        m_frame.height() - k_tabHeight
+        m_frame.height() - Metric::TabHeight
         );
     m_activeView->setFrame(activeViewFrame);
   }

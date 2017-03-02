@@ -9,8 +9,8 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
   m_pageTitle{"Colonne f'(x)"},
   m_hideColumn(PointerTableCell((char*)"Masquer la colonne de la derivee")),
   m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_function(nullptr),
   m_valuesController(valuesController)
 {

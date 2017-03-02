@@ -53,8 +53,8 @@ static const char * sMessages[] = {
 
 LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin-ContentView::k_titleMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_contentView(&m_selectableTableView),
   m_law(nullptr),
   m_parametersController(ParametersController(nullptr))

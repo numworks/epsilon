@@ -15,8 +15,8 @@ CalculationController::CalculationController(Responder * parentResponder, Header
     EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
   m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
-  m_selectableTableView(SelectableTableView(this, this, Metric::TopMargin, Metric::RightMargin,
-    Metric::BottomMargin, Metric::LeftMargin, this, true, true, Palette::WallScreenDark)),
+  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true, true, Palette::WallScreenDark)),
   m_store(store)
 {
   for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {

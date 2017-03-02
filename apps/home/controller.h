@@ -29,6 +29,9 @@ private:
   int numberOfIcons();
   AppsContainer * m_container;
   SelectableTableView m_selectableTableView;
+  static constexpr KDCoordinate k_sideMargin = 4;
+  static constexpr KDCoordinate k_indicatorThickness = 28;
+  static constexpr KDCoordinate k_indicatorMargin = 116;
   static constexpr int k_numberOfColumns = 4;
   static constexpr int k_numberOfApps = 10;
   static constexpr int k_maxNumberOfCells = 16;

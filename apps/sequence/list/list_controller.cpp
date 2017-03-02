@@ -223,7 +223,7 @@ int ListController::sequenceDefinitionForRow(int j) {
 }
 
 void ListController::addEmptyFunction() {
-  app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, 32, 20, 20, 20);
+  app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
 }
 
 void ListController::editExpression(Shared::Function * function, Ion::Events::Event event) {

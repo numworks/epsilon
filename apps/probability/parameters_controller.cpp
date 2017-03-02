@@ -37,7 +37,7 @@ PointerTextView * ParametersController::ContentView::parameterDefinitionAtIndex(
 }
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  int tableHeight = m_selectableTableView->size().height()+ Metric::TopMargin + Metric::BottomMargin;
+  int tableHeight = m_selectableTableView->size().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
@@ -69,9 +69,9 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 void ParametersController::ContentView::layoutSubviews() {
   KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  KDCoordinate tableHeight = m_selectableTableView->size().height() + Metric::TopMargin + Metric::BottomMargin;
+  KDCoordinate tableHeight = m_selectableTableView->size().height() + Metric::CommonTopMargin + Metric::CommonBottomMargin;
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight));
-  m_nextButton.setFrame(KDRect(Metric::LeftMargin, titleHeight+tableHeight, bounds().width() - Metric::RightMargin - Metric::LeftMargin, k_buttonHeight));
+  m_nextButton.setFrame(KDRect(Metric::CommonLeftMargin, titleHeight+tableHeight, bounds().width() - Metric::CommonRightMargin - Metric::CommonLeftMargin, k_buttonHeight));
   KDCoordinate textHeight = KDText::stringSize("", KDText::FontSize::Small).height();
   KDCoordinate defOrigin = (titleHeight+tableHeight+k_buttonHeight)/2+(bounds().height()-textHeight)/2;
   m_secondParameterDefinition.setFrame(KDRectZero);

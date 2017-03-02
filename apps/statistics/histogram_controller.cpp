@@ -66,9 +66,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   }
   if (m_view.isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    moveSelection(direction);
-    reloadBannerView();
-    m_view.reload();
+    if (moveSelection(direction)) {
+      reloadBannerView();
+      m_view.reload();
+    }
     return true;
   }
   return false;
@@ -192,10 +193,11 @@ bool HistogramController::moveSelection(int deltaIndex) {
       newSelectedBarIndex--;
     } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0);
   }
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars()) {
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars() && m_selectedBarIndex != newSelectedBarIndex) {
     m_selectedBarIndex = newSelectedBarIndex;
     m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
-    return m_store->scrollToSelectedBarIndex(m_selectedBarIndex);
+    m_store->scrollToSelectedBarIndex(m_selectedBarIndex);
+    return true;
   }
   return false;
 }

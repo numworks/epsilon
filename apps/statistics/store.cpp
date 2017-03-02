@@ -63,7 +63,7 @@ float Store::startOfBarAtIndex(int index) {
 }
 
 float Store::endOfBarAtIndex(int index) {
-  return startOfBarAtIndex(index) + m_barWidth;
+  return startOfBarAtIndex(index+1);
 }
 
 int Store::numberOfBars() {

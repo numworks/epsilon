@@ -80,7 +80,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
   if (i == 0) {
-    const char * titles[k_totalNumberOfRows] = {"Effectif total", "Minimum", "Maximum", "Etendu",
+    const char * titles[k_totalNumberOfRows] = {"Effectif total", "Minimum", "Maximum", "Etendue",
       "Moyenne", "Ecart-type", "Variance", "Q1", "Q3", "Mediane", "Ecart interquartile", "Somme",
       "Somme des carres"};
     EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;

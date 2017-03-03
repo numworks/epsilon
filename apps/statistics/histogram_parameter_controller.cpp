@@ -8,14 +8,14 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
-  m_binWidthCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectanges : ")),
+  m_binWidthCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectangles : ")),
   m_minValueCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Debut de la serie : ")),
   m_store(store)
 {
 }
 
 const char * HistogramParameterController::title() const {
-  return "Histogramme";
+  return "Parametres de l'histogramme";
 }
 
 float HistogramParameterController::parameterAtIndex(int index) {

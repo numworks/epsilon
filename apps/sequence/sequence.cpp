@@ -173,7 +173,6 @@ bool Sequence::isDefined() {
   }
 }
 
-
 float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   float n = roundf(x);
   switch (m_type) {
@@ -227,6 +226,14 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
       return un1;
     }
   }
+}
+
+float Sequence::sumOfTermsBetweenAbscissa(float start, float end, Context * context) {
+  float result = 0.0f;
+  for (float i = roundf(start); i <= roundf(end); i = i + 1.0f) {
+    result += evaluateAtAbscissa(i, context);
+  }
+  return result;
 }
 
 }

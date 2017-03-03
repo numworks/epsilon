@@ -25,33 +25,42 @@ private:
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
   class ContentView : public View {
   public:
-    ContentView(GraphView * graphView);
-    void layoutSubviews() override;
-    GraphView * graphView();
-  private:
     class LegendView : public View {
     public:
       LegendView();
+      ~LegendView();
       void drawRect(KDContext * ctx, KDRect rect) const override;
+      void setLegendText(const char * text);
+      void setSumSubscript(float start);
+      void setSumSuperscript(float start, float end);
+      void setSequenceName(const char * sequenceName);
     private:
       void layoutSubviews() override;
       int numberOfSubviews() const override;
       View * subviewAtIndex(int index) override;
       ExpressionView m_sum;
-      PointerTextView m_legend;
+      Poincare::ExpressionLayout * m_sumLayout;
+      BufferTextView m_legend;
     };
+    ContentView(GraphView * graphView);
+    void layoutSubviews() override;
+    GraphView * graphView();
+    LegendView * legendView();
+  private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     GraphView * m_graphView;
     LegendView m_legendView;
-    constexpr static KDCoordinate k_legendHeight = 28;
+    constexpr static KDCoordinate k_legendHeight = 35;
   };
   ContentView m_contentView;
   CurveViewRange * m_graphRange;
   Sequence * m_sequence;
   Shared::CurveViewCursor * m_cursor;
   VerticalCursorView m_cursorView;
-  int step;
+  int m_step;
+  int m_startSum;
+  int m_endSum;
 };
 
 }

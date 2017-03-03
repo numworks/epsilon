@@ -30,6 +30,7 @@ public:
   Poincare::ExpressionLayout * secondInitialConditionName();
   bool isDefined() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
+  float sumOfTermsBetweenAbscissa(float start, float end, Poincare::Context * context);
 private:
   char symbol() const override;
   Type m_type;

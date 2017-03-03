@@ -16,9 +16,10 @@ public:
   GraphController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header);
   void viewWillAppear() override;
   const char * emptyMessage() override;
-  void displayTermSumController();
+  TermSumController * termSumController();
 private:
   BannerView * bannerView() override;
+  bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
   void initCursorParameters() override;
   CurveViewRange * interactiveCurveViewRange() override;

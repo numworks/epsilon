@@ -29,13 +29,17 @@ const char * GraphController::emptyMessage() {
   return "Aucune suite activee";
 }
 
-void GraphController::displayTermSumController() {
-  m_termSumController.setSequence(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
-  stackController()->push(&m_termSumController);
+TermSumController * GraphController::termSumController() {
+  return &m_termSumController;
 }
 
 BannerView * GraphController::bannerView() {
   return &m_bannerView;
+}
+
+bool GraphController::handleEnter() {
+  m_termSumController.setSequence(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  return FunctionGraphController::handleEnter();
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {

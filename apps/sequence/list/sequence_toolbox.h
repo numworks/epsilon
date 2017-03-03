@@ -8,6 +8,7 @@ namespace Sequence {
 class SequenceToolbox : public MathToolbox {
 public:
   SequenceToolbox();
+  ~SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index, int type) override;

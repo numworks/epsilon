@@ -19,6 +19,15 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   m_titleLayout[1] = new BaselineRelativeLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
 }
 
+StoreController::~StoreController() {
+  for (int i = 0; i < 2; i++) {
+    if (m_titleLayout[i]) {
+      delete m_titleLayout[i];
+      m_titleLayout[i] = nullptr;
+    }
+  }
+}
+
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   ::StoreController::willDisplayCellAtLocation(cell, i, j);
   if (cellAtLocationIsEditable(i, j)) {

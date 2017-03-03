@@ -13,6 +13,15 @@ SequenceToolbox::SequenceToolbox() :
 {
 }
 
+SequenceToolbox::~SequenceToolbox() {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    if (m_addedCellLayout[i]) {
+      delete m_addedCellLayout[i];
+      m_addedCellLayout[i] = nullptr;
+    }
+  }
+}
+
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK && stackDepth() == 0) {
     int selectedRow = m_selectableTableView.selectedRow();
@@ -65,6 +74,12 @@ int SequenceToolbox::typeAtLocation(int i, int j) {
 }
 
 void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDepth) {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    if (m_addedCellLayout[i]) {
+      delete m_addedCellLayout[i];
+      m_addedCellLayout[i] = nullptr;
+    }
+  }
   m_numberOfAddedCells = recurrenceDepth;
   for (int j = 0; j < recurrenceDepth; j++) {
     m_addedCellLayout[j] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Large), new StringLayout((char *)(j == 0? "n" : "n+1"), strlen((char *)(j == 0? "n" : "n+1")), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);

@@ -22,6 +22,11 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() override;
 private:
+  /* Warning: we do not need to delete the previous expression layout when
+   * deleting object or setting a new expression layout. Indeed, the expression
+   * layout is always possessed by a controller which only gives a pointer to
+   * the expression view (without cloning it). The named controller is then
+   * responsible for freeing the expression layout when required. */
   Poincare::ExpressionLayout * m_expressionLayout;
   float m_horizontalAlignment;
   float m_verticalAlignment;

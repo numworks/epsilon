@@ -40,14 +40,14 @@ const char * BinomialLaw::parameterDefinitionAtIndex(int index) {
 }
 
 float BinomialLaw::xMin() {
-  float min = floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
-  float max = xMax();
+  float min = 0.0f;
+  float max = m_parameter1;
   return min - k_displayLeftMarginRatio * (max - min);
 }
 
 float BinomialLaw::xMax() {
-  float min = floorf(m_parameter1*m_parameter2-5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
-  float max = ceilf(m_parameter1*m_parameter2+5.0f*sqrtf(m_parameter1*m_parameter2*(1-m_parameter2)));
+  float min = 0.0f;
+  float max = m_parameter1;
   if (max <= min) {
     max = min + 1.0f;
   }

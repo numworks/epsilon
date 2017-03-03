@@ -32,6 +32,7 @@ protected:
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static KDCoordinate k_cursorSize = 25;
+  constexpr static int k_externRectMargin = 1;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
@@ -50,7 +51,6 @@ protected:
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
 
 private:
-  constexpr static int k_externRectMargin = 1;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;

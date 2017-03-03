@@ -1,46 +1,21 @@
 #include <escher/chevron_view.h>
 #include <escher/palette.h>
 
-const KDColor chevronPixel[] = {
-  KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-  KDColorBlack, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite, KDColorWhite,
-};
-
-const KDColor highlightedChevronPixel[] = {
-  KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
-  KDColorBlack, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select, Palette::Select,
+const uint8_t chevronMask[ChevronView::k_chevronHeight][ChevronView::k_chevronWidth] = {
+  {0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+  {0x00, 0x00, 0x45, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+  {0x00, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF, 0xFF},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0xFF, 0xFF},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C, 0x45},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C, 0x45},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0xFF, 0xFF},
+  {0x00, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF, 0xFF},
+  {0x00, 0x00, 0x45, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+  {0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
 ChevronView::ChevronView() :
-  HighlightCell()
+  View()
 {
 }
 
@@ -53,14 +28,10 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate chevronHalfHeight = k_chevronHeight/2;
-  KDRect frame(width - k_chevronRightMargin, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
-  if (m_highlighted) {
-    ctx->fillRectWithPixels(frame, highlightedChevronPixel, (KDColor *)s_workingBuffer);
-  } else {
-    ctx->fillRectWithPixels(frame, chevronPixel, (KDColor *)s_workingBuffer);
-  }
+  KDRect frame(width - k_chevronRightMargin - k_chevronWidth, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
+  ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)chevronMask, s_workingBuffer);
 }
 
 KDSize ChevronView::minimalSizeForOptimalDisplay() {
-  return KDSize(k_chevronRightMargin, k_chevronHeight);
+  return KDSize(k_chevronRightMargin+k_chevronWidth, k_chevronHeight);
 }

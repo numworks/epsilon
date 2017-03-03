@@ -36,7 +36,6 @@ void Cell::reloadCell() {
   HighlightCell::reloadCell();
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
-  m_chevronView.setHighlighted(isHighlighted());
   if (isHighlighted()) {
     m_iconView.setImage(m_focusedIcon);
   } else {

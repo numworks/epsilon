@@ -8,7 +8,6 @@ class PointerTableCellWithChevron : public PointerTableCell {
 public:
   PointerTableCellWithChevron(char * label = nullptr, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
-  void setHighlighted(bool highlight) override;
 private:
   ChevronView m_accessoryView;
 };

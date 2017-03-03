@@ -54,6 +54,10 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void ZoomParameterController::viewWillAppear() {
+  m_contentView.curveView()->setOkView(nullptr);
+}
+
 void ZoomParameterController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
 }

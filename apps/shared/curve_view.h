@@ -18,17 +18,19 @@ public:
     Vertical = 1
   };
   CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
-    BannerView * bannerView = nullptr, View * cursorView = nullptr);
+    BannerView * bannerView = nullptr, View * cursorView = nullptr, View * okView = nullptr);
   virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
   void setBannerView(BannerView * bannerView);
+  void setOkView(View * okView);
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   constexpr static KDCoordinate k_labelMargin =  4;
+  constexpr static KDCoordinate k_okMargin =  10;
   constexpr static KDCoordinate k_labelGraduationLength =  6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
@@ -79,6 +81,7 @@ private:
   CurveViewCursor * m_curveViewCursor;
   BannerView * m_bannerView;
   View * m_cursorView;
+  View * m_okView;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
 };

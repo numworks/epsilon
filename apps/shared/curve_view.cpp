@@ -10,12 +10,13 @@ using namespace Poincare;
 namespace Shared {
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
-    View * cursorView) :
+    View * cursorView, View * okView) :
   View(),
   m_curveViewRange(curveViewRange),
   m_curveViewCursor(curveViewCursor),
   m_bannerView(bannerView),
   m_cursorView(cursorView),
+  m_okView(okView),
   m_drawnRangeVersion(0)
 {
 }
@@ -57,6 +58,10 @@ void CurveView::setCursorView(View * cursorView) {
 
 void CurveView::setBannerView(BannerView * bannerView) {
   m_bannerView = bannerView;
+}
+
+void CurveView::setOkView(View * okView) {
+  m_okView = okView;
 }
 
 float CurveView::min(Axis axis) const {
@@ -440,16 +445,34 @@ void CurveView::layoutSubviews() {
     }
     m_bannerView->setFrame(bannerFrame);
   }
+  if (m_okView != nullptr) {
+    KDCoordinate bannerHeight = 0;
+    if (m_bannerView != nullptr) {
+      bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
+    }
+    KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
+    KDRect okFrame(KDRect(bounds().width()- okSize.width()-k_okMargin, bounds().height()- bannerHeight-okSize.height()-k_okMargin, okSize));
+    if (!m_mainViewSelected) {
+      okFrame = KDRectZero;
+    }
+    m_okView->setFrame(okFrame);
+  }
 }
 
 int CurveView::numberOfSubviews() const {
-  return (m_bannerView != nullptr) + (m_cursorView != nullptr);
+  return (m_bannerView != nullptr) + (m_cursorView != nullptr) + (m_okView != nullptr);
 };
 
 View * CurveView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(index >= 0 && index < 3);
   if (index == 0 && m_bannerView != nullptr) {
     return m_bannerView;
+  }
+    if (index == 0 && m_bannerView != nullptr) {
+    return m_bannerView;
+  }
+  if (index == 1 && m_okView != nullptr) {
+    return m_okView;
   }
   return m_cursorView;
 }

@@ -5,6 +5,7 @@
 #include "interactive_curve_view_range.h"
 #include "curve_view.h"
 #include "cursor_view.h"
+#include "ok_view.h"
 #include "banner_view.h"
 #include "range_parameter_controller.h"
 #include "zoom_parameter_controller.h"
@@ -50,6 +51,7 @@ protected:
   virtual CurveView * curveView() = 0;
   CurveViewCursor m_cursor;
   CursorView m_cursorView;
+  OkView m_okView;
 private:
   uint32_t m_modelVersion;
   uint32_t m_rangeVersion;

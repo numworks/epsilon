@@ -38,6 +38,7 @@ void TermSumController::viewWillAppear() {
   m_contentView.graphView()->setVerticalCursor(true);
   m_contentView.graphView()->setCursorView(&m_cursorView);
   m_contentView.graphView()->setBannerView(nullptr);
+  m_contentView.graphView()->setOkView(nullptr);
   m_contentView.graphView()->selectMainView(true);
   m_contentView.graphView()->setHighlightColor(false);
   m_contentView.graphView()->setHighlight(-1.0f,-1.0f);

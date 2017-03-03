@@ -24,6 +24,7 @@
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
+#include <escher/key_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/metric.h>
 #include <escher/modal_view_controller.h>

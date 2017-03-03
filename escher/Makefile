@@ -22,6 +22,7 @@ objs += $(addprefix escher/src/,\
   image_view.o\
   invocation.o\
   input_view_controller.o\
+  key_view.o\
   list_view_data_source.o\
   modal_view_controller.o\
   palette.o\

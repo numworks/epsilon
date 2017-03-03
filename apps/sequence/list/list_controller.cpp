@@ -231,4 +231,20 @@ void ListController::editExpression(Shared::Function * function, Ion::Events::Ev
   editExpression(sequence, sequenceDefinitionForRow(m_selectableTableView.selectedRow()), event);
 }
 
+void ListController::reinitExpression(Shared::Function * function) {
+  Sequence * sequence = (Sequence *)function;
+  switch (sequenceDefinitionForRow(m_selectableTableView.selectedRow())) {
+    case 1:
+     sequence->setFirstInitialConditionContent("");
+     break;
+   case 2:
+     sequence->setSecondInitialConditionContent("");
+     break;
+   default:
+     sequence->setContent("");
+     break;
+  }
+  m_selectableTableView.reloadData();
+}
+
 }

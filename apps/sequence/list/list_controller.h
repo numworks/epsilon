@@ -35,6 +35,7 @@ private:
   int sequenceDefinitionForRow(int j);
   void addEmptyFunction() override;
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;
+  void reinitExpression(Shared::Function * function) override;
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
   constexpr static int k_maxNumberOfRows = 9;
   SequenceStore * m_sequenceStore;

@@ -28,7 +28,8 @@ public:
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
-  void configureFunction(Shared::Function * function);
+  void configureFunction(Function * function);
+  virtual void reinitExpression(Function * function);
   SelectableTableView m_selectableTableView;
   FunctionStore * m_functionStore;
 private:

@@ -54,10 +54,6 @@ void TitleBarView::refreshPreferences() {
     strlcpy(buffer, "sci/", 5);
     numberOfChar += 4;
   }
-  if (Preferences::sharedPreferences()->numberType() == Preferences::NumberType::Complex) {
-    strlcpy(buffer+numberOfChar, "cplx/", 6);
-    numberOfChar += 5;
-  }
   if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Radian) {
     strlcpy(buffer+numberOfChar, "rad", 4);
   } else {

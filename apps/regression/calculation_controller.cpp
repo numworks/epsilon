@@ -1,6 +1,8 @@
 #include "calculation_controller.h"
 #include "../constant.h"
 #include "../apps_container.h"
+#include "../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../poincare/src/layout/string_layout.h"
 #include <poincare.h>
 #include <assert.h>
 
@@ -13,6 +15,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   ButtonRowDelegate(header, nullptr),
   m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
     EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
+  m_r2TitleCell(1.0f, 0.5f),
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
   m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
   m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
@@ -23,6 +26,14 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationCells[k].setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[k].setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[k].setParentResponder(&m_selectableTableView);
+  }
+  m_r2Layout = new BaselineRelativeLayout(new StringLayout("r", 1, KDText::FontSize::Small), new StringLayout("2", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+}
+
+CalculationController::~CalculationController() {
+  if (m_r2Layout) {
+    delete m_r2Layout;
+    m_r2Layout = nullptr;
   }
 }
 
@@ -120,14 +131,20 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   if (i == 0) {
+    if (j == 10) {
+      EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
+      myCell->setExpression(m_r2Layout);
+      return;
+    }
     EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;
     if (j == 0) {
       myCell->setText("");
       return;
     }
-    const char * titles[k_totalNumberOfRows-1] = {"Moyenne", "Somme", "Somme des carres", "Ecart-type", "Variance",
-      "Nombre de points", "Covariance", "Sxy", "r", "r2"};
     myCell->setAlignment(1.0f, 0.5f);
+    const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};
+    const char * titles[k_totalNumberOfRows-1] = {"Moyenne", "Somme", "Somme des carres", "Ecart-type", "Variance",
+      "Nombre de points", "Covariance", sxy, "r", "r2"};
     myCell->setText(titles[j-1]);
     return;
   }
@@ -182,14 +199,18 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == 0) {
-    assert(index < k_totalNumberOfRows + 2);
+    assert(index < k_maxNumberOfDisplayableRows);
     return &m_titleCells[index];
   }
   if (type == 1) {
     assert(index == 0);
-    return &m_columnTitleCell;
+    return &m_r2TitleCell;
   }
   if (type == 2) {
+    assert(index == 0);
+    return &m_columnTitleCell;
+  }
+  if (type == 3) {
     assert(index < k_totalNumberOfRows/2);
     return &m_doubleCalculationCells[index];
   }
@@ -205,22 +226,28 @@ int CalculationController::reusableCellCount(int type) {
     return 1;
   }
   if (type == 2) {
+    return 1;
+  }
+  if (type == 3) {
     return k_maxNumberOfDisplayableRows/2;
   }
   return k_maxNumberOfDisplayableRows/2;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
+  if (i == 0 && j == 10) {
+    return 1;
+  }
   if (i == 0) {
     return 0;
   }
   if (j == 0) {
-    return 1;
-  }
-  if (j > 0 && j < 6) {
     return 2;
   }
-  return 3;
+  if (j > 0 && j < 6) {
+    return 3;
+  }
+  return 4;
 }
 
 void CalculationController::viewWillAppear() {

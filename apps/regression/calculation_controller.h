@@ -11,6 +11,7 @@ class CalculationController : public ViewController, public ButtonRowDelegate, p
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
+  ~CalculationController();
   const char * title() const override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -43,6 +44,8 @@ private:
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddExpressionCell m_r2TitleCell;
+  Poincare::ExpressionLayout * m_r2Layout;
   EvenOddDoubleBufferTextCell m_columnTitleCell;
   EvenOddDoubleBufferTextCell m_doubleCalculationCells[k_maxNumberOfDisplayableRows/2];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows/2];

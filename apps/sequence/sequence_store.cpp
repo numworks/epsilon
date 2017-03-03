@@ -56,6 +56,10 @@ int SequenceStore::maxNumberOfFunctions() {
   return k_maxNumberOfSequences;
 }
 
+char SequenceStore::symbol() const {
+  return 'n';
+}
+
 const char *  SequenceStore::firstAvailableName() {
   for (int k = 0; k < k_maxNumberOfSequences; k++) {
     int j = 0;

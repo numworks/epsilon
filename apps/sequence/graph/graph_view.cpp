@@ -8,7 +8,11 @@ GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * 
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_sequenceStore(sequenceStore),
-  m_verticalCursor(false)
+  m_verticalCursor(false),
+  m_highlightedDotStart(-1),
+  m_highlightedDotEnd(-1),
+  m_highlightColor(false),
+  m_selectedSequence(nullptr)
 {
 }
 
@@ -24,12 +28,50 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         continue;
       }
       drawDot(ctx, rect, x, y, s->color());
+      if (x >= m_highlightedDotStart && x <= m_highlightedDotEnd && s == m_selectedSequence) {
+        KDColor color = m_highlightColor ? s->color() : KDColorBlack;
+        if (y >= 0.0f) {
+          drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
+        } else {
+          drawSegment(ctx, rect, Axis::Vertical, x, y, 0.0f, color, 1);
+        }
+      }
     }
   }
 }
 
 void GraphView::setVerticalCursor(bool verticalCursor) {
   m_verticalCursor = verticalCursor;
+}
+
+void GraphView::reload() {
+  FunctionGraphView::reload();
+  markRectAsDirty(bounds());
+}
+
+void GraphView::selectSequence(Sequence * sequence) {
+  if (m_selectedSequence != sequence) {
+    reload();
+    m_selectedSequence = sequence;
+    reload();
+  }
+}
+
+void GraphView::setHighlight(int start, int end) {
+  if (m_highlightedDotStart != start || m_highlightedDotEnd != end) {
+    reload();
+    m_highlightedDotStart = start;
+    m_highlightedDotEnd = end;
+    reload();
+  }
+}
+
+void GraphView::setHighlightColor(bool highlightColor) {
+  if (m_highlightColor != highlightColor) {
+    reload();
+    m_highlightColor = highlightColor;
+    reload();
+  }
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {

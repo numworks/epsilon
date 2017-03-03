@@ -14,6 +14,10 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
   compute(0);
 }
 
+Calculation::Type FiniteIntegralCalculation::type() {
+  return Type::FiniteIntegral;
+}
+
 int FiniteIntegralCalculation::numberOfParameters() {
   return 3;
 }

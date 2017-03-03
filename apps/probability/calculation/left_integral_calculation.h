@@ -9,6 +9,7 @@ class LeftIntegralCalculation : public Calculation {
 public:
   LeftIntegralCalculation();
   ~LeftIntegralCalculation() override {};
+  Type type() override;
   int numberOfParameters() override;
   const char * legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;

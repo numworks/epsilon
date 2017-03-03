@@ -9,6 +9,7 @@ class FiniteIntegralCalculation : public Calculation {
 public:
   FiniteIntegralCalculation();
   ~FiniteIntegralCalculation() override {};
+  Type type() override;
   int numberOfParameters() override;
   const char * legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;

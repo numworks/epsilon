@@ -7,8 +7,14 @@ namespace Probability {
 
 class Calculation {
 public:
+  enum class Type : uint8_t{
+    LeftIntegral,
+    RightIntegral,
+    FiniteIntegral
+  };
   Calculation();
   virtual ~Calculation() {};
+  virtual Type type() = 0;
   void setLaw(Law * law);
   virtual int numberOfParameters() = 0;
   virtual const char * legendForParameterAtIndex(int index) = 0;

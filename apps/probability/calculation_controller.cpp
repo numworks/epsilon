@@ -203,6 +203,14 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
+  if (m_calculation->type() != Calculation::Type::FiniteIntegral && m_highlightedSubviewIndex == 2) {
+    if (floatBody < 0.0f) {
+      floatBody = 0.0f;
+    }
+    if (floatBody > 1.0f) {
+      floatBody = 1.0f;
+    }
+  }
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);

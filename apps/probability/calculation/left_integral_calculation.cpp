@@ -13,6 +13,10 @@ LeftIntegralCalculation::LeftIntegralCalculation() :
   compute(0);
 }
 
+Calculation::Type LeftIntegralCalculation::type() {
+  return Type::LeftIntegral;
+}
+
 int LeftIntegralCalculation::numberOfParameters() {
   return 2;
 }

@@ -24,6 +24,10 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
+  if (isnan(floatBody)) {
+    app()->displayWarning("Valeur non definie");
+    return false;
+  }
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();

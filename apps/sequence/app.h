@@ -5,6 +5,7 @@
 #include <poincare.h>
 #include "local_context.h"
 #include "sequence_store.h"
+#include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/text_field_delegate_app.h"
@@ -23,7 +24,7 @@ private:
   ListController m_listController;
   HeaderViewController m_listHeader;
   StackViewController m_listStackViewController;
-  ValuesController m_graphController;
+  GraphController m_graphController;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   HeaderViewController m_graphHeader;
   StackViewController m_graphStackViewController;

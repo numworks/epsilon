@@ -10,7 +10,7 @@ float Law::xGridUnit() {
 
 float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
   if (!isContinuous()) {
-    int end = floorf(x);
+    int end = roundf(x);
     float result = 0.0f;
     for (int k = 0; k <=end; k++) {
       result += evaluateAtAbscissa(k);
@@ -21,7 +21,10 @@ float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
 }
 
 float Law::rightIntegralFromAbscissa(float x) const {
-  return 1.0f - cumulativeDistributiveFunctionAtAbscissa(x);
+  if (isContinuous()) {
+    return 1.0f - cumulativeDistributiveFunctionAtAbscissa(x);
+  }
+  return 1.0f - cumulativeDistributiveFunctionAtAbscissa(x-1.0f);
 }
 
 float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
@@ -31,8 +34,8 @@ float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
   if (isContinuous()) {
     return cumulativeDistributiveFunctionAtAbscissa(b) - cumulativeDistributiveFunctionAtAbscissa(a);
   }
-  int start = ceilf(a);
-  int end = floorf(b);
+  int start = roundf(a);
+  int end = roundf(b);
   float result = 0.0f;
   for (int k = start; k <=end; k++) {
     result += evaluateAtAbscissa(k);

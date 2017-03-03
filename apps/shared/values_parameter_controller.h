@@ -7,7 +7,7 @@
 namespace Shared {
 class ValuesParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
+  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, char symbol);
 
   View * view() override;
   const char * title() const override;
@@ -19,6 +19,8 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCell = 3;
+  constexpr static int k_maxNumberOfCharsInTitle = 10;
+  char m_pageTitle[10];
   PointerTableCell m_deleteColumn;
   PointerTableCellWithChevron m_copyColumn;
   PointerTableCellWithChevron m_setInterval;

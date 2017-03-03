@@ -1,25 +1,31 @@
 #ifndef SEQUENCE_VALUES_CONTROLLER_H
 #define SEQUENCE_VALUES_CONTROLLER_H
 
-#include <escher.h>
 #include "../sequence_store.h"
+#include "../sequence_title_cell.h"
+#include "../../shared/values_controller.h"
 
 namespace Sequence {
 
-class ValuesController : public ViewController, public HeaderViewDelegate,  public AlternateEmptyViewDelegate {
+class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, HeaderViewController * header);
-  const char * title() const override;
-  View * view() override;
-  void didBecomeFirstResponder() override;
-  int numberOfButtons() const override;
-  Button * buttonAtIndex(int index) override;
-  bool isEmpty() const override;
+  int numberOfColumns() override;
+  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   const char * emptyMessage() override;
-  Responder * defaultController() override;
 private:
-  SolidColorView m_view;
+  int maxNumberOfCells() override;
+  int maxNumberOfFunctions() override;
+  constexpr static int k_maxNumberOfCells = 30;
+  constexpr static int k_maxNumberOfSequences = 3;
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
+  SequenceTitleCell * functionTitleCells(int j) override;
+  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  EvenOddBufferTextCell * floatCells(int j) override;
   SequenceStore * m_sequenceStore;
+  SequenceStore * functionStore() const override;
+  Shared::ValuesFunctionParameterController m_sequenceParameterController;
+  Shared::ValuesFunctionParameterController * functionParameterController() override;
 };
 
 }

@@ -1,7 +1,7 @@
 #include "sequence.h"
 #include "local_context.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
+#include "../../poincare/src/layout/baseline_relative_layout.h"
 #include <string.h>
 
 using namespace Shared;
@@ -18,6 +18,7 @@ Sequence::Sequence(const char * text, KDColor color) :
   m_secondInitialConditionExpression(nullptr),
   m_firstInitialConditionLayout(nullptr),
   m_secondInitialConditionLayout(nullptr),
+  m_nameLayout(nullptr),
   m_definitionName(nullptr),
   m_firstInitialConditionName(nullptr),
   m_secondInitialConditionName(nullptr)
@@ -41,6 +42,10 @@ Sequence::~Sequence() {
   if (m_secondInitialConditionExpression != nullptr) {
     delete m_secondInitialConditionExpression;
     m_secondInitialConditionExpression = nullptr;
+  }
+  if (m_nameLayout != nullptr) {
+    delete m_nameLayout;
+    m_nameLayout = nullptr;
   }
   if (m_definitionName != nullptr) {
     delete m_definitionName;
@@ -70,6 +75,10 @@ Sequence::Type Sequence::type() {
 
 void Sequence::setType(Type type) {
   m_type = type;
+  if (m_nameLayout != nullptr) {
+    delete m_nameLayout;
+    m_nameLayout = nullptr;
+  }
   if (m_definitionName != nullptr) {
     delete m_definitionName;
     m_definitionName = nullptr;
@@ -82,6 +91,7 @@ void Sequence::setType(Type type) {
     delete m_secondInitialConditionName;
     m_secondInitialConditionName = nullptr;
   }
+  m_nameLayout = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   if (m_type == Type::Explicite) {
     m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
@@ -148,6 +158,10 @@ char Sequence::symbol() const {
 
 int Sequence::numberOfElements() {
   return (int)m_type + 1;
+}
+
+Poincare::ExpressionLayout * Sequence::nameLayout() {
+  return m_nameLayout;
 }
 
 Poincare::ExpressionLayout * Sequence::definitionName() {

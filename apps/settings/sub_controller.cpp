@@ -121,7 +121,7 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
       break;
     case 2:
-      Preferences::sharedPreferences()->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+      Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
       break;
     case 3:
       GlobalPreferences::sharedGlobalPreferences()->setLanguage((GlobalPreferences::Language)valueIndex);

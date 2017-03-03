@@ -55,9 +55,10 @@ Expression * AbsoluteValue::privateEvaluate(Context& context, AngleUnit angleUni
   return result;
 }
 
-ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
-  return new AbsoluteValueLayout(m_args[0]->createLayout(floatDisplayMode));
+  assert(complexFormat != ComplexFormat::Default);
+  return new AbsoluteValueLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

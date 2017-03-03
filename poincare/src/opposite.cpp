@@ -53,12 +53,13 @@ Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) co
   return result;
 }
 
-ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(floatDisplayMode)) : m_operand->createLayout(floatDisplayMode);
+  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat)) : m_operand->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(children_layouts, 2);
 }
 

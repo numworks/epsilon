@@ -47,12 +47,13 @@ float Product::privateApproximate(Context& context, AngleUnit angleUnit) const {
   return result;
 }
 
-ExpressionLayout * Product::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Product::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
   childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode);
-  return new ProductLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(floatDisplayMode), m_args[0]->createLayout(floatDisplayMode));
+  childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode, complexFormat);
+  return new ProductLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(floatDisplayMode, complexFormat), m_args[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
 Expression * Product::privateEvaluate(Context& context, AngleUnit angleUnit) const {

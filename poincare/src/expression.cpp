@@ -38,12 +38,22 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
-ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
     case FloatDisplayMode::Default:
-      return privateCreateLayout(Preferences::sharedPreferences()->displayMode());
+      switch (complexFormat) {
+        case ComplexFormat::Default:
+          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
+        default:
+          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), complexFormat);
+      }
     default:
-      return privateCreateLayout(floatDisplayMode);
+      switch (complexFormat) {
+        case ComplexFormat::Default:
+          return privateCreateLayout(floatDisplayMode, Preferences::sharedPreferences()->complexFormat());
+        default:
+          return privateCreateLayout(floatDisplayMode, complexFormat);
+      }
   }
 }
 

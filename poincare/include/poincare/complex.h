@@ -2,6 +2,7 @@
 #define POINCARE_COMPLEX_H
 
 #include <poincare/leaf_expression.h>
+#include <poincare/preferences.h>
 #include <math.h>
 
 namespace Poincare {
@@ -19,8 +20,8 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize) override;
   float a();
   float b();
-  float r();
-  float th();
+  float r() const;
+  float th() const;
   float absoluteValue();
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
@@ -41,7 +42,7 @@ public:
 private:
   Complex(float a, float b);
   constexpr static int k_numberOfSignificantDigits = 7;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   /* We here define the buffer size to write the lengthest float possible.
@@ -50,11 +51,11 @@ private:
    * shorter. */
   constexpr static int k_maxFloatBufferLength = 7+6+1;
   /* We here define the buffer size to write the lengthest complex possible.
-   * The worst case has the form -1.999999E-38-1.999999E-38 (13+13+1 char) */
-  constexpr static int k_maxComplexBufferLength = 13+13+1;
+   * The worst case has the form -1.999999E-38*e^(-1.999999E-38*i) (13+13+7+1 char) */
+  constexpr static int k_maxComplexBufferLength = 13+13+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode FloatDisplayMode) const;
+  int convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode FloatDisplayMode, ComplexFormat complexFormat) const;
   static int convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode);
   /* This function prints the int i in the buffer with a '.' at the position
    * specified by the decimalMarkerPosition. It starts printing at the end of the

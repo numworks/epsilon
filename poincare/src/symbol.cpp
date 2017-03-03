@@ -39,8 +39,9 @@ const char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   if (m_name == SpecialSymbols::Ans) {
     return new StringLayout("ans", 4);
   }

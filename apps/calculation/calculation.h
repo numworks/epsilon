@@ -16,7 +16,8 @@ public:
   Calculation & operator= (const Calculation & other) = delete;
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
-  const char * text();
+  const char * inputText();
+  const char * outputText();
   Poincare::Expression * input();
   Poincare::ExpressionLayout * inputLayout();
   Poincare::Expression * output();
@@ -25,7 +26,8 @@ public:
   bool isEmpty();
   constexpr static int k_maximalExpressionTextLength = 255;
 private:
-  char m_text[k_maximalExpressionTextLength];
+  char m_inputText[k_maximalExpressionTextLength];
+  char m_outputText[k_maximalExpressionTextLength];
   Poincare::Expression * m_input;
   Poincare::ExpressionLayout * m_inputLayout;
   Poincare::Expression * m_output;

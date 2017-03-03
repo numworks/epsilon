@@ -26,7 +26,7 @@ public:
   float determinant(Context& context, AngleUnit angleUnit) const;
   Expression * inverse(Context& context, AngleUnit angleUnit) const;
 private:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   MatrixData * m_matrixData;

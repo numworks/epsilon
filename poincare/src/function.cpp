@@ -67,14 +67,15 @@ Expression * Function::clone() const {
   return this->cloneWithDifferentOperands(m_args, m_numberOfArguments, true);
 }
 
-ExpressionLayout * Function::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Function::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** grandChildrenLayouts = (ExpressionLayout **)malloc((2*m_numberOfArguments-1)*sizeof(ExpressionLayout *));
   int layoutIndex = 0;
-  grandChildrenLayouts[layoutIndex++] = m_args[0]->createLayout(floatDisplayMode);
+  grandChildrenLayouts[layoutIndex++] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
   for (int i = 1; i < m_numberOfArguments; i++) {
     grandChildrenLayouts[layoutIndex++] = new StringLayout(",", 1);
-    grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout(floatDisplayMode);
+    grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout(floatDisplayMode, complexFormat);
   }
   ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*m_numberOfArguments-1);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));

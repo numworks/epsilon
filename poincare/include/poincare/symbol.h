@@ -24,7 +24,7 @@ public:
 private:
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   const char m_name;
 };
 

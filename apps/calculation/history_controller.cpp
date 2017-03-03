@@ -45,11 +45,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     if (subviewType == HistoryViewCell::SubviewType::Input) {
-      editController->setTextBody(calculation->text());
+      editController->setTextBody(calculation->inputText());
     } else {
-      char outputText[Calculation::k_maximalExpressionTextLength];
-      calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
-      editController->setTextBody(outputText);
+      editController->setTextBody(calculation->outputText());
     }
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(editController);
@@ -63,11 +61,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     const char * text;
     if (subviewType == HistoryViewCell::SubviewType::Input) {
-      text = calculation->text();
+      text = calculation->inputText();
     } else {
-      char outputText[Calculation::k_maximalExpressionTextLength];
-      calculation->output()->writeTextInBuffer(outputText, Calculation::k_maximalExpressionTextLength);
-      text = outputText;
+      text = calculation->outputText();
     }
     m_selectableTableView.deselectTable();
     App * calculationApp = (App *)app();

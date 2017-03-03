@@ -4,10 +4,10 @@ extern "C" {
 #include <math.h>
 #include <stdlib.h>
 }
+#include "layout/baseline_relative_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
-#include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
 
@@ -37,14 +37,15 @@ float Logarithm::privateApproximate(Context& context, AngleUnit angleUnit) const
   return log10f(m_args[1]->approximate(context, angleUnit))/log10f(m_args[0]->approximate(context, angleUnit));
 }
 
-ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   if (m_numberOfArguments == 1) {
-    return Function::privateCreateLayout(floatDisplayMode);
+    return Function::privateCreateLayout(floatDisplayMode, complexFormat);
   }
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(floatDisplayMode), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(floatDisplayMode));
+  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
+  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(floatDisplayMode, complexFormat));
   return new HorizontalLayout(childrenLayouts, 2);
 }
 

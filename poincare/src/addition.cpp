@@ -13,12 +13,13 @@ Expression::Type Addition::type() const {
   return Type::Addition;
 }
 
-ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
-  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode);
+  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
   children_layouts[1] = new StringLayout("+", 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode)) : m_operands[1]->createLayout(floatDisplayMode);
+  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(children_layouts, 3);
 }
 

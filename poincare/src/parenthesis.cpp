@@ -33,9 +33,10 @@ Expression * Parenthesis::clone() const {
   return this->cloneWithDifferentOperands((Expression**) &m_operand, 1, true);
 }
 
-ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
-  return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode));
+  assert(complexFormat != ComplexFormat::Default);
+  return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat));
 }
 
 float Parenthesis::privateApproximate(Context& context, AngleUnit angleUnit) const {

@@ -320,8 +320,9 @@ Expression::Type Integer::type() const {
   return Type::Integer;
 }
 
-ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   char buffer[255];
 
   Integer base = Integer(10);

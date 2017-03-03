@@ -47,12 +47,13 @@ float Integral::privateApproximate(Context& context, AngleUnit angleUnit) const 
 #endif
 }
 
-ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
-  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode);
+  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(m_args[1]->createLayout(floatDisplayMode), m_args[2]->createLayout(floatDisplayMode), new HorizontalLayout(childrenLayouts, 2));
+  return new IntegralLayout(m_args[1]->createLayout(floatDisplayMode, complexFormat), m_args[2]->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2));
 }
 
 float Integral::functionValueAtAbscissa(float x, VariableContext xContext, AngleUnit angleUnit) const {

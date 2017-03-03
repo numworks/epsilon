@@ -32,7 +32,8 @@ Calculation::~Calculation() {
 }
 
 void Calculation::reset() {
-  m_text[0] = 0;
+  m_inputText[0] = 0;
+  m_outputText[0] = 0;
   if (m_input != nullptr) {
     delete m_input;
   }
@@ -52,15 +53,15 @@ void Calculation::reset() {
 }
 
 void Calculation::setContent(const char * c, Context * context) {
-  strlcpy(m_text, c, sizeof(m_text));
+  strlcpy(m_inputText, c, sizeof(m_inputText));
   if (m_input != nullptr) {
     delete m_input;
   }
-  m_input = Expression::parse(m_text);
+  m_input = Expression::parse(m_inputText);
   if (m_inputLayout != nullptr) {
     delete m_inputLayout;
   }
-  m_inputLayout = m_input->createLayout();
+  m_inputLayout = m_input->createLayout(Expression::FloatDisplayMode::Decimal, Expression::ComplexFormat::Algebric);
   if (m_output != nullptr) {
     delete m_output;
   }
@@ -69,10 +70,15 @@ void Calculation::setContent(const char * c, Context * context) {
     delete m_outputLayout;
   }
   m_outputLayout = m_output->createLayout();
+  m_output->writeTextInBuffer(m_outputText, sizeof(m_outputText));
 }
 
-const char * Calculation::text() {
-  return m_text;
+const char * Calculation::inputText() {
+  return m_inputText;
+}
+
+const char * Calculation::outputText() {
+  return m_outputText;
 }
 
 Expression * Calculation::input() {

@@ -32,9 +32,10 @@ float SquareRoot::privateApproximate(Context& context, AngleUnit angleUnit) cons
   return powf(m_args[0]->approximate(context, angleUnit), 1.0f/2.0f);
 }
 
-ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
-  return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode),nullptr);
+  assert(complexFormat != ComplexFormat::Default);
+  return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat),nullptr);
 }
 
 Expression * SquareRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {

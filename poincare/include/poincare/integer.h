@@ -34,7 +34,7 @@ public:
 
   Expression * clone() const override;
 private:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   Integer add(const Integer &other, bool inverse_other_negative) const;

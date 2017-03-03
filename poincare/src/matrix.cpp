@@ -44,11 +44,12 @@ Expression * Matrix::clone() const {
   return this->cloneWithDifferentOperands(m_matrixData->operands(), numberOfOperands(), true);
 }
 
-ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(numberOfOperands()*sizeof(ExpressionLayout *));
   for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode);
+    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
   return new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns());
 }

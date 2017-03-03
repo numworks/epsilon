@@ -1,5 +1,4 @@
 #include <poincare/complex.h>
-#include <poincare/preferences.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -77,15 +76,15 @@ Expression::Type Complex::type() const {
   return Type::Complex;
 }
 
-ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode);
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, complexFormat);
   return new StringLayout(buffer, numberOfChars);
 }
 
 int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
-  return convertComplexToText(buffer, bufferSize, FloatDisplayMode::Decimal);
+  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
 }
 
 float Complex::a() {
@@ -96,14 +95,15 @@ float Complex::b() {
   return m_b;
 }
 
-float Complex::r() {
+float Complex::r() const {
   return sqrtf(m_a*m_a + m_b*m_b);
 }
 
-float Complex::th() {
+float Complex::th() const {
   float result = atanf(m_b/m_a) + M_PI;
   if (m_a >= 0.0f) {
-    result = atanf(m_b/m_a);
+    float a = m_a == 0.0f ? 0.0f : m_a;
+    result = atanf(m_b/a);
   }
   if (result > M_PI + FLT_EPSILON) {
     result = result - 2.0f*M_PI;
@@ -144,9 +144,37 @@ Complex::Complex(float a, float b) :
 {
 }
 
-int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode) const {
+int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode, ComplexFormat complexFormat) const {
   assert(displayMode != FloatDisplayMode::Default);
   int numberOfChars = 0;
+  if (complexFormat == ComplexFormat::Polar) {
+    if (r() != 1.0f || th() == 0.0f) {
+      numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
+      if ((r() != 0.0f && th() != 0.0f) && bufferSize > numberOfChars+1) {
+        buffer[numberOfChars++] = '*';
+        // Ensure that the string is null terminated even if buffer size is to small
+        buffer[numberOfChars] = 0;
+      }
+    }
+    if (r() != 0.0f && th() != 0.0f) {
+      if (bufferSize > numberOfChars+3) {
+        buffer[numberOfChars++] = Ion::Charset::Exponential;
+        buffer[numberOfChars++] = '^';
+        buffer[numberOfChars++] = '(';
+        // Ensure that the string is null terminated even if buffer size is to small
+        buffer[numberOfChars] = 0;
+      }
+      numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
+      if (bufferSize > numberOfChars+3) {
+        buffer[numberOfChars++] = '*';
+        buffer[numberOfChars++] = Ion::Charset::IComplex;
+        buffer[numberOfChars++] = ')';
+        buffer[numberOfChars] = 0;
+      }
+    }
+    return numberOfChars;
+  }
+
   if (m_a != 0.0f || m_b == 0.0f) {
     numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
     if (m_b > 0.0f && bufferSize > numberOfChars+1) {

@@ -51,10 +51,15 @@ public:
     Scientific = 1,
     Default = 2
   };
+  enum class ComplexFormat {
+    Algebric = 0,
+    Polar = 1,
+    Default = 2
+  };
   static Expression * parse(char const * string);
   virtual ~Expression();
 
-  ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default) const; // Returned object must be deleted
+  ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   virtual Expression * clone() const = 0;
@@ -98,7 +103,7 @@ public:
   float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   virtual int writeTextInBuffer(char * buffer, int bufferSize);
 private:
-  virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const = 0;
+  virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   virtual Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const = 0;
   virtual float privateApproximate(Context& context, AngleUnit angleUnit) const = 0;
   bool sequentialOperandsIdentity(const Expression * e) const;

@@ -23,14 +23,15 @@ Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
   return new Power(newOperands, cloneOperands);
 }
 
-ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = (Expression *)m_operands[1]->operand(0);
   }
-  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode),indiceOperand->createLayout(floatDisplayMode), BaselineRelativeLayout::Type::Superscript);
+  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
 Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {

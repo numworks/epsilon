@@ -109,7 +109,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       delete m_complexFormatLayout;
       m_complexFormatLayout = nullptr;
     }
-    if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Algebric) {
+    if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Algebric) {
       const char text[6] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
       m_complexFormatLayout = new StringLayout(text, 6, KDText::FontSize::Small);
     } else {

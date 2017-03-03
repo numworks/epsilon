@@ -19,7 +19,7 @@ public:
   int numberOfOperands() const override;
   Expression * clone() const override;
 protected:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   Expression ** m_args;
   int m_numberOfArguments;

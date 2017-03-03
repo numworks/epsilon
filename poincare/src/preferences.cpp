@@ -7,7 +7,7 @@ static Preferences s_preferences;
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::FloatDisplayMode::Decimal),
-  m_complexFormat(ComplexFormat::Algebric)
+  m_complexFormat(Expression::ComplexFormat::Algebric)
 {
 }
 
@@ -35,11 +35,11 @@ void Preferences::setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode) 
   }
 }
 
-Preferences::ComplexFormat Preferences::complexFormat() const {
+Expression::ComplexFormat Preferences::complexFormat() const {
   return m_complexFormat;
 }
 
-void Preferences::setComplexFormat(ComplexFormat complexFormat) {
+void Preferences::setComplexFormat(Expression::ComplexFormat complexFormat) {
   if (complexFormat != m_complexFormat) {
     m_complexFormat = complexFormat;
   }

@@ -18,6 +18,8 @@ app_objs += $(addprefix apps/shared/,\
   initialisation_parameter_controller.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
+  interval.o\
+  interval_parameter_controller.o\
   list_controller.o\
   list_parameter_controller.o\
   memoized_curve_view_range.o\
@@ -27,5 +29,8 @@ app_objs += $(addprefix apps/shared/,\
   store_parameter_controller.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
+  values_function_parameter_controller.o\
+  values_parameter_controller.o\
+  values_controller.o\
   zoom_parameter_controller.o\
 )

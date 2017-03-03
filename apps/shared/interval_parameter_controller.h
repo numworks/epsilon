@@ -1,11 +1,11 @@
-#ifndef GRAPH_INTERVAL_PARAM_CONTROLLER_H
-#define GRAPH_INTERVAL_PARAM_CONTROLLER_H
+#ifndef SHARED_INTERVAL_PARAM_CONTROLLER_H
+#define SHARED_INTERVAL_PARAM_CONTROLLER_H
 
 #include <escher.h>
 #include "interval.h"
-#include "../../shared/float_parameter_controller.h"
+#include "float_parameter_controller.h"
 
-namespace Graph {
+namespace Shared {
 
 class IntervalParameterController : public Shared::FloatParameterController {
 public:

@@ -1,7 +1,7 @@
-#ifndef GRAPH_VALUES_INTERVAL_H
-#define GRAPH_VALUES_INTERVAL_H
+#ifndef SHARED_VALUES_INTERVAL_H
+#define SHARED_VALUES_INTERVAL_H
 
-namespace Graph {
+namespace Shared {
 
 class Interval {
 public:

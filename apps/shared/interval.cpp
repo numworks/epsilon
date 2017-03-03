@@ -1,7 +1,7 @@
 #include "interval.h"
 #include <assert.h>
 
-namespace Graph {
+namespace Shared {
 
 Interval::Interval() :
   m_start(0),

@@ -6,7 +6,7 @@
 
 class PointerTableCellWithChevronAndExpression : public PointerTableCellWithChevron {
 public:
-  PointerTableCellWithChevronAndExpression(char * label = nullptr);
+  PointerTableCellWithChevronAndExpression(char * label = nullptr, KDText::FontSize size = KDText::FontSize::Small);
   View * subAccessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setExpression(Poincare::ExpressionLayout * expressionLayout);

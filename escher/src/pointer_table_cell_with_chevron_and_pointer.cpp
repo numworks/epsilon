@@ -1,9 +1,9 @@
 #include <escher/pointer_table_cell_with_chevron_and_pointer.h>
 #include <escher/palette.h>
 
-PointerTableCellWithChevronAndPointer::PointerTableCellWithChevronAndPointer(KDText::FontSize size) :
-  PointerTableCellWithChevron(nullptr, size),
-  m_subtitleView(size, "", 1.0f, 0.5f, Palette::GreyDark)
+PointerTableCellWithChevronAndPointer::PointerTableCellWithChevronAndPointer(KDText::FontSize labelSize, KDText::FontSize contentSize) :
+  PointerTableCellWithChevron(nullptr, labelSize),
+  m_subtitleView(contentSize, "", 1.0f, 0.5f, Palette::GreyDark)
 {
 }
 

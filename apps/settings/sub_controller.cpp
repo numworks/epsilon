@@ -1,6 +1,8 @@
 #include "sub_controller.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
+#include "../../poincare/src/layout/baseline_relative_layout.h"
+#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -16,6 +18,23 @@ SubController::SubController(Responder * parentResponder) :
   m_nodeModel(nullptr),
   m_preferenceIndex(0)
 {
+  const char text[6] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
+  m_complexFormatLayout[0] = new StringLayout(text, 6);
+  const char base[3] = {'r', Ion::Charset::Exponential, 0};
+  const char superscript[4] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' ', 0};
+  m_complexFormatLayout[1] = new BaselineRelativeLayout(new StringLayout(base, 4), new StringLayout(superscript, 3), BaselineRelativeLayout::Type::Superscript);
+  for (int i = 0; i < 2; i++) {
+    m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);
+  }
+}
+
+SubController::~SubController() {
+  for (int i = 0; i < 2; i++) {
+    if (m_complexFormatLayout[i]) {
+      delete m_complexFormatLayout[i];
+      m_complexFormatLayout[i] = nullptr;
+    }
+  }
 }
 
 const char * SubController::title() const {
@@ -55,10 +74,16 @@ int SubController::numberOfRows() {
 HighlightCell * SubController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
+  if (m_preferenceIndex == 2) {
+    return &m_complexFormatCells[index];
+  }
   return &m_cells[index];
 }
 
 int SubController::reusableCellCount() {
+  if (m_preferenceIndex == 2) {
+    return 2;
+  }
   return k_totalNumberOfCell;
 }
 
@@ -67,6 +92,9 @@ KDCoordinate SubController::cellHeight() {
 }
 
 void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (m_preferenceIndex == 2) {
+    return;
+  }
   PointerTableCell * myCell = (PointerTableCell *)cell;
   myCell->setText(m_nodeModel->children(index)->label());
 }
@@ -93,12 +121,9 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
       break;
     case 2:
-      Preferences::sharedPreferences()->setNumberType((Preferences::NumberType)valueIndex);
-      break;
-    case 3:
       Preferences::sharedPreferences()->setComplexFormat((Preferences::ComplexFormat)valueIndex);
       break;
-    case 4:
+    case 3:
       GlobalPreferences::sharedGlobalPreferences()->setLanguage((GlobalPreferences::Language)valueIndex);
       break;
     }
@@ -111,10 +136,8 @@ int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
     case 1:
       return (int)Preferences::sharedPreferences()->displayMode();
     case 2:
-      return (int)Preferences::sharedPreferences()->numberType();
-    case 3:
       return (int)Preferences::sharedPreferences()->complexFormat();
-    case 4:
+    case 3:
       return (int)GlobalPreferences::sharedGlobalPreferences()->language();
     default:
       assert(false);

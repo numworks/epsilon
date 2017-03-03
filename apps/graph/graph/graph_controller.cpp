@@ -45,6 +45,11 @@ void GraphController::viewWillAppear() {
     App * graphApp = (Graph::App *)app();
     m_view.setContext(graphApp->localContext());
   }
+  Expression::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
+  if (m_angleUnitVersion != newAngleUnitVersion) {
+    m_angleUnitVersion = newAngleUnitVersion;
+    initCursorParameters();
+  }
   InteractiveCurveViewController::viewWillAppear();
 }
 

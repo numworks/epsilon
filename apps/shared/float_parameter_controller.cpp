@@ -24,6 +24,10 @@ void FloatParameterController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
+void FloatParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 int FloatParameterController::activeCell() {
   return m_selectableTableView.selectedRow();
 }

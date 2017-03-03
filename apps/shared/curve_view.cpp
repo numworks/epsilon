@@ -161,14 +161,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   switch(axis) {
     case Axis::Horizontal:
       lineRect = KDRect(
-          floorf(floatToPixel(Axis::Horizontal, lowerBound)), roundf(floatToPixel(Axis::Vertical, coordinate)),
-          ceilf(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
+          roundf(floatToPixel(Axis::Horizontal, lowerBound)), roundf(floatToPixel(Axis::Vertical, coordinate)),
+          roundf(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
           );
       break;
     case Axis::Vertical:
       lineRect = KDRect(
-          roundf(floatToPixel(Axis::Horizontal, coordinate)), floorf(floatToPixel(Axis::Vertical, upperBound)),
-          thickness,  ceilf(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
+          roundf(floatToPixel(Axis::Horizontal, coordinate)), roundf(floatToPixel(Axis::Vertical, upperBound)),
+          thickness,  roundf(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
       );
       break;
   }

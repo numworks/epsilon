@@ -21,8 +21,8 @@ void BoxView::reload() {
   float calculation = (m_store->*calculationMethods[(int)m_selectedQuantile])();
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
   float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
-  float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation);
-  KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 2, pixelUpperBound - pixelLowerBound));
+  float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
+  KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 4, pixelUpperBound - pixelLowerBound));
   markRectAsDirty(dirtyZone);
 }
 
@@ -60,6 +60,9 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(firstQuartilePixels+2, lowBoundPixel, 1, upBoundPixel-lowBoundPixel-1), Palette::GreyBright);
   ctx->fillRect(KDRect(firstQuartilePixels+2, upBoundPixel-1, thirdQuartilePixels-firstQuartilePixels-2, 1), Palette::GreyBright);
   ctx->fillRect(KDRect(firstQuartilePixels+3, upBoundPixel, thirdQuartilePixels-firstQuartilePixels-3, 1), Palette::GreyMiddle);
+  // Draw the horizontal lines linking the box to the extreme bounds
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);
 
   float calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
   /* We then draw all the vertical lines of the box and then recolor the
@@ -73,9 +76,6 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   if (isMainViewSelected()) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[(int)m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
   }
-  // Draw the horizontal lines linking the box to the extreme bounds
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);
 }
 
 char * BoxView::label(Axis axis, int index) const {

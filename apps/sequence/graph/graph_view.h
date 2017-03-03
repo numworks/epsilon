@@ -11,9 +11,12 @@ public:
   GraphView(SequenceStore * sequenceStore, Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setVerticalCursor(bool verticalCursor);
 private:
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
+  KDSize cursorSize() override;
   SequenceStore * m_sequenceStore;
+  bool m_verticalCursor;
 };
 
 }

@@ -51,6 +51,14 @@ void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
   m_curveViewRange = curveViewRange;
 }
 
+void CurveView::setCursorView(View * cursorView) {
+  m_cursorView = cursorView;
+}
+
+void CurveView::setBannerView(BannerView * bannerView) {
+  m_bannerView = bannerView;
+}
+
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   return (axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin());
@@ -333,6 +341,10 @@ float CurveView::evaluateModelWithParameter(Model * curve, float t) const {
   return 0.0f;
 }
 
+KDSize CurveView::cursorSize() {
+  return KDSize(k_cursorSize, k_cursorSize);
+}
+
 void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
@@ -413,7 +425,7 @@ void CurveView::layoutSubviews() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
     KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    KDRect cursorFrame(xCursorPixelPosition - k_cursorSize/2, yCursorPixelPosition - k_cursorSize/2, k_cursorSize, k_cursorSize);
+    KDRect cursorFrame(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
     if (!m_mainViewSelected || isnan(m_curveViewCursor->x()) || isnan(m_curveViewCursor->y())
         || isinf(m_curveViewCursor->x()) || isinf(m_curveViewCursor->y())) {
       cursorFrame = KDRectZero;
@@ -436,7 +448,7 @@ int CurveView::numberOfSubviews() const {
 
 View * CurveView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
-  if (index == 0) {
+  if (index == 0 && m_bannerView != nullptr) {
     return m_bannerView;
   }
   return m_cursorView;

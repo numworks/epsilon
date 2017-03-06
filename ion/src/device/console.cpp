@@ -30,23 +30,6 @@ void readLine(char * line, int maxLineLength) {
     cursor++;
   }
 }
-/*
-
-  lastChar
-
-  char c = Device::recvChar();
-
-  char * lineEnd = line + maxLineLength;
-
-  while (line < lineEnd) {
-    *line++ = Device::recvChar();
-    if (*line == '\r') {
-      break;
-    }
-  }
-  *line = 0;
-}
-*/
 
 }
 }

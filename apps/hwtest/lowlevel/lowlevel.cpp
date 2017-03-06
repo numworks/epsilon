@@ -1,5 +1,8 @@
 #include <stddef.h>
 #include <ion.h>
+#include <ion/src/device/backlight.h>
+#include <ion/src/device/display.h>
+#include <ion/src/device/led.h>
 #include <poincare.h>
 
 typedef void (*CommandFunction)(const char * input);
@@ -72,7 +75,10 @@ void CommandList::dispatch(const char * command) const {
   Ion::Console::writeLine("NOT_FOUND");
 }
 
+static const char * sOK = "OK";
 static const char * sSyntaxError = "SYNTAX_ERROR";
+static const char * sON = "ON";
+static const char * sOFF = "OFF";
 
 void command_ping(const char * input) {
   if (input != nullptr) {
@@ -111,7 +117,17 @@ static inline uint32_t hexNumber(const char * s) {
 }
 
 void command_led(const char * input) {
-  // Input must be of the form "0xAABBCC"
+  // Input must be of the form "0xAABBCC" or "ON" or "OFF"
+  if (strcmp(input, sON) == 0) {
+    Ion::LED::Device::init();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
+  if (strcmp(input, sOFF) == 0) {
+    Ion::LED::Device::shutdown();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
   if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || !isHex(input[4]) || !isHex(input[5]) || !isHex(input[6]) || !isHex(input[7]) || input[8] != NULL) {
     Ion::Console::writeLine(sSyntaxError);
     return;
@@ -119,18 +135,42 @@ void command_led(const char * input) {
   uint32_t hexColor = hexNumber(input+2);
   KDColor ledColor = KDColor::RGB24(hexColor);
   Ion::LED::setColor(ledColor);
-  Ion::Console::writeLine("OK");
+  Ion::Console::writeLine(sOK);
+}
+
+void command_display(const char * input) {
+  if (strcmp(input, sON) == 0) {
+    Ion::Display::Device::init();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
+  if (strcmp(input, sOFF) == 0) {
+    Ion::Display::Device::shutdown();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
+  Ion::Console::writeLine(sSyntaxError);
 }
 
 void command_backlight(const char * input) {
-  // Input must be of the form "0xAA"
+  // Input must be of the form "0xAA" or "ON" or "OFF"
+  if (strcmp(input, sON) == 0) {
+    Ion::Backlight::Device::init();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
+  if (strcmp(input, sOFF) == 0) {
+    Ion::Backlight::Device::shutdown();
+    Ion::Console::writeLine(sOK);
+    return;
+  }
   if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || input[4] != NULL) {
     Ion::Console::writeLine(sSyntaxError);
     return;
   }
   uint32_t brightness = hexNumber(input+2);
   Ion::Backlight::setBrightness(brightness);
-  Ion::Console::writeLine("OK");
+  Ion::Console::writeLine(sOK);
 }
 
 void command_adc(const char * input) {
@@ -179,6 +219,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("ADC", command_adc),
   CommandHandler("CHARGE", command_charge),
   CommandHandler("KEYBOARD", command_keyboard),
+  CommandHandler("DISPLAY", command_display),
   CommandHandler(nullptr, nullptr)
 };
 constexpr const CommandList sCommandList = CommandList(handles);

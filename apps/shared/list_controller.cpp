@@ -208,7 +208,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       }
     }
   }
-  if (event == Ion::Events::Backspace && m_selectableTableView.selectedColumn() == 1) {
+  if (event == Ion::Events::Backspace && m_selectableTableView.selectedColumn() == 1 &&
+      (m_selectableTableView.selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
     reinitExpression(function);
   }

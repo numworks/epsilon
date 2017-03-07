@@ -4,6 +4,7 @@
 #include <ion/backlight.h>
 #include <ion/battery.h>
 #include <ion/charset.h>
+#include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
 #include <ion/keyboard.h>
@@ -25,6 +26,8 @@ namespace Ion {
 
 void msleep(long ms);
 void usleep(long us);
+
+const char * serialNumber();
 
 /* CAUTION: This is a complete reset! */
 void reset();

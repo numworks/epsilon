@@ -13,7 +13,9 @@
 #include "rcc.h"
 #include "rng.h"
 #include "sdio.h"
+#include "spi.h"
 #include "syscfg.h"
 #include "tim.h"
+#include "usart.h"
 
 #endif

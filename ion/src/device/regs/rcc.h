@@ -74,6 +74,7 @@ public:
   class APB1ENR : Register32 {
   public:
     REGS_BOOL_FIELD(TIM3EN, 1);
+    REGS_BOOL_FIELD(SPI3EN, 15);
     REGS_BOOL_FIELD(PWREN, 28);
   };
 
@@ -81,6 +82,7 @@ public:
   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(TIM1EN, 0);
+    REGS_BOOL_FIELD(USART1EN, 4);
     REGS_BOOL_FIELD(ADC1EN, 8);
     REGS_BOOL_FIELD(SDIOEN, 11);
     REGS_BOOL_FIELD(SYSCFGEN, 14);

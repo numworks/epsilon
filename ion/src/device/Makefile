@@ -7,6 +7,7 @@ objs += $(addprefix ion/src/shared/, \
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\
+  console.o \
   device.o\
   display.o\
   keyboard.o\
@@ -25,6 +26,7 @@ objs += $(addprefix ion/src/device/, \
 ifneq ($(DEBUG),1)
 ifneq ($(COMPILER),llvm)
 ion/src/device/led.o: SFLAGS+=-O3
+ion/src/device/console.o: SFLAGS+=-O3
 ion/src/device/display.o: SFLAGS+=-O3
 endif
 endif

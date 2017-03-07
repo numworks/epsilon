@@ -50,6 +50,11 @@ void init() {
   // Step 2 - Enable the ADC
   RCC.APB2ENR()->setADC1EN(true);
   ADC.CR2()->setADON(true);
+
+  // Configure the ADC channel
+  ADC.SQR1()->setL(0); // Always sample the same channel
+  ADC.SQR3()->setSQ1(ADCChannel);
+  ADC.SMPR()->setSamplingTime(ADCChannel, ADC::SMPR::SamplingTime::Cycles480); // Use the max sampling time
 }
 
 void shutdown() {

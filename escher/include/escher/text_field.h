@@ -3,6 +3,7 @@
 
 #include <escher/scrollable_view.h>
 #include <escher/text_field_delegate.h>
+#include <escher/text_cursor_view.h>
 #include <string.h>
 
 class TextField : public ScrollableView {
@@ -25,7 +26,7 @@ public:
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity. */
   void insertTextAtLocation(const char * text, int location);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   void setTextFieldDelegate(TextFieldDelegate * delegate);
   bool handleEvent(Ion::Events::Event event) override;
 protected:
@@ -50,11 +51,15 @@ protected:
     void reinitDraftTextBuffer();
     void setCursorLocation(int location);
     void insertTextAtLocation(const char * text, int location);
-    KDSize minimalSizeForOptimalDisplay() override;
-    KDCoordinate textHeight();
+    KDSize minimalSizeForOptimalDisplay() const override;
+    KDCoordinate textHeight() const;
     KDCoordinate charWidth();
     void deleteCharPrecedingCursor();
+    View * subviewAtIndex(int index) override;
   private:
+    int numberOfSubviews() const override;
+    void layoutSubviews() override;
+    TextCursorView m_cursorView;
     bool m_isEditing;
     char * m_textBuffer;
     char * m_draftTextBuffer;

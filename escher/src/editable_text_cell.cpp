@@ -57,6 +57,6 @@ void EditableTextCell::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
 }
 
-KDSize EditableTextCell::minimalSizeForOptimalDisplay() {
+KDSize EditableTextCell::minimalSizeForOptimalDisplay() const {
   return m_textField.minimalSizeForOptimalDisplay();
 }

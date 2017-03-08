@@ -16,9 +16,9 @@ int HistogramBannerView::numberOfSubviews() const {
   return 3;
 }
 
-TextView * HistogramBannerView::textViewAtIndex(int i) {
-  TextView * textViews[3] = {&m_intervalView, &m_sizeView, &m_frequencyView};
-  return textViews[i];
+TextView * HistogramBannerView::textViewAtIndex(int i) const {
+  const TextView * textViews[3] = {&m_intervalView, &m_sizeView, &m_frequencyView};
+  return (TextView *)textViews[i];
 }
 
 }

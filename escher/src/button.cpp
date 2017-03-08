@@ -36,7 +36,7 @@ void Button::setBackgroundColor(KDColor backgroundColor) {
   markRectAsDirty(bounds());
 }
 
-KDSize Button::minimalSizeForOptimalDisplay() {
+KDSize Button::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_pointerTextView.minimalSizeForOptimalDisplay();
   return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }

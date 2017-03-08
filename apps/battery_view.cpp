@@ -32,6 +32,6 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(k_batteryWidth-k_elementWidth, (k_batteryHeight-k_capHeight)/2, k_elementWidth, k_capHeight), KDColorWhite);
 }
 
-KDSize BatteryView::minimalSizeForOptimalDisplay() {
+KDSize BatteryView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_batteryWidth, k_batteryHeight);
 }

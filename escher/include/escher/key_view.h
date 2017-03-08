@@ -15,7 +15,7 @@ public:
   };
   KeyView(Type type);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static KDCoordinate k_keySize = 8;
 private:
   const uint8_t * mask() const;

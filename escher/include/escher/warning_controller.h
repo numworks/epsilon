@@ -20,7 +20,7 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    KDSize minimalSizeForOptimalDisplay() override;
+    KDSize minimalSizeForOptimalDisplay() const override;
   private:
     constexpr static KDCoordinate k_verticalMargin = 40;
     constexpr static KDCoordinate k_horizontalMargin = 20;

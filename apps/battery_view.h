@@ -8,7 +8,7 @@ public:
   BatteryView();
   void setChargeState(Ion::Battery::Charge chargeState);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_batteryHeight = 8;
   constexpr static KDCoordinate k_batteryWidth = 13;

@@ -41,6 +41,6 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-KDSize SwitchView::minimalSizeForOptimalDisplay() {
+KDSize SwitchView::minimalSizeForOptimalDisplay() const {
   return KDSize(2*k_separatorThickness + k_switchMargin + k_switchWidth, k_switchHeight);
 }

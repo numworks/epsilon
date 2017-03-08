@@ -11,7 +11,7 @@ public:
   BannerView();
 private:
   int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) override;
+  TextView * textViewAtIndex(int i) const override;
   BufferTextView m_abscissaView;
   BufferTextView m_sequenceView;
 };

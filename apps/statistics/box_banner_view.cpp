@@ -12,9 +12,9 @@ int BoxBannerView::numberOfSubviews() const {
   return 2;
 }
 
-TextView * BoxBannerView::textViewAtIndex(int index) {
-  TextView * textViews[2] = {&m_calculationName, &m_calculationValue};
-  return textViews[index];
+TextView * BoxBannerView::textViewAtIndex(int index) const {
+  const TextView * textViews[2] = {&m_calculationName, &m_calculationValue};
+  return (TextView *)textViews[index];
 }
 
 }

@@ -163,7 +163,7 @@ KDRect View::absoluteVisibleFrame() const {
   }
 }
 
-KDSize View::minimalSizeForOptimalDisplay() {
+KDSize View::minimalSizeForOptimalDisplay() const  {
   return KDSizeZero;
 }
 

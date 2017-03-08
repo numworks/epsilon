@@ -27,7 +27,7 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
   markRectAsDirty(bounds());
 }
 
-KDSize TextView::minimalSizeForOptimalDisplay() {
+KDSize TextView::minimalSizeForOptimalDisplay() const  {
   return KDText::stringSize(text(), m_fontSize);
 }
 

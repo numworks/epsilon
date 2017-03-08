@@ -9,7 +9,7 @@ public:
   bool state();
   void setState(bool state);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   /* k_switchHeight and k_switchWidth are the dimensions of the switch
    * (including the outline of the switch). The outline thickness is

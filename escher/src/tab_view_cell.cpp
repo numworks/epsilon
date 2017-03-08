@@ -27,7 +27,7 @@ void TabViewCell::setSelected(bool selected) {
   markRectAsDirty(bounds());
 }
 
-KDSize TabViewCell::minimalSizeForOptimalDisplay() {
+KDSize TabViewCell::minimalSizeForOptimalDisplay() const {
   return KDText::stringSize(m_name, KDText::FontSize::Small);
 }
 

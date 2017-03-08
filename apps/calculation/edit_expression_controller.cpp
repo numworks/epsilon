@@ -60,12 +60,14 @@ const char * EditExpressionController::textBody() {
 }
 
 void EditExpressionController::setTextBody(const char * text) {
+  m_contentView.textField()->setEditing(true);
   m_contentView.textField()->setText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
+      m_contentView.textField()->setEditing(false);
       app()->setFirstResponder(m_historyController);
     }
     return true;
@@ -74,6 +76,7 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
+  m_contentView.textField()->setEditing(true);
   app()->setFirstResponder(m_contentView.textField());
 }
 
@@ -82,8 +85,15 @@ bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
   m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  m_contentView.textField()->setEditing(true);
   m_contentView.textField()->setText("");
   return true;
+}
+
+bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField, const char * text) {
+  m_contentView.textField()->setEditing(true);
+  m_contentView.textField()->setText(text);
+  return false;
 }
 
 TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {

@@ -34,7 +34,7 @@ void OkView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)okMask, s_okWorkingBuffer);
 }
 
-KDSize OkView::minimalSizeForOptimalDisplay() {
+KDSize OkView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_okSize, k_okSize);
 }
 

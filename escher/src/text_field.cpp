@@ -22,7 +22,7 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
-  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
+  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()-m_cursorView.minimalSizeForOptimalDisplay().width()),
       m_verticalAlignment*(m_frame.height() - textSize.height()));
   ctx->drawString(text(), origin, m_fontSize, m_textColor, m_backgroundColor);
 }
@@ -31,7 +31,8 @@ void TextField::ContentView::reload() {
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
     m_verticalAlignment*(m_frame.height() - textSize.height()));
-  KDRect dirtyZone(origin, textSize);
+  KDSize textAndCursorSize = KDSize(textSize.width()+ m_cursorView.minimalSizeForOptimalDisplay().width(), textSize.height());
+  KDRect dirtyZone(origin, textAndCursorSize);
   markRectAsDirty(dirtyZone);
 }
 
@@ -71,8 +72,8 @@ void TextField::ContentView::setText(const char * text) {
   reload();
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
-    m_currentCursorLocation = strlen(text);
-    m_currentTextLength = m_currentCursorLocation;
+    m_currentTextLength = strlen(text);
+    setCursorLocation(m_currentTextLength);
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
   }
@@ -104,6 +105,7 @@ void TextField::ContentView::setEditing(bool isEditing) {
   }
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
+  layoutSubviews();
 }
 
 void TextField::ContentView::reinitDraftTextBuffer() {
@@ -116,6 +118,7 @@ void TextField::ContentView::setCursorLocation(int location) {
   location = location < 0 ? 0 : location;
   location = location > (signed char)m_currentTextLength ? m_currentTextLength : location;
   m_currentCursorLocation = location;
+  layoutSubviews();
 }
 
 void TextField::ContentView::insertTextAtLocation(const char * text, int location) {
@@ -134,14 +137,15 @@ void TextField::ContentView::insertTextAtLocation(const char * text, int locatio
   reload();
 }
 
-KDSize TextField::ContentView::minimalSizeForOptimalDisplay() {
+KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   if (m_isEditing) {
-    return KDText::stringSize(m_draftTextBuffer, m_fontSize);
+    KDSize textSize = KDText::stringSize(m_draftTextBuffer, m_fontSize);
+    return KDSize(textSize.width()+m_cursorView.minimalSizeForOptimalDisplay().width(), textSize.height());
   }
   return KDSize(0, textHeight());
 }
 
-KDCoordinate TextField::ContentView::textHeight() {
+KDCoordinate TextField::ContentView::textHeight() const {
   KDSize textSize = KDText::stringSize(" ", m_fontSize);
   return textSize.height();
 }
@@ -158,11 +162,30 @@ void TextField::ContentView::deleteCharPrecedingCursor() {
   }
   reload();
   m_currentTextLength--;
-  m_currentCursorLocation--;
+  setCursorLocation(m_currentCursorLocation-1);
   for (int k = m_currentCursorLocation; k < (signed char)m_currentTextLength; k ++) {
     m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
   }
   m_draftTextBuffer[m_currentTextLength] = 0;
+}
+
+int TextField::ContentView::numberOfSubviews() const {
+  return 1;
+}
+
+View * TextField::ContentView::subviewAtIndex(int index) {
+  return &m_cursorView;
+}
+
+void TextField::ContentView::layoutSubviews() {
+  if (!m_isEditing) {
+    m_cursorView.setFrame(KDRectZero);
+    return;
+  }
+  KDSize textSize = KDText::stringSize(text(), m_fontSize);
+  KDCoordinate cursorWidth = m_cursorView.minimalSizeForOptimalDisplay().width();
+  KDRect frame(m_horizontalAlignment*(m_frame.width() - textSize.width()-cursorWidth)+ m_currentCursorLocation * charWidth(), m_verticalAlignment*(m_frame.height() - textSize.height()), cursorWidth, textSize.height());
+  m_cursorView.setFrame(frame);
 }
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
@@ -229,7 +252,7 @@ void TextField::insertTextAtLocation(const char * text, int location) {
   m_contentView.insertTextAtLocation(text, location);
 }
 
-KDSize TextField::minimalSizeForOptimalDisplay() {
+KDSize TextField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, m_contentView.textHeight());
 }
 
@@ -287,9 +310,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
-    m_delegate->textFieldDidAbortEditing(this, text());
     setEditing(false);
     reloadScroll();
+    m_delegate->textFieldDidAbortEditing(this, text());
     return true;
   }
   return false;
@@ -305,9 +328,9 @@ bool TextField::cursorIsBeforeScrollingFrame() {
 }
 
 bool TextField::cursorIsAfterScrollingFrame() {
-  return cursorLocation() * m_contentView.charWidth() - m_manualScrolling > bounds().width();
+  KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
+  return cursorLocation() * m_contentView.charWidth()+cursorWidth - m_manualScrolling > bounds().width();
 }
-
 
 void TextField::scrollToCursor() {
   if (!isEditing()) {
@@ -318,7 +341,8 @@ void TextField::scrollToCursor() {
     setContentOffset(KDPoint(m_manualScrolling, 0));
   }
   if (cursorIsAfterScrollingFrame()) {
-    m_manualScrolling =  cursorLocation() * m_contentView.charWidth() - bounds().width();
+    KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
+    m_manualScrolling =  cursorLocation() * m_contentView.charWidth()+cursorWidth - bounds().width();
     setContentOffset(KDPoint(m_manualScrolling, 0));
   }
 }
@@ -327,7 +351,8 @@ void TextField::scrollToAvoidWhiteSpace() {
   if (m_manualScrolling == 0 || m_manualScrolling + bounds().width() <= textLength() * m_contentView.charWidth()) {
     return;
   }
-  m_manualScrolling = textLength() * m_contentView.charWidth()-bounds().width();
+  KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
+  m_manualScrolling = textLength() * m_contentView.charWidth()+cursorWidth-bounds().width();
   setContentOffset(KDPoint(m_manualScrolling, 0));
 }
 

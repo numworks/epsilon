@@ -31,7 +31,7 @@ void EvenOddExpressionCell::setTextColor(KDColor textColor) {
   m_expressionView.setTextColor(textColor);
 }
 
-KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() {
+KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
   return m_expressionView.minimalSizeForOptimalDisplay();
 }
 

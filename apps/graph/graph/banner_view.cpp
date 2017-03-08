@@ -25,9 +25,9 @@ int BannerView::numberOfSubviews() const {
   return 2;
 }
 
-TextView * BannerView::textViewAtIndex(int i) {
-  TextView * textViews[3] = {&m_abscissaView, &m_functionView, &m_derivativeView};
-  return textViews[i];
+TextView * BannerView::textViewAtIndex(int i) const {
+  const TextView * textViews[3] = {&m_abscissaView, &m_functionView, &m_derivativeView};
+  return (TextView *)textViews[i];
 }
 
 }

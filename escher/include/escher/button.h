@@ -11,7 +11,7 @@ public:
   Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small);
   bool handleEvent(Ion::Events::Event event) override;
   void setBackgroundColor(KDColor backgroundColor);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_horizontalMargin = 10;

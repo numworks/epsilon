@@ -269,13 +269,16 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       return true;
     }
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isEditing()) {
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
       setEditing(false);
       m_delegate->textFieldDidFinishEditing(this, text());
       reloadScroll();
       return true;
+    }
+    if (event == Ion::Events::EXE) {
+      return false;
     }
     setEditing(true);
     insertTextAtLocation(m_contentView.textBuffer(), cursorLocation());

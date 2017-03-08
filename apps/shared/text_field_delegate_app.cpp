@@ -45,7 +45,7 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
 }
 
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::OK && textField->isEditing()) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && textField->isEditing()) {
     Expression * exp = Expression::parse(textField->text());
     if (exp == nullptr) {
       if (textField->textLength() == 0) {

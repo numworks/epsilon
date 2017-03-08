@@ -14,6 +14,7 @@ public:
     AbsoluteValue,
     Addition,
     Complex,
+    ComplexArgument,
     Cosine,
     Derivative,
     Determinant,

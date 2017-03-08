@@ -137,6 +137,10 @@ float Complex::th() const {
   return result;
 }
 
+Complex * Complex::createConjugate() {
+  return new Complex(Complex::Cartesian(m_a, -m_b));
+}
+
 int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, FloatDisplayMode mode) {
   if (mode == FloatDisplayMode::Default) {

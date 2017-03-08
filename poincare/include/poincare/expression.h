@@ -15,6 +15,7 @@ public:
     Addition,
     Complex,
     ComplexArgument,
+    Conjugate,
     Cosine,
     Derivative,
     Determinant,

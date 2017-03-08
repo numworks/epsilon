@@ -22,6 +22,7 @@ public:
   float b();
   float r() const;
   float th() const;
+  Complex * createConjugate();
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches

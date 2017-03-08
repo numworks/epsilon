@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Settings {
 
-const SettingsNode angleChildren[2] = {SettingsNode("Degre "), SettingsNode("Radian ")};
+const SettingsNode angleChildren[2] = {SettingsNode("Degres "), SettingsNode("Radians ")};
 const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode("Auto "), SettingsNode("Scientifique ")};
 const SettingsNode complexFormatChildren[2] = {SettingsNode("a+ib "), SettingsNode("eitheta ")};
 const SettingsNode languageChildren[3] = {SettingsNode("Anglais "), SettingsNode("Francais "), SettingsNode("Espagnol ")};

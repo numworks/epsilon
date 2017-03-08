@@ -77,12 +77,11 @@ using namespace Poincare;
   */
   /* We designed our own extended-ASCII to include requiered symbols in less
    * than 255 glyphs. The file ion/include/ion/charset.h lists all added
-   * non-ASCII symbols with their char associated. For example, the char \x9f
+   * non-ASCII symbols with their char associated. For example, the char \x89
    * refered to Pi symbols. This artefact leads to the following lexer rules
    * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
-\xa2 { return EE; }
 [A-Zxn] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
 u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
@@ -110,10 +109,11 @@ sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNC
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
-\x9f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\xa6 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
-\xa1 { return ICOMPLEX; }
-\xa4 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x8c { return EE; }
+\x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+\x8b { return ICOMPLEX; }
+\x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

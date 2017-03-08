@@ -108,6 +108,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     m_contentView.graphView()->setHighlightColor(true);
     m_contentView.graphView()->selectMainView(false);
     m_contentView.legendView()->setLegendText(buffer);
+    return true;
   }
   return false;
 }

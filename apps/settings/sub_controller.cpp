@@ -60,6 +60,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     myContainer->refreshPreferences();
     StackViewController * stack = stackController();
     stack->pop();
+    return true;
   }
   return false;
 }

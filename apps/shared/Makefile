@@ -28,6 +28,7 @@ app_objs += $(addprefix apps/shared/,\
   range_parameter_controller.o\
   store_controller.o\
   store_parameter_controller.o\
+  tab_table_controller.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
   values_function_parameter_controller.o\

@@ -7,19 +7,18 @@
 #include <assert.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  ViewController(parentResponder),
+  TabTableController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true),
   ButtonRowDelegate(header, nullptr),
   m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
     EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
   m_r2TitleCell(1.0f, 0.5f),
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
   m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
-  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true, true, Palette::WallScreenDark)),
   m_store(store)
 {
   for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {
@@ -41,10 +40,6 @@ const char * CalculationController::title() const {
   return "Statistiques";
 }
 
-View * CalculationController::view() {
-  return &m_selectableTableView;
-}
-
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_selectableTableView.deselectTable();
@@ -60,7 +55,7 @@ void CalculationController::didBecomeFirstResponder() {
   } else {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  TabTableController::didBecomeFirstResponder();
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
@@ -181,22 +176,6 @@ KDCoordinate CalculationController::rowHeight(int j) {
   return k_cellHeight;
 }
 
-KDCoordinate CalculationController::cumulatedWidthFromIndex(int i) {
-  return i*k_cellWidth;
-}
-
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
-  return j*k_cellHeight;
-}
-
-int CalculationController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  return (offsetX-1) / k_cellWidth;
-}
-
-int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY-1) / k_cellHeight;
-}
-
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == 0) {
     assert(index < k_maxNumberOfDisplayableRows);
@@ -248,16 +227,6 @@ int CalculationController::typeAtLocation(int i, int j) {
     return 3;
   }
   return 4;
-}
-
-void CalculationController::viewWillAppear() {
-  m_selectableTableView.reloadData();
-}
-
-void CalculationController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    m_selectableTableView.deselectTable();
-  }
 }
 
 Responder * CalculationController::tabController() const {

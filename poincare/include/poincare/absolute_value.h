@@ -13,7 +13,6 @@ public:
     int numberOfOperands, bool cloneOperands = true) const override;
 private:
   float privateApproximate(Context & context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };
 

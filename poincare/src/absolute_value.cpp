@@ -29,28 +29,14 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
 
 float AbsoluteValue::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = evaluate(context, angleUnit);
+  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   float result = 0.0f;
   if (evaluation->type() == Type::Matrix) {
     result = NAN;
   } else {
-    result = ((Complex *)evaluation)->absoluteValue();
+    result = ((Complex *)evaluation)->r();
   }
-  delete evaluation;
-  return result;
-}
-
-Expression * AbsoluteValue::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
-  }
-  float absVal = ((Complex *)evaluation)->absoluteValue();
-  Complex * result = new Complex(Complex::Float(absVal));
   delete evaluation;
   return result;
 }

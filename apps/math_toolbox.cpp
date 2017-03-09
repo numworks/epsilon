@@ -9,7 +9,7 @@
 
 const ToolboxNode calculChildren[4] = {ToolboxNode("diff(,)", "Nombre derive"), ToolboxNode("int(,,)", "Integrale"), ToolboxNode("sum(,,)", "Somme"), ToolboxNode("product(,,)", "Produit")};
 const ToolboxNode complexChildren[5] = {ToolboxNode("abs()", "Module"), ToolboxNode("arg()", "Argument"), ToolboxNode("re()", "Partie reelle"), ToolboxNode("im()", "Partie imaginaire"), ToolboxNode("conj()", "Conjugue")};
-const ToolboxNode probabilityChildren[4] = {ToolboxNode("binomial()", "Combinaison"), ToolboxNode("permute(,)", "Arrangement"), ToolboxNode("random(,)", "Nombre aleatoire"), ToolboxNode("gamma()", "Fonction gamma")};
+const ToolboxNode probabilityChildren[2] = {ToolboxNode("binomial(,)", "Combinaison"), ToolboxNode("permute(,)", "Arrangement")};
 const ToolboxNode arithmeticChildren[4] = {ToolboxNode("gcd()", "PGCD"), ToolboxNode("lcm()", "PPCM"), ToolboxNode("rem()", "Reste division euclidienne"), ToolboxNode("quo()","Quotien division euclidienne")};
 const ToolboxNode matricesChildren[5] = {ToolboxNode("inverse()", "Inverse"), ToolboxNode("det()", "Determinant"), ToolboxNode("transpose()", "Transposee"), ToolboxNode("trace()", "Trace"), ToolboxNode("dim()", "Taille")};
 const ToolboxNode listesChildren[5] = {ToolboxNode("sort<()", "Tri croissant"), ToolboxNode("sort>()", "Tri decroissant"), ToolboxNode("max()", "Maximum"), ToolboxNode("min()", "Minimum"), ToolboxNode("dim()", "Taille")};
@@ -18,7 +18,7 @@ const ToolboxNode trigonometryChildren[6] = {ToolboxNode("cosh()", "cosh"), Tool
 
 const ToolboxNode menu[11] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNode("root(,)", "Racine k-ieme"), ToolboxNode("log(,)", "Logarithme base a"),
   ToolboxNode("Calcul", nullptr, calculChildren, 4), ToolboxNode("Nombre complexe", nullptr, complexChildren, 5),
-  ToolboxNode("Probabilite", nullptr, probabilityChildren, 4), ToolboxNode("Arithmetique", nullptr, arithmeticChildren, 4),
+  ToolboxNode("Probabilite", nullptr, probabilityChildren, 2), ToolboxNode("Arithmetique", nullptr, arithmeticChildren, 4),
   ToolboxNode("Matrice",  nullptr, matricesChildren, 5), ToolboxNode("Liste", nullptr, listesChildren, 5),
   ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie", nullptr, trigonometryChildren, 6)};
 const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 11);

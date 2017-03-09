@@ -38,7 +38,7 @@ Expression * MatrixInverse::privateEvaluate(Context& context, AngleUnit angleUni
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Complex) {
     Expression * arguments[2];
-    arguments[0] = new Complex(Complex::Float(2.0f));
+    arguments[0] = new Complex(Complex::Float(1.0f));
     arguments[1] = evaluation;
     Expression * result = new Fraction(arguments, true);
     delete arguments[0];

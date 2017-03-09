@@ -62,25 +62,25 @@ KDColor s_parenthesisWorkingBuffer[ParenthesisLayout::k_parenthesisCurveHeight*P
 
 void ParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize operandSize = m_operandLayout->size();
-  KDRect frame(p.x(), p.y(), k_parenthesisCurveWidth, k_parenthesisCurveHeight);
+  KDRect frame(p.x()+k_externWidthMargin, p.y(), k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x(), p.y() + operandSize.height() - k_parenthesisCurveHeight,
+  frame = KDRect(p.x()+k_externWidthMargin, p.y() + operandSize.height() - k_parenthesisCurveHeight,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y(),
+  frame = KDRect(p.x()+k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y(),
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() - k_parenthesisCurveHeight,
+  frame = KDRect(p.x() +k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() - k_parenthesisCurveHeight,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
 
-  ctx->fillRect(KDRect(p.x(), p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height() - 2*k_parenthesisCurveHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x()+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height()- 2*k_parenthesisCurveHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height() - 2*k_parenthesisCurveHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height()- 2*k_parenthesisCurveHeight), expressionColor);
 }
 
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = m_operandLayout->size();
-  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness, operandSize.height());
+  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness+2*k_externWidthMargin, operandSize.height());
 }
 
 ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
@@ -91,7 +91,7 @@ ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
 }
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
-  return KDPoint(k_widthMargin+k_lineThickness, 0);
+  return KDPoint(k_widthMargin+k_lineThickness+k_externWidthMargin, 0);
 }
 
 }

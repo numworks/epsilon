@@ -13,12 +13,15 @@ objs += $(addprefix poincare/src/,\
   cosine.o\
   derivative.o\
   determinant.o\
+  division_quotient.o\
+  division_remainder.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
   fraction.o\
   function.o\
   global_context.o\
+  great_common_divisor.o\
   hyperbolic_cosine.o\
   hyperbolic_sine.o\
   hyperbolic_tangent.o\
@@ -27,6 +30,7 @@ objs += $(addprefix poincare/src/,\
   integral.o\
   list_data.o\
   leaf_expression.o\
+  least_common_multiple.o\
   logarithm.o\
   matrix.o\
   matrix_data.o\

@@ -10,7 +10,7 @@
 const ToolboxNode calculChildren[4] = {ToolboxNode("diff(,)", "Nombre derive"), ToolboxNode("int(,,)", "Integrale"), ToolboxNode("sum(,,)", "Somme"), ToolboxNode("product(,,)", "Produit")};
 const ToolboxNode complexChildren[5] = {ToolboxNode("abs()", "Module"), ToolboxNode("arg()", "Argument"), ToolboxNode("re()", "Partie reelle"), ToolboxNode("im()", "Partie imaginaire"), ToolboxNode("conj()", "Conjugue")};
 const ToolboxNode probabilityChildren[2] = {ToolboxNode("binomial(,)", "Combinaison"), ToolboxNode("permute(,)", "Arrangement")};
-const ToolboxNode arithmeticChildren[4] = {ToolboxNode("gcd()", "PGCD"), ToolboxNode("lcm()", "PPCM"), ToolboxNode("rem()", "Reste division euclidienne"), ToolboxNode("quo()","Quotien division euclidienne")};
+const ToolboxNode arithmeticChildren[4] = {ToolboxNode("gcd(,)", "PGCD"), ToolboxNode("lcm(,)", "PPCM"), ToolboxNode("rem(,)", "Reste division euclidienne"), ToolboxNode("quo(,)","Quotien division euclidienne")};
 const ToolboxNode matricesChildren[5] = {ToolboxNode("inverse()", "Inverse"), ToolboxNode("det()", "Determinant"), ToolboxNode("transpose()", "Transposee"), ToolboxNode("trace()", "Trace"), ToolboxNode("dim()", "Taille")};
 const ToolboxNode listesChildren[5] = {ToolboxNode("sort<()", "Tri croissant"), ToolboxNode("sort>()", "Tri decroissant"), ToolboxNode("max()", "Maximum"), ToolboxNode("min()", "Minimum"), ToolboxNode("dim()", "Taille")};
 const ToolboxNode approximationChildren[4] = {ToolboxNode("floor()", "Partie entiere"), ToolboxNode("frac()", "Partie fractionnaire"), ToolboxNode("ceil()", "Plafond"), ToolboxNode("round(,)", "Arrondi")};

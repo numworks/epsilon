@@ -11,10 +11,13 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
+#include <poincare/division_quotient.h>
+#include <poincare/division_remainder.h>
 #include <poincare/expression.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/global_context.h>
+#include <poincare/great_common_divisor.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>
@@ -22,6 +25,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
 #include <poincare/list_data.h>
+#include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_data.h>

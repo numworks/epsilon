@@ -51,35 +51,36 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operandLayout) :
   m_operandLayout(operandLayout)
 {
   m_operandLayout->setParent(this);
-  m_baseline = m_operandLayout->baseline() + k_heightMargin;
+  m_baseline = m_operandLayout->baseline();
 }
 
 ParenthesisLayout::~ParenthesisLayout() {
   delete m_operandLayout;
 }
 
+KDColor s_parenthesisWorkingBuffer[ParenthesisLayout::k_parenthesisCurveHeight*ParenthesisLayout::k_parenthesisCurveWidth];
+
 void ParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize operandSize = m_operandLayout->size();
-  KDColor workingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDRect frame(p.x(), p.y(), k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)workingBuffer);
-  frame = KDRect(p.x(), p.y() + operandSize.height() + 2*k_heightMargin - k_parenthesisCurveHeight, 
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
+  frame = KDRect(p.x(), p.y() + operandSize.height() - k_parenthesisCurveHeight,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)workingBuffer);
-  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y(), 
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
+  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y(),
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)workingBuffer);
-  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() + 2*k_heightMargin - k_parenthesisCurveHeight, 
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
+  frame = KDRect(p.x() + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() - k_parenthesisCurveHeight,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)workingBuffer);
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
 
-  ctx->fillRect(KDRect(p.x(), p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height()+2*k_heightMargin - 2*k_parenthesisCurveHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x()+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height()+2*k_heightMargin - 2*k_parenthesisCurveHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x(), p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height() - 2*k_parenthesisCurveHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight, k_lineThickness, m_operandLayout->size().height()- 2*k_parenthesisCurveHeight), expressionColor);
 }
 
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = m_operandLayout->size();
-  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness, operandSize.height()+2*k_heightMargin);
+  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness, operandSize.height());
 }
 
 ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
@@ -90,7 +91,7 @@ ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
 }
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
-  return KDPoint(k_widthMargin+k_lineThickness, k_heightMargin);
+  return KDPoint(k_widthMargin+k_lineThickness, 0);
 }
 
 }

@@ -21,6 +21,8 @@ int isinff(float x);
 int isnanf(float x);
 #define isnan(x) isnanf(x)
 
+float acosf(float x);
+float asinf(float x);
 float atanf(float x);
 float ceilf(float x);
 float copysignf(float x, float y);

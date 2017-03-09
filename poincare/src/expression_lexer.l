@@ -116,6 +116,7 @@ sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNC
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
+transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
 \x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8c { return EE; }
 \x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }

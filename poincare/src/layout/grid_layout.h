@@ -1,24 +1,22 @@
-#ifndef POINCARE_MATRIX_LAYOUT_H
-#define POINCARE_MATRIX_LAYOUT_H
+#ifndef POINCARE_GRID_LAYOUT_H
+#define POINCARE_GRID_LAYOUT_H
 
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
 
 namespace Poincare {
 
-class MatrixLayout : public ExpressionLayout {
+class GridLayout : public ExpressionLayout {
   public:
-    MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns);
-    ~MatrixLayout();
+    GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns);
+    ~GridLayout();
   protected:
     void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
     KDSize computeSize() override;
     ExpressionLayout * child(uint16_t index) override;
     KDPoint positionOfChild(ExpressionLayout * child) override;
   private:
-    constexpr static KDCoordinate k_matrixEntryMargin = 4;
-    constexpr static KDCoordinate k_matrixBracketMargin = 2;
-    constexpr static KDCoordinate k_matrixBracketWidth = 2;
+    constexpr static KDCoordinate k_gridEntryMargin = 6;
     KDCoordinate rowBaseline(int i);
     KDCoordinate rowHeight(int i);
     KDCoordinate height();

@@ -50,13 +50,14 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\
   baseline_relative_layout.o\
+  bracket_layout.o\
   condensed_sum_layout.o\
   conjugate_layout.o\
   expression_layout.o\
   fraction_layout.o\
+  grid_layout.o\
   horizontal_layout.o\
   integral_layout.o\
-  matrix_layout.o\
   nth_root_layout.o\
   parenthesis_layout.o\
   product_layout.o\

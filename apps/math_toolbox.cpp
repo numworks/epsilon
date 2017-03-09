@@ -20,7 +20,7 @@ const ToolboxNode menu[11] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNod
   ToolboxNode("Calcul", nullptr, calculChildren, 4), ToolboxNode("Nombre complexe", nullptr, complexChildren, 5),
   ToolboxNode("Probabilite", nullptr, probabilityChildren, 2), ToolboxNode("Arithmetique", nullptr, arithmeticChildren, 4),
   ToolboxNode("Matrice",  nullptr, matricesChildren, 5), ToolboxNode("Liste", nullptr, listesChildren, 5),
-  ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie", nullptr, trigonometryChildren, 6)};
+  ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie hyperbolique", nullptr, trigonometryChildren, 6)};
 const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 11);
 
 /* State */

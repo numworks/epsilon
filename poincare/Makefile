@@ -5,6 +5,9 @@ include poincare/src/simplify/Makefile
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
+  arc_cosine.o\
+  arc_sine.o\
+  arc_tangent.o\
   binary_operation.o\
   binomial_coefficient.o\
   ceiling.o\

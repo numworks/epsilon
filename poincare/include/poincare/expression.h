@@ -13,6 +13,9 @@ public:
   enum class Type : uint8_t {
     AbsoluteValue,
     Addition,
+    ArcCosine,
+    ArcSine,
+    ArcTangent,
     BinomialCoefficient,
     Ceiling,
     Complex,

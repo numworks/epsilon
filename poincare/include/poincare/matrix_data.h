@@ -9,10 +9,10 @@ namespace Poincare {
 
 class MatrixData {
 public:
-  MatrixData(ListData * listData);
+  MatrixData(ListData * listData, bool clone);
   MatrixData(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
   ~MatrixData();
-  void pushListData(ListData * listData);
+  void pushListData(ListData * listData, bool clone);
   int numberOfRows();
   int numberOfColumns();
   Expression ** operands() const;

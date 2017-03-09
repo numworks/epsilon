@@ -227,7 +227,7 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
 }
 
 void TermSumController::ContentView::LegendView::setSequenceName(const char * sequenceName) {
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  ExpressionLayout * childrenLayouts[2];
   childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[0] = m_sumLayout;
   m_sumLayout = new HorizontalLayout(childrenLayouts, 2);

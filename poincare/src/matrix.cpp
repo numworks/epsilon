@@ -52,7 +52,9 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   for (int i = 0; i < numberOfOperands(); i++) {
     childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
-  return new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
+  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
+  free(childrenLayouts);
+  return layout;
 }
 
 float Matrix::privateApproximate(Context& context, AngleUnit angleUnit) const {
@@ -62,7 +64,7 @@ float Matrix::privateApproximate(Context& context, AngleUnit angleUnit) const {
 
 Expression * Matrix::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  Expression * operands[numberOfOperands()];
+  Expression ** operands = (Expression **)malloc(numberOfOperands()*sizeof(Expression *));
   for (int i = 0; i < numberOfOperands(); i++) {
     operands[i] = operand(i)->evaluate(context, angleUnit);
     assert(operands[i]->type() == Type::Matrix || operands[i]->type() == Type::Complex);
@@ -72,7 +74,9 @@ Expression * Matrix::privateEvaluate(Context& context, AngleUnit angleUnit) cons
       continue;
     }
   }
-  return new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
+  Expression * matrix = new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
+  free(operands);
+  return matrix;
 }
 
 Expression::Type Matrix::type() const {
@@ -200,7 +204,7 @@ float Matrix::determinant(Context& context, AngleUnit angleUnit) const {
   return det;
 }
 
-Expression * Matrix::inverse(Context& context, AngleUnit angleUnit) const {
+Expression * Matrix::createInverse(Context& context, AngleUnit angleUnit) const {
   if (numberOfColumns() != numberOfRows()) {
     return nullptr;
   }
@@ -259,7 +263,7 @@ Expression * Matrix::inverse(Context& context, AngleUnit angleUnit) const {
       }
     }
   }
-  Expression * operands[numberOfOperands()];
+  Expression ** operands = (Expression **)malloc(numberOfOperands()*sizeof(Expression *));
   for (int i = 0; i < numberOfRows(); i++) {
     for (int j = 0; j < numberOfColumns(); j++) {
       operands[i*dim+j] = new Complex(Complex::Float(inv[i][j+dim]));
@@ -269,7 +273,21 @@ Expression * Matrix::inverse(Context& context, AngleUnit angleUnit) const {
     free(inv[i]);
   }
   free(inv);
-  return new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
+  Expression * matrix = new Matrix(new MatrixData(operands, numberOfOperands(), numberOfColumns(), numberOfRows(), false));
+  free(operands);
+  return matrix;
+}
+
+Expression * Matrix::createTranspose(Context& context, AngleUnit angleUnit) const {
+  Expression ** operands = (Expression **)malloc(numberOfOperands()*sizeof(Expression *));
+  for (int i = 0; i < numberOfRows(); i++) {
+    for (int j = 0; j < numberOfColumns(); j++) {
+      operands[j*numberOfRows()+i] = m_matrixData->operands()[i*numberOfColumns()+j]->clone();
+    }
+  }
+  Expression * matrix = new Matrix(new MatrixData(operands, numberOfOperands(), numberOfRows(), numberOfColumns(), false));
+  free(operands);
+  return matrix;
 }
 
 }

@@ -78,7 +78,8 @@ ExpressionLayout * Function::privateCreateLayout(FloatDisplayMode floatDisplayMo
     grandChildrenLayouts[layoutIndex++] = m_args[i]->createLayout(floatDisplayMode, complexFormat);
   }
   ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*m_numberOfArguments-1);
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  free(grandChildrenLayouts);
+  ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = new StringLayout(m_name, strlen(m_name));
   childrenLayouts[1] = new ParenthesisLayout(argumentLayouts);
   return new HorizontalLayout(childrenLayouts, 2);

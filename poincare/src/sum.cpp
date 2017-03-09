@@ -50,7 +50,7 @@ float Sum::privateApproximate(Context& context, AngleUnit angleUnit) const {
 ExpressionLayout * Sum::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = new StringLayout("n=", 2);
   childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode, complexFormat);
   return new SumLayout(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(floatDisplayMode, complexFormat), m_args[0]->createLayout(floatDisplayMode, complexFormat));

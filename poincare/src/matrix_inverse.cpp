@@ -47,7 +47,7 @@ Expression * MatrixInverse::privateEvaluate(Context& context, AngleUnit angleUni
     delete result;
     return resultEvaluation;
   }
-  Expression * inverse = ((Matrix *)evaluation)->inverse(context, angleUnit);
+  Expression * inverse = ((Matrix *)evaluation)->createInverse(context, angleUnit);
   delete evaluation;
   return inverse;
 }

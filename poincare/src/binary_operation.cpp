@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 }
 
 namespace Poincare {
@@ -64,7 +65,7 @@ Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleU
 }
 
 Expression * BinaryOperation::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
     assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
@@ -76,7 +77,9 @@ Expression * BinaryOperation::evaluateOnMatrixAndComplex(Matrix * m, Complex * c
     operands[i] = evaluateOnComplex((Complex *)evaluation, c, context, angleUnit);
     delete evaluation;
   }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  free(operands);
+  return result;
 }
 
 Expression * BinaryOperation::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
@@ -87,7 +90,7 @@ Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
     return nullptr;
   }
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     Expression * mEvaluation = m->operand(i)->evaluate(context, angleUnit);
     Expression * nEvaluation = n->operand(i)->evaluate(context, angleUnit);
@@ -103,7 +106,9 @@ Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context
     delete mEvaluation;
     delete nEvaluation;
   }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  free(operands);
+  return result;
 }
 
 }

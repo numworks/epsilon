@@ -20,7 +20,9 @@ ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMo
   children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
   children_layouts[1] = new StringLayout("+", 1);
   children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 3);
+  ExpressionLayout * layout = new HorizontalLayout(children_layouts, 3);
+  free(children_layouts);
+  return layout;
 }
 
 float Addition::privateApproximate(Context& context, AngleUnit angleUnit) const {

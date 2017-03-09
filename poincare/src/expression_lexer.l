@@ -103,6 +103,7 @@ int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
 ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
+permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 re { poincare_expression_yylval.expression = new ReelPart(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }

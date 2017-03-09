@@ -36,6 +36,7 @@ public:
     Opposite,
     Fraction,
     Parenthesis,
+    PermuteCoefficient,
     Power,
     Product,
     ReelPart,

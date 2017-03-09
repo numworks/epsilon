@@ -6,6 +6,7 @@ objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   binary_operation.o\
+  binomial_coefficient.o\
   complex.o\
   complex_argument.o\
   conjugate.o\

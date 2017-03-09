@@ -92,6 +92,7 @@ w\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::wn1; 
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
+binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
 conj { poincare_expression_yylval.expression = new Conjugate(); return FUNCTION; }

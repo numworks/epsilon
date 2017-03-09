@@ -3,6 +3,7 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/binomial_coefficient.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
 #include <poincare/conjugate.h>

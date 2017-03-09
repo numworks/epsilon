@@ -34,7 +34,9 @@ objs += $(addprefix poincare/src/,\
   logarithm.o\
   matrix.o\
   matrix_data.o\
+  matrix_dimension.o\
   matrix_inverse.o\
+  matrix_trace.o\
   matrix_transpose.o\
   multiplication.o\
   naperian_logarithm.o\

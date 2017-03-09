@@ -24,12 +24,12 @@
 #include <poincare/integer.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
-#include <poincare/list_data.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
-#include <poincare/matrix_data.h>
+#include <poincare/matrix_dimension.h>
 #include <poincare/matrix_inverse.h>
+#include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>

@@ -94,6 +94,7 @@ ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
 binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
+dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
 conj { poincare_expression_yylval.expression = new Conjugate(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
@@ -116,6 +117,7 @@ sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNC
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
+trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTION; }
 transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
 \x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8c { return EE; }

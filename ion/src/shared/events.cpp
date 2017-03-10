@@ -29,6 +29,7 @@ static constexpr const char k_root[4] = {Ion::Charset::Root, '(', ')', 0};
 static constexpr const char k_complexI[2] = {Ion::Charset::IComplex, 0};
 static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', '(', ')', 0};
 static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
+static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
 
 static constexpr EventData s_dataForEvent[] = {
 // Plain
@@ -40,7 +41,7 @@ static constexpr EventData s_dataForEvent[] = {
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("*"), T("/"), U(),
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),
-  T("0"), T("."), T("E"), TL(), TL(), U(),
+  T("0"), T("."), T(k_exponent), TL(), TL(), U(),
 // Shift
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),

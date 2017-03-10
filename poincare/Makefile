@@ -98,6 +98,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   simplify_utils.cpp\
   subtraction.cpp\
+  symbol.cpp\
   trigo.cpp\
 )
 

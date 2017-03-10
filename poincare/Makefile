@@ -13,6 +13,7 @@ objs += $(addprefix poincare/src/,\
   ceiling.o\
   complex.o\
   complex_argument.o\
+  confidence_interval.o\
   conjugate.o\
   cosine.o\
   derivative.o\
@@ -54,6 +55,7 @@ objs += $(addprefix poincare/src/,\
   parenthesis.o\
   permute_coefficient.o\
   power.o\
+  prediction_interval.o\
   preferences.o\
   product.o\
   reel_part.o\

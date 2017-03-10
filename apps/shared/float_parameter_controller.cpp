@@ -8,10 +8,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-FloatParameterController::FloatParameterController(Responder * parentResponder) :
+FloatParameterController::FloatParameterController(Responder * parentResponder, const char * okButtonText) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this))
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_okButton(Button(&m_selectableTableView, okButtonText, Invocation([](void * context, void * sender) {
+    FloatParameterController * parameterController = (FloatParameterController *) context;
+    parameterController->buttonAction();
+  }, this), KDText::FontSize::Large))
 {
 }
 
@@ -28,11 +32,60 @@ void FloatParameterController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-int FloatParameterController::activeCell() {
-  return m_selectableTableView.selectedRow();
+bool FloatParameterController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    for (int i = 0; i < numberOfRows()-1; i++) {
+      setParameterAtIndex(i, previousParameterAtIndex(i));
+    }
+    stackController()->pop();
+    return true;
+  }
+  return false;
+}
+
+int FloatParameterController::typeAtLocation(int i, int j) {
+  if (j == numberOfRows()-1) {
+    return 0;
+  }
+  return 1;
+}
+
+int FloatParameterController::reusableCellCount(int type) {
+  if (type == 0) {
+    return 1;
+  }
+  return reusableParameterCellCount(type);
+}
+
+HighlightCell * FloatParameterController::reusableCell(int index, int type) {
+  if (type == 0) {
+    return &m_okButton;
+  }
+  return reusableParameterCell(index, type);
+}
+
+KDCoordinate FloatParameterController::rowHeight(int j) {
+  if (j == numberOfRows()-1) {
+    return Metric::ParameterCellHeight+k_buttonMargin;
+  }
+  return Metric::ParameterCellHeight;
+}
+
+KDCoordinate FloatParameterController::cumulatedHeightFromIndex(int j) {
+  return Metric::ParameterCellHeight*j;
+}
+
+int FloatParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  if (offsetY > numberOfRows()*Metric::ParameterCellHeight + k_buttonMargin) {
+    return numberOfRows();
+  }
+  return (offsetY - 1) / Metric::ParameterCellHeight;
 }
 
 void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == numberOfRows()-1) {
+    return;
+  }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
@@ -43,20 +96,26 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
-  if (isnan(floatBody)) {
+  if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning("Valeur non defini");
     return false;
   }
   setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
     m_selectableTableView.selectedRow()), activeCell());
+  m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()+1);
   return true;
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellY >= 0) {
+  if (previousSelectedCellY >= 0 && previousSelectedCellX < numberOfRows()-1) {
     PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
+  }
+  if (t->selectedRow() == numberOfRows()-1) {
+    Button * myNewCell = (Button *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    app()->setFirstResponder(myNewCell);
+    return;
   }
   if (t->selectedRow() >= 0) {
     PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
@@ -68,8 +127,17 @@ TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
   return (TextFieldDelegateApp *)app();
 }
 
-KDCoordinate FloatParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
+int FloatParameterController::activeCell() {
+  return m_selectableTableView.selectedRow();
+}
+
+StackViewController * FloatParameterController::stackController() {
+  return (StackViewController *)parentResponder();
+}
+
+void FloatParameterController::buttonAction() {
+  StackViewController * stack = stackController();
+  stack->pop();
 }
 
 }

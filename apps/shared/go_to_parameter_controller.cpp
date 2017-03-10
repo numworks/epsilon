@@ -5,7 +5,7 @@
 namespace Shared {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol) :
-  FloatParameterController(parentResponder),
+  FloatParameterController(parentResponder, "Valider"),
   m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)symbol)),
   m_graphRange(graphRange),
   m_cursor(cursor),
@@ -15,6 +15,20 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 
 const char * GoToParameterController::title() const {
   return "Aller a";
+}
+
+void GoToParameterController::viewWillAppear() {
+  m_previousParameter = parameterAtIndex(0);
+  FloatParameterController::viewWillAppear();
+}
+
+int GoToParameterController::numberOfRows() {
+  return 2;
+}
+
+float GoToParameterController::previousParameterAtIndex(int index) {
+  assert(index == 0);
+  return m_previousParameter;
 }
 
 float GoToParameterController::parameterAtIndex(int index) {
@@ -31,16 +45,12 @@ void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   m_cursor->moveTo(f, y);
 }
 
-int GoToParameterController::numberOfRows() {
-  return 1;
-};
-
-HighlightCell * GoToParameterController::reusableCell(int index) {
+HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
   return &m_abscisseCell;
 }
 
-int GoToParameterController::reusableCellCount() {
+int GoToParameterController::reusableParameterCellCount(int type) {
   return 1;
 }
 
@@ -48,12 +58,10 @@ void GoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
-bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  FloatParameterController::textFieldDidFinishEditing(textField, text);
+void GoToParameterController::buttonAction() {
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();
   stack->pop();
-  return true;
 }
 
 }

@@ -4,11 +4,9 @@
 namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
-  FloatParameterController(parentResponder),
+  FloatParameterController(parentResponder, "Valider"),
   m_interval(interval),
-  m_intervalStartCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Debut")),
-  m_intervalEndCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"X Fin")),
-  m_intervalStepCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Pas"))
+  m_intervalCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr)}
 {
 }
 
@@ -16,8 +14,34 @@ const char * IntervalParameterController::title() const {
   return "Regler l'intervalle";
 }
 
+void IntervalParameterController::viewWillAppear() {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    m_previousParameters[i] = parameterAtIndex(i);
+  }
+  FloatParameterController::viewWillAppear();
+}
+
+int IntervalParameterController::numberOfRows() {
+  return k_totalNumberOfCell+1;
+}
+
+void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == numberOfRows()-1) {
+    return;
+  }
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
+  const char * labels[k_totalNumberOfCell] = {"x Debut", "x Fin", "x Pas"};
+  myCell->setText(labels[index]);
+  FloatParameterController::willDisplayCellForIndex(cell, index);
+}
+
 Interval * IntervalParameterController::interval() {
   return m_interval;
+}
+
+float IntervalParameterController::previousParameterAtIndex(int index) {
+  assert(index >= 0 && index < k_totalNumberOfCell);
+  return m_previousParameters[index];
 }
 
 float IntervalParameterController::parameterAtIndex(int index) {
@@ -30,18 +54,13 @@ void IntervalParameterController::setParameterAtIndex(int parameterIndex, float 
   (m_interval->*setters[parameterIndex])(f);
 }
 
-int IntervalParameterController::numberOfRows() {
-  return k_totalNumberOfCell;
-};
-
-HighlightCell * IntervalParameterController::reusableCell(int index) {
+HighlightCell * IntervalParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_intervalStartCell, &m_intervalEndCell, &m_intervalStepCell};
-  return cells[index];
+  return &m_intervalCells[index];
 }
 
-int IntervalParameterController::reusableCellCount() {
+int IntervalParameterController::reusableParameterCellCount(int type) {
   return k_totalNumberOfCell;
 }
 

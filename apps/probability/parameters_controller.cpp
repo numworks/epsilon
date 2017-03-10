@@ -8,15 +8,6 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_nextButton(Button(parentResponder, "Suivant", Invocation([](void * context, void * sender) {
-    ParametersController * parameterController = (ParametersController *) context;
-    CalculationController * calculationController = parameterController->calculationController();
-    calculationController->setCalculationAccordingToIndex(0);
-    calculationController->selectSubview(1);
-    calculationController->reload();
-    StackViewController * stack = parameterController->stackController();
-    stack->push(calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
-  }, parentResponder), KDText::FontSize::Large)),
   m_titleView(PointerTextView(KDText::FontSize::Small, "Choisir les parametres", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
@@ -24,8 +15,9 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
 {
 }
 
-Button * ParametersController::ContentView::button() {
-  return &m_nextButton;
+void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  int tableHeight = m_selectableTableView->size().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
+  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
 PointerTextView * ParametersController::ContentView::parameterDefinitionAtIndex(int index) {
@@ -36,17 +28,12 @@ PointerTextView * ParametersController::ContentView::parameterDefinitionAtIndex(
   return &m_secondParameterDefinition;
 }
 
-void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  int tableHeight = m_selectableTableView->size().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
-  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
-}
-
 void ParametersController::ContentView::setNumberOfParameters(int numberOfParameters) {
   m_numberOfParameters = numberOfParameters;
 }
 
 int ParametersController::ContentView::numberOfSubviews() const {
-  return m_numberOfParameters+3;
+  return m_numberOfParameters+2;
 }
 
 View * ParametersController::ContentView::subviewAtIndex(int index) {
@@ -58,9 +45,6 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
     return m_selectableTableView;
   }
   if (index == 2) {
-    return &m_nextButton;
-  }
-  if (index == 3) {
     return &m_firstParameterDefinition;
   }
   return &m_secondParameterDefinition;
@@ -71,12 +55,11 @@ void ParametersController::ContentView::layoutSubviews() {
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDCoordinate tableHeight = m_selectableTableView->size().height() + Metric::CommonTopMargin + Metric::CommonBottomMargin;
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight));
-  m_nextButton.setFrame(KDRect(Metric::CommonLeftMargin, titleHeight+tableHeight, bounds().width() - Metric::CommonRightMargin - Metric::CommonLeftMargin, k_buttonHeight));
   KDCoordinate textHeight = KDText::stringSize("", KDText::FontSize::Small).height();
-  KDCoordinate defOrigin = (titleHeight+tableHeight+k_buttonHeight)/2+(bounds().height()-textHeight)/2;
+  KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
   m_secondParameterDefinition.setFrame(KDRectZero);
   if (m_numberOfParameters == 2) {
-    defOrigin = (titleHeight+tableHeight+k_buttonHeight)/2+(bounds().height()-2*textHeight-k_textMargin)/2;
+    defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-2*textHeight-k_textMargin)/2;
     m_secondParameterDefinition.setFrame(KDRect(0, defOrigin+textHeight+k_textMargin, bounds().width(), textHeight));
   }
   m_firstParameterDefinition.setFrame(KDRect(0, defOrigin, bounds().width(), textHeight));
@@ -85,12 +68,11 @@ void ParametersController::ContentView::layoutSubviews() {
 /* Parameters Controller */
 
 ParametersController::ParametersController(Responder * parentResponder) :
-  FloatParameterController(parentResponder),
+  FloatParameterController(parentResponder, "Suivant"),
   m_menuListCell{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
     PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(nullptr),
-  m_buttonSelected(false),
   m_calculationController(CalculationController(nullptr))
 {
 }
@@ -114,60 +96,42 @@ void ParametersController::setLaw(Law * law) {
   m_calculationController.setLaw(law);
 }
 
-bool ParametersController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Down && !m_buttonSelected) {
-    m_buttonSelected = true;
-    m_contentView.button()->setHighlighted(true);
-    m_selectableTableView.deselectTable();
-    app()->setFirstResponder(m_contentView.button());
-    return true;
-  }
-  if (event == Ion::Events::Up && m_buttonSelected) {
-    m_buttonSelected = false;
-    m_contentView.button()->setHighlighted(false);
-    m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
-    app()->setFirstResponder(&m_selectableTableView);
-    return true;
-  }
-  return FloatParameterController::handleEvent(event);
-}
-
-void ParametersController::didBecomeFirstResponder() {
-  for (int i = 0; i < numberOfRows(); i++) {
+void ParametersController::viewWillAppear() {
+  for (int i = 0; i < m_law->numberOfParameter(); i++) {
+    m_previousParameters[i] = parameterAtIndex(i);
     m_contentView.parameterDefinitionAtIndex(i)->setText(m_law->parameterDefinitionAtIndex(i));
   }
   m_contentView.layoutSubviews();
-  m_buttonSelected = false;
-  m_contentView.button()->setHighlighted(false);
-  FloatParameterController::didBecomeFirstResponder();
-}
-
-StackViewController * ParametersController::stackController() {
-  return (StackViewController * )parentResponder();
-}
-
-CalculationController * ParametersController::calculationController() {
-  return &m_calculationController;
+  FloatParameterController::viewWillAppear();
 }
 
 int ParametersController::numberOfRows() {
-  return m_law->numberOfParameter();
-};
+  return 1+m_law->numberOfParameter();
+}
 
 void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == numberOfRows()-1) {
+    return;
+  }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   myCell->setText(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-HighlightCell * ParametersController::reusableCell(int index) {
+HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
   return &m_menuListCell[index];
 }
 
-int ParametersController::reusableCellCount() {
+int ParametersController::reusableParameterCellCount(int type) {
   return m_law->numberOfParameter();
+}
+
+float ParametersController::previousParameterAtIndex(int index) {
+  assert(index >= 0);
+  assert(index < 2);
+  return m_previousParameters[index];
 }
 
 float ParametersController::parameterAtIndex(int index) {
@@ -180,6 +144,14 @@ void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
     return;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
+}
+
+void ParametersController::buttonAction() {
+  m_calculationController.setCalculationAccordingToIndex(0);
+  m_calculationController.selectSubview(1);
+  m_calculationController.reload();
+  StackViewController * stack = stackController();
+  stack->push(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
 }

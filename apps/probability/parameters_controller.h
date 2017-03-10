@@ -14,33 +14,29 @@ public:
   View * view() override;
   const char * title() const override;
   void setLaw(Law * law);
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
-  StackViewController * stackController();
-  CalculationController * calculationController();
+  void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
 private:
+  HighlightCell * reusableParameterCell(int index, int type) override;
+  int reusableParameterCellCount(int type) override;
+  void buttonAction() override;
+  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
-    Button * button();
-    PointerTextView * parameterDefinitionAtIndex(int index);
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    PointerTextView * parameterDefinitionAtIndex(int index);
     void layoutSubviews() override;
     void setNumberOfParameters(int numberOfParameters);
   private:
-    constexpr static KDCoordinate k_buttonHeight = 40;
     constexpr static KDCoordinate k_textMargin = 5;
     constexpr static KDCoordinate k_titleMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     int m_numberOfParameters;
-    Button m_nextButton;
     PointerTextView m_titleView;
     PointerTextView m_firstParameterDefinition;
     PointerTextView m_secondParameterDefinition;
@@ -49,9 +45,9 @@ private:
   constexpr static int k_maxNumberOfCells = 2;
   char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
   PointerTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
+  float m_previousParameters[k_maxNumberOfCells];
   ContentView m_contentView;
   Law * m_law;
-  bool m_buttonSelected;
   CalculationController m_calculationController;
 };
 

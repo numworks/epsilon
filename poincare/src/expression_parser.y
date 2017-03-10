@@ -120,8 +120,10 @@ number:
   | DIGITS DOT DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
   | DOT DIGITS EE DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
   | DIGITS DOT DIGITS EE DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | DIGITS EE DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, nullptr, 0, $3.address, $3.length, false); }
   | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
   | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
+  | DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, nullptr, 0, $4.address, $4.length, true); }
 
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }

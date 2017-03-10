@@ -9,16 +9,16 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
   m_addNewFunction(text),
-  m_plotButton(this, "Tracer", Invocation([](void * context, void * sender) {
+  m_plotButton(this, "Tracer la fonction", Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(1);
-  }, this), KDText::FontSize::Large),
+  }, this), KDText::FontSize::Small, Palette::PurpleBright),
   m_valuesButton(this, "Afficher les valeurs", Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(2);
-  }, this), KDText::FontSize::Large)
+  }, this), KDText::FontSize::Small, Palette::PurpleBright)
 {
 }
 

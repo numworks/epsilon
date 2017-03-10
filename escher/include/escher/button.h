@@ -8,7 +8,7 @@
 
 class Button : public View, public Responder {
 public:
-  Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small);
+  Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
   bool handleEvent(Ion::Events::Event event) override;
   void setBackgroundColor(KDColor backgroundColor);
   KDSize minimalSizeForOptimalDisplay() const override;

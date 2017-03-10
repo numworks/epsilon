@@ -1,9 +1,9 @@
 #include <escher/button.h>
 #include <assert.h>
 
-Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size) :
+Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size, KDColor textColor) :
   Responder(parentResponder),
-  m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f)),
+  m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f, textColor)),
   m_invocation(invocation),
   m_backgroundColor(KDColorWhite)
 {

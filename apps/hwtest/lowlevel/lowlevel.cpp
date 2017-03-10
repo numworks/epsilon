@@ -76,6 +76,7 @@ void CommandList::dispatch(const char * command) const {
 }
 
 static const char * sOK = "OK";
+static const char * sKO = "KO";
 static const char * sSyntaxError = "SYNTAX_ERROR";
 static const char * sON = "ON";
 static const char * sOFF = "OFF";
@@ -139,6 +140,8 @@ void command_led(const char * input) {
 }
 
 void command_display(const char * input) {
+  // Input must be of the form "0xAABBCC" or "ON" or "OFF"
+
   if (strcmp(input, sON) == 0) {
     Ion::Display::Device::init();
     Ion::Console::writeLine(sOK);
@@ -149,7 +152,48 @@ void command_display(const char * input) {
     Ion::Console::writeLine(sOK);
     return;
   }
-  Ion::Console::writeLine(sSyntaxError);
+  if (input == nullptr || input[0] != '0' || input[1] != 'x' || !isHex(input[2]) ||!isHex(input[3]) || !isHex(input[4]) || !isHex(input[5]) || !isHex(input[6]) || !isHex(input[7]) || input[8] != NULL) {
+    Ion::Console::writeLine(sSyntaxError);
+    return;
+  }
+
+  /* We fill the screen with a color and return OK if we read that color back everywhere. */
+
+  KDColor c = KDColor::RGB24(hexNumber(input));
+
+  constexpr int stampHeight = 10;
+  constexpr int stampWidth = 10;
+  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
+  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
+  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
+
+  KDColor stamp[stampWidth*stampHeight];
+  for (int i=0;i<stampWidth*stampHeight; i++) {
+    stamp[i] = c;
+  }
+
+  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
+    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
+      Ion::Display::pushRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
+    }
+  }
+
+  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
+    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
+      for (int i=0;i<stampWidth*stampHeight; i++) {
+        stamp[i] = KDColorBlack;
+      }
+      Ion::Display::pullRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
+      for (int i=0;i<stampWidth*stampHeight; i++) {
+        if (stamp[i] != c) {
+          Ion::Console::writeLine(sKO);
+          return;
+        }
+      }
+    }
+  }
+
+  Ion::Console::writeLine(sOK);
 }
 
 void command_backlight(const char * input) {

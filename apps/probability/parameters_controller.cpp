@@ -117,14 +117,14 @@ void ParametersController::setLaw(Law * law) {
 bool ParametersController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down && !m_buttonSelected) {
     m_buttonSelected = true;
-    m_contentView.button()->setBackgroundColor(Palette::Select);
+    m_contentView.button()->setHighlighted(true);
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(m_contentView.button());
     return true;
   }
   if (event == Ion::Events::Up && m_buttonSelected) {
     m_buttonSelected = false;
-    m_contentView.button()->setBackgroundColor(KDColorWhite);
+    m_contentView.button()->setHighlighted(false);
     m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
     app()->setFirstResponder(&m_selectableTableView);
     return true;
@@ -138,7 +138,7 @@ void ParametersController::didBecomeFirstResponder() {
   }
   m_contentView.layoutSubviews();
   m_buttonSelected = false;
-  m_contentView.button()->setBackgroundColor(KDColorWhite);
+  m_contentView.button()->setHighlighted(false);
   FloatParameterController::didBecomeFirstResponder();
 }
 

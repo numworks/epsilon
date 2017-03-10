@@ -148,12 +148,12 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App
   }
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(m_selectedButton);
-    button->setBackgroundColor(KDColorWhite);
+    button->setHighlighted(false);
   }
   m_selectedButton = selectedButton;
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(selectedButton);
-    button->setBackgroundColor(Palette::Select);
+    button->setHighlighted(true);
     application->setFirstResponder(button);
     return true;
   }

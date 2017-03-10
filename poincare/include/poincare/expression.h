@@ -61,6 +61,7 @@ public:
     Round,
     Sine,
     SquareRoot,
+    Store,
     Sum,
     Subtraction,
     Symbol,

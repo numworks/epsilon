@@ -1,6 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/function.h>
+#include <poincare/symbol.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
 #include "expression_parser.hpp"

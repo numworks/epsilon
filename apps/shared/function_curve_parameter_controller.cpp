@@ -6,7 +6,7 @@ namespace Shared {
 FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol) :
   ViewController(nullptr),
   m_goToCell(PointerTableCellWithChevron((char*)"Aller a")),
-  m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_goToParameterController(GoToParameterController(this, graphRange, cursor, symbol)),
   m_function(nullptr)

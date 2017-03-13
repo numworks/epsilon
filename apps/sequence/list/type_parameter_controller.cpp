@@ -14,7 +14,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_expliciteCell(ExpressionTableCellWithPointer((char*)"Explicite", cellLayout)),
   m_singleRecurrenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 1", cellLayout)),
   m_doubleRecurenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 2", cellLayout)),
-  m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin)),
+  m_selectableTableView(SelectableTableView(this, this, 1, topMargin, rightMargin, bottomMargin, leftMargin, nullptr, false)),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
   m_listController(list)

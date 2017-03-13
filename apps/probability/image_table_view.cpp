@@ -45,7 +45,7 @@ void ImageTableView::ImageCell::setImage(const Image * image, const Image * focu
 ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController) :
   View(),
   Responder(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, nullptr, false, false)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, nullptr, false, false)),
   m_isSelected(false),
   m_selectedIcon(0),
   m_calculation(calculation),

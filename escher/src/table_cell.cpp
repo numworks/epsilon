@@ -41,10 +41,10 @@ void TableCell::layoutSubviews() {
     KDSize labelSize = label->minimalSizeForOptimalDisplay();
     switch (m_layout) {
       case Layout::Vertical:
-        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, labelSize.height()));    
+        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, labelSize.height()));
         break;
       default:
-        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));    
+        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));
         break;
     }
   }
@@ -89,4 +89,5 @@ void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);
   ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
   ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, height-k_separatorThickness, width, k_separatorThickness), Palette::GreyBright);
  }

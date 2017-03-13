@@ -16,7 +16,7 @@
 
 class SelectableTableView : public TableView, public Responder {
 public:
-  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
+  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, int cellOverlapping,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
     KDCoordinate leftMargin = 0, SelectableTableViewDelegate * delegate = nullptr,
     bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,

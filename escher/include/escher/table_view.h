@@ -8,7 +8,7 @@
 
 class TableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource, KDCoordinate topMargin = 0,
+  TableView(TableViewDataSource * dataSource, int cellOverlapping, KDCoordinate topMargin = 0,
     KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0,
     bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
     KDCoordinate indicatorThickness = 20, KDColor indicatorColor = Palette::GreyDark,
@@ -25,7 +25,7 @@ protected:
   TableViewDataSource * dataSource();
   class ContentView : public View {
   public:
-    ContentView(TableView * tableView, TableViewDataSource * dataSource);
+    ContentView(TableView * tableView, TableViewDataSource * dataSource, int cellOverlapping);
 
     void scrollToCell(int i, int j) const;
     HighlightCell * cellAtLocation(int i, int j);
@@ -67,6 +67,7 @@ protected:
     int typeIndexFromSubviewIndex(int index, int type) const;
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
+    int m_cellOverlapping;
   };
   ContentView m_contentView;
 private:

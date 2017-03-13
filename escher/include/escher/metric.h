@@ -11,7 +11,7 @@ public:
   constexpr static KDCoordinate CommonBottomMargin = 15;
   constexpr static KDCoordinate ParameterCellHeight = 35;
   constexpr static KDCoordinate ModalTopMargin = 5;
-  constexpr static KDCoordinate ModalBottomMargin = 20;
+  constexpr static KDCoordinate ModalBottomMargin = 18;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
 };

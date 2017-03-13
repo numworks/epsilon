@@ -12,10 +12,10 @@ FloatParameterController::FloatParameterController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
-  m_okButton(Button(&m_selectableTableView, okButtonText, Invocation([](void * context, void * sender) {
+  m_okButton(ButtonWithSeparator(&m_selectableTableView, okButtonText, Invocation([](void * context, void * sender) {
     FloatParameterController * parameterController = (FloatParameterController *) context;
     parameterController->buttonAction();
-  }, this), KDText::FontSize::Large))
+  }, this)))
 {
 }
 
@@ -72,6 +72,9 @@ KDCoordinate FloatParameterController::rowHeight(int j) {
 }
 
 KDCoordinate FloatParameterController::cumulatedHeightFromIndex(int j) {
+  if (j == numberOfRows()) {
+    return j*Metric::ParameterCellHeight+k_buttonMargin;
+  }
   return Metric::ParameterCellHeight*j;
 }
 

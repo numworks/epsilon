@@ -1,5 +1,6 @@
 app_objs += $(addprefix apps/shared/,\
   banner_view.o\
+  button_with_separator.o\
   cursor_view.o\
   curve_view.o\
   curve_view_cursor.o\

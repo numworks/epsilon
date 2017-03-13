@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "text_field_delegate.h"
+#include "button_with_separator.h"
 
 namespace Shared {
 
@@ -32,7 +33,7 @@ protected:
   StackViewController * stackController();
   SelectableTableView m_selectableTableView;
 private:
-  constexpr static int k_buttonMargin = 5;
+  constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
@@ -40,7 +41,7 @@ private:
   virtual float previousParameterAtIndex(int index) = 0;
   virtual float parameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
-  Button m_okButton;
+  ButtonWithSeparator m_okButton;
 };
 
 }

@@ -26,6 +26,7 @@ View * VariableBoxController::ContentViewController::view() {
 
 void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
+  m_selectableTableView.scrollToCell(0,0);
   m_selectableTableView.selectCellAtLocation(0, m_firstSelectedRow);
   app()->setFirstResponder(&m_selectableTableView);
 }

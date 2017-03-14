@@ -12,7 +12,7 @@ class PredictionParameterController : public ViewController, public SimpleListVi
 public:
   PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

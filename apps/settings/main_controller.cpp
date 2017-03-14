@@ -9,20 +9,20 @@ using namespace Poincare;
 
 namespace Settings {
 
-const SettingsNode angleChildren[2] = {SettingsNode("Degres "), SettingsNode("Radians ")};
-const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode("Auto "), SettingsNode("Scientifique ")};
-const SettingsNode complexFormatChildren[2] = {SettingsNode("a+ib "), SettingsNode("eitheta ")};
-const SettingsNode languageChildren[3] = {SettingsNode("Anglais "), SettingsNode("Francais "), SettingsNode("Espagnol ")};
+const SettingsNode angleChildren[2] = {SettingsNode(I18n::Message::Degres), SettingsNode(I18n::Message::Radian)};
+const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Auto), SettingsNode(I18n::Message::Scientific)};
+const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
+const SettingsNode languageChildren[3] = {SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::Spanish)};
 
-const SettingsNode menu[4] = {SettingsNode("Unite d'angles", angleChildren, 2), SettingsNode("Format resultat", FloatDisplayModeChildren, 2), SettingsNode("Format complexe", complexFormatChildren, 2),
-  SettingsNode("Langue", languageChildren, 3)};
-const SettingsNode model = SettingsNode("Parametres", menu, 4);
+const SettingsNode menu[4] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(I18n::Message::Language, languageChildren, 3)};
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 4);
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small),
     PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small)},
-  m_complexFormatCell(PointerTableCellWithChevronAndExpression(nullptr, KDText::FontSize::Large)),
+  m_complexFormatCell(PointerTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel((Node *)&model),
@@ -36,8 +36,8 @@ MainController::~MainController() {
     m_complexFormatLayout = nullptr;
   }
 }
-const char * MainController::title() const {
-  return m_nodeModel->label();
+const char * MainController::title() {
+  return I18n::translate(m_nodeModel->label());
 }
 
 View * MainController::view() {
@@ -103,7 +103,7 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   PointerTableCell * myCell = (PointerTableCell *)cell;
-  myCell->setText(m_nodeModel->children(index)->label());
+  myCell->setMessage(m_nodeModel->children(index)->label());
 
   if (index == 2) {
     if (m_complexFormatLayout) {
@@ -131,7 +131,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
       break;
     case 3:
-      myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language())->label());
+      myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language()-1)->label());
       break;
   }
 }

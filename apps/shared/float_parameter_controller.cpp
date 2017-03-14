@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-FloatParameterController::FloatParameterController(Responder * parentResponder, const char * okButtonText) :
+FloatParameterController::FloatParameterController(Responder * parentResponder, I18n::Message okButtonText) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
@@ -100,7 +100,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
-    app()->displayWarning("Valeur non defini");
+    app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
   setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);

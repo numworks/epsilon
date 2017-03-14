@@ -14,7 +14,7 @@ namespace Graph {
 class ListController : public Shared::ListController {
 public:
   ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer);
-  const char * title() const override;
+  const char * title() override;
   int numberOfRows() override;
   KDCoordinate rowHeight(int j) override;
 private:

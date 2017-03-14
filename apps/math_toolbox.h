@@ -56,7 +56,7 @@ private:
   class ListController : public ViewController {
   public:
     ListController(Responder * parentResponder, SelectableTableView * tableView);
-    const char * title() const override;
+    const char * title() override;
     View * view() override;
     void didBecomeFirstResponder() override;
     void setFirstSelectedRow(int firstSelectedRow);

@@ -15,6 +15,7 @@ app_objs += $(addprefix apps/,\
   battery_view.o\
   constant.o\
   global_preferences.o\
+  i18n.o\
   main.o\
   math_toolbox.o\
   node.o\

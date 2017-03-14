@@ -31,6 +31,10 @@ void Controller::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
+void Controller::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 View * Controller::view() {
   return &m_selectableTableView;
 }

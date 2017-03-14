@@ -1,17 +1,22 @@
 #include <escher/pointer_text_view.h>
+#include <assert.h>
 
-PointerTextView::PointerTextView(KDText::FontSize size, const char * text, float horizontalAlignment, float verticalAlignment,
+PointerTextView::PointerTextView(KDText::FontSize size, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_textPointer(text)
+  m_message(message)
 {
 }
 
 const char * PointerTextView::text() const {
-  return m_textPointer;
+  return I18n::translate(m_message);
 }
 
 void PointerTextView::setText(const char * text) {
-  m_textPointer = text;
+  assert(false);
+}
+
+void PointerTextView::setMessage(I18n::Message message) {
+  m_message = message;
   markRectAsDirty(bounds());
 }

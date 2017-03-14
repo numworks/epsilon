@@ -2,7 +2,9 @@
 #define ESCHER_TAB_VIEW_H
 
 #include <escher/view.h>
+#include <escher/i18n.h>
 #include <escher/tab_view_cell.h>
+#include <escher/view_controller.h>
 
 class TabViewController;
 
@@ -12,7 +14,7 @@ public:
   int numberOfTabs() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-  void addTabNamed(const char * name);
+  void addTab(ViewController * controller);
   //TODO: void removeLastTab();
   void setActiveIndex(int index);
   void setSelectedIndex(int index);

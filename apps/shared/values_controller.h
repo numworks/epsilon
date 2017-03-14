@@ -9,13 +9,14 @@
 #include "values_parameter_controller.h"
 #include "values_function_parameter_controller.h"
 #include "interval_parameter_controller.h"
+#include "../i18n.h"
 
 namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header, char symbol);
-  const char * title() const override;
+  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle);
+  const char * title() override;
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

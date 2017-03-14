@@ -6,7 +6,7 @@
 
 class PointerTableCellWithChevron : public PointerTableCell {
 public:
-  PointerTableCellWithChevron(char * label = nullptr, KDText::FontSize size = KDText::FontSize::Small);
+  PointerTableCellWithChevron(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
 private:
   ChevronView m_accessoryView;

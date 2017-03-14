@@ -1,22 +1,18 @@
 #include <escher/pointer_table_cell_with_pointer.h>
 #include <escher/palette.h>
 
-PointerTableCellWithPointer::PointerTableCellWithPointer(char * label, Layout layout) :
-  PointerTableCell(label, KDText::FontSize::Small, layout),
-  m_accessoryView(PointerTextView(KDText::FontSize::Small, nullptr, 0.0f, 0.5f))
+PointerTableCellWithPointer::PointerTableCellWithPointer(I18n::Message message, Layout layout) :
+  PointerTableCell(message, KDText::FontSize::Small, layout),
+  m_accessoryView(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f))
 {
   if (layout != Layout::Vertical) {
     m_accessoryView.setAlignment(1.0f, 0.5f);
   }
 }
 
-void PointerTableCellWithPointer::setAccessoryText(const char * textBody) {
-  m_accessoryView.setText(textBody);
+void PointerTableCellWithPointer::setAccessoryMessage(I18n::Message textBody) {
+  m_accessoryView.setMessage(textBody);
   reloadCell();
-}
-
-const char * PointerTableCellWithPointer::accessoryText() {
-  return m_accessoryView.text();
 }
 
 View * PointerTableCellWithPointer::accessoryView() const {

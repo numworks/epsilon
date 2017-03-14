@@ -8,8 +8,8 @@ UniformLaw::UniformLaw() :
 {
 }
 
-const char * UniformLaw::title() {
-  return "Loi uniforme";
+I18n::Message UniformLaw::title() {
+  return I18n::Message::UniformLaw;
 }
 
 Law::Type UniformLaw::type() const {
@@ -20,21 +20,21 @@ bool UniformLaw::isContinuous() const {
   return true;
 }
 
-const char * UniformLaw::parameterNameAtIndex(int index) {
+I18n::Message UniformLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "a";
+    return I18n::Message::A;
   } else {
-    return "b";
+    return I18n::Message::B;
   }
 }
 
-const char * UniformLaw::parameterDefinitionAtIndex(int index) {
+I18n::Message UniformLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "[a, b] intervalle";
+    return I18n::Message::IntervalDefinition;
   } else {
-    return nullptr;
+    return I18n::Message::Default;
   }
 }
 

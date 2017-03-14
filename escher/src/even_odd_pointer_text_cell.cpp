@@ -3,7 +3,7 @@
 
 EvenOddPointerTextCell::EvenOddPointerTextCell(KDText::FontSize size) :
   EvenOddCell(),
-  m_pointerTextView(size, nullptr, 0.5f, 0.5f)
+  m_pointerTextView(size, (I18n::Message)0, 0.5f, 0.5f)
 {
 }
 
@@ -17,8 +17,8 @@ void EvenOddPointerTextCell::setEven(bool even) {
   m_pointerTextView.setBackgroundColor(backgroundColor());
 }
 
-void EvenOddPointerTextCell::setText(const char * title, KDColor textColor) {
-  m_pointerTextView.setText(title);
+void EvenOddPointerTextCell::setMessage(I18n::Message title, KDColor textColor) {
+  m_pointerTextView.setMessage(title);
   m_pointerTextView.setTextColor(textColor);
 }
 

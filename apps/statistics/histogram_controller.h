@@ -14,7 +14,7 @@ class HistogramController : public ViewController, public ButtonRowDelegate, pub
 
 public:
   HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store);
-  const char * title() const override;
+  const char * title() override;
   View * view() override;
   StackViewController * stackController();
   HistogramParameterController * histogramParameterController();
@@ -25,13 +25,13 @@ public:
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
   bool isEmpty() const override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
   Responder * defaultController() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
-  constexpr static int k_maxNumberOfCharacters = 12;
+  constexpr static int k_maxNumberOfCharacters = 8;
   Responder * tabController() const;
   void reloadBannerView();
   void initRangeParameters();

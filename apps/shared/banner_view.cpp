@@ -15,6 +15,12 @@ void BannerView::setLegendAtIndex(char * text, int index) {
   layoutSubviews();
 }
 
+void BannerView::setMessageAtIndex(I18n::Message text, int index) {
+  PointerTextView * textView = pointerTextViewAtIndex(index);
+  textView->setMessage(text);
+  layoutSubviews();
+}
+
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
   return KDSize(0, KDText::stringSize(" ", KDText::FontSize::Small).height()*numberOfLines());
 }
@@ -84,6 +90,10 @@ int BannerView::numberOfLines() const {
     }
   }
   return lineNumber+1;
+}
+
+PointerTextView * BannerView::pointerTextViewAtIndex(int i) const {
+  return nullptr;
 }
 
 }

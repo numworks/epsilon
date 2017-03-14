@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Statistics {
 
 App::App(Container * container) :
-  TextFieldDelegateApp(container, &m_tabViewController, "Statistiques", "STATISTIQUES", ImageStore::StatIcon),
+  TextFieldDelegateApp(container, &m_tabViewController, I18n::Message::StatsApp, I18n::Message::StatsAppCapital, ImageStore::StatIcon),
   m_store(),
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController)),

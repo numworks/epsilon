@@ -23,11 +23,11 @@ void GraphController::viewWillAppear() {
   FunctionGraphController::viewWillAppear();
 }
 
-const char * GraphController::emptyMessage() {
+I18n::Message GraphController::emptyMessage() {
   if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
-    return "Aucune suite";
+    return I18n::Message::NoSequence;
   }
-  return "Aucune suite activee";
+  return I18n::Message::NoActivatedSequence;
 }
 
 TermSumController * GraphController::termSumController() {

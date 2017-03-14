@@ -14,7 +14,6 @@ class EditExpressionController : public ViewController, public Shared::TextField
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
-  const char * title() const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   const char * textBody();

@@ -13,13 +13,13 @@ class CalculationController : public Shared::TabTableController, public ButtonRo
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
   ~CalculationController();
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   bool isEmpty() const override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
   Responder * defaultController() override;
 
   int numberOfRows() override;

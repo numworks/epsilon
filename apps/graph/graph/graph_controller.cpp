@@ -15,11 +15,11 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
 {
 }
 
-const char * GraphController::emptyMessage() {
+I18n::Message GraphController::emptyMessage() {
   if (m_functionStore->numberOfDefinedFunctions() == 0) {
-    return "Aucune fonction";
+    return I18n::Message::NoFunction;
   }
-  return "Aucune fonction activee";
+  return I18n::Message::NoActivatedFunction;
 }
 
 BannerView * GraphController::bannerView() {

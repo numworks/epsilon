@@ -3,12 +3,12 @@
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
-  m_textView(PointerTextView(KDText::FontSize::Small, "", 0.5f, 0.5f, KDColorWhite, KDColorBlack))
+  m_textView(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack))
 {
 }
 
-void WarningController::ContentView::setLabel(const char * label) {
-  m_textView.setText(label);
+void WarningController::ContentView::setLabel(I18n::Message label) {
+  m_textView.setMessage(label);
 }
 
 int WarningController::ContentView::numberOfSubviews() const {
@@ -28,18 +28,19 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const  {
   return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }
 
-WarningController::WarningController(Responder * parentResponder) :
+WarningController::WarningController(Responder * parentResponder, I18n::Message warningMessage) :
   ViewController(parentResponder),
-  m_contentView(ContentView())
+  m_contentView(ContentView()),
+  m_warningMessage(warningMessage)
 {
 }
 
-void WarningController::setLabel(const char * label) {
+void WarningController::setLabel(I18n::Message label) {
   m_contentView.setLabel(label);
 }
 
-const char * WarningController::title() const {
-  return "Attention";
+const char * WarningController::title() {
+  return I18n::translate(m_warningMessage);
 }
 
 View * WarningController::view() {

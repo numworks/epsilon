@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size, KDColor textColor) :
+Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
   m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f, textColor)),

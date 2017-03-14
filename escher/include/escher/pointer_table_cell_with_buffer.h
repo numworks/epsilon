@@ -6,7 +6,7 @@
 
 class PointerTableCellWithBuffer : public PointerTableCell {
 public:
-  PointerTableCellWithBuffer(char * label = nullptr);
+  PointerTableCellWithBuffer(I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * textBody);

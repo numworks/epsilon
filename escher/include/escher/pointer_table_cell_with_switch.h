@@ -6,7 +6,7 @@
 
 class PointerTableCellWithSwitch : public PointerTableCell {
 public:
-  PointerTableCellWithSwitch(char * label = nullptr);
+  PointerTableCellWithSwitch(I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
 private:
   SwitchView m_accessoryView;

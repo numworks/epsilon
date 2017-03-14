@@ -2,9 +2,9 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(char * accessoryText, Layout layout) :
+ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(I18n::Message accessoryMessage, Layout layout) :
   ExpressionTableCell(layout),
-  m_accessoryView(PointerTextView(KDText::FontSize::Small, accessoryText, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite))
+  m_accessoryView(PointerTextView(KDText::FontSize::Small, accessoryMessage, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite))
 {
   if (layout == Layout::Horizontal) {
   	m_accessoryView.setAlignment(1.0f, 0.5f);
@@ -21,6 +21,6 @@ void ExpressionTableCellWithPointer::setHighlighted(bool highlight) {
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 
-void ExpressionTableCellWithPointer::setAccessoryText(const char * text) {
-  m_accessoryView.setText(text);
+void ExpressionTableCellWithPointer::setAccessoryMessage(I18n::Message text) {
+  m_accessoryView.setMessage(text);
 }

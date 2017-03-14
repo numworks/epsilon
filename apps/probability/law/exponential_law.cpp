@@ -11,8 +11,8 @@ ExponentialLaw::ExponentialLaw() :
 {
 }
 
-const char * ExponentialLaw::title() {
-  return "Loi exponentielle";
+I18n::Message ExponentialLaw::title() {
+  return I18n::Message::ExponentialLaw;
 }
 
 Law::Type ExponentialLaw::type() const {
@@ -23,16 +23,14 @@ bool ExponentialLaw::isContinuous() const {
   return true;
 }
 
-const char * ExponentialLaw::parameterNameAtIndex(int index) {
+I18n::Message ExponentialLaw::parameterNameAtIndex(int index) {
   assert(index == 0);
-  constexpr static char name[] = {Ion::Charset::SmallLambda, 0};
-  return name;
+  return I18n::Message::Lambda;
 }
 
-const char * ExponentialLaw::parameterDefinitionAtIndex(int index) {
+I18n::Message ExponentialLaw::parameterDefinitionAtIndex(int index) {
   assert(index == 0);
-  constexpr static char def[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
-  return def;
+  return I18n::Message::LambdaExponentialDefinition;
 }
 
 float ExponentialLaw::xMin() {

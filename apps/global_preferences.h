@@ -1,19 +1,16 @@
 #ifndef APPS_GLOBAL_PREFERENCES_H
 #define APPS_GLOBAL_PREFERENCES_H
 
+#include "i18n.h"
+
 class GlobalPreferences {
 public:
-  enum class Language {
-  	French = 0,
-  	English = 1,
-  	Spanish = 2
-  };
   GlobalPreferences();
   static GlobalPreferences * sharedGlobalPreferences();
-  Language language() const;
-  void setLanguage(Language language);
+  I18n::Language language() const;
+  void setLanguage(I18n::Language language);
 private:
-  Language m_language;
+  I18n::Language m_language;
 };
 
 #endif

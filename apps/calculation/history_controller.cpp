@@ -16,10 +16,6 @@ View * HistoryController::HistoryController::view() {
   return &m_selectableTableView;
 }
 
-const char * HistoryController::title() const {
-  return "Calculation Table";
-}
-
 void HistoryController::reload() {
   m_selectableTableView.reloadData();
 }

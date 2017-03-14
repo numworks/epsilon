@@ -36,8 +36,8 @@ CalculationController::~CalculationController() {
   }
 }
 
-const char * CalculationController::title() const {
-  return "Statistiques";
+const char * CalculationController::title() {
+  return I18n::translate(I18n::Message::StatTab);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -99,8 +99,8 @@ bool CalculationController::isEmpty() const {
   return false;
 }
 
-const char * CalculationController::emptyMessage() {
-  return "Aucune grandeur a calculer";
+I18n::Message CalculationController::emptyMessage() {
+  return I18n::Message::NoValueToCompute;
 }
 
 Responder * CalculationController::defaultController() {
@@ -133,14 +133,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     }
     EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;
     if (j == 0) {
-      myCell->setText("");
+      myCell->setMessage(I18n::Message::Default);
       return;
     }
     myCell->setAlignment(1.0f, 0.5f);
-    const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};
-    const char * titles[k_totalNumberOfRows-1] = {"Moyenne", "Somme", "Somme des carres", "Ecart-type", "Variance",
-      "Nombre de points", "Covariance", sxy, "r", "r2"};
-    myCell->setText(titles[j-1]);
+    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::R, I18n::Message::Default};
+    myCell->setMessage(titles[j-1]);
     return;
   }
   if (i == 1 && j > 0 && j < 6) {

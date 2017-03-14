@@ -8,7 +8,7 @@ public:
   PointerTableCellWithChevronAndPointer(KDText::FontSize labelSize = KDText::FontSize::Small, KDText::FontSize contentSize = KDText::FontSize::Small);
   View * subAccessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setSubtitle(const char * text);
+  void setSubtitle(I18n::Message text);
 private:
   PointerTextView m_subtitleView;
 };

@@ -21,10 +21,10 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   }
   EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
   if (i == 0) {
-    mytitleCell->setText("Valeurs");
+    mytitleCell->setMessage(I18n::Message::Values);
     return;
   }
-  mytitleCell->setText("Effectifs");
+  mytitleCell->setMessage(I18n::Message::Sizes);
 }
 
 HighlightCell * StoreController::titleCells(int index) {

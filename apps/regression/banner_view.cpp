@@ -3,7 +3,7 @@
 namespace Regression {
 
 BannerView::BannerView() :
-  m_regressionTypeView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_regressionTypeView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_slopeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_yInterceptView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_xView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
@@ -18,6 +18,13 @@ int BannerView::numberOfSubviews() const {
 TextView * BannerView::textViewAtIndex(int i) const {
   const TextView * textViews[5] = {&m_regressionTypeView, &m_slopeView, &m_yInterceptView, &m_xView, &m_yView};
   return (TextView *)textViews[i];
+}
+
+PointerTextView * BannerView::pointerTextViewAtIndex(int i) const {
+  if (i == 0) {
+    return (PointerTextView *)&m_regressionTypeView;
+  }
+  return nullptr;
 }
 
 }

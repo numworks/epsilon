@@ -1,12 +1,13 @@
 #include "app.h"
 #include "regression_icon.h"
+#include "../i18n.h"
 
 using namespace Shared;
 
 namespace Regression {
 
 App::App(Container * container) :
-  TextFieldDelegateApp(container, &m_tabViewController, "Regression", "REGRESSION", ImageStore::RegressionIcon),
+  TextFieldDelegateApp(container, &m_tabViewController, I18n::Message::RegressionApp, I18n::Message::RegressionAppCapital, ImageStore::RegressionIcon),
   m_store(),
   m_calculationController(CalculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store)),
   m_calculationAlternateEmptyViewController(AlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController)),

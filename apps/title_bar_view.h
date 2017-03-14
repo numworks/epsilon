@@ -3,12 +3,13 @@
 
 #include <escher.h>
 #include "battery_view.h"
+#include "i18n.h"
 
 class TitleBarView : public View {
 public:
   TitleBarView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setTitle(const char * title);
+  void setTitle(I18n::Message title);
   void setChargeState(Ion::Battery::Charge chargeState);
   void refreshPreferences();
 private:

@@ -4,15 +4,16 @@
 #include <escher.h>
 #include "function.h"
 #include "function_store.h"
+#include "../i18n.h"
 
 namespace Shared {
 
 class ListParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  ListParameterController(Responder * parentResponder, FunctionStore * functionStore);
+  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage);
 
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   virtual void setFunction(Function * function);
   void didBecomeFirstResponder() override;

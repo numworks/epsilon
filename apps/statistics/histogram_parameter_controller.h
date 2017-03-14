@@ -10,7 +10,7 @@ namespace Statistics {
 class HistogramParameterController : public Shared::FloatParameterController {
 public:
   HistogramParameterController(Responder * parentResponder, Store * store);
-  const char * title() const override;
+  const char * title() override;
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

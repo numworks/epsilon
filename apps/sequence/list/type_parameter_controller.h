@@ -14,7 +14,7 @@ public:
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   ~TypeParameterController();
-  const char * title() const override;
+  const char * title() override;
   View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

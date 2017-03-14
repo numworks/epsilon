@@ -15,7 +15,7 @@ class GraphController : public Shared::FunctionGraphController {
 public:
   GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header);
   void viewWillAppear() override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
   TermSumController * termSumController();
 private:
   BannerView * bannerView() override;

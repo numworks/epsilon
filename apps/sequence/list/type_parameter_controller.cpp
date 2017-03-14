@@ -11,9 +11,9 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(ExpressionTableCellWithPointer((char*)"Explicite", cellLayout)),
-  m_singleRecurrenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 1", cellLayout)),
-  m_doubleRecurenceCell(ExpressionTableCellWithPointer((char*)"Recurrence d'ordre 2", cellLayout)),
+  m_expliciteCell(ExpressionTableCellWithPointer(I18n::Message::Explicite, cellLayout)),
+  m_singleRecurrenceCell(ExpressionTableCellWithPointer(I18n::Message::SingleRecurrence, cellLayout)),
+  m_doubleRecurenceCell(ExpressionTableCellWithPointer(I18n::Message::DoubleRecurrence, cellLayout)),
   m_selectableTableView(SelectableTableView(this, this, 1, topMargin, rightMargin, bottomMargin, leftMargin, nullptr, false)),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
@@ -30,11 +30,11 @@ TypeParameterController::~TypeParameterController() {
   }
 }
 
-const char * TypeParameterController::title() const {
+const char * TypeParameterController::title() {
   if (m_sequence) {
-    return "Type de suite";
+    return I18n::translate(I18n::Message::SequenceType);
   }
-  return "Choisir le type de suite";
+  return I18n::translate(I18n::Message::ChooseSequenceType);
 }
 
 View * TypeParameterController::view() {

@@ -13,8 +13,8 @@ PredictionParameterController::PredictionParameterController(Responder * parentR
 {
 }
 
-const char * PredictionParameterController::title() const {
-  return "Droite de regression";
+const char * PredictionParameterController::title() {
+  return I18n::translate(I18n::Message::RegressionSlope);
 }
 
 View * PredictionParameterController::view() {
@@ -56,8 +56,8 @@ KDCoordinate PredictionParameterController::cellHeight() {
 
 void PredictionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   PointerTableCellWithChevron * myCell = (PointerTableCellWithChevron *)cell;
-  const char * titles[3] = {"Prediction sachant x", "Prediction sachant y"};
-  myCell->setText(titles[index]);
+  I18n::Message  titles[2] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
+  myCell->setMessage(titles[index]);
 }
 
 }

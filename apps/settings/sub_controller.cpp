@@ -11,8 +11,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{PointerTableCell(nullptr, KDText::FontSize::Large), PointerTableCell(nullptr, KDText::FontSize::Large),
-    PointerTableCell(nullptr, KDText::FontSize::Large)},
+  m_cells{PointerTableCell(I18n::Message::Default, KDText::FontSize::Large), PointerTableCell(I18n::Message::Default, KDText::FontSize::Large),
+    PointerTableCell(I18n::Message::Default, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel(nullptr),
@@ -37,9 +37,9 @@ SubController::~SubController() {
   }
 }
 
-const char * SubController::title() const {
+const char * SubController::title() {
   if (m_nodeModel) {
-    return m_nodeModel->label();
+    return I18n::translate(m_nodeModel->label());
   }
   return "";
 }
@@ -97,7 +97,7 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   PointerTableCell * myCell = (PointerTableCell *)cell;
-  myCell->setText(m_nodeModel->children(index)->label());
+  myCell->setMessage(m_nodeModel->children(index)->label());
 }
 
 void SubController::setNodeModel(const Node * nodeModel, int preferenceIndex) {
@@ -125,7 +125,7 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
       break;
     case 3:
-      GlobalPreferences::sharedGlobalPreferences()->setLanguage((GlobalPreferences::Language)valueIndex);
+      GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
       break;
     }
 }
@@ -139,7 +139,7 @@ int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
     case 2:
       return (int)Preferences::sharedPreferences()->complexFormat();
     case 3:
-      return (int)GlobalPreferences::sharedGlobalPreferences()->language();
+      return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
     default:
       assert(false);
       return 0;

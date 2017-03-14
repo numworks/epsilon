@@ -9,8 +9,8 @@ BinomialLaw::BinomialLaw() :
 {
 }
 
-const char * BinomialLaw::title() {
-  return "Loi binomiale";
+I18n::Message BinomialLaw::title() {
+  return I18n::Message::BinomialLaw;
 }
 
 Law::Type BinomialLaw::type() const {
@@ -21,21 +21,21 @@ bool BinomialLaw::isContinuous() const {
   return false;
 }
 
-const char * BinomialLaw::parameterNameAtIndex(int index) {
+I18n::Message BinomialLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "n";
+    return I18n::Message::N;
   } else {
-    return "p";
+    return I18n::Message::P;
   }
 }
 
-const char * BinomialLaw::parameterDefinitionAtIndex(int index) {
+I18n::Message BinomialLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return "n : nombre de repetitions";
+    return I18n::Message::RepetitionNumber;
   } else {
-    return "p : probabilites de succes";
+    return I18n::Message::SuccessProbability;
   }
 }
 

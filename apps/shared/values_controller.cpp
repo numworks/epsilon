@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, char symbol) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   ButtonRowDelegate(header, nullptr),
   m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
@@ -16,8 +16,8 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
-  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController, symbol)),
-  m_setIntervalButton(Button(this, "Regler l'intervalle",Invocation([](void * context, void * sender) {
+  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController, parameterTitle)),
+  m_setIntervalButton(Button(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
@@ -28,8 +28,8 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_interval.setStep(1);
 }
 
-const char * ValuesController::title() const {
-  return "Valeurs";
+const char * ValuesController::title() {
+  return I18n::translate(I18n::Message::ValuesTab);
 }
 
 Interval * ValuesController::interval() {

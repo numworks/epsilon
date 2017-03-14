@@ -22,16 +22,15 @@ int FiniteIntegralCalculation::numberOfParameters() {
   return 3;
 }
 
-const char * FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
+I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return "P(";
+    return I18n::Message::RightIntegralFirstLegend;
   }
   if (index == 1) {
-    constexpr static char comparison[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
-    return comparison;
+    return I18n::Message::FiniteIntegralLegend;
   }
-  return ")=";
+  return I18n::Message::LeftIntegralSecondLegend;
 }
 
 void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {

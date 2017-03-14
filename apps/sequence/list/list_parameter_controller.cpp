@@ -7,15 +7,15 @@ using namespace Shared;
 namespace Sequence {
 
 ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
-  Shared::ListParameterController(listController, sequenceStore),
-  m_typeCell(PointerTableCellWithChevronAndExpression((char *)"Type de suite")),
+  Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence),
+  m_typeCell(PointerTableCellWithChevronAndExpression(I18n::Message::SequenceType)),
   m_typeParameterController(TypeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin))
 {
 }
 
-const char * ListParameterController::title() const {
-  return "Options de la suite";
+const char * ListParameterController::title() {
+  return I18n::translate(I18n::Message::SequenceOptions);
 }
 
 void ListParameterController::setFunction(Shared::Function * function) {

@@ -182,7 +182,7 @@ View * ButtonRowController::view() {
   return &m_contentView;
 }
 
-const char * ButtonRowController::title() const {
+const char * ButtonRowController::title() {
   return m_contentView.mainViewController()->title();
 }
 

@@ -6,8 +6,8 @@
 class TableCell : public HighlightCell {
 public:
   enum class Layout {
-  	Vertical,
-  	Horizontal
+    Vertical,
+    Horizontal
   };
   TableCell(Layout layout = Layout::Horizontal);
   virtual View * labelView() const;

@@ -25,8 +25,8 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   }
 }
 
-const char * CalculationController::title() const {
-  return "Stats";
+const char * CalculationController::title() {
+  return I18n::translate(I18n::Message::StatTab);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -54,8 +54,8 @@ bool CalculationController::isEmpty() const {
   return false;
 }
 
-const char * CalculationController::emptyMessage() {
-  return "Aucune grandeur a calculer";
+I18n::Message CalculationController::emptyMessage() {
+  return I18n::Message::NoValueToCompute;
 }
 
 Responder * CalculationController::defaultController() {
@@ -75,11 +75,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
   if (i == 0) {
-    const char * titles[k_totalNumberOfRows] = {"Effectif total", "Minimum", "Maximum", "Etendue",
-      "Moyenne", "Ecart-type", "Variance", "Q1", "Q3", "Mediane", "Ecart interquartile", "Somme",
-      "Somme des carres"};
+    I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum};
     EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;
-    myCell->setText(titles[j]);
+    myCell->setMessage(titles[j]);
   } else {
     CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,

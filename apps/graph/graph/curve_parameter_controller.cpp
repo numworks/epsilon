@@ -6,15 +6,15 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor, "x"),
+  FunctionCurveParameterController(graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
-  m_calculationCell(PointerTableCellWithChevron((char*)"Calculer")),
-  m_derivativeCell(PointerTableCellWithSwitch((char*)"Nombre derivee"))
+  m_calculationCell(PointerTableCellWithChevron(I18n::Message::Compute)),
+  m_derivativeCell(PointerTableCellWithSwitch(I18n::Message::DerivateNumber))
 {
 }
 
-const char * CurveParameterController::title() const {
-  return "Options de la courbe";
+const char * CurveParameterController::title() {
+  return I18n::translate(I18n::Message::PlotOptions);
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

@@ -4,13 +4,13 @@ extern "C" {
 #include <assert.h>
 }
 
-App::App(Container * container, ViewController * rootViewController, const char * name, const char * upperName, const Image * icon) :
+App::App(Container * container, ViewController * rootViewController, I18n::Message name, I18n::Message upperName, const Image * icon, I18n::Message warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(ModalViewController(this, rootViewController)),
   m_container(container),
   m_firstResponder(nullptr),
-  m_warningController(WarningController(this)),
+  m_warningController(WarningController(this, warningMessage)),
   m_name(name),
   m_upperName(upperName),
   m_icon(icon)
@@ -57,11 +57,11 @@ void App::setFirstResponder(Responder * responder) {
   }
 }
 
-const char * App::name() {
+I18n::Message App::name() {
   return m_name;
 }
 
-const char * App::upperName() {
+I18n::Message App::upperName() {
   return m_upperName;
 }
 
@@ -78,7 +78,7 @@ void App::dismissModalViewController() {
   m_modalViewController.dismissModalViewController();
 }
 
-void App::displayWarning(const char * warningMessage) {
+void App::displayWarning(I18n::Message warningMessage) {
   m_warningController.setLabel(warningMessage);
   m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }

@@ -13,7 +13,7 @@ public:
   DerivativeParameterController(ValuesController * valuesController);
 
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

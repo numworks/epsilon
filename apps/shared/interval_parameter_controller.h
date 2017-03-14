@@ -11,7 +11,7 @@ class IntervalParameterController : public Shared::FloatParameterController {
 public:
   IntervalParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
-  const char * title() const override;
+  const char * title() override;
   void viewWillAppear() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int numberOfRows() override;

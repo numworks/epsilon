@@ -19,7 +19,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
   if (isnan(floatBody)) {
-    app()->displayWarning("Valeur non definie");
+    app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
   setDataAtLocation(floatBody, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());

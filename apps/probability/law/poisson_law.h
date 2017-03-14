@@ -9,15 +9,15 @@ class PoissonLaw : public OneParameterLaw {
 public:
   PoissonLaw();
   ~PoissonLaw() override {};
-  const char * title() override;
+  I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;
   float xMin() override;
   float yMin() override;
   float xMax() override;
   float yMax() override;
-  const char * parameterNameAtIndex(int index) override;
-  const char * parameterDefinitionAtIndex(int index) override;
+  I18n::Message parameterNameAtIndex(int index) override;
+  I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
   bool authorizedValueAtIndex(float x, int index) const override;
 };

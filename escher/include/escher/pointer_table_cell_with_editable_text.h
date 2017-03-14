@@ -7,7 +7,7 @@
 
 class PointerTableCellWithEditableText : public Responder, public PointerTableCell {
 public:
-  PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label = nullptr);
+  PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   const char * editedText() const;
   void didBecomeFirstResponder() override;

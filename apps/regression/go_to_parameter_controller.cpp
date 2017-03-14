@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
-  FloatParameterController(parentResponder, "Valider"),
+  FloatParameterController(parentResponder),
   m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
   m_store(store),
   m_cursor(cursor),
@@ -20,7 +20,7 @@ void GoToParameterController::setXPrediction(bool xPrediction) {
   m_xPrediction = xPrediction;
 }
 
-const char * GoToParameterController::title() const {
+const char * GoToParameterController::title() {
   if (m_xPrediction) {
     return "Prediction sachant x";
   }
@@ -77,9 +77,9 @@ void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   if (m_xPrediction) {
-    myCell->setText("x");
+    myCell->setMessage(I18n::Message::X);
   } else {
-    myCell->setText("y");
+    myCell->setMessage(I18n::Message::Y);
   }
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
@@ -93,7 +93,7 @@ bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, c
     parameter = m_store->xValueForYValue(floatBody);
   }
   if (isnan(parameter)) {
-    app()->displayWarning("Valeur non atteinte par la regression");
+    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }
   return FloatParameterController::textFieldDidFinishEditing(textField, text);

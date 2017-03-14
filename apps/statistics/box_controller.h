@@ -11,12 +11,12 @@ namespace Statistics {
 class BoxController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
   BoxController(Responder * parentResponder, ButtonRowController * header, Store * store);
-  const char * title() const override;
+  const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   bool isEmpty() const override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
   Responder * defaultController() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;

@@ -1,5 +1,6 @@
 #include "app.h"
 #include "calculation_icon.h"
+#include "../i18n.h"
 using namespace Poincare;
 
 using namespace Shared;
@@ -7,7 +8,7 @@ using namespace Shared;
 namespace Calculation {
 
 App::App(Container * container, Context * context) :
-  TextFieldDelegateApp(container, &m_editExpressionController, "Calculs", "CALCULS", ImageStore::CalculationIcon),
+  TextFieldDelegateApp(container, &m_editExpressionController, I18n::Message::CalculApp, I18n::Message::CalculAppCapital, ImageStore::CalculationIcon),
   m_localContext(LocalContext((GlobalContext *)context, &m_calculationStore)),
   m_calculationStore(CalculationStore()),
   m_historyController(HistoryController(&m_editExpressionController, &m_calculationStore)),

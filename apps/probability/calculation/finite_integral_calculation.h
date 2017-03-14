@@ -11,7 +11,7 @@ public:
   ~FiniteIntegralCalculation() override {};
   Type type() override;
   int numberOfParameters() override;
-  const char * legendForParameterAtIndex(int index) override;
+  I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;
   float parameterAtIndex(int index) override;
   float lowerBound() override;

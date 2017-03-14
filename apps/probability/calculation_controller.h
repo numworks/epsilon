@@ -14,7 +14,7 @@ class CalculationController : public ViewController, public Shared::TextFieldDel
 public:
   CalculationController(Responder * parentResponder);
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   void reload();
   void setLaw(Law * law);
   void setCalculationAccordingToIndex(int index);

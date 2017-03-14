@@ -5,7 +5,7 @@ ViewController::ViewController(Responder * parentResponder) :
 {
 }
 
-const char * ViewController::title() const {
+const char * ViewController::title() {
   return nullptr;
 }
 

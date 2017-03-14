@@ -6,7 +6,7 @@
 /* ContentView */
 
 AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  m_message(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_message(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_mainViewController(mainViewController),
   m_delegate(delegate)
 {
@@ -19,7 +19,7 @@ int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
 View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   if (m_delegate->isEmpty()) {
-    m_message.setText(m_delegate->emptyMessage());
+    m_message.setMessage(m_delegate->emptyMessage());
     return &m_message;
   }
   return m_mainViewController->view();
@@ -53,7 +53,7 @@ View * AlternateEmptyViewController::view() {
   return &m_contentView;
 }
 
-const char * AlternateEmptyViewController::title() const {
+const char * AlternateEmptyViewController::title() {
   return m_contentView.mainViewController()->title();
 }
 

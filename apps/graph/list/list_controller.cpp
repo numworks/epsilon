@@ -1,5 +1,6 @@
 #include "list_controller.h"
 #include "../app.h"
+#include "../../i18n.h"
 #include <assert.h>
 
 using namespace Shared;
@@ -7,15 +8,15 @@ using namespace Shared;
 namespace Graph {
 
 ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::ListController(parentResponder, functionStore, header, footer, "Ajouter une fonction"),
+  Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
     FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
-  m_parameterController(ListParameterController(this, functionStore))
+  m_parameterController(ListParameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction))
 {
 }
 
-const char * ListController::title() const {
-  return "Fonctions";
+const char * ListController::title() {
+  return I18n::translate(I18n::Message::FunctionTab);
 }
 
 int ListController::numberOfRows() {

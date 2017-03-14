@@ -12,7 +12,7 @@ class ParametersController : public Shared::FloatParameterController {
 public:
   ParametersController(Responder * parentResponder);
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   void setLaw(Law * law);
   void viewWillAppear() override;
   int numberOfRows() override;

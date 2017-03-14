@@ -7,7 +7,7 @@ namespace Shared {
 
 class NewFunctionCell : public EvenOddCell {
 public:
-  NewFunctionCell(const char * text);
+  NewFunctionCell(I18n::Message text);
   void reloadCell() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

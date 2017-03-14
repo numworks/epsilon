@@ -12,7 +12,7 @@ public:
   MainController(Responder * parentResponder);
   ~MainController();
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

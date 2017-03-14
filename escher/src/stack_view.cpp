@@ -4,39 +4,28 @@ extern "C" {
 }
 
 StackView::StackView() :
-  View(),
-  m_textView(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f))
+  View()
 {
 }
 
 void StackView::setTextColor(KDColor textColor) {
-  m_textView.setTextColor(textColor);
+  m_textColor = textColor;
+  markRectAsDirty(bounds());
 }
 
 void StackView::setBackgroundColor(KDColor backgroundColor) {
-  m_textView.setBackgroundColor(backgroundColor);
   m_backgroundColor = backgroundColor;
+  markRectAsDirty(bounds());
 }
 
 void StackView::setSeparatorColor(KDColor separatorColor) {
   m_separatorColor = separatorColor;
+  markRectAsDirty(bounds());
 }
 
-int StackView::numberOfSubviews() const {
-  return 1;
-}
-
-View * StackView::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_textView;
-}
-
-void StackView::layoutSubviews() {
-  m_textView.setFrame(KDRect(0, 1,  bounds().width(), bounds().height()-2));
-}
-
-void StackView::setName(const char * name) {
-  m_textView.setText(name);
+void StackView::setNamedController(ViewController * controller) {
+  m_controller = controller;
+  markRectAsDirty(bounds());
 }
 
 void StackView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -45,6 +34,10 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, width, 1), m_separatorColor);
   ctx->fillRect(KDRect(0, 1, width, height-2), m_backgroundColor);
   ctx->fillRect(KDRect(0, height-1, width, 1), m_separatorColor);
+  // Write title
+  KDSize textSize = KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
+  KDPoint origin(0.5f*(m_frame.width() - textSize.width()),0.5f*(m_frame.height() - textSize.height()));
+  ctx->drawString(m_controller->title(), origin, KDText::FontSize::Small, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING

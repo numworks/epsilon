@@ -5,9 +5,9 @@ namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
-  m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
-  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
-  m_importList(PointerTableCellWithChevron((char*)"Importer une liste")),
+  m_deleteColumn(PointerTableCell(I18n::Message::ClearColumn)),
+  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
+  m_importList(PointerTableCellWithChevron(I18n::Message::ImportList)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_store(store),
@@ -19,8 +19,8 @@ void StoreParameterController::selectXColumn(bool xColumnSelected) {
   m_xColumnSelected = xColumnSelected;
 }
 
-const char * StoreParameterController::title() const {
-  return "Option de la colonne";
+const char * StoreParameterController::title() {
+  return I18n::translate(I18n::Message::ColumnOptions);
 }
 
 View * StoreParameterController::view() {

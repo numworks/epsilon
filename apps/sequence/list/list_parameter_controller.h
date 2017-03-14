@@ -13,7 +13,7 @@ class ListController;
 class ListParameterController : public Shared::ListParameterController {
 public:
   ListParameterController(ListController * list, SequenceStore * sequenceStore);
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setFunction(Shared::Function * function) override;
   int numberOfRows() override;

@@ -1,8 +1,8 @@
 #include <escher/pointer_table_cell_with_buffer.h>
 #include <escher/palette.h>
 
-PointerTableCellWithBuffer::PointerTableCellWithBuffer(char * label) :
-  PointerTableCell(label),
+PointerTableCellWithBuffer::PointerTableCellWithBuffer(I18n::Message message) :
+  PointerTableCell(message),
   m_accessoryView(BufferTextView(KDText::FontSize::Large, 1.0f, 0.5f))
 {
 }

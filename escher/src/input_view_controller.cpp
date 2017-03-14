@@ -30,10 +30,6 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 {
 }
 
-const char * InputViewController::title() const {
-  return "InputViewController";
-}
-
 const char * InputViewController::textBody() {
   return m_textFieldController.textField()->text();
 }

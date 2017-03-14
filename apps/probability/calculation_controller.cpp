@@ -12,7 +12,7 @@ using namespace Shared;
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
-  m_titleView(PointerTextView(KDText::FontSize::Small, "Calculer les probabilites", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_titleView(PointerTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
   m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
@@ -48,17 +48,17 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     return &m_imageTableView;
   }
   if (index == 3) {
-    m_text[0].setText(m_calculation->legendForParameterAtIndex(0));
+    m_text[0].setMessage(m_calculation->legendForParameterAtIndex(0));
     m_text[0].setAlignment(0.5f, 0.5f);
     return &m_text[0];
   }
   if (index == 5) {
-    m_text[1].setText(m_calculation->legendForParameterAtIndex(1));
+    m_text[1].setMessage(m_calculation->legendForParameterAtIndex(1));
     m_text[1].setAlignment(0.5f, 0.5f);
     return &m_text[1];
   }
   if (index == 7) {
-    m_text[2].setText(m_calculation->legendForParameterAtIndex(2));
+    m_text[2].setMessage(m_calculation->legendForParameterAtIndex(2));
     m_text[2].setAlignment(0.5f, 0.5f);
     return &m_text[2];
   }
@@ -83,18 +83,18 @@ void CalculationController::ContentView::layoutSubviews() {
   m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_imageHeight, bounds().width(), bounds().height() - ImageTableView::k_imageHeight-titleHeight));
   m_imageTableView.setFrame(KDRect(xCoordinate, titleHeight, ImageTableView::k_imageWidth, 3*ImageTableView::k_imageHeight));
   xCoordinate += ImageTableView::k_imageWidth + k_textWidthMargin;
-  KDCoordinate numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(0));
+  KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   m_text[0].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
   m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
-  numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(1));
+  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
   m_text[1].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
   m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
   if (m_calculation->numberOfParameters() > 2) {
-    numberOfCharacters = strlen(m_calculation->legendForParameterAtIndex(2));;
+    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
     m_text[2].setFrame(KDRect(xCoordinate, titleHeight, numberOfCharacters*charSize.width(), ImageTableView::k_imageHeight));
     xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
     m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight, k_textFieldWidth, ImageTableView::k_imageHeight));
@@ -133,7 +133,7 @@ View * CalculationController::view() {
   return &m_contentView;
 }
 
-const char * CalculationController::title() const {
+const char * CalculationController::title() {
   return m_titleBuffer;
 }
 
@@ -243,7 +243,7 @@ void CalculationController::selectSubview(int subviewIndex) {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
-    m_titleBuffer[currentChar++] = m_law->parameterNameAtIndex(index)[0];
+    m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];

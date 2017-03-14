@@ -2,6 +2,7 @@
 #define ESCHER_VIEW_CONTROLLER_H
 
 #include <kandinsky.h>
+#include <escher/i18n.h>
 extern "C" {
 #include <stdint.h>
 }
@@ -29,7 +30,7 @@ extern "C" {
 class ViewController : public Responder {
 public:
   ViewController(Responder * parentResponder);
-  virtual const char * title() const;
+  virtual const char * title();
   virtual View * view() = 0;
   virtual void viewWillAppear();
   virtual void viewWillDisappear();

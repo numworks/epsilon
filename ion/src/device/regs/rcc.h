@@ -71,7 +71,7 @@ public:
     REGS_BOOL_FIELD(QSPIEN, 0);
   };
 
-  class APB1ENR : Register32 {
+  class APB1ENR : public Register32 {
   public:
     REGS_BOOL_FIELD(TIM3EN, 1);
     REGS_BOOL_FIELD(SPI3EN, 15);

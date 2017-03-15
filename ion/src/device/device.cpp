@@ -204,7 +204,7 @@ void initClocks() {
 void shutdownClocks() {
   // Reset values, everything off
   RCC.APB2ENR()->set(0x00008000);
-
+  RCC.APB1ENR()->set(0x00000400);
   // AHB1 bus
   RCC.AHB1ENR()->set(0);
 }

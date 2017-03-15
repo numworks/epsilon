@@ -109,6 +109,10 @@ void SubController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
+void SubController::viewWillDisappear() {
+  m_selectableTableView.deselectTable();
+}
+
 StackViewController * SubController::stackController() const {
   return (StackViewController *)parentResponder();
 }

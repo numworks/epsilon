@@ -97,15 +97,7 @@ void initFPU() {
 
 void init() {
   initClocks();
-#ifndef DEBUG
-  /* In debug mode, we want to keep the SWD port configured as such.
-   * In release mode, we're setting all the inputs to analog, non-pulled state
-   * to save power. */
-  for (int g=0; g<5; g++) {
-    GPIO(g).MODER()->set(0xFFFFFFFF); // All to "Analog"
-    GPIO(g).PUPDR()->set(0x00000000); // All to "None"
-  }
-#endif
+  // TODO: Set all the UNUSED gpios to analog, non-pulled state to save power.
   initPeripherals();
 }
 

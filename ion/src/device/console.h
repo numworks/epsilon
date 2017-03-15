@@ -17,9 +17,11 @@ namespace Device {
 void init();
 void shutdown();
 
+//constexpr USART UARTPort = USART(3);
+//constexpr static GPIOPin Pins[] = { GPIOPin(GPIOC, 11), GPIOPin(GPIOD, 8) };
+
 constexpr USART UARTPort = USART(1);
-constexpr static GPIOPin RxPin = GPIOPin(GPIOB, 14);
-constexpr static GPIOPin TxPin = GPIOPin(GPIOE, 9);
+constexpr static GPIOPin Pins[] = { GPIOPin(GPIOB, 3), GPIOPin(GPIOB, 6) };
 
 void sendChar(char c);
 char recvChar();

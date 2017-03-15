@@ -41,11 +41,10 @@ namespace Device {
 void init() {
   RCC.APB2ENR()->setUSART1EN(true);
 
-  GPIOB.MODER()->setMode(3, GPIO::MODER::Mode::AlternateFunction);
-  GPIOB.MODER()->setMode(6, GPIO::MODER::Mode::AlternateFunction);
-
-  GPIOB.AFR()->setAlternateFunction(3, GPIO::AFR::AlternateFunction::AF7);
-  GPIOB.AFR()->setAlternateFunction(6, GPIO::AFR::AlternateFunction::AF7);
+  for(const GPIOPin & g : Pins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
+    g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF7);
+  }
 
   UARTPort.CR1()->setUE(true);
   UARTPort.CR1()->setTE(true);
@@ -62,6 +61,13 @@ void init() {
   // USART_BRR = 0x683
   UARTPort.BRR()->setDIV_FRAC(3);
   UARTPort.BRR()->setDIV_MANTISSA(104);
+}
+
+void shutdown() {
+  for(const GPIOPin & g : Pins) {
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
+    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  }
 }
 
 char recvChar() {

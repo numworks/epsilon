@@ -138,8 +138,6 @@ void shutdownPeripherals() {
 }
 
 void initClocks() {
-#define USE_96MHZ_SYSTEM_CLOCK 0
-#if USE_96MHZ_SYSTEM_CLOCK
   /* System clock
    * Configure the CPU at 96 MHz, APB2 and USB at 48 MHz. */
 
@@ -167,17 +165,6 @@ void initClocks() {
   RCC.CFGR()->setSW(RCC::CFGR::SW::PLL);
   while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
   }
-#else
-  /* Some parts of the chip (USB, RNG, SDIO) use the PLL48CLK clock source which
-   * is not valid in the default configuration. It provides 96 MHz which is too
-   * high. Let's configure the PLL so that it feeds 48 MHz to PLL48CLK. */
-  RCC.PLLCFGR()->setPLLQ(4);
-
-  // Enable the PLL and wait for it to be ready
-  RCC.CR()->setPLLON(true);
-  while(!RCC.CR()->getPLLRDY()) {
-  }
-#endif
 
   // Peripheral clocks
 

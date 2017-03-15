@@ -11,6 +11,7 @@ extern "C" {
 #include "sd_card.h"
 #include "backlight.h"
 #include "console.h"
+#include "swd.h"
 
 #define USE_SD_CARD 0
 
@@ -116,9 +117,12 @@ void initPeripherals() {
   SDCard::Device::init();
 #endif
   Console::Device::init();
+  SWD::Device::init();
 }
 
 void shutdownPeripherals() {
+  SWD::Device::shutdown();
+  Console::Device::shutdown();
 #if USE_SD_CARD
   SDCard::Device::shutdown();
 #endif

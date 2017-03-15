@@ -15,6 +15,7 @@ objs += $(addprefix ion/src/device/, \
   log.o\
   power.o\
   sd_card.o\
+  swd.o \
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler
@@ -28,6 +29,7 @@ ifneq ($(COMPILER),llvm)
 ion/src/device/led.o: SFLAGS+=-O3
 ion/src/device/console.o: SFLAGS+=-O3
 ion/src/device/display.o: SFLAGS+=-O3
+ion/src/device/swd.o: SFLAGS+=-O3
 endif
 endif
 

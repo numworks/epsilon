@@ -98,7 +98,18 @@ void initFPU() {
 
 void init() {
   initClocks();
-  // TODO: Set all the UNUSED gpios to analog, non-pulled state to save power.
+
+  // Put all inputs as Analog Input, No pull-up nor pull-down
+  // Except for the SWD port (PB3, PA13, PA14)
+  GPIOA.MODER()->set(0xEBFFFFFF);
+  GPIOA.PUPDR()->set(0x24000000);
+  GPIOB.MODER()->set(0xFFFFFFBF);
+  GPIOB.PUPDR()->set(0x00000000);
+  for (int g=2; g<5; g++) {
+    GPIO(g).MODER()->set(0xFFFFFFFF); // All to "Analog"
+    GPIO(g).PUPDR()->set(0x00000000); // All to "None"
+  }
+
   initPeripherals();
 }
 

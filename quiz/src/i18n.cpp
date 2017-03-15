@@ -6,5 +6,9 @@ const char * translate(Message m, Language l) {
   return nullptr;
 }
 
+int numberOfLanguages() {
+  return 0;
+}
+
 }
 

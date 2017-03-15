@@ -356,4 +356,8 @@ const char * translate(Message m, Language l) {
   return messages[(int)m][languageIndex-1];
 }
 
+int numberOfLanguages() {
+  return 3;
+}
+
 }

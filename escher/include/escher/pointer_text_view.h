@@ -11,6 +11,7 @@ public:
   void setText(const char * text) override;
   void setMessage(I18n::Message message);
   const char * text() const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   I18n::Message m_message;
 };

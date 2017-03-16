@@ -100,6 +100,7 @@ atan { poincare_expression_yylval.expression = new ArcTangent(); return FUNCTION
 atanh { poincare_expression_yylval.expression = new HyperbolicArcTangent(); return FUNCTION; }
 binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
 ceil { poincare_expression_yylval.expression = new Ceiling(); return FUNCTION; }
+confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
@@ -116,6 +117,8 @@ lcm { poincare_expression_yylval.expression = new LeastCommonMultiple(); return 
 ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
 log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
 permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
+prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }
+prediction { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = new DivisionQuotient(); return FUNCTION; }
 re { poincare_expression_yylval.expression = new ReelPart(); return FUNCTION; }
@@ -134,6 +137,7 @@ transpose { poincare_expression_yylval.expression = new MatrixTranspose(); retur
 \x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
 \x8b { return ICOMPLEX; }
 \x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x8f { return STO; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \* { return MULTIPLY; }

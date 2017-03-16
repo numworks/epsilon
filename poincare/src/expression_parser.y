@@ -29,6 +29,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * be useful to retrieve the value of Integers for example). */
 %union {
   Poincare::Expression * expression;
+  Poincare::Symbol * symbol;
   Poincare::ListData * listData;
   Poincare::MatrixData * matrixData;
   Poincare::Function * function;
@@ -49,7 +50,6 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token <string> DIGITS
 %token <character> SYMBOL
 %token <function> FUNCTION
-%token <complex> ICOMPLEX
 
 /* Operator tokens */
 %token PLUS
@@ -66,6 +66,8 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token COMMA
 %token DOT
 %token EE
+%token ICOMPLEX
+%token STO
 
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
@@ -80,6 +82,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * If you need to define precedence in order to avoid shift/redice conflicts for
  * other situations your grammar is most likely ambiguous.
  */
+%left STO
 %left PLUS
 %left MINUS
 %left MULTIPLY
@@ -89,6 +92,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;
 %type <expression> number;
+%type <symbol> symb;
 %type <listData> lstData;
 %type <matrixData> mtxData;
 
@@ -119,10 +123,14 @@ number:
   | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
   | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
 
+symb:
+  SYMBOL           { $$ = new Poincare::Symbol($1); }
+
 exp:
-  number             { $$ = $1; }
+  exp STO symb   {$$ = new Poincare::Store($3, $1, false); }
+  | number             { $$ = $1; }
   | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
-  | SYMBOL           { $$ = new Poincare::Symbol($1); }
+  | symb           { $$ = $1; }
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
   | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }

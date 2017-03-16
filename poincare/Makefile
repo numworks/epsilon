@@ -13,6 +13,7 @@ objs += $(addprefix poincare/src/,\
   ceiling.o\
   complex.o\
   complex_argument.o\
+  confidence_interval.o\
   conjugate.o\
   cosine.o\
   derivative.o\
@@ -54,12 +55,14 @@ objs += $(addprefix poincare/src/,\
   parenthesis.o\
   permute_coefficient.o\
   power.o\
+  prediction_interval.o\
   preferences.o\
   product.o\
   reel_part.o\
   round.o\
   sine.o\
   square_root.o\
+  store.o\
   subtraction.o\
   sum.o\
   symbol.o\
@@ -98,6 +101,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   simplify_utils.cpp\
   subtraction.cpp\
+  symbol.cpp\
   trigo.cpp\
 )
 

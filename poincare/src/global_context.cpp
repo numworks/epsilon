@@ -14,6 +14,15 @@ GlobalContext::GlobalContext() :
   }
 }
 
+GlobalContext::~GlobalContext() {
+  for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
+    if (m_expressions[i] != nullptr) {
+      delete m_expressions[i];
+    }
+    m_expressions[i] = nullptr;
+  }
+}
+
 Complex * GlobalContext::defaultExpression() {
   static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
@@ -44,7 +53,11 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   int index = symbolIndex(symbol);
   assert(expression->type() == Expression::Type::Complex);
-  m_expressions[index] = expression;
+  if (m_expressions[index] != nullptr) {
+    delete m_expressions[index];
+    m_expressions[index] = nullptr;
+  }
+  m_expressions[index] = expression->clone();
 }
 
 }

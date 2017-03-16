@@ -15,13 +15,15 @@ const ToolboxNode matricesChildren[5] = {ToolboxNode("inverse()", "Inverse"), To
 const ToolboxNode listesChildren[5] = {ToolboxNode("sort<()", "Tri croissant"), ToolboxNode("sort>()", "Tri decroissant"), ToolboxNode("max()", "Maximum"), ToolboxNode("min()", "Minimum"), ToolboxNode("dim()", "Taille")};
 const ToolboxNode approximationChildren[4] = {ToolboxNode("floor()", "Partie entiere"), ToolboxNode("frac()", "Partie fractionnaire"), ToolboxNode("ceil()", "Plafond"), ToolboxNode("round(,)", "Arrondi")};
 const ToolboxNode trigonometryChildren[6] = {ToolboxNode("cosh()", "cosh"), ToolboxNode("sinh()", "sinh"), ToolboxNode("tanh()", "tanh"), ToolboxNode("acosh()", "acosh"), ToolboxNode("asinh()", "asinh"), ToolboxNode("atanh()", "atanh")};
+const ToolboxNode predictionChildren[3] = {ToolboxNode("prediction95(,)", "Intervalle fluctuation 95%"), ToolboxNode("prediction(,)", "Intervalle fluctuation simple"), ToolboxNode("confidence(,)", "Intervalle de confiance")};
 
-const ToolboxNode menu[11] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNode("root(,)", "Racine k-ieme"), ToolboxNode("log(,)", "Logarithme base a"),
+const ToolboxNode menu[12] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNode("root(,)", "Racine k-ieme"), ToolboxNode("log(,)", "Logarithme base a"),
   ToolboxNode("Calcul", nullptr, calculChildren, 4), ToolboxNode("Nombre complexe", nullptr, complexChildren, 5),
   ToolboxNode("Probabilite", nullptr, probabilityChildren, 2), ToolboxNode("Arithmetique", nullptr, arithmeticChildren, 4),
   ToolboxNode("Matrice",  nullptr, matricesChildren, 5), ToolboxNode("Liste", nullptr, listesChildren, 5),
-  ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie hyperbolique", nullptr, trigonometryChildren, 6)};
-const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 11);
+  ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie hyperbolique", nullptr, trigonometryChildren, 6),
+  ToolboxNode("Intervalle fluctuation", nullptr, predictionChildren, 3)};
+const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 12);
 
 /* State */
 

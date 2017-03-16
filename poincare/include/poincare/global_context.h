@@ -13,6 +13,7 @@ class Integer;
 class GlobalContext : public Context {
 public:
   GlobalContext();
+  ~GlobalContext();
   /* The expression recorded in global context is already a final expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression * expressionForSymbol(const Symbol * symbol) override;

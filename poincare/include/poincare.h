@@ -10,6 +10,7 @@
 #include <poincare/ceiling.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
+#include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
@@ -47,12 +48,14 @@
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
+#include <poincare/prediction_interval.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>
 #include <poincare/reel_part.h>
 #include <poincare/round.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
+#include <poincare/store.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
 #include <poincare/symbol.h>

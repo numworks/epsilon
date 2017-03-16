@@ -3,6 +3,9 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/arc_cosine.h>
+#include <poincare/arc_sine.h>
+#include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/ceiling.h>
 #include <poincare/complex.h>
@@ -21,6 +24,9 @@
 #include <poincare/function.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
+#include <poincare/hyperbolic_arc_cosine.h>
+#include <poincare/hyperbolic_arc_sine.h>
+#include <poincare/hyperbolic_arc_tangent.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>

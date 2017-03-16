@@ -5,6 +5,9 @@ include poincare/src/simplify/Makefile
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
+  arc_cosine.o\
+  arc_sine.o\
+  arc_tangent.o\
   binary_operation.o\
   binomial_coefficient.o\
   ceiling.o\
@@ -25,6 +28,9 @@ objs += $(addprefix poincare/src/,\
   function.o\
   global_context.o\
   great_common_divisor.o\
+  hyperbolic_arc_cosine.o\
+  hyperbolic_arc_sine.o\
+  hyperbolic_arc_tangent.o\
   hyperbolic_cosine.o\
   hyperbolic_sine.o\
   hyperbolic_tangent.o\

@@ -19,6 +19,8 @@ objs += $(addprefix liba/src/, \
 
 objs += $(addprefix liba/src/external/openbsd/, \
   a_atanf.o \
+  e_acosf.o \
+  e_asinf.o \
   e_expf.o \
   e_lgammaf_r.o \
   e_log10f.o \

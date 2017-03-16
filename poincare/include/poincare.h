@@ -31,6 +31,7 @@
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
+#include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>

@@ -36,6 +36,7 @@ objs += $(addprefix poincare/src/,\
   nth_root.o\
   opposite.o\
   parenthesis.o\
+  permute_coefficient.o\
   power.o\
   preferences.o\
   product.o\

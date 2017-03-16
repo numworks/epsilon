@@ -56,6 +56,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()), m_selectableTableView.selectedRow());
     StackViewController * stack = stackController();
     stack->push(&m_subController);
+    return true;
   }
   return false;
 }

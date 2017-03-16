@@ -20,6 +20,7 @@ public:
   const char * textBody();
   void setTextBody(const char * text);
   bool textFieldDidFinishEditing(::TextField * textField, const char * text) override;
+  bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
 private:
   class ContentView : public View {
   public:

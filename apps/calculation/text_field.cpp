@@ -31,8 +31,4 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   return(::TextField::handleEvent(event));
 }
 
-void TextField::setEditing(bool isEditing) {
-  ::TextField::setEditing(true);
-}
-
 }

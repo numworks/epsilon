@@ -15,9 +15,9 @@ int BannerView::numberOfSubviews() const {
   return 5;
 }
 
-TextView * BannerView::textViewAtIndex(int i) {
-  TextView * textViews[5] = {&m_regressionTypeView, &m_slopeView, &m_yInterceptView, &m_xView, &m_yView};
-  return textViews[i];
+TextView * BannerView::textViewAtIndex(int i) const {
+  const TextView * textViews[5] = {&m_regressionTypeView, &m_slopeView, &m_yInterceptView, &m_xView, &m_yView};
+  return (TextView *)textViews[i];
 }
 
 }

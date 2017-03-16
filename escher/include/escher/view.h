@@ -37,7 +37,7 @@ public:
   KDRect bounds() const;
   View * subview(int index);
 
-  virtual KDSize minimalSizeForOptimalDisplay();
+  virtual KDSize minimalSizeForOptimalDisplay() const;
 
 #if ESCHER_VIEW_LOGGING
   friend std::ostream &operator<<(std::ostream &os, View &view);

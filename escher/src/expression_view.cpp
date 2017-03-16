@@ -32,7 +32,7 @@ void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlign
   markRectAsDirty(bounds());
 }
 
-KDSize ExpressionView::minimalSizeForOptimalDisplay() {
+KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
   if (m_expressionLayout ==  nullptr) {
     return KDSizeZero;
   }

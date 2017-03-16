@@ -4,16 +4,16 @@
 #include <escher.h>
 #include "store.h"
 #include "even_odd_double_buffer_text_cell.h"
+#include "../shared/tab_table_controller.h"
 
 namespace Regression {
 
-class CalculationController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate, public TableViewDataSource, public SelectableTableViewDelegate {
+class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public AlternateEmptyViewDelegate, public SelectableTableViewDelegate {
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
   ~CalculationController();
   const char * title() const override;
-  View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
@@ -27,17 +27,11 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void viewWillAppear() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
-  Responder * tabController() const;
+  Responder * tabController() const override;
   constexpr static int k_totalNumberOfRows = 11;
   constexpr static int k_totalNumberOfColumns = 2;
   constexpr static int k_maxNumberOfDisplayableRows = 10;
@@ -49,7 +43,6 @@ private:
   EvenOddDoubleBufferTextCell m_columnTitleCell;
   EvenOddDoubleBufferTextCell m_doubleCalculationCells[k_maxNumberOfDisplayableRows/2];
   EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows/2];
-  SelectableTableView m_selectableTableView;
   Store * m_store;
 };
 

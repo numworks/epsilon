@@ -20,7 +20,7 @@ public:
   void didBecomeFirstResponder() override;
   bool isEditing();
   void setEditing(bool isEditing);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static int k_bufferLength = 255;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;

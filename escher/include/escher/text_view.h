@@ -15,7 +15,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   virtual const char * text() const = 0;
   virtual void setText(const char * text) = 0;
 protected:

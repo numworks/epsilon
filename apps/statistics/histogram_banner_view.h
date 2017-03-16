@@ -11,7 +11,7 @@ public:
   HistogramBannerView();
 private:
   int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) override;
+  TextView * textViewAtIndex(int i) const override;
   BufferTextView m_intervalView;
   BufferTextView m_sizeView;
   BufferTextView m_frequencyView;

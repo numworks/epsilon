@@ -20,7 +20,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression

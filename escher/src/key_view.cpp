@@ -82,7 +82,7 @@ void KeyView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->blendRectWithMask(frame, KDColorBlack, mask(), s_keyWorkingBuffer);
 }
 
-KDSize KeyView::minimalSizeForOptimalDisplay() {
+KDSize KeyView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_keySize, k_keySize);
 }
 

@@ -9,7 +9,7 @@ class OkView : public View {
 public:
   using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static KDCoordinate k_okSize = 20;
 };
 

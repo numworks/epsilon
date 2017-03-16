@@ -32,6 +32,6 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)chevronMask, s_workingBuffer);
 }
 
-KDSize ChevronView::minimalSizeForOptimalDisplay() {
+KDSize ChevronView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_chevronRightMargin+k_chevronWidth, k_chevronHeight);
 }

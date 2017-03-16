@@ -13,7 +13,7 @@ public:
   void setExpression(Poincare::ExpressionLayout * expressionLayout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
-  KDSize minimalSizeForOptimalDisplay() override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

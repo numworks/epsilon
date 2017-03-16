@@ -10,14 +10,8 @@ namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin, this,
-    false, true, Palette::WallScreenDark))
+  TabTableController(parentResponder, topMargin, rightMargin, bottomMargin, leftMargin, this, true)
 {
-}
-
-View * EditableCellTableViewController::view() {
-  return &m_selectableTableView;
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
@@ -64,14 +58,6 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
   return k_cellHeight;
 }
 
-KDCoordinate EditableCellTableViewController::cumulatedHeightFromIndex(int j) {
-  return j*k_cellHeight;
-}
-
-int EditableCellTableViewController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY-1) / k_cellHeight;
-}
-
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
@@ -104,12 +90,12 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
     int selectedColumn = m_selectableTableView.selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
-    app()->setFirstResponder(&m_selectableTableView);
+    TabTableController::didBecomeFirstResponder();
   }
 }
 
 void EditableCellTableViewController::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  TabTableController::viewWillAppear();
   if (m_selectableTableView.selectedRow() == -1) {
     m_selectableTableView.selectCellAtLocation(0, 1);
   } else {
@@ -118,12 +104,6 @@ void EditableCellTableViewController::viewWillAppear() {
     int selectedColumn = m_selectableTableView.selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
     m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
-  }
-}
-
-void EditableCellTableViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    m_selectableTableView.deselectTable();
   }
 }
 

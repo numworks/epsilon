@@ -11,7 +11,7 @@ public:
   BannerView();
 private:
   int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) override;
+  TextView * textViewAtIndex(int i) const override;
   PointerTextView m_regressionTypeView;
   BufferTextView m_slopeView;
   BufferTextView m_yInterceptView;

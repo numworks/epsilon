@@ -27,6 +27,7 @@ app_objs += $(addprefix apps/shared/,\
   new_function_cell.o\
   ok_view.o\
   range_parameter_controller.o\
+  regular_table_view_data_source.o\
   store_controller.o\
   store_parameter_controller.o\
   tab_table_controller.o\

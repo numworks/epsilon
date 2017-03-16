@@ -91,6 +91,11 @@ float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
 float CurveView::floatToPixel(Axis axis, float f) const {
   float fraction = (f-min(axis))/(max(axis)-min(axis));
   fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
+  /* When fraction is too big or too small, we are out of the visible window.
+   * In order to avoid big float issue (often due to float to int
+   * transformation), we cap the value of fraction. */
+  fraction = fraction < -10.0f ? -10.0f : fraction;
+  fraction = fraction > 10.0f ? 10.0f : fraction;
   return pixelLength(axis)*fraction;
 }
 
@@ -189,7 +194,7 @@ const uint8_t dotMask[dotDiameter][dotDiameter] = {
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color) const {
   KDCoordinate px = roundf(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = roundf(floatToPixel(Axis::Vertical, y));
-  if ((px + dotDiameter < rect.left() - k_externRectMargin || px - dotDiameter > rect.right() + k_externRectMargin) &&
+  if ((px + dotDiameter < rect.left() - k_externRectMargin || px - dotDiameter > rect.right() + k_externRectMargin) ||
       (py + dotDiameter < rect.top() - k_externRectMargin || py - dotDiameter > rect.bottom() + k_externRectMargin)) {
     return;
   }

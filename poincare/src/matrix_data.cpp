@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixData::MatrixData(ListData * listData) :
+MatrixData::MatrixData(ListData * listData, bool clone) :
   m_numberOfRows(1),
   m_numberOfColumns(0)
 {
@@ -15,7 +15,11 @@ MatrixData::MatrixData(ListData * listData) :
   m_numberOfColumns = listData->numberOfOperands();
   m_operands = (Expression **)malloc(m_numberOfColumns*sizeof(Expression *));
   for (int i = 0; i < m_numberOfColumns; i++) {
-    m_operands[i] = (Expression *)listData->operand(i);
+    if (clone) {
+      m_operands[i] = (Expression *)listData->operand(i)->clone();
+    } else {
+      m_operands[i] = (Expression *)listData->operand(i);
+    }
   }
 }
 
@@ -49,14 +53,18 @@ MatrixData::~MatrixData() {
   free(m_operands);
 }
 
-void MatrixData::pushListData(ListData * listData) {
+void MatrixData::pushListData(ListData * listData, bool clone) {
   Expression ** newOperands = (Expression **)malloc(((m_numberOfRows+1)*m_numberOfColumns)*sizeof(Expression *));
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     newOperands[i] = m_operands[i];
   }
   for (int i = 0; i < m_numberOfColumns; i++) {
     int max = listData->numberOfOperands();
-    newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? (Expression *)listData->operand(i) : defaultExpression();
+    if (clone) {
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? (Expression *)listData->operand(i)->clone() : defaultExpression();
+    } else {
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? (Expression *)listData->operand(i) : defaultExpression();
+    }
   }
   free(m_operands);
   m_operands = newOperands;

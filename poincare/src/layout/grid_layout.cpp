@@ -8,11 +8,12 @@ namespace Poincare {
 
 GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
   ExpressionLayout(),
-  m_entryLayouts(entryLayouts),
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
+  m_entryLayouts = (ExpressionLayout **)malloc(numberOfColumns*numberOfRows*sizeof(ExpressionLayout *));
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
+    m_entryLayouts[i] = entryLayouts[i];
     m_entryLayouts[i]->setParent(this);
   }
   m_baseline = height()/2 + KDText::stringSize(" ").height()/2;

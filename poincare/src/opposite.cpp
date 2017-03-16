@@ -56,7 +56,7 @@ Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) co
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  ExpressionLayout * children_layouts[2];
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
   children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat)) : m_operand->createLayout(floatDisplayMode, complexFormat);
@@ -80,7 +80,7 @@ Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const {
-  Expression * operands[m->numberOfRows() * m->numberOfColumns()];
+  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
     Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
     assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
@@ -92,7 +92,9 @@ Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit 
     operands[i] = new Complex(Complex::Cartesian(-((Complex *)evaluation)->a(), -((Complex *)evaluation)->b()));
     delete evaluation;
   }
-  return new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  Expression * matrix = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
+  free(operands);
+  return matrix;
 }
 
 }

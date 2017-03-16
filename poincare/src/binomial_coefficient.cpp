@@ -46,7 +46,7 @@ float BinomialCoefficient::privateApproximate(Context& context, AngleUnit angleU
 ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout ** childrenLayouts = (ExpressionLayout **)malloc(2*sizeof(ExpressionLayout *));
+  ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode, complexFormat);
   return new ParenthesisLayout(new GridLayout(childrenLayouts, 2, 1));

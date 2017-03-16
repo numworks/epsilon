@@ -18,7 +18,7 @@ Expression::Type Multiplication::type() const {
 ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
+  ExpressionLayout * children_layouts[3];
   children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
   children_layouts[1] = new StringLayout("*", 1);
   children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
@@ -45,7 +45,7 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
   if (m->numberOfColumns() != n->numberOfRows()) {
     return nullptr;
   }
-  Expression * operands[m->numberOfRows() * n->numberOfColumns()];
+  Expression ** operands = (Expression **)malloc(m->numberOfRows() * n->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows(); i++) {
     for (int j = 0; j < n->numberOfColumns(); j++) {
       float a = 0.0f;
@@ -69,7 +69,9 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
       operands[i*n->numberOfColumns()+j] = new Complex(Complex::Cartesian(a, b));
     }
   }
-  return new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);
+  Expression * matrix = new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);
+  free(operands);
+  return matrix;
 }
 
 }

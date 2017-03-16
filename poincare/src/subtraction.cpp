@@ -30,7 +30,7 @@ Expression::Type Subtraction::type() const {
 ExpressionLayout * Subtraction::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout** children_layouts = (ExpressionLayout **)malloc(3*sizeof(ExpressionLayout *));
+  ExpressionLayout * children_layouts[3];
   children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
   char string[2] = {'-', '\0'};
   children_layouts[1] = new StringLayout(string, 1);

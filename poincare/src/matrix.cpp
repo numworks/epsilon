@@ -4,7 +4,8 @@ extern "C" {
 }
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
-#include "layout/matrix_layout.h"
+#include "layout/grid_layout.h"
+#include "layout/bracket_layout.h"
 #include <math.h>
 #include <float.h>
 #include <string.h>
@@ -51,7 +52,7 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   for (int i = 0; i < numberOfOperands(); i++) {
     childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
-  return new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns());
+  return new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
 }
 
 float Matrix::privateApproximate(Context& context, AngleUnit angleUnit) const {

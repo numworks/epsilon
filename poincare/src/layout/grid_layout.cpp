@@ -1,4 +1,4 @@
-#include "matrix_layout.h"
+#include "grid_layout.h"
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -6,7 +6,7 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixLayout::MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
+GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
   ExpressionLayout(),
   m_entryLayouts(entryLayouts),
   m_numberOfRows(numberOfRows),
@@ -18,14 +18,14 @@ MatrixLayout::MatrixLayout(ExpressionLayout ** entryLayouts, int numberOfRows, i
   m_baseline = height()/2 + KDText::stringSize(" ").height()/2;
 }
 
-MatrixLayout::~MatrixLayout() {
+GridLayout::~GridLayout() {
   for (int i=0; i<m_numberOfColumns*m_numberOfRows; i++) {
     delete m_entryLayouts[i];
   }
   free(m_entryLayouts);
 }
 
-KDCoordinate MatrixLayout::rowBaseline(int i) {
+KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
     rowBaseline = max(rowBaseline, m_entryLayouts[i*m_numberOfColumns+j]->baseline());
@@ -34,7 +34,7 @@ KDCoordinate MatrixLayout::rowBaseline(int i) {
 }
 
 
-KDCoordinate MatrixLayout::rowHeight(int i) {
+KDCoordinate GridLayout::rowHeight(int i) {
   KDCoordinate rowHeight = 0;
   KDCoordinate baseline = rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
@@ -43,16 +43,16 @@ KDCoordinate MatrixLayout::rowHeight(int i) {
   return baseline+rowHeight;
 }
 
-KDCoordinate MatrixLayout::height() {
+KDCoordinate GridLayout::height() {
   KDCoordinate totalHeight = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
   }
-  totalHeight += (m_numberOfRows-1)*k_matrixEntryMargin;
+  totalHeight += (m_numberOfRows-1)*k_gridEntryMargin;
   return totalHeight;
 }
 
-KDCoordinate MatrixLayout::columnWidth(int j) {
+KDCoordinate GridLayout::columnWidth(int j) {
   KDCoordinate columnWidth = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
     columnWidth = max(columnWidth, m_entryLayouts[i*m_numberOfColumns+j]->size().width());
@@ -60,32 +60,31 @@ KDCoordinate MatrixLayout::columnWidth(int j) {
   return columnWidth;
 }
 
-KDCoordinate MatrixLayout::width() {
+KDCoordinate GridLayout::width() {
   KDCoordinate totalWidth = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);
   }
-  totalWidth += (m_numberOfColumns-1)*k_matrixEntryMargin;
-  return totalWidth + 2*k_matrixBracketWidth + 2*k_matrixBracketMargin;
+  totalWidth += (m_numberOfColumns-1)*k_gridEntryMargin;
+  return totalWidth;
 }
 
-void MatrixLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x(), p.y(), k_matrixBracketWidth, height()), expressionColor);
-  ctx->fillRect(KDRect(p.x() + width() - k_matrixBracketWidth, p.y(), k_matrixBracketWidth, height()), expressionColor);
+void GridLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  // Nothing to do for a simple grid
 }
 
-KDSize MatrixLayout::computeSize() {
+KDSize GridLayout::computeSize() {
   return KDSize(width(), height());
 }
 
-ExpressionLayout * MatrixLayout::child(uint16_t index) {
+ExpressionLayout * GridLayout::child(uint16_t index) {
   if (index >= 0 && index < m_numberOfColumns*m_numberOfRows) {
     return m_entryLayouts[index];
   }
   return nullptr;
 }
 
-KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
   int rowIndex = 0;
   int columnIndex = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
@@ -101,12 +100,12 @@ KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
   for (int j = 0; j < columnIndex; j++) {
     x += columnWidth(j);
   }
-  x += (columnWidth(columnIndex) - child->size().width())/2+ columnIndex * k_matrixEntryMargin + k_matrixBracketMargin + k_matrixBracketWidth;
+  x += (columnWidth(columnIndex) - child->size().width())/2+ columnIndex * k_gridEntryMargin;
   KDCoordinate y = 0;
   for (int i = 0; i < rowIndex; i++) {
     y += rowHeight(i);
   }
-  y += rowBaseline(rowIndex) - child->baseline() + rowIndex * k_matrixEntryMargin;
+  y += rowBaseline(rowIndex) - child->baseline() + rowIndex * k_gridEntryMargin;
   return KDPoint(x, y);
 }
 

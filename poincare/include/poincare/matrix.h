@@ -23,6 +23,8 @@ public:
   /* If the buffer is too small, the function fills the buffer until reaching
    * buffer size */
   int writeTextInBuffer(char * buffer, int bufferSize) override;
+  Expression * createDimensionMatrix(Context& context, AngleUnit angleUnit) const;
+  float trace(Context& context, AngleUnit angleUnit) const;
   float determinant(Context& context, AngleUnit angleUnit) const;
   Expression * createInverse(Context& context, AngleUnit angleUnit) const;
   Expression * createTranspose(Context& context, AngleUnit angleUnit) const;

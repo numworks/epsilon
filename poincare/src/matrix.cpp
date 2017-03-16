@@ -143,6 +143,25 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) {
   return currentChar;
 }
 
+Expression * Matrix::createDimensionMatrix(Context& context, AngleUnit angleUnit) const {
+  Expression * operands[2];
+  operands[0] = new Complex(Complex::Float(numberOfRows()));
+  operands[1] = new Complex(Complex::Float(numberOfColumns()));
+  return new Matrix(new MatrixData(operands, 2, 2, 1, false));
+}
+
+float Matrix::trace(Context& context, AngleUnit angleUnit) const {
+  if (numberOfColumns() != numberOfRows()) {
+    return NAN;
+  }
+  int dim = numberOfRows();
+  float trace = 0.0f;
+  for (int i = 0; i < dim; i++) {
+    trace += m_matrixData->operands()[i*dim+i]->approximate(context, angleUnit);
+  }
+  return trace;
+}
+
 float Matrix::determinant(Context& context, AngleUnit angleUnit) const {
   if (numberOfColumns() != numberOfRows()) {
     return NAN;

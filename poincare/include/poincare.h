@@ -4,6 +4,7 @@
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/ceiling.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
 #include <poincare/conjugate.h>
@@ -14,6 +15,8 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/expression.h>
+#include <poincare/floor.h>
+#include <poincare/frac_part.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
 #include <poincare/global_context.h>
@@ -24,12 +27,12 @@
 #include <poincare/integer.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
-#include <poincare/list_data.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
-#include <poincare/matrix_data.h>
+#include <poincare/matrix_dimension.h>
 #include <poincare/matrix_inverse.h>
+#include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
@@ -41,6 +44,7 @@
 #include <poincare/preferences.h>
 #include <poincare/product.h>
 #include <poincare/reel_part.h>
+#include <poincare/round.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>

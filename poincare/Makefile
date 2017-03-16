@@ -7,6 +7,7 @@ objs += $(addprefix poincare/src/,\
   addition.o\
   binary_operation.o\
   binomial_coefficient.o\
+  ceiling.o\
   complex.o\
   complex_argument.o\
   conjugate.o\
@@ -18,6 +19,8 @@ objs += $(addprefix poincare/src/,\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
+  floor.o\
+  frac_part.o\
   fraction.o\
   function.o\
   global_context.o\
@@ -34,7 +37,9 @@ objs += $(addprefix poincare/src/,\
   logarithm.o\
   matrix.o\
   matrix_data.o\
+  matrix_dimension.o\
   matrix_inverse.o\
+  matrix_trace.o\
   matrix_transpose.o\
   multiplication.o\
   naperian_logarithm.o\
@@ -46,6 +51,7 @@ objs += $(addprefix poincare/src/,\
   preferences.o\
   product.o\
   reel_part.o\
+  round.o\
   sine.o\
   square_root.o\
   subtraction.o\

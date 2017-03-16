@@ -38,7 +38,7 @@ void VariableBoxLeafCell::layoutSubviews() {
   KDCoordinate height = bounds().height();
   if (numberOfSubviews() == 3) {
     m_labelView.setFrame(KDRect(1, 1, width/2-1, height/2 - 1));
-    m_subtitleView.setFrame(KDRect(1, height/2, width/2-1, height/2 - 1));
+    m_subtitleView.setFrame(KDRect(1, height/2, width/2-1, height/2));
     m_subtitleView.setAlignment(0.0f, 0.5f);
     m_expressionView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
     return;
@@ -74,8 +74,9 @@ void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
-  ctx->fillRect(KDRect(1, 0, width-2, height-1), backgroundColor);
+  ctx->fillRect(KDRect(1, 0, width-2, height-2), backgroundColor);
   ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, width, 1), Palette::GreyBright);
   ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::GreyBright);
   ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::GreyBright);
  }

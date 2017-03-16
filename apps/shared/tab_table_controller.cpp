@@ -5,7 +5,7 @@ namespace Shared {
 TabTableController::TabTableController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, SelectableTableViewDelegate * delegate, bool showIndicators) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, topMargin, rightMargin, bottomMargin, leftMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, topMargin, rightMargin, bottomMargin, leftMargin,
     delegate, showIndicators, true, Palette::WallScreenDark))
 {
 }

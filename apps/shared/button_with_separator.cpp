@@ -8,8 +8,8 @@ ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, const char
 void ButtonWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-
-  ctx->fillRect(KDRect(0, 0, width, k_margin), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, 0, width, k_lineThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, k_lineThickness, width, k_margin-k_lineThickness), Palette::WallScreen);
   // Draw rectangle around cell
   ctx->fillRect(KDRect(0, k_margin, width, k_lineThickness), Palette::GreyBright);
   ctx->fillRect(KDRect(0, k_margin+k_lineThickness, k_lineThickness, height-k_margin), Palette::GreyBright);

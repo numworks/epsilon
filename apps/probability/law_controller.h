@@ -29,7 +29,7 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    PointerTextView m_titleView;;
+    MessageTextView m_titleView;;
     SelectableTableView * m_selectableTableView;
   };
   void setLawAccordingToIndex(int index);

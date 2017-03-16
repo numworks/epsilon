@@ -55,7 +55,7 @@ KDCoordinate PredictionParameterController::cellHeight() {
 }
 
 void PredictionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  PointerTableCellWithChevron * myCell = (PointerTableCellWithChevron *)cell;
+  MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
   I18n::Message  titles[2] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
   myCell->setMessage(titles[index]);
 }

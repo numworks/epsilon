@@ -44,10 +44,10 @@ private:
     constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    PointerTextView m_titleView;
+    MessageTextView m_titleView;
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
-    PointerTextView m_text[k_maxNumberOfEditableFields];
+    MessageTextView m_text[k_maxNumberOfEditableFields];
     char m_draftTextBuffer[EditableTextCell::k_bufferLength];
     EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
     Calculation * m_calculation;

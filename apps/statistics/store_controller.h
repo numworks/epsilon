@@ -13,7 +13,7 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
   HighlightCell * titleCells(int index) override;
-  EvenOddPointerTextCell m_titleCells[k_numberOfTitleCells];
+  EvenOddMessageTextCell m_titleCells[k_numberOfTitleCells];
 };
 
 }

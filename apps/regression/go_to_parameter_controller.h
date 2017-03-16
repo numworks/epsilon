@@ -24,8 +24,8 @@ private:
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   void buttonAction() override;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_abscisseCell;
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_abscisseCell;
   float m_previousParameter;
   Store * m_store;
   Shared::CurveViewCursor * m_cursor;

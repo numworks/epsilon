@@ -23,8 +23,8 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_totalNumberOfCell = 3;
   Interval * m_interval;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
   float m_previousParameters[k_totalNumberOfCell];
 };
 

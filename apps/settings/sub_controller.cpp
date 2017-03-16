@@ -11,8 +11,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{PointerTableCell(I18n::Message::Default, KDText::FontSize::Large), PointerTableCell(I18n::Message::Default, KDText::FontSize::Large),
-    PointerTableCell(I18n::Message::Default, KDText::FontSize::Large)},
+  m_cells{MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large),
+    MessageTableCell(I18n::Message::Default, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel(nullptr),
@@ -96,7 +96,7 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_preferenceIndex == 2) {
     return;
   }
-  PointerTableCell * myCell = (PointerTableCell *)cell;
+  MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_nodeModel->children(index)->label());
 }
 

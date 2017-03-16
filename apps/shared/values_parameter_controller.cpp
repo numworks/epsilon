@@ -6,9 +6,9 @@ namespace Shared {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
   ViewController(parentResponder),
   m_pageTitle(title),
-  m_deleteColumn(PointerTableCell(I18n::Message::ClearColumn)),
-  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
-  m_setInterval(PointerTableCellWithChevron(I18n::Message::IntervalSet)),
+  m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
+  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
+  m_setInterval(MessageTableCellWithChevron(I18n::Message::IntervalSet)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)

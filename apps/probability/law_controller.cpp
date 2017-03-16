@@ -20,7 +20,7 @@
 namespace Probability {
 
 LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(PointerTextView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_selectableTableView(selectableTableView)
 {
 }

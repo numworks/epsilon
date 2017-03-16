@@ -26,8 +26,8 @@ private:
   constexpr static int k_totalNumberOfCell = 2;
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
-  PointerTableCell m_hideColumn;
-  PointerTableCellWithChevron m_copyColumn;
+  MessageTableCell m_hideColumn;
+  MessageTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
   CartesianFunction * m_function;
   ValuesController * m_valuesController;

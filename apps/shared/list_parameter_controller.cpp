@@ -8,9 +8,9 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_functionStore(functionStore),
-  m_colorCell(PointerTableCellWithChevron(functionColorMessage)),
-  m_enableCell(PointerTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
-  m_deleteCell(PointerTableCell(deleteFunctionMessage))
+  m_colorCell(MessageTableCellWithChevron(functionColorMessage)),
+  m_enableCell(MessageTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
+  m_deleteCell(MessageTableCell(deleteFunctionMessage))
 {
 }
 

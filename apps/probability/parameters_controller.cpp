@@ -8,9 +8,9 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(PointerTextView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
-  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
-  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_firstParameterDefinition(MessageTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_secondParameterDefinition(MessageTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -20,7 +20,7 @@ void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) c
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
-PointerTextView * ParametersController::ContentView::parameterDefinitionAtIndex(int index) {
+MessageTextView * ParametersController::ContentView::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return &m_firstParameterDefinition;
@@ -69,8 +69,8 @@ void ParametersController::ContentView::layoutSubviews() {
 
 ParametersController::ParametersController(Responder * parentResponder) :
   FloatParameterController(parentResponder, I18n::Message::Next),
-  m_menuListCell{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
-    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
+  m_menuListCell{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
+    MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
   m_contentView(ContentView(this, &m_selectableTableView)),
   m_law(nullptr),
   m_calculationController(CalculationController(nullptr))
@@ -113,7 +113,7 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
   if (index == numberOfRows()-1) {
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
   myCell->setMessage(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }

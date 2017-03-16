@@ -89,7 +89,7 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   if (index == numberOfRows()-1) {
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   myCell->setAccessoryText(buffer);
@@ -112,7 +112,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (previousSelectedCellY >= 0 && previousSelectedCellX < numberOfRows()-1) {
-    PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
   }
   if (t->selectedRow() == numberOfRows()-1) {
@@ -121,7 +121,7 @@ void FloatParameterController::tableViewDidChangeSelection(SelectableTableView *
     return;
   }
   if (t->selectedRow() >= 0) {
-    PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
     app()->setFirstResponder(myNewCell);
   }
 }

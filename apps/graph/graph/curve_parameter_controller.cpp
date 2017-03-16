@@ -8,8 +8,8 @@ namespace Graph {
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
   FunctionCurveParameterController(graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
-  m_calculationCell(PointerTableCellWithChevron(I18n::Message::Compute)),
-  m_derivativeCell(PointerTableCellWithSwitch(I18n::Message::DerivateNumber))
+  m_calculationCell(MessageTableCellWithChevron(I18n::Message::Compute)),
+  m_derivativeCell(MessageTableCellWithSwitch(I18n::Message::DerivateNumber))
 {
 }
 

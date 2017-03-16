@@ -1,13 +1,13 @@
-#ifndef ESCHER_POINTER_TABLE_CELL_WITH_EDITABLE_TEXT_H
-#define ESCHER_POINTER_TABLE_CELL_WITH_EDITABLE_TEXT_H
+#ifndef ESCHER_MESSAGE_TABLE_CELL_WITH_EDITABLE_TEXT_H
+#define ESCHER_MESSAGE_TABLE_CELL_WITH_EDITABLE_TEXT_H
 
 #include <escher/editable_text_cell.h>
-#include <escher/pointer_table_cell.h>
+#include <escher/message_table_cell.h>
 #include <escher/responder.h>
 
-class PointerTableCellWithEditableText : public Responder, public PointerTableCell {
+class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
-  PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message = (I18n::Message)0);
+  MessageTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   const char * editedText() const;
   void didBecomeFirstResponder() override;

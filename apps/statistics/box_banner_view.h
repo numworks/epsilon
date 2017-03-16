@@ -13,8 +13,8 @@ public:
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
-  PointerTextView * pointerTextViewAtIndex(int i) const override;
-  PointerTextView m_calculationName;
+  MessageTextView * messageTextViewAtIndex(int i) const override;
+  MessageTextView m_calculationName;
   BufferTextView m_calculationValue;
 };
 

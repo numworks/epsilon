@@ -21,7 +21,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 4;
-  PointerTableCell m_cells[k_totalNumberOfCells];
+  MessageTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   InteractiveCurveViewRange * m_graphRange;
 };

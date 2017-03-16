@@ -154,13 +154,13 @@ int MathToolbox::reusableCellCount(int type) {
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxNode * node = (ToolboxNode *)m_nodeModel->children(index);
   if (node->numberOfChildren() == 0) {
-    PointerTableCellWithPointer * myCell = (PointerTableCellWithPointer *)cell;
+    MessageTableCellWithMessage * myCell = (MessageTableCellWithMessage *)cell;
     myCell->setMessage(node->label());
     myCell->setAccessoryMessage(node->text());
     myCell->setAccessoryTextColor(Palette::GreyDark);
     return;
   }
-  PointerTableCell * myCell = (PointerTableCell *)cell;
+  MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(node->label());
 }
 

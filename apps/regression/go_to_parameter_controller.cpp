@@ -9,7 +9,7 @@ namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
   FloatParameterController(parentResponder),
-  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
+  m_abscisseCell(MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
   m_store(store),
   m_cursor(cursor),
   m_xPrediction(true)
@@ -75,7 +75,7 @@ void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (index == numberOfRows()-1) {
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
   if (m_xPrediction) {
     myCell->setMessage(I18n::Message::X);
   } else {

@@ -38,7 +38,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
-    EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
+    EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
     mytitleCell->setMessage(I18n::Message::X);
     return;
   }

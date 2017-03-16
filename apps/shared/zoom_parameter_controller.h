@@ -33,7 +33,7 @@ private:
       void layoutSubviews() override;
       int numberOfSubviews() const override;
       View * subviewAtIndex(int index) override;
-      PointerTextView m_legends[k_numberOfLegends-1];
+      MessageTextView m_legends[k_numberOfLegends-1];
       KeyView m_legendPictograms[k_numberOfLegends];
     };
     int numberOfSubviews() const override;

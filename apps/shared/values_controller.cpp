@@ -11,7 +11,7 @@ namespace Shared {
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   ButtonRowDelegate(header, nullptr),
-  m_abscissaTitleCell(EvenOddPointerTextCell(KDText::FontSize::Small)),
+  m_abscissaTitleCell(EvenOddMessageTextCell(KDText::FontSize::Small)),
   m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},

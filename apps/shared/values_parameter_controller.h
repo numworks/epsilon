@@ -20,9 +20,9 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   I18n::Message m_pageTitle;
-  PointerTableCell m_deleteColumn;
-  PointerTableCellWithChevron m_copyColumn;
-  PointerTableCellWithChevron m_setInterval;
+  MessageTableCell m_deleteColumn;
+  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron m_setInterval;
   SelectableTableView m_selectableTableView;
   IntervalParameterController * m_intervalParameterController;
 };

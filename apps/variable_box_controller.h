@@ -55,7 +55,7 @@ private:
     int m_previousSelectedRow;
     Page m_currentPage;
     VariableBoxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
-    PointerTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+    MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;

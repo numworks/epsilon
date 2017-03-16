@@ -18,8 +18,8 @@ public:
 private:
   BannerView * m_bannerView;
   constexpr static int k_totalNumberOfCells = 3;
-  PointerTableCellWithChevron m_calculationCell;
-  PointerTableCellWithSwitch m_derivativeCell;
+  MessageTableCellWithChevron m_calculationCell;
+  MessageTableCellWithSwitch m_derivativeCell;
 };
 
 }

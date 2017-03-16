@@ -12,8 +12,8 @@ public:
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
-  PointerTextView * pointerTextViewAtIndex(int i) const override;
-  PointerTextView m_regressionTypeView;
+  MessageTextView * messageTextViewAtIndex(int i) const override;
+  MessageTextView m_regressionTypeView;
   BufferTextView m_slopeView;
   BufferTextView m_yInterceptView;
   BufferTextView m_xView;

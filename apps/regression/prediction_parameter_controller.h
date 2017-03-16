@@ -22,7 +22,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
-  PointerTableCellWithChevron m_cells[2];
+  MessageTableCellWithChevron m_cells[2];
   SelectableTableView m_selectableTableView;
   GoToParameterController m_goToParameterController;
 };

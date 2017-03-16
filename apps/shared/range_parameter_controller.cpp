@@ -10,9 +10,9 @@ namespace Shared {
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),
-  m_rangeCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default),
-    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
-  m_yAutoCell(PointerTableCellWithSwitch(I18n::Message::YAuto))
+  m_rangeCells{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default),
+    MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
+  m_yAutoCell(MessageTableCellWithSwitch(I18n::Message::YAuto))
 {
 }
 
@@ -52,7 +52,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     switchView->setState(m_interactiveRange->yAuto());
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
   I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
   myCell->setMessage(labels[index]);
   KDColor yColor = m_interactiveRange->yAuto() ? Palette::GreyDark : KDColorBlack;
@@ -69,7 +69,7 @@ bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, 
 
 void RangeParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (previousSelectedCellX < numberOfRows()-1 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
-    PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
     app()->setFirstResponder(t);
   }
@@ -79,7 +79,7 @@ void RangeParameterController::tableViewDidChangeSelection(SelectableTableView *
     return;
   }
   if (t->selectedRow() >= 0 && t->selectedRow() !=2) {
-    PointerTableCellWithEditableText * myNewCell = (PointerTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
     if ((t->selectedRow() == 0 || t->selectedRow() == 1) || !m_interactiveRange->yAuto()) {
       app()->setFirstResponder(myNewCell);
     }

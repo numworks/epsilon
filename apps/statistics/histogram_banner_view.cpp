@@ -24,9 +24,9 @@ TextView * HistogramBannerView::textViewAtIndex(int i) const {
   return (TextView *)textViews[i];
 }
 
-PointerTextView * HistogramBannerView::pointerTextViewAtIndex(int index) const {
-  const PointerTextView * textViews[6] = {&m_intervalLegendView, nullptr, &m_sizeLegendView, nullptr, &m_frequencyLegendView, nullptr};
-  return (PointerTextView *)textViews[index];
+MessageTextView * HistogramBannerView::messageTextViewAtIndex(int index) const {
+  const MessageTextView * textViews[6] = {&m_intervalLegendView, nullptr, &m_sizeLegendView, nullptr, &m_frequencyLegendView, nullptr};
+  return (MessageTextView *)textViews[index];
 }
 
 }

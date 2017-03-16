@@ -10,7 +10,7 @@ namespace Statistics {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
-  m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)}
+  m_titleCells{EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small)}
 {
 }
 
@@ -19,7 +19,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
-  EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
+  EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
   if (i == 0) {
     mytitleCell->setMessage(I18n::Message::Values);
     return;

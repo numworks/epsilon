@@ -44,9 +44,8 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
     switch (m_selectableTableView.selectedRow()) {
       case 0:
       {
-        m_valuesController->selectCellAtLocation(0, -1);
-        m_function->setDisplayDerivative(false);
         m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()-1, m_valuesController->activeRow());
+        m_function->setDisplayDerivative(false);
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;

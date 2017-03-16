@@ -1,6 +1,7 @@
 #include <quiz.h>
 #include <poincare.h>
 #include <ion.h>
+#include <math.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -50,5 +51,12 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   delete a;
   delete e;
 
-  // TODO: test matrice fraction when implemented
+  a = Expression::parse("[[1,2][3,4]]/[[3,4][5,6]]");
+  e = a->evaluate(globalContext);
+  assert(fabsf(e->operand(0)->approximate(globalContext) - 2.0f) < 0.000001f);
+  assert(fabsf(e->operand(1)->approximate(globalContext) - -1.0f) < 0.000001f);
+  assert(fabsf(e->operand(2)->approximate(globalContext) - 1.0f) < 0.000001f);
+  assert(fabsf(e->operand(3)->approximate(globalContext) - 0.0f) < 0.000001f);
+  delete a;
+  delete e;
 }

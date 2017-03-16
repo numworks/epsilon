@@ -116,7 +116,7 @@ void MathToolbox::ListController::setFirstSelectedRow(int firstSelectedRow) {
 
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, &m_listController),
-  m_selectableTableView(SelectableTableView(&m_listController, this, 1, 0, 0, 0, 0, nullptr, false)),
+  m_selectableTableView(SelectableTableView(&m_listController, this, 0, 1, 0, 0, 0, 0, nullptr, false)),
   m_listController(this, &m_selectableTableView),
   m_nodeModel(nullptr)
 {

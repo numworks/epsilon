@@ -8,7 +8,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
   m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_store(store),
   m_xColumnSelected(true)

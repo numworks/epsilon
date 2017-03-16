@@ -1,10 +1,9 @@
 #include <escher/selectable_table_view.h>
 
-SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, int cellOverlapping,
-    KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
+SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
     SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
     KDCoordinate indicatorThickness, KDColor indicatorColor, KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  TableView(dataSource, cellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
+  TableView(dataSource, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
     indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   Responder(parentResponder),
   m_delegate(delegate),

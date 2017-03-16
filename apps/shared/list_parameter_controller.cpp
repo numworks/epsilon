@@ -5,7 +5,7 @@ namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_functionStore(functionStore),
   m_colorCell(MessageTableCellWithChevron(functionColorMessage)),

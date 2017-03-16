@@ -13,7 +13,7 @@ SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large),
     MessageTableCell(I18n::Message::Default, KDText::FontSize::Large)},
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel(nullptr),
   m_preferenceIndex(0)

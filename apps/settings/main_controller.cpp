@@ -23,7 +23,7 @@ MainController::MainController(Responder * parentResponder) :
   m_cells{MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small),
     MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small)},
   m_complexFormatCell(MessageTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel((Node *)&model),
   m_subController(this)

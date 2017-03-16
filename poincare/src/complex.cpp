@@ -290,8 +290,8 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   int dividend = fabsf((float)mantissa);
   int quotien = dividend/10;
   int digit = dividend - quotien*10;
-  int minimumNumberOfCharsInMantissa = displayMode == FloatDisplayMode::Scientific ? 3 : 1;
-  while (digit == 0 && availableCharsForMantissaWithSign > minimumNumberOfCharsInMantissa &&
+  int minimumNumberOfCharsInMantissa = 1;
+  while (digit == 0 && availableCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
       (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == FloatDisplayMode::Scientific)) {
     mantissa = mantissa/10;
     availableCharsForMantissaWithoutSign--;
@@ -302,13 +302,14 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   // Suppress the decimal marker if no fractional part
-  if (displayMode == FloatDisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2) {
+  if ((displayMode == FloatDisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2)
+      || (displayMode == FloatDisplayMode::Scientific && availableCharsForMantissaWithoutSign == 2)) {
     availableCharsForMantissaWithSign--;
   }
 
   // Print mantissa
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
-  if (displayMode == FloatDisplayMode::Decimal) {
+  if (displayMode == FloatDisplayMode::Decimal || exponentInBase10 == 0.0f) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }

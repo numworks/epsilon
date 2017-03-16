@@ -27,8 +27,8 @@ const char * messages[200][3] {
   /* Variables */
   {"Variables", "Variables", "Variables"},
   {"Nombres", "Numbers", "Numeros"},
-  {"Listes", "Lists", "Listas"},
   {"Matrices", "Matrices", "Matrices"},
+  {"Listes", "Lists", "Listas"},
 
   /* Toolbox */
   {"Toolbox", "Toolbox", "Toolbox"},

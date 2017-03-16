@@ -5,6 +5,7 @@
 #include <poincare/addition.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
+#include <poincare/conjugate.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>

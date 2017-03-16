@@ -6,9 +6,10 @@ objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   binary_operation.o\
-  cosine.o\
   complex.o\
   complex_argument.o\
+  conjugate.o\
+  cosine.o\
   derivative.o\
   determinant.o\
   expression.o\
@@ -50,6 +51,7 @@ objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\
   baseline_relative_layout.o\
   condensed_sum_layout.o\
+  conjugate_layout.o\
   expression_layout.o\
   fraction_layout.o\
   horizontal_layout.o\

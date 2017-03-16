@@ -94,6 +94,7 @@ ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
+conj { poincare_expression_yylval.expression = new Conjugate(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
 cosh { poincare_expression_yylval.expression = new HyperbolicCosine(); return FUNCTION; }
 im { poincare_expression_yylval.expression = new ImaginaryPart(); return FUNCTION; }

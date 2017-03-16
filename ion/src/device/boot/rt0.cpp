@@ -5,6 +5,7 @@ extern "C" {
 #include <string.h>
 #include <ion.h>
 #include "../device.h"
+#include "../bench/bench.h"
 
 typedef void (*cxx_constructor)();
 
@@ -59,6 +60,11 @@ void start() {
   }
 
   Ion::Device::init();
+
+  if (Ion::Keyboard::keyDown(Ion::Keyboard::Key::A1) &&
+      Ion::Keyboard::keyDown(Ion::Keyboard::Key::I5)) {
+    Ion::Device::Bench::run();
+  }
 
   ion_app();
 

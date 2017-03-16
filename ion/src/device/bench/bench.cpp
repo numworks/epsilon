@@ -1,3 +1,4 @@
+#include "bench.h"
 #include <ion.h>
 #include "command_list.h"
 

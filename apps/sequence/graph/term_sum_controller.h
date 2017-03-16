@@ -40,7 +40,7 @@ private:
       View * subviewAtIndex(int index) override;
       ExpressionView m_sum;
       Poincare::ExpressionLayout * m_sumLayout;
-      PointerTextView m_legend;
+      MessageTextView m_legend;
     };
     ContentView(GraphView * graphView);
     void layoutSubviews() override;

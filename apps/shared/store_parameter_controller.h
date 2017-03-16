@@ -21,9 +21,9 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  PointerTableCell m_deleteColumn;
-  PointerTableCellWithChevron m_copyColumn;
-  PointerTableCellWithChevron m_importList;
+  MessageTableCell m_deleteColumn;
+  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron m_importList;
   SelectableTableView m_selectableTableView;
   FloatPairStore * m_store;
   bool m_xColumnSelected;

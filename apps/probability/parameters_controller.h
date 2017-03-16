@@ -28,7 +28,7 @@ private:
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    PointerTextView * parameterDefinitionAtIndex(int index);
+    MessageTextView * parameterDefinitionAtIndex(int index);
     void layoutSubviews() override;
     void setNumberOfParameters(int numberOfParameters);
   private:
@@ -37,14 +37,14 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     int m_numberOfParameters;
-    PointerTextView m_titleView;
-    PointerTextView m_firstParameterDefinition;
-    PointerTextView m_secondParameterDefinition;
+    MessageTextView m_titleView;
+    MessageTextView m_firstParameterDefinition;
+    MessageTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
   };
   constexpr static int k_maxNumberOfCells = 2;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
   float m_previousParameters[k_maxNumberOfCells];
   ContentView m_contentView;
   Law * m_law;

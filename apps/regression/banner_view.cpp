@@ -20,9 +20,9 @@ TextView * BannerView::textViewAtIndex(int i) const {
   return (TextView *)textViews[i];
 }
 
-PointerTextView * BannerView::pointerTextViewAtIndex(int i) const {
+MessageTextView * BannerView::messageTextViewAtIndex(int i) const {
   if (i == 0) {
-    return (PointerTextView *)&m_regressionTypeView;
+    return (MessageTextView *)&m_regressionTypeView;
   }
   return nullptr;
 }

@@ -37,7 +37,7 @@ private:
   constexpr static int k_maxNumberOfDisplayableRows = 10;
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  EvenOddPointerTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
   EvenOddDoubleBufferTextCell m_columnTitleCell;

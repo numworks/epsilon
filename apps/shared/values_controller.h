@@ -54,7 +54,7 @@ private:
   constexpr static int k_maxNumberOfAbscissaCells = 10;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
-  EvenOddPointerTextCell m_abscissaTitleCell;
+  EvenOddMessageTextCell m_abscissaTitleCell;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   char m_draftTextBuffer[EditableTextCell::k_bufferLength];

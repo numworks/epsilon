@@ -3,7 +3,7 @@
 
 #include <escher/expression_table_cell.h>
 #include <escher/i18n.h>
-#include <escher/pointer_text_view.h>
+#include <escher/message_text_view.h>
 
 class ExpressionTableCellWithPointer : public ExpressionTableCell {
 public:
@@ -12,7 +12,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setAccessoryMessage(I18n::Message messageBody);
 private:
-  PointerTextView m_accessoryView;
+  MessageTextView m_accessoryView;
 };
 
 #endif

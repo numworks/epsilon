@@ -174,7 +174,7 @@ View * TermSumController::ContentView::subviewAtIndex(int index) {
 TermSumController::ContentView::LegendView::LegendView() :
   m_sum(ExpressionView(0.0f, 0.5f, KDColorBlack, Palette::GreyBright)),
   m_sumLayout(nullptr),
-  m_legend(PointerTextView(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright))
+  m_legend(MessageTextView(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright))
 {
 }
 

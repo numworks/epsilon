@@ -13,7 +13,7 @@ public:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
 private:
-  PointerTextView m_pointerTextView;
+  MessageTextView m_messageTextView;
 };
 
 }

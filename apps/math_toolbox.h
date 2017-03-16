@@ -71,8 +71,8 @@ private:
   bool selectSubMenu(ToolboxNode * selectedNode);
   bool returnToPreviousMenu();
   Stack m_stack;
-  PointerTableCellWithPointer m_leafCells[k_maxNumberOfDisplayedRows];
-  PointerTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
+  MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
+  MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
   ListController m_listController;
   ToolboxNode * m_nodeModel;
 };

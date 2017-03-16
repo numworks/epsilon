@@ -20,8 +20,8 @@ private:
   float parameterAtIndex(int index) override;
   float previousParameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_cells[2];
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_cells[2];
   float m_previousParameters[2];
   Store * m_store;
 };

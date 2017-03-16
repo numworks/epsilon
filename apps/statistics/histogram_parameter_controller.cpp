@@ -8,7 +8,7 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
-  m_cells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
+  m_cells{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
   m_store(store)
 {
 }
@@ -32,7 +32,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   if (index == numberOfRows()-1) {
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
   I18n::Message labels[2] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);

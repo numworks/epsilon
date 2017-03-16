@@ -22,7 +22,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCell = 4;
-  PointerTableCellWithChevronAndExpression m_typeCell;
+  MessageTableCellWithChevronAndExpression m_typeCell;
   TypeParameterController m_typeParameterController;
   Sequence * m_sequence;
 };

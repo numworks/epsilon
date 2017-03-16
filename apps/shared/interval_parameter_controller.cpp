@@ -6,7 +6,7 @@ namespace Shared {
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
-  m_intervalCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)}
+  m_intervalCells{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)}
 {
 }
 
@@ -29,7 +29,7 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   if (index == numberOfRows()-1) {
     return;
   }
-  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::XStep};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);

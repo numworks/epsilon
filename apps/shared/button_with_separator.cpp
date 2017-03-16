@@ -23,5 +23,5 @@ void ButtonWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
 void ButtonWithSeparator::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_pointerTextView.setFrame(KDRect(k_lineThickness, k_margin + k_lineThickness, width-2*k_lineThickness, height - 4*k_lineThickness-k_margin));
+  m_messageTextView.setFrame(KDRect(k_lineThickness, k_margin + k_lineThickness, width-2*k_lineThickness, height - 4*k_lineThickness-k_margin));
 }

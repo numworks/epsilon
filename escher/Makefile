@@ -13,7 +13,7 @@ objs += $(addprefix escher/src/,\
   even_odd_buffer_text_cell.o\
   even_odd_editable_text_cell.o\
   even_odd_expression_cell.o\
-  even_odd_pointer_text_cell.o\
+  even_odd_message_text_cell.o\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
   expression_view.o\
@@ -24,17 +24,17 @@ objs += $(addprefix escher/src/,\
   input_view_controller.o\
   key_view.o\
   list_view_data_source.o\
+  message_table_cell.o\
+  message_table_cell_with_buffer.o\
+  message_table_cell_with_chevron.o\
+  message_table_cell_with_chevron_and_message.o\
+  message_table_cell_with_chevron_and_expression.o\
+  message_table_cell_with_editable_text.o\
+  message_table_cell_with_message.o\
+  message_table_cell_with_switch.o\
+  message_text_view.o\
   modal_view_controller.o\
   palette.o\
-  pointer_table_cell.o\
-  pointer_table_cell_with_buffer.o\
-  pointer_table_cell_with_chevron.o\
-  pointer_table_cell_with_chevron_and_pointer.o\
-  pointer_table_cell_with_chevron_and_expression.o\
-  pointer_table_cell_with_editable_text.o\
-  pointer_table_cell_with_pointer.o\
-  pointer_table_cell_with_switch.o\
-  pointer_text_view.o\
   responder.o\
   run_loop.o\
   scroll_view.o\

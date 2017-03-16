@@ -14,8 +14,8 @@ namespace Regression {
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true),
   ButtonRowDelegate(header, nullptr),
-  m_titleCells{EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small),
-    EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small), EvenOddPointerTextCell(KDText::FontSize::Small)},
+  m_titleCells{EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small),
+    EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small)},
   m_r2TitleCell(1.0f, 0.5f),
   m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
   m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
@@ -131,7 +131,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setExpression(m_r2Layout);
       return;
     }
-    EvenOddPointerTextCell * myCell = (EvenOddPointerTextCell *)cell;
+    EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     if (j == 0) {
       myCell->setMessage(I18n::Message::Default);
       return;

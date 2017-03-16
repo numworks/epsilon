@@ -5,13 +5,13 @@ namespace Shared {
 
 NewFunctionCell::NewFunctionCell(I18n::Message text) :
   EvenOddCell(),
-  m_pointerTextView(PointerTextView(KDText::FontSize::Large, text, 0.5f, 0.5f))
+  m_messageTextView(MessageTextView(KDText::FontSize::Large, text, 0.5f, 0.5f))
 {
 }
 
 void NewFunctionCell::reloadCell() {
   EvenOddCell::reloadCell();
-  m_pointerTextView.setBackgroundColor(backgroundColor());
+  m_messageTextView.setBackgroundColor(backgroundColor());
 }
 
 int NewFunctionCell::numberOfSubviews() const {
@@ -20,11 +20,11 @@ int NewFunctionCell::numberOfSubviews() const {
 
 View * NewFunctionCell::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_pointerTextView;
+  return &m_messageTextView;
 }
 
 void NewFunctionCell::layoutSubviews() {
-  m_pointerTextView.setFrame(bounds());
+  m_messageTextView.setFrame(bounds());
 }
 
 }

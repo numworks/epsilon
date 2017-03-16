@@ -27,8 +27,8 @@ public:
 private:
   StackViewController * stackController() const;
   constexpr static int k_totalNumberOfCell = 4;
-  PointerTableCellWithChevronAndPointer m_cells[k_totalNumberOfCell-1];
-  PointerTableCellWithChevronAndExpression m_complexFormatCell;
+  MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell-1];
+  MessageTableCellWithChevronAndExpression m_complexFormatCell;
   Poincare::ExpressionLayout * m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;

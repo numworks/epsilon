@@ -20,7 +20,7 @@ public:
   virtual int reusableCellCount() override;
   virtual void setFunction(Function * function);
 protected:
-  PointerTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
 private:
   constexpr static int k_maxNumberOfCharsInTitle = 16;

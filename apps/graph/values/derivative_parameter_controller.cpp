@@ -6,8 +6,8 @@ namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ViewController(valuesController),
-  m_hideColumn(PointerTableCell(I18n::Message::HideDerivativeColumn)),
-  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
+  m_hideColumn(MessageTableCell(I18n::Message::HideDerivativeColumn)),
+  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_function(nullptr),

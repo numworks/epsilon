@@ -107,7 +107,7 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
-    PointerTableCell * myCell = (PointerTableCell *)cell;
+    MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(label);
     return;
   }

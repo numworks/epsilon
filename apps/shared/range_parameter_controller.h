@@ -26,9 +26,9 @@ private:
   void setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
   InteractiveCurveViewRange * m_interactiveRange;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_rangeCells[k_numberOfTextCell];
-  PointerTableCellWithSwitch m_yAutoCell;
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_rangeCells[k_numberOfTextCell];
+  MessageTableCellWithSwitch m_yAutoCell;
   float m_previousParameters[k_numberOfTextCell];
   bool m_previousSwitchState;
 };

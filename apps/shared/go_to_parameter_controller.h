@@ -23,8 +23,8 @@ private:
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
-  char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_abscisseCell;
+  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_abscisseCell;
   float m_previousParameter;
   InteractiveCurveViewRange * m_graphRange;
   CurveViewCursor * m_cursor;

@@ -13,12 +13,12 @@ public:
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
-  PointerTextView * pointerTextViewAtIndex(int index) const override;
-  PointerTextView m_intervalLegendView;
+  MessageTextView * messageTextViewAtIndex(int index) const override;
+  MessageTextView m_intervalLegendView;
   BufferTextView m_intervalView;
-  PointerTextView m_sizeLegendView;
+  MessageTextView m_sizeLegendView;
   BufferTextView m_sizeView;
-  PointerTextView m_frequencyLegendView;
+  MessageTextView m_frequencyLegendView;
   BufferTextView m_frequencyView;
 };
 

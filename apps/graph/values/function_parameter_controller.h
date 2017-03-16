@@ -19,7 +19,7 @@ public:
   void setFunction(Shared::Function * function) override;
 private:
   constexpr static int k_totalNumberOfCell = 2;
-  PointerTableCellWithSwitch m_displayDerivativeColumn;
+  MessageTableCellWithSwitch m_displayDerivativeColumn;
   CartesianFunction * m_cartesianFunction;
   ValuesController * m_valuesController;
 };

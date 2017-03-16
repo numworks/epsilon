@@ -17,7 +17,7 @@ private:
   int numberOfSubviews() const override;
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;
-  PointerTextView m_titleView;
+  MessageTextView m_titleView;
   BatteryView m_batteryView;
   BufferTextView m_preferenceView;
 };

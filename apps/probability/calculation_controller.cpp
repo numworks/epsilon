@@ -12,7 +12,7 @@ using namespace Shared;
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
-  m_titleView(PointerTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
   m_lawCurveView(LawCurveView()),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
   m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),

@@ -2,7 +2,7 @@
 #define ESCHER_WARNING_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/pointer_text_view.h>
+#include <escher/message_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/i18n.h>
 
@@ -25,7 +25,7 @@ private:
   private:
     constexpr static KDCoordinate k_verticalMargin = 40;
     constexpr static KDCoordinate k_horizontalMargin = 20;
-    PointerTextView m_textView;
+    MessageTextView m_textView;
   };
 
   ContentView m_contentView;

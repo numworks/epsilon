@@ -16,7 +16,7 @@ void BannerView::setLegendAtIndex(char * text, int index) {
 }
 
 void BannerView::setMessageAtIndex(I18n::Message text, int index) {
-  PointerTextView * textView = pointerTextViewAtIndex(index);
+  MessageTextView * textView = messageTextViewAtIndex(index);
   textView->setMessage(text);
   layoutSubviews();
 }
@@ -92,7 +92,7 @@ int BannerView::numberOfLines() const {
   return lineNumber+1;
 }
 
-PointerTextView * BannerView::pointerTextViewAtIndex(int i) const {
+MessageTextView * BannerView::messageTextViewAtIndex(int i) const {
   return nullptr;
 }
 

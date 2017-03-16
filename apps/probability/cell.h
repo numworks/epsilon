@@ -20,7 +20,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  PointerTextView m_labelView;
+  MessageTextView m_labelView;
   ImageView m_iconView;
   /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two
    * images (16bits/pixels)*/

@@ -18,7 +18,7 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
-  PointerTableCell m_sumCell;
+  MessageTableCell m_sumCell;
   GraphController * m_graphController;
 };
 

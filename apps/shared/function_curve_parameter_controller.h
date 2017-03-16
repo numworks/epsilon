@@ -18,7 +18,7 @@ public:
   void setFunction(Function * function);
 protected:
   bool handleGotoSelection();
-  PointerTableCellWithChevron m_goToCell;
+  MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
 private:
   GoToParameterController m_goToParameterController;

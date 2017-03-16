@@ -29,9 +29,9 @@ protected:
   Function * m_function;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  PointerTableCellWithChevron m_colorCell;
-  PointerTableCellWithSwitch m_enableCell;
-  PointerTableCell m_deleteCell;
+  MessageTableCellWithChevron m_colorCell;
+  MessageTableCellWithSwitch m_enableCell;
+  MessageTableCell m_deleteCell;
 };
 
 }

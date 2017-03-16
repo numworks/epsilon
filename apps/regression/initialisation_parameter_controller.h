@@ -21,7 +21,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 3;
-  PointerTableCell m_cells[k_totalNumberOfCells];
+  MessageTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   Store * m_store;
 };

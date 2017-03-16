@@ -57,7 +57,7 @@ KDCoordinate InitialisationParameterController::cellHeight() {
 }
 
 void InitialisationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  PointerTableCell * myCell = (PointerTableCell *)cell;
+  MessageTableCell * myCell = (MessageTableCell *)cell;
   I18n::Message titles[4] = {I18n::Message::Trigonometric, I18n::Message::RoundAbscissa, I18n::Message::Orthonormal, I18n::Message::DefaultSetting};
   myCell->setMessage(titles[index]);
 }

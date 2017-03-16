@@ -4,7 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/i18n.h>
 #include <escher/responder.h>
-#include <escher/pointer_text_view.h>
+#include <escher/message_text_view.h>
 #include <escher/invocation.h>
 
 class Button : public HighlightCell, public Responder {
@@ -14,7 +14,7 @@ public:
   void setHighlighted(bool highlight) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 protected:
-  PointerTextView m_pointerTextView;
+  MessageTextView m_messageTextView;
 private:
   constexpr static KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_horizontalMargin = 10;

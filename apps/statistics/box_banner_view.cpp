@@ -17,9 +17,9 @@ TextView * BoxBannerView::textViewAtIndex(int index) const {
   return (TextView *)textViews[index];
 }
 
-PointerTextView * BoxBannerView::pointerTextViewAtIndex(int index) const {
+MessageTextView * BoxBannerView::messageTextViewAtIndex(int index) const {
   if (index == 0) {
-    return (PointerTextView *)&m_calculationName;
+    return (MessageTextView *)&m_calculationName;
   }
   return nullptr;
 }

@@ -5,7 +5,7 @@
 Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f, textColor)),
+  m_messageTextView(MessageTextView(size, textBody, 0.5f, 0.5f, textColor)),
   m_invocation(invocation)
 {
 }
@@ -16,11 +16,11 @@ int Button::numberOfSubviews() const {
 
 View * Button::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_pointerTextView;
+  return &m_messageTextView;
 }
 
 void Button::layoutSubviews() {
-  m_pointerTextView.setFrame(bounds());
+  m_messageTextView.setFrame(bounds());
 }
 
 bool Button::handleEvent(Ion::Events::Event event) {
@@ -34,11 +34,11 @@ bool Button::handleEvent(Ion::Events::Event event) {
 void Button::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
-  m_pointerTextView.setBackgroundColor(backgroundColor);
+  m_messageTextView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }
 
 KDSize Button::minimalSizeForOptimalDisplay() const {
-  KDSize textSize = m_pointerTextView.minimalSizeForOptimalDisplay();
+  KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
   return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }

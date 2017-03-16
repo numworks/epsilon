@@ -20,9 +20,9 @@ const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 4);
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small),
-    PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small), PointerTableCellWithChevronAndPointer(KDText::FontSize::Large, KDText::FontSize::Small)},
-  m_complexFormatCell(PointerTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
+  m_cells{MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small),
+    MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small)},
+  m_complexFormatCell(MessageTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel((Node *)&model),
@@ -102,7 +102,7 @@ int MainController::typeAtLocation(int i, int j) {
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  PointerTableCell * myCell = (PointerTableCell *)cell;
+  MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_nodeModel->children(index)->label());
 
   if (index == 2) {
@@ -118,11 +118,11 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       const char superscrit[4] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' ', 0};
       m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, 4, KDText::FontSize::Small), new StringLayout(superscrit, 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
     }
-    PointerTableCellWithChevronAndExpression * myExpCell = (PointerTableCellWithChevronAndExpression *)cell;
+    MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
     myExpCell->setExpression(m_complexFormatLayout);
     return;
   }
-  PointerTableCellWithChevronAndPointer * myTextCell = (PointerTableCellWithChevronAndPointer *)cell;
+  MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   switch (index) {
     case 0:
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->angleUnit())->label());

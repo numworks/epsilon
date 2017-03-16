@@ -1,9 +1,11 @@
 extern "C" {
 #include <assert.h>
 #include <string.h>
+#include <float.h>
 }
 
 #include <poincare/fraction.h>
+#include <poincare/multiplication.h>
 #include "layout/fraction_layout.h"
 
 namespace Poincare {
@@ -43,13 +45,17 @@ Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& conte
   if (m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }
-  /* TODO: implement matrix fraction
-  if (n->det() == 0) {
+  if (fabsf(n->determinant(context, angleUnit)) <= FLT_EPSILON) {
     return new Complex(Complex::Float(NAN));
   }
-  result = new Product(m, n->inv(), false);
-  return result;*/
-  return nullptr;
+  Expression * args[2];
+  args[0] = m;
+  args[1] = n->createInverse(context, angleUnit);
+  Expression * result = new Multiplication(args, true);
+  delete args[1];
+  Expression * resultEvaluation = result->evaluate(context, angleUnit);
+  delete result;
+  return resultEvaluation;
 }
 
 }

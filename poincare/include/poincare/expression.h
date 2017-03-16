@@ -34,6 +34,7 @@ public:
     LeastCommonMultiple,
     Matrix,
     MatrixInverse,
+    MatrixTranspose,
     Multiplication,
     NaperianLogarithm,
     NthRoot,

@@ -91,9 +91,13 @@ float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
 float CurveView::floatToPixel(Axis axis, float f) const {
   float fraction = (f-min(axis))/(max(axis)-min(axis));
   fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
-  /* When fraction is too big or too small, we are out of the visible window.
-   * In order to avoid big float issue (often due to float to int
-   * transformation), we cap the value of fraction. */
+  /* Fraction is a float that translates the relative position of f on the axis.
+   * When fraction is between 0 and 1, f is visible. Otherwise, f is out of the
+   * visible window. We need to clip fraction to avoid big float issue (often
+   * due to float to int transformation). However, we cannot clip fraction
+   * between 0 and 1 because drawing a sized stamp on the extern boarder of the
+   * window should still be visible. We thus arbitrarily clip fraction between
+   * -10 and 10. */
   fraction = fraction < -10.0f ? -10.0f : fraction;
   fraction = fraction > 10.0f ? 10.0f : fraction;
   return pixelLength(axis)*fraction;

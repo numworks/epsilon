@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[197][3] {
+const char * messages[200][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
@@ -250,6 +250,9 @@ const char * messages[197][3] {
   {"Radians ", "Radians ", "Radianes "},
   {"Auto ", "Auto ", "Auto "},
   {"Scientifique ", "Scientific ", "Cientifico "},
+  {"deg", "deg", "gra"},
+  {"rad", "rad", "rad"},
+  {"sci/", "sci/", "sci/"},
 };
 
 const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};

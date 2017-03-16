@@ -222,6 +222,9 @@ namespace I18n {
     Radian,
     Auto,
     Scientific,
+    Deg,
+    Rad,
+    Sci,
 
     /* UNIVERSAL MESSAGES */
     Default = 0x8000,

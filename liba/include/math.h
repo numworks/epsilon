@@ -22,24 +22,32 @@ int isnanf(float x);
 #define isnan(x) isnanf(x)
 
 float acosf(float x);
+float acoshf(float x);
 float asinf(float x);
+float asinhf(float x);
 float atanf(float x);
+float atanhf(float x);
 float ceilf(float x);
 float copysignf(float x, float y);
 float cosf(float x);
+float coshf(float x);
 float expf(float x);
+float expm1f(float x);
 float fabsf(float x);
 float floorf(float x);
 float lgammaf(float x);
 float lgammaf_r(float x, int *signgamp);
+float log1pf(float x);
 float log10f(float x);
 float logf(float x);
 float powf(float x, float y);
 float roundf(float x);
 float scalbnf(float x, int n);
 float sinf(float x);
+float sinhf(float x);
 float sqrtf(float x);
 float tanf(float x);
+float tanhf(float x);
 
 LIBA_END_DECLS
 

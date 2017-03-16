@@ -7,13 +7,13 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-TableView::TableView(TableViewDataSource * dataSource, int cellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin,
+TableView::TableView(TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
     KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
     KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
     backgroundColor, indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_contentView(TableView::ContentView(this, dataSource, cellOverlapping))
+  m_contentView(TableView::ContentView(this, dataSource, horizontalCellOverlapping, verticalCellOverlapping))
 {
 }
 
@@ -56,11 +56,12 @@ void TableView::reloadData() {
 
 /* TableView::ContentView */
 
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, int cellOverlapping) :
+TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping) :
   View(),
   m_tableView(tableView),
   m_dataSource(dataSource),
-  m_cellOverlapping(cellOverlapping)
+  m_horizontalCellOverlapping(horizontalCellOverlapping),
+  m_verticalCellOverlapping(verticalCellOverlapping)
 {
 }
 
@@ -84,11 +85,11 @@ void TableView::ContentView::resizeToFitContent() {
 }
 
 KDCoordinate TableView::ContentView::height() const {
-  return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows())+m_cellOverlapping;
+  return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows())+m_verticalCellOverlapping;
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns());
+  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns()+m_horizontalCellOverlapping);
   // handle the case of list: cumulatedWidthFromIndex() = 0
   return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
 }
@@ -101,14 +102,14 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
     contentOffsetX = m_dataSource->cumulatedWidthFromIndex(x);
   } else if (columnAtIndexIsAfterFullyVisibleRange(x)) {
     // Let's scroll the tableView to put that cell on the right (while keeping the right margin)
-    contentOffsetX = m_dataSource->cumulatedWidthFromIndex(x+1)-m_tableView->maxContentWidthDisplayableWithoutScrolling();
+    contentOffsetX = m_dataSource->cumulatedWidthFromIndex(x+1)+2*m_horizontalCellOverlapping - m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
   if (rowAtIndexIsBeforeFullyVisibleRange(y)) {
     // Let's scroll the tableView to put that cell on the top (while keeping the top margin)
     contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y);
   } else if (rowAtIndexIsAfterFullyVisibleRange(y)) {
     // Let's scroll the tableView to put that cell on the bottom (while keeping the bottom margin)
-    contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y+1)+2*m_cellOverlapping - m_tableView->maxContentHeightDisplayableWithoutScrolling();
+    contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y+1)+2*m_verticalCellOverlapping - m_tableView->maxContentHeightDisplayableWithoutScrolling();
   }
   m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
@@ -184,7 +185,7 @@ void TableView::ContentView::layoutSubviews() {
     KDCoordinate verticalOffset = m_dataSource->cumulatedHeightFromIndex(j);
     KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
     KDRect cellFrame(horizontalOffset, verticalOffset,
-      columnWidth, rowHeight+m_cellOverlapping);
+      columnWidth+m_horizontalCellOverlapping, rowHeight+m_verticalCellOverlapping);
 
     cell->setFrame(cellFrame);
 

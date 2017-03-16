@@ -9,7 +9,7 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
   m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_setInterval(MessageTableCellWithChevron(I18n::Message::IntervalSet)),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)
 {

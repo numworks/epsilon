@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[200][3] {
+const char * messages[197][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
@@ -27,8 +27,8 @@ const char * messages[200][3] {
   /* Variables */
   {"Variables", "Variables", "Variables"},
   {"Nombres", "Numbers", "Numeros"},
-  {"Listes", "Lists", "Listas"},
   {"Matrices", "Matrices", "Matrices"},
+  {"Listes", "Lists", "Listas"},
 
   /* Toolbox */
   {"Toolbox", "Toolbox", "Toolbox"},
@@ -252,10 +252,10 @@ const char * messages[200][3] {
   {"Scientifique ", "Scientific ", "Cientifico "},
 };
 
-const char Sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};
-constexpr static char Mu[] = {Ion::Charset::SmallMu, 0};
-constexpr static char Sigma[] = {Ion::Charset::SmallSigma, 0};
-constexpr static char Lambda[] = {Ion::Charset::SmallLambda, 0};
+const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};
+constexpr static char mu[] = {Ion::Charset::SmallMu, 0};
+constexpr static char sigma[] = {Ion::Charset::SmallSigma, 0};
+constexpr static char lambda[] = {Ion::Charset::SmallLambda, 0};
 constexpr static char rightIntegralSecondLegend[] = {Ion::Charset::LessEqual, 'X', ')', '=', 0};
 constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::LessEqual, 0};
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
@@ -267,13 +267,13 @@ const char * universalMessages[200] {
   "y",
   "n",
   "p",
-  Mu,
-  Sigma,
-  Lambda,
+  mu,
+  sigma,
+  lambda,
   "a",
   "b",
   "r",
-  Sxy,
+  sxy,
 
   "cosh",
   "sinh",
@@ -352,7 +352,7 @@ const char * translate(Message m, Language l) {
     languageIndex = (int) GlobalPreferences::sharedGlobalPreferences()->language();
   }
   assert(languageIndex > 0);
-  assert(messages[(int)m][languageIndex-1] != nullptr);
+  assert(((int)m*numberOfLanguages()+languageIndex-1)*sizeof(char *) < sizeof(messages));
   return messages[(int)m][languageIndex-1];
 }
 

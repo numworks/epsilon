@@ -6,7 +6,7 @@ namespace Shared {
 FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   ViewController(nullptr),
   m_goToCell(MessageTableCellWithChevron(I18n::Message::Goto)),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_goToParameterController(GoToParameterController(this, graphRange, cursor, symbol)),
   m_function(nullptr)

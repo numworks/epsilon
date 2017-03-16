@@ -27,7 +27,7 @@ Expression * HyperbolicArcSine::cloneWithDifferentOperands(Expression** newOpera
 float HyperbolicArcSine::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   float x = m_args[0]->approximate(context, angleUnit);
-  return logf(x+sqrtf(x*x+1.0f));
+  return asinhf(x);
 }
 
 }

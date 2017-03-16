@@ -20,28 +20,36 @@ objs += $(addprefix liba/src/, \
 objs += $(addprefix liba/src/external/openbsd/, \
   a_atanf.o \
   e_acosf.o \
+  e_acoshf.o \
   e_asinf.o \
+  e_atanhf.o \
+  e_coshf.o \
   e_expf.o \
   e_lgammaf_r.o \
   e_log10f.o \
   e_logf.o \
   e_powf.o \
   e_rem_pio2f.o \
+  e_sinhf.o \
   e_sqrtf.o \
   k_cosf.o \
   k_rem_pio2f.o \
   k_sinf.o \
   k_tanf.o \
+  s_asinhf.o\
   s_ceilf.o \
   s_copysignf.o \
   s_cosf.o \
+  s_expm1f.o\
   s_fabsf.o \
   s_floorf.o \
+  s_log1pf.o \
   s_roundf.o \
   s_scalbnf.o \
   s_signgam.o \
   s_sinf.o \
   s_tanf.o \
+  s_tanhf.o \
   w_lgammaf.o \
 )
 
@@ -52,8 +60,10 @@ ifeq ($(DEBUG),1)
 # code. That's annoying because Clang rightfully decides to emit double-to-float
 # aeabi conversions when building in -O0 mode, and we really don't want to code
 # such functions. A simple workaround is to always build this file -Os.
-liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
 liba/src/external/openbsd/e_expf.o: CFLAGS += -Os
+liba/src/external/openbsd/s_expm1f.o: CFLAGS += -Os
+liba/src/external/openbsd/s_log1pf.o: CFLAGS += -Os
+liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
 endif
 
 tests += $(addprefix liba/test/, \

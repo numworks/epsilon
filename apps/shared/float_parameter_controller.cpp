@@ -10,7 +10,7 @@ namespace Shared {
 
 FloatParameterController::FloatParameterController(Responder * parentResponder, I18n::Message okButtonText) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_okButton(ButtonWithSeparator(&m_selectableTableView, okButtonText, Invocation([](void * context, void * sender) {
     FloatParameterController * parameterController = (FloatParameterController *) context;

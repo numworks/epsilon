@@ -27,7 +27,7 @@ Expression * HyperbolicArcTangent::cloneWithDifferentOperands(Expression** newOp
 float HyperbolicArcTangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   float x = m_args[0]->approximate(context, angleUnit);
-  return 0.5f*logf((1.0f+x)/(1.0f-x));
+  return atanhf(x);
 }
 
 }

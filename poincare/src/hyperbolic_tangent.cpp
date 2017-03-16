@@ -30,8 +30,7 @@ Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOpera
 
 float HyperbolicTangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  return (expf(m_args[0]->approximate(context, angleUnit))-expf(-m_args[0]->approximate(context, angleUnit)))/
-    (expf(m_args[0]->approximate(context, angleUnit))+expf(-m_args[0]->approximate(context, angleUnit)));
+  return tanhf(m_args[0]->approximate(context, angleUnit));
 }
 
 Expression * HyperbolicTangent::privateEvaluate(Context& context, AngleUnit angleUnit) const {
@@ -42,6 +41,12 @@ Expression * HyperbolicTangent::privateEvaluate(Context& context, AngleUnit angl
     delete evaluation;
     return new Complex(Complex::Float(NAN));
   }
+  /* Float case */
+  if (((Complex *)evaluation)->b() == 0) {
+    delete evaluation;
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  /* Complex case */
   Expression * arguments[2];
   arguments[0] = new HyperbolicSine();
   ((Function *)arguments[0])->setArgument(&evaluation, 1, true);

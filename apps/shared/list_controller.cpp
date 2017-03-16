@@ -6,7 +6,7 @@ namespace Shared {
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, footer),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, nullptr, false, true)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
   m_addNewFunction(text),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {

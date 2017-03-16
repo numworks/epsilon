@@ -24,8 +24,23 @@ private:
     View * view() override;
     TextField * textField();
   private:
-    TextField m_textField;
-    char m_textBody[255];
+    class ContentView : public Responder, public View {
+    public:
+      ContentView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate);
+      void didBecomeFirstResponder() override;
+      TextField * textField();
+      void drawRect(KDContext * ctx, KDRect rect) const override;
+      KDSize minimalSizeForOptimalDisplay() const override;
+    private:
+      View * subviewAtIndex(int index) override;
+      int numberOfSubviews() const override;
+      void layoutSubviews() override;
+      constexpr static int k_inputHeight = 37;
+      constexpr static int k_separatorThickness = 1;
+      TextField m_textField;
+      char m_textBody[255];
+    };
+    ContentView m_view;
   };
   TextFieldController m_textFieldController;
   Invocation m_successAction;

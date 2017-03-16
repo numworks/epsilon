@@ -31,7 +31,7 @@ Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands
 
 float HyperbolicSine::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  return (expf(m_args[0]->approximate(context, angleUnit))-expf(-m_args[0]->approximate(context, angleUnit)))/2.0f;
+  return sinhf(m_args[0]->approximate(context, angleUnit));
 }
 
 Expression * HyperbolicSine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
@@ -42,6 +42,12 @@ Expression * HyperbolicSine::privateEvaluate(Context& context, AngleUnit angleUn
     delete evaluation;
     return new Complex(Complex::Float(NAN));
   }
+  /* Float case */
+  if (((Complex *)evaluation)->b() == 0) {
+    delete evaluation;
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  /* Complex case */
   Expression * arguments[2];
   arguments[0] = new Complex(Complex::Float(M_E));
   arguments[1] = evaluation;

@@ -122,6 +122,9 @@ float Complex::b() {
 }
 
 float Complex::r() const {
+  if (m_b == 0) {
+    return fabsf(m_a);
+  }
   return sqrtf(m_a*m_a + m_b*m_b);
 }
 

@@ -10,7 +10,7 @@ namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  TabTableController(parentResponder, topMargin, rightMargin, bottomMargin, leftMargin, this, true)
+  TabTableController(parentResponder, this, topMargin, rightMargin, bottomMargin, leftMargin, this, true)
 {
 }
 

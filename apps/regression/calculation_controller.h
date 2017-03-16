@@ -5,10 +5,11 @@
 #include "store.h"
 #include "even_odd_double_buffer_text_cell.h"
 #include "../shared/tab_table_controller.h"
+#include "../shared/regular_table_view_data_source.h"
 
 namespace Regression {
 
-class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public AlternateEmptyViewDelegate, public SelectableTableViewDelegate {
+class CalculationController : public Shared::TabTableController, public Shared::RegularTableViewDataSource, public ButtonRowDelegate, public AlternateEmptyViewDelegate, public SelectableTableViewDelegate {
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);

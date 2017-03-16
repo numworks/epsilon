@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, nullptr, true),
+  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, nullptr, true),
   ButtonRowDelegate(header, nullptr),
   m_titleCells{EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small),
     EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small)},

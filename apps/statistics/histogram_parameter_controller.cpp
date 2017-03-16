@@ -7,15 +7,35 @@ using namespace Shared;
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
-  FloatParameterController(parentResponder),
-  m_binWidthCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Largeur des rectangles : ")),
-  m_minValueCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)"Debut de la serie : ")),
+  FloatParameterController(parentResponder, "Valider"),
+  m_cells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr)},
   m_store(store)
 {
 }
 
 const char * HistogramParameterController::title() const {
   return "Parametres de l'histogramme";
+}
+
+void HistogramParameterController::viewWillAppear() {
+  for (int i = 0; i < 2; i++) {
+    m_previousParameters[i] = parameterAtIndex(i);
+  }
+  FloatParameterController::viewWillAppear();
+}
+
+int HistogramParameterController::numberOfRows() {
+  return 1+2;
+}
+
+void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == numberOfRows()-1) {
+    return;
+  }
+  PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
+  const char * labels[2] = {"Largeur des rectangles : ", "Debut de la serie : "};
+  myCell->setText(labels[index]);
+  FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
 float HistogramParameterController::parameterAtIndex(int index) {
@@ -26,10 +46,14 @@ float HistogramParameterController::parameterAtIndex(int index) {
   return m_store->firstDrawnBarAbscissa();
 }
 
+float HistogramParameterController::previousParameterAtIndex(int index) {
+  return m_previousParameters[index];
+}
+
 void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
-    if (f <= 0.0f || isnan(f) || isinf(f)) {
+    if (f <= 0.0f) {
       app()->displayWarning("Valeur interdite");
       return;
     }
@@ -39,19 +63,12 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
   }
 }
 
-int HistogramParameterController::numberOfRows() {
-  return 2;
-};
-
-HighlightCell * HistogramParameterController::reusableCell(int index) {
+HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return &m_binWidthCell;
-  }
-  return &m_minValueCell;
+  return &m_cells[index];
 }
 
-int HistogramParameterController::reusableCellCount() {
+int HistogramParameterController::reusableParameterCellCount(int type) {
   return 2;
 }
 

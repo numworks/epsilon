@@ -13,16 +13,19 @@ class GoToParameterController : public FloatParameterController {
 public:
   GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol);
   const char * title() const override;
-  int numberOfRows() override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  void viewWillAppear() override;
   void setFunction(Function * function);
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  int numberOfRows() override;
 private:
+  void buttonAction() override;
+  HighlightCell * reusableParameterCell(int index, int type) override;
+  int reusableParameterCellCount(int type) override;
+  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
   PointerTableCellWithEditableText m_abscisseCell;
+  float m_previousParameter;
   InteractiveCurveViewRange * m_graphRange;
   CurveViewCursor * m_cursor;
   Function * m_function;

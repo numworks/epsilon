@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
-  FloatParameterController(parentResponder),
+  FloatParameterController(parentResponder, "Valider"),
   m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
   m_store(store),
   m_cursor(cursor),
@@ -25,6 +25,15 @@ const char * GoToParameterController::title() const {
     return "Prediction sachant x";
   }
   return "Prediction sachant y";
+}
+
+int GoToParameterController::numberOfRows() {
+  return 2;
+}
+
+float GoToParameterController::previousParameterAtIndex(int index) {
+  assert(index == 0);
+  return m_previousParameter;
 }
 
 float GoToParameterController::parameterAtIndex(int index) {
@@ -53,20 +62,19 @@ void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   }
 }
 
-int GoToParameterController::numberOfRows() {
-  return 1;
-};
-
-HighlightCell * GoToParameterController::reusableCell(int index) {
+HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
   return &m_abscisseCell;
 }
 
-int GoToParameterController::reusableCellCount() {
+int GoToParameterController::reusableParameterCellCount(int type) {
   return 1;
 }
 
 void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == numberOfRows()-1) {
+    return;
+  }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
   if (m_xPrediction) {
     myCell->setText("x");
@@ -88,15 +96,18 @@ bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, c
     app()->displayWarning("Valeur non atteinte par la regression");
     return false;
   }
-  FloatParameterController::textFieldDidFinishEditing(textField, text);
-  StackViewController * stack = (StackViewController *)parentResponder();
-  stack->pop();
-  stack->pop();
-  return true;
+  return FloatParameterController::textFieldDidFinishEditing(textField, text);
 }
 
 void GoToParameterController::viewWillAppear() {
+  m_previousParameter = parameterAtIndex(0);
   m_selectableTableView.reloadData();
+}
+
+void GoToParameterController::buttonAction() {
+  StackViewController * stack = (StackViewController *)parentResponder();
+  stack->pop();
+  stack->pop();
 }
 
 }

@@ -43,8 +43,8 @@ private:
     ButtonRowDelegate * buttonRowDelegate() const;
   private:
     constexpr static KDCoordinate k_plainStyleHeight = 20;
-    constexpr static KDCoordinate k_embossedStyleHeight = 46;
-    constexpr static KDCoordinate k_embossedStyleHeightMargin = 5;
+    constexpr static KDCoordinate k_embossedStyleHeight = 36;
+    constexpr static KDCoordinate k_embossedStyleHeightMargin = 6;
     constexpr static KDColor k_separatorHeaderColor = KDColor::RGB24(0xDEE0E2);
     constexpr static KDColor k_selectedBackgroundColor = KDColor::RGB24(0x426DA7);
     ViewController * m_mainViewController;

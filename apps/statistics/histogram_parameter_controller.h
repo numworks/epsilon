@@ -11,15 +11,18 @@ class HistogramParameterController : public Shared::FloatParameterController {
 public:
   HistogramParameterController(Responder * parentResponder, Store * store);
   const char * title() const override;
+  void viewWillAppear() override;
   int numberOfRows() override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  HighlightCell * reusableParameterCell(int index, int type) override;
+  int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
+  float previousParameterAtIndex(int index) override;
   void setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[PointerTableCellWithEditableText::k_bufferLength];
-  PointerTableCellWithEditableText m_binWidthCell;
-  PointerTableCellWithEditableText m_minValueCell;
+  PointerTableCellWithEditableText m_cells[2];
+  float m_previousParameters[2];
   Store * m_store;
 };
 

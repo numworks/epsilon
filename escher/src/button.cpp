@@ -1,11 +1,12 @@
 #include <escher/button.h>
+#include <escher/palette.h>
 #include <assert.h>
 
-Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size) :
+Button::Button(Responder * parentResponder, const char * textBody, Invocation invocation, KDText::FontSize size, KDColor textColor) :
+  HighlightCell(),
   Responder(parentResponder),
-  m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f)),
-  m_invocation(invocation),
-  m_backgroundColor(KDColorWhite)
+  m_pointerTextView(PointerTextView(size, textBody, 0.5f, 0.5f, textColor)),
+  m_invocation(invocation)
 {
 }
 
@@ -30,8 +31,9 @@ bool Button::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void Button::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
+void Button::setHighlighted(bool highlight) {
+  HighlightCell::setHighlighted(highlight);
+  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_pointerTextView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }

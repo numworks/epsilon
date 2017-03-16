@@ -11,8 +11,8 @@ namespace Shared {
 
 class GoToParameterController : public FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol);
-  const char * title() const override;
+  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  const char * title() override;
   void viewWillAppear() override;
   void setFunction(Function * function);
   int numberOfRows() override;

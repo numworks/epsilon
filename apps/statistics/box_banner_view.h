@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../shared/banner_view.h"
+#include "../i18n.h"
 
 namespace Statistics {
 
@@ -12,6 +13,7 @@ public:
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
+  PointerTextView * pointerTextViewAtIndex(int i) const override;
   PointerTextView m_calculationName;
   BufferTextView m_calculationValue;
 };

@@ -12,7 +12,7 @@ namespace Shared {
 
 class FloatParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
-  FloatParameterController(Responder * parentResponder, const char * okButtonText = "Valider");
+  FloatParameterController(Responder * parentResponder, I18n::Message okButtonText = I18n::Message::Ok);
   View * view() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;

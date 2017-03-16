@@ -9,7 +9,6 @@
 class InputViewController : public ModalViewController, TextFieldDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate);
-  const char * title() const override;
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
   void setTextFieldDelegate(TextFieldDelegate * textFieldDelegate);

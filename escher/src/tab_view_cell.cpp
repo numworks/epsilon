@@ -8,12 +8,12 @@ TabViewCell::TabViewCell() :
   View(),
   m_active(false),
   m_selected(false),
-  m_name(nullptr)
+  m_controller(nullptr)
 {
 }
 
-void TabViewCell::setName(const char * name) {
-  m_name = name;
+void TabViewCell::setNamedController(ViewController * controller) {
+  m_controller = controller;
   markRectAsDirty(bounds());
 }
 
@@ -28,7 +28,7 @@ void TabViewCell::setSelected(bool selected) {
 }
 
 KDSize TabViewCell::minimalSizeForOptimalDisplay() const {
-  return KDText::stringSize(m_name, KDText::FontSize::Small);
+  return KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
 }
 
 void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -46,9 +46,9 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
-  KDSize textSize = KDText::stringSize(m_name, KDText::FontSize::Small);
+  KDSize textSize = KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
   KDPoint origin(0.5f*(m_frame.width() - textSize.width()),0.5f*(m_frame.height() - textSize.height()));
-  ctx->drawString(m_name, origin, KDText::FontSize::Small, text, background);
+  ctx->drawString(m_controller->title(), origin, KDText::FontSize::Small, text, background);
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -59,6 +59,6 @@ const char * TabViewCell::className() const {
 void TabViewCell::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
   os << " active=\"" << m_active << "\"";
-  os << " name=\"" << m_name << "\"";
+  os << " name=\"" << m_controller->title() << "\"";
 }
 #endif

@@ -17,7 +17,7 @@ namespace Sequence {
 class ListController : public Shared::ListController, public Shared::TextFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
-  const char * title() const override;
+  const char * title() override;
   int numberOfRows() override;
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;

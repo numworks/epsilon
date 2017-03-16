@@ -51,10 +51,6 @@ View * EditExpressionController::view() {
   return &m_contentView;
 }
 
-const char * EditExpressionController::title() const {
-  return "EditExpressionController";
-}
-
 const char * EditExpressionController::textBody() {
   return m_contentView.textField()->text();
 }

@@ -11,8 +11,8 @@ ZoomParameterController::ZoomParameterController(Responder * parentResponder, In
 {
 }
 
-const char * ZoomParameterController::title() const {
-  return "Zoom interactif";
+const char * ZoomParameterController::title() {
+  return I18n::translate(I18n::Message::InteractiveZoom);
 }
 
 View * ZoomParameterController::view() {
@@ -93,11 +93,11 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 /* Legend View */
 
 ZoomParameterController::ContentView::LegendView::LegendView() :
-  m_legends{PointerTextView(KDText::FontSize::Small, "HAUT", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "GAUCHE", 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "ZOOM", 0.5f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "BAS", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    PointerTextView(KDText::FontSize::Small, "DROITE", 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)},
+  m_legends{PointerTextView(KDText::FontSize::Small, I18n::Message::TopCapital, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, I18n::Message::LeftCapital, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, I18n::Message::ZoomCapital, 0.5f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, I18n::Message::BottomCapital, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    PointerTextView(KDText::FontSize::Small, I18n::Message::RightCapital, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)},
   m_legendPictograms{KeyView(KeyView::Type::Up), KeyView(KeyView::Type::Left),
     KeyView(KeyView::Type::Plus), KeyView(KeyView::Type::Minus),
     KeyView(KeyView::Type::Down), KeyView(KeyView::Type::Right)}

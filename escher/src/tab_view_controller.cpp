@@ -138,7 +138,7 @@ View * TabViewController::view() {
   // Let's populate our tabview
   if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
     for (int i=0; i<m_numberOfChildren; i++) {
-      m_view.m_tabView.addTabNamed(m_children[i]->title());
+      m_view.m_tabView.addTab(m_children[i]);
     }
   }
   return &m_view;

@@ -12,7 +12,7 @@ View * PicViewController::view() {
 
 /*
 
-const char * PicViewController::title() const {
+const char * PicViewController::title() {
   return "PicView";
 }
 */

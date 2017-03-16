@@ -10,8 +10,8 @@ PoissonLaw::PoissonLaw() :
 {
 }
 
-const char * PoissonLaw::title() {
-  return "Loi Poisson";
+I18n::Message PoissonLaw::title() {
+  return I18n::Message::PoissonLaw;
 }
 
 Law::Type PoissonLaw::type() const {
@@ -22,16 +22,14 @@ bool PoissonLaw::isContinuous() const {
   return false;
 }
 
-const char * PoissonLaw::parameterNameAtIndex(int index) {
+I18n::Message PoissonLaw::parameterNameAtIndex(int index) {
   assert(index == 0);
-  constexpr static char name[] = {Ion::Charset::SmallLambda, 0};
-  return name;
+  return I18n::Message::Lambda;
 }
 
-const char * PoissonLaw::parameterDefinitionAtIndex(int index) {
+I18n::Message PoissonLaw::parameterDefinitionAtIndex(int index) {
   assert(index == 0);
-  constexpr static char meanDef[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
-  return meanDef;
+  return I18n::Message::LambdaPoissonDefinition;
 }
 
 float PoissonLaw::xMin() {

@@ -8,9 +8,9 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(PointerTextView(KDText::FontSize::Small, "Choisir les parametres", 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
-  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
-  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_titleView(PointerTextView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_firstParameterDefinition(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
+  m_secondParameterDefinition(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen)),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -68,7 +68,7 @@ void ParametersController::ContentView::layoutSubviews() {
 /* Parameters Controller */
 
 ParametersController::ParametersController(Responder * parentResponder) :
-  FloatParameterController(parentResponder, "Suivant"),
+  FloatParameterController(parentResponder, I18n::Message::Next),
   m_menuListCell{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
     PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
   m_contentView(ContentView(this, &m_selectableTableView)),
@@ -81,9 +81,9 @@ View * ParametersController::view() {
   return &m_contentView;
 }
 
-const char * ParametersController::title() const {
+const char * ParametersController::title() {
   if (m_law != nullptr) {
-    return m_law->title();
+    return I18n::translate(m_law->title());
   }
   return "";
 }
@@ -99,7 +99,7 @@ void ParametersController::setLaw(Law * law) {
 void ParametersController::viewWillAppear() {
   for (int i = 0; i < m_law->numberOfParameter(); i++) {
     m_previousParameters[i] = parameterAtIndex(i);
-    m_contentView.parameterDefinitionAtIndex(i)->setText(m_law->parameterDefinitionAtIndex(i));
+    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
   }
   m_contentView.layoutSubviews();
   FloatParameterController::viewWillAppear();
@@ -114,7 +114,7 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
     return;
   }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *) cell;
-  myCell->setText(m_law->parameterNameAtIndex(index));
+  myCell->setMessage(m_law->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -140,7 +140,7 @@ float ParametersController::parameterAtIndex(int index) {
 
 void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
-    app()->displayWarning("Cette valeur est interdite !");
+    app()->displayWarning(I18n::Message::ForbiddenValue);
     return;
   }
   m_law->setParameterAtIndex(f, parameterIndex);

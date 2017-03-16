@@ -4,17 +4,17 @@
 
 namespace Shared {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const char * symbol) :
-  FloatParameterController(parentResponder, "Valider"),
-  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, (char*)symbol)),
+GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+  FloatParameterController(parentResponder),
+  m_abscisseCell(PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, symbol)),
   m_graphRange(graphRange),
   m_cursor(cursor),
   m_function(nullptr)
 {
 }
 
-const char * GoToParameterController::title() const {
-  return "Aller a";
+const char * GoToParameterController::title() {
+  return I18n::translate(I18n::Message::Goto);
 }
 
 void GoToParameterController::viewWillAppear() {

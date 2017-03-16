@@ -9,7 +9,7 @@ namespace Graph {
 class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor);
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index) override;

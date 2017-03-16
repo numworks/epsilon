@@ -3,19 +3,19 @@
 
 namespace Shared {
 
-ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore) :
+ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_functionStore(functionStore),
-  m_colorCell(PointerTableCellWithChevron((char*)"Couleur de la fonction")),
-  m_enableCell(PointerTableCellWithSwitch((char*)"Activer/Desactiver")),
-  m_deleteCell(PointerTableCell((char*)"Supprimer la fonction"))
+  m_colorCell(PointerTableCellWithChevron(functionColorMessage)),
+  m_enableCell(PointerTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
+  m_deleteCell(PointerTableCell(deleteFunctionMessage))
 {
 }
 
-const char * ListParameterController::title() const {
-  return "Options de la fonction";
+const char * ListParameterController::title() {
+  return I18n::translate(I18n::Message::FunctionOptions);
 }
 
 View * ListParameterController::view() {
@@ -93,8 +93,8 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
           stack->pop();
           return true;
         }
-        app()->displayWarning("Pas de fonction a supprimer");
-        return false;
+        app()->displayWarning(I18n::Message::NoFunctionToDelete);
+        return true;
       }
   }
   default:

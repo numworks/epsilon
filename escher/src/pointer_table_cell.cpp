@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-PointerTableCell::PointerTableCell(char * label, KDText::FontSize size, Layout layout) :
+PointerTableCell::PointerTableCell(I18n::Message label, KDText::FontSize size, Layout layout) :
   TableCell(layout),
   m_pointerTextView(PointerTextView(size, label, 0, 0.5, KDColorBlack, KDColorWhite))
 {
@@ -18,8 +18,8 @@ void PointerTableCell::setHighlighted(bool highlight) {
   m_pointerTextView.setBackgroundColor(backgroundColor);
 }
 
-void PointerTableCell::setText(const char * text) {
-  m_pointerTextView.setText(text);
+void PointerTableCell::setMessage(I18n::Message text) {
+  m_pointerTextView.setMessage(text);
   layoutSubviews();
 }
 

@@ -8,7 +8,7 @@ using namespace Poincare;
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_titleView(KDText::FontSize::Small, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
   m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
 {
 }
@@ -18,8 +18,8 @@ void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
 
 }
 
-void TitleBarView::setTitle(const char * title) {
-  m_titleView.setText(title);
+void TitleBarView::setTitle(I18n::Message title) {
+  m_titleView.setMessage(title);
 }
 
 void TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {

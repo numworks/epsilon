@@ -12,7 +12,7 @@ public:
   ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header);
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
 private:
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;

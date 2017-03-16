@@ -2,13 +2,13 @@
 #define ESCHER_STACK_VIEW_H
 
 #include <escher/view.h>
-#include <escher/pointer_text_view.h>
+#include <escher/view_controller.h>
 
 class StackView : public View {
 public:
   StackView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setName(const char * name);
+  void setNamedController(ViewController * controller);
   void setTextColor(KDColor textColor);
   void setBackgroundColor(KDColor backgroundColor);
   void setSeparatorColor(KDColor separatorColor);
@@ -18,12 +18,10 @@ protected:
   void logAttributes(std::ostream &os) const override;
 #endif
 private:
+  KDColor m_textColor;
   KDColor m_backgroundColor;
   KDColor m_separatorColor;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
-  PointerTextView m_textView;
+  ViewController * m_controller;
 };
 
 #endif

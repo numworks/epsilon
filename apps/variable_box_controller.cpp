@@ -16,8 +16,8 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
 {
 }
 
-const char * VariableBoxController::ContentViewController::title() const {
-  return "Variable";
+const char * VariableBoxController::ContentViewController::title() {
+  return I18n::translate(I18n::Message::Variables);
 }
 
 View * VariableBoxController::ContentViewController::view() {
@@ -106,9 +106,9 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
 
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
-    const char * label = nodeLabelAtIndex(index);
+    I18n::Message label = nodeLabelAtIndex(index);
     PointerTableCell * myCell = (PointerTableCell *)cell;
-    myCell->setText(label);
+    myCell->setMessage(label);
     return;
   }
   VariableBoxLeafCell * myCell = (VariableBoxLeafCell *)cell;
@@ -213,9 +213,9 @@ void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int i
   }
 }
 
-const char * VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
+I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
-  const char * labels[3] = {"Nombre", "Liste", "Matrice"};
+  I18n::Message labels[3] = {I18n::Message::Number, I18n::Message::List, I18n::Message::Matrix};
   return labels[index];
 }
 

@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, 'n'),
+  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn),
   m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},
   m_sequenceStore(sequenceStore),
@@ -23,7 +23,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
-    mytitleCell->setText("n");
+    mytitleCell->setMessage(I18n::Message::N);
     return;
   }
   // The cell is a function title cell:
@@ -35,11 +35,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
-const char * ValuesController::emptyMessage() {
+I18n::Message ValuesController::emptyMessage() {
   if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
-    return "Aucune suite";
+    return I18n::Message::NoSequence;
   }
-  return "Aucune suite selectionnee";
+  return I18n::Message::NoActivatedSequence;
 }
 
 int ValuesController::maxNumberOfCells() {

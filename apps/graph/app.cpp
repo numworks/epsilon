@@ -1,5 +1,6 @@
 #include "app.h"
 #include "graph_icon.h"
+#include "../i18n.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -7,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 App::App(Container * container, Context * context) :
-  TextFieldDelegateApp(container, &m_inputViewController, "Fonctions", "FONCTIONS", ImageStore::GraphIcon),
+  TextFieldDelegateApp(container, &m_inputViewController, I18n::Message::FunctionApp, I18n::Message::FunctionAppCapital, ImageStore::GraphIcon),
   m_functionStore(CartesianFunctionStore()),
   m_xContext(VariableContext('x', context)),
   m_listController(ListController(&m_listFooter, &m_functionStore, &m_listHeader, &m_listFooter)),

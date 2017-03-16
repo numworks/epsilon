@@ -3,7 +3,7 @@
 
 namespace Shared {
 
-NewFunctionCell::NewFunctionCell(const char * text) :
+NewFunctionCell::NewFunctionCell(I18n::Message text) :
   EvenOddCell(),
   m_pointerTextView(PointerTextView(KDText::FontSize::Large, text, 0.5f, 0.5f))
 {

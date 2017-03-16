@@ -1,8 +1,8 @@
 #include <escher/pointer_table_cell_with_chevron_and_expression.h>
 #include <escher/palette.h>
 
-PointerTableCellWithChevronAndExpression::PointerTableCellWithChevronAndExpression(char * label, KDText::FontSize size) :
-  PointerTableCellWithChevron(label, size),
+PointerTableCellWithChevronAndExpression::PointerTableCellWithChevronAndExpression(I18n::Message message, KDText::FontSize size) :
+  PointerTableCellWithChevron(message, size),
   m_subtitleView(1.0f, 0.5f, Palette::GreyDark)
 {
 }

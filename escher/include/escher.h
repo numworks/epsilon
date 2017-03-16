@@ -24,6 +24,7 @@
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/invocation_timer.h>
+#include <escher/i18n.h>
 #include <escher/key_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/metric.h>

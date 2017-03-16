@@ -15,7 +15,7 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
   ButtonRowDelegate(header, nullptr),
   m_bannerView(HistogramBannerView()),
   m_view(HistogramView(store, &m_bannerView)),
-  m_settingButton(Button(this, "Reglages de l'histogramme", Invocation([](void * context, void * sender) {
+  m_settingButton(Button(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
@@ -26,8 +26,8 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
 {
 }
 
-const char * HistogramController::title() const {
-  return "Histogramme";
+const char * HistogramController::title() {
+  return I18n::translate(I18n::Message::HistogramTab);
 }
 
 View * HistogramController::view() {
@@ -115,8 +115,8 @@ bool HistogramController::isEmpty() const {
   return false;
 }
 
-const char * HistogramController::emptyMessage() {
-  return "Aucune donnee a tracer";
+I18n::Message HistogramController::emptyMessage() {
+  return I18n::Message::NoDataToPlot;
 }
 
 Responder * HistogramController::defaultController() {
@@ -145,7 +145,7 @@ Responder * HistogramController::tabController() const {
 void HistogramController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+ Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2];
   int numberOfChar = 0;
-  const char * legend = "Intervalle [";
+  const char * legend = " [";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -158,10 +158,10 @@ void HistogramController::reloadBannerView() {
   legend = "   ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  m_bannerView.setLegendAtIndex(buffer, 0);
+  m_bannerView.setLegendAtIndex(buffer, 1);
 
   numberOfChar = 0;
-  legend = "Effectif: ";
+  legend = ": ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -170,16 +170,16 @@ void HistogramController::reloadBannerView() {
   legend = "   ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  m_bannerView.setLegendAtIndex(buffer, 1);
+  m_bannerView.setLegendAtIndex(buffer, 3);
 
   numberOfChar = 0;
-  legend = "Frequence: ";
+  legend = ": ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   float frequency = size/m_store->sumOfColumn(1);
   numberOfChar += Complex::convertFloatToText(frequency, buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  m_bannerView.setLegendAtIndex(buffer, 2);
+  m_bannerView.setLegendAtIndex(buffer, 5);
 }
 
 bool HistogramController::moveSelection(int deltaIndex) {

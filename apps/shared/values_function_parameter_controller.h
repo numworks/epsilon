@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "function.h"
+#include "../i18n.h"
 
 namespace Shared {
 
@@ -11,7 +12,7 @@ public:
   ValuesFunctionParameterController(char symbol);
 
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   void didBecomeFirstResponder() override;
   virtual int numberOfRows() override;
   KDCoordinate cellHeight() override;
@@ -25,6 +26,7 @@ private:
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   Function * m_function;
+  char m_symbol;
 };
 
 }

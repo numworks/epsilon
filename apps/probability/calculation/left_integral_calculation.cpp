@@ -21,13 +21,12 @@ int LeftIntegralCalculation::numberOfParameters() {
   return 2;
 }
 
-const char * LeftIntegralCalculation::legendForParameterAtIndex(int index) {
+I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    constexpr static char comparison[] = {'P', '(', 'X', Ion::Charset::LessEqual, 0};
-    return comparison;
+    return I18n::Message::LeftIntegralFirstLegend;
   }
-  return ")=";
+  return I18n::Message::LeftIntegralSecondLegend;
 }
 
 void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {

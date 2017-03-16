@@ -2,8 +2,8 @@
 #include <escher/palette.h>
 
 PointerTableCellWithChevronAndPointer::PointerTableCellWithChevronAndPointer(KDText::FontSize labelSize, KDText::FontSize contentSize) :
-  PointerTableCellWithChevron(nullptr, labelSize),
-  m_subtitleView(contentSize, "", 1.0f, 0.5f, Palette::GreyDark)
+  PointerTableCellWithChevron((I18n::Message)0, labelSize),
+  m_subtitleView(contentSize, (I18n::Message)0, 1.0f, 0.5f, Palette::GreyDark)
 {
 }
 
@@ -17,8 +17,8 @@ void PointerTableCellWithChevronAndPointer::setHighlighted(bool highlight) {
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 
-void PointerTableCellWithChevronAndPointer::setSubtitle(const char * text) {
-  m_subtitleView.setText(text);
+void PointerTableCellWithChevronAndPointer::setSubtitle(I18n::Message text) {
+  m_subtitleView.setMessage(text);
   reloadCell();
   layoutSubviews();
 }

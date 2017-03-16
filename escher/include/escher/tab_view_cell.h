@@ -2,13 +2,15 @@
 #define ESCHER_TAB_VIEW_CELL_H
 
 #include <escher/view.h>
+#include <escher/i18n.h>
 #include <escher/text_view.h>
+#include <escher/view_controller.h>
 
 class TabViewCell : public View {
 public:
   TabViewCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setName(const char * name);
+  void setNamedController(ViewController * controller);
   void setActive(bool active);
   void setSelected(bool selected);
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -20,7 +22,7 @@ protected:
 private:
   bool m_active;
   bool m_selected;
-  const char * m_name;
+  ViewController * m_controller;
 };
 
 #endif

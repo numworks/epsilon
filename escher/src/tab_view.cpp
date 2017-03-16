@@ -23,12 +23,11 @@ void TabView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, height-k_activeTabHeight, width, k_activeTabHeight), KDColorWhite);
 }
 
-void TabView::addTabNamed(const char * name) {
+void TabView::addTab(ViewController * controller) {
   assert(m_numberOfTabs < k_maxNumberOfTabs);
   uint8_t tabIndex = m_numberOfTabs;
-  m_cells[tabIndex].setName(name);
+  m_cells[tabIndex].setNamedController(controller);
   m_numberOfTabs++;
-  //setSubview(&m_cells[tabIndex], tabIndex);
   markRectAsDirty(bounds());
 }
 

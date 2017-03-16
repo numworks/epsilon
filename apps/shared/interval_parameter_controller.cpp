@@ -4,14 +4,14 @@
 namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
-  FloatParameterController(parentResponder, "Valider"),
+  FloatParameterController(parentResponder),
   m_interval(interval),
-  m_intervalCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr)}
+  m_intervalCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)}
 {
 }
 
-const char * IntervalParameterController::title() const {
-  return "Regler l'intervalle";
+const char * IntervalParameterController::title() {
+  return I18n::translate(I18n::Message::IntervalSet);
 }
 
 void IntervalParameterController::viewWillAppear() {
@@ -30,8 +30,8 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
-  const char * labels[k_totalNumberOfCell] = {"x Debut", "x Fin", "x Pas"};
-  myCell->setText(labels[index]);
+  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::XStep};
+  myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 

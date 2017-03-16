@@ -8,16 +8,16 @@ using namespace Poincare;
 namespace Shared {
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
-  FloatParameterController(parentResponder, "Valider"),
+  FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),
-  m_rangeCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr),
-    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr)},
-  m_yAutoCell(PointerTableCellWithSwitch((char*)"Y auto"))
+  m_rangeCells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default),
+    PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
+  m_yAutoCell(PointerTableCellWithSwitch(I18n::Message::YAuto))
 {
 }
 
-const char * RangeParameterController::title() const {
-  return "Axes";
+const char * RangeParameterController::title() {
+  return I18n::translate(I18n::Message::Axis);
 }
 
 void RangeParameterController::viewWillAppear() {
@@ -53,8 +53,8 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
-  const char * labels[k_numberOfTextCell+1] = {"Xmin", "Xmax", "", "Ymin", "Ymax"};
-  myCell->setText(labels[index]);
+  I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
+  myCell->setMessage(labels[index]);
   KDColor yColor = m_interactiveRange->yAuto() ? Palette::GreyDark : KDColorBlack;
   KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
   myCell->setTextColor(colors[index]);

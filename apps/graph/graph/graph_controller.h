@@ -12,7 +12,7 @@ namespace Graph {
 class GraphController : public Shared::FunctionGraphController {
 public:
   GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header);
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
 private:
   BannerView * bannerView() override;
   void reloadBannerView() override;

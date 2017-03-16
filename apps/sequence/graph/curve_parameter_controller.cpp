@@ -7,14 +7,14 @@ using namespace Shared;
 namespace Sequence {
 
 CurveParameterController::CurveParameterController(GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor, "n"),
-  m_sumCell(PointerTableCell((char*)"Somme des termes")),
+  FunctionCurveParameterController(graphRange, cursor, I18n::Message::N),
+  m_sumCell(PointerTableCell(I18n::Message::TermSum)),
   m_graphController(graphController)
 {
 }
 
-const char * CurveParameterController::title() const {
-  return "Options de la suite";
+const char * CurveParameterController::title() {
+  return I18n::translate(I18n::Message::SequenceOptions);
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {

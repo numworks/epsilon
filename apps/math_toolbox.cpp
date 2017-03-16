@@ -5,25 +5,25 @@
 /* TODO: find a shorter way to initiate tree models
  * We create one model tree: each node keeps the label of the row it refers to
  * and the text which would be edited by clicking on the row. When the node is a
- * subtree, the edited text is set at nullptr. */
+ * subtree, the edited text is set at I18n::Message::Default. */
 
-const ToolboxNode calculChildren[4] = {ToolboxNode("diff(,)", "Nombre derive"), ToolboxNode("int(,,)", "Integrale"), ToolboxNode("sum(,,)", "Somme"), ToolboxNode("product(,,)", "Produit")};
-const ToolboxNode complexChildren[5] = {ToolboxNode("abs()", "Module"), ToolboxNode("arg()", "Argument"), ToolboxNode("re()", "Partie reelle"), ToolboxNode("im()", "Partie imaginaire"), ToolboxNode("conj()", "Conjugue")};
-const ToolboxNode probabilityChildren[2] = {ToolboxNode("binomial(,)", "Combinaison"), ToolboxNode("permute(,)", "Arrangement")};
-const ToolboxNode arithmeticChildren[4] = {ToolboxNode("gcd(,)", "PGCD"), ToolboxNode("lcm(,)", "PPCM"), ToolboxNode("rem(,)", "Reste division euclidienne"), ToolboxNode("quo(,)","Quotien division euclidienne")};
-const ToolboxNode matricesChildren[5] = {ToolboxNode("inverse()", "Inverse"), ToolboxNode("det()", "Determinant"), ToolboxNode("transpose()", "Transposee"), ToolboxNode("trace()", "Trace"), ToolboxNode("dim()", "Taille")};
-const ToolboxNode listesChildren[5] = {ToolboxNode("sort<()", "Tri croissant"), ToolboxNode("sort>()", "Tri decroissant"), ToolboxNode("max()", "Maximum"), ToolboxNode("min()", "Minimum"), ToolboxNode("dim()", "Taille")};
-const ToolboxNode approximationChildren[4] = {ToolboxNode("floor()", "Partie entiere"), ToolboxNode("frac()", "Partie fractionnaire"), ToolboxNode("ceil()", "Plafond"), ToolboxNode("round(,)", "Arrondi")};
-const ToolboxNode trigonometryChildren[6] = {ToolboxNode("cosh()", "cosh"), ToolboxNode("sinh()", "sinh"), ToolboxNode("tanh()", "tanh"), ToolboxNode("acosh()", "acosh"), ToolboxNode("asinh()", "asinh"), ToolboxNode("atanh()", "atanh")};
-const ToolboxNode predictionChildren[3] = {ToolboxNode("prediction95(,)", "Intervalle fluctuation 95%"), ToolboxNode("prediction(,)", "Intervalle fluctuation simple"), ToolboxNode("confidence(,)", "Intervalle de confiance")};
+const ToolboxNode calculChildren[4] = {ToolboxNode(I18n::Message::DiffCommand, I18n::Message::DerivateNumber), ToolboxNode(I18n::Message::IntCommand, I18n::Message::Integral), ToolboxNode(I18n::Message::SumCommand, I18n::Message::Sum), ToolboxNode(I18n::Message::ProductCommand, I18n::Message::Product)};
+const ToolboxNode complexChildren[5] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::ComplexAbsoluteValue), ToolboxNode(I18n::Message::ArgCommand, I18n::Message::Agument), ToolboxNode(I18n::Message::ReCommand, I18n::Message::ReelPart), ToolboxNode(I18n::Message::ImCommand, I18n::Message::ImaginaryPart), ToolboxNode(I18n::Message::ConjCommand, I18n::Message::Conjugate)};
+const ToolboxNode probabilityChildren[2] = {ToolboxNode(I18n::Message::BinomialCommand, I18n::Message::Combination), ToolboxNode(I18n::Message::PermuteCommand, I18n::Message::Permutation)};
+const ToolboxNode arithmeticChildren[4] = {ToolboxNode(I18n::Message::GcdCommand, I18n::Message::GreatCommonDivisor),ToolboxNode(I18n::Message::LcmCommand, I18n::Message::LeastCommonMultiple), ToolboxNode(I18n::Message::RemCommand, I18n::Message::Remainder), ToolboxNode(I18n::Message::QuoCommand, I18n::Message::Quotient)};
+const ToolboxNode matricesChildren[5] = {ToolboxNode(I18n::Message::InverseCommand, I18n::Message::Inverse), ToolboxNode(I18n::Message::DeterminantCommand, I18n::Message::Determinant), ToolboxNode(I18n::Message::TransposeCommand, I18n::Message::Transpose), ToolboxNode(I18n::Message::TraceCommand, I18n::Message::Trace), ToolboxNode(I18n::Message::DimensionCommand, I18n::Message::Dimension)};
+const ToolboxNode listesChildren[5] = {ToolboxNode(I18n::Message::SortCommand, I18n::Message::Sort), ToolboxNode(I18n::Message::InvSortCommand, I18n::Message::InvSort), ToolboxNode(I18n::Message::MaxCommand, I18n::Message::Maximum), ToolboxNode(I18n::Message::MinCommand, I18n::Message::Minimum), ToolboxNode(I18n::Message::DimensionCommand, I18n::Message::Dimension)};
+const ToolboxNode approximationChildren[4] = {ToolboxNode(I18n::Message::FloorCommand, I18n::Message::Floor), ToolboxNode(I18n::Message::FracCommand, I18n::Message::FracPart), ToolboxNode(I18n::Message::CeilCommand, I18n::Message::Ceiling), ToolboxNode(I18n::Message::RoundCommand, I18n::Message::Rounding)};
+const ToolboxNode trigonometryChildren[6] = {ToolboxNode(I18n::Message::CoshCommand, I18n::Message::Cosh), ToolboxNode(I18n::Message::SinhCommand, I18n::Message::Sinh), ToolboxNode(I18n::Message::TanhCommand, I18n::Message::Tanh), ToolboxNode(I18n::Message::AcoshCommand, I18n::Message::Acosh), ToolboxNode(I18n::Message::AsinhCommand, I18n::Message::Asinh), ToolboxNode(I18n::Message::AtanhCommand, I18n::Message::Atanh)};
+const ToolboxNode predictionChildren[3] = {ToolboxNode(I18n::Message::Prediction95Command, I18n::Message::Prediction95), ToolboxNode(I18n::Message::PredictionCommand, I18n::Message::Prediction), ToolboxNode(I18n::Message::ConfidenceCommand, I18n::Message::Confidence)};
 
-const ToolboxNode menu[12] = {ToolboxNode("abs()", "Valeur absolue"), ToolboxNode("root(,)", "Racine k-ieme"), ToolboxNode("log(,)", "Logarithme base a"),
-  ToolboxNode("Calcul", nullptr, calculChildren, 4), ToolboxNode("Nombre complexe", nullptr, complexChildren, 5),
-  ToolboxNode("Probabilite", nullptr, probabilityChildren, 2), ToolboxNode("Arithmetique", nullptr, arithmeticChildren, 4),
-  ToolboxNode("Matrice",  nullptr, matricesChildren, 5), ToolboxNode("Liste", nullptr, listesChildren, 5),
-  ToolboxNode("Approximation", nullptr, approximationChildren, 4), ToolboxNode("Trigonometrie hyperbolique", nullptr, trigonometryChildren, 6),
-  ToolboxNode("Intervalle fluctuation", nullptr, predictionChildren, 3)};
-const ToolboxNode toolboxModel = ToolboxNode("Toolbox", nullptr, menu, 12);
+const ToolboxNode menu[12] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::AbsoluteValue), ToolboxNode(I18n::Message::RootCommand, I18n::Message::NthRoot), ToolboxNode(I18n::Message::LogCommand, I18n::Message::BasedLogarithm),
+  ToolboxNode(I18n::Message::Calculation, I18n::Message::Default, calculChildren, 4), ToolboxNode(I18n::Message::ComplexNumber, I18n::Message::Default, complexChildren, 5),
+  ToolboxNode(I18n::Message::Probability, I18n::Message::Default, probabilityChildren, 2), ToolboxNode(I18n::Message::Arithmetic, I18n::Message::Default, arithmeticChildren, 4),
+  ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, matricesChildren, 5), ToolboxNode(I18n::Message::Lists, I18n::Message::Default, listesChildren, 5),
+  ToolboxNode(I18n::Message::Approximation, I18n::Message::Default, approximationChildren, 4), ToolboxNode(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, trigonometryChildren, 6),
+  ToolboxNode(I18n::Message::Fluctuation, I18n::Message::Default, predictionChildren, 3)};
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 12);
 
 /* State */
 
@@ -98,8 +98,8 @@ View * MathToolbox::ListController::view() {
   return m_selectableTableView;
 }
 
-const char * MathToolbox::ListController::title() const {
-  return toolboxModel.label();
+const char * MathToolbox::ListController::title() {
+  return I18n::translate(toolboxModel.label());
 }
 
 void MathToolbox::ListController::didBecomeFirstResponder() {
@@ -155,13 +155,13 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxNode * node = (ToolboxNode *)m_nodeModel->children(index);
   if (node->numberOfChildren() == 0) {
     PointerTableCellWithPointer * myCell = (PointerTableCellWithPointer *)cell;
-    myCell->setText(node->label());
-    myCell->setAccessoryText(node->text());
+    myCell->setMessage(node->label());
+    myCell->setAccessoryMessage(node->text());
     myCell->setAccessoryTextColor(Palette::GreyDark);
     return;
   }
   PointerTableCell * myCell = (PointerTableCell *)cell;
-  myCell->setText(node->label());
+  myCell->setMessage(node->label());
 }
 
 KDCoordinate MathToolbox::rowHeight(int j) {
@@ -237,7 +237,7 @@ const ToolboxNode * MathToolbox::rootModel() {
 bool MathToolbox::selectLeaf(ToolboxNode * selectedNode){
   m_selectableTableView.deselectTable();
   ToolboxNode * node = selectedNode;
-  const char * editedText = node->label();
+  const char * editedText = I18n::translate(node->label());
   if (!sender()->isEditing()) {
     sender()->setEditing(true);
   }

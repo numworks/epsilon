@@ -5,12 +5,13 @@
 #include "function_store.h"
 #include "list_parameter_controller.h"
 #include "new_function_cell.h"
+#include "../i18n.h"
 
 namespace Shared {
 
 class ListController : public ViewController, public ButtonRowDelegate, public TableViewDataSource {
 public:
-  ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, const char * text);
+  ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
   View * view() override;
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;

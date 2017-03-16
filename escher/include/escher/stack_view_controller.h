@@ -18,7 +18,7 @@ public:
 
 
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -28,7 +28,7 @@ private:
   public:
     ControllerView(bool displayFirstStackHeader);
     void setContentView(View * view);
-    void pushStack(const char * name, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
+    void pushStack(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
     void popStack();
   protected:
 #if ESCHER_VIEW_LOGGING

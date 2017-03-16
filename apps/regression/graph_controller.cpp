@@ -29,11 +29,11 @@ bool GraphController::isEmpty() const {
   return false;
 }
 
-const char * GraphController::emptyMessage() {
+I18n::Message GraphController::emptyMessage() {
   if (m_store->numberOfPairs() == 0) {
-    return "Aucune donnee a tracer";
+    return I18n::Message::NoDataToPlot;
   }
-  return "Pas assez de donnees pour un regression";
+  return I18n::Message::NoEnoughDataForRegression;
 }
 
 BannerView * GraphController::bannerView() {
@@ -54,7 +54,7 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  m_bannerView.setLegendAtIndex((char *)"   y=ax+b   ", 0);
+  m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 0);
   char buffer[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChar = 0;
   const char * legend = "a=";

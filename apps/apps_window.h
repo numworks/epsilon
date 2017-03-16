@@ -7,7 +7,7 @@
 class AppsWindow : public Window {
 public:
   AppsWindow();
-  void setTitle(const char * title);
+  void setTitle(I18n::Message title);
   void updateBatteryLevel();
   void refreshPreferences();
 private:

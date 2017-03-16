@@ -16,7 +16,6 @@ public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
 
   View * view() override;
-  const char * title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void reload();

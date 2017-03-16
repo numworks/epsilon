@@ -14,17 +14,17 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_cursorView(CursorView()),
   m_rangeParameterController(RangeParameterController(this, interactiveRange)),
   m_zoomParameterController(ZoomParameterController(this, interactiveRange, curveView)),
-  m_rangeButton(this, "Axes", Invocation([](void * context, void * sender) {
+  m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
   }, this), KDText::FontSize::Small),
-  m_zoomButton(this, "Zoom", Invocation([](void * context, void * sender) {
+  m_zoomButton(this, I18n::Message::Zoom, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->zoomParameterController());
   }, this), KDText::FontSize::Small),
-  m_defaultInitialisationButton(this, "Initialisation", Invocation([](void * context, void * sender) {
+  m_defaultInitialisationButton(this, I18n::Message::Initialization, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
@@ -32,8 +32,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 {
 }
 
-const char * InteractiveCurveViewController::title() const {
-  return "Graphique";
+const char * InteractiveCurveViewController::title() {
+  return I18n::translate(I18n::Message::GraphTab);
 }
 
 View * InteractiveCurveViewController::view() {

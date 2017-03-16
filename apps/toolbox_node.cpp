@@ -1,6 +1,6 @@
 #include "toolbox_node.h"
 
-const char * ToolboxNode::text() const {
+I18n::Message ToolboxNode::text() const {
   return m_text;
 }
 

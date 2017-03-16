@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "variable_box_leaf_cell.h"
+#include "i18n.h"
 
 class VariableBoxController : public StackViewController {
 public:
@@ -17,7 +18,7 @@ private:
   public:
     ContentViewController(Responder * parentResponder, Poincare::Context * context);
     View * view() override;
-    const char * title() const override;
+    const char * title() override;
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
     int numberOfRows() override;
@@ -45,7 +46,7 @@ private:
     constexpr static KDCoordinate k_nodeRowHeight = 40;
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
-    const char * nodeLabelAtIndex(int index);
+    I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression * expressionForIndex(int index);
 
     Poincare::Context * m_context;

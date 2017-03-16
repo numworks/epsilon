@@ -4,19 +4,20 @@
 #include <escher/view_controller.h>
 #include <escher/pointer_text_view.h>
 #include <escher/solid_color_view.h>
+#include <escher/i18n.h>
 
 class WarningController : public ViewController {
 public:
-  WarningController(Responder * parentResponder);
-  void setLabel(const char *);
-  const char * title() const override;
+  WarningController(Responder * parentResponder, I18n::Message warningMessage);
+  void setLabel(I18n::Message message);
+  const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
   class ContentView : public SolidColorView {
   public:
     ContentView();
-    void setLabel(const char *);
+    void setLabel(I18n::Message message);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
@@ -28,6 +29,7 @@ private:
   };
 
   ContentView m_contentView;
+  I18n::Message m_warningMessage;
 };
 
 #endif

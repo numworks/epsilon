@@ -16,6 +16,7 @@ public:
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
 
   virtual int numberOfRows() override;
   virtual int numberOfColumns() override;

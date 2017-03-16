@@ -3,11 +3,11 @@
 TextView::TextView(KDText::FontSize size, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   View(),
+  m_fontSize(size),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
-  m_fontSize(size)
+  m_backgroundColor(backgroundColor)
 {
 }
 

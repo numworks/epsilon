@@ -15,7 +15,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  const char * emptyMessage() override;
+  I18n::Message emptyMessage() override;
   void selectCellAtLocation(int i, int j);
   int activeRow();
   int activeColumn();

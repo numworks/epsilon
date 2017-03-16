@@ -5,7 +5,7 @@ namespace Home {
 
 AppCell::AppCell() :
   HighlightCell(),
-  m_nameView(PointerTextView(KDText::FontSize::Small, nullptr, 0.5f, 0.5f, KDColorBlack, KDColorWhite)),
+  m_nameView(PointerTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite)),
   m_visible(true)
 {
 }
@@ -27,7 +27,7 @@ void AppCell::layoutSubviews() {
 
 void AppCell::setApp(::App * app) {
   m_iconView.setImage(app->icon());
-  m_nameView.setText(app->name());
+  m_nameView.setMessage(app->name());
   layoutSubviews();
 }
 

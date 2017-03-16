@@ -27,8 +27,8 @@ TermSumController::TermSumController(Responder * parentResponder, GraphView * gr
 {
 }
 
-const char * TermSumController::title() const {
-  return "Sommes des termes";
+const char * TermSumController::title() {
+  return I18n::translate(I18n::Message::TermSum);
 }
 
 View * TermSumController::view() {
@@ -49,7 +49,7 @@ void TermSumController::viewWillAppear() {
   m_startSum = -1;
   m_endSum = -1;
   m_step = 0;
-  m_contentView.legendView()->setLegendText("SELECTIONNER LE PREMIER TERME");
+  m_contentView.legendView()->setLegendMessage(I18n::Message::SelectFirstTerm);
   m_contentView.legendView()->setSumSubscript(m_cursor->x());
 }
 
@@ -94,20 +94,17 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
       m_step++;
       m_startSum = m_cursor->x();
       m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
-      m_contentView.legendView()->setLegendText("SELECTIONNER LE DERNIER TERME");
+      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectLastTerm);
       return true;
     }
     m_step++;
     m_endSum = m_cursor->x();
-    m_contentView.legendView()->setSequenceName(m_sequence->name());
-    char buffer[2+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    strlcpy(buffer, "= ", 3);
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     float sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
-    Complex::convertFloatToText(sum, buffer+2, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    m_contentView.legendView()->setSumResult(m_sequence->name(), sum);
+    m_contentView.legendView()->setLegendMessage(I18n::Message::Default);
     m_contentView.graphView()->setHighlightColor(true);
     m_contentView.graphView()->selectMainView(false);
-    m_contentView.legendView()->setLegendText(buffer);
     return true;
   }
   return false;
@@ -177,7 +174,7 @@ View * TermSumController::ContentView::subviewAtIndex(int index) {
 TermSumController::ContentView::LegendView::LegendView() :
   m_sum(ExpressionView(0.0f, 0.5f, KDColorBlack, Palette::GreyBright)),
   m_sumLayout(nullptr),
-  m_legend(BufferTextView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright))
+  m_legend(PointerTextView(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright))
 {
 }
 
@@ -192,8 +189,8 @@ void TermSumController::ContentView::LegendView::drawRect(KDContext * ctx, KDRec
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyBright);
 }
 
-void TermSumController::ContentView::LegendView::setLegendText(const char * text) {
-  m_legend.setText(text);
+void TermSumController::ContentView::LegendView::setLegendMessage(I18n::Message message) {
+  m_legend.setMessage(message);
   layoutSubviews();
 }
 
@@ -226,13 +223,17 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
   layoutSubviews();
 }
 
-void TermSumController::ContentView::LegendView::setSequenceName(const char * sequenceName) {
-  ExpressionLayout * childrenLayouts[2];
+void TermSumController::ContentView::LegendView::setSumResult(const char * sequenceName, float result) {
+  ExpressionLayout * childrenLayouts[3];
+  char buffer[2+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  strlcpy(buffer, "= ", 3);
+  Complex::convertFloatToText(result, buffer+2, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
   childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[0] = m_sumLayout;
-  m_sumLayout = new HorizontalLayout(childrenLayouts, 2);
+  m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
   m_sum.setExpression(m_sumLayout);
-  m_sum.setAlignment(1.0f, 0.5f);
+  m_sum.setAlignment(0.5f, 0.5f);
   layoutSubviews();
 }
 
@@ -252,13 +253,13 @@ void TermSumController::ContentView::LegendView::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate heigth = bounds().height();
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
-  if (legendSize.width() > width/2) {
+  if (legendSize.width() > 0) {
     m_sum.setFrame(KDRect(0, 0, width-legendSize.width(), heigth));
     m_legend.setFrame(KDRect(width-legendSize.width(), 0, legendSize.width(), heigth));
     return;
   }
-  m_sum.setFrame(KDRect(0, 0, width/2, heigth));
-  m_legend.setFrame(KDRect(width/2, 0, width/2, heigth));
+  m_sum.setFrame(bounds());
+  m_legend.setFrame(KDRectZero);
 }
 
 }

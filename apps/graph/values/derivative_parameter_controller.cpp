@@ -6,9 +6,8 @@ namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ViewController(valuesController),
-  m_pageTitle{"Colonne f'(x)"},
-  m_hideColumn(PointerTableCell((char*)"Masquer la colonne de la derivee")),
-  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
+  m_hideColumn(PointerTableCell(I18n::Message::HideDerivativeColumn)),
+  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_function(nullptr),
@@ -16,7 +15,14 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
 {
 }
 
-const char * DerivativeParameterController::title() const {
+const char * DerivativeParameterController::title() {
+  strlcpy(m_pageTitle, I18n::translate(I18n::Message::DerivativeColumn), k_maxNumberOfCharsInTitle);
+  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
+    if (m_pageTitle[currentChar] == '(') {
+      m_pageTitle[currentChar-2] = *m_function->name();
+      break;
+    }
+  }
   return m_pageTitle;
 }
 
@@ -26,12 +32,6 @@ View * DerivativeParameterController::view() {
 
 void DerivativeParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar-2] = *m_function->name();
-      return;
-    }
-  }
 }
 
 void DerivativeParameterController::didBecomeFirstResponder() {

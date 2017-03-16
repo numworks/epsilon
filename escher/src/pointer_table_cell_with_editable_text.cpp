@@ -2,9 +2,9 @@
 #include <escher/palette.h>
 #include <escher/app.h>
 
-PointerTableCellWithEditableText::PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, char * label) :
+PointerTableCellWithEditableText::PointerTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
   Responder(parentResponder),
-  PointerTableCell(label),
+  PointerTableCell(message),
   m_textField(TextField(this, m_textBody, draftTextBuffer, 255, textFieldDelegate, KDText::FontSize::Large, 1.0f, 0.5f))
 {
 }

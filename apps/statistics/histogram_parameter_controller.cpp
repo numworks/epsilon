@@ -7,14 +7,14 @@ using namespace Shared;
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
-  FloatParameterController(parentResponder, "Valider"),
-  m_cells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, nullptr)},
+  FloatParameterController(parentResponder),
+  m_cells{PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), PointerTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
   m_store(store)
 {
 }
 
-const char * HistogramParameterController::title() const {
-  return "Parametres de l'histogramme";
+const char * HistogramParameterController::title() {
+  return I18n::translate(I18n::Message::HistogramSet);
 }
 
 void HistogramParameterController::viewWillAppear() {
@@ -33,8 +33,8 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
     return;
   }
   PointerTableCellWithEditableText * myCell = (PointerTableCellWithEditableText *)cell;
-  const char * labels[2] = {"Largeur des rectangles : ", "Debut de la serie : "};
-  myCell->setText(labels[index]);
+  I18n::Message labels[2] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
+  myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -54,7 +54,7 @@ void HistogramParameterController::setParameterAtIndex(int parameterIndex, float
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
     if (f <= 0.0f) {
-      app()->displayWarning("Valeur interdite");
+      app()->displayWarning(I18n::Message::ForbiddenValue);
       return;
     }
     m_store->setBarWidth(f);

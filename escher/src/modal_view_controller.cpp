@@ -106,10 +106,6 @@ bool ModalViewController::isDisplayingModal() {
   return m_contentView.isDisplayingModal();
 }
 
-const char * ModalViewController::title() const {
-  return "Modal View Controller";
-}
-
 void ModalViewController::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
   KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
   m_currentModalViewController = vc;

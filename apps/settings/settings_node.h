@@ -7,7 +7,7 @@ namespace Settings {
 
 class SettingsNode : public Node {
 public:
-  constexpr SettingsNode(const char * label = nullptr, const SettingsNode * children = nullptr, int numberOfChildren = 0) :
+  constexpr SettingsNode(I18n::Message label = I18n::Message::Default, const SettingsNode * children = nullptr, int numberOfChildren = 0) :
     Node(label, numberOfChildren),
     m_children(children)
   {

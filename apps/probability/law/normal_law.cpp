@@ -11,8 +11,8 @@ NormalLaw::NormalLaw() :
 {
 }
 
-const char * NormalLaw::title() {
-  return "Loi normale";
+I18n::Message NormalLaw::title() {
+  return I18n::Message::NormalLaw;
 }
 
 Law::Type NormalLaw::type() const {
@@ -23,25 +23,21 @@ bool NormalLaw::isContinuous() const {
   return true;
 }
 
-const char * NormalLaw::parameterNameAtIndex(int index) {
+I18n::Message NormalLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    constexpr static char meanName[] = {Ion::Charset::SmallMu, 0};
-    return meanName;
+    return I18n::Message::Mu;
   } else {
-    constexpr static char devName[] = {Ion::Charset::SmallSigma, 0};
-    return devName;
+    return I18n::Message::Sigma;
   }
 }
 
-const char * NormalLaw::parameterDefinitionAtIndex(int index) {
+I18n::Message NormalLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    constexpr static char meanDef[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'm', 'o', 'y', 'e', 'n', 'n', 'e', 0};
-    return meanDef;
+    return I18n::Message::MeanDefinition;
   } else {
-    constexpr static char devDef[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'e', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
-    return devDef;
+    return I18n::Message::DeviationDefinition;
   }
 }
 

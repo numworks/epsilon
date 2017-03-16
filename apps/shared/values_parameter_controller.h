@@ -7,10 +7,10 @@
 namespace Shared {
 class ValuesParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, char symbol);
+  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title);
 
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
@@ -19,8 +19,7 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCell = 3;
-  constexpr static int k_maxNumberOfCharsInTitle = 10;
-  char m_pageTitle[10];
+  I18n::Message m_pageTitle;
   PointerTableCell m_deleteColumn;
   PointerTableCellWithChevron m_copyColumn;
   PointerTableCellWithChevron m_setInterval;

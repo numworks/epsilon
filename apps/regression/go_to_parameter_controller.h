@@ -12,7 +12,7 @@ class GoToParameterController : public Shared::FloatParameterController {
 public:
   GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   void setXPrediction(bool xPrediction);
-  const char * title() const override;
+  const char * title() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;

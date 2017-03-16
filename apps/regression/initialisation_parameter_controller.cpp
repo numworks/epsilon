@@ -14,8 +14,8 @@ InitialisationParameterController::InitialisationParameterController(Responder *
 {
 }
 
-const char * InitialisationParameterController::title() const {
-  return "Zoom predefini";
+const char * InitialisationParameterController::title() {
+  return I18n::translate(I18n::Message::PredefinedZoom);
 }
 
 View * InitialisationParameterController::view() {
@@ -60,8 +60,8 @@ KDCoordinate InitialisationParameterController::cellHeight() {
 
 void InitialisationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   PointerTableCell * myCell = (PointerTableCell *)cell;
-  const char * titles[3] = {"Abscisses entieres", "Orthonorme", "Reglage de base"};
-  myCell->setText(titles[index]);
+  I18n::Message titles[3] = {I18n::Message::RoundAbscissa, I18n::Message::Orthonormal, I18n::Message::DefaultSetting};
+  myCell->setMessage(titles[index]);
 }
 
 }

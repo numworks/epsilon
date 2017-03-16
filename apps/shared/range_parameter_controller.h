@@ -10,7 +10,7 @@ namespace Shared {
 class RangeParameterController : public FloatParameterController {
 public:
   RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
-  const char * title() const override;
+  const char * title() override;
   void viewWillAppear() override;
   int numberOfRows() override;
   int typeAtLocation(int i, int j) override;

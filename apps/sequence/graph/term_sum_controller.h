@@ -12,7 +12,7 @@ namespace Sequence {
 class TermSumController : public ViewController {
 public:
   TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
-  const char * title() const override;
+  const char * title() override;
   View * view() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -30,17 +30,17 @@ private:
       LegendView();
       ~LegendView();
       void drawRect(KDContext * ctx, KDRect rect) const override;
-      void setLegendText(const char * text);
+      void setLegendMessage(I18n::Message message);
       void setSumSubscript(float start);
       void setSumSuperscript(float start, float end);
-      void setSequenceName(const char * sequenceName);
+      void setSumResult(const char * sequenceName, float result);
     private:
       void layoutSubviews() override;
       int numberOfSubviews() const override;
       View * subviewAtIndex(int index) override;
       ExpressionView m_sum;
       Poincare::ExpressionLayout * m_sumLayout;
-      BufferTextView m_legend;
+      PointerTextView m_legend;
     };
     ContentView(GraphView * graphView);
     void layoutSubviews() override;

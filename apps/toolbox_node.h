@@ -5,17 +5,17 @@
 
 class ToolboxNode : public Node {
 public:
-  constexpr ToolboxNode(const char * label = nullptr, const char * text = nullptr, const ToolboxNode * children = nullptr, int numberOfChildren = 0) :
+  constexpr ToolboxNode(I18n::Message label = I18n::Message::Default, I18n::Message text = I18n::Message::Default, const ToolboxNode * children = nullptr, int numberOfChildren = 0) :
     Node(label, numberOfChildren),
     m_children(children),
     m_text(text)
   {
   };
   const Node * children(int index) const override;
-  const char * text() const;
+  I18n::Message text() const;
 private:
   const ToolboxNode * m_children;
-  const char * m_text;
+  I18n::Message m_text;
 };
 
 #endif

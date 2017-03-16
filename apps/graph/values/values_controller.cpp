@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, 'x'),
+  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small),
     FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small)},
   m_functionStore(functionStore),
@@ -39,7 +39,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddPointerTextCell * mytitleCell = (EvenOddPointerTextCell *)cell;
-    mytitleCell->setText("x");
+    mytitleCell->setMessage(I18n::Message::X);
     return;
   }
   // The cell is a function title cell:
@@ -61,11 +61,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
-const char * ValuesController::emptyMessage() {
+I18n::Message ValuesController::emptyMessage() {
   if (m_functionStore->numberOfDefinedFunctions() == 0) {
-    return "Aucune fonction";
+    return I18n::Message::NoFunction;
   }
-  return "Aucune fonction selectionnee";
+  return I18n::Message::NoActivatedFunction;
 }
 
 void ValuesController::selectCellAtLocation(int i, int j) {

@@ -18,8 +18,8 @@ void StackViewController::ControllerView::setContentView(View * view) {
   markRectAsDirty(bounds());
 }
 
-void StackViewController::ControllerView::pushStack(const char * name, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
-  m_stackViews[m_numberOfStacks].setName(name);
+void StackViewController::ControllerView::pushStack(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
+  m_stackViews[m_numberOfStacks].setNamedController(controller);
   m_stackViews[m_numberOfStacks].setTextColor(textColor);
   m_stackViews[m_numberOfStacks].setBackgroundColor(backgroundColor);
   m_stackViews[m_numberOfStacks].setSeparatorColor(separatorColor);
@@ -78,17 +78,17 @@ StackViewController::StackViewController(Responder * parentResponder, ViewContro
   // push(rootViewController);
 }
 
-const char * StackViewController::title() const {
+const char * StackViewController::title() {
   if (m_rootViewController) {
     return m_rootViewController->title();
   } else {
-    ViewController * vc = m_children[m_numberOfChildren-1];
+    ViewController * vc = m_children[0];
     return vc->title();
   }
 }
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
-  m_view.pushStack(vc->title(), textColor, backgroundColor, separatorColor);
+  m_view.pushStack(vc, textColor, backgroundColor, separatorColor);
   m_children[m_numberOfChildren++] = vc;
   if (m_numberOfChildren > 1) {
     m_children[m_numberOfChildren-2]->viewWillDisappear();

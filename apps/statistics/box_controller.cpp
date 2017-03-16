@@ -16,8 +16,8 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
 {
 }
 
-const char * BoxController::title() const {
-  return "Boite";
+const char * BoxController::title() {
+  return I18n::translate(I18n::Message::BoxTab);
 }
 
 View * BoxController::view() {
@@ -52,8 +52,9 @@ bool BoxController::isEmpty() const {
   }
   return false;
 }
-const char * BoxController::emptyMessage() {
-  return "Aucune donnee a tracer";
+
+I18n::Message BoxController::emptyMessage() {
+  return I18n::Message::NoDataToPlot;
 }
 
 Responder * BoxController::defaultController() {
@@ -65,8 +66,8 @@ Responder * BoxController::tabController() const {
 }
 
 void BoxController::reloadBannerView() {
-  const char * calculationName[5] = {"Minimum", "Premier quartile", "Mediane", "Troisieme quartile", "Maximum"};
-  m_boxBannerView.setLegendAtIndex((char *)calculationName[(int)m_view.selectedQuantile()], 0);
+  I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
+  m_boxBannerView.setMessageAtIndex(calculationName[(int)m_view.selectedQuantile()], 0);
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};

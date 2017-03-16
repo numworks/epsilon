@@ -8,7 +8,7 @@ namespace Graph {
 
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
   ValuesFunctionParameterController('x'),
-  m_displayDerivativeColumn(PointerTableCellWithSwitch((char*)"Colonne de la fonction derivee")),
+  m_displayDerivativeColumn(PointerTableCellWithSwitch(I18n::Message::DerivativeFunctionColumn)),
   m_cartesianFunction(nullptr),
   m_valuesController(valuesController)
 {

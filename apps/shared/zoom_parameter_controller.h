@@ -4,13 +4,14 @@
 #include <escher.h>
 #include "interactive_curve_view_range.h"
 #include "curve_view.h"
+#include "../i18n.h"
 
 namespace Shared {
 
 class ZoomParameterController : public ViewController {
 public:
   ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
-  const char * title() const override;
+  const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

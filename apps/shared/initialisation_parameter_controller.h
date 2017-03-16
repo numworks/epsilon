@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "interactive_curve_view_range.h"
+#include "../i18n.h"
 
 namespace Shared {
 
@@ -10,7 +11,7 @@ class InitialisationParameterController : public ViewController, public SimpleLi
 public:
   InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange);
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

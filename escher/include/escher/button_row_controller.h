@@ -4,6 +4,7 @@
 #include <escher/view_controller.h>
 #include <escher/view.h>
 #include <escher/invocation.h>
+#include <escher/i18n.h>
 #include <escher/button.h>
 #include <escher/app.h>
 
@@ -21,7 +22,7 @@ public:
   };
   ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position = Position::Top, Style = Style::PlainWhite);
   View * view() override;
-  const char * title() const override;
+  const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool setSelectedButton(int selectedButton);

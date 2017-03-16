@@ -3,26 +3,20 @@
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, char symbol) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
   ViewController(parentResponder),
-  m_pageTitle("Colonne 0"),
-  m_deleteColumn(PointerTableCell((char*)"Effacer la colonne")),
-  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
-  m_setInterval(PointerTableCellWithChevron((char*)"Regler l'intervalle")),
+  m_pageTitle(title),
+  m_deleteColumn(PointerTableCell(I18n::Message::ClearColumn)),
+  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
+  m_setInterval(PointerTableCellWithChevron(I18n::Message::IntervalSet)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)
 {
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == ' ') {
-      m_pageTitle[currentChar+1] = symbol;
-      return;
-    }
-  }
 }
 
-const char * ValuesParameterController::title() const {
-  return m_pageTitle;
+const char * ValuesParameterController::title() {
+  return I18n::translate(m_pageTitle);
 }
 
 View * ValuesParameterController::view() {

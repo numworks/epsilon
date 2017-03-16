@@ -5,21 +5,23 @@ namespace Shared {
 
 ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol) :
   ViewController(nullptr),
-  m_copyColumn(PointerTableCellWithChevron((char*)"Copier la colonne dans une liste")),
+  m_copyColumn(PointerTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_selectableTableView(SelectableTableView(this, this, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_pageTitle{"Colonne f(x)"},
-  m_function(nullptr)
+  m_function(nullptr),
+  m_symbol(symbol)
 {
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar+1] = symbol;
-      return;
-    }
-  }
 }
 
-const char * ValuesFunctionParameterController::title() const {
+const char * ValuesFunctionParameterController::title() {
+  strlcpy(m_pageTitle, I18n::translate(I18n::Message::FunctionColumn), k_maxNumberOfCharsInTitle);
+  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
+    if (m_pageTitle[currentChar] == '(') {
+      m_pageTitle[currentChar-1] = *m_function->name();
+      m_pageTitle[currentChar+1] = m_symbol;
+      break;
+    }
+  }
   return m_pageTitle;
 }
 
@@ -29,12 +31,6 @@ View * ValuesFunctionParameterController::view() {
 
 void ValuesFunctionParameterController::setFunction(Function * function) {
   m_function = function;
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar-1] = *m_function->name();
-      return;
-    }
-  }
 }
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {
@@ -49,7 +45,7 @@ int ValuesFunctionParameterController::numberOfRows() {
 
 HighlightCell * ValuesFunctionParameterController::reusableCell(int index) {
   assert(index == 0);
-  return &m_copyColumn; 
+  return &m_copyColumn;
 }
 
 int ValuesFunctionParameterController::reusableCellCount() {

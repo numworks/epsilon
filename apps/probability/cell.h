@@ -9,7 +9,7 @@ class Cell : public HighlightCell {
 public:
   Cell();
   void reloadCell() override;
-  void setLabel(const char * text);
+  void setLabel(I18n::Message message);
   void setImage(const Image * image, const Image * focusedImage);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:

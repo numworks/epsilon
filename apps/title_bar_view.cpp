@@ -51,15 +51,16 @@ void TitleBarView::refreshPreferences() {
   char buffer[13];
   int numberOfChar = 0;
   if (Preferences::sharedPreferences()->displayMode() == Expression::FloatDisplayMode::Scientific) {
-    strlcpy(buffer, "sci/", 5);
-    numberOfChar += 4;
+    strlcpy(buffer, I18n::translate(I18n::Message::Sci), strlen(I18n::translate(I18n::Message::Sci))+1);
+    numberOfChar += strlen(I18n::translate(I18n::Message::Sci))+1;
   }
   if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Radian) {
-    strlcpy(buffer+numberOfChar, "rad", 4);
+    strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), strlen(I18n::translate(I18n::Message::Rad))+1);
+    numberOfChar += strlen(I18n::translate(I18n::Message::Rad))+1;
   } else {
-    strlcpy(buffer+numberOfChar, "deg", 4);
+    strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), strlen(I18n::translate(I18n::Message::Sci))+1);
+    numberOfChar += strlen(I18n::translate(I18n::Message::Deg))+1;
   }
-  numberOfChar += 3;
   buffer[numberOfChar] = 0;
   m_preferenceView.setText(buffer);
   layoutSubviews();

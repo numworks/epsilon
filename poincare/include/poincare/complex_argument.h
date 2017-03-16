@@ -1,21 +1,21 @@
-#ifndef POINCARE_ABSOLUTE_VALUE_H
-#define POINCARE_ABSOLUTE_VALUE_H
+#ifndef POINCARE_COMPLEX_ARGUMENT_H
+#define POINCARE_COMPLEX_ARGUMENT_H
 
 #include <poincare/function.h>
 
 namespace Poincare {
 
-class AbsoluteValue : public Function {
+class ComplexArgument : public Function {
 public:
-  AbsoluteValue();
+  ComplexArgument();
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
 private:
   float privateApproximate(Context & context, AngleUnit angleUnit) const override;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };
 
 }
 
 #endif
+

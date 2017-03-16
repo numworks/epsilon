@@ -20,6 +20,7 @@ objs += $(addprefix poincare/src/,\
   hyperbolic_cosine.o\
   hyperbolic_sine.o\
   hyperbolic_tangent.o\
+  imaginary_part.o\
   integer.o\
   integral.o\
   list_data.o\
@@ -36,6 +37,7 @@ objs += $(addprefix poincare/src/,\
   power.o\
   preferences.o\
   product.o\
+  reel_part.o\
   sine.o\
   square_root.o\
   subtraction.o\

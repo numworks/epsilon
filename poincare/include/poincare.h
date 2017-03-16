@@ -17,6 +17,7 @@
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>
 #include <poincare/integer.h>
+#include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
 #include <poincare/list_data.h>
 #include <poincare/logarithm.h>
@@ -31,6 +32,7 @@
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>
+#include <poincare/reel_part.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>

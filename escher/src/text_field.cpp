@@ -167,6 +167,7 @@ void TextField::ContentView::deleteCharPrecedingCursor() {
     m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
   }
   m_draftTextBuffer[m_currentTextLength] = 0;
+  layoutSubviews();
 }
 
 int TextField::ContentView::numberOfSubviews() const {

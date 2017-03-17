@@ -2,6 +2,7 @@ include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
 
 objs += $(addprefix ion/src/shared/, \
+  console_line.o \
   events_keyboard.o \
 )
 

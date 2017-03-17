@@ -93,14 +93,12 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 /* Legend View */
 
 ZoomParameterController::ContentView::LegendView::LegendView() :
-  m_legends{MessageTextView(KDText::FontSize::Small, I18n::Message::TopCapital, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::LeftCapital, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::ZoomCapital, 0.5f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::BottomCapital, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::RightCapital, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright)},
-  m_legendPictograms{KeyView(KeyView::Type::Up), KeyView(KeyView::Type::Left),
-    KeyView(KeyView::Type::Plus), KeyView(KeyView::Type::Minus),
-    KeyView(KeyView::Type::Down), KeyView(KeyView::Type::Right)}
+  m_legends{MessageTextView(KDText::FontSize::Small, I18n::Message::Move, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    MessageTextView(KDText::FontSize::Small, I18n::Message::ToZoom, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+    MessageTextView(KDText::FontSize::Small, I18n::Message::Or, 0.5f, 0.5f, KDColorBlack, Palette::GreyBright)},
+  m_legendPictograms{KeyView(KeyView::Type::Up), KeyView(KeyView::Type::Down),
+    KeyView(KeyView::Type::Left), KeyView(KeyView::Type::Right),
+    KeyView(KeyView::Type::Plus), KeyView(KeyView::Type::Minus)}
 {
 }
 
@@ -109,31 +107,35 @@ void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx,
 }
 
 int ZoomParameterController::ContentView::LegendView::numberOfSubviews() const {
-  return 2*k_numberOfLegends-1;
+  return k_numberOfLegends+k_numberOfTokens;
 }
 
 View * ZoomParameterController::ContentView::LegendView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2*k_numberOfLegends);
-  if (index < k_numberOfLegends-1) {
+  assert(index >= 0 && index < k_numberOfTokens+k_numberOfLegends);
+  if (index < k_numberOfLegends) {
     return &m_legends[index];
   }
-  return &m_legendPictograms[index-k_numberOfLegends+1];
+  return &m_legendPictograms[index-k_numberOfLegends];
 }
 
 void ZoomParameterController::ContentView::LegendView::layoutSubviews() {
-  KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  for (int row = 0; row < 2; row++) {
-    m_legends[row].setFrame(KDRect(k_tokenWidth, row*height/2, width/3 - k_tokenWidth, height/2));
-    m_legends[3+row].setFrame(KDRect(2*width/3, row*height/2, width/3 - k_tokenWidth, height/2));
+  KDCoordinate xOrigin = 0;
+  KDCoordinate legendWidth = m_legends[0].minimalSizeForOptimalDisplay().width();
+  m_legends[0].setFrame(KDRect(xOrigin, 0, legendWidth, height));
+  xOrigin += legendWidth;
+  for (int i = 0; i < k_numberOfTokens - 2; i++) {
+    m_legendPictograms[i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height));
+    xOrigin += k_tokenWidth;
   }
-  m_legends[2].setFrame(KDRect(width/3, 0, width/3, height));
-  for (int row = 0; row < 2; row++) {
-    m_legendPictograms[row].setFrame(KDRect(0, row*height/2, k_tokenWidth, height/2));
-    m_legendPictograms[4+row].setFrame(KDRect(width-k_tokenWidth, row*height/2, k_tokenWidth, height/2));
+  xOrigin = bounds().width()/2;
+  for (int i = 1; i < k_numberOfLegends; i++) {
+    KDCoordinate legendWidth = m_legends[i].minimalSizeForOptimalDisplay().width();
+    m_legends[i].setFrame(KDRect(xOrigin, 0, legendWidth, height));
+    xOrigin += legendWidth;
+    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height));
+    xOrigin += k_tokenWidth;
   }
-  m_legendPictograms[2].setFrame(KDRect(width/3, 0, k_tokenWidth, height));
-  m_legendPictograms[3].setFrame(KDRect(2*width/3-k_tokenWidth, 0, k_tokenWidth, height));
 }
 
 }

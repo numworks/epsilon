@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[200][3] {
+const char * messages[196][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
@@ -107,13 +107,9 @@ const char * messages[200][3] {
   {"Zoom interactif", "Interactive zoom", "Zoom interactivo"},
   {"Zoom predefini", "Predefined zoom", "Zoom predefinido"},
   {"Initialisation", "Preadjustment", "Inicializacion"},
-  {"HAUT", "TOP", "???"},
-  {"GAUCHE", "LEFT", "???"},
-  {"BAS", "BOTTM", "???"},
-  {"DROITE", "RIGHT", "???"},
-  {"ZOOM", "ZOOM", "ZOOM"},
-  {"Se deplacer", "Move", "Mover"},
-  {"Zoomer", "Zoom", "Zoom"},
+  {" Deplacer : ", "Move: ", "Mover : "},
+  {"Zoomer : ", "Zoom: ", "Zoom : "},
+  {" ou ", " or ", " o "},
   {"Trigonometrique", "Trigonometrical", "Trigonometrico"},
   {"Abscisses entieres", "Integer", "Abscisas enteras"},
   {"Orthonorme", "Orthonormal", "Ortonormal"},

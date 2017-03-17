@@ -36,6 +36,10 @@ QUIZ_CASE(poincare_parse_function) {
   assert(e->type() == Expression::Type::Determinant);
   delete e;
 
+  e = Expression::parse("confidence(0.1, 100)");
+  assert(e->type() == Expression::Type::ConfidenceInterval);
+  delete e;
+
   e = Expression::parse("conj(2)");
   assert(e->type() == Expression::Type::Conjugate);
   delete e;
@@ -79,6 +83,14 @@ QUIZ_CASE(poincare_parse_function) {
 
   e = Expression::parse("permute(10, 4)");
   assert(e->type() == Expression::Type::PermuteCoefficient);
+  delete e;
+
+  e = Expression::parse("prediction(0.1, 100)");
+  assert(e->type() == Expression::Type::ConfidenceInterval);
+  delete e;
+
+  e = Expression::parse("prediction95(0.1, 100)");
+  assert(e->type() == Expression::Type::PredictionInterval);
   delete e;
 
   e = Expression::parse("product(n, 4, 10)");
@@ -238,6 +250,13 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete a;
   delete e;
 
+  a = Expression::parse("confidence(0.1, 100)");
+  e = a->evaluate(globalContext);
+  assert(fabsf(e->operand(0)->approximate(globalContext)- 0.1f + sqrtf(1.0f/100.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(1)->approximate(globalContext) - 0.1f - sqrtf(1.0f/100.0f)) <= 0.00001f);
+  delete a;
+  delete e;
+
   a = Expression::parse("dim([[1,2,3][4,5,-6]])");
   e = a->evaluate(globalContext);
   assert(fabsf(e->operand(0)->approximate(globalContext)-2.0f) <= 0.00001f);
@@ -264,6 +283,20 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert(fabsf(e->operand(6)->approximate(globalContext) -(1.0f/24.0f)) <= 0.00001f);
   assert(fabsf(e->operand(7)->approximate(globalContext) -(-1.0f/12.0f)) <= 0.00001f);
   assert(fabsf(e->operand(8)->approximate(globalContext) -(1.0f/24.0f)) <= 0.00001f);
+  delete a;
+  delete e;
+
+  a = Expression::parse("prediction(0.1, 100)");
+  e = a->evaluate(globalContext);
+  assert(fabsf(e->operand(0)->approximate(globalContext)- 0.1f + sqrtf(1.0f/100.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(1)->approximate(globalContext) - 0.1f - sqrtf(1.0f/100.0f)) <= 0.00001f);
+  delete a;
+  delete e;
+
+  a = Expression::parse("prediction95(0.1, 100)");
+  e = a->evaluate(globalContext);
+  assert(fabsf(e->operand(0)->approximate(globalContext)- 0.1f + 1.96f*sqrtf((0.1f*0.9f)/100.0f)) <= 0.00001f);
+  assert(fabsf(e->operand(1)->approximate(globalContext) - 0.1f - 1.96f*sqrtf((0.1f*0.9f)/100.0f)) <= 0.00001f);
   delete a;
   delete e;
 

@@ -19,6 +19,10 @@ Sum::Sum() :
 {
 }
 
+bool Sum::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 3);
+}
+
 Expression::Type Sum::type() const {
   return Type::Sum;
 }

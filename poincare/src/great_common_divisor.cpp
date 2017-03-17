@@ -13,6 +13,10 @@ GreatCommonDivisor::GreatCommonDivisor() :
 {
 }
 
+bool GreatCommonDivisor::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type GreatCommonDivisor::type() const {
   return Type::GreatCommonDivisor;
 }

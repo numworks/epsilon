@@ -63,6 +63,11 @@ Function::~Function() {
   }
 }
 
+bool Function::isValidNumberOfArguments(int numberOfArguments) {
+  /* By default, a function has one argument only */
+  return (numberOfArguments == 1);
+}
+
 Expression * Function::clone() const {
   return this->cloneWithDifferentOperands(m_args, m_numberOfArguments, true);
 }

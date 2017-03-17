@@ -12,6 +12,10 @@ ConfidenceInterval::ConfidenceInterval() :
 {
 }
 
+bool ConfidenceInterval::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type ConfidenceInterval::type() const {
   return Type::ConfidenceInterval;
 }

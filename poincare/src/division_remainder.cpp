@@ -12,6 +12,10 @@ DivisionRemainder::DivisionRemainder() :
 {
 }
 
+bool DivisionRemainder::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type DivisionRemainder::type() const {
   return Type::DivisionRemainder;
 }

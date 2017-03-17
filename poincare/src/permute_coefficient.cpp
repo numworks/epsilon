@@ -13,6 +13,10 @@ PermuteCoefficient::PermuteCoefficient() :
 {
 }
 
+bool PermuteCoefficient::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type PermuteCoefficient::type() const {
   return Type::PermuteCoefficient;
 }

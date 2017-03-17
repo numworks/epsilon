@@ -13,6 +13,10 @@ LeastCommonMultiple::LeastCommonMultiple() :
 {
 }
 
+bool LeastCommonMultiple::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type LeastCommonMultiple::type() const {
   return Type::LeastCommonMultiple;
 }

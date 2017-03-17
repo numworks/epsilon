@@ -14,7 +14,6 @@ void MCUSerial(const char * input) {
   char response[11+24+1] = {'M', 'C', 'U', '_', 'S', 'E', 'R', 'I', 'A', 'L', '=', 0};
   strlcpy(response+11, Ion::serialNumber(), 25);
   reply(response);
-  Ion::Console::writeLine(response);
 }
 
 }

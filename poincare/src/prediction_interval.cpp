@@ -39,8 +39,8 @@ Expression * PredictionInterval::privateEvaluate(Context& context, AngleUnit ang
   float p = m_args[0]->approximate(context, angleUnit);
   float n = m_args[1]->approximate(context, angleUnit);
   Expression * operands[2];
-  operands[0] = new Complex(Complex::Float(p - 1.96f*sqrtf(p*(1-p))/sqrtf(n)));
-  operands[1] = new Complex(Complex::Float(p + 1.96f*sqrtf(p*(1-p))/sqrtf(n)));
+  operands[0] = new Complex(Complex::Float(p - 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n)));
+  operands[1] = new Complex(Complex::Float(p + 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n)));
   return new Matrix(new MatrixData(operands, 2, 2, 1, false));
 }
 

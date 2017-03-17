@@ -2,33 +2,21 @@
 #include "console.h"
 
 /* This file implements a serial console.
- * We use a 9600 8N1 serial port */
+ * We use a 115200 8N1 serial port */
 
 namespace Ion {
 namespace Console {
 
-void writeLine(const char * line) {
-  while (*line != NULL) {
-    Device::sendChar(*line++);
+char readChar() {
+  while (Device::UARTPort.SR()->getRXNE() == 0) {
   }
-  Device::sendChar('\r');
-  Device::sendChar('\n');
+  return (char)Device::UARTPort.DR()->get();
 }
 
-void readLine(char * line, int maxLineLength) {
-  if (maxLineLength <= 0) {
-    return;
+void writeChar(char c) {
+  while (Device::UARTPort.SR()->getTXE() == 0) {
   }
-  char * cursor = line;
-  char * last = line+maxLineLength-1;
-  while (true) {
-    *cursor = Device::recvChar();
-    if (*cursor == '\r' || cursor == last) {
-      *cursor = 0;
-      return;
-    }
-    cursor++;
-  }
+  Device::UARTPort.DR()->set(c);
 }
 
 }
@@ -50,17 +38,19 @@ void init() {
   UARTPort.CR1()->setTE(true);
   UARTPort.CR1()->setRE(true);
 
-  // Set the Baud rate
-  // base clock = 16 MHz
-  // Baud rate = fAPB2/(16*USARTDIV)
-  // USARTDIV = 104.16667
-  //
-  // DIV_Fraction = 16*0.16666667
-  //  = 2.666667 -> 3
-  // DIV_Mantissa = 104 = 0x68
-  // USART_BRR = 0x683
-  UARTPort.BRR()->setDIV_FRAC(3);
-  UARTPort.BRR()->setDIV_MANTISSA(104);
+  /* We need to set the baud rate of the UART port.
+   * This is set relative to the APB2 clock, which runs at 96 MHz.
+   *
+   * The baud rate is set by the following equation:
+   * BaudRate = fAPB2/(16*USARTDIV), where USARTDIV is a divider.
+   * In other words, USARDFIV = fAPB2/(16*BaudRate). All frequencies in Hz.
+   *
+   * In our case, fAPB2 = 96 MHz, so USARTDIV = 52.08333
+   * DIV_MANTISSA = 52
+   * DIV_FRAC = 16*0.083333 = 1.33 = 1
+   */
+  UARTPort.BRR()->setDIV_MANTISSA(52);
+  UARTPort.BRR()->setDIV_FRAC(1);
 }
 
 void shutdown() {
@@ -68,18 +58,6 @@ void shutdown() {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
-}
-
-char recvChar() {
-  while (UARTPort.SR()->getRXNE() == 0) {
-  }
-  return (char)UARTPort.DR()->get();
-}
-
-void sendChar(char c) {
-  while (UARTPort.SR()->getTXE() == 0) {
-  }
-  UARTPort.DR()->set(c);
 }
 
 }

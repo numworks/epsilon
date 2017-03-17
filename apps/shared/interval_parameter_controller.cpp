@@ -49,9 +49,10 @@ float IntervalParameterController::parameterAtIndex(int index) {
   return (m_interval->*getters[index])();
 }
 
-void IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
   SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
   (m_interval->*setters[parameterIndex])(f);
+  return true;
 }
 
 HighlightCell * IntervalParameterController::reusableParameterCell(int index, int type) {

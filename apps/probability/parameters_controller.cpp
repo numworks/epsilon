@@ -138,12 +138,13 @@ float ParametersController::parameterAtIndex(int index) {
   return m_law->parameterValueAtIndex(index);
 }
 
-void ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
-    return;
+    return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
+  return true;
 }
 
 void ParametersController::buttonAction() {

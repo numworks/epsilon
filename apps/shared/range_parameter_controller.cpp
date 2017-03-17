@@ -116,11 +116,12 @@ float RangeParameterController::parameterAtIndex(int parameterIndex) {
   return (m_interactiveRange->*getters[index])();
 }
 
-void RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
   ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   (m_interactiveRange->*setters[index])(f);
+  return true;
 }
 
 HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {

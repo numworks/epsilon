@@ -50,17 +50,18 @@ float HistogramParameterController::previousParameterAtIndex(int index) {
   return m_previousParameters[index];
 }
 
-void HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < 2);
   if (parameterIndex == 0) {
     if (f <= 0.0f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
-      return;
+      return false;
     }
     m_store->setBarWidth(f);
   } else {
     m_store->setFirstDrawnBarAbscissa(f);
   }
+  return true;
 }
 
 HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {

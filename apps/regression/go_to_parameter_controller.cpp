@@ -44,22 +44,32 @@ float GoToParameterController::parameterAtIndex(int index) {
   return m_cursor->y();
 }
 
-void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
+  if (fabsf(f) > k_maxDisplayableFloat) {
+    app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
   if (m_xPrediction) {
     float y = m_store->yValueForXValue(f);
+    if (fabsf(y) > k_maxDisplayableFloat) {
+      app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+    }
     m_store->centerAxisAround(CurveViewRange::Axis::X, f);
     m_store->centerAxisAround(CurveViewRange::Axis::Y, y);
     m_cursor->moveTo(f, y);
   } else {
     float x = m_store->xValueForYValue(f);
-    if (isnan(x)) {
-      return;
+    if (fabsf(x) > k_maxDisplayableFloat) {
+      app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
     }
     m_store->centerAxisAround(CurveViewRange::Axis::X, x);
     m_store->centerAxisAround(CurveViewRange::Axis::Y, f);
     m_cursor->moveTo(x, f);
   }
+  return true;
 }
 
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {

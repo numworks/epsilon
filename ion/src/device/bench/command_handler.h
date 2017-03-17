@@ -13,6 +13,7 @@ public:
     m_name(name), m_function(function) {}
   bool valid() const;
   bool handle(const char * command) const;
+  Command::Function function() const { return m_function; }
 private:
   bool matches(const char * command) const;
   const char * m_name;

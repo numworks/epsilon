@@ -14,6 +14,7 @@ void ADC(const char * input);
 void Backlight(const char * input);
 void Charge(const char * input);
 void Display(const char * input);
+void Exit(const char * input);
 void Keyboard(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);

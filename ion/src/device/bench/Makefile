@@ -10,6 +10,7 @@ objs += $(addprefix ion/src/device/bench/command/, \
   backlight.o \
   charge.o \
   display.o \
+  exit.o \
   keyboard.o \
   led.o \
   mcu_serial.o \

@@ -10,7 +10,7 @@ namespace Bench {
 class CommandList {
 public:
   constexpr CommandList(const CommandHandler * handlers) : m_handlers(handlers) {}
-  void dispatch(const char * command) const;
+  const CommandHandler * dispatch(const char * command) const;
 private:
   const CommandHandler * m_handlers;
 };

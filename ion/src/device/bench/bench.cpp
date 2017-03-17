@@ -11,6 +11,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("BACKLIGHT", Command::Backlight),
   CommandHandler("CHARGE", Command::Charge),
   CommandHandler("DISPLAY", Command::Display),
+  CommandHandler("EXIT", Command::Exit),
   CommandHandler("KEYBOARD", Command::Keyboard),
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),
@@ -26,7 +27,10 @@ void run() {
   char command[kMaxCommandLength];
   while (true) {
     Ion::Console::readLine(command, kMaxCommandLength);
-    sCommandList.dispatch(command);
+    const CommandHandler * ch = sCommandList.dispatch(command);
+    if (ch != nullptr && ch->function() == Command::Exit) {
+      break;
+    }
   }
 }
 

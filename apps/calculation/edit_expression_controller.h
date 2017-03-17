@@ -29,8 +29,10 @@ private:
     void layoutSubviews() override;
     TextField * textField();
     TableView * mainView();
+    void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
-    static constexpr KDCoordinate k_textFieldHeight = 20;
+    static constexpr KDCoordinate k_textFieldHeight = 37;
+    constexpr static int k_separatorThickness = 1;
     TableView * m_mainView;
     TextField m_textField;
     char m_textBody[255];

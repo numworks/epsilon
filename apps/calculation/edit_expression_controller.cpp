@@ -25,10 +25,14 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
 }
 
 void EditExpressionController::ContentView::layoutSubviews() {
-  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - k_textFieldHeight);
+  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - k_textFieldHeight-k_separatorThickness);
   m_mainView->setFrame(mainViewFrame);
-  KDRect inputViewFram(0, bounds().height() - k_textFieldHeight, bounds().width(), k_textFieldHeight);
-  m_textField.setFrame(inputViewFram);
+  KDRect inputViewFrame(0, bounds().height() - k_textFieldHeight, bounds().width(), k_textFieldHeight);
+  m_textField.setFrame(inputViewFrame);
+}
+
+void  EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(KDRect(0, bounds().height() -k_textFieldHeight-k_separatorThickness, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
 }
 
 TextField * EditExpressionController::ContentView::textField() {

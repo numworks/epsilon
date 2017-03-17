@@ -23,7 +23,7 @@ private:
   int reusableParameterCellCount(int type) override;
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
-  void setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfTextCell = 4;
   InteractiveCurveViewRange * m_interactiveRange;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];

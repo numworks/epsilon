@@ -103,7 +103,9 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody);
+  if (!setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody)) {
+    return false;
+  }
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
     m_selectableTableView.selectedRow()), activeCell());
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()+1);

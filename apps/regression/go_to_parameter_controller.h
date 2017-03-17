@@ -18,11 +18,12 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   void viewWillAppear() override;
 private:
+  constexpr static float k_maxDisplayableFloat = 1E7f;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
-  void setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   void buttonAction() override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_abscisseCell;

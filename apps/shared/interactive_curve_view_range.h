@@ -18,6 +18,8 @@ public:
   bool yAuto();
   void setXMin(float f) override;
   void setXMax(float f) override;
+  void setYMin(float f) override;
+  void setYMax(float f) override;
   void setYAuto(bool yAuto);
 
   // Window
@@ -32,6 +34,7 @@ public:
 protected:
   bool m_yAuto;
 private:
+  constexpr static float k_minFloat = 1E-8f;
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRangeDelegate * m_delegate;
 };

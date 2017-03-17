@@ -36,13 +36,18 @@ float GoToParameterController::parameterAtIndex(int index) {
   return m_cursor->x();
 }
 
-void GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
+  if (fabsf(f) > k_maxDisplayableFloat || fabsf(y) > k_maxDisplayableFloat) {
+    app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
   m_cursor->moveTo(f, y);
+  return true;
 }
 
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {

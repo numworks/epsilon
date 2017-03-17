@@ -17,12 +17,13 @@ public:
   void setFunction(Function * function);
   int numberOfRows() override;
 private:
+  constexpr static float k_maxDisplayableFloat = 1E7f;
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
-  void setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_abscisseCell;
   float m_previousParameter;

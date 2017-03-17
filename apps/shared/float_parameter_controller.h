@@ -40,7 +40,7 @@ private:
   TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual float previousParameterAtIndex(int index) = 0;
   virtual float parameterAtIndex(int index) = 0;
-  virtual void setParameterAtIndex(int parameterIndex, float f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
   ButtonWithSeparator m_okButton;
 };
 

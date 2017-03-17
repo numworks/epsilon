@@ -17,8 +17,8 @@ public:
   float yGridUnit() override;
   virtual void setXMin(float f);
   virtual void setXMax(float f);
-  void setYMin(float f);
-  void setYMax(float f);
+  virtual void setYMin(float f);
+  virtual void setYMax(float f);
 
 protected:
   // Window bounds of the data

@@ -18,8 +18,14 @@ float CurveViewCursor::y() {
 }
 
 void CurveViewCursor::moveTo(float x, float y) {
-  m_x = x;
-  m_y = y;
+  m_x = clipped(x);
+  m_y = clipped(y);
+}
+
+float CurveViewCursor::clipped(float x) {
+  float clippedX = x > k_maxFloat ? k_maxFloat : x;
+  clippedX = clippedX < - k_maxFloat ? -k_maxFloat : clippedX;
+  return clippedX;
 }
 
 }

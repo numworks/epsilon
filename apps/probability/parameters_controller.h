@@ -23,7 +23,7 @@ private:
   void buttonAction() override;
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
-  void setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);

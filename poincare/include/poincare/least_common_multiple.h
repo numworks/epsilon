@@ -8,6 +8,7 @@ namespace Poincare {
 class LeastCommonMultiple : public Function {
 public:
   LeastCommonMultiple();
+  bool isValidNumberOfArguments(int numberOfArguments) override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

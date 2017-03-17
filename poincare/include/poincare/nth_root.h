@@ -8,6 +8,7 @@ namespace Poincare {
 class NthRoot : public Function {
 public:
   NthRoot();
+  bool isValidNumberOfArguments(int numberOfArguments) override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

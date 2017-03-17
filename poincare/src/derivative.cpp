@@ -15,6 +15,10 @@ Derivative::Derivative() :
 {
 }
 
+bool Derivative::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type Derivative::type() const {
   return Type::Derivative;
 }

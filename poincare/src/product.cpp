@@ -19,6 +19,10 @@ Product::Product() :
 {
 }
 
+bool Product::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 3);
+}
+
 Expression::Type Product::type() const {
   return Type::Product;
 }

@@ -290,7 +290,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete e;
 
 
-  char text2[20] ={Ion::Charset::Root, '(', '3', '+', Ion::Charset::IComplex, ',', '3',')', 0};
+  char text2[20] ={Ion::Charset::Root, '(', '3', '+', Ion::Charset::IComplex,')', 0};
   a = Expression::parse(text2);
   e = a->evaluate(globalContext);
   assert((1.75532f - 0.00001f) <= (((Complex *)e)->a()) &&

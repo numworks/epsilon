@@ -12,6 +12,10 @@ DivisionQuotient::DivisionQuotient() :
 {
 }
 
+bool DivisionQuotient::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type DivisionQuotient::type() const {
   return Type::DivisionQuotient;
 }

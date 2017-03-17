@@ -12,6 +12,10 @@ Round::Round() :
 {
 }
 
+bool Round::isValidNumberOfArguments(int numberOfArguments) {
+  return (numberOfArguments == 2);
+}
+
 Expression::Type Round::type() const {
   return Type::Round;
 }

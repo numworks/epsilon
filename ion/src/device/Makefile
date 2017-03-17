@@ -14,7 +14,6 @@ objs += $(addprefix ion/src/device/, \
   display.o\
   keyboard.o\
   led.o\
-  log.o\
   power.o\
   sd_card.o\
   swd.o \

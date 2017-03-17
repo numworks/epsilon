@@ -3,7 +3,6 @@ objs += $(addprefix ion/src/shared/, \
   crc32.o \
   events.o \
   events_stdin.o \
-  log_printf.o \
   power.o \
 )
 

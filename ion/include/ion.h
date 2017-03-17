@@ -9,7 +9,6 @@
 #include <ion/events.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
-#include <ion/log.h>
 #include <ion/power.h>
 #include <stdint.h>
 #include <string.h>

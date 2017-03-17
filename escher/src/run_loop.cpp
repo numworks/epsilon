@@ -53,17 +53,14 @@ void RunLoop::step() {
   }
 
 #if ESCHER_LOG_EVENTS_BINARY
-  char message[2] = { (char)event.id(), 0};
-  ion_log_string(message);
+  Ion::Console::writeChar((char)event.id());
 #endif
 #if ESCHER_LOG_EVENTS_NAME
   const char * name = event.name();
   if (name == nullptr) {
     name = "UNDEFINED";
   }
-  ion_log_string("Ion::Events::");
-  ion_log_string(name);
-  ion_log_string("\n");
+  Ion::Console::writeLine(name);
 #endif
 
   if (event != Ion::Events::None) {

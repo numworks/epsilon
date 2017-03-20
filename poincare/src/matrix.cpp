@@ -283,8 +283,8 @@ Expression * Matrix::createInverse(Context& context, AngleUnit angleUnit) const 
     }
   }
   Expression ** operands = (Expression **)malloc(numberOfOperands()*sizeof(Expression *));
-  for (int i = 0; i < numberOfRows(); i++) {
-    for (int j = 0; j < numberOfColumns(); j++) {
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
       operands[i*dim+j] = new Complex(Complex::Float(inv[i][j+dim]));
     }
   }

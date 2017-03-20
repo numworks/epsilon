@@ -24,7 +24,7 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
   if (dataSource()->rowHeight(j) > bounds().height()) {
     KDCoordinate contentOffsetX = contentOffset().x();
     KDCoordinate contentOffsetY = contentOffset().y();
-    if (contentOffset().y() > dataSource()->cumulatedHeightFromIndex(j) && contentOffset().y() > dataSource()->cumulatedHeightFromIndex(j+1)) {
+    if (contentOffsetY > dataSource()->cumulatedHeightFromIndex(j) && contentOffsetY > dataSource()->cumulatedHeightFromIndex(j+1)) {
       // Let's scroll the tableView to align the top of the cell to the top
       contentOffsetY = dataSource()->cumulatedHeightFromIndex(j);
     } else {
@@ -47,15 +47,13 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   }
   /* Main part of the scroll */
   KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY = contentOffset().y();
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(j+1) - maxContentHeightDisplayableWithoutScrolling();
   if (subviewType == HistoryViewCell::SubviewType::Input) {
     if (j == 0) {
       contentOffsetY = 0;
     } else {
       contentOffsetY = dataSource()->cumulatedHeightFromIndex(j);
     }
-  } else {
-    contentOffsetY = dataSource()->cumulatedHeightFromIndex(j+1) - maxContentHeightDisplayableWithoutScrolling();
   }
   /* For the same reason, we have to rehighlight the new history view cell and
    * inform the delegate which history view cell is highlighted even if the

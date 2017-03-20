@@ -43,11 +43,15 @@ Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) co
     return nullptr;
   }
   Expression * result = nullptr;
-  if (operandEvalutation->type() == Type::Complex) {
-    result = new Complex(Complex::Cartesian(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b()));
-  }
-  if (operandEvalutation->type() == Type::Matrix) {
-    result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
+  switch (operandEvalutation->type()) {
+    case Type::Complex:
+      result = new Complex(Complex::Cartesian(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b()));
+      break;
+    case Type::Matrix:
+      result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
+      break;
+    default:
+     break;
   }
   delete operandEvalutation;
   return result;

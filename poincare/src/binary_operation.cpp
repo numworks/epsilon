@@ -47,17 +47,37 @@ Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleU
     return nullptr;
   }
   Expression * result = nullptr;
-  if (leftOperandEvalutation->type() == Type::Complex && rightOperandEvalutation->type() == Type::Complex) {
-    result = evaluateOnComplex((Complex *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
-  }
-  if (leftOperandEvalutation->type() == Type::Complex && rightOperandEvalutation->type() == Type::Matrix) {
-    result =  evaluateOnComplexAndMatrix((Complex *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
-  }
-    if (leftOperandEvalutation->type() == Type::Matrix && rightOperandEvalutation->type() == Type::Complex) {
-    result = evaluateOnMatrixAndComplex((Matrix *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
-  }
-  if (leftOperandEvalutation->type() == Type::Matrix && rightOperandEvalutation->type() == Type::Matrix) {
-    result = evaluateOnMatrices((Matrix *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
+  switch (leftOperandEvalutation->type()) {
+    case Type::Complex:
+    {
+      switch (rightOperandEvalutation->type()) {
+        case Type::Complex:
+          result = evaluateOnComplex((Complex *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
+          break;
+        case Type::Matrix:
+          result = evaluateOnComplexAndMatrix((Complex *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
+          break;
+        default:
+          break;
+      }
+    }
+    break;
+    case Type::Matrix:
+    {
+      switch (rightOperandEvalutation->type()) {
+        case Type::Complex:
+          result = evaluateOnMatrixAndComplex((Matrix *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
+          break;
+        case Type::Matrix:
+          result = evaluateOnMatrices((Matrix *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
+          break;
+        default:
+          break;
+      }
+    }
+    break;
+    default:
+      break;
   }
   delete leftOperandEvalutation;
   delete rightOperandEvalutation;

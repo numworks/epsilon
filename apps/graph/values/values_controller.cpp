@@ -47,7 +47,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
     CartesianFunction * function = functionAtColumn(i);
     char bufferName[6] = {0, 0, '(', 'x', ')', 0};
-    const char * name = bufferName;
+    const char * name = nullptr;
     if (isDerivativeColumn(i)) {
       bufferName[0] = *function->name();
       bufferName[1] = '\'';

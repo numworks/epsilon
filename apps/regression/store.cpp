@@ -65,10 +65,8 @@ int Store::closestVerticalDot(int direction, float x) {
   // Compare with the mean dot
   if (m_xMin <= meanOfColumn(0) && meanOfColumn(0) <= m_xMax &&
       (fabsf(meanOfColumn(0) - x) < fabsf(nextX - x)) &&
-      ((meanOfColumn(1) - yValueForXValue(meanOfColumn(0)) >= 0) == (direction > 0))) { 
+      ((meanOfColumn(1) - yValueForXValue(meanOfColumn(0)) >= 0) == (direction > 0))) {
     if (nextX != meanOfColumn(0) || ((nextY - meanOfColumn(1) >= 0) == (direction > 0))) {
-      nextX = meanOfColumn(0);
-      nextY = meanOfColumn(1);
       selectedDot = m_numberOfPairs;
     }
   }
@@ -105,7 +103,6 @@ int Store::nextDot(int direction, int dot) {
           (m_numberOfPairs != dot) &&
           (meanOfColumn(0) >= x)) {
       if (meanOfColumn(0) != x || (x > dot)) {
-        nextX = meanOfColumn(0);
         selectedDot = m_numberOfPairs;
       }
     }

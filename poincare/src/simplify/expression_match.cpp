@@ -14,7 +14,7 @@ ExpressionMatch::ExpressionMatch() {
 
 ExpressionMatch::ExpressionMatch(const Expression ** expressions, int numberOfExpressions) {
   m_numberOfExpressions = numberOfExpressions;
-  m_expressions = (const Expression**) malloc(m_numberOfExpressions * sizeof(ExpressionMatch*));
+  m_expressions = (const Expression**) malloc(m_numberOfExpressions * sizeof(Expression*));
   for (int i(0); i<numberOfExpressions; i++) {
     m_expressions[i] = expressions[i];
   }

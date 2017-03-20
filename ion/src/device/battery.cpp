@@ -17,6 +17,19 @@ bool isCharging() {
   return !Device::ChargingGPIO.IDR()->get(Device::ChargingPin);
 }
 
+Charge level() {
+  if (voltage() < 3.2f) {
+    return Charge::EMPTY;
+  }
+  if (voltage() < 3.5f) {
+    return Charge::LOW;
+  }
+  if (voltage() < 3.8f) {
+    return Charge::SOMEWHERE_INBETWEEN;
+  }
+  return Charge::FULL;
+}
+
 float voltage() {
   ADC.CR2()->setSWSTART(true);
   while (ADC.SR()->getEOC() != true) {

@@ -37,12 +37,12 @@ QUIZ_CASE(poincare_symbol_approximate) {
   GlobalContext globalContext;
   char piText[2] = {Ion::Charset::SmallPi, 0};
   Expression * e = Expression::parse(piText);
-  assert(fabsf(e->approximate(globalContext)-M_PI) <= 0.0001f);
+  assert(fabsf(e->approximate(globalContext)-(float)M_PI) <= 0.0001f);
   delete e;
 
   char eText[2] = {Ion::Charset::Exponential, 0};
   e = Expression::parse(eText);
-  assert(fabsf(e->approximate(globalContext)-M_E) <= 0.0001f);
+  assert(fabsf(e->approximate(globalContext)-(float)M_E) <= 0.0001f);
 
   delete e;
 

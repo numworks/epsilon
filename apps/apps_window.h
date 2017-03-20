@@ -9,6 +9,7 @@ public:
   AppsWindow();
   void setTitle(I18n::Message title);
   void updateBatteryLevel();
+  void updateIsChargingState();
   void refreshPreferences();
 private:
   constexpr static KDCoordinate k_titleBarHeight = 18;

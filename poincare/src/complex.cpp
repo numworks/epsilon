@@ -6,8 +6,8 @@ extern "C" {
 #include <math.h>
 #include <float.h>
 }
-#include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
+#include "layout/string_layout.h"
 #include <ion.h>
 
 namespace Poincare {

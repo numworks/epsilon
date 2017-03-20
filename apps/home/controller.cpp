@@ -10,7 +10,7 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container)
   ViewController(parentResponder),
   m_container(container),
   m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, k_sideMargin, 0, k_sideMargin, this, true, true,
-    KDColorWhite, k_indicatorThickness, Palette::YellowDark, Palette::GreyMiddle, k_indicatorMargin))
+    KDColorWhite, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin))
 {
 }
 

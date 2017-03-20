@@ -12,8 +12,8 @@ namespace Shared {
 InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
   MemoizedCurveViewRange(),
   m_yAuto(true),
-  m_cursor(cursor),
-  m_delegate(delegate)
+  m_delegate(delegate),
+  m_cursor(cursor)
 {
 }
 

@@ -113,7 +113,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellY >= 0 && previousSelectedCellX < numberOfRows()-1) {
+  if (previousSelectedCellY >= 0 && previousSelectedCellY < numberOfRows()-1) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
   }

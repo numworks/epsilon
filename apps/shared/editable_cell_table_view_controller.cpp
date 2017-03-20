@@ -18,7 +18,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
-  if (isnan(floatBody)) {
+  if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }

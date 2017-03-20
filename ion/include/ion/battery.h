@@ -18,6 +18,7 @@ bool isCharging();
 
 enum class Charge {
   EMPTY,
+  LOW,
   SOMEWHERE_INBETWEEN,
   FULL
 };

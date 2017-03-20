@@ -25,18 +25,18 @@ public:
   // Window
   void zoom(float ratio);
   void panWithVector(float x, float y);
-  void roundAbscissa();
-  void normalize();
-  void setTrigonometric();
+  virtual void roundAbscissa();
+  virtual void normalize();
+  virtual void setTrigonometric();
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
 protected:
   bool m_yAuto;
+  InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   constexpr static float k_minFloat = 1E-8f;
   CurveViewCursor * m_cursor;
-  InteractiveCurveViewRangeDelegate * m_delegate;
 };
 
 typedef void (InteractiveCurveViewRange::*ParameterSetterPointer)(float);

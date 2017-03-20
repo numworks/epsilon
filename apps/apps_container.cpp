@@ -79,6 +79,8 @@ void AppsContainer::switchTo(App * app) {
   m_window.setTitle(app->upperName());
   // TODO: Update the battery icon every in a time frame
   m_window.updateBatteryLevel();
+  // TODO: Update the 'isCharging' state when the USB is plugged or unplugged
+  m_window.updateIsChargingState();
   Container::switchTo(app);
 }
 

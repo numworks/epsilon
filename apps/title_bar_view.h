@@ -11,6 +11,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setTitle(I18n::Message title);
   void setChargeState(Ion::Battery::Charge chargeState);
+  void setIsCharging(bool isCharging);
   void refreshPreferences();
 private:
   constexpr static KDCoordinate k_batteryLeftMargin = 5;

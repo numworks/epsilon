@@ -14,8 +14,11 @@ void AppsWindow::setTitle(I18n::Message title) {
 }
 
 void AppsWindow::updateBatteryLevel() {
-  // TODO: use Ion::Battery::level()
-  m_titleBarView.setChargeState(Ion::Battery::Charge::EMPTY);
+  m_titleBarView.setChargeState(Ion::Battery::level());
+}
+
+void AppsWindow::updateIsChargingState() {
+  m_titleBarView.setIsCharging(Ion::Battery::isCharging());
 }
 
 void AppsWindow::refreshPreferences() {

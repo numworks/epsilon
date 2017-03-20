@@ -26,6 +26,10 @@ void TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
   m_batteryView.setChargeState(chargeState);
 }
 
+void TitleBarView::setIsCharging(bool isCharging) {
+  m_batteryView.setIsCharging(isCharging);
+}
+
 int TitleBarView::numberOfSubviews() const {
   return 3;
 }

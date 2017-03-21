@@ -91,6 +91,9 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
+    if (m_selectableTableView.selectedRow() == 0 || m_selectableTableView.selectedRow() == numberOfRows()-1) {
+      return false;
+    }
     m_store->deletePairAtIndex(m_selectableTableView.selectedRow()-1);
     m_selectableTableView.reloadData();
     return true;

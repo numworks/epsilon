@@ -186,10 +186,8 @@ void TableView::ContentView::layoutSubviews() {
     KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
     KDRect cellFrame(horizontalOffset, verticalOffset,
       columnWidth+m_horizontalCellOverlapping, rowHeight+m_verticalCellOverlapping);
-
-    cell->setFrame(cellFrame);
-
     m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
+    cell->setFrame(cellFrame);
   }
 }
 

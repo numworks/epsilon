@@ -22,7 +22,7 @@ Expression::Type PredictionInterval::type() const {
 
 Expression * PredictionInterval::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   PredictionInterval * pi = new PredictionInterval();
   pi->setArgument(newOperands, numberOfOperands, cloneOperands);

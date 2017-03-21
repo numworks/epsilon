@@ -25,7 +25,7 @@ float Symbol::privateApproximate(Context& context, AngleUnit angleUnit) const {
 
 Expression * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  if (context.expressionForSymbol(this)) {
+  if (context.expressionForSymbol(this) != nullptr) {
     return context.expressionForSymbol(this)->evaluate(context, angleUnit);
   }
   return nullptr;

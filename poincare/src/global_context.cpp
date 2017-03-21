@@ -28,6 +28,11 @@ Complex * GlobalContext::defaultExpression() {
   return defaultExpression;
 }
 
+Complex * GlobalContext::nanExpression() {
+  static Complex * nanExpression = new Complex(Complex::Float(NAN));
+  return nanExpression;
+}
+
 int GlobalContext::symbolIndex(const Symbol * symbol) const {
   int index = symbol->name() - 'A';
   return index;
@@ -42,7 +47,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   }
   int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
-    return nullptr;
+    return nanExpression();
   }
   if (m_expressions[index] == nullptr) {
     return defaultExpression();

@@ -23,6 +23,7 @@ public:
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
   static Complex * defaultExpression();
 private:
+  static Complex * nanExpression();
   int symbolIndex(const Symbol * symbol) const;
   Expression * m_expressions[k_maxNumberOfScalarExpressions];
   Complex m_pi;

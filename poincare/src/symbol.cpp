@@ -1,10 +1,10 @@
 #include <poincare/symbol.h>
 #include <poincare/context.h>
-#include <math.h>
-#include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
+#include "layout/string_layout.h"
 extern "C" {
 #include <assert.h>
+#include <math.h>
 }
 
 namespace Poincare {

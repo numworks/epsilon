@@ -31,12 +31,12 @@ static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', 
 static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
 static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
 
-static constexpr EventData s_dataForEvent[] = {
+static constexpr EventData s_dataForEvent[Event::k_numberOfEvents] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), TL(), U(),   U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
-  T(k_exponential), T("ln()"),  T("log()"), T(k_complexI), T(","),      T("^"),
+  T(k_exponential), T("ln()"),  T("log()"), T(k_complexI), T(","), T("^"),
   T("sin()"), T("cos()"), T("tan()"), T(k_pi), T(k_root), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("*"), T("/"), U(),
@@ -61,7 +61,7 @@ static constexpr EventData s_dataForEvent[] = {
   T("m"), T("n"), T("o"), T("p"), T("q"), U(),
   T("r"), T("s"), T("t"), T("u"), T("v"), U(),
   T("w"), T("x"), T("y"), T("z"), T(" "), U(),
-  T("?"), T("!"), U(), U(), U(),
+  T("?"), T("!"), U(), U(), U(), U(),
 // Shift+Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
@@ -89,7 +89,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   // shift-X -> X
   // alpha-X -> X
   // shift-alpha-X -> alpha-X -> X
-
+  assert((int)key >= 0 && (int)key < Keyboard::NumberOfKeys);
   m_id = Events::None.m_id;
 
   int noFallbackOffsets[] = {0};
@@ -105,12 +105,15 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   do {
     offset = fallbackOffset[i++];
     m_id = offset + (int)key;
-  } while (offset > 0 && s_dataForEvent[m_id].isUndefined());
+  } while (offset > 0 && s_dataForEvent[m_id].isUndefined() && m_id < k_numberOfEvents);
 
   assert(m_id != Events::None.m_id);
 }
 
 const char * Event::text() const {
+  if (m_id >= k_numberOfEvents) {
+    return nullptr;
+  }
   return s_dataForEvent[m_id].text();
 }
 
@@ -120,7 +123,7 @@ bool Event::hasText() const {
 
 #ifdef DEBUG
 
-static constexpr const char * s_nameForEvent[] = {
+static constexpr const char * s_nameForEvent[Event::k_numberOfEvents] = {
  // Plain
   "Left", "Up", "Down", "Right", "OK", "Back",
   "Home", "OnOff", nullptr, nullptr, nullptr, nullptr,
@@ -164,6 +167,9 @@ static constexpr const char * s_nameForEvent[] = {
 };
 
 const char * Event::name() const {
+  if (m_id >= k_numberOfEvents || m_id < 0) {
+    return "Event exceeds limits";
+  }
   return s_nameForEvent[m_id];
 }
 

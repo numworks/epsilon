@@ -29,8 +29,9 @@ public:
   }
   const char * text() const;
   bool hasText() const;
+  static constexpr int k_numberOfEvents = 4*Keyboard::NumberOfKeys;
 private:
-  static constexpr int k_eventPageSize = 54;
+  static constexpr int k_eventPageSize = Keyboard::NumberOfKeys;
   uint8_t m_id;
 };
 

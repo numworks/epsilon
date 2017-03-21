@@ -26,7 +26,7 @@ Expression::Type NthRoot::type() const {
 
 Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   NthRoot * r = new NthRoot();
   r->setArgument(newOperands, numberOfOperands, cloneOperands);

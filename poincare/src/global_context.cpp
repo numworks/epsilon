@@ -57,12 +57,18 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 
 void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   int index = symbolIndex(symbol);
-  assert(expression->type() == Expression::Type::Complex);
+  if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
+    return;
+  }
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;
   }
-  m_expressions[index] = expression->clone();
+  if (expression->type() == Expression::Type::Complex) {
+    m_expressions[index] = expression->clone();
+  } else {
+    m_expressions[index] = new Complex(Complex::Float(NAN));
+  }
 }
 
 }

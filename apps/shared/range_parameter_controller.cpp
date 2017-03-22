@@ -68,7 +68,7 @@ bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, 
 }
 
 void RangeParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX < numberOfRows()-1 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
+  if (previousSelectedCellY < numberOfRows()-1 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
     app()->setFirstResponder(t);

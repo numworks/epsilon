@@ -50,6 +50,7 @@ void SequenceStore::removeFunction(Shared::Function * f) {
   for (int j = i; j<m_numberOfFunctions; j++) {
     m_sequences[j] = m_sequences[j+1];
   }
+  m_sequences[m_numberOfFunctions] = Sequence("", KDColorBlack);
 }
 
 int SequenceStore::maxNumberOfFunctions() {

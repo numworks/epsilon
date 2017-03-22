@@ -71,7 +71,8 @@ Expression * Store::privateEvaluate(Context& context, AngleUnit angleUnit) const
   assert(angleUnit != AngleUnit::Default);
   Expression * valueEvaluation = m_value->evaluate(context, angleUnit);
   context.setExpressionForSymbolName(valueEvaluation, m_symbol);
-  return valueEvaluation;
+  delete valueEvaluation;
+  return context.expressionForSymbol(m_symbol)->clone();
 }
 
 float Store::privateApproximate(Context& context, AngleUnit angleUnit) const {

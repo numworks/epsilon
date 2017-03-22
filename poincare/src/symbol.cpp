@@ -1,5 +1,6 @@
 #include <poincare/symbol.h>
 #include <poincare/context.h>
+#include <poincare/complex.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
 extern "C" {
@@ -26,9 +27,9 @@ float Symbol::privateApproximate(Context& context, AngleUnit angleUnit) const {
 Expression * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->evaluate(context, angleUnit);
+    return context.expressionForSymbol(this)->evaluate(context, angleUnit)->clone();
   }
-  return nullptr;
+  return new Complex(Complex::Float(NAN));
 }
 
 Expression::Type Symbol::type() const {

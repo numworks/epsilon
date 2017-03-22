@@ -99,24 +99,6 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {
-  uint32_t newModelVersion = modelVersion();
-  if (m_modelVersion != newModelVersion) {
-    m_modelVersion = newModelVersion;
-    initRangeParameters();
-    /* Warning: init cursor parameter before reloading banner view. Indeed,
-     * reloading banner view needs an updated cursor to load the right data. */
-    initCursorParameters();
-    centerCursorVertically();
-    reloadBannerView();
-    curveView()->reload();
-  }
-  uint32_t newRangeVersion = rangeVersion();
-  if (m_rangeVersion != newRangeVersion) {
-    m_rangeVersion = newRangeVersion;
-    initCursorParameters();
-    reloadBannerView();
-    curveView()->reload();
-  }
   if (!curveView()->isMainViewSelected()) {
     header()->setSelectedButton(0);
   }
@@ -147,6 +129,24 @@ Responder * InteractiveCurveViewController::defaultController() {
 }
 
 void InteractiveCurveViewController::viewWillAppear() {
+  uint32_t newModelVersion = modelVersion();
+  if (m_modelVersion != newModelVersion) {
+    m_modelVersion = newModelVersion;
+    initRangeParameters();
+    /* Warning: init cursor parameter before reloading banner view. Indeed,
+     * reloading banner view needs an updated cursor to load the right data. */
+    initCursorParameters();
+    centerCursorVertically();
+    reloadBannerView();
+    curveView()->reload();
+  }
+  uint32_t newRangeVersion = rangeVersion();
+  if (m_rangeVersion != newRangeVersion) {
+    m_rangeVersion = newRangeVersion;
+    initCursorParameters();
+    reloadBannerView();
+    curveView()->reload();
+  }
   curveView()->selectMainView(true);
   header()->setSelectedButton(-1);
   reloadBannerView();

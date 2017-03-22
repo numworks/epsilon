@@ -57,6 +57,7 @@ void CartesianFunctionStore::removeFunction(Shared::Function * f) {
   for (int j = i; j<m_numberOfFunctions; j++) {
     m_functions[j] = m_functions[j+1];
   }
+  m_functions[m_numberOfFunctions] = CartesianFunction("", KDColorBlack);
 }
 
 int CartesianFunctionStore::maxNumberOfFunctions() {

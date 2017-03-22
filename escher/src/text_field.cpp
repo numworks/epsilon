@@ -115,9 +115,9 @@ void TextField::ContentView::reinitDraftTextBuffer() {
 }
 
 void TextField::ContentView::setCursorLocation(int location) {
-  location = location < 0 ? 0 : location;
-  location = location > (signed char)m_currentTextLength ? m_currentTextLength : location;
-  m_currentCursorLocation = location;
+  int adjustedLocation = location < 0 ? 0 : location;
+  adjustedLocation = adjustedLocation > (signed int)m_currentTextLength ? (signed int)m_currentTextLength : adjustedLocation;
+  m_currentCursorLocation = adjustedLocation;
   layoutSubviews();
 }
 

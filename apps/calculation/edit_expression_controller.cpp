@@ -76,7 +76,7 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
-  m_contentView.textField()->setEditing(true);
+  m_contentView.textField()->setEditing(true, false);
   app()->setFirstResponder(m_contentView.textField());
 }
 

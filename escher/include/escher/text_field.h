@@ -20,7 +20,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  virtual void setEditing(bool isEditing);
+  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   void setCursorLocation(int location);
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
@@ -47,7 +47,7 @@ protected:
     void setBackgroundColor(KDColor backgroundColor);
     void setTextColor(KDColor textColor);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
-    void setEditing(bool isEditing);
+    void setEditing(bool isEditing, bool reinitDraftBuffer);
     void reinitDraftTextBuffer();
     void setCursorLocation(int location);
     void insertTextAtLocation(const char * text, int location);

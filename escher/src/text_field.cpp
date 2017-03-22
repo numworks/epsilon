@@ -96,11 +96,11 @@ void TextField::ContentView::setAlignment(float horizontalAlignment, float verti
   markRectAsDirty(bounds());
 }
 
-void TextField::ContentView::setEditing(bool isEditing) {
+void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
   if (m_isEditing == isEditing) {
     return;
   }
-  if (m_isEditing == false) {
+  if (m_isEditing == false && reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
   m_isEditing = isEditing;
@@ -240,8 +240,12 @@ void TextField::setAlignment(float horizontalAlignment, float verticalAlignment)
   m_contentView.setAlignment(horizontalAlignment, verticalAlignment);
 }
 
-void TextField::setEditing(bool isEditing) {
-  m_contentView.setEditing(isEditing);
+void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
+  if (isEditing) {
+    m_manualScrolling = 0;
+    setContentOffset(KDPoint(m_manualScrolling, 0));
+  }
+  m_contentView.setEditing(isEditing, reinitDrafBuffer);
 }
 
 void TextField::setCursorLocation(int location) {

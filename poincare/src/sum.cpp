@@ -29,7 +29,7 @@ Expression::Type Sum::type() const {
 
 Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
+  assert(numberOfOperands == 3);
   assert(newOperands != nullptr);
   Sum * s = new Sum();
   s->setArgument(newOperands, numberOfOperands, cloneOperands);

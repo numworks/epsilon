@@ -23,7 +23,7 @@ Expression::Type GreatCommonDivisor::type() const {
 
 Expression * GreatCommonDivisor::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   GreatCommonDivisor * gcd = new GreatCommonDivisor();
   gcd->setArgument(newOperands, numberOfOperands, cloneOperands);

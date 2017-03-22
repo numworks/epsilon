@@ -29,7 +29,7 @@ Expression::Type Product::type() const {
 
 Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
+  assert(numberOfOperands == 3);
   assert(newOperands != nullptr);
   Product * p = new Product();
   p->setArgument(newOperands, numberOfOperands, cloneOperands);

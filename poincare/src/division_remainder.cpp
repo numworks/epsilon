@@ -22,7 +22,7 @@ Expression::Type DivisionRemainder::type() const {
 
 Expression * DivisionRemainder::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   DivisionRemainder * dr = new DivisionRemainder();
   dr->setArgument(newOperands, numberOfOperands, cloneOperands);

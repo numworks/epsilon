@@ -23,7 +23,7 @@ Expression::Type PermuteCoefficient::type() const {
 
 Expression * PermuteCoefficient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   PermuteCoefficient * pc = new PermuteCoefficient();
   pc->setArgument(newOperands, numberOfOperands, cloneOperands);

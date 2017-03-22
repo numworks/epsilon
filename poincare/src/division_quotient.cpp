@@ -22,7 +22,7 @@ Expression::Type DivisionQuotient::type() const {
 
 Expression * DivisionQuotient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   DivisionQuotient * dq = new DivisionQuotient();
   dq->setArgument(newOperands, numberOfOperands, cloneOperands);

@@ -26,7 +26,7 @@ Expression::Type BinomialCoefficient::type() const {
 
 Expression * BinomialCoefficient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   BinomialCoefficient * bc = new BinomialCoefficient();
   bc->setArgument(newOperands, numberOfOperands, cloneOperands);

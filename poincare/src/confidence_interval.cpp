@@ -22,7 +22,7 @@ Expression::Type ConfidenceInterval::type() const {
 
 Expression * ConfidenceInterval::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
+  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   ConfidenceInterval * ci = new ConfidenceInterval();
   ci->setArgument(newOperands, numberOfOperands, cloneOperands);

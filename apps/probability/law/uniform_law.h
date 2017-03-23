@@ -20,6 +20,7 @@ public:
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
   bool authorizedValueAtIndex(float x, int index) const override;
+  void setParameterAtIndex(float f, int index) override;
   float cumulativeDistributiveFunctionAtAbscissa(float x) const override;
   float cumulativeDistributiveInverseForProbability(float * probability) override;
 private:

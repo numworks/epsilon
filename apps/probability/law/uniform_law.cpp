@@ -80,15 +80,19 @@ float UniformLaw::evaluateAtAbscissa(float t) const {
 
 bool UniformLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
-    if (x > m_parameter2) {
-      return false;
-    }
     return true;
   }
   if (m_parameter1 > x) {
     return false;
   }
   return true;
+}
+
+void UniformLaw::setParameterAtIndex(float f, int index) {
+  TwoParameterLaw::setParameterAtIndex(f, index);
+  if (index == 0 && m_parameter2 < m_parameter1) {
+    m_parameter2 = m_parameter1+1.0f;
+  }
 }
 
 float UniformLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {

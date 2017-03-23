@@ -70,7 +70,7 @@ float ExponentialLaw::evaluateAtAbscissa(float x) const {
 }
 
 bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
-  if (x <= 0.0f) {
+  if (x <= 0.0f || x > 7500.0f) {
     return false;
   }
   return true;

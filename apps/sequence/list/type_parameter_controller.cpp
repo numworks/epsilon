@@ -55,8 +55,8 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         m_sequence->setContent("");
         m_sequence->setFirstInitialConditionContent("");
         m_sequence->setSecondInitialConditionContent("");
-        m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
         m_listController->selectPreviousNewSequenceCell();
+        m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
       }
       StackViewController * stack = stackController();
       stack->pop();

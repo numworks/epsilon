@@ -14,6 +14,10 @@ float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
     float result = 0.0f;
     for (int k = 0; k <=end; k++) {
       result += evaluateAtAbscissa(k);
+      /* Avoid too long loop */
+      if (result > k_maxProbability || k > k_maxNumberOfOperations) {
+        break;
+      }
     }
     return result;
   }
@@ -39,6 +43,10 @@ float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
   float result = 0.0f;
   for (int k = start; k <=end; k++) {
     result += evaluateAtAbscissa(k);
+    /* Avoid too long loop */
+    if (result > k_maxProbability || k-start > k_maxNumberOfOperations) {
+      break;
+    }
   }
   return result;
 }

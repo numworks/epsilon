@@ -71,7 +71,9 @@ void RangeParameterController::tableViewDidChangeSelection(SelectableTableView *
   if (previousSelectedCellY < numberOfRows()-1 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
-    app()->setFirstResponder(t);
+    if (t->selectedRow() >= 0) {
+      app()->setFirstResponder(t);
+    }
   }
   if (t->selectedRow() == numberOfRows()-1) {
     Button * myNewCell = (Button *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());

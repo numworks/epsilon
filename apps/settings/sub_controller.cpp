@@ -48,7 +48,7 @@ View * SubController::view() {
   return &m_selectableTableView;
 }
 
-void SubController::didBecomeFirstResponder() {
+void SubController::didEnterResponderChain(Responder * previousResponder) {
   m_selectableTableView.selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -109,7 +109,7 @@ void SubController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-void SubController::viewWillDisappear() {
+void SubController::willExitResponderChain(Responder * nextResponder) {
   m_selectableTableView.deselectTable();
 }
 

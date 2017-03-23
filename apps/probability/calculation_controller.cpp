@@ -203,6 +203,10 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
+  if (isnan(floatBody) || isinf(floatBody)) {
+    app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && m_highlightedSubviewIndex == 2) {
     if (floatBody < 0.0f) {
       floatBody = 0.0f;

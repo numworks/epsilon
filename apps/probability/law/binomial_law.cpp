@@ -99,7 +99,7 @@ float BinomialLaw::evaluateAtAbscissa(float x) const {
 
 bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
-    if (x != (int)x || x < 0) {
+    if (x != (int)x || x < 0.0f || x > 999.0f) {
       return false;
     }
     return true;

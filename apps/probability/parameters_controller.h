@@ -24,6 +24,7 @@ private:
   float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);

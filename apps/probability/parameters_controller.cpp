@@ -150,6 +150,12 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   return true;
 }
 
+bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+  FloatParameterController::textFieldDidFinishEditing(textField, text);
+  m_selectableTableView.reloadData();
+  return true;
+}
+
 void ParametersController::buttonAction() {
   m_calculationController.setCalculationAccordingToIndex(0);
   m_calculationController.selectSubview(1);

@@ -29,16 +29,19 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
   const char * text = textField->text();
   int location = textField->cursorLocation();
   int tokenLength = strlen(token);
-  while (text[location] != '(') {
-    location --;
-  }
-  if (location - tokenLength < 0) {
-    return false;
-  }
-  char previousToken[10];
-  strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
-  if (strcmp(previousToken, token) == 0) {
-    return true;
+  while (location >= 0) {
+    while (text[location] != '(') {
+      location --;
+    }
+    if (location - tokenLength < 0) {
+      return false;
+    }
+    char previousToken[10];
+    strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
+    if (strcmp(previousToken, token) == 0) {
+      return true;
+    }
+    location--;
   }
   return false;
 }

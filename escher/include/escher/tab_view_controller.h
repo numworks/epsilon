@@ -8,7 +8,7 @@ class TabViewController : public ViewController {
 public:
   TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
   View * view() override;
-
+  int activeTab() const;
   void setSelectedTab(int8_t index);
   void setActiveTab(int8_t index, bool forceReactive = false);
   uint8_t numberOfTabs();

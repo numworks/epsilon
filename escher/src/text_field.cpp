@@ -73,7 +73,6 @@ void TextField::ContentView::setText(const char * text) {
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
     m_currentTextLength = strlen(text);
-    setCursorLocation(m_currentTextLength);
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
   }
@@ -224,8 +223,9 @@ int TextField::cursorLocation() const{
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
-  scrollToCursor();
-  layoutSubviews();
+  if (isEditing()) {
+    setCursorLocation(textLength());
+  }
 }
 
 void TextField::setBackgroundColor(KDColor backgroundColor) {

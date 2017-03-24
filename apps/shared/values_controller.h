@@ -47,7 +47,7 @@ private:
   void configureAbscissa();
   void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;

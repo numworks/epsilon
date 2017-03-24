@@ -112,8 +112,9 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   return false;
 }
 
-void StoreController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+bool StoreController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   m_store->set(floatBody, columnIndex, rowIndex-1);
+  return true;
 }
 
 float StoreController::dataAtLocation(int columnIndex, int rowIndex) {

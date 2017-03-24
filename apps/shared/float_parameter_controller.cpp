@@ -32,7 +32,9 @@ void FloatParameterController::didBecomeFirstResponder() {
 bool FloatParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     for (int i = 0; i < numberOfRows()-1; i++) {
-      setParameterAtIndex(i, previousParameterAtIndex(i));
+      if (parameterAtIndex(i) != previousParameterAtIndex(i)) {
+        setParameterAtIndex(i, previousParameterAtIndex(i));
+      }
     }
     stackController()->pop();
     return true;

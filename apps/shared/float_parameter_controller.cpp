@@ -24,12 +24,9 @@ View * FloatParameterController::view() {
 }
 
 void FloatParameterController::didBecomeFirstResponder() {
+  m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
-}
-
-void FloatParameterController::viewWillAppear() {
-  m_selectableTableView.reloadData();
 }
 
 bool FloatParameterController::handleEvent(Ion::Events::Event event) {

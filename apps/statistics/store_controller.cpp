@@ -32,4 +32,15 @@ HighlightCell * StoreController::titleCells(int index) {
   return &m_titleCells[index];
 }
 
+bool StoreController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+  if (columnIndex == 1) {
+    if (floatBody < 0) {
+      return false;
+    }
+    m_store->set(roundf(floatBody), columnIndex, rowIndex-1);
+    return true;
+  }
+  return Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex);
+}
+
 }

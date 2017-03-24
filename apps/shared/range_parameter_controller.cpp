@@ -62,9 +62,11 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  FloatParameterController::textFieldDidFinishEditing(textField, text);
-  m_selectableTableView.reloadData();
-  return true;
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text)) {
+    m_selectableTableView.reloadData();
+    return true;
+  }
+  return false;
 }
 
 void RangeParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {

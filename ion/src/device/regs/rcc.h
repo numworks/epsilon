@@ -75,6 +75,7 @@ public:
   public:
     REGS_BOOL_FIELD(TIM3EN, 1);
     REGS_BOOL_FIELD(SPI3EN, 15);
+    REGS_BOOL_FIELD(USART3EN, 18);
     REGS_BOOL_FIELD(PWREN, 28);
   };
 

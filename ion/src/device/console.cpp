@@ -27,7 +27,7 @@ namespace Console {
 namespace Device {
 
 void init() {
-  RCC.APB2ENR()->setUSART1EN(true);
+  RCC.APB1ENR()->setUSART3EN(true);
 
   for(const GPIOPin & g : Pins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
@@ -39,17 +39,17 @@ void init() {
   UARTPort.CR1()->setRE(true);
 
   /* We need to set the baud rate of the UART port.
-   * This is set relative to the APB2 clock, which runs at 96 MHz.
+   * This is set relative to the APB1 clock, which runs at 48 MHz.
    *
    * The baud rate is set by the following equation:
-   * BaudRate = fAPB2/(16*USARTDIV), where USARTDIV is a divider.
-   * In other words, USARDFIV = fAPB2/(16*BaudRate). All frequencies in Hz.
+   * BaudRate = fAPB1/(16*USARTDIV), where USARTDIV is a divider.
+   * In other words, USARDFIV = fAPB1/(16*BaudRate). All frequencies in Hz.
    *
-   * In our case, fAPB2 = 96 MHz, so USARTDIV = 52.08333
-   * DIV_MANTISSA = 52
-   * DIV_FRAC = 16*0.083333 = 1.33 = 1
+   * In our case, fAPB1 = 48 MHz, so USARTDIV = 26.0416667
+   * DIV_MANTISSA = 26
+   * DIV_FRAC = 16*0.0416667 = 1
    */
-  UARTPort.BRR()->setDIV_MANTISSA(52);
+  UARTPort.BRR()->setDIV_MANTISSA(26);
   UARTPort.BRR()->setDIV_FRAC(1);
 }
 

@@ -39,9 +39,6 @@ Expression * Opposite::clone() const {
 Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   Expression * operandEvalutation = m_operand->evaluate(context, angleUnit);
-  if (operandEvalutation == nullptr) {
-    return nullptr;
-  }
   Expression * result = nullptr;
   switch (operandEvalutation->type()) {
     case Type::Complex:
@@ -51,6 +48,7 @@ Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) co
       result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
       break;
     default:
+      result = new Complex(Complex::Float(NAN));
      break;
   }
   delete operandEvalutation;

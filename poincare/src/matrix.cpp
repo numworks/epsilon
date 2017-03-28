@@ -225,7 +225,7 @@ float Matrix::determinant(Context& context, AngleUnit angleUnit) const {
 
 Expression * Matrix::createInverse(Context& context, AngleUnit angleUnit) const {
   if (numberOfColumns() != numberOfRows()) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   int dim = numberOfRows();
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */

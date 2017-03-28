@@ -36,7 +36,7 @@ Expression * MatrixDimension::privateEvaluate(Context& context, AngleUnit angleU
   assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
   if (evaluation->type() == Type::Complex) {
     delete evaluation;
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   Expression * dimension = ((Matrix *)evaluation)->createDimensionMatrix(context, angleUnit);
   delete evaluation;

@@ -38,12 +38,12 @@ Expression * Fraction::evaluateOnComplex(Complex * c, Complex * d, Context& cont
 }
 
 Expression * Fraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  return nullptr;
+  return new Complex(Complex::Float(NAN));
 }
 
 Expression * Fraction::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfColumns()) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   if (fabsf(n->determinant(context, angleUnit)) <= FLT_EPSILON) {
     return new Complex(Complex::Float(NAN));

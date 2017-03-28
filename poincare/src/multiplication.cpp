@@ -43,7 +43,7 @@ Expression * Multiplication::evaluateOnComplex(Complex * c, Complex * d, Context
 
 Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfRows()) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   Expression ** operands = (Expression **)malloc(m->numberOfRows() * n->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows(); i++) {

@@ -102,7 +102,6 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
-  inputController->setTextFieldDelegate(this);
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, sequence, initialText,

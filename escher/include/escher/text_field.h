@@ -56,6 +56,7 @@ protected:
     KDCoordinate charWidth();
     void deleteCharPrecedingCursor();
     View * subviewAtIndex(int index) override;
+    constexpr static int k_maxBufferSize = 255;
   private:
     int numberOfSubviews() const override;
     void layoutSubviews() override;

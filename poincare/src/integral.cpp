@@ -15,12 +15,8 @@ extern "C" {
 namespace Poincare {
 
 Integral::Integral() :
-  Function("int")
+  Function("int", 3)
 {
-}
-
-bool Integral::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 3);
 }
 
 Expression::Type Integral::type() const {
@@ -29,7 +25,6 @@ Expression::Type Integral::type() const {
 
 Expression * Integral::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 3);
   assert(newOperands != nullptr);
   Integral * i = new Integral();
   i->setArgument(newOperands, numberOfOperands, cloneOperands);

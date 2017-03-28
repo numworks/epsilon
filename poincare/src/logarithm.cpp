@@ -12,12 +12,20 @@ extern "C" {
 namespace Poincare {
 
 Logarithm::Logarithm() :
-  Function("log")
+  Function("log", 2)
 {
 }
 
 bool Logarithm::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 1 || m_numberOfArguments == 2);
+  if (m_numberOfArguments != 1 && m_numberOfArguments != 2) {
+    return false;
+  }
+  for (int i = 0; i < m_numberOfArguments; i++) {
+    if (!m_args[i]->hasValidNumberOfArguments()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 Expression::Type Logarithm::type() const {
@@ -26,7 +34,6 @@ Expression::Type Logarithm::type() const {
 
 Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1 || numberOfOperands == 2);
   assert(newOperands != nullptr);
   Logarithm * l = new Logarithm();
   l->setArgument(newOperands, numberOfOperands, cloneOperands);

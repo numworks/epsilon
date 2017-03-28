@@ -9,12 +9,8 @@ extern "C" {
 namespace Poincare {
 
 LeastCommonMultiple::LeastCommonMultiple() :
-  Function("lcm")
+  Function("lcm", 2)
 {
-}
-
-bool LeastCommonMultiple::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type LeastCommonMultiple::type() const {

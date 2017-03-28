@@ -12,12 +12,8 @@ extern "C" {
 namespace Poincare {
 
 BinomialCoefficient::BinomialCoefficient() :
-  Function("binomial")
+  Function("binomial", 2)
 {
-}
-
-bool BinomialCoefficient::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type BinomialCoefficient::type() const {
@@ -26,7 +22,6 @@ Expression::Type BinomialCoefficient::type() const {
 
 Expression * BinomialCoefficient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   BinomialCoefficient * bc = new BinomialCoefficient();
   bc->setArgument(newOperands, numberOfOperands, cloneOperands);

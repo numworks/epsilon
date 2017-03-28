@@ -20,7 +20,6 @@ Expression::Type AbsoluteValue::type() const {
 
 Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   AbsoluteValue * a = new AbsoluteValue();
   a->setArgument(newOperands, numberOfOperands, cloneOperands);

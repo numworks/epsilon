@@ -8,12 +8,8 @@ extern "C" {
 namespace Poincare {
 
 PredictionInterval::PredictionInterval() :
-  Function("prediction95")
+  Function("prediction95", 2)
 {
-}
-
-bool PredictionInterval::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type PredictionInterval::type() const {
@@ -22,7 +18,6 @@ Expression::Type PredictionInterval::type() const {
 
 Expression * PredictionInterval::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   PredictionInterval * pi = new PredictionInterval();
   pi->setArgument(newOperands, numberOfOperands, cloneOperands);

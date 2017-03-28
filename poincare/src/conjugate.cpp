@@ -20,7 +20,6 @@ Expression::Type Conjugate::type() const {
 
 Expression * Conjugate::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   Conjugate * c = new Conjugate();
   c->setArgument(newOperands, numberOfOperands, cloneOperands);

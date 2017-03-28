@@ -17,7 +17,6 @@ Sine::Sine() :
 Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  assert(numberOfOperands == 1);
   Sine * s = new Sine();
   s->setArgument(newOperands, numberOfOperands, cloneOperands);
   return s;

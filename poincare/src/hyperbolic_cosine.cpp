@@ -22,7 +22,6 @@ Expression::Type HyperbolicCosine::type() const {
 
 Expression * HyperbolicCosine::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   HyperbolicCosine * hc = new HyperbolicCosine();
   hc->setArgument(newOperands, numberOfOperands, cloneOperands);

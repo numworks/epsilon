@@ -10,9 +10,10 @@ extern "C" {
 
 namespace Poincare {
 
-Function::Function(const char * name) :
+Function::Function(const char * name, int requiredNumberOfArguments) :
   m_args(nullptr),
   m_numberOfArguments(0),
+  m_requiredNumberOfArguments(requiredNumberOfArguments),
   m_name(name)
 {
 }
@@ -64,8 +65,15 @@ Function::~Function() {
 }
 
 bool Function::hasValidNumberOfArguments() const {
-  /* By default, a function has one argument only */
-  return (m_numberOfArguments == 1);
+  if (m_numberOfArguments != m_requiredNumberOfArguments) {
+    return false;
+  }
+  for (int i = 0; i < m_requiredNumberOfArguments; i++) {
+    if (!m_args[i]->hasValidNumberOfArguments()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 Expression * Function::clone() const {

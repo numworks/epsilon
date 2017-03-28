@@ -18,7 +18,6 @@ Expression::Type MatrixTrace::type() const {
 
 Expression * MatrixTrace::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   MatrixTrace * t = new MatrixTrace();
   t->setArgument(newOperands, numberOfOperands, cloneOperands);

@@ -18,7 +18,6 @@ Expression::Type MatrixDimension::type() const {
 
 Expression * MatrixDimension::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   MatrixDimension * md = new MatrixDimension();
   md->setArgument(newOperands, numberOfOperands, cloneOperands);

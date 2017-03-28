@@ -199,7 +199,7 @@ float Store::sortedElementNumber(int k) {
   float bufferValues[m_numberOfPairs];
   memcpy(bufferValues, m_data[0], m_numberOfPairs*sizeof(float));
   int sortedElementIndex = 0;
-  int cumulatedSize = 0;
+  float cumulatedSize = 0.0f;
   while (cumulatedSize < k) {
     sortedElementIndex = minIndex(bufferValues, m_numberOfPairs);
     bufferValues[sortedElementIndex] = FLT_MAX;

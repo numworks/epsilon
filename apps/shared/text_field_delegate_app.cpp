@@ -53,15 +53,6 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
       textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    Expression * evaluation = exp->evaluate(*localContext());
-    if (evaluation == nullptr) {
-      delete exp;
-      textField->app()->displayWarning(I18n::Message::MathError);
-      return true;
-    } else {
-      delete evaluation;
-      delete exp;
-    }
   }
   if (event == Ion::Events::Var) {
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();

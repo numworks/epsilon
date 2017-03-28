@@ -81,10 +81,6 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   }
 }
 
-void InputViewController::setTextFieldDelegate(TextFieldDelegate * textFieldDelegate) {
-  m_textFieldDelegate = textFieldDelegate;
-}
-
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   m_successAction.perform(this);
   dismissModalViewController();

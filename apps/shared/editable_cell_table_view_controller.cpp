@@ -26,7 +26,6 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  willDisplayCellAtLocation(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()+1);
   return true;

@@ -10,6 +10,7 @@ class Opposite : public Expression {
 public:
   Opposite(Expression * operand, bool cloneOperands = true);
   ~Opposite();
+  bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * clone() const override;

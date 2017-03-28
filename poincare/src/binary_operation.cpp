@@ -25,6 +25,10 @@ BinaryOperation::~BinaryOperation() {
   delete m_operands[0];
 }
 
+bool BinaryOperation::hasValidNumberOfArguments() const {
+  return m_operands[0]->hasValidNumberOfArguments() && m_operands[1]->hasValidNumberOfArguments();
+}
+
 int BinaryOperation::numberOfOperands() const {
   return 2;
 }

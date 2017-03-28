@@ -141,7 +141,7 @@ exp:
   | MINUS exp        { $$ = new Poincare::Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }
-  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if (!$1->isValidNumberOfArguments($3->numberOfOperands())) { $$ = new Poincare::Complex(Poincare::Complex::Float(NAN));} else {$$ = $1; $1->setArgument($3, true); delete $3;} }
+  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
 ;
 
 %%

@@ -21,6 +21,15 @@ Matrix::~Matrix() {
   delete m_matrixData;
 }
 
+bool Matrix::hasValidNumberOfArguments() const {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (!operand(i)->hasValidNumberOfArguments()) {
+      return false;
+    }
+  }
+  return true;
+}
+
 Matrix::Matrix(Expression ** newOperands, int numberOfOperands, int numberOfColumns, int numberOfRows, bool cloneOperands)
 {
   m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfColumns, numberOfRows, cloneOperands);

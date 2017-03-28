@@ -63,9 +63,9 @@ Function::~Function() {
   }
 }
 
-bool Function::isValidNumberOfArguments(int numberOfArguments) {
+bool Function::hasValidNumberOfArguments() const {
   /* By default, a function has one argument only */
-  return (numberOfArguments == 1);
+  return (m_numberOfArguments == 1);
 }
 
 Expression * Function::clone() const {

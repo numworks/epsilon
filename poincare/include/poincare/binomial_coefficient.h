@@ -8,7 +8,7 @@ namespace Poincare {
 class BinomialCoefficient : public Function {
 public:
   BinomialCoefficient();
-  bool isValidNumberOfArguments(int numberOfArguments) override;
+  bool hasValidNumberOfArguments() const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

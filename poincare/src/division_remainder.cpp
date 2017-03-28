@@ -12,8 +12,8 @@ DivisionRemainder::DivisionRemainder() :
 {
 }
 
-bool DivisionRemainder::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool DivisionRemainder::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type DivisionRemainder::type() const {

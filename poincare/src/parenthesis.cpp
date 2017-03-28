@@ -20,6 +20,10 @@ Parenthesis::~Parenthesis() {
   delete m_operand;
 }
 
+bool Parenthesis::hasValidNumberOfArguments() const {
+  return m_operand->hasValidNumberOfArguments();
+}
+
 int Parenthesis::numberOfOperands() const {
   return 1;
 }

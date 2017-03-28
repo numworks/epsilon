@@ -23,6 +23,10 @@ Opposite::~Opposite() {
   delete m_operand;
 }
 
+bool Opposite::hasValidNumberOfArguments() const {
+  return m_operand->hasValidNumberOfArguments();
+}
+
 const Expression * Opposite::operand(int i) const {
   assert(i == 0);
   return m_operand;

@@ -26,6 +26,10 @@ Store::~Store() {
   delete m_value;
 }
 
+bool Store::hasValidNumberOfArguments() const {
+  return m_value->hasValidNumberOfArguments();
+}
+
 Expression::Type Store::type() const {
   return Type::Store;
 }

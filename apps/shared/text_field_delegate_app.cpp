@@ -49,7 +49,7 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && textField->isEditing()) {
     Expression * exp = Expression::parse(textField->text());
-    if (exp == nullptr) {
+    if (exp == nullptr || !exp->hasValidNumberOfArguments()) {
       if (textField->textLength() == 0) {
         return true;
       }

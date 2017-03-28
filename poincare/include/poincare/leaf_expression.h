@@ -7,6 +7,7 @@ namespace Poincare {
 
 class LeafExpression : public Expression {
 public:
+  bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,

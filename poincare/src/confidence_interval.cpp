@@ -12,8 +12,8 @@ ConfidenceInterval::ConfidenceInterval() :
 {
 }
 
-bool ConfidenceInterval::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool ConfidenceInterval::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type ConfidenceInterval::type() const {

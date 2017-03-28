@@ -17,7 +17,6 @@ Expression::Type HyperbolicArcTangent::type() const {
 
 Expression * HyperbolicArcTangent::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   HyperbolicArcTangent * t = new HyperbolicArcTangent();
   t->setArgument(newOperands, numberOfOperands, cloneOperands);

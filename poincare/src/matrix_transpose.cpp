@@ -20,7 +20,6 @@ Expression::Type MatrixTranspose::type() const {
 
 Expression * MatrixTranspose::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   MatrixTranspose * t = new MatrixTranspose();
   t->setArgument(newOperands, numberOfOperands, cloneOperands);

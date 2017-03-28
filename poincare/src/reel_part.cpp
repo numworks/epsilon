@@ -19,7 +19,6 @@ Expression::Type ReelPart::type() const {
 
 Expression * ReelPart::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   ReelPart * rp = new ReelPart();
   rp->setArgument(newOperands, numberOfOperands, cloneOperands);

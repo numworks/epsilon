@@ -8,7 +8,6 @@ namespace Poincare {
 class Round : public Function {
 public:
   Round();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

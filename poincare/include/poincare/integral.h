@@ -9,7 +9,6 @@ namespace Poincare {
 class Integral : public Function {
 public:
   Integral();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;

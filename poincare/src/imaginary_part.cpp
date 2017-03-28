@@ -19,7 +19,6 @@ Expression::Type ImaginaryPart::type() const {
 
 Expression * ImaginaryPart::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   ImaginaryPart * ip = new ImaginaryPart();
   ip->setArgument(newOperands, numberOfOperands, cloneOperands);

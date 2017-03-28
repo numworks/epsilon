@@ -9,12 +9,8 @@ extern "C" {
 namespace Poincare {
 
 PermuteCoefficient::PermuteCoefficient() :
-  Function("permute")
+  Function("permute", 2)
 {
-}
-
-bool PermuteCoefficient::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type PermuteCoefficient::type() const {
@@ -23,7 +19,6 @@ Expression::Type PermuteCoefficient::type() const {
 
 Expression * PermuteCoefficient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   PermuteCoefficient * pc = new PermuteCoefficient();
   pc->setArgument(newOperands, numberOfOperands, cloneOperands);

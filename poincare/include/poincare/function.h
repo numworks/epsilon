@@ -11,7 +11,7 @@ namespace Poincare {
 
 class Function : public Expression {
 public:
-  Function(const char * name);
+  Function(const char * name, int requiredNumberOfArguments = 1);
   ~Function();
   void setArgument(Expression ** args, int numberOfArguments, bool clone = true);
   void setArgument(ListData * listData, bool clone = true);
@@ -24,6 +24,7 @@ protected:
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   Expression ** m_args;
   int m_numberOfArguments;
+  int m_requiredNumberOfArguments;
   const char * m_name;
 };
 

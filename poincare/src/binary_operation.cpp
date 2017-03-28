@@ -43,9 +43,6 @@ Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleU
   assert(angleUnit != AngleUnit::Default);
   Expression * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
   Expression * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
-  if (leftOperandEvalutation == nullptr || rightOperandEvalutation == nullptr) {
-    return nullptr;
-  }
   Expression * result = nullptr;
   switch (leftOperandEvalutation->type()) {
     case Type::Complex:
@@ -58,6 +55,7 @@ Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleU
           result = evaluateOnComplexAndMatrix((Complex *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
           break;
         default:
+          result = new Complex(Complex::Float(NAN));
           break;
       }
     }
@@ -72,11 +70,13 @@ Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleU
           result = evaluateOnMatrices((Matrix *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
           break;
         default:
+          result = new Complex(Complex::Float(NAN));
           break;
       }
     }
     break;
     default:
+      result = new Complex(Complex::Float(NAN));
       break;
   }
   delete leftOperandEvalutation;
@@ -108,7 +108,7 @@ Expression * BinaryOperation::evaluateOnComplexAndMatrix(Complex * c, Matrix * m
 
 Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
   if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {

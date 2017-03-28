@@ -53,10 +53,10 @@ Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context
 
 Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
   if (m_operands[1]->type() != Expression::Type::Integer) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
  if (m->numberOfColumns() != m->numberOfRows()) {
-    return nullptr;
+    return new Complex(Complex::Float(NAN));
   }
   // TODO: return identity matrix if i == 0
   int power = c->approximate(context, angleUnit);
@@ -75,11 +75,11 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
 }
 
 Expression * Power::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  return nullptr;
+  return new Complex(Complex::Float(NAN));
 }
 
 Expression * Power::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
-  return nullptr;
+  return new Complex(Complex::Float(NAN));
 }
 
 }

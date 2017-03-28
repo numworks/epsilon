@@ -50,6 +50,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token <string> DIGITS
 %token <character> SYMBOL
 %token <function> FUNCTION
+%token <expression> UNDEFINED
 
 /* Operator tokens */
 %token PLUS
@@ -129,7 +130,8 @@ symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }
 
 exp:
-  exp STO symb   {$$ = new Poincare::Store($3, $1, false); }
+  UNDEFINED        { $$ = $1; }
+  | exp STO symb   {$$ = new Poincare::Store($3, $1, false); }
   | number             { $$ = $1; }
   | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }

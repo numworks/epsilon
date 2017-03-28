@@ -230,12 +230,15 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
 int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode) {
   assert(mode != FloatDisplayMode::Default);
   if (isinf(f)) {
-    buffer[0] = f > 0 ? '+' : '-';
-    buffer[1] = 'i';
-    buffer[2] = 'n';
-    buffer[3] = 'f';
-    buffer[4] = 0;
-    return 5;
+    int currentChar = 0;
+    if (f < 0) {
+      buffer[currentChar++] = '-';
+    }
+    buffer[currentChar++] = 'i';
+    buffer[currentChar++] = 'n';
+    buffer[currentChar++] = 'f';
+    buffer[currentChar++] = 0;
+    return currentChar;
   }
 
   if (isnan(f)) {

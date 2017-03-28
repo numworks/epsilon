@@ -39,10 +39,7 @@ View * EditableTextCell::subviewAtIndex(int index) {
 }
 
 void EditableTextCell::layoutSubviews() {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  KDCoordinate textHeight = m_textField.minimalSizeForOptimalDisplay().height();
-  m_textField.setFrame(KDRect(k_separatorThickness, (height - textHeight)/2, width - k_separatorThickness, textHeight));
+  m_textField.setFrame(bounds());
 }
 
 void EditableTextCell::didBecomeFirstResponder() {

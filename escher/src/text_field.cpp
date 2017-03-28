@@ -21,11 +21,15 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
 }
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
+  KDColor bckCol = m_backgroundColor;
+  if (m_isEditing) {
+    bckCol = KDColorWhite;
+  }
+  ctx->fillRect(rect, bckCol);
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()-m_cursorView.minimalSizeForOptimalDisplay().width()),
       m_verticalAlignment*(m_frame.height() - textSize.height()));
-  ctx->drawString(text(), origin, m_fontSize, m_textColor, m_backgroundColor);
+  ctx->drawString(text(), origin, m_fontSize, m_textColor, bckCol);
 }
 
 void TextField::ContentView::reload() {

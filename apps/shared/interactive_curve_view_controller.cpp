@@ -137,15 +137,13 @@ void InteractiveCurveViewController::viewWillAppear() {
      * reloading banner view needs an updated cursor to load the right data. */
     initCursorParameters();
     centerCursorVertically();
-    reloadBannerView();
-    curveView()->reload();
   }
   uint32_t newRangeVersion = rangeVersion();
   if (m_rangeVersion != newRangeVersion) {
     m_rangeVersion = newRangeVersion;
-    initCursorParameters();
-    reloadBannerView();
-    curveView()->reload();
+    if (!interactiveCurveViewRange()->isCursorVisible()) {
+      initCursorParameters();
+    }
   }
   curveView()->selectMainView(true);
   header()->setSelectedButton(-1);

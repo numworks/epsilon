@@ -79,7 +79,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
 
 void ListController::selectPreviousNewSequenceCell() {
   if (sequenceDefinitionForRow(m_selectableTableView.selectedRow()) >= 0) {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedRow()-sequenceDefinitionForRow(m_selectableTableView.selectedRow()), m_selectableTableView.selectedColumn());
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()-sequenceDefinitionForRow(m_selectableTableView.selectedRow()));
   }
 }
 

@@ -260,8 +260,9 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   return false;
 }
 
-void ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   m_interval.setElement(rowIndex-1, floatBody);
+  return true;
 }
 
 float ValuesController::dataAtLocation(int columnIndex, int rowIndex) {

@@ -11,7 +11,6 @@ public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate);
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
-  void setTextFieldDelegate(TextFieldDelegate * textFieldDelegate);
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;

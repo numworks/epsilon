@@ -28,7 +28,7 @@ protected:
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  void setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;

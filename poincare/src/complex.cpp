@@ -252,11 +252,10 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   float logBase10 = f != 0.0f ? log10f(fabsf(f)) : 0;
-  int exponentInBase10 = logBase10;
-  if ((int)f == 0 && logBase10 != exponentInBase10) {
-    /* For floats < 0, the exponent in base 10 is the inferior integer part of
-     * log10(float). We thus decrement the exponent for float < 0 whose exponent
-     * is not an integer. */
+  int exponentInBase10 = floorf(logBase10);
+  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
+   * but is stored as 7 in hardware. We catch these cases here. */
+  if (f != 0.0f && logBase10 == (int)logBase10 && fabsf(f) < powf(10.0f, logBase10)) {
     exponentInBase10--;
   }
 
@@ -281,11 +280,16 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
   int mantissa = roundf(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
+   * instance) */
+  if (mantissa != (int)(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal))) {
+    float newLogBase10 = mantissa != 0.0f ? log10f(fabsf(mantissa/powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal))) : 0;
+    exponentInBase10 = floorf(newLogBase10);
+  }
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
   if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {
     mantissa = mantissa/10;
-    exponentInBase10++;
   }
 
   int numberOfCharExponent = exponentInBase10 != 0 ? log10f(fabsf((float)exponentInBase10)) + 1 : 1;

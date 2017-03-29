@@ -10,18 +10,15 @@ namespace Device {
 
 /*  Pin | Role              | Mode
  * -----+-------------------+--------------------
- * PC11 | UART1 RX          | Alternate Function
- *  PD8 | UART1 TX          | Alternate Function
+ * PC11 | UART3 RX          | Alternate Function
+ *  PD8 | UART3 TX          | Alternate Function
  */
 
 void init();
 void shutdown();
 
-//constexpr USART UARTPort = USART(3);
-//constexpr static GPIOPin Pins[] = { GPIOPin(GPIOC, 11), GPIOPin(GPIOD, 8) };
-
-constexpr USART UARTPort = USART(1);
-constexpr static GPIOPin Pins[] = { GPIOPin(GPIOB, 3), GPIOPin(GPIOB, 6) };
+constexpr USART UARTPort = USART(3);
+constexpr static GPIOPin Pins[] = { GPIOPin(GPIOC, 11), GPIOPin(GPIOD, 8) };
 
 void sendChar(char c);
 char recvChar();

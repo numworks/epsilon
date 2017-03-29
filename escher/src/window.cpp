@@ -8,7 +8,10 @@ Window::Window() :
 {
 }
 
-void Window::redraw() {
+void Window::redraw(bool force) {
+  if (force) {
+    markRectAsDirty(bounds());
+  }
   View::redraw(bounds());
 }
 

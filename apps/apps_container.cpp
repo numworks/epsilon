@@ -65,6 +65,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OnOff) {
     Ion::Power::suspend();
+    /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
+     * the frame memory is lost. That's why we need to force a window redraw
+     * upon wakeup, otherwise the screen is filled with noise. */
+    window()->redraw(true);
     return true;
   }
   bool didProcessEvent = Container::dispatchEvent(event);

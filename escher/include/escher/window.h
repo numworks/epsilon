@@ -6,7 +6,7 @@
 class Window : public View {
 public:
   Window();
-  void redraw();
+  void redraw(bool force = false);
   void setContentView(View * contentView);
 protected:
 #if ESCHER_VIEW_LOGGING

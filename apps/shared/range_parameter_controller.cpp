@@ -91,16 +91,10 @@ void RangeParameterController::tableViewDidChangeSelection(SelectableTableView *
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
-  if (activeCell() == 2) {
-    if (event == Ion::Events::OK) {
-      m_interactiveRange->setYAuto(!m_interactiveRange->yAuto());
-      m_selectableTableView.reloadData();
-      return true;
-    }
-    return false;
-  }
-  if (m_interactiveRange->yAuto() && (activeCell() == 3 || activeCell() == 4)) {
-    return false;
+  if (activeCell() == 2 && event == Ion::Events::OK) {
+    m_interactiveRange->setYAuto(!m_interactiveRange->yAuto());
+    m_selectableTableView.reloadData();
+    return true;
   }
   if (event == Ion::Events::Back) {
     m_interactiveRange->setYAuto(m_previousSwitchState);

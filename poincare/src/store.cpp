@@ -76,7 +76,10 @@ Expression * Store::privateEvaluate(Context& context, AngleUnit angleUnit) const
   Expression * valueEvaluation = m_value->evaluate(context, angleUnit);
   context.setExpressionForSymbolName(valueEvaluation, m_symbol);
   delete valueEvaluation;
-  return context.expressionForSymbol(m_symbol)->clone();
+  if (context.expressionForSymbol(m_symbol) != nullptr) {
+    return context.expressionForSymbol(m_symbol)->clone();
+  }
+  return new Complex(Complex::Float(NAN));
 }
 
 float Store::privateApproximate(Context& context, AngleUnit angleUnit) const {

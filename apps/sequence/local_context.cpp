@@ -32,14 +32,14 @@ void LocalContext::setSequenceRankValue(float f, int rank) {
 
 char LocalContext::sequenceIndexForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::un ||
-  	  symbol->name() == Symbol::SpecialSymbols::vn ||
-  	  symbol->name() == Symbol::SpecialSymbols::wn) {
-  	return 0;
+      symbol->name() == Symbol::SpecialSymbols::vn ||
+      symbol->name() == Symbol::SpecialSymbols::wn) {
+    return 0;
   }
   if (symbol->name() == Symbol::SpecialSymbols::un1 ||
-  	  symbol->name() == Symbol::SpecialSymbols::vn1 ||
-  	  symbol->name() == Symbol::SpecialSymbols::wn1) {
-  	return 1;
+      symbol->name() == Symbol::SpecialSymbols::vn1 ||
+      symbol->name() == Symbol::SpecialSymbols::wn1) {
+    return 1;
   }
   return 2;
 }

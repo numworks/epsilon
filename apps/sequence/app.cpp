@@ -22,7 +22,7 @@ App::App(Container * container, Context * context) :
   m_valuesHeader(ButtonRowController(nullptr, &m_valuesAlternateEmptyViewController, &m_valuesController)),
   m_valuesStackViewController(StackViewController(&m_tabViewController, &m_valuesHeader)),
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, this)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController)
 {
 }
 

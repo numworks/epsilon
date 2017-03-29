@@ -17,6 +17,7 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
   m_backgroundColor(backgroundColor),
   m_fontSize(size)
 {
+  assert(m_textBufferSize <= k_maxBufferSize);
 }
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -73,7 +74,6 @@ void TextField::ContentView::setText(const char * text) {
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
     m_currentTextLength = strlen(text);
-    setCursorLocation(m_currentTextLength);
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
   }
@@ -224,8 +224,9 @@ int TextField::cursorLocation() const{
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
-  scrollToCursor();
-  layoutSubviews();
+  if (isEditing()) {
+    setCursorLocation(textLength());
+  }
 }
 
 void TextField::setBackgroundColor(KDColor backgroundColor) {
@@ -277,9 +278,18 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isEditing()) {
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
+      int cursorLoc = cursorLocation();
       setEditing(false);
-      m_delegate->textFieldDidFinishEditing(this, text());
-      reloadScroll();
+      if (m_delegate->textFieldDidFinishEditing(this, text())) {
+        reloadScroll();
+        return true;
+      }
+      char buffer[ContentView::k_maxBufferSize];
+      strlcpy(buffer, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
+      setText("");
+      setEditing(true);
+      setText(buffer);
+      setCursorLocation(cursorLoc);
       return true;
     }
     if (event == Ion::Events::EXE) {

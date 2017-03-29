@@ -39,14 +39,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.cellAtLocation(0, focusRow);
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
+    m_selectableTableView.deselectTable();
+    app()->setFirstResponder(editController);
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->setTextBody(calculation->inputText());
     } else {
       editController->setTextBody(calculation->outputText());
     }
-    m_selectableTableView.deselectTable();
-    app()->setFirstResponder(editController);
     return true;
   }
   if (event == Ion::Events::EXE) {

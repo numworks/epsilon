@@ -18,12 +18,12 @@ extern "C" {
 // Public Ion methods
 
 void Ion::msleep(long ms) {
-  for (volatile long i=0; i<1040*ms; i++) {
+  for (volatile long i=0; i<5400*ms; i++) {
       __asm volatile("nop");
   }
 }
 void Ion::usleep(long us) {
-  for (volatile long i=0; i<us; i++) {
+  for (volatile long i=0; i<5*us; i++) {
     __asm volatile("nop");
   }
 }

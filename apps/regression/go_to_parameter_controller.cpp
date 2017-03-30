@@ -56,8 +56,6 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_store->centerAxisAround(CurveViewRange::Axis::X, f);
-    m_store->centerAxisAround(CurveViewRange::Axis::Y, y);
     m_cursor->moveTo(f, y);
   } else {
     float x = m_store->xValueForYValue(f);
@@ -65,8 +63,6 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_store->centerAxisAround(CurveViewRange::Axis::X, x);
-    m_store->centerAxisAround(CurveViewRange::Axis::Y, f);
     m_cursor->moveTo(x, f);
   }
   return true;
@@ -114,6 +110,8 @@ void GoToParameterController::viewWillAppear() {
 }
 
 void GoToParameterController::buttonAction() {
+  m_store->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
+  m_store->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();
   stack->pop();

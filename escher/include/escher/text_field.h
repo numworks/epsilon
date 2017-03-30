@@ -9,7 +9,7 @@
 class TextField : public ScrollableView {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
+    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
     float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
   Toolbox * toolbox() override;
   bool isEditing() const;
@@ -81,6 +81,7 @@ private:
   void scrollToCursor();
   void scrollToAvoidWhiteSpace();
   View * view() override;
+  bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };
 

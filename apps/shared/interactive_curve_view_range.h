@@ -31,6 +31,7 @@ public:
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
+  bool isCursorVisible();
 protected:
   bool m_yAuto;
   InteractiveCurveViewRangeDelegate * m_delegate;

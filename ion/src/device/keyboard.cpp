@@ -60,8 +60,6 @@ bool keyDown(Key k) {
     Device::RowGPIO.ODR()->set(pin, state);
   }
 
-  msleep(1);
-
   // Read the input of the proper column
   uint8_t column = Device::columnForKey(k);
   uint8_t pin = Device::ColumnPins[column];

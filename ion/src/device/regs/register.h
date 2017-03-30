@@ -17,6 +17,12 @@ public:
   T get() volatile {
     return m_value;
   }
+  void setBitRange(uint8_t high, uint8_t low, T value) volatile {
+    m_value = bit_range_set_value(high, low, m_value, value);
+  }
+  T getBitRange(uint8_t high, uint8_t low) volatile {
+    return (m_value & bit_range_mask(high,low)) >> low;
+  }
 protected:
   static constexpr T bit_range_mask(uint8_t high, uint8_t low) {
     return ((((T)1)<<(high-low+1))-1)<<low;
@@ -26,12 +32,6 @@ protected:
   }
   static constexpr T bit_range_set_value(uint8_t high, uint8_t low, T originalValue, T targetValue) {
     return (originalValue & ~bit_range_mask(high,low))|bit_range_value(targetValue, high, low);
-  }
-  void setBitRange(uint8_t high, uint8_t low, T value) volatile {
-    m_value = bit_range_set_value(high, low, m_value, value);
-  }
-  T getBitRange(uint8_t high, uint8_t low) volatile {
-    return (m_value & bit_range_mask(high,low)) >> low;
   }
 private:
   T m_value;

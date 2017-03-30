@@ -11,10 +11,11 @@ public:
   FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
   void setFunction(Function * function);
-private:
-  float parameterAtIndex(int index) override;
+protected:
   bool setParameterAtIndex(int parameterIndex, float f) override;
   Function * m_function;
+private:
+  float parameterAtIndex(int index) override;
 };
 
 }

@@ -3,12 +3,11 @@
 
 namespace Shared {
 
-FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   ViewController(nullptr),
   m_goToCell(MessageTableCellWithChevron(I18n::Message::Goto)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_goToParameterController(FunctionGoToParameterController(this, graphRange, cursor, symbol)),
   m_function(nullptr)
 {
 }
@@ -26,9 +25,9 @@ bool FunctionCurveParameterController::handleGotoSelection() {
   if (m_function == nullptr) {
     return false;
   }
-  m_goToParameterController.setFunction(m_function);
+  goToParameterController()->setFunction(m_function);
   StackViewController * stack = (StackViewController *)parentResponder();
-  stack->push(&m_goToParameterController);
+  stack->push(goToParameterController());
   return true;
 }
 

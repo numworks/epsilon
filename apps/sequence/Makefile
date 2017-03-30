@@ -3,6 +3,7 @@ app_objs += $(addprefix apps/sequence/,\
   graph/banner_view.o\
   graph/curve_parameter_controller.o\
   graph/curve_view_range.o\
+  graph/go_to_parameter_controller.o\
   graph/graph_controller.o\
   graph/graph_view.o\
   graph/term_sum_controller.o\

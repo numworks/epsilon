@@ -7,7 +7,8 @@ using namespace Shared;
 namespace Sequence {
 
 CurveParameterController::CurveParameterController(GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor, I18n::Message::N),
+  FunctionCurveParameterController(graphRange, cursor),
+  m_goToParameterController(GoToParameterController(this, graphRange, cursor, I18n::Message::N)),
   m_sumCell(MessageTableCell(I18n::Message::TermSum)),
   m_graphController(graphController)
 {
@@ -49,6 +50,10 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
 
 int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
+}
+
+GoToParameterController * CurveParameterController::goToParameterController() {
+  return &m_goToParameterController;
 }
 
 }

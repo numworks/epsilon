@@ -6,7 +6,8 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor, I18n::Message::X),
+  FunctionCurveParameterController(graphRange, cursor),
+  m_goToParameterController(FunctionGoToParameterController(this, graphRange, cursor, I18n::Message::X)),
   m_bannerView(bannerView),
   m_calculationCell(MessageTableCellWithChevron(I18n::Message::Compute)),
   m_derivativeCell(MessageTableCellWithSwitch(I18n::Message::DerivateNumber))
@@ -57,6 +58,10 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
 
 int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
+}
+
+FunctionGoToParameterController * CurveParameterController::goToParameterController() {
+  return &m_goToParameterController;
 }
 
 }

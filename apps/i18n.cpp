@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[196][3] {
+const char * messages[198][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
@@ -117,6 +117,7 @@ const char * messages[196][3] {
   {"Options de la courbe", "Plot options", "Opciones de la curva"},
   {"Calculer", "Calculate", "Calcular"},
   {"Aller a", "Go to", "Ir a"},
+  {"Valeur non atteinte par la fonction", "Value not reached by function", "No se alcanza este valor"},
   {"Zeros", "Zeros", "Raices"},
   {"Tangente", "Tangent", "Tangente"},
   {"Intersection", "Intersection", "Interseccion"},
@@ -156,6 +157,7 @@ const char * messages[196][3] {
   {"Somme des termes", "Sum of terms", "Suma de terminos"},
   {"SELECTIONNER LE PREMIER TERME", "SELECT FIRST TERM", "SELECCIONAR EL PRIMER TERMINO"},
   {"SELECTIONNER LE DERNIER TERME", "SELECT LAST TERM", "SELECCIONAR ULTIMO TERMINO"},
+  {"Valeur non atteinte par la suite", "Value not reached by sequence", "No se alcanza este valor"},
   /* Sequence: third tab */
   {"Colonne n", "n column", "Columna n"},
 

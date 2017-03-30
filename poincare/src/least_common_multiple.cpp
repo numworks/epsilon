@@ -30,7 +30,7 @@ float LeastCommonMultiple::privateApproximate(Context& context, AngleUnit angleU
   assert(angleUnit != AngleUnit::Default);
   float f1 = m_args[0]->approximate(context, angleUnit);
   float f2 = m_args[1]->approximate(context, angleUnit);
-  if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+  if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2 || f1 == 0.0f || f2 == 0.0f) {
     return NAN;
   }
   int a = (int)f2;

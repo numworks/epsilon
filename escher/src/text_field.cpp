@@ -21,11 +21,15 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
 }
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
+  KDColor bckCol = m_backgroundColor;
+  if (m_isEditing) {
+    bckCol = KDColorWhite;
+  }
+  ctx->fillRect(rect, bckCol);
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
   KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()-m_cursorView.minimalSizeForOptimalDisplay().width()),
       m_verticalAlignment*(m_frame.height() - textSize.height()));
-  ctx->drawString(text(), origin, m_fontSize, m_textColor, m_backgroundColor);
+  ctx->drawString(text(), origin, m_fontSize, m_textColor, bckCol);
 }
 
 void TextField::ContentView::reload() {
@@ -277,6 +281,8 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isEditing()) {
+      char bufferText[ContentView::k_maxBufferSize];
+      strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
       int cursorLoc = cursorLocation();
       setEditing(false);
@@ -284,11 +290,13 @@ bool TextField::handleEvent(Ion::Events::Event event) {
         reloadScroll();
         return true;
       }
-      char buffer[ContentView::k_maxBufferSize];
-      strlcpy(buffer, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-      setText("");
+      /* if the text was refused (textFieldDidFinishEditing returned false, we
+       * reset the textfield in the same state as before */
+      char bufferDraft[ContentView::k_maxBufferSize];
+      strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
+      setText(bufferText);
       setEditing(true);
-      setText(buffer);
+      setText(bufferDraft);
       setCursorLocation(cursorLoc);
       return true;
     }

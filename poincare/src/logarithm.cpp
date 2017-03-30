@@ -16,8 +16,8 @@ Logarithm::Logarithm() :
 {
 }
 
-bool Logarithm::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 1 || numberOfArguments == 2);
+bool Logarithm::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 1 || m_numberOfArguments == 2);
 }
 
 Expression::Type Logarithm::type() const {

@@ -22,7 +22,7 @@ const char * messages[196][3] {
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
   {"Attention a la syntaxe", "Syntax error", "Error sintactico"},
-  {"Error mathematique", "Math error", "Error matematico"},
+  {"Erreur mathematique", "Math error", "Error matematico"},
 
   /* Variables */
   {"Variables", "Variables", "Variables"},

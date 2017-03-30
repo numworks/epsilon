@@ -19,8 +19,8 @@ Product::Product() :
 {
 }
 
-bool Product::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 3);
+bool Product::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 3);
 }
 
 Expression::Type Product::type() const {

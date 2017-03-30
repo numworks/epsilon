@@ -16,8 +16,8 @@ NthRoot::NthRoot() :
 {
 }
 
-bool NthRoot::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool NthRoot::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type NthRoot::type() const {

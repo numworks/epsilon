@@ -29,16 +29,19 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
   const char * text = textField->text();
   int location = textField->cursorLocation();
   int tokenLength = strlen(token);
-  while (text[location] != '(') {
-    location --;
-  }
-  if (location - tokenLength < 0) {
-    return false;
-  }
-  char previousToken[10];
-  strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
-  if (strcmp(previousToken, token) == 0) {
-    return true;
+  while (location >= 0) {
+    while (text[location] != '(') {
+      location --;
+    }
+    if (location - tokenLength < 0) {
+      return false;
+    }
+    char previousToken[10];
+    strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
+    if (strcmp(previousToken, token) == 0) {
+      return true;
+    }
+    location--;
   }
   return false;
 }
@@ -46,7 +49,7 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && textField->isEditing()) {
     Expression * exp = Expression::parse(textField->text());
-    if (exp == nullptr) {
+    if (exp == nullptr || !exp->hasValidNumberOfArguments()) {
       if (textField->textLength() == 0) {
         return true;
       }

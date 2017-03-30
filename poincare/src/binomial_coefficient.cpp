@@ -16,8 +16,8 @@ BinomialCoefficient::BinomialCoefficient() :
 {
 }
 
-bool BinomialCoefficient::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool BinomialCoefficient::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type BinomialCoefficient::type() const {

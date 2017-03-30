@@ -33,7 +33,10 @@ InputViewController * App::inputViewController() {
 }
 
 Context * App::localContext() {
-  return &m_xContext;
+  if (m_tabViewController.activeTab() == 0) {
+    return &m_xContext;
+  }
+  return TextFieldDelegateApp::localContext();
 }
 
 }

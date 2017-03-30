@@ -151,9 +151,11 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
 }
 
 bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  FloatParameterController::textFieldDidFinishEditing(textField, text);
-  m_selectableTableView.reloadData();
-  return true;
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text)) {
+    m_selectableTableView.reloadData();
+    return true;
+  }
+  return false;
 }
 
 void ParametersController::buttonAction() {

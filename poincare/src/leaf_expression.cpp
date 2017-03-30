@@ -6,6 +6,10 @@ extern "C" {
 
 namespace Poincare {
 
+bool LeafExpression::hasValidNumberOfArguments() const {
+  return true;
+}
+
 int LeafExpression::numberOfOperands() const {
   return 0;
 }

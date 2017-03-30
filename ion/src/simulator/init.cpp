@@ -58,12 +58,26 @@ void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
   sFrameBuffer->pullRect(r, pixels);
 }
 
-bool Ion::Keyboard::keyDown(Ion::Keyboard::Key key) {
-  return sKeyboard->key_down(key);
+Ion::Keyboard::State Ion::Keyboard::scan() {
+  Ion::Keyboard::State result = 0;
+  for (int i=0; i<Ion::Keyboard::NumberOfKeys; i++) {
+    result = result << 1 | sKeyboard->key_down((Ion::Keyboard::Key)(Ion::Keyboard::NumberOfKeys-1-i));
+
+  }
+  return result;
 }
 
+#include <chrono>
+
 void Ion::msleep(long ms) {
-  ::usleep(1000*ms);
-  sDisplay->redraw();
-  Fl::wait();
+  auto start = std::chrono::high_resolution_clock::now();
+  while (true) {
+    sDisplay->redraw();
+    Fl::wait(0);
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    if (microseconds >= ms) {
+      break;
+    }
+  }
 }

@@ -61,8 +61,9 @@ void start() {
 
   Ion::Device::init();
 
-  if (Ion::Keyboard::keyDown(Ion::Keyboard::Key::A1) &&
-      Ion::Keyboard::keyDown(Ion::Keyboard::Key::I5)) {
+  Ion::Keyboard::State state = Ion::Keyboard::scan();
+  if (Ion::Keyboard::keyDown(Ion::Keyboard::Key::A1, state) &&
+      Ion::Keyboard::keyDown(Ion::Keyboard::Key::I5, state)) {
     Ion::Device::Bench::run();
   }
 

@@ -16,15 +16,15 @@ namespace Device {
  *  PC3 | Keyboard column 4 | Input, pulled up
  *  PC4 | Keyboard column 5 | Input, pulled up
  *  PC5 | Keyboard column 6 | Input, pulled up
- *  PE1 | Keyboard row A    | Output, open drain
- *  PE2 | Keyboard row B    | Output, open drain
- *  PE3 | Keyboard row C    | Output, open drain
- *  PE4 | Keyboard row D    | Output, open drain
- *  PE5 | Keyboard row E    | Output, open drain
- *  PE6 | Keyboard row F    | Output, open drain
- *  PE7 | Keyboard row G    | Output, open drain
- *  PE8 | Keyboard row H    | Output, open drain
- *  PE9 | Keyboard row I    | Output, open drain
+ *  PE0 | Keyboard row A    | Output, open drain
+ *  PE1 | Keyboard row B    | Output, open drain
+ *  PE2 | Keyboard row C    | Output, open drain
+ *  PE3 | Keyboard row D    | Output, open drain
+ *  PE4 | Keyboard row E    | Output, open drain
+ *  PE5 | Keyboard row F    | Output, open drain
+ *  PE6 | Keyboard row G    | Output, open drain
+ *  PE7 | Keyboard row H    | Output, open drain
+ *  PE8 | Keyboard row I    | Output, open drain
  */
 
 void init();

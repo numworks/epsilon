@@ -42,7 +42,7 @@ float MemoizedCurveViewRange::yGridUnit() {
 void MemoizedCurveViewRange::setXMin(float xMin) {
   m_xMin = xMin;
   if (m_xMin >= m_xMax) {
-    m_xMax = xMin + 1.0f;
+    m_xMax = xMin + powf(10.0f, floorf(log10f(fabsf(xMin)))-1.0f);
   }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 }
@@ -50,7 +50,7 @@ void MemoizedCurveViewRange::setXMin(float xMin) {
 void MemoizedCurveViewRange::setXMax(float xMax) {
   m_xMax = xMax;
   if (m_xMin >= m_xMax) {
-    m_xMin = xMax - 1.0f;
+    m_xMin = xMax - powf(10.0f, floorf(log10f(fabsf(xMax)))-1.0f);
   }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 }

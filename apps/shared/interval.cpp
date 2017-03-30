@@ -74,7 +74,7 @@ void Interval::computeElements() {
     m_numberOfElements = 0;
   } else {
     m_numberOfElements = m_step > 0 ? 1 + (m_end - m_start)/m_step : k_maxNumberOfElements;
-    m_numberOfElements = m_numberOfElements > k_maxNumberOfElements ? k_maxNumberOfElements : m_numberOfElements;
+    m_numberOfElements = m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0 ? k_maxNumberOfElements : m_numberOfElements;
   }
   for (int i = 0; i < m_numberOfElements; i += 1) {
     m_intervalBuffer[i] = m_start + i * m_step;

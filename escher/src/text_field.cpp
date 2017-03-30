@@ -104,7 +104,7 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
   if (m_isEditing == isEditing) {
     return;
   }
-  if (m_isEditing == false && reinitDrafBuffer) {
+  if (reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
   m_isEditing = isEditing;
@@ -194,10 +194,11 @@ void TextField::ContentView::layoutSubviews() {
 }
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, TextFieldDelegate * delegate, KDText::FontSize size,
+    size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, KDText::FontSize size,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   ScrollableView(parentResponder, &m_contentView),
   m_contentView(textBuffer, draftTextBuffer, textBufferSize, size,horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
 {
 }
@@ -285,7 +286,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
       int cursorLoc = cursorLocation();
-      setEditing(false);
+      setEditing(false, m_hasTwoBuffers);
       if (m_delegate->textFieldDidFinishEditing(this, text())) {
         reloadScroll();
         return true;

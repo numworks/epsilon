@@ -67,7 +67,7 @@ void EditExpressionController::setTextBody(const char * text) {
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      m_contentView.textField()->setEditing(false);
+      m_contentView.textField()->setEditing(false, false);
       app()->setFirstResponder(m_historyController);
     }
     return true;

@@ -201,6 +201,10 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   }
 }
 
+bool InteractiveCurveViewRange::isCursorVisible() {
+  return m_cursor->x() >= m_xMin && m_cursor->x() <= m_xMax && m_cursor->y() >= m_yMin && m_cursor->y() <= m_yMax;
+}
+
 float InteractiveCurveViewRange::clipped(float x, bool isMax) {
   float max = isMax ? k_upperMaxFloat : k_lowerMaxFloat;
   float min = isMax ? -k_lowerMaxFloat : -k_upperMaxFloat;

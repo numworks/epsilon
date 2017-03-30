@@ -44,8 +44,6 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, f);
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, y);
   m_cursor->moveTo(f, y);
   return true;
 }
@@ -64,6 +62,8 @@ void GoToParameterController::setFunction(Function * function) {
 }
 
 void GoToParameterController::buttonAction() {
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();
   stack->pop();

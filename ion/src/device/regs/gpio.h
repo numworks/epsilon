@@ -39,12 +39,12 @@ public:
     void setPull(int index, Pull pull) volatile { setBitRange(2*index+1, 2*index, (uint32_t)pull); }
   };
 
-  class IDR : Register32 {
+  class IDR : public Register32 {
   public:
     bool get(int index) volatile { return (bool)getBitRange(index, index); }
   };
 
-  class ODR : Register32 {
+  class ODR : public Register32 {
   public:
     bool get(int index) volatile { return (bool)getBitRange(index, index); }
     void set(int index, bool state) volatile { setBitRange(index, index, state); }

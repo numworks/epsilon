@@ -11,7 +11,7 @@ namespace Shared {
 
 class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource {
 public:
-  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
@@ -21,7 +21,7 @@ protected:
   MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
 private:
-  FunctionGoToParameterController m_goToParameterController;
+  virtual FunctionGoToParameterController * goToParameterController() = 0;
   Function * m_function;
 };
 

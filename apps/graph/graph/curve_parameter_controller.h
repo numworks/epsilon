@@ -16,6 +16,8 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  Shared::FunctionGoToParameterController * goToParameterController() override;
+  Shared::FunctionGoToParameterController m_goToParameterController;
   BannerView * m_bannerView;
   constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;

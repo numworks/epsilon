@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../../shared/function_curve_parameter_controller.h"
+#include "go_to_parameter_controller.h"
 
 namespace Sequence {
 
@@ -18,6 +19,8 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
+  GoToParameterController * goToParameterController() override;
+  GoToParameterController m_goToParameterController;
   MessageTableCell m_sumCell;
   GraphController * m_graphController;
 };

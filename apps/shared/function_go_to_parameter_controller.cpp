@@ -2,8 +2,6 @@
 #include "text_field_delegate_app.h"
 #include <assert.h>
 
-using namespace Poincare;
-
 namespace Shared {
 
 FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :

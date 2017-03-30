@@ -102,6 +102,7 @@ namespace I18n {
     PlotOptions,
     Compute,
     Goto,
+    ValueNotReachedByFunction,
     Zeros,
     Tangent,
     Intersection,
@@ -138,6 +139,7 @@ namespace I18n {
     TermSum,
     SelectFirstTerm,
     SelectLastTerm,
+    ValueNotReachedBySequence,
     NColumn,
 
   /* Statistics */

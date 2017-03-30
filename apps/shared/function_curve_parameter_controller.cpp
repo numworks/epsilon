@@ -8,7 +8,7 @@ FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCu
   m_goToCell(MessageTableCellWithChevron(I18n::Message::Goto)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
-  m_goToParameterController(GoToParameterController(this, graphRange, cursor, symbol)),
+  m_goToParameterController(FunctionGoToParameterController(this, graphRange, cursor, symbol)),
   m_function(nullptr)
 {
 }

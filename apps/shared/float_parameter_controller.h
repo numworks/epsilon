@@ -30,6 +30,7 @@ public:
 protected:
   int activeCell();
   StackViewController * stackController();
+  virtual float parameterAtIndex(int index) = 0;
   SelectableTableView m_selectableTableView;
 private:
   constexpr static int k_buttonMargin = 6;
@@ -38,7 +39,6 @@ private:
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual float previousParameterAtIndex(int index) = 0;
-  virtual float parameterAtIndex(int index) = 0;
   virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
   ButtonWithSeparator m_okButton;
 };

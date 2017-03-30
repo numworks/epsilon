@@ -8,10 +8,8 @@ using namespace Poincare;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
-  FloatParameterController(parentResponder),
-  m_abscisseCell(MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)),
+  Shared::GoToParameterController(parentResponder, store, cursor, I18n::Message::X),
   m_store(store),
-  m_cursor(cursor),
   m_xPrediction(true)
 {
 }
@@ -25,15 +23,6 @@ const char * GoToParameterController::title() {
     return "Prediction sachant x";
   }
   return "Prediction sachant y";
-}
-
-int GoToParameterController::numberOfRows() {
-  return 2;
-}
-
-float GoToParameterController::previousParameterAtIndex(int index) {
-  assert(index == 0);
-  return m_previousParameter;
 }
 
 float GoToParameterController::parameterAtIndex(int index) {
@@ -50,31 +39,24 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
+  float x = m_store->xValueForYValue(f);
   if (m_xPrediction) {
-    float y = m_store->yValueForXValue(f);
-    if (fabsf(y) > k_maxDisplayableFloat) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-    m_cursor->moveTo(f, y);
+    x = m_store->yValueForXValue(f);
+  }
+  if (fabsf(x) > k_maxDisplayableFloat) {
+    app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  if (isnan(x)) {
+    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
+    return false;
+  }
+  if (m_xPrediction) {
+    m_cursor->moveTo(f, x);
   } else {
-    float x = m_store->xValueForYValue(f);
-    if (fabsf(x) > k_maxDisplayableFloat) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
     m_cursor->moveTo(x, f);
   }
   return true;
-}
-
-HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
-  assert(index == 0);
-  return &m_abscisseCell;
-}
-
-int GoToParameterController::reusableParameterCellCount(int type) {
-  return 1;
 }
 
 void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -88,33 +70,6 @@ void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     myCell->setMessage(I18n::Message::Y);
   }
   FloatParameterController::willDisplayCellForIndex(cell, index);
-}
-
-bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext);
-  float parameter = m_store->yValueForXValue(floatBody);
-  if (!m_xPrediction) {
-    parameter = m_store->xValueForYValue(floatBody);
-  }
-  if (isnan(parameter)) {
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
-    return false;
-  }
-  return FloatParameterController::textFieldDidFinishEditing(textField, text);
-}
-
-void GoToParameterController::viewWillAppear() {
-  m_previousParameter = parameterAtIndex(0);
-}
-
-void GoToParameterController::buttonAction() {
-  m_store->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
-  m_store->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
-  StackViewController * stack = (StackViewController *)parentResponder();
-  stack->pop();
-  stack->pop();
 }
 
 }

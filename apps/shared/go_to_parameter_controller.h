@@ -17,7 +17,7 @@ public:
   void setFunction(Function * function);
   int numberOfRows() override;
 private:
-  constexpr static float k_maxDisplayableFloat = 1E7f;
+  constexpr static float k_maxDisplayableFloat = 1E8f;
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;

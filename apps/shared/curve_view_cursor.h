@@ -9,8 +9,8 @@ public:
   float x();
   float y();
   void moveTo(float x, float y);
-  static float clipped(float f);
 private:
+  static float clipped(float f);
   constexpr static float k_maxFloat = 1E+8f;
   float m_x;
   float m_y;

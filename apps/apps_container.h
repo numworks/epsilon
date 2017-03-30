@@ -5,6 +5,7 @@
 #include "graph/app.h"
 #include "probability/app.h"
 #include "calculation/app.h"
+#include "hardware_test/app.h"
 #include "regression/app.h"
 #include "sequence/app.h"
 #include "settings/app.h"
@@ -38,6 +39,7 @@ private:
   Graph::App m_graphApp;
   Probability::App m_probabilityApp;
   Calculation::App m_calculationApp;
+  HardwareTest::App m_hardwareTestApp;
   Regression::App m_regressionApp;
   Sequence::App m_sequenceApp;
   Settings::App m_settingsApp;

@@ -13,7 +13,7 @@ public:
   View * view() override;
 
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
 private:
   KeyboardView m_view;
 };

@@ -6,7 +6,7 @@
 InputViewController::TextFieldController::ContentView::ContentView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(this, m_textBody, m_textBody, 255, textFieldDelegate)
+  m_textField(this, m_textBody, m_textBody, 255, textFieldDelegate, false)
 {
   m_textBody[0] = 0;
 }

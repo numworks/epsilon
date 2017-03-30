@@ -21,8 +21,15 @@ enum class Key : uint8_t {
 };
 
 constexpr int NumberOfKeys  = 54;
+typedef uint64_t State;
 
-bool keyDown(Key k);
+static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");
+
+State scan();
+
+inline bool keyDown(Key k, State s) {
+  return (s>>(uint8_t)k) & 1;
+}
 
 }
 }

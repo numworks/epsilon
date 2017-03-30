@@ -8,12 +8,8 @@ extern "C" {
 namespace Poincare {
 
 DivisionQuotient::DivisionQuotient() :
-  Function("quo")
+  Function("quo", 2)
 {
-}
-
-bool DivisionQuotient::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type DivisionQuotient::type() const {
@@ -22,7 +18,6 @@ Expression::Type DivisionQuotient::type() const {
 
 Expression * DivisionQuotient::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   DivisionQuotient * dq = new DivisionQuotient();
   dq->setArgument(newOperands, numberOfOperands, cloneOperands);

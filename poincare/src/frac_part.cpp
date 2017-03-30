@@ -18,7 +18,6 @@ Expression::Type FracPart::type() const {
 
 Expression * FracPart::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   FracPart * fp = new FracPart();
   fp->setArgument(newOperands, numberOfOperands, cloneOperands);

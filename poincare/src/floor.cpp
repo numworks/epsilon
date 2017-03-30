@@ -18,7 +18,6 @@ Expression::Type Floor::type() const {
 
 Expression * Floor::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   Floor * f = new Floor();
   f->setArgument(newOperands, numberOfOperands, cloneOperands);

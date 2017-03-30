@@ -18,7 +18,6 @@ Tangent::Tangent() :
 Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  assert(numberOfOperands == 1);
   Tangent * t = new Tangent();
   t->setArgument(newOperands, numberOfOperands, cloneOperands);
   return t;

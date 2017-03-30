@@ -15,12 +15,8 @@ extern "C" {
 namespace Poincare {
 
 Sum::Sum() :
-  Function("sum")
+  Function("sum", 3)
 {
-}
-
-bool Sum::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 3);
 }
 
 Expression::Type Sum::type() const {
@@ -29,7 +25,6 @@ Expression::Type Sum::type() const {
 
 Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 3);
   assert(newOperands != nullptr);
   Sum * s = new Sum();
   s->setArgument(newOperands, numberOfOperands, cloneOperands);

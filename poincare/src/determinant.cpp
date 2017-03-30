@@ -18,7 +18,6 @@ Expression::Type Determinant::type() const {
 
 Expression * Determinant::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   Determinant * d = new Determinant();
   d->setArgument(newOperands, numberOfOperands, cloneOperands);

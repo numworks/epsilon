@@ -9,12 +9,8 @@ extern "C" {
 namespace Poincare {
 
 GreatCommonDivisor::GreatCommonDivisor() :
-  Function("gcd")
+  Function("gcd", 2)
 {
-}
-
-bool GreatCommonDivisor::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type GreatCommonDivisor::type() const {
@@ -23,7 +19,6 @@ Expression::Type GreatCommonDivisor::type() const {
 
 Expression * GreatCommonDivisor::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   GreatCommonDivisor * gcd = new GreatCommonDivisor();
   gcd->setArgument(newOperands, numberOfOperands, cloneOperands);

@@ -8,12 +8,8 @@ extern "C" {
 namespace Poincare {
 
 DivisionRemainder::DivisionRemainder() :
-  Function("rem")
+  Function("rem", 2)
 {
-}
-
-bool DivisionRemainder::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type DivisionRemainder::type() const {
@@ -22,7 +18,6 @@ Expression::Type DivisionRemainder::type() const {
 
 Expression * DivisionRemainder::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   DivisionRemainder * dr = new DivisionRemainder();
   dr->setArgument(newOperands, numberOfOperands, cloneOperands);

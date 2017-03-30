@@ -17,7 +17,6 @@ Expression::Type ArcSine::type() const {
 
 Expression * ArcSine::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   ArcSine * s = new ArcSine();
   s->setArgument(newOperands, numberOfOperands, cloneOperands);

@@ -19,7 +19,6 @@ Expression::Type ComplexArgument::type() const {
 
 Expression * ComplexArgument::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   ComplexArgument * ca = new ComplexArgument();
   ca->setArgument(newOperands, numberOfOperands, cloneOperands);

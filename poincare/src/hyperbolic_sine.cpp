@@ -22,7 +22,6 @@ Expression::Type HyperbolicSine::type() const {
 
 Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   HyperbolicSine * hs = new HyperbolicSine();
   hs->setArgument(newOperands, numberOfOperands, cloneOperands);

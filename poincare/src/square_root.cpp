@@ -10,7 +10,7 @@ extern "C" {
 namespace Poincare {
 
 SquareRoot::SquareRoot() :
-  Function("v")
+  Function("squareRoot")
 {
 }
 
@@ -20,7 +20,6 @@ Expression::Type SquareRoot::type() const {
 
 Expression * SquareRoot::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   SquareRoot * sr = new SquareRoot();
   sr->setArgument(newOperands, numberOfOperands, cloneOperands);

@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_CURVE_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "go_to_parameter_controller.h"
+#include "function_go_to_parameter_controller.h"
 #include "function.h"
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range.h"
@@ -21,7 +21,7 @@ protected:
   MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
 private:
-  GoToParameterController m_goToParameterController;
+  FunctionGoToParameterController m_goToParameterController;
   Function * m_function;
 };
 

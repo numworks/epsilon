@@ -2,34 +2,21 @@
 #define REGRESSION_GO_TO_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../shared/float_parameter_controller.h"
-#include "../shared/curve_view_cursor.h"
+#include "../shared/go_to_parameter_controller.h"
 #include "store.h"
 
 namespace Regression {
 
-class GoToParameterController : public Shared::FloatParameterController {
+class GoToParameterController : public Shared::GoToParameterController {
 public:
   GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   void setXPrediction(bool xPrediction);
   const char * title() override;
-  int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
-  void viewWillAppear() override;
 private:
-  constexpr static float k_maxDisplayableFloat = 1E8f;
-  HighlightCell * reusableParameterCell(int index, int type) override;
-  int reusableParameterCellCount(int type) override;
-  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
-  void buttonAction() override;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText m_abscisseCell;
-  float m_previousParameter;
   Store * m_store;
-  Shared::CurveViewCursor * m_cursor;
   bool m_xPrediction;
 };
 

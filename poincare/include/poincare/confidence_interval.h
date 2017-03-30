@@ -8,7 +8,6 @@ namespace Poincare {
 class ConfidenceInterval : public Function {
 public:
   ConfidenceInterval();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

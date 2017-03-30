@@ -12,12 +12,8 @@ extern "C" {
 namespace Poincare {
 
 NthRoot::NthRoot() :
-  Function("root")
+  Function("root", 2)
 {
-}
-
-bool NthRoot::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type NthRoot::type() const {
@@ -26,7 +22,6 @@ Expression::Type NthRoot::type() const {
 
 Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   NthRoot * r = new NthRoot();
   r->setArgument(newOperands, numberOfOperands, cloneOperands);

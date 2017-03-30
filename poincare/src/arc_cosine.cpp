@@ -17,7 +17,6 @@ Expression::Type ArcCosine::type() const {
 
 Expression * ArcCosine::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   ArcCosine * c = new ArcCosine();
   c->setArgument(newOperands, numberOfOperands, cloneOperands);

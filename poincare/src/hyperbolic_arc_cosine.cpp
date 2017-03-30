@@ -17,7 +17,6 @@ Expression::Type HyperbolicArcCosine::type() const {
 
 Expression * HyperbolicArcCosine::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   HyperbolicArcCosine * c = new HyperbolicArcCosine();
   c->setArgument(newOperands, numberOfOperands, cloneOperands);

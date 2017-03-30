@@ -11,12 +11,8 @@ extern "C" {
 namespace Poincare {
 
 Derivative::Derivative() :
-  Function("diff")
+  Function("diff", 2)
 {
-}
-
-bool Derivative::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type Derivative::type() const {
@@ -25,7 +21,6 @@ Expression::Type Derivative::type() const {
 
 Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   Derivative * d = new Derivative();
   d->setArgument(newOperands, numberOfOperands, cloneOperands);

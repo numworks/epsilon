@@ -21,7 +21,6 @@ Expression::Type NaperianLogarithm::type() const {
 
 Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   assert(newOperands != nullptr);
   NaperianLogarithm * l = new NaperianLogarithm();
   l->setArgument(newOperands, numberOfOperands, cloneOperands);

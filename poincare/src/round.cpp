@@ -8,12 +8,8 @@ extern "C" {
 namespace Poincare {
 
 Round::Round() :
-  Function("round")
+  Function("round", 2)
 {
-}
-
-bool Round::hasValidNumberOfArguments() const {
-  return (m_numberOfArguments == 2);
 }
 
 Expression::Type Round::type() const {
@@ -22,7 +18,6 @@ Expression::Type Round::type() const {
 
 Expression * Round::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   Round * r = new Round();
   r->setArgument(newOperands, numberOfOperands, cloneOperands);

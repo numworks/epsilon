@@ -9,7 +9,6 @@ namespace Poincare {
 class Derivative : public Function {
 public:
   Derivative();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;

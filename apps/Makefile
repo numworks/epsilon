@@ -1,6 +1,7 @@
 include apps/calculation/Makefile
 include apps/graph/Makefile
 include apps/home/Makefile
+include apps/hardware_test/Makefile
 include apps/probability/Makefile
 include apps/regression/Makefile
 include apps/sequence/Makefile

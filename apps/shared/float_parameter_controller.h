@@ -14,7 +14,6 @@ class FloatParameterController : public ViewController, public ListViewDataSourc
 public:
   FloatParameterController(Responder * parentResponder, I18n::Message okButtonText = I18n::Message::Ok);
   View * view() override;
-  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

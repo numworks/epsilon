@@ -15,8 +15,8 @@ Derivative::Derivative() :
 {
 }
 
-bool Derivative::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool Derivative::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type Derivative::type() const {

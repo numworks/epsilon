@@ -69,6 +69,10 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
   }
 }
 
+int TabViewController::activeTab() const {
+  return m_activeChildIndex;
+}
+
 bool TabViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     if (app()->firstResponder() != this) {

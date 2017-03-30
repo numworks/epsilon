@@ -12,8 +12,8 @@ PredictionInterval::PredictionInterval() :
 {
 }
 
-bool PredictionInterval::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 2);
+bool PredictionInterval::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 2);
 }
 
 Expression::Type PredictionInterval::type() const {

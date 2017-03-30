@@ -16,7 +16,7 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController();
-  LocalContext * localContext() override;
+  Poincare::Context * localContext() override;
   const char * XNT() override;
 private:
   SequenceStore m_sequenceStore;

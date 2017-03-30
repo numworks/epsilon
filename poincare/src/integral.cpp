@@ -19,8 +19,8 @@ Integral::Integral() :
 {
 }
 
-bool Integral::isValidNumberOfArguments(int numberOfArguments) {
-  return (numberOfArguments == 3);
+bool Integral::hasValidNumberOfArguments() const {
+  return (m_numberOfArguments == 3);
 }
 
 Expression::Type Integral::type() const {

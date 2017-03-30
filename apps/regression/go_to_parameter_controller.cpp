@@ -111,7 +111,6 @@ bool GoToParameterController::textFieldDidFinishEditing(TextField * textField, c
 
 void GoToParameterController::viewWillAppear() {
   m_previousParameter = parameterAtIndex(0);
-  m_selectableTableView.reloadData();
 }
 
 void GoToParameterController::buttonAction() {

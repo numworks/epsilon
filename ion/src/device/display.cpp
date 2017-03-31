@@ -105,11 +105,63 @@ void initFSMC() {
   FSMC.BCR(FSMCMemoryBank)->setMWID(FSMC::BCR::MWID::SIXTEEN_BITS);
   FSMC.BCR(FSMCMemoryBank)->setWREN(true);
   FSMC.BCR(FSMCMemoryBank)->setMBKEN(true);
+  FSMC.BCR(FSMCMemoryBank)->setEXTMOD(true);
 
-  // Timing register
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(2);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(2);
-  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(2);
+  /* From AN2790 Application note - TFT LCD interfacing with the high-density
+   * STM32F10xxx FSMC and STM32F412 reference manual:
+   * (ADDSET + DATAST) × HCLK = Tcyc(Read cycle time)
+   * DATAST × HCLK = Twrlr (Low pulse width for read)
+   * DATAST = (((Tacc(Data access time) + Tas(Address setup time)) +
+   * (tsu(Data_NE)+ tv(A_NE)))/HCLK) – ADDSET – 4
+   * With:
+   * tsu(Data_NE): FSMC_NEx low to data valid
+   * tv(A_NE): FSMC_NEx low to FSMC_A valid
+   *
+   * Hence:
+   * T(HCLK) = 1*10^(9)/(96MHz*10^6) = 10.42 ns (Cf STM32F412 datasheet)
+   * tsu(Data_NE) = T(HCLK) - 1 = 9.42 ns (Cf STM32F412 datasheet)
+   * tv(A_NE) = 1.5 ns  (Cf STM32F412 datasheet)
+   * Tcyc(read) = 450 ns (Cf ST7789 datasheet)
+   * Twrlr = 45 ns (Cf ST7789 datasheet)
+   * Tacc(read) = 340 ns (Cf ST7789 datasheet)
+   * Tas = 0 ns (Cf ST7789 datasheet)
+   *
+   * ADDSET(read) = 29
+   * DATAST(read) = 5*/
+
+  // Reading timing register
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(5);
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(7);
+  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(0);
+  FSMC.BTR(FSMCMemoryBank)->setACCMOD(1);
+
+  /* From AN2790 Application note - TFT LCD interfacing with the high-density
+   * STM32F10xxx FSMC and STM32F412 reference manual:
+   * (ADDSET+ (DATAST + 1)) × HCLK = Tcyc(Write or read cycle time)
+   * DATAST × HCLK = Twrlw (Low pulse width for write)
+   * DATAST = (((Tacc(Data access time) + Tas(Address setup time)) +
+   * (tsu(Data_NE)+ tv(A_NE)))/HCLK) – ADDSET – 4
+   * With:
+   * tsu(Data_NE): FSMC_NEx low to data valid
+   * tv(A_NE): FSMC_NEx low to FSMC_A valid
+   *
+   * Hence:
+   * T(HCLK) = 1*10^(9)/(96MHz*10^6) = 10.42 ns (Cf STM32F412 datasheet)
+   * tsu(Data_NE) = T(HCLK) - 1 = 9.42 ns (Cf STM32F412 datasheet)
+   * tv(A_NE) = 1.5 ns  (Cf STM32F412 datasheet)
+   * Tcyc(write) = 66 ns (Cf ST7789 datasheet)
+   * Twrlw = 15 ns (Cf ST7789 datasheet)
+   * Tacc(write) = 80 ns ?
+   * Tas = 0 ns (Cf ST7789 datasheet)
+   *
+   * ADDSET(write) = 4
+   * DATAST(write) = 2 */
+
+  // Writing timing register
+  FSMC.BWTR(FSMCMemoryBank)->setADDSET(4);
+  FSMC.BWTR(FSMCMemoryBank)->setDATAST(2);
+  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(0);
+  FSMC.BTR(FSMCMemoryBank)->setACCMOD(1);
 }
 
 void shutdownFSMC() {

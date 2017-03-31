@@ -41,6 +41,7 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:
   StackViewController * stackController() const;
+  Interval m_interval;
 private:
   virtual Function * functionAtColumn(int i);
   Responder * tabController() const override;
@@ -61,7 +62,6 @@ private:
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
-  Interval m_interval;
   IntervalParameterController m_intervalParameterController;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;

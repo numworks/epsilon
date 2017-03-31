@@ -12,8 +12,9 @@ void Keyboard(const char * input) {
     return;
   }
   char result[9+Ion::Keyboard::NumberOfKeys+1] = { 'K', 'E', 'Y', 'B', 'O', 'A', 'R', 'D', '=' };
+  Ion::Keyboard::State state = Ion::Keyboard::scan();
   for (uint8_t i=0; i<Ion::Keyboard::NumberOfKeys; i++) {
-    result[9+i] = Ion::Keyboard::keyDown((Ion::Keyboard::Key)i) ? '1' : '0';
+    result[9+i] = Ion::Keyboard::keyDown((Ion::Keyboard::Key)i, state) ? '1' : '0';
   }
   result[9+Ion::Keyboard::NumberOfKeys] = 0;
   reply(result);

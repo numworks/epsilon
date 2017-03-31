@@ -48,26 +48,36 @@
 namespace Ion {
 namespace Keyboard {
 
-bool keyDown(Key k) {
-  // Drive the corresponding row low, and let all the others float.
-  int row = Device::rowForKey(k);
+State scan() {
+  State state = 0;
+
   for (uint8_t i=0; i<Device::numberOfRows; i++) {
     /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
      * the pin floating (Hi-Z). So we want to set the current row to zero and
      * all the others to 1. */
-    bool state = (i == row ? 0 : 1);
-    uint8_t pin = Device::RowPins[i];
-    Device::RowGPIO.ODR()->set(pin, state);
+    uint16_t rowState = ~(1<<(Device::numberOfRows-1-i));
+
+    // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
+    Device::RowGPIO.ODR()->setBitRange(9, 0, rowState);
+
+    // TODO: 100 us seems to work, but wasn't really calculated
+    usleep(100);
+
+    // TODO: Assert pin numbers are sequentials and dynamically find 8 and 0
+    uint8_t column = Device::ColumnGPIO.IDR()->getBitRange(5,0);
+
+    /* The key is down if the input is brought low by the output. In other
+     * words, we want to return true if the input is low (false). So we need to
+     * append 6 bits of (not column) to state. */
+    state = (state << 6) | (~column & 0x3F);
   }
 
-  // Read the input of the proper column
-  uint8_t column = Device::columnForKey(k);
-  uint8_t pin = Device::ColumnPins[column];
-  bool input = Device::ColumnGPIO.IDR()->get(pin);
+  /* Last but not least, keys number 8, 9, 10, 11, 35, 41, 47 and 53 are not
+   * defined. Therefore we want to make sure those bits are forced to zero in
+   * whatever value we return. */
+  state = state & 0x1F7DF7FFFFF0FF;
 
-  /* The key is down if the input is brought low by the output. In other words,
-   * we want to return true if the input is low (false). */
-  return (input == false);
+  return state;
 }
 
 }

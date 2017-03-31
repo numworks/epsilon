@@ -133,12 +133,12 @@ float Store::standardDeviation() {
 }
 
 float Store::firstQuartile() {
-  int firstQuartileIndex = floorf(sumOfColumn(1)/4)+1;
+  int firstQuartileIndex = ceilf(sumOfColumn(1)/4);
   return sortedElementNumber(firstQuartileIndex);
 }
 
 float Store::thirdQuartile() {
-  int thirdQuartileIndex = floorf(3*sumOfColumn(1)/4)+1;
+  int thirdQuartileIndex = ceilf(3*sumOfColumn(1)/4);
   return sortedElementNumber(thirdQuartileIndex);
 }
 

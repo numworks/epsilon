@@ -58,6 +58,9 @@ void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
   sFrameBuffer->pullRect(r, pixels);
 }
 
+void Ion::Display::waitForVBlank() {
+}
+
 Ion::Keyboard::State Ion::Keyboard::scan() {
   Ion::Keyboard::State result = 0;
   for (int i=0; i<Ion::Keyboard::NumberOfKeys; i++) {

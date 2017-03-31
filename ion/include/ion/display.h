@@ -21,6 +21,8 @@ void pushRect(KDRect r, const KDColor * pixels);
 void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor * pixels);
 
+void waitForVBlank();
+
 constexpr int Width = 320;
 constexpr int Height = 240;
 

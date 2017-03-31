@@ -1,7 +1,9 @@
 #include "values_controller.h"
 #include <assert.h>
+#include "../../constant.h"
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Graph {
 
@@ -35,7 +37,6 @@ int ValuesController::numberOfColumns() {
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
@@ -58,7 +59,20 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     myFunctionCell->setText(name);
     myFunctionCell->setColor(function->color());
+    return;
   }
+  // The cell is a derivative value cell
+  if (j > 0 && i > 0 && isDerivativeColumn(i)) {
+    TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
+    CartesianFunction * function = functionAtColumn(i);
+    float x = m_interval.element(j-1);
+    Complex::convertFloatToText(function->approximateDerivative(x, myApp->localContext()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    myValueCell->setText(buffer);
+    return;
+  }
+  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
 
 I18n::Message ValuesController::emptyMessage() {

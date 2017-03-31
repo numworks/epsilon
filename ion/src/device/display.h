@@ -80,6 +80,7 @@ constexpr static GPIOPin FSMCPins[] = {
 
 constexpr static GPIOPin PowerPin = GPIOPin(GPIOB, 14);
 constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 9);
+constexpr static GPIOPin ExtendedCommandPin = GPIOPin(GPIOB, 13);
 constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 10);
 
 constexpr static int FSMCMemoryBank = 1;

@@ -81,6 +81,10 @@ void initGPIO() {
   ResetPin.group().MODER()->setMode(ResetPin.pin(), GPIO::MODER::Mode::Output);
   ResetPin.group().ODR()->set(ResetPin.pin(), true);
 
+  // Turn on the extended command pin
+  ExtendedCommandPin.group().MODER()->setMode(ExtendedCommandPin.pin(), GPIO::MODER::Mode::Output);
+  ExtendedCommandPin.group().ODR()->set(ExtendedCommandPin.pin(), true);
+
   // Turn on the Tearing Effect pin
   TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Input);
   TearingEffectPin.group().PUPDR()->setPull(TearingEffectPin.pin(), GPIO::PUPDR::Pull::None);
@@ -102,6 +106,9 @@ void shutdownGPIO() {
 
   PowerPin.group().MODER()->setMode(PowerPin.pin(), GPIO::MODER::Mode::Analog);
   PowerPin.group().PUPDR()->setPull(PowerPin.pin(), GPIO::PUPDR::Pull::None);
+
+  ExtendedCommandPin.group().MODER()->setMode(ExtendedCommandPin.pin(), GPIO::MODER::Mode::Analog);
+  ExtendedCommandPin.group().PUPDR()->setPull(ExtendedCommandPin.pin(), GPIO::PUPDR::Pull::None);
 
   TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }

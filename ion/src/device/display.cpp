@@ -31,6 +31,18 @@ void pullRect(KDRect r, KDColor * pixels) {
   Device::pullPixels(pixels, r.width()*r.height());
 }
 
+void waitForVBlank() {
+  // We want to return as soon as the TE line is transitionning from "DOWN" to "UP"
+  while (Device::TearingEffectPin.group().IDR()->get(Device::TearingEffectPin.pin())) {
+    // Loop while high, exit when low
+    // Wait for zero
+  }
+  while (!Device::TearingEffectPin.group().IDR()->get(Device::TearingEffectPin.pin())) {
+    // Loop while low, exit when high
+  }
+  // Here, we went from low to high
+}
+
 }
 }
 
@@ -69,6 +81,10 @@ void initGPIO() {
   ResetPin.group().MODER()->setMode(ResetPin.pin(), GPIO::MODER::Mode::Output);
   ResetPin.group().ODR()->set(ResetPin.pin(), true);
 
+  // Turn on the Tearing Effect pin
+  TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Input);
+  TearingEffectPin.group().PUPDR()->setPull(TearingEffectPin.pin(), GPIO::PUPDR::Pull::None);
+
   msleep(120);
 }
 
@@ -86,6 +102,8 @@ void shutdownGPIO() {
 
   PowerPin.group().MODER()->setMode(PowerPin.pin(), GPIO::MODER::Mode::Analog);
   PowerPin.group().PUPDR()->setPull(PowerPin.pin(), GPIO::PUPDR::Pull::None);
+
+  TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }
 
 void initFSMC() {
@@ -173,6 +191,7 @@ void initPanel() {
 
   SEND_COMMAND(PixelFormatSet, 0x05);
   SEND_COMMAND(MemoryAccessControl, 0xA0);
+  SEND_COMMAND(TearingEffectLineOn, 0x00);
 
   *CommandAddress = Command::DisplayOn;
   //msleep(50);

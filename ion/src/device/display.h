@@ -64,6 +64,7 @@ enum class Command : uint16_t {
   PageAddressSet = 0x2B,
   MemoryWrite = 0x2C,
   MemoryRead = 0x2E,
+  TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
 };
@@ -79,6 +80,7 @@ constexpr static GPIOPin FSMCPins[] = {
 
 constexpr static GPIOPin PowerPin = GPIOPin(GPIOB, 14);
 constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 9);
+constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 10);
 
 constexpr static int FSMCMemoryBank = 1;
 constexpr static int FSMCDataCommandAddressBit = 16;

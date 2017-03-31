@@ -53,22 +53,11 @@ void Calculation::reset() {
 }
 
 void Calculation::setContent(const char * c, Context * context) {
+  reset();
   strlcpy(m_inputText, c, sizeof(m_inputText));
-  if (m_input != nullptr) {
-    delete m_input;
-  }
   m_input = Expression::parse(m_inputText);
-  if (m_inputLayout != nullptr) {
-    delete m_inputLayout;
-  }
   m_inputLayout = m_input->createLayout(Expression::FloatDisplayMode::Decimal, Expression::ComplexFormat::Algebric);
-  if (m_output != nullptr) {
-    delete m_output;
-  }
   m_output = m_input->evaluate(*context);
-  if (m_outputLayout != nullptr) {
-    delete m_outputLayout;
-  }
   m_outputLayout = m_output->createLayout();
   m_output->writeTextInBuffer(m_outputText, sizeof(m_outputText));
 }

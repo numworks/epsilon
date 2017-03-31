@@ -11,7 +11,8 @@ CalculationStore::CalculationStore() :
 
 Calculation * CalculationStore::push(const char * text, Context * context) {
   Calculation * result = m_start;
-  m_start++->setContent(text, context);
+  m_start->setContent(text, context);
+  m_start++;
   if (m_start >= m_calculations + k_maxNumberOfCalculations) {
     m_start = m_calculations;
   }

@@ -1,9 +1,15 @@
 #include "keyboard_view.h"
+#include "../constant.h"
+#include <poincare.h>
+
+using namespace Poincare;
 
 namespace HardwareTest {
 
 KeyboardView::KeyboardView() :
-  m_testedKey(Ion::Keyboard::Key::A1)
+  m_testedKey(Ion::Keyboard::Key::A1),
+  m_batteryLevelView(BufferTextView(KDText::FontSize::Small)),
+  m_batteryChargingView(BufferTextView(KDText::FontSize::Small))
 {
   for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
     m_defectiveKey[i] = 0;
@@ -35,6 +41,32 @@ void KeyboardView::resetTestedKey() {
   markRectAsDirty(bounds());
 }
 
+void KeyboardView::updateBatteryState(float batteryLevel, bool batteryCharging) {
+  char bufferLevel[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  const char * legend = "Battery level: ";
+  int legendLength = strlen(legend);
+  strlcpy(bufferLevel, legend, legendLength+1);
+  Complex::convertFloatToText(batteryLevel, bufferLevel+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  m_batteryLevelView.setText(bufferLevel);
+
+  char bufferCharging[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  int numberOfChars = 0;
+  legend = "Battery charging: ";
+  legendLength = strlen(legend);
+  strlcpy(bufferCharging, legend, legendLength+1);
+  numberOfChars += legendLength;
+  legend = "no";
+  if (batteryCharging) {
+    legend = "yes";
+  }
+  legendLength = strlen(legend);
+  strlcpy(bufferCharging+numberOfChars, legend, legendLength+1);
+  numberOfChars += legendLength;
+  bufferCharging[numberOfChars] = 0;
+  m_batteryChargingView.setText(bufferCharging);
+
+  markRectAsDirty(bounds());
+}
 
 void KeyboardView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
@@ -85,4 +117,22 @@ void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(x, y, k_bigRectWidth, k_bigRectHeight), color);
   }
 }
+
+void KeyboardView::layoutSubviews() {
+  KDSize textSize = KDText::stringSize(" ", KDText::FontSize::Small);
+  m_batteryLevelView.setFrame(KDRect(130, k_margin, bounds().width()-130, textSize.height()));
+  m_batteryChargingView.setFrame(KDRect(130, k_margin+2*textSize.height(), bounds().width()-130, textSize.height()));
+}
+
+int KeyboardView::numberOfSubviews() const {
+  return 2;
+}
+
+View * KeyboardView::subviewAtIndex(int index) {
+  if (index == 0) {
+    return &m_batteryLevelView;
+  }
+  return &m_batteryChargingView;
+}
+
 }

@@ -333,7 +333,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       setEditing(true);
       insertTextAtLocation(event.text(), cursorLocation());
     }
-    int cursorDelta = strlen(event.text()) > 1 ? -1 : 0;
+    /* All events whose text is longer than 2 have parenthesis. In these cases,
+     * we want to position the cursor before the last parenthesis */
+    int cursorDelta = strlen(event.text()) > 2 ? -1 : 0;
     setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
     layoutSubviews();
     return true;

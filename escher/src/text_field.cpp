@@ -380,6 +380,9 @@ void TextField::scrollToAvoidWhiteSpace() {
   }
   KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
   m_manualScrolling = textLength() * m_contentView.charWidth()+cursorWidth-bounds().width();
+  if (m_manualScrolling < 0) {
+    m_manualScrolling = 0;
+  }
   setContentOffset(KDPoint(m_manualScrolling, 0));
 }
 

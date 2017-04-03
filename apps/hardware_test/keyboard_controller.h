@@ -9,13 +9,13 @@ namespace HardwareTest {
 class KeyboardController : public ViewController {
 public:
   KeyboardController(Responder * parentResponder);
-
   View * view() override;
-
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
+  static KDColor nextColor(KDColor color);
   KeyboardView m_view;
+  KDColor m_color;
 };
 
 }

@@ -25,6 +25,7 @@ private:
   void configureDerivativeFunction();
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
+  float evaluationOfAbscissaAtColumn(float abscissa, int columnIndex) override;
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];

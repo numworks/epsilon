@@ -247,11 +247,11 @@ void TextField::setAlignment(float horizontalAlignment, float verticalAlignment)
 }
 
 void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
-  if (isEditing) {
-    m_manualScrolling = 0;
-    setContentOffset(KDPoint(m_manualScrolling, 0));
-  }
   m_contentView.setEditing(isEditing, reinitDrafBuffer);
+  if (reinitDrafBuffer) {
+    reloadScroll();
+    layoutSubviews();
+  }
 }
 
 void TextField::setCursorLocation(int location) {
@@ -323,6 +323,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && isEditing()) {
     deleteCharPrecedingCursor();
+    layoutSubviews();
     return true;
   }
   if (event.hasText()) {
@@ -334,6 +335,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     }
     int cursorDelta = strlen(event.text()) > 1 ? -1 : 0;
     setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
+    layoutSubviews();
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {

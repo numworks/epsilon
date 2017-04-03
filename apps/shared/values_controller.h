@@ -52,6 +52,7 @@ private:
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
+  virtual float evaluationOfAbscissaAtColumn(float abscissa, int columnIndex);
   constexpr static int k_maxNumberOfAbscissaCells = 10;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;

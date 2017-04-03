@@ -109,7 +109,6 @@ Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Positio
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Default);
   if (cellAtLocationIsEditable(i, j)) {
     return;
@@ -129,9 +128,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-    Function * function = functionAtColumn(i);
     float x = m_interval.element(j-1);
-    Complex::convertFloatToText(function->evaluateAtAbscissa(x, myApp->localContext()), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }
@@ -275,6 +273,12 @@ int ValuesController::numberOfElements() {
 
 int ValuesController::maxNumberOfElements() const {
   return Interval::k_maxNumberOfElements;
+}
+
+float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnIndex) {
+  Function * function = functionAtColumn(columnIndex);
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
 
 }

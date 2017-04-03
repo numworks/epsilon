@@ -93,6 +93,14 @@ void ValuesController::didBecomeFirstResponder() {
   }
 }
 
+void ValuesController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_selectableTableView.deselectTable();
+    m_selectableTableView.scrollToCell(0,0);
+    header()->setSelectedButton(-1);
+  }
+}
+
 ViewController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }

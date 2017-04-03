@@ -20,6 +20,7 @@ public:
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   ViewController * intervalParameterController();
   int numberOfButtons(ButtonRowController::Position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;

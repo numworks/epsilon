@@ -212,6 +212,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       (m_selectableTableView.selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
     reinitExpression(function);
+    return true;
   }
   if ((event.hasText() || event == Ion::Events::XNT)
       && m_selectableTableView.selectedColumn() == 1

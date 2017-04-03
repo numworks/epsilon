@@ -159,6 +159,8 @@ const char * TabViewController::tabName(uint8_t index) {
 void TabViewController::viewWillAppear() {
   if (m_activeChildIndex < 0) {
     setActiveTab(0);
+  } else {
+    setActiveTab(m_activeChildIndex);
   }
   ViewController * activeVC = m_children[m_activeChildIndex];
   activeVC->viewWillAppear();

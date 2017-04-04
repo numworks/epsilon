@@ -199,14 +199,20 @@ void initClocks() {
   apb2enr.setSDIOEN(true);
 #endif
   RCC.APB2ENR()->set(apb2enr);
+
+  RCC.AHB3ENR()->setFSMCEN(true);
 }
 
 void shutdownClocks() {
+
   // Reset values, everything off
   RCC.APB2ENR()->set(0x00008000);
   RCC.APB1ENR()->set(0x00000400);
+
   // AHB1 bus
   RCC.AHB1ENR()->set(0);
+
+  RCC.AHB3ENR()->setFSMCEN(false);
 }
 
 }

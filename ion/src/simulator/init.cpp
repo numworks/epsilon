@@ -81,3 +81,7 @@ void Ion::msleep(long ms) {
     }
   }
 }
+
+const char * Ion::serialNumber() {
+  return "Simulator";
+}

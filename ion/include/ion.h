@@ -27,6 +27,8 @@ void msleep(long ms);
 void usleep(long us);
 
 const char * serialNumber();
+const char * softwareVersion();
+const char * patchLevel();
 
 /* CAUTION: This is a complete reset! */
 void reset();

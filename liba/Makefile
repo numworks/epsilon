@@ -53,7 +53,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   w_lgammaf.o \
 )
 
-liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -Wno-parentheses -Wno-implicit-function-declaration
+liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -w
 # isnanf ans isinff are throwing implicit declaration warnings
 ifeq ($(DEBUG),1)
 # OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision

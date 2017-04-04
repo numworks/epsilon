@@ -26,3 +26,8 @@ void MessageTableCell::setMessage(I18n::Message text) {
 void MessageTableCell::setTextColor(KDColor color) {
   m_messageTextView.setTextColor(color);
 }
+
+void MessageTableCell::setMessageFontSize(KDText::FontSize fontSize) {
+  m_messageTextView.setFontSize(fontSize);
+  layoutSubviews();
+}

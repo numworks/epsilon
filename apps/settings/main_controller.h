@@ -26,7 +26,7 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-  constexpr static int k_totalNumberOfCell = 4;
+  constexpr static int k_totalNumberOfCell = 5;
   MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell-1];
   MessageTableCellWithChevronAndExpression m_complexFormatCell;
   Poincare::ExpressionLayout * m_complexFormatLayout;

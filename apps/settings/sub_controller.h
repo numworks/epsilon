@@ -27,7 +27,7 @@ private:
   void setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex);
   int valueIndexAtPreferenceIndex(int preferenceIndex);
   constexpr static int k_totalNumberOfCell = 3;
-  MessageTableCell m_cells[k_totalNumberOfCell];
+  MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
   Poincare::ExpressionLayout * m_complexFormatLayout[2];
   SelectableTableView m_selectableTableView;

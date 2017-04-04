@@ -216,6 +216,7 @@ namespace I18n {
     DisplayMode,
     ComplexFormat,
     Language,
+    About,
     Degres,
     Radian,
     Auto,
@@ -223,6 +224,8 @@ namespace I18n {
     Deg,
     Rad,
     Sci,
+    SoftwareVersion,
+    SerialNumber,
 
     /* UNIVERSAL MESSAGES */
     Default = 0x8000,

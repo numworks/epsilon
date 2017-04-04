@@ -16,12 +16,12 @@ namespace Device {
 
 void init();
 void shutdown();
+bool peerConnected();
 
 constexpr USART UARTPort = USART(3);
-constexpr static GPIOPin Pins[] = { GPIOPin(GPIOC, 11), GPIOPin(GPIOD, 8) };
-
-void sendChar(char c);
-char recvChar();
+constexpr static GPIOPin RxPin = GPIOPin(GPIOC, 11);
+constexpr static GPIOPin TxPin = GPIOPin(GPIOD, 8);
+constexpr static GPIOPin Pins[] = { RxPin, TxPin };
 
 }
 }

@@ -60,6 +60,16 @@ void shutdown() {
   }
 }
 
+bool peerConnected() {
+  RxPin.group().PUPDR()->setPull(RxPin.pin(), GPIO::PUPDR::Pull::Down);
+  RxPin.group().MODER()->setMode(RxPin.pin(), GPIO::MODER::Mode::Input);
+  bool result = RxPin.group().IDR()->get(RxPin.pin());
+  RxPin.group().PUPDR()->setPull(RxPin.pin(), GPIO::PUPDR::Pull::None);
+  RxPin.group().MODER()->setMode(RxPin.pin(), GPIO::MODER::Mode::AlternateFunction);
+  return result;
+}
+
+
 }
 }
 }

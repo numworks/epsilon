@@ -74,7 +74,7 @@ const char * Ion::serialNumber() {
   static char serialNumber[25] = {0};
   if (serialNumber[0] == 0) {
     uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
-    for (int i=0; i<24; i++) {
+    for (int i=0; i<12; i++) {
       uint8_t d = *rawUniqueID++;
       serialNumber[2*i] = hex(d & 0xF);
       serialNumber[2*i+1] = hex(d >> 4);

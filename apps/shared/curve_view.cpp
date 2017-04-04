@@ -474,14 +474,11 @@ int CurveView::numberOfSubviews() const {
 
 View * CurveView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 3);
-  if (index == 0 && m_bannerView != nullptr) {
-    return m_bannerView;
-  }
-    if (index == 0 && m_bannerView != nullptr) {
-    return m_bannerView;
-  }
-  if (index == 1 && m_okView != nullptr) {
+  if (index == 0 && m_okView != nullptr) {
     return m_okView;
+  }
+    if (index == 1 && m_bannerView != nullptr) {
+    return m_bannerView;
   }
   return m_cursorView;
 }

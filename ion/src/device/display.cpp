@@ -130,8 +130,8 @@ void initFSMC() {
    * DATAST(read) = 5*/
 
   // Reading timing register
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(5);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(7);
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(29);
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(5);
   FSMC.BTR(FSMCMemoryBank)->setBUSTURN(0);
   FSMC.BTR(FSMCMemoryBank)->setACCMOD(1);
 

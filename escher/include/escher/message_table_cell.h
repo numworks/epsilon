@@ -12,6 +12,7 @@ public:
   virtual void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
   virtual void setTextColor(KDColor color);
+  void setMessageFontSize(KDText::FontSize fontSize);
 private:
   MessageTextView m_messageTextView;
 };

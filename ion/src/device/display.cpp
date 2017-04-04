@@ -89,9 +89,6 @@ void shutdownGPIO() {
 }
 
 void initFSMC() {
-  // FSMC lives on the AHB3 bus. Let's enable its clock. */
-  RCC.AHB3ENR()->setFSMCEN(true);
-
 #if 0
 		/* FSMC timing */
 		FSMC_Bank1->BTCR[0+1] = (6) | (10 << 8) | (10 << 16);
@@ -165,8 +162,6 @@ void initFSMC() {
 }
 
 void shutdownFSMC() {
-  // FSMC lives on the AHB3 bus. Let's enable its clock. */
-  RCC.AHB3ENR()->setFSMCEN(false);
 }
 
 void initPanel() {

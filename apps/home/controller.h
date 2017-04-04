@@ -28,8 +28,18 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   int numberOfIcons();
+  class ContentView : public View {
+  public:
+    ContentView(Controller * controller);
+    SelectableTableView * selectableTableView();
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+  private:
+    int numberOfSubviews() const override;
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+    SelectableTableView m_selectableTableView;
+  };
   AppsContainer * m_container;
-  SelectableTableView m_selectableTableView;
   static constexpr KDCoordinate k_sideMargin = 4;
   static constexpr KDCoordinate k_indicatorThickness = 28;
   static constexpr KDCoordinate k_indicatorMargin = 116;
@@ -38,6 +48,7 @@ private:
   static constexpr int k_maxNumberOfCells = 16;
   static constexpr int k_cellHeight = 98;
   static constexpr int k_cellWidth = 104;
+  ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
 };
 

@@ -11,8 +11,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large),
-    MessageTableCell(I18n::Message::Default, KDText::FontSize::Large)},
+  m_cells{MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark), MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark),
+    MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark)},
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_nodeModel(nullptr),
@@ -55,6 +55,18 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 
 bool SubController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
+    if (m_preferenceIndex == 4) {
+      if (m_selectableTableView.selectedRow() == 1) {
+        return false;
+      }
+      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
+        myCell->setAccessoryText(Ion::softwareVersion());
+        return true;
+      }
+      myCell->setAccessoryText(Ion::patchLevel());
+      return true;
+    }
     setPreferenceAtIndexWithValueIndex(m_preferenceIndex, m_selectableTableView.selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
@@ -96,8 +108,18 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_preferenceIndex == 2) {
     return;
   }
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
   myCell->setMessage(m_nodeModel->children(index)->label());
+  myCell->setMessageFontSize(KDText::FontSize::Large);
+  myCell->setAccessoryText("");
+  if (m_preferenceIndex == 4) {
+    myCell->setMessageFontSize(KDText::FontSize::Small);
+    const char * accessoryMessage = Ion::softwareVersion();
+    if (index == 1) {
+      accessoryMessage = Ion::serialNumber();
+    }
+    myCell->setAccessoryText(accessoryMessage);
+  }
 }
 
 void SubController::setNodeModel(const Node * nodeModel, int preferenceIndex) {
@@ -131,6 +153,8 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
     case 3:
       GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
       break;
+    default:
+      break;
     }
 }
 
@@ -144,6 +168,8 @@ int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
       return (int)Preferences::sharedPreferences()->complexFormat();
     case 3:
       return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+    case 4:
+      return 0;
     default:
       assert(false);
       return 0;

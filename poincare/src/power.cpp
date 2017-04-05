@@ -52,7 +52,7 @@ Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context
 }
 
 Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
-  if (m_operands[1]->type() != Expression::Type::Integer) {
+  if (isnan(m_operands[1]->approximate(context, angleUnit)) || m_operands[1]->approximate(context, angleUnit) != (int)m_operands[1]->approximate(context, angleUnit)) {
     return new Complex(Complex::Float(NAN));
   }
  if (m->numberOfColumns() != m->numberOfRows()) {

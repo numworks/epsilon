@@ -21,6 +21,10 @@ void MessageTableCellWithEditableText::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
 }
 
+bool MessageTableCellWithEditableText::isEditing() {
+  return m_textField.isEditing();
+}
+
 void MessageTableCellWithEditableText::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
 }

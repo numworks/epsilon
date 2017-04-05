@@ -21,7 +21,6 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
   if (f <= 0) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};

@@ -89,8 +89,6 @@ namespace I18n {
     NoActivatedFunction,
     Axis,
     Zoom,
-    InteractiveZoom,
-    PredefinedZoom,
     Initialization,
     Move,
     ToZoom,

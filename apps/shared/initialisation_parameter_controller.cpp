@@ -13,7 +13,7 @@ InitialisationParameterController::InitialisationParameterController(Responder *
 }
 
 const char * InitialisationParameterController::title() {
-  return I18n::translate(I18n::Message::PredefinedZoom);
+  return I18n::translate(I18n::Message::Initialization);
 }
 
 View * InitialisationParameterController::view() {

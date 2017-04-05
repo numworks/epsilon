@@ -474,10 +474,19 @@ int CurveView::numberOfSubviews() const {
 
 View * CurveView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 3);
-  if (index == 0 && m_okView != nullptr) {
-    return m_okView;
+  /* If all subviews exist, we want Ok view to be the first child to avoid
+   * redrawing it because it falls in the union of dirty rectangles linked to
+   * the banner view and curve view */
+  if (index == 0) {
+    if (m_okView != nullptr) {
+      return m_okView;
+    } else {
+      if (m_bannerView != nullptr) {
+        return m_bannerView;
+      }
+    }
   }
-    if (index == 1 && m_bannerView != nullptr) {
+  if (index == 1 && m_bannerView != nullptr && m_okView != nullptr) {
     return m_bannerView;
   }
   return m_cursorView;

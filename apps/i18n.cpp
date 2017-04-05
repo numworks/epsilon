@@ -34,7 +34,7 @@ const char * messages[201][3] {
   {"Toolbox", "Toolbox", "Toolbox"},
   {"Valeur absolue", "Absolute value", "Valor absoluto"},
   {"Racine n-ieme", "nth-root", "Raiz enesima"},
-  {"Logarithme base a", "Logarithm to base a", "Logaritmo en base b"},
+  {"Logarithme base a", "Logarithm to base a", "Logaritmo en base a"},
   {"Calculs", "Calculation", "Calculos"},
   {"Nombres complexes", "Complex numbers", "Numeros complejos"},
   {"Probabilites", "Probability", "Probabilidad"},
@@ -42,7 +42,7 @@ const char * messages[201][3] {
   {"Matrices", "Matrix", "Matriz"},
   {"Listes", "List", "Listas"},
   {"Approximation", "Approximation", "Aproximacion"},
-  {"Trigonometrie hyperbolique", "Hyperbolic trigonometry", "Trigonometria hiberbolica"},
+  {"Trigonometrie hyperbolique", "Hyperbolic trigonometry", "Trigonometria hiperbolica"},
   {"Intervalle fluctuation", "Prediction Interval", "Interval de prediccion"},
   {"Nombre derive", "Derivative", "Derivada"},
   {"Integrale", "Integral", "Integral"},
@@ -71,14 +71,14 @@ const char * messages[201][3] {
   {"Partie entiere", "Floor", "Parte entera"},
   {"Partie fractionnaire", "Fractional part", "Parte fraccionaria"},
   {"Plafond", "Ceiling", "Techo"},
-  {"Arrondi n chiffres apres la virgule", "Rounding to n digits of precision", "Redondeo n digitos despues de la coma"},
+  {"Arrondi n chiffres", "Rounding to n digits", "Redondeo n digitos"},
   {"Intervalle fluctuation 95%", "Prediction interval 95%", "Intervalo de prediccion 95%"},
   {"Intervalle fluctuation simple", "Simple prediction interval", "Intervalo de prediciion simple"},
   {"Intervalle confiance", "Confidence interval", "Intervalo de confianza"},
 
   /* Applications */
-  {"Applications", "Applications", "Aplicacion"},
-  {"APPLICATIONS", "APPLICATIONS", "APLICACION"},
+  {"Applications", "Applications", "Aplicaciones"},
+  {"APPLICATIONS", "APPLICATIONS", "APLICACIONES"},
 
   /* 1.Calculation */
   {"Calculs", "Calculation", "Calculo"},
@@ -130,8 +130,8 @@ const char * messages[201][3] {
   {"X fin", "X end", "X fin"},
   {"Pas", "Step", "Incremento"},
   {"Colonne x", "x column", "Columna x"},
-  {"Colonne 0(0)", "Function 0(0)", "Columna 0(0)"},
-  {"Colonne 0'(x)", "Column 0'(x)", "Columna 0'(x)"},
+  {"Colonne 0(0)", "0(0) column", "Columna 0(0)"},
+  {"Colonne 0'(x)", "0'(x) column", "Columna 0'(x)"},
   {"Colonne de la fonction derivee", "Derivative function column", "Columna de la derivada"},
   {"Effacer la colonne", "Clear column", "Borrar la columna"},
   {"Copier la colonne dans une liste", "Export the column to a list", "Copiar la columna en una lista"},
@@ -148,7 +148,7 @@ const char * messages[201][3] {
   {"Explicite", "Explicit expression", "Formula explicita"},
   {"Recurrente d'ordre 1", "Recursive first order", "Recurrencia de orden uno"},
   {"Recurrente d'ordre 2", "Recursive second order", "Recurrencia de orden dos"},
-  {"Options de la suite", "Sequence options", "Opciones de sucesion"},
+  {"Options de la suite", "Sequence options", "Opciones de la sucesion"},
   {"Couleur de la suite", "Sequence color", "Color de la sucesion"},
   {"Supprimer la suite", "Delete sequence", "Eliminar la sucesion"},
   /* Sequence: second tab */
@@ -156,7 +156,7 @@ const char * messages[201][3] {
   {"Aucune suite activee", "No sequence is turned on", "Ninguna sucesion activada"},
   {"Somme des termes", "Sum of terms", "Suma de terminos"},
   {"SELECTIONNER LE PREMIER TERME", "SELECT FIRST TERM", "SELECCIONAR EL PRIMER TERMINO"},
-  {"SELECTIONNER LE DERNIER TERME", "SELECT LAST TERM", "SELECCIONAR ULTIMO TERMINO"},
+  {"SELECTIONNER LE DERNIER TERME", "SELECT LAST TERM", "SELECCIONAR EL ULTIMO TERMINO"},
   {"Valeur non atteinte par la suite", "Value not reached by sequence", "No se alcanza este valor"},
   /* Sequence: third tab */
   {"Colonne n", "n column", "Columna n"},
@@ -173,13 +173,13 @@ const char * messages[201][3] {
   /* Statistics: first tab */
   {"Valeurs", "Values", "Valores"},
   {"Effectifs", "Sizes", "Frecuencias"},
-  {"Options de la colonne", "Column options", "Opciones de columna"},
+  {"Options de la colonne", "Column options", "Opciones de la columna"},
   {"Importer une liste", "Import from a list", "Importar una lista"},
   /* Statistics: second tab */
   {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar"},
   {"Intervalle ", "Interval ", "Intervalo"},
   {"Effectif", "Size", "Frecuencia"},
-  {"       Frequence", "       Frequency", "       Frequencia (relativa)"},
+  {"       Frequence", "       Frequency", "       Frecuencia relativa"},
   {"Reglage de l'histogramme", "Histogram settings", "Parametros del histograma"},
   {"Largeur des rectangles", "Bin width", "Ancho del rectangulo"},
   {"Debut de la serie", "X start", "Principio de la serie"},
@@ -195,7 +195,7 @@ const char * messages[201][3] {
   {"Ecart type", "Standard deviation", "Desviacion tipica"},
   {"Variance", "Variance", "Varianza"},
   {"Ecart interquartile", "Interquartile range", "Rango intercuartilo"},
-  {"Somme des carres", "Sum of squares", "Suma de los cuadrados"},
+  {"Somme des carres", "Sum of squares", "Suma cuadrados"},
 
   /* Probability */
   {"Probabilites", "Probability", "Probabilidad"},
@@ -212,7 +212,7 @@ const char * messages[201][3] {
   {"Loi uniforme", "Uniform distribution", "Distribucion uniforme"},
   {"Loi exponentielle", "Exponential distribution", "Distribucion exponencial"},
   {"Loi normale", "Normal distribution", "Distribucion normal"},
-  {"Loi Poisson", "Poisson distribution", "Distribucion Poisson"},
+  {"Loi Poisson", "Poisson distribution", "Distribucion de Poisson"},
   {"Choisir les parametres", "Choose parameters", "Seleccionar parametros"},
   {"n : Nombre de repetitions", "n: Number of trials", "n : Numero de ensayos "},
   {"p : Probabilite de succes", "p: Success probability", "p : Probabilidad de exito "},
@@ -252,8 +252,8 @@ const char * messages[201][3] {
   {"deg", "deg", "gra"},
   {"rad", "rad", "rad"},
   {"sci/", "sci/", "sci/"},
-  {"Version du logiciel", "Software version", "Versión de software"},
-  {"Numero de serie", "Serial number", "Número de serie"},
+  {"Version du logiciel", "Software version", "Version de software"},
+  {"Numero de serie", "Serial number", "Numero de serie"},
 };
 
 const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};

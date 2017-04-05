@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/sequence/,\
   list/list_parameter_controller.o\
   list/sequence_toolbox.o\
   list/type_parameter_controller.o\
+  values/interval_parameter_controller.o\
   values/values_controller.o\
   local_context.o\
   sequence.o\

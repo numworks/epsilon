@@ -6,11 +6,12 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn),
+  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController),
   m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
     SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},
   m_sequenceStore(sequenceStore),
-  m_sequenceParameterController(Shared::ValuesFunctionParameterController('n'))
+  m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),
+  m_intervalParameterController(IntervalParameterController(this, &m_interval))
 {
 }
 
@@ -40,6 +41,17 @@ I18n::Message ValuesController::emptyMessage() {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
+}
+
+IntervalParameterController * ValuesController::intervalParameterController() {
+  return &m_intervalParameterController;
+}
+
+bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+  if (floatBody < 0) {
+      return false;
+  }
+  return Shared::ValuesController::setDataAtLocation(roundf(floatBody), columnIndex, rowIndex);
 }
 
 int ValuesController::maxNumberOfCells() {

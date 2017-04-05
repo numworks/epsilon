@@ -8,15 +8,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   ButtonRowDelegate(header, nullptr),
   m_abscissaTitleCell(EvenOddMessageTextCell(KDText::FontSize::Small)),
   m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
     EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
-  m_intervalParameterController(IntervalParameterController(this, &m_interval)),
-  m_abscissaParameterController(ValuesParameterController(this, &m_intervalParameterController, parameterTitle)),
+  m_abscissaParameterController(ValuesParameterController(this, intervalParameterController, parameterTitle)),
   m_setIntervalButton(Button(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
@@ -99,10 +98,6 @@ void ValuesController::willExitResponderChain(Responder * nextFirstResponder) {
     m_selectableTableView.scrollToCell(0,0);
     header()->setSelectedButton(-1);
   }
-}
-
-ViewController * ValuesController::intervalParameterController() {
-  return &m_intervalParameterController;
 }
 
 int ValuesController::numberOfButtons(ButtonRowController::Position) const {

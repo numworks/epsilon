@@ -10,6 +10,12 @@ AppCell::AppCell() :
 {
 }
 
+
+void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
+  ctx->fillRect(KDRect(0,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin), KDColorWhite);
+}
+
 int AppCell::numberOfSubviews() const {
   return m_visible ? 2 : 0;
 }

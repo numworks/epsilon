@@ -8,6 +8,7 @@ namespace Home {
 class AppCell : public HighlightCell {
 public:
   AppCell();
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

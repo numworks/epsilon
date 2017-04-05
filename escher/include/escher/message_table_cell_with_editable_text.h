@@ -11,6 +11,7 @@ public:
   View * accessoryView() const override;
   const char * editedText() const;
   void didBecomeFirstResponder() override;
+  bool isEditing();
   void setEditing(bool isEditing);
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * text);

@@ -15,6 +15,8 @@ public:
   FloatParameterController(Responder * parentResponder, I18n::Message okButtonText = I18n::Message::Ok);
   View * view() override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   int typeAtLocation(int i, int j) override;

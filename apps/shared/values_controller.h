@@ -15,13 +15,13 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle);
+  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController);
   const char * title() override;
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
-  ViewController * intervalParameterController();
+  virtual IntervalParameterController * intervalParameterController() = 0;
   int numberOfButtons(ButtonRowController::Position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
@@ -42,6 +42,7 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:
   StackViewController * stackController() const;
+  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   Interval m_interval;
 private:
   virtual Function * functionAtColumn(int i);
@@ -49,7 +50,6 @@ private:
   void configureAbscissa();
   void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   float dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
@@ -64,7 +64,6 @@ private:
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
-  IntervalParameterController m_intervalParameterController;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;
 };

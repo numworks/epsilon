@@ -8,11 +8,12 @@ using namespace Poincare;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn),
+  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController),
   m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small),
     FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small)},
   m_functionStore(functionStore),
   m_functionParameterController(FunctionParameterController(this)),
+  m_intervalParameterController(IntervalParameterController(this, &m_interval)),
   m_derivativeParameterController(DerivativeParameterController(this))
 {
 }
@@ -80,6 +81,10 @@ int ValuesController::activeRow() {
 
 int ValuesController::activeColumn() {
   return m_selectableTableView.selectedColumn();
+}
+
+IntervalParameterController * ValuesController::intervalParameterController() {
+  return &m_intervalParameterController;
 }
 
 CartesianFunction * ValuesController::functionAtColumn(int i) {

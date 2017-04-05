@@ -4,6 +4,7 @@
 #include "../cartesian_function_store.h"
 #include "../function_title_cell.h"
 #include "../../shared/values_controller.h"
+#include "../../shared/interval_parameter_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
 
@@ -19,6 +20,7 @@ public:
   void selectCellAtLocation(int i, int j);
   int activeRow();
   int activeColumn();
+  Shared::IntervalParameterController * intervalParameterController() override;
 private:
   CartesianFunction * functionAtColumn(int i) override;
   bool isDerivativeColumn(int i);
@@ -36,6 +38,7 @@ private:
   CartesianFunctionStore * functionStore() const override;
   FunctionParameterController m_functionParameterController;
   FunctionParameterController * functionParameterController() override;
+  Shared::IntervalParameterController m_intervalParameterController;
   DerivativeParameterController m_derivativeParameterController;
 };
 

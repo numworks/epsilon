@@ -20,7 +20,7 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 }
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
-  if (f <= 0) {
+  if (f < 0) {
     return false;
   }
   SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};

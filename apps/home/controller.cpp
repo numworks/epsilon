@@ -6,37 +6,63 @@ extern "C" {
 
 namespace Home {
 
+Controller::ContentView::ContentView(Controller * controller) :
+  m_selectableTableView(SelectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, controller, true, false,
+    KDColorBlack, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin))
+{
+}
+
+SelectableTableView * Controller::ContentView::selectableTableView() {
+  return &m_selectableTableView;
+}
+
+void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(bounds(), KDColorWhite);
+}
+
+int Controller::ContentView::numberOfSubviews() const {
+  return 1;
+}
+
+View * Controller::ContentView::subviewAtIndex(int index) {
+  assert(index == 0);
+  return &m_selectableTableView;
+}
+
+void Controller::ContentView::layoutSubviews() {
+  m_selectableTableView.setFrame(bounds());
+}
+
 Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
   ViewController(parentResponder),
   m_container(container),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, k_sideMargin, 0, k_sideMargin, this, true, true,
-    KDColorWhite, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin))
+  m_view(ContentView(this))
 {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_container->switchTo(m_container->appAtIndex(m_selectableTableView.selectedRow()*k_numberOfColumns+m_selectableTableView.selectedColumn()+1));
+    m_container->switchTo(m_container->appAtIndex(m_view.selectableTableView()->selectedRow()*k_numberOfColumns+m_view.selectableTableView()->selectedColumn()+1));
     return true;
   }
   return false;
 }
 
 void Controller::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+  if (m_view.selectableTableView()->selectedRow() == -1) {
+    m_view.selectableTableView()->selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    m_view.selectableTableView()->selectCellAtLocation(m_view.selectableTableView()->selectedColumn(), m_view.selectableTableView()->selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  app()->setFirstResponder(m_view.selectableTableView());
 }
 
 void Controller::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  m_view.selectableTableView()->reloadData();
 }
 
 View * Controller::view() {
-  return &m_selectableTableView;
+  return &m_view;
 }
 
 int Controller::numberOfRows() {

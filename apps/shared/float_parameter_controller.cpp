@@ -24,9 +24,34 @@ View * FloatParameterController::view() {
 }
 
 void FloatParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  if (m_selectableTableView.selectedRow() >= 0) {
+    int selectedRow = m_selectableTableView.selectedRow();
+    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
+    int selectedColumn = m_selectableTableView.selectedColumn();
+    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
+    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+  }
   app()->setFirstResponder(&m_selectableTableView);
+}
+
+void FloatParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+  if (m_selectableTableView.selectedRow() == -1) {
+    m_selectableTableView.selectCellAtLocation(0, 0);
+  } else {
+    int selectedRow = m_selectableTableView.selectedRow();
+    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
+    int selectedColumn = m_selectableTableView.selectedColumn();
+    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
+    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+  }
+}
+
+void FloatParameterController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (parentResponder() == nullptr) {
+    m_selectableTableView.deselectTable();
+    m_selectableTableView.scrollToCell(0,0);
+  }
 }
 
 bool FloatParameterController::handleEvent(Ion::Events::Event event) {
@@ -89,6 +114,9 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
+  if (myCell->isEditing()) {
+    return;
+  }
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   myCell->setAccessoryText(buffer);
@@ -103,15 +131,20 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     return false;
   }
   if (!setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody)) {
+    app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
     m_selectableTableView.selectedRow()), activeCell());
+  m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()+1);
   return true;
 }
 
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
+    return;
+  }
   if (previousSelectedCellY >= 0 && previousSelectedCellY < numberOfRows()-1) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);

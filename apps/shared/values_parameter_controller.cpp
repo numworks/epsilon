@@ -6,9 +6,9 @@ namespace Shared {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
   ViewController(parentResponder),
   m_pageTitle(title),
-  m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
-  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
-  m_setInterval(MessageTableCellWithChevron(I18n::Message::IntervalSet)),
+  m_deleteColumn(MessageTableCell(I18n::Message::Default)),
+  m_copyColumn(MessageTableCellWithChevron(I18n::Message::Default)),
+  m_setInterval(MessageTableCellWithChevron(I18n::Message::Default)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_intervalParameterController(intervalParameterController)
@@ -21,6 +21,12 @@ const char * ValuesParameterController::title() {
 
 View * ValuesParameterController::view() {
   return &m_selectableTableView;
+}
+
+void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  MessageTableCell * myCell = (MessageTableCell *)cell;
+  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
+  myCell->setMessage(labels[index]);
 }
 
 void ValuesParameterController::didBecomeFirstResponder() {

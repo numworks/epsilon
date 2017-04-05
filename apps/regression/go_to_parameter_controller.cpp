@@ -20,9 +20,9 @@ void GoToParameterController::setXPrediction(bool xPrediction) {
 
 const char * GoToParameterController::title() {
   if (m_xPrediction) {
-    return "Prediction sachant x";
+    return I18n::translate(I18n::Message::XPrediction);
   }
-  return "Prediction sachant y";
+  return I18n::translate(I18n::Message::YPrediction);
 }
 
 float GoToParameterController::parameterAtIndex(int index) {

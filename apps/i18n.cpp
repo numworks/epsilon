@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[201][3] {
+const char * messages[203][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Suivant", "Next", "Siguiente"},
@@ -154,6 +154,8 @@ const char * messages[201][3] {
   /* Sequence: second tab */
   {"Aucune suite", "No sequence", "Ninguna sucesion"},
   {"Aucune suite activee", "No sequence is turned on", "Ninguna sucesion activada"},
+  {"N debut", "N start", "N inicio"},
+  {"N fin", "N end", "N fin"},
   {"Somme des termes", "Sum of terms", "Suma de terminos"},
   {"SELECTIONNER LE PREMIER TERME", "SELECT FIRST TERM", "SELECCIONAR EL PRIMER TERMINO"},
   {"SELECTIONNER LE DERNIER TERME", "SELECT LAST TERM", "SELECCIONAR EL ULTIMO TERMINO"},

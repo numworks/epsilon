@@ -4,6 +4,7 @@
 #include "../sequence_store.h"
 #include "../sequence_title_cell.h"
 #include "../../shared/values_controller.h"
+#include "interval_parameter_controller.h"
 
 namespace Sequence {
 
@@ -13,7 +14,9 @@ public:
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
+  IntervalParameterController * intervalParameterController() override;
 private:
+  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   constexpr static int k_maxNumberOfCells = 30;
@@ -26,6 +29,7 @@ private:
   SequenceStore * functionStore() const override;
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
   Shared::ValuesFunctionParameterController * functionParameterController() override;
+  IntervalParameterController m_intervalParameterController;
 };
 
 }

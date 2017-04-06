@@ -1,4 +1,5 @@
 #include <ion.h>
+#include <assert.h>
 
 namespace Ion {
 namespace Events {
@@ -60,9 +61,9 @@ bool canRepeatEvent(Event e) {
   return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
 }
 
-// FIXME: Timeout is ignored!
-
 Event getEvent(int * timeout) {
+  assert(*timeout > delayBeforeRepeat);
+  assert(*timeout > delayBetweenRepeat);
   int time = 0;
   Keyboard::State keysSeenUp = 0;
   Keyboard::State keysSeenTransitionningFromUpToDown = 0;
@@ -86,7 +87,10 @@ Event getEvent(int * timeout) {
       return event;
     }
 
-    msleep(10);
+    if (sleepWithTimeout(10, timeout)) {
+      // Timeout occured
+      return Events::None;
+    }
     time += 10;
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero

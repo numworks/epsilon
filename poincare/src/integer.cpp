@@ -284,6 +284,12 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
   bool sign = m_negative;
 
   uint8_t exponent = 126;
+  /* if the exponent is bigger then 255, it cannot be stored as a uint8. Also,
+   * the integer whose 2-exponent is bigger than 255 cannot be stored as a
+   * float (IEEE 754 floating point). The approximation is thus INFINITY. */
+  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 255) {
+    return INFINITY;
+  }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
 
@@ -307,6 +313,12 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
   uint_result |= (sign << 31);
   uint_result |= (exponent << 23);
   uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
+
+  /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
+   * representable float. */
+  if (exponent == 255 && isnan(float_result)) {
+    return INFINITY;
+  }
 
   return float_result;
 }

@@ -253,7 +253,7 @@ const char * messages[201][3] {
   {"rad", "rad", "rad"},
   {"sci/", "sci/", "sci/"},
   {"Version du logiciel", "Software version", "Version de software"},
-  {"Numero de serie", "Serial number", "Numero de serie"},
+  {"Numero serie", "Serial number", "Numero serie"},
 };
 
 const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};

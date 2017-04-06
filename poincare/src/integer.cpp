@@ -323,6 +323,14 @@ Expression::Type Integer::type() const {
 ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
+  /* If the integer is too long, this method may overflow the stack.
+   * Experimentally, we can display at most integer whose number of digits is
+   * around 7. However, to avoid crashing when the stack is already half full,
+   * we decide not to display integers whose number of digits > 5. */
+  if (m_numberOfDigits > 5) {
+    return new StringLayout("inf", 3);
+  }
+
   char buffer[255];
 
   Integer base = Integer(10);

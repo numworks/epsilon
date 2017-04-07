@@ -3,10 +3,11 @@
 
 #include <escher.h>
 #include "main_controller.h"
+#include "../shared/resettable_app.h"
 
 namespace Settings {
 
-class App : public ::App {
+class App : public Shared::ResettableApp {
 public:
   App(Container * container);
 private:

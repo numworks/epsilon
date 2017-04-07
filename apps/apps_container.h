@@ -29,6 +29,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
+  void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();

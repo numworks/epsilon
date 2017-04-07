@@ -62,4 +62,10 @@ int FunctionStore::numberOfDefinedFunctions() {
   return result;
 }
 
+void FunctionStore::removeAll() {
+  for (int i = 0; i < numberOfFunctions(); i++) {
+    removeFunction(functionAtIndex(i));
+  }
+}
+
 }

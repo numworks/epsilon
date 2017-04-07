@@ -39,7 +39,6 @@ public:
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
-
 protected:
   ModalViewController m_modalViewController;
 private:

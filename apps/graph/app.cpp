@@ -39,4 +39,8 @@ Context * App::localContext() {
   return TextFieldDelegateApp::localContext();
 }
 
+void App::reset() {
+  m_functionStore.removeAll();
+}
+
 }

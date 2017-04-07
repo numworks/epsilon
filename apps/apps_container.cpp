@@ -7,6 +7,7 @@ extern "C" {
 }
 
 using namespace Poincare;
+using namespace Shared;
 
 AppsContainer::AppsContainer() :
   Container(),
@@ -49,6 +50,12 @@ App * AppsContainer::appAtIndex(int index) {
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);
   return apps[index];
+}
+
+void AppsContainer::reset() {
+  for (int i = 0; i < numberOfApps(); i++) {
+    ((ResettableApp *)appAtIndex(i))->reset();
+  }
 }
 
 Context * AppsContainer::globalContext() {

@@ -1,6 +1,7 @@
 #include "exam_pop_up_controller.h"
 #include "i18n.h"
 #include "global_preferences.h"
+#include "apps_container.h"
 #include <assert.h>
 
 ExamPopUpController::ExamPopUpController() :
@@ -51,9 +52,9 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Desactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
-    Container * container = (Container *)controller->app()->container();
+    AppsContainer * container = (AppsContainer *)controller->app()->container();
     if (controller->isActivatingExamMode()) {
-    //container->reset();
+      container->reset();
     } else {
       Ion::LED::setColor(KDColorBlack);
     }

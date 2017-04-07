@@ -20,4 +20,8 @@ Context * App::localContext() {
   return &m_localContext;
 }
 
+void App::reset() {
+  m_calculationStore.deleteAll();
+}
+
 }

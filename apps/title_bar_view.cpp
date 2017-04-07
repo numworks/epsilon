@@ -13,21 +13,16 @@ TitleBarView::TitleBarView() :
 {
 }
 
-void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::YellowDark);
-
-}
-
 void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
 }
 
-void TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
-  m_batteryView.setChargeState(chargeState);
+bool TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
+  return m_batteryView.setChargeState(chargeState);
 }
 
-void TitleBarView::setIsCharging(bool isCharging) {
-  m_batteryView.setIsCharging(isCharging);
+bool TitleBarView::setIsCharging(bool isCharging) {
+  return m_batteryView.setIsCharging(isCharging);
 }
 
 int TitleBarView::numberOfSubviews() const {

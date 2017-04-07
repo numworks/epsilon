@@ -6,8 +6,8 @@
 class BatteryView : public View {
 public:
   BatteryView();
-  void setChargeState(Ion::Battery::Charge chargeState);
-  void setIsCharging(bool isCharging);
+  bool setChargeState(Ion::Battery::Charge chargeState);
+  bool setIsCharging(bool isCharging);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static int k_flashHeight = 8;

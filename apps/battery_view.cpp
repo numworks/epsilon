@@ -18,18 +18,22 @@ BatteryView::BatteryView() :
 {
 }
 
-void BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
+bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
   if (chargeState != m_chargeState) {
     m_chargeState = chargeState;
     markRectAsDirty(bounds());
+    return true;
   }
+  return false;
 }
 
-void BatteryView::setIsCharging(bool isCharging) {
+bool BatteryView::setIsCharging(bool isCharging) {
   if (m_isCharging != isCharging) {
     m_isCharging = isCharging;
     markRectAsDirty(bounds());
+    return true;
   }
+  return false;
 }
 
 KDColor s_flashWorkingBuffer[BatteryView::k_flashHeight*BatteryView::k_flashWidth];

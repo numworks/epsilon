@@ -13,9 +13,11 @@ include apps/statistics/Makefile
 app_objs += $(addprefix apps/,\
   apps_container.o\
   apps_window.o\
+  battery_timer.o\
   battery_view.o\
   constant.o\
   global_preferences.o\
+  exam_mode_timer.o\
   exam_pop_up_controller.o\
   i18n.o\
   led_timer.o\

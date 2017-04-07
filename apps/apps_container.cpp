@@ -1,4 +1,5 @@
 #include "apps_container.h"
+#include "global_preferences.h"
 #include <ion.h>
 
 extern "C" {
@@ -20,7 +21,11 @@ AppsContainer::AppsContainer() :
   m_settingsApp(this),
   m_statisticsApp(this),
   m_globalContext(GlobalContext()),
-  m_variableBoxController(&m_globalContext)
+  m_variableBoxController(&m_globalContext),
+  m_examPopUpController(ExamPopUpController()),
+  m_ledTimer(LedTimer()),
+  m_batteryTimer(BatteryTimer(this)),
+  m_examModeTimer(ExamModeTimer(this))
 {
   refreshPreferences();
 }
@@ -82,17 +87,45 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 
 void AppsContainer::switchTo(App * app) {
   m_window.setTitle(app->upperName());
-  // TODO: Update the battery icon every in a time frame
-  m_window.updateBatteryLevel();
-  // TODO: Update the 'isCharging' state when the USB is plugged or unplugged
-  m_window.updateIsChargingState();
   Container::switchTo(app);
+}
+
+void AppsContainer::updateBatteryState() {
+  if (m_window.updateBatteryLevel() || m_window.updateIsChargingState()) {
+    m_window.redraw();
+  }
 }
 
 void AppsContainer::refreshPreferences() {
   m_window.refreshPreferences();
 }
 
+void AppsContainer::displayExamModePopUp(bool activate, bool forceWindowRedraw) {
+  m_examPopUpController.setActivatingExamMode(activate);
+  activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+  if (forceWindowRedraw) {
+    m_window.redraw(true);
+  }
+}
+
 Window * AppsContainer::window() {
   return &m_window;
+}
+
+int AppsContainer::numberOfTimers() {
+  return 2+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+}
+
+Timer * AppsContainer::timerAtIndex(int i) {
+  switch (i) {
+    case 0:
+      return &m_batteryTimer;
+    case 1:
+      return &m_examModeTimer;
+    case 2:
+      return &m_ledTimer;
+    default:
+      assert(false);
+      return nullptr;
+  }
 }

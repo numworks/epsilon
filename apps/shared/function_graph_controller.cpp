@@ -65,6 +65,9 @@ bool FunctionGraphController::didChangeRange(InteractiveCurveViewRange * interac
     }
   }
   float range = max - min;
+  if (max < min) {
+    range = 0.0f;
+  }
   if (interactiveCurveViewRange->yMin() == min-k_displayBottomMarginRatio*range
       && interactiveCurveViewRange->yMax() == max+k_displayTopMarginRatio*range) {
     return false;

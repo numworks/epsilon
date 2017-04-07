@@ -232,6 +232,17 @@ void setDrawingArea(KDRect r) {
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
   *CommandAddress  = Command::MemoryWrite;
+  while (numberOfPixels > 8) {
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    *DataAddress = *pixels++;
+    numberOfPixels -= 8;
+  }
   while (numberOfPixels--) {
     *DataAddress = *pixels++;
   }
@@ -239,6 +250,17 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
 
 void pushColor(KDColor color, size_t numberOfPixels) {
   *CommandAddress  = Command::MemoryWrite;
+  while (numberOfPixels > 8) {
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    *DataAddress = color;
+    numberOfPixels -= 8;
+  }
   while (numberOfPixels--) {
     *DataAddress = color;
   }

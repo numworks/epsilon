@@ -31,20 +31,32 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
     return;
   }
 
-  /* At this point we need the working buffer */
-  assert(workingBuffer != nullptr);
-  /* if the rect has been clipped, we want to fill the working buffer with the
-   * rect pixels starting from the top corner of the absolute rect. */
   KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
   KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
   startingI = startingI > 0 ? startingI : 0;
   startingJ = startingJ > 0 ? startingJ : 0;
-  for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
-    for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
-      workingBuffer[i+absoluteRect.width()*j] = pixels[startingI+i+rect.width()*(startingJ+j)];
+
+  /* If the rect has indeed been clipped, we only want to push the correct
+   * discontinuous extract of pixels. We want also to minimize calls to pushRect
+   * (time consuming). If a working buffer is available, we can fill it by
+   * concatenating extracted rows of 'pixels' to call pushRect only once on the
+   * absoluteRect. However, if we do not have a working buffer, we push row by
+   * row extracts of 'pixels' calling pushRect multiple times. */
+
+  if (workingBuffer == nullptr) {
+    for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
+      KDRect absoluteRow = KDRect(absoluteRect.x(), absoluteRect.y()+j, absoluteRect.width(), 1);
+      KDColor * rowPixels = (KDColor *)pixels+startingI+rect.width()*(startingJ+j);
+      pushRect(absoluteRow, rowPixels);
     }
+  } else {
+    for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
+      for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
+        workingBuffer[i+absoluteRect.width()*j] = pixels[startingI+i+rect.width()*(startingJ+j)];
+      }
+    }
+    pushRect(absoluteRect, workingBuffer);
   }
-  pushRect(absoluteRect, workingBuffer);
 }
 
 // Mask's size must be rect.size

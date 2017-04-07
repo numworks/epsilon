@@ -17,9 +17,10 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[201][3] {
+const char * messages[210][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
+  {"Annuler", "Cancel", "Cancelar"},
   {"Suivant", "Next", "Siguiente"},
   {"Attention a la syntaxe", "Syntax error", "Error sintactico"},
   {"Erreur mathematique", "Math error", "Error matematico"},
@@ -244,6 +245,14 @@ const char * messages[201][3] {
   {"Format resultat", "Result format", "Formato resultado"},
   {"Forme complexe", "Complex format", "Formato complejo"},
   {"Langue", "Language", "Idioma"},
+  {"Mode examen", "Exam mode", "Modo examen"},
+  {"Activer le mode examen", "Activate exam mode", "Activar el modo examen"},
+  {"Mode examen: actif", "Exam mode: active", "Modo examen: activo"},
+  {"Toutes vos donnees seront ", "All your data will be ", "Todos sus datos se "},
+  {"supprimees si vous activez ", "deleted when you activate ", "eliminarán al activar "},
+  {"le mode examen.", "the exam mode.", "el modo examen."},
+  {"Voulez-vous sortir ", "Exit the exam ", "Salir del modo "},
+  {"du mode examen ?", "mode?", "examen ?"},
   {"A propos", "About", "Acerca"},
   {"Degres ", "Degrees ", "Grados "},
   {"Radians ", "Radians ", "Radianes "},

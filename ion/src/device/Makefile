@@ -17,6 +17,7 @@ objs += $(addprefix ion/src/device/, \
   power.o\
   sd_card.o\
   swd.o \
+  usb.o \
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

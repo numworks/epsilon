@@ -71,6 +71,9 @@ const Image * App::icon() {
 
 void App::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
+  if (m_modalViewController.isDisplayingModal()) {
+    m_modalViewController.dismissModalViewController();
+  }
   m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
 }
 

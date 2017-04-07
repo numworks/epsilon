@@ -17,6 +17,7 @@ app_objs += $(addprefix apps/,\
   constant.o\
   global_preferences.o\
   i18n.o\
+  led_timer.o\
   main.o\
   math_toolbox.o\
   node.o\

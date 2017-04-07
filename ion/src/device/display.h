@@ -67,6 +67,7 @@ enum class Command : uint16_t {
   TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
+  FrameRateControl = 0xC6
 };
 
 constexpr static GPIOPin FSMCPins[] = {

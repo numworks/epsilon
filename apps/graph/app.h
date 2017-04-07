@@ -20,6 +20,7 @@ public:
    * use a temporary local context (on the stack). That way, we avoid keeping
    * weird x values after drawing curves or displaying the value table. */
   Poincare::Context * localContext() override;
+  void reset() override;
 private:
   CartesianFunctionStore m_functionStore;
   Poincare::VariableContext m_xContext;

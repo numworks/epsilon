@@ -14,6 +14,7 @@ namespace Statistics {
 class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container);
+  void reset() override;
 private:
   Store m_store;
   CalculationController m_calculationController;

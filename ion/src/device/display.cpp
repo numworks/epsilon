@@ -199,6 +199,7 @@ void initPanel() {
   SEND_COMMAND(PixelFormatSet, 0x05);
   SEND_COMMAND(MemoryAccessControl, 0xA0);
   SEND_COMMAND(TearingEffectLineOn, 0x00);
+  SEND_COMMAND(FrameRateControl, 0x1E); // 40 Hz frame rate
 
   *CommandAddress = Command::DisplayOn;
   //msleep(50);

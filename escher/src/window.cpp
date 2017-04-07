@@ -1,4 +1,5 @@
 #include <escher/window.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -12,6 +13,7 @@ void Window::redraw(bool force) {
   if (force) {
     markRectAsDirty(bounds());
   }
+  Ion::Display::waitForVBlank();
   View::redraw(bounds());
 }
 

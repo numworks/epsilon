@@ -55,7 +55,17 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 
 bool SubController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
+    /* Behavious of "Exam mode" menu*/
     if (m_preferenceIndex == 4) {
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+        return false;
+      }
+      AppsContainer * container = (AppsContainer *)(app()->container());
+      container->displayExamModePopUp(true, false);
+      return true;
+    }
+    /* Behaviour of "About" menu */
+    if (m_preferenceIndex == 5) {
       if (m_selectableTableView.selectedRow() == 1) {
         return false;
       }
@@ -67,6 +77,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       myCell->setAccessoryText(Ion::patchLevel());
       return true;
     }
+    /* Generic behaviour of preference menu*/
     setPreferenceAtIndexWithValueIndex(m_preferenceIndex, m_selectableTableView.selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
@@ -112,7 +123,10 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->setMessage(m_nodeModel->children(index)->label());
   myCell->setMessageFontSize(KDText::FontSize::Large);
   myCell->setAccessoryText("");
-  if (m_preferenceIndex == 4) {
+  if (m_preferenceIndex == 4 && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+    myCell->setMessage(I18n::Message::ExamModeActive);
+  }
+  if (m_preferenceIndex == 5) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
     if (index == 1) {
@@ -169,6 +183,8 @@ int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
     case 3:
       return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
     case 4:
+      return 0;
+    case 5:
       return 0;
     default:
       assert(false);

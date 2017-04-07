@@ -13,15 +13,16 @@ const SettingsNode angleChildren[2] = {SettingsNode(I18n::Message::Degres), Sett
 const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Auto), SettingsNode(I18n::Message::Scientific)};
 const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
 const SettingsNode languageChildren[3] = {SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::Spanish)};
+const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[2] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber)};
 
-const SettingsNode menu[5] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::About, aboutChildren, 2)};
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 5);
+const SettingsNode menu[6] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::About, aboutChildren, 2)};
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 6);
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small),
+  m_cells{MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small),
     MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small)},
   m_complexFormatCell(MessageTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
@@ -134,7 +135,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     case 3:
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language()-1)->label());
       break;
-    case 4:
+    default:
       myTextCell->setSubtitle(I18n::Message::Default);
       break;
   }

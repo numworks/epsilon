@@ -13,6 +13,10 @@
 #include "apps_window.h"
 #include "math_toolbox.h"
 #include "variable_box_controller.h"
+#include "exam_pop_up_controller.h"
+#include "led_timer.h"
+#include "battery_timer.h"
+#include "exam_mode_timer.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -30,9 +34,13 @@ public:
   VariableBoxController * variableBoxController();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App * app) override;
+  void updateBatteryState();
   void refreshPreferences();
+  void displayExamModePopUp(bool activate, bool forceRedrawWindow);
 private:
   Window * window() override;
+  int numberOfTimers() override;
+  Timer * timerAtIndex(int i) override;
   static constexpr int k_numberOfApps = 9;
   AppsWindow m_window;
   Home::App m_homeApp;
@@ -50,6 +58,10 @@ private:
   Poincare::GlobalContext m_globalContext;
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
+  ExamPopUpController m_examPopUpController;
+  LedTimer m_ledTimer;
+  BatteryTimer m_batteryTimer;
+  ExamModeTimer m_examModeTimer;
 };
 
 #endif

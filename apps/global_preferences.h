@@ -5,12 +5,19 @@
 
 class GlobalPreferences {
 public:
+  enum class ExamMode {
+    Activate,
+    Desactivate
+  };
   GlobalPreferences();
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const;
   void setLanguage(I18n::Language language);
+  ExamMode examMode() const;
+  void setExamMode(ExamMode examMode);
 private:
   I18n::Language m_language;
+  ExamMode m_examMode;
 };
 
 #endif

@@ -2,6 +2,7 @@ objs += $(addprefix ion/src/simulator/, \
   battery.o\
   init.o\
   led.o\
+  usb.o\
 )
 
 objs += $(addprefix ion/src/simulator/boot/, main.o)

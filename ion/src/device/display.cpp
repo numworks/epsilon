@@ -81,8 +81,8 @@ void initDMA() {
   DMAEngine.SM0AR(DMAStream)->set((uint32_t)DataAddress);
   DMAEngine.SCR(DMAStream)->setMSIZE(DMA::SCR::DataSize::HalfWord);
   DMAEngine.SCR(DMAStream)->setPSIZE(DMA::SCR::DataSize::HalfWord);
-  //DMAEngine.SCR(DMAStream)->setMBURST(DMA::SCR::Burst::Incremental4);
-  //DMAEngine.SCR(DMAStream)->setPBURST(DMA::SCR::Burst::Incremental4);
+  DMAEngine.SCR(DMAStream)->setMBURST(DMA::SCR::Burst::Incremental4);
+  DMAEngine.SCR(DMAStream)->setPBURST(DMA::SCR::Burst::Incremental4);
   DMAEngine.SCR(DMAStream)->setMINC(false);
 }
 

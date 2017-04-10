@@ -13,6 +13,7 @@ extern "C" {
 #include "console.h"
 #include "swd.h"
 #include "usb.h"
+#include "bench/bench.h"
 
 #define USE_SD_CARD 0
 
@@ -111,7 +112,13 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
+  bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
+
   initPeripherals();
+
+  if (consolePeerConnectedOnBoot) {
+    Ion::Device::Bench::run();
+  }
 }
 
 void shutdown() {

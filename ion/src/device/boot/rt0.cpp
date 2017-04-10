@@ -6,7 +6,6 @@ extern "C" {
 #include <ion.h>
 #include "../device.h"
 #include "../console.h"
-#include "../bench/bench.h"
 
 typedef void (*cxx_constructor)();
 
@@ -61,14 +60,6 @@ void start() {
   }
 
   Ion::Device::init();
-
-  if (Ion::Console::Device::peerConnected()) {
-  /*Ion::Keyboard::State state = Ion::Keyboard::scan();
-  if (Ion::Keyboard::keyDown(Ion::Keyboard::Key::A1, state) &&
-      Ion::Keyboard::keyDown(Ion::Keyboard::Key::I5, state)) {
-      */
-    Ion::Device::Bench::run();
-  }
 
   ion_app();
 

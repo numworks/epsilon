@@ -41,6 +41,7 @@ namespace Device {
 void init();
 void shutdown();
 
+void initDMA();
 void initGPIO();
 void shutdownGPIO();
 void initFSMC();
@@ -49,6 +50,7 @@ void initPanel();
 void shutdownPanel();
 
 void setDrawingArea(KDRect r);
+void waitForPendingDMAUploadCompletion();
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);
 void pullPixels(KDColor * pixels, size_t numberOfPixels);
@@ -89,6 +91,9 @@ constexpr static int FSMCDataCommandAddressBit = 16;
 
 constexpr static uint32_t FSMCBaseAddress = 0x60000000;
 constexpr static uint32_t FSMCBankAddress = FSMCBaseAddress + (FSMCMemoryBank-1)*0x04000000;
+
+constexpr static DMA DMAEngine = DMA2;
+constexpr static int DMAStream = 0;
 
 static volatile Command * const CommandAddress = (Command *)(FSMCBankAddress);
 static volatile uint16_t * const DataAddress = (uint16_t *)(FSMCBankAddress | (1<<(FSMCDataCommandAddressBit+1)));

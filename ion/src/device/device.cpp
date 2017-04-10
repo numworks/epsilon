@@ -194,6 +194,7 @@ void initClocks() {
   ahb1enr.setGPIOCEN(true);
   ahb1enr.setGPIODEN(true);
   ahb1enr.setGPIOEEN(true);
+  ahb1enr.setDMA2EN(true);
   RCC.AHB1ENR()->set(ahb1enr);
 
   // APB1 bus

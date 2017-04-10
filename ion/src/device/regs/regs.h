@@ -4,6 +4,7 @@
 #include "adc.h"
 #include "cm4.h"
 #include "crc.h"
+#include "dma.h"
 #include "exti.h"
 #include "flash.h"
 #include "fsmc.h"

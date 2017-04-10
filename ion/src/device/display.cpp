@@ -17,16 +17,19 @@ namespace Ion {
 namespace Display {
 
 void pushRect(KDRect r, const KDColor * pixels) {
+  Device::waitForPendingDMAUploadCompletion();
   Device::setDrawingArea(r);
   Device::pushPixels(pixels, r.width()*r.height());
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
+  Device::waitForPendingDMAUploadCompletion();
   Device::setDrawingArea(r);
   Device::pushColor(c, r.width()*r.height());
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
+  Device::waitForPendingDMAUploadCompletion();
   Device::setDrawingArea(r);
   Device::pullPixels(pixels, r.width()*r.height());
 }
@@ -40,7 +43,6 @@ void waitForVBlank() {
   while (!Device::TearingEffectPin.group().IDR()->get(Device::TearingEffectPin.pin())) {
     // Loop while low, exit when high
   }
-  // Here, we went from low to high
 }
 
 }
@@ -54,7 +56,9 @@ namespace Device {
 
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
+
 void init() {
+  initDMA();
   initGPIO();
   initFSMC();
   initPanel();
@@ -64,6 +68,39 @@ void shutdown() {
   shutdownPanel();
   shutdownFSMC();
   shutdownGPIO();
+}
+
+void initDMA() {
+  // Only DMA2 can perform memory-to-memory transfers
+  //assert(DMAEngine == DMA2);
+
+  /* In memory-to-memory transfers, the "peripheral" is the source and the
+   * "memory" is the destination. In other words, memory is copied from address
+   * DMA_SxPAR to address DMA_SxM0AR. */
+
+  DMAEngine.SCR(DMAStream)->setDIR(DMA::SCR::Direction::MemoryToMemory);
+  DMAEngine.SM0AR(DMAStream)->set((uint32_t)DataAddress);
+  DMAEngine.SCR(DMAStream)->setMSIZE(DMA::SCR::DataSize::HalfWord);
+  DMAEngine.SCR(DMAStream)->setPSIZE(DMA::SCR::DataSize::HalfWord);
+  //DMAEngine.SCR(DMAStream)->setMBURST(DMA::SCR::Burst::Incremental4);
+  //DMAEngine.SCR(DMAStream)->setPBURST(DMA::SCR::Burst::Incremental4);
+  DMAEngine.SCR(DMAStream)->setMINC(false);
+}
+
+void waitForPendingDMAUploadCompletion() {
+  // Loop until DMA engine available
+  while (DMAEngine.SCR(DMAStream)->getEN()) {
+  }
+}
+
+static inline void startDMAUpload(const KDColor * src, bool incrementSrc, uint16_t length) {
+  // Reset interruption markers
+  DMAEngine.LIFCR()->set(0xF7D0F7D);
+
+  DMAEngine.SNDTR(DMAStream)->set(length);
+  DMAEngine.SPAR(DMAStream)->set((uint32_t)src);
+  DMAEngine.SCR(DMAStream)->setPINC(incrementSrc);
+  DMAEngine.SCR(DMAStream)->setEN(true);
 }
 
 void initGPIO() {
@@ -114,15 +151,6 @@ void shutdownGPIO() {
 }
 
 void initFSMC() {
-#if 0
-		/* FSMC timing */
-		FSMC_Bank1->BTCR[0+1] = (6) | (10 << 8) | (10 << 16);
-
-		/* Bank1 NOR/SRAM control register configuration */
-		FSMC_Bank1->BTCR[0] = FSMC_BCR1_MWID_0 | FSMC_BCR1_WREN | FSMC_BCR1_MBKEN;
-#endif
-
-
   // Control register
   FSMC.BCR(FSMCMemoryBank)->setMWID(FSMC::BCR::MWID::SIXTEEN_BITS);
   FSMC.BCR(FSMCMemoryBank)->setWREN(true);
@@ -202,7 +230,6 @@ void initPanel() {
   SEND_COMMAND(FrameRateControl, 0x1E); // 40 Hz frame rate
 
   *CommandAddress = Command::DisplayOn;
-  //msleep(50);
 }
 
 void shutdownPanel() {
@@ -232,6 +259,14 @@ void setDrawingArea(KDRect r) {
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
   *CommandAddress  = Command::MemoryWrite;
+  /* Theoretically, we should not be able to use DMA here. Indeed, we have no
+   * guarantee that the content at "pixels" will remain valid once we exit this
+   * function call. In practice, we might be able to use DMA here because most
+   * of the time we push pixels from static locations. */
+#define USE_DMA_FOR_PUSH_PIXELS 0
+#if USE_DMA_FOR_PUSH_PIXELS
+  startDMAUpload(pixels, true, numberOfPixels);
+#else
   while (numberOfPixels > 8) {
     *DataAddress = *pixels++;
     *DataAddress = *pixels++;
@@ -246,21 +281,18 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
   while (numberOfPixels--) {
     *DataAddress = *pixels++;
   }
+#endif
 }
 
 void pushColor(KDColor color, size_t numberOfPixels) {
   *CommandAddress  = Command::MemoryWrite;
-  while (numberOfPixels > 8) {
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    *DataAddress = color;
-    numberOfPixels -= 8;
-  }
+  /* The "color" variable lives on the stack. We cannot take its address because
+   * it will stop being valid as soon as we return. An easy workaround is to
+   * duplicate the content in a static variable, whose value is guaranteed to be
+   * kept until the next pushColor call. */
+  static KDColor staticColor;
+  staticColor = color;
+  //startDMAUpload(&staticColor, false, (numberOfPixels > 64000 ? 64000 : numberOfPixels));
   while (numberOfPixels--) {
     *DataAddress = color;
   }

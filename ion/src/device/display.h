@@ -49,7 +49,12 @@ void shutdownFSMC();
 void initPanel();
 void shutdownPanel();
 
-void setDrawingArea(KDRect r);
+enum class Orientation {
+  Landscape = 0,
+  Portrait = 1
+};
+
+void setDrawingArea(KDRect r, Orientation o);
 void waitForPendingDMAUploadCompletion();
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);

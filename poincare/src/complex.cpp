@@ -275,8 +275,8 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   /* The number of digits in an integer is capped because the maximal integer is
    * 2^31 - 1. As our mantissa is an integer, we assert that we stay beyond this
    * threshold during computation. */
-  int numberMaximalOfCharsInInteger = log10f(powf(2, 31));
-  assert(availableCharsForMantissaWithoutSign - 1 < numberMaximalOfCharsInInteger);
+  assert(availableCharsForMantissaWithoutSign - 1 < log10f(powf(2, 31)));
+
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
   float mantissa = roundf(f * powf(10.0f, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));

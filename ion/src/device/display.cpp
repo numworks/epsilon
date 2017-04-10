@@ -18,19 +18,19 @@ namespace Display {
 
 void pushRect(KDRect r, const KDColor * pixels) {
   Device::waitForPendingDMAUploadCompletion();
-  Device::setDrawingArea(r);
+  Device::setDrawingArea(r, Device::Orientation::Landscape);
   Device::pushPixels(pixels, r.width()*r.height());
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   Device::waitForPendingDMAUploadCompletion();
-  Device::setDrawingArea(r);
+  Device::setDrawingArea(r, Device::Orientation::Portrait);
   Device::pushColor(c, r.width()*r.height());
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
   Device::waitForPendingDMAUploadCompletion();
-  Device::setDrawingArea(r);
+  Device::setDrawingArea(r, Device::Orientation::Landscape);
   Device::pullPixels(pixels, r.width()*r.height());
 }
 
@@ -55,7 +55,6 @@ namespace Display {
 namespace Device {
 
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
-
 
 void init() {
   initDMA();
@@ -225,7 +224,7 @@ void initPanel() {
   msleep(5);
 
   SEND_COMMAND(PixelFormatSet, 0x05);
-  SEND_COMMAND(MemoryAccessControl, 0xA0);
+  //SEND_COMMAND(MemoryAccessControl, 0xA0);
   SEND_COMMAND(TearingEffectLineOn, 0x00);
   SEND_COMMAND(FrameRateControl, 0x1E); // 40 Hz frame rate
 
@@ -238,11 +237,22 @@ void shutdownPanel() {
   msleep(5);
 }
 
-void setDrawingArea(KDRect r) {
-  uint16_t x_start = r.x();
-  uint16_t x_end = r.x() + r.width() - 1;
-  uint16_t y_start = r.y();
-  uint16_t y_end = r.y() + r.height() - 1;
+void setDrawingArea(KDRect r, Orientation o) {
+  uint16_t x_start, x_end, y_start, y_end;
+
+  if (o == Orientation::Landscape) {
+    SEND_COMMAND(MemoryAccessControl, 0xA0);
+    x_start = r.x();
+    x_end = r.x() + r.width() - 1;
+    y_start = r.y();
+    y_end = r.y() + r.height() - 1;
+  } else {
+    SEND_COMMAND(MemoryAccessControl, 0x00);
+    x_start = r.y();
+    x_end = r.y() + r.height() - 1;
+    y_start = Ion::Display::Width - (r.x() + r.width());
+    y_end = Ion::Display::Width - r.x() - 1;
+  }
 
   *CommandAddress  = Command::ColumnAddressSet;
   *DataAddress = (x_start >> 8);

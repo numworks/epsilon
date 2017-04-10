@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <private/memconfig.h>
 
 #if LIBA_LOG_DYNAMIC_MEMORY
@@ -55,6 +56,11 @@ void * malloc(size_t size) {
   ion_log_print_integer((uint32_t)size);
   ion_log_print_string("\n");
 #endif
+  /* If the process could not find enough space in the memory dedicated to
+   * dynamic allocation, p is NULL. The conventional malloc just return NULL
+   * without crashing. However, for debuging purposes, we abort the process
+   * in that case to easily spot memory leaking. */
+  assert(p != NULL);
   return p;
 }
 

@@ -47,8 +47,7 @@ void initCard() {
   //        0xB7 = Pattern to see back in response
   sendCommand(8, 0x1B7);
 
-  uint32_t response = SDIO.RESP(1)->get();
-  assert(response == 0x1B7);
+  assert(SDIO.RESP(1)->get() == 0x1B7);
 }
 
 void sendCommand(uint32_t cmd, uint32_t arg) {

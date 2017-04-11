@@ -11,6 +11,7 @@ void initFPU();
 void initPeripherals();
 void shutdownPeripherals(bool persistingLED);
 void initClocks();
+void initStandbyClock();
 void shutdownClocks();
 
 /*  Pin | Role              | Mode                  | Function

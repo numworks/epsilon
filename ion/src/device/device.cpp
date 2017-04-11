@@ -216,8 +216,27 @@ void initClocks() {
   RCC.AHB3ENR()->setFSMCEN(true);
 }
 
-void shutdownClocks() {
+void initStandbyClock () {
+  // AHB1 bus
+  class RCC::AHB1ENR ahb1enr(0); // Reset value
+  ahb1enr.setGPIOAEN(true);
+  ahb1enr.setGPIOBEN(true);
+  ahb1enr.setGPIOCEN(true);
+  ahb1enr.setGPIOEEN(true);
+  RCC.AHB1ENR()->set(ahb1enr);
 
+  // APB1 bus
+  // We're using TIM3
+  RCC.APB1ENR()->setTIM3EN(true);
+  RCC.APB1ENR()->setPWREN(true);
+
+  // APB2 bus
+  class RCC::APB2ENR apb2enr(0x00008000); // Reset value
+  apb2enr.setSYSCFGEN(true);
+  RCC.APB2ENR()->set(apb2enr);
+}
+
+void shutdownClocks() {
   // Reset values, everything off
   RCC.APB2ENR()->set(0x00008000);
   RCC.APB1ENR()->set(0x00000400);

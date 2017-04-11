@@ -28,10 +28,10 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate chevronHalfHeight = k_chevronHeight/2;
-  KDRect frame(width - k_chevronRightMargin - k_chevronWidth, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
+  KDRect frame(width - k_chevronWidth, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
   ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)chevronMask, s_workingBuffer);
 }
 
 KDSize ChevronView::minimalSizeForOptimalDisplay() const {
-  return KDSize(k_chevronRightMargin+k_chevronWidth, k_chevronHeight);
+  return KDSize(k_chevronWidth, k_chevronHeight);
 }

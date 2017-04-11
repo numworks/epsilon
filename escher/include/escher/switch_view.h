@@ -18,7 +18,6 @@ private:
   constexpr static KDCoordinate k_switchHeight = 16;
   constexpr static KDCoordinate k_switchWidth = 20;
   constexpr static KDCoordinate k_separatorThickness = 1;
-  constexpr static KDCoordinate k_switchMargin = 10;
   bool m_state;
 };
 

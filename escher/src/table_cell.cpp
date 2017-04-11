@@ -41,10 +41,10 @@ void TableCell::layoutSubviews() {
     KDSize labelSize = label->minimalSizeForOptimalDisplay();
     switch (m_layout) {
       case Layout::Vertical:
-        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, labelSize.height()));
+        label->setFrame(KDRect(k_separatorThickness+k_labelMargin, k_separatorThickness+k_labelTopMargin, width-2*k_separatorThickness-k_labelMargin, labelSize.height()));
         break;
       default:
-        label->setFrame(KDRect(k_separatorThickness, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));
+        label->setFrame(KDRect(k_separatorThickness+k_labelMargin, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));
         break;
     }
   }
@@ -57,16 +57,16 @@ void TableCell::layoutSubviews() {
       accessorySize = KDSize(width - 2*k_separatorThickness, accessorySize.height());
       if (label) {
         KDSize labelSize = label->minimalSizeForOptimalDisplay();
-        accessorySize = KDSize(width - 2*k_separatorThickness - labelSize.width(), accessorySize.height());
+        accessorySize = KDSize(width - 2*k_separatorThickness - labelSize.width()-k_labelMargin-k_accessoryMargin, accessorySize.height());
       }
     }
     switch (m_layout) {
       case Layout::Vertical:
-        accessory->setFrame(KDRect(k_separatorThickness, height-k_separatorThickness-accessorySize.height(),
-          width-2*k_separatorThickness, accessorySize.height()));
+        accessory->setFrame(KDRect(k_separatorThickness+k_accessoryMargin, height-k_separatorThickness-accessorySize.height()-k_accessoryBottomMargin,
+          width-2*k_separatorThickness - k_accessoryMargin, accessorySize.height()));
         break;
       default:
-        accessory->setFrame(KDRect(width - accessorySize.width() - k_separatorThickness, k_separatorThickness,
+        accessory->setFrame(KDRect(width - accessorySize.width() - k_separatorThickness-k_accessoryMargin, k_separatorThickness,
           accessorySize.width(), height-2*k_separatorThickness));
         break;
     }
@@ -75,7 +75,7 @@ void TableCell::layoutSubviews() {
   if (subAccessory && accessory) {
     KDSize accessorySize = accessory->minimalSizeForOptimalDisplay();
     KDSize subAccessorySize = subAccessory->minimalSizeForOptimalDisplay();
-    subAccessory->setFrame(KDRect(width-k_separatorThickness-accessorySize.width()-subAccessorySize.width(), k_separatorThickness,
+    subAccessory->setFrame(KDRect(width-k_separatorThickness-k_accessoryMargin-accessorySize.width()-subAccessorySize.width(), k_separatorThickness,
       subAccessorySize.width(), height-2*k_separatorThickness));
   }
 }

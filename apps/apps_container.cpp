@@ -26,7 +26,7 @@ AppsContainer::AppsContainer() :
   m_examPopUpController(ExamPopUpController()),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
-  m_examModeTimer(ExamModeTimer(this))
+  m_USBTimer(USBTimer(this))
 {
   refreshPreferences();
 }
@@ -128,7 +128,7 @@ Timer * AppsContainer::timerAtIndex(int i) {
     case 0:
       return &m_batteryTimer;
     case 1:
-      return &m_examModeTimer;
+      return &m_USBTimer;
     case 2:
       return &m_ledTimer;
     default:

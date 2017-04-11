@@ -1,13 +1,13 @@
-#ifndef APPS_EXAM_MODE_TIMER_H
-#define APPS_EXAM_MODE_TIMER_H
+#ifndef APPS_USB_TIMER_H
+#define APPS_USB_TIMER_H
 
 #include <escher.h>
 
 class AppsContainer;
 
-class ExamModeTimer : public Timer {
+class USBTimer : public Timer {
 public:
-  ExamModeTimer(AppsContainer * container);
+  USBTimer(AppsContainer * container);
 private:
   void fire() override;
   AppsContainer * m_container;

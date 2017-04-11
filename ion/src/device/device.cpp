@@ -122,7 +122,7 @@ void init() {
 }
 
 void shutdown() {
-  shutdownPeripherals();
+  shutdownPeripherals(false);
   shutdownClocks();
 }
 
@@ -140,7 +140,7 @@ void initPeripherals() {
   SWD::Device::init();
 }
 
-void shutdownPeripherals() {
+void shutdownPeripherals(bool persitingLED) {
   SWD::Device::shutdown();
   Console::Device::shutdown();
 #if USE_SD_CARD
@@ -148,7 +148,9 @@ void shutdownPeripherals() {
 #endif
   USB::Device::shutdown();
   Battery::Device::shutdown();
-  LED::Device::shutdown();
+  if (!persitingLED) {
+    LED::Device::shutdown();
+  }
   Keyboard::Device::shutdown();
   Backlight::Device::shutdown();
   Display::Device::shutdown();

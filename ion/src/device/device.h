@@ -9,7 +9,7 @@ void shutdown();
 
 void initFPU();
 void initPeripherals();
-void shutdownPeripherals();
+void shutdownPeripherals(bool persistingLED);
 void initClocks();
 void shutdownClocks();
 

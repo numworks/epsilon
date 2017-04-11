@@ -22,6 +22,7 @@ void shutdownClocks();
  *  PA5 | LCD D7            | Alternate Function 12 | FSMC_D7
  *  PA6 | LED red           | Alternate Function XX | TIM3_CH1
  *  PA7 | LED green         | Alternate Function XX | TIM3_CH2
+ *  PA9 | USB VBUS prob     | Input, pulled down    |
  *  PB0 | LED blue          | Alternate Function XX | TIM3_CH3
  *  PB1 | Keyboard row A    | Output, open-drain    |
  *  PB2 | Keyboard row B    | Output, open-drain    |

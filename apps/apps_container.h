@@ -16,7 +16,7 @@
 #include "exam_pop_up_controller.h"
 #include "led_timer.h"
 #include "battery_timer.h"
-#include "exam_mode_timer.h"
+#include "usb_timer.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -62,7 +62,7 @@ private:
   ExamPopUpController m_examPopUpController;
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
-  ExamModeTimer m_examModeTimer;
+  USBTimer m_USBTimer;
 };
 
 #endif

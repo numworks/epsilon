@@ -13,6 +13,8 @@ public:
   void setExpression(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_widthMargin = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

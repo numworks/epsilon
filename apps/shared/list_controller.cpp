@@ -153,6 +153,7 @@ void ListController::didBecomeFirstResponder() {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   if (m_selectableTableView.selectedRow() >= numberOfRows()) {
+    m_selectableTableView.selectCellAtLocation(1, 0);
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);

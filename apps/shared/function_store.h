@@ -18,7 +18,7 @@ public:
   virtual Function * definedFunctionAtIndex(int i);
   virtual Function * addEmptyFunction() = 0;
   virtual void removeFunction(Function * f) = 0;
-  void removeAll();
+  virtual void removeAll() = 0;
   int numberOfFunctions();
   // Functions can be undefined when they have a color and a name but no content
   int numberOfDefinedFunctions();

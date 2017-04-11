@@ -93,4 +93,11 @@ const KDColor SequenceStore::firstAvailableColor() {
   return k_defaultColors[0];
 }
 
+void SequenceStore::removeAll() {
+  for (int i = 0; i < m_numberOfFunctions; i++) {
+    m_sequences[i] = Sequence("", KDColorBlack);
+  }
+  m_numberOfFunctions = 0;
+}
+
 }

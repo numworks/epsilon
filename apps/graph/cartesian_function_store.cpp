@@ -100,4 +100,12 @@ const KDColor  CartesianFunctionStore::firstAvailableColor() {
   return k_defaultColors[0];
 }
 
+void CartesianFunctionStore::removeAll() {
+  for (int i = 0; i < m_numberOfFunctions; i++) {
+    m_functions[i] = CartesianFunction("", KDColorBlack);
+  }
+  m_numberOfFunctions = 0;
+  addEmptyFunction();
+}
+
 }

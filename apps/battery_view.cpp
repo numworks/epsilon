@@ -14,7 +14,7 @@ const uint8_t flashMask[BatteryView::k_flashHeight][BatteryView::k_flashWidth] =
 BatteryView::BatteryView() :
   View(),
   m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
-  m_isCharging(true)
+  m_isCharging(false)
 {
 }
 

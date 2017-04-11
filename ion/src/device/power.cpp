@@ -6,7 +6,7 @@
 #include "display.h"
 
 void Ion::Power::suspend() {
-  Device::shutdownPeripherals();
+  Device::shutdownPeripherals(false);
 
   PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.

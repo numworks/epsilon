@@ -13,11 +13,13 @@ public:
 
   //class IMR : public MaskRegister { };
   class EMR : public MaskRegister { };
+  class RTSR : public MaskRegister { };
   class FTSR : public MaskRegister { };
 
   constexpr EXTI() {};
   //REGS_REGISTER_AT(IMR, 0x00);
   REGS_REGISTER_AT(EMR, 0x04);
+  REGS_REGISTER_AT(RTSR, 0x08);
   REGS_REGISTER_AT(FTSR, 0x0C);
 private:
   constexpr uint32_t Base() const {

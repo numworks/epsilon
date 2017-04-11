@@ -12,7 +12,7 @@ void Ion::Power::suspend() {
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
   CM4.SCR()->setSLEEPDEEP(true);
 
-  Keyboard::Device::generateWakeUpEventForKey(Ion::Keyboard::Key::B2);
+  Keyboard::Device::generateWakeUpEventForPowerKey();
 
   Device::shutdownClocks();
 

@@ -117,17 +117,22 @@ void shutdown() {
   }
 }
 
-void generateWakeUpEventForKey(Key k) {
-  uint8_t rowPin = RowPins[rowForKey(k)];
+void generateWakeUpEventForPowerKey() {
+  Key key = Key::B2;
+  uint8_t rowPin = RowPins[rowForKey(key)];
   RowGPIO.MODER()->setMode(rowPin, GPIO::MODER::Mode::Output);
   RowGPIO.OTYPER()->setType(rowPin, GPIO::OTYPER::Type::OpenDrain);
   RowGPIO.ODR()->set(rowPin, 0);
 
-  uint8_t column = columnForKey(k);
+  uint8_t column = columnForKey(key);
   uint8_t columnPin = ColumnPins[column];
 
   ColumnGPIO.MODER()->setMode(columnPin, GPIO::MODER::Mode::Input);
   ColumnGPIO.PUPDR()->setPull(columnPin, GPIO::PUPDR::Pull::Up);
+
+  /* Warning: pins with the same number in different groups cannot be set as
+   * source input for EXTI at the same time. Here, EXTICR1 register is filled
+   * between position 4-7 (column pin = 1) with 0010 (ColumnGPIO = group C). */
 
   SYSCFG.EXTICR1()->setEXTI(columnPin, ColumnGPIO);
 

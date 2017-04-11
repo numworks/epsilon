@@ -37,14 +37,14 @@ void VariableBoxLeafCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   if (numberOfSubviews() == 3) {
-    m_labelView.setFrame(KDRect(1, 1, width/2-1, height/2 - 1));
-    m_subtitleView.setFrame(KDRect(1, height/2, width/2-1, height/2));
+    m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height/2 - k_separatorThickness));
+    m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin, height/2, width/2-k_widthMargin-k_separatorThickness, height/2));
     m_subtitleView.setAlignment(0.0f, 0.5f);
-    m_expressionView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
+    m_expressionView.setFrame(KDRect(width/2, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
     return;
   }
-  m_labelView.setFrame(KDRect(1, 1, width/2-1, height-2));
-  m_subtitleView.setFrame(KDRect(width/2, 1, width/2-1, height-2));
+  m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
+  m_subtitleView.setFrame(KDRect(width/2, 1, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
   m_subtitleView.setAlignment(1.0f, 0.5f);
   return;
 }

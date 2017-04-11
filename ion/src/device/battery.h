@@ -17,6 +17,7 @@ void init();
 void shutdown();
 void initGPIO();
 void initADC();
+void generateWakeUpEventForChargingState();
 
 constexpr GPIO ChargingGPIO = GPIOA;
 constexpr uint8_t ChargingPin = 0;

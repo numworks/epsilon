@@ -48,13 +48,7 @@ namespace Battery {
 namespace Device {
 
 void init() {
-  /* Step 1 - Configure the GPIOs
-   * The BAT_CHRG pin is connected to the Li-Po charging IC. That pin uses an
-   * open-drain output. Open-drain output are either connected to ground or left
-   * floating. To interact with such an output, our input must therefore be
-   * pulled up. */
-  ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Input);
-  ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::Up);
+  initGPIO();
 
   /* The BAT_SNS pin is connected to Vbat through a divider bridge. It therefore
    * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
@@ -70,10 +64,37 @@ void init() {
   ADC.SMPR()->setSamplingTime(ADCChannel, ADC::SMPR::SamplingTime::Cycles480); // Use the max sampling time
 }
 
+void initGPIO() {
+  /* Step 1 - Configure the GPIOs
+   * The BAT_CHRG pin is connected to the Li-Po charging IC. That pin uses an
+   * open-drain output. Open-drain output are either connected to ground or left
+   * floating. To interact with such an output, our input must therefore be
+   * pulled up. */
+  ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Input);
+  ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::Up);
+}
+
 void shutdown() {
   // Disable the ADC
   ADC.CR2()->setADON(false);
   RCC.APB2ENR()->setADC1EN(false);
+}
+
+void generateWakeUpEventForChargingState() {
+  initGPIO();
+
+  /* Warning: pins with the same number in different groups cannot be set as
+   * source input for EXTI at the same time. Here, EXTICR1 register is filled
+   * between position 0-3 (charging pin = 0) with
+   * 0000 (ChargingGPIO = group A). */
+  SYSCFG.EXTICR1()->setEXTI(ChargingPin, ChargingGPIO);
+
+  EXTI.EMR()->set(ChargingPin, true);
+
+  /* We need to detect when the battery starts and stops charging. We set the
+   * wake up event on the falling and rising edge. */
+  EXTI.FTSR()->set(ChargingPin, true);
+  EXTI.RTSR()->set(ChargingPin, true);
 }
 
 }

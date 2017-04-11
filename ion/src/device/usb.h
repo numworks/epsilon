@@ -13,7 +13,9 @@ namespace Device {
  */
 
 void init();
+void initGPIO();
 void shutdown();
+void generateWakeUpEventForUSBPlug();
 
 constexpr static GPIOPin VbusPin = GPIOPin(GPIOA, 9);
 

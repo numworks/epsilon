@@ -32,5 +32,6 @@ constexpr KDColor KDColorWhite = KDColor::RGB24(0xFFFFFF);
 constexpr KDColor KDColorRed = KDColor::RGB24(0xFF0000);
 constexpr KDColor KDColorGreen = KDColor::RGB24(0x00FF00);
 constexpr KDColor KDColorBlue = KDColor::RGB24(0x0000FF);
+constexpr KDColor KDColorOrange = KDColor::RGB24(0xCC7700);
 
 #endif

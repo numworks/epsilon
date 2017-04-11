@@ -44,7 +44,7 @@ void Ion::Power::suspend() {
     // Update LEDS
     KDColor LEDColor = KDColorBlack;
     if (Battery::isCharging()) {
-      LEDColor = KDColorBlue;
+      LEDColor = KDColorOrange;
     } else if (Ion::USB::isPlugged()) {
       LEDColor = KDColorGreen;
     } else {

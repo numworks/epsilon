@@ -2,9 +2,9 @@
 #include "regs/regs.h"
 #include "battery.h"
 #include "device.h"
+#include "display.h"
 #include "keyboard.h"
 #include "led.h"
-#include "display.h"
 #include "usb.h"
 
 void Ion::Power::suspend() {

@@ -9,10 +9,10 @@ void shutdown();
 
 void initFPU();
 void initPeripherals();
-void shutdownPeripherals(bool persistingLED);
+void shutdownPeripherals();
 void initClocks();
-void initStandbyClock();
 void shutdownClocks();
+void shutdownLEDClocks();
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------

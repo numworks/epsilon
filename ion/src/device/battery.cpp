@@ -80,23 +80,6 @@ void shutdown() {
   RCC.APB2ENR()->setADC1EN(false);
 }
 
-void generateWakeUpEventForChargingState() {
-  initGPIO();
-
-  /* Warning: pins with the same number in different groups cannot be set as
-   * source input for EXTI at the same time. Here, EXTICR1 register is filled
-   * between position 0-3 (charging pin = 0) with
-   * 0000 (ChargingGPIO = group A). */
-  SYSCFG.EXTICR1()->setEXTI(ChargingPin, ChargingGPIO);
-
-  EXTI.EMR()->set(ChargingPin, true);
-
-  /* We need to detect when the battery starts and stops charging. We set the
-   * wake up event on the falling and rising edge. */
-  EXTI.FTSR()->set(ChargingPin, true);
-  EXTI.RTSR()->set(ChargingPin, true);
-}
-
 }
 }
 }

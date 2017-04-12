@@ -33,17 +33,6 @@ void shutdown() {
   VbusPin.group().PUPDR()->setPull(VbusPin.pin(), GPIO::PUPDR::Pull::None);
 }
 
-void generateWakeUpEventForUSBPlug() {
-  initGPIO();
-  /* Warning: pins with the same number in different groups cannot be set as
-   * source input for EXTI at the same time. Here, EXTICR3 register is
-   * filled between position 4-7 (Vbus pin = 9) with 0000 (Vbus GPIO = group A). */
-  SYSCFG.EXTICR3()->setEXTI(VbusPin.pin(), VbusPin.group());
-
-  EXTI.EMR()->set(VbusPin.pin(), true);
-  EXTI.FTSR()->set(VbusPin.pin(), true);
-  EXTI.RTSR()->set(VbusPin.pin(), true);
-}
 }
 }
 }

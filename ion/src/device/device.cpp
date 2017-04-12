@@ -115,7 +115,6 @@ void init() {
   bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
 
   initPeripherals();
-  LED::Device::init();
 
   if (consolePeerConnectedOnBoot) {
     Ion::Device::Bench::run();
@@ -128,11 +127,10 @@ void shutdown() {
 }
 
 void initPeripherals() {
-  /* WARNING: it never inits the LED that is manually switch on/off in sleep
-   * mode when needed. */
   Display::Device::init();
   Backlight::Device::init();
   Keyboard::Device::init();
+  LED::Device::init();
   Battery::Device::init();
   USB::Device::init();
 #if USE_SD_CARD
@@ -143,8 +141,6 @@ void initPeripherals() {
 }
 
 void shutdownPeripherals() {
-  /* WARNING: it never shutdowns the LED that can be switched on/off in sleep
-   * mode. */
   SWD::Device::shutdown();
   Console::Device::shutdown();
 #if USE_SD_CARD
@@ -152,6 +148,7 @@ void shutdownPeripherals() {
 #endif
   USB::Device::shutdown();
   Battery::Device::shutdown();
+  LED::Device::shutdown();
   Keyboard::Device::shutdown();
   Backlight::Device::shutdown();
   Display::Device::shutdown();
@@ -218,26 +215,16 @@ void initClocks() {
 }
 
 void shutdownClocks() {
-  /* Reset values, everything off except LED timer clock */
-
   // APB2 bus
   RCC.APB2ENR()->set(0x00008000); // Reset value
 
-  /* AHB1
-   * TIM3 clock is needed on to drive the LED */
-  class RCC::APB1ENR apb1enr(0x00000400); // Reset value
-  apb1enr.setTIM3EN(true);
-  RCC.APB1ENR()->set(apb1enr);
+  // AHB1
+  RCC.APB1ENR()->set(0x00000400);
 
   // AHB1 bus
   RCC.AHB1ENR()->set(0); // Reset value
 
   RCC.AHB3ENR()->setFSMCEN(false);
-}
-
-void shutdownLEDClocks() {
-  /* AHB1 */
-  RCC.APB1ENR()->set(0x00000400); // Reset value
 }
 
 }

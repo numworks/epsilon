@@ -86,6 +86,20 @@ void shutdownTimer() {
   TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::ForceInactive);
 }
 
+void enforceState(bool red, bool green, bool blue) {
+  bool states[3] = {red, green, blue};
+  for (int i=0; i<3; i++) {
+    GPIOPin p = RGBPins[i];
+    if (states[i]) {
+      p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Output);
+      p.group().ODR()->set(p.pin(), true);
+    } else {
+      p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Analog);
+      p.group().PUPDR()->setPull(p.pin(), GPIO::PUPDR::Pull::None);
+    }
+  }
+}
+
 }
 }
 }

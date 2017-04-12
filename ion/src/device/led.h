@@ -16,6 +16,8 @@ namespace Device {
 
 void init();
 void shutdown();
+/* This call bypasses the timer, and immediately enforces a given LED state. */
+void enforceState(bool red, bool green, bool blue);
 
 void initGPIO();
 void shutdownGPIO();

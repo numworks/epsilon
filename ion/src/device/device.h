@@ -12,7 +12,6 @@ void initPeripherals();
 void shutdownPeripherals();
 void initClocks();
 void shutdownClocks();
-void shutdownLEDClocks();
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------

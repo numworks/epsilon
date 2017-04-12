@@ -115,6 +115,7 @@ void init() {
   bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
 
   initPeripherals();
+  LED::Device::init();
 
   if (consolePeerConnectedOnBoot) {
     Ion::Device::Bench::run();
@@ -122,15 +123,16 @@ void init() {
 }
 
 void shutdown() {
-  shutdownPeripherals(false);
+  shutdownPeripherals();
   shutdownClocks();
 }
 
 void initPeripherals() {
+  /* WARNING: it never inits the LED that is manually switch on/off in sleep
+   * mode when needed. */
   Display::Device::init();
   Backlight::Device::init();
   Keyboard::Device::init();
-  LED::Device::init();
   Battery::Device::init();
   USB::Device::init();
 #if USE_SD_CARD
@@ -140,7 +142,9 @@ void initPeripherals() {
   SWD::Device::init();
 }
 
-void shutdownPeripherals(bool persitingLED) {
+void shutdownPeripherals() {
+  /* WARNING: it never shutdowns the LED that can be switched on/off in sleep
+   * mode. */
   SWD::Device::shutdown();
   Console::Device::shutdown();
 #if USE_SD_CARD
@@ -148,9 +152,6 @@ void shutdownPeripherals(bool persitingLED) {
 #endif
   USB::Device::shutdown();
   Battery::Device::shutdown();
-  if (!persitingLED) {
-    LED::Device::shutdown();
-  }
   Keyboard::Device::shutdown();
   Backlight::Device::shutdown();
   Display::Device::shutdown();
@@ -216,35 +217,27 @@ void initClocks() {
   RCC.AHB3ENR()->setFSMCEN(true);
 }
 
-void initStandbyClock () {
-  // AHB1 bus
-  class RCC::AHB1ENR ahb1enr(0); // Reset value
-  ahb1enr.setGPIOAEN(true);
-  ahb1enr.setGPIOBEN(true);
-  ahb1enr.setGPIOCEN(true);
-  ahb1enr.setGPIOEEN(true);
-  RCC.AHB1ENR()->set(ahb1enr);
-
-  // APB1 bus
-  // We're using TIM3
-  RCC.APB1ENR()->setTIM3EN(true);
-  RCC.APB1ENR()->setPWREN(true);
+void shutdownClocks() {
+  /* Reset values, everything off except LED timer clock */
 
   // APB2 bus
-  class RCC::APB2ENR apb2enr(0x00008000); // Reset value
-  apb2enr.setSYSCFGEN(true);
-  RCC.APB2ENR()->set(apb2enr);
-}
+  RCC.APB2ENR()->set(0x00008000); // Reset value
 
-void shutdownClocks() {
-  // Reset values, everything off
-  RCC.APB2ENR()->set(0x00008000);
-  RCC.APB1ENR()->set(0x00000400);
+  /* AHB1
+   * TIM3 clock is needed on to drive the LED */
+  class RCC::APB1ENR apb1enr(0x00000400); // Reset value
+  apb1enr.setTIM3EN(true);
+  RCC.APB1ENR()->set(apb1enr);
 
   // AHB1 bus
-  RCC.AHB1ENR()->set(0);
+  RCC.AHB1ENR()->set(0); // Reset value
 
   RCC.AHB3ENR()->setFSMCEN(false);
+}
+
+void shutdownLEDClocks() {
+  /* AHB1 */
+  RCC.APB1ENR()->set(0x00000400); // Reset value
 }
 
 }

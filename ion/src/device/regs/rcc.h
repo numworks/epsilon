@@ -73,6 +73,7 @@ public:
 
   class APB1ENR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_BOOL_FIELD(TIM3EN, 1);
     REGS_BOOL_FIELD(SPI3EN, 15);
     REGS_BOOL_FIELD(USART3EN, 18);

@@ -45,8 +45,6 @@ inline uint8_t columnForKey(Key key) {
   return (int)key%numberOfColumns;
 }
 
-void generateWakeUpEventForPowerKey();
-
 }
 }
 }

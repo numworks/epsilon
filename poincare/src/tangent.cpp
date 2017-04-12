@@ -11,7 +11,7 @@ extern "C" {
 namespace Poincare {
 
 Tangent::Tangent() :
-  Function("tan")
+  TrigonometricFunction("tan")
 {
 }
 
@@ -27,34 +27,17 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-float Tangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  if (angleUnit == AngleUnit::Degree) {
-    return tanf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
-  }
-  return tanf(m_args[0]->approximate(context, angleUnit));
+float Tangent::trigonometricApproximation(float x) const {
+  return tanf(x);
 }
 
-Expression * Tangent::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
-  }
-  /* Float case */
-  if (((Complex *)evaluation)->b() == 0) {
-    delete evaluation;
-    return Function::privateEvaluate(context, angleUnit);
-  }
-  /* Complex case */
+Expression * Tangent::createComplexEvaluation(Expression * exp, Context & context, AngleUnit angleUnit) const {
+  assert(exp->type() == Type::Complex);
   Expression * arguments[2];
   arguments[0] = new Sine();
-  ((Function *)arguments[0])->setArgument(&evaluation, 1, true);
+  ((Function *)arguments[0])->setArgument(&exp, 1, true);
   arguments[1] = new Cosine();
-  ((Function *)arguments[1])->setArgument(&evaluation, 1, true);
-  delete evaluation;
+  ((Function *)arguments[1])->setArgument(&exp, 1, true);
   Expression * result = new Fraction(arguments, true);
   delete arguments[1];
   delete arguments[0];

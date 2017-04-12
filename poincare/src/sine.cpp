@@ -10,8 +10,12 @@ extern "C" {
 namespace Poincare {
 
 Sine::Sine() :
-  Function("sin")
+  TrigonometricFunction("sin")
 {
+}
+
+Expression::Type Sine::type() const {
+  return Expression::Type::Sine;
 }
 
 Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
@@ -22,36 +26,15 @@ Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-Expression::Type Sine::type() const {
-  return Expression::Type::Sine;
+float Sine::trigonometricApproximation(float x) const {
+  return sinf(x);
 }
 
-float Sine::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  if (angleUnit == AngleUnit::Degree) {
-    return sinf(m_args[0]->approximate(context, angleUnit)*M_PI/180.0f);
-  }
-  return sinf(m_args[0]->approximate(context, angleUnit));
-}
-
-Expression * Sine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
-  }
-  /* Float case */
-  if (((Complex *)evaluation)->b() == 0) {
-    delete evaluation;
-    return Function::privateEvaluate(context, angleUnit);
-  }
-  /* Complex case */
-  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)evaluation)->b(), ((Complex *)evaluation)->a()));
+Expression * Sine::createComplexEvaluation(Expression * exp, Context & context, AngleUnit angleUnit) const {
+  assert(exp->type() == Type::Complex);
+  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)exp)->b(), ((Complex *)exp)->a()));
   Function * sinh = new HyperbolicSine();
   sinh->setArgument(&arg, 1, true);
-  delete evaluation;
   delete arg;
   Expression * args[2];
   args[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));

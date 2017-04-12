@@ -1,19 +1,19 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/function.h>
+#include <poincare/trigonometric_function.h>
 
 namespace Poincare {
 
-class Sine : public Function {
+class Sine : public TrigonometricFunction {
 public:
   Sine();
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  float trigonometricApproximation(float x) const override;
+  Expression * createComplexEvaluation(Expression * arg, Context & context, AngleUnit angleUnit) const override;
 };
 
 }

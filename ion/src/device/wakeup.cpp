@@ -1,4 +1,4 @@
-#include "wake_up.h"
+#include "wakeup.h"
 #include "regs/regs.h"
 #include "battery.h"
 #include "usb.h"

@@ -6,10 +6,9 @@
 #include "keyboard.h"
 #include "led.h"
 #include "usb.h"
-#include "wake_up.h"
+#include "wakeup.h"
 
 void Ion::Power::suspend() {
-  // Shutdown all peripherals except the LED
   Device::shutdownPeripherals();
 
   PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
@@ -24,27 +23,11 @@ void Ion::Power::suspend() {
      * if the standby mode was stopped due to a "stop charging" event, we wait
      * a while to be sure that the plug state of the USB is up-to-date. */
     msleep(200);
-    KDColor LEDColor = KDColorBlack;
-    if (Battery::isCharging()) {
-      LEDColor = KDColorYellow;
-    } else if (USB::isPlugged()) {
-      LEDColor = KDColorGreen;
-    } else {
-      LEDColor = KDColorBlack;
-    }
-    if (LEDColor != KDColorBlack) {
-      LED::Device::init();
-    } else {
-      LED::Device::shutdown();
-    }
-    LED::setColor(LEDColor);
+    LED::Device::enforceState(Battery::isCharging(), USB::isPlugged(), false);
 
     WakeUp::Device::onPowerKeyDown();
 
-    Device::shutdownClocks();//Shutdown all except LED
-    if (LEDColor == KDColorBlack) {
-      Device::shutdownLEDClocks();
-    }
+    Device::shutdownClocks();
 
    /* To enter sleep, we need to issue a WFE instruction, which waits for the
    * event flag to be set and then clears it. However, the event flag might
@@ -72,5 +55,4 @@ void Ion::Power::suspend() {
   Device::initClocks();
 
   Device::initPeripherals();
-  LED::Device::init();
 }

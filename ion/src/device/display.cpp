@@ -136,9 +136,8 @@ void shutdownGPIO() {
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
 
-  // Set to true : sleep consumption = 154 uA
-  // Set to false : sleep consumption = 92 uA
-  ResetPin.group().ODR()->set(ResetPin.pin(), false);
+  ResetPin.group().MODER()->setMode(ResetPin.pin(), GPIO::MODER::Mode::Analog);
+  ResetPin.group().PUPDR()->setPull(ResetPin.pin(), GPIO::PUPDR::Pull::None);
 
   PowerPin.group().MODER()->setMode(PowerPin.pin(), GPIO::MODER::Mode::Analog);
   PowerPin.group().PUPDR()->setPull(PowerPin.pin(), GPIO::PUPDR::Pull::None);

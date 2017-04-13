@@ -1,4 +1,6 @@
 #include "title_bar_view.h"
+#include "exam_icon.h"
+#include "global_preferences.h"
 extern "C" {
 #include <assert.h>
 }
@@ -11,6 +13,7 @@ TitleBarView::TitleBarView() :
   m_titleView(KDText::FontSize::Small, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
   m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
 {
+  m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
 
 void TitleBarView::setTitle(I18n::Message title) {
@@ -26,7 +29,7 @@ bool TitleBarView::setIsCharging(bool isCharging) {
 }
 
 int TitleBarView::numberOfSubviews() const {
-  return 3;
+  return 4;
 }
 
 View * TitleBarView::subviewAtIndex(int index) {
@@ -36,6 +39,9 @@ View * TitleBarView::subviewAtIndex(int index) {
   if (index == 1) {
     return &m_preferenceView;
   }
+  if (index == 2) {
+    return &m_examModeIconView;
+  }
   return &m_batteryView;
 }
 
@@ -44,6 +50,11 @@ void TitleBarView::layoutSubviews() {
   m_preferenceView.setFrame(KDRect(0, 0, m_preferenceView.minimalSizeForOptimalDisplay()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryLeftMargin, (bounds().height()- batterySize.height())/2, batterySize));
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+    m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
+  } else {
+    m_examModeIconView.setFrame(KDRectZero);
+  }
 }
 
 void TitleBarView::refreshPreferences() {
@@ -62,5 +73,6 @@ void TitleBarView::refreshPreferences() {
   }
   buffer[numberOfChar] = 0;
   m_preferenceView.setText(buffer);
+  // Layout the exam mode icon if needed
   layoutSubviews();
 }

@@ -58,6 +58,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     } else {
       Ion::LED::setColor(KDColorBlack);
     }
+    container->refreshPreferences();
     container->activeApp()->dismissModalViewController();
   }, parentResponder), KDText::FontSize::Small)),
   m_warningTextView(MessageTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack)),

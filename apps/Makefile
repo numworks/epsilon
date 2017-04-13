@@ -30,6 +30,8 @@ app_objs += $(addprefix apps/,\
   variable_box_leaf_cell.o\
 )
 
+app_images += apps/exam_icon.png
+
 # Tracking which source file uses which image is painful. But we need to ensure
 # that a .png file has been inlined before building any source file that uses
 # said image (because it will expect the ".h" file to be there).

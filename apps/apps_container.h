@@ -11,6 +11,7 @@
 #include "settings/app.h"
 #include "statistics/app.h"
 #include "apps_window.h"
+#include "empty_battery_window.h"
 #include "math_toolbox.h"
 #include "variable_box_controller.h"
 #include "exam_pop_up_controller.h"
@@ -38,12 +39,14 @@ public:
   void updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate, bool forceRedrawWindow);
+  void shutdownDueToLowBattery();
 private:
   Window * window() override;
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
   static constexpr int k_numberOfApps = 9;
   AppsWindow m_window;
+  EmptyBatteryWindow m_emptyBatteryWindow;
   Home::App m_homeApp;
   Graph::App m_graphApp;
   Probability::App m_probabilityApp;

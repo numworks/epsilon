@@ -107,7 +107,11 @@ void CurveView::computeLabels(Axis axis) {
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float step = gridUnit(axis);
   for (int index = 0; index < numberOfLabels(axis); index++) {
-    Complex::convertFloatToText(2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step, buffer,
+    float labelValue = 2.0f*step*(ceilf(min(axis)/(2.0f*step)))+index*2.0f*step;
+    if (labelValue < step && labelValue > -step) {
+      labelValue = 0.0f;
+    }
+    Complex::convertFloatToText(labelValue, buffer,
       Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
       Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     //TODO: check for size of label?

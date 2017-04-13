@@ -17,8 +17,13 @@ CurveViewRange::CurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRan
 void CurveViewRange::roundAbscissa() {
   float xMin = m_xMin;
   float xMax = m_xMax;
-  m_xMin = roundf((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f;
-  m_xMax = roundf((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f;
+  float newXMin = clipped(roundf((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
+  float newXMax = clipped(roundf((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  if (isnan(newXMin) || isnan(newXMax)) {
+    return;
+  }
+  m_xMin = newXMin;
+  m_xMax = newXMax;
   if (m_xMin < 0.0f) {
     m_xMin = -k_displayLeftMarginRatio*(float)Ion::Display::Width;
     m_xMax = m_xMin+(float)Ion::Display::Width;
@@ -34,17 +39,25 @@ void CurveViewRange::normalize() {
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
-  m_xMin = (xMin+xMax)/2 - 5.3f;
-  m_xMax = (xMin+xMax)/2 + 5.3f;
+  float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
+  float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
+  if (!isnan(newXMin) && !isnan(newXMax)) {
+    m_xMin = newXMin;
+    m_xMax = newXMax;
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  }
   if (m_xMin < 0.0f) {
     m_xMin = -k_displayLeftMarginRatio*2.0f*5.3f;
     m_xMax = m_xMin + 2.0f*5.3f;
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   m_yAuto = false;
-  m_yMin = (yMin+yMax)/2 - 3.1f;
-  m_yMax = (yMin+yMax)/2 + 3.1f;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
+  float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
+  if (!isnan(newYMin) && !isnan(newYMax)) {
+    m_yMin = newYMin;
+    m_yMax = newYMax;
+    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  }
 }
 
 void CurveViewRange::setTrigonometric() {

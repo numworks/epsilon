@@ -40,6 +40,9 @@ float MemoizedCurveViewRange::yGridUnit() {
 }
 
 void MemoizedCurveViewRange::setXMin(float xMin) {
+  if (isnan(xMin)) {
+    return;
+  }
   m_xMin = xMin;
   if (m_xMin >= m_xMax) {
     m_xMax = xMin + powf(10.0f, floorf(log10f(fabsf(xMin)))-1.0f);
@@ -48,6 +51,9 @@ void MemoizedCurveViewRange::setXMin(float xMin) {
 }
 
 void MemoizedCurveViewRange::setXMax(float xMax) {
+  if (isnan(xMax)) {
+    return;
+  }
   m_xMax = xMax;
   if (m_xMin >= m_xMax) {
     m_xMin = xMax - powf(10.0f, floorf(log10f(fabsf(xMax)))-1.0f);
@@ -56,17 +62,24 @@ void MemoizedCurveViewRange::setXMax(float xMax) {
 }
 
 void MemoizedCurveViewRange::setYMin(float yMin) {
+  if (isnan(yMin)) {
+    return;
+  }
   m_yMin = yMin;
   if (m_yMin >= m_yMax) {
-    m_yMax = yMin + 1.0f;
+    m_yMax = yMin + powf(10.0f, floorf(log10f(fabsf(yMin)))-1.0f);
   }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
 
 void MemoizedCurveViewRange::setYMax(float yMax) {
+  if (isnan(yMax)) {
+    return;
+  }
   m_yMax = yMax;
   if (m_yMin >= m_yMax) {
-    m_yMin = yMax - 1.0f;
+    m_yMin = yMax - + powf(10.0f, floorf(log10f(fabsf(yMax)))-1.0f);
+
   }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }

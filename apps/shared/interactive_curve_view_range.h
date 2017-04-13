@@ -34,12 +34,12 @@ public:
   bool isCursorVisible();
 protected:
   bool m_yAuto;
+  static float clipped(float f, bool isMax);
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   constexpr static float k_minFloat = 1E-8f;
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
-  static float clipped(float f, bool isMax);
   CurveViewCursor * m_cursor;
 };
 

@@ -9,4 +9,7 @@ BatteryTimer::BatteryTimer(AppsContainer * container) :
 
 void BatteryTimer::fire() {
   m_container->updateBatteryState();
+  if (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+    m_container->shutdownDueToLowBattery();
+  }
 }

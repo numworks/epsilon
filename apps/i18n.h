@@ -11,6 +11,7 @@ namespace I18n {
     Next = 3,
     SyntaxError,
     MathError,
+    LowBattery,
 
     /* Variables */
     Variables,

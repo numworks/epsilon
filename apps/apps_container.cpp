@@ -12,6 +12,7 @@ using namespace Shared;
 AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
+  m_emptyBatteryWindow(EmptyBatteryWindow()),
   m_homeApp(this),
   m_graphApp(this, &m_globalContext),
   m_probabilityApp(this),
@@ -29,6 +30,7 @@ AppsContainer::AppsContainer() :
   m_USBTimer(USBTimer(this))
 {
   refreshPreferences();
+  m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
 }
 
 int AppsContainer::numberOfApps() {
@@ -113,6 +115,15 @@ void AppsContainer::displayExamModePopUp(bool activate, bool forceWindowRedraw) 
   if (forceWindowRedraw) {
     m_window.redraw(true);
   }
+}
+
+void AppsContainer::shutdownDueToLowBattery() {
+  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+    m_emptyBatteryWindow.redraw(true);
+    Ion::msleep(3000);
+    Ion::Power::suspend();
+  }
+  window()->redraw(true);
 }
 
 Window * AppsContainer::window() {

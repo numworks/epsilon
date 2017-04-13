@@ -39,7 +39,8 @@ void init() {
 }
 
 void shutdown() {
-  GPIOC.ODR()->set(6, false);
+  GPIOC.MODER()->setMode(6, GPIO::MODER::Mode::Analog);
+  GPIOC.PUPDR()->setPull(6, GPIO::PUPDR::Pull::None);
 }
 
 void suspend() {

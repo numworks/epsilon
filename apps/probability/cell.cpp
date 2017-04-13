@@ -29,7 +29,7 @@ void Cell::layoutSubviews() {
   KDCoordinate height = bounds().height();
   m_labelView.setFrame(KDRect(1+k_iconWidth+2*k_iconMargin, 1, width-2-k_iconWidth-2*k_iconMargin - k_chevronWidth, height-2));
   m_iconView.setFrame(KDRect(1+k_iconMargin, (height - k_iconHeight)/2, k_iconWidth, k_iconHeight));
-  m_chevronView.setFrame(KDRect(width-1-k_chevronWidth, 1, k_chevronWidth, height - 2));
+  m_chevronView.setFrame(KDRect(width-1-k_chevronWidth-k_chevronMargin, 1, k_chevronWidth, height - 2));
 }
 
 void Cell::reloadCell() {

@@ -16,7 +16,8 @@ private:
   constexpr static KDCoordinate k_iconWidth = 35;
   constexpr static KDCoordinate k_iconHeight = 19;
   constexpr static KDCoordinate k_iconMargin = 10;
-  constexpr static KDCoordinate k_chevronWidth = 20+8;
+  constexpr static KDCoordinate k_chevronWidth = 8;
+  constexpr static KDCoordinate k_chevronMargin = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

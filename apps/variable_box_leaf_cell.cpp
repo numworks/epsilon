@@ -38,7 +38,7 @@ void VariableBoxLeafCell::layoutSubviews() {
   KDCoordinate height = bounds().height();
   if (numberOfSubviews() == 3) {
     m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height/2 - k_separatorThickness));
-    m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin, height/2, width/2-k_widthMargin-k_separatorThickness, height/2));
+    m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin, height/2, width/2-k_widthMargin-k_separatorThickness, height/2-k_separatorThickness));
     m_subtitleView.setAlignment(0.0f, 0.5f);
     m_expressionView.setFrame(KDRect(width/2, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
     return;
@@ -74,9 +74,9 @@ void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
-  ctx->fillRect(KDRect(1, 0, width-2, height-2), backgroundColor);
-  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, 0, width, 1), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, 0, 1, height-1), Palette::GreyBright);
-  ctx->fillRect(KDRect(width-1, 0, 1, height-1), Palette::GreyBright);
+  ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-2*k_separatorThickness), backgroundColor);
+  ctx->fillRect(KDRect(0, height-k_separatorThickness, width, k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(width-k_separatorThickness, 0, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
  }

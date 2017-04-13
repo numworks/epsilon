@@ -89,18 +89,26 @@ void InteractiveCurveViewRange::zoom(float ratio) {
   if (2.0f*ratio*fabsf(xMax-xMin) < k_minFloat || 2.0f*ratio*fabsf(yMax-yMin) < k_minFloat) {
     return;
   }
-  m_xMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
-  m_xMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  float newXMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
+  float newXMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
+  if (!isnan(newXMin) && !isnan(newXMax)) {
+    m_xMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
+    m_xMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  }
   m_yAuto = false;
-  m_yMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
-  m_yMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  float newYMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
+  float newYMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
+  if (!isnan(newYMin) && !isnan(newYMax)) {
+    m_yMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
+    m_yMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
+    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  }
 }
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   m_yAuto = false;
-  if (clipped(m_xMin + x, false) != m_xMin + x || clipped(m_xMax + x, true) != m_xMax + x || clipped(m_yMin + y, false) != m_yMin + y || clipped(m_yMax + y, true) != m_yMax + y) {
+  if (clipped(m_xMin + x, false) != m_xMin + x || clipped(m_xMax + x, true) != m_xMax + x || clipped(m_yMin + y, false) != m_yMin + y || clipped(m_yMax + y, true) != m_yMax + y || isnan(clipped(m_xMin + x, false)) || isnan(clipped(m_xMax + x, true)) || isnan(clipped(m_yMin + y, false)) || isnan(clipped(m_yMax + y, true))) {
     return;
   }
   m_xMin = clipped(m_xMin + x, false);
@@ -114,8 +122,13 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::roundAbscissa() {
   float xMin = m_xMin;
   float xMax = m_xMax;
-  m_xMin = clipped(roundf((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
-  m_xMax = clipped(roundf((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  float newXMin = clipped(roundf((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
+  float newXMax = clipped(roundf((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  if (isnan(newXMin) || isnan(newXMax)) {
+    return;
+  }
+  m_xMin = newXMin;
+  m_xMax = newXMax;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
@@ -127,13 +140,21 @@ void InteractiveCurveViewRange::normalize() {
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
-  m_xMin = clipped((xMin+xMax)/2 - 5.3f, false);
-  m_xMax = clipped((xMin+xMax)/2 + 5.3f, true);
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
+  float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
+  if (!isnan(newXMin) && !isnan(newXMax)) {
+    m_xMin = newXMin;
+    m_xMax = newXMax;
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  }
   m_yAuto = false;
-  m_yMin = clipped((yMin+yMax)/2 - 3.1f, false);
-  m_yMax = clipped((yMin+yMax)/2 + 3.1f, true);
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
+  float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
+  if (!isnan(newYMin) && !isnan(newYMax)) {
+    m_yMin = newYMin;
+    m_yMax = newYMax;
+    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  }
 }
 
 void InteractiveCurveViewRange::setTrigonometric() {
@@ -158,6 +179,9 @@ void InteractiveCurveViewRange::setDefault() {
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
+  if (isnan(position)) {
+    return;
+  }
   if (axis == Axis::X) {
     float range = m_xMax - m_xMin;
     m_xMin = clipped(position - range/2.0f, false);

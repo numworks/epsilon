@@ -131,7 +131,6 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     return false;
   }
   if (!setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),

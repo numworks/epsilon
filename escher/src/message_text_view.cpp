@@ -17,8 +17,10 @@ void MessageTextView::setText(const char * text) {
 }
 
 void MessageTextView::setMessage(I18n::Message message) {
-  m_message = message;
-  markRectAsDirty(bounds());
+  if (message != m_message) {
+    m_message = message;
+    markRectAsDirty(bounds());
+  }
 }
 
 KDSize MessageTextView::minimalSizeForOptimalDisplay() const  {

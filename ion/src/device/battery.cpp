@@ -75,6 +75,9 @@ void initGPIO() {
 }
 
 void shutdown() {
+  ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Analog);
+  ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::None);
+
   // Disable the ADC
   ADC.CR2()->setADON(false);
   RCC.APB2ENR()->setADC1EN(false);

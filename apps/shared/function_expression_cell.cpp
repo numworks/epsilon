@@ -25,8 +25,10 @@ void FunctionExpressionCell::setEven(bool even) {
 }
 
 void FunctionExpressionCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_expressionView.setBackgroundColor(backgroundColor());
+  if (highlight != EvenOddCell::isHighlighted()) {
+    EvenOddCell::setHighlighted(highlight);
+    m_expressionView.setBackgroundColor(backgroundColor());
+  }
 }
 
 int FunctionExpressionCell::numberOfSubviews() const {

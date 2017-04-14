@@ -18,7 +18,7 @@ public:
   void resetColumn(int i);
   float sumOfColumn(int i);
   uint32_t storeChecksum();
-  constexpr static int k_maxNumberOfPairs = 500;
+  constexpr static int k_maxNumberOfPairs = 100;
 protected:
   virtual float defaultValue(int ii);
   int m_numberOfPairs;

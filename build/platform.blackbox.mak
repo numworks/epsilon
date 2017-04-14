@@ -1,3 +1,3 @@
 TOOLCHAIN ?= afl
-USE_LIBA ?= 1
+USE_LIBA ?= 0
 EXE = bin

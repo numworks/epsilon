@@ -10,7 +10,7 @@ public:
   float y();
   void moveTo(float x, float y);
 private:
-  static float clipped(float f);
+  static float clipped(float f, bool canBeInfinite);
   constexpr static float k_maxFloat = 1E+8f;
   float m_x;
   float m_y;

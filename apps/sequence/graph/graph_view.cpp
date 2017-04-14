@@ -22,7 +22,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     Sequence * s = m_sequenceStore->activeFunctionAtIndex(i);
     float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
     float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-    for (int x = rectMin; x < rectMax; x++) {
+    int step = ceilf((rectMax - rectMin)/k_precision);
+    for (int x = rectMin; x < rectMax; x += step) {
       float y = evaluateModelWithParameter(s, x);
       if (isnan(y)) {
         continue;

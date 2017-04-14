@@ -48,8 +48,13 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
-  float x = direction > 0 ? xCursorPosition + 1.0f :
-    xCursorPosition -  1.0f;
+  float step = ceilf((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/GraphView::k_precision);
+  step = step < 1.0f ? 1.0f : step;
+  float x = direction > 0 ? xCursorPosition + step:
+    xCursorPosition -  step;
+  if (x < 0.0f) {
+    return false;
+  }
   Sequence * s = m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = s->evaluateAtAbscissa(x, myApp->localContext());

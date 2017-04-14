@@ -22,6 +22,7 @@ public:
   Poincare::Expression * secondInitialConditionExpression();
   Poincare::ExpressionLayout * firstInitialConditionLayout();
   Poincare::ExpressionLayout * secondInitialConditionLayout();
+  void setContent(const char * c) override;
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   int numberOfElements();
@@ -33,6 +34,7 @@ public:
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
   float sumOfTermsBetweenAbscissa(float start, float end, Poincare::Context * context);
 private:
+  constexpr static int k_maxRecurrentRank = 10000;
   char symbol() const override;
   Type m_type;
   char m_firstInitialConditionText[Shared::Function::k_bodyLength];
@@ -45,6 +47,10 @@ private:
   Poincare::ExpressionLayout * m_definitionName;
   Poincare::ExpressionLayout * m_firstInitialConditionName;
   Poincare::ExpressionLayout * m_secondInitialConditionName;
+  mutable int m_indexBuffer1;
+  mutable int m_indexBuffer2;
+  mutable float m_buffer1;
+  mutable float m_buffer2;
 };
 
 }

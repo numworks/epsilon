@@ -18,7 +18,7 @@ public:
   virtual bool isDefined();
   bool isActive();
   void setActive(bool active);
-  void setContent(const char * c);
+  virtual void setContent(const char * c);
   void setColor(KDColor m_color);
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
 protected:

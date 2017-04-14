@@ -8,7 +8,6 @@
 
 Ion::Events::Event Ion::Events::getEvent(int * timeout) {
   int c = getchar();
-  msleep(100);
   if (c == EOF) {
     exit(0);
   } else {

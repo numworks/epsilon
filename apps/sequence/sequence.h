@@ -37,8 +37,8 @@ private:
   constexpr static int k_maxRecurrentRank = 10000;
   char symbol() const override;
   Type m_type;
-  char m_firstInitialConditionText[Shared::Function::k_bodyLength];
-  char m_secondInitialConditionText[Shared::Function::k_bodyLength];
+  char m_firstInitialConditionText[TextField::maxBufferSize()];
+  char m_secondInitialConditionText[TextField::maxBufferSize()];
   Poincare::Expression * m_firstInitialConditionExpression;
   Poincare::Expression * m_secondInitialConditionExpression;
   Poincare::ExpressionLayout * m_firstInitialConditionLayout;

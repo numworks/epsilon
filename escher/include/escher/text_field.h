@@ -29,6 +29,9 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void setTextFieldDelegate(TextFieldDelegate * delegate);
   bool handleEvent(Ion::Events::Event event) override;
+  constexpr static int maxBufferSize() {
+     return ContentView::k_maxBufferSize;
+  }
 protected:
   class ContentView : public View {
   public:

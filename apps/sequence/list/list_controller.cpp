@@ -85,7 +85,7 @@ void ListController::selectPreviousNewSequenceCell() {
 
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
   char * initialText = nullptr;
-  char initialTextContent[255];
+  char initialTextContent[TextField::maxBufferSize()];
   if (event == Ion::Events::OK) {
     switch (sequenceDefinition) {
       case 0:

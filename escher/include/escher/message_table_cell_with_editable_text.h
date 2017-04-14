@@ -16,7 +16,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
-  constexpr static int k_bufferLength = 255;
+  constexpr static int k_bufferLength = TextField::maxBufferSize();
 private:
   constexpr static int k_maxNumberOfEditableCharacters = 14;
   TextField m_textField;

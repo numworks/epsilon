@@ -16,8 +16,9 @@ public:
   void selectSequence(Sequence * sequence);
   void setHighlight(int start, int end);
   void setHighlightColor(bool highlightColor);
-  constexpr static float k_precision = 250.0f;
+  float resolution() const override;
 private:
+  constexpr static float k_sequenceResolution = 250.0f;
   float evaluateModelWithParameter(Model * expression, float abscissa) const override;
   KDSize cursorSize() override;
   SequenceStore * m_sequenceStore;

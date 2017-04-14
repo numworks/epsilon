@@ -48,7 +48,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
-  float step = ceilf((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/GraphView::k_precision);
+  float step = ceilf((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
   step = step < 1.0f ? 1.0f : step;
   float x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;

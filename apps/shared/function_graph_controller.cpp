@@ -51,11 +51,11 @@ bool FunctionGraphController::didChangeRange(InteractiveCurveViewRange * interac
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  float step = (xMax - xMin)/Ion::Display::Width;
+  float step = (xMax - xMin)/curveView()->resolution();
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
     float y = 0.0f;
-    for (int i = 0; i <= Ion::Display::Width; i++) {
+    for (int i = 0; i <= curveView()->resolution(); i++) {
       float x = xMin + i*step;
       y = f->evaluateAtAbscissa(x, myApp->localContext());
       if (!isnan(y) && !isinf(y)) {

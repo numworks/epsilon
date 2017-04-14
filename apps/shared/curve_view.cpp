@@ -64,6 +64,10 @@ void CurveView::setOkView(View * okView) {
   m_okView = okView;
 }
 
+float CurveView::resolution() const {
+  return k_resolution;
+}
+
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   return (axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin());
@@ -272,7 +276,6 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 #endif
 
 constexpr static int k_maxNumberOfIterations = 10;
-constexpr static int k_resolution = 350.0f;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);

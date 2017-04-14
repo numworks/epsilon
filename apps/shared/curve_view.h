@@ -26,9 +26,11 @@ public:
   void setCursorView(View * cursorView);
   void setBannerView(BannerView * bannerView);
   void setOkView(View * okView);
+  virtual float resolution() const;
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
+  constexpr static int k_resolution = 350.0f;
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static KDCoordinate k_okMargin =  10;
   constexpr static KDCoordinate k_labelGraduationLength =  6;

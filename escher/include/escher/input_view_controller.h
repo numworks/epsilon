@@ -37,7 +37,7 @@ private:
       constexpr static int k_inputHeight = 37;
       constexpr static int k_separatorThickness = 1;
       TextField m_textField;
-      char m_textBody[255];
+      char m_textBody[TextField::maxBufferSize()];
     };
     ContentView m_view;
   };

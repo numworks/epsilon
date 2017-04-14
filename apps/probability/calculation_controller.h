@@ -48,7 +48,7 @@ private:
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;
     MessageTextView m_text[k_maxNumberOfEditableFields];
-    char m_draftTextBuffer[EditableTextCell::k_bufferLength];
+    char m_draftTextBuffer[TextField::maxBufferSize()];
     EditableTextCell m_calculationCell[k_maxNumberOfEditableFields];
     Calculation * m_calculation;
   };

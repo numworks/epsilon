@@ -33,7 +33,7 @@ protected:
   int numberOfElements() override;
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
-  char m_draftTextBuffer[EditableTextCell::k_bufferLength];
+  char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;

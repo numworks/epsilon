@@ -3,6 +3,7 @@
 
 #include <poincare.h>
 #include <kandinsky.h>
+#include <escher.h>
 
 namespace Shared {
 
@@ -22,11 +23,10 @@ public:
   void setColor(KDColor m_color);
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
 protected:
-  constexpr static int k_bodyLength = 255;
   Poincare::Expression * m_expression;
 private:
   virtual char symbol() const = 0;
-  char m_text[k_bodyLength];
+  char m_text[TextField::maxBufferSize()];
   const char * m_name;
   KDColor m_color;
   Poincare::ExpressionLayout * m_layout;

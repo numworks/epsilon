@@ -2,6 +2,7 @@
 #define CALCULATION_CALCULATION_H
 
 #include <poincare.h>
+#include <escher.h>
 
 namespace Calculation {
 
@@ -24,10 +25,9 @@ public:
   Poincare::ExpressionLayout * outputLayout();
   void setContent(const char * c, Poincare::Context * context);
   bool isEmpty();
-  constexpr static int k_maximalExpressionTextLength = 255;
 private:
-  char m_inputText[k_maximalExpressionTextLength];
-  char m_outputText[k_maximalExpressionTextLength];
+  char m_inputText[::TextField::maxBufferSize()];
+  char m_outputText[::TextField::maxBufferSize()];
   Poincare::Expression * m_input;
   Poincare::ExpressionLayout * m_inputLayout;
   Poincare::Expression * m_output;

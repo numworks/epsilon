@@ -60,7 +60,7 @@ private:
   EvenOddMessageTextCell m_abscissaTitleCell;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
-  char m_draftTextBuffer[EditableTextCell::k_bufferLength];
+  char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;

@@ -35,7 +35,7 @@ private:
     constexpr static int k_separatorThickness = 1;
     TableView * m_mainView;
     TextField m_textField;
-    char m_textBody[255];
+    char m_textBody[TextField::maxBufferSize()];
   };
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   ContentView m_contentView;

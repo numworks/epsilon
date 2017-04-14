@@ -18,13 +18,14 @@ float CurveViewCursor::y() {
 }
 
 void CurveViewCursor::moveTo(float x, float y) {
-  m_x = clipped(x);
-  m_y = clipped(y);
+  m_x = clipped(x, false);
+  m_y = clipped(y, true);
 }
 
-float CurveViewCursor::clipped(float x) {
-  float clippedX = x > k_maxFloat ? INFINITY : x;
-  clippedX = clippedX < - k_maxFloat ? -INFINITY : clippedX;
+float CurveViewCursor::clipped(float x, bool canBeInfinite) {
+  float maxValue = canBeInfinite ? INFINITY : k_maxFloat;
+  float clippedX = x > k_maxFloat ? maxValue : x;
+  clippedX = clippedX < - k_maxFloat ? -maxValue : clippedX;
   return clippedX;
 }
 

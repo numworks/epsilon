@@ -106,6 +106,19 @@ void CalculationController::ContentView::layoutSubviews() {
 
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
+  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
+  KDSize charSize = KDText::stringSize(" ");
+  KDCoordinate xCoordinate = ImageTableView::k_imageCellWidth + k_textWidthMargin;
+  KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+
+  ctx->drawRect(KDRect(xCoordinate-1, titleHeight+ImageCell::k_imageMargin-1, k_textFieldWidth+1, ImageCell::k_imageHeight+1), Palette::GreyMiddle);
+
+  xCoordinate += k_textFieldWidth + k_textWidthMargin;
+  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+
+  ctx->drawRect(KDRect(xCoordinate-1, titleHeight+ImageCell::k_imageMargin-1, k_textFieldWidth+1, ImageCell::k_imageHeight+1), Palette::GreyMiddle);
 }
 
 LawCurveView * CalculationController::ContentView::lawCurveView() {

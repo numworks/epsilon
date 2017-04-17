@@ -35,6 +35,7 @@ public:
   float sumOfTermsBetweenAbscissa(float start, float end, Poincare::Context * context);
 private:
   constexpr static int k_maxRecurrentRank = 10000;
+  constexpr static float k_maxNumberOfTermsInSum = 100000.0f;
   char symbol() const override;
   Type m_type;
   char m_firstInitialConditionText[TextField::maxBufferSize()];

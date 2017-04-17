@@ -56,7 +56,7 @@ void TermSumController::viewWillAppear() {
 }
 
 bool TermSumController::handleEvent(Ion::Events::Event event) {
-  if (m_step > 1 && event != Ion::Events::OK) {
+  if (m_step > 1 && event != Ion::Events::OK && event != Ion::Events::Back) {
     return false;
   }
   if (event == Ion::Events::Left) {
@@ -109,6 +109,24 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     m_contentView.legendView()->setLegendMessage(I18n::Message::Default);
     m_contentView.graphView()->setHighlightColor(true);
     m_contentView.graphView()->selectMainView(false);
+    return true;
+  }
+  if (event == Ion::Events::Back && m_step > 0) {
+    m_step--;
+    m_bufferCursorPosition = 0;
+    if (m_step == 1) {
+      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectLastTerm);
+      m_contentView.graphView()->setHighlightColor(false);
+      m_contentView.graphView()->selectMainView(true);
+      m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
+    }
+    if (m_step == 0) {
+      m_contentView.graphView()->setHighlight(-1,-1);
+      moveCursorHorizontallyToPosition(m_startSum);
+      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectFirstTerm);
+      m_contentView.legendView()->setSumSubscript(m_startSum);
+      m_contentView.graphView()->reload();
+    }
     return true;
   }
   return false;

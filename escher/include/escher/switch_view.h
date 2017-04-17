@@ -10,14 +10,12 @@ public:
   void setState(bool state);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-private:
   /* k_switchHeight and k_switchWidth are the dimensions of the switch
-   * (including the outline of the switch). The outline thickness is
-   * k_separatorThickness. The k_switchMargin is the margin between the right
-   * extremity of the view and the right extremity of the switch. */
-  constexpr static KDCoordinate k_switchHeight = 16;
-  constexpr static KDCoordinate k_switchWidth = 20;
-  constexpr static KDCoordinate k_separatorThickness = 1;
+   * (including the outline of the switch). */
+  constexpr static KDCoordinate k_onOffSize = 12;
+  constexpr static KDCoordinate k_switchHeight = 12;
+  constexpr static KDCoordinate k_switchWidth = 22;
+private:
   bool m_state;
 };
 

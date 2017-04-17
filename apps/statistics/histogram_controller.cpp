@@ -50,6 +50,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
       m_view.selectMainView(true);
       reloadBannerView();
       m_view.reload();
+      app()->setFirstResponder(this);
       return true;
     }
     return false;

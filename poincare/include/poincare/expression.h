@@ -27,6 +27,7 @@ public:
     Determinant,
     DivisionQuotient,
     DivisionRemainder,
+    Factorial,
     Float,
     Floor,
     FracPart,

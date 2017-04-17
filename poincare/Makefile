@@ -23,6 +23,7 @@ objs += $(addprefix poincare/src/,\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
+  factorial.o\
   floor.o\
   frac_part.o\
   fraction.o\

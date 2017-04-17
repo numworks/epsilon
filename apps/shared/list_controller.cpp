@@ -209,10 +209,20 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       }
     }
   }
-  if (event == Ion::Events::Backspace && m_selectableTableView.selectedColumn() == 1 &&
+  if (event == Ion::Events::Backspace &&
       (m_selectableTableView.selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
-    reinitExpression(function);
+    if (m_selectableTableView.selectedColumn() == 1) {
+      reinitExpression(function);
+    } else {
+      removeFunctionRow(function);
+      m_selectableTableView.reloadData();
+      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      if (m_selectableTableView.selectedRow() >= numberOfRows()) {
+        m_selectableTableView.selectCellAtLocation(0, 0);
+        m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
+      }
+    }
     return true;
   }
   if ((event.hasText() || event == Ion::Events::XNT)
@@ -263,6 +273,10 @@ int ListController::functionIndexForRow(int j) {
 void ListController::addEmptyFunction() {
   m_functionStore->addEmptyFunction();
   m_selectableTableView.reloadData();
+}
+
+void ListController::removeFunctionRow(Function * function) {
+  m_functionStore->removeFunction(function);
 }
 
 }

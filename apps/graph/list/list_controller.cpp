@@ -95,5 +95,10 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   myCell->setTextColor(textColor);
 }
 
+void ListController::removeFunctionRow(Function * function) {
+  if (m_functionStore->numberOfFunctions() > 1) {
+    m_functionStore->removeFunction(function);
+  }
+}
 
 }

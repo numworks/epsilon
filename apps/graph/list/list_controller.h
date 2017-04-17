@@ -25,6 +25,7 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
+  void removeFunctionRow(Shared::Function * function) override;
   constexpr static int k_maxNumberOfRows = 5;
   FunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];

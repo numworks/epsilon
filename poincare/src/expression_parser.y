@@ -58,6 +58,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token MULTIPLY
 %token DIVIDE
 %token POW
+%token BANG
 %token LEFT_PARENTHESIS
 %token RIGHT_PARENTHESIS
 %token LEFT_BRACE
@@ -89,6 +90,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %left MULTIPLY
 %left DIVIDE
 %left POW
+%left BANG
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> exp;
@@ -131,7 +133,8 @@ symb:
 
 exp:
   UNDEFINED        { $$ = $1; }
-  | exp STO symb   {$$ = new Poincare::Store($3, $1, false); }
+  | exp BANG       { $$ = new Poincare::Factorial($1, false); }
+  | exp STO symb   { $$ = new Poincare::Store($3, $1, false); }
   | number             { $$ = $1; }
   | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }

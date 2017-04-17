@@ -145,6 +145,7 @@ inf { poincare_expression_yylval.expression = new Complex(Complex::Float(INFINIT
 \* { return MULTIPLY; }
 \/ { return DIVIDE; }
 \^ { return POW; }
+\! { return BANG; }
 \( { return LEFT_PARENTHESIS; }
 \) { return RIGHT_PARENTHESIS; }
 \{ { return LEFT_BRACE; }

@@ -93,7 +93,7 @@ const char * messages[211][3] {
   {"Graphique", "Graph", "Grafico"},
   {"Valeurs", "Table", "Tabla"},
     /* Function: first tab */
-  {"Tracer", "Plot", "Dibujar"},
+  {"Tracer le graphique", "Plot graph", "Dibujar el grafico"},
   {"Afficher les valeurs", "Display values", "Visualizar los valores"},
   {"Options de la fonction", "Function options", "Opciones de la funcion"},
   {"Ajouter une fonction", "Add function", "Agregar una funcion"},

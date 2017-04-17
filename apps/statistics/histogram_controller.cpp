@@ -155,30 +155,36 @@ void HistogramController::reloadBannerView() {
   float upperBound = m_store->endOfBarAtIndex(m_selectedBarIndex);
   numberOfChar += Complex::convertFloatToText(upperBound, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = '[';
-  legend = "   ";
+  legend = "                            ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  buffer[k_maxIntervalLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 1);
 
   numberOfChar = 0;
-  legend = ": ";
+  legend = " : ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   float size = m_store->heightOfBarAtIndex(m_selectedBarIndex);
   numberOfChar += Complex::convertFloatToText(size, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "   ";
+  legend = "                   ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 3);
 
   numberOfChar = 0;
-  legend = ": ";
+  legend = " : ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   float frequency = size/m_store->sumOfColumn(1);
-  Complex::convertFloatToText(frequency, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(frequency, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "                   ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 5);
 }
 

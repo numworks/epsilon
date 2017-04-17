@@ -181,7 +181,7 @@ const char * messages[211][3] {
   {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar"},
   {"Intervalle ", "Interval ", "Intervalo"},
   {"Effectif", "Size", "Frecuencia"},
-  {"       Frequence", "       Frequency", "       Frecuencia relativa"},
+  {"Frequence", "Frequency", "Relativa"},
   {"Reglage de l'histogramme", "Histogram settings", "Parametros del histograma"},
   {"Largeur des rectangles", "Bin width", "Ancho del rectangulo"},
   {"Debut de la serie", "X start", "Principio de la serie"},

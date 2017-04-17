@@ -10,25 +10,36 @@
 
 namespace Probability {
 
-ImageTableView::ImageCell::ImageCell() :
+ImageCell::ImageCell() :
   HighlightCell()
 {
 }
 
-int ImageTableView::ImageCell::numberOfSubviews() const {
+void ImageCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+  ctx->fillRect(KDRect(0,0, width, k_imageMargin), KDColorWhite);
+  ctx->fillRect(KDRect(0,0, k_imageMargin, height), KDColorWhite);
+  ctx->fillRect(KDRect(0,height-k_imageMargin, width, k_imageMargin), KDColorWhite);
+  ctx->fillRect(KDRect(width-k_imageMargin,0, k_imageMargin, height), KDColorWhite);
+}
+
+int ImageCell::numberOfSubviews() const {
   return 1;
 }
 
-View * ImageTableView::ImageCell::subviewAtIndex(int index) {
+View * ImageCell::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_iconView;
 }
 
-void ImageTableView::ImageCell::layoutSubviews() {
-  m_iconView.setFrame(bounds());
+void ImageCell::layoutSubviews() {
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+  m_iconView.setFrame(KDRect(k_imageMargin, k_imageMargin, width - 2*k_imageMargin, height-2*k_imageMargin));
 }
 
-void ImageTableView::ImageCell::reloadCell() {
+void ImageCell::reloadCell() {
   HighlightCell::reloadCell();
   if (isHighlighted()) {
     m_iconView.setImage(m_focusedIcon);
@@ -37,7 +48,7 @@ void ImageTableView::ImageCell::reloadCell() {
   }
 }
 
-void ImageTableView::ImageCell::setImage(const Image * image, const Image * focusedImage) {
+void ImageCell::setImage(const Image * image, const Image * focusedImage) {
   m_icon = image;
   m_focusedIcon = focusedImage;
 }
@@ -131,7 +142,7 @@ void ImageTableView::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate ImageTableView::cellHeight() {
-  return k_imageHeight;
+  return k_imageCellHeight;
 }
 
 int ImageTableView::numberOfSubviews() const {

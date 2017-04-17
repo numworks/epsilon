@@ -24,13 +24,11 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float 
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
   float parameter = roundf(f);
   if (parameterIndex == 2 && parameter == 0.0f) {
     parameter = 1.0f;
   }
-  (m_interval->*setters[parameterIndex])(parameter);
-  return true;
+  return Shared::IntervalParameterController::setParameterAtIndex(parameterIndex, parameter);
 }
 
 }

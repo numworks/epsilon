@@ -58,6 +58,7 @@ private:
   Sequence * m_sequence;
   Shared::CurveViewCursor * m_cursor;
   VerticalCursorView m_cursorView;
+  int m_bufferCursorPosition;
   int m_step;
   int m_startSum;
   int m_endSum;

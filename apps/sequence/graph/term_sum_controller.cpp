@@ -21,6 +21,7 @@ TermSumController::TermSumController(Responder * parentResponder, GraphView * gr
   m_sequence(nullptr),
   m_cursor(cursor),
   m_cursorView(VerticalCursorView()),
+  m_bufferCursorPosition(0),
   m_step(0),
   m_startSum(-1),
   m_endSum(-1)
@@ -46,6 +47,7 @@ void TermSumController::viewWillAppear() {
   m_contentView.graphView()->reload();
   m_contentView.layoutSubviews();
 
+  m_bufferCursorPosition = 0;
   m_startSum = -1;
   m_endSum = -1;
   m_step = 0;
@@ -75,10 +77,11 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event.hasText() && event.text()[0] >= '0' && event.text()[0] <= '9') {
-    if (m_step > 0 && event.text()[0]-'0' < m_cursor->x()) {
+    m_bufferCursorPosition = 10*m_bufferCursorPosition + event.text()[0]-'0';
+    if (m_step > 0 && m_bufferCursorPosition < m_cursor->x()) {
       return false;
     }
-    if (moveCursorHorizontallyToPosition(event.text()[0]-'0')) {
+    if (moveCursorHorizontallyToPosition(m_bufferCursorPosition)) {
       m_contentView.graphView()->reload();
       return true;
     }
@@ -92,6 +95,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     }
     if (m_step == 0) {
       m_step++;
+      m_bufferCursorPosition = 0;
       m_startSum = m_cursor->x();
       m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
       m_contentView.legendView()->setLegendMessage(I18n::Message::SelectLastTerm);

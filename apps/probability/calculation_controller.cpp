@@ -227,6 +227,9 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
       floatBody = 1.0f;
     }
   }
+  if (!m_law->isContinuous() && (m_highlightedSubviewIndex == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
+    floatBody = roundf(floatBody);
+  }
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);

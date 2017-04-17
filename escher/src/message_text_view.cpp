@@ -25,7 +25,7 @@ void MessageTextView::setMessage(I18n::Message message) {
 
 KDSize MessageTextView::minimalSizeForOptimalDisplay() const  {
   KDCoordinate width = 0;
-  for (int l = 0; l < I18n::numberOfLanguages(); l++) {
+  for (int l = 0; l < I18n::numberOfLanguages()+1; l++) {
     KDCoordinate newWidth = KDText::stringSize(I18n::translate(m_message, (I18n::Language)l), m_fontSize).width();
     width = width > newWidth ?  width : newWidth;
   }

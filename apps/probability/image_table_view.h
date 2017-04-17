@@ -32,6 +32,7 @@ class ImageTableView : public View, public Responder, public SimpleListViewDataS
   void setCalculation(Calculation * calculation, int index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   void select(bool select);
   void setHighlight(bool highlight);
   int numberOfRows() override;

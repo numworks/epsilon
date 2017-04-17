@@ -1,6 +1,7 @@
 #include "go_to_parameter_controller.h"
 #include "../apps_container.h"
 #include <assert.h>
+#include <float.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -48,6 +49,10 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   if (isnan(x)) {
+    if (m_store->slope() < FLT_EPSILON && f == 0.0f) {
+      m_cursor->moveTo(m_cursor->x(), f);
+      return true;
+    }
     app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }

@@ -54,6 +54,16 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float 
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
+  float start = parameterIndex == 0 ? f : m_interval->start();
+  float end = parameterIndex == 1 ? f : m_interval->end();
+  if (start > end) {
+    if (parameterIndex == 1) {
+      app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+    }
+    float g = f+1.0f;
+    m_interval->setEnd(g);
+  }
   SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
   (m_interval->*setters[parameterIndex])(f);
   return true;

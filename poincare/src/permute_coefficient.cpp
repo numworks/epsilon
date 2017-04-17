@@ -29,8 +29,11 @@ float PermuteCoefficient::privateApproximate(Context& context, AngleUnit angleUn
   assert(angleUnit != AngleUnit::Default);
   float n = m_args[0]->approximate(context, angleUnit);
   float k = m_args[1]->approximate(context, angleUnit);
-  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k) {
+  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || n < 0.0f || k < 0.0f) {
     return NAN;
+  }
+  if (k > n) {
+    return 0.0f;
   }
   float result = 1.0f;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {

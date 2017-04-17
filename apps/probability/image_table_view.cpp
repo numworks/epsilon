@@ -80,6 +80,10 @@ void ImageTableView::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
+void ImageTableView::willExitResponderChain(Responder * nextFirstResponder) {
+  m_calculationController->reload();
+}
+
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     m_calculationController->setCalculationAccordingToIndex(m_selectableTableView.selectedRow());

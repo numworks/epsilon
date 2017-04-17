@@ -175,7 +175,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     if (m_highlightedSubviewIndex == 0) {
       m_contentView.imageTableView()->select(false);
       m_contentView.imageTableView()->setHighlight(false);
-      m_contentView.layoutSubviews();
     } else {
       EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
       calculCell->setHighlighted(false);

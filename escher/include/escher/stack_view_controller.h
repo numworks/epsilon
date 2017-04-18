@@ -23,6 +23,8 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void loadView() override;
+  void unloadView() override;
 private:
   class ControllerView : public View {
   public:

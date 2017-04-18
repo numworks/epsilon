@@ -228,6 +228,6 @@ void ButtonRowController::viewWillAppear() {
   m_contentView.mainViewController()->viewWillAppear();
 }
 
-void ButtonRowController::viewWillDisappear() {
-  m_contentView.mainViewController()->viewWillDisappear();
+void ButtonRowController::viewDidDisappear() {
+  m_contentView.mainViewController()->viewDidDisappear();
 }

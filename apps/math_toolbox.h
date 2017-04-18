@@ -24,7 +24,7 @@ public:
   int typeAtLocation(int i, int j) override;
 
   void viewWillAppear() override;
-  void viewWillDisappear() override;
+  void viewDidDisappear() override;
 protected:
   int stackDepth();
   TextField * sender() override;

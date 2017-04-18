@@ -255,6 +255,6 @@ void VariableBoxController::viewWillAppear() {
   m_contentViewController.reloadData();
 }
 
-void VariableBoxController::viewWillDisappear() {
+void VariableBoxController::viewDidDisappear() {
   m_contentViewController.deselectTable();
 }

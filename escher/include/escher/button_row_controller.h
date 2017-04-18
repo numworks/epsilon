@@ -27,7 +27,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool setSelectedButton(int selectedButton);
   void viewWillAppear() override;
-  void viewWillDisappear() override;
+  void viewDidDisappear() override;
 private:
   class ContentView : public View {
   public:

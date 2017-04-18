@@ -204,7 +204,7 @@ void MathToolbox::viewWillAppear() {
   m_listController.setFirstSelectedRow(0);
 }
 
-void MathToolbox::viewWillDisappear() {
+void MathToolbox::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 

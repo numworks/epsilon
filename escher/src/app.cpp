@@ -105,5 +105,5 @@ void App::willBecomeInactive() {
   if (m_modalViewController.isDisplayingModal()) {
     dismissModalViewController();
   }
-  m_modalViewController.viewWillDisappear();
+  m_modalViewController.viewDidDisappear();
 }

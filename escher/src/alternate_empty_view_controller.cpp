@@ -81,8 +81,8 @@ void AlternateEmptyViewController::viewWillAppear() {
   }
 }
 
-void AlternateEmptyViewController::viewWillDisappear() {
+void AlternateEmptyViewController::viewDidDisappear() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    m_contentView.mainViewController()->viewWillDisappear();
+    m_contentView.mainViewController()->viewDidDisappear();
   }
 }

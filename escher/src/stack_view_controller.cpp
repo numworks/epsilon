@@ -91,7 +91,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   m_view.pushStack(vc, textColor, backgroundColor, separatorColor);
   m_children[m_numberOfChildren++] = vc;
   if (m_numberOfChildren > 1) {
-    m_children[m_numberOfChildren-2]->viewWillDisappear();
+    m_children[m_numberOfChildren-2]->viewDidDisappear();
   }
   setupActiveViewController();
 }
@@ -102,7 +102,7 @@ void StackViewController::pop() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   vc->setParentResponder(nullptr);
   m_numberOfChildren--;
-  vc->viewWillDisappear();
+  vc->viewDidDisappear();
   setupActiveViewController();
 }
 
@@ -142,9 +142,9 @@ void StackViewController::viewWillAppear() {
   }
 }
 
-void StackViewController::viewWillDisappear() {
+void StackViewController::viewDidDisappear() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   if (m_numberOfChildren > 0 && vc) {
-    vc->viewWillDisappear();
+    vc->viewDidDisappear();
   }
 }

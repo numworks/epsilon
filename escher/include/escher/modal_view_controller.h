@@ -16,7 +16,7 @@ public:
   void dismissModalViewController();
   bool isDisplayingModal();
   void viewWillAppear() override;
-  void viewWillDisappear() override;
+  void viewDidDisappear() override;
 private:
   class ContentView : public View {
   public:

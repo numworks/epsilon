@@ -163,7 +163,7 @@ void HistogramController::reloadBannerView() {
   m_bannerView.setLegendAtIndex(buffer, 1);
 
   numberOfChar = 0;
-  legend = " : ";
+  legend = ": ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -176,7 +176,7 @@ void HistogramController::reloadBannerView() {
   m_bannerView.setLegendAtIndex(buffer, 3);
 
   numberOfChar = 0;
-  legend = " : ";
+  legend = ": ";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;

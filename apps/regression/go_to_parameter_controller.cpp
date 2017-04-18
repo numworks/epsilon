@@ -49,7 +49,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   if (isnan(x)) {
-    if (m_store->slope() < FLT_EPSILON && f == 0.0f) {
+    if (m_store->slope() < FLT_EPSILON && f == m_store->yIntercept()) {
       m_cursor->moveTo(m_cursor->x(), f);
       return true;
     }

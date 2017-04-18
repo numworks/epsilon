@@ -111,14 +111,14 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
-  m_regularViewController->viewWillDisappear();
+  m_regularViewController->viewDidDisappear();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
   app()->setFirstResponder(vc);
 }
 
 void ModalViewController::dismissModalViewController() {
-  m_currentModalViewController->viewWillDisappear();
+  m_currentModalViewController->viewDidDisappear();
   m_currentModalViewController = nullptr;
   m_regularViewController->viewWillAppear();
   app()->setFirstResponder(m_previousResponder);
@@ -150,9 +150,9 @@ void ModalViewController::viewWillAppear() {
   m_regularViewController->viewWillAppear();
 }
 
-void ModalViewController::viewWillDisappear() {
+void ModalViewController::viewDidDisappear() {
   if (m_contentView.isDisplayingModal()) {
-    m_currentModalViewController->viewWillDisappear();
+    m_currentModalViewController->viewDidDisappear();
   }
-  m_regularViewController->viewWillDisappear();
+  m_regularViewController->viewDidDisappear();
 }

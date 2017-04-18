@@ -12,7 +12,7 @@ public:
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
   void viewWillAppear() override;
-  void viewWillDisappear() override;
+  void viewDidDisappear() override;
 private:
   class ContentViewController : public ViewController, public ListViewDataSource {
   public:

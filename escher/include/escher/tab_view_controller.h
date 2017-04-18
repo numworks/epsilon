@@ -18,7 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   void willResignFirstResponder() override;
   void viewWillAppear() override;
-  void viewWillDisappear() override;
+  void viewDidDisappear() override;
 private:
   class ContentView : public View {
   public:

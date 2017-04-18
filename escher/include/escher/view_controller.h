@@ -33,7 +33,7 @@ public:
   virtual const char * title();
   virtual View * view() = 0;
   virtual void viewWillAppear();
-  virtual void viewWillDisappear();
+  virtual void viewDidDisappear();
 };
 
 #endif

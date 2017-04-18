@@ -12,5 +12,5 @@ const char * ViewController::title() {
 void ViewController::viewWillAppear() {
 }
 
-void ViewController::viewWillDisappear() {
+void ViewController::viewDidDisappear() {
 }

@@ -65,7 +65,11 @@ void CurveView::setOkView(View * okView) {
 }
 
 float CurveView::resolution() const {
-  return k_resolution;
+  return bounds().width()*samplingRatio();
+}
+
+float CurveView::samplingRatio() const {
+  return 1.1f;
 }
 
 float CurveView::min(Axis axis) const {
@@ -280,7 +284,7 @@ constexpr static int k_maxNumberOfIterations = 10;
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
-  float xStep = (xMax-xMin)/k_resolution;
+  float xStep = (xMax-xMin)/resolution();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   for (float x = rectMin; x < rectMax; x += xStep) {

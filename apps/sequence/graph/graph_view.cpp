@@ -22,7 +22,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     Sequence * s = m_sequenceStore->activeFunctionAtIndex(i);
     float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
     float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-    int step = ceilf((rectMax - rectMin)/k_sequenceResolution);
+    /* We draw a dot at every integer WindowRange/Resolution < 1. Otherwise, we
+     * draw a dot every step where step is an integer. */
+    int step = ceilf((rectMax - rectMin)/resolution());
     for (int x = rectMin; x < rectMax; x += step) {
       float y = evaluateModelWithParameter(s, x);
       if (isnan(y)) {
@@ -81,8 +83,8 @@ void GraphView::setHighlightColor(bool highlightColor) {
   }
 }
 
-float GraphView::resolution() const {
-  return k_sequenceResolution;
+float GraphView::samplingRatio() const {
+  return 0.8f;
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {

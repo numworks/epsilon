@@ -48,6 +48,9 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
+  /* The cursor moves by step of at minimum 1. If the windowRange is to large
+   * compared to the resolution, the cursor takes bigger round step to cross
+   * the window in approximatively resolution steps. */
   float step = ceilf((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
   step = step < 1.0f ? 1.0f : step;
   float x = direction > 0 ? xCursorPosition + step:

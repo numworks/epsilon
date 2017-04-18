@@ -48,10 +48,14 @@ private:
   Poincare::ExpressionLayout * m_definitionName;
   Poincare::ExpressionLayout * m_firstInitialConditionName;
   Poincare::ExpressionLayout * m_secondInitialConditionName;
-  mutable int m_indexBuffer1;
-  mutable int m_indexBuffer2;
-  mutable float m_buffer1;
-  mutable float m_buffer2;
+  /* In order to accelerate the computation of values of recurrent sequences,
+   * we memoize the last computed values of the sequence and their associated
+   * ranks (n and n+1 for instance). Thereby, when another evaluation at a
+   * superior rank k > n+1 is called, we avoid iterating from 0 but can start
+   * from n. */
+  constexpr static int k_maxRecurrenceDepth = 2;
+  mutable int m_indexBuffer[k_maxRecurrenceDepth];
+  mutable float m_buffer[k_maxRecurrenceDepth];
 };
 
 }

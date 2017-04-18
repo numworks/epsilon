@@ -22,10 +22,8 @@ Sequence::Sequence(const char * text, KDColor color) :
   m_definitionName(nullptr),
   m_firstInitialConditionName(nullptr),
   m_secondInitialConditionName(nullptr),
-  m_indexBuffer1(-1),
-  m_indexBuffer2(-1),
-  m_buffer1(NAN),
-  m_buffer2(NAN)
+  m_indexBuffer{-1, -1},
+  m_buffer{NAN, NAN}
 {
 }
 
@@ -108,8 +106,8 @@ void Sequence::setType(Type type) {
     m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
-  m_indexBuffer1 = -1;
-  m_indexBuffer2 = -1;
+  m_indexBuffer[0] = -1;
+  m_indexBuffer[1] = -1;
 }
 
 Poincare::Expression * Sequence::firstInitialConditionExpression() {
@@ -130,8 +128,8 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
 
 void Sequence::setContent(const char * c) {
   Function::setContent(c);
-  m_indexBuffer1 = -1;
-  m_indexBuffer2 = -1;
+  m_indexBuffer[0] = -1;
+  m_indexBuffer[1] = -1;
 }
 
 void Sequence::setFirstInitialConditionContent(const char * c) {
@@ -147,8 +145,8 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
   if (m_firstInitialConditionExpression) {
     m_firstInitialConditionLayout = m_firstInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
   }
-  m_indexBuffer1 = -1;
-  m_indexBuffer2 = -1;
+  m_indexBuffer[0] = -1;
+  m_indexBuffer[1] = -1;
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
@@ -164,8 +162,8 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
   if (m_secondInitialConditionExpression) {
     m_secondInitialConditionLayout = m_secondInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
   }
-  m_indexBuffer1 = -1;
-  m_indexBuffer2 = -1;
+  m_indexBuffer[0] = -1;
+  m_indexBuffer[1] = -1;
 }
 
 char Sequence::symbol() const {
@@ -217,22 +215,22 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         return NAN;
       }
       if (n == 0) {
-        m_indexBuffer1 = 0;
-        m_buffer1 = m_firstInitialConditionExpression->approximate(*context);
-        return m_buffer1;
+        m_indexBuffer[0] = 0;
+        m_buffer[0] = m_firstInitialConditionExpression->approximate(*context);
+        return m_buffer[0];
       }
       LocalContext subContext = LocalContext(context);
       Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
-      int start = m_indexBuffer1 < 0 || m_indexBuffer1 > n ? 0 : m_indexBuffer1;
-      float un = m_indexBuffer1 < 0 || m_indexBuffer1 > n ? m_firstInitialConditionExpression->approximate(*context) : m_buffer1;
+      int start = m_indexBuffer[0] < 0 || m_indexBuffer[0] > n ? 0 : m_indexBuffer[0];
+      float un = m_indexBuffer[0] < 0 || m_indexBuffer[0] > n ? m_firstInitialConditionExpression->approximate(*context) : m_buffer[0];
       for (int i = start; i < n; i++) {
         subContext.setSequenceRankValue(un, 0);
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
         un = m_expression->approximate(subContext);
       }
-      m_buffer1 = un;
-      m_indexBuffer1 = n;
+      m_buffer[0] = un;
+      m_indexBuffer[0] = n;
       return un;
     }
     default:
@@ -244,17 +242,17 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         return m_firstInitialConditionExpression->approximate(*context);
       }
       if (n == 1) {
-        m_indexBuffer1 = 0;
-        m_buffer1 = m_firstInitialConditionExpression->approximate(*context);
-        m_indexBuffer2 = 1;
-        m_buffer2 = m_secondInitialConditionExpression->approximate(*context);
-        return m_buffer2;
+        m_indexBuffer[0] = 0;
+        m_buffer[0] = m_firstInitialConditionExpression->approximate(*context);
+        m_indexBuffer[1] = 1;
+        m_buffer[1] = m_secondInitialConditionExpression->approximate(*context);
+        return m_buffer[1];
       }
       LocalContext subContext = LocalContext(context);
       Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
-      int start = m_indexBuffer1 >= 0 && m_indexBuffer1 < n && m_indexBuffer2 > 0 && m_indexBuffer2 <= n && m_indexBuffer1 + 1 == m_indexBuffer2 ? m_indexBuffer1 : 0;
-      float un = m_indexBuffer1 >= 0 && m_indexBuffer1 < n && m_indexBuffer2 > 0 && m_indexBuffer2 <= n && m_indexBuffer1 + 1 == m_indexBuffer2 ? m_buffer1 : m_firstInitialConditionExpression->approximate(*context);
-      float un1 =  m_indexBuffer1 >= 0 && m_indexBuffer1 < n && m_indexBuffer2 > 0 && m_indexBuffer2 <= n && m_indexBuffer1 + 1 == m_indexBuffer2 ? m_buffer2 : m_secondInitialConditionExpression->approximate(*context);
+      int start = m_indexBuffer[0] >= 0 && m_indexBuffer[0] < n && m_indexBuffer[1] > 0 && m_indexBuffer[1] <= n && m_indexBuffer[0] + 1 == m_indexBuffer[1] ? m_indexBuffer[0] : 0;
+      float un = m_indexBuffer[0] >= 0 && m_indexBuffer[0] < n && m_indexBuffer[1] > 0 && m_indexBuffer[1] <= n && m_indexBuffer[0] + 1 == m_indexBuffer[1] ? m_buffer[0] : m_firstInitialConditionExpression->approximate(*context);
+      float un1 =  m_indexBuffer[0] >= 0 && m_indexBuffer[0] < n && m_indexBuffer[1] > 0 && m_indexBuffer[1] <= n && m_indexBuffer[0] + 1 == m_indexBuffer[1] ? m_buffer[1] : m_secondInitialConditionExpression->approximate(*context);
       for (int i = start; i < n-1; i++) {
         subContext.setSequenceRankValue(un, 0);
         subContext.setSequenceRankValue(un1, 1);
@@ -263,10 +261,10 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         un = un1;
         un1 = m_expression->approximate(subContext);
       }
-      m_buffer1 = un;
-      m_indexBuffer1 = n-1;
-      m_buffer2 = un1;
-      m_indexBuffer2 = n;
+      m_buffer[0] = un;
+      m_indexBuffer[0] = n-1;
+      m_buffer[1] = un1;
+      m_indexBuffer[1] = n;
       return un1;
     }
   }

@@ -58,6 +58,10 @@ private:
   Sequence * m_sequence;
   Shared::CurveViewCursor * m_cursor;
   VerticalCursorView m_cursorView;
+  /* The user can move the cursor to an abscissa n by typing the right digits.
+   * To be able to go to abscissa represented by more than one digit, we record
+   * the value typed by the used up to now (if he typed '1' and '4',
+   * m_bufferCursorPosition = 14). */
   int m_bufferCursorPosition;
   int m_step;
   int m_startSum;

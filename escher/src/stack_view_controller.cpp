@@ -90,8 +90,9 @@ const char * StackViewController::title() {
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
   m_view.pushStack(vc, textColor, backgroundColor, separatorColor);
   m_children[m_numberOfChildren++] = vc;
-  if (m_numberOfChildren > 1) {
+  if (m_numberOfChildren > 2) {
     m_children[m_numberOfChildren-2]->viewDidDisappear();
+    m_children[m_numberOfChildren-2]->unloadView();
   }
   setupActiveViewController();
 }
@@ -100,15 +101,19 @@ void StackViewController::pop() {
   m_view.popStack();
   assert(m_numberOfChildren > 0);
   ViewController * vc = m_children[m_numberOfChildren-1];
-  vc->setParentResponder(nullptr);
   m_numberOfChildren--;
   vc->viewDidDisappear();
   setupActiveViewController();
+  vc->setParentResponder(nullptr);
+  vc->unloadView();
 }
 
 void StackViewController::setupActiveViewController() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   vc->setParentResponder(this);
+  if (m_numberOfChildren > 1) {
+    vc->loadView();
+  }
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   app()->setFirstResponder(vc);
@@ -133,7 +138,12 @@ View * StackViewController::view() {
 
 void StackViewController::viewWillAppear() {
   if (m_rootViewController != nullptr) {
-    push(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
+    /* push the m_rootViewController without setting it as first responder
+     * (which will be done in did become first responder */
+    m_view.pushStack(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
+    m_children[m_numberOfChildren++] = m_rootViewController;
+    m_rootViewController->setParentResponder(this);
+    m_view.setContentView(m_rootViewController->view());
     m_rootViewController = nullptr;
   }
   ViewController * vc = m_children[m_numberOfChildren-1];
@@ -146,5 +156,23 @@ void StackViewController::viewDidDisappear() {
   ViewController * vc = m_children[m_numberOfChildren-1];
   if (m_numberOfChildren > 0 && vc) {
     vc->viewDidDisappear();
+  }
+}
+
+void StackViewController::loadView() {
+  if (m_rootViewController) {
+    m_rootViewController->loadView();
+  } else {
+   ViewController * vc = m_children[m_numberOfChildren-1];
+   if (m_numberOfChildren > 0 && vc) {
+     vc->loadView();
+   }
+  }
+}
+
+void StackViewController::unloadView() {
+  ViewController * vc = m_children[m_numberOfChildren-1];
+  if (m_numberOfChildren > 0 && vc) {
+    vc->unloadView();
   }
 }

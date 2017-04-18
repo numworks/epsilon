@@ -26,6 +26,12 @@ ButtonRowController * ButtonRowDelegate::header() {
   return m_header;
 }
 
+void ButtonRowDelegate::loadButtonView() {
+}
+
+void ButtonRowDelegate::unloadButtonView() {
+}
+
 ButtonRowController::ContentView::ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style) :
   View(),
   m_mainViewController(mainViewController),
@@ -230,4 +236,14 @@ void ButtonRowController::viewWillAppear() {
 
 void ButtonRowController::viewDidDisappear() {
   m_contentView.mainViewController()->viewDidDisappear();
+}
+
+void ButtonRowController::loadView() {
+  m_contentView.buttonRowDelegate()->loadButtonView();
+  m_contentView.mainViewController()->loadView();
+}
+
+void ButtonRowController::unloadView() {
+  m_contentView.buttonRowDelegate()->unloadButtonView();
+  m_contentView.mainViewController()->unloadView();
 }

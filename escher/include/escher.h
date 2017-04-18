@@ -9,6 +9,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/chevron_view.h>
 #include <escher/container.h>
+#include <escher/dynamic_view_controller.h>
 #include <escher/editable_text_cell.h>
 #include <escher/even_odd_cell.h>
 #include <escher/even_odd_buffer_text_cell.h>

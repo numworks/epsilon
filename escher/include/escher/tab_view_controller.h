@@ -16,9 +16,12 @@ public:
   const char * tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void didEnterResponderChain(Responder * previousResponder) override;
   void willResignFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void loadView() override;
+  void unloadView() override;
 private:
   class ContentView : public View {
   public:

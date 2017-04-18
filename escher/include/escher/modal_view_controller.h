@@ -17,6 +17,8 @@ public:
   bool isDisplayingModal();
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void loadView() override;
+  void unloadView() override;
 private:
   class ContentView : public View {
   public:

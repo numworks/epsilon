@@ -86,3 +86,11 @@ void AlternateEmptyViewController::viewDidDisappear() {
     m_contentView.mainViewController()->viewDidDisappear();
   }
 }
+
+void AlternateEmptyViewController::loadView() {
+  m_contentView.mainViewController()->loadView();
+}
+
+void AlternateEmptyViewController::unloadView() {
+  m_contentView.mainViewController()->unloadView();
+}

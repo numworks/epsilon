@@ -111,10 +111,14 @@ void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
   ViewController * activeVC = m_children[i];
   if (i  != m_activeChildIndex || forceReactive) {
     assert(i <= m_numberOfChildren);
+    if (i != m_activeChildIndex) {
+      activeVC->loadView();
+    }
     m_view.setActiveView(activeVC->view());
     m_view.m_tabView.setActiveIndex(i);
-    if (m_activeChildIndex >= 0) {
+    if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
       m_children[m_activeChildIndex]->viewDidDisappear();
+      m_children[m_activeChildIndex]->unloadView();
     }
     m_activeChildIndex = i;
     if (i >= 0) {
@@ -132,6 +136,10 @@ void TabViewController::setSelectedTab(int8_t i) {
   m_selectedChildIndex = i;
 }
 
+void TabViewController::didEnterResponderChain(Responder * previousResponder) {
+  setActiveTab(m_activeChildIndex, true);
+}
+
 void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_activeChildIndex);
 }
@@ -142,13 +150,6 @@ void TabViewController::willResignFirstResponder() {
 
 
 View * TabViewController::view() {
-  // We're asked for a view!
-  // Let's populate our tabview
-  if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
-    for (int i=0; i<m_numberOfChildren; i++) {
-      m_view.m_tabView.addTab(m_children[i]);
-    }
-  }
   return &m_view;
 }
 
@@ -161,16 +162,26 @@ const char * TabViewController::tabName(uint8_t index) {
 }
 
 void TabViewController::viewWillAppear() {
-  if (m_activeChildIndex < 0) {
-    setActiveTab(0, true);
-  } else {
-    setActiveTab(m_activeChildIndex, true);
-  }
-  ViewController * activeVC = m_children[m_activeChildIndex];
-  activeVC->viewWillAppear();
 }
 
 void TabViewController::viewDidDisappear() {
   ViewController * activeVC = m_children[m_activeChildIndex];
   activeVC->viewDidDisappear();
+}
+
+void TabViewController::loadView() {
+  if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
+    for (int i=0; i<m_numberOfChildren; i++) {
+      m_view.m_tabView.addTab(m_children[i]);
+    }
+  }
+  if (m_activeChildIndex < 0) {
+    m_activeChildIndex = 0;
+  }
+  m_children[m_activeChildIndex]->loadView();
+}
+
+void TabViewController::unloadView() {
+  ViewController * activeVC = m_children[m_activeChildIndex];
+  activeVC->unloadView();
 }

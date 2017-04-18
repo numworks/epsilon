@@ -10,6 +10,9 @@ View::View() :
 {
 }
 
+View::~View() {
+}
+
 void View::drawRect(KDContext * ctx, KDRect rect) const {
   // By default, a view doesn't do anything
   // It's transparent!

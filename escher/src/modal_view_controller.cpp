@@ -17,7 +17,9 @@ ModalViewController::ContentView::ContentView() :
 }
 
 void ModalViewController::ContentView::setMainView(View * regularView) {
-  m_regularView = regularView;
+  if (m_regularView != regularView) {
+    m_regularView = regularView;
+  }
 }
 
 int ModalViewController::ContentView::numberOfSubviews() const {
@@ -96,9 +98,6 @@ ModalViewController::ModalViewController(Responder * parentResponder, ViewContro
 }
 
 View * ModalViewController::view() {
-  if (m_contentView.subviewAtIndex(0) == nullptr) {
-    m_contentView.setMainView(m_regularViewController->view());
-  }
   return &m_contentView;
 }
 
@@ -112,6 +111,7 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
   m_regularViewController->viewDidDisappear();
+  vc->loadView();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
   app()->setFirstResponder(vc);
@@ -119,6 +119,7 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
 
 void ModalViewController::dismissModalViewController() {
   m_currentModalViewController->viewDidDisappear();
+  m_currentModalViewController->unloadView();
   m_currentModalViewController = nullptr;
   m_regularViewController->viewWillAppear();
   app()->setFirstResponder(m_previousResponder);
@@ -155,4 +156,20 @@ void ModalViewController::viewDidDisappear() {
     m_currentModalViewController->viewDidDisappear();
   }
   m_regularViewController->viewDidDisappear();
+}
+
+void ModalViewController::loadView() {
+  if (m_contentView.isDisplayingModal()) {
+    m_currentModalViewController->loadView();
+  }
+  m_regularViewController->loadView();
+  m_contentView.setMainView(m_regularViewController->view());
+  m_contentView.layoutSubviews();
+}
+
+void ModalViewController::unloadView() {
+  if (m_contentView.isDisplayingModal()) {
+    m_currentModalViewController->unloadView();
+  }
+  m_regularViewController->unloadView();
 }

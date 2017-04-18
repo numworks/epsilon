@@ -91,13 +91,12 @@ const Container * App::container() const {
 }
 
 void App::didBecomeActive(Window * window) {
+  m_modalViewController.loadView();
   View * view = m_modalViewController.view();
   assert(m_modalViewController.app() == this);
   window->setContentView(view);
   m_modalViewController.viewWillAppear();
-  if (m_firstResponder == nullptr) {
-    setFirstResponder(&m_modalViewController);
-  }
+  setFirstResponder(&m_modalViewController);
   window->redraw();
 }
 
@@ -105,5 +104,7 @@ void App::willBecomeInactive() {
   if (m_modalViewController.isDisplayingModal()) {
     dismissModalViewController();
   }
+  setFirstResponder(nullptr);
   m_modalViewController.viewDidDisappear();
+  m_modalViewController.unloadView();
 }

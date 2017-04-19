@@ -47,6 +47,13 @@ Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context
   }
   /* Third case only c is complex */
   float radius = powf(c->r(), d->a());
+  if (c->b() == 0 && d->a() == roundf(d->a())) {
+    /* We handle the case -c float and d integer- separatly to avoid getting
+     * complex result due to float representation: a float power an integer is
+     * always real. */
+    return new Complex(Complex::Cartesian(radius, 0.0f));
+  }
+  /* Third case only c is complex */
   float theta = d->a()*c->th();
   return new Complex(Complex::Polar(radius, theta));
 }

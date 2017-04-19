@@ -8,14 +8,14 @@
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../shared/text_field_delegate_app.h"
+#include "../shared/function_app.h"
 
 namespace Sequence {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::FunctionApp {
 public:
   App(Container * container, Poincare::Context * context);
-  InputViewController * inputViewController();
+  InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;
   void reset() override;
   const char * XNT() override;

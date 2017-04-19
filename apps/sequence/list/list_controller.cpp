@@ -10,9 +10,6 @@ namespace Sequence {
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::ListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
-  m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
-    SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
-    SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, sequenceStore)),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
@@ -26,8 +23,8 @@ const char * ListController::title() {
 
 Toolbox * ListController::toolboxForTextField(TextField * textField) {
   int recurrenceDepth = 0;
-  int sequenceDefinition = sequenceDefinitionForRow(m_selectableTableView.selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+  int sequenceDefinition = sequenceDefinitionForRow(selectableTableView()->selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -78,9 +75,21 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
 }
 
 void ListController::selectPreviousNewSequenceCell() {
-  if (sequenceDefinitionForRow(m_selectableTableView.selectedRow()) >= 0) {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()-sequenceDefinitionForRow(m_selectableTableView.selectedRow()));
+  if (sequenceDefinitionForRow(selectableTableView()->selectedRow()) >= 0) {
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()-sequenceDefinitionForRow(selectableTableView()->selectedRow()));
   }
+}
+
+void ListController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    assert(m_sequenceTitleCells[i] != nullptr);
+    delete m_sequenceTitleCells[i];
+    m_sequenceTitleCells[i] = nullptr;
+    assert(m_expressionCells[i] != nullptr);
+    delete m_expressionCells[i];
+    m_expressionCells[i] = nullptr;
+  }
+  Shared::ListController::unloadView();
 }
 
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
@@ -148,12 +157,12 @@ int ListController::maxNumberOfRows() {
 
 HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_sequenceTitleCells[index];
+  return m_sequenceTitleCells[index];
 }
 
 HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_expressionCells[index];
+  return m_expressionCells[index];
 }
 
 
@@ -233,12 +242,12 @@ void ListController::addEmptyFunction() {
 
 void ListController::editExpression(Shared::Function * function, Ion::Events::Event event) {
   Sequence * sequence = (Sequence *)function;
-  editExpression(sequence, sequenceDefinitionForRow(m_selectableTableView.selectedRow()), event);
+  editExpression(sequence, sequenceDefinitionForRow(selectableTableView()->selectedRow()), event);
 }
 
 void ListController::reinitExpression(Shared::Function * function) {
   Sequence * sequence = (Sequence *)function;
-  switch (sequenceDefinitionForRow(m_selectableTableView.selectedRow())) {
+  switch (sequenceDefinitionForRow(selectableTableView()->selectedRow())) {
     case 1:
      sequence->setFirstInitialConditionContent("");
      break;
@@ -249,7 +258,17 @@ void ListController::reinitExpression(Shared::Function * function) {
      sequence->setContent("");
      break;
   }
-  m_selectableTableView.reloadData();
+  selectableTableView()->reloadData();
+}
+
+View * ListController::createView() {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    assert(m_sequenceTitleCells[i] == nullptr);
+    m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
+    assert(m_expressionCells[i] == nullptr);
+    m_expressionCells[i] = new FunctionExpressionCell();
+  }
+  return Shared::ListController::createView();
 }
 
 }

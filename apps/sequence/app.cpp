@@ -6,7 +6,7 @@ using namespace Poincare;
 namespace Sequence {
 
 App::App(Container * container, Context * context) :
-  TextFieldDelegateApp(container, &m_inputViewController, I18n::Message::SequenceApp, I18n::Message::SequenceAppCapital, ImageStore::SequenceIcon),
+  FunctionApp(container, &m_inputViewController, I18n::Message::SequenceApp, I18n::Message::SequenceAppCapital, ImageStore::SequenceIcon),
   m_sequenceStore(SequenceStore()),
   m_nContext(LocalContext(context)),
   m_listController(&m_listFooter, &m_sequenceStore, &m_listHeader, &m_listFooter),

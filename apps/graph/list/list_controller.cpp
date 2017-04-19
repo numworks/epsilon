@@ -9,8 +9,6 @@ namespace Graph {
 
 ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
-  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator),
-    FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator), FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator)},
   m_parameterController(ListParameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction))
 {
 }
@@ -36,6 +34,18 @@ KDCoordinate ListController::rowHeight(int j) {
   }
   KDCoordinate functionSize = function->layout()->size().height();
   return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
+}
+
+void ListController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    assert(m_functionTitleCells[i] != nullptr);
+    delete m_functionTitleCells[i];
+    m_functionTitleCells[i] = nullptr;
+    assert(m_expressionCells[i] != nullptr);
+    delete m_expressionCells[i];
+    m_expressionCells[i] = nullptr;
+  }
+  Shared::ListController::unloadView();
 }
 
 void ListController::editExpression(Function * function, Ion::Events::Event event) {
@@ -68,12 +78,12 @@ int ListController::maxNumberOfRows() {
 
 HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_functionTitleCells[index];
+  return m_functionTitleCells[index];
 }
 
 HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_expressionCells[index];
+  return m_expressionCells[index];
 }
 
 
@@ -99,6 +109,16 @@ void ListController::removeFunctionRow(Function * function) {
   if (m_functionStore->numberOfFunctions() > 1) {
     m_functionStore->removeFunction(function);
   }
+}
+
+View * ListController::createView() {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    assert(m_functionTitleCells[i] == nullptr);
+    m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
+    assert(m_expressionCells[i] == nullptr);
+    m_expressionCells[i] = new FunctionExpressionCell();
+  }
+  return Shared::ListController::createView();
 }
 
 }

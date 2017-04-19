@@ -69,13 +69,13 @@ bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
-  m_contentView.layoutSubviews();
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     app()->setFirstResponder(m_contentView.mainViewController());
   }
 }
 
 void AlternateEmptyViewController::viewWillAppear() {
+  m_contentView.layoutSubviews();
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     m_contentView.mainViewController()->viewWillAppear();
   }

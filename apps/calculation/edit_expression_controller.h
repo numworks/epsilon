@@ -10,16 +10,17 @@
 namespace Calculation {
 class HistoryController;
 
-class EditExpressionController : public ViewController, public Shared::TextFieldDelegate {
+class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
-  View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   const char * textBody();
   void setTextBody(const char * text);
   bool textFieldDidFinishEditing(::TextField * textField, const char * text) override;
   bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
+  void loadView() override;
+  void unloadView() override;
 private:
   class ContentView : public View {
   public:
@@ -37,8 +38,8 @@ private:
     TextField m_textField;
     char m_textBody[TextField::maxBufferSize()];
   };
+  View * createView() override;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  ContentView m_contentView;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
 };

@@ -21,7 +21,7 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
     KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
     setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
   }
-  if (dataSource()->rowHeight(j) > bounds().height()) {
+  if (dataSource()->numberOfRows() > j && dataSource()->numberOfColumns() > i && dataSource()->rowHeight(j) > bounds().height()) {
     KDCoordinate contentOffsetX = contentOffset().x();
     KDCoordinate contentOffsetY = contentOffset().y();
     if (contentOffsetY > dataSource()->cumulatedHeightFromIndex(j) && contentOffsetY > dataSource()->cumulatedHeightFromIndex(j+1)) {

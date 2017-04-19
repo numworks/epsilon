@@ -27,5 +27,9 @@ kandinsky/src/font.h
 apps/picview/image.raw
 apps/picview/image.c
 
+# No AST file
+*.ast
+*.ast.json
+
 # Quiz output
 quiz/src/symbols.c

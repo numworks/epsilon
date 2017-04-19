@@ -7,14 +7,14 @@
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../shared/text_field_delegate_app.h"
+#include "../shared/function_app.h"
 
 namespace Graph {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::FunctionApp {
 public:
   App(Container * container, Poincare::Context * context);
-  InputViewController * inputViewController();
+  InputViewController * inputViewController() override;
   /* This local context can parse x. However, it always stores NAN
    * as x value. When we need to evaluate expression with a specific x value, we
    * use a temporary local context (on the stack). That way, we avoid keeping

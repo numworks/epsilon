@@ -9,10 +9,9 @@
 
 namespace Shared {
 
-class ListController : public ViewController, public ButtonRowDelegate, public TableViewDataSource {
+class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource {
 public:
   ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
-  View * view() override;
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
@@ -29,12 +28,14 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  void unloadView() override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   virtual void reinitExpression(Function * function);
-  SelectableTableView m_selectableTableView;
+  SelectableTableView * selectableTableView();
+  View * createView() override;
   FunctionStore * m_functionStore;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
@@ -49,8 +50,9 @@ private:
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) = 0;
-  EvenOddCell m_emptyCell;
-  NewFunctionCell m_addNewFunction;
+  EvenOddCell * m_emptyCell;
+  I18n::Message m_addNewMessage;
+  NewFunctionCell * m_addNewFunction;
   Button m_plotButton;
   Button m_valuesButton;
 };

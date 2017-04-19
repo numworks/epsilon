@@ -4,11 +4,10 @@
 namespace Shared {
 
 ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
-  ViewController(parentResponder),
+  DynamicViewController(parentResponder),
   ButtonRowDelegate(header, footer),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, nullptr, false, true)),
   m_functionStore(functionStore),
-  m_addNewFunction(text),
+  m_addNewMessage(text),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();
@@ -22,10 +21,6 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
 {
 }
 
-View * ListController::view() {
-  return &m_selectableTableView;
-}
-
 int ListController::numberOfColumns() {
   return 2;
 };
@@ -35,7 +30,7 @@ KDCoordinate ListController::columnWidth(int i) {
     case 0:
       return k_functionNameWidth;
     case 1:
-      return m_selectableTableView.bounds().width()-k_functionNameWidth;
+      return selectableTableView()->bounds().width()-k_functionNameWidth;
     default:
       assert(false);
       return 0;
@@ -49,7 +44,7 @@ KDCoordinate ListController::cumulatedWidthFromIndex(int i) {
     case 1:
       return k_functionNameWidth;
     case 2:
-      return m_selectableTableView.bounds().width();
+      return selectableTableView()->bounds().width();
     default:
       assert(false);
       return 0;
@@ -68,7 +63,7 @@ int ListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   if (offsetX <= k_functionNameWidth) {
     return 0;
   } else {
-    if (offsetX <= m_selectableTableView.bounds().width())
+    if (offsetX <= selectableTableView()->bounds().width())
       return 1;
     else {
       return 2;
@@ -102,9 +97,9 @@ HighlightCell * ListController::reusableCell(int index, int type) {
     case 1:
       return expressionCells(index);
     case 2:
-      return &m_emptyCell;
+      return m_emptyCell;
     case 3:
-      return &m_addNewFunction;
+      return m_addNewFunction;
     default:
       assert(false);
       return nullptr;
@@ -128,7 +123,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   }
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
+  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {
@@ -147,59 +142,59 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
 }
 
 void ListController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(1, 0);
+  if (selectableTableView()->selectedRow() == -1) {
+    selectableTableView()->selectCellAtLocation(1, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
   }
-  if (m_selectableTableView.selectedRow() >= numberOfRows()) {
-    m_selectableTableView.selectCellAtLocation(1, 0);
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
+  if (selectableTableView()->selectedRow() >= numberOfRows()) {
+    selectableTableView()->selectCellAtLocation(1, 0);
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);
-  app()->setFirstResponder(&m_selectableTableView);
+  app()->setFirstResponder(selectableTableView());
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    if (m_selectableTableView.selectedRow() == -1) {
+    if (selectableTableView()->selectedRow() == -1) {
       footer()->setSelectedButton(-1);
-      m_selectableTableView.selectCellAtLocation(1, numberOfRows()-1);
-      app()->setFirstResponder(&m_selectableTableView);
+      selectableTableView()->selectCellAtLocation(1, numberOfRows()-1);
+      app()->setFirstResponder(selectableTableView());
       return true;
     }
-    m_selectableTableView.deselectTable();
-    assert(m_selectableTableView.selectedRow() == -1);
+    selectableTableView()->deselectTable();
+    assert(selectableTableView()->selectedRow() == -1);
     app()->setFirstResponder(tabController());
     return true;
   }
   if (event == Ion::Events::Down) {
-    if (m_selectableTableView.selectedRow() == -1) {
+    if (selectableTableView()->selectedRow() == -1) {
       return false;
     }
-    m_selectableTableView.deselectTable();
+    selectableTableView()->deselectTable();
     footer()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::OK) {
-      switch (m_selectableTableView.selectedColumn()) {
+      switch (selectableTableView()->selectedColumn()) {
       case 0:
       {
         if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-            m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+            selectableTableView()->selectedRow() == numberOfRows() - 1) {
           return true;
         }
-        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow())));
+        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow())));
         return true;
       }
       case 1:
       {
         if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-            m_selectableTableView.selectedRow() == numberOfRows() - 1) {
+            selectableTableView()->selectedRow() == numberOfRows() - 1) {
           addEmptyFunction();
           return true;
         }
-        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
         editExpression(function, Ion::Events::OK);
         return true;
       }
@@ -210,26 +205,26 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Backspace &&
-      (m_selectableTableView.selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
-    if (m_selectableTableView.selectedColumn() == 1) {
+      (selectableTableView()->selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
+    if (selectableTableView()->selectedColumn() == 1) {
       reinitExpression(function);
     } else {
       removeFunctionRow(function);
-      m_selectableTableView.reloadData();
-      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-      if (m_selectableTableView.selectedRow() >= numberOfRows()) {
-        m_selectableTableView.selectCellAtLocation(0, 0);
-        m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), numberOfRows()-1);
+      selectableTableView()->reloadData();
+      selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
+      if (selectableTableView()->selectedRow() >= numberOfRows()) {
+        selectableTableView()->selectCellAtLocation(0, 0);
+        selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), numberOfRows()-1);
       }
     }
     return true;
   }
   if ((event.hasText() || event == Ion::Events::XNT)
-      && m_selectableTableView.selectedColumn() == 1
-      && (m_selectableTableView.selectedRow() != numberOfRows() - 1
+      && selectableTableView()->selectedColumn() == 1
+      && (selectableTableView()->selectedRow() != numberOfRows() - 1
          || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(m_selectableTableView.selectedRow()));
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
     editExpression(function, event);
     return true;
   }
@@ -237,14 +232,24 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 }
 
 void ListController::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  selectableTableView()->reloadData();
 }
 
 void ListController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
-    m_selectableTableView.deselectTable();
+    selectableTableView()->deselectTable();
     footer()->setSelectedButton(-1);
   }
+}
+
+void ListController::unloadView() {
+  assert(m_emptyCell != nullptr);
+  delete m_emptyCell;
+  m_emptyCell = nullptr;
+  assert(m_addNewFunction != nullptr);
+  delete m_addNewFunction;
+  m_addNewFunction = nullptr;
+  DynamicViewController::unloadView();
 }
 
 StackViewController * ListController::stackController() const{
@@ -259,7 +264,19 @@ void ListController::configureFunction(Shared::Function * function) {
 
 void ListController::reinitExpression(Function * function) {
   function->setContent("");
-  m_selectableTableView.reloadData();
+  selectableTableView()->reloadData();
+}
+
+SelectableTableView * ListController::selectableTableView() {
+  return (SelectableTableView *)view();
+}
+
+View * ListController::createView() {
+  assert(m_emptyCell == nullptr);
+  m_emptyCell = new EvenOddCell();
+  assert(m_addNewFunction == nullptr);
+  m_addNewFunction = new NewFunctionCell(m_addNewMessage);
+  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, nullptr, false, true);
 }
 
 TabViewController * ListController::tabController() const{
@@ -272,7 +289,7 @@ int ListController::functionIndexForRow(int j) {
 
 void ListController::addEmptyFunction() {
   m_functionStore->addEmptyFunction();
-  m_selectableTableView.reloadData();
+  selectableTableView()->reloadData();
 }
 
 void ListController::removeFunctionRow(Function * function) {

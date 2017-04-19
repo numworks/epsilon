@@ -7,6 +7,7 @@ namespace Events {
 static bool sIsShiftActive = false;
 static bool sIsAlphaActive = false;
 static bool sIsAlphaLocked = false;
+static bool sIsShiftAlphaLocked = false;
 
 bool isShiftActive() {
   return sIsShiftActive;
@@ -20,16 +21,26 @@ bool isAlphaLocked() {
   return sIsAlphaLocked;
 }
 
+bool isShiftAlphaLocked() {
+  return sIsShiftAlphaLocked;
+}
+
 void updateModifiersFromEvent(Event e) {
   if (e == Shift) {
     sIsShiftActive = !sIsShiftActive;
   } else if (e == Alpha) {
-    if (sIsAlphaLocked) {
+    if (sIsAlphaLocked || sIsShiftAlphaLocked) {
       sIsAlphaLocked = false;
+      sIsShiftAlphaLocked = false;
       sIsAlphaActive = false;
     } else if (sIsAlphaActive) {
-      sIsAlphaLocked = true;
-      sIsAlphaActive = false;
+      if (sIsShiftActive) {
+        sIsShiftAlphaLocked = true;
+        sIsAlphaActive = false;
+      } else {
+        sIsAlphaLocked = true;
+        sIsAlphaActive = false;
+      }
     } else {
       sIsAlphaActive = true;
     }
@@ -80,7 +91,7 @@ Event getEvent(int * timeout) {
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, sIsShiftActive, sIsAlphaActive || sIsAlphaLocked);
+      Event event(key, sIsShiftActive || sIsShiftAlphaLocked, sIsAlphaActive || sIsAlphaLocked || sIsShiftAlphaLocked);
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;

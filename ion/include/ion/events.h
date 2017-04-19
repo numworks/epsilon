@@ -41,6 +41,7 @@ Event getEvent(int * timeout);
 bool isShiftActive();
 bool isAlphaActive();
 bool isAlphaLocked();
+bool isShiftAlphaLocked();
 
 // Plain
 

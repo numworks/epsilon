@@ -34,6 +34,7 @@ public:
   bool isEmpty() const override;
   Responder * defaultController() override;
   void viewWillAppear() override;
+  void unloadView() override;
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 5;
   static constexpr KDCoordinate k_leftMargin = 1;
@@ -43,6 +44,7 @@ public:
 protected:
   StackViewController * stackController() const;
   bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  View * createView() override;
   Interval m_interval;
 private:
   virtual Function * functionAtColumn(int i);
@@ -57,11 +59,11 @@ private:
   constexpr static int k_maxNumberOfAbscissaCells = 10;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
-  EvenOddMessageTextCell m_abscissaTitleCell;
+  EvenOddMessageTextCell * m_abscissaTitleCell;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
-  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
+  EvenOddEditableTextCell * m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
   ValuesParameterController m_abscissaParameterController;

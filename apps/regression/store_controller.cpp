@@ -12,8 +12,7 @@ using namespace Shared;
 namespace Regression {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
-  Shared::StoreController(parentResponder, store, header),
-  m_titleCells{EvenOddExpressionCell(0.5f, 0.5f), EvenOddExpressionCell(0.5f, 0.5f)}
+  Shared::StoreController(parentResponder, store, header)
 {
   m_titleLayout[0] = new BaselineRelativeLayout(new StringLayout("X", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   m_titleLayout[1] = new BaselineRelativeLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
@@ -37,9 +36,26 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   mytitleCell->setExpression(m_titleLayout[i]);
 }
 
+void StoreController::unloadView() {
+  for (int i = 0; i < k_numberOfTitleCells; i++) {
+    assert(m_titleCells[i] != nullptr);
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+  }
+  Shared::StoreController::unloadView();
+}
+
 HighlightCell * StoreController::titleCells(int index) {
   assert(index >= 0 && index < k_numberOfTitleCells);
-  return &m_titleCells[index];
+  return m_titleCells[index];
+}
+
+View * StoreController::createView() {
+  for (int i = 0; i < k_numberOfTitleCells; i++) {
+    assert(m_titleCells[i] == nullptr);
+    m_titleCells[i] = new EvenOddExpressionCell(0.5f, 0.5f);
+  }
+  return Shared::StoreController::createView();
 }
 
 }

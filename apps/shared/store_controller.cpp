@@ -10,11 +10,6 @@ namespace Shared {
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin),
   ButtonRowDelegate(header, nullptr),
-  m_editableCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer)},
   m_store(store),
   m_storeParameterController(this, store)
 {
@@ -48,7 +43,7 @@ HighlightCell * StoreController::reusableCell(int index, int type) {
       return titleCells(index);
     case 1:
       assert(index < k_maxNumberOfEditableCells);
-      return &m_editableCells[index];
+      return m_editableCells[index];
     default:
       assert(false);
       return nullptr;
@@ -71,34 +66,43 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 }
 
 void StoreController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() < 0) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+  if (selectableTableView()->selectedRow() < 0) {
+    selectableTableView()->selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_selectableTableView.deselectTable();
-    assert(m_selectableTableView.selectedRow() == -1);
+    selectableTableView()->deselectTable();
+    assert(selectableTableView()->selectedRow() == -1);
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::OK && m_selectableTableView.selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(m_selectableTableView.selectedColumn() == 0);
+  if (event == Ion::Events::OK && selectableTableView()->selectedRow() == 0) {
+    m_storeParameterController.selectXColumn(selectableTableView()->selectedColumn() == 0);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (m_selectableTableView.selectedRow() == 0 || m_selectableTableView.selectedRow() == numberOfRows()-1) {
+    if (selectableTableView()->selectedRow() == 0 || selectableTableView()->selectedRow() == numberOfRows()-1) {
       return false;
     }
-    m_store->deletePairAtIndex(m_selectableTableView.selectedRow()-1);
-    m_selectableTableView.reloadData();
+    m_store->deletePairAtIndex(selectableTableView()->selectedRow()-1);
+    selectableTableView()->reloadData();
     return true;
   }
   return false;
+}
+
+void StoreController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
+    assert(m_editableCells[i] != nullptr);
+    delete m_editableCells[i];
+    m_editableCells[i] = nullptr;
+  }
+  EditableCellTableViewController::unloadView();
 }
 
 Responder * StoreController::tabController() const {
@@ -127,6 +131,15 @@ int StoreController::numberOfElements() {
 
 int StoreController::maxNumberOfElements() const {
   return FloatPairStore::k_maxNumberOfPairs;
+}
+
+View * StoreController::createView() {
+  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::createView();
+  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
+    assert(m_editableCells[i] == nullptr);
+    m_editableCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer);
+  }
+  return tableView;
 }
 
 }

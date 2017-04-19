@@ -11,10 +11,6 @@ namespace Shared {
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   ButtonRowDelegate(header, nullptr),
-  m_abscissaTitleCell(EvenOddMessageTextCell(KDText::FontSize::Small)),
-  m_abscissaCells{EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small),
-    EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small), EvenOddEditableTextCell(&m_selectableTableView, this, m_draftTextBuffer, KDText::FontSize::Small)},
   m_abscissaParameterController(ValuesParameterController(this, intervalParameterController, parameterTitle)),
   m_setIntervalButton(Button(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
@@ -37,37 +33,37 @@ Interval * ValuesController::interval() {
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    if (m_selectableTableView.selectedRow() == -1) {
+    if (selectableTableView()->selectedRow() == -1) {
       header()->setSelectedButton(-1);
-      m_selectableTableView.selectCellAtLocation(0,0);
-      app()->setFirstResponder(&m_selectableTableView);
+      selectableTableView()->selectCellAtLocation(0,0);
+      app()->setFirstResponder(selectableTableView());
       return true;
     }
     return false;
   }
 
   if (event == Ion::Events::Up) {
-    if (m_selectableTableView.selectedRow() == -1) {
+    if (selectableTableView()->selectedRow() == -1) {
       header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
-    m_selectableTableView.deselectTable();
+    selectableTableView()->deselectTable();
     header()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::Backspace && m_selectableTableView.selectedRow() > 0 &&
-      (m_selectableTableView.selectedRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
-    m_interval.deleteElementAtIndex(m_selectableTableView.selectedRow()-1);
-    m_selectableTableView.reloadData();
+  if (event == Ion::Events::Backspace && selectableTableView()->selectedRow() > 0 &&
+      (selectableTableView()->selectedRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
+    m_interval.deleteElementAtIndex(selectableTableView()->selectedRow()-1);
+    selectableTableView()->reloadData();
     return true;
   }
   if (event == Ion::Events::OK) {
-    if (m_selectableTableView.selectedRow() == -1) {
+    if (selectableTableView()->selectedRow() == -1) {
       return header()->handleEvent(event);
     }
-    if (m_selectableTableView.selectedRow() == 0) {
-      if (m_selectableTableView.selectedColumn() == 0) {
+    if (selectableTableView()->selectedRow() == 0) {
+      if (selectableTableView()->selectedColumn() == 0) {
         configureAbscissa();
         return true;
       }
@@ -76,7 +72,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (m_selectableTableView.selectedRow() == -1) {
+  if (selectableTableView()->selectedRow() == -1) {
     return header()->handleEvent(event);
   }
   return false;
@@ -84,8 +80,8 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 void ValuesController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.deselectTable();
+  if (selectableTableView()->selectedRow() == -1) {
+    selectableTableView()->deselectTable();
     header()->setSelectedButton(0);
   } else {
     header()->setSelectedButton(-1);
@@ -94,8 +90,8 @@ void ValuesController::didBecomeFirstResponder() {
 
 void ValuesController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0,0);
+    selectableTableView()->deselectTable();
+    selectableTableView()->scrollToCell(0,0);
     header()->setSelectedButton(-1);
   }
 }
@@ -171,12 +167,12 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
   switch (type) {
     case 0:
       assert(index == 0);
-      return &m_abscissaTitleCell;
+      return m_abscissaTitleCell;
     case 1:
       return functionTitleCells(index);
     case 2:
       assert(index < k_maxNumberOfAbscissaCells);
-      return &m_abscissaCells[index];
+      return m_abscissaCells[index];
     case 3:
       return floatCells(index);
     default:
@@ -230,6 +226,18 @@ void ValuesController::viewWillAppear() {
   EditableCellTableViewController::viewWillAppear();
 }
 
+void ValuesController::unloadView() {
+  assert(m_abscissaTitleCell != nullptr);
+  delete m_abscissaTitleCell;
+  m_abscissaTitleCell = nullptr;
+  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
+    assert(m_abscissaCells[i] != nullptr);
+    delete m_abscissaCells[i];
+    m_abscissaCells[i] = nullptr;
+  }
+  EditableCellTableViewController::unloadView();
+}
+
 Function * ValuesController::functionAtColumn(int i) {
   assert(i > 0);
   return functionStore()->activeFunctionAtIndex(i-1);
@@ -249,7 +257,7 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
-  functionParameterController()->setFunction(functionAtColumn(m_selectableTableView.selectedColumn()));
+  functionParameterController()->setFunction(functionAtColumn(selectableTableView()->selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());
 }
@@ -282,6 +290,17 @@ float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnI
   Function * function = functionAtColumn(columnIndex);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
+}
+
+View * ValuesController::createView() {
+  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::createView();
+  assert(m_abscissaTitleCell == nullptr);
+  m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
+  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
+    assert(m_abscissaCells[i] == nullptr);
+    m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);
+  }
+  return tableView;
 }
 
 }

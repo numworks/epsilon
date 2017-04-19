@@ -29,14 +29,16 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  void unloadView() override;
 private:
   Responder * tabController() const override;
+  View * createView() override;
   constexpr static int k_totalNumberOfRows = 13;
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddBufferTextCell m_calculationCells[k_maxNumberOfDisplayableRows];
+  EvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddBufferTextCell * m_calculationCells[k_maxNumberOfDisplayableRows];
   Store * m_store;
 };
 

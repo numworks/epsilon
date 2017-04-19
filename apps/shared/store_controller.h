@@ -22,11 +22,13 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void unloadView() override;
 protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   constexpr static int k_maxNumberOfEditableCells = 22;
   constexpr static int k_numberOfTitleCells = 2;
   Responder * tabController() const override;
+  View * createView() override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   float dataAtLocation(int columnIndex, int rowIndex) override;
@@ -34,7 +36,7 @@ protected:
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
-  EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
+  EvenOddEditableTextCell * m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;
 };

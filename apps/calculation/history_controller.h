@@ -11,11 +11,10 @@ namespace Calculation {
 
 class App;
 
-class HistoryController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate {
+class HistoryController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDelegate {
 public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
 
-  View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void reload();
@@ -28,10 +27,13 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void unloadView() override;
+  void scrollToCell(int i, int j);
 private:
+  View * createView() override;
+  CalculationSelectableTableView * selectableTableView();
   constexpr static int k_maxNumberOfDisplayedRows = 5;
-  HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
-  CalculationSelectableTableView m_selectableTableView;
+  HistoryViewCell * m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;
 };
 

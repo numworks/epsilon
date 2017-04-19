@@ -44,30 +44,25 @@ TableView * EditExpressionController::ContentView::mainView() {
 }
 
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
-  ViewController(parentResponder),
-  m_contentView(this, (TableView *)historyController->view(), this),
+  DynamicViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore)
 {
 }
 
-View * EditExpressionController::view() {
-  return &m_contentView;
-}
-
 const char * EditExpressionController::textBody() {
-  return m_contentView.textField()->text();
+  return ((ContentView *)view())->textField()->text();
 }
 
 void EditExpressionController::setTextBody(const char * text) {
-  m_contentView.textField()->setEditing(true);
-  m_contentView.textField()->setText(text);
+  ((ContentView *)view())->textField()->setEditing(true);
+  ((ContentView *)view())->textField()->setText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      m_contentView.textField()->setEditing(false, false);
+      ((ContentView *)view())->textField()->setEditing(false, false);
       app()->setFirstResponder(m_historyController);
     }
     return true;
@@ -76,28 +71,44 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
-  m_contentView.textField()->setEditing(true, false);
-  app()->setFirstResponder(m_contentView.textField());
+  int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
+  m_historyController->scrollToCell(0, lastRow);
+  ((ContentView *)view())->textField()->setEditing(true, false);
+  app()->setFirstResponder(((ContentView *)view())->textField());
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
   App * calculationApp = (App *)app();
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
-  m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  m_contentView.textField()->setEditing(true);
-  m_contentView.textField()->setText("");
+  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  ((ContentView *)view())->textField()->setEditing(true);
+  ((ContentView *)view())->textField()->setText("");
   return true;
 }
 
 bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField, const char * text) {
-  m_contentView.textField()->setEditing(true);
-  m_contentView.textField()->setText(text);
+  ((ContentView *)view())->textField()->setEditing(true);
+  ((ContentView *)view())->textField()->setText(text);
   return false;
 }
 
 TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
   return (App *)app();
+}
+
+void EditExpressionController::loadView() {
+  m_historyController->loadView();
+  DynamicViewController::loadView();
+}
+
+void EditExpressionController::unloadView() {
+  m_historyController->unloadView();
+  DynamicViewController::unloadView();
+}
+
+View * EditExpressionController::createView() {
+  return new ContentView(this, (TableView *)m_historyController->view(), this);
 }
 
 }

@@ -13,16 +13,8 @@ namespace Statistics {
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, nullptr, true),
   ButtonRowDelegate(header, nullptr),
-  m_titleCells{EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small),
-    EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small)},
-  m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small),
-    EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
   m_store(store)
 {
-  for (int k = 0; k < k_maxNumberOfDisplayableRows; k++) {
-    m_titleCells[k].setAlignment(1.0f, 0.5f);
-    m_calculationCells[k].setTextColor(Palette::GreyDark);
-  }
 }
 
 const char * CalculationController::title() {
@@ -31,7 +23,7 @@ const char * CalculationController::title() {
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_selectableTableView.deselectTable();
+    selectableTableView()->deselectTable();
     app()->setFirstResponder(tabController());
     return true;
   }
@@ -39,10 +31,10 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+  if (selectableTableView()->selectedRow() == -1) {
+    selectableTableView()->selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
 }
@@ -73,7 +65,7 @@ int CalculationController::numberOfColumns() {
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
+  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
   if (i == 0) {
     I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum};
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
@@ -101,9 +93,9 @@ KDCoordinate CalculationController::rowHeight(int j) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index < k_totalNumberOfRows);
   if (type == 0) {
-    return &m_titleCells[index];
+    return m_titleCells[index];
   }
-  return &m_calculationCells[index];
+  return m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
@@ -114,8 +106,33 @@ int CalculationController::typeAtLocation(int i, int j) {
   return i;
 }
 
+void CalculationController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    assert(m_titleCells[i] != nullptr);
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+    assert(m_calculationCells[i] != nullptr);
+    delete m_calculationCells[i];
+    m_calculationCells[i] = nullptr;
+  }
+  TabTableController::unloadView();
+}
+
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
+View * CalculationController::createView() {
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    assert(m_titleCells[i] == nullptr);
+    m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
+    m_titleCells[i]->setAlignment(1.0f, 0.5f);
+    assert(m_calculationCells[i] == nullptr);
+    m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
+    m_calculationCells[i]->setTextColor(Palette::GreyDark);
+  }
+  return TabTableController::createView();
 }
+
+}
+

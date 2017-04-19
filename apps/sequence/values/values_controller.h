@@ -15,18 +15,20 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
   IntervalParameterController * intervalParameterController() override;
+  void unloadView() override;
 private:
   bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   constexpr static int k_maxNumberOfCells = 30;
   constexpr static int k_maxNumberOfSequences = 3;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
+  SequenceTitleCell * m_sequenceTitleCells[k_maxNumberOfSequences];
   SequenceTitleCell * functionTitleCells(int j) override;
-  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  EvenOddBufferTextCell * m_floatCells[k_maxNumberOfCells];
   EvenOddBufferTextCell * floatCells(int j) override;
   SequenceStore * m_sequenceStore;
   SequenceStore * functionStore() const override;
+  View * createView() override;
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
   Shared::ValuesFunctionParameterController * functionParameterController() override;
   IntervalParameterController m_intervalParameterController;

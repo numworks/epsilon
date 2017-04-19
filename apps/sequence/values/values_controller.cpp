@@ -7,8 +7,6 @@ namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController),
-  m_sequenceTitleCells{SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator), SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator),
-    SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator)},
   m_sequenceStore(sequenceStore),
   m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),
   m_intervalParameterController(IntervalParameterController(this, &m_interval))
@@ -47,6 +45,20 @@ IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
 
+void ValuesController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_floatCells[i] != nullptr);
+    delete m_floatCells[i];
+    m_floatCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+    assert(m_sequenceTitleCells[i] != nullptr);
+    delete m_sequenceTitleCells[i];
+    m_sequenceTitleCells[i] = nullptr;
+  }
+  Shared::ValuesController::unloadView();
+}
+
 bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
       return false;
@@ -64,12 +76,12 @@ int ValuesController::maxNumberOfFunctions() {
 
 SequenceTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfSequences);
-  return &m_sequenceTitleCells[j];
+  return m_sequenceTitleCells[j];
 }
 
 EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfCells);
-  return &m_floatCells[j];
+  return m_floatCells[j];
 }
 
 SequenceStore * ValuesController::functionStore() const {
@@ -78,6 +90,18 @@ SequenceStore * ValuesController::functionStore() const {
 
 Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {
   return &m_sequenceParameterController;
+}
+
+View * ValuesController::createView() {
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+    assert(m_sequenceTitleCells[i] == nullptr);
+    m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator);
+  }
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_floatCells[i] == nullptr);
+    m_floatCells[i] = new EvenOddBufferTextCell();
+  }
+  return Shared::ValuesController::createView();
 }
 
 }

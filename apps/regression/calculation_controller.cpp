@@ -14,18 +14,8 @@ namespace Regression {
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true),
   ButtonRowDelegate(header, nullptr),
-  m_titleCells{EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small),
-    EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small), EvenOddMessageTextCell(KDText::FontSize::Small)},
-  m_r2TitleCell(1.0f, 0.5f),
-  m_columnTitleCell(EvenOddDoubleBufferTextCell(&m_selectableTableView)),
-  m_calculationCells{EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small), EvenOddBufferTextCell(KDText::FontSize::Small)},
   m_store(store)
 {
-  for (int k = 0; k < k_maxNumberOfDisplayableRows/2; k++) {
-    m_calculationCells[k].setTextColor(Palette::GreyDark);
-    m_doubleCalculationCells[k].setTextColor(Palette::GreyDark);
-    m_doubleCalculationCells[k].setParentResponder(&m_selectableTableView);
-  }
   m_r2Layout = new BaselineRelativeLayout(new StringLayout("r", 1, KDText::FontSize::Small), new StringLayout("2", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
 }
 
@@ -42,7 +32,7 @@ const char * CalculationController::title() {
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_selectableTableView.deselectTable();
+    selectableTableView()->deselectTable();
     app()->setFirstResponder(tabController());
     return true;
   }
@@ -50,10 +40,10 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(1, 0);
+  if (selectableTableView()->selectedRow() == -1) {
+    selectableTableView()->selectCellAtLocation(1, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
 }
@@ -67,7 +57,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
    * selected one. */
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
-      m_selectableTableView.deselectTable();
+      selectableTableView()->deselectTable();
       app()->setFirstResponder(tabController());
     } else {
       t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
@@ -118,7 +108,7 @@ int CalculationController::numberOfColumns() {
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == m_selectableTableView.selectedColumn() && j == m_selectableTableView.selectedRow());
+  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
   if (j == 0 && i > 0) {
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     myCell->setFirstText("x");
@@ -177,22 +167,22 @@ KDCoordinate CalculationController::rowHeight(int j) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == 0) {
     assert(index < k_maxNumberOfDisplayableRows);
-    return &m_titleCells[index];
+    return m_titleCells[index];
   }
   if (type == 1) {
     assert(index == 0);
-    return &m_r2TitleCell;
+    return m_r2TitleCell;
   }
   if (type == 2) {
     assert(index == 0);
-    return &m_columnTitleCell;
+    return m_columnTitleCell;
   }
   if (type == 3) {
     assert(index < k_totalNumberOfRows/2);
-    return &m_doubleCalculationCells[index];
+    return m_doubleCalculationCells[index];
   }
   assert(index < k_totalNumberOfRows/2);
-  return &m_calculationCells[index];
+  return m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
@@ -227,8 +217,54 @@ int CalculationController::typeAtLocation(int i, int j) {
   return 4;
 }
 
+void CalculationController::unloadView() {
+  assert(m_r2TitleCell != nullptr);
+  delete m_r2TitleCell;
+  m_r2TitleCell = nullptr;
+  assert(m_columnTitleCell != nullptr);
+  delete m_columnTitleCell;
+  m_columnTitleCell = nullptr;
+  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
+    assert(m_doubleCalculationCells[i] != nullptr);
+    delete m_doubleCalculationCells[i];
+    m_doubleCalculationCells[i] = nullptr;
+    assert(m_calculationCells[i] != nullptr);
+    delete m_calculationCells[i];
+    m_calculationCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    assert(m_titleCells[i] != nullptr);
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+  }
+  TabTableController::unloadView();
+}
+
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
+View * CalculationController::createView() {
+  SelectableTableView * tableView = (SelectableTableView *)TabTableController::createView();
+  assert(m_r2TitleCell == nullptr);
+  m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
+  assert(m_columnTitleCell == nullptr);
+  m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    assert(m_titleCells[i] == nullptr);
+    m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
+  }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
+    assert(m_doubleCalculationCells[i] == nullptr);
+    m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCell();
+    m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
+    m_doubleCalculationCells[i]->setParentResponder(tableView);
+    assert(m_calculationCells[i] == nullptr);
+    m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
+    m_calculationCells[i]->setTextColor(Palette::GreyDark);
+  }
+  return tableView;
 }
+
+}
+

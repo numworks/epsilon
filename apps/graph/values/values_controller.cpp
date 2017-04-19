@@ -9,8 +9,6 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController),
-  m_functionTitleCells{FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small),
-    FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small), FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small)},
   m_functionStore(functionStore),
   m_functionParameterController(FunctionParameterController(this)),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),
@@ -72,19 +70,33 @@ I18n::Message ValuesController::emptyMessage() {
 }
 
 void ValuesController::selectCellAtLocation(int i, int j) {
-  m_selectableTableView.selectCellAtLocation(i, j);
+  selectableTableView()->selectCellAtLocation(i, j);
 }
 
 int ValuesController::activeRow() {
-  return m_selectableTableView.selectedRow();
+  return selectableTableView()->selectedRow();
 }
 
 int ValuesController::activeColumn() {
-  return m_selectableTableView.selectedColumn();
+  return selectableTableView()->selectedColumn();
 }
 
 IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
+}
+
+void ValuesController::unloadView() {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_floatCells[i] != nullptr);
+    delete m_floatCells[i];
+    m_floatCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
+    assert(m_functionTitleCells[i] != nullptr);
+    delete m_functionTitleCells[i];
+    m_functionTitleCells[i] = nullptr;
+  }
+  Shared::ValuesController::unloadView();
 }
 
 CartesianFunction * ValuesController::functionAtColumn(int i) {
@@ -146,12 +158,12 @@ int ValuesController::maxNumberOfFunctions() {
 
 FunctionTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfFunctions);
-  return &m_functionTitleCells[j];
+  return m_functionTitleCells[j];
 }
 
 EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfCells);
-  return &m_floatCells[j];
+  return m_floatCells[j];
 }
 
 CartesianFunctionStore * ValuesController::functionStore() const {
@@ -169,6 +181,18 @@ float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnI
     return function->approximateDerivative(abscissa, myApp->localContext());
   }
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
+}
+
+View * ValuesController::createView() {
+  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
+    assert(m_functionTitleCells[i] == nullptr);
+    m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
+  }
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_floatCells[i] == nullptr);
+    m_floatCells[i] = new EvenOddBufferTextCell();
+  }
+  return Shared::ValuesController::createView();
 }
 
 }

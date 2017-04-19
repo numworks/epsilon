@@ -4,30 +4,40 @@ namespace Shared {
 
 TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, SelectableTableViewDelegate * delegate, bool showIndicators) :
-  ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, dataSource, 0, 0, topMargin, rightMargin, bottomMargin, leftMargin,
-    delegate, showIndicators, true, Palette::WallScreenDark))
+  DynamicViewController(parentResponder),
+  m_dataSource(dataSource),
+  m_topMargin(topMargin),
+  m_rightMargin(rightMargin),
+  m_bottomMargin(bottomMargin),
+  m_leftMargin(leftMargin),
+  m_delegate(delegate),
+  m_showIndicators(showIndicators)
 {
 }
 
-View * TabTableController::view() {
-  return &m_selectableTableView;
-}
-
 void TabTableController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  app()->setFirstResponder(selectableTableView());
 }
 
 void TabTableController::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  selectableTableView()->reloadData();
 }
 
 void TabTableController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0,0);
+    selectableTableView()->deselectTable();
+    selectableTableView()->scrollToCell(0,0);
   }
 }
+
+SelectableTableView * TabTableController::selectableTableView() {
+  return (SelectableTableView *)view();
+}
+
+View * TabTableController::createView() {
+  return new SelectableTableView(this, m_dataSource, 0, 0, m_topMargin, m_rightMargin, m_bottomMargin, m_leftMargin, m_delegate, m_showIndicators, true, Palette::WallScreenDark);
+}
+
 
 }
 

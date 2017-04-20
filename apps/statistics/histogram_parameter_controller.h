@@ -14,15 +14,18 @@ public:
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void unloadView() override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
   float previousParameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  View * createView() override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText m_cells[2];
-  float m_previousParameters[2];
+  constexpr static int k_numberOfCells = 2;
+  MessageTableCellWithEditableText * m_cells[k_numberOfCells];
+  float m_previousParameters[k_numberOfCells];
   Store * m_store;
 };
 

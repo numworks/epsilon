@@ -8,7 +8,6 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
-  m_cells{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)},
   m_store(store)
 {
 }
@@ -18,14 +17,14 @@ const char * HistogramParameterController::title() {
 }
 
 void HistogramParameterController::viewWillAppear() {
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < k_numberOfCells; i++) {
     m_previousParameters[i] = parameterAtIndex(i);
   }
   FloatParameterController::viewWillAppear();
 }
 
 int HistogramParameterController::numberOfRows() {
-  return 1+2;
+  return 1+k_numberOfCells;
 }
 
 void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -33,13 +32,22 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[2] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
+  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
+void HistogramParameterController::unloadView() {
+  for (int i = 0; i < k_numberOfCells; i++) {
+    assert(m_cells[i] != nullptr);
+    delete m_cells[i];
+    m_cells[i] = nullptr;
+  }
+  FloatParameterController::unloadView();
+}
+
 float HistogramParameterController::parameterAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(index >= 0 && index < k_numberOfCells);
   if (index == 0) {
     return m_store->barWidth();
   }
@@ -51,7 +59,7 @@ float HistogramParameterController::previousParameterAtIndex(int index) {
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
-  assert(parameterIndex >= 0 && parameterIndex < 2);
+  assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
     if (f <= 0.0f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
@@ -65,12 +73,22 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float
 }
 
 HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {
-  assert(index >= 0 && index < 2);
-  return &m_cells[index];
+  assert(index >= 0 && index < k_numberOfCells);
+  return m_cells[index];
 }
 
 int HistogramParameterController::reusableParameterCellCount(int type) {
-  return 2;
+  return k_numberOfCells;
+}
+
+View * HistogramParameterController::createView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
+  for (int i = 0; i < k_numberOfCells; i++) {
+    assert(m_cells[i] == nullptr);
+    m_cells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+  }
+  return tableView;
 }
 
 }
+

@@ -11,12 +11,12 @@ namespace Probability {
 class ParametersController : public Shared::FloatParameterController {
 public:
   ParametersController(Responder * parentResponder);
-  View * view() override;
   const char * title() override;
   void setLaw(Law * law);
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void unloadView() override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
@@ -25,6 +25,8 @@ private:
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  I18n::Message okButtonText() override;
+  View * createView() override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
@@ -43,11 +45,13 @@ private:
     MessageTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
   };
+  SelectableTableView * selectableTableView() override;
+  ContentView * contentView();
+  SelectableTableView * m_selectableTableView;
   constexpr static int k_maxNumberOfCells = 2;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
+  MessageTableCellWithEditableText * m_menuListCell[k_maxNumberOfCells];
   float m_previousParameters[k_maxNumberOfCells];
-  ContentView m_contentView;
   Law * m_law;
   CalculationController m_calculationController;
 };

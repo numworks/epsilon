@@ -68,17 +68,10 @@ void ParametersController::ContentView::layoutSubviews() {
 /* Parameters Controller */
 
 ParametersController::ParametersController(Responder * parentResponder) :
-  FloatParameterController(parentResponder, I18n::Message::Next),
-  m_menuListCell{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer),
-    MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer)},
-  m_contentView(ContentView(this, &m_selectableTableView)),
+  FloatParameterController(parentResponder),
   m_law(nullptr),
   m_calculationController(CalculationController(nullptr))
 {
-}
-
-View * ParametersController::view() {
-  return &m_contentView;
 }
 
 const char * ParametersController::title() {
@@ -90,18 +83,15 @@ const char * ParametersController::title() {
 
 void ParametersController::setLaw(Law * law) {
   m_law = law;
-  if (m_law != nullptr) {
-    m_contentView.setNumberOfParameters(m_law->numberOfParameter());
-  }
   m_calculationController.setLaw(law);
 }
 
 void ParametersController::viewWillAppear() {
   for (int i = 0; i < m_law->numberOfParameter(); i++) {
     m_previousParameters[i] = parameterAtIndex(i);
-    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
+    contentView()->parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
   }
-  m_contentView.layoutSubviews();
+  contentView()->layoutSubviews();
   FloatParameterController::viewWillAppear();
 }
 
@@ -111,7 +101,7 @@ int ParametersController::numberOfRows() {
 
 void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows()-1) {
-    if (m_selectableTableView.selectedRow() != numberOfRows()-1) {
+    if (m_selectableTableView->selectedRow() != numberOfRows()-1) {
       cell->setHighlighted(false);
     }
     return;
@@ -124,11 +114,23 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
 HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
-  return &m_menuListCell[index];
+  return m_menuListCell[index];
 }
 
 int ParametersController::reusableParameterCellCount(int type) {
   return m_law->numberOfParameter();
+}
+
+void ParametersController::unloadView() {
+  assert(m_selectableTableView != nullptr);
+  delete m_selectableTableView;
+  m_selectableTableView = nullptr;
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_menuListCell[i] != nullptr);
+    delete m_menuListCell[i];
+    m_menuListCell[i] = nullptr;
+  }
+  FloatParameterController::unloadView();
 }
 
 float ParametersController::previousParameterAtIndex(int index) {
@@ -152,7 +154,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
 
 bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text)) {
-    m_selectableTableView.reloadData();
+    m_selectableTableView->reloadData();
     return true;
   }
   return false;
@@ -164,6 +166,32 @@ void ParametersController::buttonAction() {
   m_calculationController.reload();
   StackViewController * stack = stackController();
   stack->push(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+}
+
+I18n::Message ParametersController::okButtonText() {
+  return I18n::Message::Next;
+}
+
+View * ParametersController::createView() {
+  assert(m_selectableTableView == nullptr);
+  m_selectableTableView = (SelectableTableView *)FloatParameterController::createView();
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    assert(m_menuListCell[i] == nullptr);
+    m_menuListCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
+  }
+  ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
+  if (m_law != nullptr) {
+    contentView->setNumberOfParameters(m_law->numberOfParameter());
+  }
+  return contentView;
+}
+
+SelectableTableView * ParametersController::selectableTableView() {
+  return m_selectableTableView;
+}
+
+ParametersController::ContentView * ParametersController::contentView() {
+  return (ContentView *)view();
 }
 
 }

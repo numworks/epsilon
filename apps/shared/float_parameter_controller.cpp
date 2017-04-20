@@ -8,49 +8,39 @@ using namespace Poincare;
 
 namespace Shared {
 
-FloatParameterController::FloatParameterController(Responder * parentResponder, I18n::Message okButtonText) :
-  ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
-  m_okButton(ButtonWithSeparator(&m_selectableTableView, okButtonText, Invocation([](void * context, void * sender) {
-    FloatParameterController * parameterController = (FloatParameterController *) context;
-    parameterController->buttonAction();
-  }, this)))
+FloatParameterController::FloatParameterController(Responder * parentResponder) :
+  DynamicViewController(parentResponder)
 {
 }
 
-View * FloatParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void FloatParameterController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() >= 0) {
-    int selectedRow = m_selectableTableView.selectedRow();
+  if (selectableTableView()->selectedRow() >= 0) {
+    int selectedRow = selectableTableView()->selectedRow();
     selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = m_selectableTableView.selectedColumn();
+    int selectedColumn = selectableTableView()->selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  app()->setFirstResponder(selectableTableView());
 }
 
 void FloatParameterController::viewWillAppear() {
-  m_selectableTableView.reloadData();
-  if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+  selectableTableView()->reloadData();
+  if (selectableTableView()->selectedRow() == -1) {
+    selectableTableView()->selectCellAtLocation(0, 0);
   } else {
-    int selectedRow = m_selectableTableView.selectedRow();
+    int selectedRow = selectableTableView()->selectedRow();
     selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = m_selectableTableView.selectedColumn();
+    int selectedColumn = selectableTableView()->selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    m_selectableTableView.selectCellAtLocation(selectedColumn, selectedRow);
+    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
   }
 }
 
 void FloatParameterController::willExitResponderChain(Responder * nextFirstResponder) {
   if (parentResponder() == nullptr) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0,0);
+    selectableTableView()->deselectTable();
+    selectableTableView()->scrollToCell(0,0);
   }
 }
 
@@ -83,7 +73,7 @@ int FloatParameterController::reusableCellCount(int type) {
 
 HighlightCell * FloatParameterController::reusableCell(int index, int type) {
   if (type == 0) {
-    return &m_okButton;
+    return m_okButton;
   }
   return reusableParameterCell(index, type);
 }
@@ -130,13 +120,13 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  if (!setParameterAtIndex(m_selectableTableView.selectedRow(), floatBody)) {
+  if (!setParameterAtIndex(selectableTableView()->selectedRow(), floatBody)) {
     return false;
   }
-  willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(),
-    m_selectableTableView.selectedRow()), activeCell());
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()+1);
+  willDisplayCellForIndex(selectableTableView()->cellAtLocation(selectableTableView()->selectedColumn(),
+    selectableTableView()->selectedRow()), activeCell());
+  selectableTableView()->reloadData();
+  selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
   return true;
 }
 
@@ -164,16 +154,41 @@ TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
 }
 
 int FloatParameterController::activeCell() {
-  return m_selectableTableView.selectedRow();
+  return selectableTableView()->selectedRow();
+}
+
+void FloatParameterController::unloadView() {
+  assert(m_okButton != nullptr);
+  delete m_okButton;
+  m_okButton = nullptr;
+  DynamicViewController::unloadView();
 }
 
 StackViewController * FloatParameterController::stackController() {
   return (StackViewController *)parentResponder();
 }
 
+SelectableTableView * FloatParameterController::selectableTableView() {
+  return (SelectableTableView *)view();
+}
+
+View * FloatParameterController::createView() {
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this);
+  assert(m_okButton == nullptr);
+  m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
+    FloatParameterController * parameterController = (FloatParameterController *) context;
+    parameterController->buttonAction();
+  }, this));
+  return tableView;
+}
+
 void FloatParameterController::buttonAction() {
   StackViewController * stack = stackController();
   stack->pop();
+}
+
+I18n::Message FloatParameterController::okButtonText() {
+  return I18n::Message::Ok;
 }
 
 }

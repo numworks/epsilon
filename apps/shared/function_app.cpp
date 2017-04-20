@@ -11,8 +11,11 @@ FunctionApp::FunctionApp(Container * container, ViewController * rootViewControl
 }
 
 void FunctionApp::willBecomeInactive() {
+  if (m_modalViewController.isDisplayingModal()) {
+    m_modalViewController.dismissModalViewController();
+  }
   if (inputViewController()->isDisplayingModal()) {
-    inputViewController()->dismissModalViewController();
+    inputViewController()->abortTextFieldEditionAndDismiss();
   }
   ::App::willBecomeInactive();
 }

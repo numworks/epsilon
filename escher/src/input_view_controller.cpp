@@ -81,6 +81,11 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   }
 }
 
+void InputViewController::abortTextFieldEditionAndDismiss() {
+  m_textFieldController.textField()->setEditing(false);
+  dismissModalViewController();
+}
+
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
   m_successAction.perform(this);
   dismissModalViewController();

@@ -19,6 +19,7 @@ ModalViewController::ContentView::ContentView() :
 void ModalViewController::ContentView::setMainView(View * regularView) {
   if (m_regularView != regularView) {
     m_regularView = regularView;
+    layoutSubviews();
   }
 }
 
@@ -164,7 +165,6 @@ void ModalViewController::loadView() {
   }
   m_regularViewController->loadView();
   m_contentView.setMainView(m_regularViewController->view());
-  m_contentView.layoutSubviews();
 }
 
 void ModalViewController::unloadView() {

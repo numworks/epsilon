@@ -130,6 +130,14 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   return true;
 }
 
+bool FloatParameterController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Backspace && !textField->isEditing()) {
+    textField->setEditing(true);
+    return true;
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
 void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
     return;

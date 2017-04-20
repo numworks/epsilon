@@ -26,11 +26,28 @@ public:
   void loadView() override;
   void unloadView() override;
 private:
+  class Frame {
+  public:
+    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright) :
+      m_viewController(viewController),
+      m_textColor(textColor),
+      m_backgroundColor(backgroundColor),
+      m_separatorColor(separatorColor) {}
+    ViewController * viewController() { return m_viewController; }
+    KDColor textColor() { return m_textColor; }
+    KDColor backgroundColor() { return m_backgroundColor; }
+    KDColor separatorColor() { return m_separatorColor; }
+  private:
+    ViewController * m_viewController;
+    KDColor m_textColor;
+    KDColor m_backgroundColor;
+    KDColor m_separatorColor;
+  };
   class ControllerView : public View {
   public:
     ControllerView(bool displayFirstStackHeader);
     void setContentView(View * view);
-    void pushStack(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor);
+    void pushStack(Frame frame);
     void popStack();
   protected:
 #if ESCHER_VIEW_LOGGING
@@ -47,17 +64,12 @@ private:
     int8_t m_numberOfStacks;
     bool m_displayFirstStackHeader;
   };
-
   ControllerView m_view;
-
+  void pushModel(Frame frame);
   void setupActiveViewController();
   static constexpr uint8_t k_maxNumberOfChildren = 4;
-  ViewController * m_children[k_maxNumberOfChildren];
+  Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
-  ViewController * m_rootViewController;
-  KDColor m_textColor;
-  KDColor m_backgroundColor;
-  KDColor m_separatorColor;
 };
 
 #endif

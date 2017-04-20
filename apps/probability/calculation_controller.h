@@ -22,6 +22,7 @@ public:
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   void updateTitle();
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;

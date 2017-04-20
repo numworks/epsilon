@@ -230,8 +230,8 @@ bool ButtonRowController::handleEvent(Ion::Events::Event event) {
 void ButtonRowController::viewWillAppear() {
   /* We need to layout subviews at first appearance because the number of
    * buttons might have changed between 2 appearences. */
-  m_contentView.layoutSubviews();
   m_contentView.mainViewController()->viewWillAppear();
+  m_contentView.layoutSubviews();
 }
 
 void ButtonRowController::viewDidDisappear() {

@@ -113,8 +113,8 @@ void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
     assert(i <= m_numberOfChildren);
     if (i != m_activeChildIndex) {
       activeVC->loadView();
+      m_view.setActiveView(activeVC->view());
     }
-    m_view.setActiveView(activeVC->view());
     m_view.m_tabView.setActiveIndex(i);
     if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
       m_children[m_activeChildIndex]->viewDidDisappear();
@@ -179,6 +179,7 @@ void TabViewController::loadView() {
     m_activeChildIndex = 0;
   }
   m_children[m_activeChildIndex]->loadView();
+  m_view.setActiveView(m_children[m_activeChildIndex]->view());
 }
 
 void TabViewController::unloadView() {

@@ -18,11 +18,11 @@ void StackViewController::ControllerView::setContentView(View * view) {
   markRectAsDirty(bounds());
 }
 
-void StackViewController::ControllerView::pushStack(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
-  m_stackViews[m_numberOfStacks].setNamedController(controller);
-  m_stackViews[m_numberOfStacks].setTextColor(textColor);
-  m_stackViews[m_numberOfStacks].setBackgroundColor(backgroundColor);
-  m_stackViews[m_numberOfStacks].setSeparatorColor(separatorColor);
+void StackViewController::ControllerView::pushStack(Frame frame) {
+  m_stackViews[m_numberOfStacks].setNamedController(frame.viewController());
+  m_stackViews[m_numberOfStacks].setTextColor(frame.textColor());
+  m_stackViews[m_numberOfStacks].setBackgroundColor(frame.backgroundColor());
+  m_stackViews[m_numberOfStacks].setSeparatorColor(frame.separatorColor());
   m_numberOfStacks++;
 }
 
@@ -69,30 +69,32 @@ StackViewController::StackViewController(Responder * parentResponder, ViewContro
     bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
   m_view(ControllerView(displayFirstStackHeader)),
-  m_numberOfChildren(0),
-  m_rootViewController(rootViewController),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
-  m_separatorColor(separatorColor)
+  m_numberOfChildren(0)
 {
-  // push(rootViewController);
+  pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
+  rootViewController->setParentResponder(this);
 }
 
 const char * StackViewController::title() {
-  if (m_rootViewController) {
-    return m_rootViewController->title();
-  } else {
-    ViewController * vc = m_children[0];
-    return vc->title();
-  }
+  ViewController * vc = m_childrenFrame[0].viewController();
+  return vc->title();
 }
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
-  m_view.pushStack(vc, textColor, backgroundColor, separatorColor);
-  m_children[m_numberOfChildren++] = vc;
+  Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
+  /* Load stack view */
+  m_view.pushStack(frame);
+  /* Add the frame to the model */
+  pushModel(frame);
+  if (m_numberOfChildren > 1) {
+    m_childrenFrame[m_numberOfChildren-2].viewController()->viewDidDisappear();
+  /* The first added view controller is never unloaded because the view might
+   * record some usefull information (which should be store in a model ideally).
+   * And We do not to delete these information.
+   * TODO: better compartmentalize views and models to avoid this weird exception */
   if (m_numberOfChildren > 2) {
-    m_children[m_numberOfChildren-2]->viewDidDisappear();
-    m_children[m_numberOfChildren-2]->unloadView();
+    m_childrenFrame[m_numberOfChildren-2].viewController()->unloadView();
+  }
   }
   setupActiveViewController();
 }
@@ -100,7 +102,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
 void StackViewController::pop() {
   m_view.popStack();
   assert(m_numberOfChildren > 0);
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   m_numberOfChildren--;
   vc->viewDidDisappear();
   setupActiveViewController();
@@ -108,19 +110,25 @@ void StackViewController::pop() {
   vc->unloadView();
 }
 
+void StackViewController::pushModel(Frame frame) {
+  m_childrenFrame[m_numberOfChildren++] = frame;
+}
+
 void StackViewController::setupActiveViewController() {
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   vc->setParentResponder(this);
+  /* Same comment as above (TODO) */
   if (m_numberOfChildren > 1) {
     vc->loadView();
   }
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
+  vc->setParentResponder(this);
   app()->setFirstResponder(vc);
 }
 
 void StackViewController::didBecomeFirstResponder() {
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   app()->setFirstResponder(vc);
 }
 
@@ -137,41 +145,37 @@ View * StackViewController::view() {
 }
 
 void StackViewController::viewWillAppear() {
-  if (m_rootViewController != nullptr) {
-    /* push the m_rootViewController without setting it as first responder
-     * (which will be done in did become first responder */
-    m_view.pushStack(m_rootViewController, m_textColor, m_backgroundColor, m_separatorColor);
-    m_children[m_numberOfChildren++] = m_rootViewController;
-    m_rootViewController->setParentResponder(this);
-    m_view.setContentView(m_rootViewController->view());
-    m_rootViewController = nullptr;
-  }
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   if (m_numberOfChildren > 0 && vc) {
     vc->viewWillAppear();
   }
 }
 
 void StackViewController::viewDidDisappear() {
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   if (m_numberOfChildren > 0 && vc) {
     vc->viewDidDisappear();
   }
 }
 
 void StackViewController::loadView() {
-  if (m_rootViewController) {
-    m_rootViewController->loadView();
-  } else {
-   ViewController * vc = m_children[m_numberOfChildren-1];
-   if (m_numberOfChildren > 0 && vc) {
-     vc->loadView();
-   }
+  /* Load the stack view */
+  for (int i = 0; i < m_numberOfChildren; i++) {
+    m_view.pushStack(m_childrenFrame[i]);
+  }
+  /* Load the visible controller view */
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
+  if (m_numberOfChildren > 0 && vc) {
+    vc->loadView();
+    m_view.setContentView(vc->view());
   }
 }
 
 void StackViewController::unloadView() {
-  ViewController * vc = m_children[m_numberOfChildren-1];
+  for (int i = 0; i < m_numberOfChildren; i++) {
+    m_view.popStack();
+  }
+  ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   if (m_numberOfChildren > 0 && vc) {
     vc->unloadView();
   }

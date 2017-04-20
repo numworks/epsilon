@@ -20,12 +20,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
     Sequence * s = m_sequenceStore->activeFunctionAtIndex(i);
-    float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-    float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-    /* We draw a dot at every integer WindowRange/Resolution < 1. Otherwise, we
-     * draw a dot every step where step is an integer. */
-    int step = ceilf((rectMax - rectMin)/resolution());
-    for (int x = rectMin; x < rectMax; x += step) {
+    float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+    rectXMin = rectXMin < 0 ? 0 : rectXMin;
+    float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+    /* We draw a dot at every integer if WindowRange/Resolution < 1. Otherwise,
+     * we draw a dot at every step where step is an integer wider than 1. */
+    float windowRange = pixelToFloat(Axis::Horizontal, bounds().width()) - pixelToFloat(Axis::Horizontal, 0);
+    int step = ceilf(windowRange/resolution());
+    for (int x = rectXMin; x < rectXMax; x += step) {
       float y = evaluateModelWithParameter(s, x);
       if (isnan(y)) {
         continue;
@@ -84,7 +86,7 @@ void GraphView::setHighlightColor(bool highlightColor) {
 }
 
 float GraphView::samplingRatio() const {
-  return 0.8f;
+  return 5.0f;
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {

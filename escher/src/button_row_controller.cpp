@@ -241,6 +241,7 @@ void ButtonRowController::viewDidDisappear() {
 void ButtonRowController::loadView() {
   m_contentView.buttonRowDelegate()->loadButtonView();
   m_contentView.mainViewController()->loadView();
+  m_contentView.layoutSubviews();
 }
 
 void ButtonRowController::unloadView() {

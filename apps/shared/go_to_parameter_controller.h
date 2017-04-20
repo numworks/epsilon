@@ -13,6 +13,7 @@ public:
   GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   void viewWillAppear() override;
   int numberOfRows() override;
+  void unloadView() override;
 protected:
   constexpr static float k_maxDisplayableFloat = 1E8f;
   CurveViewCursor * m_cursor;
@@ -21,10 +22,12 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float previousParameterAtIndex(int index) override;
+  View * createView() override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText m_abscisseCell;
+  MessageTableCellWithEditableText * m_abscisseCell;
   float m_previousParameter;
   InteractiveCurveViewRange * m_graphRange;
+  I18n::Message m_abscissaSymbol;
 };
 
 }

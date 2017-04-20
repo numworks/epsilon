@@ -5,8 +5,7 @@ namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
-  m_interval(interval),
-  m_intervalCells{MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default), MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::Default)}
+  m_interval(interval)
 {
 }
 
@@ -37,6 +36,15 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 
 Interval * IntervalParameterController::interval() {
   return m_interval;
+}
+
+void IntervalParameterController::unloadView() {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    assert(m_intervalCells[i] != nullptr);
+    delete m_intervalCells[i];
+    m_intervalCells[i] = nullptr;
+  }
+  FloatParameterController::unloadView();
 }
 
 float IntervalParameterController::previousParameterAtIndex(int index) {
@@ -72,11 +80,20 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float 
 HighlightCell * IntervalParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  return &m_intervalCells[index];
+  return m_intervalCells[index];
 }
 
 int IntervalParameterController::reusableParameterCellCount(int type) {
   return k_totalNumberOfCell;
+}
+
+View * IntervalParameterController::createView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    assert(m_intervalCells[i] == nullptr);
+    m_intervalCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+  }
+  return tableView;
 }
 
 }

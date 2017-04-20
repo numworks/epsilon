@@ -10,10 +10,9 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
+class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
-  FloatParameterController(Responder * parentResponder, I18n::Message okButtonText = I18n::Message::Ok);
-  View * view() override;
+  FloatParameterController(Responder * parentResponder);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -29,20 +28,23 @@ public:
 
   bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void unloadView() override;
 protected:
   int activeCell();
   StackViewController * stackController();
   virtual float parameterAtIndex(int index) = 0;
-  SelectableTableView m_selectableTableView;
+  virtual SelectableTableView * selectableTableView();
+  View * createView() override;
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
+  virtual I18n::Message okButtonText();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual float previousParameterAtIndex(int index) = 0;
   virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
-  ButtonWithSeparator m_okButton;
+  ButtonWithSeparator * m_okButton;
 };
 
 }

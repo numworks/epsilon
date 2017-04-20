@@ -7,8 +7,8 @@ namespace Shared {
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   FloatParameterController(parentResponder),
   m_cursor(cursor),
-  m_abscisseCell(MessageTableCellWithEditableText(&m_selectableTableView, this, m_draftTextBuffer, symbol)),
-  m_graphRange(graphRange)
+  m_graphRange(graphRange),
+  m_abscissaSymbol(symbol)
 {
 }
 
@@ -21,6 +21,13 @@ int GoToParameterController::numberOfRows() {
   return 2;
 }
 
+void GoToParameterController::unloadView() {
+  assert(m_abscisseCell != nullptr);
+  delete m_abscisseCell;
+  m_abscisseCell = nullptr;
+  FloatParameterController::unloadView();
+}
+
 float GoToParameterController::previousParameterAtIndex(int index) {
   assert(index == 0);
   return m_previousParameter;
@@ -28,7 +35,7 @@ float GoToParameterController::previousParameterAtIndex(int index) {
 
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
-  return &m_abscisseCell;
+  return m_abscisseCell;
 }
 
 int GoToParameterController::reusableParameterCellCount(int type) {
@@ -41,6 +48,13 @@ void GoToParameterController::buttonAction() {
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();
   stack->pop();
+}
+
+View * GoToParameterController::createView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
+  assert(m_abscisseCell == nullptr);
+  m_abscisseCell = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, m_abscissaSymbol);
+  return tableView;
 }
 
 }

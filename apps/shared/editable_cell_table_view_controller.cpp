@@ -14,7 +14,14 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
 {
 }
 
-bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
+     || (event == Ion::Events::Down && selectableTableView()->selectedRow() < numberOfRows()-1)
+     || (event == Ion::Events::Up && selectableTableView()->selectedRow() > 0)
+     || (event == Ion::Events::Right && selectableTableView()->selectedColumn() < numberOfColumns()-1)
+     || (event == Ion::Events::Left && selectableTableView()->selectedColumn() > 0);  }
+
+bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
@@ -27,7 +34,11 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     return false;
   }
   selectableTableView()->reloadData();
-  selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+  } else {
+    selectableTableView()->handleEvent(event);
+  }
   return true;
 }
 

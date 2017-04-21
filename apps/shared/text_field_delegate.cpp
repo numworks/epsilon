@@ -4,6 +4,10 @@ using namespace Poincare;
 
 namespace Shared {
 
+bool TextFieldDelegate::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return textFieldDelegateApp()->textFieldShouldFinishEditing(textField, event);
+}
+
 bool TextFieldDelegate::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }

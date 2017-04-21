@@ -152,8 +152,8 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   return true;
 }
 
-bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text)) {
+bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
     m_selectableTableView->reloadData();
     return true;
   }

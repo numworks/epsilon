@@ -15,7 +15,7 @@ public:
   int numberOfRows() override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   bool handleEvent(Ion::Events::Event event) override;
   void unloadView() override;

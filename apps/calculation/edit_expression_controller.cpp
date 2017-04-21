@@ -77,7 +77,7 @@ void EditExpressionController::didBecomeFirstResponder() {
   app()->setFirstResponder(((ContentView *)view())->textField());
 }
 
-bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text) {
+bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
   App * calculationApp = (App *)app();
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();

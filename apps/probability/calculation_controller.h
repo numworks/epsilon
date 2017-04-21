@@ -21,7 +21,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   void updateTitle();

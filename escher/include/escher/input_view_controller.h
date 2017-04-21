@@ -13,7 +13,8 @@ public:
   const char * textBody();
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   void abortTextFieldEditionAndDismiss();
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
   Toolbox * toolboxForTextField(TextField * textFied) override;
 private:

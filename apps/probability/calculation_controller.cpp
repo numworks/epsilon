@@ -211,7 +211,11 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1) || event == Ion::Events::Left || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+}
+
+bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
@@ -231,6 +235,9 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
     floatBody = roundf(floatBody);
   }
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
+  if (event == Ion::Events::Right || event == Ion::Events::Left) {
+    handleEvent(event);
+  }
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     m_contentView.willDisplayEditableCellAtIndex(k);
   }

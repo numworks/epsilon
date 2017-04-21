@@ -271,54 +271,50 @@ void TextField::setTextFieldDelegate(TextFieldDelegate * delegate) {
   m_delegate = delegate;
 }
 
+bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
+  return m_delegate->textFieldShouldFinishEditing(this, event);
+}
+
 bool TextField::handleEvent(Ion::Events::Event event) {
+  assert(m_delegate != nullptr);
   if (Responder::handleEvent(event)) {
     return true;
   }
-  if (m_delegate) {
-    if (m_delegate->textFieldDidReceiveEvent(this, event)) {
-      return true;
-    }
+  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+    return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (isEditing()) {
-      char bufferText[ContentView::k_maxBufferSize];
-      strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-      strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
-      int cursorLoc = cursorLocation();
-      setEditing(false, m_hasTwoBuffers);
-      if (m_delegate->textFieldDidFinishEditing(this, text())) {
-        reloadScroll();
-        return true;
-      }
-      /* if the text was refused (textFieldDidFinishEditing returned false, we
-       * reset the textfield in the same state as before */
-      char bufferDraft[ContentView::k_maxBufferSize];
-      strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-      setText(bufferText);
-      setEditing(true);
-      setText(bufferDraft);
-      setCursorLocation(cursorLoc);
+  if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
+    setCursorLocation(cursorLocation()-1);
+    return true;
+  }
+  if (event == Ion::Events::Right && isEditing() && cursorLocation() < textLength()) {
+    setCursorLocation(cursorLocation()+1);
+    return true;
+  }
+  if (textFieldShouldFinishEditing(event) && isEditing()) {
+    char bufferText[ContentView::k_maxBufferSize];
+    strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
+    strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
+    int cursorLoc = cursorLocation();
+    setEditing(false, m_hasTwoBuffers);
+    if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
+      reloadScroll();
       return true;
     }
-    if (event == Ion::Events::EXE) {
-      return false;
-    }
+    /* if the text was refused (textFieldDidFinishEditing returned false, we
+     * reset the textfield in the same state as before */
+    char bufferDraft[ContentView::k_maxBufferSize];
+    strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
+    setText(bufferText);
+    setEditing(true);
+    setText(bufferDraft);
+    setCursorLocation(cursorLoc);
+    return true;
+  }
+  if (event == Ion::Events::OK) {
     setEditing(true);
     insertTextAtLocation(m_contentView.textBuffer(), cursorLocation());
     setCursorLocation(strlen(m_contentView.draftTextBuffer()));
-    return true;
-  }
-  if (event == Ion::Events::Left && isEditing()) {
-    if (cursorLocation() > 0) {
-      setCursorLocation(cursorLocation()-1);
-    }
-    return true;
-  }
-  if (event == Ion::Events::Right && isEditing()) {
-    if (cursorLocation() < textLength()) {
-      setCursorLocation(cursorLocation()+1);
-    }
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {

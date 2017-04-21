@@ -46,8 +46,12 @@ bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * tok
   return false;
 }
 
+bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && textField->isEditing()) {
+  if (textField->textFieldShouldFinishEditing(event) && textField->isEditing()) {
     Expression * exp = Expression::parse(textField->text());
     if (exp == nullptr || !exp->hasValidNumberOfArguments()) {
       if (textField->textLength() == 0) {

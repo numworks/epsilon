@@ -14,6 +14,7 @@ public:
   virtual Poincare::Context * localContext();
   AppsContainer * container();
   virtual const char * XNT();
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
 private:

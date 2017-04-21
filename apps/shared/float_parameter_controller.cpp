@@ -112,7 +112,13 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   myCell->setAccessoryText(buffer);
 }
 
-bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+bool FloatParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return (event == Ion::Events::Down && selectableTableView()->selectedRow() < numberOfRows()-1)
+     || (event == Ion::Events::Up && selectableTableView()->selectedRow() > 0)
+     || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+}
+
+bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::parse(text)->approximate(*globalContext);
@@ -126,7 +132,11 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   willDisplayCellForIndex(selectableTableView()->cellAtLocation(selectableTableView()->selectedColumn(),
     selectableTableView()->selectedRow()), activeCell());
   selectableTableView()->reloadData();
-  selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
+    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+  } else {
+    selectableTableView()->handleEvent(event);
+  }
   return true;
 }
 

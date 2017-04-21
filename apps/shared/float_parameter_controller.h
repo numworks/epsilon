@@ -25,8 +25,8 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-
-  bool textFieldDidFinishEditing(TextField * textField, const char * text) override;
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   void unloadView() override;

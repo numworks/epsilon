@@ -58,8 +58,8 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text)) {
+bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
     selectableTableView()->reloadData();
     return true;
   }

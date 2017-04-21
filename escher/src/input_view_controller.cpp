@@ -86,7 +86,11 @@ void InputViewController::abortTextFieldEditionAndDismiss() {
   dismissModalViewController();
 }
 
-bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text) {
+bool InputViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
+bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   m_successAction.perform(this);
   dismissModalViewController();
   return true;

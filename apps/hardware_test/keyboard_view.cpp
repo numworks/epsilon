@@ -21,13 +21,17 @@ Ion::Keyboard::Key KeyboardView::testedKey() const {
 }
 
 void KeyboardView::setDefectiveKey(Ion::Keyboard::Key key) {
-  m_defectiveKey[(int)key] = 1;
+  int keyIndex = (int)key;
+  if (keyIndex < Ion::Keyboard::NumberOfKeys && keyIndex >= 0) {
+    m_defectiveKey[(int)key] = 1;
+  }
 }
 
 bool KeyboardView::setNextKey() {
   m_testedKey = (Ion::Keyboard::Key)((int)m_testedKey+1);
   int keyIndex = (int)m_testedKey;
-  if (keyIndex >= 54) {
+  if (keyIndex == 55) {
+    resetTestedKey();
     return false;
   }
   if ((keyIndex > 7 && keyIndex < 12) || keyIndex == 35 || keyIndex == 41 || keyIndex == 47 || keyIndex == 53) {

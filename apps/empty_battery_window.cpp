@@ -1,6 +1,6 @@
 #include "empty_battery_window.h"
-#include "i18n.h"
 #include "global_preferences.h"
+#include "i18n.h"
 extern "C" {
 #include <assert.h>
 }

@@ -9,7 +9,8 @@ namespace HardwareTest {
 KeyboardView::KeyboardView() :
   m_testedKey(Ion::Keyboard::Key::A1),
   m_batteryLevelView(BufferTextView(KDText::FontSize::Small)),
-  m_batteryChargingView(BufferTextView(KDText::FontSize::Small))
+  m_batteryChargingView(BufferTextView(KDText::FontSize::Small)),
+  m_ledStateView(BufferTextView(KDText::FontSize::Small))
 {
   for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
     m_defectiveKey[i] = 0;
@@ -43,6 +44,34 @@ bool KeyboardView::setNextKey() {
 
 void KeyboardView::resetTestedKey() {
   m_testedKey = Ion::Keyboard::Key::A1;
+  markRectAsDirty(bounds());
+}
+
+void KeyboardView::updateLEDState(KDColor color) {
+  Ion::LED::setColor(color);
+
+  char ledLevel[k_maxNumberOfCharacters];
+  const char * legend = "LED color: ";
+  int legendLength = strlen(legend);
+  int numberOfChar = legendLength;
+  strlcpy(ledLevel, legend, legendLength+1);
+  legend = "Off";
+  if (color == KDColorWhite) {
+    legend = "White";
+  }
+  if (color == KDColorRed) {
+    legend = "Red";
+  }
+  if (color == KDColorBlue) {
+    legend = "Blue";
+  }
+  if (color == KDColorGreen) {
+    legend = "Green";
+  }
+  legendLength = strlen(legend);
+  strlcpy(ledLevel+numberOfChar, legend, legendLength+1);
+  m_ledStateView.setText(ledLevel);
+
   markRectAsDirty(bounds());
 }
 
@@ -127,17 +156,21 @@ void KeyboardView::layoutSubviews() {
   KDSize textSize = KDText::stringSize(" ", KDText::FontSize::Small);
   m_batteryLevelView.setFrame(KDRect(130, k_margin, bounds().width()-130, textSize.height()));
   m_batteryChargingView.setFrame(KDRect(130, k_margin+2*textSize.height(), bounds().width()-130, textSize.height()));
+  m_ledStateView.setFrame(KDRect(130, k_margin+5*textSize.height(), bounds().width()-130, textSize.height()));
 }
 
 int KeyboardView::numberOfSubviews() const {
-  return 2;
+  return 3;
 }
 
 View * KeyboardView::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_batteryLevelView;
   }
-  return &m_batteryChargingView;
+  if (index == 1) {
+    return &m_batteryChargingView;
+  }
+  return &m_ledStateView;
 }
 
 }

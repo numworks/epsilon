@@ -1,6 +1,6 @@
 #include "edit_expression_controller.h"
-#include "app.h"
 #include "../apps_container.h"
+#include "app.h"
 #include <assert.h>
 
 using namespace Shared;

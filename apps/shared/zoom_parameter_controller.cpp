@@ -82,7 +82,7 @@ View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
 }
 
 void ZoomParameterController::ContentView::layoutSubviews() {
-  m_curveView->setFrame(bounds());
+  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight));
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
 }
 

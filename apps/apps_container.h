@@ -30,6 +30,7 @@ public:
 
   int numberOfApps();
   App * appAtIndex(int index);
+  App * hardwareTestApp();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();

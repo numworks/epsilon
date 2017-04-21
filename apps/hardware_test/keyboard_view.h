@@ -10,7 +10,7 @@ public:
   KeyboardView();
   Ion::Keyboard::Key testedKey() const;
   void setDefectiveKey(Ion::Keyboard::Key key);
-  void setNextKey();
+  bool setNextKey();
   void resetTestedKey();
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -54,6 +54,13 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 }
 
 bool SubController::handleEvent(Ion::Events::Event event) {
+  /* We hide here the activation hardware test app: in the menu "about", by
+   * clicking on '6' on the serial number row. */
+  if (event == Ion::Events::Six && m_preferenceIndex == 5 && m_selectableTableView.selectedRow() == 1) {
+    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    appsContainer->switchTo(appsContainer->hardwareTestApp());
+    return true;
+  }
   if (event == Ion::Events::OK) {
     /* Behavious of "Exam mode" menu*/
     if (m_preferenceIndex == 4) {

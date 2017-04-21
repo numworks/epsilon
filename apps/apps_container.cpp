@@ -53,6 +53,10 @@ App * AppsContainer::appAtIndex(int index) {
   return apps[index];
 }
 
+App * AppsContainer::hardwareTestApp() {
+  return &m_hardwareTestApp;
+}
+
 void AppsContainer::reset() {
   for (int i = 0; i < numberOfApps(); i++) {
     ((ResettableApp *)appAtIndex(i))->reset();
@@ -73,11 +77,11 @@ VariableBoxController * AppsContainer::variableBoxController() {
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home) {
+  if (event == Ion::Events::Home && activeApp() != &m_hardwareTestApp) {
     switchTo(appAtIndex(0));
     return true;
   }
-  if (event == Ion::Events::OnOff) {
+  if (event == Ion::Events::OnOff && activeApp() != &m_hardwareTestApp) {
     Ion::Power::suspend();
     /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
      * the frame memory is lost. That's why we need to force a window redraw

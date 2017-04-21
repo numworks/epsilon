@@ -12,6 +12,7 @@ public:
   void setDefectiveKey(Ion::Keyboard::Key key);
   bool setNextKey();
   void resetTestedKey();
+  void updateLEDState(KDColor color);
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
@@ -26,11 +27,12 @@ private:
   constexpr static int k_smallRectWidth = 16;
   constexpr static int k_bigRectHeight = 14;
   constexpr static int k_bigRectWidth = 20;
-  constexpr static int k_maxNumberOfCharacters = 15;
+  constexpr static int k_maxNumberOfCharacters = 20;
   Ion::Keyboard::Key m_testedKey;
   int m_defectiveKey[Ion::Keyboard::NumberOfKeys];
   BufferTextView m_batteryLevelView;
   BufferTextView m_batteryChargingView;
+  BufferTextView m_ledStateView;
 };
 
 }

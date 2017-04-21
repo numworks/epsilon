@@ -24,16 +24,17 @@ void KeyboardView::setDefectiveKey(Ion::Keyboard::Key key) {
   m_defectiveKey[(int)key] = 1;
 }
 
-void KeyboardView::setNextKey() {
+bool KeyboardView::setNextKey() {
   m_testedKey = (Ion::Keyboard::Key)((int)m_testedKey+1);
   int keyIndex = (int)m_testedKey;
-  if (keyIndex == 54) {
-    resetTestedKey();
+  if (keyIndex >= 54) {
+    return false;
   }
   if ((keyIndex > 7 && keyIndex < 12) || keyIndex == 35 || keyIndex == 41 || keyIndex == 47 || keyIndex == 53) {
     setNextKey();
   }
   markRectAsDirty(bounds());
+  return true;
 }
 
 void KeyboardView::resetTestedKey() {

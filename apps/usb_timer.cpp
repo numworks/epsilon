@@ -18,7 +18,9 @@ void USBTimer::fire() {
     Ion::LED::setColor(LEDColor);
     m_previousPluggedState = true;
   } else {
-    Ion::LED::setColor(KDColorBlack);
-    m_previousPluggedState = false;
+    if (m_previousPluggedState) {
+      Ion::LED::setColor(KDColorBlack);
+      m_previousPluggedState = false;
+    }
   }
 }

@@ -44,7 +44,7 @@ private:
   Window * window() override;
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
-  static constexpr int k_numberOfApps = 9;
+  static constexpr int k_numberOfApps = 8;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Home::App m_homeApp;

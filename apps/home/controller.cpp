@@ -20,6 +20,11 @@ void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
 }
 
+void Controller::ContentView::reloadBottomRightCorner(SimpleTableViewDataSource * dataSource) {
+  /* We mark the bottom right corner (where an empty space can be) as dirty. */
+  markRectAsDirty(KDRect(dataSource->cellWidth()*2, dataSource->cellHeight(), dataSource->cellWidth(), dataSource->cellHeight()));
+}
+
 int Controller::ContentView::numberOfSubviews() const {
   return 1;
 }
@@ -107,6 +112,16 @@ int Controller::numberOfIcons() {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  /* When we display the rightest icon, the icon below is empty. As no icon is
+   * thus redrawn on the previous one, the cell is not cleaned. We need to
+   * redraw a white rect on the cell to hide the dirtyness below. Ideally,
+   * we would have redrawn all the background in white and then redraw visible
+   * cells. However, the redrawing takes time and is visible at scrolling.
+   * Here, we avoid the background complete redrawing but the code is a bit
+   * clumsy. */
+  if (t->selectedColumn() == k_numberOfColumns -1) {
+    m_view.reloadBottomRightCorner(this);
+  }
   /* To prevent the selectable table view to select cells that are unvisible,
    * we reselect the previous selected cell as soon as the selected cell is
    * unvisible. This trick does not create an endless loop as we ensure not to

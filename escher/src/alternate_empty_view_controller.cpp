@@ -88,9 +88,13 @@ void AlternateEmptyViewController::viewDidDisappear() {
 }
 
 void AlternateEmptyViewController::loadView() {
-  m_contentView.mainViewController()->loadView();
+  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+    m_contentView.mainViewController()->loadView();
+  }
 }
 
 void AlternateEmptyViewController::unloadView() {
-  m_contentView.mainViewController()->unloadView();
+  if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
+    m_contentView.mainViewController()->unloadView();
+  }
 }

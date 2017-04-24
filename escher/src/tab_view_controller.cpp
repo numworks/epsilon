@@ -57,15 +57,17 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
   m_activeChildIndex(-1),
   m_selectedChildIndex(-1)
 {
+  assert(one != nullptr);
+  assert(two != nullptr || (three == nullptr && four == nullptr));
+  assert(three != nullptr || four == nullptr);
   m_children[0] = one;
   m_children[1] = two;
   m_children[2] = three;
   m_children[3] = four;
 
-  for (int i = 0; i < k_maxNumberOfChildren; i++) {
-    if (m_children[i] != nullptr) {
-      m_numberOfChildren ++;
-    }
+  m_numberOfChildren = 0;
+  while (m_numberOfChildren < k_maxNumberOfChildren && m_children[m_numberOfChildren] != nullptr) {
+    m_numberOfChildren++;
   }
 }
 
@@ -108,9 +110,9 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
+  assert(i >= 0 && i < m_numberOfChildren);
   ViewController * activeVC = m_children[i];
   if (i  != m_activeChildIndex || forceReactive) {
-    assert(i <= m_numberOfChildren);
     if (i != m_activeChildIndex) {
       activeVC->loadView();
       m_view.setActiveView(activeVC->view());
@@ -137,7 +139,7 @@ void TabViewController::setSelectedTab(int8_t i) {
 }
 
 void TabViewController::didEnterResponderChain(Responder * previousResponder) {
-  setActiveTab(m_activeChildIndex, true);
+  app()->setFirstResponder(activeViewController());
 }
 
 void TabViewController::didBecomeFirstResponder() {
@@ -162,11 +164,12 @@ const char * TabViewController::tabName(uint8_t index) {
 }
 
 void TabViewController::viewWillAppear() {
+  activeViewController()->viewWillAppear();
+  m_view.m_tabView.setActiveIndex(m_activeChildIndex);
 }
 
 void TabViewController::viewDidDisappear() {
-  ViewController * activeVC = m_children[m_activeChildIndex];
-  activeVC->viewDidDisappear();
+  activeViewController()->viewDidDisappear();
 }
 
 void TabViewController::loadView() {
@@ -183,6 +186,10 @@ void TabViewController::loadView() {
 }
 
 void TabViewController::unloadView() {
-  ViewController * activeVC = m_children[m_activeChildIndex];
-  activeVC->unloadView();
+  activeViewController()->unloadView();
+}
+
+ViewController * TabViewController::activeViewController() {
+  assert(m_activeChildIndex >= 0 && m_activeChildIndex < m_numberOfChildren);
+  return m_children[m_activeChildIndex];
 }

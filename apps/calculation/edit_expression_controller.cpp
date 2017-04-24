@@ -10,7 +10,7 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_textField(parentResponder, m_textBody, 100, textFieldDelegate)
+  m_textField(parentResponder, m_textBody, TextField::maxBufferSize(), textFieldDelegate)
 {
   m_textBody[0] = 0;
 }

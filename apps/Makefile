@@ -16,6 +16,7 @@ app_objs += $(addprefix apps/,\
   battery_timer.o\
   battery_view.o\
   constant.o\
+  backlight_dimming_timer.o\
   empty_battery_window.o\
   exam_pop_up_controller.o\
   global_preferences.o\
@@ -24,6 +25,7 @@ app_objs += $(addprefix apps/,\
   main.o\
   math_toolbox.o\
   node.o\
+  suspend_timer.o\
   title_bar_view.o\
   toolbox_node.o\
   usb_timer.o\

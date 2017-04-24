@@ -73,6 +73,9 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
 }
 
 HighlightCell * SelectableTableView::selectedCell() {
+  if (m_selectedCellX < 0 || m_selectedCellY < 0) {
+    return nullptr;
+  }
   return cellAtLocation(m_selectedCellX, m_selectedCellY);
 }
 

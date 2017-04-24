@@ -20,6 +20,12 @@ void HistoryController::didBecomeFirstResponder() {
   app()->setFirstResponder(selectableTableView());
 }
 
+void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == parentResponder()) {
+    selectableTableView()->deselectTable();
+  }
+}
+
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     selectableTableView()->deselectTable();
@@ -106,6 +112,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
+  if (selectedCell == nullptr) {
+    return;
+  }
   selectedCell->setParentResponder(t);
   if (selectableTableView()->selectedRow() < previousSelectedCellY) {
     selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);

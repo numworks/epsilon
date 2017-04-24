@@ -73,7 +73,10 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
 
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
-  myCell->setEven(j%2 == 0);
+  /* We set the cell even or odd state only if the cell is not being edited.
+   * Otherwise, the cell background is white whichever it is an odd or even cell
+   * and we do not want to redraw the cell twice (in the even/odd color and
+   * then in white) to avoid screen blinking. */
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
@@ -83,16 +86,20 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
       /* Display an empty line only if there is enough space for a new element in
        * data */
       if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->isEditing()) {
+        myCell->setEven(j%2 == 0);
         buffer[0] = 0;
         myEditableValueCell->setText(buffer);
         return;
       }
     }
     if (!myEditableValueCell->isEditing()) {
+      myCell->setEven(j%2 == 0);
       Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
       myEditableValueCell->setText(buffer);
     }
     return;
+  } else {
+    myCell->setEven(j%2 == 0);
   }
 }
 

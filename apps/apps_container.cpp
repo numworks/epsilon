@@ -27,7 +27,9 @@ AppsContainer::AppsContainer() :
   m_examPopUpController(ExamPopUpController()),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
-  m_USBTimer(USBTimer(this))
+  m_USBTimer(USBTimer(this)),
+  m_suspendTimer(SuspendTimer(this)),
+  m_backlightDimmingTimer(BacklightDimmingTimer())
 {
   refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
@@ -75,18 +77,25 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
+void AppsContainer::suspend() {
+  Ion::Power::suspend();
+  /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
+   * the frame memory is lost. That's why we need to force a window redraw
+   * upon wakeup, otherwise the screen is filled with noise. */
+  window()->redraw(true);
+}
+
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  m_backlightDimmingTimer.reset();
+  m_suspendTimer.reset();
+  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   // Home and Power buttons are not sent to apps. We handle them straight away.
   if (event == Ion::Events::Home && activeApp() != &m_hardwareTestApp) {
     switchTo(appAtIndex(0));
     return true;
   }
   if (event == Ion::Events::OnOff && activeApp() != &m_hardwareTestApp) {
-    Ion::Power::suspend();
-    /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
-     * the frame memory is lost. That's why we need to force a window redraw
-     * upon wakeup, otherwise the screen is filled with noise. */
-    window()->redraw(true);
+    suspend();
     return true;
   }
   bool didProcessEvent = Container::dispatchEvent(event);
@@ -134,7 +143,7 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfTimers() {
-  return 2+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
 Timer * AppsContainer::timerAtIndex(int i) {
@@ -144,6 +153,10 @@ Timer * AppsContainer::timerAtIndex(int i) {
     case 1:
       return &m_USBTimer;
     case 2:
+      return &m_suspendTimer;
+    case 3:
+      return &m_backlightDimmingTimer;
+    case 4:
       return &m_ledTimer;
     default:
       assert(false);

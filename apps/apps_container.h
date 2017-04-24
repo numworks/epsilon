@@ -18,6 +18,8 @@
 #include "led_timer.h"
 #include "battery_timer.h"
 #include "usb_timer.h"
+#include "suspend_timer.h"
+#include "backlight_dimming_timer.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -35,6 +37,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
+  void suspend();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App * app) override;
   void updateBatteryState();
@@ -67,6 +70,8 @@ private:
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
   USBTimer m_USBTimer;
+  SuspendTimer m_suspendTimer;
+  BacklightDimmingTimer m_backlightDimmingTimer;
 };
 
 #endif

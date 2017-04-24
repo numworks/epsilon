@@ -23,6 +23,7 @@ public:
   void loadView() override;
   void unloadView() override;
 private:
+  ViewController * activeViewController();
   class ContentView : public View {
   public:
     ContentView();

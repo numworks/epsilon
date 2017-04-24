@@ -129,8 +129,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   if (!setParameterAtIndex(selectableTableView()->selectedRow(), floatBody)) {
     return false;
   }
-  willDisplayCellForIndex(selectableTableView()->cellAtLocation(selectableTableView()->selectedColumn(),
-    selectableTableView()->selectedRow()), activeCell());
+  willDisplayCellForIndex(selectableTableView()->selectedCell(), activeCell());
   selectableTableView()->reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
@@ -157,12 +156,12 @@ void FloatParameterController::tableViewDidChangeSelection(SelectableTableView *
     myCell->setEditing(false);
   }
   if (t->selectedRow() == numberOfRows()-1) {
-    Button * myNewCell = (Button *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    Button * myNewCell = (Button *)t->selectedCell();
     app()->setFirstResponder(myNewCell);
     return;
   }
   if (t->selectedRow() >= 0) {
-    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
     app()->setFirstResponder(myNewCell);
   }
 }

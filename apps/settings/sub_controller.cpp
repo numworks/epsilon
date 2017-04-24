@@ -76,7 +76,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       if (m_selectableTableView.selectedRow() == 1) {
         return false;
       }
-      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
         myCell->setAccessoryText(Ion::softwareVersion());
         return true;

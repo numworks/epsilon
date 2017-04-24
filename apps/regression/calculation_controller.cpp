@@ -43,7 +43,7 @@ void CalculationController::didBecomeFirstResponder() {
   if (selectableTableView()->selectedRow() == -1) {
     selectableTableView()->selectCellAtLocation(1, 0);
   } else {
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
+    selectableTableView()->selectedCell();
   }
   TabTableController::didBecomeFirstResponder();
 }
@@ -64,7 +64,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     }
   }
   if (t->selectedColumn() == 1 && t->selectedRow() >= 0 && t->selectedRow() < 6) {
-    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)t->selectedCell();
     bool firstSubCellSelected = true;
     if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY < 6) {
       EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);

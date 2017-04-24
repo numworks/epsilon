@@ -78,7 +78,7 @@ void RangeParameterController::tableViewDidChangeSelection(SelectableTableView *
     }
   }
   if (t->selectedRow() == numberOfRows()-1) {
-    Button * myNewCell = (Button *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    Button * myNewCell = (Button *)t->selectedCell();
     app()->setFirstResponder(myNewCell);
     return;
   }

@@ -54,7 +54,7 @@ void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTabl
     }
   }
   if (cellAtLocationIsEditable(t->selectedColumn(), t->selectedRow())) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
+    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->selectedCell();
     app()->setFirstResponder(myCell);
   }
 }

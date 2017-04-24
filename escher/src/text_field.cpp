@@ -101,7 +101,7 @@ void TextField::ContentView::setAlignment(float horizontalAlignment, float verti
 }
 
 void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
-  if (m_isEditing == isEditing) {
+  if (m_isEditing == isEditing && !reinitDrafBuffer) {
     return;
   }
   if (reinitDrafBuffer) {
@@ -340,6 +340,10 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setEditing(false);
     reloadScroll();
     m_delegate->textFieldDidAbortEditing(this, text());
+    return true;
+  }
+  if (event == Ion::Events::Clear && isEditing()) {
+    setEditing(true, true);
     return true;
   }
   return false;

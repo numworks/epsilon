@@ -1,5 +1,4 @@
 #include <ion/battery.h>
-#include <math.h>
 
 bool Ion::Battery::isCharging() {
   return false;
@@ -10,5 +9,5 @@ Ion::Battery::Charge Ion::Battery::level() {
 }
 
 float Ion::Battery::voltage() {
-  return NAN;
+  return 0.0f;
 }

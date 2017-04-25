@@ -7,6 +7,7 @@ objs += $(addprefix ion/src/shared/, \
   events_stdin.o \
   power.o \
   dummy/backlight.o \
+  dummy/battery.o \
 )
 
 ion/src/shared/log_printf.o: SFLAGS=-Iion/include

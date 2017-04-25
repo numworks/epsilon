@@ -37,7 +37,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK) {
     int focusRow = selectableTableView()->selectedRow();
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->cellAtLocation(0, focusRow);
+    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     selectableTableView()->deselectTable();
@@ -52,7 +52,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::EXE) {
     int focusRow = selectableTableView()->selectedRow();
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->cellAtLocation(0, focusRow);
+    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
@@ -72,7 +72,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace) {
     int focusRow = selectableTableView()->selectedRow();
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->cellAtLocation(0, focusRow);
+    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     selectableTableView()->deselectTable();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();

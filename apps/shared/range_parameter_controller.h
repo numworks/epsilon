@@ -11,7 +11,6 @@ class RangeParameterController : public FloatParameterController {
 public:
   RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() override;
-  void viewWillAppear() override;
   int numberOfRows() override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
@@ -22,7 +21,6 @@ public:
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   View * createView() override;
@@ -31,7 +29,6 @@ private:
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_rangeCells[k_numberOfTextCell];
   MessageTableCellWithSwitch * m_yAutoCell;
-  float m_previousParameters[k_numberOfTextCell];
   bool m_previousSwitchState;
 };
 

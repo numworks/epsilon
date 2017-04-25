@@ -88,7 +88,6 @@ void ParametersController::setLaw(Law * law) {
 
 void ParametersController::viewWillAppear() {
   for (int i = 0; i < m_law->numberOfParameter(); i++) {
-    m_previousParameters[i] = parameterAtIndex(i);
     contentView()->parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
   }
   contentView()->layoutSubviews();
@@ -131,12 +130,6 @@ void ParametersController::unloadView() {
     m_menuListCell[i] = nullptr;
   }
   FloatParameterController::unloadView();
-}
-
-float ParametersController::previousParameterAtIndex(int index) {
-  assert(index >= 0);
-  assert(index < 2);
-  return m_previousParameters[index];
 }
 
 float ParametersController::parameterAtIndex(int index) {

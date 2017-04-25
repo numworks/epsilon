@@ -12,11 +12,6 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 {
 }
 
-void GoToParameterController::viewWillAppear() {
-  m_previousParameter = parameterAtIndex(0);
-  FloatParameterController::viewWillAppear();
-}
-
 int GoToParameterController::numberOfRows() {
   return 2;
 }
@@ -26,11 +21,6 @@ void GoToParameterController::unloadView() {
   delete m_abscisseCell;
   m_abscisseCell = nullptr;
   FloatParameterController::unloadView();
-}
-
-float GoToParameterController::previousParameterAtIndex(int index) {
-  assert(index == 0);
-  return m_previousParameter;
 }
 
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {

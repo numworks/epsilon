@@ -7,7 +7,7 @@ objs += $(addprefix escher/src/,\
   button.o\
   button_row_controller.o\
   chevron_view.o\
-  clipped_board.o\
+  clipboard.o\
   container.o\
   dynamic_view_controller.o\
   editable_text_cell.o\

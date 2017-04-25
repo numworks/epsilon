@@ -6,8 +6,8 @@ namespace Shared {
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
   m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
-  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
-  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
+//  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
+//  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_store(store),
@@ -46,10 +46,11 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         stack->pop();
         return true;
       }
-      case 1:
+      /* TODO: implement copy column and import list
+       * case 1:
         return false;
       case 2:
-        return false;
+        return false;*/
       default:
         assert(false);
         return false;
@@ -65,7 +66,7 @@ int StoreParameterController::numberOfRows() {
 HighlightCell * StoreParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_importList};
+  HighlightCell * cells[] = {&m_deleteColumn};// {&m_deleteColumn, &m_copyColumn, &m_importList};
   return cells[index];
 }
 

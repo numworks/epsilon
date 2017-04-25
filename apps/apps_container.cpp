@@ -83,6 +83,7 @@ void AppsContainer::suspend() {
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+  m_backlightDimmingTimer.reset();
   window()->redraw(true);
 }
 

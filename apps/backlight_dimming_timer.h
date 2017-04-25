@@ -8,7 +8,7 @@ public:
   BacklightDimmingTimer();
 private:
   constexpr static int k_idleBeforeDimmingDuration = 30*1000; // In miliseconds
-  constexpr static int k_dimBacklightBrightness = 0; // Intensity value from 0 to 15
+  constexpr static int k_dimBacklightBrightness = 0;
   void fire() override;
 };
 

@@ -1,5 +1,4 @@
 objs += $(addprefix ion/src/simulator/, \
-  backlight.o\
   battery.o\
   init.o\
   led.o\
@@ -17,6 +16,7 @@ objs += $(addprefix ion/src/shared/, \
   events_keyboard.o \
   power.o \
   random.o \
+  dummy/backlight.o \
 )
 
 SFLAGS += `fltk-config --cflags`

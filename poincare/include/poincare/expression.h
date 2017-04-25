@@ -128,6 +128,7 @@ public:
    * Do not forget to delete the new expression to avoid leaking. */
   Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  static float approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
   virtual int writeTextInBuffer(char * buffer, int bufferSize);
 private:
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;

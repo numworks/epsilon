@@ -76,6 +76,16 @@ float Expression::approximate(Context& context, AngleUnit angleUnit) const {
   }
 }
 
+float Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
+  Expression * exp = parse(text);
+  float result = NAN;
+  if (exp != nullptr) {
+    result = exp->approximate(context, angleUnit);
+    delete exp;
+  }
+  return result;
+}
+
 Expression * Expression::simplify() const {
   /* We make sure that the simplification is deletable.
    * Indeed, we don't want an expression with some parts deletable and some not

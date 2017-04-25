@@ -8,7 +8,7 @@
 #include <escher/button.h>
 #include <escher/button_row_controller.h>
 #include <escher/chevron_view.h>
-#include <escher/clipped_board.h>
+#include <escher/clipboard.h>
 #include <escher/container.h>
 #include <escher/dynamic_view_controller.h>
 #include <escher/editable_text_cell.h>

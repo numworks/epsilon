@@ -1,5 +1,5 @@
 #include <escher/text_field.h>
-#include <escher/clipped_board.h>
+#include <escher/clipboard.h>
 #include <assert.h>
 
 /* TextField::ContentView */
@@ -355,19 +355,19 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Copy && !isEditing()) {
-    ClippedBoard::sharedClippedBoard()->store(text());
+    Clipboard::sharedClipboard()->store(text());
     return true;
   }
   if (event == Ion::Events::Cut && !isEditing()) {
-    ClippedBoard::sharedClippedBoard()->store(text());
+    Clipboard::sharedClipboard()->store(text());
     setEditing(true, true);
     return true;
   }
   if (event == Ion::Events::Paste) {
     setEditing(true);
     int nextCursorLocation = textLength();
-    if (insertTextAtLocation(ClippedBoard::sharedClippedBoard()->storedText(), cursorLocation())) {
-      nextCursorLocation = cursorLocation() + strlen(ClippedBoard::sharedClippedBoard()->storedText());
+    if (insertTextAtLocation(Clipboard::sharedClipboard()->storedText(), cursorLocation())) {
+      nextCursorLocation = cursorLocation() + strlen(Clipboard::sharedClipboard()->storedText());
     }
     setCursorLocation(nextCursorLocation);
     return true;

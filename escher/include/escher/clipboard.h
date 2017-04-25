@@ -1,12 +1,11 @@
-#ifndef ESCHER_CLIPPED_BOARD_H
-#define ESCHER_CLIPPED_BOARD_H
+#ifndef ESCHER_CLIPBOARD_H
+#define ESCHER_CLIPBOARD_H
 
 #include <escher/text_field.h>
 
-class ClippedBoard {
+class Clipboard {
 public:
-  ClippedBoard();
-  static ClippedBoard * sharedClippedBoard();
+  static Clipboard * sharedClipboard();
   void store(const char * storedText);
   const char * storedText();
   void reset();

@@ -7,6 +7,7 @@
 class EvenOddBufferTextCell : public EvenOddCell {
 public:
   EvenOddBufferTextCell(KDText::FontSize size = KDText::FontSize::Small, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
+  const char * text();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setText(const char * textContent);

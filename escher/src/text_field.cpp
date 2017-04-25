@@ -125,10 +125,10 @@ void TextField::ContentView::setCursorLocation(int location) {
   layoutSubviews();
 }
 
-void TextField::ContentView::insertTextAtLocation(const char * text, int location) {
+bool TextField::ContentView::insertTextAtLocation(const char * text, int location) {
   int textSize = strlen(text);
   if (m_currentTextLength + textSize >= m_textBufferSize) {
-    return;
+    return false;
   }
   for (int k = m_currentTextLength; k >= location && k >= 0; k--) {
     m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
@@ -139,6 +139,7 @@ void TextField::ContentView::insertTextAtLocation(const char * text, int locatio
   }
   m_currentTextLength += textSize;
   reload();
+  return true;
 }
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -259,8 +260,8 @@ void TextField::setCursorLocation(int location) {
   scrollToCursor();
 }
 
-void TextField::insertTextAtLocation(const char * text, int location) {
-  m_contentView.insertTextAtLocation(text, location);
+bool TextField::insertTextAtLocation(const char * text, int location) {
+  return m_contentView.insertTextAtLocation(text, location);
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() const {
@@ -313,8 +314,13 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK) {
     setEditing(true);
-    insertTextAtLocation(m_contentView.textBuffer(), cursorLocation());
-    setCursorLocation(strlen(m_contentView.draftTextBuffer()));
+    if (insertTextAtLocation(m_contentView.textBuffer(), cursorLocation())) {
+      setCursorLocation(strlen(m_contentView.draftTextBuffer()));
+    } else {
+      /* If the text could not be inserted (buffer is full), we set the cursor
+       * at the end of the text. */
+      setCursorLocation(textLength());
+    }
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
@@ -323,16 +329,17 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event.hasText()) {
-    if (isEditing()) {
-      insertTextAtLocation(event.text(), cursorLocation());
-    } else {
+    if (!isEditing()) {
       setEditing(true);
-      insertTextAtLocation(event.text(), cursorLocation());
     }
-    /* All events whose text is longer than 2 have parenthesis. In these cases,
-     * we want to position the cursor before the last parenthesis */
-    int cursorDelta = strlen(event.text()) > 2 ? -1 : 0;
-    setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
+    if (insertTextAtLocation(event.text(), cursorLocation())) {
+      /* All events whose text is longer than 2 have parenthesis. In these cases,
+       * we want to position the cursor before the last parenthesis */
+      int cursorDelta = strlen(event.text()) > 2 ? -1 : 0;
+      setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
+    } else {
+      setCursorLocation(maxBufferSize());
+    }
     layoutSubviews();
     return true;
   }

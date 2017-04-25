@@ -24,8 +24,8 @@ public:
   void setCursorLocation(int location);
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
-   * the maximum buffer capacity. */
-  void insertTextAtLocation(const char * text, int location);
+   * the maximum buffer capacity) and false is returned. */
+  bool insertTextAtLocation(const char * text, int location);
   KDSize minimalSizeForOptimalDisplay() const override;
   void setTextFieldDelegate(TextFieldDelegate * delegate);
   bool handleEvent(Ion::Events::Event event) override;
@@ -54,7 +54,7 @@ protected:
     void setEditing(bool isEditing, bool reinitDraftBuffer);
     void reinitDraftTextBuffer();
     void setCursorLocation(int location);
-    void insertTextAtLocation(const char * text, int location);
+    bool insertTextAtLocation(const char * text, int location);
     KDSize minimalSizeForOptimalDisplay() const override;
     KDCoordinate textHeight() const;
     KDCoordinate charWidth();

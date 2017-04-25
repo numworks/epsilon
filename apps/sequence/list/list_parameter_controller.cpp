@@ -27,16 +27,16 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     int selectedRowIndex = m_selectableTableView.selectedRow();
     switch (selectedRowIndex) {
-      case 0:
-        return handleEnterOnRow(selectedRowIndex);
-      case 1:
+      /*case 0:
+        return handleEnterOnRow(selectedRowIndex);*/
+      case 0://1
       {
         StackViewController * stack = (StackViewController *)(parentResponder());
         m_typeParameterController.setSequence(m_sequence);
         stack->push(&m_typeParameterController);
         return true;
       }
-      case 3:
+      case 2://3
       if (m_functionStore->numberOfFunctions() > 0) {
         m_functionStore->removeFunction(m_function);
         StackViewController * stack = (StackViewController *)(parentResponder());
@@ -56,10 +56,10 @@ int ListParameterController::numberOfRows() {
 
 HighlightCell * ListParameterController::reusableCell(int index) {
   switch (index) {
-    case 0:
-      return Shared::ListParameterController::reusableCell(index);
-    case 1:
-    return &m_typeCell;
+    /*case 0:
+      return Shared::ListParameterController::reusableCell(index);*/
+    case 0://1:
+      return &m_typeCell;
     default:
       return Shared::ListParameterController::reusableCell(index-1);
   }

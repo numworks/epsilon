@@ -10,6 +10,14 @@ EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(Responder * parentRespo
 {
 }
 
+const char * EvenOddDoubleBufferTextCell::firstText() {
+  return m_firstBufferTextView.text();
+}
+
+const char * EvenOddDoubleBufferTextCell::secondText() {
+  return m_secondBufferTextView.text();
+}
+
 bool EvenOddDoubleBufferTextCell::firstTextSelected() {
   return m_firstTextSelected;
 }

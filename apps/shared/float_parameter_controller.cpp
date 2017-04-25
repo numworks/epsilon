@@ -121,7 +121,7 @@ bool FloatParameterController::textFieldShouldFinishEditing(TextField * textFiel
 bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::parse(text)->approximate(*globalContext);
+  float floatBody = Expression::approximate(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;

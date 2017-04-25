@@ -1,4 +1,5 @@
 #include <escher/text_field.h>
+#include <escher/clipped_board.h>
 #include <assert.h>
 
 /* TextField::ContentView */
@@ -353,6 +354,26 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setEditing(true, true);
     return true;
   }
+  if (event == Ion::Events::Copy && !isEditing()) {
+    ClippedBoard::sharedClippedBoard()->store(text());
+    return true;
+  }
+  if (event == Ion::Events::Cut && !isEditing()) {
+    ClippedBoard::sharedClippedBoard()->store(text());
+    setEditing(true, true);
+    return true;
+  }
+  if (event == Ion::Events::Paste) {
+    setEditing(true);
+    int nextCursorLocation = textLength();
+    if (insertTextAtLocation(ClippedBoard::sharedClippedBoard()->storedText(), cursorLocation())) {
+      nextCursorLocation = cursorLocation() + strlen(ClippedBoard::sharedClippedBoard()->storedText());
+    }
+    setCursorLocation(nextCursorLocation);
+    return true;
+  }
+
+
   return false;
 }
 

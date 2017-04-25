@@ -18,7 +18,8 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setFunction(Shared::Function * function) override;
 private:
-  constexpr static int k_totalNumberOfCell = 2;
+  /* TODO: implement copy column */
+  constexpr static int k_totalNumberOfCell = 1;//2;
   MessageTableCellWithSwitch m_displayDerivativeColumn;
   CartesianFunction * m_cartesianFunction;
   ValuesController * m_valuesController;

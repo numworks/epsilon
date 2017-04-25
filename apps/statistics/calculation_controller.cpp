@@ -27,6 +27,11 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
+  if (event == Ion::Events::Copy && selectableTableView()->selectedColumn() == 1) {
+    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
+    Clipboard::sharedClipboard()->store(myCell->text());
+    return true;
+  }
   return false;
 }
 

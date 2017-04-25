@@ -41,6 +41,7 @@ private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
   TabViewController * tabController() const;
   virtual int functionIndexForRow(int j);
+  virtual const char * textForRow(int j);
   virtual void addEmptyFunction();
   virtual void removeFunctionRow(Function * function);
   virtual void editExpression(Function * function, Ion::Events::Event event) = 0;

@@ -217,6 +217,21 @@ int ListController::functionIndexForRow(int j) {
   return sequenceIndex;
 }
 
+const char * ListController::textForRow(int j) {
+  Sequence * sequence = (Sequence *)m_functionStore->functionAtIndex(functionIndexForRow(j));
+  switch (sequenceDefinitionForRow(j)) {
+    case 0:
+     return sequence->text();
+   case 1:
+     return sequence->firstInitialConditionText();
+   case 2:
+     return sequence->secondInitialConditionText();
+   default:
+     assert(false);
+     return nullptr;
+  }
+}
+
 int ListController::sequenceDefinitionForRow(int j) {
   if (j < 0) {
     return j;

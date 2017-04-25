@@ -34,6 +34,7 @@ private:
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   int functionIndexForRow(int j) override;
+  const char * textForRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyFunction() override;
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;

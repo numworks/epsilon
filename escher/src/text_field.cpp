@@ -312,15 +312,15 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLoc);
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK && !isEditing()) {
     setEditing(true);
+    /* If the text could not be inserted (buffer is full), we set the cursor
+     * at the end of the text. */
+    int nextCursorLocation = textLength();
     if (insertTextAtLocation(m_contentView.textBuffer(), cursorLocation())) {
-      setCursorLocation(strlen(m_contentView.draftTextBuffer()));
-    } else {
-      /* If the text could not be inserted (buffer is full), we set the cursor
-       * at the end of the text. */
-      setCursorLocation(textLength());
+      nextCursorLocation = strlen(m_contentView.draftTextBuffer());
     }
+    setCursorLocation(nextCursorLocation);
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
@@ -332,14 +332,14 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       setEditing(true);
     }
+    int nextCursorLocation = textLength();
     if (insertTextAtLocation(event.text(), cursorLocation())) {
       /* All events whose text is longer than 2 have parenthesis. In these cases,
        * we want to position the cursor before the last parenthesis */
       int cursorDelta = strlen(event.text()) > 2 ? -1 : 0;
-      setCursorLocation(cursorLocation() + strlen(event.text()) + cursorDelta);
-    } else {
-      setCursorLocation(maxBufferSize());
+      nextCursorLocation = cursorLocation() + strlen(event.text()) + cursorDelta;
     }
+    setCursorLocation(nextCursorLocation);
     layoutSubviews();
     return true;
   }

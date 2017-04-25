@@ -280,15 +280,15 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   if (Responder::handleEvent(event)) {
     return true;
   }
-  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
-    return true;
-  }
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
     setCursorLocation(cursorLocation()-1);
     return true;
   }
   if (event == Ion::Events::Right && isEditing() && cursorLocation() < textLength()) {
     setCursorLocation(cursorLocation()+1);
+    return true;
+  }
+  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
   }
   if (textFieldShouldFinishEditing(event) && isEditing()) {

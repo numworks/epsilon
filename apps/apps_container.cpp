@@ -82,6 +82,7 @@ void AppsContainer::suspend() {
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
+  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   window()->redraw(true);
 }
 

@@ -127,7 +127,7 @@ void TextField::ContentView::setCursorLocation(int location) {
 
 void TextField::ContentView::insertTextAtLocation(const char * text, int location) {
   int textSize = strlen(text);
-  if (m_currentTextLength + textSize > m_textBufferSize) {
+  if (m_currentTextLength + textSize >= m_textBufferSize) {
     return;
   }
   for (int k = m_currentTextLength; k >= location && k >= 0; k--) {

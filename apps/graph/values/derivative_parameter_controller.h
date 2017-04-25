@@ -23,11 +23,11 @@ public:
 
   void setFunction(CartesianFunction * function);
 private:
-  constexpr static int k_totalNumberOfCell = 2;
+  constexpr static int k_totalNumberOfCell = 1;//2;
   constexpr static int k_maxNumberOfCharsInTitle = 16;
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   MessageTableCell m_hideColumn;
-  MessageTableCellWithChevron m_copyColumn;
+//  MessageTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
   CartesianFunction * m_function;
   ValuesController * m_valuesController;

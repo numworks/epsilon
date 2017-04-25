@@ -262,6 +262,11 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
+  /* Temporary: the sequence value controller does not have a function parameter
+   * controller yet but it shoult come soon. */
+  if (functionParameterController() == nullptr) {
+    return;
+  }
   functionParameterController()->setFunction(functionAtColumn(selectableTableView()->selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());

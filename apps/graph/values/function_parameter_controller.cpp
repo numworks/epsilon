@@ -32,8 +32,9 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
         m_selectableTableView.reloadData();
         return true;
       }
-      case 1:
-        return false;
+      /* TODO: implement copy column
+       * case 1:
+        return false;*/
       default:
         assert(false);
         return false;
@@ -49,7 +50,7 @@ int FunctionParameterController::numberOfRows() {
 HighlightCell * FunctionParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
+  HighlightCell * cells[] = {&m_displayDerivativeColumn}; // {&m_displayDerivativeColumn, &m_copyColumn};
   return cells[index];
 }
 

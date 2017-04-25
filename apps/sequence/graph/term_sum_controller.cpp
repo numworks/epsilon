@@ -78,7 +78,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
   }
   if (event.hasText() && event.text()[0] >= '0' && event.text()[0] <= '9') {
     m_bufferCursorPosition = 10*m_bufferCursorPosition + event.text()[0]-'0';
-    if (m_step > 0 && m_bufferCursorPosition < m_cursor->x()) {
+    if (m_step > 0 && m_bufferCursorPosition < m_startSum) {
       return false;
     }
     if (moveCursorHorizontallyToPosition(m_bufferCursorPosition)) {

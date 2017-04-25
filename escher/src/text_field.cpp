@@ -364,7 +364,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Paste) {
-    setEditing(true);
+    if (!isEditing()) {
+      setEditing(true);
+    }
     int nextCursorLocation = textLength();
     if (insertTextAtLocation(Clipboard::sharedClipboard()->storedText(), cursorLocation())) {
       nextCursorLocation = cursorLocation() + strlen(Clipboard::sharedClipboard()->storedText());

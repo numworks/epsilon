@@ -21,7 +21,6 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;
-  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -51,7 +50,6 @@ private:
   constexpr static int k_maxNumberOfCells = 2;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_menuListCell[k_maxNumberOfCells];
-  float m_previousParameters[k_maxNumberOfCells];
   Law * m_law;
   CalculationController m_calculationController;
 };

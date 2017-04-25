@@ -16,13 +16,6 @@ const char * HistogramParameterController::title() {
   return I18n::translate(I18n::Message::HistogramSet);
 }
 
-void HistogramParameterController::viewWillAppear() {
-  for (int i = 0; i < k_numberOfCells; i++) {
-    m_previousParameters[i] = parameterAtIndex(i);
-  }
-  FloatParameterController::viewWillAppear();
-}
-
 int HistogramParameterController::numberOfRows() {
   return 1+k_numberOfCells;
 }
@@ -52,10 +45,6 @@ float HistogramParameterController::parameterAtIndex(int index) {
     return m_store->barWidth();
   }
   return m_store->firstDrawnBarAbscissa();
-}
-
-float HistogramParameterController::previousParameterAtIndex(int index) {
-  return m_previousParameters[index];
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {

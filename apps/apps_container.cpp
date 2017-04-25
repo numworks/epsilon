@@ -60,6 +60,7 @@ App * AppsContainer::hardwareTestApp() {
 }
 
 void AppsContainer::reset() {
+  Clipboard::sharedClipboard()->reset();
   for (int i = 0; i < numberOfApps(); i++) {
     ((ResettableApp *)appAtIndex(i))->reset();
   }

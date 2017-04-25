@@ -99,6 +99,16 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %type <listData> lstData;
 %type <matrixData> mtxData;
 
+/* During error recovery, some symbols need to be discarded. We need to tell
+ * Bison how to get rid of them. Depending on the type of the symbol, it may
+ * have some heap-allocated data that need to be discarded. */
+
+%destructor { delete $$; } FUNCTION
+%destructor { delete $$; } UNDEFINED exp number
+%destructor { delete $$; } lstData
+%destructor { delete $$; } mtxData
+%destructor { delete $$; } symb
+
 %%
 
 Root:

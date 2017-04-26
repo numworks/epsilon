@@ -1,15 +1,6 @@
 #include <stdint.h>
 #include <ion.h>
 
-void Ion::Display::pushRect(KDRect r, const KDColor * pixels) {
-}
-
-void Ion::Display::pushRectUniform(KDRect r, KDColor c) {
-}
-
-void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
-}
-
 bool Ion::USB::isPlugged() {
   return false;
 }
@@ -22,7 +13,4 @@ const char * Ion::serialNumber() {
 }
 
 void Ion::LED::setColor(KDColor) {
-}
-
-void Ion::Display::waitForVBlank() {
 }

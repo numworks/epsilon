@@ -7,7 +7,7 @@ DEBUG ?= 1
 # Do not edit below this
 
 ifeq ($(DEBUG),1)
-OPTIM_SFLAGS ?= -O0
+OPTIM_SFLAGS ?= -O0 -g
 else
 OPTIM_SFLAGS ?= -Os
 endif

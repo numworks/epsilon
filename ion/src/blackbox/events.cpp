@@ -19,7 +19,7 @@ Ion::Events::Event Ion::Events::getEvent(int * timeout) {
   if (sEventCount++ > sLogAfterNumberOfEvents && sLogAfterNumberOfEvents >= 0) {
     char filename[32];
     sprintf(filename, "event%d.png", sEventCount);
-    Ion::Display::Blackbox::writeFramebufferToFile(filename);
+    Ion::Display::Blackbox::writeFrameBufferToFile(filename);
     printf("Event %d is %s\n", sEventCount, event.name());
   }
   return event;

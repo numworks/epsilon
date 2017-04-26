@@ -107,7 +107,7 @@ int Matrix::numberOfColumns() const {
 }
 
 int Matrix::writeTextInBuffer(char * buffer, int bufferSize) {
-  buffer[bufferSize] = 0;
+  buffer[bufferSize-1] = 0;
   int currentChar = 0;
   if (currentChar >= bufferSize) {
     return 0;

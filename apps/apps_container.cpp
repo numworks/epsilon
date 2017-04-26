@@ -92,6 +92,9 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   m_backlightDimmingTimer.reset();
   m_suspendTimer.reset();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+
+  bool alphaLockWantsRedraw = m_window.updateAlphaLock();
+
   // Home and Power buttons are not sent to apps. We handle them straight away.
   if (event == Ion::Events::Home && activeApp() != &m_hardwareTestApp) {
     switchTo(appAtIndex(0));
@@ -104,6 +107,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool didProcessEvent = Container::dispatchEvent(event);
   if (!didProcessEvent && event == Ion::Events::Back) {
     switchTo(appAtIndex(0));
+    return true;
+  }
+  if (!didProcessEvent && alphaLockWantsRedraw) {
+    window()->redraw();
     return true;
   }
   return didProcessEvent;

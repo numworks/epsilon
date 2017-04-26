@@ -97,7 +97,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %type <expression> number;
 %type <symbol> symb;
 %type <listData> lstData;
-%type <matrixData> mtxData;
+/*%type <matrixData> mtxData;*/
 
 /* During error recovery, some symbols need to be discarded. We need to tell
  * Bison how to get rid of them. Depending on the type of the symbol, it may
@@ -106,7 +106,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %destructor { delete $$; } FUNCTION
 %destructor { delete $$; } UNDEFINED exp number
 %destructor { delete $$; } lstData
-%destructor { delete $$; } mtxData
+/*%destructor { delete $$; } mtxData*/
 %destructor { delete $$; } symb
 
 %%
@@ -123,9 +123,9 @@ lstData:
   exp { $$ = new Poincare::ListData($1); }
   | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
 
-mtxData:
+/* mtxData:
   LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, true); delete $2; }
-  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3, true); delete $3; }
+  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3, true); delete $3; }*/
 
 number:
   DIGITS { $$ = new Poincare::Integer($1.address, false); }
@@ -155,7 +155,7 @@ exp:
   | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
   | MINUS exp        { $$ = new Poincare::Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
-  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }
+/*  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }*/
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
 ;
 

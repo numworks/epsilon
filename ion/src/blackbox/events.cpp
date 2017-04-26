@@ -25,6 +25,22 @@ Ion::Events::Event Ion::Events::getEvent(int * timeout) {
   return event;
 }
 
+bool isShiftActive() {
+  return false;
+}
+
+bool isAlphaActive() {
+  return false;
+}
+
+bool isAlphaLocked() {
+  return false;
+}
+
+bool isShiftAlphaLocked() {
+  return false;
+}
+
 namespace Blackbox {
 
 void dumpEventCount(int i) {

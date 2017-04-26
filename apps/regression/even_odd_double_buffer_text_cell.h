@@ -6,6 +6,8 @@
 class EvenOddDoubleBufferTextCell : public EvenOddCell, public Responder{
 public:
   EvenOddDoubleBufferTextCell(Responder * parentResponder = nullptr);
+  const char * firstText();
+  const char * secondText();
   void reloadCell() override;
   void setHighlighted(bool highlight) override;
   void setEven(bool even) override;

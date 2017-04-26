@@ -8,7 +8,7 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
   m_functionStore(functionStore),
-  m_colorCell(MessageTableCellWithChevron(functionColorMessage)),
+  //m_colorCell(MessageTableCellWithChevron(functionColorMessage)),
   m_enableCell(MessageTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
   m_deleteCell(MessageTableCell(deleteFunctionMessage))
 {
@@ -58,7 +58,7 @@ int ListParameterController::numberOfRows() {
 HighlightCell * ListParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
+  HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};//{&m_colorCell, &m_enableCell, &m_deleteCell};
   return cells[index];
 }
 
@@ -72,13 +72,12 @@ KDCoordinate ListParameterController::cellHeight() {
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
   switch (rowIndex) {
-    case 0:
-      return true;
-    case 1:
+    /* TODO: implement function color choice */
+    case 0://1:
       m_function->setActive(!m_function->isActive());
       m_selectableTableView.reloadData();
       return true;
-    case 2:
+    case 1://2:
     {
       if (m_functionStore->numberOfFunctions() > 1) {
         m_functionStore->removeFunction(m_function);

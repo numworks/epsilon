@@ -12,7 +12,6 @@ public:
   IntervalParameterController(Responder * parentResponder, Interval * interval);
   Interval * interval();
   const char * title() override;
-  void viewWillAppear() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int numberOfRows() override;
   void unloadView() override;
@@ -23,12 +22,10 @@ protected:
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  float previousParameterAtIndex(int index) override;
   float parameterAtIndex(int index) override;
   View * createView() override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_intervalCells[k_totalNumberOfCell];
-  float m_previousParameters[k_totalNumberOfCell];
 };
 
 }

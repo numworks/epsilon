@@ -7,7 +7,7 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   ViewController(parentResponder),
   m_pageTitle(title),
   m_deleteColumn(MessageTableCell(I18n::Message::Default)),
-  m_copyColumn(MessageTableCellWithChevron(I18n::Message::Default)),
+  //m_copyColumn(MessageTableCellWithChevron(I18n::Message::Default)),
   m_setInterval(MessageTableCellWithChevron(I18n::Message::Default)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
@@ -25,7 +25,7 @@ View * ValuesParameterController::view() {
 
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
+  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::IntervalSet};// {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
   myCell->setMessage(labels[index]);
 }
 
@@ -47,9 +47,11 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
         stack->pop();
         return true;
       }
-      case 1:
+      /* TODO: implement copy column
+       * case 1:
         return false;
-      case 2:
+        */
+      case 1:
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->push(m_intervalParameterController);
@@ -70,7 +72,7 @@ int ValuesParameterController::numberOfRows() {
 HighlightCell * ValuesParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_deleteColumn, &m_copyColumn, &m_setInterval};
+  HighlightCell * cells[] = {&m_deleteColumn, &m_setInterval}; //{&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
 }
 

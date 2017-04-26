@@ -33,7 +33,8 @@ void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
 
 bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
-    if (m_currentPage == Page::RootMenu) {
+    /* TODO: implement matrix and list contexts */
+    if (m_currentPage == Page::Scalar) {//if (m_currentPage == Page::RootMenu) {
       m_firstSelectedRow = 0;
       app()->dismissModalViewController();
       return true;
@@ -228,7 +229,8 @@ void VariableBoxController::ContentViewController::reloadData() {
 }
 
 void VariableBoxController::ContentViewController::resetPage() {
-  m_currentPage = Page::RootMenu;
+  /* TODO: implement matrix and list contexts */
+  m_currentPage = Page::Scalar;//Page::RootMenu;
 }
 
 void VariableBoxController::ContentViewController::deselectTable() {

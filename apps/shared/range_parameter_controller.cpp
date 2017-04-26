@@ -17,15 +17,6 @@ const char * RangeParameterController::title() {
   return I18n::translate(I18n::Message::Axis);
 }
 
-void RangeParameterController::viewWillAppear() {
-  for (int i = 0; i < k_numberOfTextCell; i++) {
-    int index = i > 2 ? i + 1 : i;
-    m_previousParameters[i] = parameterAtIndex(index);
-  }
-  m_previousSwitchState = m_interactiveRange->yAuto();
-  FloatParameterController::viewWillAppear();
-}
-
 int RangeParameterController::numberOfRows() {
   return k_numberOfTextCell+2;
 }
@@ -96,15 +87,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     selectableTableView()->reloadData();
     return true;
   }
-  if (event == Ion::Events::Back) {
-    m_interactiveRange->setYAuto(m_previousSwitchState);
-  }
   return FloatParameterController::handleEvent(event);
-}
-
-float RangeParameterController::previousParameterAtIndex(int parameterIndex) {
-  int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
-  return m_previousParameters[index];
 }
 
 float RangeParameterController::parameterAtIndex(int parameterIndex) {

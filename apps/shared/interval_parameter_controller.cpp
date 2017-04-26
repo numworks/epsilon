@@ -13,13 +13,6 @@ const char * IntervalParameterController::title() {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 
-void IntervalParameterController::viewWillAppear() {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_previousParameters[i] = parameterAtIndex(i);
-  }
-  FloatParameterController::viewWillAppear();
-}
-
 int IntervalParameterController::numberOfRows() {
   return k_totalNumberOfCell+1;
 }
@@ -45,11 +38,6 @@ void IntervalParameterController::unloadView() {
     m_intervalCells[i] = nullptr;
   }
   FloatParameterController::unloadView();
-}
-
-float IntervalParameterController::previousParameterAtIndex(int index) {
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  return m_previousParameters[index];
 }
 
 float IntervalParameterController::parameterAtIndex(int index) {

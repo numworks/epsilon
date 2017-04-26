@@ -75,6 +75,11 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (selectableTableView()->selectedRow() == -1) {
     return header()->handleEvent(event);
   }
+  if (event == Ion::Events::Copy && selectableTableView()->selectedRow() > 0 && selectableTableView()->selectedColumn() > 0) {
+    EvenOddBufferTextCell * cell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
+    Clipboard::sharedClipboard()->store(cell->text());
+    return true;
+  }
   return false;
 }
 
@@ -257,6 +262,11 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
+  /* Temporary: the sequence value controller does not have a function parameter
+   * controller yet but it shoult come soon. */
+  if (functionParameterController() == nullptr) {
+    return;
+  }
   functionParameterController()->setFunction(functionAtColumn(selectableTableView()->selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());

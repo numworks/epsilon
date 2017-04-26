@@ -5,7 +5,8 @@ namespace Ion {
 namespace Display {
 namespace Blackbox {
 
-void writeFramebufferToFile(const char * filename);
+void setFrameBufferActive(bool enabled);
+void writeFrameBufferToFile(const char * filename);
 
 }
 }

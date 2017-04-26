@@ -7,19 +7,26 @@
 namespace Ion {
 namespace Display {
 
+static bool sFrameBufferActive = false;
 static KDColor sPixels[Ion::Display::Width*Ion::Display::Height];
 static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Ion::Display::Width, Ion::Display::Height));
 
 void pushRect(KDRect r, const KDColor * pixels) {
-  sFrameBuffer.pushRect(r, pixels);
+  if (sFrameBufferActive) {
+    sFrameBuffer.pushRect(r, pixels);
+  }
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
-  sFrameBuffer.pushRectUniform(r, c);
+  if (sFrameBufferActive) {
+    sFrameBuffer.pushRectUniform(r, c);
+  }
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
-  sFrameBuffer.pullRect(r, pixels);
+  if (sFrameBufferActive) {
+    sFrameBuffer.pullRect(r, pixels);
+  }
 }
 
 void waitForVBlank() {
@@ -32,13 +39,17 @@ namespace Ion {
 namespace Display {
 namespace Blackbox {
 
+void setFrameBufferActive(bool enabled) {
+  sFrameBufferActive = enabled;
+}
+
 typedef struct {
   uint8_t red;
   uint8_t green;
   uint8_t blue;
 } pixel_t;
 
-void writeFramebufferToFile(const char * filename) {
+void writeFrameBufferToFile(const char * filename) {
   FILE * file = fopen(filename, "wb"); // Write in binary mode
   //ENSURE(file != NULL, "Opening file %s", filename);
 

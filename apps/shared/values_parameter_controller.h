@@ -19,10 +19,11 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  constexpr static int k_totalNumberOfCell = 3;
+  constexpr static int k_totalNumberOfCell = 2;//3;
   I18n::Message m_pageTitle;
   MessageTableCell m_deleteColumn;
-  MessageTableCellWithChevron m_copyColumn;
+  /* TODO: implement copy column */
+  //MessageTableCellWithChevron m_copyColumn;
   MessageTableCellWithChevron m_setInterval;
   SelectableTableView m_selectableTableView;
   IntervalParameterController * m_intervalParameterController;

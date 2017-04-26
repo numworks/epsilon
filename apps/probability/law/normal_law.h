@@ -20,9 +20,11 @@ public:
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
   bool authorizedValueAtIndex(float x, int index) const override;
+  void setParameterAtIndex(float f, int index) override;
   float cumulativeDistributiveFunctionAtAbscissa(float x) const override;
   float cumulativeDistributiveInverseForProbability(float * probability) override;
 private:
+  constexpr static float k_maxRatioMuSigma = 1000.0f;
   /* Waissi & Rossin constants */
   constexpr static float k_beta1 = -0.0004406f;
   constexpr static float k_beta2 = 0.0418198f;

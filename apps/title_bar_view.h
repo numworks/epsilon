@@ -14,7 +14,7 @@ public:
   bool setIsCharging(bool isCharging);
   void refreshPreferences();
 private:
-  constexpr static KDCoordinate k_batteryLeftMargin = 5;
+  constexpr static KDCoordinate k_batteryRightMargin = 5;
   constexpr static KDCoordinate k_preferenceMargin = 3;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;

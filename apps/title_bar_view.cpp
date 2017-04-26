@@ -60,7 +60,7 @@ void TitleBarView::layoutSubviews() {
   m_titleView.setFrame(KDRect(0, 2, bounds().width(), bounds().height()-2));
   m_preferenceView.setFrame(KDRect(k_preferenceMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
-  m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryLeftMargin, (bounds().height()- batterySize.height())/2, batterySize));
+  m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryRightMargin, (bounds().height()- batterySize.height())/2, batterySize));
   if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {

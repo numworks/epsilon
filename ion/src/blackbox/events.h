@@ -1,3 +1,6 @@
+#ifndef ION_BLACKBOX_EVENT_H
+#define ION_BLACKBOX_EVENT_H
+
 namespace Ion {
 namespace Events {
 namespace Blackbox {
@@ -8,3 +11,5 @@ void dumpEventCount(int i);
 }
 }
 }
+
+#endif

@@ -294,7 +294,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
       return;
     }
     float y = evaluateModelWithParameter(curve, x);
-    if (isnan(y)) {
+    if (isnan(y)|| isinf(y)) {
       continue;
     }
     float pxf = floatToPixel(Axis::Horizontal, x);

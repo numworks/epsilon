@@ -107,6 +107,18 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(editController);
     return true;
   }
+  if (event == Ion::Events::Copy) {
+    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
+    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    int focusRow = selectableTableView()->selectedRow();
+    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+    if (subviewType == HistoryViewCell::SubviewType::Input) {
+      Clipboard::sharedClipboard()->store(calculation->inputText());
+    } else {
+      Clipboard::sharedClipboard()->store(calculation->outputText());
+    }
+    return true;
+  }
   return false;
 }
 

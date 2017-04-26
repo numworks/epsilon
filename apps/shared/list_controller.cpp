@@ -220,12 +220,17 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if ((event.hasText() || event == Ion::Events::XNT)
+  if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste)
       && selectableTableView()->selectedColumn() == 1
       && (selectableTableView()->selectedRow() != numberOfRows() - 1
          || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
     editExpression(function, event);
+    return true;
+  }
+  if (event == Ion::Events::Copy && selectableTableView()->selectedColumn() == 1 &&
+      (selectableTableView()->selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
+    Clipboard::sharedClipboard()->store(textForRow(selectableTableView()->selectedRow()));
     return true;
   }
   return false;
@@ -285,6 +290,11 @@ TabViewController * ListController::tabController() const{
 
 int ListController::functionIndexForRow(int j) {
   return j;
+}
+
+const char * ListController::textForRow(int j) {
+  Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(j));
+  return function->text();
 }
 
 void ListController::addEmptyFunction() {

@@ -11,6 +11,7 @@ include apps/statistics/Makefile
 #include apps/picview/Makefile
 
 app_objs += $(addprefix apps/,\
+  alpha_lock_view.o\
   apps_container.o\
   apps_window.o\
   battery_timer.o\
@@ -22,6 +23,7 @@ app_objs += $(addprefix apps/,\
   global_preferences.o\
   i18n.o\
   led_timer.o\
+  lock_view.o\
   main.o\
   math_toolbox.o\
   node.o\

@@ -11,6 +11,7 @@ public:
   bool updateBatteryLevel();
   bool updateIsChargingState();
   void refreshPreferences();
+  bool updateAlphaLock();
 private:
   constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;

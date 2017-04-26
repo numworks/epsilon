@@ -1,0 +1,14 @@
+#ifndef ION_BLACKBOX_DISPLAY_H
+#define ION_BLACKBOX_DISPLAY_H
+
+namespace Ion {
+namespace Display {
+namespace Blackbox {
+
+void writeFramebufferToFile(const char * filename);
+
+}
+}
+}
+
+#endif

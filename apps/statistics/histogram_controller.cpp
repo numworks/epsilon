@@ -91,6 +91,7 @@ void HistogramController::didBecomeFirstResponder() {
   if (m_rangeVersion != rangeChecksum) {
     m_rangeVersion = rangeChecksum;
     initBarSelection();
+    reloadBannerView();
   }
   if (!m_view.isMainViewSelected()) {
     header()->setSelectedButton(0);

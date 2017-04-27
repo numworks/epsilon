@@ -37,6 +37,7 @@ public:
   float median();
   float sum();
   float squaredValueSum();
+  constexpr static int k_maxNumberOfBars = 10000.0f;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
   constexpr static float k_displayBottomMarginRatio = 0.4f;

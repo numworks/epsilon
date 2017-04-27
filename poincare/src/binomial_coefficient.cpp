@@ -32,7 +32,7 @@ float BinomialCoefficient::privateApproximate(Context& context, AngleUnit angleU
   assert(angleUnit != AngleUnit::Default);
   float n = m_args[0]->approximate(context, angleUnit);
   float k = m_args[1]->approximate(context, angleUnit);
-  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || k > n) {
+  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || k > n || k < 0.0f || n < 0.0f) {
     return NAN;
   }
   float result = 1.0f;

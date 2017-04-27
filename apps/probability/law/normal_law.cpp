@@ -76,7 +76,20 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
 }
 
 bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
+  if (index == 0) {
+    return true;
+  }
+  if (x <= 0 || fabsf(m_parameter1/x) > k_maxRatioMuSigma) {
+    return false;
+  }
   return true;
+}
+
+void NormalLaw::setParameterAtIndex(float f, int index) {
+  TwoParameterLaw::setParameterAtIndex(f, index);
+  if (index == 0 && fabsf(m_parameter1/m_parameter2) > k_maxRatioMuSigma) {
+    m_parameter2 = m_parameter1/k_maxRatioMuSigma;
+  }
 }
 
 float NormalLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {

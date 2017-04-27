@@ -34,8 +34,12 @@ bool TitleBarView::setIsCharging(bool isCharging) {
   return m_batteryView.setIsCharging(isCharging);
 }
 
+bool TitleBarView::setAlphaLockStatus(AlphaLockView::Status status) {
+  return m_alphaLockView.setStatus(status);
+}
+
 int TitleBarView::numberOfSubviews() const {
-  return 4;
+  return 5;
 }
 
 View * TitleBarView::subviewAtIndex(int index) {
@@ -47,6 +51,9 @@ View * TitleBarView::subviewAtIndex(int index) {
   }
   if (index == 2) {
     return &m_examModeIconView;
+  }
+  if (index == 3) {
+    return &m_alphaLockView;
   }
   return &m_batteryView;
 }
@@ -66,6 +73,8 @@ void TitleBarView::layoutSubviews() {
   } else {
     m_examModeIconView.setFrame(KDRectZero);
   }
+  KDSize alphaLockSize = m_alphaLockView.minimalSizeForOptimalDisplay();
+  m_alphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_batteryRightMargin-k_alphaRightMargin-alphaLockSize.width(), (bounds().height()- alphaLockSize.height())/2, alphaLockSize));
 }
 
 void TitleBarView::refreshPreferences() {

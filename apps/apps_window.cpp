@@ -25,6 +25,22 @@ void AppsWindow::refreshPreferences() {
   m_titleBarView.refreshPreferences();
 }
 
+bool AppsWindow::updateAlphaLock() {
+  AlphaLockView::Status alphaLockStatus = AlphaLockView::Status::Default;
+  if (Ion::Events::isAlphaLocked()) {
+    alphaLockStatus = AlphaLockView::Status::AlphaLock;
+  } else if (Ion::Events::isShiftAlphaLocked()) {
+    alphaLockStatus = AlphaLockView::Status::CapitalAlphaLock;
+  } else if (Ion::Events::isAlphaActive()) {
+    if (Ion::Events::isShiftActive()) {
+      alphaLockStatus = AlphaLockView::Status::CapitalAlpha;
+    } else {
+      alphaLockStatus = AlphaLockView::Status::Alpha;
+    }
+  }
+  return m_titleBarView.setAlphaLockStatus(alphaLockStatus);
+}
+
 int AppsWindow::numberOfSubviews() const {
   return (m_contentView == nullptr ? 1 : 2);
 }

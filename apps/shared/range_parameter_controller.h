@@ -29,7 +29,6 @@ private:
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_rangeCells[k_numberOfTextCell];
   MessageTableCellWithSwitch * m_yAutoCell;
-  bool m_previousSwitchState;
 };
 
 }

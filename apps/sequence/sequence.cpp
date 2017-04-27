@@ -272,7 +272,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
 
 float Sequence::sumOfTermsBetweenAbscissa(float start, float end, Context * context) {
   float result = 0.0f;
-  if (end-start > k_maxNumberOfTermsInSum) {
+  if (end-start > k_maxNumberOfTermsInSum || start + 1.0f == start) {
     return NAN;
   }
   for (float i = roundf(start); i <= roundf(end); i = i + 1.0f) {

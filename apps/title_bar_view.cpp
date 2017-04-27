@@ -16,6 +16,12 @@ TitleBarView::TitleBarView() :
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
 
+void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
+  /* As we cheated to layout the title view, we have to fill a very thin
+   * rectangle at the top with the background color. */
+  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::YellowDark);
+}
+
 void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
 }
@@ -46,8 +52,13 @@ View * TitleBarView::subviewAtIndex(int index) {
 }
 
 void TitleBarView::layoutSubviews() {
-  m_titleView.setFrame(bounds());
-  m_preferenceView.setFrame(KDRect(0, 0, m_preferenceView.minimalSizeForOptimalDisplay()));
+  /* We here cheat to layout the main title. The application title is written
+   * with upper cases. But, as upper letters are on the same baseline as lower
+   * letters, they seem to be slightly above when they are perferctly centered
+   * (because their glyph never cross the baseline). To avoid this effect, we
+   * translate the frame of the title downwards.*/
+  m_titleView.setFrame(KDRect(0, 2, bounds().width(), bounds().height()-2));
+  m_preferenceView.setFrame(KDRect(k_preferenceMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryLeftMargin, (bounds().height()- batterySize.height())/2, batterySize));
   if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {

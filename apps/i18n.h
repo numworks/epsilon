@@ -239,6 +239,8 @@ namespace I18n {
 
     /* UNIVERSAL MESSAGES */
     Default = 0x8000,
+    Alpha,
+    CapitalAlpha,
     X,
     Y,
     N,

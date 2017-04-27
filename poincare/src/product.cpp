@@ -35,8 +35,11 @@ float Product::privateApproximate(Context& context, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
   VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
-  int start = m_args[1]->approximate(context, angleUnit);
-  int end = m_args[2]->approximate(context, angleUnit);
+  float start = m_args[1]->approximate(context, angleUnit);
+  float end = m_args[2]->approximate(context, angleUnit);
+  if (start != (int)start || end != (int)end) {
+    return NAN;
+  }
   float result = 1.0f;
   for (int i = start; i <= end; i++) {
     Complex iExpression = Complex::Float(i);

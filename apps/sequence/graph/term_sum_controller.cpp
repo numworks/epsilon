@@ -238,7 +238,7 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
   const char sigma[2] = {Ion::Charset::CapitalSigma, 0};
   char bufferStart[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(start, bufferStart, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  char bufferEnd[Complex::bufferSizeForFloatsWithPrecision(1)];
+  char bufferEnd[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(end, bufferEnd, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 1), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);

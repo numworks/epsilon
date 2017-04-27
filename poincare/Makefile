@@ -61,6 +61,7 @@ objs += $(addprefix poincare/src/,\
   product.o\
   reel_part.o\
   round.o\
+  sequence.o\
   sine.o\
   square_root.o\
   store.o\

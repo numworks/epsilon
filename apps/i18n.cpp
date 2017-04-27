@@ -277,7 +277,7 @@ constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Io
 
 const char * universalMessages[202] {
   "",
-  "Alpha",
+  "alpha",
   "ALPHA",
   "x",
   "y",

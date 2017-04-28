@@ -135,7 +135,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   for (float x = start; x < end; x += 2.0f*step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
-    if (x == x-step) {
+    if (x == x-step || x == x+step) {
       return;
     }
     KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
@@ -231,7 +231,7 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
   for (float x =start; x < max(axis); x += step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
-    if (x == x-step) {
+    if (x == x-step || x == x+step) {
       return;
     }
     if (rectMin <= x && x <= rectMax) {
@@ -290,7 +290,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
   for (float x = rectMin; x < rectMax; x += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
-    if (x == x-xStep) {
+    if (x == x-xStep || x == x+xStep) {
       return;
     }
     float y = evaluateModelWithParameter(curve, x);
@@ -331,7 +331,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
     /* When |rectMinLowerBound| >> barWidth, rectMinLowerBound + barWidth = rectMinLowerBound.
      * In that case, quit the infinite loop. */
-    if (x == x-barWidth) {
+    if (x == x-barWidth || x == x+barWidth) {
       return;
     }
     float centerX = fillBar ? x+barWidth/2.0f : x;

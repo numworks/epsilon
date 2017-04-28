@@ -3,13 +3,12 @@
 
 #include <escher.h>
 #include "keyboard_controller.h"
-#include "../shared/resettable_app.h"
 
 class AppsContainer;
 
 namespace HardwareTest {
 
-class App : public Shared::ResettableApp {
+  class App : public ::App {
 public:
   App(AppsContainer * container);
 private:

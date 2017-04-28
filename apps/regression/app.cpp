@@ -23,8 +23,4 @@ App::App(Container * container) :
 {
 }
 
-void App::reset() {
-  m_store.deleteAllPairs();
-}
-
 }

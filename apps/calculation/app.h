@@ -13,7 +13,6 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   App(Container * container, Poincare::Context * context);
   Poincare::Context * localContext() override;
-  void reset() override;
 private:
   LocalContext m_localContext;
   CalculationStore m_calculationStore;

@@ -2,13 +2,14 @@
 #define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
 #include <poincare.h>
-#include "resettable_app.h"
+#include <escher.h>
+#include "../i18n.h"
 
 class AppsContainer;
 
 namespace Shared {
 
-class TextFieldDelegateApp : public ResettableApp, public TextFieldDelegate {
+class TextFieldDelegateApp : public ::App, public TextFieldDelegate {
 public:
   TextFieldDelegateApp(Container * container, ViewController * rootViewController, I18n::Message name = (I18n::Message)0, I18n::Message upperName = (I18n::Message)0, const Image * icon = nullptr);
   virtual Poincare::Context * localContext();

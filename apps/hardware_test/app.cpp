@@ -8,7 +8,7 @@ extern "C" {
 namespace HardwareTest {
 
 App::App(AppsContainer * container) :
-  Shared::ResettableApp(container, &m_keyboardController),
+  ::App(container, &m_keyboardController),
   m_keyboardController(KeyboardController(&m_modalViewController))
 {
 }

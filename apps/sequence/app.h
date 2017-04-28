@@ -17,7 +17,6 @@ public:
   App(Container * container, Poincare::Context * context);
   InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;
-  void reset() override;
   const char * XNT() override;
 private:
   SequenceStore m_sequenceStore;

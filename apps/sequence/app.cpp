@@ -37,10 +37,6 @@ Context * App::localContext() {
   return TextFieldDelegateApp::localContext();
 }
 
-void App::reset() {
-  m_sequenceStore.removeAll();
-}
-
 const char * App::XNT() {
   return "n";
 }

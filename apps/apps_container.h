@@ -29,7 +29,7 @@
 class AppsContainer : public Container {
 public:
   AppsContainer();
-
+  static bool poincareCircuitBreaker(const Poincare::Expression * e);
   int numberOfApps();
   App * appAtIndex(int index);
   App * hardwareTestApp();

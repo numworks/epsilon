@@ -33,6 +33,12 @@ AppsContainer::AppsContainer() :
 {
   refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+}
+
+bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
+  Ion::Keyboard::State state = Ion::Keyboard::scan();
+  return Ion::Keyboard::keyDown(Ion::Keyboard::Key::A6, state);
 }
 
 int AppsContainer::numberOfApps() {

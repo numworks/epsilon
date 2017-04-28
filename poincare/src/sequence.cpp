@@ -28,6 +28,9 @@ float Sequence::privateApproximate(Context& context, AngleUnit angleUnit) const 
   }
   float result = emptySequenceValue();
   for (int i = start; i <= end; i++) {
+    if (shouldStopProcessing()) {
+      return NAN;
+    }
     Complex iExpression = Complex::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
     result = approximateWithNextTerm(result, m_args[0]->approximate(nContext, angleUnit));
@@ -55,6 +58,10 @@ Expression * Sequence::privateEvaluate(Context& context, AngleUnit angleUnit) co
   Symbol nSymbol = Symbol('n');
   Expression * result = new Complex(Complex::Float(0.0f));
   for (int i = (int)start; i <= (int)end; i++) {
+    if (shouldStopProcessing()) {
+      delete result;
+      return new Complex(Complex::Float(NAN));
+    }
     Complex * iExpression = new Complex(Complex::Float(i));
     nContext.setExpressionForSymbolName(iExpression, &nSymbol);
     delete iExpression;

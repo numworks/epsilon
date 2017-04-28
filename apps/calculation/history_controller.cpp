@@ -36,7 +36,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK) {
-    int focusRow = selectableTableView()->selectedRow();
+    int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
@@ -51,7 +51,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::EXE) {
-    int focusRow = selectableTableView()->selectedRow();
+    int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
@@ -71,7 +71,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    int focusRow = selectableTableView()->selectedRow();
+    int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     selectableTableView()->deselectTable();
@@ -88,11 +88,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       selectableTableView()->selectCellAtLocation(0, 0);
     }
     if (subviewType == HistoryViewCell::SubviewType::Input) {
-      tableViewDidChangeSelection(selectableTableView(), 0, selectableTableView()->selectedRow());
+      tableViewDidChangeSelection(selectableTableView(), 0, selectedRow());
     } else {
       tableViewDidChangeSelection(selectableTableView(), 0, -1);
     }
-    selectableTableView()->scrollToCell(0, selectableTableView()->selectedRow());
+    selectableTableView()->scrollToCell(0, selectedRow());
     return true;
   }
   if (event == Ion::Events::Clear) {
@@ -110,7 +110,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy) {
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-    int focusRow = selectableTableView()->selectedRow();
+    int focusRow = selectedRow();
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       Clipboard::sharedClipboard()->store(calculation->inputText());
@@ -128,10 +128,10 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
     return;
   }
   selectedCell->setParentResponder(t);
-  if (selectableTableView()->selectedRow() < previousSelectedCellY) {
+  if (selectedRow() < previousSelectedCellY) {
     selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
   }
-  if (selectableTableView()->selectedRow() >= previousSelectedCellY) {
+  if (selectedRow() >= previousSelectedCellY) {
     selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Input);
   }
   if (previousSelectedCellY == -1) {

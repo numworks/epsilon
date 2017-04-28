@@ -28,7 +28,7 @@ void PredictionParameterController::didBecomeFirstResponder() {
 
 bool PredictionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_goToParameterController.setXPrediction(m_selectableTableView.selectedRow() == 0);
+    m_goToParameterController.setXPrediction(selectedRow() == 0);
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->push(&m_goToParameterController);
     return true;

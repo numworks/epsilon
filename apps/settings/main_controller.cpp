@@ -47,7 +47,7 @@ View * MainController::view() {
 }
 
 void MainController::didBecomeFirstResponder() {
-  if (m_selectableTableView.selectedRow() < 0) {
+  if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
   app()->setFirstResponder(&m_selectableTableView);
@@ -55,7 +55,7 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_subController.setNodeModel(m_nodeModel->children(m_selectableTableView.selectedRow()), m_selectableTableView.selectedRow());
+    m_subController.setNodeModel(m_nodeModel->children(selectedRow()), selectedRow());
     StackViewController * stack = stackController();
     stack->push(&m_subController);
     return true;

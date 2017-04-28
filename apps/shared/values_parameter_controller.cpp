@@ -36,7 +36,7 @@ void ValuesParameterController::didBecomeFirstResponder() {
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
       {
         Interval * interval = m_intervalParameterController->interval();

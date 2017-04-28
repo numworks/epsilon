@@ -8,7 +8,7 @@
  * where we are located. It enables to know which rows are leaves and which are
  * subtrees. */
 
-class MathToolbox : public Toolbox, public ListViewDataSource {
+class MathToolbox : public Toolbox, public ListViewDataSource, public SelectableTableViewDelegate {
 public:
   MathToolbox();
   void didBecomeFirstResponder() override;
@@ -53,7 +53,7 @@ private:
     constexpr static int k_maxModelTreeDepth = 2;
     State m_statesStack[k_maxModelTreeDepth];
   };
-  class ListController : public ViewController, public SelectableTableViewDelegate {
+  class ListController : public ViewController {
   public:
     ListController(Responder * parentResponder, SelectableTableView * tableView);
     const char * title() override;

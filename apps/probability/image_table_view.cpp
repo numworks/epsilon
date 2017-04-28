@@ -72,10 +72,10 @@ void ImageTableView::setCalculation(Calculation * calculation, int index) {
 void ImageTableView::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_isSelected = true;
-  if (m_selectableTableView.selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -86,7 +86,7 @@ void ImageTableView::willExitResponderChain(Responder * nextFirstResponder) {
 
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_calculationController->setCalculationAccordingToIndex(m_selectableTableView.selectedRow());
+    m_calculationController->setCalculationAccordingToIndex(selectedRow());
     select(false);
     setHighlight(true);
     m_selectableTableView.reloadData();

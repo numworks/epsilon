@@ -72,10 +72,10 @@ void Probability::LawController::didBecomeFirstResponder() {
     m_law = nullptr;
     m_parametersController.setLaw(m_law);
   }
-  if (m_selectableTableView.selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -83,7 +83,7 @@ void Probability::LawController::didBecomeFirstResponder() {
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     StackViewController * stack = (StackViewController *)parentResponder();
-    setLawAccordingToIndex(m_selectableTableView.selectedRow());
+    setLawAccordingToIndex(selectedRow());
     stack->push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     return true;
   }

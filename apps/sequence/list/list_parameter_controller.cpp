@@ -25,7 +25,7 @@ void ListParameterController::setFunction(Shared::Function * function) {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    int selectedRowIndex = m_selectableTableView.selectedRow();
+    int selectedRowIndex = selectedRow();
     switch (selectedRowIndex) {
       /*case 0:
         return handleEnterOnRow(selectedRowIndex);*/

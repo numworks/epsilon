@@ -24,10 +24,10 @@ View * ListParameterController::view() {
 
 void ListParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
-  if (m_selectableTableView.selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -46,7 +46,7 @@ void ListParameterController::setFunction(Function * function) {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    return handleEnterOnRow(m_selectableTableView.selectedRow());
+    return handleEnterOnRow(selectedRow());
   }
   return false;
 }

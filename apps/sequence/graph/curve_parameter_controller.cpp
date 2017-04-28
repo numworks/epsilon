@@ -20,7 +20,7 @@ const char * CurveParameterController::title() {
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
       {
         StackViewController * stack = (StackViewController *)parentResponder();

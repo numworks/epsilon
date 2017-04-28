@@ -197,7 +197,7 @@ void TextField::ContentView::layoutSubviews() {
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
     size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, KDText::FontSize size,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  ScrollableView(parentResponder, &m_contentView),
+  ScrollableView(parentResponder, &m_contentView, this),
   m_contentView(textBuffer, draftTextBuffer, textBufferSize, size,horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)

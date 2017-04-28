@@ -14,26 +14,26 @@ FloatParameterController::FloatParameterController(Responder * parentResponder) 
 }
 
 void FloatParameterController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() >= 0) {
-    int selectedRow = selectableTableView()->selectedRow();
-    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = selectableTableView()->selectedColumn();
-    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectCellAtLocation(selectedColumn, selectedRow);
+  if (selectedRow() >= 0) {
+    int selRow = selectedRow();
+    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
+    int selColumn = selectedColumn();
+    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selectCellAtLocation(selColumn, selRow);
   }
   app()->setFirstResponder(selectableTableView());
 }
 
 void FloatParameterController::viewWillAppear() {
   selectableTableView()->reloadData();
-  if (selectableTableView()->selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    int selectedRow = selectableTableView()->selectedRow();
-    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = selectableTableView()->selectedColumn();
-    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectCellAtLocation(selectedColumn, selectedRow);
+    int selRow = selectedRow();
+    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
+    int selColumn = selectedColumn();
+    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selectCellAtLocation(selColumn, selRow);
   }
 }
 
@@ -108,8 +108,8 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool FloatParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Down && selectableTableView()->selectedRow() < numberOfRows()-1)
-     || (event == Ion::Events::Up && selectableTableView()->selectedRow() > 0)
+  return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
+     || (event == Ion::Events::Up && selectedRow() > 0)
      || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
@@ -121,13 +121,13 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  if (!setParameterAtIndex(selectableTableView()->selectedRow(), floatBody)) {
+  if (!setParameterAtIndex(selectedRow(), floatBody)) {
     return false;
   }
   willDisplayCellForIndex(selectableTableView()->selectedCell(), activeCell());
   selectableTableView()->reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
   } else {
     selectableTableView()->handleEvent(event);
   }
@@ -166,7 +166,7 @@ TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
 }
 
 int FloatParameterController::activeCell() {
-  return selectableTableView()->selectedRow();
+  return selectedRow();
 }
 
 void FloatParameterController::unloadView() {

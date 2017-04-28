@@ -24,12 +24,11 @@ SequenceToolbox::~SequenceToolbox() {
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK && stackDepth() == 0) {
-    int selectedRow = m_selectableTableView.selectedRow();
-    if (selectedRow < m_numberOfAddedCells) {
-      return selectAddedCell(selectedRow);
+    if (selectedRow() < m_numberOfAddedCells) {
+      return selectAddedCell(selectedRow());
     }
   }
-  return MathToolbox::handleEventForRow(event, mathToolboxIndex(m_selectableTableView.selectedRow()));
+  return MathToolbox::handleEventForRow(event, mathToolboxIndex(selectedRow()));
 }
 
 int SequenceToolbox::numberOfRows() {

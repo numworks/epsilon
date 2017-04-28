@@ -23,8 +23,8 @@ const char * ListController::title() {
 
 Toolbox * ListController::toolboxForTextField(TextField * textField) {
   int recurrenceDepth = 0;
-  int sequenceDefinition = sequenceDefinitionForRow(selectableTableView()->selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
+  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -75,8 +75,8 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
 }
 
 void ListController::selectPreviousNewSequenceCell() {
-  if (sequenceDefinitionForRow(selectableTableView()->selectedRow()) >= 0) {
-    selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()-sequenceDefinitionForRow(selectableTableView()->selectedRow()));
+  if (sequenceDefinitionForRow(selectedRow()) >= 0) {
+    selectCellAtLocation(selectedColumn(), selectedRow()-sequenceDefinitionForRow(selectedRow()));
   }
 }
 
@@ -257,12 +257,12 @@ void ListController::addEmptyFunction() {
 
 void ListController::editExpression(Shared::Function * function, Ion::Events::Event event) {
   Sequence * sequence = (Sequence *)function;
-  editExpression(sequence, sequenceDefinitionForRow(selectableTableView()->selectedRow()), event);
+  editExpression(sequence, sequenceDefinitionForRow(selectedRow()), event);
 }
 
 void ListController::reinitExpression(Shared::Function * function) {
   Sequence * sequence = (Sequence *)function;
-  switch (sequenceDefinitionForRow(selectableTableView()->selectedRow())) {
+  switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
      sequence->setFirstInitialConditionContent("");
      break;

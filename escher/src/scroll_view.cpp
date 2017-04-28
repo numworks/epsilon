@@ -4,13 +4,13 @@ extern "C" {
 #include <assert.h>
 }
 
-ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate rightMargin,
+ScrollView::ScrollView(View * contentView, ScrollViewDelegate * delegate, KDCoordinate topMargin, KDCoordinate rightMargin,
   KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
   KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
   KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   View(),
   m_topMargin(topMargin),
-  m_offset(KDPointZero),
+  m_delegate(delegate),
   m_contentView(contentView),
   m_verticalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin)),
   m_horizontalScrollIndicator(ScrollViewIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin)),
@@ -22,6 +22,7 @@ ScrollView::ScrollView(View * contentView, KDCoordinate topMargin, KDCoordinate 
   m_colorBackground(colorBackground),
   m_backgroundColor(backgroundColor)
 {
+  assert(m_delegate != nullptr);
 }
 
 bool ScrollView::hasVerticalIndicator() const {
@@ -60,8 +61,8 @@ void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
   }
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate offsetX = m_offset.x();
-  KDCoordinate offsetY = m_offset.y();
+  KDCoordinate offsetX = contentOffset().x();
+  KDCoordinate offsetY = contentOffset().y();
   KDCoordinate contentHeight = m_contentView->bounds().height();
   KDCoordinate contentWidth = m_contentView->bounds().width();
   ctx->fillRect(KDRect(0, 0, width, m_topMargin-offsetY), m_backgroundColor);
@@ -74,7 +75,7 @@ void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
 void ScrollView::layoutSubviews() {
   // Layout contentView
   // We're only re-positionning the contentView, not modifying its size.
-  KDPoint absoluteOffset = m_offset.opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
+  KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
   KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
 
@@ -116,27 +117,26 @@ void ScrollView::layoutSubviews() {
 void ScrollView::updateScrollIndicator() {
   if (m_showIndicators) {
     float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-    float verticalStart = m_offset.y();
-    float verticalEnd = m_offset.y() + m_frame.height();
+    float verticalStart = contentOffset().y();
+    float verticalEnd = contentOffset().y() + m_frame.height();
     m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
     m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
     float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-    float horizontalStart = m_offset.x();
-    float horizontalEnd = m_offset.x() + m_frame.width();
+    float horizontalStart = contentOffset().x();
+    float horizontalEnd = contentOffset().x() + m_frame.width();
     m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
     m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
   }
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
-  if (offset != m_offset) {
-    m_offset = offset;
+  if (m_delegate->setOffset(offset)) {
     layoutSubviews();
   }
 }
 
-KDPoint ScrollView::contentOffset() {
-  return m_offset;
+KDPoint ScrollView::contentOffset() const {
+  return m_delegate->offset();
 }
 
 KDCoordinate ScrollView::topMargin() const {
@@ -162,6 +162,6 @@ const char * ScrollView::className() const {
 
 void ScrollView::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
-  os << " offset=\"" << (int)m_offset.x << "," << (int)m_offset.y << "\"";
+  os << " offset=\"" << (int)contentOffset().x << "," << (int)contentOffset().y << "\"";
 }
 #endif

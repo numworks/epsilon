@@ -31,7 +31,7 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::roundAbscissa,
       &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
-    (m_store->*rangeMethods[m_selectableTableView.selectedRow()])();
+    (m_store->*rangeMethods[selectedRow()])();
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
     return true;

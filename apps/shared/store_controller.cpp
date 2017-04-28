@@ -66,7 +66,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 }
 
 void StoreController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() < 0) {
+  if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
@@ -75,21 +75,21 @@ void StoreController::didBecomeFirstResponder() {
 bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    assert(selectableTableView()->selectedRow() == -1);
+    assert(selectedRow() == -1);
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::OK && selectableTableView()->selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(selectableTableView()->selectedColumn() == 0);
+  if (event == Ion::Events::OK && selectedRow() == 0) {
+    m_storeParameterController.selectXColumn(selectedColumn() == 0);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (selectableTableView()->selectedRow() == 0 || selectableTableView()->selectedRow() == numberOfRows()-1) {
+    if (selectedRow() == 0 || selectedRow() == numberOfRows()-1) {
       return false;
     }
-    m_store->deletePairAtIndex(selectableTableView()->selectedRow()-1);
+    m_store->deletePairAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }

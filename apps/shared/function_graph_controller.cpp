@@ -73,18 +73,21 @@ bool FunctionGraphController::didChangeRange(InteractiveCurveViewRange * interac
     return false;
   }
   if (min == max) {
-    min = min - 1;
-    max = max + 1;
+    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, max) : 1.0f;
+    min = min - step;
+    max = max + step;
   }
   if (min == FLT_MAX && max == -FLT_MAX) {
     min = -1.0f;
     max = 1.0f;
   }
   if (min == FLT_MAX) {
-    min = max-1.0f;
+    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(max)) : 1.0f;
+    min = max-step;
   }
    if (max == -FLT_MAX) {
-    max = min+1.0f;
+    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(min)) : 1.0f;
+    max = min+step;
   }
   interactiveCurveViewRange->setYMin(min-k_displayBottomMarginRatio*range);
   interactiveCurveViewRange->setYMax(max+k_displayTopMarginRatio*range);

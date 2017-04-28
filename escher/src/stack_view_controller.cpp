@@ -88,13 +88,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   pushModel(frame);
   if (m_numberOfChildren > 1) {
     m_childrenFrame[m_numberOfChildren-2].viewController()->viewDidDisappear();
-  /* The first added view controller is never unloaded because the view might
-   * record some usefull information (which should be store in a model ideally).
-   * And We do not to delete these information.
-   * TODO: better compartmentalize views and models to avoid this weird exception */
-  if (m_numberOfChildren > 2) {
     m_childrenFrame[m_numberOfChildren-2].viewController()->unloadView();
-  }
   }
   setupActiveViewController();
 }
@@ -117,10 +111,7 @@ void StackViewController::pushModel(Frame frame) {
 void StackViewController::setupActiveViewController() {
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   vc->setParentResponder(this);
-  /* Same comment as above (TODO) */
-  if (m_numberOfChildren > 1) {
-    vc->loadView();
-  }
+  vc->loadView();
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   vc->setParentResponder(this);

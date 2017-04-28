@@ -47,17 +47,17 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container)
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    m_container->switchTo(m_container->appAtIndex(m_view.selectableTableView()->selectedRow()*k_numberOfColumns+m_view.selectableTableView()->selectedColumn()+1));
+    m_container->switchTo(m_container->appAtIndex(selectedRow()*k_numberOfColumns+selectedColumn()+1));
     return true;
   }
   return false;
 }
 
 void Controller::didBecomeFirstResponder() {
-  if (m_view.selectableTableView()->selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(m_view.selectableTableView()->selectedColumn(), m_view.selectableTableView()->selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   app()->setFirstResponder(m_view.selectableTableView());
 }

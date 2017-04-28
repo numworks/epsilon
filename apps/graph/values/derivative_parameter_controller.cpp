@@ -41,7 +41,7 @@ void DerivativeParameterController::didBecomeFirstResponder() {
 
 bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
       {
         m_valuesController->selectCellAtLocation(m_valuesController->activeColumn()-1, m_valuesController->activeRow());

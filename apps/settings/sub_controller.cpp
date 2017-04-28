@@ -56,7 +56,7 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the serial number row. */
-  if (event == Ion::Events::Six && m_preferenceIndex == 5 && m_selectableTableView.selectedRow() == 1) {
+  if (event == Ion::Events::Six && m_preferenceIndex == 5 && selectedRow() == 1) {
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestApp());
     return true;
@@ -73,7 +73,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     }
     /* Behaviour of "About" menu */
     if (m_preferenceIndex == 5) {
-      if (m_selectableTableView.selectedRow() == 1) {
+      if (selectedRow() == 1) {
         return false;
       }
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
@@ -85,7 +85,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Generic behaviour of preference menu*/
-    setPreferenceAtIndexWithValueIndex(m_preferenceIndex, m_selectableTableView.selectedRow());
+    setPreferenceAtIndexWithValueIndex(m_preferenceIndex, selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
     StackViewController * stack = stackController();

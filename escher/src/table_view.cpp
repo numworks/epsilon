@@ -7,11 +7,11 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-TableView::TableView(TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin,
+TableView::TableView(TableViewDataSource * dataSource, ScrollViewDelegate * scrollDelegate, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin,
     KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
     KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
     KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  ScrollView(&m_contentView, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
+  ScrollView(&m_contentView, scrollDelegate, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
     backgroundColor, indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   m_contentView(TableView::ContentView(this, dataSource, horizontalCellOverlapping, verticalCellOverlapping))
 {

@@ -5,7 +5,7 @@
 
 namespace Calculation {
 
-class ScrollableExpressionView : public ScrollableView {
+class ScrollableExpressionView : public ScrollableView, public ScrollViewDelegate {
 public:
   ScrollableExpressionView(Responder * parentResponder);
   void setExpression(Poincare::ExpressionLayout * expressionLayout);

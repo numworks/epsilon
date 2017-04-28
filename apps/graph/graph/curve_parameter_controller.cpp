@@ -27,7 +27,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
         return true;
       case 1:

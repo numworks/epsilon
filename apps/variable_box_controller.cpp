@@ -46,18 +46,17 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     return true;
   }
   if (event == Ion::Events::OK) {
-    int selectedRow = m_selectableTableView.selectedRow();
     m_selectableTableView.deselectTable();
     if (m_currentPage == Page::RootMenu) {
-      m_previousSelectedRow = selectedRow;
+      m_previousSelectedRow = selectedRow();
       m_firstSelectedRow = 0;
-      m_currentPage = pageAtIndex(selectedRow);
+      m_currentPage = pageAtIndex(selectedRow());
       app()->setFirstResponder(this);
       return true;
     }
     m_firstSelectedRow = 0;
     char label[3];
-    putLabelAtIndexInBuffer(selectedRow, label);
+    putLabelAtIndexInBuffer(selectedRow(), label);
     const char * editedText = label;
     if (!m_textFieldCaller->isEditing()) {
       m_textFieldCaller->setEditing(true);

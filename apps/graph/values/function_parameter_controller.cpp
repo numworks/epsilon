@@ -21,7 +21,7 @@ void FunctionParameterController::setFunction(Function * function) {
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
       {
         m_cartesianFunction->setDisplayDerivative(!m_cartesianFunction->displayDerivative());

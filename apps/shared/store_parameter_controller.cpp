@@ -34,7 +34,7 @@ void StoreParameterController::didBecomeFirstResponder() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
-    switch (m_selectableTableView.selectedRow()) {
+    switch (selectedRow()) {
       case 0:
       {
         if (m_xColumnSelected) {

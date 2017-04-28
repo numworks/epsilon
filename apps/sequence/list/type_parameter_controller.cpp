@@ -50,20 +50,20 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (m_sequence) {
-      Sequence::Type sequenceType = (Sequence::Type)m_selectableTableView.selectedRow();
+      Sequence::Type sequenceType = (Sequence::Type)selectedRow();
       if (m_sequence->type() != sequenceType) {
         m_sequence->setContent("");
         m_sequence->setFirstInitialConditionContent("");
         m_sequence->setSecondInitialConditionContent("");
         m_listController->selectPreviousNewSequenceCell();
-        m_sequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+        m_sequence->setType((Sequence::Type)selectedRow());
       }
       StackViewController * stack = stackController();
       stack->pop();
       return true;
     }
     Sequence * newSequence = m_sequenceStore->addEmptyFunction();
-    newSequence->setType((Sequence::Type)m_selectableTableView.selectedRow());
+    newSequence->setType((Sequence::Type)selectedRow());
     app()->dismissModalViewController();
     return true;
   }

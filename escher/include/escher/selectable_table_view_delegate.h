@@ -1,9 +1,11 @@
 #ifndef ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
 #define ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
 
+#include <escher/scroll_view_delegate.h>
+
 class SelectableTableView;
 
-class SelectableTableViewDelegate {
+class SelectableTableViewDelegate : public ScrollViewDelegate {
 public:
   SelectableTableViewDelegate();
   int selectedRow();

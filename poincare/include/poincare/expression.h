@@ -124,6 +124,11 @@ public:
 
   virtual Type type() const = 0;
   virtual bool isCommutative() const;
+
+   typedef bool (*CircuitBreaker)(const Expression * e);
+   static void setCircuitBreaker(CircuitBreaker cb);
+   bool shouldStopProcessing() const;
+
   /* The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
   Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;

@@ -3,6 +3,7 @@ objs += $(addprefix ion/src/blackbox/, \
   ion.o \
   display.o \
   events.o \
+  keyboard.o \
 )
 
 objs += $(addprefix ion/src/shared/, \

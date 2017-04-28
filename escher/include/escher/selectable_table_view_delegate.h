@@ -5,7 +5,16 @@ class SelectableTableView;
 
 class SelectableTableViewDelegate {
 public:
-  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) = 0;
+  SelectableTableViewDelegate();
+  int selectedRow();
+  int selectedColumn();
+  void selectRow(int j);
+  void selectColumn(int i);
+  void selectCellAtLocation(int i, int j);
+  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
+private:
+  int m_selectedCellX;
+  int m_selectedCellY;
 };
 
 #endif

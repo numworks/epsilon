@@ -54,7 +54,7 @@ static I18n::Message sMessages[] = {
 LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_contentView(&m_selectableTableView),
   m_law(nullptr),
   m_parametersController(ParametersController(nullptr))
@@ -73,9 +73,9 @@ void Probability::LawController::didBecomeFirstResponder() {
     m_parametersController.setLaw(m_law);
   }
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

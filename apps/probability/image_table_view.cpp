@@ -56,7 +56,7 @@ void ImageCell::setImage(const Image * image, const Image * focusedImage) {
 ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController) :
   View(),
   Responder(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, nullptr, false, false)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, false, false)),
   m_isSelected(false),
   m_selectedIcon(0),
   m_calculation(calculation),
@@ -73,9 +73,9 @@ void ImageTableView::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_isSelected = true;
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

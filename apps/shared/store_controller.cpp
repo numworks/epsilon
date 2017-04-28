@@ -67,7 +67,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 
 void StoreController::didBecomeFirstResponder() {
   if (selectableTableView()->selectedRow() < 0) {
-    selectableTableView()->selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
 }

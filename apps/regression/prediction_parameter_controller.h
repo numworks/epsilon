@@ -8,7 +8,7 @@
 
 namespace Regression {
 
-class PredictionParameterController : public ViewController, public SimpleListViewDataSource {
+class PredictionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
   View * view() override;

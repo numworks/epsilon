@@ -14,7 +14,7 @@ SubController::SubController(Responder * parentResponder) :
   m_cells{MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark), MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark),
     MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark)},
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_nodeModel(nullptr),
   m_preferenceIndex(0)
 {
@@ -49,7 +49,7 @@ View * SubController::view() {
 }
 
 void SubController::didEnterResponderChain(Responder * previousResponder) {
-  m_selectableTableView.selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
+  selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
   app()->setFirstResponder(&m_selectableTableView);
 }
 

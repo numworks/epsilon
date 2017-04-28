@@ -16,7 +16,7 @@ void HistoryController::reload() {
 }
 
 void HistoryController::didBecomeFirstResponder() {
-  selectableTableView()->selectCellAtLocation(0, numberOfRows()-1);
+  selectCellAtLocation(0, numberOfRows()-1);
   app()->setFirstResponder(selectableTableView());
 }
 

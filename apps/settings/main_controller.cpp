@@ -26,7 +26,7 @@ MainController::MainController(Responder * parentResponder) :
     MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small)},
   m_complexFormatCell(MessageTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_nodeModel((Node *)&model),
   m_subController(this)
 {
@@ -48,7 +48,7 @@ View * MainController::view() {
 
 void MainController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() < 0) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   }
   app()->setFirstResponder(&m_selectableTableView);
 }

@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class LawController : public ViewController, public SimpleListViewDataSource {
+class LawController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   LawController(Responder * parentResponder);
   View * view() override;

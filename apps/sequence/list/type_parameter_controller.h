@@ -8,7 +8,7 @@ namespace Sequence {
 
 class ListController;
 
-class TypeParameterController : public ViewController, public SimpleListViewDataSource {
+class TypeParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list,
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,

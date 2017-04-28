@@ -1,4 +1,5 @@
 #include <escher/selectable_table_view.h>
+#include <assert.h>
 
 SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
     SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
@@ -6,40 +7,42 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   TableView(dataSource, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
     indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   Responder(parentResponder),
-  m_delegate(delegate),
-  m_selectedCellX(0),
-  m_selectedCellY(-1)
+  m_delegate(delegate)
 {
-}
-
-void SelectableTableView::setDelegate(SelectableTableViewDelegate * delegate) {
-  m_delegate = delegate;
+  assert(m_delegate != nullptr);
 }
 
 int SelectableTableView::selectedRow() {
-  return m_selectedCellY;
+  return m_delegate->selectedRow();
 }
 
 int SelectableTableView::selectedColumn() {
-  return m_selectedCellX;
+  return m_delegate->selectedColumn();
+}
+
+void SelectableTableView::selectRow(int j) {
+  m_delegate->selectRow(j);
+}
+
+void SelectableTableView::selectColumn(int i) {
+  m_delegate->selectColumn(i);
 }
 
 void SelectableTableView::didBecomeFirstResponder() {
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, 0, -1);
-  }
+  selectCellAtLocation(selectedColumn(), selectedRow());
+  m_delegate->tableViewDidChangeSelection(this, 0, -1);
+}
+
+void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
+  unhighlightTable();
 }
 
 void SelectableTableView::deselectTable() {
-  if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
-      m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
-    HighlightCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
-    previousCell->setHighlighted(false);
-  }
-  int previousSelectedCellX = m_selectedCellX;
-  int previousSelectedCellY = m_selectedCellY;
-  m_selectedCellX = 0;
-  m_selectedCellY = -1;
+  unhighlightTable();
+  int previousSelectedCellX = selectedColumn();
+  int previousSelectedCellY = selectedRow();
+  selectColumn(0);
+  selectRow(-1);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY);
   }
@@ -52,16 +55,12 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   if (j < 0 || j >= dataSource()->numberOfRows()) {
     return false;
   }
-  if (m_selectedCellX >= 0 && m_selectedCellX < dataSource()->numberOfColumns() &&
-      m_selectedCellY >= 0 && m_selectedCellY < dataSource()->numberOfRows()) {
-    HighlightCell * previousCell = cellAtLocation(m_selectedCellX, m_selectedCellY);
-    previousCell->setHighlighted(false);
-  }
-  int previousX = m_selectedCellX;
-  int previousY = m_selectedCellY;
-  m_selectedCellX = i;
-  m_selectedCellY = j;
-  if (m_selectedCellY >= 0) {
+  unhighlightTable();
+  int previousX = selectedColumn();
+  int previousY = selectedRow();
+  selectColumn(i);
+  selectRow(j);
+  if (selectedRow() >= 0) {
     scrollToCell(i, j);
     HighlightCell * cell = cellAtLocation(i, j);
     cell->setHighlighted(true);
@@ -73,24 +72,32 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
 }
 
 HighlightCell * SelectableTableView::selectedCell() {
-  if (m_selectedCellX < 0 || m_selectedCellY < 0) {
+  if (selectedColumn() < 0 || selectedRow() < 0) {
     return nullptr;
   }
-  return cellAtLocation(m_selectedCellX, m_selectedCellY);
+  return cellAtLocation(selectedColumn(), selectedRow());
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    return selectCellAtLocation(m_selectedCellX, m_selectedCellY+1);
+    return selectCellAtLocation(selectedColumn(), selectedRow()+1);
   }
   if (event == Ion::Events::Up) {
-    return selectCellAtLocation(m_selectedCellX, m_selectedCellY-1);
+    return selectCellAtLocation(selectedColumn(), selectedRow()-1);
   }
   if (event == Ion::Events::Left) {
-    return selectCellAtLocation(m_selectedCellX-1, m_selectedCellY);
+    return selectCellAtLocation(selectedColumn()-1, selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectCellAtLocation(m_selectedCellX+1, m_selectedCellY);
+    return selectCellAtLocation(selectedColumn()+1, selectedRow());
   }
   return false;
+}
+
+void SelectableTableView::unhighlightTable() {
+  if (selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns() &&
+      selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows()) {
+    HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
+    previousCell->setHighlighted(false);
+  }
 }

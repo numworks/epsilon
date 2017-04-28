@@ -14,7 +14,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
-  class ContentViewController : public ViewController, public ListViewDataSource {
+  class ContentViewController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate {
   public:
     ContentViewController(Responder * parentResponder, Poincare::Context * context);
     View * view() override;

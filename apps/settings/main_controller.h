@@ -7,7 +7,7 @@
 
 namespace Settings {
 
-class MainController : public ViewController, public ListViewDataSource {
+class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDelegate {
 public:
   MainController(Responder * parentResponder);
   ~MainController();

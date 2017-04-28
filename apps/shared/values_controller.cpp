@@ -33,7 +33,7 @@ Interval * ValuesController::interval() {
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    if (selectableTableView()->selectedRow() == -1) {
+    if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(0,0);
       app()->setFirstResponder(selectableTableView());
@@ -43,7 +43,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::Up) {
-    if (selectableTableView()->selectedRow() == -1) {
+    if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
@@ -52,18 +52,18 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     header()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::Backspace && selectableTableView()->selectedRow() > 0 &&
-      (selectableTableView()->selectedRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
-    m_interval.deleteElementAtIndex(selectableTableView()->selectedRow()-1);
+  if (event == Ion::Events::Backspace && selectedRow() > 0 &&
+      (selectedRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
+    m_interval.deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
   if (event == Ion::Events::OK) {
-    if (selectableTableView()->selectedRow() == -1) {
+    if (selectedRow() == -1) {
       return header()->handleEvent(event);
     }
-    if (selectableTableView()->selectedRow() == 0) {
-      if (selectableTableView()->selectedColumn() == 0) {
+    if (selectedRow() == 0) {
+      if (selectedColumn() == 0) {
         configureAbscissa();
         return true;
       }
@@ -72,10 +72,10 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (selectableTableView()->selectedRow() == -1) {
+  if (selectedRow() == -1) {
     return header()->handleEvent(event);
   }
-  if (event == Ion::Events::Copy && selectableTableView()->selectedRow() > 0 && selectableTableView()->selectedColumn() > 0) {
+  if (event == Ion::Events::Copy && selectedRow() > 0 && selectedColumn() > 0) {
     EvenOddBufferTextCell * cell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
     Clipboard::sharedClipboard()->store(cell->text());
     return true;
@@ -85,7 +85,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 void ValuesController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
-  if (selectableTableView()->selectedRow() == -1) {
+  if (selectedRow() == -1) {
     selectableTableView()->deselectTable();
     header()->setSelectedButton(0);
   } else {
@@ -267,7 +267,7 @@ void ValuesController::configureFunction() {
   if (functionParameterController() == nullptr) {
     return;
   }
-  functionParameterController()->setFunction(functionAtColumn(selectableTableView()->selectedColumn()));
+  functionParameterController()->setFunction(functionAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());
 }

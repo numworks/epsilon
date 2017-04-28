@@ -8,10 +8,10 @@ namespace Shared {
 /* Tab table controller is a controller whose view is a selectable table view
  * and whose one ancestor is a tab */
 
-class TabTableController : public DynamicViewController {
+class TabTableController : public DynamicViewController, public SelectableTableViewDelegate {
 public:
   TabTableController(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate topMargin,
-    KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, SelectableTableViewDelegate * delegate, bool showIndicators);
+    KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -25,7 +25,6 @@ private:
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
-  SelectableTableViewDelegate * m_delegate;
   bool m_showIndicators;
 };
 

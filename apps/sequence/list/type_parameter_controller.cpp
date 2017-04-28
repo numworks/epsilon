@@ -14,7 +14,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_expliciteCell(ExpressionTableCellWithPointer(I18n::Message::Explicite, cellLayout)),
   m_singleRecurrenceCell(ExpressionTableCellWithPointer(I18n::Message::SingleRecurrence, cellLayout)),
   m_doubleRecurenceCell(ExpressionTableCellWithPointer(I18n::Message::DoubleRecurrence, cellLayout)),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, nullptr, false)),
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, false)),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
   m_listController(list)
@@ -43,7 +43,7 @@ View * TypeParameterController::view() {
 
 void TypeParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

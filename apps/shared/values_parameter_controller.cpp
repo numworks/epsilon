@@ -10,7 +10,7 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   //m_copyColumn(MessageTableCellWithChevron(I18n::Message::Default)),
   m_setInterval(MessageTableCellWithChevron(I18n::Message::Default)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_intervalParameterController(intervalParameterController)
 {
 }
@@ -30,7 +30,7 @@ void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, in
 }
 
 void ValuesParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

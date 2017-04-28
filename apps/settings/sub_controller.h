@@ -6,7 +6,7 @@
 
 namespace Settings {
 
-class SubController : public ViewController, public SimpleListViewDataSource {
+class SubController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   SubController(Responder * parentResponder);
   ~SubController();

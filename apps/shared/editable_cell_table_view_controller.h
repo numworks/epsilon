@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
+class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource , public TextFieldDelegate {
 public:
   EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
     KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin);

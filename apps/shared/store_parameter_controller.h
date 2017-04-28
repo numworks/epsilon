@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class StoreParameterController : public ViewController, public SimpleListViewDataSource {
+class StoreParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   StoreParameterController(Responder * parentResponder, FloatPairStore * store);
   void selectXColumn(bool xColumnSelected);

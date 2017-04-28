@@ -9,7 +9,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 //  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
 //  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_store(store),
   m_xColumnSelected(true)
 {
@@ -28,7 +28,7 @@ View * StoreParameterController::view() {
 }
 
 void StoreParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

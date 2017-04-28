@@ -123,7 +123,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   }
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
+  myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {
@@ -142,14 +142,13 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
 }
 
 void ListController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() == -1) {
-    selectableTableView()->selectCellAtLocation(1, 0);
+  if (selectedRow() == -1) {
+    selectCellAtLocation(1, 0);
   } else {
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  if (selectableTableView()->selectedRow() >= numberOfRows()) {
-    selectableTableView()->selectCellAtLocation(1, 0);
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), numberOfRows()-1);
+  if (selectedRow() >= numberOfRows()) {
+    selectCellAtLocation(selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);
   app()->setFirstResponder(selectableTableView());
@@ -157,19 +156,19 @@ void ListController::didBecomeFirstResponder() {
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    if (selectableTableView()->selectedRow() == -1) {
+    if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(1, numberOfRows()-1);
       app()->setFirstResponder(selectableTableView());
       return true;
     }
     selectableTableView()->deselectTable();
-    assert(selectableTableView()->selectedRow() == -1);
+    assert(selectedRow() == -1);
     app()->setFirstResponder(tabController());
     return true;
   }
   if (event == Ion::Events::Down) {
-    if (selectableTableView()->selectedRow() == -1) {
+    if (selectedRow() == -1) {
       return false;
     }
     selectableTableView()->deselectTable();
@@ -177,24 +176,24 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK) {
-      switch (selectableTableView()->selectedColumn()) {
+      switch (selectedColumn()) {
       case 0:
       {
         if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-            selectableTableView()->selectedRow() == numberOfRows() - 1) {
+            selectedRow() == numberOfRows() - 1) {
           return true;
         }
-        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow())));
+        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(selectedRow())));
         return true;
       }
       case 1:
       {
         if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
-            selectableTableView()->selectedRow() == numberOfRows() - 1) {
+            selectedRow() == numberOfRows() - 1) {
           addEmptyFunction();
           return true;
         }
-        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
+        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
         editExpression(function, Ion::Events::OK);
         return true;
       }
@@ -204,33 +203,33 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       }
     }
   }
-  if (event == Ion::Events::Backspace && selectableTableView()->selectedRow() >= 0 &&
-      (selectableTableView()->selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
-    if (selectableTableView()->selectedColumn() == 1) {
+  if (event == Ion::Events::Backspace && selectedRow() >= 0 &&
+      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
+    if (selectedColumn() == 1) {
       reinitExpression(function);
     } else {
       removeFunctionRow(function);
       selectableTableView()->reloadData();
-      selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
-      if (selectableTableView()->selectedRow() >= numberOfRows()) {
+      selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
+      if (selectedRow() >= numberOfRows()) {
         selectableTableView()->selectCellAtLocation(0, 0);
-        selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), numberOfRows()-1);
+        selectableTableView()->selectCellAtLocation(selectedColumn(), numberOfRows()-1);
       }
     }
     return true;
   }
   if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste)
-      && selectableTableView()->selectedColumn() == 1
-      && (selectableTableView()->selectedRow() != numberOfRows() - 1
+      && selectedColumn() == 1
+      && (selectedRow() != numberOfRows() - 1
          || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectableTableView()->selectedRow()));
+    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
     editExpression(function, event);
     return true;
   }
-  if (event == Ion::Events::Copy && selectableTableView()->selectedColumn() == 1 &&
-      (selectableTableView()->selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
-    Clipboard::sharedClipboard()->store(textForRow(selectableTableView()->selectedRow()));
+  if (event == Ion::Events::Copy && selectedColumn() == 1 &&
+      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
+    Clipboard::sharedClipboard()->store(textForRow(selectedRow()));
     return true;
   }
   return false;
@@ -281,7 +280,7 @@ View * ListController::createView() {
   m_emptyCell = new EvenOddCell();
   assert(m_addNewFunction == nullptr);
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, nullptr, false, true);
+  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, false, true);
 }
 
 TabViewController * ListController::tabController() const{

@@ -19,7 +19,7 @@ void FloatParameterController::didBecomeFirstResponder() {
     selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
     int selectedColumn = selectableTableView()->selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
+    selectCellAtLocation(selectedColumn, selectedRow);
   }
   app()->setFirstResponder(selectableTableView());
 }
@@ -27,13 +27,13 @@ void FloatParameterController::didBecomeFirstResponder() {
 void FloatParameterController::viewWillAppear() {
   selectableTableView()->reloadData();
   if (selectableTableView()->selectedRow() == -1) {
-    selectableTableView()->selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   } else {
     int selectedRow = selectableTableView()->selectedRow();
     selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
     int selectedColumn = selectableTableView()->selectedColumn();
     selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
+    selectCellAtLocation(selectedColumn, selectedRow);
   }
 }
 

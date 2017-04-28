@@ -9,7 +9,7 @@
 
 namespace Regression {
 
-class CalculationController : public Shared::TabTableController, public Shared::RegularTableViewDataSource, public ButtonRowDelegate, public AlternateEmptyViewDelegate, public SelectableTableViewDelegate {
+class CalculationController : public Shared::TabTableController, public Shared::RegularTableViewDataSource, public ButtonRowDelegate, public AlternateEmptyViewDelegate  {
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);

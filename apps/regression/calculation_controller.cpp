@@ -12,7 +12,7 @@ using namespace Shared;
 namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true),
+  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, true),
   ButtonRowDelegate(header, nullptr),
   m_store(store)
 {
@@ -36,8 +36,8 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::Copy && selectableTableView()->selectedColumn() == 1 && selectableTableView()->selectedRow() > 0) {
-    if (selectableTableView()->selectedRow() < 6) {
+  if (event == Ion::Events::Copy && selectedColumn() == 1 && selectedRow() > 0) {
+    if (selectedRow() < 6) {
       EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)selectableTableView()->selectedCell();
       if (myCell->firstTextSelected()) {
         Clipboard::sharedClipboard()->store(myCell->firstText());
@@ -54,10 +54,10 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() == -1) {
-    selectableTableView()->selectCellAtLocation(1, 0);
+  if (selectedRow() == -1) {
+    selectCellAtLocation(1, 0);
   } else {
-    selectableTableView()->selectedCell();
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
 }
@@ -122,7 +122,7 @@ int CalculationController::numberOfColumns() {
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
+  myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   if (j == 0 && i > 0) {
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     myCell->setFirstText("x");

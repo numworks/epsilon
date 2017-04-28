@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, nullptr, true),
+  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, true),
   ButtonRowDelegate(header, nullptr),
   m_store(store)
 {
@@ -27,7 +27,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::Copy && selectableTableView()->selectedColumn() == 1) {
+  if (event == Ion::Events::Copy && selectedColumn() == 1) {
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
     Clipboard::sharedClipboard()->store(myCell->text());
     return true;
@@ -36,10 +36,10 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() == -1) {
-    selectableTableView()->selectCellAtLocation(0, 0);
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 0);
   } else {
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow());
+    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
 }
@@ -70,7 +70,7 @@ int CalculationController::numberOfColumns() {
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == selectableTableView()->selectedColumn() && j == selectableTableView()->selectedRow());
+  myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   if (i == 0) {
     I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum};
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;

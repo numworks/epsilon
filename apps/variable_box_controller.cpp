@@ -12,7 +12,7 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, 0, 0, 0, 0, nullptr, false))
+  m_selectableTableView(SelectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, false))
 {
 }
 
@@ -27,7 +27,7 @@ View * VariableBoxController::ContentViewController::view() {
 void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_selectableTableView.scrollToCell(0,0);
-  m_selectableTableView.selectCellAtLocation(0, m_firstSelectedRow);
+  selectCellAtLocation(0, m_firstSelectedRow);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

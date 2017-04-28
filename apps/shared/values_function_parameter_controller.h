@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class ValuesFunctionParameterController : public ViewController, public SimpleListViewDataSource {
+class ValuesFunctionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
   ValuesFunctionParameterController(char symbol);
 

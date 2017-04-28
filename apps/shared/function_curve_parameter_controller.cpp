@@ -7,7 +7,7 @@ FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCu
   ViewController(nullptr),
   m_goToCell(MessageTableCellWithChevron(I18n::Message::Goto)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_function(nullptr)
 {
 }
@@ -17,7 +17,7 @@ View * FunctionCurveParameterController::view() {
 }
 
 void FunctionCurveParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

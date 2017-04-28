@@ -6,7 +6,7 @@ namespace Shared {
 ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_functionStore(functionStore),
   //m_colorCell(MessageTableCellWithChevron(functionColorMessage)),
   m_enableCell(MessageTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
@@ -25,9 +25,9 @@ View * ListParameterController::view() {
 void ListParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   if (m_selectableTableView.selectedRow() == -1) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    selectCellAtLocation(0, 0);
   } else {
-    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -41,7 +41,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 
 void ListParameterController::setFunction(Function * function) {
   m_function = function;
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

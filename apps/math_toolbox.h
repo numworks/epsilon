@@ -53,7 +53,7 @@ private:
     constexpr static int k_maxModelTreeDepth = 2;
     State m_statesStack[k_maxModelTreeDepth];
   };
-  class ListController : public ViewController {
+  class ListController : public ViewController, public SelectableTableViewDelegate {
   public:
     ListController(Responder * parentResponder, SelectableTableView * tableView);
     const char * title() override;

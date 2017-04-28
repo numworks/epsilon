@@ -7,7 +7,7 @@ ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol
   ViewController(nullptr),
   m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_function(nullptr),
   m_symbol(symbol)
 {
@@ -35,7 +35,7 @@ void ValuesFunctionParameterController::setFunction(Function * function) {
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

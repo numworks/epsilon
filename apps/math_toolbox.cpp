@@ -111,7 +111,7 @@ const char * MathToolbox::ListController::title() {
 
 void MathToolbox::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
-  m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
+  selectCellAtLocation(0, m_firstSelectedRow);
   app()->setFirstResponder(m_selectableTableView);
 }
 
@@ -123,7 +123,7 @@ void MathToolbox::ListController::setFirstSelectedRow(int firstSelectedRow) {
 
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, &m_listController),
-  m_selectableTableView(SelectableTableView(&m_listController, this, 0, 1, 0, 0, 0, 0, nullptr, false)),
+  m_selectableTableView(SelectableTableView(&m_listController, this, 0, 1, 0, 0, 0, 0, &m_listController, false)),
   m_listController(this, &m_selectableTableView),
   m_nodeModel(nullptr)
 {

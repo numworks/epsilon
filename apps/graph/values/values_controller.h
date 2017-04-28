@@ -17,7 +17,6 @@ public:
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
-  void selectCellAtLocation(int i, int j);
   int activeRow();
   int activeColumn();
   Shared::IntervalParameterController * intervalParameterController() override;

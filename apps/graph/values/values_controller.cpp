@@ -69,16 +69,12 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedFunction;
 }
 
-void ValuesController::selectCellAtLocation(int i, int j) {
-  selectableTableView()->selectCellAtLocation(i, j);
-}
-
 int ValuesController::activeRow() {
-  return selectableTableView()->selectedRow();
+  return selectedRow();
 }
 
 int ValuesController::activeColumn() {
-  return selectableTableView()->selectedColumn();
+  return selectedColumn();
 }
 
 IntervalParameterController * ValuesController::intervalParameterController() {

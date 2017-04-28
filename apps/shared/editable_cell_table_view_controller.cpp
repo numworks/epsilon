@@ -10,16 +10,16 @@ namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
   KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  TabTableController(parentResponder, this, topMargin, rightMargin, bottomMargin, leftMargin, this, true)
+  TabTableController(parentResponder, this, topMargin, rightMargin, bottomMargin, leftMargin, true)
 {
 }
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
-     || (event == Ion::Events::Down && selectableTableView()->selectedRow() < numberOfRows()-1)
-     || (event == Ion::Events::Up && selectableTableView()->selectedRow() > 0)
-     || (event == Ion::Events::Right && selectableTableView()->selectedColumn() < numberOfColumns()-1)
-     || (event == Ion::Events::Left && selectableTableView()->selectedColumn() > 0);  }
+     || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
+     || (event == Ion::Events::Up && selectedRow() > 0)
+     || (event == Ion::Events::Right && selectedColumn() < numberOfColumns()-1)
+     || (event == Ion::Events::Left && selectedColumn() > 0);  }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
@@ -29,13 +29,13 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  if (!setDataAtLocation(floatBody, selectableTableView()->selectedColumn(), selectableTableView()->selectedRow())) {
+  if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   selectableTableView()->reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectableTableView()->selectedColumn(), selectableTableView()->selectedRow()+1);
+    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
   } else {
     selectableTableView()->handleEvent(event);
   }
@@ -104,26 +104,26 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
 }
 
 void EditableCellTableViewController::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() >= 0) {
-    int selectedRow = selectableTableView()->selectedRow();
-    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = selectableTableView()->selectedColumn();
-    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
+  if (selectedRow() >= 0) {
+    int selRow = selectedRow();
+    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
+    int selColumn = selectedColumn();
+    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selectCellAtLocation(selColumn, selRow);
     TabTableController::didBecomeFirstResponder();
   }
 }
 
 void EditableCellTableViewController::viewWillAppear() {
   TabTableController::viewWillAppear();
-  if (selectableTableView()->selectedRow() == -1) {
-    selectableTableView()->selectCellAtLocation(0, 1);
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 1);
   } else {
-    int selectedRow = selectableTableView()->selectedRow();
-    selectedRow = selectedRow >= numberOfRows() ? numberOfRows()-1 : selectedRow;
-    int selectedColumn = selectableTableView()->selectedColumn();
-    selectedColumn = selectedColumn >= numberOfColumns() ? numberOfColumns() - 1 : selectedColumn;
-    selectableTableView()->selectCellAtLocation(selectedColumn, selectedRow);
+    int selRow = selectedRow();
+    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
+    int selColumn = selectedColumn();
+    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selectCellAtLocation(selColumn, selRow);
   }
 }
 

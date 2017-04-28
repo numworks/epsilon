@@ -8,7 +8,7 @@ namespace Regression {
 PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_goToParameterController(GoToParameterController(this, store, cursor))
 {
 }
@@ -22,7 +22,7 @@ View * PredictionParameterController::view() {
 }
 
 void PredictionParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

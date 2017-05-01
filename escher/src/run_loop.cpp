@@ -31,7 +31,7 @@ bool RunLoop::step() {
   int eventDuration = Timer::TickDuration;
   int timeout = eventDuration;
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-  assert(event.isValid());
+  assert(event.isDefined());
   eventDuration -= timeout;
 
   assert(eventDuration >= 0);

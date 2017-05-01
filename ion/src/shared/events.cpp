@@ -1,4 +1,5 @@
-#include <ion.h>
+#include <ion/events.h>
+#include <ion/charset.h>
 
 extern "C" {
 #include <assert.h>
@@ -119,6 +120,13 @@ const char * Event::text() const {
 
 bool Event::hasText() const {
   return text() != nullptr;
+}
+
+bool Event::isValid() const {
+  if (m_id >= k_numberOfEvents) {
+    return false;
+  }
+  return s_dataForEvent[m_id].isDefined();
 }
 
 #ifdef DEBUG

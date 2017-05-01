@@ -13,7 +13,7 @@ void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & 
     Ion::Events::Event e(prEventId);
     if (e.isValid()) {
       i--;
-      file << (char)(prEventId);
+      file << (unsigned char)(prEventId);
     }
   }
 }

@@ -2,11 +2,11 @@
 #include <ion/events.h>
 
 int main(int argc, char * argv[]) {
-  char c;
-  while (std::cin.get(c)) {
+  unsigned char c = 0;
+  while (std::cin >> c) {
     Ion::Events::Event e(c);
     if (e.isValid()) {
-      std::cout.put(c);
+      std::cout << c;
     }
   }
 }

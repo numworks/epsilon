@@ -131,7 +131,7 @@ bool Event::isValid() const {
 
 #ifdef DEBUG
 
-static constexpr const char * s_nameForEvent[Event::k_numberOfEvents] = {
+static constexpr const char * s_nameForEvent[255] = {
  // Plain
   "Left", "Up", "Down", "Right", "OK", "Back",
   "Home", "OnOff", nullptr, nullptr, nullptr, nullptr,
@@ -171,13 +171,11 @@ static constexpr const char * s_nameForEvent[Event::k_numberOfEvents] = {
   "UpperM", "UpperN", "UpperO", "UpperP", "UpperQ", nullptr,
   "UpperR", "UpperS", "UpperT", "UpperU", "UpperV", nullptr,
   "UpperW", "UpperX", "UpperY", "UpperZ", nullptr, nullptr,
-  "None", nullptr, nullptr, nullptr, nullptr, nullptr
+  // Special
+  "None", "Termination", nullptr, nullptr, nullptr, nullptr,
 };
 
 const char * Event::name() const {
-  if (m_id >= k_numberOfEvents || m_id < 0) {
-    return "Event exceeds limits";
-  }
   return s_nameForEvent[m_id];
 }
 

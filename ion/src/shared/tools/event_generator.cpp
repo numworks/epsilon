@@ -5,7 +5,7 @@
 #include <ion/events.h>
 
 void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & rng) {
-  std::uniform_int_distribution<int> distribution(0,Ion::Events::Event::k_numberOfEvents);
+  std::uniform_int_distribution<int> distribution(0,4*Ion::Events::Event::PageSize);
 
   int i = numberOfEvents;
   while (i > 0) {

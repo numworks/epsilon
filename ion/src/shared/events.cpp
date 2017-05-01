@@ -32,7 +32,7 @@ static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', 
 static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
 static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
 
-static constexpr EventData s_dataForEvent[Event::k_numberOfEvents] = {
+static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), TL(), U(),   U(),  U(),  U(),
@@ -94,9 +94,9 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   m_id = Events::None.m_id;
 
   int noFallbackOffsets[] = {0};
-  int shiftFallbackOffsets[] = {k_eventPageSize, 0};
-  int alphaFallbackOffsets[] = {2*k_eventPageSize, 0};
-  int shiftAlphaFallbackOffsets[] = {3*k_eventPageSize, 2*k_eventPageSize, 0};
+  int shiftFallbackOffsets[] = {PageSize, 0};
+  int alphaFallbackOffsets[] = {2*PageSize, 0};
+  int shiftAlphaFallbackOffsets[] = {3*PageSize, 2*PageSize, 0};
 
   int * fallbackOffsets[] = {noFallbackOffsets, shiftFallbackOffsets, alphaFallbackOffsets, shiftAlphaFallbackOffsets};
 
@@ -106,13 +106,13 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   do {
     offset = fallbackOffset[i++];
     m_id = offset + (int)key;
-  } while (offset > 0 && !s_dataForEvent[m_id].isDefined() && m_id < k_numberOfEvents);
+  } while (offset > 0 && !s_dataForEvent[m_id].isDefined() && m_id < 4*PageSize);
 
   assert(m_id != Events::None.m_id);
 }
 
 const char * Event::text() const {
-  if (m_id >= k_numberOfEvents) {
+  if (m_id >= 4*PageSize) {
     return nullptr;
   }
   return s_dataForEvent[m_id].text();
@@ -123,10 +123,11 @@ bool Event::hasText() const {
 }
 
 bool Event::isValid() const {
-  if (m_id >= k_numberOfEvents) {
-    return false;
+  if (isKeyboardEvent()) {
+    return s_dataForEvent[m_id].isDefined();
+  } else {
+    return (*this == None);
   }
-  return s_dataForEvent[m_id].isDefined();
 }
 
 #ifdef DEBUG

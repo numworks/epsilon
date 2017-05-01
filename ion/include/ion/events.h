@@ -9,12 +9,12 @@ namespace Events {
 class Event {
 public:
   static constexpr Event PlainKey(Keyboard::Key k) { return Event((int)k); }
-  static constexpr Event ShiftKey(Keyboard::Key k) { return Event(k_eventPageSize+(int)k); }
-  static constexpr Event AlphaKey(Keyboard::Key k) { return Event(2*k_eventPageSize+(int)k); }
-  static constexpr Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*k_eventPageSize+(int)k); }
-  static constexpr Event Special(int i) { return Event(4*k_eventPageSize+i); }
+  static constexpr Event ShiftKey(Keyboard::Key k) { return Event(PageSize+(int)k); }
+  static constexpr Event AlphaKey(Keyboard::Key k) { return Event(2*PageSize+(int)k); }
+  static constexpr Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*PageSize+(int)k); }
+  static constexpr Event Special(int i) { return Event(4*PageSize+i); }
 
-  constexpr Event(int i) : m_id(i){}
+  constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 #ifdef DEBUG
   uint8_t id() const { return m_id; }
   const char * name() const;
@@ -29,10 +29,11 @@ public:
   }
   const char * text() const;
   bool hasText() const;
+  bool isKeyboardEvent() const { return m_id < 4*PageSize; }
+  bool isSpecialEvent() const { return m_id >= 4*PageSize; }
   bool isValid() const;
-  static constexpr int k_numberOfEvents = 4*Keyboard::NumberOfKeys;
+  static constexpr int PageSize = Keyboard::NumberOfKeys;
 private:
-  static constexpr int k_eventPageSize = Keyboard::NumberOfKeys;
   uint8_t m_id;
 };
 

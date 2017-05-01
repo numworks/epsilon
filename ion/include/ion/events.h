@@ -199,6 +199,7 @@ constexpr Event UpperY = Event::ShiftAlphaKey(Keyboard::Key::H3);
 constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::H4);
 
 constexpr Event None = Event::Special(0);
+constexpr Event Termination = Event::Special(1);
 
 }
 }

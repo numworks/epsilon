@@ -10,12 +10,16 @@ static int sLogAfterNumberOfEvents = -1;
 static int sEventCount = 0;
 
 Ion::Events::Event Ion::Events::getEvent(int * timeout) {
-  int c = getchar();
-  if (c == EOF) {
-    printf("Finished processing %d events\n", sEventCount);
-    exit(0);
+  Ion::Events::Event event = Ion::Events::None;
+  while (!event.isKeyboardEvent()) {
+    int c = getchar();
+    if (c == EOF) {
+      printf("Finished processing %d events\n", sEventCount);
+      event = Ion::Events::Termination;
+      break;
+    }
+    event = Ion::Events::Event(c);
   }
-  Ion::Events::Event event(c);
   if (sEventCount++ > sLogAfterNumberOfEvents && sLogAfterNumberOfEvents >= 0) {
     char filename[32];
     sprintf(filename, "event%d.png", sEventCount);

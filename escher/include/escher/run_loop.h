@@ -13,7 +13,7 @@ protected:
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
 private:
-  void step();
+  bool step();
   int m_time;
 };
 

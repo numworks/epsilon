@@ -12,7 +12,7 @@ public:
   static constexpr EventData Undefined() { return EventData(nullptr); }
   static constexpr EventData Textless() { return EventData(k_textless); }
   static constexpr EventData Text(const char * text) { return EventData(text); }
-  bool isUndefined() const { return (m_data == nullptr); }
+  bool isDefined() const { return (m_data != nullptr); }
   const char * text() const;
 private:
   static constexpr const char * k_textless = "";
@@ -105,7 +105,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   do {
     offset = fallbackOffset[i++];
     m_id = offset + (int)key;
-  } while (offset > 0 && s_dataForEvent[m_id].isUndefined() && m_id < k_numberOfEvents);
+  } while (offset > 0 && !s_dataForEvent[m_id].isDefined() && m_id < k_numberOfEvents);
 
   assert(m_id != Events::None.m_id);
 }

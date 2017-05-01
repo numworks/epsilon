@@ -11,7 +11,7 @@ static int sEventCount = 0;
 
 Ion::Events::Event Ion::Events::getEvent(int * timeout) {
   Ion::Events::Event event = Ion::Events::None;
-  while (!event.isKeyboardEvent()) {
+  while (!(event.isDefined() && event.isKeyboardEvent())) {
     int c = getchar();
     if (c == EOF) {
       printf("Finished processing %d events\n", sEventCount);

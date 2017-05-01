@@ -31,7 +31,7 @@ public:
   bool hasText() const;
   bool isKeyboardEvent() const { return m_id < 4*PageSize; }
   bool isSpecialEvent() const { return m_id >= 4*PageSize; }
-  bool isValid() const;
+  bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
 private:
   uint8_t m_id;

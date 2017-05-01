@@ -122,7 +122,7 @@ bool Event::hasText() const {
   return text() != nullptr;
 }
 
-bool Event::isValid() const {
+bool Event::isDefined() const {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();
   } else {

@@ -49,10 +49,10 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T(k_sto),
   T("asin()"), T("acos()"), T("atan()"), T("="), T("<"), T(">"),
-  U(), U(), TL(), TL(), TL(), TL(),
-  U(), U(), TL(), TL(), TL(), TL(),
-  U(), U(), TL(), TL(), TL(), TL(),
-  U(), U(), TL(), TL(), TL(), TL(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), U(), U(),
 // Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
@@ -71,7 +71,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("G"), T("H"), T("I"), T("J"), T("K"), T("L"),
   T("M"), T("N"), T("O"), T("P"), T("Q"), U(),
   T("R"), T("S"), T("T"), T("U"), T("V"), U(),
-  T("W"), T("X"), T("Y"), T("Z"), T(" "), U(),
+  T("W"), T("X"), T("Y"), T("Z"), U(), U(),
   U(), U(), U(), U(), U(), U(),
 };
 
@@ -126,7 +126,7 @@ bool Event::isValid() const {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();
   } else {
-    return (*this == None);
+    return (*this == None || *this == Termination);
   }
 }
 

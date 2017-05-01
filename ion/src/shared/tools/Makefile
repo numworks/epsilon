@@ -2,4 +2,4 @@ ion/src/shared/tools/event_%: ion/src/shared/tools/event_%.cpp ion/src/shared/ev
 	@echo "HOSTCXX $@"
 	@$(HOSTCXX) -std=c++11 -Iion/include $^ -o $@
 
-products += $(addprefix ion/src/shared/tools/, event_filter event_generator)
+products += $(addprefix ion/src/shared/tools/, event_filter event_generator event_printer)

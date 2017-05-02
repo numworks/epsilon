@@ -17,20 +17,29 @@ const ToolboxNode approximationChildren[4] = {ToolboxNode(I18n::Message::FloorCo
 const ToolboxNode trigonometryChildren[6] = {ToolboxNode(I18n::Message::CoshCommand, I18n::Message::Cosh), ToolboxNode(I18n::Message::SinhCommand, I18n::Message::Sinh), ToolboxNode(I18n::Message::TanhCommand, I18n::Message::Tanh), ToolboxNode(I18n::Message::AcoshCommand, I18n::Message::Acosh), ToolboxNode(I18n::Message::AsinhCommand, I18n::Message::Asinh), ToolboxNode(I18n::Message::AtanhCommand, I18n::Message::Atanh)};
 const ToolboxNode predictionChildren[3] = {ToolboxNode(I18n::Message::Prediction95Command, I18n::Message::Prediction95), ToolboxNode(I18n::Message::PredictionCommand, I18n::Message::Prediction), ToolboxNode(I18n::Message::ConfidenceCommand, I18n::Message::Confidence)};
 
+#if MATRICES_ARE_DEFINED
+const ToolboxNode menu[12] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::AbsoluteValue),
+#else
 const ToolboxNode menu[10] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::AbsoluteValue),
+#endif
   ToolboxNode(I18n::Message::RootCommand, I18n::Message::NthRoot),
   ToolboxNode(I18n::Message::LogCommand, I18n::Message::BasedLogarithm),
   ToolboxNode(I18n::Message::Calculation, I18n::Message::Default, calculChildren, 4),
   ToolboxNode(I18n::Message::ComplexNumber, I18n::Message::Default, complexChildren, 5),
   ToolboxNode(I18n::Message::Probability, I18n::Message::Default, probabilityChildren, 2),
   ToolboxNode(I18n::Message::Arithmetic, I18n::Message::Default, arithmeticChildren, 4),
-  //ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, matricesChildren, 5),
-  //ToolboxNode(I18n::Message::Lists, I18n::Message::Default, listesChildren, 5),
+#if MATRICES_ARE_DEFINED
+  ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, matricesChildren, 5),
+  ToolboxNode(I18n::Message::Lists, I18n::Message::Default, listesChildren, 5),
+#endif
   ToolboxNode(I18n::Message::Approximation, I18n::Message::Default, approximationChildren, 4),
   ToolboxNode(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, trigonometryChildren, 6),
   ToolboxNode(I18n::Message::Fluctuation, I18n::Message::Default, predictionChildren, 3)};
-/* TODO: implement matrix and list */
-const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 10);//ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 12);
+#if MATRICES_ARE_DEFINED
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 12);
+#else
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 10);
+#endif
 
 /* State */
 

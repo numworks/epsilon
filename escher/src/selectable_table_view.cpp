@@ -28,7 +28,7 @@ void SelectableTableView::selectColumn(int i) {
   m_delegate->selectColumn(i);
 }
 
-void SelectableTableView::didBecomeFirstResponder() {
+void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   selectCellAtLocation(selectedColumn(), selectedRow());
   m_delegate->tableViewDidChangeSelection(this, 0, -1);
 }

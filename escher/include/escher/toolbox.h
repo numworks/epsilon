@@ -8,6 +8,7 @@ public:
   Toolbox(Responder * parentResponder, ViewController * rootViewController);
   void setSender(Responder * sender);
   void viewWillAppear() override;
+  void viewDidDisappear() override;
 protected:
   virtual Responder * sender();
 private:

@@ -14,6 +14,10 @@ void Toolbox::viewWillAppear() {
   StackViewController::viewWillAppear();
 }
 
+void Toolbox::viewDidDisappear() {
+  StackViewController::viewDidDisappear();
+}
+
 Responder * Toolbox::sender() {
   return m_sender;
 }

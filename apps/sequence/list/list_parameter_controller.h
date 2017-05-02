@@ -21,8 +21,11 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  /* TODO: implement function color choice */
-  constexpr static int k_totalNumberOfCell = 3;//4
+#if FUNCTION_COLOR_CHOICE
+  constexpr static int k_totalNumberOfCell = 4;
+#else
+  constexpr static int k_totalNumberOfCell = 3;
+#endif
   MessageTableCellWithChevronAndExpression m_typeCell;
   TypeParameterController m_typeParameterController;
   Sequence * m_sequence;

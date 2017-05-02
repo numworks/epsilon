@@ -28,9 +28,12 @@ protected:
   FunctionStore * m_functionStore;
   Function * m_function;
 private:
-  /* TODO: implement function color choice */
-  constexpr static int k_totalNumberOfCell = 2;//3;
-  //MessageTableCellWithChevron m_colorCell;
+#if FUNCTION_COLOR_CHOICE
+  constexpr static int k_totalNumberOfCell = 3;
+  MessageTableCellWithChevron m_colorCell;
+#else
+  constexpr static int k_totalNumberOfCell = 2;
+#endif
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;
 };

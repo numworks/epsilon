@@ -86,11 +86,11 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   m_view.pushStack(frame);
   /* Add the frame to the model */
   pushModel(frame);
+  setupActiveViewController();
   if (m_numberOfChildren > 1) {
     m_childrenFrame[m_numberOfChildren-2].viewController()->viewDidDisappear();
     m_childrenFrame[m_numberOfChildren-2].viewController()->unloadView();
   }
-  setupActiveViewController();
 }
 
 void StackViewController::pop() {

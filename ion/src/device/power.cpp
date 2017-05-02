@@ -1,5 +1,4 @@
 #include <ion.h>
-#include "regs/regs.h"
 #include "battery.h"
 #include "device.h"
 #include "display.h"
@@ -7,6 +6,7 @@
 #include "led.h"
 #include "usb.h"
 #include "wakeup.h"
+#include "regs/regs.h"
 
 void Ion::Power::suspend() {
   Device::shutdownPeripherals();

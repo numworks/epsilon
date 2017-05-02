@@ -118,16 +118,18 @@ void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
       m_view.setActiveView(activeVC->view());
     }
     m_view.m_tabView.setActiveIndex(i);
-    if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
-      m_children[m_activeChildIndex]->viewDidDisappear();
-      m_children[m_activeChildIndex]->unloadView();
-    }
-    m_activeChildIndex = i;
     if (i >= 0) {
       m_children[i]->viewWillAppear();
     }
   }
   app()->setFirstResponder(activeVC);
+  if (i  != m_activeChildIndex || forceReactive) {
+      if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
+      m_children[m_activeChildIndex]->viewDidDisappear();
+      m_children[m_activeChildIndex]->unloadView();
+    }
+    m_activeChildIndex = i;
+  }
 }
 
 void TabViewController::setSelectedTab(int8_t i) {

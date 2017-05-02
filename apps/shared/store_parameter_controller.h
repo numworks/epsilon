@@ -20,11 +20,14 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  /* TODO: implement copy column and import list */
-  constexpr static int k_totalNumberOfCell = 1;//3;
+#if COPY_IMPORT_LIST
+  constexpr static int k_totalNumberOfCell = 3;
+  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron m_importList;
+#else
+  constexpr static int k_totalNumberOfCell = 1;
+#endif
   MessageTableCell m_deleteColumn;
-//  MessageTableCellWithChevron m_copyColumn;
-//  MessageTableCellWithChevron m_importList;
   SelectableTableView m_selectableTableView;
   FloatPairStore * m_store;
   bool m_xColumnSelected;

@@ -6,8 +6,10 @@ namespace Shared {
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
   m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
-//  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
-//  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
+#if COPY_IMPORT_LIST
+  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
+  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
+#endif
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_store(store),
@@ -46,11 +48,13 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         stack->pop();
         return true;
       }
-      /* TODO: implement copy column and import list
-       * case 1:
-        return false;
+#if COPY_IMPORT_LIST
+      /* TODO: implement copy column and import list */
+      case 1:
+        return true;
       case 2:
-        return false;*/
+        return true;
+#endif
       default:
         assert(false);
         return false;

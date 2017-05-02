@@ -33,8 +33,11 @@ void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
 
 bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
-    /* TODO: implement matrix and list contexts */
-    if (m_currentPage == Page::Scalar) {//if (m_currentPage == Page::RootMenu) {
+#if MATRIX_LIST_VARIABLES
+    if (m_currentPage == Page::RootMenu) {
+#else
+    if (m_currentPage == Page::Scalar) {
+#endif
       m_firstSelectedRow = 0;
       app()->dismissModalViewController();
       return true;
@@ -125,6 +128,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   }
   myCell->displayExpression(true);
   if (expression) {
+    /* TODO: implement matrix and list contexts */
     //myCell->setExpression(expression->createLayout());
   // TODO: display the dimensgion of the list/matrice as subtitle
     /* char buffer[4];
@@ -228,8 +232,11 @@ void VariableBoxController::ContentViewController::reloadData() {
 }
 
 void VariableBoxController::ContentViewController::resetPage() {
-  /* TODO: implement matrix and list contexts */
-  m_currentPage = Page::Scalar;//Page::RootMenu;
+#if MATRIX_LIST_VARIABLES
+  m_currentPage = Page::RootMenu;
+#else
+  m_currentPage = Page::Scalar;
+#endif
 }
 
 void VariableBoxController::ContentViewController::deselectTable() {

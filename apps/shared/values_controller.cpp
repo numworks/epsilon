@@ -262,11 +262,14 @@ void ValuesController::configureAbscissa() {
 }
 
 void ValuesController::configureFunction() {
+#if COPY_COLUMN
+#else
   /* Temporary: the sequence value controller does not have a function parameter
    * controller yet but it shoult come soon. */
   if (functionParameterController() == nullptr) {
     return;
   }
+#endif
   functionParameterController()->setFunction(functionAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());

@@ -8,7 +8,9 @@ namespace Sequence {
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController),
   m_sequenceStore(sequenceStore),
-  //m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),
+#if COPY_COLUMN
+  m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),
+#endif
   m_intervalParameterController(IntervalParameterController(this, &m_interval))
 {
 }
@@ -89,7 +91,11 @@ SequenceStore * ValuesController::functionStore() const {
 }
 
 Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {
-  return nullptr; // TODO: return &m_sequenceParameterController;
+#if COPY_COLUMN
+  return &m_sequenceParameterController;
+#else
+  return nullptr;
+#endif
 }
 
 View * ValuesController::createView() {

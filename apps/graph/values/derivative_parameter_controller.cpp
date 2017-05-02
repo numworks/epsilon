@@ -7,7 +7,9 @@ namespace Graph {
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ViewController(valuesController),
   m_hideColumn(MessageTableCell(I18n::Message::HideDerivativeColumn)),
-//  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
+#if COPY_COLUMN
+  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
+#endif
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_function(nullptr),
@@ -50,9 +52,11 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
         stack->pop();
         return true;
       }
-      /* TODO: implement copy column
-       * case 1:
-        return true;*/
+#if COPY_COLUMN
+    case 1:
+    /* TODO: implement function copy column */
+      return true;
+#endif
       default:
         assert(false);
         return false;
@@ -68,7 +72,11 @@ int DerivativeParameterController::numberOfRows() {
 HighlightCell * DerivativeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_hideColumn}; //{&m_hideColumn, &m_copyColumn};
+#if COPY_COLUMN
+  HighlightCell * cells[] = {&m_hideColumn, &m_copyColumn};
+#else
+  HighlightCell * cells[] = {&m_hideColumn};
+#endif
   return cells[index];
 }
 

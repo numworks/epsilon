@@ -27,16 +27,24 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     int selectedRowIndex = selectedRow();
     switch (selectedRowIndex) {
-      /*case 0:
-        return handleEnterOnRow(selectedRowIndex);*/
-      case 0://1
+#if FUNCTION_COLOR_CHOICE
+      case 0:
+        return handleEnterOnRow(selectedRowIndex);
+      case 1:
+#else
+      case 0:
+#endif
       {
         StackViewController * stack = (StackViewController *)(parentResponder());
         m_typeParameterController.setSequence(m_sequence);
         stack->push(&m_typeParameterController);
         return true;
       }
-      case 2://3
+#if FUNCTION_COLOR_CHOICE
+      case 3:
+#else
+      case 2:
+#endif
       if (m_functionStore->numberOfFunctions() > 0) {
         m_functionStore->removeFunction(m_function);
         StackViewController * stack = (StackViewController *)(parentResponder());

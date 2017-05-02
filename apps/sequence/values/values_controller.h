@@ -29,7 +29,9 @@ private:
   SequenceStore * m_sequenceStore;
   SequenceStore * functionStore() const override;
   View * createView() override;
-  //Shared::ValuesFunctionParameterController m_sequenceParameterController;
+#if COPY_COLUMN
+  Shared::ValuesFunctionParameterController m_sequenceParameterController;
+#endif
   Shared::ValuesFunctionParameterController * functionParameterController() override;
   IntervalParameterController m_intervalParameterController;
 };

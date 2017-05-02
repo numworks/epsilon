@@ -35,7 +35,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
@@ -48,26 +48,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else {
       editController->setTextBody(calculation->outputText());
     }
-    return true;
-  }
-  if (event == Ion::Events::EXE) {
-    int focusRow = selectedRow();
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
-    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-    EditExpressionController * editController = (EditExpressionController *)parentResponder();
-    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    const char * text;
-    if (subviewType == HistoryViewCell::SubviewType::Input) {
-      text = calculation->inputText();
-    } else {
-      text = calculation->outputText();
-    }
-    selectableTableView()->deselectTable();
-    App * calculationApp = (App *)app();
-    m_calculationStore->push(text, calculationApp->localContext());
-    reload();
-    selectableTableView()->scrollToCell(0, numberOfRows()-1);
-    app()->setFirstResponder(editController);
     return true;
   }
   if (event == Ion::Events::Backspace) {

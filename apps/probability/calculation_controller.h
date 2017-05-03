@@ -13,6 +13,7 @@ namespace Probability {
 class CalculationController : public ViewController, public Shared::TextFieldDelegate {
 public:
   CalculationController(Responder * parentResponder);
+  ~CalculationController();
   View * view() override;
   const char * title() override;
   void reload();

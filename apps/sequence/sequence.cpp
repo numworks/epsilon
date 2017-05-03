@@ -28,7 +28,6 @@ Sequence::Sequence(const char * text, KDColor color) :
 }
 
 Sequence::~Sequence() {
-  ((Function *)this)->Shared::Function::~Function();
   if (m_firstInitialConditionLayout != nullptr) {
     delete m_firstInitialConditionLayout;
     m_firstInitialConditionLayout = nullptr;

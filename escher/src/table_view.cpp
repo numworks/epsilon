@@ -89,7 +89,7 @@ KDCoordinate TableView::ContentView::height() const {
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns()+m_horizontalCellOverlapping);
+  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlapping;
   // handle the case of list: cumulatedWidthFromIndex() = 0
   return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
 }

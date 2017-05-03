@@ -62,6 +62,12 @@ LawController::LawController(Responder * parentResponder) :
   m_messages = sMessages;
 }
 
+LawController::~LawController() {
+  if (m_law) {
+    delete m_law;
+    m_law = nullptr;
+  }
+}
 View * LawController::view() {
   return &m_contentView;
 }

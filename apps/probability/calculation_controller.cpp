@@ -142,6 +142,13 @@ CalculationController::CalculationController(Responder * parentResponder) :
 {
 }
 
+CalculationController::~CalculationController() {
+  if (m_calculation) {
+    delete m_calculation;
+    m_calculation = nullptr;
+  }
+}
+
 View * CalculationController::view() {
   return &m_contentView;
 }

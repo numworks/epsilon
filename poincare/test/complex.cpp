@@ -87,11 +87,11 @@ QUIZ_CASE(poincare_complex_evaluate) {
 
 QUIZ_CASE(poincare_complex_constructor) {
   Complex * a = new Complex(Complex::Cartesian(2.0f, 3.0f));
-  assert(a->a() == 2.0f && a->b() == 3.0f);
+  assert(fabsf(a->a() - 2.0f) < 0.00001f && fabsf(a->b()-3.0f) < 0.00001f);
   assert(a->r() == 3.60555124f && a->th() == 0.982793748f);
   delete a;
 
   a = new Complex(Complex::Polar(3.60555124f, 0.982793748f));
-  assert(a->a() == 2.0f && a->b() == 3.0f);
+  assert(fabsf(a->a() - 2.0f) < 0.00001f && fabsf(a->b()-3.0f) < 0.00001f);
   delete a;
 }

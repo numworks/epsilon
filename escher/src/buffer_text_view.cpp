@@ -4,7 +4,8 @@
 
 BufferTextView::BufferTextView(KDText::FontSize size, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_buffer("")
 {
 }
 

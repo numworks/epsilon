@@ -35,6 +35,27 @@ AppsContainer::AppsContainer() :
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
 
+AppsContainer::~AppsContainer() {
+  delete m_homeApp;
+  m_homeApp = nullptr;
+  delete m_graphApp;
+  m_graphApp = nullptr;
+  delete m_probabilityApp;
+  m_probabilityApp = nullptr;
+  delete m_calculationApp;
+  m_calculationApp = nullptr;
+  delete m_hardwareTestApp;
+  m_hardwareTestApp = nullptr;
+  delete m_regressionApp;
+  m_regressionApp = nullptr;
+  delete m_sequenceApp;
+  m_sequenceApp = nullptr;
+  delete m_settingsApp;
+  m_settingsApp = nullptr;
+  delete m_statisticsApp;
+  m_statisticsApp = nullptr;
+}
+
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
   return Ion::Keyboard::keyDown(Ion::Keyboard::Key::A6, state);

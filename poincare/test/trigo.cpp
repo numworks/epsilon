@@ -208,10 +208,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   char expText4[10] ={'c','o', 's', 'h','(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText4);
   e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((14.754701170f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (14.754701170f + 0.000001f) &&
-      -22.963673499f - 0.000001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <= -22.963673499f + 0.000001f);
+  assert(fabsf(((Complex *)e)->a()-14.754701170f) <  0.00001f &&
+      fabsf(((Complex *)e)->b()+22.963673499f) <  0.00001f);
   delete a;
   delete e;
 
@@ -225,10 +223,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   char expText5[10] ={'s','i', 'n', 'h', '(', Ion::Charset::IComplex, '-', '4',')', 0};
   a = Expression::parse(expText5);
   e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((-14.74480518855f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (-14.74480518855f + 0.000001f) &&
-      22.97908557788f - 0.00001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <= 22.97908557788f + 0.00001f);
+  assert(fabsf(((Complex *)e)->a()+14.74480518855f) <  0.00001f &&
+      fabsf(((Complex *)e)->b()-22.97908557788f) <  0.00001f);
   delete a;
   delete e;
 

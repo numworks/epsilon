@@ -26,23 +26,8 @@ const char * TextFieldDelegateApp::XNT() {
 }
 
 bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * token) {
-  const char * text = textField->text();
-  int location = textField->cursorLocation();
-  int tokenLength = strlen(token);
-  while (location >= 0) {
-    while (text[location] != '(') {
-      location --;
-    }
-    if (location - tokenLength < 0) {
-      return false;
-    }
-    char previousToken[10];
-    strlcpy(previousToken, text+location-tokenLength, tokenLength+1);
-    if (strcmp(previousToken, token) == 0) {
-      return true;
-    }
-    location--;
-  }
+  /* TODO: find a way to return true when cursor is in token(?,,). Warning: be
+   * able to differenciate sum(int(x,1,2),3,4) and sum(2*n,2,3) */
   return false;
 }
 

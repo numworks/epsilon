@@ -19,7 +19,6 @@ Expression::Type LeastCommonMultiple::type() const {
 
 Expression * LeastCommonMultiple::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
   assert(newOperands != nullptr);
   LeastCommonMultiple * lcm = new LeastCommonMultiple();
   lcm->setArgument(newOperands, numberOfOperands, cloneOperands);

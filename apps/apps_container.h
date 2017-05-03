@@ -51,15 +51,6 @@ private:
   static constexpr int k_numberOfApps = 8;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
-  Home::App m_homeApp;
-  Graph::App m_graphApp;
-  Probability::App m_probabilityApp;
-  Calculation::App m_calculationApp;
-  HardwareTest::App m_hardwareTestApp;
-  Regression::App m_regressionApp;
-  Sequence::App m_sequenceApp;
-  Settings::App m_settingsApp;
-  Statistics::App m_statisticsApp;
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif
@@ -72,6 +63,15 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  Home::App * m_homeApp;
+  Graph::App * m_graphApp;
+  Probability::App * m_probabilityApp;
+  Calculation::App * m_calculationApp;
+  HardwareTest::App * m_hardwareTestApp;
+  Regression::App * m_regressionApp;
+  Sequence::App * m_sequenceApp;
+  Settings::App * m_settingsApp;
+  Statistics::App * m_statisticsApp;
 };
 
 #endif

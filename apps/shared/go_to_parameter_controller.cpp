@@ -7,6 +7,7 @@ namespace Shared {
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   FloatParameterController(parentResponder),
   m_cursor(cursor),
+  m_abscisseCell(nullptr),
   m_graphRange(graphRange),
   m_abscissaSymbol(symbol)
 {

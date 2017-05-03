@@ -7,6 +7,7 @@ namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
   DynamicViewController(parentResponder),
+  m_calculationHistory{},
   m_calculationStore(calculationStore)
 {
 }

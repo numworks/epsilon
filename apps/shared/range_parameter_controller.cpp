@@ -9,7 +9,9 @@ namespace Shared {
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
-  m_interactiveRange(interactiveRange)
+  m_interactiveRange(interactiveRange),
+  m_rangeCells{},
+  m_yAutoCell(nullptr)
 {
 }
 

@@ -10,6 +10,7 @@ namespace Shared {
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin),
   ButtonRowDelegate(header, nullptr),
+  m_editableCells{},
   m_store(store),
   m_storeParameterController(this, store)
 {

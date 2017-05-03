@@ -9,7 +9,8 @@ using namespace Poincare;
 namespace Shared {
 
 FloatParameterController::FloatParameterController(Responder * parentResponder) :
-  DynamicViewController(parentResponder)
+  DynamicViewController(parentResponder),
+  m_okButton(nullptr)
 {
 }
 

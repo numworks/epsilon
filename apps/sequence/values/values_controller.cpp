@@ -7,6 +7,8 @@ namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController),
+  m_sequenceTitleCells{},
+  m_floatCells{},
   m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
   m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),

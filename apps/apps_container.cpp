@@ -6,34 +6,33 @@ extern "C" {
 #include <assert.h>
 }
 
-using namespace Poincare;
 using namespace Shared;
 
 AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
   m_emptyBatteryWindow(EmptyBatteryWindow()),
-  m_homeApp(this),
-  m_graphApp(this, &m_globalContext),
-  m_probabilityApp(this),
-  m_calculationApp(this, &m_globalContext),
-  m_hardwareTestApp(this),
-  m_regressionApp(this),
-  m_sequenceApp(this, &m_globalContext),
-  m_settingsApp(this),
-  m_statisticsApp(this),
-  m_globalContext(GlobalContext()),
+  m_globalContext(Poincare::GlobalContext()),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(ExamPopUpController()),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
-  m_backlightDimmingTimer(BacklightDimmingTimer())
+  m_backlightDimmingTimer(BacklightDimmingTimer()),
+  m_homeApp(new Home::App(this)),
+  m_graphApp(new Graph::App(this, &m_globalContext)),
+  m_probabilityApp(new Probability::App(this)),
+  m_calculationApp(new Calculation::App(this, &m_globalContext)),
+  m_hardwareTestApp(new HardwareTest::App(this)),
+  m_regressionApp(new Regression::App(this)),
+  m_sequenceApp(new Sequence::App(this, &m_globalContext)),
+  m_settingsApp(new Settings::App(this)),
+  m_statisticsApp(new Statistics::App(this))
 {
   refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+  Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
 
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
@@ -46,15 +45,15 @@ int AppsContainer::numberOfApps() {
 }
 
 App * AppsContainer::appAtIndex(int index) {
-  static App * apps[] = {
-    &m_homeApp,
-    &m_calculationApp,
-    &m_graphApp,
-    &m_sequenceApp,
-    &m_settingsApp,
-    &m_statisticsApp,
-    &m_probabilityApp,
-    &m_regressionApp,
+  App * apps[] = {
+    m_homeApp,
+    m_calculationApp,
+    m_graphApp,
+    m_sequenceApp,
+    m_settingsApp,
+    m_statisticsApp,
+    m_probabilityApp,
+    m_regressionApp,
   };
   assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
   assert(index >= 0 && index < k_numberOfApps);
@@ -62,14 +61,38 @@ App * AppsContainer::appAtIndex(int index) {
 }
 
 App * AppsContainer::hardwareTestApp() {
-  return &m_hardwareTestApp;
+  return m_hardwareTestApp;
 }
 
 void AppsContainer::reset() {
   Clipboard::sharedClipboard()->reset();
+  if (m_calculationApp != nullptr) {
+    delete m_calculationApp;
+  }
+  m_calculationApp = new Calculation::App(this, &m_globalContext);
+  if (m_graphApp != nullptr) {
+    delete m_graphApp;
+  }
+  m_graphApp = new Graph::App(this, &m_globalContext);
+  if (m_sequenceApp != nullptr) {
+    delete m_sequenceApp;
+  }
+  m_sequenceApp = new Sequence::App(this, &m_globalContext);
+  if (m_statisticsApp != nullptr) {
+    delete m_statisticsApp;
+  }
+  m_statisticsApp = new Statistics::App(this);
+  if (m_probabilityApp != nullptr) {
+    delete m_probabilityApp;
+  }
+  m_probabilityApp = new Probability::App(this);
+  if (m_regressionApp != nullptr) {
+    delete m_regressionApp;
+  }
+  m_regressionApp = new Regression::App(this);
 }
 
-Context * AppsContainer::globalContext() {
+Poincare::Context * AppsContainer::globalContext() {
   return &m_globalContext;
 }
 
@@ -99,11 +122,11 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = m_window.updateAlphaLock();
 
   // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home && activeApp() != &m_hardwareTestApp) {
+  if (event == Ion::Events::Home && activeApp() != m_hardwareTestApp) {
     switchTo(appAtIndex(0));
     return true;
   }
-  if (event == Ion::Events::OnOff && activeApp() != &m_hardwareTestApp) {
+  if (event == Ion::Events::OnOff && activeApp() != m_hardwareTestApp) {
     suspend();
     return true;
   }

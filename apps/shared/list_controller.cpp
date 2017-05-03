@@ -7,7 +7,9 @@ ListController::ListController(Responder * parentResponder, FunctionStore * func
   DynamicViewController(parentResponder),
   ButtonRowDelegate(header, footer),
   m_functionStore(functionStore),
+  m_emptyCell(nullptr),
   m_addNewMessage(text),
+  m_addNewFunction(nullptr),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();

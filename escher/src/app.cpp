@@ -17,6 +17,9 @@ App::App(Container * container, ViewController * rootViewController, I18n::Messa
 {
 }
 
+App::~App() {
+}
+
 bool App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_firstResponder;
   bool didHandleEvent = false;

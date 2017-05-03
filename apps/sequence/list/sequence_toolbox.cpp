@@ -9,6 +9,7 @@ namespace Sequence {
 
 SequenceToolbox::SequenceToolbox() :
   MathToolbox(),
+  m_addedCellLayout{},
   m_numberOfAddedCells(0)
 {
 }

@@ -17,8 +17,8 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK && activeRow() == 0
-      && activeColumn()>0 && isDerivativeColumn(activeColumn())) {
+  if (event == Ion::Events::OK && selectedRow() == 0
+      && selectedColumn()>0 && isDerivativeColumn(selectedColumn())) {
     configureDerivativeFunction();
     return true;
   }
@@ -69,14 +69,6 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedFunction;
 }
 
-int ValuesController::activeRow() {
-  return selectedRow();
-}
-
-int ValuesController::activeColumn() {
-  return selectedColumn();
-}
-
 IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
@@ -124,7 +116,7 @@ bool ValuesController::isDerivativeColumn(int i) {
 }
 
 void ValuesController::configureDerivativeFunction() {
-  CartesianFunction * function = functionAtColumn(activeColumn());
+  CartesianFunction * function = functionAtColumn(selectedColumn());
   m_derivativeParameterController.setFunction(function);
   StackViewController * stack = stackController();
   stack->push(&m_derivativeParameterController);

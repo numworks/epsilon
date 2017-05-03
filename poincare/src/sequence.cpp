@@ -23,7 +23,7 @@ float Sequence::privateApproximate(Context& context, AngleUnit angleUnit) const 
   Symbol nSymbol = Symbol('n');
   float start = m_args[1]->approximate(context, angleUnit);
   float end = m_args[2]->approximate(context, angleUnit);
-  if (isnan(start) || isnan(end) || start != (int)start || end != (int)end) {
+  if (isnan(start) || isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return NAN;
   }
   float result = emptySequenceValue();
@@ -56,7 +56,7 @@ Expression * Sequence::privateEvaluate(Context& context, AngleUnit angleUnit) co
   }
   VariableContext nContext = VariableContext('n', &context);
   Symbol nSymbol = Symbol('n');
-  Expression * result = new Complex(Complex::Float(0.0f));
+  Expression * result = new Complex(Complex::Float(emptySequenceValue()));
   for (int i = (int)start; i <= (int)end; i++) {
     if (shouldStopProcessing()) {
       delete result;

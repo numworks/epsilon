@@ -9,7 +9,7 @@ class Sequence : public Function {
 public:
   Sequence(const char * name);
 private:
-  constexpr static int k_maxNumberOfSteps = 10000;
+  constexpr static float k_maxNumberOfSteps = 10000.0f;
   float privateApproximate(Context & context, AngleUnit angleUnit) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;

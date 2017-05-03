@@ -34,11 +34,11 @@ void SelectableTableView::didEnterResponderChain(Responder * previousFirstRespon
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
-  unhighlightTable();
+  unhighlightSelectedCell();
 }
 
 void SelectableTableView::deselectTable() {
-  unhighlightTable();
+  unhighlightSelectedCell();
   int previousSelectedCellX = selectedColumn();
   int previousSelectedCellY = selectedRow();
   selectColumn(0);
@@ -55,7 +55,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   if (j < 0 || j >= dataSource()->numberOfRows()) {
     return false;
   }
-  unhighlightTable();
+  unhighlightSelectedCell();
   int previousX = selectedColumn();
   int previousY = selectedRow();
   selectColumn(i);
@@ -94,7 +94,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void SelectableTableView::unhighlightTable() {
+void SelectableTableView::unhighlightSelectedCell() {
   if (selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns() &&
       selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows()) {
     HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());

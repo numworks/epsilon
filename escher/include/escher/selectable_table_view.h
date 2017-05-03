@@ -35,7 +35,7 @@ public:
 protected:
   SelectableTableViewDelegate * m_delegate;
 private:
-  void unhighlightTable();
+  void unhighlightSelectedCell();
 };
 
 #endif

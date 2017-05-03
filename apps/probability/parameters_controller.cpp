@@ -69,6 +69,8 @@ void ParametersController::ContentView::layoutSubviews() {
 
 ParametersController::ParametersController(Responder * parentResponder) :
   FloatParameterController(parentResponder),
+  m_selectableTableView(nullptr),
+  m_menuListCell{},
   m_law(nullptr),
   m_calculationController(CalculationController(nullptr))
 {

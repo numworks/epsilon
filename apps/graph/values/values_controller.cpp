@@ -9,6 +9,8 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController),
+  m_functionTitleCells{},
+  m_floatCells{},
   m_functionStore(functionStore),
   m_functionParameterController(FunctionParameterController(this)),
   m_intervalParameterController(IntervalParameterController(this, &m_interval)),

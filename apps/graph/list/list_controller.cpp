@@ -9,6 +9,8 @@ namespace Graph {
 
 ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
+  m_functionTitleCells{},
+  m_expressionCells{},
   m_parameterController(ListParameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction))
 {
 }

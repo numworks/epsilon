@@ -11,6 +11,8 @@ namespace Shared {
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController) :
   EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
   ButtonRowDelegate(header, nullptr),
+  m_abscissaTitleCell(nullptr),
+  m_abscissaCells{},
   m_abscissaParameterController(ValuesParameterController(this, intervalParameterController, parameterTitle)),
   m_setIntervalButton(Button(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;

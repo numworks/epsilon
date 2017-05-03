@@ -10,6 +10,8 @@ namespace Sequence {
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::ListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
+  m_sequenceTitleCells{},
+  m_expressionCells{},
   m_parameterController(ListParameterController(this, sequenceStore)),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),

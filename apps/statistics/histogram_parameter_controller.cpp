@@ -8,6 +8,7 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
   FloatParameterController(parentResponder),
+  m_cells{},
   m_store(store)
 {
 }

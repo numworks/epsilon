@@ -9,7 +9,8 @@ using namespace Shared;
 namespace Statistics {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
-  Shared::StoreController(parentResponder, store, header)
+  Shared::StoreController(parentResponder, store, header),
+  m_titleCells{}
 {
 }
 

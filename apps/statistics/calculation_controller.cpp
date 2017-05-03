@@ -13,6 +13,8 @@ namespace Statistics {
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, true),
   ButtonRowDelegate(header, nullptr),
+  m_titleCells{},
+  m_calculationCells{},
   m_store(store)
 {
 }

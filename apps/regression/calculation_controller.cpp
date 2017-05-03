@@ -14,6 +14,11 @@ namespace Regression {
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, true),
   ButtonRowDelegate(header, nullptr),
+  m_titleCells{},
+  m_r2TitleCell(nullptr),
+  m_columnTitleCell(nullptr),
+  m_doubleCalculationCells{},
+  m_calculationCells{},
   m_store(store)
 {
   m_r2Layout = new BaselineRelativeLayout(new StringLayout("r", 1, KDText::FontSize::Small), new StringLayout("2", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);

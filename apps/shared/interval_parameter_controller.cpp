@@ -5,7 +5,8 @@ namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
   FloatParameterController(parentResponder),
-  m_interval(interval)
+  m_interval(interval),
+  m_intervalCells{}
 {
 }
 

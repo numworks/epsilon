@@ -32,8 +32,6 @@ public:
   ViewController(Responder * parentResponder);
   virtual const char * title();
   virtual View * view() = 0;
-  virtual void loadView();
-  virtual void unloadView();
   virtual void viewWillAppear();
   virtual void viewDidDisappear();
 };

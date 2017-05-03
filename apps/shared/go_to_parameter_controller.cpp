@@ -16,13 +16,6 @@ int GoToParameterController::numberOfRows() {
   return 2;
 }
 
-void GoToParameterController::unloadView() {
-  assert(m_abscisseCell != nullptr);
-  delete m_abscisseCell;
-  m_abscisseCell = nullptr;
-  FloatParameterController::unloadView();
-}
-
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
   return m_abscisseCell;
@@ -40,11 +33,16 @@ void GoToParameterController::buttonAction() {
   stack->pop();
 }
 
-View * GoToParameterController::createView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
-  assert(m_abscisseCell == nullptr);
+View * GoToParameterController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   m_abscisseCell = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, m_abscissaSymbol);
   return tableView;
+}
+
+void GoToParameterController::unloadView(View * view) {
+  delete m_abscisseCell;
+  m_abscisseCell = nullptr;
+  FloatParameterController::unloadView(view);
 }
 
 }

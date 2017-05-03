@@ -114,8 +114,7 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
   }
 }
 
-void EditableCellTableViewController::viewWillAppear() {
-  TabTableController::viewWillAppear();
+void EditableCellTableViewController::didEnterResponderChain(Responder * previousFirstResponder) {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 1);
   } else {

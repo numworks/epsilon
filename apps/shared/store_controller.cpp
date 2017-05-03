@@ -96,15 +96,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StoreController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    assert(m_editableCells[i] != nullptr);
-    delete m_editableCells[i];
-    m_editableCells[i] = nullptr;
-  }
-  EditableCellTableViewController::unloadView();
-}
-
 Responder * StoreController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
@@ -133,13 +124,20 @@ int StoreController::maxNumberOfElements() const {
   return FloatPairStore::k_maxNumberOfPairs;
 }
 
-View * StoreController::createView() {
-  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::createView();
+View * StoreController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::loadView();
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    assert(m_editableCells[i] == nullptr);
     m_editableCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer);
   }
   return tableView;
+}
+
+void StoreController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
+    delete m_editableCells[i];
+    m_editableCells[i] = nullptr;
+  }
+  EditableCellTableViewController::unloadView(view);
 }
 
 }

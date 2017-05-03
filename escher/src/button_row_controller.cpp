@@ -26,12 +26,6 @@ ButtonRowController * ButtonRowDelegate::header() {
   return m_header;
 }
 
-void ButtonRowDelegate::loadButtonView() {
-}
-
-void ButtonRowDelegate::unloadButtonView() {
-}
-
 ButtonRowController::ContentView::ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style) :
   View(),
   m_mainViewController(mainViewController),
@@ -230,21 +224,10 @@ bool ButtonRowController::handleEvent(Ion::Events::Event event) {
 void ButtonRowController::viewWillAppear() {
   /* We need to layout subviews at first appearance because the number of
    * buttons might have changed between 2 appearences. */
-  m_contentView.mainViewController()->viewWillAppear();
   m_contentView.layoutSubviews();
+  m_contentView.mainViewController()->viewWillAppear();
 }
 
 void ButtonRowController::viewDidDisappear() {
   m_contentView.mainViewController()->viewDidDisappear();
-}
-
-void ButtonRowController::loadView() {
-  m_contentView.buttonRowDelegate()->loadButtonView();
-  m_contentView.mainViewController()->loadView();
-  m_contentView.layoutSubviews();
-}
-
-void ButtonRowController::unloadView() {
-  m_contentView.buttonRowDelegate()->unloadButtonView();
-  m_contentView.mainViewController()->unloadView();
 }

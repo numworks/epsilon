@@ -19,6 +19,7 @@ void TabTableController::didBecomeFirstResponder() {
 }
 
 void TabTableController::viewWillAppear() {
+  DynamicViewController::viewWillAppear();
   selectableTableView()->reloadData();
 }
 
@@ -33,10 +34,13 @@ SelectableTableView * TabTableController::selectableTableView() {
   return (SelectableTableView *)view();
 }
 
-View * TabTableController::createView() {
+View * TabTableController::loadView() {
   return new SelectableTableView(this, m_dataSource, 0, 0, m_topMargin, m_rightMargin, m_bottomMargin, m_leftMargin, this, m_showIndicators, true, Palette::WallScreenDark);
 }
 
+void TabTableController::unloadView(View * view) {
+  delete view;
+}
 
 }
 

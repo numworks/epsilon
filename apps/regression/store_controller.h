@@ -12,10 +12,10 @@ public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
   ~StoreController();
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  void unloadView() override;
 private:
   HighlightCell * titleCells(int index) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   EvenOddExpressionCell * m_titleCells[k_numberOfTitleCells];
   Poincare::ExpressionLayout * m_titleLayout[2];
 };

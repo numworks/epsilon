@@ -235,7 +235,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ListController::viewWillAppear() {
+void ListController::didEnterResponderChain(Responder * previousFirstResponder) {
   selectableTableView()->reloadData();
 }
 
@@ -244,16 +244,6 @@ void ListController::willExitResponderChain(Responder * nextFirstResponder) {
     selectableTableView()->deselectTable();
     footer()->setSelectedButton(-1);
   }
-}
-
-void ListController::unloadView() {
-  assert(m_emptyCell != nullptr);
-  delete m_emptyCell;
-  m_emptyCell = nullptr;
-  assert(m_addNewFunction != nullptr);
-  delete m_addNewFunction;
-  m_addNewFunction = nullptr;
-  DynamicViewController::unloadView();
 }
 
 StackViewController * ListController::stackController() const{
@@ -273,14 +263,6 @@ void ListController::reinitExpression(Function * function) {
 
 SelectableTableView * ListController::selectableTableView() {
   return (SelectableTableView *)view();
-}
-
-View * ListController::createView() {
-  assert(m_emptyCell == nullptr);
-  m_emptyCell = new EvenOddCell();
-  assert(m_addNewFunction == nullptr);
-  m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, false, true);
 }
 
 TabViewController * ListController::tabController() const{
@@ -303,6 +285,20 @@ void ListController::addEmptyFunction() {
 
 void ListController::removeFunctionRow(Function * function) {
   m_functionStore->removeFunction(function);
+}
+
+View * ListController::loadView() {
+  m_emptyCell = new EvenOddCell();
+  m_addNewFunction = new NewFunctionCell(m_addNewMessage);
+  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, false, true);
+}
+
+void ListController::unloadView(View * view) {
+  delete m_emptyCell;
+  m_emptyCell = nullptr;
+  delete m_addNewFunction;
+  m_addNewFunction = nullptr;
+  delete view;
 }
 
 }

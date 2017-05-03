@@ -15,8 +15,3 @@ void ViewController::viewWillAppear() {
 void ViewController::viewDidDisappear() {
 }
 
-void ViewController::loadView() {
-}
-
-void ViewController::unloadView() {
-}

@@ -20,8 +20,6 @@ public:
   void willResignFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void loadView() override;
-  void unloadView() override;
 private:
   ViewController * activeViewController();
   class ContentView : public View {

@@ -15,7 +15,6 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
   IntervalParameterController * intervalParameterController() override;
-  void unloadView() override;
 private:
   bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   int maxNumberOfCells() override;
@@ -28,7 +27,8 @@ private:
   EvenOddBufferTextCell * floatCells(int j) override;
   SequenceStore * m_sequenceStore;
   SequenceStore * functionStore() const override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif

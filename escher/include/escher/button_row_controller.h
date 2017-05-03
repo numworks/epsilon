@@ -28,8 +28,6 @@ public:
   bool setSelectedButton(int selectedButton);
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void loadView() override;
-  void unloadView() override;
 private:
   class ContentView : public View {
   public:
@@ -66,10 +64,6 @@ public:
   virtual Button * buttonAtIndex(int index, ButtonRowController::Position position) const;
   ButtonRowController * header();
   ButtonRowController * footer();
-  /* By default these two functions do not load anything. They should be
-   * overrided if the delegate dynamically allocate the button views. */
-  virtual void loadButtonView();
-  virtual void unloadButtonView();
 private:
   ButtonRowController * m_header;
   ButtonRowController * m_footer;

@@ -14,7 +14,6 @@ public:
   const char * title() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int numberOfRows() override;
-  void unloadView() override;
 protected:
   constexpr static int k_totalNumberOfCell = 3;
   bool setParameterAtIndex(int parameterIndex, float f) override;
@@ -23,7 +22,8 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_intervalCells[k_totalNumberOfCell];
 };

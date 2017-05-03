@@ -30,15 +30,6 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-void HistogramParameterController::unloadView() {
-  for (int i = 0; i < k_numberOfCells; i++) {
-    assert(m_cells[i] != nullptr);
-    delete m_cells[i];
-    m_cells[i] = nullptr;
-  }
-  FloatParameterController::unloadView();
-}
-
 float HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
   if (index == 0) {
@@ -76,13 +67,20 @@ int HistogramParameterController::reusableParameterCellCount(int type) {
   return k_numberOfCells;
 }
 
-View * HistogramParameterController::createView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
+View * HistogramParameterController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_numberOfCells; i++) {
-    assert(m_cells[i] == nullptr);
     m_cells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
   }
   return tableView;
+}
+
+void HistogramParameterController::unloadView(View * view) {
+  for (int i = 0; i < k_numberOfCells; i++) {
+    delete m_cells[i];
+    m_cells[i] = nullptr;
+  }
+  FloatParameterController::unloadView(view);
 }
 
 }

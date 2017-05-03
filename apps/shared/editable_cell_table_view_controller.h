@@ -22,7 +22,7 @@ public:
   KDCoordinate rowHeight(int j) override;
 
   void didBecomeFirstResponder() override;
-  void viewWillAppear() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
 private:
   TextFieldDelegateApp * textFieldDelegateApp() override;
   static constexpr KDCoordinate k_cellHeight = 20;

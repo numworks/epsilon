@@ -87,11 +87,11 @@ void ParametersController::setLaw(Law * law) {
 }
 
 void ParametersController::viewWillAppear() {
+  FloatParameterController::viewWillAppear();
   for (int i = 0; i < m_law->numberOfParameter(); i++) {
     contentView()->parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
   }
   contentView()->layoutSubviews();
-  FloatParameterController::viewWillAppear();
 }
 
 int ParametersController::numberOfRows() {
@@ -118,18 +118,6 @@ HighlightCell * ParametersController::reusableParameterCell(int index, int type)
 
 int ParametersController::reusableParameterCellCount(int type) {
   return m_law->numberOfParameter();
-}
-
-void ParametersController::unloadView() {
-  assert(m_selectableTableView != nullptr);
-  delete m_selectableTableView;
-  m_selectableTableView = nullptr;
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_menuListCell[i] != nullptr);
-    delete m_menuListCell[i];
-    m_menuListCell[i] = nullptr;
-  }
-  FloatParameterController::unloadView();
 }
 
 float ParametersController::parameterAtIndex(int index) {
@@ -165,11 +153,9 @@ I18n::Message ParametersController::okButtonText() {
   return I18n::Message::Next;
 }
 
-View * ParametersController::createView() {
-  assert(m_selectableTableView == nullptr);
-  m_selectableTableView = (SelectableTableView *)FloatParameterController::createView();
+View * ParametersController::loadView() {
+  m_selectableTableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_menuListCell[i] == nullptr);
     m_menuListCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
   }
   ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
@@ -177,6 +163,16 @@ View * ParametersController::createView() {
     contentView->setNumberOfParameters(m_law->numberOfParameter());
   }
   return contentView;
+}
+
+void ParametersController::unloadView(View * view) {
+  delete m_selectableTableView;
+  m_selectableTableView = nullptr;
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    delete m_menuListCell[i];
+    m_menuListCell[i] = nullptr;
+  }
+  FloatParameterController::unloadView(view);
 }
 
 SelectableTableView * ParametersController::selectableTableView() {

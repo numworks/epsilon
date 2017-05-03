@@ -26,16 +26,16 @@ public:
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void viewWillAppear() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
-  void unloadView() override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   virtual void reinitExpression(Function * function);
   SelectableTableView * selectableTableView();
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   FunctionStore * m_functionStore;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;

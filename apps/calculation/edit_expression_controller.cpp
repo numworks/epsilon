@@ -97,18 +97,17 @@ TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
   return (App *)app();
 }
 
-void EditExpressionController::loadView() {
-  m_historyController->loadView();
-  DynamicViewController::loadView();
-}
-
-void EditExpressionController::unloadView() {
-  m_historyController->unloadView();
-  DynamicViewController::unloadView();
-}
-
-View * EditExpressionController::createView() {
+View * EditExpressionController::loadView() {
   return new ContentView(this, (TableView *)m_historyController->view(), this);
+}
+
+void EditExpressionController::unloadView(View * view) {
+  delete view;
+}
+
+void EditExpressionController::viewDidDisappear() {
+  DynamicViewController::viewDidDisappear();
+  m_historyController->viewDidDisappear();
 }
 
 }

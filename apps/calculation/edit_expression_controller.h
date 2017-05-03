@@ -10,17 +10,17 @@
 namespace Calculation {
 class HistoryController;
 
+/* TODO: implement a split view */
 class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   void didBecomeFirstResponder() override;
+  void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
   const char * textBody();
   void setTextBody(const char * text);
   bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
-  void loadView() override;
-  void unloadView() override;
 private:
   class ContentView : public View {
   public:
@@ -38,7 +38,8 @@ private:
     TextField m_textField;
     char m_textBody[TextField::maxBufferSize()];
   };
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;

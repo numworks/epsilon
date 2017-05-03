@@ -25,6 +25,7 @@ void FloatParameterController::didBecomeFirstResponder() {
 }
 
 void FloatParameterController::viewWillAppear() {
+  DynamicViewController::viewWillAppear();
   selectableTableView()->reloadData();
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
@@ -169,29 +170,12 @@ int FloatParameterController::activeCell() {
   return selectedRow();
 }
 
-void FloatParameterController::unloadView() {
-  assert(m_okButton != nullptr);
-  delete m_okButton;
-  m_okButton = nullptr;
-  DynamicViewController::unloadView();
-}
-
 StackViewController * FloatParameterController::stackController() {
   return (StackViewController *)parentResponder();
 }
 
 SelectableTableView * FloatParameterController::selectableTableView() {
   return (SelectableTableView *)view();
-}
-
-View * FloatParameterController::createView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this);
-  assert(m_okButton == nullptr);
-  m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
-    FloatParameterController * parameterController = (FloatParameterController *) context;
-    parameterController->buttonAction();
-  }, this));
-  return tableView;
 }
 
 void FloatParameterController::buttonAction() {
@@ -201,6 +185,21 @@ void FloatParameterController::buttonAction() {
 
 I18n::Message FloatParameterController::okButtonText() {
   return I18n::Message::Ok;
+}
+
+View * FloatParameterController::loadView() {
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this);
+  m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
+    FloatParameterController * parameterController = (FloatParameterController *) context;
+    parameterController->buttonAction();
+  }, this));
+  return tableView;
+}
+
+void FloatParameterController::unloadView(View * view) {
+  delete m_okButton;
+  m_okButton = nullptr;
+  delete view;
 }
 
 }

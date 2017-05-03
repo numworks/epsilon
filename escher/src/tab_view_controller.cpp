@@ -114,19 +114,15 @@ void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
   ViewController * activeVC = m_children[i];
   if (i  != m_activeChildIndex || forceReactive) {
     if (i != m_activeChildIndex) {
-      activeVC->loadView();
       m_view.setActiveView(activeVC->view());
-    }
-    m_view.m_tabView.setActiveIndex(i);
-    if (i >= 0) {
       m_children[i]->viewWillAppear();
     }
+    m_view.m_tabView.setActiveIndex(i);
   }
   app()->setFirstResponder(activeVC);
   if (i  != m_activeChildIndex || forceReactive) {
       if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
       m_children[m_activeChildIndex]->viewDidDisappear();
-      m_children[m_activeChildIndex]->unloadView();
     }
     m_activeChildIndex = i;
   }
@@ -166,15 +162,6 @@ const char * TabViewController::tabName(uint8_t index) {
 }
 
 void TabViewController::viewWillAppear() {
-  activeViewController()->viewWillAppear();
-  m_view.m_tabView.setActiveIndex(m_activeChildIndex);
-}
-
-void TabViewController::viewDidDisappear() {
-  activeViewController()->viewDidDisappear();
-}
-
-void TabViewController::loadView() {
   if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
     for (int i=0; i<m_numberOfChildren; i++) {
       m_view.m_tabView.addTab(m_children[i]);
@@ -183,12 +170,13 @@ void TabViewController::loadView() {
   if (m_activeChildIndex < 0) {
     m_activeChildIndex = 0;
   }
-  m_children[m_activeChildIndex]->loadView();
   m_view.setActiveView(m_children[m_activeChildIndex]->view());
+  activeViewController()->viewWillAppear();
+  m_view.m_tabView.setActiveIndex(m_activeChildIndex);
 }
 
-void TabViewController::unloadView() {
-  activeViewController()->unloadView();
+void TabViewController::viewDidDisappear() {
+  activeViewController()->viewDidDisappear();
 }
 
 ViewController * TabViewController::activeViewController() {

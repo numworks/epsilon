@@ -57,8 +57,10 @@ KDRect ModalViewController::ContentView::frame() {
 }
 
 void ModalViewController::ContentView::layoutSubviews() {
+  assert(m_regularView != nullptr);
   m_regularView->setFrame(bounds());
   if (numberOfSubviews() == 2) {
+  assert(m_currentModalView != nullptr);
     m_currentModalView->setFrame(frame());
   }
 }
@@ -110,8 +112,6 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
-  m_regularViewController->viewDidDisappear();
-  vc->loadView();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
   app()->setFirstResponder(vc);
@@ -119,10 +119,8 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
 
 void ModalViewController::dismissModalViewController() {
   m_currentModalViewController->viewDidDisappear();
-  m_regularViewController->viewWillAppear();
   app()->setFirstResponder(m_previousResponder);
   m_contentView.dismissModalView();
-  m_currentModalViewController->unloadView();
   m_currentModalViewController = nullptr;
 }
 
@@ -145,6 +143,8 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void ModalViewController::viewWillAppear() {
+  m_contentView.setMainView(m_regularViewController->view());
+  m_contentView.layoutSubviews();
   if (m_contentView.isDisplayingModal()) {
     m_currentModalViewController->viewWillAppear();
   }
@@ -156,20 +156,4 @@ void ModalViewController::viewDidDisappear() {
     m_currentModalViewController->viewDidDisappear();
   }
   m_regularViewController->viewDidDisappear();
-}
-
-void ModalViewController::loadView() {
-  if (m_contentView.isDisplayingModal()) {
-    m_currentModalViewController->loadView();
-  }
-  m_regularViewController->loadView();
-  m_contentView.setMainView(m_regularViewController->view());
-  m_contentView.layoutSubviews();
-}
-
-void ModalViewController::unloadView() {
-  if (m_contentView.isDisplayingModal()) {
-    m_currentModalViewController->unloadView();
-  }
-  m_regularViewController->unloadView();
 }

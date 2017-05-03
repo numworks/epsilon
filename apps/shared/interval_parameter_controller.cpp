@@ -31,15 +31,6 @@ Interval * IntervalParameterController::interval() {
   return m_interval;
 }
 
-void IntervalParameterController::unloadView() {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    assert(m_intervalCells[i] != nullptr);
-    delete m_intervalCells[i];
-    m_intervalCells[i] = nullptr;
-  }
-  FloatParameterController::unloadView();
-}
-
 float IntervalParameterController::parameterAtIndex(int index) {
   GetterPointer getters[k_totalNumberOfCell] = {&Interval::start, &Interval::end, &Interval::step};
   return (m_interval->*getters[index])();
@@ -75,13 +66,20 @@ int IntervalParameterController::reusableParameterCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-View * IntervalParameterController::createView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
+View * IntervalParameterController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_totalNumberOfCell; i++) {
-    assert(m_intervalCells[i] == nullptr);
     m_intervalCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
   }
   return tableView;
+}
+
+void IntervalParameterController::unloadView(View * view) {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    delete m_intervalCells[i];
+    m_intervalCells[i] = nullptr;
+  }
+  FloatParameterController::unloadView(view);
 }
 
 }

@@ -29,10 +29,10 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void unloadView() override;
 private:
   Responder * tabController() const override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   constexpr static int k_totalNumberOfRows = 13;
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   static constexpr KDCoordinate k_cellHeight = 20;

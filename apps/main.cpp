@@ -5,4 +5,5 @@ AppsContainer container;
 void ion_app() {
   container.switchTo(container.appAtIndex(0));
   container.run();
+  container.switchTo(nullptr);
 }

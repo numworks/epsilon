@@ -23,7 +23,6 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
   void selectPreviousNewSequenceCell();
-  void unloadView() override;
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
@@ -39,7 +38,8 @@ private:
   void addEmptyFunction() override;
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;
   void reinitExpression(Shared::Function * function) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
   constexpr static int k_maxNumberOfRows = 9;
   SequenceStore * m_sequenceStore;

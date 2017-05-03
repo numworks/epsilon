@@ -9,24 +9,32 @@ DynamicViewController::DynamicViewController(Responder * parentResponder) :
 }
 
 DynamicViewController::~DynamicViewController() {
-  if (m_view) {
-    delete m_view;
-    m_view = nullptr;
-  }
+  assert(m_view == nullptr);
 }
 
 View * DynamicViewController::view() {
-  assert(m_view != nullptr);
+  loadViewIfNeeded();
   return m_view;
 }
 
-void DynamicViewController::loadView() {
-  assert(m_view == nullptr);
-  m_view = createView();
+void DynamicViewController::viewWillAppear() {
+  loadViewIfNeeded();
 }
 
-void DynamicViewController::unloadView() {
-  assert(m_view != nullptr);
-  delete m_view;
-  m_view = nullptr;
+void DynamicViewController::viewDidDisappear() {
+  unloadViewIfNeeded();
+}
+
+void DynamicViewController::loadViewIfNeeded() {
+  if (m_view == nullptr) {
+    m_view = loadView();
+    assert(m_view != nullptr);
+  }
+}
+
+void DynamicViewController::unloadViewIfNeeded() {
+  if (m_view != nullptr) {
+    unloadView(m_view);
+    m_view = nullptr;
+  }
 }

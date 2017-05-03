@@ -227,20 +227,8 @@ Responder * ValuesController::defaultController() {
 }
 
 void ValuesController::viewWillAppear() {
-  header()->setSelectedButton(-1);
   EditableCellTableViewController::viewWillAppear();
-}
-
-void ValuesController::unloadView() {
-  assert(m_abscissaTitleCell != nullptr);
-  delete m_abscissaTitleCell;
-  m_abscissaTitleCell = nullptr;
-  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    assert(m_abscissaCells[i] != nullptr);
-    delete m_abscissaCells[i];
-    m_abscissaCells[i] = nullptr;
-  }
-  EditableCellTableViewController::unloadView();
+  header()->setSelectedButton(-1);
 }
 
 Function * ValuesController::functionAtColumn(int i) {
@@ -305,15 +293,23 @@ float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnI
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
 
-View * ValuesController::createView() {
-  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::createView();
-  assert(m_abscissaTitleCell == nullptr);
+View * ValuesController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::loadView();
   m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    assert(m_abscissaCells[i] == nullptr);
     m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);
   }
   return tableView;
+}
+
+void ValuesController::unloadView(View * view) {
+  delete m_abscissaTitleCell;
+  m_abscissaTitleCell = nullptr;
+  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
+    delete m_abscissaCells[i];
+    m_abscissaCells[i] = nullptr;
+  }
+  EditableCellTableViewController::unloadView(view);
 }
 
 }

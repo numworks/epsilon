@@ -17,7 +17,6 @@ public:
   const char * title() override;
   int numberOfRows() override;
   KDCoordinate rowHeight(int j) override;
-  void unloadView() override;
 private:
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;
   Shared::ListParameterController * parameterController() override;
@@ -27,7 +26,8 @@ private:
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   void removeFunctionRow(Shared::Function * function) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   constexpr static int k_maxNumberOfRows = 5;
   FunctionTitleCell * m_functionTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell * m_expressionCells[k_maxNumberOfRows];

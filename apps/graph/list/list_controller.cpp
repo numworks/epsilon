@@ -36,18 +36,6 @@ KDCoordinate ListController::rowHeight(int j) {
   return functionSize + k_emptyRowHeight - KDText::stringSize(" ").height();
 }
 
-void ListController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    assert(m_functionTitleCells[i] != nullptr);
-    delete m_functionTitleCells[i];
-    m_functionTitleCells[i] = nullptr;
-    assert(m_expressionCells[i] != nullptr);
-    delete m_expressionCells[i];
-    m_expressionCells[i] = nullptr;
-  }
-  Shared::ListController::unloadView();
-}
-
 void ListController::editExpression(Function * function, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
@@ -111,14 +99,22 @@ void ListController::removeFunctionRow(Function * function) {
   }
 }
 
-View * ListController::createView() {
+View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    assert(m_functionTitleCells[i] == nullptr);
     m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    assert(m_expressionCells[i] == nullptr);
     m_expressionCells[i] = new FunctionExpressionCell();
   }
-  return Shared::ListController::createView();
+  return Shared::ListController::loadView();
+}
+
+void ListController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    delete m_functionTitleCells[i];
+    m_functionTitleCells[i] = nullptr;
+    delete m_expressionCells[i];
+    m_expressionCells[i] = nullptr;
+  }
+  Shared::ListController::unloadView(view);
 }
 
 }

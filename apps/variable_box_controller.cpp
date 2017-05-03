@@ -264,5 +264,6 @@ void VariableBoxController::viewWillAppear() {
 }
 
 void VariableBoxController::viewDidDisappear() {
+  StackViewController::viewDidDisappear();
   m_contentViewController.deselectTable();
 }

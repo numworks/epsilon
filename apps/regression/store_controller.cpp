@@ -36,26 +36,24 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   mytitleCell->setExpression(m_titleLayout[i]);
 }
 
-void StoreController::unloadView() {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    assert(m_titleCells[i] != nullptr);
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-  }
-  Shared::StoreController::unloadView();
-}
-
 HighlightCell * StoreController::titleCells(int index) {
   assert(index >= 0 && index < k_numberOfTitleCells);
   return m_titleCells[index];
 }
 
-View * StoreController::createView() {
+View * StoreController::loadView() {
   for (int i = 0; i < k_numberOfTitleCells; i++) {
-    assert(m_titleCells[i] == nullptr);
     m_titleCells[i] = new EvenOddExpressionCell(0.5f, 0.5f);
   }
-  return Shared::StoreController::createView();
+  return Shared::StoreController::loadView();
+}
+
+void StoreController::unloadView(View * view) {
+  for (int i = 0; i < k_numberOfTitleCells; i++) {
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+  }
+  Shared::StoreController::unloadView(view);
 }
 
 }

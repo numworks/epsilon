@@ -15,10 +15,13 @@ public:
   DynamicViewController(Responder * parentResponder);
   ~DynamicViewController();
   View * view() override;
-  virtual void loadView() override;
-  virtual void unloadView() override;
+  void viewWillAppear() override;
+  void viewDidDisappear() override;
 private:
-  virtual View * createView() = 0;
+  void loadViewIfNeeded();
+  void unloadViewIfNeeded();
+  virtual View * loadView() = 0;
+  virtual void unloadView(View * view) = 0;
   View * m_view;
 };
 

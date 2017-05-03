@@ -231,53 +231,43 @@ int CalculationController::typeAtLocation(int i, int j) {
   return 4;
 }
 
-void CalculationController::unloadView() {
-  assert(m_r2TitleCell != nullptr);
-  delete m_r2TitleCell;
-  m_r2TitleCell = nullptr;
-  assert(m_columnTitleCell != nullptr);
-  delete m_columnTitleCell;
-  m_columnTitleCell = nullptr;
-  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
-    assert(m_doubleCalculationCells[i] != nullptr);
-    delete m_doubleCalculationCells[i];
-    m_doubleCalculationCells[i] = nullptr;
-    assert(m_calculationCells[i] != nullptr);
-    delete m_calculationCells[i];
-    m_calculationCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    assert(m_titleCells[i] != nullptr);
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-  }
-  TabTableController::unloadView();
-}
-
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
-View * CalculationController::createView() {
-  SelectableTableView * tableView = (SelectableTableView *)TabTableController::createView();
-  assert(m_r2TitleCell == nullptr);
+View * CalculationController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView *)TabTableController::loadView();
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
-  assert(m_columnTitleCell == nullptr);
   m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    assert(m_titleCells[i] == nullptr);
     m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
-    assert(m_doubleCalculationCells[i] == nullptr);
     m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCell();
     m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[i]->setParentResponder(tableView);
-    assert(m_calculationCells[i] == nullptr);
     m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
   return tableView;
+}
+
+void CalculationController::unloadView(View * view) {
+  delete m_r2TitleCell;
+  m_r2TitleCell = nullptr;
+  delete m_columnTitleCell;
+  m_columnTitleCell = nullptr;
+  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
+    delete m_doubleCalculationCells[i];
+    m_doubleCalculationCells[i] = nullptr;
+    delete m_calculationCells[i];
+    m_calculationCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+  }
+  TabTableController::unloadView(view);
 }
 
 }

@@ -47,20 +47,6 @@ IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
 
-void ValuesController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_floatCells[i] != nullptr);
-    delete m_floatCells[i];
-    m_floatCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    assert(m_sequenceTitleCells[i] != nullptr);
-    delete m_sequenceTitleCells[i];
-    m_sequenceTitleCells[i] = nullptr;
-  }
-  Shared::ValuesController::unloadView();
-}
-
 bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
       return false;
@@ -98,16 +84,26 @@ Shared::ValuesFunctionParameterController * ValuesController::functionParameterC
 #endif
 }
 
-View * ValuesController::createView() {
+View * ValuesController::loadView() {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    assert(m_sequenceTitleCells[i] == nullptr);
     m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator);
   }
   for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_floatCells[i] == nullptr);
     m_floatCells[i] = new EvenOddBufferTextCell();
   }
-  return Shared::ValuesController::createView();
+  return Shared::ValuesController::loadView();
+}
+
+void ValuesController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    delete m_floatCells[i];
+    m_floatCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+    delete m_sequenceTitleCells[i];
+    m_sequenceTitleCells[i] = nullptr;
+  }
+  Shared::ValuesController::unloadView(view);
 }
 
 }

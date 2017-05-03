@@ -80,18 +80,6 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-void ListController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    assert(m_sequenceTitleCells[i] != nullptr);
-    delete m_sequenceTitleCells[i];
-    m_sequenceTitleCells[i] = nullptr;
-    assert(m_expressionCells[i] != nullptr);
-    delete m_expressionCells[i];
-    m_expressionCells[i] = nullptr;
-  }
-  Shared::ListController::unloadView();
-}
-
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
@@ -276,14 +264,22 @@ void ListController::reinitExpression(Shared::Function * function) {
   selectableTableView()->reloadData();
 }
 
-View * ListController::createView() {
+View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    assert(m_sequenceTitleCells[i] == nullptr);
     m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    assert(m_expressionCells[i] == nullptr);
     m_expressionCells[i] = new FunctionExpressionCell();
   }
-  return Shared::ListController::createView();
+  return Shared::ListController::loadView();
+}
+
+void ListController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    delete m_sequenceTitleCells[i];
+    m_sequenceTitleCells[i] = nullptr;
+    delete m_expressionCells[i];
+    m_expressionCells[i] = nullptr;
+  }
+  Shared::ListController::unloadView(view);
 }
 
 }

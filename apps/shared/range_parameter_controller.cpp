@@ -121,27 +121,23 @@ int RangeParameterController::reusableParameterCellCount(int type) {
   return k_numberOfTextCell;
 }
 
-void RangeParameterController::unloadView() {
-  assert(m_yAutoCell != nullptr);
-  delete m_yAutoCell;
-  m_yAutoCell = nullptr;
-  for (int i = 0; i < k_numberOfTextCell; i++) {
-    assert(m_rangeCells[i] != nullptr);
-    delete m_rangeCells[i];
-    m_rangeCells[i] = nullptr;
-  }
-  FloatParameterController::unloadView();
-}
-
-View * RangeParameterController::createView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::createView();
-  assert(m_yAutoCell == nullptr);
+View * RangeParameterController::loadView() {
+  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   m_yAutoCell = new MessageTableCellWithSwitch(I18n::Message::YAuto);
   for (int i = 0; i < k_numberOfTextCell; i++) {
-    assert(m_rangeCells[i] == nullptr);
     m_rangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
   }
   return tableView;
+}
+
+void RangeParameterController::unloadView(View * view) {
+  delete m_yAutoCell;
+  m_yAutoCell = nullptr;
+  for (int i = 0; i < k_numberOfTextCell; i++) {
+    delete m_rangeCells[i];
+    m_rangeCells[i] = nullptr;
+  }
+  FloatParameterController::unloadView(view);
 }
 
 }

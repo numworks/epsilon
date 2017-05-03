@@ -17,7 +17,8 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   SelectableTableView * selectableTableView();
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   virtual Responder * tabController() const = 0;
 private:
   TableViewDataSource * m_dataSource;

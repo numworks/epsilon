@@ -81,20 +81,6 @@ IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
 
-void ValuesController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_floatCells[i] != nullptr);
-    delete m_floatCells[i];
-    m_floatCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
-    assert(m_functionTitleCells[i] != nullptr);
-    delete m_functionTitleCells[i];
-    m_functionTitleCells[i] = nullptr;
-  }
-  Shared::ValuesController::unloadView();
-}
-
 CartesianFunction * ValuesController::functionAtColumn(int i) {
   assert(i > 0);
   int index = 1;
@@ -179,16 +165,26 @@ float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnI
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
 
-View * ValuesController::createView() {
+View * ValuesController::loadView() {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {
-    assert(m_functionTitleCells[i] == nullptr);
     m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
   }
   for (int i = 0; i < k_maxNumberOfCells; i++) {
-    assert(m_floatCells[i] == nullptr);
     m_floatCells[i] = new EvenOddBufferTextCell();
   }
-  return Shared::ValuesController::createView();
+  return Shared::ValuesController::loadView();
+}
+
+void ValuesController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    delete m_floatCells[i];
+    m_floatCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
+    delete m_functionTitleCells[i];
+    m_functionTitleCells[i] = nullptr;
+  }
+  Shared::ValuesController::unloadView(view);
 }
 
 }

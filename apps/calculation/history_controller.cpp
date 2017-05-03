@@ -171,29 +171,27 @@ int HistoryController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-void HistoryController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    assert(m_calculationHistory[i] != nullptr);
-    delete m_calculationHistory[i];
-    m_calculationHistory[i] = nullptr;
-  }
-  DynamicViewController::unloadView();
-}
-
 void HistoryController::scrollToCell(int i, int j) {
   selectableTableView()->scrollToCell(i, j);
 }
 
-View * HistoryController::createView() {
+CalculationSelectableTableView * HistoryController::selectableTableView() {
+  return (CalculationSelectableTableView *)view();
+}
+
+View * HistoryController::loadView() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    assert(m_calculationHistory[i] == nullptr);
     m_calculationHistory[i] = new HistoryViewCell();
   }
   return new CalculationSelectableTableView(this, this, this);
 }
 
-CalculationSelectableTableView * HistoryController::selectableTableView() {
-  return (CalculationSelectableTableView *)view();
+void HistoryController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    delete m_calculationHistory[i];
+    m_calculationHistory[i] = nullptr;
+  }
+  delete view;
 }
 
 }

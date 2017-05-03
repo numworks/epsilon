@@ -221,6 +221,7 @@ void MathToolbox::viewWillAppear() {
 }
 
 void MathToolbox::viewDidDisappear() {
+  Toolbox::viewDidDisappear();
   m_selectableTableView.deselectTable();
 }
 

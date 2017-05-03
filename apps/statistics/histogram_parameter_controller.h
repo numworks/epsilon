@@ -13,13 +13,13 @@ public:
   const char * title() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void unloadView() override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   constexpr static int k_numberOfCells = 2;
   MessageTableCellWithEditableText * m_cells[k_numberOfCells];

@@ -29,13 +29,13 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
-  void unloadView() override;
 protected:
   int activeCell();
   StackViewController * stackController();
   virtual float parameterAtIndex(int index) = 0;
   virtual SelectableTableView * selectableTableView();
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();

@@ -16,7 +16,6 @@ public:
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void unloadView() override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
@@ -25,7 +24,8 @@ private:
   bool setParameterAtIndex(int parameterIndex, float f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   I18n::Message okButtonText() override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);

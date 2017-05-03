@@ -17,13 +17,13 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   bool handleEvent(Ion::Events::Event event) override;
-  void unloadView() override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   constexpr static int k_numberOfTextCell = 4;
   InteractiveCurveViewRange * m_interactiveRange;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];

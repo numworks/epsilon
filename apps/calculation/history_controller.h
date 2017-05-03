@@ -28,10 +28,10 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
-  void unloadView() override;
   void scrollToCell(int i, int j);
+  View * loadView() override;
+  void unloadView(View * view) override;
 private:
-  View * createView() override;
   CalculationSelectableTableView * selectableTableView();
   constexpr static int k_maxNumberOfDisplayedRows = 5;
   HistoryViewCell * m_calculationHistory[k_maxNumberOfDisplayedRows];

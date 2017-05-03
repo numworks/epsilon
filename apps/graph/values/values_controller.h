@@ -20,7 +20,6 @@ public:
   int activeRow();
   int activeColumn();
   Shared::IntervalParameterController * intervalParameterController() override;
-  void unloadView() override;
 private:
   CartesianFunction * functionAtColumn(int i) override;
   bool isDerivativeColumn(int i);
@@ -38,7 +37,8 @@ private:
   CartesianFunctionStore * functionStore() const override;
   FunctionParameterController m_functionParameterController;
   FunctionParameterController * functionParameterController() override;
-  View * createView() override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   Shared::IntervalParameterController m_intervalParameterController;
   DerivativeParameterController m_derivativeParameterController;
 };

@@ -120,7 +120,9 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App * app) {
-  m_window.setTitle(app->upperName());
+  if (app) {
+    m_window.setTitle(app->upperName());
+  }
   Container::switchTo(app);
 }
 

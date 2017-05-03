@@ -111,32 +111,29 @@ int CalculationController::typeAtLocation(int i, int j) {
   return i;
 }
 
-void CalculationController::unloadView() {
-  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    assert(m_titleCells[i] != nullptr);
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-    assert(m_calculationCells[i] != nullptr);
-    delete m_calculationCells[i];
-    m_calculationCells[i] = nullptr;
-  }
-  TabTableController::unloadView();
-}
-
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
-View * CalculationController::createView() {
+View * CalculationController::loadView() {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    assert(m_titleCells[i] == nullptr);
     m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
     m_titleCells[i]->setAlignment(1.0f, 0.5f);
-    assert(m_calculationCells[i] == nullptr);
     m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
-  return TabTableController::createView();
+  return TabTableController::loadView();
+}
+
+
+void CalculationController::unloadView(View * view) {
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    delete m_titleCells[i];
+    m_titleCells[i] = nullptr;
+    delete m_calculationCells[i];
+    m_calculationCells[i] = nullptr;
+  }
+  TabTableController::unloadView(view);
 }
 
 }

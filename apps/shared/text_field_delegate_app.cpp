@@ -75,7 +75,6 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
   if (event == Ion::Events::XNT) {
     if (!textField->isEditing()) {
       textField->setEditing(true);
-      textField->setText("");
     }
     if (cursorInToken(textField, "sum") || cursorInToken(textField, "product")) {
       textField->insertTextAtLocation("n", textField->cursorLocation());

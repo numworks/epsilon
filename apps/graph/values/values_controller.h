@@ -17,8 +17,6 @@ public:
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
-  int activeRow();
-  int activeColumn();
   Shared::IntervalParameterController * intervalParameterController() override;
 private:
   CartesianFunction * functionAtColumn(int i) override;

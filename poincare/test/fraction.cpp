@@ -28,6 +28,7 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("[[1,2][3,4][5,6]]/2");
   e = a->evaluate(globalContext);
   assert(e->operand(0)->approximate(globalContext) == 0.5f);
@@ -59,4 +60,5 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   assert(fabsf(e->operand(3)->approximate(globalContext) - 0.0f) < 0.000001f);
   delete a;
   delete e;
+#endif
 }

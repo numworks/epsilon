@@ -27,6 +27,7 @@ QUIZ_CASE(poincare_addition_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("[[1,2][3,4][5,6]]+3");
   e = a->evaluate(globalContext);
   assert(e->operand(0)->approximate(globalContext) == 4.0f);
@@ -96,4 +97,5 @@ QUIZ_CASE(poincare_addition_evaluate) {
   assert(((Complex *)e->operand(5))->a() == 12.0f && ((Complex *)e->operand(5))->b() == 1.0f);
   delete a;
   delete e;
+#endif
 }

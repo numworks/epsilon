@@ -2,66 +2,68 @@
 #include <poincare.h>
 #include <string.h>
 #include <ion.h>
+#include <stdlib.h>
 #include <assert.h>
 
 using namespace Poincare;
+constexpr Expression::FloatDisplayMode Decimal = Expression::FloatDisplayMode::Decimal;
+constexpr Expression::FloatDisplayMode Scientific = Expression::FloatDisplayMode::Scientific;
+
+void assert_float_converts_to(float f, const char * result, Expression::FloatDisplayMode mode = Scientific, int significantDigits = 7, int bufferSize = 14) {
+  int tagSize = 8;
+  unsigned char tag = 'X';
+  char * taggedBuffer = (char *)malloc(bufferSize+2*tagSize);
+  memset(taggedBuffer, tag, bufferSize+2*tagSize);
+  char * buffer = taggedBuffer + tagSize;
+
+  Complex::convertFloatToText(f, buffer, bufferSize, significantDigits, mode);
+
+  for (int i=0; i<tagSize; i++) {
+    assert(taggedBuffer[i] == tag);
+  }
+  for (int i=tagSize+strlen(buffer)+1; i<bufferSize+2*tagSize; i++) {
+    assert(taggedBuffer[i] == tag);
+  }
+
+  for (int i=0; i<bufferSize; i++) {
+    if (buffer[i] == Ion::Charset::Exponent) {
+      buffer[i] = 'E';
+    }
+  }
+
+  assert(strcmp(buffer, result) == 0);
+
+  free(taggedBuffer);
+}
 
 QUIZ_CASE(poincare_complex_to_text) {
-  char buffer[14];
-  Complex::convertFloatToText(123.456f,buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result1[20] = {'1','.','2','3','4','5','6',Ion::Charset::Exponent,'2',0};
-  assert(strcmp(buffer, result1) == 0);
-  Complex::convertFloatToText(1.234567891011f,buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result2[20] = {'1','.','2','3','4','5','6','8',0};
-  assert(strcmp(buffer, result2) == 0);
-  Complex::convertFloatToText(2.0f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result3[20] = {'2',0};
-  assert(strcmp(buffer, result3) == 0);
-  Complex::convertFloatToText(123456789.0f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result4[20] = {'1','.','2','3','4','5','6','8',Ion::Charset::Exponent,'8',0};
-  assert(strcmp(buffer, result4) == 0);
-  Complex::convertFloatToText(0.00000123456789f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result5[20] = {'1','.','2','3','4','5','6','8',Ion::Charset::Exponent,'-','6',0};
-  assert(strcmp(buffer, result5) == 0);
-  Complex::convertFloatToText(0.99f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result6[20] = {'9','.','9',Ion::Charset::Exponent,'-','1',0};
-  assert(strcmp(buffer, result6) == 0);
-  Complex::convertFloatToText(-123.456789f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result7[20] = {'-','1','.','2','3','4','5','6','8',Ion::Charset::Exponent,'2',0};
-  assert(strcmp(buffer, result7) == 0);
-  Complex::convertFloatToText(-0.000123456789f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result8[20] = {'-','1','.','2','3','4','5','6','8',Ion::Charset::Exponent,'-','4',0};
-  assert(strcmp(buffer, result8) == 0);
-  Complex::convertFloatToText(0.0f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result9[20] = {'0',0};
-  assert(strcmp(buffer, result9) == 0);
-  Complex::convertFloatToText(10000000000000000000000000000.0f, buffer, 14, 7, Expression::FloatDisplayMode::Scientific);
-  char result10[20] = {'1',Ion::Charset::Exponent,'2','8',0};
-  assert(strcmp(buffer, result10) == 0);
-  Complex::convertFloatToText(10000000000000000000000000000.0f, buffer, 14, 7, Expression::FloatDisplayMode::Decimal);
-  assert(strcmp(buffer, result10) == 0);
-  Complex::convertFloatToText(1000000.0f, buffer, 14, 7, Expression::FloatDisplayMode::Decimal);
-  assert(strcmp(buffer, "1000000") == 0);
-  Complex::convertFloatToText(10000000.0f, buffer, 14, 7, Expression::FloatDisplayMode::Decimal);
-  char result11[20] = {'1',Ion::Charset::Exponent,'7',0};
-  assert(strcmp(buffer, result11) == 0);
-  Complex::convertFloatToText(0.000001f, buffer, 14, 7, Expression::FloatDisplayMode::Decimal);
-  assert(strcmp(buffer, "0.000001") == 0);
-  Complex::convertFloatToText(0.0000001f, buffer, 14, 7, Expression::FloatDisplayMode::Decimal);
-  char result12[20] = {'1',Ion::Charset::Exponent,'-','7',0};
-  assert(strcmp(buffer, result12) == 0);
-  char buffer2[6];
-  Complex::convertFloatToText(123.421f, buffer2, 6, 4, Expression::FloatDisplayMode::Decimal);
-  assert(strcmp(buffer2, "123.4") == 0);
-  char buffer3[6];
-  Complex::convertFloatToText(123.421f, buffer3, 6, 5, Expression::FloatDisplayMode::Decimal);
-  char result13[20] = {'1','.','2',Ion::Charset::Exponent,'2',0};
-  assert(strcmp(buffer3, result13) == 0);
+  assert_float_converts_to(123.456f, "1.23456E2"); //FIXME: Only 6 significant digits?
+  assert_float_converts_to(1.234567891011f, "1.234568");
+  assert_float_converts_to(2.0f, "2");
+  assert_float_converts_to(123456789.0f, "1.234568E8");
+  assert_float_converts_to(0.00000123456789f, "1.234568E-6");
+  assert_float_converts_to(0.99f, "9.9E-1");
+  assert_float_converts_to(-123.456789f, "-1.234568E2");
+  assert_float_converts_to(-0.000123456789f, "-1.234568E-4");
+  assert_float_converts_to(0.0f, "0");
+  assert_float_converts_to(10000000000000000000000000000.0f, "1E28");
+  assert_float_converts_to(10000000000000000000000000000.0f, "1E28", Decimal); // FIXME: Explain. Would overflow?
+  assert_float_converts_to(1000000.0f, "1000000", Decimal);
+  assert_float_converts_to(10000000.0f, "1E7", Decimal);
+  assert_float_converts_to(0.000001f, "0.000001", Decimal);
+  assert_float_converts_to(0.0000001f, "1E-7", Decimal); // FIXME: Explain. Would overflow?
+  // CRASH!! assert_float_converts_to(-0.00000000000000000000000000000000909090964f, "WHATEVER", Decimal);
+  assert_float_converts_to(123.421f, "123.4", Decimal, 4, 6);
+  assert_float_converts_to(123.421f, "1.2E2", Decimal, 5, 6);
+}
 
-  Complex::Cartesian(1.0f, 2.0f).writeTextInBuffer(buffer, 14);
-  char text1[14] = {'1','+', '2', '*', Ion::Charset::IComplex, 0};
+QUIZ_CASE(poincare_complex_cartesian_to_text) {
+  constexpr int bufferSize = 14;
+  char buffer[bufferSize] = {0};
+  Complex::Cartesian(1.0f, 2.0f).writeTextInBuffer(buffer, bufferSize);
+  char text1[bufferSize] = {'1','+', '2', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text1) == 0);
-  Complex::Cartesian(-1.3f, 2.444f).writeTextInBuffer(buffer, 14);
+  Complex::Cartesian(-1.3f, 2.444f).writeTextInBuffer(buffer, bufferSize);
   char text2[14] = {'-','1','.','3','+', '2','.','4','4','4', '*', Ion::Charset::IComplex, 0};
   assert(strcmp(buffer, text2) == 0);
   Complex::Cartesian(-1.3f, -2.444f).writeTextInBuffer(buffer, 14);

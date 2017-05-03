@@ -28,6 +28,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert(e->type() == Expression::Type::Derivative);
   delete e;
 
+#if MATRICES_ARE_DEFINED
   e = Expression::parse("dim([[2]])");
   assert(e->type() == Expression::Type::MatrixDimension);
   delete e;
@@ -35,6 +36,7 @@ QUIZ_CASE(poincare_parse_function) {
   e = Expression::parse("det([[1,2,3][4,5,6][7,8,9]])");
   assert(e->type() == Expression::Type::Determinant);
   delete e;
+#endif
 
   e = Expression::parse("confidence(0.1, 100)");
   assert(e->type() == Expression::Type::ConfidenceInterval);
@@ -65,9 +67,11 @@ QUIZ_CASE(poincare_parse_function) {
   assert(e->type() == Expression::Type::Integral);
   delete e;
 
+#if MATRICES_ARE_DEFINED
   e = Expression::parse("inverse([[1,2,3][4,5,6][7,8,9]])");
   assert(e->type() == Expression::Type::MatrixInverse);
   delete e;
+#endif
 
   e = Expression::parse("lcm(2,3)");
   assert(e->type() == Expression::Type::LeastCommonMultiple);
@@ -127,6 +131,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert(e->type() == Expression::Type::Sum);
   delete e;
 
+#if MATRICES_ARE_DEFINED
   e = Expression::parse("trace([[1,2,3][4,5,6][7,8,9]])");
   assert(e->type() == Expression::Type::MatrixTrace);
   delete e;
@@ -134,6 +139,7 @@ QUIZ_CASE(poincare_parse_function) {
   e = Expression::parse("transpose([[1,2,3][4,5,6][7,8,9]])");
   assert(e->type() == Expression::Type::MatrixTranspose);
   delete e;
+#endif
 }
 
 
@@ -160,9 +166,11 @@ QUIZ_CASE(poincare_function_approximate) {
   assert(e->approximate(globalContext) == 2.0f);
   delete e;
 
+#if MATRICES_ARE_DEFINED
   e = Expression::parse("det([[1,23,3][4,5,6][7,8,9]])");
   assert(fabsf(e->approximate(globalContext)-126.0f) <= 0.0001f);
   delete e;
+#endif
 
   e = Expression::parse("floor(2.3)");
   assert(e->approximate(globalContext) == 2.0f);
@@ -235,9 +243,11 @@ QUIZ_CASE(poincare_function_approximate) {
   assert(e->approximate(globalContext) == 49.0f);
   delete e;
 
+#if MATRICES_ARE_DEFINED
   e = Expression::parse("trace([[1,2,3][4,5,6][7,8,9]])");
   assert(e->approximate(globalContext) == 15.0f);
   delete e;
+#endif
 }
 
 QUIZ_CASE(poincare_function_evaluate) {
@@ -257,12 +267,14 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("dim([[1,2,3][4,5,-6]])");
   e = a->evaluate(globalContext);
   assert(fabsf(e->operand(0)->approximate(globalContext)-2.0f) <= 0.00001f);
   assert(fabsf(e->operand(1)->approximate(globalContext) -3.0f) <= 0.00001f);
   delete a;
   delete e;
+#endif
 
   char conjText[20] ={'c','o', 'n','j', '(', '3', '+', '2', '*', Ion::Charset::IComplex, ')', 0};
   a = Expression::parse(conjText);
@@ -272,6 +284,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("inverse([[1,2,3][4,5,-6][7,8,9]])");
   e = a->evaluate(globalContext);
   assert(fabsf(e->operand(0)->approximate(globalContext)-(-31.0f/24.0f)) <= 0.00001f);
@@ -285,6 +298,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert(fabsf(e->operand(8)->approximate(globalContext) -(1.0f/24.0f)) <= 0.00001f);
   delete a;
   delete e;
+#endif
 
   a = Expression::parse("prediction(0.1, 100)");
   e = a->evaluate(globalContext);
@@ -341,6 +355,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("transpose([[1,2,3][4,5,-6][7,8,9]])");
   e = a->evaluate(globalContext);
   assert(fabsf(e->operand(0)->approximate(globalContext)-1.0f) <= 0.00001f);
@@ -354,4 +369,5 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert(fabsf(e->operand(8)->approximate(globalContext) -9.0f) <= 0.00001f);
   delete a;
   delete e;
+#endif
 }

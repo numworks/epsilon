@@ -35,6 +35,7 @@ QUIZ_CASE(poincare_power_evaluate) {
   delete a;
   delete e;
 
+#if MATRICES_ARE_DEFINED
   a = Expression::parse("[[1,2][3,4]]^3");
   e = a->evaluate(globalContext);
   assert(e->operand(0)->approximate(globalContext) == 37.0f);
@@ -43,4 +44,5 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert(e->operand(3)->approximate(globalContext) == 118.0f);
   delete a;
   delete e;
+#endif
 }

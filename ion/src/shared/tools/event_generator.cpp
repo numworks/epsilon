@@ -11,7 +11,7 @@ void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & 
   while (i > 0) {
     int prEventId = distribution(rng);
     Ion::Events::Event e(prEventId);
-    if (e.isValid() && e != Ion::Events::Termination) {
+    if (e.isDefined() && e != Ion::Events::Termination) {
       i--;
       file << (unsigned char)(prEventId);
     }

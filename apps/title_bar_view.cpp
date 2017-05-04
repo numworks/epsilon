@@ -34,6 +34,10 @@ bool TitleBarView::setIsCharging(bool isCharging) {
   return m_batteryView.setIsCharging(isCharging);
 }
 
+bool TitleBarView::setIsPlugged(bool isPlugged) {
+  return m_batteryView.setIsPlugged(isPlugged);
+}
+
 bool TitleBarView::setAlphaLockStatus(AlphaLockView::Status status) {
   return m_alphaLockView.setStatus(status);
 }

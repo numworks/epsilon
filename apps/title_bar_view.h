@@ -13,6 +13,7 @@ public:
   void setTitle(I18n::Message title);
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
+  bool setIsPlugged(bool isPlugged);
   bool setAlphaLockStatus(AlphaLockView::Status status);
   void refreshPreferences();
 private:

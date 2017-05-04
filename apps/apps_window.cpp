@@ -22,6 +22,10 @@ bool AppsWindow::updateIsChargingState() {
   return m_titleBarView.setIsCharging(Ion::Battery::isCharging());
 }
 
+bool AppsWindow::updatePluggedState() {
+  return m_titleBarView.setIsPlugged(Ion::USB::isPlugged());
+}
+
 void AppsWindow::refreshPreferences() {
   m_titleBarView.refreshPreferences();
 }

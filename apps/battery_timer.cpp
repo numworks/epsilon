@@ -2,7 +2,7 @@
 #include "apps_container.h"
 
 BatteryTimer::BatteryTimer(AppsContainer * container) :
-  Timer(5),
+  Timer(1),
   m_container(container)
 {
 }

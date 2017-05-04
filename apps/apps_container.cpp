@@ -164,6 +164,11 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App * app) {
+  if (app == hardwareTestApp()) {
+    m_window.hideTitleBarView(true);
+  } else {
+    m_window.hideTitleBarView(false);
+  }
   if (app) {
     m_window.setTitle(app->upperName());
   }

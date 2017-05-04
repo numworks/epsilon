@@ -32,7 +32,6 @@ bool KeyboardView::setNextKey() {
   m_testedKey = (Ion::Keyboard::Key)((int)m_testedKey+1);
   int keyIndex = (int)m_testedKey;
   if (keyIndex == 55) {
-    resetTestedKey();
     return false;
   }
   if ((keyIndex > 7 && keyIndex < 12) || keyIndex == 35 || keyIndex == 41 || keyIndex == 47 || keyIndex == 53) {
@@ -43,6 +42,9 @@ bool KeyboardView::setNextKey() {
 }
 
 void KeyboardView::resetTestedKey() {
+  for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
+    m_defectiveKey[i] = 0;
+  }
   m_testedKey = Ion::Keyboard::Key::A1;
   markRectAsDirty(bounds());
 }

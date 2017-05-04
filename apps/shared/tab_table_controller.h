@@ -10,23 +10,17 @@ namespace Shared {
 
 class TabTableController : public DynamicViewController, public SelectableTableViewDelegate {
 public:
-  TabTableController(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate topMargin,
-    KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators);
+  TabTableController(Responder * parentResponder, TableViewDataSource * dataSource);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   SelectableTableView * selectableTableView();
-  View * loadView() override;
+  virtual View * loadView() override;
   void unloadView(View * view) override;
   virtual Responder * tabController() const = 0;
 private:
   TableViewDataSource * m_dataSource;
-  KDCoordinate m_topMargin;
-  KDCoordinate m_rightMargin;
-  KDCoordinate m_bottomMargin;
-  KDCoordinate m_leftMargin;
-  bool m_showIndicators;
 };
 
 }

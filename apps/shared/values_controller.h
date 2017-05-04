@@ -35,9 +35,9 @@ public:
   Responder * defaultController() override;
   void viewWillAppear() override;
   static constexpr KDCoordinate k_topMargin = 10;
-  static constexpr KDCoordinate k_bottomMargin = 5;
+  static constexpr KDCoordinate k_bottomMargin = 15;
   static constexpr KDCoordinate k_leftMargin = 1;
-  static constexpr KDCoordinate k_rightMargin = 10;
+  static constexpr KDCoordinate k_rightMargin = 15;
   static constexpr KDCoordinate k_abscissaCellWidth = 150;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:

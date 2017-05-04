@@ -2,15 +2,9 @@
 
 namespace Shared {
 
-TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate topMargin,
-  KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators) :
+TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource) :
   DynamicViewController(parentResponder),
-  m_dataSource(dataSource),
-  m_topMargin(topMargin),
-  m_rightMargin(rightMargin),
-  m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin),
-  m_showIndicators(showIndicators)
+  m_dataSource(dataSource)
 {
 }
 
@@ -35,7 +29,7 @@ SelectableTableView * TabTableController::selectableTableView() {
 }
 
 View * TabTableController::loadView() {
-  return new SelectableTableView(this, m_dataSource, 0, 0, m_topMargin, m_rightMargin, m_bottomMargin, m_leftMargin, this, m_showIndicators, true, Palette::WallScreenDark);
+  return new SelectableTableView(this, m_dataSource, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, true, true);
 }
 
 void TabTableController::unloadView(View * view) {

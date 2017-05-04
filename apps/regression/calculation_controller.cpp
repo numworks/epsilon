@@ -12,7 +12,7 @@ using namespace Shared;
 namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, this, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, true),
+  TabTableController(parentResponder, this),
   ButtonRowDelegate(header, nullptr),
   m_titleCells{},
   m_r2TitleCell(nullptr),

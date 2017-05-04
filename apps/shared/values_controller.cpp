@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Shared {
 
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController) :
-  EditableCellTableViewController(parentResponder, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin),
+  EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
@@ -296,7 +296,7 @@ float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnI
 }
 
 View * ValuesController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::loadView();
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this, true, true, Palette::WallScreenDark, 13, Palette::GreyDark, Palette::GreyMiddle);
   m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);

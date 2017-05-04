@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Shared {
 
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
-  EditableCellTableViewController(parentResponder, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin),
+  EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
   m_store(store),

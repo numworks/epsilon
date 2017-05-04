@@ -8,9 +8,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
-  KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  TabTableController(parentResponder, this, topMargin, rightMargin, bottomMargin, leftMargin, true)
+EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
+  TabTableController(parentResponder, this)
 {
 }
 

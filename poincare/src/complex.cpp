@@ -6,8 +6,8 @@ extern "C" {
 #include <math.h>
 #include <float.h>
 }
-#include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
+#include "layout/baseline_relative_layout.h"
 #include <ion.h>
 
 namespace Poincare {
@@ -333,13 +333,16 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   }
 
   // Print mantissa
+  assert(availableCharsForMantissaWithSign < k_maxFloatBufferLength);
   printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
   if (displayMode == FloatDisplayMode::Decimal || exponentInBase10 == 0.0f) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }
   // Print exponent
+  assert(availableCharsForMantissaWithSign < k_maxFloatBufferLength);
   buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
+  assert(numberOfCharExponent+availableCharsForMantissaWithSign+1 < k_maxFloatBufferLength);
   printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
@@ -361,10 +364,12 @@ void Complex::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,
    * decimalMarkerPosition != 0 */
   do {
     if (endChar == decimalMarkerPosition) {
+      assert(endChar >= 0 && endChar < bufferSize);
       buffer[endChar--] = '.';
     }
     quotien = dividend/10;
     digit = dividend - quotien*10;
+    assert(endChar >= 0 && endChar < bufferSize);
     buffer[endChar--] = '0'+digit;
     dividend = quotien;
   }  while (endChar >= startChar);

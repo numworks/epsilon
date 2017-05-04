@@ -15,8 +15,9 @@ void Ion::Power::suspend() {
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
   CM4.SCR()->setSLEEPDEEP(true);
 
-  WakeUp::Device::onChargingEvent();
   WakeUp::Device::onUSBPlugging();
+#if LED_WHILE_CHARGING
+  WakeUp::Device::onChargingEvent();
 
   while (1) {
     /* Update LEDS
@@ -24,8 +25,14 @@ void Ion::Power::suspend() {
      * a while to be sure that the plug state of the USB is up-to-date. */
     msleep(200);
     LED::Device::enforceState(Battery::isCharging(), USB::isPlugged(), false);
+#endif
 
     WakeUp::Device::onPowerKeyDown();
+
+#if LED_WHILE_CHARGING
+#else
+    msleep(200);
+#endif
 
     Device::shutdownClocks();
 
@@ -39,6 +46,7 @@ void Ion::Power::suspend() {
     msleep(1);
     asm("wfe");
 
+#if LED_WHILE_CHARGING
     Device::initClocks();
 
     Keyboard::Device::init();
@@ -51,7 +59,7 @@ void Ion::Power::suspend() {
       break;
     }
   }
-
+#endif
   Device::initClocks();
 
   Device::initPeripherals();

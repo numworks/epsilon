@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "keyboard_view.h"
+#include "color_controller.h"
 
 namespace HardwareTest {
 
@@ -16,6 +17,7 @@ private:
   static KDColor nextColor(KDColor color);
   KeyboardView m_view;
   KDColor m_color;
+  ColorController m_colorController;
 };
 
 }

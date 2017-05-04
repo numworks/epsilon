@@ -9,7 +9,8 @@ namespace HardwareTest {
 KeyboardController::KeyboardController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_view(KeyboardView()),
-  m_color(KDColorBlack)
+  m_color(KDColorBlack),
+  m_colorController(ColorController(nullptr))
 {
 }
 
@@ -21,13 +22,14 @@ bool KeyboardController::handleEvent(Ion::Events::Event event) {
   m_view.updateLEDState(m_color);
   m_color = nextColor(m_color);
   m_view.updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
-  if (event != Ion::Events::Event::PlainKey(m_view.testedKey()) && event != Ion::Events::Event::ShiftKey(m_view.testedKey()) && event != Ion::Events::Event::AlphaKey(m_view.testedKey()) && event != Ion::Events::Event::ShiftAlphaKey(m_view.testedKey())) {
+  Ion::Keyboard::State state = Ion::Keyboard::scan();
+  if (!Ion::Keyboard::keyDown(m_view.testedKey(), state)) {
     m_view.setDefectiveKey(m_view.testedKey());
   }
   if (!m_view.setNextKey()) {
     m_view.updateLEDState(KDColorBlack);
-    AppsContainer * container = (AppsContainer *)app()->container();
-    container->switchTo(container->appAtIndex(0));
+    ModalViewController * modal = (ModalViewController *)parentResponder();
+    modal->displayModalViewController(&m_colorController, 0.0f, 0.0f);
   }
   return true;
 }

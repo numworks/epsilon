@@ -10,6 +10,7 @@ public:
   void setTitle(I18n::Message title);
   bool updateBatteryLevel();
   bool updateIsChargingState();
+  bool updatePluggedState();
   void refreshPreferences();
   bool updateAlphaLock();
   void hideTitleBarView(bool hide);

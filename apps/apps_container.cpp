@@ -176,7 +176,7 @@ void AppsContainer::switchTo(App * app) {
 }
 
 void AppsContainer::updateBatteryState() {
-  if (m_window.updateBatteryLevel() || m_window.updateIsChargingState()) {
+  if (m_window.updateBatteryLevel() || m_window.updateIsChargingState() || m_window.updatePluggedState()) {
     m_window.redraw();
   }
 }

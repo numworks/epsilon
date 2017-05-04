@@ -21,7 +21,6 @@ Expression::Type HyperbolicTangent::type() const {
 
 Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 1);
   HyperbolicTangent * ht = new HyperbolicTangent();
   ht->setArgument(newOperands, numberOfOperands, cloneOperands);
   return ht;

@@ -11,8 +11,7 @@ namespace Shared {
 
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource , public TextFieldDelegate {
 public:
-  EditableCellTableViewController(Responder * parentResponder, KDCoordinate topMargin,
-    KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin);
+  EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;

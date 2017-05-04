@@ -12,12 +12,14 @@ public:
   bool updateIsChargingState();
   void refreshPreferences();
   bool updateAlphaLock();
+  void hideTitleBarView(bool hide);
 private:
   constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;
   TitleBarView m_titleBarView;
+  bool m_hideTitleBarView;
 };
 
 #endif

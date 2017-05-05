@@ -148,6 +148,12 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff && activeApp() != m_hardwareTestApp) {
+    /* Wait until power is released to avoid restarting just after suspending */
+    bool isPowerDown = true;
+    while (isPowerDown) {
+      Ion::Keyboard::State scan = Ion::Keyboard::scan();
+      isPowerDown = Ion::Keyboard::keyDown(Ion::Keyboard::Key::B2, scan);
+    }
     suspend();
     return true;
   }

@@ -29,11 +29,6 @@ void Ion::Power::suspend() {
 
     WakeUp::Device::onPowerKeyDown();
 
-#if LED_WHILE_CHARGING
-#else
-    msleep(200);
-#endif
-
     Device::shutdownClocks();
 
    /* To enter sleep, we need to issue a WFE instruction, which waits for the

@@ -8,7 +8,6 @@ namespace Probability {
 class RightIntegralCalculation : public Calculation {
 public:
   RightIntegralCalculation();
-  ~RightIntegralCalculation() override {};
   Type type() override;
   int numberOfParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;

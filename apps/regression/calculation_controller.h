@@ -14,6 +14,10 @@ class CalculationController : public Shared::TabTableController, public Shared::
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
   ~CalculationController();
+  CalculationController(const CalculationController& other) = delete;
+  CalculationController(CalculationController&& other) = delete;
+  CalculationController& operator=(const CalculationController& other) = delete;
+  CalculationController& operator=(CalculationController&& other) = delete;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

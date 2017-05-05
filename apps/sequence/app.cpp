@@ -7,7 +7,7 @@ namespace Sequence {
 
 App::App(Container * container, Context * context) :
   FunctionApp(container, &m_inputViewController, I18n::Message::SequenceApp, I18n::Message::SequenceAppCapital, ImageStore::SequenceIcon),
-  m_sequenceStore(SequenceStore()),
+  m_sequenceStore(),
   m_nContext(LocalContext(context)),
   m_listController(&m_listFooter, &m_sequenceStore, &m_listHeader, &m_listFooter),
   m_listFooter(ButtonRowController(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey)),

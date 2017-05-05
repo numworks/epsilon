@@ -7,7 +7,7 @@ namespace Probability {
 
 App::App(Container * container) :
   TextFieldDelegateApp(container, &m_stackViewController, I18n::Message::ProbaApp, I18n::Message::ProbaAppCapital, ImageStore::ProbabilityIcon),
-  m_lawController(LawController(nullptr)),
+  m_lawController(nullptr),
   m_stackViewController(&m_modalViewController, &m_lawController)
 {
 }

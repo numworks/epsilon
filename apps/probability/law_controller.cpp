@@ -57,7 +57,7 @@ LawController::LawController(Responder * parentResponder) :
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
   m_contentView(&m_selectableTableView),
   m_law(nullptr),
-  m_parametersController(ParametersController(nullptr))
+  m_parametersController(nullptr)
 {
   m_messages = sMessages;
 }

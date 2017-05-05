@@ -8,7 +8,6 @@ namespace Probability {
 class FiniteIntegralCalculation : public Calculation {
 public:
   FiniteIntegralCalculation();
-  ~FiniteIntegralCalculation() override {};
   Type type() override;
   int numberOfParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;

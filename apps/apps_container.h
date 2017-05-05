@@ -30,6 +30,17 @@ class AppsContainer : public Container {
 public:
   AppsContainer();
   ~AppsContainer();
+  /* Rule of 5: the copy constructor, move constructor, copy assignment
+   * operator and move assignment operator are deleted as their default
+   * implementation does not create new apps. The new object thus become
+   * obsolete as soon as the copy is deleted (because of our
+   * implementation of deletion). To avoid any use of obsolete object,
+   * we prevent to copy and assign. */
+  AppsContainer(const AppsContainer& other) = delete;
+  AppsContainer(AppsContainer&& other) = delete;
+  AppsContainer& operator=(const AppsContainer& other) = delete;
+  AppsContainer& operator=(AppsContainer&& other) = delete;
+  /* */
   static bool poincareCircuitBreaker(const Poincare::Expression * e);
   int numberOfApps();
   App * appAtIndex(int index);

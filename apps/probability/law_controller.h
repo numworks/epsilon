@@ -12,7 +12,11 @@ class LawController : public ViewController, public SimpleListViewDataSource, pu
 public:
   LawController(Responder * parentResponder);
   ~LawController();
-  View * view() override;
+  LawController(const LawController& other) = delete;
+  LawController(LawController&& other) = delete;
+  LawController& operator=(const LawController& other) = delete;
+  LawController& operator=(LawController&& other) = delete;
+    View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 

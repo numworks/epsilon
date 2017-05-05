@@ -8,7 +8,6 @@ namespace Probability {
 class BinomialLaw : public TwoParameterLaw {
 public:
   BinomialLaw();
-  ~BinomialLaw() override {};
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

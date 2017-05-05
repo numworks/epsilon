@@ -37,7 +37,8 @@ void assert_float_converts_to(float f, const char * result, Expression::FloatDis
 }
 
 QUIZ_CASE(poincare_complex_to_text) {
-  assert_float_converts_to(123.456f, "1.23456E2"); //FIXME: Only 6 significant digits?
+  /* We expect 7 significative numbers but do not display 0 */
+  assert_float_converts_to(123.456f, "1.23456E2");
   assert_float_converts_to(1.234567891011f, "1.234568");
   assert_float_converts_to(2.0f, "2");
   assert_float_converts_to(123456789.0f, "1.234568E8");
@@ -47,12 +48,20 @@ QUIZ_CASE(poincare_complex_to_text) {
   assert_float_converts_to(-0.000123456789f, "-1.234568E-4");
   assert_float_converts_to(0.0f, "0");
   assert_float_converts_to(10000000000000000000000000000.0f, "1E28");
-  assert_float_converts_to(10000000000000000000000000000.0f, "1E28", Decimal); // FIXME: Explain. Would overflow?
+  /* Converting 10000000000000000000000000000.0f into a decimal display would
+   * overflow the number of significant digits set to 7. When this is the case, the
+   * display mode is automatically set to scientific. */
+  assert_float_converts_to(10000000000000000000000000000.0f, "1E28", Decimal);
   assert_float_converts_to(1000000.0f, "1000000", Decimal);
   assert_float_converts_to(10000000.0f, "1E7", Decimal);
   assert_float_converts_to(0.000001f, "0.000001", Decimal);
-  assert_float_converts_to(0.0000001f, "1E-7", Decimal); // FIXME: Explain. Would overflow?
-  assert_float_converts_to(-0.00000000000000000000000000000000909090964f, "-9.090897E-33", Decimal); // FIXME: explain why it is not -9.090964 ?
+  /* Converting 0.00000001f into a decimal display would also overflow the
+   * number of significant digits set to 7. */
+  assert_float_converts_to(0.0000001f, "1E-7", Decimal);
+  /* The conversion of -0.00000000000000000000000000000000909090964f does not
+   * give the exact right number because of float represention. The closest
+   * exact representation is -9.090897E-33. */
+  assert_float_converts_to(-0.00000000000000000000000000000000909090964f, "-9.090897E-33"); // FIXME: explain why it is not -9.090964 ?
   assert_float_converts_to(123.421f, "123.4", Decimal, 4, 6);
   assert_float_converts_to(123.421f, "1.2E2", Decimal, 5, 6);
 }

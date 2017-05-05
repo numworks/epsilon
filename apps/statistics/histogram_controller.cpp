@@ -125,11 +125,13 @@ Responder * HistogramController::defaultController() {
   return tabController();
 }
 
-void HistogramController::viewWillAppear() {
-  m_view.selectMainView(true);
-  header()->setSelectedButton(-1);
-  reloadBannerView();
-  m_view.reload();
+void HistogramController::didEnterResponderChain(Responder * previousFirstResponder) {
+  if (!m_view.isMainViewSelected()) {
+    m_view.selectMainView(true);
+    header()->setSelectedButton(-1);
+    reloadBannerView();
+    m_view.reload();
+  }
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {

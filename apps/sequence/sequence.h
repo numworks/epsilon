@@ -14,6 +14,10 @@ public:
   };
   Sequence(const char * text = nullptr, KDColor color = KDColorBlack);
   ~Sequence();
+  Sequence& operator=(const Sequence& other);
+  Sequence& operator=(Sequence&& other) = delete;
+  Sequence(const Sequence& other) = delete;
+  Sequence(Sequence&& other) = delete;
   Type type();
   void setType(Type type);
   const char * firstInitialConditionText();

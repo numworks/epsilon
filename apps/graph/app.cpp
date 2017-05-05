@@ -9,7 +9,7 @@ namespace Graph {
 
 App::App(Container * container, Context * context) :
   FunctionApp(container, &m_inputViewController, I18n::Message::FunctionApp, I18n::Message::FunctionAppCapital, ImageStore::GraphIcon),
-  m_functionStore(CartesianFunctionStore()),
+  m_functionStore(),
   m_xContext(VariableContext('x', context)),
   m_listController(ListController(&m_listFooter, &m_functionStore, &m_listHeader, &m_listFooter)),
   m_listFooter(ButtonRowController(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey)),

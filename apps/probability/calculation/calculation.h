@@ -13,7 +13,7 @@ public:
     FiniteIntegral
   };
   Calculation();
-  virtual ~Calculation() {};
+  virtual ~Calculation() = default;
   virtual Type type() = 0;
   void setLaw(Law * law);
   virtual int numberOfParameters() = 0;

@@ -8,7 +8,6 @@ namespace Probability {
 class TwoParameterLaw : public Law {
 public:
   TwoParameterLaw(float parameterValue1, float parameterValue2);
-  virtual ~TwoParameterLaw() {};
   int numberOfParameter() override;
   float parameterValueAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;

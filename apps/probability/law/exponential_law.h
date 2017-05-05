@@ -8,7 +8,6 @@ namespace Probability {
 class ExponentialLaw : public OneParameterLaw {
 public:
   ExponentialLaw();
-  ~ExponentialLaw() override {};
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

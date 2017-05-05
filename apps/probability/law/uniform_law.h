@@ -8,7 +8,6 @@ namespace Probability {
 class UniformLaw : public TwoParameterLaw {
 public:
   UniformLaw();
-  ~UniformLaw() override {};
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

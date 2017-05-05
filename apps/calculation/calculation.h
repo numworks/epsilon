@@ -10,11 +10,10 @@ class Calculation {
 public:
   Calculation();
   ~Calculation(); // Delete expression and layout, if needed
-  /* The copy assignment operator is deleted as its default implementation does
-   * not create new expressions. The new object thus become obsolete as soon
-   * as the copy is deleted (because of our implementation of deletion). To
-   * avoid any use of obsolete object, we prevent to copy and assign. */
-  Calculation & operator= (const Calculation & other) = delete;
+  Calculation(const Calculation& other) = delete;
+  Calculation(Calculation&& other) = delete;
+  Calculation& operator=(const Calculation& other) = delete;
+  Calculation& operator=(Calculation&& other) = delete;
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
   const char * inputText();

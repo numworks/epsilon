@@ -8,7 +8,6 @@ namespace Probability {
 class PoissonLaw : public OneParameterLaw {
 public:
   PoissonLaw();
-  ~PoissonLaw() override {};
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

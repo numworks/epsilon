@@ -72,7 +72,7 @@ ParametersController::ParametersController(Responder * parentResponder) :
   m_selectableTableView(nullptr),
   m_menuListCell{},
   m_law(nullptr),
-  m_calculationController(CalculationController(nullptr))
+  m_calculationController(nullptr)
 {
 }
 

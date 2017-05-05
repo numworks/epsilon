@@ -8,7 +8,6 @@ namespace Probability {
 class OneParameterLaw : public Law {
 public:
   OneParameterLaw(float parameterValue);
-  virtual ~OneParameterLaw() {};
   int numberOfParameter() override;
   float parameterValueAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;

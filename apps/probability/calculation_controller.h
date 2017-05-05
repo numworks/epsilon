@@ -14,6 +14,10 @@ class CalculationController : public ViewController, public Shared::TextFieldDel
 public:
   CalculationController(Responder * parentResponder);
   ~CalculationController();
+  CalculationController(const CalculationController& other) = delete;
+  CalculationController(CalculationController&& other) = delete;
+  CalculationController& operator=(const CalculationController& other) = delete;
+  CalculationController& operator=(CalculationController&& other) = delete;
   View * view() override;
   const char * title() override;
   void reload();

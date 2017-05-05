@@ -11,9 +11,9 @@ ValuesController::ValuesController(Responder * parentResponder, SequenceStore * 
   m_floatCells{},
   m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
-  m_sequenceParameterController(Shared::ValuesFunctionParameterController('n')),
+  m_sequenceParameterController('n'),
 #endif
-  m_intervalParameterController(IntervalParameterController(this, &m_interval))
+  m_intervalParameterController(this, &m_interval)
 {
 }
 

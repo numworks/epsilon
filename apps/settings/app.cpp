@@ -6,8 +6,8 @@ namespace Settings {
 
 App::App(Container * container) :
   ::App(container, &m_stackViewController, I18n::Message::SettingsApp, I18n::Message::SettingsAppCapital, ImageStore::SettingsIcon, I18n::Message::Warning),
-  m_mainController(MainController(&m_stackViewController)),
-  m_stackViewController(StackViewController(&m_modalViewController, &m_mainController))
+  m_mainController(&m_stackViewController),
+  m_stackViewController(&m_modalViewController, &m_mainController)
 {
 }
 

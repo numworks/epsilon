@@ -5,7 +5,7 @@ namespace Probability {
 
 Cell::Cell() :
   HighlightCell(),
-  m_labelView(MessageTextView(KDText::FontSize::Large, (I18n::Message)0, 0, 0.5, KDColorBlack, KDColorWhite))
+  m_labelView(KDText::FontSize::Large, (I18n::Message)0, 0, 0.5, KDColorBlack, KDColorWhite)
 {
 }
 

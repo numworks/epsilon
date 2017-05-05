@@ -16,11 +16,11 @@ namespace Sequence {
 
 TermSumController::TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
   ViewController(parentResponder),
-  m_contentView(ContentView(graphView)),
+  m_contentView(graphView),
   m_graphRange(graphRange),
   m_sequence(nullptr),
   m_cursor(cursor),
-  m_cursorView(VerticalCursorView()),
+  m_cursorView(),
   m_bufferCursorPosition(0),
   m_step(0),
   m_startSum(-1),
@@ -194,9 +194,9 @@ View * TermSumController::ContentView::subviewAtIndex(int index) {
 /* Legend View */
 
 TermSumController::ContentView::LegendView::LegendView() :
-  m_sum(ExpressionView(0.0f, 0.5f, KDColorBlack, Palette::GreyBright)),
+  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
   m_sumLayout(nullptr),
-  m_legend(MessageTextView(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright))
+  m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright)
 {
 }
 

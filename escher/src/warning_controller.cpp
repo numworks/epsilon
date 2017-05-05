@@ -3,7 +3,7 @@
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
-  m_textView(MessageTextView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack))
+  m_textView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack)
 {
 }
 

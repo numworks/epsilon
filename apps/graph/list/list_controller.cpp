@@ -11,7 +11,7 @@ ListController::ListController(Responder * parentResponder, CartesianFunctionSto
   Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{},
   m_expressionCells{},
-  m_parameterController(ListParameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction))
+  m_parameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
 {
 }
 

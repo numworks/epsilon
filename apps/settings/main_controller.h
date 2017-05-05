@@ -11,6 +11,10 @@ class MainController : public ViewController, public ListViewDataSource, public 
 public:
   MainController(Responder * parentResponder);
   ~MainController();
+  MainController(const MainController& other) = delete;
+  MainController(MainController&& other) = delete;
+  MainController& operator=(const MainController& other) = delete;
+  MainController& operator=(MainController&& other) = delete;
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

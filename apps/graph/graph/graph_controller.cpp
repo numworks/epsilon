@@ -7,10 +7,10 @@ namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
   FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
-  m_bannerView(BannerView()),
-  m_view(GraphView(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),
-  m_graphRange(InteractiveCurveViewRange(&m_cursor, this)),
-  m_curveParameterController(CurveParameterController(&m_graphRange, &m_bannerView, &m_cursor)),
+  m_bannerView(),
+  m_view(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(&m_cursor, this),
+  m_curveParameterController(&m_graphRange, &m_bannerView, &m_cursor),
   m_functionStore(functionStore)
 {
 }

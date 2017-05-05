@@ -12,10 +12,10 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
   m_expressionCells{},
-  m_parameterController(ListParameterController(this, sequenceStore)),
+  m_parameterController(this, sequenceStore),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
-  m_typeStackController(StackViewController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)),
-  m_sequenceToolbox(SequenceToolbox())
+  m_typeStackController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_sequenceToolbox()
 {
 }
 

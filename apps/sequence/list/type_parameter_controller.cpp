@@ -11,11 +11,11 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(ExpressionTableCellWithPointer(I18n::Message::Explicite, cellLayout)),
-  m_singleRecurrenceCell(ExpressionTableCellWithPointer(I18n::Message::SingleRecurrence, cellLayout)),
-  m_doubleRecurenceCell(ExpressionTableCellWithPointer(I18n::Message::DoubleRecurrence, cellLayout)),
+  m_expliciteCell(I18n::Message::Explicite, cellLayout),
+  m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
+  m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_expressionLayouts{},
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, false)),
+  m_selectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, false),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
   m_listController(list)

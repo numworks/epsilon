@@ -14,6 +14,10 @@ class DynamicViewController : public ViewController {
 public:
   DynamicViewController(Responder * parentResponder);
   ~DynamicViewController();
+  DynamicViewController(const DynamicViewController& other) = delete;
+  DynamicViewController(DynamicViewController&& other) = delete;
+  DynamicViewController& operator=(const DynamicViewController& other) = delete;
+  DynamicViewController& operator=(DynamicViewController&& other) = delete;
   View * view() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

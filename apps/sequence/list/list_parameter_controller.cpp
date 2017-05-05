@@ -8,9 +8,9 @@ namespace Sequence {
 
 ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
   Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence),
-  m_typeCell(MessageTableCellWithChevronAndExpression(I18n::Message::SequenceType)),
-  m_typeParameterController(TypeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin))
+  m_typeCell(I18n::Message::SequenceType),
+  m_typeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
 }
 

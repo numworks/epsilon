@@ -8,11 +8,11 @@ namespace Regression {
 
 GraphController::GraphController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   InteractiveCurveViewController(parentResponder, header, store, &m_view),
-  m_bannerView(BannerView()),
-  m_view(GraphView(store, &m_cursor, &m_bannerView, &m_cursorView)),
+  m_bannerView(),
+  m_view(store, &m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
-  m_initialisationParameterController(InitialisationParameterController(this, m_store)),
-  m_predictionParameterController(PredictionParameterController(this, m_store, &m_cursor)),
+  m_initialisationParameterController(this, m_store),
+  m_predictionParameterController(this, m_store, &m_cursor),
   m_selectedDotIndex(-1)
 {
   m_store->setCursor(&m_cursor);

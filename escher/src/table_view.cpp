@@ -13,7 +13,7 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDelegate * scro
     KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   ScrollView(&m_contentView, scrollDelegate, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
     backgroundColor, indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_contentView(TableView::ContentView(this, dataSource, horizontalCellOverlapping, verticalCellOverlapping))
+  m_contentView(this, dataSource, horizontalCellOverlapping, verticalCellOverlapping)
 {
 }
 

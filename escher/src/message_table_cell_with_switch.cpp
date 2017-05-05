@@ -3,7 +3,7 @@
 
 MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message) :
   MessageTableCell(message),
-  m_accessoryView(SwitchView())
+  m_accessoryView()
 {
 }
 

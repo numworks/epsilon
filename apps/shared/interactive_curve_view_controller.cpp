@@ -12,8 +12,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   ButtonRowDelegate(header, nullptr),
   m_cursor(),
   m_cursorView(CursorView()),
-  m_rangeParameterController(RangeParameterController(this, interactiveRange)),
-  m_zoomParameterController(ZoomParameterController(this, interactiveRange, curveView)),
+  m_rangeParameterController(this, interactiveRange),
+  m_zoomParameterController(this, interactiveRange, curveView),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();

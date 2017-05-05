@@ -7,7 +7,7 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
    KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(TextField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor))
+  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
 }
 

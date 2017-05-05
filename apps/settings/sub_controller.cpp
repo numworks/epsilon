@@ -50,6 +50,9 @@ View * SubController::view() {
 
 void SubController::didEnterResponderChain(Responder * previousResponder) {
   selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
+  if (m_preferenceIndex == 4) {
+    m_selectableTableView.reloadData();
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -150,10 +153,6 @@ void SubController::setNodeModel(const Node * nodeModel, int preferenceIndex) {
 
 void SubController::viewWillAppear() {
   m_selectableTableView.reloadData();
-}
-
-void SubController::willExitResponderChain(Responder * nextResponder) {
-  m_selectableTableView.deselectTable();
 }
 
 StackViewController * SubController::stackController() const {

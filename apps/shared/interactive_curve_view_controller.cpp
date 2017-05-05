@@ -152,6 +152,15 @@ void InteractiveCurveViewController::viewWillAppear() {
   curveView()->setOkView(&m_okView);
 }
 
+void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
+  if (!curveView()->isMainViewSelected()) {
+    curveView()->selectMainView(true);
+    header()->setSelectedButton(-1);
+    reloadBannerView();
+    curveView()->reload();
+  }
+}
+
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     curveView()->selectMainView(false);

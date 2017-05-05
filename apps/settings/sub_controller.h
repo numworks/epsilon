@@ -14,7 +14,6 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;

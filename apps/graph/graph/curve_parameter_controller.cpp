@@ -7,10 +7,10 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
   FunctionCurveParameterController(graphRange, cursor),
-  m_goToParameterController(FunctionGoToParameterController(this, graphRange, cursor, I18n::Message::X)),
+  m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
-  m_calculationCell(MessageTableCellWithChevron(I18n::Message::Compute)),
-  m_derivativeCell(MessageTableCellWithSwitch(I18n::Message::DerivateNumber))
+  m_calculationCell(I18n::Message::Compute),
+  m_derivativeCell(I18n::Message::DerivateNumber)
 {
 }
 

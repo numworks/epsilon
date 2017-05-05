@@ -8,7 +8,7 @@ namespace HardwareTest {
 
 ColorController::ColorController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_view(ColorView())
+  m_view()
 {
 }
 

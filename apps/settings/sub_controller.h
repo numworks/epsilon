@@ -10,6 +10,10 @@ class SubController : public ViewController, public SimpleListViewDataSource, pu
 public:
   SubController(Responder * parentResponder);
   ~SubController();
+  SubController(const SubController& other) = delete;
+  SubController(SubController&& other) = delete;
+  SubController& operator=(const SubController& other) = delete;
+  SubController& operator=(SubController&& other) = delete;
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

@@ -6,7 +6,7 @@ namespace Calculation {
 
 ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) :
   ScrollableView(parentResponder, &m_expressionView, this),
-  m_expressionView(ExpressionView())
+  m_expressionView()
 {
 }
 

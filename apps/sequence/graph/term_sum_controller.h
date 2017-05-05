@@ -29,6 +29,10 @@ private:
     public:
       LegendView();
       ~LegendView();
+      LegendView(const LegendView& other) = delete;
+      LegendView(LegendView&& other) = delete;
+      LegendView& operator=(const LegendView& other) = delete;
+      LegendView& operator=(LegendView&& other) = delete;
       void drawRect(KDContext * ctx, KDRect rect) const override;
       void setLegendMessage(I18n::Message message);
       void setSumSubscript(float start);

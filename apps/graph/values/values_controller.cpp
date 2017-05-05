@@ -12,9 +12,9 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),
-  m_functionParameterController(FunctionParameterController(this)),
-  m_intervalParameterController(IntervalParameterController(this, &m_interval)),
-  m_derivativeParameterController(DerivativeParameterController(this))
+  m_functionParameterController(this),
+  m_intervalParameterController(this, &m_interval),
+  m_derivativeParameterController(this)
 {
 }
 

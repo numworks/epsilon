@@ -8,9 +8,9 @@ namespace HardwareTest {
 
 KeyboardController::KeyboardController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_view(KeyboardView()),
+  m_view(),
   m_color(KDColorBlack),
-  m_colorController(ColorController(nullptr))
+  m_colorController(nullptr)
 {
 }
 

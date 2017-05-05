@@ -9,7 +9,7 @@ namespace HardwareTest {
 
 App::App(AppsContainer * container) :
   ::App(container, &m_keyboardController),
-  m_keyboardController(KeyboardController(&m_modalViewController))
+  m_keyboardController(&m_modalViewController)
 {
 }
 

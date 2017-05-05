@@ -7,17 +7,14 @@ extern "C" {
 App::App(Container * container, ViewController * rootViewController, I18n::Message name, I18n::Message upperName, const Image * icon, I18n::Message warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
-  m_modalViewController(ModalViewController(this, rootViewController)),
+  m_modalViewController(this, rootViewController),
   m_container(container),
   m_firstResponder(nullptr),
-  m_warningController(WarningController(this, warningMessage)),
+  m_warningController(this, warningMessage),
   m_name(name),
   m_upperName(upperName),
   m_icon(icon)
 {
-}
-
-App::~App() {
 }
 
 bool App::processEvent(Ion::Events::Event event) {

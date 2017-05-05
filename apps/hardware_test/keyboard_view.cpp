@@ -8,9 +8,9 @@ namespace HardwareTest {
 
 KeyboardView::KeyboardView() :
   m_testedKey(Ion::Keyboard::Key::A1),
-  m_batteryLevelView(BufferTextView(KDText::FontSize::Small)),
-  m_batteryChargingView(BufferTextView(KDText::FontSize::Small)),
-  m_ledStateView(BufferTextView(KDText::FontSize::Small))
+  m_batteryLevelView(KDText::FontSize::Small),
+  m_batteryChargingView(KDText::FontSize::Small),
+  m_ledStateView(KDText::FontSize::Small)
 {
   for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
     m_defectiveKey[i] = 0;

@@ -9,6 +9,10 @@ class SequenceToolbox : public MathToolbox {
 public:
   SequenceToolbox();
   ~SequenceToolbox();
+  SequenceToolbox(const SequenceToolbox& other) = delete;
+  SequenceToolbox(SequenceToolbox&& other) = delete;
+  SequenceToolbox& operator=(const SequenceToolbox& other) = delete;
+  SequenceToolbox& operator=(SequenceToolbox&& other) = delete;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index, int type) override;

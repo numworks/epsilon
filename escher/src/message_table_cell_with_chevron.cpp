@@ -2,7 +2,7 @@
 
 MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message, KDText::FontSize size) :
   MessageTableCell(message, size),
-  m_accessoryView(ChevronView())
+  m_accessoryView()
 {
 }
 

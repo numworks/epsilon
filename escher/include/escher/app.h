@@ -23,7 +23,7 @@ class App : public Responder {
 public:
   constexpr static uint8_t Magic = 0xA8;
   App(Container * container, ViewController * rootViewController, I18n::Message name = (I18n::Message)0, I18n::Message upperName = (I18n::Message)0, const Image * icon = nullptr, I18n::Message warningMessage = (I18n::Message)0);
-  virtual ~App();
+  virtual ~App() = default;
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   bool processEvent(Ion::Events::Event event);

@@ -7,8 +7,8 @@ extern "C" {
 namespace Home {
 
 Controller::ContentView::ContentView(Controller * controller) :
-  m_selectableTableView(SelectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, controller, true, false,
-    KDColorBlack, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin))
+  m_selectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, controller, true, false,
+    KDColorBlack, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin)
 {
 }
 

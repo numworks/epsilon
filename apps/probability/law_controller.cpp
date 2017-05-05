@@ -20,7 +20,7 @@
 namespace Probability {
 
 LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
+  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -53,8 +53,8 @@ static I18n::Message sMessages[] = {
 
 LawController::LawController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_contentView(&m_selectableTableView),
   m_law(nullptr),
   m_parametersController(nullptr)

@@ -6,11 +6,11 @@ namespace Sequence {
 
 GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
   FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
-  m_bannerView(BannerView()),
-  m_view(GraphView(sequenceStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView)),
-  m_graphRange(CurveViewRange(&m_cursor, this)),
-  m_curveParameterController(CurveParameterController(this, &m_graphRange, &m_cursor)),
-  m_termSumController(TermSumController(this, &m_view, &m_graphRange, &m_cursor)),
+  m_bannerView(),
+  m_view(sequenceStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(&m_cursor, this),
+  m_curveParameterController(this, &m_graphRange, &m_cursor),
+  m_termSumController(this, &m_view, &m_graphRange, &m_cursor),
   m_sequenceStore(sequenceStore)
 {
 }

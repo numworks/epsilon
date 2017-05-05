@@ -14,6 +14,10 @@ public:
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   ~TypeParameterController();
+  TypeParameterController(const TypeParameterController& other) = delete;
+  TypeParameterController(TypeParameterController&& other) = delete;
+  TypeParameterController& operator=(const TypeParameterController& other) = delete;
+  TypeParameterController& operator=(TypeParameterController&& other) = delete;
   const char * title() override;
   View * view() override;
   void didBecomeFirstResponder() override;

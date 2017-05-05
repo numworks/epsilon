@@ -8,8 +8,8 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell() :
   Responder(nullptr),
-  m_inputView(ScrollableExpressionView(this)),
-  m_outputView(ScrollableExpressionView(this)),
+  m_inputView(this),
+  m_outputView(this),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
 {
 }

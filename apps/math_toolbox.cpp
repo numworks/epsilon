@@ -7,40 +7,40 @@
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
-const ToolboxNode calculChildren[4] = {ToolboxNode(I18n::Message::DiffCommand, I18n::Message::DerivateNumber), ToolboxNode(I18n::Message::IntCommand, I18n::Message::Integral), ToolboxNode(I18n::Message::SumCommand, I18n::Message::Sum), ToolboxNode(I18n::Message::ProductCommand, I18n::Message::Product)};
-const ToolboxNode complexChildren[5] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::ComplexAbsoluteValue), ToolboxNode(I18n::Message::ArgCommand, I18n::Message::Agument), ToolboxNode(I18n::Message::ReCommand, I18n::Message::ReelPart), ToolboxNode(I18n::Message::ImCommand, I18n::Message::ImaginaryPart), ToolboxNode(I18n::Message::ConjCommand, I18n::Message::Conjugate)};
-const ToolboxNode probabilityChildren[2] = {ToolboxNode(I18n::Message::BinomialCommand, I18n::Message::Combination), ToolboxNode(I18n::Message::PermuteCommand, I18n::Message::Permutation)};
-const ToolboxNode arithmeticChildren[4] = {ToolboxNode(I18n::Message::GcdCommand, I18n::Message::GreatCommonDivisor),ToolboxNode(I18n::Message::LcmCommand, I18n::Message::LeastCommonMultiple), ToolboxNode(I18n::Message::RemCommand, I18n::Message::Remainder), ToolboxNode(I18n::Message::QuoCommand, I18n::Message::Quotient)};
+const ToolboxNode calculChildren[4] = {ToolboxNode(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommand), ToolboxNode(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommand), ToolboxNode(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommand), ToolboxNode(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommand)};
+const ToolboxNode complexChildren[5] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::ComplexAbsoluteValue, I18n::Message::AbsCommand), ToolboxNode(I18n::Message::ArgCommandWithArg, I18n::Message::Agument, I18n::Message::ArgCommand), ToolboxNode(I18n::Message::ReCommandWithArg, I18n::Message::ReelPart, I18n::Message::ReCommand), ToolboxNode(I18n::Message::ImCommandWithArg, I18n::Message::ImaginaryPart, I18n::Message::ImCommand), ToolboxNode(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate, I18n::Message::ConjCommand)};
+const ToolboxNode probabilityChildren[2] = {ToolboxNode(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommand), ToolboxNode(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation, I18n::Message::PermuteCommand)};
+const ToolboxNode arithmeticChildren[4] = {ToolboxNode(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor, I18n::Message::GcdCommand),ToolboxNode(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple, I18n::Message::LcmCommand), ToolboxNode(I18n::Message::RemCommandWithArg, I18n::Message::Remainder, I18n::Message::RemCommand), ToolboxNode(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient, I18n::Message::QuoCommand)};
 #if MATRICES_ARE_DEFINED
-const ToolboxNode matricesChildren[5] = {ToolboxNode(I18n::Message::InverseCommand, I18n::Message::Inverse), ToolboxNode(I18n::Message::DeterminantCommand, I18n::Message::Determinant), ToolboxNode(I18n::Message::TransposeCommand, I18n::Message::Transpose), ToolboxNode(I18n::Message::TraceCommand, I18n::Message::Trace), ToolboxNode(I18n::Message::DimensionCommand, I18n::Message::Dimension)};
-const ToolboxNode listesChildren[5] = {ToolboxNode(I18n::Message::SortCommand, I18n::Message::Sort), ToolboxNode(I18n::Message::InvSortCommand, I18n::Message::InvSort), ToolboxNode(I18n::Message::MaxCommand, I18n::Message::Maximum), ToolboxNode(I18n::Message::MinCommand, I18n::Message::Minimum), ToolboxNode(I18n::Message::DimensionCommand, I18n::Message::Dimension)};
+const ToolboxNode matricesChildren[5] = {ToolboxNode(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse, I18n::Message::InverseCommand), ToolboxNode(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant, I18n::Message::DeterminantCommand), ToolboxNode(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose, I18n::Message::TransposeCommand), ToolboxNode(I18n::Message::TraceCommandWithArg, I18n::Message::Trace, I18n::Message::TraceCommand), ToolboxNode(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension, I18n::Message::DimensionCommand)};
+const ToolboxNode listesChildren[5] = {ToolboxNode(I18n::Message::SortCommandWithArg, I18n::Message::Sort, I18n::Message::SortCommand), ToolboxNode(I18n::Message::InvSortCommandWithArg, I18n::Message::InvSort, I18n::Message::InvSortCommand), ToolboxNode(I18n::Message::MaxCommandWithArg, I18n::Message::Maximum, I18n::Message::MaxCommand), ToolboxNode(I18n::Message::MinCommandWithArg, I18n::Message::Minimum, I18n::Message::MinCommand), ToolboxNode(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension, I18n::Message::DimensionCommand)};
 #endif
-const ToolboxNode approximationChildren[4] = {ToolboxNode(I18n::Message::FloorCommand, I18n::Message::Floor), ToolboxNode(I18n::Message::FracCommand, I18n::Message::FracPart), ToolboxNode(I18n::Message::CeilCommand, I18n::Message::Ceiling), ToolboxNode(I18n::Message::RoundCommand, I18n::Message::Rounding)};
-const ToolboxNode trigonometryChildren[6] = {ToolboxNode(I18n::Message::CoshCommand, I18n::Message::Cosh), ToolboxNode(I18n::Message::SinhCommand, I18n::Message::Sinh), ToolboxNode(I18n::Message::TanhCommand, I18n::Message::Tanh), ToolboxNode(I18n::Message::AcoshCommand, I18n::Message::Acosh), ToolboxNode(I18n::Message::AsinhCommand, I18n::Message::Asinh), ToolboxNode(I18n::Message::AtanhCommand, I18n::Message::Atanh)};
-const ToolboxNode predictionChildren[3] = {ToolboxNode(I18n::Message::Prediction95Command, I18n::Message::Prediction95), ToolboxNode(I18n::Message::PredictionCommand, I18n::Message::Prediction), ToolboxNode(I18n::Message::ConfidenceCommand, I18n::Message::Confidence)};
+const ToolboxNode approximationChildren[4] = {ToolboxNode(I18n::Message::FloorCommandWithArg, I18n::Message::Floor, I18n::Message::FloorCommand), ToolboxNode(I18n::Message::FracCommandWithArg, I18n::Message::FracPart, I18n::Message::FracCommand), ToolboxNode(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling, I18n::Message::CeilCommand), ToolboxNode(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding, I18n::Message::RoundCommand)};
+const ToolboxNode trigonometryChildren[6] = {ToolboxNode(I18n::Message::CoshCommandWithArg, I18n::Message::Cosh, I18n::Message::CoshCommand), ToolboxNode(I18n::Message::SinhCommandWithArg, I18n::Message::Sinh, I18n::Message::SinhCommand), ToolboxNode(I18n::Message::TanhCommandWithArg, I18n::Message::Tanh, I18n::Message::TanhCommand), ToolboxNode(I18n::Message::AcoshCommandWithArg, I18n::Message::Acosh, I18n::Message::AcoshCommand), ToolboxNode(I18n::Message::AsinhCommandWithArg, I18n::Message::Asinh, I18n::Message::AsinhCommand), ToolboxNode(I18n::Message::AtanhCommandWithArg, I18n::Message::Atanh, I18n::Message::AtanhCommand)};
+const ToolboxNode predictionChildren[3] = {ToolboxNode(I18n::Message::Prediction95CommandWithArg, I18n::Message::Prediction95, I18n::Message::Prediction95Command), ToolboxNode(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction, I18n::Message::PredictionCommand), ToolboxNode(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommand)};
 
 #if MATRICES_ARE_DEFINED
-const ToolboxNode menu[12] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::AbsoluteValue),
+const ToolboxNode menu[12] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommand),
 #else
-const ToolboxNode menu[10] = {ToolboxNode(I18n::Message::AbsCommand, I18n::Message::AbsoluteValue),
+const ToolboxNode menu[10] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommand),
 #endif
-  ToolboxNode(I18n::Message::RootCommand, I18n::Message::NthRoot),
-  ToolboxNode(I18n::Message::LogCommand, I18n::Message::BasedLogarithm),
-  ToolboxNode(I18n::Message::Calculation, I18n::Message::Default, calculChildren, 4),
-  ToolboxNode(I18n::Message::ComplexNumber, I18n::Message::Default, complexChildren, 5),
-  ToolboxNode(I18n::Message::Probability, I18n::Message::Default, probabilityChildren, 2),
-  ToolboxNode(I18n::Message::Arithmetic, I18n::Message::Default, arithmeticChildren, 4),
+  ToolboxNode(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommand),
+  ToolboxNode(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommand),
+  ToolboxNode(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
+  ToolboxNode(I18n::Message::ComplexNumber, I18n::Message::Default, I18n::Message::Default, complexChildren, 5),
+  ToolboxNode(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
+  ToolboxNode(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 4),
 #if MATRICES_ARE_DEFINED
-  ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, matricesChildren, 5),
-  ToolboxNode(I18n::Message::Lists, I18n::Message::Default, listesChildren, 5),
+  ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 5),
+  ToolboxNode(I18n::Message::Lists, I18n::Message::Default, I18n::Message::Default, listesChildren, 5),
 #endif
-  ToolboxNode(I18n::Message::Approximation, I18n::Message::Default, approximationChildren, 4),
-  ToolboxNode(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, trigonometryChildren, 6),
-  ToolboxNode(I18n::Message::Fluctuation, I18n::Message::Default, predictionChildren, 3)};
+  ToolboxNode(I18n::Message::Approximation, I18n::Message::Default, I18n::Message::Default, approximationChildren, 4),
+  ToolboxNode(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, I18n::Message::Default, trigonometryChildren, 6),
+  ToolboxNode(I18n::Message::Fluctuation, I18n::Message::Default, I18n::Message::Default, predictionChildren, 3)};
 #if MATRICES_ARE_DEFINED
-const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 12);
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 12);
 #else
-const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, menu, 10);
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 10);
 #endif
 
 /* State */
@@ -256,7 +256,7 @@ const ToolboxNode * MathToolbox::rootModel() {
 bool MathToolbox::selectLeaf(ToolboxNode * selectedNode){
   m_selectableTableView.deselectTable();
   ToolboxNode * node = selectedNode;
-  const char * editedText = I18n::translate(node->label());
+  const char * editedText = I18n::translate(node->insertedText());
   if (!sender()->isEditing()) {
     sender()->setEditing(true);
   }

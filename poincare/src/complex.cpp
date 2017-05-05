@@ -284,13 +284,15 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
    * is too big (or too small), mantissa is now inf. We handle this case by
    * using logarithm function. */
   if (isnan(mantissa) || isinf(mantissa)) {
-    mantissa = roundf(powf(10.0f, log10f(f)+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    mantissa = roundf(powf(10.0f, log10f(fabsf(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    mantissa = copysignf(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
   float truncatedMantissa = (int)(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   if (isinf(truncatedMantissa) || isnan(truncatedMantissa)) {
-    truncatedMantissa = (int)(powf(10.0f, log10f(f)+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    truncatedMantissa = (int)(powf(10.0f, log10f(fabsf(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    truncatedMantissa = copysignf(truncatedMantissa, f);
   }
   if (mantissa != truncatedMantissa) {
     float newLogBase10 = mantissa != 0.0f ? log10f(fabsf(mantissa/powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal))) : 0.0f;

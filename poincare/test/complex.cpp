@@ -52,7 +52,7 @@ QUIZ_CASE(poincare_complex_to_text) {
   assert_float_converts_to(10000000.0f, "1E7", Decimal);
   assert_float_converts_to(0.000001f, "0.000001", Decimal);
   assert_float_converts_to(0.0000001f, "1E-7", Decimal); // FIXME: Explain. Would overflow?
-  // CRASH!! assert_float_converts_to(-0.00000000000000000000000000000000909090964f, "WHATEVER", Decimal);
+  assert_float_converts_to(-0.00000000000000000000000000000000909090964f, "-9.090897E-33", Decimal); // FIXME: explain why it is not -9.090964 ?
   assert_float_converts_to(123.421f, "123.4", Decimal, 4, 6);
   assert_float_converts_to(123.421f, "1.2E2", Decimal, 5, 6);
 }

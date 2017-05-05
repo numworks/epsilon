@@ -33,7 +33,7 @@ Sequence * SequenceStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfSequences);
   const char * name = firstAvailableName();
   KDColor color = firstAvailableColor();
-  Sequence addedSequence = Sequence(name, color);
+  Sequence addedSequence(name, color);
   m_sequences[m_numberOfFunctions] = addedSequence;
   Sequence * result = &m_sequences[m_numberOfFunctions];
   m_numberOfFunctions++;
@@ -50,7 +50,8 @@ void SequenceStore::removeFunction(Shared::Function * f) {
   for (int j = i; j<m_numberOfFunctions; j++) {
     m_sequences[j] = m_sequences[j+1];
   }
-  m_sequences[m_numberOfFunctions] = Sequence("", KDColorBlack);
+  Sequence emptySequence("", KDColorBlack);
+  m_sequences[m_numberOfFunctions] = emptySequence;
 }
 
 int SequenceStore::maxNumberOfFunctions() {
@@ -95,7 +96,8 @@ const KDColor SequenceStore::firstAvailableColor() {
 
 void SequenceStore::removeAll() {
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    m_sequences[i] = Sequence("", KDColorBlack);
+    Sequence emptySequence("", KDColorBlack);
+    m_sequences[i] = emptySequence;
   }
   m_numberOfFunctions = 0;
 }

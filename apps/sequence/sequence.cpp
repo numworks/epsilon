@@ -62,6 +62,17 @@ Sequence::~Sequence() {
   }
 }
 
+Sequence& Sequence::operator=(const Sequence& other) {
+  // Self-assignment is benign
+  Function::operator=(other);
+  setType(other.m_type);
+  setFirstInitialConditionContent(other.m_firstInitialConditionText);
+  setSecondInitialConditionContent(other.m_secondInitialConditionText);
+  m_indexBuffer[0] = other.m_indexBuffer[0];
+  m_indexBuffer[1] = other.m_indexBuffer[1];
+  return *this;
+}
+
 const char * Sequence::firstInitialConditionText() {
   return m_firstInitialConditionText;
 }

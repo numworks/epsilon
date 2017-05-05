@@ -9,8 +9,12 @@ namespace Shared {
 
 class Function {
 public:
-  Function(const char * text = nullptr, KDColor color = KDColorBlack);
-  ~Function(); // Delete expression and layout, if needed
+  Function(const char * name = nullptr, KDColor color = KDColorBlack);
+  virtual ~Function(); // Delete expression and layout, if needed
+  Function& operator=(const Function& other);
+  Function& operator=(Function&& other) = delete;
+  Function(const Function& other) = delete;
+  Function(Function&& other) = delete;
   const char * text();
   const char * name();
   KDColor color() const { return m_color; }

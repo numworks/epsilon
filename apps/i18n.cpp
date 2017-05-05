@@ -275,7 +275,7 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[202] {
+const char * universalMessages[241] {
   "",
   "alpha",
   "ALPHA",
@@ -356,6 +356,46 @@ const char * universalMessages[202] {
   "prediction95(,)",
   "prediction(,)",
   "confidence(,)",
+
+  "abs(x)",
+  "root(x,n)",
+  "log(a,x)",
+  "diff(f(x),a)",
+  "int(f(x),a,b)",
+  "sum(f(n),nmin,nmax)",
+  "product(f(n),nmin,nmax)",
+  "arg(z)",
+  "re(z)",
+  "im(z)",
+  "conj(z)",
+  "binomial(n,k)",
+  "permute(n,r)",
+  "gcd(p,q)",
+  "lcm(p,q)",
+  "rem(p,q)",
+  "quo(p,q)",
+  "inverse(M)",
+  "det(M)",
+  "transpose(M)",
+  "trace(M)",
+  "dim(M)",
+  "sort<(L)",
+  "sort>(L)",
+  "max(L)",
+  "min(L)",
+  "floor(x)",
+  "frac(x)",
+  "ceil(x)",
+  "round(x,n)",
+  "cosh(x)",
+  "sinh(x)",
+  "tanh(x)",
+  "acosh(x)",
+  "asinh(x)",
+  "atanh(x)",
+  "prediction95(p,n)",
+  "prediction(p,n)",
+  "confidence(f,n)",
 };
 
 const char * translate(Message m, Language l) {

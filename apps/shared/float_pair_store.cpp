@@ -7,7 +7,8 @@
 namespace Shared {
 
 FloatPairStore::FloatPairStore() :
-  m_numberOfPairs(0)
+  m_numberOfPairs(0),
+  m_data{}
 {
 }
 

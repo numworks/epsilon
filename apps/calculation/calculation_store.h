@@ -16,7 +16,7 @@ public:
   void deleteAll();
   int numberOfCalculations();
 private:
-  static constexpr int k_maxNumberOfCalculations = 20;
+  static constexpr int k_maxNumberOfCalculations = 10;
   Calculation * m_start;
   Calculation m_calculations[k_maxNumberOfCalculations];
 };

@@ -20,17 +20,17 @@ public:
   int maxNumberOfFunctions() override;
   char symbol() const override;
   void removeAll() override;
-  static constexpr int k_maxNumberOfFunctions = 8;
+  static constexpr int k_maxNumberOfFunctions = 4;
 private:
   const char * firstAvailableName() override;
   const KDColor firstAvailableColor() override;
-  static constexpr int k_numberOfDefaultColors = 8;
-  static constexpr KDColor k_defaultColors[k_numberOfDefaultColors] = {
+  static constexpr KDColor k_defaultColors[k_maxNumberOfFunctions] = {
     Palette::Red, Palette::Blue,  Palette::YellowDark, Palette::Magenta,
-    Palette::Pink, Palette::Turquoise, Palette::Orange,  Palette::Green
+    //Palette::Pink, Palette::Turquoise, Palette::Orange,  Palette::Green
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
-    "f", "g", "h", "p", "q", "r", "s", "t"
+    "f", "g", "h", "p",
+    //"q", "r", "s", "t"
   };
   CartesianFunction m_functions[k_maxNumberOfFunctions];
 };

@@ -125,8 +125,8 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::suspend() {
-  Ion::Power::suspend();
+void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
+  Ion::Power::suspend(checkIfPowerKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
@@ -148,13 +148,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff && activeApp() != m_hardwareTestApp) {
-    /* Wait until power is released to avoid restarting just after suspending */
-    bool isPowerDown = true;
-    while (isPowerDown) {
-      Ion::Keyboard::State scan = Ion::Keyboard::scan();
-      isPowerDown = Ion::Keyboard::keyDown(Ion::Keyboard::Key::B2, scan);
-    }
-    suspend();
+    suspend(true);
     return true;
   }
   bool didProcessEvent = Container::dispatchEvent(event);

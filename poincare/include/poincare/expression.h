@@ -84,7 +84,7 @@ public:
     Default = 2
   };
   static Expression * parse(char const * string);
-  virtual ~Expression();
+  virtual ~Expression() = default;
   virtual bool hasValidNumberOfArguments() const = 0;
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
   virtual const Expression * operand(int i) const = 0;

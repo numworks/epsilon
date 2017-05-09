@@ -14,6 +14,10 @@ class GlobalContext : public Context {
 public:
   GlobalContext();
   ~GlobalContext();
+  GlobalContext(const GlobalContext& other) = delete;
+  GlobalContext(GlobalContext&& other) = delete;
+  GlobalContext& operator=(const GlobalContext& other) = delete;
+  GlobalContext& operator=(GlobalContext&& other) = delete;
   /* The expression recorded in global context is already a final expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression * expressionForSymbol(const Symbol * symbol) override;

@@ -11,6 +11,10 @@ class BinaryOperation : public Expression {
 public:
   BinaryOperation(Expression ** operands, bool cloneOperands = true);
   ~BinaryOperation();
+  BinaryOperation(const BinaryOperation& other) = delete;
+  BinaryOperation(BinaryOperation&& other) = delete;
+  BinaryOperation& operator=(const BinaryOperation& other) = delete;
+  BinaryOperation& operator=(BinaryOperation&& other) = delete;
   bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;

@@ -10,6 +10,10 @@ class Store : public Expression {
 public:
   Store(Symbol * symbol, Expression * value, bool clone = true);
   ~Store();
+  Store(const Store& other) = delete;
+  Store(Store&& other) = delete;
+  Store& operator=(const Store& other) = delete;
+  Store& operator=(Store&& other) = delete;
   bool hasValidNumberOfArguments() const override;
   Type type() const override;
   const Expression * operand(int i) const override;

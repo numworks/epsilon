@@ -9,6 +9,10 @@ class Parenthesis : public Expression {
 public:
   Parenthesis(Expression * operand, bool cloneOperands = true);
   ~Parenthesis();
+  Parenthesis(const Parenthesis& other) = delete;
+  Parenthesis(Parenthesis&& other) = delete;
+  Parenthesis& operator=(const Parenthesis& other) = delete;
+  Parenthesis& operator=(Parenthesis&& other) = delete;
   bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;

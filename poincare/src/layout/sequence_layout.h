@@ -10,6 +10,10 @@ class SequenceLayout : public ExpressionLayout {
 public:
   SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * argumentLayout);
   ~SequenceLayout();
+  SequenceLayout(const SequenceLayout& other) = delete;
+  SequenceLayout(SequenceLayout&& other) = delete;
+  SequenceLayout& operator=(const SequenceLayout& other) = delete;
+  SequenceLayout& operator=(SequenceLayout&& other) = delete;
   constexpr static KDCoordinate k_symbolHeight = 15;
   constexpr static KDCoordinate k_symbolWidth = 9;
 protected:

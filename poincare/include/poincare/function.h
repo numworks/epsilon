@@ -13,6 +13,10 @@ class Function : public Expression {
 public:
   Function(const char * name, int requiredNumberOfArguments = 1);
   ~Function();
+  Function(const Function& other) = delete;
+  Function(Function&& other) = delete;
+  Function& operator=(const Function& other) = delete;
+  Function& operator=(Function&& other) = delete;
   void setArgument(Expression ** args, int numberOfArguments, bool clone = true);
   void setArgument(ListData * listData, bool clone = true);
   bool hasValidNumberOfArguments() const override;

@@ -9,6 +9,10 @@ class ListData {
 public:
   ListData(Expression * operand);
   ~ListData();
+  ListData(const ListData& other) = delete;
+  ListData(ListData&& other) = delete;
+  ListData& operator=(const ListData& other) = delete;
+  ListData& operator=(ListData&& other) = delete;
   int numberOfOperands() const;
   const Expression * operand(int i) const;
   void pushExpression(Expression * operand);

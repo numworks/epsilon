@@ -10,6 +10,10 @@ class CondensedSumLayout : public ExpressionLayout {
 public:
   CondensedSumLayout(ExpressionLayout * baseLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout = nullptr);
   ~CondensedSumLayout();
+  CondensedSumLayout(const CondensedSumLayout& other) = delete;
+  CondensedSumLayout(CondensedSumLayout&& other) = delete;
+  CondensedSumLayout& operator=(const CondensedSumLayout& other) = delete;
+  CondensedSumLayout& operator=(CondensedSumLayout&& other) = delete;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

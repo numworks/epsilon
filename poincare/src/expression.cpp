@@ -18,9 +18,6 @@ namespace Poincare {
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
 
-Expression::~Expression() {
-}
-
 #include <stdio.h>
 
 Expression * Expression::parse(char const * string) {

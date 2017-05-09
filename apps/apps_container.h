@@ -49,7 +49,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
-  void suspend();
+  void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App * app) override;
   void updateBatteryState();

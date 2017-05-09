@@ -8,7 +8,15 @@
 #include "wakeup.h"
 #include "regs/regs.h"
 
-void Ion::Power::suspend() {
+void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
+  if (checkIfPowerKeyReleased) {
+    /* Wait until power is released to avoid restarting just after suspending */
+    bool isPowerDown = true;
+    while (isPowerDown) {
+      Keyboard::State scan = Keyboard::scan();
+      isPowerDown = Keyboard::keyDown(Keyboard::Key::B2, scan);
+    }
+  }
   Device::shutdownPeripherals();
 
   PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.

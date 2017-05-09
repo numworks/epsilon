@@ -4,7 +4,7 @@
 namespace Ion {
 namespace Power {
 
-void suspend();
+void suspend(bool checkIfPowerKeyReleased = false);
 
 }
 }

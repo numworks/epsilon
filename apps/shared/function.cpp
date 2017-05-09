@@ -6,14 +6,23 @@ using namespace Poincare;
 
 namespace Shared {
 
-Function::Function(const char * text, KDColor color) :
+Function::Function(const char * name, KDColor color) :
   m_expression(nullptr),
   m_text{0},
-  m_name(text),
+  m_name(name),
   m_color(color),
   m_layout(nullptr),
   m_active(true)
 {
+}
+
+Function& Function::operator=(const Function& other) {
+  // Self-assignment is benign
+  m_color = other.m_color;
+  m_name = other.m_name;
+  m_active = other.m_active;
+  setContent(other.m_text);
+  return *this;
 }
 
 void Function::setContent(const char * c) {

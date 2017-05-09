@@ -9,6 +9,7 @@ namespace Statistics {
 HistogramView::HistogramView(Store * store, BannerView * bannerView) :
   CurveView(store, nullptr, bannerView, nullptr),
   m_store(store),
+  m_labels{},
   m_highlightedBarStart(NAN),
   m_highlightedBarEnd(NAN)
 {

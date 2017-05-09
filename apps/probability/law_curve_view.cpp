@@ -8,6 +8,7 @@ namespace Probability {
 
 LawCurveView::LawCurveView() :
   CurveView(nullptr, nullptr, nullptr, nullptr),
+  m_labels{},
   m_law(nullptr),
   m_calculation(nullptr)
 {

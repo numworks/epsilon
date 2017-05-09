@@ -10,6 +10,7 @@ BoxView::BoxView(Store * store, BannerView * bannerView) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
+  m_labels{},
   m_selectedQuantile(Quantile::Min)
 {
 }

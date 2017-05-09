@@ -53,9 +53,6 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     if (m_sequence) {
       Sequence::Type sequenceType = (Sequence::Type)selectedRow();
       if (m_sequence->type() != sequenceType) {
-        m_sequence->setContent("");
-        m_sequence->setFirstInitialConditionContent("");
-        m_sequence->setSecondInitialConditionContent("");
         m_listController->selectPreviousNewSequenceCell();
         m_sequence->setType((Sequence::Type)selectedRow());
       }

@@ -9,6 +9,8 @@ namespace Shared {
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
+  m_xLabels{},
+  m_yLabels{},
   m_context(nullptr)
 {
 }

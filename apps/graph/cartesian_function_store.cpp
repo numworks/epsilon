@@ -40,7 +40,7 @@ CartesianFunction * CartesianFunctionStore::addEmptyFunction() {
   assert(m_numberOfFunctions < k_maxNumberOfFunctions);
   const char * name = firstAvailableName();
   KDColor color = firstAvailableColor();
-  CartesianFunction addedFunction = CartesianFunction(name, color);
+  CartesianFunction addedFunction(name, color);
   m_functions[m_numberOfFunctions] = addedFunction;
   CartesianFunction * result = &m_functions[m_numberOfFunctions];
   m_numberOfFunctions++;
@@ -57,7 +57,8 @@ void CartesianFunctionStore::removeFunction(Shared::Function * f) {
   for (int j = i; j<m_numberOfFunctions; j++) {
     m_functions[j] = m_functions[j+1];
   }
-  m_functions[m_numberOfFunctions] = CartesianFunction("", KDColorBlack);
+  CartesianFunction emptyFunction("", KDColorBlack);
+  m_functions[m_numberOfFunctions] = emptyFunction;
 }
 
 int CartesianFunctionStore::maxNumberOfFunctions() {
@@ -102,7 +103,8 @@ const KDColor  CartesianFunctionStore::firstAvailableColor() {
 
 void CartesianFunctionStore::removeAll() {
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    m_functions[i] = CartesianFunction("", KDColorBlack);
+    CartesianFunction emptyFunction("", KDColorBlack);
+    m_functions[i] = emptyFunction;
   }
   m_numberOfFunctions = 0;
   addEmptyFunction();

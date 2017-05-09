@@ -8,7 +8,7 @@ namespace Poincare {
 class ExpressionLayout {
 public:
   ExpressionLayout();
-  virtual  ~ExpressionLayout();
+  virtual  ~ExpressionLayout() = default;
 
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   KDPoint origin();

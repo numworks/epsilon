@@ -13,13 +13,14 @@ namespace Poincare {
 class Integer : public LeafExpression {
 public:
   Integer(native_int_t i);
-  Integer(Integer&& other); // C++11 move constructor
   Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
   Type type() const override;
 
   ~Integer();
-
+  Integer(Integer&& other); // C++11 move constructor
   Integer& operator=(Integer&& other); // C++11 move assignment operator
+  Integer(const Integer& other) = delete;
+  Integer& operator=(const Integer& other) = delete;
 
   // Arithmetic
   Integer add(const Integer &other) const;

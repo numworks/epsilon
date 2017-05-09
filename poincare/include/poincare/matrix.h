@@ -12,6 +12,10 @@ public:
   Matrix(MatrixData * matrixData);
   Matrix(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
   ~Matrix();
+  Matrix(const Matrix& other) = delete;
+  Matrix(Matrix&& other) = delete;
+  Matrix& operator=(const Matrix& other) = delete;
+  Matrix& operator=(Matrix&& other) = delete;
   bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;

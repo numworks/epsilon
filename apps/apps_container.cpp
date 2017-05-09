@@ -12,7 +12,7 @@ AppsContainer::AppsContainer() :
   Container(),
   m_window(AppsWindow()),
   m_emptyBatteryWindow(EmptyBatteryWindow()),
-  m_globalContext(Poincare::GlobalContext()),
+  m_globalContext(),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(ExamPopUpController()),
   m_ledTimer(LedTimer()),

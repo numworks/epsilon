@@ -10,6 +10,10 @@ class NthRootLayout : public ExpressionLayout {
 public:
   NthRootLayout(ExpressionLayout * radicandLayout, ExpressionLayout * indexLayout);
   ~NthRootLayout();
+  NthRootLayout(const NthRootLayout& other) = delete;
+  NthRootLayout(NthRootLayout&& other) = delete;
+  NthRootLayout& operator=(const NthRootLayout& other) = delete;
+  NthRootLayout& operator=(NthRootLayout&& other) = delete;
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
 protected:

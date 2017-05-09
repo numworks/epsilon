@@ -10,6 +10,10 @@ class ConjugateLayout : public ExpressionLayout {
 public:
   ConjugateLayout(ExpressionLayout * operandLayout);
   ~ConjugateLayout();
+  ConjugateLayout(const ConjugateLayout& other) = delete;
+  ConjugateLayout(ConjugateLayout&& other) = delete;
+  ConjugateLayout& operator=(const ConjugateLayout& other) = delete;
+  ConjugateLayout& operator=(ConjugateLayout&& other) = delete;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

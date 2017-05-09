@@ -10,6 +10,10 @@ class ParenthesisLayout : public ExpressionLayout {
 public:
   ParenthesisLayout(ExpressionLayout * operandLayout);
   ~ParenthesisLayout();
+  ParenthesisLayout(const ParenthesisLayout& other) = delete;
+  ParenthesisLayout(ParenthesisLayout&& other) = delete;
+  ParenthesisLayout& operator=(const ParenthesisLayout& other) = delete;
+  ParenthesisLayout& operator=(ParenthesisLayout&& other) = delete;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 6;
 protected:

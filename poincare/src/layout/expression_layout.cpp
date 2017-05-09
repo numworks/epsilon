@@ -12,9 +12,6 @@ ExpressionLayout::ExpressionLayout() :
   m_frame(KDRectZero) {
 }
 
-ExpressionLayout::~ExpressionLayout() {
-}
-
 KDCoordinate ExpressionLayout::baseline() {
   return m_baseline;
 }

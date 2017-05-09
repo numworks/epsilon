@@ -10,6 +10,10 @@ class IntegralLayout : public ExpressionLayout {
 public:
   IntegralLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * integrandLayout);
   ~IntegralLayout();
+  IntegralLayout(const IntegralLayout& other) = delete;
+  IntegralLayout(IntegralLayout&& other) = delete;
+  IntegralLayout& operator=(const IntegralLayout& other) = delete;
+  IntegralLayout& operator=(IntegralLayout&& other) = delete;
   constexpr static KDCoordinate k_symbolHeight = 4;
   constexpr static KDCoordinate k_symbolWidth = 4;
 protected:

@@ -12,6 +12,10 @@ public:
   MatrixData(ListData * listData, bool clone);
   MatrixData(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
   ~MatrixData();
+  MatrixData(const MatrixData& other) = delete;
+  MatrixData(MatrixData&& other) = delete;
+  MatrixData& operator=(const MatrixData& other) = delete;
+  MatrixData& operator=(MatrixData&& other) = delete;
   void pushListData(ListData * listData, bool clone);
   int numberOfRows();
   int numberOfColumns();

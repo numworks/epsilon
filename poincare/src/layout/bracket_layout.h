@@ -10,6 +10,10 @@ class BracketLayout : public ExpressionLayout {
 public:
   BracketLayout(ExpressionLayout * operandLayout);
   ~BracketLayout();
+  BracketLayout(const BracketLayout& other) = delete;
+  BracketLayout(BracketLayout&& other) = delete;
+  BracketLayout& operator=(const BracketLayout& other) = delete;
+  BracketLayout& operator=(BracketLayout&& other) = delete;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

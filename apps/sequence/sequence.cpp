@@ -103,6 +103,10 @@ void Sequence::setType(Type type) {
     delete m_secondInitialConditionName;
     m_secondInitialConditionName = nullptr;
   }
+  /* Reset all contents */
+  setContent("");
+  setFirstInitialConditionContent("");
+  setSecondInitialConditionContent("");
   m_nameLayout = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   if (m_type == Type::Explicite) {
     m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);

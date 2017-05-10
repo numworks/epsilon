@@ -75,7 +75,7 @@ const char * messages[211][3] {
   {"Plafond", "Ceiling", "Techo"},
   {"Arrondi n chiffres", "Rounding to n digits", "Redondeo n digitos"},
   {"Intervalle fluctuation 95%", "Prediction interval 95%", "Intervalo de prediccion 95%"},
-  {"Intervalle fluctuation simple", "Simple prediction interval", "Intervalo de prediciion simple"},
+  {"Intervalle fluctuation simple", "Simple prediction interval", "Intervalo de prediccion simple"},
   {"Intervalle confiance", "Confidence interval", "Intervalo de confianza"},
 
   /* Applications */

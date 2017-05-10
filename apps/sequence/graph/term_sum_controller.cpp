@@ -208,7 +208,7 @@ TermSumController::ContentView::LegendView::~LegendView() {
 }
 
 void TermSumController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyMiddle);
 }
 
 void TermSumController::ContentView::LegendView::setLegendMessage(I18n::Message message) {

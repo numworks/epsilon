@@ -53,6 +53,10 @@ void AppsWindow::hideTitleBarView(bool hide) {
   }
 }
 
+void AppsWindow::reloadTitleBar() {
+  m_titleBarView.reload();
+}
+
 int AppsWindow::numberOfSubviews() const {
   return (m_contentView == nullptr ? 1 : 2);
 }

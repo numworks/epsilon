@@ -10,6 +10,7 @@ class TitleBarView : public View {
 public:
   TitleBarView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void reload();
   void setTitle(I18n::Message title);
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);

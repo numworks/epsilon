@@ -202,6 +202,10 @@ void AppsContainer::shutdownDueToLowBattery() {
   window()->redraw(true);
 }
 
+void AppsContainer::reloadTitleBar() {
+  m_window.reloadTitleBar();
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }

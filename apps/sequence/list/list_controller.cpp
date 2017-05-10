@@ -85,7 +85,7 @@ void ListController::selectPreviousNewSequenceCell() {
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     switch (sequenceDefinition) {
       case 0:
         strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));

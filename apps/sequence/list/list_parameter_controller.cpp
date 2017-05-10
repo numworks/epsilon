@@ -24,7 +24,7 @@ void ListParameterController::setFunction(Shared::Function * function) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int selectedRowIndex = selectedRow();
     switch (selectedRowIndex) {
 #if FUNCTION_COLOR_CHOICE

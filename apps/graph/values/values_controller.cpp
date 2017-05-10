@@ -19,7 +19,7 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK && selectedRow() == 0
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0
       && selectedColumn()>0 && isDerivativeColumn(selectedColumn())) {
     configureDerivativeFunction();
     return true;

@@ -312,7 +312,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLoc);
     return true;
   }
-  if (event == Ion::Events::OK && !isEditing()) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
     /* If the text could not be inserted (buffer is full), we set the cursor
      * at the end of the text. */

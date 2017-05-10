@@ -85,7 +85,7 @@ void ImageTableView::willExitResponderChain(Responder * nextFirstResponder) {
 }
 
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_calculationController->setCalculationAccordingToIndex(selectedRow());
     select(false);
     setHighlight(true);

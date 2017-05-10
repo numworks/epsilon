@@ -28,7 +28,7 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 }
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::roundAbscissa,
       &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
     (m_store->*rangeMethods[selectedRow()])();

@@ -46,7 +46,7 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container)
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_container->switchTo(m_container->appAtIndex(selectedRow()*k_numberOfColumns+selectedColumn()+1));
     return true;
   }

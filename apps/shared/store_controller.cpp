@@ -80,7 +80,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::OK && selectedRow() == 0) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.selectXColumn(selectedColumn() == 0);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);

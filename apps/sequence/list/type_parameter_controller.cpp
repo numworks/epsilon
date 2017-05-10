@@ -49,7 +49,7 @@ void TypeParameterController::didBecomeFirstResponder() {
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_sequence) {
       Sequence::Type sequenceType = (Sequence::Type)selectedRow();
       if (m_sequence->type() != sequenceType) {

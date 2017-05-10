@@ -48,7 +48,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     app()->setFirstResponder(this);
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_selectableTableView.deselectTable();
     if (m_currentPage == Page::RootMenu) {
       m_previousSelectedRow = selectedRow();

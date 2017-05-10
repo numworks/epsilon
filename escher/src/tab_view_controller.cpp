@@ -102,7 +102,7 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
     setActiveTab(m_activeChildIndex, false);
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     setActiveTab(m_selectedChildIndex, true);
     return true;
   }

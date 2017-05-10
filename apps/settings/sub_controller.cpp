@@ -64,7 +64,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     appsContainer->switchTo(appsContainer->hardwareTestApp());
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Behavious of "Exam mode" menu*/
     if (m_preferenceIndex == 4) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {

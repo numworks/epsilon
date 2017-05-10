@@ -84,7 +84,7 @@ void RangeParameterController::tableViewDidChangeSelection(SelectableTableView *
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
-  if (activeCell() == 2 && event == Ion::Events::OK) {
+  if (activeCell() == 2 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     m_interactiveRange->setYAuto(!m_interactiveRange->yAuto());
     selectableTableView()->reloadData();
     return true;

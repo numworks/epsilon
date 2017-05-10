@@ -57,6 +57,8 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         m_sequence->setType((Sequence::Type)selectedRow());
       }
       StackViewController * stack = stackController();
+      assert(stack->depth()>2);
+      stack->pop();
       stack->pop();
       return true;
     }

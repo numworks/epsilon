@@ -14,6 +14,7 @@ public:
   constexpr static KDColor GreyMiddle = KDColor::RGB24(0xd9d9d9);
   constexpr static KDColor GreyDark = KDColor::RGB24(0xa7a7a7);
   constexpr static KDColor Select = KDColor::RGB24(0xd4d7e0);
+  constexpr static KDColor SelectDark = KDColor::RGB24(0xb0b8d8);
   constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);
   constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);
   constexpr static KDColor SubTab = KDColor::RGB24(0xb8bbc5);

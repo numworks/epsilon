@@ -55,7 +55,7 @@ Function::~Function() {
   }
 }
 
-const char * Function::text() {
+const char * Function::text() const {
   return m_text;
 }
 

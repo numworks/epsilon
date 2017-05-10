@@ -63,13 +63,21 @@ Sequence::~Sequence() {
 }
 
 Sequence& Sequence::operator=(const Sequence& other) {
-  // Self-assignment is benign
+  /* We temporarely store other's required features to be able to access them
+   * after setType (which erase all contents and index buffer) even in case of
+   * self assignement */
+  const char * contentText = other.text();
+  const char * firstInitialText = other.m_firstInitialConditionText;
+  const char * secondInitialText = other.m_secondInitialConditionText;
+  int indexBuffer0 = other.m_indexBuffer[0];
+  int indexBuffer1 = other.m_indexBuffer[1];
   Function::operator=(other);
   setType(other.m_type);
-  setFirstInitialConditionContent(other.m_firstInitialConditionText);
-  setSecondInitialConditionContent(other.m_secondInitialConditionText);
-  m_indexBuffer[0] = other.m_indexBuffer[0];
-  m_indexBuffer[1] = other.m_indexBuffer[1];
+  setContent(contentText);
+  setFirstInitialConditionContent(firstInitialText);
+  setSecondInitialConditionContent(secondInitialText);
+  m_indexBuffer[0] = indexBuffer0;
+  m_indexBuffer[1] = indexBuffer1;
   return *this;
 }
 

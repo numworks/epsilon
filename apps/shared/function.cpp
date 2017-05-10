@@ -83,6 +83,10 @@ void Function::setActive(bool active) {
   m_active = active;
 }
 
+bool Function::isEmpty() {
+  return strlen(m_text) == 0;
+}
+
 float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   Poincare::VariableContext variableContext = Poincare::VariableContext(symbol(), context);
   Poincare::Symbol xSymbol = Poincare::Symbol(symbol());

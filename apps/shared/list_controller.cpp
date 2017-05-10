@@ -208,7 +208,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && selectedRow() >= 0 &&
       (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
-    if (selectedColumn() == 1) {
+    if (selectedColumn() == 1 && !function->isEmpty()) {
       reinitExpression(function);
     } else {
       removeFunctionRow(function);

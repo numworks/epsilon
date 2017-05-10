@@ -42,15 +42,14 @@ float HistogramParameterController::parameterAtIndex(int index) {
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
-    float newNumberOfBars = ceilf((m_store->maxValue() - m_store->firstDrawnBarAbscissa())/f);
+    float newNumberOfBars = ceilf((m_store->maxValue() - m_store->minValue())/f);
     if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     m_store->setBarWidth(f);
   } else {
-    float newNumberOfBars = ceilf((m_store->maxValue() - f)/m_store->barWidth());
-    if (newNumberOfBars > Store::k_maxNumberOfBars || f > m_store->maxValue()+m_store->barWidth()) {
+    if (f > m_store->maxValue()+m_store->barWidth()) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

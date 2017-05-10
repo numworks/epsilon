@@ -9,11 +9,14 @@ class LocalContext : public Poincare::VariableContext {
 public:
   LocalContext(Poincare::Context * parentContext);
   const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
-  void setSequenceRankValue(float f, int rank);
+  void setValueForSequenceRank(float value, const char * sequenceName, int rank);
 private:
-  char sequenceIndexForSymbol(const Poincare::Symbol * symbol);
-  Poincare::Complex m_nValue;
-  Poincare::Complex m_n1Value;
+  Poincare::Complex m_unValue;
+  Poincare::Complex m_un1Value;
+  Poincare::Complex m_vnValue;
+  Poincare::Complex m_vn1Value;
+  Poincare::Complex m_wnValue;
+  Poincare::Complex m_wn1Value;
 };
 
 }

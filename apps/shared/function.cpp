@@ -59,7 +59,7 @@ const char * Function::text() {
   return m_text;
 }
 
-const char * Function::name() {
+const char * Function::name() const {
   return m_name;
 }
 

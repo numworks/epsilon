@@ -238,7 +238,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
       int start = m_indexBuffer[0] < 0 || m_indexBuffer[0] > n ? 0 : m_indexBuffer[0];
       float un = m_indexBuffer[0] < 0 || m_indexBuffer[0] > n ? m_firstInitialConditionExpression->approximate(*context) : m_buffer[0];
       for (int i = start; i < n; i++) {
-        subContext.setSequenceRankValue(un, 0);
+        subContext.setValueForSequenceRank(un, name(), 0);
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
         un = m_expression->approximate(subContext);
@@ -268,8 +268,8 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
       float un = m_indexBuffer[0] >= 0 && m_indexBuffer[0] < n && m_indexBuffer[1] > 0 && m_indexBuffer[1] <= n && m_indexBuffer[0] + 1 == m_indexBuffer[1] ? m_buffer[0] : m_firstInitialConditionExpression->approximate(*context);
       float un1 =  m_indexBuffer[0] >= 0 && m_indexBuffer[0] < n && m_indexBuffer[1] > 0 && m_indexBuffer[1] <= n && m_indexBuffer[0] + 1 == m_indexBuffer[1] ? m_buffer[1] : m_secondInitialConditionExpression->approximate(*context);
       for (int i = start; i < n-1; i++) {
-        subContext.setSequenceRankValue(un, 0);
-        subContext.setSequenceRankValue(un1, 1);
+        subContext.setValueForSequenceRank(un, name(), 0);
+        subContext.setValueForSequenceRank(un1, name(), 1);
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
         un = un1;

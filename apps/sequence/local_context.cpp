@@ -6,60 +6,64 @@ namespace Sequence {
 
 LocalContext::LocalContext(Context * parentContext) :
   VariableContext('n', parentContext),
-  m_unValue(Complex::Float(NAN)),
-  m_un1Value(Complex::Float(NAN)),
-  m_vnValue(Complex::Float(NAN)),
-  m_vn1Value(Complex::Float(NAN)),
-  m_wnValue(Complex::Float(NAN)),
-  m_wn1Value(Complex::Float(NAN))
+  m_values{{Complex::Float(NAN), Complex::Float(NAN)}, {Complex::Float(NAN), Complex::Float(NAN)}
+  //, {Complex::Float(NAN), Complex::Float(NAN)}
+  }
 {
 }
 
 const Expression * LocalContext::expressionForSymbol(const Symbol * symbol) {
-  switch (symbol->name()) {
-    case Symbol::SpecialSymbols::un:
-      return &m_unValue;
-    case Symbol::SpecialSymbols::un1:
-      return &m_un1Value;
-    case Symbol::SpecialSymbols::vn:
-      return &m_vnValue;
-    case Symbol::SpecialSymbols::vn1:
-      return &m_vn1Value;
-    case Symbol::SpecialSymbols::wn:
-      return &m_wnValue;
-    case Symbol::SpecialSymbols::wn1:
-      return &m_wn1Value;
-    default:
-      return VariableContext::expressionForSymbol(symbol);
+  if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
+      symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1 ||
+symbol->name() == Symbol::SpecialSymbols::wn || symbol->name() == Symbol::SpecialSymbols::wn1) {
+    return &m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
   }
+  return VariableContext::expressionForSymbol(symbol);
 }
 
 void LocalContext::setValueForSequenceRank(float value, const char * sequenceName, int rank) {
-  switch (rank) {
-    case 0:
-      if (sequenceName[0] == 'u') {
-        m_unValue = Complex::Float(value);
-      }
-      if (sequenceName[0] == 'v') {
-        m_vnValue = Complex::Float(value);
-      }
-      if (sequenceName[0] == 'w') {
-        m_wnValue = Complex::Float(value);
-      }
-      return;
-    case 1:
-      if (sequenceName[0] == 'u') {
-        m_un1Value = Complex::Float(value);
-      }
-      if (sequenceName[0] == 'v') {
-        m_vn1Value = Complex::Float(value);
-      }
-      if (sequenceName[0] == 'v') {
-        m_wn1Value = Complex::Float(value);
-      }
-      return;
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    if (strcmp(sequenceName, SequenceStore::k_sequenceNames[i]) == 0) {
+      m_values[i][rank] = Complex::Float(value);
+    }
+  }
+}
+
+int LocalContext::nameIndexForSymbol(const Poincare::Symbol * symbol) {
+  switch (symbol->name()) {
+    case Symbol::SpecialSymbols::un:
+      return 0;
+    case Symbol::SpecialSymbols::un1:
+      return 0;
+    case Symbol::SpecialSymbols::vn:
+      return 1;
+    case Symbol::SpecialSymbols::vn1:
+      return 1;
+    case Symbol::SpecialSymbols::wn:
+      return 2;
+    case Symbol::SpecialSymbols::wn1:
+      return 2;
     default:
-      return;
+      return 0;
+  }
+}
+
+int LocalContext::rankIndexForSymbol(const Poincare::Symbol * symbol) {
+  switch (symbol->name()) {
+    case Symbol::SpecialSymbols::un:
+      return 0;
+    case Symbol::SpecialSymbols::un1:
+      return 1;
+    case Symbol::SpecialSymbols::vn:
+      return 0;
+    case Symbol::SpecialSymbols::vn1:
+      return 1;
+    case Symbol::SpecialSymbols::wn:
+      return 0;
+    case Symbol::SpecialSymbols::wn1:
+      return 1;
+    default:
+      return 0;
   }
 }
 

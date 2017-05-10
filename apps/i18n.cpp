@@ -13,8 +13,8 @@ constexpr static char lambdaPoissonSpanishDefinition[] = {Ion::Charset::SmallLam
 constexpr static char meanFrenchDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'o', 'y', 'e', 'n', 'n', 'e', 0};
 constexpr static char meanEnglishDefinition[] = {Ion::Charset::SmallMu, ':', ' ', 'M', 'e', 'a', 'n', 0};
 constexpr static char meanSpanishDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'e', 'd', 'i', 'a', 0};
-constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'E', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
-constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
+constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'E', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
+constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
 const char * messages[211][3] {

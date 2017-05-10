@@ -223,6 +223,17 @@ bool Sequence::isDefined() {
   }
 }
 
+bool Sequence::isEmpty() {
+  switch (m_type) {
+    case Type::Explicite:
+      return Function::isEmpty();
+    case Type::SingleRecurrence:
+      return Function::isEmpty() && strlen(m_firstInitialConditionText) == 0;
+    default:
+      return Function::isEmpty() && strlen(m_firstInitialConditionText) == 0 && strlen(m_secondInitialConditionText) == 0;
+  }
+}
+
 float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   float n = roundf(x);
   switch (m_type) {

@@ -373,6 +373,9 @@ KDSize CurveView::cursorSize() {
 void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
+  if (isnan(pyf) || isnan(pvf)) {
+    return;
+  }
   // No need to draw if both dots are outside visible area
   if ((pyf < -stampSize && pvf < -stampSize) || (pyf > pixelLength(Axis::Vertical)+stampSize && pvf > pixelLength(Axis::Vertical)+stampSize)) {
     return;
@@ -391,11 +394,14 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
   float cy = evaluateModelWithParameter(curve, cx);
-  if ((y < cy && cy < v) || (v < cy && cy < y)) {
+  if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
     float pxf = floatToPixel(Axis::Horizontal, x);
     float puf = floatToPixel(Axis::Horizontal, u);
+    if (isnan(pxf) || isnan(puf)) {
+      return;
+    }
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;
   }

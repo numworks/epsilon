@@ -89,6 +89,10 @@ void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
   markRectAsDirty(bounds());
 }
 
+KDColor TextField::ContentView::backgroundColor() const {
+  return m_backgroundColor;
+}
+
 void TextField::ContentView::setTextColor(KDColor textColor) {
   m_textColor = textColor;
   markRectAsDirty(bounds());
@@ -237,6 +241,10 @@ void TextField::setText(const char * text) {
 
 void TextField::setBackgroundColor(KDColor backgroundColor) {
   m_contentView.setBackgroundColor(backgroundColor);
+}
+
+KDColor TextField::backgroundColor() const {
+  return m_contentView.backgroundColor();
 }
 
 void TextField::setTextColor(KDColor textColor) {

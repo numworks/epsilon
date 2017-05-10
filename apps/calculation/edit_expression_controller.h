@@ -33,6 +33,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
     static constexpr KDCoordinate k_textFieldHeight = 37;
+    static constexpr KDCoordinate k_textMargin= 5;
     constexpr static int k_separatorThickness = 1;
     TableView * m_mainView;
     TextField m_textField;

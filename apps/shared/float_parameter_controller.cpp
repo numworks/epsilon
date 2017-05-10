@@ -28,7 +28,7 @@ void FloatParameterController::didBecomeFirstResponder() {
 void FloatParameterController::viewWillAppear() {
   DynamicViewController::viewWillAppear();
   selectableTableView()->reloadData();
-  if (selectedRow() == -1) {
+  if (selectedRow() == -1 || selectedRow() == numberOfRows()-1) {
     selectCellAtLocation(0, 0);
   } else {
     int selRow = selectedRow();

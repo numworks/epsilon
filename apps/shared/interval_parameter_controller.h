@@ -22,6 +22,7 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
+  void buttonAction() override;
   View * loadView() override;
   void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];

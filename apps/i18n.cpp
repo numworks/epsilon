@@ -170,7 +170,7 @@ const char * messages[211][3] {
   {"Donnees", "Data", "Datos"},
   {"Histogramme", "Histogram", "Histograma"},
   {"Boite", "Box", "Caja"},
-  {"Stats", "Statistics", "Medidas"},
+  {"Stats", "Stats", "Medidas"},
 
   /* Statistics: first tab */
   {"Valeurs", "Values", "Valores"},
@@ -241,7 +241,7 @@ const char * messages[211][3] {
 
   /* Settings */
   {"Parametres", "Settings", "Configuracion"},
-  {"PARAMETRES", "SETTINGS", "CONFIGURATION"},
+  {"PARAMETRES", "SETTINGS", "CONFIGURACION"},
   {"Unite d'angle", "Angle measure", "Medida del angulo"},
   {"Format resultat", "Result format", "Formato resultado"},
   {"Forme complexe", "Complex format", "Formato complejo"},

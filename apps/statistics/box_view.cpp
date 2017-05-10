@@ -50,16 +50,16 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowBound = 0.35f;
   float upBound = 0.65f;
   // Draw the main box
-  KDCoordinate firstQuartilePixels = floatToPixel(Axis::Horizontal, m_store->firstQuartile());
-  KDCoordinate thirdQuartilePixels = floatToPixel(Axis::Horizontal, m_store->thirdQuartile());
+  KDCoordinate firstQuartilePixels = roundf(floatToPixel(Axis::Horizontal, m_store->firstQuartile()));
+  KDCoordinate thirdQuartilePixels = roundf(floatToPixel(Axis::Horizontal, m_store->thirdQuartile()));
   KDCoordinate lowBoundPixel = floatToPixel(Axis::Vertical, upBound);
   KDCoordinate upBoundPixel = floatToPixel(Axis::Vertical, lowBound);
-  ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels,
+  ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Add 'shadows' to the box
   if (thirdQuartilePixels-firstQuartilePixels > 2) {
-    ctx->fillRect(KDRect(firstQuartilePixels+2, upBoundPixel-1, thirdQuartilePixels-firstQuartilePixels-2, 1), Palette::GreyBright);
-    ctx->fillRect(KDRect(firstQuartilePixels+3, upBoundPixel, thirdQuartilePixels-firstQuartilePixels-3, 1), Palette::GreyMiddle);
+    ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel-1, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyBright);
+    ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyMiddle);
   }
   // Draw the horizontal lines linking the box to the extreme bounds
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);

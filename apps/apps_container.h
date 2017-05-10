@@ -56,6 +56,7 @@ public:
   void refreshPreferences();
   void displayExamModePopUp(bool activate, bool forceRedrawWindow);
   void shutdownDueToLowBattery();
+  void reloadTitleBar();
 private:
   Window * window() override;
   int numberOfTimers() override;

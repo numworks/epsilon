@@ -171,8 +171,12 @@ void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int 
       Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
       break;
     case 3:
+    {
       GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
+      AppsContainer * appsContainer = (AppsContainer *)app()->container();
+      appsContainer->reloadTitleBar();
       break;
+    }
     default:
       break;
     }

@@ -41,7 +41,7 @@ KDCoordinate ListController::rowHeight(int j) {
 void ListController::editExpression(Function * function, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     strlcpy(initialTextContent, function->text(), sizeof(initialTextContent));
     initialText = initialTextContent;
   }

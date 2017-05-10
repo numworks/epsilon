@@ -55,7 +55,7 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_subController.setNodeModel(m_nodeModel->children(selectedRow()), selectedRow());
     StackViewController * stack = stackController();
     stack->push(&m_subController);

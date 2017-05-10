@@ -239,7 +239,7 @@ bool MathToolbox::handleEventForRow(Ion::Events::Event event, int selectedRow) {
   if (event == Ion::Events::Back) {
     return returnToPreviousMenu();
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     ToolboxNode * selectedNode = (ToolboxNode *)m_nodeModel->children(selectedRow);
     if (selectedNode->numberOfChildren() == 0) {
       return selectLeaf(selectedNode);

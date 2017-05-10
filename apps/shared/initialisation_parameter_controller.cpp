@@ -26,7 +26,7 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 }
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
-if (event == Ion::Events::OK) {
+if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::setTrigonometric,
     &InteractiveCurveViewRange::roundAbscissa, &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
     (m_graphRange->*rangeMethods[selectedRow()])();

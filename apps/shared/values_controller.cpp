@@ -60,7 +60,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     selectableTableView()->reloadData();
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == -1) {
       return header()->handleEvent(event);
     }

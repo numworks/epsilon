@@ -35,7 +35,7 @@ void StoreParameterController::didBecomeFirstResponder() {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     switch (selectedRow()) {
       case 0:
       {

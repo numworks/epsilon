@@ -56,7 +56,7 @@ void TermSumController::viewWillAppear() {
 }
 
 bool TermSumController::handleEvent(Ion::Events::Event event) {
-  if (m_step > 1 && event != Ion::Events::OK && event != Ion::Events::Back) {
+  if (m_step > 1 && event != Ion::Events::OK && event != Ion::Events::EXE && event != Ion::Events::Back) {
     return false;
   }
   if (event == Ion::Events::Left) {
@@ -87,7 +87,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_step == 2) {
       StackViewController * stack = (StackViewController *)parentResponder();
       stack->pop();

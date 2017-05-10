@@ -177,7 +177,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       switch (selectedColumn()) {
       case 0:
       {
@@ -196,7 +196,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
           return true;
         }
         Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
-        editExpression(function, Ion::Events::OK);
+        editExpression(function, event);
         return true;
       }
       default:

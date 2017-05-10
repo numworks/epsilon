@@ -36,8 +36,9 @@ private:
       View * subviewAtIndex(int index) override;
       int numberOfSubviews() const override;
       void layoutSubviews() override;
-      constexpr static int k_inputHeight = 37;
-      constexpr static int k_separatorThickness = 1;
+      constexpr static KDCoordinate k_inputHeight = 37;
+      constexpr static KDCoordinate k_separatorThickness = 1;
+      constexpr static KDCoordinate k_textMargin = 5;
       TextField m_textField;
       char m_textBody[TextField::maxBufferSize()];
     };

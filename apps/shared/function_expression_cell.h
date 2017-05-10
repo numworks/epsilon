@@ -19,6 +19,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_margin = 5;
   ExpressionView m_expressionView;
 };
 

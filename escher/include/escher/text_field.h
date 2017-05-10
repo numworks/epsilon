@@ -18,6 +18,7 @@ public:
   int cursorLocation() const;
   void setText(const char * text);
   void setBackgroundColor(KDColor backgroundColor);
+  KDColor backgroundColor() const;
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
@@ -49,6 +50,7 @@ protected:
     int bufferSize();
     void setText(const char * text);
     void setBackgroundColor(KDColor backgroundColor);
+    KDColor backgroundColor() const;
     void setTextColor(KDColor textColor);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing, bool reinitDraftBuffer);

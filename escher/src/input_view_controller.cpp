@@ -21,6 +21,7 @@ TextField * InputViewController::TextFieldController::ContentView::textField() {
 
 void  InputViewController::TextFieldController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
+  ctx->fillRect(KDRect(0, k_separatorThickness, k_textMargin, bounds().height()-k_separatorThickness), m_textField.backgroundColor());
 }
 
 KDSize InputViewController::TextFieldController::ContentView::minimalSizeForOptimalDisplay() const {
@@ -36,7 +37,7 @@ View * InputViewController::TextFieldController::ContentView::subviewAtIndex(int
 }
 
 void  InputViewController::TextFieldController::ContentView::layoutSubviews() {
-  m_textField.setFrame(KDRect(0, k_separatorThickness, bounds().width(), bounds().height()));
+  m_textField.setFrame(KDRect(k_textMargin, k_separatorThickness, bounds().width()-k_textMargin, bounds().height()));
 }
 
 InputViewController::TextFieldController::TextFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate) :

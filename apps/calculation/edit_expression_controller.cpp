@@ -27,12 +27,15 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
 void EditExpressionController::ContentView::layoutSubviews() {
   KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - k_textFieldHeight-k_separatorThickness);
   m_mainView->setFrame(mainViewFrame);
-  KDRect inputViewFrame(0, bounds().height() - k_textFieldHeight, bounds().width(), k_textFieldHeight);
+  KDRect inputViewFrame(k_textMargin, bounds().height() - k_textFieldHeight, bounds().width()-k_textMargin, k_textFieldHeight);
   m_textField.setFrame(inputViewFrame);
 }
 
 void  EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  // Draw the separator
   ctx->fillRect(KDRect(0, bounds().height() -k_textFieldHeight-k_separatorThickness, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
+  // Color the margin
+  ctx->fillRect(KDRect(0, bounds().height() -k_textFieldHeight, k_textMargin, k_textFieldHeight), m_textField.backgroundColor());
 }
 
 TextField * EditExpressionController::ContentView::textField() {

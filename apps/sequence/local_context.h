@@ -2,6 +2,7 @@
 #define SEQUENCE_LOCAL_CONTEXT_H
 
 #include <poincare.h>
+#include "sequence_store.h"
 
 namespace Sequence {
 
@@ -11,12 +12,10 @@ public:
   const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
   void setValueForSequenceRank(float value, const char * sequenceName, int rank);
 private:
-  Poincare::Complex m_unValue;
-  Poincare::Complex m_un1Value;
-  Poincare::Complex m_vnValue;
-  Poincare::Complex m_vn1Value;
-  Poincare::Complex m_wnValue;
-  Poincare::Complex m_wn1Value;
+  constexpr static int k_depth = 2;
+  int nameIndexForSymbol(const Poincare::Symbol * symbol);
+  int rankIndexForSymbol(const Poincare::Symbol * symbol);
+  Poincare::Complex m_values[SequenceStore::k_maxNumberOfSequences][k_depth];
 };
 
 }

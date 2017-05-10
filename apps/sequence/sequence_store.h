@@ -22,13 +22,13 @@ public:
   char symbol() const override;
   void removeAll() override;
   static constexpr int k_maxNumberOfSequences = 2;
+  static constexpr const char * k_sequenceNames[k_maxNumberOfSequences] = {
+    "u", "v"//, "w"
+  };
 private:
   const KDColor firstAvailableColor() override;
   static constexpr KDColor k_defaultColors[k_maxNumberOfSequences] = {
     Palette::Red, Palette::Blue//, Palette::YellowDark
-  };
-  static constexpr const char * k_sequenceNames[k_maxNumberOfSequences] = {
-    "u", "v"//, "w"
   };
   Sequence m_sequences[k_maxNumberOfSequences];
 };

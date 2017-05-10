@@ -309,6 +309,11 @@ float Sequence::sumOfTermsBetweenAbscissa(float start, float end, Context * cont
     return NAN;
   }
   for (float i = roundf(start); i <= roundf(end); i = i + 1.0f) {
+    /* When |start| >> 1.0f, start + 1.0f = start. In that case, quit the
+     * infinite loop. */
+    if (i == i-1.0f || i == i+1.0f) {
+      return NAN;
+    }
     result += evaluateAtAbscissa(i, context);
   }
   return result;

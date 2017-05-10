@@ -16,7 +16,7 @@ public:
   Function(const Function& other) = delete;
   Function(Function&& other) = delete;
   const char * text();
-  const char * name();
+  const char * name() const;
   KDColor color() const { return m_color; }
   Poincare::Expression * expression();
   Poincare::ExpressionLayout * layout();

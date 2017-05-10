@@ -43,9 +43,6 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
       delete exp;
     }
     if (invalidText) {
-      if (textField->textLength() == 0) {
-        return true;
-      }
       textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }

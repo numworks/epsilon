@@ -187,7 +187,7 @@ void AppsContainer::refreshPreferences() {
 
 void AppsContainer::displayExamModePopUp(bool activate, bool forceWindowRedraw) {
   m_examPopUpController.setActivatingExamMode(activate);
-  activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+  activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
   if (forceWindowRedraw) {
     m_window.redraw(true);
   }

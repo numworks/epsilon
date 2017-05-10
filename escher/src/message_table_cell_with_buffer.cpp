@@ -9,7 +9,7 @@ MessageTableCellWithBuffer::MessageTableCellWithBuffer(I18n::Message message, KD
 
 void MessageTableCellWithBuffer::setAccessoryText(const char * textBody) {
   m_accessoryView.setText(textBody);
-  reloadCell();
+  layoutSubviews();
 }
 
 const char * MessageTableCellWithBuffer::accessoryText() {

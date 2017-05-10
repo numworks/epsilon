@@ -254,14 +254,23 @@ void ListController::reinitExpression(Shared::Function * function) {
   Sequence * sequence = (Sequence *)function;
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
-     sequence->setFirstInitialConditionContent("");
-     break;
-   case 2:
-     sequence->setSecondInitialConditionContent("");
-     break;
-   default:
-     sequence->setContent("");
-     break;
+      if (strlen(sequence->firstInitialConditionText()) == 0) {
+        return;
+      }
+      sequence->setFirstInitialConditionContent("");
+      break;
+    case 2:
+      if (strlen(sequence->secondInitialConditionText()) == 0) {
+        return;
+      }
+      sequence->setSecondInitialConditionContent("");
+      break;
+    default:
+      if (strlen(sequence->text()) == 0) {
+        return;
+      }
+      sequence->setContent("");
+      break;
   }
   selectableTableView()->reloadData();
 }

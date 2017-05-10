@@ -211,12 +211,13 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (selectedColumn() == 1 && !function->isEmpty()) {
       reinitExpression(function);
     } else {
-      removeFunctionRow(function);
-      selectableTableView()->reloadData();
-      selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
-      if (selectedRow() >= numberOfRows()) {
-        selectableTableView()->selectCellAtLocation(0, 0);
-        selectableTableView()->selectCellAtLocation(selectedColumn(), numberOfRows()-1);
+      if (removeFunctionRow(function)) {
+        selectableTableView()->reloadData();
+        selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
+        if (selectedRow() >= numberOfRows()) {
+          selectableTableView()->selectCellAtLocation(0, 0);
+          selectableTableView()->selectCellAtLocation(selectedColumn(), numberOfRows()-1);
+        }
       }
     }
     return true;
@@ -224,7 +225,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste)
       && selectedColumn() == 1
       && (selectedRow() != numberOfRows() - 1
-         || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
+        || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
     Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
     editExpression(function, event);
     return true;
@@ -285,8 +286,9 @@ void ListController::addEmptyFunction() {
   selectableTableView()->reloadData();
 }
 
-void ListController::removeFunctionRow(Function * function) {
+bool ListController::removeFunctionRow(Function * function) {
   m_functionStore->removeFunction(function);
+  return true;
 }
 
 View * ListController::loadView() {

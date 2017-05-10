@@ -25,7 +25,7 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  void removeFunctionRow(Shared::Function * function) override;
+  bool removeFunctionRow(Shared::Function * function) override;
   View * loadView() override;
   void unloadView(View * view) override;
   constexpr static int k_maxNumberOfRows = 5;

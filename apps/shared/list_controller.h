@@ -43,7 +43,7 @@ private:
   virtual int functionIndexForRow(int j);
   virtual const char * textForRow(int j);
   virtual void addEmptyFunction();
-  virtual void removeFunctionRow(Function * function);
+  virtual bool removeFunctionRow(Function * function);
   virtual void editExpression(Function * function, Ion::Events::Event event) = 0;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;

@@ -16,7 +16,7 @@ public:
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
   void pop();
 
-
+  int depth();
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

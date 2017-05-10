@@ -67,6 +67,14 @@ int IntervalParameterController::reusableParameterCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
+void IntervalParameterController::buttonAction() {
+  StackViewController * stack = stackController();
+  stack->pop();
+  if (stack->depth() > 1) {
+    stack->pop();
+  }
+}
+
 View * IntervalParameterController::loadView() {
   SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_totalNumberOfCell; i++) {

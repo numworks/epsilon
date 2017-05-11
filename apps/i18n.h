@@ -238,6 +238,14 @@ namespace I18n {
     SoftwareVersion,
     SerialNumber,
 
+    /* On boarding */
+    UpdateAvailable,
+    UpdateMessage1,
+    UpdateMessage2,
+    UpdateMessage3,
+    UpdateMessage4,
+    Skip,
+
     /* UNIVERSAL MESSAGES */
     Default = 0x8000,
     Alpha,

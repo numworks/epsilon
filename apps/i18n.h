@@ -4,6 +4,7 @@
 #include <escher.h>
 
 namespace I18n {
+  constexpr static int NumberOfLanguages = 3;
   enum class Message : uint16_t {
     Warning = 0,
     Ok = 1,

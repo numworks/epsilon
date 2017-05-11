@@ -20,6 +20,7 @@ AppsContainer::AppsContainer() :
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(BacklightDimmingTimer()),
+  m_onBoardingApp(new OnBoarding::App(this)),
   m_homeApp(new Home::App(this)),
   m_graphApp(new Graph::App(this, &m_globalContext)),
   m_probabilityApp(new Probability::App(this)),
@@ -36,6 +37,8 @@ AppsContainer::AppsContainer() :
 }
 
 AppsContainer::~AppsContainer() {
+  delete m_onBoardingApp;
+  m_onBoardingApp = nullptr;
   delete m_homeApp;
   m_homeApp = nullptr;
   delete m_graphApp;
@@ -66,6 +69,9 @@ int AppsContainer::numberOfApps() {
 }
 
 App * AppsContainer::appAtIndex(int index) {
+  if (index == -1) {
+    return m_onBoardingApp;
+  }
   App * apps[] = {
     m_homeApp,
     m_calculationApp,
@@ -143,11 +149,14 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = m_window.updateAlphaLock();
 
   // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home && activeApp() != m_hardwareTestApp) {
+  if (event == Ion::Events::Home && activeApp() != m_hardwareTestApp && activeApp() != m_onBoardingApp) {
     switchTo(appAtIndex(0));
     return true;
   }
   if (event == Ion::Events::OnOff && activeApp() != m_hardwareTestApp) {
+    if (activeApp() == m_onBoardingApp) {
+      m_onBoardingApp->reinitOnBoarding();
+    }
     suspend(true);
     return true;
   }
@@ -164,7 +173,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App * app) {
-  if (app == hardwareTestApp()) {
+  if (app == hardwareTestApp() || app == m_onBoardingApp) {
     m_window.hideTitleBarView(true);
   } else {
     m_window.hideTitleBarView(false);
@@ -173,6 +182,9 @@ void AppsContainer::switchTo(App * app) {
     m_window.setTitle(app->upperName());
   }
   Container::switchTo(app);
+  if (activeApp() == m_onBoardingApp) {
+    m_onBoardingApp->reinitOnBoarding();
+  }
 }
 
 void AppsContainer::updateBatteryState() {
@@ -206,12 +218,16 @@ void AppsContainer::reloadTitleBar() {
   m_window.reloadTitleBar();
 }
 
+void AppsContainer::windowRedraw() {
+  m_window.redraw();
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }
 
 int AppsContainer::numberOfTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) + (m_onBoardingApp->hasTimer());
 }
 
 Timer * AppsContainer::timerAtIndex(int i) {
@@ -225,6 +241,10 @@ Timer * AppsContainer::timerAtIndex(int i) {
     case 3:
       return &m_backlightDimmingTimer;
     case 4:
+      if (m_onBoardingApp->hasTimer() == 1) {
+        return m_onBoardingApp->timer();
+      }
+    case 5:
       return &m_ledTimer;
     default:
       assert(false);

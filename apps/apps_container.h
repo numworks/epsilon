@@ -6,6 +6,7 @@
 #include "probability/app.h"
 #include "calculation/app.h"
 #include "hardware_test/app.h"
+#include "on_boarding/app.h"
 #include "regression/app.h"
 #include "sequence/app.h"
 #include "settings/app.h"
@@ -57,6 +58,7 @@ public:
   void displayExamModePopUp(bool activate, bool forceRedrawWindow);
   void shutdownDueToLowBattery();
   void reloadTitleBar();
+  void windowRedraw();
 private:
   Window * window() override;
   int numberOfTimers() override;
@@ -76,6 +78,7 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  OnBoarding::App * m_onBoardingApp;
   Home::App * m_homeApp;
   Graph::App * m_graphApp;
   Probability::App * m_probabilityApp;

@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[211][3] {
+const char * messages[217][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Annuler", "Cancel", "Cancelar"},
@@ -264,6 +264,14 @@ const char * messages[211][3] {
   {"sci/", "sci/", "sci/"},
   {"Version du logiciel", "Software version", "Version de software"},
   {"Numero serie", "Serial number", "Numero serie"},
+
+  /* On boarding */
+  {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE"},
+  {"Des ameliorations importantes existent", "There are important upgrades", "Hay mejoras importantes"},
+  {"pour votre calculatrice.", "for your calculator.", "para su calculadora."},
+  {"Connectez-vous depuis votre ordinateur", "Browse our page from your computer", "Visita nuestra pagina desde su ordenador"},
+  {"www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update"},
+  {"Passer", "Skip", "Saltar"},
 };
 
 const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};

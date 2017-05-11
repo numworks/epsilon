@@ -413,7 +413,7 @@ const char * translate(Message m, Language l) {
 }
 
 int numberOfLanguages() {
-  return 3;
+  return NumberOfLanguages;
 }
 
 }

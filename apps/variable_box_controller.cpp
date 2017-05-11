@@ -42,14 +42,14 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
       app()->dismissModalViewController();
       return true;
     }
-    m_selectableTableView.deselectTable();
     m_firstSelectedRow = m_previousSelectedRow;
+#if MATRIX_LIST_VARIABLES
     m_currentPage = Page::RootMenu;
+#endif
     app()->setFirstResponder(this);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_selectableTableView.deselectTable();
     if (m_currentPage == Page::RootMenu) {
       m_previousSelectedRow = selectedRow();
       m_firstSelectedRow = 0;
@@ -66,7 +66,9 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     }
     m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
     m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation() + strlen(editedText));
+#if MATRIX_LIST_VARIABLES
     m_currentPage = Page::RootMenu;
+#endif
     app()->dismissModalViewController();
     return true;
   }
@@ -239,10 +241,6 @@ void VariableBoxController::ContentViewController::resetPage() {
 #endif
 }
 
-void VariableBoxController::ContentViewController::deselectTable() {
-  m_selectableTableView.deselectTable();
-}
-
 VariableBoxController::VariableBoxController(Context * context) :
   StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(ContentViewController(this, context))
@@ -265,5 +263,4 @@ void VariableBoxController::viewWillAppear() {
 
 void VariableBoxController::viewDidDisappear() {
   StackViewController::viewDidDisappear();
-  m_contentViewController.deselectTable();
 }

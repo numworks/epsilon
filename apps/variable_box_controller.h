@@ -32,7 +32,6 @@ private:
     void setTextFieldCaller(TextField * textField);
     void reloadData();
     void resetPage();
-    void deselectTable();
   private:
     enum class Page {
       RootMenu,

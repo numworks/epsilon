@@ -77,7 +77,8 @@ int TextField::ContentView::bufferSize() {
 void TextField::ContentView::setText(const char * text) {
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
-    m_currentTextLength = strlen(text);
+    int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
+    m_currentTextLength = textLength;
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
   }

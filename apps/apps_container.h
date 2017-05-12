@@ -7,6 +7,7 @@
 #include "calculation/app.h"
 #include "hardware_test/app.h"
 #include "on_boarding/app.h"
+#include "on_boarding/update_controller.h"
 #include "regression/app.h"
 #include "sequence/app.h"
 #include "settings/app.h"
@@ -73,6 +74,7 @@ private:
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
+  UpdateController m_updateController;
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
   USBTimer m_USBTimer;

@@ -10,7 +10,7 @@ namespace OnBoarding {
 
 class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
 public:
-  LanguageController(Responder * parentResponder, LogoController * logoController);
+  LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController);
   View * view() override;
   void reinitOnBoarding();
   void didBecomeFirstResponder() override;
@@ -24,7 +24,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   LogoController * m_logoController;
-  UpdateController m_updateController;
+  UpdateController * m_updateController;
   MessageTableCell m_cells[I18n::NumberOfLanguages];
   SelectableTableView m_selectableTableView;
 };

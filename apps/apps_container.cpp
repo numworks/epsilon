@@ -15,12 +15,13 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(ExamPopUpController()),
+  m_updateController(),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(BacklightDimmingTimer()),
-  m_onBoardingApp(new OnBoarding::App(this)),
+  m_onBoardingApp(new OnBoarding::App(this, &m_updateController)),
   m_homeApp(new Home::App(this)),
   m_graphApp(new Graph::App(this, &m_globalContext)),
   m_probabilityApp(new Probability::App(this)),
@@ -132,6 +133,9 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
+  if (activeApp() != m_onBoardingApp) {
+    activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
+  }
   Ion::Power::suspend(checkIfPowerKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw

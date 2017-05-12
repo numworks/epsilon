@@ -85,16 +85,30 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * If you need to define precedence in order to avoid shift/redice conflicts for
  * other situations your grammar is most likely ambiguous.
  */
-%left STO
+%nonassoc STO
 %left PLUS
 %left MINUS
 %left IMPLICIT_MULTIPLY
+%left UNARY_MINUS
 %left MULTIPLY
 %left DIVIDE
 %left POW
 %left BANG
+%left LEFT_PARENTHESIS
+%left RIGHT_PARENTHESIS
+%left LEFT_BRACKET
+%left RIGHT_BRACKET
+%left FUNCTION
+%left COMMA
+%left DOT
+%left EE
+%left DIGITS
+%left ICOMPLEX
+%left UNDEFINED_SYMBOL
+%left SYMBOL
 
 /* The "exp" symbol uses the "expression" part of the union. */
+%type <expression> final_exp;
 %type <expression> exp;
 %type <expression> number;
 %type <symbol> symb;
@@ -107,7 +121,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * have some heap-allocated data that need to be discarded. */
 
 %destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED exp number
+%destructor { delete $$; } UNDEFINED final_exp exp number
 %destructor { delete $$; } lstData
 /* MATRICES_ARE_DEFINED */
 /*%destructor { delete $$; } mtxData*/
@@ -116,7 +130,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %%
 
 Root:
-  exp {
+  final_exp {
     *expressionOutput = $1;
   }
 
@@ -126,7 +140,6 @@ Root:
 lstData:
   exp { $$ = new Poincare::ListData($1); }
   | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
-
 /* MATRICES_ARE_DEFINED */
 /* mtxData:
   LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, true); delete $2; }
@@ -149,7 +162,6 @@ symb:
 exp:
   UNDEFINED        { $$ = $1; }
   | exp BANG       { $$ = new Poincare::Factorial($1, false); }
-  | exp STO symb   { $$ = new Poincare::Store($3, $1, false); }
   | number             { $$ = $1; }
   | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }
@@ -159,13 +171,15 @@ exp:
   | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
   | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
   | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
-  | MINUS exp        { $$ = new Poincare::Opposite($2, false); }
+  | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
 /* MATRICES_ARE_DEFINED */
-/*  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }*/
+/*  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); } */
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
-;
 
+final_exp:
+  exp      { $$ = $1; }
+  | exp STO symb   { $$ = new Poincare::Store($3, $1, false); };
 %%
 
 void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char const *msg) {

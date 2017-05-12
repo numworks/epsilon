@@ -237,6 +237,7 @@ namespace I18n {
     Sci,
     SoftwareVersion,
     SerialNumber,
+    UpdatePopUp,
 
     /* On boarding */
     UpdateAvailable,

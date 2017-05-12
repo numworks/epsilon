@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[217][3] {
+const char * messages[218][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Annuler", "Cancel", "Cancelar"},
@@ -264,6 +264,7 @@ const char * messages[217][3] {
   {"sci/", "sci/", "sci/"},
   {"Version du logiciel", "Software version", "Version de software"},
   {"Numero serie", "Serial number", "Numero serie"},
+  {"Rappel mise a jour", "Update pop-up", "Aviso emergente de actualizacion"},
 
   /* On boarding */
   {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE"},

@@ -4,7 +4,8 @@ static GlobalPreferences s_globalPreferences;
 
 GlobalPreferences::GlobalPreferences() :
   m_language(I18n::Language::French),
-  m_examMode(ExamMode::Desactivate)
+  m_examMode(ExamMode::Desactivate),
+  m_showUpdatePopUp(true)
 {
 }
 
@@ -29,5 +30,15 @@ GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
 void GlobalPreferences::setExamMode(ExamMode examMode) {
   if (examMode != m_examMode) {
     m_examMode = examMode;
+  }
+}
+
+bool GlobalPreferences::showUpdatePopUp() const {
+  return m_showUpdatePopUp;
+}
+
+void GlobalPreferences::setShowUpdatePopUp(bool showUpdatePopUp) {
+  if (showUpdatePopUp != m_showUpdatePopUp) {
+    m_showUpdatePopUp = showUpdatePopUp;
   }
 }

@@ -63,7 +63,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.reloadData();
       return true;
     }
-    m_subController.setNodeModel(m_nodeModel->children(selectedRow()), selectedRow());
+    m_subController.setNodeModel(m_nodeModel->children(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(&m_subController);
     return true;

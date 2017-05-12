@@ -15,8 +15,7 @@ SubController::SubController(Responder * parentResponder) :
     MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark)},
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
-  m_nodeModel(nullptr),
-  m_preferenceIndex(0)
+  m_nodeModel(nullptr)
 {
   const char text[6] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
   m_complexFormatLayout[0] = new StringLayout(text, 6);
@@ -49,8 +48,8 @@ View * SubController::view() {
 }
 
 void SubController::didEnterResponderChain(Responder * previousResponder) {
-  selectCellAtLocation(0, valueIndexAtPreferenceIndex(m_preferenceIndex));
-  if (m_preferenceIndex == 4) {
+  selectCellAtLocation(0, valueIndexForPreference(m_nodeModel->label()));
+  if (m_nodeModel->label() == I18n::Message::ExamMode) {
     m_selectableTableView.reloadData();
   }
   app()->setFirstResponder(&m_selectableTableView);
@@ -59,14 +58,14 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the serial number row. */
-  if (event == Ion::Events::Six && m_preferenceIndex == 6 && selectedRow() == 1) {
+  if (event == Ion::Events::Six && m_nodeModel->label() == I18n::Message::About && selectedRow() == 1) {
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestApp());
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Behavious of "Exam mode" menu*/
-    if (m_preferenceIndex == 4) {
+    if (m_nodeModel->label() == I18n::Message::ExamMode) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;
       }
@@ -75,7 +74,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Behaviour of "About" menu */
-    if (m_preferenceIndex == 6) {
+    if (m_nodeModel->label() == I18n::Message::About) {
       if (selectedRow() == 1) {
         return false;
       }
@@ -88,7 +87,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Generic behaviour of preference menu*/
-    setPreferenceAtIndexWithValueIndex(m_preferenceIndex, selectedRow());
+    setPreferenceWithValueIndex(m_nodeModel->label(), selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
     StackViewController * stack = stackController();
@@ -108,14 +107,14 @@ int SubController::numberOfRows() {
 HighlightCell * SubController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  if (m_preferenceIndex == 2) {
+  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
     return &m_complexFormatCells[index];
   }
   return &m_cells[index];
 }
 
 int SubController::reusableCellCount() {
-  if (m_preferenceIndex == 2) {
+  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
     return 2;
   }
   return k_totalNumberOfCell;
@@ -126,17 +125,17 @@ KDCoordinate SubController::cellHeight() {
 }
 
 void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (m_preferenceIndex == 2) {
+  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
     return;
   }
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
   myCell->setMessage(m_nodeModel->children(index)->label());
   myCell->setMessageFontSize(KDText::FontSize::Large);
   myCell->setAccessoryText("");
-  if (m_preferenceIndex == 4 && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+  if (m_nodeModel->label() == I18n::Message::ExamMode && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
-  if (m_preferenceIndex == 6) {
+  if (m_nodeModel->label() == I18n::Message::About) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
     if (index == 1) {
@@ -146,9 +145,8 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
 }
 
-void SubController::setNodeModel(const Node * nodeModel, int preferenceIndex) {
+void SubController::setNodeModel(const Node * nodeModel) {
   m_nodeModel = (Node *)nodeModel;
-  m_preferenceIndex = preferenceIndex;
 }
 
 void SubController::viewWillAppear() {
@@ -159,43 +157,37 @@ StackViewController * SubController::stackController() const {
   return (StackViewController *)parentResponder();
 }
 
-void SubController::setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex) {
-  switch (preferenceIndex) {
-    case 0:
-      Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
-      break;
-    case 1:
-      Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
-      break;
-    case 2:
-      Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
-      break;
-    case 3:
-    {
-      GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
-      AppsContainer * appsContainer = (AppsContainer *)app()->container();
-      appsContainer->reloadTitleBar();
-      break;
-    }
-    default:
-      break;
-    }
+void SubController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
+  if (message == I18n::Message::AngleUnit) {
+    Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
+  }
+  if (message == I18n::Message::DisplayMode) {
+    Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
+  }
+  if (message == I18n::Message::ComplexFormat) {
+    Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
+  }
+  if (message == I18n::Message::Language) {
+    GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
+    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    appsContainer->reloadTitleBar();
+  }
 }
 
-int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
-  switch (preferenceIndex) {
-    case 0:
-      return (int)Preferences::sharedPreferences()->angleUnit();
-    case 1:
-      return (int)Preferences::sharedPreferences()->displayMode();
-    case 2:
-      return (int)Preferences::sharedPreferences()->complexFormat();
-    case 3:
-      return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
-    default:
-      assert(false);
-      return 0;
-    }
+int SubController::valueIndexForPreference(I18n::Message message) {
+  if (message == I18n::Message::AngleUnit) {
+    return (int)Preferences::sharedPreferences()->angleUnit();
+  }
+  if (message == I18n::Message::DisplayMode) {
+    return (int)Preferences::sharedPreferences()->displayMode();
+  }
+  if (message == I18n::Message::ComplexFormat) {
+    return (int)Preferences::sharedPreferences()->complexFormat();
+  }
+  if (message == I18n::Message::Language) {
+    return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+  }
+  return 0;
 }
 
 

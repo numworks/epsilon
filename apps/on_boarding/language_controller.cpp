@@ -4,9 +4,10 @@
 
 namespace OnBoarding {
 
-LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController) :
+LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController) :
   ViewController(parentResponder),
   m_logoController(logoController),
+  m_updateController(updateController),
   m_cells{MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large)},
   m_selectableTableView(SelectableTableView(this, this, 0, 1, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this))
 {
@@ -29,7 +30,7 @@ void LanguageController::didBecomeFirstResponder() {
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
-    app()->displayModalViewController(&m_updateController, 0.5f, 0.5f);
+    app()->displayModalViewController(m_updateController, 0.5f, 0.5f);
     return true;
   }
   if (event == Ion::Events::Back) {

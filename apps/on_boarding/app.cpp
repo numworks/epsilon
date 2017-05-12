@@ -2,9 +2,9 @@
 
 namespace OnBoarding {
 
-App::App(Container * container) :
+App::App(Container * container, UpdateController * updateController) :
   ::App(container, &m_languageController),
-  m_languageController(&m_modalViewController, &m_logoController),
+  m_languageController(&m_modalViewController, &m_logoController, updateController),
   m_logoController()
 {
 }

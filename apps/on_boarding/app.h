@@ -4,12 +4,13 @@
 #include <escher.h>
 #include "language_controller.h"
 #include "logo_controller.h"
+#include "update_controller.h"
 
 namespace OnBoarding {
 
 class App : public ::App {
 public:
-  App(Container * container);
+  App(Container * container, UpdateController * updateController);
   void reinitOnBoarding();
   bool hasTimer();
   Timer * timer();

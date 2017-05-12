@@ -70,6 +70,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token EE
 %token ICOMPLEX
 %token STO
+%token UNDEFINED_SYMBOL
 
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.

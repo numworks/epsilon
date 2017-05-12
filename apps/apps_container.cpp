@@ -133,7 +133,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
-  if (activeApp() != m_onBoardingApp) {
+  if (activeApp() != m_onBoardingApp && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }
   Ion::Power::suspend(checkIfPowerKeyReleased);

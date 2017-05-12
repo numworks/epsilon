@@ -17,15 +17,16 @@ const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[2] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber)};
 
-const SettingsNode menu[6] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::About, aboutChildren, 2)};
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 6);
+const SettingsNode menu[7] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::UpdatePopUp), SettingsNode(I18n::Message::About, aboutChildren, 2)};
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_cells{MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small),
     MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small), MessageTableCellWithChevronAndMessage(KDText::FontSize::Large, KDText::FontSize::Small)},
   m_complexFormatCell(MessageTableCellWithChevronAndExpression(I18n::Message::Default, KDText::FontSize::Large)),
+  m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
   m_complexFormatLayout(nullptr),
   m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
@@ -57,6 +58,11 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
+      GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
+      m_selectableTableView.reloadData();
+      return true;
+    }
     m_subController.setNodeModel(m_nodeModel->children(selectedRow()), selectedRow());
     StackViewController * stack = stackController();
     stack->push(&m_subController);
@@ -88,12 +94,15 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-  return &m_complexFormatCell;
+  if (type == 1) {
+    return &m_complexFormatCell;
+  }
+  return &m_updateCell;
 }
 
 int MainController::reusableCellCount(int type) {
   if (type == 0) {
-    return k_totalNumberOfCell-1;
+    return k_totalNumberOfCell-2;
   }
   return 1;
 }
@@ -101,6 +110,9 @@ int MainController::reusableCellCount(int type) {
 int MainController::typeAtLocation(int i, int j) {
   if (j == 2) {
     return 1;
+  }
+  if (j == 5) {
+    return 2;
   }
   return 0;
 }
@@ -124,6 +136,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
     myExpCell->setExpression(m_complexFormatLayout);
+    return;
+  }
+  if (index == 5) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
     return;
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;

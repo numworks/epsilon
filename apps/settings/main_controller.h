@@ -30,9 +30,10 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-  constexpr static int k_totalNumberOfCell = 6;
+  constexpr static int k_totalNumberOfCell = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell-1];
   MessageTableCellWithChevronAndExpression m_complexFormatCell;
+  MessageTableCellWithSwitch m_updateCell;
   Poincare::ExpressionLayout * m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;

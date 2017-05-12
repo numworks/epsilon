@@ -59,7 +59,7 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the serial number row. */
-  if (event == Ion::Events::Six && m_preferenceIndex == 5 && selectedRow() == 1) {
+  if (event == Ion::Events::Six && m_preferenceIndex == 6 && selectedRow() == 1) {
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestApp());
     return true;
@@ -75,7 +75,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Behaviour of "About" menu */
-    if (m_preferenceIndex == 5) {
+    if (m_preferenceIndex == 6) {
       if (selectedRow() == 1) {
         return false;
       }
@@ -136,7 +136,7 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_preferenceIndex == 4 && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
-  if (m_preferenceIndex == 5) {
+  if (m_preferenceIndex == 6) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
     if (index == 1) {
@@ -192,10 +192,6 @@ int SubController::valueIndexAtPreferenceIndex(int preferenceIndex) {
       return (int)Preferences::sharedPreferences()->complexFormat();
     case 3:
       return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
-    case 4:
-      return 0;
-    case 5:
-      return 0;
     default:
       assert(false);
       return 0;

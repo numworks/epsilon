@@ -23,19 +23,18 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setNodeModel(const Node * nodeModel, int preferenceIndex);
+  void setNodeModel(const Node * nodeModel);
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-  void setPreferenceAtIndexWithValueIndex(int preferenceIndex, int valueIndex);
-  int valueIndexAtPreferenceIndex(int preferenceIndex);
+  void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
+  int valueIndexForPreference(I18n::Message message);
   constexpr static int k_totalNumberOfCell = 3;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
   Poincare::ExpressionLayout * m_complexFormatLayout[2];
   SelectableTableView m_selectableTableView;
   Node * m_nodeModel;
-  int m_preferenceIndex;
 };
 
 }

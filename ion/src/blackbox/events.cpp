@@ -9,7 +9,7 @@ namespace Events {
 static int sLogAfterNumberOfEvents = -1;
 static int sEventCount = 0;
 
-Ion::Events::Event Ion::Events::getEvent(int * timeout) {
+Event getEvent(int * timeout) {
   Ion::Events::Event event = Ion::Events::None;
   while (!(event.isDefined() && event.isKeyboardEvent())) {
     int c = getchar();
@@ -27,22 +27,6 @@ Ion::Events::Event Ion::Events::getEvent(int * timeout) {
     printf("Event %d is %s\n", sEventCount, event.name());
   }
   return event;
-}
-
-bool isShiftActive() {
-  return false;
-}
-
-bool isAlphaActive() {
-  return false;
-}
-
-bool isAlphaLocked() {
-  return false;
-}
-
-bool isShiftAlphaLocked() {
-  return false;
 }
 
 namespace Blackbox {

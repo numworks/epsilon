@@ -3,7 +3,6 @@ objs += $(addprefix ion/src/blackbox/, \
   ion.o \
   display.o \
   events.o \
-  keyboard.o \
 )
 
 objs += $(addprefix ion/src/shared/, \
@@ -14,6 +13,11 @@ objs += $(addprefix ion/src/shared/, \
   power.o \
   dummy/backlight.o \
   dummy/battery.o \
+  dummy/events_modifier.o \
+  dummy/led.o \
+  dummy/keyboard.o \
+  dummy/serial_number.o \
+  dummy/usb.o \
 )
 
 ion/src/shared/log_printf.o: SFLAGS=-Iion/include

@@ -13,7 +13,7 @@ View * UpdateController::view() {
 }
 
 bool UpdateController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event != Ion::Events::Back) {
     app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->appAtIndex(0));

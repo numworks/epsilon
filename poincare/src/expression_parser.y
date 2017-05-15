@@ -87,6 +87,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %left STO
 %left PLUS
 %left MINUS
+%left IMPLICIT_MULTIPLY
 %left MULTIPLY
 %left DIVIDE
 %left POW
@@ -154,6 +155,7 @@ exp:
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
   | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }
+  | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
   | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
   | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
   | MINUS exp        { $$ = new Poincare::Opposite($2, false); }

@@ -100,9 +100,9 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %left RIGHT_BRACKET
 %left FUNCTION
 %left COMMA
+%left DIGITS
 %left DOT
 %left EE
-%left DIGITS
 %left ICOMPLEX
 %left UNDEFINED_SYMBOL
 %left SYMBOL

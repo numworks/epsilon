@@ -170,7 +170,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     return true;
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
-    window()->redraw();
+    windowRedraw();
     return true;
   }
   return didProcessEvent;
@@ -192,21 +192,18 @@ void AppsContainer::switchTo(App * app) {
 }
 
 void AppsContainer::updateBatteryState() {
-  if (m_window.updateBatteryLevel() || m_window.updateIsChargingState() || m_window.updatePluggedState()) {
-    m_window.redraw();
-  }
+  m_window.updateBatteryLevel();
+  m_window.updateIsChargingState();
+  m_window.updatePluggedState();
 }
 
 void AppsContainer::refreshPreferences() {
   m_window.refreshPreferences();
 }
 
-void AppsContainer::displayExamModePopUp(bool activate, bool forceWindowRedraw) {
+void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
   activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
-  if (forceWindowRedraw) {
-    m_window.redraw(true);
-  }
 }
 
 void AppsContainer::shutdownDueToLowBattery() {
@@ -220,10 +217,6 @@ void AppsContainer::shutdownDueToLowBattery() {
 
 void AppsContainer::reloadTitleBar() {
   m_window.reloadTitleBar();
-}
-
-void AppsContainer::windowRedraw() {
-  m_window.redraw();
 }
 
 Window * AppsContainer::window() {

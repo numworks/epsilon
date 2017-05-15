@@ -48,7 +48,9 @@ bool RunLoop::step() {
     m_time -= Timer::TickDuration;
     for (int i=0; i<numberOfTimers(); i++) {
       Timer * timer = timerAtIndex(i);
-      timer->tick();
+      if (timer->tick()) {
+        windowRedraw();
+      }
     }
   }
 

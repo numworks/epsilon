@@ -56,10 +56,9 @@ public:
   void switchTo(App * app) override;
   void updateBatteryState();
   void refreshPreferences();
-  void displayExamModePopUp(bool activate, bool forceRedrawWindow);
+  void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void reloadTitleBar();
-  void windowRedraw();
 private:
   Window * window() override;
   int numberOfTimers() override;

@@ -111,6 +111,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %type <expression> final_exp;
 %type <expression> exp;
 %type <expression> number;
+%type <expression> closeExp;
 %type <symbol> symb;
 %type <listData> lstData;
 /* MATRICES_ARE_DEFINED */
@@ -121,7 +122,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * have some heap-allocated data that need to be discarded. */
 
 %destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED final_exp exp number
+%destructor { delete $$; } UNDEFINED final_exp exp number closeExp
 %destructor { delete $$; } lstData
 /* MATRICES_ARE_DEFINED */
 /*%destructor { delete $$; } mtxData*/
@@ -159,23 +160,28 @@ number:
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }
 
-exp:
-  UNDEFINED        { $$ = $1; }
-  | exp BANG       { $$ = new Poincare::Factorial($1, false); }
-  | number             { $$ = $1; }
-  | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
-  | symb           { $$ = $1; }
-  | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
-  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
-  | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }
-  | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
-  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
-  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
-  | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
-  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
+closeExp:
+  UNDEFINED                 { $$ = $1; }
+  | ICOMPLEX                { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
+  | symb                    { $$ = $1; }
+  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = new Poincare::Parenthesis($2, false); }
 /* MATRICES_ARE_DEFINED */
 /*  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); } */
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
+
+exp:
+  closeExp                 { $$ = $1; }
+  | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
+  | exp BANG                { $$ = new Poincare::Factorial($1, false); }
+  | number                 { $$ = $1; }
+  | exp PLUS exp            { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
+  | exp MINUS exp           { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
+  | exp DIVIDE exp          { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
+  | exp MULTIPLY exp        { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }
+  | exp POW exp             { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
+  | exp closeExp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
+  | closeExp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
+  | exp BANG exp               { Poincare::Expression * fac = new Poincare::Factorial($1, false); Poincare::Expression * terms[2] = {fac,$3}; $$ = new Poincare::Multiplication(terms, false); }
 
 final_exp:
   exp      { $$ = $1; }

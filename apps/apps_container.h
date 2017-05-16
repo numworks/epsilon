@@ -42,28 +42,30 @@ public:
   AppsContainer(AppsContainer&& other) = delete;
   AppsContainer& operator=(const AppsContainer& other) = delete;
   AppsContainer& operator=(AppsContainer&& other) = delete;
-  /* */
   static bool poincareCircuitBreaker(const Poincare::Expression * e);
   int numberOfApps();
-  App * appAtIndex(int index);
-  App * hardwareTestApp();
+  App::Descriptor * appDescriptorAtIndex(int index);
+  App::Descriptor * hardwareTestAppDescriptor();
+  App::Descriptor * onBoardingAppDescriptor();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
   void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  void switchTo(App * app) override;
+  void switchTo(App::Descriptor * descriptor) override;
   void updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void reloadTitleBar();
+  UpdateController * updatePopUpController();
 private:
   Window * window() override;
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
-  static constexpr int k_numberOfApps = 8;
+  static constexpr int k_numberOfCommonApps = 8;
+  static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
 #if USE_PIC_VIEW_APP
@@ -79,16 +81,7 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
-  OnBoarding::App * m_onBoardingApp;
-  Home::App * m_homeApp;
-  Graph::App * m_graphApp;
-  Probability::App * m_probabilityApp;
-  Calculation::App * m_calculationApp;
-  HardwareTest::App * m_hardwareTestApp;
-  Regression::App * m_regressionApp;
-  Sequence::App * m_sequenceApp;
-  Settings::App * m_settingsApp;
-  Statistics::App * m_statisticsApp;
+  App::Descriptor * m_descriptors[k_totalNumberOfApps];
 };
 
 #endif

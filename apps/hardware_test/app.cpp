@@ -7,10 +7,18 @@ extern "C" {
 
 namespace HardwareTest {
 
-App::App(AppsContainer * container) :
-  ::App(container, &m_keyboardController),
+App * App::Descriptor::build(Container * container) {
+  return new App(container, this);
+}
+
+App::App(Container * container, Descriptor * descriptor) :
+  ::App(container, &m_keyboardController, descriptor),
   m_keyboardController(&m_modalViewController)
 {
+}
+
+App::Descriptor * App::buildDescriptor() {
+  return new App::Descriptor();
 }
 
 }

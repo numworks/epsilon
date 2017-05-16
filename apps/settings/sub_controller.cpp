@@ -60,7 +60,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
    * clicking on '6' on the serial number row. */
   if (event == Ion::Events::Six && m_nodeModel->label() == I18n::Message::About && selectedRow() == 1) {
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->switchTo(appsContainer->hardwareTestApp());
+    appsContainer->switchTo(appsContainer->hardwareTestAppDescriptor());
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

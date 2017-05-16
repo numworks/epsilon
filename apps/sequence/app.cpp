@@ -1,14 +1,31 @@
 #include "app.h"
+#include "../apps_container.h"
 #include "sequence_icon.h"
 
 using namespace Poincare;
 
 namespace Sequence {
 
-App::App(Container * container, Context * context) :
-  FunctionApp(container, &m_inputViewController, I18n::Message::SequenceApp, I18n::Message::SequenceAppCapital, ImageStore::SequenceIcon),
+App * App::Descriptor::build(Container * container) {
+  return new App(container, this);
+}
+
+I18n::Message App::Descriptor::name() {
+  return I18n::Message::SequenceApp;
+}
+
+I18n::Message App::Descriptor::upperName() {
+  return I18n::Message::SequenceAppCapital;
+}
+
+const Image * App::Descriptor::icon() {
+  return ImageStore::SequenceIcon;
+}
+
+App::App(Container * container, Descriptor * descriptor) :
+  FunctionApp(container, &m_inputViewController, descriptor),
   m_sequenceStore(),
-  m_nContext(context),
+  m_nContext(((AppsContainer *)container)->globalContext()),
   m_listController(&m_listFooter, &m_sequenceStore, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
@@ -24,6 +41,10 @@ App::App(Container * container, Context * context) :
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController)
 {
+}
+
+App::Descriptor * App::buildDescriptor() {
+  return new App::Descriptor();
 }
 
 InputViewController * App::inputViewController() {

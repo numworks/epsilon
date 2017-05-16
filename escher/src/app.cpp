@@ -4,17 +4,31 @@ extern "C" {
 #include <assert.h>
 }
 
-App::App(Container * container, ViewController * rootViewController, I18n::Message name, I18n::Message upperName, const Image * icon, I18n::Message warningMessage) :
+I18n::Message App::Descriptor::name() {
+  return (I18n::Message)0;
+}
+
+I18n::Message App::Descriptor::upperName() {
+  return (I18n::Message)0;
+}
+
+const Image * App::Descriptor::icon() {
+  return nullptr;
+}
+
+App::App(Container * container, ViewController * rootViewController, Descriptor * descriptor, I18n::Message warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(this, rootViewController),
+  m_descriptor(descriptor),
   m_container(container),
   m_firstResponder(nullptr),
-  m_warningController(this, warningMessage),
-  m_name(name),
-  m_upperName(upperName),
-  m_icon(icon)
+  m_warningController(this, warningMessage)
 {
+}
+
+App::Descriptor * App::descriptor() {
+  return m_descriptor;
 }
 
 bool App::processEvent(Ion::Events::Event event) {
@@ -55,18 +69,6 @@ void App::setFirstResponder(Responder * responder) {
     }
     m_firstResponder->didBecomeFirstResponder();
   }
-}
-
-I18n::Message App::name() {
-  return m_name;
-}
-
-I18n::Message App::upperName() {
-  return m_upperName;
-}
-
-const Image * App::icon() {
-  return m_icon;
 }
 
 void App::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,

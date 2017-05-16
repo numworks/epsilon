@@ -8,10 +8,15 @@ class AppsContainer;
 
 namespace HardwareTest {
 
-  class App : public ::App {
+class App : public ::App {
 public:
-  App(AppsContainer * container);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    App * build(Container * container) override;
+  };
+  static Descriptor * buildDescriptor();
 private:
+  App(Container * container, Descriptor * descriptor);
   KeyboardController m_keyboardController;
 };
 

@@ -13,7 +13,14 @@ namespace Graph {
 
 class App : public Shared::FunctionApp {
 public:
-  App(Container * container, Poincare::Context * context);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    App * build(Container * container) override;
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  static Descriptor * buildDescriptor();
   InputViewController * inputViewController() override;
   /* This local context can parse x. However, it always stores NAN
    * as x value. When we need to evaluate expression with a specific x value, we
@@ -21,6 +28,7 @@ public:
    * weird x values after drawing curves or displaying the value table. */
   Poincare::Context * localContext() override;
 private:
+  App(Container * container, Descriptor * descriptor);
   CartesianFunctionStore m_functionStore;
   Poincare::VariableContext m_xContext;
   ListController m_listController;

@@ -21,9 +21,18 @@ class Container;
 
 class App : public Responder {
 public:
-  constexpr static uint8_t Magic = 0xA8;
-  App(Container * container, ViewController * rootViewController, I18n::Message name = (I18n::Message)0, I18n::Message upperName = (I18n::Message)0, const Image * icon = nullptr, I18n::Message warningMessage = (I18n::Message)0);
+  class Descriptor {
+  public:
+    virtual App * build(Container * container) = 0;
+    virtual I18n::Message name();
+    virtual I18n::Message upperName();
+    virtual const Image * icon();
+  };
+  /* Each App subclass must implement
+   * static Descriptor * builDescriptor(); */
+  Descriptor * descriptor();
   virtual ~App() = default;
+  constexpr static uint8_t Magic = 0xA8;
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   bool processEvent(Ion::Events::Event event);
@@ -32,23 +41,19 @@ public:
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage);
   const Container * container() const;
-  I18n::Message name();
-  I18n::Message upperName();
-  const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
-
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
 protected:
+  App(Container * container, ViewController * rootViewController, Descriptor * descriptor, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;
 private:
+  Descriptor * m_descriptor;
   Container * m_container;
   Responder * m_firstResponder;
   WarningController m_warningController;
-  I18n::Message m_name;
-  I18n::Message m_upperName;
-  const Image * m_icon;
 };
 
 #endif
+

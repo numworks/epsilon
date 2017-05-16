@@ -16,7 +16,9 @@ bool UpdateController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Back) {
     app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->switchTo(appsContainer->appAtIndex(0));
+    if (appsContainer->activeApp()->descriptor() == appsContainer->onBoardingAppDescriptor()) {
+      appsContainer->switchTo(appsContainer->appDescriptorAtIndex(0));
+    }
     return true;
   }
   return false;

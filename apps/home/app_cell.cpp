@@ -31,9 +31,9 @@ void AppCell::layoutSubviews() {
   m_nameView.setFrame(KDRect((bounds().width()-nameSize.width())/2-k_nameWidthMargin,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, nameSize.width()+2*k_nameWidthMargin, nameSize.height()+2*k_nameHeightMargin));
 }
 
-void AppCell::setApp(::App * app) {
-  m_iconView.setImage(app->icon());
-  m_nameView.setMessage(app->name());
+void AppCell::setAppDescriptor(::App::Descriptor * descriptor) {
+  m_iconView.setImage(descriptor->icon());
+  m_nameView.setMessage(descriptor->name());
   layoutSubviews();
 }
 

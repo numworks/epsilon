@@ -14,11 +14,19 @@ namespace Sequence {
 
 class App : public Shared::FunctionApp {
 public:
-  App(Container * container, Poincare::Context * context);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    App * build(Container * container) override;
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  static Descriptor * buildDescriptor();
   InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;
   const char * XNT() override;
 private:
+  App(Container * container, Descriptor * descriptor);
   SequenceStore m_sequenceStore;
   LocalContext m_nContext;
   ListController m_listController;

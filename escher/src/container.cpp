@@ -7,14 +7,20 @@ Container::Container() :
 {
 }
 
-void Container::switchTo(App * app) {
-  if (m_activeApp == app) {
-    return;
+Container::~Container() {
+  if (m_activeApp) {
+    delete m_activeApp;
   }
+}
+
+void Container::switchTo(App::Descriptor * descriptor) {
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
+    delete m_activeApp;
   }
-  m_activeApp = app;
+  if (descriptor) {
+    m_activeApp = descriptor->build(this);
+  }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());
   }

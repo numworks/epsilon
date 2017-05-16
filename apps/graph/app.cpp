@@ -1,4 +1,5 @@
 #include "app.h"
+#include "../apps_container.h"
 #include "graph_icon.h"
 #include "../i18n.h"
 
@@ -7,10 +8,26 @@ using namespace Shared;
 
 namespace Graph {
 
-App::App(Container * container, Context * context) :
-  FunctionApp(container, &m_inputViewController, I18n::Message::FunctionApp, I18n::Message::FunctionAppCapital, ImageStore::GraphIcon),
+App * App::Descriptor::build(Container * container) {
+  return new App(container, this);
+}
+
+I18n::Message App::Descriptor::name() {
+  return I18n::Message::FunctionApp;
+}
+
+I18n::Message App::Descriptor::upperName() {
+  return I18n::Message::FunctionAppCapital;
+}
+
+const Image * App::Descriptor::icon() {
+  return ImageStore::GraphIcon;
+}
+
+App::App(Container * container, Descriptor * descriptor) :
+  FunctionApp(container,  &m_inputViewController, descriptor),
   m_functionStore(),
-  m_xContext('x', context),
+  m_xContext('x',((AppsContainer *)container)->globalContext()),
   m_listController(&m_listFooter, &m_functionStore, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
@@ -26,6 +43,10 @@ App::App(Container * container, Context * context) :
   m_tabViewController(&m_inputViewController, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this)
 {
+}
+
+App::Descriptor * App::buildDescriptor() {
+  return new App::Descriptor();
 }
 
 InputViewController * App::inputViewController() {

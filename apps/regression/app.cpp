@@ -6,8 +6,24 @@ using namespace Shared;
 
 namespace Regression {
 
-App::App(Container * container) :
-  TextFieldDelegateApp(container, &m_tabViewController, I18n::Message::RegressionApp, I18n::Message::RegressionAppCapital, ImageStore::RegressionIcon),
+App * App::Descriptor::build(Container * container) {
+  return new App(container, this);
+}
+
+I18n::Message App::Descriptor::name() {
+  return I18n::Message::RegressionApp;
+}
+
+I18n::Message App::Descriptor::upperName() {
+  return I18n::Message::RegressionAppCapital;
+}
+
+const Image * App::Descriptor::icon() {
+  return ImageStore::RegressionIcon;
+}
+
+App::App(Container * container, Descriptor * descriptor) :
+  TextFieldDelegateApp(container, &m_tabViewController, descriptor),
   m_store(),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
@@ -21,6 +37,10 @@ App::App(Container * container) :
   m_storeStackViewController(&m_tabViewController, &m_storeHeader),
   m_tabViewController(&m_modalViewController, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader)
 {
+}
+
+App::Descriptor * App::buildDescriptor() {
+  return new App::Descriptor();
 }
 
 }

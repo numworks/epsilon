@@ -20,44 +20,27 @@ AppsContainer::AppsContainer() :
   m_batteryTimer(BatteryTimer(this)),
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
-  m_backlightDimmingTimer(BacklightDimmingTimer()),
-  m_onBoardingApp(new OnBoarding::App(this, &m_updateController)),
-  m_homeApp(new Home::App(this)),
-  m_graphApp(new Graph::App(this, &m_globalContext)),
-  m_probabilityApp(new Probability::App(this)),
-  m_calculationApp(new Calculation::App(this, &m_globalContext)),
-  m_hardwareTestApp(new HardwareTest::App(this)),
-  m_regressionApp(new Regression::App(this)),
-  m_sequenceApp(new Sequence::App(this, &m_globalContext)),
-  m_settingsApp(new Settings::App(this)),
-  m_statisticsApp(new Statistics::App(this))
+  m_backlightDimmingTimer(BacklightDimmingTimer())
 {
+  m_descriptors[0] = Home::App::buildDescriptor();
+  m_descriptors[1] = Calculation::App::buildDescriptor();
+  m_descriptors[2] = Graph::App::buildDescriptor();
+  m_descriptors[3] = Sequence::App::buildDescriptor();
+  m_descriptors[4] = Settings::App::buildDescriptor();
+  m_descriptors[5] = Statistics::App::buildDescriptor();
+  m_descriptors[6] = Probability::App::buildDescriptor();
+  m_descriptors[7] = Regression::App::buildDescriptor();
+  m_descriptors[8] = OnBoarding::App::buildDescriptor();
+  m_descriptors[9] = HardwareTest::App::buildDescriptor();
   refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
 
 AppsContainer::~AppsContainer() {
-  delete m_onBoardingApp;
-  m_onBoardingApp = nullptr;
-  delete m_homeApp;
-  m_homeApp = nullptr;
-  delete m_graphApp;
-  m_graphApp = nullptr;
-  delete m_probabilityApp;
-  m_probabilityApp = nullptr;
-  delete m_calculationApp;
-  m_calculationApp = nullptr;
-  delete m_hardwareTestApp;
-  m_hardwareTestApp = nullptr;
-  delete m_regressionApp;
-  m_regressionApp = nullptr;
-  delete m_sequenceApp;
-  m_sequenceApp = nullptr;
-  delete m_settingsApp;
-  m_settingsApp = nullptr;
-  delete m_statisticsApp;
-  m_statisticsApp = nullptr;
+  for (int i = 0; i < k_totalNumberOfApps; i++) {
+    delete m_descriptors[i];
+  }
 }
 
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
@@ -66,58 +49,25 @@ bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
 }
 
 int AppsContainer::numberOfApps() {
-  return k_numberOfApps;
+  return k_numberOfCommonApps;
 }
 
-App * AppsContainer::appAtIndex(int index) {
-  if (index == -1) {
-    return m_onBoardingApp;
-  }
-  App * apps[] = {
-    m_homeApp,
-    m_calculationApp,
-    m_graphApp,
-    m_sequenceApp,
-    m_settingsApp,
-    m_statisticsApp,
-    m_probabilityApp,
-    m_regressionApp,
-  };
-  assert(sizeof(apps)/sizeof(apps[0]) == k_numberOfApps);
-  assert(index >= 0 && index < k_numberOfApps);
-  return apps[index];
+App::Descriptor * AppsContainer::appDescriptorAtIndex(int index) {
+  assert(index >= 0 && index < k_numberOfCommonApps);
+  return m_descriptors[index];
 }
 
-App * AppsContainer::hardwareTestApp() {
-  return m_hardwareTestApp;
+App::Descriptor * AppsContainer::hardwareTestAppDescriptor() {
+  return m_descriptors[k_totalNumberOfApps-1];
+}
+
+App::Descriptor * AppsContainer::onBoardingAppDescriptor() {
+  return m_descriptors[k_totalNumberOfApps - 2];
 }
 
 void AppsContainer::reset() {
   Clipboard::sharedClipboard()->reset();
-  if (m_calculationApp != nullptr) {
-    delete m_calculationApp;
-  }
-  m_calculationApp = new Calculation::App(this, &m_globalContext);
-  if (m_graphApp != nullptr) {
-    delete m_graphApp;
-  }
-  m_graphApp = new Graph::App(this, &m_globalContext);
-  if (m_sequenceApp != nullptr) {
-    delete m_sequenceApp;
-  }
-  m_sequenceApp = new Sequence::App(this, &m_globalContext);
-  if (m_statisticsApp != nullptr) {
-    delete m_statisticsApp;
-  }
-  m_statisticsApp = new Statistics::App(this);
-  if (m_probabilityApp != nullptr) {
-    delete m_probabilityApp;
-  }
-  m_probabilityApp = new Probability::App(this);
-  if (m_regressionApp != nullptr) {
-    delete m_regressionApp;
-  }
-  m_regressionApp = new Regression::App(this);
+  //TODO: persitence->reset()
 }
 
 Poincare::Context * AppsContainer::globalContext() {
@@ -133,7 +83,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
-  if (activeApp() != m_onBoardingApp && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
+  if (activeApp()->descriptor() != onBoardingAppDescriptor() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }
   Ion::Power::suspend(checkIfPowerKeyReleased);
@@ -153,20 +103,20 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = m_window.updateAlphaLock();
 
   // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home && activeApp() != m_hardwareTestApp && activeApp() != m_onBoardingApp) {
-    switchTo(appAtIndex(0));
+  if (event == Ion::Events::Home && activeApp()->descriptor() != onBoardingAppDescriptor() && activeApp()->descriptor() != hardwareTestAppDescriptor() && activeApp()->descriptor() != appDescriptorAtIndex(0)) {
+    switchTo(appDescriptorAtIndex(0));
     return true;
   }
-  if (event == Ion::Events::OnOff && activeApp() != m_hardwareTestApp) {
-    if (activeApp() == m_onBoardingApp) {
-      m_onBoardingApp->reinitOnBoarding();
+  if (event == Ion::Events::OnOff && activeApp()->descriptor() != hardwareTestAppDescriptor()) {
+    if (activeApp()->descriptor() == onBoardingAppDescriptor()) {
+      ((OnBoarding::App *)activeApp())->reinitOnBoarding();
     }
     suspend(true);
     return true;
   }
   bool didProcessEvent = Container::dispatchEvent(event);
   if (!didProcessEvent && event == Ion::Events::Back) {
-    switchTo(appAtIndex(0));
+    switchTo(appDescriptorAtIndex(0));
     return true;
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
@@ -176,18 +126,18 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent;
 }
 
-void AppsContainer::switchTo(App * app) {
-  if (app == hardwareTestApp() || app == m_onBoardingApp) {
+void AppsContainer::switchTo(App::Descriptor * descriptor) {
+  if (descriptor == hardwareTestAppDescriptor() || descriptor == onBoardingAppDescriptor()) {
     m_window.hideTitleBarView(true);
   } else {
     m_window.hideTitleBarView(false);
   }
-  if (app) {
-    m_window.setTitle(app->upperName());
+  if (descriptor) {
+    m_window.setTitle(descriptor->upperName());
   }
-  Container::switchTo(app);
-  if (activeApp() == m_onBoardingApp) {
-    m_onBoardingApp->reinitOnBoarding();
+  Container::switchTo(descriptor);
+  if (activeApp()->descriptor() == onBoardingAppDescriptor()) {
+    ((OnBoarding::App *)activeApp())->reinitOnBoarding();
   }
 }
 
@@ -219,32 +169,24 @@ void AppsContainer::reloadTitleBar() {
   m_window.reloadTitleBar();
 }
 
+UpdateController * AppsContainer::updatePopUpController() {
+  return &m_updateController;
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }
 
 int AppsContainer::numberOfTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) + (m_onBoardingApp->hasTimer());
+  bool onBoardingTimer = activeApp()->descriptor() == onBoardingAppDescriptor() && ((OnBoarding::App *)activeApp())->hasTimer();
+  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) + onBoardingTimer;
 }
 
 Timer * AppsContainer::timerAtIndex(int i) {
-  switch (i) {
-    case 0:
-      return &m_batteryTimer;
-    case 1:
-      return &m_USBTimer;
-    case 2:
-      return &m_suspendTimer;
-    case 3:
-      return &m_backlightDimmingTimer;
-    case 4:
-      if (m_onBoardingApp->hasTimer() == 1) {
-        return m_onBoardingApp->timer();
-      }
-    case 5:
-      return &m_ledTimer;
-    default:
-      assert(false);
-      return nullptr;
+  bool onBoardingTimer = activeApp()->descriptor() == onBoardingAppDescriptor() && ((OnBoarding::App *)activeApp())->hasTimer();
+  if (onBoardingTimer && i == 4) {
+    return ((OnBoarding::App *)activeApp())->timer();
   }
+  Timer * timers[6] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer, &m_ledTimer};
+  return timers[i];
 }

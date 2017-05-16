@@ -11,9 +11,17 @@ namespace Calculation {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  App(Container * container, Poincare::Context * context);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    App * build(Container * container) override;
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  static Descriptor * buildDescriptor();
   Poincare::Context * localContext() override;
 private:
+  App(Container * container, Descriptor * descriptor);
   LocalContext m_localContext;
   CalculationStore m_calculationStore;
   HistoryController m_historyController;

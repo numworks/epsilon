@@ -4,13 +4,13 @@ extern "C" {
 #include <assert.h>
 }
 
-ScrollView::ScrollView(View * contentView, ScrollViewDelegate * delegate, KDCoordinate topMargin, KDCoordinate rightMargin,
+ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
   KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
   KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
   KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   View(),
   m_topMargin(topMargin),
-  m_delegate(delegate),
+  m_dataSource(dataSource),
   m_contentView(contentView),
   m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin),
@@ -22,7 +22,7 @@ ScrollView::ScrollView(View * contentView, ScrollViewDelegate * delegate, KDCoor
   m_colorBackground(colorBackground),
   m_backgroundColor(backgroundColor)
 {
-  assert(m_delegate != nullptr);
+  assert(m_dataSource != nullptr);
 }
 
 bool ScrollView::hasVerticalIndicator() const {
@@ -130,13 +130,13 @@ void ScrollView::updateScrollIndicator() {
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {
-  if (m_delegate->setOffset(offset)) {
+  if (m_dataSource->setOffset(offset)) {
     layoutSubviews();
   }
 }
 
 KDPoint ScrollView::contentOffset() const {
-  return m_delegate->offset();
+  return m_dataSource->offset();
 }
 
 KDCoordinate ScrollView::topMargin() const {

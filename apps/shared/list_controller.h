@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDelegate {
+class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDataSource {
 public:
   ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
   int numberOfColumns() override;

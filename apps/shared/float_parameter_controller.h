@@ -10,7 +10,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
+class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
   void didBecomeFirstResponder() override;

@@ -8,7 +8,7 @@ namespace Graph {
 
 class ValuesController;
 
-class DerivativeParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class DerivativeParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   DerivativeParameterController(ValuesController * valuesController);
 

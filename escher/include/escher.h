@@ -43,10 +43,11 @@
 #include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
-#include <escher/scroll_view_delegate.h>
+#include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/scrollable_view.h>
 #include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/simple_table_view_data_source.h>
 #include <escher/simple_list_view_data_source.h>

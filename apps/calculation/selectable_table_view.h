@@ -8,7 +8,7 @@ namespace Calculation {
 class CalculationSelectableTableView : public ::SelectableTableView {
 public:
   CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
-    SelectableTableViewDelegate * delegate = nullptr);
+    SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate = nullptr);
   void scrollToCell(int i, int j) override;
   void scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType subviewType, int i, int j);
 };

@@ -11,7 +11,7 @@ namespace Calculation {
 
 class App;
 
-class HistoryController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDelegate {
+class HistoryController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
 

@@ -6,7 +6,7 @@
 #include <escher/text_cursor_view.h>
 #include <string.h>
 
-class TextField : public ScrollableView, public ScrollViewDelegate {
+class TextField : public ScrollableView, public ScrollViewDataSource {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,

@@ -8,7 +8,7 @@ class AppsContainer;
 
 namespace Home {
 
-class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
+class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   Controller(Responder * parentResponder, ::AppsContainer * container);
 

@@ -5,13 +5,13 @@
 #include "graph/app.h"
 #include "probability/app.h"
 #include "calculation/app.h"
-#include "hardware_test/app.h"
-#include "on_boarding/app.h"
-#include "on_boarding/update_controller.h"
 #include "regression/app.h"
 #include "sequence/app.h"
 #include "settings/app.h"
 #include "statistics/app.h"
+#include "on_boarding/app.h"
+#include "hardware_test/app.h"
+#include "on_boarding/update_controller.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
 #include "math_toolbox.h"
@@ -31,29 +31,18 @@
 class AppsContainer : public Container {
 public:
   AppsContainer();
-  ~AppsContainer();
-  /* Rule of 5: the copy constructor, move constructor, copy assignment
-   * operator and move assignment operator are deleted as their default
-   * implementation does not create new apps. The new object thus become
-   * obsolete as soon as the copy is deleted (because of our
-   * implementation of deletion). To avoid any use of obsolete object,
-   * we prevent to copy and assign. */
-  AppsContainer(const AppsContainer& other) = delete;
-  AppsContainer(AppsContainer&& other) = delete;
-  AppsContainer& operator=(const AppsContainer& other) = delete;
-  AppsContainer& operator=(AppsContainer&& other) = delete;
   static bool poincareCircuitBreaker(const Poincare::Expression * e);
   int numberOfApps();
-  App::Descriptor * appDescriptorAtIndex(int index);
-  App::Descriptor * hardwareTestAppDescriptor();
-  App::Descriptor * onBoardingAppDescriptor();
+  App::Snapshot * appSnapshotAtIndex(int index);
+  App::Snapshot * hardwareTestAppSnapshot();
+  App::Snapshot * onBoardingAppSnapshot();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
   void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  void switchTo(App::Descriptor * descriptor) override;
+  void switchTo(App::Snapshot * snapshot) override;
   void updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate);
@@ -81,7 +70,16 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
-  App::Descriptor * m_descriptors[k_totalNumberOfApps];
+  HardwareTest::App::Snapshot m_hardwareTestSnapshot;
+  OnBoarding::App::Snapshot m_onBoardingSnapshot;
+  Home::App::Snapshot m_homeSnapshot;
+  Calculation::App::Snapshot m_calculationSnapshot;
+  Graph::App::Snapshot m_graphSnapshot;
+  Sequence::App::Snapshot m_sequenceSnapshot;
+  Settings::App::Snapshot m_settingsSnapshot;
+  Statistics::App::Snapshot m_statisticsSnapshot;
+  Probability::App::Snapshot m_probabilitySnapshot;
+  Regression::App::Snapshot m_regressionSnapshot;
 };
 
 #endif

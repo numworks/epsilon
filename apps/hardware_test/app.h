@@ -10,13 +10,13 @@ namespace HardwareTest {
 
 class App : public ::App {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Snapshot : public ::App::Snapshot {
   public:
-    App * build(Container * container) override;
+    App * unpack(Container * container) override;
+    Descriptor * descriptor() override;
   };
-  static Descriptor * buildDescriptor();
 private:
-  App(Container * container, Descriptor * descriptor);
+  App(Container * container, Snapshot * snapshot);
   KeyboardController m_keyboardController;
 };
 

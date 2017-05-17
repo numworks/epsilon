@@ -4,10 +4,6 @@
 
 namespace Settings {
 
-App * App::Descriptor::build(Container * container) {
-  return new App(container, this);
-}
-
 I18n::Message App::Descriptor::name() {
   return I18n::Message::SettingsApp;
 }
@@ -20,15 +16,20 @@ const Image * App::Descriptor::icon() {
   return ImageStore::SettingsIcon;
 }
 
-App::App(Container * container, Descriptor * descriptor) :
-  ::App(container, &m_stackViewController, descriptor, I18n::Message::Warning),
+App * App::Snapshot::unpack(Container * container) {
+  return new App(container, this);
+}
+
+App::Descriptor * App::Snapshot::descriptor() {
+  static Descriptor descriptor;
+  return &descriptor;
+}
+
+App::App(Container * container, Snapshot * snapshot) :
+  ::App(container, snapshot, &m_stackViewController, I18n::Message::Warning),
   m_mainController(&m_stackViewController),
   m_stackViewController(&m_modalViewController, &m_mainController)
 {
-}
-
-App::Descriptor * App::buildDescriptor() {
-  return new App::Descriptor();
 }
 
 }

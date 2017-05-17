@@ -20,7 +20,7 @@ bool ColorController::handleEvent(Ion::Events::Event event) {
   m_view.setColors(nextColor(m_view.fillColor()), nextColor(m_view.outlineColor()));
   if (m_view.fillColor() == KDColorBlack) {
     AppsContainer * container = (AppsContainer *)app()->container();
-    container->switchTo(container->appDescriptorAtIndex(0));
+    container->switchTo(container->appSnapshotAtIndex(0));
   }
   return true;
 }

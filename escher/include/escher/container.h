@@ -26,7 +26,7 @@ public:
   void run();
   App * activeApp();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  virtual void switchTo(App::Descriptor * descriptor);
+  virtual void switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
   void windowRedraw() override;

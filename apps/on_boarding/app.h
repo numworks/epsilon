@@ -10,16 +10,16 @@ namespace OnBoarding {
 
 class App : public ::App {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Snapshot : public ::App::Snapshot {
   public:
-    App * build(Container * container) override;
+    App * unpack(Container * container) override;
+    Descriptor * descriptor() override;
   };
-  static Descriptor * buildDescriptor();
   void reinitOnBoarding();
   bool hasTimer();
   Timer * timer();
 private:
-  App(Container * container, Descriptor * descriptor);
+  App(Container * container, Snapshot * snapshot);
   LanguageController m_languageController;
   LogoController m_logoController;
 };

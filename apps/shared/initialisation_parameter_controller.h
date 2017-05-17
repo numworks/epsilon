@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange);
   View * view() override;

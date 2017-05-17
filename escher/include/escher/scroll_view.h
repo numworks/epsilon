@@ -3,12 +3,12 @@
 
 #include <escher/view.h>
 #include <escher/scroll_view_indicator.h>
-#include <escher/scroll_view_delegate.h>
+#include <escher/scroll_view_data_source.h>
 #include <escher/palette.h>
 
 class ScrollView : public View {
 public:
-  ScrollView(View * contentView, ScrollViewDelegate * delegate, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
+  ScrollView(View * contentView, ScrollViewDataSource * dataSource, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0, bool showIndicators = true,
     bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen, KDCoordinate indicatorThickness = 20,
     KDColor indicatorColor = Palette::GreyDark, KDColor backgroundIndicatorColor = Palette::GreyMiddle,
@@ -30,7 +30,7 @@ protected:
   virtual void logAttributes(std::ostream &os) const override;
 #endif
 private:
-  ScrollViewDelegate * m_delegate;
+  ScrollViewDataSource * m_dataSource;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 

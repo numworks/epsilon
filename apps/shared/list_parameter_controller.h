@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage);
 

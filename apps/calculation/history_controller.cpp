@@ -108,7 +108,6 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   if (selectedCell == nullptr) {
     return;
   }
-  selectedCell->setParentResponder(t);
   if (selectedRow() < previousSelectedCellY) {
     selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
   }
@@ -147,7 +146,8 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
 KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   KDCoordinate inputHeight = calculation->inputLayout()->size().height();
-  KDCoordinate outputHeight = calculation->outputLayout()->size().height();
+  App * calculationApp = (App *)app();
+  KDCoordinate outputHeight = calculation->outputLayout(calculationApp->localContext())->size().height();
   return inputHeight + outputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 
@@ -181,10 +181,11 @@ CalculationSelectableTableView * HistoryController::selectableTableView() {
 }
 
 View * HistoryController::loadView() {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_calculationHistory[i] = new HistoryViewCell();
+  CalculationSelectableTableView * tableView = new CalculationSelectableTableView(this, this, this);
+for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_calculationHistory[i] = new HistoryViewCell(tableView);
   }
-  return new CalculationSelectableTableView(this, this, this);
+  return tableView;
 }
 
 void HistoryController::unloadView(View * view) {

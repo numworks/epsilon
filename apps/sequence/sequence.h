@@ -38,6 +38,7 @@ public:
   bool isEmpty() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
   float sumOfTermsBetweenAbscissa(float start, float end, Poincare::Context * context);
+  void tidy() override;
 private:
   constexpr static int k_maxRecurrentRank = 10000;
   constexpr static float k_maxNumberOfTermsInSum = 100000.0f;

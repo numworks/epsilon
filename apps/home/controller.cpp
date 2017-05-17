@@ -47,7 +47,7 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container)
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appDescriptorAtIndex(selectedRow()*k_numberOfColumns+selectedColumn()+1));
+    m_container->switchTo(m_container->appSnapshotAtIndex(selectedRow()*k_numberOfColumns+selectedColumn()+1));
     return true;
   }
   return false;
@@ -101,7 +101,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = m_container->appDescriptorAtIndex((j*k_numberOfColumns+i)+1);
+    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex((j*k_numberOfColumns+i)+1)->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }

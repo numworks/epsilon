@@ -15,6 +15,7 @@ public:
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int numberOfCalculations();
+  void tidy();
 private:
   static constexpr int k_maxNumberOfCalculations = 10;
   Calculation * m_start;

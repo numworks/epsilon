@@ -20,27 +20,21 @@ AppsContainer::AppsContainer() :
   m_batteryTimer(BatteryTimer(this)),
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
-  m_backlightDimmingTimer(BacklightDimmingTimer())
+  m_backlightDimmingTimer(BacklightDimmingTimer()),
+  m_hardwareTestSnapshot(),
+  m_onBoardingSnapshot(),
+  m_homeSnapshot(),
+  m_calculationSnapshot(),
+  m_graphSnapshot(),
+  m_sequenceSnapshot(),
+  m_settingsSnapshot(),
+  m_statisticsSnapshot(),
+  m_probabilitySnapshot(),
+  m_regressionSnapshot()
 {
-  m_descriptors[0] = Home::App::buildDescriptor();
-  m_descriptors[1] = Calculation::App::buildDescriptor();
-  m_descriptors[2] = Graph::App::buildDescriptor();
-  m_descriptors[3] = Sequence::App::buildDescriptor();
-  m_descriptors[4] = Settings::App::buildDescriptor();
-  m_descriptors[5] = Statistics::App::buildDescriptor();
-  m_descriptors[6] = Probability::App::buildDescriptor();
-  m_descriptors[7] = Regression::App::buildDescriptor();
-  m_descriptors[8] = OnBoarding::App::buildDescriptor();
-  m_descriptors[9] = HardwareTest::App::buildDescriptor();
   refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
-}
-
-AppsContainer::~AppsContainer() {
-  for (int i = 0; i < k_totalNumberOfApps; i++) {
-    delete m_descriptors[i];
-  }
 }
 
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
@@ -52,22 +46,38 @@ int AppsContainer::numberOfApps() {
   return k_numberOfCommonApps;
 }
 
-App::Descriptor * AppsContainer::appDescriptorAtIndex(int index) {
+App::Snapshot * AppsContainer::appSnapshotAtIndex(int index) {
+  if (index < 0) {
+    return nullptr;
+  }
+  App::Snapshot * snapshots[] = {
+    &m_homeSnapshot,
+    &m_calculationSnapshot,
+    &m_graphSnapshot,
+    &m_sequenceSnapshot,
+    &m_settingsSnapshot,
+    &m_statisticsSnapshot,
+    &m_probabilitySnapshot,
+    &m_regressionSnapshot,
+  };
+  assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
   assert(index >= 0 && index < k_numberOfCommonApps);
-  return m_descriptors[index];
+  return snapshots[index];
 }
 
-App::Descriptor * AppsContainer::hardwareTestAppDescriptor() {
-  return m_descriptors[k_totalNumberOfApps-1];
+App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
+  return &m_hardwareTestSnapshot;
 }
 
-App::Descriptor * AppsContainer::onBoardingAppDescriptor() {
-  return m_descriptors[k_totalNumberOfApps - 2];
+App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
+  return &m_onBoardingSnapshot;
 }
 
 void AppsContainer::reset() {
   Clipboard::sharedClipboard()->reset();
-  //TODO: persitence->reset()
+  for (int i = 0; i < k_numberOfCommonApps; i++) {
+    appSnapshotAtIndex(i)->reset();
+  }
 }
 
 Poincare::Context * AppsContainer::globalContext() {
@@ -83,7 +93,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
-  if (activeApp()->descriptor() != onBoardingAppDescriptor() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
+  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }
   Ion::Power::suspend(checkIfPowerKeyReleased);
@@ -103,12 +113,12 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = m_window.updateAlphaLock();
 
   // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home && activeApp()->descriptor() != onBoardingAppDescriptor() && activeApp()->descriptor() != hardwareTestAppDescriptor() && activeApp()->descriptor() != appDescriptorAtIndex(0)) {
-    switchTo(appDescriptorAtIndex(0));
+  if (event == Ion::Events::Home && activeApp()->snapshot() != onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot()) {
+    switchTo(appSnapshotAtIndex(0));
     return true;
   }
-  if (event == Ion::Events::OnOff && activeApp()->descriptor() != hardwareTestAppDescriptor()) {
-    if (activeApp()->descriptor() == onBoardingAppDescriptor()) {
+  if (event == Ion::Events::OnOff && activeApp()->snapshot() != hardwareTestAppSnapshot()) {
+    if (activeApp()->snapshot() == onBoardingAppSnapshot()) {
       ((OnBoarding::App *)activeApp())->reinitOnBoarding();
     }
     suspend(true);
@@ -116,7 +126,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   }
   bool didProcessEvent = Container::dispatchEvent(event);
   if (!didProcessEvent && event == Ion::Events::Back) {
-    switchTo(appDescriptorAtIndex(0));
+    switchTo(appSnapshotAtIndex(0));
     return true;
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
@@ -126,17 +136,17 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent;
 }
 
-void AppsContainer::switchTo(App::Descriptor * descriptor) {
-  if (descriptor == hardwareTestAppDescriptor() || descriptor == onBoardingAppDescriptor()) {
+void AppsContainer::switchTo(App::Snapshot * snapshot) {
+  if (snapshot == hardwareTestAppSnapshot() || snapshot == onBoardingAppSnapshot()) {
     m_window.hideTitleBarView(true);
   } else {
     m_window.hideTitleBarView(false);
   }
-  if (descriptor) {
-    m_window.setTitle(descriptor->upperName());
+  if (snapshot) {
+    m_window.setTitle(snapshot->descriptor()->upperName());
   }
-  Container::switchTo(descriptor);
-  if (activeApp()->descriptor() == onBoardingAppDescriptor()) {
+  Container::switchTo(snapshot);
+  if (activeApp() != nullptr && activeApp()->snapshot() == onBoardingAppSnapshot()) {
     ((OnBoarding::App *)activeApp())->reinitOnBoarding();
   }
 }
@@ -178,12 +188,12 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfTimers() {
-  bool onBoardingTimer = activeApp()->descriptor() == onBoardingAppDescriptor() && ((OnBoarding::App *)activeApp())->hasTimer();
+  bool onBoardingTimer = activeApp()->snapshot() == onBoardingAppSnapshot() && ((OnBoarding::App *)activeApp())->hasTimer();
   return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) + onBoardingTimer;
 }
 
 Timer * AppsContainer::timerAtIndex(int i) {
-  bool onBoardingTimer = activeApp()->descriptor() == onBoardingAppDescriptor() && ((OnBoarding::App *)activeApp())->hasTimer();
+  bool onBoardingTimer = activeApp()->snapshot() == onBoardingAppSnapshot() && ((OnBoarding::App *)activeApp())->hasTimer();
   if (onBoardingTimer && i == 4) {
     return ((OnBoarding::App *)activeApp())->timer();
   }

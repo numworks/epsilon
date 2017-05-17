@@ -95,56 +95,40 @@ Sequence::Type Sequence::type() {
 
 void Sequence::setType(Type type) {
   m_type = type;
-  if (m_nameLayout != nullptr) {
-    delete m_nameLayout;
-    m_nameLayout = nullptr;
-  }
-  if (m_definitionName != nullptr) {
-    delete m_definitionName;
-    m_definitionName = nullptr;
-  }
-  if (m_firstInitialConditionName != nullptr) {
-    delete m_firstInitialConditionName;
-    m_firstInitialConditionName = nullptr;
-  }
-  if (m_secondInitialConditionName != nullptr) {
-    delete m_secondInitialConditionName;
-    m_secondInitialConditionName = nullptr;
-  }
+  tidy();
   /* Reset all contents */
   setContent("");
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
-  m_nameLayout = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  if (m_type == Type::Explicite) {
-    m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  }
-  if (m_type == Type::SingleRecurrence) {
-    m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+1 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-    m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  }
-  if (m_type == Type::DoubleRecurrence) {
-    m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+2 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-    m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-    m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  }
   m_indexBuffer[0] = -1;
   m_indexBuffer[1] = -1;
 }
 
 Poincare::Expression * Sequence::firstInitialConditionExpression() {
+  if (m_firstInitialConditionExpression == nullptr) {
+    m_firstInitialConditionExpression = Poincare::Expression::parse(m_firstInitialConditionText);
+  }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression * Sequence::secondInitialConditionExpression() {
+  if (m_secondInitialConditionExpression == nullptr) {
+    m_secondInitialConditionExpression = Poincare::Expression::parse(m_secondInitialConditionText);
+  }
   return m_secondInitialConditionExpression;
 }
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionLayout() {
+  if (m_firstInitialConditionLayout == nullptr && firstInitialConditionExpression() != nullptr) {
+    m_firstInitialConditionLayout = firstInitialConditionExpression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  }
   return m_firstInitialConditionLayout;
 }
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
+  if (m_secondInitialConditionLayout == nullptr && secondInitialConditionExpression()) {
+    m_secondInitialConditionLayout = secondInitialConditionExpression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  }
   return m_secondInitialConditionLayout;
 }
 
@@ -158,14 +142,11 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
   strlcpy(m_firstInitialConditionText, c, sizeof(m_firstInitialConditionText));
   if (m_firstInitialConditionExpression != nullptr) {
     delete m_firstInitialConditionExpression;
+    m_firstInitialConditionExpression = nullptr;
   }
-  m_firstInitialConditionExpression = Poincare::Expression::parse(m_firstInitialConditionText);
   if (m_firstInitialConditionLayout != nullptr) {
     delete m_firstInitialConditionLayout;
-  }
-  m_firstInitialConditionLayout = nullptr;
-  if (m_firstInitialConditionExpression) {
-    m_firstInitialConditionLayout = m_firstInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
+    m_firstInitialConditionLayout = nullptr;
   }
   m_indexBuffer[0] = -1;
   m_indexBuffer[1] = -1;
@@ -175,14 +156,11 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
   strlcpy(m_secondInitialConditionText, c, sizeof(m_secondInitialConditionText));
   if (m_secondInitialConditionExpression != nullptr) {
     delete m_secondInitialConditionExpression;
+    m_secondInitialConditionExpression = nullptr;
   }
-  m_secondInitialConditionExpression = Poincare::Expression::parse(m_secondInitialConditionText);
   if (m_secondInitialConditionLayout != nullptr) {
     delete m_secondInitialConditionLayout;
-  }
-  m_secondInitialConditionLayout = nullptr;
-  if (m_secondInitialConditionExpression) {
-    m_secondInitialConditionLayout = m_secondInitialConditionExpression->createLayout(Expression::FloatDisplayMode::Decimal);
+    m_secondInitialConditionLayout = nullptr;
   }
   m_indexBuffer[0] = -1;
   m_indexBuffer[1] = -1;
@@ -197,29 +175,57 @@ int Sequence::numberOfElements() {
 }
 
 Poincare::ExpressionLayout * Sequence::nameLayout() {
+  if (m_nameLayout == nullptr) {
+    m_nameLayout = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  }
   return m_nameLayout;
 }
 
 Poincare::ExpressionLayout * Sequence::definitionName() {
+  if (m_definitionName == nullptr) {
+    if (m_type == Type::Explicite) {
+      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    }
+    if (m_type == Type::SingleRecurrence) {
+      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+1 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    }
+    if (m_type == Type::DoubleRecurrence) {
+      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+2 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    }
+  }
   return m_definitionName;
 }
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
+  if (m_firstInitialConditionName == nullptr) {
+    if (m_type == Type::SingleRecurrence) {
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    }
+    if (m_type == Type::DoubleRecurrence) {
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    }
+  }
   return m_firstInitialConditionName;
 }
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
+  if (m_secondInitialConditionName == nullptr) {
+    if (m_type == Type::DoubleRecurrence) {
+      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+
+    }
+  }
   return m_secondInitialConditionName;
 }
 
 bool Sequence::isDefined() {
   switch (m_type) {
     case Type::Explicite:
-      return expression() != nullptr;
+      return strlen(text()) != 0;
     case Type::SingleRecurrence:
-      return expression() != nullptr && m_firstInitialConditionExpression != nullptr;
+      return strlen(text()) != 0 && strlen(firstInitialConditionText()) != 0;
     default:
-      return expression() != nullptr && m_firstInitialConditionExpression != nullptr && m_secondInitialConditionExpression != nullptr;
+      return strlen(text()) != 0 && strlen(firstInitialConditionText()) != 0 && strlen(secondInitialConditionText()) != 0;
   }
 }
 
@@ -317,6 +323,42 @@ float Sequence::sumOfTermsBetweenAbscissa(float start, float end, Context * cont
     result += evaluateAtAbscissa(i, context);
   }
   return result;
+}
+
+void Sequence::tidy() {
+  Function::tidy();
+  if (m_firstInitialConditionLayout != nullptr) {
+    delete m_firstInitialConditionLayout;
+    m_firstInitialConditionLayout = nullptr;
+  }
+  if (m_secondInitialConditionLayout != nullptr) {
+    delete m_secondInitialConditionLayout;
+    m_secondInitialConditionLayout = nullptr;
+  }
+  if (m_firstInitialConditionExpression != nullptr) {
+    delete m_firstInitialConditionExpression;
+    m_firstInitialConditionExpression = nullptr;
+  }
+  if (m_secondInitialConditionExpression != nullptr) {
+    delete m_secondInitialConditionExpression;
+    m_secondInitialConditionExpression = nullptr;
+  }
+  if (m_nameLayout != nullptr) {
+    delete m_nameLayout;
+    m_nameLayout = nullptr;
+  }
+  if (m_definitionName != nullptr) {
+    delete m_definitionName;
+    m_definitionName = nullptr;
+  }
+  if (m_firstInitialConditionName != nullptr) {
+    delete m_firstInitialConditionName;
+    m_firstInitialConditionName = nullptr;
+  }
+  if (m_secondInitialConditionName != nullptr) {
+    delete m_secondInitialConditionName;
+    m_secondInitialConditionName = nullptr;
+  }
 }
 
 }

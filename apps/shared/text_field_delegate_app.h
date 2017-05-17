@@ -11,7 +11,8 @@ namespace Shared {
 
 class TextFieldDelegateApp : public ::App, public TextFieldDelegate {
 public:
-  TextFieldDelegateApp(Container * container, ViewController * rootViewController, Descriptor * descriptor);
+  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  virtual ~TextFieldDelegateApp() = default;
   virtual Poincare::Context * localContext();
   AppsContainer * container();
   virtual const char * XNT();

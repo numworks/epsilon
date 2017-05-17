@@ -13,7 +13,7 @@ public:
     Input,
     Output
   };
-  HistoryViewCell();
+  HistoryViewCell(Responder * parentResponder);
   void reloadCell() override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);

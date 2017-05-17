@@ -3,7 +3,7 @@
 AppsContainer container;
 
 void ion_app() {
-  container.switchTo(container.onBoardingAppDescriptor());
+  container.switchTo(container.onBoardingAppSnapshot());
   container.run();
   container.switchTo(nullptr);
 }

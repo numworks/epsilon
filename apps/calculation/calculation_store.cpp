@@ -61,4 +61,10 @@ void CalculationStore::deleteAll() {
   }
 }
 
+void CalculationStore::tidy() {
+  for (int i = 0; i < k_maxNumberOfCalculations; i++) {
+    m_calculations[i].tidy();
+  }
+}
+
 }

@@ -5,8 +5,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionApp::FunctionApp(Container * container, ViewController * rootViewController, Descriptor * descriptor) :
-  TextFieldDelegateApp(container, rootViewController, descriptor)
+FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+  TextFieldDelegateApp(container, snapshot, rootViewController)
 {
 }
 

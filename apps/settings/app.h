@@ -10,14 +10,17 @@ class App : public ::App {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
-    App * build(Container * container) override;
     I18n::Message name() override;
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  static Descriptor * buildDescriptor();
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    Descriptor * descriptor() override;
+  };
 private:
-  App(Container * container, Descriptor * descriptor);
+  App(Container * container, Snapshot * snapshot);
   MainController m_mainController;
   StackViewController m_stackViewController;
 };

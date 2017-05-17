@@ -13,13 +13,18 @@ Container::~Container() {
   }
 }
 
-void Container::switchTo(App::Descriptor * descriptor) {
+void Container::switchTo(App::Snapshot * snapshot) {
+  if (m_activeApp && snapshot == m_activeApp->snapshot()) {
+    return;
+  }
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
-    delete m_activeApp;
+    m_activeApp->snapshot()->pack(m_activeApp);
   }
-  if (descriptor) {
-    m_activeApp = descriptor->build(this);
+  if (snapshot) {
+    m_activeApp = snapshot->unpack(this);
+  } else {
+    m_activeApp = nullptr;
   }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());

@@ -62,4 +62,10 @@ int FunctionStore::numberOfDefinedFunctions() {
   return result;
 }
 
+void FunctionStore::tidy() {
+  for (int i = 0; i < m_numberOfFunctions; i++) {
+    functionAtIndex(i)->tidy();
+  }
+}
+
 }

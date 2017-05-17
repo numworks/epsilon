@@ -16,19 +16,30 @@ const Image * App::Descriptor::icon() {
   return nullptr;
 }
 
-App::App(Container * container, ViewController * rootViewController, Descriptor * descriptor, I18n::Message warningMessage) :
+void App::Snapshot::pack(App * app) {
+  tidy();
+  delete app;
+}
+
+void App::Snapshot::reset() {
+}
+
+void App::Snapshot::tidy() {
+}
+
+App::App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(this, rootViewController),
-  m_descriptor(descriptor),
   m_container(container),
   m_firstResponder(nullptr),
+  m_snapshot(snapshot),
   m_warningController(this, warningMessage)
 {
 }
 
-App::Descriptor * App::descriptor() {
-  return m_descriptor;
+App::Snapshot * App::snapshot() {
+  return m_snapshot;
 }
 
 bool App::processEvent(Ion::Events::Event event) {

@@ -3,19 +3,20 @@
 
 namespace OnBoarding {
 
-App * App::Descriptor::build(Container * container) {
+App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
 
-App::App(Container * container, Descriptor * descriptor) :
-  ::App(container, &m_languageController, descriptor),
+App::Descriptor * App::Snapshot::descriptor() {
+  static Descriptor descriptor;
+  return &descriptor;
+}
+
+App::App(Container * container, Snapshot * snapshot) :
+  ::App(container, snapshot, &m_languageController),
   m_languageController(&m_modalViewController, &m_logoController, ((AppsContainer *)container)->updatePopUpController()),
   m_logoController()
 {
-}
-
-App::Descriptor * App::buildDescriptor() {
-  return new App::Descriptor();
 }
 
 void App::reinitOnBoarding() {

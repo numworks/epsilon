@@ -15,15 +15,21 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
-    App * build(Container * container) override;
     I18n::Message name() override;
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  static Descriptor * buildDescriptor();
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    void reset() override;
+    Descriptor * descriptor() override;
+    Store * store();
+  private:
+    Store m_store;
+  };
 private:
-  App(Container * container, Descriptor * descriptor);
-  Store m_store;
+  App(Container * container, Snapshot * snapshot);
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   ButtonRowController m_calculationHeader;

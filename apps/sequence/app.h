@@ -16,18 +16,25 @@ class App : public Shared::FunctionApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
-    App * build(Container * container) override;
     I18n::Message name() override;
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  static Descriptor * buildDescriptor();
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    void reset() override;
+    Descriptor * descriptor() override;
+    SequenceStore * sequenceStore();
+  private:
+    void tidy() override;
+    SequenceStore m_sequenceStore;
+  };
   InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;
   const char * XNT() override;
 private:
-  App(Container * container, Descriptor * descriptor);
-  SequenceStore m_sequenceStore;
+  App(Container * container, Snapshot * snapshot);
   LocalContext m_nContext;
   ListController m_listController;
   ButtonRowController m_listFooter;

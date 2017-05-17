@@ -150,8 +150,8 @@ void InteractiveCurveViewController::viewWillAppear() {
   curveView()->selectMainView(true);
   header()->setSelectedButton(-1);
   reloadBannerView();
-  curveView()->reload();
   curveView()->setOkView(&m_okView);
+  curveView()->reload();
 }
 
 void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {

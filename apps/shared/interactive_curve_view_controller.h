@@ -15,7 +15,7 @@ namespace Shared {
 
 class InteractiveCurveViewController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor);
+  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -56,8 +56,8 @@ protected:
   CursorView m_cursorView;
   OkView m_okView;
 private:
-  uint32_t m_modelVersion;
-  uint32_t m_rangeVersion;
+  uint32_t * m_modelVersion;
+  uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   ZoomParameterController m_zoomParameterController;
   Button m_rangeButton;

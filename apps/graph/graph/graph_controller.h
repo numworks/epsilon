@@ -13,7 +13,7 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController {
 public:
-  GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, ButtonRowController * header);
+  GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
 private:
   BannerView * bannerView() override;

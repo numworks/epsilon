@@ -5,6 +5,25 @@ using namespace Poincare;
 
 namespace Shared {
 
+FunctionApp::Snapshot::Snapshot() :
+  m_cursor(),
+  m_modelVersion(0),
+  m_rangeVersion(0)
+{
+}
+
+CurveViewCursor * FunctionApp::Snapshot::cursor() {
+  return &m_cursor;
+}
+
+uint32_t * FunctionApp::Snapshot::modelVersion() {
+  return &m_modelVersion;
+}
+
+uint32_t * FunctionApp::Snapshot::rangeVersion() {
+  return &m_rangeVersion;
+}
+
 FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
   TextFieldDelegateApp(container, snapshot, rootViewController)
 {

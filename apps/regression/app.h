@@ -20,14 +20,19 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     Store * store();
     Shared::CurveViewCursor * cursor();
+    uint32_t * modelVersion();
+    uint32_t * rangeVersion();
   private:
     Store m_store;
     Shared::CurveViewCursor m_cursor;
+    uint32_t m_modelVersion;
+    uint32_t m_rangeVersion;
  };
 private:
   App(Container * container, Snapshot * snapshot);

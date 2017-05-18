@@ -11,7 +11,6 @@ namespace Shared {
 
 class TextFieldDelegateApp : public ::App, public TextFieldDelegate {
 public:
-  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
   virtual ~TextFieldDelegateApp() = default;
   virtual Poincare::Context * localContext();
   AppsContainer * container();
@@ -19,6 +18,8 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
+protected:
+  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 private:
   bool cursorInToken(TextField * textField, const char * token);
 };

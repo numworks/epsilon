@@ -21,9 +21,9 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
+  Shared::FunctionApp::Snapshot::Snapshot(),
   m_functionStore(),
-  m_graphRange(&m_cursor),
-  m_cursor()
+  m_graphRange(&m_cursor)
 {
 }
 
@@ -48,10 +48,6 @@ InteractiveCurveViewRange * App::Snapshot::graphRange() {
   return &m_graphRange;
 }
 
-CurveViewCursor * App::Snapshot::cursor() {
-  return &m_cursor;
-}
-
 void App::Snapshot::tidy() {
   m_functionStore.tidy();
 }
@@ -63,7 +59,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, snapshot->functionStore(), snapshot->graphRange(), snapshot->cursor(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, snapshot->functionStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), &m_graphHeader),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

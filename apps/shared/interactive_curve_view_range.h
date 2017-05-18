@@ -10,7 +10,8 @@ namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
-  InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate);
+  InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr);
+  void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
   void setCursor(CurveViewCursor * cursor);
   uint32_t rangeChecksum() override;
 

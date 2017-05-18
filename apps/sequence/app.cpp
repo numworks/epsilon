@@ -18,6 +18,13 @@ const Image * App::Descriptor::icon() {
   return ImageStore::SequenceIcon;
 }
 
+App::Snapshot::Snapshot() :
+  m_sequenceStore(),
+  m_graphRange(&m_cursor),
+  m_cursor()
+{
+}
+
 App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
@@ -35,6 +42,14 @@ SequenceStore * App::Snapshot::sequenceStore() {
   return &m_sequenceStore;
 }
 
+CurveViewRange * App::Snapshot::graphRange() {
+  return &m_graphRange;
+}
+
+Shared::CurveViewCursor * App::Snapshot::cursor() {
+  return &m_cursor;
+}
+
 void App::Snapshot::tidy() {
   m_sequenceStore.tidy();
 }
@@ -46,7 +61,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, snapshot->sequenceStore(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), &m_graphHeader),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

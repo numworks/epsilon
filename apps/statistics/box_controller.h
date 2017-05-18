@@ -10,7 +10,7 @@ namespace Statistics {
 
 class BoxController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
-  BoxController(Responder * parentResponder, ButtonRowController * header, Store * store);
+  BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile);
   const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;

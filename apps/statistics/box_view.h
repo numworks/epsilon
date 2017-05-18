@@ -19,7 +19,7 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, Shared::BannerView * bannerView);
+  BoxView(Store * store, Shared::BannerView * bannerView, Quantile * selectedQuantile);
   void reload() override;
   Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);
@@ -29,7 +29,7 @@ private:
   Store * m_store;
   BoxRange m_boxRange;
   char m_labels[k_maxNumberOfXLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Quantile m_selectedQuantile;
+  Quantile * m_selectedQuantile;
 };
 
 }

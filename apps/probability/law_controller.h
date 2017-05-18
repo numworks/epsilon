@@ -11,7 +11,7 @@ namespace Probability {
 
 class LawController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  LawController(Responder * parentResponder, Law * m_law);
+  LawController(Responder * parentResponder, Law * m_law, Calculation * calculation);
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

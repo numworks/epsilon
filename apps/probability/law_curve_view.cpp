@@ -6,17 +6,14 @@ using namespace Shared;
 
 namespace Probability {
 
-LawCurveView::LawCurveView(Law * law) :
+LawCurveView::LawCurveView(Law * law, Calculation * calculation) :
   CurveView(law, nullptr, nullptr, nullptr),
   m_labels{},
   m_law(law),
-  m_calculation(nullptr)
+  m_calculation(calculation)
 {
   assert(law != nullptr);
-}
-
-void LawCurveView::setCalculation(Calculation * calculation) {
-  m_calculation = calculation;
+  assert(calculation != nullptr);
 }
 
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {

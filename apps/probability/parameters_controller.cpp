@@ -67,18 +67,22 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, Law * law) :
+ParametersController::ParametersController(Responder * parentResponder, Law * law, Calculation * calculation) :
   FloatParameterController(parentResponder),
   m_selectableTableView(nullptr),
   m_menuListCell{},
   m_law(law),
-  m_calculationController(nullptr, law)
+  m_calculationController(nullptr, law, calculation)
 {
   assert(m_law != nullptr);
 }
 
 const char * ParametersController::title() {
   return I18n::translate(m_law->title());
+}
+
+void ParametersController::reinitCalculation() {
+  m_calculationController.setCalculationAccordingToIndex(0, true);
 }
 
 void ParametersController::viewWillAppear() {
@@ -125,6 +129,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
+  m_calculationController.setCalculationAccordingToIndex(0, true);
   return true;
 }
 
@@ -137,7 +142,6 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 }
 
 void ParametersController::buttonAction() {
-  m_calculationController.setCalculationAccordingToIndex(0);
   m_calculationController.selectSubview(1);
   m_calculationController.reload();
   StackViewController * stack = stackController();

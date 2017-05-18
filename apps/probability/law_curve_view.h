@@ -12,8 +12,7 @@ namespace Probability {
 
 class LawCurveView : public Shared::CurveView {
 public:
-  LawCurveView(Law * law);
-  void setCalculation(Calculation * calculation);
+  LawCurveView(Law * law, Calculation * calculation);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   char * label(Axis axis, int index) const override;

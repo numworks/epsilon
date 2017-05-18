@@ -14,19 +14,13 @@ namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
   m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
-  m_lawCurveView(LawCurveView(law)),
+  m_lawCurveView(LawCurveView(law, calculation)),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
   m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
     EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
     EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
   m_calculation(calculation)
 {
-}
-
-void CalculationController::ContentView::setCalculation(Calculation * calculation, int index) {
-  m_calculation = calculation;
-  m_lawCurveView.setCalculation(calculation);
-  m_imageTableView.setCalculation(calculation, index);
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
@@ -130,21 +124,15 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
   return &m_calculationCell[index];
 }
 
-CalculationController::CalculationController(Responder * parentResponder, Law * law) :
+CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
-  m_calculation(new LeftIntegralCalculation()),
+  m_calculation(calculation),
   m_contentView(ContentView(this, this, m_calculation, law)),
   m_law(law),
   m_highlightedSubviewIndex(1)
 {
   assert(law != nullptr);
-}
-
-CalculationController::~CalculationController() {
-  if (m_calculation) {
-    delete m_calculation;
-    m_calculation = nullptr;
-  }
+  assert(calculation != nullptr);
 }
 
 View * CalculationController::view() {
@@ -160,26 +148,25 @@ void CalculationController::reload() {
   m_contentView.lawCurveView()->reload();
 }
 
-void CalculationController::setCalculationAccordingToIndex(int index) {
-  if (m_calculation != nullptr) {
-    delete m_calculation;
-    m_calculation = nullptr;
+void CalculationController::setCalculationAccordingToIndex(int index, bool forceReinitialisation) {
+  if ((int)m_calculation->type() == index && !forceReinitialisation) {
+    return;
   }
+  m_calculation->~Calculation();
   switch (index) {
     case 0:
-      m_calculation = new LeftIntegralCalculation();
+      new(m_calculation) LeftIntegralCalculation();
       break;
     case 1:
-      m_calculation = new FiniteIntegralCalculation();
+      new(m_calculation) FiniteIntegralCalculation();
       break;
     case 2:
-      m_calculation = new RightIntegralCalculation();
+      new(m_calculation) RightIntegralCalculation();
       break;
     default:
      return;
   }
   m_calculation->setLaw(m_law);
-  m_contentView.setCalculation(m_calculation, index);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {

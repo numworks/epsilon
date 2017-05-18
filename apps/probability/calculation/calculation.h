@@ -9,8 +9,8 @@ class Calculation {
 public:
   enum class Type : uint8_t{
     LeftIntegral,
-    RightIntegral,
-    FiniteIntegral
+    FiniteIntegral,
+    RightIntegral
   };
   Calculation();
   virtual ~Calculation() = default;

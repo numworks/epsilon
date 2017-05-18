@@ -51,13 +51,13 @@ static I18n::Message sMessages[] = {
   I18n::Message::Poisson
 };
 
-LawController::LawController(Responder * parentResponder, Law * law) :
+LawController::LawController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_contentView(&m_selectableTableView),
   m_law(law),
-  m_parametersController(nullptr, law)
+  m_parametersController(nullptr, law, calculation)
 {
   m_messages = sMessages;
   assert(m_law != nullptr);
@@ -139,6 +139,7 @@ void Probability::LawController::setLawAccordingToIndex(int index) {
     default:
      return;
   }
+  m_parametersController.reinitCalculation();
 }
 
 }

@@ -10,6 +10,9 @@
 #include "law/normal_law.h"
 #include "law/poisson_law.h"
 #include "law/uniform_law.h"
+#include "calculation/left_integral_calculation.h"
+#include "calculation/right_integral_calculation.h"
+#include "calculation/finite_integral_calculation.h"
 
 constexpr static size_t max(const int * data, int seed = 0) {
   return (*data == 0 ? seed : max(data+1, *data > seed ? *data : seed));
@@ -32,10 +35,14 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
     Law * law();
+    Calculation * calculation();
   private:
     constexpr static int k_lawSizes[] = {sizeof(BinomialLaw),sizeof(ExponentialLaw), sizeof(NormalLaw), sizeof(PoissonLaw), sizeof(UniformLaw), 0};
     constexpr static size_t k_lawSize = max(k_lawSizes);
     char m_law[k_lawSize];
+    constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
+    constexpr static size_t k_calculationSize = max(k_calculationSizes);
+    char m_calculation[k_calculationSize];
   };
 private:
   App(Container * container, Snapshot * snapshot);

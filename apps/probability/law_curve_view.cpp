@@ -6,17 +6,13 @@ using namespace Shared;
 
 namespace Probability {
 
-LawCurveView::LawCurveView() :
-  CurveView(nullptr, nullptr, nullptr, nullptr),
+LawCurveView::LawCurveView(Law * law) :
+  CurveView(law, nullptr, nullptr, nullptr),
   m_labels{},
-  m_law(nullptr),
+  m_law(law),
   m_calculation(nullptr)
 {
-}
-
-void LawCurveView::setLaw(Law * law) {
-  setCurveViewRange(law);
-  m_law = law;
+  assert(law != nullptr);
 }
 
 void LawCurveView::setCalculation(Calculation * calculation) {

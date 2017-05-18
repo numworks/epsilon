@@ -67,25 +67,18 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder) :
+ParametersController::ParametersController(Responder * parentResponder, Law * law) :
   FloatParameterController(parentResponder),
   m_selectableTableView(nullptr),
   m_menuListCell{},
-  m_law(nullptr),
-  m_calculationController(nullptr)
+  m_law(law),
+  m_calculationController(nullptr, law)
 {
+  assert(m_law != nullptr);
 }
 
 const char * ParametersController::title() {
-  if (m_law != nullptr) {
-    return I18n::translate(m_law->title());
-  }
-  return "";
-}
-
-void ParametersController::setLaw(Law * law) {
-  m_law = law;
-  m_calculationController.setLaw(law);
+  return I18n::translate(m_law->title());
 }
 
 void ParametersController::viewWillAppear() {
@@ -161,9 +154,7 @@ View * ParametersController::loadView() {
     m_menuListCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
   }
   ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
-  if (m_law != nullptr) {
-    contentView->setNumberOfParameters(m_law->numberOfParameter());
-  }
+  contentView->setNumberOfParameters(m_law->numberOfParameter());
   return contentView;
 }
 

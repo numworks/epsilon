@@ -5,18 +5,14 @@
 #include "cell.h"
 #include "law/law.h"
 #include "parameters_controller.h"
+#include <new>
 
 namespace Probability {
 
 class LawController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  LawController(Responder * parentResponder);
-  ~LawController();
-  LawController(const LawController& other) = delete;
-  LawController(LawController&& other) = delete;
-  LawController& operator=(const LawController& other) = delete;
-  LawController& operator=(LawController&& other) = delete;
-    View * view() override;
+  LawController(Responder * parentResponder, Law * m_law);
+  View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 

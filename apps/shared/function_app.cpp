@@ -36,6 +36,8 @@ void FunctionApp::Snapshot::reset() {
   m_interval.setStart(0);
   m_interval.setEnd(10);
   m_interval.setStep(1);
+  m_modelVersion = 0;
+  m_rangeVersion = 0;
 }
 
 FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :

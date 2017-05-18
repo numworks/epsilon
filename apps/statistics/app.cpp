@@ -34,6 +34,11 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
+  m_storeVersion = 0;
+  m_barVersion = 0;
+  m_rangeVersion = 0;
+  m_selectedHistogramBarIndex = 0;
+  m_selectedBoxQuantile = BoxView::Quantile::Min;
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

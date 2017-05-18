@@ -18,9 +18,13 @@ CartesianFunctionStore::CartesianFunctionStore() :
 }
 
 uint32_t CartesianFunctionStore::storeChecksum() {
-  size_t dataLengthInBytes = m_numberOfFunctions*sizeof(CartesianFunction);
+  size_t dataLengthInBytes = k_maxNumberOfFunctions*TextField::maxBufferSize()*sizeof(char);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)m_functions, dataLengthInBytes>>2);
+  char data[k_maxNumberOfFunctions*TextField::maxBufferSize()] = {};
+  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
+    strlcpy(data+i*TextField::maxBufferSize(), m_functions[i].text(), TextField::maxBufferSize());
+  }
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
 CartesianFunction * CartesianFunctionStore::functionAtIndex(int i) {

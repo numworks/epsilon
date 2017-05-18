@@ -12,19 +12,15 @@ using namespace Shared;
 
 namespace Probability {
 
-CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation) :
+CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
   m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
-  m_lawCurveView(LawCurveView()),
+  m_lawCurveView(LawCurveView(law)),
   m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
   m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
     EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
     EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
   m_calculation(calculation)
 {
-}
-
-void CalculationController::ContentView::setLaw(Law * law) {
-  m_lawCurveView.setLaw(law);
 }
 
 void CalculationController::ContentView::setCalculation(Calculation * calculation, int index) {
@@ -134,13 +130,14 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
   return &m_calculationCell[index];
 }
 
-CalculationController::CalculationController(Responder * parentResponder) :
+CalculationController::CalculationController(Responder * parentResponder, Law * law) :
   ViewController(parentResponder),
   m_calculation(new LeftIntegralCalculation()),
-  m_contentView(ContentView(this, this, m_calculation)),
-  m_law(nullptr),
+  m_contentView(ContentView(this, this, m_calculation, law)),
+  m_law(law),
   m_highlightedSubviewIndex(1)
 {
+  assert(law != nullptr);
 }
 
 CalculationController::~CalculationController() {
@@ -161,12 +158,6 @@ const char * CalculationController::title() {
 void CalculationController::reload() {
   m_contentView.layoutSubviews();
   m_contentView.lawCurveView()->reload();
-}
-
-void CalculationController::setLaw(Law * law) {
-  m_law = law;
-  m_contentView.setLaw(law);
-  m_calculation->setLaw(law);
 }
 
 void CalculationController::setCalculationAccordingToIndex(int index) {

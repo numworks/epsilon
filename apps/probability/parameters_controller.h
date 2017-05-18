@@ -10,9 +10,8 @@ namespace Probability {
 
 class ParametersController : public Shared::FloatParameterController {
 public:
-  ParametersController(Responder * parentResponder);
+  ParametersController(Responder * parentResponder, Law * m_law);
   const char * title() override;
-  void setLaw(Law * law);
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

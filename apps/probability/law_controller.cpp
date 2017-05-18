@@ -1,6 +1,6 @@
 #include "law_controller.h"
 #include <assert.h>
-#include "app.h"
+#include <new>
 #include "law/binomial_law.h"
 #include "law/exponential_law.h"
 #include "law/normal_law.h"
@@ -51,33 +51,23 @@ static I18n::Message sMessages[] = {
   I18n::Message::Poisson
 };
 
-LawController::LawController(Responder * parentResponder) :
+LawController::LawController(Responder * parentResponder, Law * law) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_contentView(&m_selectableTableView),
-  m_law(nullptr),
-  m_parametersController(nullptr)
+  m_law(law),
+  m_parametersController(nullptr, law)
 {
   m_messages = sMessages;
+  assert(m_law != nullptr);
 }
 
-LawController::~LawController() {
-  if (m_law) {
-    delete m_law;
-    m_law = nullptr;
-  }
-}
 View * LawController::view() {
   return &m_contentView;
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
-  if (m_law != nullptr) {
-    delete m_law;
-    m_law = nullptr;
-    m_parametersController.setLaw(m_law);
-  }
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -126,30 +116,29 @@ KDCoordinate Probability::LawController::cellHeight() {
 }
 
 void Probability::LawController::setLawAccordingToIndex(int index) {
-  if (m_law != nullptr) {
-    delete m_law;
-    m_law = nullptr;
+  if ((int)m_law->type() == index) {
+    return;
   }
+  m_law->~Law();
   switch (index) {
     case 0:
-      m_law = new BinomialLaw();
+      new(m_law) BinomialLaw();
       break;
     case 1:
-      m_law = new UniformLaw();
+      new(m_law) UniformLaw();
       break;
     case 2:
-      m_law = new ExponentialLaw();
+      new(m_law) ExponentialLaw();
       break;
     case 3:
-      m_law = new NormalLaw();
+      new(m_law) NormalLaw();
       break;
     case 4:
-      m_law = new PoissonLaw();
+      new(m_law) PoissonLaw();
       break;
     default:
      return;
   }
-  m_parametersController.setLaw(m_law);
 }
 
 }

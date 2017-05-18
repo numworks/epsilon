@@ -6,12 +6,12 @@ using namespace Shared;
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, BannerView * bannerView) :
+BoxView::BoxView(Store * store, BannerView * bannerView, Quantile * selectedQuantile) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_labels{},
-  m_selectedQuantile(Quantile::Min)
+  m_selectedQuantile(selectedQuantile)
 {
 }
 
@@ -19,7 +19,7 @@ void BoxView::reload() {
   CurveView::reload();
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
-  float calculation = (m_store->*calculationMethods[(int)m_selectedQuantile])();
+  float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])();
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
   float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
@@ -28,16 +28,16 @@ void BoxView::reload() {
 }
 
 BoxView::Quantile BoxView::selectedQuantile() {
-  return m_selectedQuantile;
+  return *m_selectedQuantile;
 }
 
 bool BoxView::selectQuantile(int selectedQuantile) {
   if (selectedQuantile < 0 || selectedQuantile > 4) {
     return false;
   }
-  if ((int)m_selectedQuantile != selectedQuantile) {
+  if ((int)*m_selectedQuantile != selectedQuantile) {
     reload();
-    m_selectedQuantile = (Quantile)selectedQuantile;
+    *m_selectedQuantile = (Quantile)selectedQuantile;
     reload();
   }
   return true;
@@ -75,7 +75,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::Select, 2);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
   }
 }
 

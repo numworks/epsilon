@@ -21,12 +21,23 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     Store * store();
+    uint32_t * storeVersion();
+    uint32_t * barVersion();
+    uint32_t * rangeVersion();
+    int * selectedHistogramBarIndex();
+    BoxView::Quantile * selectedBoxQuantile();
   private:
     Store m_store;
+    uint32_t m_storeVersion;
+    uint32_t  m_barVersion;
+    uint32_t m_rangeVersion;
+    int m_selectedHistogramBarIndex;
+    BoxView::Quantile m_selectedBoxQuantile;
   };
 private:
   App(Container * container, Snapshot * snapshot);

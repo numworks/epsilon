@@ -1,0 +1,8 @@
+#ifndef LIBAXX_NEW
+#define LIBAXX_NEW
+
+void * operator new(unsigned int size, void * ptr) noexcept {
+  return ptr;
+}
+
+#endif

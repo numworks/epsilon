@@ -41,6 +41,7 @@ public:
     ~Snapshot();
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
+    void reset() override;
     Law * law();
     Calculation * calculation();
     Page activePage();

@@ -13,7 +13,7 @@ namespace Sequence {
 
 class GraphController : public Shared::FunctionGraphController {
 public:
-  GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header);
+  GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, ButtonRowController * header);
   void viewWillAppear() override;
   I18n::Message emptyMessage() override;
   TermSumController * termSumController();
@@ -28,7 +28,7 @@ private:
   CurveParameterController * curveParameterController() override;
   BannerView m_bannerView;
   GraphView m_view;
-  CurveViewRange m_graphRange;
+  CurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   TermSumController m_termSumController;
   SequenceStore * m_sequenceStore;

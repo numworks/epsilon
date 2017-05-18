@@ -24,9 +24,11 @@ public:
     void reset() override;
     Descriptor * descriptor() override;
     Store * store();
+    Shared::CurveViewCursor * cursor();
   private:
     Store m_store;
-  };
+    Shared::CurveViewCursor m_cursor;
+ };
 private:
   App(Container * container, Snapshot * snapshot);
   CalculationController m_calculationController;

@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "interactive_curve_view_range.h"
+#include "curve_view_cursor.h"
 #include "curve_view.h"
 #include "cursor_view.h"
 #include "ok_view.h"
@@ -14,7 +15,7 @@ namespace Shared {
 
 class InteractiveCurveViewController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView);
+  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -51,7 +52,7 @@ protected:
   virtual uint32_t rangeVersion() = 0;
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
   virtual CurveView * curveView() = 0;
-  CurveViewCursor m_cursor;
+  CurveViewCursor * m_cursor;
   CursorView m_cursorView;
   OkView m_okView;
 private:

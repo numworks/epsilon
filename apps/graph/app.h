@@ -21,13 +21,18 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     CartesianFunctionStore * functionStore();
+    Shared::InteractiveCurveViewRange * graphRange();
+    Shared::CurveViewCursor * cursor();
   private:
     void tidy() override;
     CartesianFunctionStore m_functionStore;
+    Shared::InteractiveCurveViewRange m_graphRange;
+    Shared::CurveViewCursor m_cursor;
   };
   InputViewController * inputViewController() override;
   /* This local context can parse x. However, it always stores NAN

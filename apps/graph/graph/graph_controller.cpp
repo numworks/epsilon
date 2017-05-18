@@ -5,14 +5,15 @@ using namespace Poincare;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
+GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, header, curveViewRange, &m_view, cursor),
   m_bannerView(),
-  m_view(functionStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView),
-  m_graphRange(&m_cursor, this),
-  m_curveParameterController(&m_graphRange, &m_bannerView, &m_cursor),
+  m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(curveViewRange),
+  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor),
   m_functionStore(functionStore)
 {
+  m_graphRange->setDelegate(this);
 }
 
 I18n::Message GraphController::emptyMessage() {
@@ -42,20 +43,20 @@ void GraphController::reloadBannerView() {
   buffer[0] = f->name()[0];
   buffer[1] = '\'';
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = f->approximateDerivative(m_cursor.x(), myApp->localContext());
+  float y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
   Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  float xCursorPosition = m_cursor.x();
-  float x = direction > 0 ? xCursorPosition + m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit :
-    xCursorPosition -  m_graphRange.xGridUnit()/k_numberOfCursorStepsInGradUnit;
+  float xCursorPosition = m_cursor->x();
+  float x = direction > 0 ? xCursorPosition + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit :
+    xCursorPosition -  m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = f->evaluateAtAbscissa(x, myApp->localContext());
-  m_cursor.moveTo(x, y);
-  m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_cursor->moveTo(x, y);
+  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -69,12 +70,12 @@ void GraphController::initCursorParameters() {
     CartesianFunction * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while (isnan(y) && functionIndex < functionStore()->numberOfActiveFunctions());
-  m_cursor.moveTo(x, y);
+  m_cursor->moveTo(x, y);
   interactiveCurveViewRange()->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
-  return &m_graphRange;
+  return m_graphRange;
 }
 
 CartesianFunctionStore * GraphController::functionStore() const {

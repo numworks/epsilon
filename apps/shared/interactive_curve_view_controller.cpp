@@ -7,10 +7,10 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_cursor(),
+  m_cursor(cursor),
   m_cursorView(CursorView()),
   m_modelVersion(0),
   m_rangeVersion(0),
@@ -181,7 +181,7 @@ StackViewController * InteractiveCurveViewController::stackController() const{
 
 void InteractiveCurveViewController::centerCursorVertically() {
   if (!interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor.y());
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   }
 }
 }

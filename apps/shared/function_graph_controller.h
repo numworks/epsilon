@@ -12,7 +12,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
 public:
-  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView);
+  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor);
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
   void viewWillAppear() override;

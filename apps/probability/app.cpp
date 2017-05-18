@@ -42,6 +42,14 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
+void App::Snapshot::reset() {
+  law()->~Law();
+  new(m_law) BinomialLaw();
+  calculation()->~Calculation();
+  new(m_calculation) LeftIntegralCalculation();
+  m_activePage = Page::Law;
+}
+
 Law * App::Snapshot::law() {
   return (Law *)m_law;
 }

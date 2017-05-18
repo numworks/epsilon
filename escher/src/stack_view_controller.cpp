@@ -92,6 +92,9 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   }
 }
 
+void StackViewController::pushModel(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
+  pushModel(Frame(vc, textColor, backgroundColor, separatorColor));
+}
 void StackViewController::pop() {
   m_view.popStack();
   assert(m_numberOfChildren > 0);

@@ -4,6 +4,8 @@
 #include <escher.h>
 #include <poincare.h>
 #include "law_controller.h"
+#include "calculation_controller.h"
+#include "parameters_controller.h"
 #include "../shared/text_field_delegate_app.h"
 #include "law/binomial_law.h"
 #include "law/exponential_law.h"
@@ -30,12 +32,19 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    enum class Page {
+      Law,
+      Parameters,
+      Calculations
+    };
     Snapshot();
     ~Snapshot();
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
     Law * law();
     Calculation * calculation();
+    Page activePage();
+    void setActivePage(Page activePage);
   private:
     constexpr static int k_lawSizes[] = {sizeof(BinomialLaw),sizeof(ExponentialLaw), sizeof(NormalLaw), sizeof(PoissonLaw), sizeof(UniformLaw), 0};
     constexpr static size_t k_lawSize = max(k_lawSizes);
@@ -43,9 +52,12 @@ public:
     constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
     constexpr static size_t k_calculationSize = max(k_calculationSizes);
     char m_calculation[k_calculationSize];
+    Page m_activePage;
   };
 private:
   App(Container * container, Snapshot * snapshot);
+  CalculationController m_calculationController;
+  ParametersController m_parametersController;
   LawController m_lawController;
   StackViewController m_stackViewController;
 };

@@ -30,6 +30,8 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
+  FunctionApp::Snapshot::reset();
+  m_graphRange.setDefault();
   m_sequenceStore.removeAll();
 }
 

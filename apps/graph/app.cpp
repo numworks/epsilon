@@ -32,7 +32,9 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
+  FunctionApp::Snapshot::reset();
   m_functionStore.removeAll();
+  m_graphRange.setDefault();
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

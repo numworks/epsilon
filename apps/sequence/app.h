@@ -21,7 +21,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
@@ -29,12 +29,10 @@ public:
     Descriptor * descriptor() override;
     SequenceStore * sequenceStore();
     CurveViewRange * graphRange();
-    Shared::CurveViewCursor * cursor();
   private:
     void tidy() override;
     SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
-    Shared::CurveViewCursor m_cursor;
   };
   InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;

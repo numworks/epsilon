@@ -15,7 +15,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController);
+  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
   const char * title() override;
   Interval * interval();
   virtual bool handleEvent(Ion::Events::Event event) override;
@@ -45,7 +45,7 @@ protected:
   bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
   View * loadView() override;
   void unloadView(View * view) override;
-  Interval m_interval;
+  Interval * m_interval;
 private:
   virtual Function * functionAtColumn(int i);
   Responder * tabController() const override;

@@ -4,6 +4,7 @@
 #include <poincare.h>
 #include "text_field_delegate_app.h"
 #include "curve_view_cursor.h"
+#include "interval.h"
 
 class AppsContainer;
 
@@ -17,8 +18,11 @@ public:
     CurveViewCursor * cursor();
     uint32_t * modelVersion();
     uint32_t * rangeVersion();
+    Interval * interval();
+    void reset() override;
   protected:
     CurveViewCursor m_cursor;
+    Interval m_interval;
   private:
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;

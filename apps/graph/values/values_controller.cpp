@@ -7,13 +7,13 @@ using namespace Poincare;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController),
+ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),
   m_functionParameterController(this),
-  m_intervalParameterController(this, &m_interval),
+  m_intervalParameterController(this, m_interval),
   m_derivativeParameterController(this)
 {
 }

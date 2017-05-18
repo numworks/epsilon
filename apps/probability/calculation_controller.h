@@ -18,6 +18,7 @@ public:
   void reload();
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
   bool handleEvent(Ion::Events::Event event) override;
+  void didEnterResponderChain(Responder * firstResponder) override;
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;

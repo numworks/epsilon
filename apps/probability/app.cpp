@@ -21,7 +21,8 @@ const Image * App::Descriptor::icon() {
 
 App::Snapshot::Snapshot() :
   m_law{},
-  m_calculation{}
+  m_calculation{},
+  m_activePage(Page::Law)
 {
   new(m_law) BinomialLaw();
   new(m_calculation) LeftIntegralCalculation();
@@ -49,11 +50,32 @@ Calculation * App::Snapshot::calculation() {
   return (Calculation *)m_calculation;
 }
 
+void App::Snapshot::setActivePage(Page activePage) {
+  m_activePage = activePage;
+}
+
+App::Snapshot::Page App::Snapshot::activePage() {
+  return m_activePage;
+}
+
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_stackViewController),
-  m_lawController(nullptr, snapshot->law(), snapshot->calculation()),
+  m_calculationController(&m_stackViewController, snapshot->law(), snapshot->calculation()),
+  m_parametersController(&m_stackViewController, snapshot->law(), &m_calculationController),
+  m_lawController(&m_stackViewController, snapshot->law(), &m_parametersController),
   m_stackViewController(&m_modalViewController, &m_lawController)
 {
+    switch (snapshot->activePage()) {
+    case Snapshot::Page::Parameters:
+      m_stackViewController.pushModel(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      break;
+    case Snapshot::Page::Calculations:
+      m_stackViewController.pushModel(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      m_stackViewController.pushModel(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+    default:
+      break;
+  }
 }
+
 
 }

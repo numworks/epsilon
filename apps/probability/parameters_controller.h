@@ -10,9 +10,10 @@ namespace Probability {
 
 class ParametersController : public Shared::FloatParameterController {
 public:
-  ParametersController(Responder * parentResponder, Law * m_law, Calculation * calculation);
+  ParametersController(Responder * parentResponder, Law * m_law, CalculationController * calculationController);
   const char * title() override;
   void reinitCalculation();
+  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
@@ -51,7 +52,7 @@ private:
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_menuListCell[k_maxNumberOfCells];
   Law * m_law;
-  CalculationController m_calculationController;
+  CalculationController * m_calculationController;
 };
 
 }

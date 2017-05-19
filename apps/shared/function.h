@@ -18,7 +18,7 @@ public:
   const char * text() const;
   const char * name() const;
   KDColor color() const { return m_color; }
-  Poincare::Expression * expression();
+  Poincare::Expression * expression() const;
   Poincare::ExpressionLayout * layout();
   virtual bool isDefined();
   bool isActive();
@@ -29,7 +29,7 @@ public:
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
   virtual void tidy();
 protected:
-  Poincare::Expression * m_expression;
+  mutable Poincare::Expression * m_expression;
 private:
   virtual char symbol() const = 0;
   char m_text[TextField::maxBufferSize()];

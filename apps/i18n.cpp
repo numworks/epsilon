@@ -214,7 +214,7 @@ const char * messages[218][3] {
   {"Loi uniforme", "Uniform distribution", "Distribucion uniforme"},
   {"Loi exponentielle", "Exponential distribution", "Distribucion exponencial"},
   {"Loi normale", "Normal distribution", "Distribucion normal"},
-  {"Loi Poisson", "Poisson distribution", "Distribucion de Poisson"},
+  {"Loi de Poisson", "Poisson distribution", "Distribucion de Poisson"},
   {"Choisir les parametres", "Choose parameters", "Seleccionar parametros"},
   {"n : Nombre de repetitions", "n: Number of trials", "n : Numero de ensayos "},
   {"p : Probabilite de succes", "p: Success probability", "p : Probabilidad de exito "},

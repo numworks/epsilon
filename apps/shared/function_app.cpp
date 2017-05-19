@@ -38,6 +38,7 @@ void FunctionApp::Snapshot::reset() {
   m_interval.setStep(1);
   m_modelVersion = 0;
   m_rangeVersion = 0;
+  setActiveTab(0);
 }
 
 FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :

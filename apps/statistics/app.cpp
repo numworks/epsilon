@@ -39,6 +39,7 @@ void App::Snapshot::reset() {
   m_rangeVersion = 0;
   m_selectedHistogramBarIndex = 0;
   m_selectedBoxQuantile = BoxView::Quantile::Min;
+  setActiveTab(0);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

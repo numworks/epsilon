@@ -35,6 +35,7 @@ void App::Snapshot::reset() {
   m_store.setDefault();
   m_modelVersion = 0;
   m_rangeVersion = 0;
+  setActiveTab(0);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

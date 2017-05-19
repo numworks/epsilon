@@ -132,13 +132,13 @@ void HistogramController::didEnterResponderChain(Responder * previousFirstRespon
   if (!m_view.isMainViewSelected()) {
     m_view.selectMainView(true);
     header()->setSelectedButton(-1);
-    reloadBannerView();
-    m_view.reload();
   }
+  reloadBannerView();
+  m_view.reload();
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
+  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     m_view.selectMainView(false);
     header()->setSelectedButton(-1);
     m_view.reload();

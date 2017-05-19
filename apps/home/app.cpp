@@ -27,7 +27,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_controller, I18n::Message::Warning),
-  m_controller(&m_modalViewController, (AppsContainer *)container)
+  m_controller(&m_modalViewController, (AppsContainer *)container, snapshot)
 {
 }
 

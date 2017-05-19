@@ -8,9 +8,9 @@ class AppsContainer;
 
 namespace Home {
 
-class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
+class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, ::AppsContainer * container);
+  Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource);
 
   View * view() override;
 
@@ -30,7 +30,7 @@ private:
   int numberOfIcons();
   class ContentView : public View {
   public:
-    ContentView(Controller * controller);
+    ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource);
     SelectableTableView * selectableTableView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reloadBottomRightCorner(SimpleTableViewDataSource * dataSource);
@@ -51,6 +51,7 @@ private:
   static constexpr int k_cellWidth = 104;
   ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
+  SelectableTableViewDataSource * m_selectionDataSource;
 };
 
 }

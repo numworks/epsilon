@@ -15,7 +15,7 @@ public:
     I18n::Message name() override;
     I18n::Message upperName() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::App::Snapshot, public SelectableTableViewDataSource {
   public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;

@@ -19,7 +19,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
     App * unpack(Container * container) override;

@@ -12,7 +12,7 @@ namespace Shared {
 
 class FunctionApp : public TextFieldDelegateApp {
 public:
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
     CurveViewCursor * cursor();

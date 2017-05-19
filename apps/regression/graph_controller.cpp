@@ -12,7 +12,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_view(store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
   m_initialisationParameterController(this, m_store),
-  m_predictionParameterController(this, m_store, m_cursor),
+  m_predictionParameterController(this, m_store, m_cursor, this),
   m_selectedDotIndex(-1)
 {
   m_store->setCursor(m_cursor);
@@ -34,6 +34,10 @@ I18n::Message GraphController::emptyMessage() {
     return I18n::Message::NoDataToPlot;
   }
   return I18n::Message::NoEnoughDataForRegression;
+}
+
+void GraphController::selectRegressionCurve() {
+  m_selectedDotIndex = -1;
 }
 
 BannerView * GraphController::bannerView() {

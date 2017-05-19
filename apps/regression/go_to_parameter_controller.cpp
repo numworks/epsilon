@@ -1,4 +1,5 @@
 #include "go_to_parameter_controller.h"
+#include "graph_controller.h"
 #include "../apps_container.h"
 #include <assert.h>
 #include <float.h>
@@ -8,10 +9,11 @@ using namespace Poincare;
 
 namespace Regression {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   Shared::GoToParameterController(parentResponder, store, cursor, I18n::Message::X),
   m_store(store),
-  m_xPrediction(true)
+  m_xPrediction(true),
+  m_graphController(graphController)
 {
 }
 
@@ -50,12 +52,14 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   }
   if (isnan(x)) {
     if (m_store->slope() < FLT_EPSILON && f == m_store->yIntercept()) {
+      m_graphController->selectRegressionCurve();
       m_cursor->moveTo(m_cursor->x(), f);
       return true;
     }
     app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }
+  m_graphController->selectRegressionCurve();
   if (m_xPrediction) {
     m_cursor->moveTo(f, x);
   } else {

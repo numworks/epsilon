@@ -7,9 +7,11 @@
 
 namespace Regression {
 
+class GraphController;
+
 class GoToParameterController : public Shared::GoToParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
+  GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void setXPrediction(bool xPrediction);
   const char * title() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
@@ -18,6 +20,7 @@ private:
   bool setParameterAtIndex(int parameterIndex, float f) override;
   Store * m_store;
   bool m_xPrediction;
+  GraphController * m_graphController;
 };
 
 }

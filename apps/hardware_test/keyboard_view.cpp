@@ -7,45 +7,40 @@ using namespace Poincare;
 namespace HardwareTest {
 
 KeyboardView::KeyboardView() :
-  m_testedKey(Ion::Keyboard::Key::A1),
+  m_testedKey(0),
   m_batteryLevelView(KDText::FontSize::Small),
   m_batteryChargingView(KDText::FontSize::Small),
   m_ledStateView(KDText::FontSize::Small)
 {
-  for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
+  for (uint8_t i = 0; i < Ion::Keyboard::NumberOfValidKeys; i++) {
     m_defectiveKey[i] = 0;
   }
 }
 
-Ion::Keyboard::Key KeyboardView::testedKey() const {
+uint8_t KeyboardView::testedKey() const {
   return m_testedKey;
 }
 
-void KeyboardView::setDefectiveKey(Ion::Keyboard::Key key) {
-  int keyIndex = (int)key;
-  if (keyIndex < Ion::Keyboard::NumberOfKeys && keyIndex >= 0) {
-    m_defectiveKey[(int)key] = 1;
+void KeyboardView::setDefectiveKey(uint8_t key) {
+  if (key < Ion::Keyboard::NumberOfValidKeys && key >= 0) {
+    m_defectiveKey[key] = 1;
   }
 }
 
 bool KeyboardView::setNextKey() {
-  m_testedKey = (Ion::Keyboard::Key)((int)m_testedKey+1);
-  int keyIndex = (int)m_testedKey;
-  if (keyIndex == 55) {
+  m_testedKey = m_testedKey+1;
+  if (m_testedKey == 46) {
     return false;
-  }
-  if ((keyIndex > 7 && keyIndex < 12) || keyIndex == 35 || keyIndex == 41 || keyIndex == 47 || keyIndex == 53) {
-    setNextKey();
   }
   markRectAsDirty(bounds());
   return true;
 }
 
 void KeyboardView::resetTestedKey() {
-  for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
+  for (uint8_t i = 0; i < Ion::Keyboard::NumberOfValidKeys; i++) {
     m_defectiveKey[i] = 0;
   }
-  m_testedKey = Ion::Keyboard::Key::A1;
+  m_testedKey = 0;
   markRectAsDirty(bounds());
 }
 
@@ -106,48 +101,49 @@ void KeyboardView::updateBatteryState(float batteryLevel, bool batteryCharging) 
 
 void KeyboardView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
+  for (uint8_t i = 0; i < Ion::Keyboard::NumberOfValidKeys; i++) {
      drawKey(i, ctx, rect);
   }
 }
 
-void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
-  KDColor color = keyIndex == (int)m_testedKey ? KDColorBlue: KDColorBlack;
-  if (keyIndex < (int)m_testedKey) {
+void KeyboardView::drawKey(uint8_t keyIndex, KDContext * ctx, KDRect rect) const {
+  KDColor color = keyIndex == m_testedKey ? KDColorBlue: KDColorBlack;
+  if (keyIndex < m_testedKey) {
     color = m_defectiveKey[keyIndex] == 0 ? KDColorGreen : KDColorRed;
   }
+  Ion::Keyboard::Key key = Ion::Keyboard::ValidKeys[keyIndex];
   /* the key is on the cross */
-  if (keyIndex < 4) {
-    KDCoordinate x = keyIndex == 1 || keyIndex == 2 ? k_margin + k_smallSquareSize : k_margin;
-    x = keyIndex == 3 ? x + 2*k_smallSquareSize : x;
-    KDCoordinate y = keyIndex == 0 || keyIndex == 3 ? k_margin + k_smallSquareSize : k_margin;
-    y = keyIndex == 2 ? y + 2*k_smallSquareSize : y;
+  if ((uint8_t)key < 4) {
+    KDCoordinate x = (uint8_t)key == 1 || (uint8_t)key == 2 ? k_margin + k_smallSquareSize : k_margin;
+    x = (uint8_t)key == 3 ? x + 2*k_smallSquareSize : x;
+    KDCoordinate y = (uint8_t)key == 0 || (uint8_t)key == 3 ? k_margin + k_smallSquareSize : k_margin;
+    y = (uint8_t)key == 2 ? y + 2*k_smallSquareSize : y;
     ctx->fillRect(KDRect(x, y, k_smallSquareSize, k_smallSquareSize), color);
   }
   /* the key is a "OK" or "back" */
-  if (keyIndex >= 4 && keyIndex < 6) {
-    KDCoordinate x = keyIndex == 4 ? 5*k_margin + 3*k_smallSquareSize + 2*k_bigRectWidth : 6*k_margin + 3*k_smallSquareSize + 2*k_bigRectWidth + k_bigSquareSize;
+  if ((uint8_t)key >= 4 && (uint8_t)key < 6) {
+    KDCoordinate x = (uint8_t)key == 4 ? 5*k_margin + 3*k_smallSquareSize + 2*k_bigRectWidth : 6*k_margin + 3*k_smallSquareSize + 2*k_bigRectWidth + k_bigSquareSize;
     KDCoordinate y = 2*k_margin;
     ctx->fillRect(KDRect(x, y, k_bigSquareSize, k_bigSquareSize), color);
   }
   /* the key is a "home" or "power" */
-  if (keyIndex >= 6 && keyIndex < 8) {
+  if ((uint8_t)key >= 6 && (uint8_t)key < 8) {
     KDCoordinate x = 3*k_margin + 3*k_smallSquareSize;
-    KDCoordinate y = keyIndex == 6 ? k_margin : 2*k_margin + k_bigRectHeight;
+    KDCoordinate y = (uint8_t)key == 6 ? k_margin : 2*k_margin + k_bigRectHeight;
     ctx->fillRect(KDRect(x, y, k_bigRectWidth, k_bigRectHeight), color);
   }
   /* the key is a small key as "shift", "alpha" ...*/
-  if (keyIndex >= 12 && keyIndex < 30) {
-    int j = (keyIndex - 12)/6;
-    int i = (keyIndex - 12) - 6*j;
+  if ((uint8_t)key >= 12 && (uint8_t)key < 30) {
+    int j = ((uint8_t)key - 12)/6;
+    int i = ((uint8_t)key - 12) - 6*j;
     KDCoordinate x = (i+1)*k_margin + i*k_smallRectWidth;
     KDCoordinate y = 2*k_bigRectHeight + (j+3)*k_margin + j*k_smallRectHeight;
     ctx->fillRect(KDRect(x, y, k_smallRectWidth, k_smallRectHeight), color);
   }
   /* the key is a big key as "7", "Ans" ...*/
-  if (keyIndex >= 30 && keyIndex != 35 && keyIndex != 41 && keyIndex != 47 && keyIndex !=  53) {
-    int j = (keyIndex - 30)/6;
-    int i = (keyIndex - 30) - 6*j;
+  if ((uint8_t)key >= 30 && (uint8_t)key != 35 && (uint8_t)key != 41 && (uint8_t)key != 47 && (uint8_t)key !=  53) {
+    int j = ((uint8_t)key - 30)/6;
+    int i = ((uint8_t)key - 30) - 6*j;
     KDCoordinate x = (i+1)*k_margin + i*k_bigRectWidth;
     KDCoordinate y = 2*k_bigRectHeight + 3*k_smallRectHeight + (j+6)*k_margin + j*k_bigRectHeight;
     ctx->fillRect(KDRect(x, y, k_bigRectWidth, k_bigRectHeight), color);

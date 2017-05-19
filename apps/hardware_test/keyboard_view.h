@@ -8,15 +8,15 @@ namespace HardwareTest {
 class KeyboardView : public View {
 public:
   KeyboardView();
-  Ion::Keyboard::Key testedKey() const;
-  void setDefectiveKey(Ion::Keyboard::Key key);
+  uint8_t testedKey() const;
+  void setDefectiveKey(uint8_t key);
   bool setNextKey();
   void resetTestedKey();
   void updateLEDState(KDColor color);
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  void drawKey(int key, KDContext * ctx, KDRect rect) const;
+  void drawKey(uint8_t key, KDContext * ctx, KDRect rect) const;
   void layoutSubviews() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
@@ -28,8 +28,8 @@ private:
   constexpr static int k_bigRectHeight = 14;
   constexpr static int k_bigRectWidth = 20;
   constexpr static int k_maxNumberOfCharacters = 20;
-  Ion::Keyboard::Key m_testedKey;
-  int m_defectiveKey[Ion::Keyboard::NumberOfKeys];
+  uint8_t m_testedKey;
+  bool m_defectiveKey[Ion::Keyboard::NumberOfValidKeys];
   BufferTextView m_batteryLevelView;
   BufferTextView m_batteryChargingView;
   BufferTextView m_ledStateView;

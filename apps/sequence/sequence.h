@@ -22,8 +22,8 @@ public:
   void setType(Type type);
   const char * firstInitialConditionText();
   const char * secondInitialConditionText();
-  Poincare::Expression * firstInitialConditionExpression();
-  Poincare::Expression * secondInitialConditionExpression();
+  Poincare::Expression * firstInitialConditionExpression() const;
+  Poincare::Expression * secondInitialConditionExpression() const;
   Poincare::ExpressionLayout * firstInitialConditionLayout();
   Poincare::ExpressionLayout * secondInitialConditionLayout();
   void setContent(const char * c) override;
@@ -46,8 +46,8 @@ private:
   Type m_type;
   char m_firstInitialConditionText[TextField::maxBufferSize()];
   char m_secondInitialConditionText[TextField::maxBufferSize()];
-  Poincare::Expression * m_firstInitialConditionExpression;
-  Poincare::Expression * m_secondInitialConditionExpression;
+  mutable Poincare::Expression * m_firstInitialConditionExpression;
+  mutable Poincare::Expression * m_secondInitialConditionExpression;
   Poincare::ExpressionLayout * m_firstInitialConditionLayout;
   Poincare::ExpressionLayout * m_secondInitialConditionLayout;
   Poincare::ExpressionLayout * m_nameLayout;

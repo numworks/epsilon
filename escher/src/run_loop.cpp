@@ -19,7 +19,7 @@ Timer * RunLoop::timerAtIndex(int i) {
 
 void RunLoop::run() {
 #ifdef __EMSCRIPTEN__
-  emscripten_set_main_loop_arg([](void * ctx){ ((Container *)ctx)->step(); }, this, 0, 1);
+  emscripten_set_main_loop_arg([](void * ctx){ ((RunLoop *)ctx)->step(); }, this, 0, 1);
 #else
   while(step()) {
   }

@@ -55,6 +55,7 @@ objs += $(addprefix escher/src/,\
   tab_view.o\
   tab_view_cell.o\
   tab_view_controller.o\
+  tab_view_data_source.o\
   table_cell.o\
   table_view.o\
   table_view_data_source.o\

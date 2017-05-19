@@ -5,11 +5,11 @@ using namespace Shared;
 
 namespace Regression {
 
-PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor) :
+PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_goToParameterController(this, store, cursor)
+  m_goToParameterController(this, store, cursor, graphController)
 {
 }
 

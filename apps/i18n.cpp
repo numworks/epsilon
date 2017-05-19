@@ -39,7 +39,7 @@ const char * messages[218][3] {
   {"Logarithme base a", "Logarithm to base a", "Logaritmo en base a"},
   {"Calculs", "Calculation", "Calculos"},
   {"Nombres complexes", "Complex numbers", "Numeros complejos"},
-  {"Probabilites", "Probability", "Probabilidad"},
+  {"Denombrement", "Combinatorics", "Combinatoria"},
   {"Arithmetique", "Arithmetic", "Aritmetica"},
   {"Matrices", "Matrix", "Matriz"},
   {"Listes", "List", "Listas"},
@@ -55,7 +55,7 @@ const char * messages[218][3] {
   {"Partie reelle", "Real part", "Parte real"},
   {"Partie imaginaire", "Imaginary part", "Parte imaginaria"},
   {"Conjugue", "Conjugate", "Conjugado"},
-  {"Combinaison", "Combination", "Combinacion"},
+  {"k parmi n", "Combination", "Combinacion"},
   {"Arrangement", "Permutation", "Variacion"},
   {"PGCD", "GCD", "MCD"},
   {"PPCM", "LCM", "MCM"},
@@ -74,8 +74,8 @@ const char * messages[218][3] {
   {"Partie fractionnaire", "Fractional part", "Parte fraccionaria"},
   {"Plafond", "Ceiling", "Techo"},
   {"Arrondi n chiffres", "Rounding to n digits", "Redondeo n digitos"},
-  {"Intervalle fluctuation 95%", "Prediction interval 95%", "Intervalo de prediccion 95%"},
-  {"Intervalle fluctuation simple", "Simple prediction interval", "Intervalo de prediccion simple"},
+  {"Intervalle fluctuation 95% (Term)", "Prediction interval 95%", "Intervalo de prediccion 95%"},
+  {"Intervalle fluctuation simple (2de)", "Simple prediction interval", "Intervalo de prediccion simple"},
   {"Intervalle confiance", "Confidence interval", "Intervalo de confianza"},
 
   /* Applications */

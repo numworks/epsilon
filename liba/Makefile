@@ -76,6 +76,7 @@ tests += $(addprefix liba/test/, \
 # In practice we're always using liba on such a target.
 objs += $(addprefix liba/src/aeabi-rt/, \
   atexit.o \
+  llsl.o \
   llsr.o \
   memclr.o \
   memcpy.o \

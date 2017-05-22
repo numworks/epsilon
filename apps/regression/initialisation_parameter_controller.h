@@ -7,7 +7,7 @@
 
 namespace Regression {
 
-class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   InitialisationParameterController(Responder * parentResponder, Store * store);
   View * view() override;

@@ -189,7 +189,7 @@ I18n::Message FloatParameterController::okButtonText() {
 }
 
 View * FloatParameterController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this);
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this);
   m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
     FloatParameterController * parameterController = (FloatParameterController *) context;
     parameterController->buttonAction();

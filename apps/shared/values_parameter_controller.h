@@ -5,7 +5,7 @@
 #include "interval_parameter_controller.h"
 
 namespace Shared {
-class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title);
 

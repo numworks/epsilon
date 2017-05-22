@@ -2,35 +2,38 @@
 #include <assert.h>
 
 SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
-    SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
+    SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
     KDCoordinate indicatorThickness, KDColor indicatorColor, KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  TableView(dataSource, delegate, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
+  TableView(dataSource, selectionDataSource, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
     indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   Responder(parentResponder),
+  m_selectionDataSource(selectionDataSource),
   m_delegate(delegate)
 {
-  assert(m_delegate != nullptr);
+  assert(m_selectionDataSource != nullptr);
 }
 
 int SelectableTableView::selectedRow() {
-  return m_delegate->selectedRow();
+  return m_selectionDataSource->selectedRow();
 }
 
 int SelectableTableView::selectedColumn() {
-  return m_delegate->selectedColumn();
+  return m_selectionDataSource->selectedColumn();
 }
 
 void SelectableTableView::selectRow(int j) {
-  m_delegate->selectRow(j);
+  m_selectionDataSource->selectRow(j);
 }
 
 void SelectableTableView::selectColumn(int i) {
-  m_delegate->selectColumn(i);
+  m_selectionDataSource->selectColumn(i);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   selectCellAtLocation(selectedColumn(), selectedRow());
-  m_delegate->tableViewDidChangeSelection(this, 0, -1);
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, 0, -1);
+  }
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {

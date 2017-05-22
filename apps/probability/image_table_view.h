@@ -26,7 +26,7 @@ private:
   const Image * m_focusedIcon;
 };
 
-class ImageTableView : public View, public Responder, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class ImageTableView : public View, public Responder, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
     ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
   void setCalculation(Calculation * calculation, int index);

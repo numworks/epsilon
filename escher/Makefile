@@ -40,10 +40,11 @@ objs += $(addprefix escher/src/,\
   responder.o\
   run_loop.o\
   scroll_view.o\
-  scroll_view_delegate.o\
+  scroll_view_data_source.o\
   scroll_view_indicator.o\
   scrollable_view.o\
   selectable_table_view.o\
+  selectable_table_view_data_source.o\
   selectable_table_view_delegate.o\
   simple_list_view_data_source.o\
   simple_table_view_data_source.o\

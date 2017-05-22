@@ -8,7 +8,7 @@
 
 namespace OnBoarding {
 
-class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController);
   View * view() override;

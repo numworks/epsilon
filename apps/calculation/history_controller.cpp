@@ -181,7 +181,7 @@ CalculationSelectableTableView * HistoryController::selectableTableView() {
 }
 
 View * HistoryController::loadView() {
-  CalculationSelectableTableView * tableView = new CalculationSelectableTableView(this, this, this);
+  CalculationSelectableTableView * tableView = new CalculationSelectableTableView(this, this, this, this);
 for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i] = new HistoryViewCell(tableView);
   }

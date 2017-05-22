@@ -19,8 +19,10 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
   if (textLength() == 0 &&
       (event == Ion::Events::Multiplication ||
-      event == Ion::Events::Plus ||
-      event == Ion::Events::Division)) {
+       event == Ion::Events::Plus ||
+       event == Ion::Events::Minus ||
+       event == Ion::Events::Power ||
+       event == Ion::Events::Division)) {
     if (!isEditing()) {
       setEditing(true);
       setText("");

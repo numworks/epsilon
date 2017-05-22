@@ -6,8 +6,8 @@ extern "C" {
 
 namespace Home {
 
-Controller::ContentView::ContentView(Controller * controller) :
-  m_selectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, controller, controller, true, false,
+Controller::ContentView::ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :
+  m_selectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, selectionDataSource, controller, true, false,
     KDColorBlack, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin)
 {
 }
@@ -38,26 +38,27 @@ void Controller::ContentView::layoutSubviews() {
   m_selectableTableView.setFrame(bounds());
 }
 
-Controller::Controller(Responder * parentResponder, ::AppsContainer * container) :
+Controller::Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource) :
   ViewController(parentResponder),
   m_container(container),
-  m_view(ContentView(this))
+  m_view(ContentView(this, selectionDataSource)),
+  m_selectionDataSource(selectionDataSource)
 {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appSnapshotAtIndex(selectedRow()*k_numberOfColumns+selectedColumn()+1));
+    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
     return true;
   }
   return false;
 }
 
 void Controller::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
+  if (m_selectionDataSource->selectedRow() == -1) {
+    m_selectionDataSource->selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    m_selectionDataSource->selectCellAtLocation(m_selectionDataSource->selectedColumn(), m_selectionDataSource->selectedRow());
   }
   app()->setFirstResponder(m_view.selectableTableView());
 }

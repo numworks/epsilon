@@ -58,6 +58,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>
+#include <escher/tab_view_data_source.h>
 #include <escher/table_cell.h>
 #include <escher/table_view.h>
 #include <escher/table_view_data_source.h>

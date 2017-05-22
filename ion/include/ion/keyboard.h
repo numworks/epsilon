@@ -30,6 +30,7 @@ constexpr Key ValidKeys[] = {
 };
 
 constexpr int NumberOfKeys  = 54;
+constexpr int NumberOfValidKeys  = 46;
 typedef uint64_t State;
 
 static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");

@@ -2,11 +2,12 @@
 #define ESCHER_TAB_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
+#include <escher/tab_view_data_source.h>
 #include <escher/tab_view.h>
 
 class TabViewController : public ViewController {
 public:
-  TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
+  TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
   View * view() override;
   int activeTab() const;
   void setSelectedTab(int8_t index);
@@ -45,8 +46,7 @@ private:
   static constexpr uint8_t k_maxNumberOfChildren = 4;
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
-  int8_t m_activeChildIndex;
-  int8_t m_selectedChildIndex;
+  TabViewDataSource * m_dataSource;
 };
 
 #endif

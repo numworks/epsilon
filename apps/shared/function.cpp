@@ -60,7 +60,7 @@ const char * Function::name() const {
   return m_name;
 }
 
-Poincare::Expression * Function::expression() {
+Poincare::Expression * Function::expression() const {
   if (m_expression == nullptr) {
     m_expression = Expression::parse(m_text);
   }
@@ -95,7 +95,7 @@ float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   Poincare::Symbol xSymbol = Poincare::Symbol(symbol());
   Poincare::Complex e = Poincare::Complex::Float(x);
   variableContext.setExpressionForSymbolName(&e, &xSymbol);
-  return m_expression->approximate(variableContext);
+  return expression()->approximate(variableContext);
 }
 
 void Function::tidy() {

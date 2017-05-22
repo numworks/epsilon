@@ -147,24 +147,20 @@ void InteractiveCurveViewController::viewWillAppear() {
       initCursorParameters();
     }
   }
-  curveView()->selectMainView(true);
-  header()->setSelectedButton(-1);
-  reloadBannerView();
   curveView()->setOkView(&m_okView);
-  curveView()->reload();
 }
 
 void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);
     header()->setSelectedButton(-1);
-    reloadBannerView();
-    curveView()->reload();
   }
+  reloadBannerView();
+  curveView()->reload();
 }
 
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
+  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     curveView()->selectMainView(false);
     header()->setSelectedButton(-1);
     curveView()->reload();

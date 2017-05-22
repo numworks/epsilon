@@ -56,7 +56,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
     Keyboard::State scan = Keyboard::scan();
     Keyboard::Device::shutdown();
 
-    Ion::Keyboard::State OnlyPowerKeyDown = (1 << (uint8_t)Keyboard::Key::B2);
+    Ion::Keyboard::State OnlyPowerKeyDown = ((uint64_t)1 << (uint8_t)Keyboard::Key::B2);
     if (scan == OnlyPowerKeyDown) {
       // Wake up
       break;

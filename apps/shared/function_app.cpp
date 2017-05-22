@@ -5,8 +5,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionApp::FunctionApp(Container * container, ViewController * rootViewController, I18n::Message name, I18n::Message upperName, const Image * icon) :
-  TextFieldDelegateApp(container, rootViewController, name, upperName, icon)
+FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+  TextFieldDelegateApp(container, snapshot, rootViewController)
 {
 }
 

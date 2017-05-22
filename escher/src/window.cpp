@@ -18,11 +18,9 @@ void Window::redraw(bool force) {
 }
 
 void Window::setContentView(View * contentView) {
-  if (m_contentView != contentView) {
-    m_contentView = contentView;
-    markRectAsDirty(bounds());
-    layoutSubviews();
-  }
+  m_contentView = contentView;
+  markRectAsDirty(bounds());
+  layoutSubviews();
 }
 
 const Window * Window::window() const {

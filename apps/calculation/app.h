@@ -5,17 +5,33 @@
 #include "local_context.h"
 #include "history_controller.h"
 #include "../shared/text_field_delegate_app.h"
+#include "calculation_store.h"
 #include <escher.h>
 
 namespace Calculation {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  App(Container * container, Poincare::Context * context);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    void reset() override;
+    Descriptor * descriptor() override;
+    CalculationStore * calculationStore();
+  private:
+    void tidy() override;
+    CalculationStore m_calculationStore;
+  };
   Poincare::Context * localContext() override;
 private:
+  App(Container * container, Snapshot * snapshot);
   LocalContext m_localContext;
-  CalculationStore m_calculationStore;
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };

@@ -27,16 +27,13 @@ Function& Function::operator=(const Function& other) {
 
 void Function::setContent(const char * c) {
   strlcpy(m_text, c, sizeof(m_text));
-  if (m_expression != nullptr) {
-    delete m_expression;
-  }
-  m_expression = Poincare::Expression::parse(m_text);
   if (m_layout != nullptr) {
     delete m_layout;
+    m_layout = nullptr;
   }
-  m_layout = nullptr;
-  if (m_expression) {
-    m_layout = expression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
   }
 }
 
@@ -64,15 +61,21 @@ const char * Function::name() const {
 }
 
 Poincare::Expression * Function::expression() {
+  if (m_expression == nullptr) {
+    m_expression = Expression::parse(m_text);
+  }
   return m_expression;
 }
 
 Poincare::ExpressionLayout * Function::layout() {
+  if (m_layout == nullptr && expression() != nullptr) {
+    m_layout = expression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  }
   return m_layout;
 }
 
 bool Function::isDefined() {
-  return m_expression != nullptr;
+  return strlen(m_text) != 0;
 }
 
 bool Function::isActive() {
@@ -93,6 +96,17 @@ float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
   Poincare::Complex e = Poincare::Complex::Float(x);
   variableContext.setExpressionForSymbolName(&e, &xSymbol);
   return m_expression->approximate(variableContext);
+}
+
+void Function::tidy() {
+  if (m_layout != nullptr) {
+    delete m_layout;
+    m_layout = nullptr;
+  }
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
+  }
 }
 
 }

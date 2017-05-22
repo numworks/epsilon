@@ -16,7 +16,7 @@ public:
 
   void setVisible(bool visible);
   void reloadCell() override;
-  void setApp(::App * app);
+  void setAppDescriptor(::App::Descriptor * appDescriptor);
 private:
   static constexpr KDCoordinate k_iconMargin = 18;
   static constexpr KDCoordinate k_iconWidth = 55;

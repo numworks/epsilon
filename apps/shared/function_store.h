@@ -26,6 +26,7 @@ public:
   int numberOfActiveFunctions();
   virtual int maxNumberOfFunctions() = 0;
   virtual char symbol() const = 0;
+  void tidy();
 protected:
   int m_numberOfFunctions;
 private:

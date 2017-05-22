@@ -21,9 +21,26 @@ class Container;
 
 class App : public Responder {
 public:
-  constexpr static uint8_t Magic = 0xA8;
-  App(Container * container, ViewController * rootViewController, I18n::Message name = (I18n::Message)0, I18n::Message upperName = (I18n::Message)0, const Image * icon = nullptr, I18n::Message warningMessage = (I18n::Message)0);
+  class Descriptor {
+  public:
+    virtual I18n::Message name();
+    virtual I18n::Message upperName();
+    virtual const Image * icon();
+  };
+  class Snapshot {
+  public:
+    virtual App * unpack(Container * container) = 0;
+    void pack(App * app);
+    /* reset all instances to their initial values */
+    virtual void reset();
+    virtual Descriptor * descriptor() = 0;
+  private:
+    /* tidy clean all dynamically-allocated data */
+    virtual void tidy();
+  };
   virtual ~App() = default;
+  constexpr static uint8_t Magic = 0xA8;
+  Snapshot * snapshot();
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   bool processEvent(Ion::Events::Event event);
@@ -32,23 +49,19 @@ public:
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage);
   const Container * container() const;
-  I18n::Message name();
-  I18n::Message upperName();
-  const Image * icon();
   uint8_t m_magic; // Poor man's RTTI
-
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
 protected:
+  App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;
 private:
   Container * m_container;
   Responder * m_firstResponder;
+  Snapshot * m_snapshot;
   WarningController m_warningController;
-  I18n::Message m_name;
-  I18n::Message m_upperName;
-  const Image * m_icon;
 };
 
 #endif
+

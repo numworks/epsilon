@@ -15,7 +15,7 @@ Expression * LocalContext::ansValue() {
     return m_parentContext->defaultExpression();
   }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
-  return lastCalculation->output();
+  return lastCalculation->output(m_parentContext);
 }
 
 void LocalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {

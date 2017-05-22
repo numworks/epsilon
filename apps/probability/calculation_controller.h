@@ -12,17 +12,11 @@ namespace Probability {
 
 class CalculationController : public ViewController, public Shared::TextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder);
-  ~CalculationController();
-  CalculationController(const CalculationController& other) = delete;
-  CalculationController(CalculationController&& other) = delete;
-  CalculationController& operator=(const CalculationController& other) = delete;
-  CalculationController& operator=(CalculationController&& other) = delete;
+  CalculationController(Responder * parentResponder, Law * law, Calculation * calculation);
   View * view() override;
   const char * title() override;
   void reload();
-  void setLaw(Law * law);
-  void setCalculationAccordingToIndex(int index);
+  void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
@@ -35,8 +29,7 @@ private:
   Calculation * m_calculation;
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation);
-    void setLaw(Law * law);
+    ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation, Law * law);
     void setCalculation(Calculation * calculation, int index);
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;

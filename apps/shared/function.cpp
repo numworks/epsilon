@@ -1,6 +1,7 @@
 #include "function.h"
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 using namespace Poincare;
 
@@ -23,6 +24,14 @@ Function& Function::operator=(const Function& other) {
   m_active = other.m_active;
   setContent(other.m_text);
   return *this;
+}
+
+uint32_t Function::checksum() {
+  size_t dataLengthInBytes = TextField::maxBufferSize()*sizeof(char);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  char data[TextField::maxBufferSize()] = {};
+  strlcpy(data, m_text, TextField::maxBufferSize());
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
 void Function::setContent(const char * c) {

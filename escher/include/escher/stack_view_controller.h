@@ -14,7 +14,6 @@ public:
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
-  void pushModel(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
   void pop();
 
   int depth();
@@ -69,6 +68,7 @@ private:
   static constexpr uint8_t k_maxNumberOfChildren = 4;
   Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
+  bool m_isVisible;
 };
 
 #endif

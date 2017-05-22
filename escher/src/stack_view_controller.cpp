@@ -69,7 +69,8 @@ StackViewController::StackViewController(Responder * parentResponder, ViewContro
     bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
   m_view(ControllerView(displayFirstStackHeader)),
-  m_numberOfChildren(0)
+  m_numberOfChildren(0),
+  m_isVisible(false)
 {
   pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
   rootViewController->setParentResponder(this);
@@ -82,19 +83,19 @@ const char * StackViewController::title() {
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
-  /* Load stack view */
-  m_view.pushStack(frame);
   /* Add the frame to the model */
   pushModel(frame);
+  if (!m_isVisible) {
+    return;
+  }
+  /* Load stack view */
+  m_view.pushStack(frame);
   setupActiveViewController();
   if (m_numberOfChildren > 1) {
     m_childrenFrame[m_numberOfChildren-2].viewController()->viewDidDisappear();
   }
 }
 
-void StackViewController::pushModel(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
-  pushModel(Frame(vc, textColor, backgroundColor, separatorColor));
-}
 void StackViewController::pop() {
   m_view.popStack();
   assert(m_numberOfChildren > 0);
@@ -150,6 +151,7 @@ void StackViewController::viewWillAppear() {
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
   }
+  m_isVisible = true;
 }
 
 void StackViewController::viewDidDisappear() {
@@ -160,4 +162,5 @@ void StackViewController::viewDidDisappear() {
   for (int i = 0; i < m_numberOfChildren; i++) {
     m_view.popStack();
   }
+  m_isVisible = false;
 }

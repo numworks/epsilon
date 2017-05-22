@@ -1,6 +1,7 @@
 #include "law_controller.h"
 #include <assert.h>
 #include <new>
+#include "app.h"
 #include "law/binomial_law.h"
 #include "law/exponential_law.h"
 #include "law/normal_law.h"
@@ -51,13 +52,13 @@ static I18n::Message sMessages[] = {
   I18n::Message::Poisson
 };
 
-LawController::LawController(Responder * parentResponder, Law * law, Calculation * calculation) :
+LawController::LawController(Responder * parentResponder, Law * law, ParametersController * parametersController) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_contentView(&m_selectableTableView),
   m_law(law),
-  m_parametersController(nullptr, law, calculation)
+  m_parametersController(parametersController)
 {
   m_messages = sMessages;
   assert(m_law != nullptr);
@@ -68,6 +69,8 @@ View * LawController::view() {
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
+  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
+  snapshot->setActivePage(App::Snapshot::Page::Law);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -80,7 +83,7 @@ bool Probability::LawController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     StackViewController * stack = (StackViewController *)parentResponder();
     setLawAccordingToIndex(selectedRow());
-    stack->push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+    stack->push(m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     return true;
   }
   return false;
@@ -139,7 +142,7 @@ void Probability::LawController::setLawAccordingToIndex(int index) {
     default:
      return;
   }
-  m_parametersController.reinitCalculation();
+  m_parametersController->reinitCalculation();
 }
 
 }

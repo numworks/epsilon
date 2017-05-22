@@ -67,12 +67,12 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, Law * law, Calculation * calculation) :
+ParametersController::ParametersController(Responder * parentResponder, Law * law, CalculationController * calculationController) :
   FloatParameterController(parentResponder),
   m_selectableTableView(nullptr),
   m_menuListCell{},
   m_law(law),
-  m_calculationController(nullptr, law, calculation)
+  m_calculationController(calculationController)
 {
   assert(m_law != nullptr);
 }
@@ -82,7 +82,13 @@ const char * ParametersController::title() {
 }
 
 void ParametersController::reinitCalculation() {
-  m_calculationController.setCalculationAccordingToIndex(0, true);
+  m_calculationController->setCalculationAccordingToIndex(0, true);
+}
+
+void ParametersController::didBecomeFirstResponder() {
+  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
+  snapshot->setActivePage(App::Snapshot::Page::Parameters);
+  FloatParameterController::didBecomeFirstResponder();
 }
 
 void ParametersController::viewWillAppear() {
@@ -129,7 +135,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
-  m_calculationController.setCalculationAccordingToIndex(0, true);
+  m_calculationController->setCalculationAccordingToIndex(0, true);
   return true;
 }
 
@@ -142,10 +148,10 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 }
 
 void ParametersController::buttonAction() {
-  m_calculationController.selectSubview(1);
-  m_calculationController.reload();
+  m_calculationController->selectSubview(1);
+  m_calculationController->reload();
   StackViewController * stack = stackController();
-  stack->push(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+  stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
 I18n::Message ParametersController::okButtonText() {

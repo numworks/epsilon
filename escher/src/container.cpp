@@ -20,11 +20,10 @@ void Container::switchTo(App::Snapshot * snapshot) {
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
     m_activeApp->snapshot()->pack(m_activeApp);
+    m_activeApp = nullptr;
   }
   if (snapshot) {
     m_activeApp = snapshot->unpack(this);
-  } else {
-    m_activeApp = nullptr;
   }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());

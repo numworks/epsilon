@@ -2,7 +2,7 @@
 #define HARDWARE_TEST_APP_H
 
 #include <escher.h>
-#include "keyboard_controller.h"
+#include "keyboard_test_controller.h"
 
 class AppsContainer;
 
@@ -17,7 +17,7 @@ public:
   };
 private:
   App(Container * container, Snapshot * snapshot);
-  KeyboardController m_keyboardController;
+  KeyboardTestController m_keyboardController;
 };
 
 }

@@ -92,20 +92,20 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %left UNARY_MINUS
 %left MULTIPLY
 %left DIVIDE
-%left POW
+%right POW
 %left BANG
-%left LEFT_PARENTHESIS
-%left RIGHT_PARENTHESIS
-%left LEFT_BRACKET
-%left RIGHT_BRACKET
-%left FUNCTION
+%nonassoc LEFT_PARENTHESIS
+%nonassoc RIGHT_PARENTHESIS
+%nonassoc LEFT_BRACKET
+%nonassoc RIGHT_BRACKET
+%nonassoc FUNCTION
 %left COMMA
-%left DIGITS
-%left DOT
-%left EE
-%left ICOMPLEX
-%left UNDEFINED_SYMBOL
-%left SYMBOL
+%nonassoc DIGITS
+%nonassoc DOT
+%nonassoc EE
+%nonassoc ICOMPLEX
+%nonassoc UNDEFINED_SYMBOL
+%nonassoc SYMBOL
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> final_exp;

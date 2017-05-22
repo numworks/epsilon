@@ -26,7 +26,7 @@ App * Container::activeApp() {
 
 bool Container::dispatchEvent(Ion::Events::Event event) {
   if (m_activeApp->processEvent(event)) {
-    window()->redraw();
+    windowRedraw();
     return true;
   }
   return false;
@@ -36,4 +36,8 @@ void Container::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   window()->redraw();
   RunLoop::run();
+}
+
+void Container::windowRedraw() {
+  window()->redraw();
 }

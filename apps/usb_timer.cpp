@@ -12,7 +12,7 @@ USBTimer::USBTimer(AppsContainer * container) :
 void USBTimer::fire() {
   if (Ion::USB::isPlugged()) {
     if (!m_previousPluggedState && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
-      m_container->displayExamModePopUp(false, true);
+      m_container->displayExamModePopUp(false);
     }
 #if LED_WHILE_CHARGING
     KDColor LEDColor = Ion::Battery::isCharging() ? KDColorYellow : KDColorGreen;

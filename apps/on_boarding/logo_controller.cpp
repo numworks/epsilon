@@ -1,6 +1,5 @@
 #include "logo_controller.h"
 #include "logo_icon.h"
-#include "../apps_container.h"
 
 namespace OnBoarding {
 
@@ -17,8 +16,6 @@ View * LogoController::view() {
 
 void LogoController::fire() {
   app()->dismissModalViewController();
-  AppsContainer * appsContainer = (AppsContainer *)app()->container();
-  appsContainer->windowRedraw();
 }
 
 }

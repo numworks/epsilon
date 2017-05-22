@@ -70,7 +70,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
         return false;
       }
       AppsContainer * container = (AppsContainer *)(app()->container());
-      container->displayExamModePopUp(true, false);
+      container->displayExamModePopUp(true);
       return true;
     }
     /* Behaviour of "About" menu */

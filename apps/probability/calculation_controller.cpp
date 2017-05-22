@@ -240,6 +240,8 @@ bool CalculationController::textFieldDidReceiveEvent(::TextField * textField, Io
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
+  snapshot->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
   for (int subviewIndex = 0; subviewIndex < 2; subviewIndex++) {
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);

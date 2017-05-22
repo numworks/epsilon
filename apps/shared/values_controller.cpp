@@ -8,9 +8,10 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
+  m_interval(interval),
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
   m_abscissaParameterController(ValuesParameterController(this, intervalParameterController, parameterTitle)),
@@ -20,9 +21,6 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
     stack->push(valuesController->intervalParameterController());
   }, this), KDText::FontSize::Small))
 {
-  m_interval.setStart(0);
-  m_interval.setEnd(10);
-  m_interval.setStep(1);
 }
 
 const char * ValuesController::title() {
@@ -30,7 +28,7 @@ const char * ValuesController::title() {
 }
 
 Interval * ValuesController::interval() {
-  return &m_interval;
+  return m_interval;
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -55,8 +53,8 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
-      (selectedRow() < numberOfRows()-1 || m_interval.numberOfElements() == Interval::k_maxNumberOfElements)) {
-    m_interval.deleteElementAtIndex(selectedRow()-1);
+      (selectedRow() < numberOfRows()-1 || m_interval->numberOfElements() == Interval::k_maxNumberOfElements)) {
+    m_interval->deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -124,7 +122,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     // Special case: last row
     if (j == numberOfRows() - 1) {
-      int numberOfIntervalElements = m_interval.numberOfElements();
+      int numberOfIntervalElements = m_interval->numberOfElements();
       if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
         buffer[0] = 0;
         EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
@@ -134,7 +132,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-    float x = m_interval.element(j-1);
+    float x = m_interval->element(j-1);
     Complex::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
@@ -273,16 +271,16 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
-  m_interval.setElement(rowIndex-1, floatBody);
+  m_interval->setElement(rowIndex-1, floatBody);
   return true;
 }
 
 float ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_interval.element(rowIndex-1);
+  return m_interval->element(rowIndex-1);
 }
 
 int ValuesController::numberOfElements() {
-  return m_interval.numberOfElements();
+  return m_interval->numberOfElements();
 }
 
 int ValuesController::maxNumberOfElements() const {

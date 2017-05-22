@@ -13,7 +13,7 @@ namespace Statistics {
 class HistogramController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 
 public:
-  HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store);
+  HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex);
   const char * title() override;
   View * view() override;
   StackViewController * stackController();
@@ -45,11 +45,10 @@ private:
   HistogramView m_view;
   Button m_settingButton;
   Store * m_store;
-  Shared::CurveViewCursor m_cursor;
-  uint32_t m_storeVersion;
-  uint32_t m_barVersion;
-  uint32_t m_rangeVersion;
-  int m_selectedBarIndex;
+  uint32_t * m_storeVersion;
+  uint32_t * m_barVersion;
+  uint32_t * m_rangeVersion;
+  int * m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
 };
 

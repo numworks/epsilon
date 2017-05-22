@@ -5,15 +5,15 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController),
+ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
-  m_intervalParameterController(this, &m_interval)
+  m_intervalParameterController(this, m_interval)
 {
 }
 

@@ -10,7 +10,7 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store) :
+HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_bannerView(HistogramBannerView()),
@@ -21,7 +21,10 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
     stack->push(histogramController->histogramParameterController());
   }, this))),
   m_store(store),
-  m_cursor(CurveViewCursor()),
+  m_storeVersion(storeVersion),
+  m_barVersion(barVersion),
+  m_rangeVersion(rangeVersion),
+  m_selectedBarIndex(selectedBarIndex),
   m_histogramParameterController(nullptr, store)
 {
 }
@@ -78,25 +81,25 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 
 void HistogramController::didBecomeFirstResponder() {
   uint32_t storeChecksum = m_store->storeChecksum();
-  if (m_storeVersion != storeChecksum) {
-    m_storeVersion = storeChecksum;
+  if (*m_storeVersion != storeChecksum) {
+    *m_storeVersion = storeChecksum;
     initBarParameters();
   }
   uint32_t barChecksum = m_store->barChecksum();
-  if (m_barVersion != barChecksum) {
-    m_barVersion = barChecksum;
+  if (*m_barVersion != barChecksum) {
+    *m_barVersion = barChecksum;
     initRangeParameters();
   }
   uint32_t rangeChecksum = m_store->rangeChecksum();
-  if (m_rangeVersion != rangeChecksum) {
-    m_rangeVersion = rangeChecksum;
+  if (*m_rangeVersion != rangeChecksum) {
+    *m_rangeVersion = rangeChecksum;
     initBarSelection();
     reloadBannerView();
   }
   if (!m_view.isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
-    m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
+    m_view.setHighlight(m_store->startOfBarAtIndex(*m_selectedBarIndex), m_store->endOfBarAtIndex(*m_selectedBarIndex));
   }
 }
 
@@ -153,10 +156,10 @@ void HistogramController::reloadBannerView() {
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  float lowerBound = m_store->startOfBarAtIndex(m_selectedBarIndex);
+  float lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += Complex::convertFloatToText(lowerBound, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ';';
-  float upperBound = m_store->endOfBarAtIndex(m_selectedBarIndex);
+  float upperBound = m_store->endOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += Complex::convertFloatToText(upperBound, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = '[';
   legend = "                            ";
@@ -170,7 +173,7 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  float size = m_store->heightOfBarAtIndex(m_selectedBarIndex);
+  float size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += Complex::convertFloatToText(size, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                   ";
   legendLength = strlen(legend);
@@ -193,7 +196,7 @@ void HistogramController::reloadBannerView() {
 }
 
 bool HistogramController::moveSelection(int deltaIndex) {
-  int newSelectedBarIndex = m_selectedBarIndex;
+  int newSelectedBarIndex = *m_selectedBarIndex;
   if (deltaIndex > 0) {
     do {
       newSelectedBarIndex++;
@@ -203,10 +206,10 @@ bool HistogramController::moveSelection(int deltaIndex) {
       newSelectedBarIndex--;
     } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0);
   }
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars() && m_selectedBarIndex != newSelectedBarIndex) {
-    m_selectedBarIndex = newSelectedBarIndex;
-    m_view.setHighlight(m_store->startOfBarAtIndex(m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedBarIndex));
-    m_store->scrollToSelectedBarIndex(m_selectedBarIndex);
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars() && *m_selectedBarIndex != newSelectedBarIndex) {
+    *m_selectedBarIndex = newSelectedBarIndex;
+    m_view.setHighlight(m_store->startOfBarAtIndex(*m_selectedBarIndex), m_store->endOfBarAtIndex(*m_selectedBarIndex));
+    m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
     return true;
   }
   return false;
@@ -252,20 +255,20 @@ void HistogramController::initBarParameters() {
 }
 
 void HistogramController::initBarSelection() {
-  m_selectedBarIndex = 0;
-  while ((m_store->heightOfBarAtIndex(m_selectedBarIndex) == 0 &&
-      m_selectedBarIndex < m_store->numberOfBars()) ||
-      m_store->startOfBarAtIndex(m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) {
-    m_selectedBarIndex++;
+  *m_selectedBarIndex = 0;
+  while ((m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 &&
+      *m_selectedBarIndex < m_store->numberOfBars()) ||
+      m_store->startOfBarAtIndex(*m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) {
+    *m_selectedBarIndex = *m_selectedBarIndex+1;
   }
-  if (m_selectedBarIndex >= m_store->numberOfBars()) {
+  if (*m_selectedBarIndex >= m_store->numberOfBars()) {
     /* No bar is after m_firstDrawnBarAbscissa, so we select the first bar */
-    m_selectedBarIndex = 0;
-    while (m_store->heightOfBarAtIndex(m_selectedBarIndex) == 0 && m_selectedBarIndex < m_store->numberOfBars()) {
-      m_selectedBarIndex++;
+    *m_selectedBarIndex = 0;
+    while (m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 && *m_selectedBarIndex < m_store->numberOfBars()) {
+      *m_selectedBarIndex = *m_selectedBarIndex+1;
     }
   }
-  m_store->scrollToSelectedBarIndex(m_selectedBarIndex);
+  m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
 }
 
 }

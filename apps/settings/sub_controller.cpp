@@ -58,7 +58,7 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the serial number row. */
-  if (event == Ion::Events::Six && m_nodeModel->label() == I18n::Message::About && selectedRow() == 1) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == I18n::Message::About && selectedRow() == 1) {
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
     return true;

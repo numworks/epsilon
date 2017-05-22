@@ -294,7 +294,7 @@ bool ListController::removeFunctionRow(Function * function) {
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, false, true);
+  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, nullptr, false, true);
 }
 
 void ListController::unloadView(View * view) {

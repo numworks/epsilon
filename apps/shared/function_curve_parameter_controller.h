@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDelegate {
+class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   View * view() override;

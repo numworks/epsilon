@@ -8,7 +8,7 @@
  * where we are located. It enables to know which rows are leaves and which are
  * subtrees. */
 
-class MathToolbox : public Toolbox, public ListViewDataSource, public SelectableTableViewDelegate {
+class MathToolbox : public Toolbox, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   MathToolbox();
   void didBecomeFirstResponder() override;

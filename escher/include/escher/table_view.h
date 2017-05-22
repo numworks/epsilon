@@ -8,7 +8,7 @@
 
 class TableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource, ScrollViewDelegate * scrollDelegate, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin = 0,
+  TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin = 0,
     KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0,
     bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
     KDCoordinate indicatorThickness = 20, KDColor indicatorColor = Palette::GreyDark,

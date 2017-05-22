@@ -3,8 +3,8 @@
 namespace Calculation {
 
 CalculationSelectableTableView::CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
- SelectableTableViewDelegate * delegate) :
-  ::SelectableTableView(parentResponder, dataSource, 0, 0, 0, 0, 0, 0, delegate, false)
+ SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
+  ::SelectableTableView(parentResponder, dataSource, 0, 0, 0, 0, 0, 0, selectionDataSource, delegate, false)
 {
 }
 

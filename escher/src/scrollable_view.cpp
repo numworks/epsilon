@@ -2,9 +2,9 @@
 #include <escher/metric.h>
 #include <assert.h>
 
-ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDelegate * delegate) :
+ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
   Responder(parentResponder),
-  ScrollView(view, delegate, 0, 0, 0, 0, false, false),
+  ScrollView(view, dataSource, 0, 0, 0, 0, false, false),
   m_manualScrolling(0)
 {
 }

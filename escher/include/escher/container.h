@@ -29,7 +29,6 @@ public:
   virtual void switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
-  void windowRedraw() override;
 private:
   void step();
   App * m_activeApp;

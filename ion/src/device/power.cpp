@@ -26,8 +26,9 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
   WakeUp::Device::onUSBPlugging();
 #if LED_WHILE_CHARGING
   WakeUp::Device::onChargingEvent();
-
+#endif
   while (1) {
+#if LED_WHILE_CHARGING
     /* Update LEDS
      * if the standby mode was stopped due to a "stop charging" event, we wait
      * a while to be sure that the plug state of the USB is up-to-date. */
@@ -49,7 +50,6 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
     msleep(1);
     asm("wfe");
 
-#if LED_WHILE_CHARGING
     Device::initClocks();
 
     Keyboard::Device::init();
@@ -62,7 +62,6 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
       break;
     }
   }
-#endif
   Device::initClocks();
 
   Device::initPeripherals();

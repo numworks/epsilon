@@ -6,12 +6,14 @@ Timer::Timer(uint32_t period) :
 {
 }
 
-void Timer::tick() {
+bool Timer::tick() {
   m_numberOfTicksBeforeFire--;
   if (m_numberOfTicksBeforeFire == 0) {
     fire();
     reset();
+    return true;
   }
+  return false;
 }
 
 void Timer::reset() {

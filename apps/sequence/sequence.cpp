@@ -97,7 +97,26 @@ void Sequence::setType(Type type) {
   m_type = type;
   tidy();
   /* Reset all contents */
-  setContent("");
+  switch (m_type) {
+    case Type::Explicite:
+      setContent("");
+      break;
+    case Type::SingleRecurrence:
+    {
+      char ex[5] = "u(n)";
+      ex[0] = name()[0];
+      setContent(ex);
+      break;
+    }
+    case Type::DoubleRecurrence:
+    {
+      char ex[12] = "u(n+1)+u(n)";
+      ex[0] = name()[0];
+      ex[7] = name()[0];
+      setContent(ex);
+      break;
+    }
+  }
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
   m_indexBuffer[0] = -1;

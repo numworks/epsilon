@@ -19,6 +19,7 @@ public:
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
+  void selectRegressionCurve();
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;    // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorRightMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth

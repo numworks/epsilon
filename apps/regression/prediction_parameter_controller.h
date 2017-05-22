@@ -8,9 +8,11 @@
 
 namespace Regression {
 
+class GraphController;
+
 class PredictionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor);
+  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

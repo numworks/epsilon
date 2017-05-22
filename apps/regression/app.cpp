@@ -32,6 +32,9 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
+  m_store.setDefault();
+  m_modelVersion = 0;
+  m_rangeVersion = 0;
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

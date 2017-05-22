@@ -19,11 +19,11 @@ View * KeyboardController::view() {
 }
 
 bool KeyboardController::handleEvent(Ion::Events::Event event) {
+  Ion::Keyboard::State state = Ion::Keyboard::scan();
   m_view.updateLEDState(m_color);
   m_color = nextColor(m_color);
   m_view.updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
-  Ion::Keyboard::State state = Ion::Keyboard::scan();
-  if (!Ion::Keyboard::keyDown(m_view.testedKey(), state)) {
+  if (!Ion::Keyboard::keyDown(Ion::Keyboard::ValidKeys[m_view.testedKey()], state)) {
     m_view.setDefectiveKey(m_view.testedKey());
   }
   if (!m_view.setNextKey()) {

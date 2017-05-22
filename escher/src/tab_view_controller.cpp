@@ -52,10 +52,9 @@ const char * TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(Responder * parentResponder, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
+TabViewController::TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
   ViewController(parentResponder),
-  m_activeChildIndex(-1),
-  m_selectedChildIndex(-1)
+  m_dataSource(dataSource)
 {
   assert(one != nullptr);
   assert(two != nullptr || (three == nullptr && four == nullptr));
@@ -72,7 +71,7 @@ TabViewController::TabViewController(Responder * parentResponder, ViewController
 }
 
 int TabViewController::activeTab() const {
-  return m_activeChildIndex;
+  return m_dataSource->activeTab();
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
@@ -87,23 +86,23 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Left) {
-    if (m_selectedChildIndex > 0) {
-      setSelectedTab(m_selectedChildIndex-1);
+    if (m_dataSource->selectedTab() > 0) {
+      setSelectedTab(m_dataSource->selectedTab()-1);
     }
     return true;
   }
   if (event == Ion::Events::Right) {
-    if (m_selectedChildIndex < m_numberOfChildren-1) {
-      setSelectedTab(m_selectedChildIndex+1);
+    if (m_dataSource->selectedTab() < m_numberOfChildren-1) {
+      setSelectedTab(m_dataSource->selectedTab()+1);
     }
     return true;
   }
   if (event == Ion::Events::Down) {
-    setActiveTab(m_activeChildIndex, false);
+    setActiveTab(m_dataSource->activeTab(), false);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    setActiveTab(m_selectedChildIndex, true);
+    setActiveTab(m_dataSource->selectedTab(), true);
     return true;
   }
   return false;
@@ -112,28 +111,28 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
 void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
   assert(i >= 0 && i < m_numberOfChildren);
   ViewController * activeVC = m_children[i];
-  if (i  != m_activeChildIndex || forceReactive) {
-    if (i != m_activeChildIndex) {
+  if (i  != m_dataSource->activeTab() || forceReactive) {
+    if (i != m_dataSource->activeTab()) {
       m_view.setActiveView(activeVC->view());
       m_children[i]->viewWillAppear();
     }
     m_view.m_tabView.setActiveIndex(i);
   }
   app()->setFirstResponder(activeVC);
-  if (i  != m_activeChildIndex || forceReactive) {
-      if (m_activeChildIndex >= 0 && m_activeChildIndex != i) {
-      m_children[m_activeChildIndex]->viewDidDisappear();
+  if (i  != m_dataSource->activeTab() || forceReactive) {
+      if (m_dataSource->activeTab() >= 0 && m_dataSource->activeTab() != i) {
+      m_children[m_dataSource->activeTab()]->viewDidDisappear();
     }
-    m_activeChildIndex = i;
+    m_dataSource->setActiveTab(i);
   }
 }
 
 void TabViewController::setSelectedTab(int8_t i) {
-  if (i == m_selectedChildIndex) {
+  if (i == m_dataSource->selectedTab()) {
     return;
   }
   m_view.m_tabView.setSelectedIndex(i);
-  m_selectedChildIndex = i;
+  m_dataSource->setSelectedTab(i);
 }
 
 void TabViewController::didEnterResponderChain(Responder * previousResponder) {
@@ -141,7 +140,7 @@ void TabViewController::didEnterResponderChain(Responder * previousResponder) {
 }
 
 void TabViewController::didBecomeFirstResponder() {
-  setSelectedTab(m_activeChildIndex);
+  setSelectedTab(m_dataSource->activeTab());
 }
 
 void TabViewController::willResignFirstResponder() {
@@ -167,12 +166,12 @@ void TabViewController::viewWillAppear() {
       m_view.m_tabView.addTab(m_children[i]);
     }
   }
-  if (m_activeChildIndex < 0) {
-    m_activeChildIndex = 0;
+  if (m_dataSource->activeTab() < 0) {
+    m_dataSource->setActiveTab(0);
   }
-  m_view.setActiveView(m_children[m_activeChildIndex]->view());
+  m_view.setActiveView(m_children[m_dataSource->activeTab()]->view());
   activeViewController()->viewWillAppear();
-  m_view.m_tabView.setActiveIndex(m_activeChildIndex);
+  m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
 }
 
 void TabViewController::viewDidDisappear() {
@@ -180,6 +179,6 @@ void TabViewController::viewDidDisappear() {
 }
 
 ViewController * TabViewController::activeViewController() {
-  assert(m_activeChildIndex >= 0 && m_activeChildIndex < m_numberOfChildren);
-  return m_children[m_activeChildIndex];
+  assert(m_dataSource->activeTab() >= 0 && m_dataSource->activeTab() < m_numberOfChildren);
+  return m_children[m_dataSource->activeTab()];
 }

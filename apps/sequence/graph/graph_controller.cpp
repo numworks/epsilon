@@ -4,15 +4,16 @@ using namespace Shared;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, header, &m_graphRange, &m_view),
+GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, modelVersion, rangeVersion),
   m_bannerView(),
-  m_view(sequenceStore, &m_graphRange, &m_cursor, &m_bannerView, &m_cursorView),
-  m_graphRange(&m_cursor, this),
-  m_curveParameterController(this, &m_graphRange, &m_cursor),
-  m_termSumController(this, &m_view, &m_graphRange, &m_cursor),
+  m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(graphRange),
+  m_curveParameterController(this, graphRange, m_cursor),
+  m_termSumController(this, &m_view, graphRange, m_cursor),
   m_sequenceStore(sequenceStore)
 {
+  m_graphRange->setDelegate(this);
 }
 
 void GraphController::viewWillAppear() {
@@ -44,7 +45,7 @@ bool GraphController::handleEnter() {
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  float xCursorPosition = roundf(m_cursor.x());
+  float xCursorPosition = roundf(m_cursor->x());
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
@@ -61,8 +62,8 @@ bool GraphController::moveCursorHorizontally(int direction) {
   Sequence * s = m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = s->evaluateAtAbscissa(x, myApp->localContext());
-  m_cursor.moveTo(x, y);
-  m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_cursor->moveTo(x, y);
+  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -76,12 +77,12 @@ void GraphController::initCursorParameters() {
     Sequence * firstFunction = m_sequenceStore->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while (isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
-  m_cursor.moveTo(x, y);
-  m_graphRange.panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_cursor->moveTo(x, y);
+  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
 CurveViewRange * GraphController::interactiveCurveViewRange() {
-  return &m_graphRange;
+  return m_graphRange;
 }
 
 SequenceStore * GraphController::functionStore() const {

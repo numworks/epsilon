@@ -17,6 +17,10 @@ InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, I
 {
 }
 
+void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
+  m_delegate = delegate;
+}
+
 void InteractiveCurveViewRange::setCursor(CurveViewCursor * cursor) {
   m_cursor = cursor;
 }

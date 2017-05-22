@@ -7,13 +7,13 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_cursor(),
+  m_cursor(cursor),
   m_cursorView(CursorView()),
-  m_modelVersion(0),
-  m_rangeVersion(0),
+  m_modelVersion(modelVersion),
+  m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
@@ -132,8 +132,8 @@ Responder * InteractiveCurveViewController::defaultController() {
 
 void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
-  if (m_modelVersion != newModelVersion) {
-    m_modelVersion = newModelVersion;
+  if (*m_modelVersion != newModelVersion) {
+    *m_modelVersion = newModelVersion;
     initRangeParameters();
     /* Warning: init cursor parameter before reloading banner view. Indeed,
      * reloading banner view needs an updated cursor to load the right data. */
@@ -141,8 +141,8 @@ void InteractiveCurveViewController::viewWillAppear() {
     centerCursorVertically();
   }
   uint32_t newRangeVersion = rangeVersion();
-  if (m_rangeVersion != newRangeVersion) {
-    m_rangeVersion = newRangeVersion;
+  if (*m_rangeVersion != newRangeVersion) {
+    *m_rangeVersion = newRangeVersion;
     if (!interactiveCurveViewRange()->isCursorVisible()) {
       initCursorParameters();
     }
@@ -181,7 +181,7 @@ StackViewController * InteractiveCurveViewController::stackController() const{
 
 void InteractiveCurveViewController::centerCursorVertically() {
   if (!interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor.y());
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   }
 }
 }

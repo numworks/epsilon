@@ -6,6 +6,7 @@
 #include "local_context.h"
 #include "sequence_store.h"
 #include "graph/graph_controller.h"
+#include "graph/curve_view_range.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
@@ -20,15 +21,18 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     SequenceStore * sequenceStore();
+    CurveViewRange * graphRange();
   private:
     void tidy() override;
     SequenceStore m_sequenceStore;
+    CurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
   Poincare::Context * localContext() override;

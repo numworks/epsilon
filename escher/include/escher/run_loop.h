@@ -9,7 +9,6 @@ public:
   RunLoop();
   void run();
 protected:
-  virtual void windowRedraw() = 0;
   virtual bool dispatchEvent(Ion::Events::Event e) = 0;
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);

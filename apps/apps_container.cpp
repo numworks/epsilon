@@ -130,7 +130,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     return true;
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
-    windowRedraw();
+    window()->redraw();
     return true;
   }
   return didProcessEvent;

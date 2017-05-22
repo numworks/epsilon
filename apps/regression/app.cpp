@@ -18,6 +18,14 @@ const Image * App::Descriptor::icon() {
   return ImageStore::RegressionIcon;
 }
 
+App::Snapshot::Snapshot() :
+  m_store(),
+  m_cursor(),
+  m_modelVersion(0),
+  m_rangeVersion(0)
+{
+}
+
 App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
@@ -35,12 +43,24 @@ Store * App::Snapshot::store() {
   return &m_store;
 }
 
+CurveViewCursor * App::Snapshot::cursor() {
+  return &m_cursor;
+}
+
+uint32_t * App::Snapshot::modelVersion() {
+  return &m_modelVersion;
+}
+
+uint32_t * App::Snapshot::rangeVersion() {
+  return &m_rangeVersion;
+}
+
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader, snapshot->store()),
+  m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

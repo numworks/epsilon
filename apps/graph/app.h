@@ -19,15 +19,18 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     CartesianFunctionStore * functionStore();
+    Shared::InteractiveCurveViewRange * graphRange();
   private:
     void tidy() override;
     CartesianFunctionStore m_functionStore;
+    Shared::InteractiveCurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
   /* This local context can parse x. However, it always stores NAN

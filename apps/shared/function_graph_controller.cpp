@@ -8,8 +8,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
-  InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView),
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
+  InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_indexFunctionSelectedByCursor(0),
   m_initialisationParameterController(InitialisationParameterController(this, interactiveRange))
 {
@@ -116,7 +116,7 @@ void FunctionGraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   buffer[0] = functionStore()->symbol();
-  numberOfChar += Complex::convertFloatToText(m_cursor.x(), buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(m_cursor->x(), buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "   ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -133,7 +133,7 @@ void FunctionGraphController::reloadBannerView() {
   }
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[0] = f->name()[0];
-  numberOfChar += Complex::convertFloatToText(m_cursor.y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex::convertFloatToText(m_cursor->y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "   ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -149,12 +149,12 @@ void FunctionGraphController::initRangeParameters() {
 bool FunctionGraphController::moveCursorVertically(int direction) {
   Function * actualFunction = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = actualFunction->evaluateAtAbscissa(m_cursor.x(), myApp->localContext());
+  float y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   Function * nextFunction = actualFunction;
   float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
-    float newY = f->evaluateAtAbscissa(m_cursor.x(), myApp->localContext());
+    float newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
       m_indexFunctionSelectedByCursor = i;
@@ -165,8 +165,8 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   if (nextFunction == actualFunction) {
     return false;
   }
-  m_cursor.moveTo(m_cursor.x(), nextY);
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor.x(), m_cursor.y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_cursor->moveTo(m_cursor->x(), nextY);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 

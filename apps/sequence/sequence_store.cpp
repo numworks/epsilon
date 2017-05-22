@@ -11,9 +11,15 @@ constexpr KDColor SequenceStore::k_defaultColors[k_maxNumberOfSequences];
 constexpr const char * SequenceStore::k_sequenceNames[k_maxNumberOfSequences];
 
 uint32_t SequenceStore::storeChecksum() {
-  size_t dataLengthInBytes = m_numberOfFunctions*sizeof(Sequence);
+  size_t dataLengthInBytes = k_maxNumberOfSequences*3*TextField::maxBufferSize()*sizeof(char);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)m_sequences, dataLengthInBytes>>2);
+  char data[3*k_maxNumberOfSequences*TextField::maxBufferSize()] = {};
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+    strlcpy(data+i*3*TextField::maxBufferSize(), m_sequences[i].text(), TextField::maxBufferSize());
+    strlcpy(data+i*3*TextField::maxBufferSize()+TextField::maxBufferSize(), m_sequences[i].firstInitialConditionText(), TextField::maxBufferSize());
+    strlcpy(data+i*3*TextField::maxBufferSize()+2*TextField::maxBufferSize(), m_sequences[i].secondInitialConditionText(), TextField::maxBufferSize());
+  }
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
 Sequence * SequenceStore::functionAtIndex(int i) {

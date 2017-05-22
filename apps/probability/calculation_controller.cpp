@@ -239,6 +239,9 @@ bool CalculationController::textFieldDidReceiveEvent(::TextField * textField, Io
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
+void CalculationController::didEnterResponderChain(Responder * previousFirstResponder) {
+  reload();
+}
 void CalculationController::didBecomeFirstResponder() {
   App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
   snapshot->setActivePage(App::Snapshot::Page::Calculations);

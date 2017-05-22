@@ -50,6 +50,7 @@ CurveViewRange * App::Snapshot::graphRange() {
 
 void App::Snapshot::tidy() {
   m_sequenceStore.tidy();
+  m_graphRange.setDelegate(nullptr);
 }
 
 App::App(Container * container, Snapshot * snapshot) :

@@ -67,25 +67,22 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder) :
+ParametersController::ParametersController(Responder * parentResponder, Law * law, Calculation * calculation) :
   FloatParameterController(parentResponder),
   m_selectableTableView(nullptr),
   m_menuListCell{},
-  m_law(nullptr),
-  m_calculationController(nullptr)
+  m_law(law),
+  m_calculationController(nullptr, law, calculation)
 {
+  assert(m_law != nullptr);
 }
 
 const char * ParametersController::title() {
-  if (m_law != nullptr) {
-    return I18n::translate(m_law->title());
-  }
-  return "";
+  return I18n::translate(m_law->title());
 }
 
-void ParametersController::setLaw(Law * law) {
-  m_law = law;
-  m_calculationController.setLaw(law);
+void ParametersController::reinitCalculation() {
+  m_calculationController.setCalculationAccordingToIndex(0, true);
 }
 
 void ParametersController::viewWillAppear() {
@@ -132,6 +129,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
+  m_calculationController.setCalculationAccordingToIndex(0, true);
   return true;
 }
 
@@ -144,7 +142,6 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 }
 
 void ParametersController::buttonAction() {
-  m_calculationController.setCalculationAccordingToIndex(0);
   m_calculationController.selectSubview(1);
   m_calculationController.reload();
   StackViewController * stack = stackController();
@@ -161,9 +158,7 @@ View * ParametersController::loadView() {
     m_menuListCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
   }
   ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
-  if (m_law != nullptr) {
-    contentView->setNumberOfParameters(m_law->numberOfParameter());
-  }
+  contentView->setNumberOfParameters(m_law->numberOfParameter());
   return contentView;
 }
 

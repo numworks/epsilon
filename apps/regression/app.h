@@ -12,9 +12,23 @@ namespace Regression {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  App(Container * container);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    void reset() override;
+    Descriptor * descriptor() override;
+    Store * store();
+  private:
+    Store m_store;
+  };
 private:
-  Store m_store;
+  App(Container * container, Snapshot * snapshot);
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   ButtonRowController m_calculationHeader;

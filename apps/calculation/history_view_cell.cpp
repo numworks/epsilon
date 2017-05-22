@@ -1,4 +1,5 @@
 #include "history_view_cell.h"
+#include "app.h"
 #include "../constant.h"
 #include "selectable_table_view.h"
 #include <assert.h>
@@ -6,8 +7,8 @@
 
 namespace Calculation {
 
-HistoryViewCell::HistoryViewCell() :
-  Responder(nullptr),
+HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
+  Responder(parentResponder),
   m_inputView(this),
   m_outputView(this),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
@@ -48,7 +49,8 @@ void HistoryViewCell::layoutSubviews() {
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_inputView.setExpression(calculation->inputLayout());
-  m_outputView.setExpression(calculation->outputLayout());
+  App * calculationApp = (App *)app();
+  m_outputView.setExpression(calculation->outputLayout(calculationApp->localContext()));
 }
 
 void HistoryViewCell::reloadCell() {

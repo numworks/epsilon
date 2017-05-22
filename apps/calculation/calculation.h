@@ -20,10 +20,11 @@ public:
   const char * outputText();
   Poincare::Expression * input();
   Poincare::ExpressionLayout * inputLayout();
-  Poincare::Expression * output();
-  Poincare::ExpressionLayout * outputLayout();
+  Poincare::Expression * output(Poincare::Context * context);
+  Poincare::ExpressionLayout * outputLayout(Poincare::Context * context);
   void setContent(const char * c, Poincare::Context * context);
   bool isEmpty();
+  void tidy();
 private:
   char m_inputText[::TextField::maxBufferSize()];
   char m_outputText[::TextField::maxBufferSize()];

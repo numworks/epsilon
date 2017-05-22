@@ -27,6 +27,7 @@ public:
   virtual void setContent(const char * c);
   void setColor(KDColor m_color);
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
+  virtual void tidy();
 protected:
   Poincare::Expression * m_expression;
 private:

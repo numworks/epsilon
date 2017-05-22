@@ -18,10 +18,15 @@
 class Container : public RunLoop {
 public:
   Container();
+  virtual ~Container();
+  Container(const Container& other) = delete;
+  Container(Container&& other) = delete;
+  Container& operator=(const Container& other) = delete;
+  Container& operator=(Container&& other) = delete;
   void run();
   App * activeApp();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  virtual void switchTo(App * app);
+  virtual void switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
   void windowRedraw() override;

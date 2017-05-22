@@ -7,14 +7,25 @@ Container::Container() :
 {
 }
 
-void Container::switchTo(App * app) {
-  if (m_activeApp == app) {
+Container::~Container() {
+  if (m_activeApp) {
+    delete m_activeApp;
+  }
+}
+
+void Container::switchTo(App::Snapshot * snapshot) {
+  if (m_activeApp && snapshot == m_activeApp->snapshot()) {
     return;
   }
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
+    m_activeApp->snapshot()->pack(m_activeApp);
   }
-  m_activeApp = app;
+  if (snapshot) {
+    m_activeApp = snapshot->unpack(this);
+  } else {
+    m_activeApp = nullptr;
+  }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());
   }

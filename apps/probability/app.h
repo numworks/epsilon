@@ -10,8 +10,19 @@ namespace Probability {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  App(Container * container);
+  class Descriptor : public ::App::Descriptor {
+  public:
+    I18n::Message name() override;
+    I18n::Message upperName() override;
+    const Image * icon() override;
+  };
+  class Snapshot : public ::App::Snapshot {
+  public:
+    App * unpack(Container * container) override;
+    Descriptor * descriptor() override;
+  };
 private:
+  App(Container * container, Snapshot * snapshot);
   LawController m_lawController;
   StackViewController m_stackViewController;
 };

@@ -10,7 +10,8 @@ namespace Shared {
 
 class FunctionApp : public TextFieldDelegateApp {
 public:
-  FunctionApp(Container * container, ViewController * rootViewController, I18n::Message name = (I18n::Message)0, I18n::Message upperName = (I18n::Message)0, const Image * icon = nullptr);
+  FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  virtual ~FunctionApp() = default;
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 };

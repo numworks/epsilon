@@ -11,25 +11,36 @@ extern "C" {
  * configured, we only need to write in the address space of the MCU to actually
  * send some data to the LCD controller. */
 
+#define USE_DMA_FOR_PUSH_PIXELS 0
+#define USE_DMA_FOR_PUSH_COLOR 0
+
+#define USE_DMA (USE_DMA_FOR_PUSH_PIXELS|USE_DMA_FOR_PUSH_COLOR)
+
 // Public Ion::Display methods
 
 namespace Ion {
 namespace Display {
 
 void pushRect(KDRect r, const KDColor * pixels) {
+#if USE_DMA
   Device::waitForPendingDMAUploadCompletion();
+#endif
   Device::setDrawingArea(r, Device::Orientation::Landscape);
   Device::pushPixels(pixels, r.width()*r.height());
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
+#if USE_DMA
   Device::waitForPendingDMAUploadCompletion();
+#endif
   Device::setDrawingArea(r, Device::Orientation::Portrait);
   Device::pushColor(c, r.width()*r.height());
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
+#if USE_DMA
   Device::waitForPendingDMAUploadCompletion();
+#endif
   Device::setDrawingArea(r, Device::Orientation::Landscape);
   Device::pullPixels(pixels, r.width()*r.height());
 }
@@ -57,7 +68,9 @@ namespace Device {
 #define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
 
 void init() {
+#if USE_DMA
   initDMA();
+#endif
   initGPIO();
   initFSMC();
   initPanel();
@@ -69,6 +82,7 @@ void shutdown() {
   shutdownGPIO();
 }
 
+#if USE_DMA
 void initDMA() {
   // Only DMA2 can perform memory-to-memory transfers
   //assert(DMAEngine == DMA2);
@@ -101,6 +115,7 @@ static inline void startDMAUpload(const KDColor * src, bool incrementSrc, uint16
   DMAEngine.SCR(DMAStream)->setPINC(incrementSrc);
   DMAEngine.SCR(DMAStream)->setEN(true);
 }
+#endif
 
 void initGPIO() {
   // All the FSMC GPIO pins use the alternate function number 12
@@ -272,7 +287,6 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
    * guarantee that the content at "pixels" will remain valid once we exit this
    * function call. In practice, we might be able to use DMA here because most
    * of the time we push pixels from static locations. */
-#define USE_DMA_FOR_PUSH_PIXELS 0
 #if USE_DMA_FOR_PUSH_PIXELS
   startDMAUpload(pixels, true, numberOfPixels);
 #else
@@ -295,16 +309,19 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
 
 void pushColor(KDColor color, size_t numberOfPixels) {
   *CommandAddress  = Command::MemoryWrite;
+#if USE_DMA_FOR_PUSH_COLOR
   /* The "color" variable lives on the stack. We cannot take its address because
    * it will stop being valid as soon as we return. An easy workaround is to
    * duplicate the content in a static variable, whose value is guaranteed to be
    * kept until the next pushColor call. */
   static KDColor staticColor;
   staticColor = color;
-  //startDMAUpload(&staticColor, false, (numberOfPixels > 64000 ? 64000 : numberOfPixels));
+  startDMAUpload(&staticColor, false, (numberOfPixels > 64000 ? 64000 : numberOfPixels));
+#else
   while (numberOfPixels--) {
     *DataAddress = color;
   }
+#endif
 }
 
 void pullPixels(KDColor * pixels, size_t numberOfPixels) {

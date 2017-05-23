@@ -26,6 +26,7 @@ App::Snapshot::Snapshot() :
 {
   new(m_law) BinomialLaw();
   new(m_calculation) LeftIntegralCalculation();
+  calculation()->setLaw(law());
 }
 
 App::Snapshot::~Snapshot() {

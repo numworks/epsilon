@@ -15,7 +15,7 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-
+  void viewWillAppear() override;
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cellHeight() override;

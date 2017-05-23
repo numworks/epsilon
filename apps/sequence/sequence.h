@@ -18,6 +18,7 @@ public:
   Sequence& operator=(Sequence&& other) = delete;
   Sequence(const Sequence& other) = delete;
   Sequence(Sequence&& other) = delete;
+  uint32_t checksum() override;
   Type type();
   void setType(Type type);
   const char * firstInitialConditionText();

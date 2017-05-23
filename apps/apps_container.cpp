@@ -39,7 +39,7 @@ AppsContainer::AppsContainer() :
 
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return Ion::Keyboard::keyDown(Ion::Keyboard::Key::A6, state);
+  return state.keyDown(Ion::Keyboard::Key::A6);
 }
 
 int AppsContainer::numberOfApps() {

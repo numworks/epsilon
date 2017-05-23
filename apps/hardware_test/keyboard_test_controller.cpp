@@ -30,8 +30,7 @@ bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
     m_LEDColorIndex = 0;
   }
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
-  int shift = (uint8_t)Ion::Keyboard::ValidKeys[m_view.keyboardView()->testedKeyIndex()];
-  Ion::Keyboard::State onlyKeyDown = (uint64_t)1 << shift;
+  Ion::Keyboard::State onlyKeyDown = Ion::Keyboard::State(Ion::Keyboard::ValidKeys[m_view.keyboardView()->testedKeyIndex()]);
   if (state == onlyKeyDown) {
     m_view.keyboardView()->setTestedKeyIndex(m_view.keyboardView()->testedKeyIndex()+1);
     if (m_view.keyboardView()->testedKeyIndex() == Ion::Keyboard::NumberOfValidKeys) {

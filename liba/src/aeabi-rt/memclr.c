@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <string.h>
 
-/* See the "Run-time ABI for the ARM Architecture", Section 4.3.3 */
+/* See the "Run-time ABI for the ARM Architecture", Section 4.3.4 */
 
 void __aeabi_memclr(void * dest, size_t n) {
   memset(dest, 0, n);

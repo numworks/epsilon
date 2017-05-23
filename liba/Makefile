@@ -67,6 +67,7 @@ liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
 endif
 
 tests += $(addprefix liba/test/, \
+  aeabi.c \
   ieee754.c \
   stdint.c \
   strlcpy.c \

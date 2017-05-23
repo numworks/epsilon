@@ -9,7 +9,7 @@ class BatteryTimer : public Timer {
 public:
   BatteryTimer(AppsContainer * container);
 private:
-  void fire() override;
+  bool fire() override;
   AppsContainer * m_container;
 };
 

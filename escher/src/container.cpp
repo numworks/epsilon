@@ -35,7 +35,7 @@ App * Container::activeApp() {
 }
 
 bool Container::dispatchEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::TimerTick || m_activeApp->processEvent(event)) {
+  if (event == Ion::Events::TimerFire || m_activeApp->processEvent(event)) {
     window()->redraw();
     return true;
   }

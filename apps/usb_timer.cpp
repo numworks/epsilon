@@ -9,10 +9,12 @@ USBTimer::USBTimer(AppsContainer * container) :
 {
 }
 
-void USBTimer::fire() {
+bool USBTimer::fire() {
+  bool needRedrawing = false;
   if (Ion::USB::isPlugged()) {
     if (!m_previousPluggedState && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
       m_container->displayExamModePopUp(false);
+      needRedrawing = true;
     }
 #if LED_WHILE_CHARGING
     KDColor LEDColor = Ion::Battery::isCharging() ? KDColorYellow : KDColorGreen;
@@ -27,4 +29,5 @@ void USBTimer::fire() {
       m_previousPluggedState = false;
     }
   }
+  return needRedrawing;
 }

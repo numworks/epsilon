@@ -151,10 +151,13 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   }
 }
 
-void AppsContainer::updateBatteryState() {
-  m_window.updateBatteryLevel();
-  m_window.updateIsChargingState();
-  m_window.updatePluggedState();
+bool AppsContainer::updateBatteryState() {
+  if (m_window.updateBatteryLevel() ||
+      m_window.updateIsChargingState() ||
+      m_window.updatePluggedState()) {
+    return true;
+  }
+  return false;
 }
 
 void AppsContainer::refreshPreferences() {

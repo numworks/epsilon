@@ -19,7 +19,7 @@ public:
   bool tick();
   void reset();
 protected:
-  virtual void fire() = 0;
+  virtual bool fire() = 0;
 private:
   uint32_t m_period;
   uint32_t m_numberOfTicksBeforeFire;

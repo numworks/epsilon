@@ -8,6 +8,9 @@ objs += $(addprefix ion/src/shared/, \
   events_keyboard.o \
 )
 
+# If you need to profile execution, you can replace events_keyboard with
+# events_replay.o and dummy/events_modifier.o
+
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\

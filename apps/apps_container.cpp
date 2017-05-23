@@ -39,7 +39,7 @@ AppsContainer::AppsContainer() :
 
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return Ion::Keyboard::keyDown(Ion::Keyboard::Key::A6, state);
+  return state.keyDown(Ion::Keyboard::Key::A6);
 }
 
 int AppsContainer::numberOfApps() {
@@ -151,10 +151,13 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   }
 }
 
-void AppsContainer::updateBatteryState() {
-  m_window.updateBatteryLevel();
-  m_window.updateIsChargingState();
-  m_window.updatePluggedState();
+bool AppsContainer::updateBatteryState() {
+  if (m_window.updateBatteryLevel() ||
+      m_window.updateIsChargingState() ||
+      m_window.updatePluggedState()) {
+    return true;
+  }
+  return false;
 }
 
 void AppsContainer::refreshPreferences() {

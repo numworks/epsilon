@@ -85,27 +85,31 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * If you need to define precedence in order to avoid shift/redice conflicts for
  * other situations your grammar is most likely ambiguous.
  */
+
+/* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
+ * one has the highest precedence. */
+
 %nonassoc STO
 %left PLUS
 %left MINUS
-%left IMPLICIT_MULTIPLY
-%left UNARY_MINUS
 %left MULTIPLY
 %left DIVIDE
-%left POW
+%left IMPLICIT_MULTIPLY
+%right UNARY_MINUS
+%right POW
 %left BANG
-%left LEFT_PARENTHESIS
-%left RIGHT_PARENTHESIS
-%left LEFT_BRACKET
-%left RIGHT_BRACKET
-%left FUNCTION
+%nonassoc LEFT_PARENTHESIS
+%nonassoc RIGHT_PARENTHESIS
+%nonassoc LEFT_BRACKET
+%nonassoc RIGHT_BRACKET
+%nonassoc FUNCTION
 %left COMMA
-%left DIGITS
-%left DOT
-%left EE
-%left ICOMPLEX
-%left UNDEFINED_SYMBOL
-%left SYMBOL
+%nonassoc DIGITS
+%nonassoc DOT
+%nonassoc EE
+%nonassoc ICOMPLEX
+%nonassoc UNDEFINED
+%nonassoc SYMBOL
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> final_exp;
@@ -134,9 +138,6 @@ Root:
     *expressionOutput = $1;
   }
 
-/* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
- * one has the highest precedence. */
-
 lstData:
   exp { $$ = new Poincare::ListData($1); }
   | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
@@ -159,6 +160,11 @@ number:
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }
 
+/* The rules "exp MINUS exp" and "MINUS exp" are sometimes ambiguous. We want
+ * to favor "exp MINUS exp" over "MINUS exp". Bison by default resolves
+ * reduce/reduce conflicts in favor of the first grammar rule. Thus, the order
+ * of the grammar rules is here paramount: "MINUS exp" should always be after
+ *  "exp MINUS exp". */
 exp:
   UNDEFINED        { $$ = $1; }
   | exp BANG       { $$ = new Poincare::Factorial($1, false); }

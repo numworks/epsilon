@@ -91,7 +91,7 @@ const char * messages[218][3] {
   {"FONCTIONS", "FUNCTIONS", "FUNCION"},
   {"Fonctions", "Functions", "Funciones"},
   {"Graphique", "Graph", "Grafico"},
-  {"Valeurs", "Table", "Tabla"},
+  {"Tableau", "Table", "Tabla"},
     /* Function: first tab */
   {"Tracer le graphique", "Plot graph", "Dibujar el grafico"},
   {"Afficher les valeurs", "Display values", "Visualizar los valores"},
@@ -264,7 +264,7 @@ const char * messages[218][3] {
   {"sci/", "sci/", "sci/"},
   {"Version du logiciel", "Software version", "Version de software"},
   {"Numero serie", "Serial number", "Numero serie"},
-  {"Rappel mise a jour", "Update pop-up", "Aviso emergente de actualizacion"},
+  {"Rappel mise a jour", "Update pop-up", "Pop-up de actualizacion"},
 
   /* On boarding */
   {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE"},

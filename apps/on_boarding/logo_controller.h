@@ -11,7 +11,7 @@ public:
   LogoController();
   View * view() override;
 private:
-  void fire() override;
+  bool fire() override;
   LogoView m_logoView;
 };
 

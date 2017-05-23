@@ -10,7 +10,7 @@ public:
   SuspendTimer(AppsContainer * container);
 private:
   constexpr static int k_idleBeforeSuspendDuration = 5*60*1000; // In miliseconds
-  void fire() override;
+  bool fire() override;
   AppsContainer * m_container;
 };
 

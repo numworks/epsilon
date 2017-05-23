@@ -7,7 +7,7 @@ class LedTimer : public Timer {
 public:
   LedTimer();
 private:
-  void fire() override;
+  bool fire() override;
   bool m_on;
 };
 

@@ -31,15 +31,27 @@ constexpr Key ValidKeys[] = {
 
 constexpr int NumberOfKeys  = 54;
 constexpr int NumberOfValidKeys  = 46;
-typedef uint64_t State;
 
-static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");
+class State {
+public:
+  constexpr State(uint64_t s = 0) :
+    m_bitField(s)
+  {}
+  explicit constexpr State(Key k) :
+    m_bitField((uint64_t)1 << (uint8_t)k)
+  {}
+  inline bool keyDown(Key k) const {
+    return (m_bitField>>(uint8_t)k) & 1;
+  }
+  operator uint64_t() const { return m_bitField; }
+private:
+  uint64_t m_bitField;
+};
 
 State scan();
 
-inline bool keyDown(Key k, State s) {
-  return (s>>(uint8_t)k) & 1;
-}
+static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");
+
 
 }
 }

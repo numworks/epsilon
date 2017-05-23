@@ -9,9 +9,9 @@ Timer::Timer(uint32_t period) :
 bool Timer::tick() {
   m_numberOfTicksBeforeFire--;
   if (m_numberOfTicksBeforeFire == 0) {
-    fire();
+    bool needRedraw = fire();
     reset();
-    return true;
+    return needRedraw;
   }
   return false;
 }

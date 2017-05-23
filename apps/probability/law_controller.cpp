@@ -68,6 +68,10 @@ View * LawController::view() {
   return &m_contentView;
 }
 
+void Probability::LawController::viewWillAppear() {
+  selectRow((int)m_law->type());
+}
+
 void Probability::LawController::didBecomeFirstResponder() {
   App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
   snapshot->setActivePage(App::Snapshot::Page::Law);

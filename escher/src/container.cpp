@@ -20,11 +20,10 @@ void Container::switchTo(App::Snapshot * snapshot) {
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
     m_activeApp->snapshot()->pack(m_activeApp);
+    m_activeApp = nullptr;
   }
   if (snapshot) {
     m_activeApp = snapshot->unpack(this);
-  } else {
-    m_activeApp = nullptr;
   }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());
@@ -36,8 +35,8 @@ App * Container::activeApp() {
 }
 
 bool Container::dispatchEvent(Ion::Events::Event event) {
-  if (m_activeApp->processEvent(event)) {
-    windowRedraw();
+  if (event == Ion::Events::TimerTick || m_activeApp->processEvent(event)) {
+    window()->redraw();
     return true;
   }
   return false;
@@ -49,6 +48,3 @@ void Container::run() {
   RunLoop::run();
 }
 
-void Container::windowRedraw() {
-  window()->redraw();
-}

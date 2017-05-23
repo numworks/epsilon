@@ -15,6 +15,7 @@ public:
   Function& operator=(Function&& other) = delete;
   Function(const Function& other) = delete;
   Function(Function&& other) = delete;
+  virtual uint32_t checksum();
   const char * text() const;
   const char * name() const;
   KDColor color() const { return m_color; }

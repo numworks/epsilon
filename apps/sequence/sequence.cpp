@@ -2,6 +2,7 @@
 #include "local_context.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
+#include <assert.h>
 #include <string.h>
 
 using namespace Shared;
@@ -79,6 +80,16 @@ Sequence& Sequence::operator=(const Sequence& other) {
   m_indexBuffer[0] = indexBuffer0;
   m_indexBuffer[1] = indexBuffer1;
   return *this;
+}
+
+uint32_t Sequence::checksum() {
+  size_t dataLengthInBytes = 3*TextField::maxBufferSize()*sizeof(char);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  char data[3*TextField::maxBufferSize()] = {};
+  strlcpy(data, text(), TextField::maxBufferSize());
+  strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), TextField::maxBufferSize());
+  strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), TextField::maxBufferSize());
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
 }
 
 const char * Sequence::firstInitialConditionText() {

@@ -7,6 +7,7 @@ SuspendTimer::SuspendTimer(AppsContainer * container) :
 {
 }
 
-void SuspendTimer::fire() {
+bool SuspendTimer::fire() {
   m_container->suspend();
+  return false;
 }

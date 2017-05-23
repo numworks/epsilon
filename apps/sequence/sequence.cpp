@@ -294,7 +294,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         subContext.setValueForSequenceRank(un, name(), 0);
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
-        un = m_expression->approximate(subContext);
+        un = expression()->approximate(subContext);
       }
       m_buffer[0] = un;
       m_indexBuffer[0] = n;
@@ -326,7 +326,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
         un = un1;
-        un1 = m_expression->approximate(subContext);
+        un1 = expression()->approximate(subContext);
       }
       m_buffer[0] = un;
       m_indexBuffer[0] = n-1;

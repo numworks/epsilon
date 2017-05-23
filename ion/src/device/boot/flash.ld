@@ -34,6 +34,10 @@ SECTIONS {
     KEEP(*(.isr_vector_table))
   } >FLASH
 
+  .header : {
+    KEEP(*(.header))
+  } >FLASH
+
   .text : {
     . = ALIGN(4);
     *(.text)

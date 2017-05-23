@@ -63,7 +63,7 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 }
 
 Event sLastEvent = Events::None;
-Keyboard::State sLastKeyboardState = 0;
+Keyboard::State sLastKeyboardState;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
@@ -76,8 +76,8 @@ Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
   int time = 0;
-  Keyboard::State keysSeenUp = 0;
-  Keyboard::State keysSeenTransitionningFromUpToDown = 0;
+  uint64_t keysSeenUp = 0;
+  uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
     Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;

@@ -49,7 +49,7 @@ namespace Ion {
 namespace Keyboard {
 
 State scan() {
-  State state = 0;
+  uint64_t state = 0;
 
   for (uint8_t i=0; i<Device::numberOfRows; i++) {
     /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
@@ -77,7 +77,7 @@ State scan() {
    * whatever value we return. */
   state = state & 0x1F7DF7FFFFF0FF;
 
-  return state;
+  return State(state);
 }
 
 }

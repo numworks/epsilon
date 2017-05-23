@@ -18,4 +18,5 @@ objs += $(addprefix ion/src/shared/, \
 tests += $(addprefix ion/test/,\
   crc32.cpp\
   events.cpp\
+  keyboard.cpp\
 )

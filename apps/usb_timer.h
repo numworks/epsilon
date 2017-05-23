@@ -9,7 +9,7 @@ class USBTimer : public Timer {
 public:
   USBTimer(AppsContainer * container);
 private:
-  void fire() override;
+  bool fire() override;
   AppsContainer * m_container;
   bool m_previousPluggedState;
 };

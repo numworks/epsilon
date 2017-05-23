@@ -5,6 +5,7 @@ BacklightDimmingTimer::BacklightDimmingTimer() :
 {
 }
 
-void BacklightDimmingTimer::fire() {
+bool BacklightDimmingTimer::fire() {
   Ion::Backlight::setBrightness(k_dimBacklightBrightness);
+  return false;
 }

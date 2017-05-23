@@ -49,7 +49,7 @@ bool RunLoop::step() {
     for (int i=0; i<numberOfTimers(); i++) {
       Timer * timer = timerAtIndex(i);
       if (timer->tick()) {
-        dispatchEvent(Ion::Events::TimerTick);
+        dispatchEvent(Ion::Events::TimerFire);
       }
     }
   }

@@ -200,7 +200,7 @@ constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::H4);
 
 constexpr Event None = Event::Special(0);
 constexpr Event Termination = Event::Special(1);
-constexpr Event TimerTick = Event::Special(2);
+constexpr Event TimerFire = Event::Special(2);
 
 }
 }

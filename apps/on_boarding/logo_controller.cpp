@@ -14,8 +14,9 @@ View * LogoController::view() {
   return &m_logoView;
 }
 
-void LogoController::fire() {
+bool LogoController::fire() {
   app()->dismissModalViewController();
+  return true;
 }
 
 }

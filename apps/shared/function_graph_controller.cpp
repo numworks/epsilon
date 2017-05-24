@@ -141,9 +141,8 @@ void FunctionGraphController::reloadBannerView() {
 }
 
 void FunctionGraphController::initRangeParameters() {
-  if (didChangeRange(interactiveCurveViewRange())) {
-    initCursorParameters();
-  }
+  interactiveCurveViewRange()->setDefault();
+  initCursorParameters();
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {

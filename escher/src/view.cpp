@@ -11,6 +11,12 @@ View::View() :
 }
 
 View::~View() {
+  for (int i = 0; i < numberOfSubviews(); i++) {
+    View * subview = subviewAtIndex(i);
+    if (subview != nullptr) {
+      subview->m_superview = nullptr;
+    }
+  }
 }
 
 void View::drawRect(KDContext * ctx, KDRect rect) const {

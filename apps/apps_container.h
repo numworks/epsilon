@@ -43,6 +43,7 @@ public:
   void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App::Snapshot * snapshot) override;
+  void run() override;
   bool updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate);

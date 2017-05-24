@@ -25,12 +25,12 @@ bool UpdateController::handleEvent(Ion::Events::Event event) {
 }
 
 UpdateController::ContentView::ContentView() :
-  m_titleTextView(MessageTextView(KDText::FontSize::Large, I18n::Message::UpdateAvailable, 0.5f, 0.5f)),
-  m_messageTextView1(MessageTextView(KDText::FontSize::Small, I18n::Message::UpdateMessage1, 0.5f, 0.5f)),
-  m_messageTextView2(MessageTextView(KDText::FontSize::Small, I18n::Message::UpdateMessage2, 0.5f, 0.5f)),
-  m_messageTextView3(MessageTextView(KDText::FontSize::Small, I18n::Message::UpdateMessage3, 0.5f, 0.5f)),
-  m_messageTextView4(MessageTextView(KDText::FontSize::Small, I18n::Message::UpdateMessage4, 0.5f, 0.5f, Palette::YellowDark)),
-  m_skipView(MessageTextView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5)),
+  m_titleTextView(KDText::FontSize::Large, I18n::Message::UpdateAvailable, 0.5f, 0.5f),
+  m_messageTextView1(KDText::FontSize::Small, I18n::Message::UpdateMessage1, 0.5f, 0.5f),
+  m_messageTextView2(KDText::FontSize::Small, I18n::Message::UpdateMessage2, 0.5f, 0.5f),
+  m_messageTextView3(KDText::FontSize::Small, I18n::Message::UpdateMessage3, 0.5f, 0.5f),
+  m_messageTextView4(KDText::FontSize::Small, I18n::Message::UpdateMessage4, 0.5f, 0.5f, Palette::YellowDark),
+  m_skipView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5),
   m_okView()
 {
 }

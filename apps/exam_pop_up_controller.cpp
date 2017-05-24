@@ -6,7 +6,7 @@
 
 ExamPopUpController::ExamPopUpController() :
   ViewController(nullptr),
-  m_contentView(ContentView(this)),
+  m_contentView(this),
   m_isActivatingExamMode(false)
 {
 }
@@ -43,12 +43,12 @@ bool ExamPopUpController::isActivatingExamMode() {
 }
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
-  m_cancelButton(Button(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
+  m_cancelButton(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     Container * container = (Container *)controller->app()->container();
     container->activeApp()->dismissModalViewController();
-  }, parentResponder), KDText::FontSize::Small)),
-  m_okButton(Button(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
+  }, parentResponder), KDText::FontSize::Small),
+  m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Desactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
@@ -60,11 +60,11 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     }
     container->refreshPreferences();
     container->activeApp()->dismissModalViewController();
-  }, parentResponder), KDText::FontSize::Small)),
-  m_warningTextView(MessageTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack)),
-  m_messageTextView1(MessageTextView(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)),
-  m_messageTextView2(MessageTextView(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)),
-  m_messageTextView3(MessageTextView(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack))
+  }, parentResponder), KDText::FontSize::Small),
+  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView1(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView2(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView3(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 

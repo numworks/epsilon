@@ -3,7 +3,7 @@
 
 MessageTableCellWithBuffer::MessageTableCellWithBuffer(I18n::Message message, KDText::FontSize fontSize, KDText::FontSize accessoryFontSize, KDColor accessoryTextColor) :
   MessageTableCell(message, fontSize),
-  m_accessoryView(BufferTextView(accessoryFontSize, 1.0f, 0.5f, accessoryTextColor))
+  m_accessoryView(accessoryFontSize, 1.0f, 0.5f, accessoryTextColor)
 {
 }
 

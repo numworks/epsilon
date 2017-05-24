@@ -179,7 +179,7 @@ ButtonRowDelegate * ButtonRowController::ContentView::buttonRowDelegate() const 
 
 ButtonRowController::ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style) :
   ViewController(parentResponder),
-  m_contentView(ContentView(mainViewController, delegate, position, style))
+  m_contentView(mainViewController, delegate, position, style)
 {
 }
 

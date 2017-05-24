@@ -25,8 +25,8 @@ public:
 private:
   LogoController * m_logoController;
   UpdateController * m_updateController;
-  MessageTableCell m_cells[I18n::NumberOfLanguages];
   SelectableTableView m_selectableTableView;
+  MessageTableCell m_cells[I18n::NumberOfLanguages];
 };
 
 }

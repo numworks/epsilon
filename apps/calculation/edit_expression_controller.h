@@ -19,6 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   const char * textBody();
   void setTextBody(const char * text);
+bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
 private:

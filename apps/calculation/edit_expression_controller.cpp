@@ -80,6 +80,18 @@ void EditExpressionController::didBecomeFirstResponder() {
   app()->setFirstResponder(((ContentView *)view())->textField());
 }
 
+bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+  if (textField->textFieldShouldFinishEditing(event) && textField->isEditing() && strlen(textField->text()) == 0 && m_calculationStore->numberOfCalculations() > 0) {
+    App * calculationApp = (App *)app();
+    const char * lastTextBody = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1)->inputText();
+    m_calculationStore->push(lastTextBody, calculationApp->localContext());
+    m_historyController->reload();
+    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+    return true;
+  }
+  return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
+}
+
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
   App * calculationApp = (App *)app();
   m_calculationStore->push(textBody(), calculationApp->localContext());

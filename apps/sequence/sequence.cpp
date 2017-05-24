@@ -83,13 +83,11 @@ Sequence& Sequence::operator=(const Sequence& other) {
 }
 
 uint32_t Sequence::checksum() {
-  size_t dataLengthInBytes = 3*TextField::maxBufferSize()*sizeof(char);
-  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  char data[3*TextField::maxBufferSize()] = {};
+  char data[k_dataLengthInBytes/sizeof(char)] = {};
   strlcpy(data, text(), TextField::maxBufferSize());
   strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), TextField::maxBufferSize());
   strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), TextField::maxBufferSize());
-  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes>>2);
 }
 
 const char * Sequence::firstInitialConditionText() {
@@ -296,7 +294,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         subContext.setValueForSequenceRank(un, name(), 0);
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
-        un = m_expression->approximate(subContext);
+        un = expression()->approximate(subContext);
       }
       m_buffer[0] = un;
       m_indexBuffer[0] = n;
@@ -328,7 +326,7 @@ float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
         Poincare::Complex e = Poincare::Complex::Float(i);
         subContext.setExpressionForSymbolName(&e, &nSymbol);
         un = un1;
-        un1 = m_expression->approximate(subContext);
+        un1 = expression()->approximate(subContext);
       }
       m_buffer[0] = un;
       m_indexBuffer[0] = n-1;

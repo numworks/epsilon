@@ -27,11 +27,9 @@ Function& Function::operator=(const Function& other) {
 }
 
 uint32_t Function::checksum() {
-  size_t dataLengthInBytes = TextField::maxBufferSize()*sizeof(char);
-  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  char data[TextField::maxBufferSize()] = {};
+  char data[k_dataLengthInBytes/sizeof(char)] = {};
   strlcpy(data, m_text, TextField::maxBufferSize());
-  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes>>2);
 }
 
 void Function::setContent(const char * c) {

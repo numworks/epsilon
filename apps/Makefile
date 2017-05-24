@@ -36,6 +36,8 @@ app_objs += $(addprefix apps/,\
   variable_box_leaf_cell.o\
 )
 
+apps/apps_container.o: SFLAGS += -DON_BOARDING=$(ON_BOARDING)
+
 app_images += apps/exam_icon.png
 
 # Tracking which source file uses which image is painful. But we need to ensure

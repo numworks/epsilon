@@ -11,6 +11,14 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
 {
 }
 
+void EditableTextCell::setTextFieldDelegate(TextFieldDelegate * delegate) {
+  m_textField.setDelegate(delegate);
+}
+
+void EditableTextCell::setTextFieldDraftTextBuffer(char * draftTextBuffer) {
+  m_textField.setDraftTextBuffer(draftTextBuffer);
+}
+
 TextField * EditableTextCell::textField() {
   return &m_textField;
 }

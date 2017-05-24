@@ -8,9 +8,11 @@ LanguageController::LanguageController(Responder * parentResponder, LogoControll
   ViewController(parentResponder),
   m_logoController(logoController),
   m_updateController(updateController),
-  m_cells{MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large), MessageTableCell(I18n::Message::Default, KDText::FontSize::Large)},
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this))
+  m_selectableTableView(this, this, 0, 1, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
 {
+  for (int i = 0; i < I18n::NumberOfLanguages; i++) {
+    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+  }
 }
 
 View * LanguageController::view() {

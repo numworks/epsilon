@@ -19,6 +19,10 @@ View::~View() {
   }
 }
 
+void View::resetSuperview() {
+  m_superview = nullptr;
+}
+
 void View::drawRect(KDContext * ctx, KDRect rect) const {
   // By default, a view doesn't do anything
   // It's transparent!

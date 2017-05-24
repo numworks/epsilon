@@ -11,7 +11,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_cursor(cursor),
-  m_cursorView(CursorView()),
+  m_cursorView(),
   m_modelVersion(modelVersion),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, interactiveRange),

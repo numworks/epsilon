@@ -68,7 +68,7 @@ const char * StackViewController::ControllerView::className() const {
 StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController,
     bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
-  m_view(ControllerView(displayFirstStackHeader)),
+  m_view(displayFirstStackHeader),
   m_numberOfChildren(0),
   m_isVisible(false)
 {

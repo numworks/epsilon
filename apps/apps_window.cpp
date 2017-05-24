@@ -5,7 +5,7 @@ extern "C" {
 
 AppsWindow::AppsWindow() :
   Window(),
-  m_titleBarView(TitleBarView()),
+  m_titleBarView(),
   m_hideTitleBarView(false)
 {
 }

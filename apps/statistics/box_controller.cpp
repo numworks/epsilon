@@ -10,8 +10,8 @@ namespace Statistics {
 BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_boxBannerView(BoxBannerView()),
-  m_view(BoxView(store, &m_boxBannerView, selectedQuantile)),
+  m_boxBannerView(),
+  m_view(store, &m_boxBannerView, selectedQuantile),
   m_store(store)
 {
 }

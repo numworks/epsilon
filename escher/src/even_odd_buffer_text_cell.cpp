@@ -3,7 +3,7 @@
 
 EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
-  m_bufferTextView(BufferTextView(size, horizontalAlignment, verticalAlignment))
+  m_bufferTextView(size, horizontalAlignment, verticalAlignment)
 {
 }
 

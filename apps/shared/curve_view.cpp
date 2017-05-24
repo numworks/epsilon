@@ -17,6 +17,7 @@ CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveVie
   m_bannerView(bannerView),
   m_cursorView(cursorView),
   m_okView(okView),
+  m_mainViewSelected(false),
   m_drawnRangeVersion(0)
 {
 }

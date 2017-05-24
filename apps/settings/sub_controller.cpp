@@ -11,12 +11,15 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_cells{MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark), MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark),
-    MessageTableCellWithBuffer(I18n::Message::Default, KDText::FontSize::Large, KDText::FontSize::Small, Palette::GreyDark)},
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_nodeModel(nullptr)
 {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+    m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);
+    m_cells[i].setAccessoryTextColor(Palette::GreyDark);
+  }
   const char text[6] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
   m_complexFormatLayout[0] = new StringLayout(text, 6);
   const char base[3] = {'r', Ion::Charset::Exponential, 0};

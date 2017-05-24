@@ -14,12 +14,12 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_interval(interval),
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
-  m_abscissaParameterController(ValuesParameterController(this, intervalParameterController, parameterTitle)),
-  m_setIntervalButton(Button(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
+  m_abscissaParameterController(this, intervalParameterController, parameterTitle),
+  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
-  }, this), KDText::FontSize::Small))
+  }, this), KDText::FontSize::Small)
 {
 }
 

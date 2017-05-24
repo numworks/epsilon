@@ -151,6 +151,12 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   }
 }
 
+void AppsContainer::run() {
+  switchTo(onBoardingAppSnapshot());
+  Container::run();
+  switchTo(nullptr);
+}
+
 bool AppsContainer::updateBatteryState() {
   if (m_window.updateBatteryLevel() ||
       m_window.updateIsChargingState() ||

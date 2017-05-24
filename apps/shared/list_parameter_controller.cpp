@@ -5,14 +5,14 @@ namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
   ViewController(parentResponder),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_functionStore(functionStore),
 #if FUNCTION_COLOR_CHOICE
-  m_colorCell(MessageTableCellWithChevron(functionColorMessage)),
+  m_colorCell(functionColorMessage),
 #endif
-  m_enableCell(MessageTableCellWithSwitch(I18n::Message::ActivateDesactivate)),
-  m_deleteCell(MessageTableCell(deleteFunctionMessage))
+  m_enableCell(I18n::Message::ActivateDesactivate),
+  m_deleteCell(deleteFunctionMessage)
 {
 }
 

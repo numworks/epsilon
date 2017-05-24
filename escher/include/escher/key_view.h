@@ -13,7 +13,8 @@ public:
     Plus,
     Minus
   };
-  KeyView(Type type);
+  KeyView(Type type = Type::Up);
+  void setType(Type type);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static KDCoordinate k_keySize = 8;

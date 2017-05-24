@@ -21,6 +21,10 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
   assert(m_textBufferSize <= k_maxBufferSize);
 }
 
+void TextField::ContentView::setDraftTextBuffer(char * draftTextBuffer) {
+  m_draftTextBuffer = draftTextBuffer;
+}
+
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor bckCol = m_backgroundColor;
   if (m_isEditing) {
@@ -209,6 +213,14 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
 {
 }
 
+void TextField::setDelegate(TextFieldDelegate * delegate) {
+  m_delegate = delegate;
+}
+
+void TextField::setDraftTextBuffer(char * draftTextBuffer) {
+  m_contentView.setDraftTextBuffer(draftTextBuffer);
+}
+
 Toolbox * TextField::toolbox() {
   if (m_delegate) {
     return m_delegate->toolboxForTextField(this);
@@ -275,10 +287,6 @@ bool TextField::insertTextAtLocation(const char * text, int location) {
 
 KDSize TextField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, m_contentView.textHeight());
-}
-
-void TextField::setTextFieldDelegate(TextFieldDelegate * delegate) {
-  m_delegate = delegate;
 }
 
 bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {

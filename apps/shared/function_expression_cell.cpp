@@ -7,7 +7,7 @@ namespace Shared {
 
 FunctionExpressionCell::FunctionExpressionCell() :
   EvenOddCell(),
-  m_expressionView(ExpressionView())
+  m_expressionView()
 {
 }
 

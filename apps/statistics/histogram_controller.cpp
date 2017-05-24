@@ -13,13 +13,13 @@ namespace Statistics {
 HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_bannerView(HistogramBannerView()),
-  m_view(HistogramView(store, &m_bannerView)),
-  m_settingButton(Button(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
+  m_bannerView(),
+  m_view(store, &m_bannerView),
+  m_settingButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
-  }, this))),
+  }, this)),
   m_store(store),
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),

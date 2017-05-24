@@ -5,7 +5,7 @@ namespace Shared {
 
 NewFunctionCell::NewFunctionCell(I18n::Message text) :
   EvenOddCell(),
-  m_messageTextView(MessageTextView(KDText::FontSize::Large, text, 0.5f, 0.5f))
+  m_messageTextView(KDText::FontSize::Large, text, 0.5f, 0.5f)
 {
 }
 

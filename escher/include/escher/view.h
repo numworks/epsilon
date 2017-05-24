@@ -30,6 +30,7 @@ public:
   View(View&& other) = delete;
   View& operator=(const View& other) = delete;
   View& operator=(View&& other) = delete;
+  void resetSuperview();
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
    * Kandinsky library using the provided context. */

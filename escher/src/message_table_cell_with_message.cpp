@@ -3,7 +3,7 @@
 
 MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
   MessageTableCell(message, KDText::FontSize::Small, layout),
-  m_accessoryView(MessageTextView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f))
+  m_accessoryView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f)
 {
   if (layout != Layout::Vertical) {
     m_accessoryView.setAlignment(1.0f, 0.5f);

@@ -13,14 +13,17 @@ using namespace Shared;
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
-  m_titleView(MessageTextView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen)),
-  m_lawCurveView(LawCurveView(law, calculation)),
-  m_imageTableView(ImageTableView(parentResponder, calculation, calculationController)),
-  m_calculationCell{EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer),
-    EditableTextCell(parentResponder, calculationController, m_draftTextBuffer)},
+  m_titleView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_lawCurveView(law, calculation),
+  m_imageTableView(parentResponder, calculation, calculationController),
+  m_draftTextBuffer{},
   m_calculation(calculation)
 {
+  for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
+    m_calculationCell[i].setParentResponder(parentResponder);
+    m_calculationCell[i].setTextFieldDelegate(calculationController);
+    m_calculationCell[i].setTextFieldDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
@@ -127,7 +130,7 @@ EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(in
 CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_calculation(calculation),
-  m_contentView(ContentView(this, this, m_calculation, law)),
+  m_contentView(this, this, m_calculation, law),
   m_law(law),
   m_highlightedSubviewIndex(1)
 {

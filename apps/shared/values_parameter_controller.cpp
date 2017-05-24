@@ -6,13 +6,13 @@ namespace Shared {
 ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
   ViewController(parentResponder),
   m_pageTitle(title),
-  m_deleteColumn(MessageTableCell(I18n::Message::Default)),
+  m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
-  m_copyColumn(MessageTableCellWithChevron(I18n::Message::Default)),
+  m_copyColumn(I18n::Message::Default),
 #endif
-  m_setInterval(MessageTableCellWithChevron(I18n::Message::Default)),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_setInterval(I18n::Message::Default),
+  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_intervalParameterController(intervalParameterController)
 {
 }

@@ -8,8 +8,10 @@
 
 class EditableTextCell : public HighlightCell, public Responder {
 public:
-  EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size = KDText::FontSize::Large,
+  EditableTextCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr, KDText::FontSize size = KDText::FontSize::Large,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+  void setTextFieldDelegate(TextFieldDelegate * delegate);
+  void setTextFieldDraftTextBuffer(char * draftTextBuffer);
   TextField * textField();
   void setHighlighted(bool highlight) override;
   const char * text() const;

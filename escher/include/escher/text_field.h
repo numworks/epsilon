@@ -11,6 +11,8 @@ public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
     float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+  void setDelegate(TextFieldDelegate * delegate);
+  void setDraftTextBuffer(char * draftTextBuffer);
   Toolbox * toolbox() override;
   bool isEditing() const;
   const char * text() const;
@@ -28,7 +30,6 @@ public:
    * the maximum buffer capacity) and false is returned. */
   bool insertTextAtLocation(const char * text, int location);
   KDSize minimalSizeForOptimalDisplay() const override;
-  void setTextFieldDelegate(TextFieldDelegate * delegate);
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Ion::Events::Event event);
   constexpr static int maxBufferSize() {
@@ -39,6 +40,7 @@ protected:
   public:
     ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f,
     float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+    void setDraftTextBuffer(char * draftTextBuffer);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reload();
     bool isEditing() const;

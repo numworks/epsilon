@@ -5,13 +5,13 @@ namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
-  m_deleteColumn(MessageTableCell(I18n::Message::ClearColumn)),
+  m_deleteColumn(I18n::Message::ClearColumn),
 #if COPY_IMPORT_LIST
-  m_copyColumn(MessageTableCellWithChevron(I18n::Message::CopyColumnInList)),
-  m_importList(MessageTableCellWithChevron(I18n::Message::ImportList)),
+  m_copyColumn(I18n::Message::CopyColumnInList),
+  m_importList(I18n::Message::ImportList),
 #endif
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this)),
+  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_store(store),
   m_xColumnSelected(true)
 {

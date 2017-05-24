@@ -60,7 +60,7 @@ TextField * InputViewController::TextFieldController::textField() {
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_textFieldController(TextFieldController(this, this)),
+  m_textFieldController(this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_textFieldDelegate(textFieldDelegate)

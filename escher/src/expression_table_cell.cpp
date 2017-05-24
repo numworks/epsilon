@@ -4,7 +4,7 @@
 
 ExpressionTableCell::ExpressionTableCell(Layout layout) :
   TableCell(layout),
-  m_labelExpressionView(ExpressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite))
+  m_labelExpressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
 }
 

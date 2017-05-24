@@ -72,6 +72,11 @@ KeyView::KeyView(Type type) :
 {
 }
 
+void KeyView::setType(Type type) {
+  m_type = type;
+  markRectAsDirty(bounds());
+}
+
 KDColor s_keyWorkingBuffer[KeyView::k_keySize*KeyView::k_keySize];
 
 void KeyView::drawRect(KDContext * ctx, KDRect rect) const {

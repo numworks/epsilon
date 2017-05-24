@@ -5,7 +5,7 @@ using namespace Poincare;
 EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   EvenOddCell(),
-  m_expressionView(ExpressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor))
+  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
 }
 

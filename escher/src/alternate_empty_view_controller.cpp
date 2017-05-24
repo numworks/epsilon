@@ -45,7 +45,7 @@ AlternateEmptyViewDelegate * AlternateEmptyViewController::ContentView::alternat
 
 AlternateEmptyViewController::AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
   ViewController(parentResponder),
-  m_contentView(ContentView(mainViewController, delegate))
+  m_contentView(mainViewController, delegate)
 {
 }
 

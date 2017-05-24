@@ -6,7 +6,7 @@ namespace Shared {
 
 ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ViewController(parentResponder),
-  m_contentView(ContentView(curveView)),
+  m_contentView(curveView),
   m_interactiveRange(interactiveRange)
 {
 }
@@ -92,14 +92,20 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 
 /* Legend View */
 
-ZoomParameterController::ContentView::LegendView::LegendView() :
-  m_legends{MessageTextView(KDText::FontSize::Small, I18n::Message::Move, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::ToZoom, 1.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-    MessageTextView(KDText::FontSize::Small, I18n::Message::Or, 0.5f, 0.5f, KDColorBlack, Palette::GreyBright)},
-  m_legendPictograms{KeyView(KeyView::Type::Up), KeyView(KeyView::Type::Down),
-    KeyView(KeyView::Type::Left), KeyView(KeyView::Type::Right),
-    KeyView(KeyView::Type::Plus), KeyView(KeyView::Type::Minus)}
+ZoomParameterController::ContentView::LegendView::LegendView()
 {
+  I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
+  float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
+  for (int i = 0; i < k_numberOfLegends; i++) {
+    m_legends[i].setFontSize(KDText::FontSize::Small);
+    m_legends[i].setMessage(messages[i]);
+    m_legends[i].setBackgroundColor(Palette::GreyBright);
+    m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);
+  }
+  KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
+  for (int i = 0; i < k_numberOfTokens ; i++) {
+    m_legendPictograms[i].setType(tokenTypes[i]);
+  }
 }
 
 void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {

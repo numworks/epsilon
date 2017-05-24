@@ -12,7 +12,7 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(SelectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false))
+  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
 {
 }
 
@@ -243,7 +243,7 @@ void VariableBoxController::ContentViewController::resetPage() {
 
 VariableBoxController::VariableBoxController(Context * context) :
   StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_contentViewController(ContentViewController(this, context))
+  m_contentViewController(this, context)
 {
 }
 

@@ -41,7 +41,7 @@ void Controller::ContentView::layoutSubviews() {
 Controller::Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource) :
   ViewController(parentResponder),
   m_container(container),
-  m_view(ContentView(this, selectionDataSource)),
+  m_view(this, selectionDataSource),
   m_selectionDataSource(selectionDataSource)
 {
 }

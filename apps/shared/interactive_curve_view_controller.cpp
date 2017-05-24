@@ -148,13 +148,15 @@ void InteractiveCurveViewController::viewWillAppear() {
     }
   }
   curveView()->setOkView(&m_okView);
-}
-
-void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);
     header()->setSelectedButton(-1);
   }
+  reloadBannerView();
+  curveView()->reload();
+}
+
+void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
   reloadBannerView();
   curveView()->reload();
 }

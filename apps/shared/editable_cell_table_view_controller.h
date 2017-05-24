@@ -19,9 +19,8 @@ public:
   int numberOfRows() override;
   void willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Poincare::Expression::FloatDisplayMode FloatDisplayMode);
   KDCoordinate rowHeight(int j) override;
-
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
 private:
   TextFieldDelegateApp * textFieldDelegateApp() override;
   static constexpr KDCoordinate k_cellHeight = 20;

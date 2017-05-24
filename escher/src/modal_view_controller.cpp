@@ -82,6 +82,7 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
 void ModalViewController::ContentView::dismissModalView() {
   m_isDisplayingModal = false;
   markRectAsDirty(frame());
+  m_currentModalView->resetSuperview();
   m_currentModalView = nullptr;
   layoutSubviews();
 }

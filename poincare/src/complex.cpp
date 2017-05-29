@@ -146,6 +146,7 @@ Complex * Complex::createConjugate() {
 
 int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, FloatDisplayMode mode) {
+  assert(numberOfSignificantDigits > 0);
   if (mode == FloatDisplayMode::Default) {
     return convertFloatToText(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
   }
@@ -160,7 +161,9 @@ int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
     requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, FloatDisplayMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits - requiredLength + bufferSize - 1, FloatDisplayMode::Scientific);
+    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - requiredLength + bufferSize - 1;
+    adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, FloatDisplayMode::Scientific);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
   strlcpy(buffer, tempBuffer, bufferSize);
@@ -229,6 +232,7 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
 
 int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode) {
   assert(mode != FloatDisplayMode::Default);
+  assert(numberOfSignificantDigits > 0);
   if (isinf(f)) {
     int currentChar = 0;
     if (f < 0) {

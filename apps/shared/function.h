@@ -32,7 +32,7 @@ public:
 protected:
   mutable Poincare::Expression * m_expression;
 private:
-  constexpr static size_t k_dataLengthInBytes = TextField::maxBufferSize()*sizeof(char);
+  constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize()+2)*sizeof(char)+2;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   virtual char symbol() const = 0;
   char m_text[TextField::maxBufferSize()];

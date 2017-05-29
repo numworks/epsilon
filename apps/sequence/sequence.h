@@ -43,7 +43,7 @@ public:
 private:
   constexpr static int k_maxRecurrentRank = 10000;
   constexpr static float k_maxNumberOfTermsInSum = 100000.0f;
-  constexpr static size_t k_dataLengthInBytes = 3*TextField::maxBufferSize()*sizeof(char)+2;
+  constexpr static size_t k_dataLengthInBytes = 3*TextField::maxBufferSize()*sizeof(char);
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The sequence data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   char symbol() const override;
   Type m_type;

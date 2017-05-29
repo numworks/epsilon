@@ -64,7 +64,12 @@ protected:
     KDCoordinate charWidth();
     void deleteCharPrecedingCursor();
     View * subviewAtIndex(int index) override;
-    constexpr static int k_maxBufferSize = 50;
+    /* In some app (ie Calculation), text fields record expression results whose
+     * lengths can reach 70 (ie
+     * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
+     * In order to be able to record those output text, k_maxBufferSize must be
+     * over 70. */
+    constexpr static int k_maxBufferSize = 100;
   private:
     int numberOfSubviews() const override;
     void layoutSubviews() override;

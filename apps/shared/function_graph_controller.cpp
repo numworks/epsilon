@@ -131,6 +131,7 @@ void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
+  assert(m_indexFunctionSelectedByCursor < functionStore()->numberOfActiveFunctions());
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[0] = f->name()[0];
   numberOfChar += Complex::convertFloatToText(m_cursor->y(), buffer+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -143,6 +144,7 @@ void FunctionGraphController::reloadBannerView() {
 void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
   initCursorParameters();
+  m_indexFunctionSelectedByCursor = 0;
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {

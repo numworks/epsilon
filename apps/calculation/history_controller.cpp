@@ -77,6 +77,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Clear) {
+    selectableTableView()->deselectTable();
     m_calculationStore->deleteAll();
     reload();
     app()->setFirstResponder(parentResponder());

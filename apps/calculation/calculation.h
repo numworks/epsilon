@@ -10,9 +10,9 @@ class Calculation {
 public:
   Calculation();
   ~Calculation(); // Delete expression and layout, if needed
+  Calculation& operator=(const Calculation& other);
   Calculation(const Calculation& other) = delete;
   Calculation(Calculation&& other) = delete;
-  Calculation& operator=(const Calculation& other) = delete;
   Calculation& operator=(Calculation&& other) = delete;
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();

@@ -69,7 +69,7 @@ Expression * Multiplication::evaluateOnMatrices(Matrix * m, Matrix * n, Context&
       operands[i*n->numberOfColumns()+j] = new Complex(Complex::Cartesian(a, b));
     }
   }
-  Expression * matrix = new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), m->numberOfRows(), n->numberOfColumns(), false);
+  Expression * matrix = new Matrix(operands, m->numberOfRows() * n->numberOfColumns(), n->numberOfColumns(), m->numberOfRows(), false);
   free(operands);
   return matrix;
 }

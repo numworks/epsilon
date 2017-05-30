@@ -22,6 +22,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Plus ||
        event == Ion::Events::Minus ||
        event == Ion::Events::Power ||
+       event == Ion::Events::Square ||
        event == Ion::Events::Division)) {
     if (!isEditing()) {
       setEditing(true);

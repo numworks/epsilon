@@ -5,6 +5,8 @@ using namespace Poincare;
 namespace Calculation {
 
 Calculation::Calculation() :
+  m_inputText(""),
+  m_outputText(""),
   m_input(nullptr),
   m_inputLayout(nullptr),
   m_output(nullptr),

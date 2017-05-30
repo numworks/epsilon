@@ -8,7 +8,7 @@ $(symbols_file): $(tests)
 	@awk -f quiz/src/symbols.awk $(tests) > $@
 
 runner_objs += $(addprefix quiz/src/, runner.o symbols.o i18n.o)
-test_objs = $(subst .c,.o, $(subst .cpp,.o,$(tests)))
+test_objs += $(subst .c,.o, $(subst .cpp,.o,$(tests)))
 
 test.$(EXE): $(runner_objs) $(test_objs)
 

@@ -91,7 +91,7 @@ ExpressionLayout * Calculation::outputLayout(Context * context) {
 }
 
 bool Calculation::isEmpty() {
-  if (strlen(m_inputText) == 0) {
+  if (strlen(m_outputText) == 0) {
     return true;
   }
   return false;

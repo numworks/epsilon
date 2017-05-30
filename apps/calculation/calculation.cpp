@@ -51,7 +51,7 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context) {
   reset();
   strlcpy(m_inputText, c, sizeof(m_inputText));
-  output(context)->writeTextInBuffer(m_outputText, sizeof(m_outputText));
+  input()->evaluate(*context)->writeTextInBuffer(m_outputText, sizeof(m_outputText));
 }
 
 const char * Calculation::inputText() {
@@ -77,8 +77,15 @@ ExpressionLayout * Calculation::inputLayout() {
 }
 
 Expression * Calculation::output(Context * context) {
-  if (m_output == nullptr && input() != nullptr) {
-    m_output = input()->evaluate(*context);
+  if (m_output == nullptr) {
+    /* To ensure that the expression 'm_output' is a matrix or a complex, we
+     * call 'evaluate'. */
+    Expression * exp = Expression::parse(m_outputText);
+    if (exp != nullptr) {
+      m_output = exp->evaluate(*context);
+    } else {
+      m_output = new Complex(Complex::Float(NAN));
+    }
   }
   return m_output;
 }

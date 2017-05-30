@@ -27,7 +27,7 @@ public:
   void tidy();
 private:
   char m_inputText[::TextField::maxBufferSize()];
-  char m_outputText[::TextField::maxBufferSize()];
+  char m_outputText[2*::TextField::maxBufferSize()];
   Poincare::Expression * m_input;
   Poincare::ExpressionLayout * m_inputLayout;
   Poincare::Expression * m_output;

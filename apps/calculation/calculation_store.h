@@ -5,8 +5,6 @@
 
 namespace Calculation {
 
-// TODO: make tests for the ring buffer
-
 class CalculationStore {
 public:
   CalculationStore();
@@ -16,8 +14,8 @@ public:
   void deleteAll();
   int numberOfCalculations();
   void tidy();
-private:
   static constexpr int k_maxNumberOfCalculations = 10;
+private:
   int m_startIndex;
   Calculation m_calculations[k_maxNumberOfCalculations];
 };

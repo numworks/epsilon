@@ -1,5 +1,6 @@
 extern "C" {
 #include <assert.h>
+#include <stdlib.h>
 #include <math.h>
 }
 #include <poincare/power.h>
@@ -71,10 +72,40 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
  if (m->numberOfColumns() != m->numberOfRows()) {
     return new Complex(Complex::Float(NAN));
   }
-  // TODO: return identity matrix if i == 0
-  int power = c->approximate(context, angleUnit);
+  float power = c->approximate(context, angleUnit);
+  if (isnan(power) || isinf(power) || power != (int)power) {
+    return new Complex(Complex::Float(NAN));
+  }
+  if (power == 0.0f) {
+    /* Build the identity matrix with the same dimensions as m */
+    Expression ** operands = (Expression **)malloc(m->numberOfOperands()*sizeof(Expression *));
+    for (int i = 0; i < m->numberOfRows(); i++) {
+      for (int j = 0; j < m->numberOfColumns(); j++) {
+        if (i == j) {
+          operands[i*m->numberOfColumns()+j] = new Complex(Complex::Float(1.0f));
+        } else {
+          operands[i*m->numberOfColumns()+j] = new Complex(Complex::Float(0.0f));
+        }
+      }
+    }
+    Expression * matrix = new Matrix(new MatrixData(operands, m->numberOfOperands(), m->numberOfColumns(), m->numberOfRows(), false));
+    free(operands);
+    return matrix;
+  }
+  if (power < 0.0f) {
+    Expression * inverse = m->createInverse(context, angleUnit);
+    Expression * operands[2];
+    operands[0] = inverse;
+    operands[1] = new Complex(Complex::Float(-power));;
+    Expression * power = new Power(operands, true);
+    delete operands[0];
+    delete operands[1];
+    Expression * result = power->evaluate(context, angleUnit);
+    delete power;
+    return result;
+  }
   Expression * result = new Complex(Complex::Float(1.0f));
-  for (int k = 0; k < power; k++) {
+  for (int k = 0; k < (int)power; k++) {
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m;

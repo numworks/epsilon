@@ -7,8 +7,8 @@ namespace Shared {
 GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   FloatParameterController(parentResponder),
   m_cursor(cursor),
-  m_abscisseCell(nullptr),
   m_graphRange(graphRange),
+  m_abscisseCell(nullptr),
   m_abscissaSymbol(symbol)
 {
 }
@@ -27,8 +27,6 @@ int GoToParameterController::reusableParameterCellCount(int type) {
 }
 
 void GoToParameterController::buttonAction() {
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();
   stack->pop();

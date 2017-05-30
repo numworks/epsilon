@@ -65,6 +65,8 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   } else {
     m_cursor->moveTo(x, f);
   }
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
+  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   return true;
 }
 

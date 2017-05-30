@@ -96,17 +96,15 @@ void InteractiveCurveViewRange::zoom(float ratio) {
   float newXMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
   float newXMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
   if (!isnan(newXMin) && !isnan(newXMax)) {
-    m_xMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
     m_xMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    MemoizedCurveViewRange::setXMin(clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false));
   }
   m_yAuto = false;
   float newYMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
   float newYMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
   if (!isnan(newYMin) && !isnan(newYMax)) {
-    m_yMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
     m_yMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    MemoizedCurveViewRange::setYMin(clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false));
   }
 }
 
@@ -115,12 +113,10 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
   if (clipped(m_xMin + x, false) != m_xMin + x || clipped(m_xMax + x, true) != m_xMax + x || clipped(m_yMin + y, false) != m_yMin + y || clipped(m_yMax + y, true) != m_yMax + y || isnan(clipped(m_xMin + x, false)) || isnan(clipped(m_xMax + x, true)) || isnan(clipped(m_yMin + y, false)) || isnan(clipped(m_yMax + y, true))) {
     return;
   }
-  m_xMin = clipped(m_xMin + x, false);
   m_xMax = clipped(m_xMax + x, true);
-  m_yMin = clipped(m_yMin + y, false);
+  MemoizedCurveViewRange::setXMin(clipped(m_xMin + x, false));
   m_yMax = clipped(m_yMax + y, true);
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  MemoizedCurveViewRange::setYMin(clipped(m_yMin + y, false));
 }
 
 void InteractiveCurveViewRange::roundAbscissa() {
@@ -131,9 +127,8 @@ void InteractiveCurveViewRange::roundAbscissa() {
   if (isnan(newXMin) || isnan(newXMax)) {
     return;
   }
-  m_xMin = newXMin;
   m_xMax = newXMax;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  MemoizedCurveViewRange::setXMin(newXMin);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
@@ -147,38 +142,33 @@ void InteractiveCurveViewRange::normalize() {
   float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
   float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
   if (!isnan(newXMin) && !isnan(newXMax)) {
-    m_xMin = newXMin;
     m_xMax = newXMax;
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    MemoizedCurveViewRange::setXMin(newXMin);
   }
   m_yAuto = false;
   float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
   float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
   if (!isnan(newYMin) && !isnan(newYMax)) {
-    m_yMin = newYMin;
     m_yMax = newYMax;
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    MemoizedCurveViewRange::setYMin(newYMin);
   }
 }
 
 void InteractiveCurveViewRange::setTrigonometric() {
-  m_xMin = -10.5f;
   m_xMax = 10.5f;
+  MemoizedCurveViewRange::setXMin(-10.5f);
   if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Degree) {
-    m_xMin = -600;
-    m_xMax = 600;
+    m_xMax = 600.0f;
+    MemoizedCurveViewRange::setXMin(-600.0f);
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   m_yAuto = false;
-  m_yMin = -1.6f;
   m_yMax = 1.6f;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  MemoizedCurveViewRange::setYMin(-1.6f);
 }
 
 void InteractiveCurveViewRange::setDefault() {
-  m_xMin = -10.0f;
   m_xMax = 10.0f;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  MemoizedCurveViewRange::setXMin(-10.0f);
   setYAuto(true);
 }
 
@@ -188,15 +178,13 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
   if (axis == Axis::X) {
     float range = m_xMax - m_xMin;
-    m_xMin = clipped(position - range/2.0f, false);
     m_xMax = clipped(position + range/2.0f, true);
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    MemoizedCurveViewRange::setXMin(clipped(position - range/2.0f, false));
   } else {
     m_yAuto = false;
     float range = m_yMax - m_yMin;
-    m_yMin = clipped(position - range/2.0f, false);
     m_yMax = clipped(position + range/2.0f, true);
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    MemoizedCurveViewRange::setYMin(clipped(position - range/2.0f, false));
   }
 }
 
@@ -204,27 +192,25 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
   if (x < m_xMin + leftMarginRation*xRange && !isinf(x) && !isnan(x)) {
-    m_xMin = clipped(x - leftMarginRation*xRange, false);
-    m_xMax = clipped(m_xMin + xRange, true);
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    float newXMin = clipped(x - leftMarginRation*xRange, false);
+    m_xMax = clipped(newXMin + xRange, true);
+    MemoizedCurveViewRange::setXMin(newXMin);
     m_yAuto = false;
   }
   if (x > m_xMax - rightMarginRatio*xRange && !isinf(x) && !isnan(x)) {
     m_xMax = clipped(x + rightMarginRatio*xRange, true);
-    m_xMin = clipped(m_xMax - xRange, false);
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    MemoizedCurveViewRange::setXMin(clipped(m_xMax - xRange, false));
     m_yAuto = false;
   }
   if (y < m_yMin + bottomMarginRation*yRange && !isinf(y) && !isnan(y)) {
-    m_yMin = clipped(y - bottomMarginRation*yRange, false);
-    m_yMax = clipped(m_yMin + yRange, true);
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    float newYMin = clipped(y - bottomMarginRation*yRange, false);
+    m_yMax = clipped(newYMin + yRange, true);
+    MemoizedCurveViewRange::setYMin(newYMin);
     m_yAuto = false;
   }
   if (y > m_yMax - topMarginRatio*yRange && !isinf(y) && !isnan(y)) {
     m_yMax = clipped(y + topMarginRatio*yRange, true);
-    m_yMin = clipped(m_yMax - yRange, false);
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    MemoizedCurveViewRange::setYMin(clipped(m_yMax - yRange, false));
     m_yAuto = false;
   }
 }

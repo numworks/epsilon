@@ -57,9 +57,11 @@ const char * EditExpressionController::textBody() {
   return ((ContentView *)view())->textField()->text();
 }
 
-void EditExpressionController::setTextBody(const char * text) {
-  ((ContentView *)view())->textField()->setEditing(true);
-  ((ContentView *)view())->textField()->setText(text);
+void EditExpressionController::insertTextBody(const char * text) {
+  TextField * tf = ((ContentView *)view())->textField();
+  tf->setEditing(true, false);
+  tf->insertTextAtLocation(text, tf->cursorLocation());
+  tf->setCursorLocation(tf->cursorLocation() + strlen(text));
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {

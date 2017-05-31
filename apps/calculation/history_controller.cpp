@@ -45,9 +45,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(editController);
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
     if (subviewType == HistoryViewCell::SubviewType::Input) {
-      editController->setTextBody(calculation->inputText());
+      editController->insertTextBody(calculation->inputText());
     } else {
-      editController->setTextBody(calculation->outputText());
+      editController->insertTextBody(calculation->outputText());
     }
     return true;
   }

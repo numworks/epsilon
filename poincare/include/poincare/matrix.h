@@ -33,6 +33,7 @@ public:
   float determinant(Context& context, AngleUnit angleUnit) const;
   Expression * createInverse(Context& context, AngleUnit angleUnit) const;
   Expression * createTranspose(Context& context, AngleUnit angleUnit) const;
+  static Expression * createIdentity(int dim);
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;

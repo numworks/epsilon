@@ -5,23 +5,23 @@ using namespace Poincare;
 namespace Calculation {
 
 CalculationStore::CalculationStore() :
-  m_start(m_calculations)
+  m_startIndex(0)
 {
 }
 
 Calculation * CalculationStore::push(const char * text, Context * context) {
-  Calculation * result = m_start;
-  m_start->setContent(text, context);
-  m_start++;
-  if (m_start >= m_calculations + k_maxNumberOfCalculations) {
-    m_start = m_calculations;
+  Calculation * result = &m_calculations[m_startIndex];
+  result->setContent(text, context);
+  m_startIndex++;
+  if (m_startIndex >= k_maxNumberOfCalculations) {
+    m_startIndex = 0;
   }
   return result;
 }
 
 Calculation * CalculationStore::calculationAtIndex(int i) {
   int j = 0;
-  Calculation * currentCalc = m_start;
+  Calculation * currentCalc = &m_calculations[m_startIndex];
   Calculation * previousCalc = nullptr;
   while (j <= i) {
     if (!currentCalc++->isEmpty()) {
@@ -47,17 +47,39 @@ int CalculationStore::numberOfCalculations() {
 }
 
 void CalculationStore::deleteCalculationAtIndex(int i) {
-  calculationAtIndex(i)->reset();
+  int numberOfCalc = numberOfCalculations();
+  assert(i >= 0 && i < numberOfCalc);
+  int indexFirstCalc = m_startIndex;
+  while (m_calculations[indexFirstCalc].isEmpty()) {
+    indexFirstCalc++;
+    if (indexFirstCalc == k_maxNumberOfCalculations) {
+      indexFirstCalc = 0;
+    }
+    assert(indexFirstCalc != m_startIndex);
+  }
+  int absoluteIndexCalculationI = indexFirstCalc+i;
+  absoluteIndexCalculationI = absoluteIndexCalculationI >= k_maxNumberOfCalculations ? absoluteIndexCalculationI - k_maxNumberOfCalculations : absoluteIndexCalculationI;
+
+  int index = absoluteIndexCalculationI;
+  for (int k = i; k < numberOfCalc-1; k++) {
+    int nextIndex = index+1 >= k_maxNumberOfCalculations ? 0 : index+1;
+    m_calculations[index] = m_calculations[nextIndex];
+    index++;
+    if (index == k_maxNumberOfCalculations) {
+      index = 0;
+    }
+  }
+  m_calculations[index].reset();
+  m_startIndex--;
+  if (m_startIndex == -1) {
+    m_startIndex = k_maxNumberOfCalculations-1;
+  }
 }
 
 void CalculationStore::deleteAll() {
-  m_start = m_calculations;
-  Calculation * currentCalc= m_start;
-  while (currentCalc < m_calculations + k_maxNumberOfCalculations) {
-    if (!currentCalc->isEmpty()) {
-      currentCalc->reset();
-    }
-    currentCalc++;
+  m_startIndex = 0;
+  for (int i = 0; i < k_maxNumberOfCalculations; i++) {
+    m_calculations[i].reset();
   }
 }
 

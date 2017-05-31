@@ -31,6 +31,15 @@ Calculation::~Calculation() {
   }
 }
 
+Calculation& Calculation::operator=(const Calculation& other) {
+  const char * otherInputText = other.m_inputText;
+  const char * otherOutputText = other.m_outputText;
+  reset();
+  strlcpy(m_inputText, otherInputText, sizeof(m_inputText));
+  strlcpy(m_outputText, otherOutputText, sizeof(m_outputText));
+  return *this;
+}
+
 void Calculation::reset() {
   m_inputText[0] = 0;
   m_outputText[0] = 0;

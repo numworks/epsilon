@@ -11,7 +11,7 @@ public:
   View * view() override;
   int activeTab() const;
   void setSelectedTab(int8_t index);
-  void setActiveTab(int8_t index, bool forceReactive = false);
+  void setActiveTab(int8_t index);
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);

@@ -98,31 +98,27 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Down) {
-    setActiveTab(m_dataSource->activeTab(), false);
+    setActiveTab(m_dataSource->activeTab());
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    setActiveTab(m_dataSource->selectedTab(), true);
+    setActiveTab(m_dataSource->selectedTab());
     return true;
   }
   return false;
 }
 
-void TabViewController::setActiveTab(int8_t i, bool forceReactive) {
+void TabViewController::setActiveTab(int8_t i) {
   assert(i >= 0 && i < m_numberOfChildren);
   ViewController * activeVC = m_children[i];
-  if (i  != m_dataSource->activeTab() || forceReactive) {
-    if (i != m_dataSource->activeTab()) {
-      m_view.setActiveView(activeVC->view());
-      m_children[i]->viewWillAppear();
-    }
+  if (i != m_dataSource->activeTab()) {
+    m_view.setActiveView(activeVC->view());
+    m_children[i]->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
   app()->setFirstResponder(activeVC);
-  if (i  != m_dataSource->activeTab() || forceReactive) {
-      if (m_dataSource->activeTab() >= 0 && m_dataSource->activeTab() != i) {
-      m_children[m_dataSource->activeTab()]->viewDidDisappear();
-    }
+  if (i  != m_dataSource->activeTab()) {
+    m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
 }

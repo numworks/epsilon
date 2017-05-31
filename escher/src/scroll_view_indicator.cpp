@@ -43,18 +43,26 @@ float ScrollViewIndicator::start() const {
   return m_start;
 }
 
-void ScrollViewIndicator::setStart(float start) {
+bool ScrollViewIndicator::setStart(float start) {
+  if (m_start != start) {
   m_start = start;
   markRectAsDirty(bounds());
+  return true;
+  }
+  return false;
 }
 
 float ScrollViewIndicator::end() const {
   return m_end;
 }
 
-void ScrollViewIndicator::setEnd(float end) {
+bool ScrollViewIndicator::setEnd(float end) {
+  if (m_end != end) {
   m_end = end;
   markRectAsDirty(bounds());
+  return true;
+  }
+  return false;
 }
 
 #if ESCHER_VIEW_LOGGING

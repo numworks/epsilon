@@ -31,8 +31,8 @@ public:
   Responder * defaultController() override;
 
   void viewWillAppear() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual BannerView * bannerView() = 0;

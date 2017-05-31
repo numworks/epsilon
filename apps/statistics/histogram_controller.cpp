@@ -128,7 +128,7 @@ Responder * HistogramController::defaultController() {
   return tabController();
 }
 
-void HistogramController::didEnterResponderChain(Responder * previousFirstResponder) {
+void HistogramController::viewWillAppear() {
   if (!m_view.isMainViewSelected()) {
     m_view.selectMainView(true);
     header()->setSelectedButton(-1);

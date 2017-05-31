@@ -29,6 +29,8 @@ Function& Function::operator=(const Function& other) {
 uint32_t Function::checksum() {
   char data[k_dataLengthInBytes/sizeof(char)] = {};
   strlcpy(data, m_text, TextField::maxBufferSize());
+  data[k_dataLengthInBytes-2] = m_name != nullptr ? m_name[0] : 0;
+  data[k_dataLengthInBytes-1] = m_active ? 1 : 0;
   return Ion::crc32((uint32_t *)data, k_dataLengthInBytes>>2);
 }
 

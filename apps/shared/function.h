@@ -29,12 +29,11 @@ public:
   void setColor(KDColor m_color);
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const;
   virtual void tidy();
-protected:
-  mutable Poincare::Expression * m_expression;
 private:
   constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize()+2)*sizeof(char)+2;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   virtual char symbol() const = 0;
+  mutable Poincare::Expression * m_expression;
   char m_text[TextField::maxBufferSize()];
   const char * m_name;
   KDColor m_color;

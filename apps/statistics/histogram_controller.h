@@ -27,7 +27,7 @@ public:
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   Responder * defaultController() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;

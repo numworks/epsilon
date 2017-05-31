@@ -318,4 +318,20 @@ Expression * Matrix::createTranspose(Context& context, AngleUnit angleUnit) cons
   return matrix;
 }
 
+Expression * Matrix::createIdentity(int dim) {
+  Expression ** operands = (Expression **)malloc(dim*dim*sizeof(Expression *));
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      if (i == j) {
+        operands[i*dim+j] = new Complex(Complex::Float(1.0f));
+      } else {
+        operands[i*dim+j] = new Complex(Complex::Float(0.0f));
+      }
+    }
+  }
+  Expression * matrix = new Matrix(new MatrixData(operands, dim*dim, dim, dim, false));
+  free(operands);
+  return matrix;
+}
+
 }

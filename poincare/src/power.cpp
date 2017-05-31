@@ -78,28 +78,14 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
   }
   if (power == 0.0f) {
     /* Build the identity matrix with the same dimensions as m */
-    Expression ** operands = (Expression **)malloc(m->numberOfOperands()*sizeof(Expression *));
-    for (int i = 0; i < m->numberOfRows(); i++) {
-      for (int j = 0; j < m->numberOfColumns(); j++) {
-        if (i == j) {
-          operands[i*m->numberOfColumns()+j] = new Complex(Complex::Float(1.0f));
-        } else {
-          operands[i*m->numberOfColumns()+j] = new Complex(Complex::Float(0.0f));
-        }
-      }
-    }
-    Expression * matrix = new Matrix(new MatrixData(operands, m->numberOfOperands(), m->numberOfColumns(), m->numberOfRows(), false));
-    free(operands);
-    return matrix;
+    return Matrix::createIdentity(m->numberOfRows());
   }
   if (power < 0.0f) {
     Expression * inverse = m->createInverse(context, angleUnit);
     Expression * operands[2];
     operands[0] = inverse;
     operands[1] = new Complex(Complex::Float(-power));;
-    Expression * power = new Power(operands, true);
-    delete operands[0];
-    delete operands[1];
+    Expression * power = new Power(operands, false);
     Expression * result = power->evaluate(context, angleUnit);
     delete power;
     return result;

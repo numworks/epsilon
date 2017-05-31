@@ -222,7 +222,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste)
+  if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
       && selectedColumn() == 1
       && (selectedRow() != numberOfRows() - 1
         || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {

@@ -48,6 +48,9 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
     }
   }
   if (event == Ion::Events::Var) {
+    if (!textField->isEditing()) {
+      textField->setEditing(true);
+    }
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
     variableBoxController->setTextFieldCaller(textField);

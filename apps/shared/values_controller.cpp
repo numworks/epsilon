@@ -56,6 +56,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
       (selectedRow() < numberOfRows()-1 || m_interval->numberOfElements() == Interval::k_maxNumberOfElements)) {
     m_interval->deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
+    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

@@ -111,6 +111,12 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
     // Let's scroll the tableView to put that cell on the bottom (while keeping the bottom margin)
     contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y+1)+2*m_verticalCellOverlapping - m_tableView->maxContentHeightDisplayableWithoutScrolling();
   }
+  if (m_tableView->maxContentHeightDisplayableWithoutScrolling() > height()-contentOffsetY) {
+    contentOffsetY = height() > m_tableView->maxContentHeightDisplayableWithoutScrolling() ? height()-m_tableView->maxContentHeightDisplayableWithoutScrolling() : 0;
+  }
+  if (m_tableView->maxContentWidthDisplayableWithoutScrolling() > width()-contentOffsetX) {
+    contentOffsetX = width() > m_tableView->maxContentWidthDisplayableWithoutScrolling() ? width()-m_tableView->maxContentWidthDisplayableWithoutScrolling() : 0;
+  }
   m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 

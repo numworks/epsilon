@@ -43,28 +43,27 @@ float ScrollViewIndicator::start() const {
   return m_start;
 }
 
-bool ScrollViewIndicator::setStart(float start) {
+void ScrollViewIndicator::setStart(float start) {
   if (m_start != start) {
-  m_start = start;
-  markRectAsDirty(bounds());
-  return true;
+    m_start = start;
+    markRectAsDirty(bounds());
   }
-  return false;
 }
 
 float ScrollViewIndicator::end() const {
   return m_end;
 }
 
-bool ScrollViewIndicator::setEnd(float end) {
+void ScrollViewIndicator::setEnd(float end) {
   if (m_end != end) {
-  m_end = end;
-  markRectAsDirty(bounds());
-  return true;
+    m_end = end;
+    markRectAsDirty(bounds());
   }
-  return false;
 }
 
+KDRect ScrollViewIndicator::frame() {
+  return m_frame;
+}
 #if ESCHER_VIEW_LOGGING
 const char * ScrollViewIndicator::className() const {
   return "ScrollViewIndicator";

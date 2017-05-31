@@ -13,9 +13,10 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   float start() const;
-  bool setStart(float start);
+  void setStart(float start);
   float end() const;
-  bool setEnd(float end);
+  void setEnd(float end);
+  KDRect frame();
 protected:
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;

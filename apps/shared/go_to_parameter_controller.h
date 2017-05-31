@@ -15,6 +15,7 @@ public:
 protected:
   constexpr static float k_maxDisplayableFloat = 1E8f;
   CurveViewCursor * m_cursor;
+  InteractiveCurveViewRange * m_graphRange;
 private:
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
@@ -23,7 +24,6 @@ private:
   void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_abscisseCell;
-  InteractiveCurveViewRange * m_graphRange;
   I18n::Message m_abscissaSymbol;
 };
 

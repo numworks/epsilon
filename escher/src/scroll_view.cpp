@@ -119,13 +119,19 @@ void ScrollView::updateScrollIndicator() {
     float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
     float verticalStart = contentOffset().y();
     float verticalEnd = contentOffset().y() + m_frame.height();
-    m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-    m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
+    bool verticalUpdateStart = m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
+    bool verticalUpdateEnd = m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
+    if (verticalUpdateStart || verticalUpdateEnd) {
+      markRectAsDirty(KDRect(m_frame.width() - m_indicatorThickness, 0, m_indicatorThickness, m_frame.height()));
+    }
     float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
     float horizontalStart = contentOffset().x();
     float horizontalEnd = contentOffset().x() + m_frame.width();
-    m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-    m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
+    bool horizontalUpdateStart = m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
+    bool horizontalUpdateEnd = m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
+    if (horizontalUpdateStart || horizontalUpdateEnd) {
+      markRectAsDirty(KDRect(0, m_frame.height() - m_indicatorThickness, m_frame.width() - m_indicatorThickness, m_indicatorThickness));
+    }
   }
 }
 

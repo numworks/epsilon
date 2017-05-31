@@ -98,6 +98,12 @@ ExpressionLayout * Calculation::outputLayout(Context * context) {
 }
 
 bool Calculation::isEmpty() {
+  /* To test if a calculation is empty, we need to test either m_inputText or
+   * m_outputText, the only two fields that are not lazy-loaded. We choose
+   * m_outputText to consider that a calculation being added is still empty
+   * until the end of the method 'setContent'. Indeed, during 'setContent'
+   * method, 'ans' evaluation calls the evaluation of the last calculation
+   * only if the calculation being filled is not taken into account.*/
   if (strlen(m_outputText) == 0) {
     return true;
   }

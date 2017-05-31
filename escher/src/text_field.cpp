@@ -296,6 +296,11 @@ bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   if (Responder::handleEvent(event)) {
+    /* The only event Responder handles is 'Toolbox' displaying. In that case,
+     * the text field is forced into editing mode. */
+    if (!isEditing()) {
+      setEditing(true);
+    }
     return true;
   }
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {

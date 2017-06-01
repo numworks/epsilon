@@ -1,5 +1,4 @@
 #include "screen_test_controller.h"
-#include "../apps_container.h"
 extern "C" {
 #include <assert.h>
 }
@@ -9,7 +8,8 @@ namespace HardwareTest {
 ScreenTestController::ScreenTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_patternIndex(0),
-  m_view()
+  m_view(),
+  m_ledTestController(this)
 {
 }
 
@@ -18,9 +18,12 @@ View * ScreenTestController::view() {
 }
 
 bool ScreenTestController::handleEvent(Ion::Events::Event event) {
+  if (event != Ion::Events::OK) {
+    return true;
+  }
   if (m_patternIndex == Pattern::numberOfPatterns()) {
-    AppsContainer * container = (AppsContainer *)app()->container();
-    container->switchTo(container->appSnapshotAtIndex(0));
+    ModalViewController * modal = (ModalViewController *)parentResponder();
+    modal->displayModalViewController(&m_ledTestController, 0.0f, 0.0f);
   } else {
     showNextPattern();
   }

@@ -2,6 +2,7 @@
 #define HARDWARE_TEST_SCREEN_TEST_CONTROLLER_H
 
 #include <escher.h>
+#include "led_test_controller.h"
 #include "pattern_view.h"
 #include "pattern.h"
 
@@ -17,6 +18,7 @@ private:
   void showNextPattern();
   int m_patternIndex;
   PatternView m_view;
+  LEDTestController m_ledTestController;
 };
 
 }

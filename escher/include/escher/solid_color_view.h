@@ -6,6 +6,7 @@
 class SolidColorView : public View {
 public:
   SolidColorView(KDColor color);
+  virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
 #if ESCHER_VIEW_LOGGING

@@ -36,12 +36,18 @@ void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, in
 }
 
 void ValuesParameterController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  if (selectedRow() < 0) {
+    selectCellAtLocation(0, 0);
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+#if COPY_COLUMN
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 2)) {
+#else
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
+#endif
     switch (selectedRow()) {
       case 0:
       {

@@ -58,8 +58,11 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
+      if (event == Ion::Events::Right) {
+        return false;
+      }
       GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
       m_selectableTableView.reloadData();
       return true;

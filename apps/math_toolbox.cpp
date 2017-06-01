@@ -236,15 +236,21 @@ TextField * MathToolbox::sender() {
 }
 
 bool MathToolbox::handleEventForRow(Ion::Events::Event event, int selectedRow) {
-  if (event == Ion::Events::Back) {
+  int depth = m_stack.depth();
+  if (event == Ion::Events::Back && depth == 0) {
+    m_selectableTableView.deselectTable();
+    app()->dismissModalViewController();
+    return true;
+  }
+  if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    ToolboxNode * selectedNode = (ToolboxNode *)m_nodeModel->children(selectedRow);
-    if (selectedNode->numberOfChildren() == 0) {
-      return selectLeaf(selectedNode);
-    }
+  ToolboxNode * selectedNode = (ToolboxNode *)m_nodeModel->children(selectedRow);
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedNode->numberOfChildren() > 0) {
     return selectSubMenu(selectedNode);
+  }
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedNode->numberOfChildren() == 0) {
+    return selectLeaf(selectedNode);
   }
   return false;
 }
@@ -277,10 +283,6 @@ bool MathToolbox::selectLeaf(ToolboxNode * selectedNode){
 bool MathToolbox::returnToPreviousMenu() {
   m_selectableTableView.deselectTable();
   int depth = m_stack.depth();
-  if (depth == 0) {
-    app()->dismissModalViewController();
-    return true;
-  }
   int index = 0;
   ToolboxNode * parentNode = (ToolboxNode *)rootModel();
   Stack::State * previousState = m_stack.stateAtIndex(index++);;

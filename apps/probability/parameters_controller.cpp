@@ -81,6 +81,13 @@ const char * ParametersController::title() {
   return I18n::translate(m_law->title());
 }
 
+bool ParametersController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackController()->pop();
+    return true;
+  }
+  return false;
+}
 void ParametersController::reinitCalculation() {
   m_calculationController->setCalculationAccordingToIndex(0, true);
 }

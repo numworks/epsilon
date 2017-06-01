@@ -101,6 +101,10 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     stack->pop();
     return true;
   }
+  if (event == Ion::Events::Left) {
+    stackController()->pop();
+    return true;
+  }
   return false;
 }
 

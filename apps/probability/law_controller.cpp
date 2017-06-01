@@ -84,7 +84,7 @@ void Probability::LawController::didBecomeFirstResponder() {
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     setLawAccordingToIndex(selectedRow());
     stack->push(m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);

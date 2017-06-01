@@ -14,8 +14,8 @@ public:
   constexpr static KDCoordinate ModalBottomMargin = 18;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
-  constexpr static KDCoordinate PopUpLeftMargin = 40;
-  constexpr static KDCoordinate PopUpRightMargin = 40;
+  constexpr static KDCoordinate PopUpLeftMargin = 32;
+  constexpr static KDCoordinate PopUpRightMargin = 32;
   constexpr static KDCoordinate ExamPopUpTopMargin = 27;
   constexpr static KDCoordinate ExamPopUpBottomMargin = 55;
   constexpr static KDCoordinate PopUpTopMargin = 50;

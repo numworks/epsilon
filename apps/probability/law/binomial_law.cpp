@@ -41,7 +41,7 @@ I18n::Message BinomialLaw::parameterDefinitionAtIndex(int index) {
 
 float BinomialLaw::xMin() {
   float min = 0.0f;
-  float max = m_parameter1;
+  float max = m_parameter1 > 0.0f ? m_parameter1 : 1.0f;
   return min - k_displayLeftMarginRatio * (max - min);
 }
 

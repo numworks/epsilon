@@ -92,10 +92,10 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %nonassoc STO
 %left PLUS
 %left MINUS
+%right UNARY_MINUS
 %left MULTIPLY
 %left DIVIDE
 %left IMPLICIT_MULTIPLY
-%right UNARY_MINUS
 %right POW
 %left BANG
 %nonassoc LEFT_PARENTHESIS

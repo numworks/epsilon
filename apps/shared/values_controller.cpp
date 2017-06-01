@@ -8,12 +8,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval, uint32_t * modelVersion) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
+  m_numberOfColumns(0),
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
+  m_modelVersion(modelVersion),
   m_abscissaParameterController(this, intervalParameterController, parameterTitle),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
@@ -25,6 +27,10 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 
 const char * ValuesController::title() {
   return I18n::translate(I18n::Message::ValuesTab);
+}
+
+int ValuesController::numberOfColumns() {
+  return m_numberOfColumns;
 }
 
 Interval * ValuesController::interval() {
@@ -228,6 +234,11 @@ Responder * ValuesController::defaultController() {
 }
 
 void ValuesController::viewWillAppear() {
+  uint32_t newModelVersion = functionStore()->storeChecksum();
+  if (*m_modelVersion != newModelVersion) {
+    *m_modelVersion = newModelVersion;
+    updateNumberOfColumns();
+  }
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
 }
@@ -311,6 +322,10 @@ void ValuesController::unloadView(View * view) {
     m_abscissaCells[i] = nullptr;
   }
   EditableCellTableViewController::unloadView(view);
+}
+
+void ValuesController::updateNumberOfColumns() {
+  m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 
 }

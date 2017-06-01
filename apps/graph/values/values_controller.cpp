@@ -7,8 +7,8 @@ using namespace Poincare;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval),
+ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, uint32_t * modelVersion, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval, modelVersion),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),
@@ -16,6 +16,7 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
   m_intervalParameterController(this, m_interval),
   m_derivativeParameterController(this)
 {
+  updateNumberOfColumns();
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -25,16 +26,6 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return Shared::ValuesController::handleEvent(event);
-}
-
-int ValuesController::numberOfColumns() {
-  int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
-    }
-  }
-  return result;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -179,6 +170,16 @@ void ValuesController::unloadView(View * view) {
     m_functionTitleCells[i] = nullptr;
   }
   Shared::ValuesController::unloadView(view);
+}
+
+void ValuesController::updateNumberOfColumns() {
+  int result = 1;
+  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+    if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
+      result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
+    }
+  }
+  m_numberOfColumns = result;
 }
 
 }

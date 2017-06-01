@@ -32,16 +32,16 @@ void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
 }
 
 bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
 #if MATRIX_LIST_VARIABLES
-    if (m_currentPage == Page::RootMenu) {
+  if (event == Ion::Events::Back && m_currentPage == Page::RootMenu) {
 #else
-    if (m_currentPage == Page::Scalar) {
+  if (event == Ion::Events::Back && m_currentPage == Page::Scalar) {
 #endif
-      m_firstSelectedRow = 0;
-      app()->dismissModalViewController();
-      return true;
-    }
+    m_firstSelectedRow = 0;
+    app()->dismissModalViewController();
+    return true;
+  }
+  if (event == Ion::Events::Back || event == Ion::Events::Left) {
     m_firstSelectedRow = m_previousSelectedRow;
 #if MATRIX_LIST_VARIABLES
     m_currentPage = Page::RootMenu;
@@ -49,8 +49,8 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     app()->setFirstResponder(this);
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (m_currentPage == Page::RootMenu) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && m_currentPage == Page::RootMenu)) {
+   if (m_currentPage == Page::RootMenu) {
       m_previousSelectedRow = selectedRow();
       m_firstSelectedRow = 0;
       m_currentPage = pageAtIndex(selectedRow());

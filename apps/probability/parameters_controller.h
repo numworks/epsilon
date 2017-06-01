@@ -12,6 +12,7 @@ class ParametersController : public Shared::FloatParameterController {
 public:
   ParametersController(Responder * parentResponder, Law * m_law, CalculationController * calculationController);
   const char * title() override;
+  bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

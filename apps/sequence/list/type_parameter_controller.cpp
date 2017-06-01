@@ -67,6 +67,10 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     app()->dismissModalViewController();
     return true;
   }
+  if (event == Ion::Events::Left && m_sequence) {
+    stackController()->pop();
+    return true;
+  }
   return false;
 }
 

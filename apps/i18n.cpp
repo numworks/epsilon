@@ -250,7 +250,7 @@ const char * messages[222][3] {
   {"Activer le mode examen", "Activate exam mode", "Activar el modo examen"},
   {"Mode examen: actif", "Exam mode: active", "Modo examen: activo"},
   {"Toutes vos donnees seront ", "All your data will be ", "Todos sus datos se "},
-  {"supprimees si vous activez ", "deleted when you activate ", "eliminarán al activar "},
+  {"supprimees si vous activez ", "deleted when you activate ", "eliminaran al activar "},
   {"le mode examen.", "the exam mode.", "el modo examen."},
   {"Voulez-vous sortir ", "Exit the exam ", "Salir del modo "},
   {"du mode examen ?", "mode?", "examen ?"},
@@ -266,10 +266,10 @@ const char * messages[222][3] {
   {"Numero serie", "Serial number", "Numero serie"},
   {"Rappel mise a jour", "Update pop-up", "Pop-up de actualizacion"},
 
-  {"Vous allez lancer le test usine.", "You are starting the hardware", "Esta iniciando la prueba"},
-  {"Pour en sortir vous devrez", " test. At the end of the test, you", "de fabrica. Para quitar"},
-  {"effectuer un reset qui", "will have to reset the device and", "la prueba, debera resetear"},
-  {"supprimera vos donnees.", "all your data will be deleted.", "su equipo."},
+  {"Vous allez lancer le test usine.", "You are starting the hardware", "Esta iniciando la prueba de"},
+  {"Pour en sortir vous devrez", " test. At the end of the test, you", "fabrica. Para quitar la prueba,"},
+  {"effectuer un reset qui supprimera", "will have to reset the device and", "debera resetear su equipo."},
+  {"vos donnees.", "all your data will be deleted.", ""},
 
   /* On boarding */
   {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE"},

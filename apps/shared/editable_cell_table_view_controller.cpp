@@ -115,7 +115,15 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
 
 void EditableCellTableViewController::viewWillAppear() {
   TabTableController::viewWillAppear();
-  selectCellAtLocation(0,1);
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 1);
+  } else {
+    int selRow = selectedRow();
+    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
+    int selColumn = selectedColumn();
+    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selectCellAtLocation(selColumn, selRow);
+  }
 }
 
 TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {

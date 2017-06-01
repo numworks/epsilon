@@ -41,6 +41,7 @@ private:
   constexpr static float k_minFloat = 1E-8f;
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
+  constexpr static float k_maxRatioPositionRange = 1E5f;
   CurveViewCursor * m_cursor;
 };
 

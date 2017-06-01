@@ -84,7 +84,7 @@ Poincare::ExpressionLayout * Function::layout() {
 }
 
 bool Function::isDefined() {
-  return strlen(m_text) != 0;
+  return m_text[0] != 0;
 }
 
 bool Function::isActive() {
@@ -96,7 +96,7 @@ void Function::setActive(bool active) {
 }
 
 bool Function::isEmpty() {
-  return strlen(m_text) == 0;
+  return m_text[0] == 0;
 }
 
 float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {

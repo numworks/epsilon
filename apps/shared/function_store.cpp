@@ -12,9 +12,10 @@ Function * FunctionStore::activeFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
   for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (functionAtIndex(k)->isActive() && functionAtIndex(k)->isDefined()) {
+    Function * function = functionAtIndex(k);
+    if (function->isActive() && function->isDefined()) {
       if (i == index) {
-        return functionAtIndex(k);
+        return function;
       }
       index++;
     }
@@ -45,7 +46,8 @@ int FunctionStore::numberOfFunctions() {
 int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (functionAtIndex(i)->isDefined() && functionAtIndex(i)->isActive()) {
+    Function * function = functionAtIndex(i);
+    if (function->isDefined() && function->isActive()) {
       result++;
     }
   }

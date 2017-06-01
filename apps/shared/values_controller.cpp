@@ -165,13 +165,8 @@ KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
 int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   if (offsetX <= k_abscissaCellWidth) {
     return 0;
-  } else {
-    int index = 0;
-    while ((k_abscissaCellWidth+index*k_ordinateCellWidth) <= offsetX) {
-      index++;
-    }
-    return index;
   }
+  return (offsetX - k_abscissaCellWidth)/k_ordinateCellWidth+1;
 }
 
 HighlightCell * ValuesController::reusableCell(int index, int type) {

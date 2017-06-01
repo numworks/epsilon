@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDataSource {
+class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
   int numberOfColumns() override;
@@ -28,6 +28,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
   static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;

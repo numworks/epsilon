@@ -249,6 +249,12 @@ void ListController::willExitResponderChain(Responder * nextFirstResponder) {
   }
 }
 
+void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && selectedRow() == numberOfRows() - 1 && selectedColumn() == 0) {
+    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  }
+}
+
 StackViewController * ListController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
@@ -294,7 +300,7 @@ bool ListController::removeFunctionRow(Function * function) {
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, nullptr, false, true);
+  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, this, false, true);
 }
 
 void ListController::unloadView(View * view) {

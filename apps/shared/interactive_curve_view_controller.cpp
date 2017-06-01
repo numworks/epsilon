@@ -61,12 +61,14 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Plus) {
     interactiveCurveViewRange()->zoom(1.0f/3.0f);
+    initCursorParameters();
     reloadBannerView();
     curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
     interactiveCurveViewRange()->zoom(3.0f/4.0f);
+    initCursorParameters();
     reloadBannerView();
     curveView()->reload();
     return true;

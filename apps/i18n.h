@@ -238,6 +238,10 @@ namespace I18n {
     SoftwareVersion,
     SerialNumber,
     UpdatePopUp,
+    HardwareTestLaunch1,
+    HardwareTestLaunch2,
+    HardwareTestLaunch3,
+    HardwareTestLaunch4,
 
     /* On boarding */
     UpdateAvailable,

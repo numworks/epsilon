@@ -51,7 +51,12 @@ View * SubController::view() {
 }
 
 void SubController::didEnterResponderChain(Responder * previousResponder) {
-  selectCellAtLocation(0, valueIndexForPreference(m_nodeModel->label()));
+  if (previousResponder->commonAncestorWith(this) == parentResponder()) {
+    /* We want to select the prefered setting node only when the previous page
+     * was the main setting page. We do not to change the selection when
+     * dismissing a pop-up for instance. */
+    selectCellAtLocation(0, valueIndexForPreference(m_nodeModel->label()));
+  }
   if (m_nodeModel->label() == I18n::Message::ExamMode) {
     m_selectableTableView.reloadData();
   }
@@ -62,8 +67,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the serial number row. */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == I18n::Message::About && selectedRow() == 1) {
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
+    app()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

@@ -17,7 +17,7 @@ constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, '
 constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 
-const char * messages[218][3] {
+const char * messages[222][3] {
   {"Attention", "Warning", "Cuidado"},
   {"Valider", "Confirm", "Confirmar"},
   {"Annuler", "Cancel", "Cancelar"},
@@ -265,6 +265,11 @@ const char * messages[218][3] {
   {"Version du logiciel", "Software version", "Version de software"},
   {"Numero serie", "Serial number", "Numero serie"},
   {"Rappel mise a jour", "Update pop-up", "Pop-up de actualizacion"},
+
+  {"Vous allez lancer le test usine.", "You are starting the hardware", "Esta iniciando la prueba"},
+  {"Pour en sortir vous devrez", " test. At the end of the test, you", "de fabrica. Para quitar"},
+  {"effectuer un reset qui", "will have to reset the device and", "la prueba, debera resetear"},
+  {"supprimera vos donnees.", "all your data will be deleted.", "su equipo."},
 
   /* On boarding */
   {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE"},

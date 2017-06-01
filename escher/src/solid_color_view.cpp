@@ -6,6 +6,13 @@ SolidColorView::SolidColorView(KDColor color) :
 {
 }
 
+void SolidColorView::setColor(KDColor color) {
+  if (m_color != color) {
+    m_color = color;
+    markRectAsDirty(bounds());
+  }
+}
+
 void SolidColorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_color);
 }

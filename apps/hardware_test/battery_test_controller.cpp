@@ -27,6 +27,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
       modal->displayModalViewController(&m_resetController, 0.0f, 0.0f);
     }
   }
+  updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
   return true;
 }
 

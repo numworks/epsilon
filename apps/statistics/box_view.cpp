@@ -72,7 +72,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
    * lines. This solution could hide the highlighed line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::Select, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, 2);
   }
   if (isMainViewSelected()) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);

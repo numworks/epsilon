@@ -180,7 +180,7 @@ const char * messages[222][3] {
   /* Statistics: second tab */
   {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar"},
   {"Intervalle ", "Interval ", "Intervalo"},
-  {"Effectif", "Size", "Frecuencia"},
+  {"Effectif", "   Size   ", "Frecuencia"},
   {"Frequence", "Frequency", "Relativa"},
   {"Reglage de l'histogramme", "Histogram settings", "Parametros del histograma"},
   {"Largeur des rectangles", "Bin width", "Ancho del rectangulo"},

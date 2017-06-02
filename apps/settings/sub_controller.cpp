@@ -82,16 +82,16 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     }
     /* Behaviour of "About" menu */
     if (m_nodeModel->label() == I18n::Message::About) {
-      if (selectedRow() == 1) {
-        return false;
-      }
-      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
-        myCell->setAccessoryText(Ion::softwareVersion());
+      if (selectedRow() == 0) {
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
+          myCell->setAccessoryText(Ion::softwareVersion());
+          return true;
+        }
+        myCell->setAccessoryText(Ion::patchLevel());
         return true;
       }
-      myCell->setAccessoryText(Ion::patchLevel());
-      return true;
+      return false;
     }
     /* Generic behaviour of preference menu*/
     setPreferenceWithValueIndex(m_nodeModel->label(), selectedRow());
@@ -149,8 +149,19 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_nodeModel->label() == I18n::Message::About) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
-    if (index == 1) {
-      accessoryMessage = Ion::serialNumber();
+    switch (index) {
+      case 0:
+        accessoryMessage = Ion::softwareVersion();
+        break;
+      case 1:
+        accessoryMessage = Ion::serialNumber();
+        break;
+      case 2:
+        accessoryMessage = Ion::fccId();
+        break;
+      default:
+        assert(false);
+        break;
     }
     myCell->setAccessoryText(accessoryMessage);
   }

@@ -30,6 +30,7 @@ void usleep(long us);
 const char * serialNumber();
 const char * softwareVersion();
 const char * patchLevel();
+const char * fccId();
 
 /* CAUTION: This is a complete reset! */
 void reset();

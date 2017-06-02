@@ -15,10 +15,10 @@ const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Au
 const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
 const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::Spanish)};
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
-const SettingsNode aboutChildren[2] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber)};
+const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
 
 const SettingsNode menu[7] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::UpdatePopUp), SettingsNode(I18n::Message::About, aboutChildren, 2)};
+  SettingsNode(I18n::Message::Language, languageChildren, 3), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::UpdatePopUp), SettingsNode(I18n::Message::About, aboutChildren, 3)};
 const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
 
 MainController::MainController(Responder * parentResponder) :

@@ -292,6 +292,8 @@ namespace I18n {
     English,
     Spanish,
 
+    FccId,
+
     /* Toolbox: commands */
     AbsCommand,
     RootCommand,

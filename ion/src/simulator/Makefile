@@ -17,6 +17,7 @@ objs += $(addprefix ion/src/shared/, \
   random.o \
   dummy/backlight.o \
   dummy/battery.o \
+  dummy/fcc_id.o \
 )
 
 SFLAGS += `fltk-config --cflags`

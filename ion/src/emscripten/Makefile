@@ -11,6 +11,7 @@ objs += $(addprefix ion/src/shared/, \
   dummy/backlight.o \
   dummy/battery.o \
   dummy/events_modifier.o \
+  dummy/fcc_id.o \
   dummy/keyboard.o \
   dummy/led.o \
   dummy/serial_number.o \

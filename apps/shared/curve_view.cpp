@@ -208,7 +208,22 @@ const uint8_t dotMask[dotDiameter][dotDiameter] = {
   {0xE1, 0x45, 0x0C, 0x45, 0xE1},
 };
 
-void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color) const {
+constexpr KDCoordinate oversizeDotDiameter = 7;
+const uint8_t oversizeDotMask[oversizeDotDiameter][oversizeDotDiameter] = {
+  {0xE1, 0x45, 0x0C, 0x00, 0x0C, 0x45, 0xE1},
+  {0x45, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0x45},
+  {0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C},
+  {0x45, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0x45},
+  {0xE1, 0x45, 0x0C, 0x00, 0x0C, 0x45, 0xE1},
+
+};
+
+KDColor s_dotWorkingBuffer[dotDiameter*dotDiameter];
+KDColor s_oversizeDotWorkingBuffer[oversizeDotDiameter*oversizeDotDiameter];
+
+void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize) const {
   KDCoordinate px = roundf(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = roundf(floatToPixel(Axis::Vertical, y));
   if ((px + dotDiameter < rect.left() - k_externRectMargin || px - dotDiameter > rect.right() + k_externRectMargin) ||
@@ -216,8 +231,11 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
     return;
   }
   KDRect dotRect = KDRect(px - dotDiameter/2, py-dotDiameter/2, dotDiameter, dotDiameter);
-  KDColor workingBuffer[dotDiameter*dotDiameter];
-  ctx->blendRectWithMask(dotRect, color, (const uint8_t *)dotMask, workingBuffer);
+  ctx->blendRectWithMask(dotRect, color, (const uint8_t *)dotMask, s_dotWorkingBuffer);
+  if (oversize) {
+    KDRect oversizeDotRect = KDRect(px - oversizeDotDiameter/2, py-oversizeDotDiameter/2, oversizeDotDiameter, oversizeDotDiameter);
+    ctx->blendRectWithMask(oversizeDotRect, color, (const uint8_t *)oversizeDotMask, s_oversizeDotWorkingBuffer);
+  }
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {

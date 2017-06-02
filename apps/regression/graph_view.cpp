@@ -23,9 +23,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Vertical, true);
   drawCurve(ctx, rect, nullptr, Palette::YellowDark);
   for (int index = 0; index < m_store->numberOfPairs(); index++) {
-    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::YellowDark);
+    drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::Red);
   }
-  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::PurpleBright);
+  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::Red, true);
 }
 
 char * GraphView::label(Axis axis, int index) const {

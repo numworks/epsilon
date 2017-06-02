@@ -126,7 +126,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   if (!setParameterAtIndex(selectedRow(), floatBody)) {
     return false;
   }
-  willDisplayCellForIndex(selectableTableView()->selectedCell(), activeCell());
+  selectableTableView()->reloadCellAtLocation(0, activeCell());
   selectableTableView()->reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);

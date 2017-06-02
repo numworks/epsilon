@@ -64,7 +64,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         return false;
       }
       GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
-      willDisplayCellForIndex(m_selectableTableView.cellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()), m_selectableTableView.selectedRow());
+      m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
       return true;
     }
     m_subController.setNodeModel(m_nodeModel->children(selectedRow()));

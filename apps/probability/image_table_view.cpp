@@ -96,7 +96,7 @@ void ImageTableView::select(bool select) {
   if (!select) {
     m_selectableTableView.deselectTable();
     m_isSelected = select;
-    willDisplayCellForIndex(m_selectableTableView.cellAtLocation(0,0), 0);
+    m_selectableTableView.reloadCellAtLocation(0, 0);
   } else {
     m_isSelected = select;
     m_selectableTableView.selectCellAtLocation(0, (int)m_calculation->type());

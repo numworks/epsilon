@@ -54,6 +54,10 @@ void TableView::reloadData() {
   layoutSubviews();
 }
 
+void TableView::reloadCellAtLocation(int i, int j) {
+  m_contentView.reloadCellAtLocation(i, j);
+}
+
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping) :
@@ -118,6 +122,10 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
     contentOffsetX = width() > m_tableView->maxContentWidthDisplayableWithoutScrolling() ? width()-m_tableView->maxContentWidthDisplayableWithoutScrolling() : 0;
   }
   m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+}
+
+void TableView::ContentView::reloadCellAtLocation(int i, int j) {
+  m_dataSource->willDisplayCellAtLocation(cellAtLocation(i, j), i, j);
 }
 
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {

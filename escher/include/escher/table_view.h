@@ -17,6 +17,7 @@ public:
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
   void reloadData();
+  void reloadCellAtLocation(int i, int j);
   KDSize size() const;
 protected:
 #if ESCHER_VIEW_LOGGING
@@ -28,6 +29,7 @@ protected:
     ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping);
 
     void scrollToCell(int i, int j) const;
+    void reloadCellAtLocation(int i, int j);
     HighlightCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();

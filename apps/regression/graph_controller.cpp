@@ -91,7 +91,7 @@ void GraphController::reloadBannerView() {
   float x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
-    constexpr static char legX[] = {Ion::Charset::XBar, ' ', '=', ' ', 0};
+    constexpr static char legX[] = {Ion::Charset::XBar, '=', 0};
     legend = legX;
     x = m_store->meanOfColumn(0);
   }
@@ -109,7 +109,7 @@ void GraphController::reloadBannerView() {
   legend = " y=";
   float y = m_cursor->y();
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
-    constexpr static char legY[] = {Ion::Charset::YBar, ' ', '=', ' ', 0};
+    constexpr static char legY[] = {Ion::Charset::YBar, '=', 0};
     legend = legY;
     y = m_store->meanOfColumn(1);
   }
@@ -117,11 +117,38 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   numberOfChar += Complex::convertFloatToText(y, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "             ";
+  legend = "                ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 4);
+
+
+  numberOfChar = 0;
+  legend = " r=";
+  float r = m_store->correlationCoefficient();
+  legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(r, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "             ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  buffer[k_maxLegendLength] = 0;
+  m_bannerView.setLegendAtIndex(buffer, 5);
+
+  numberOfChar = 0;
+  legend = " r^2=";
+  float r2 = m_store->squaredCorrelationCoefficient();
+  legendLength = strlen(legend);
+  strlcpy(buffer, legend, legendLength+1);
+  numberOfChar += legendLength;
+  numberOfChar += Complex::convertFloatToText(r2, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  legend = "                ";
+  legendLength = strlen(legend);
+  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  buffer[k_maxLegendLength] = 0;
+  m_bannerView.setLegendAtIndex(buffer, 6);
 }
 
 void GraphController::initRangeParameters() {

@@ -18,6 +18,8 @@ private:
   BufferTextView m_yInterceptView;
   BufferTextView m_xView;
   BufferTextView m_yView;
+  BufferTextView m_rView;
+  BufferTextView m_r2View;
 };
 
 }

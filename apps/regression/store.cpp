@@ -235,12 +235,22 @@ float Store::xValueForYValue(float y) {
 }
 
 float Store::correlationCoefficient() {
-  return covariance()/(standardDeviationOfColumn(0)*standardDeviationOfColumn(1));
+  float sd0 = standardDeviationOfColumn(0);
+  float sd1 = standardDeviationOfColumn(1);
+  if (sd0 == 0.0f || sd1 == 0.0f) {
+    return 1.0f;
+  }
+  return covariance()/(sd0*sd1);
 }
 
 float Store::squaredCorrelationCoefficient() {
   float cov = covariance();
-  return cov*cov/(varianceOfColumn(0)*varianceOfColumn(1));
+  float v0 = varianceOfColumn(0);
+  float v1 = varianceOfColumn(1);
+  if (v0 == 0.0f || v1 == 0.0f) {
+    return 1.0f;
+  }
+  return cov*cov/(v0*v1);
 }
 
 }

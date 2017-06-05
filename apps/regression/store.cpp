@@ -33,9 +33,8 @@ bool Store::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange
   if (min == m_yMin && max == m_yMax) {
     return false;
   }
-  m_yMin = min;
-  m_yMax = max;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  setYMin(min);
+  setYMax(max);
   return true;
 }
 
@@ -137,23 +136,13 @@ void Store::setDefault() {
   float min = minValueOfColumn(0);
   float max = maxValueOfColumn(0);
   float range = max - min;
-  m_xMin = min - k_displayLeftMarginRatio*range;
-  m_xMax = max + k_displayRightMarginRatio*range;
+  InteractiveCurveViewRange::setXMin(min - k_displayLeftMarginRatio*range);
+  InteractiveCurveViewRange::setXMax(max + k_displayRightMarginRatio*range);
   min = minValueOfColumn(1);
   max = maxValueOfColumn(1);
   range = max - min;
-  m_yMin = min - k_displayBottomMarginRatio*range;
-  m_yMax = max + k_displayTopMarginRatio*range;
-  if (m_xMin == m_xMax) {;
-    m_xMin = m_xMin - 1.0f;
-    m_xMax = m_xMax + 1.0f;
-  }
-  if (m_yMin == m_yMax) {
-    m_yMin = m_yMin - 1.0f;
-    m_yMax = m_yMax + 1.0f;
-  }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  setYMin(min - k_displayBottomMarginRatio*range);
+  setYMax(max + k_displayTopMarginRatio*range);
 }
 
 /* Calculations */

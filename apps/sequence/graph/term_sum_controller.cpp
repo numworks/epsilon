@@ -37,6 +37,7 @@ View * TermSumController::view() {
 }
 
 void TermSumController::viewWillAppear() {
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   m_contentView.graphView()->setVerticalCursor(true);
   m_contentView.graphView()->setCursorView(&m_cursorView);
   m_contentView.graphView()->setBannerView(nullptr);

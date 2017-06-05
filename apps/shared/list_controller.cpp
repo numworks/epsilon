@@ -251,7 +251,7 @@ void ListController::willExitResponderChain(Responder * nextFirstResponder) {
 
 void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && selectedRow() == numberOfRows() - 1 && selectedColumn() == 0) {
-    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    t->selectCellAtLocation(1, numberOfRows()-1);
   }
 }
 

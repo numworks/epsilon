@@ -18,7 +18,7 @@ public:
   void viewWillAppear() override;
   bool didChangeRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 protected:
-  constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
+  constexpr static float k_cursorTopMarginRatio = 0.068f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
@@ -37,6 +37,7 @@ private:
   CurveView * curveView() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
+  bool isCursorVisible() override;
   virtual FunctionStore * functionStore() const = 0;
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;

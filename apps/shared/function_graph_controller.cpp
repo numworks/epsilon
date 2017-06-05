@@ -183,4 +183,8 @@ uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }
 
+bool FunctionGraphController::isCursorVisible() {
+  return interactiveCurveViewRange()->isCursorVisible(k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+}
+
 }

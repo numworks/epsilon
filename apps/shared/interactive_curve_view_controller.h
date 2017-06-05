@@ -40,7 +40,6 @@ protected:
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
   StackViewController * stackController() const;
-  void centerCursorVertically();
   virtual void reloadBannerView() = 0;
   virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;

@@ -140,7 +140,6 @@ void InteractiveCurveViewController::viewWillAppear() {
     /* Warning: init cursor parameter before reloading banner view. Indeed,
      * reloading banner view needs an updated cursor to load the right data. */
     initCursorParameters();
-    centerCursorVertically();
   }
   uint32_t newRangeVersion = rangeVersion();
   if (*m_rangeVersion != newRangeVersion) {
@@ -183,9 +182,4 @@ StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-void InteractiveCurveViewController::centerCursorVertically() {
-  if (!interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
-  }
-}
 }

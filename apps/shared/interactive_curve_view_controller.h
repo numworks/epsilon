@@ -31,6 +31,7 @@ public:
   Responder * defaultController() override;
 
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
@@ -52,6 +53,7 @@ protected:
   virtual uint32_t rangeVersion() = 0;
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
   virtual CurveView * curveView() = 0;
+  virtual bool isCursorVisible() = 0;
   CurveViewCursor * m_cursor;
   CursorView m_cursorView;
   OkView m_okView;

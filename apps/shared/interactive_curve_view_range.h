@@ -32,7 +32,7 @@ public:
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
-  bool isCursorVisible();
+  bool isCursorVisible(float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
 protected:
   bool m_yAuto;
   static float clipped(float f, bool isMax);

@@ -38,6 +38,7 @@ private:
   bool moveCursorVertically(int direction) override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
+  bool isCursorVisible() override;
   BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;

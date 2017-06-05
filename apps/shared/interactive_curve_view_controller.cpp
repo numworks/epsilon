@@ -145,7 +145,7 @@ void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newRangeVersion = rangeVersion();
   if (*m_rangeVersion != newRangeVersion) {
     *m_rangeVersion = newRangeVersion;
-    if (!interactiveCurveViewRange()->isCursorVisible()) {
+    if (!isCursorVisible()) {
       initCursorParameters();
     }
   }
@@ -156,6 +156,10 @@ void InteractiveCurveViewController::viewWillAppear() {
   }
   reloadBannerView();
   curveView()->reload();
+}
+
+void InteractiveCurveViewController::viewDidDisappear() {
+  *m_rangeVersion = rangeVersion();
 }
 
 void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {

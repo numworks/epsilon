@@ -178,7 +178,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
   if (axis == Axis::X) {
     float range = m_xMax - m_xMin;
-    if (fabsf(position/range) < 1.0f/k_maxRatioPositionRange || fabsf(position/range) > k_maxRatioPositionRange) {
+    if (fabsf(position/range) > k_maxRatioPositionRange) {
       range = powf(10.0f, floorf(log10f(fabsf(position)))-1.0f);
     }
     m_xMax = clipped(position + range/2.0f, true);
@@ -186,7 +186,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   } else {
     m_yAuto = false;
     float range = m_yMax - m_yMin;
-    if (fabsf(position/range) < 1.0f/k_maxRatioPositionRange || fabsf(position/range) > k_maxRatioPositionRange) {
+    if (fabsf(position/range) > k_maxRatioPositionRange) {
       range = powf(10.0f, floorf(log10f(fabsf(position)))-1.0f);
     }
     m_yMax = clipped(position + range/2.0f, true);

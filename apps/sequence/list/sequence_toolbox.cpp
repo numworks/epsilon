@@ -24,10 +24,11 @@ SequenceToolbox::~SequenceToolbox() {
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && stackDepth() == 0) {
-    if (selectedRow() < m_numberOfAddedCells) {
+  if (selectedRow() < m_numberOfAddedCells) {
+    if ((event == Ion::Events::OK || event == Ion::Events::EXE) && stackDepth() == 0) {
       return selectAddedCell(selectedRow());
     }
+    return false;
   }
   return MathToolbox::handleEventForRow(event, mathToolboxIndex(selectedRow()));
 }

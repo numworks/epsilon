@@ -182,13 +182,13 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
   if (complexFormat == ComplexFormat::Polar) {
     if (r() != 1.0f || th() == 0.0f) {
       numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
-      if ((r() != 0.0f && th() != 0.0f) && bufferSize > numberOfChars+1) {
+      if (r() != 0.0f && th() != 0.0f && !isnan(th()) && bufferSize > numberOfChars+1) {
         buffer[numberOfChars++] = '*';
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
     }
-    if (r() != 0.0f && th() != 0.0f) {
+    if (r() != 0.0f && th() != 0.0f && !isnan(th())) {
       if (bufferSize > numberOfChars+3) {
         buffer[numberOfChars++] = Ion::Charset::Exponential;
         buffer[numberOfChars++] = '^';
@@ -209,20 +209,20 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
 
   if (m_a != 0.0f || m_b == 0.0f) {
     numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
-    if (m_b > 0.0f && bufferSize > numberOfChars+1) {
+    if (m_b > 0.0f && !isnan(m_b) && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
       buffer[numberOfChars] = 0;
     }
   }
-  if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f) {
+  if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f && !isnan(m_b)) {
     numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = '*';
   }
   if (m_b == -1.0f && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = '-';
   }
-  if (m_b != 0.0f && bufferSize > numberOfChars+1) {
+  if (m_b != 0.0f && !isnan(m_b) && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = Ion::Charset::IComplex;
     buffer[numberOfChars] = 0;
   }
@@ -241,18 +241,19 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     buffer[currentChar++] = 'i';
     buffer[currentChar++] = 'n';
     buffer[currentChar++] = 'f';
-    buffer[currentChar++] = 0;
+    buffer[currentChar] = 0;
     return currentChar;
   }
 
   if (isnan(f)) {
-    buffer[0] = 'u';
-    buffer[1] = 'n';
-    buffer[2] = 'd';
-    buffer[3] = 'e';
-    buffer[4] = 'f';
-    buffer[5] = 0;
-    return 6;
+    int currentChar = 0;
+    buffer[currentChar++] = 'u';
+    buffer[currentChar++] = 'n';
+    buffer[currentChar++] = 'd';
+    buffer[currentChar++] = 'e';
+    buffer[currentChar++] = 'f';
+    buffer[currentChar] = 0;
+    return currentChar;
   }
 
   float logBase10 = f != 0.0f ? log10f(fabsf(f)) : 0;

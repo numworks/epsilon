@@ -32,7 +32,7 @@ void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
 }
 
 bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
-#if MATRIX_LIST_VARIABLES
+#if MATRIX_VARIABLES
   if (event == Ion::Events::Back && m_currentPage == Page::RootMenu) {
 #else
   if (event == Ion::Events::Back && m_currentPage == Page::Scalar) {
@@ -43,17 +43,19 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   }
   if (event == Ion::Events::Back || event == Ion::Events::Left) {
     m_firstSelectedRow = m_previousSelectedRow;
-#if MATRIX_LIST_VARIABLES
+#if MATRIX_VARIABLES
+    m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;
 #endif
     app()->setFirstResponder(this);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && m_currentPage == Page::RootMenu)) {
-   if (m_currentPage == Page::RootMenu) {
+  if (m_currentPage == Page::RootMenu) {
       m_previousSelectedRow = selectedRow();
       m_firstSelectedRow = 0;
-      m_currentPage = pageAtIndex(selectedRow());
+      m_selectableTableView.deselectTable();
+      m_currentPage = pageAtIndex(m_previousSelectedRow);
       app()->setFirstResponder(this);
       return true;
     }
@@ -66,7 +68,8 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     }
     m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
     m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation() + strlen(editedText));
-#if MATRIX_LIST_VARIABLES
+#if MATRIX_VARIABLES
+    m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;
 #endif
     app()->dismissModalViewController();
@@ -78,11 +81,13 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
 int VariableBoxController::ContentViewController::numberOfRows() {
   switch (m_currentPage) {
     case Page::RootMenu:
-      return 3;
+      return k_numberOfMenuRows;
     case Page::Scalar:
       return GlobalContext::k_maxNumberOfScalarExpressions;
+#if LIST_VARIABLES
     case Page::List:
       return GlobalContext::k_maxNumberOfListExpressions;
+#endif
     case Page::Matrix:
       return GlobalContext::k_maxNumberOfMatrixExpressions;
     default:
@@ -130,16 +135,17 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   }
   myCell->displayExpression(true);
   if (expression) {
-    /* TODO: implement matrix and list contexts */
-    //myCell->setExpression(expression->createLayout());
-  // TODO: display the dimensgion of the list/matrice as subtitle
-    /* char buffer[4];
-     * buffer[0] = (Matrice *)expression->dim(0);
-     * buffer[1] = 'x';
-     * buffer[2] = (Matrice *)expression->dim(1)
-     * buffer[3] = 0;
-     * myCell->setSubtitle(buffer);*/
+    assert(expression->type() == Expression::Type::Matrix);
+    Matrix * m = (Matrix *)expression;
+    /* TODO: implement list contexts */
+    myCell->setExpression((Expression *)expression);
+    char buffer[2*Complex::bufferSizeForFloatsWithPrecision(2)+1];
+    int numberOfChars = Complex::convertFloatToText(m->numberOfRows(), buffer, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    buffer[numberOfChars++] = 'x';
+    Complex::convertFloatToText(m->numberOfColumns(), buffer+numberOfChars, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    myCell->setSubtitle(buffer);
   } else {
+    myCell->setExpression(nullptr);
     myCell->setSubtitle("Vide");
   }
 }
@@ -153,8 +159,10 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   }
   const Expression * expression = expressionForIndex(index);
   if (expression) {
-    KDCoordinate expressionHeight = expression->createLayout()->size().height();
-    return expressionHeight;
+    ExpressionLayout * layout = expression->createLayout();
+    KDCoordinate expressionHeight = layout->size().height();
+    delete layout;
+    return expressionHeight+k_leafMargin;
   }
   return k_leafRowHeight;
 }
@@ -189,16 +197,23 @@ const Expression * VariableBoxController::ContentViewController::expressionForIn
     return m_context->expressionForSymbol(&symbol);
   }
   if (m_currentPage == Page::Matrix) {
-    return nullptr;
+    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    return m_context->expressionForSymbol(&symbol);
   }
+#if LIST_VARIABLES
   if (m_currentPage == Page::List) {
     return nullptr;
   }
+#endif
   return nullptr;
 }
 
 VariableBoxController::ContentViewController::Page VariableBoxController::ContentViewController::pageAtIndex(int index) {
+#if LIST_VARIABLES
   Page pages[3] = {Page::Scalar, Page::List, Page::Matrix};
+#else
+  Page pages[2] = {Page::Scalar, Page::Matrix};
+#endif
   return pages[index];
 }
 
@@ -207,11 +222,13 @@ void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int i
     buffer[0] = 'A' + index;
     buffer[1] = 0;
   }
+#if LIST_VARIABLES
   if (m_currentPage == Page::List) {
     buffer[0] = 'L';
     buffer[1] = '0' + index;
     buffer[2] = 0;
   }
+#endif
   if (m_currentPage == Page::Matrix) {
     buffer[0] = 'M';
     buffer[1] = '0' + index;
@@ -221,7 +238,11 @@ void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int i
 
 I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
+#if LIST_VARIABLES
   I18n::Message labels[3] = {I18n::Message::Number, I18n::Message::List, I18n::Message::Matrix};
+#else
+  I18n::Message labels[2] = {I18n::Message::Number, I18n::Message::Matrix};
+#endif
   return labels[index];
 }
 
@@ -234,11 +255,16 @@ void VariableBoxController::ContentViewController::reloadData() {
 }
 
 void VariableBoxController::ContentViewController::resetPage() {
-#if MATRIX_LIST_VARIABLES
+#if MATRIX_VARIABLES
   m_currentPage = Page::RootMenu;
 #else
   m_currentPage = Page::Scalar;
 #endif
+}
+
+void VariableBoxController::ContentViewController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+  ViewController::viewDidDisappear();
 }
 
 VariableBoxController::VariableBoxController(Context * context) :

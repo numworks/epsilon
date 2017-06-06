@@ -29,6 +29,7 @@ public:
 private:
   int symbolIndex(const Symbol * symbol) const;
   Expression * m_expressions[k_maxNumberOfScalarExpressions];
+  Expression * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   Complex m_pi;
   Complex m_e;
 };

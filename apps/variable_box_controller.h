@@ -1,6 +1,8 @@
 #ifndef APPS_VARIABLE_BOX_CONTROLLER_H
 #define APPS_VARIABLE_BOX_CONTROLLER_H
 
+#define MATRIX_VARIABLES 1
+
 #include <escher.h>
 #include <poincare.h>
 #include "variable_box_leaf_cell.h"
@@ -32,16 +34,24 @@ private:
     void setTextFieldCaller(TextField * textField);
     void reloadData();
     void resetPage();
+    void viewDidDisappear() override;
   private:
     enum class Page {
       RootMenu,
       Scalar,
+#if LIST_VARIABLES
       List,
+#endif
       Matrix
     };
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
-    constexpr static int k_numberOfMenuRows = 3; //240/40
+#if LIST_VARIABLES
+    constexpr static int k_numberOfMenuRows = 3;
+#else
+    constexpr static int k_numberOfMenuRows = 2;
+#endif
     constexpr static KDCoordinate k_leafRowHeight = 40;
+    constexpr static KDCoordinate k_leafMargin = 10;
     constexpr static KDCoordinate k_nodeRowHeight = 40;
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);

@@ -5,12 +5,20 @@ using namespace Poincare;
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   HighlightCell(),
+  m_expressionLayout(nullptr),
   m_labelView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite),
   m_subtitleView(KDText::FontSize::Small, 0, 0.5, Palette::GreyDark, KDColorWhite),
+  m_expressionView(1.0f, 0.5f),
   m_displayExpression(false)
 {
 }
 
+VariableBoxLeafCell::~VariableBoxLeafCell() {
+  if (m_expressionLayout != nullptr) {
+    delete m_expressionLayout;
+    m_expressionLayout = nullptr;
+  }
+}
 void VariableBoxLeafCell::displayExpression(bool displayExpression) {
   m_displayExpression = displayExpression;
 }
@@ -37,10 +45,19 @@ void VariableBoxLeafCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   if (numberOfSubviews() == 3) {
-    m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height/2 - k_separatorThickness));
-    m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin, height/2, width/2-k_widthMargin-k_separatorThickness, height/2-k_separatorThickness));
+    KDSize labelSize = m_labelView.minimalSizeForOptimalDisplay();
+    KDSize subtitleSize = m_subtitleView.minimalSizeForOptimalDisplay();
+    m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, labelSize.width(), height/2 - k_separatorThickness));
+    m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin, height/2, subtitleSize.width(), height/2-k_separatorThickness));
     m_subtitleView.setAlignment(0.0f, 0.5f);
-    m_expressionView.setFrame(KDRect(width/2, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
+    KDCoordinate maxTextSize = subtitleSize.width() > labelSize.width() ? subtitleSize.width() : labelSize.width();
+    KDCoordinate expressionAvailableSize = width-k_separatorThickness-3*k_widthMargin-maxTextSize;
+    m_expressionView.setFrame(KDRect(width - expressionAvailableSize - k_widthMargin, k_separatorThickness, expressionAvailableSize, height-2*k_separatorThickness));
+    if (m_expressionView.minimalSizeForOptimalDisplay().width() > expressionAvailableSize) {
+      m_expressionView.setAlignment(0.0f, 0.5f);
+    } else {
+      m_expressionView.setAlignment(1.0f, 0.5f);
+    }
     return;
   }
   m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, width/2-k_separatorThickness-k_widthMargin, height-2*k_separatorThickness));
@@ -66,8 +83,15 @@ void VariableBoxLeafCell::setSubtitle(const char * text) {
   layoutSubviews();
 }
 
-void VariableBoxLeafCell::setExpression(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpression(expressionLayout);
+void VariableBoxLeafCell::setExpression(Expression * expression) {
+  if(m_expressionLayout != nullptr) {
+    delete m_expressionLayout;
+    m_expressionLayout = nullptr;
+  }
+  if (expression) {
+    m_expressionLayout = expression->createLayout();
+  }
+  m_expressionView.setExpression(m_expressionLayout);
 }
 
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {

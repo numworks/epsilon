@@ -12,6 +12,7 @@ public:
   Expression * cloneWithDifferentOperands(Expression** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
 private:
+  constexpr static float k_maxNumberOfSteps = 10000.0f;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   float privateApproximate(Context& context, AngleUnit angleUnit) const override;
   Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const override;

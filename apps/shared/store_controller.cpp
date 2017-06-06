@@ -92,7 +92,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     }
     m_store->deletePairAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
-    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
     return true;
   }
   return false;

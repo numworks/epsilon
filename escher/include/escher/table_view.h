@@ -16,7 +16,7 @@ public:
 
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
-  void reloadData();
+  virtual void reloadData();
   void reloadCellAtLocation(int i, int j);
   KDSize size() const;
 protected:

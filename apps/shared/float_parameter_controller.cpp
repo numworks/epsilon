@@ -27,7 +27,6 @@ void FloatParameterController::didBecomeFirstResponder() {
 
 void FloatParameterController::viewWillAppear() {
   DynamicViewController::viewWillAppear();
-  selectableTableView()->reloadData();
   if (selectedRow() == -1 || selectedRow() == numberOfRows()-1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -37,6 +36,7 @@ void FloatParameterController::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
+  selectableTableView()->reloadData();
 }
 
 void FloatParameterController::willExitResponderChain(Responder * nextFirstResponder) {

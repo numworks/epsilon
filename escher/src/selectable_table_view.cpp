@@ -29,6 +29,14 @@ void SelectableTableView::selectColumn(int i) {
   m_selectionDataSource->selectColumn(i);
 }
 
+void SelectableTableView::reloadData() {
+  int col = selectedColumn();
+  int row = selectedRow();
+  deselectTable();
+  TableView::reloadData();
+  selectCellAtLocation(col, row);
+}
+
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   selectCellAtLocation(selectedColumn(), selectedRow());
   if (m_delegate) {

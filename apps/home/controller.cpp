@@ -64,7 +64,6 @@ void Controller::didBecomeFirstResponder() {
 }
 
 void Controller::viewWillAppear() {
-  m_view.selectableTableView()->reloadData();
 }
 
 View * Controller::view() {

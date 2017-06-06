@@ -26,6 +26,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setNodeModel(const Node * nodeModel);
   void viewWillAppear() override;
+  void viewDidDisappear() override;
 private:
   StackViewController * stackController() const;
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);

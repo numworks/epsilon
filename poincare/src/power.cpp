@@ -73,7 +73,7 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
     return new Complex(Complex::Float(NAN));
   }
   float power = c->approximate(context, angleUnit);
-  if (isnan(power) || isinf(power) || power != (int)power) {
+  if (isnan(power) || isinf(power) || power != (int)power || fabsf(power) > k_maxNumberOfSteps) {
     return new Complex(Complex::Float(NAN));
   }
   if (power == 0.0f) {
@@ -91,7 +91,12 @@ Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context&
     return result;
   }
   Expression * result = new Complex(Complex::Float(1.0f));
+  // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
+    if (shouldStopProcessing()) {
+      delete result;
+      return new Complex(Complex::Float(NAN));
+    }
     Expression * operands[2];
     operands[0] = result;
     operands[1] = m;

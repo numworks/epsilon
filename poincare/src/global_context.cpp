@@ -1,4 +1,5 @@
 #include <poincare/global_context.h>
+#include <poincare/matrix.h>
 #include <assert.h>
 #include <math.h>
 #include <ion.h>
@@ -12,6 +13,9 @@ GlobalContext::GlobalContext() :
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
   }
+  for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
+    m_matrixExpressions[i] = nullptr;
+  }
 }
 
 GlobalContext::~GlobalContext() {
@@ -20,6 +24,12 @@ GlobalContext::~GlobalContext() {
       delete m_expressions[i];
     }
     m_expressions[i] = nullptr;
+  }
+  for (int i = 0; i < k_maxNumberOfMatrixExpressions; i++) {
+    if (m_matrixExpressions[i] != nullptr) {
+      delete m_matrixExpressions[i];
+    }
+    m_matrixExpressions[i] = nullptr;
   }
 }
 
@@ -40,6 +50,10 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
   }
+  if (symbol->isMatrixSymbol()) {
+    int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
+    return m_matrixExpressions[indexMatrix];
+  }
   int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return nullptr;
@@ -51,6 +65,18 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 }
 
 void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+  if (symbol->isMatrixSymbol()) {
+    int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
+    assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
+    if (m_expressions[indexMatrix] != nullptr) {
+      delete m_matrixExpressions[indexMatrix];
+      m_matrixExpressions[indexMatrix] = nullptr;
+    }
+    if (expression->type() == Expression::Type::Matrix) {
+      m_matrixExpressions[indexMatrix] = expression->clone();
+    }
+    return;
+  }
   int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;

@@ -13,14 +13,18 @@ const ToolboxNode probabilityChildren[2] = {ToolboxNode(I18n::Message::BinomialC
 const ToolboxNode arithmeticChildren[4] = {ToolboxNode(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor, I18n::Message::GcdCommand),ToolboxNode(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple, I18n::Message::LcmCommand), ToolboxNode(I18n::Message::RemCommandWithArg, I18n::Message::Remainder, I18n::Message::RemCommand), ToolboxNode(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient, I18n::Message::QuoCommand)};
 #if MATRICES_ARE_DEFINED
 const ToolboxNode matricesChildren[5] = {ToolboxNode(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse, I18n::Message::InverseCommand), ToolboxNode(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant, I18n::Message::DeterminantCommand), ToolboxNode(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose, I18n::Message::TransposeCommand), ToolboxNode(I18n::Message::TraceCommandWithArg, I18n::Message::Trace, I18n::Message::TraceCommand), ToolboxNode(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension, I18n::Message::DimensionCommand)};
+#endif
+#if LIST_ARE_DEFINED
 const ToolboxNode listesChildren[5] = {ToolboxNode(I18n::Message::SortCommandWithArg, I18n::Message::Sort, I18n::Message::SortCommand), ToolboxNode(I18n::Message::InvSortCommandWithArg, I18n::Message::InvSort, I18n::Message::InvSortCommand), ToolboxNode(I18n::Message::MaxCommandWithArg, I18n::Message::Maximum, I18n::Message::MaxCommand), ToolboxNode(I18n::Message::MinCommandWithArg, I18n::Message::Minimum, I18n::Message::MinCommand), ToolboxNode(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension, I18n::Message::DimensionCommand)};
 #endif
 const ToolboxNode approximationChildren[4] = {ToolboxNode(I18n::Message::FloorCommandWithArg, I18n::Message::Floor, I18n::Message::FloorCommand), ToolboxNode(I18n::Message::FracCommandWithArg, I18n::Message::FracPart, I18n::Message::FracCommand), ToolboxNode(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling, I18n::Message::CeilCommand), ToolboxNode(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding, I18n::Message::RoundCommand)};
 const ToolboxNode trigonometryChildren[6] = {ToolboxNode(I18n::Message::CoshCommandWithArg, I18n::Message::Cosh, I18n::Message::CoshCommand), ToolboxNode(I18n::Message::SinhCommandWithArg, I18n::Message::Sinh, I18n::Message::SinhCommand), ToolboxNode(I18n::Message::TanhCommandWithArg, I18n::Message::Tanh, I18n::Message::TanhCommand), ToolboxNode(I18n::Message::AcoshCommandWithArg, I18n::Message::Acosh, I18n::Message::AcoshCommand), ToolboxNode(I18n::Message::AsinhCommandWithArg, I18n::Message::Asinh, I18n::Message::AsinhCommand), ToolboxNode(I18n::Message::AtanhCommandWithArg, I18n::Message::Atanh, I18n::Message::AtanhCommand)};
 const ToolboxNode predictionChildren[3] = {ToolboxNode(I18n::Message::Prediction95CommandWithArg, I18n::Message::Prediction95, I18n::Message::Prediction95Command), ToolboxNode(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction, I18n::Message::PredictionCommand), ToolboxNode(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommand)};
 
-#if MATRICES_ARE_DEFINED
+#if LIST_ARE_DEFINED
 const ToolboxNode menu[12] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommand),
+#elif MATRICES_ARE_DEFINED
+const ToolboxNode menu[11] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommand),
 #else
 const ToolboxNode menu[10] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommand),
 #endif
@@ -32,13 +36,17 @@ const ToolboxNode menu[10] = {ToolboxNode(I18n::Message::AbsCommandWithArg, I18n
   ToolboxNode(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 4),
 #if MATRICES_ARE_DEFINED
   ToolboxNode(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 5),
+#endif
+#if LIST_ARE_DEFINED
   ToolboxNode(I18n::Message::Lists, I18n::Message::Default, I18n::Message::Default, listesChildren, 5),
 #endif
   ToolboxNode(I18n::Message::Approximation, I18n::Message::Default, I18n::Message::Default, approximationChildren, 4),
   ToolboxNode(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, I18n::Message::Default, trigonometryChildren, 6),
   ToolboxNode(I18n::Message::Fluctuation, I18n::Message::Default, I18n::Message::Default, predictionChildren, 3)};
-#if MATRICES_ARE_DEFINED
+#if LIST_ARE_DEFINED
 const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 12);
+#elif MATRICES_ARE_DEFINED
+const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 11);
 #else
 const ToolboxNode toolboxModel = ToolboxNode(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 10);
 #endif

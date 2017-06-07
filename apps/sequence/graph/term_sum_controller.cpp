@@ -222,10 +222,10 @@ void TermSumController::ContentView::LegendView::setSumSubscript(float start) {
     delete m_sumLayout;
     m_sumLayout = nullptr;
   }
-  const char sigma[2] = {Ion::Charset::CapitalSigma, 0};
+  const char sigma[3] = {' ',Ion::Charset::CapitalSigma, 0};
   char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(start, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
+  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
  m_sum.setExpression(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
  layoutSubviews();
@@ -236,13 +236,14 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
     delete m_sumLayout;
     m_sumLayout = nullptr;
   }
-  const char sigma[2] = {Ion::Charset::CapitalSigma, 0};
+  const char sigma[3] = {' ', Ion::Charset::CapitalSigma, 0};
   char bufferStart[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(start, bufferStart, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   char bufferEnd[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex::convertFloatToText(end, bufferEnd, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 1), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
+  m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);
+  m_sum.setAlignment(0.0f, 0.5f);
   layoutSubviews();
 }
 

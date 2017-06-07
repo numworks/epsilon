@@ -205,6 +205,7 @@ namespace I18n {
     RegressionApp,
     RegressionAppCapital,
     NoEnoughDataForRegression,
+    Reg,
     RegressionSlope,
     XPrediction,
     YPrediction,

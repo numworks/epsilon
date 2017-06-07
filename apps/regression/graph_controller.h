@@ -26,7 +26,7 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.3f;  // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;   // (cursorWidth/2)/graphViewWidth
   constexpr static int k_maxLegendLength = 16;
-  constexpr static int k_maxNumberOfCharacters = 20;
+  constexpr static int k_maxNumberOfCharacters = 50;
   BannerView * bannerView() override;
   Shared::CurveView * curveView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;

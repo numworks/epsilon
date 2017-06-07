@@ -25,7 +25,7 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[222][5] {
+const char * messages[223][5] {
   {"Attention", "Warning", "Cuidado", "Achtung", "Atencao"},
   {"Valider", "Confirm", "Confirmar", "Bestatigen", "Confirmar"},
   {"Annuler", "Cancel", "Cancelar", "Abbrechen", "Cancelar"},
@@ -239,6 +239,7 @@ const char * messages[222][5] {
   {"REGRESSIONS", "REGRESSION", "REGRESION", "REGRESSION", "REGRESSAO"},
 
   {"Pas assez de donnees pour une regression", "Not enough data for regerssion", "Escasez de datos para la regresion", "Nicht genug Daten fur eine Regression", "Nao ha dados suficientes para uma regressao"},
+  {"reg", "reg", "reg", "reg", "reg"},
   {"Droite de regression", "Regression line", "Recta de regresion", "Regressionsgerade", "Linha de regressao"},
   {"Prediction sachant X", "Prediction given X", "Prediccion dado X", "Berechne Y", "Predicao dado X"},
   {"Prediction sachant Y", "Prediction given Y", "Prediccion dado Y", "Berechne X", "Predicao dado Y"},
@@ -331,7 +332,7 @@ const char * universalMessages[244] {
   ")=",
   finiteIntegralLegend,
 
-  "   y=ax+b   ",
+  " D: y=ax+b ",
 
   "Francais ",
   "English ",

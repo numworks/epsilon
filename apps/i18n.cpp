@@ -187,8 +187,8 @@ const char * messages[224][5] {
   {"Importer une liste", "Import from a list", "Importar una lista", "Laden eine Liste", "Importar de uma lista"},
   /* Statistics: second tab */
   {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar", "Keine Daten zu zeichnen", "Nao ha dados para desenhar"},
-  {"Intervalle ", "Interval ", "Intervalo", "Intervall", "Intervalo"},
-  {"Effectif", "   Size   ", "Frecuencia", "Haufigkeit", "Frequencia"},
+  {" Intervalle ", " Interval ", " Intervalo", " Intervall", " Intervalo"},
+  {" Effectif", " Size", " Frecuencia", " Haufigkeit", " Frequencia"},
   {"Frequence", "Frequency", "Relativa", "Relative", "Relativa"},
   {"Reglage de l'histogramme", "Histogram settings", "Parametros del histograma", "Einstellung des Histogramms", "Configurando o histograma"},
   {"Largeur des rectangles", "Bin width", "Ancho del rectangulo", "Breite der Rechtecken", "Largura dos rectangulos"},

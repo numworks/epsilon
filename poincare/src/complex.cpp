@@ -179,16 +179,19 @@ Complex::Complex(float a, float b) :
 int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode, ComplexFormat complexFormat) const {
   assert(displayMode != FloatDisplayMode::Default);
   int numberOfChars = 0;
+  if (isnan(m_a) || isnan(m_b)) {
+    return convertFloatToText(NAN, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
+  }
   if (complexFormat == ComplexFormat::Polar) {
     if (r() != 1.0f || th() == 0.0f) {
       numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
-      if (r() != 0.0f && th() != 0.0f && !isnan(th()) && bufferSize > numberOfChars+1) {
+      if (r() != 0.0f && th() != 0.0f && bufferSize > numberOfChars+1) {
         buffer[numberOfChars++] = '*';
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
     }
-    if (r() != 0.0f && th() != 0.0f && !isnan(th())) {
+    if (r() != 0.0f && th() != 0.0f) {
       if (bufferSize > numberOfChars+3) {
         buffer[numberOfChars++] = Ion::Charset::Exponential;
         buffer[numberOfChars++] = '^';
@@ -215,14 +218,14 @@ int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMod
       buffer[numberOfChars] = 0;
     }
   }
-  if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f && !isnan(m_b)) {
+  if (m_b != 1.0f && m_b != -1.0f && m_b != 0.0f) {
     numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = '*';
   }
   if (m_b == -1.0f && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = '-';
   }
-  if (m_b != 0.0f && !isnan(m_b) && bufferSize > numberOfChars+1) {
+  if (m_b != 0.0f && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = Ion::Charset::IComplex;
     buffer[numberOfChars] = 0;
   }

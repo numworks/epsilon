@@ -43,8 +43,9 @@ Expression * HyperbolicCosine::privateEvaluate(Context& context, AngleUnit angle
   }
   /* Float case */
   if (((Complex *)evaluation)->b() == 0) {
+    Expression * result = new Complex(Complex::Float(coshf(evaluation->approximate(context, angleUnit))));
     delete evaluation;
-    return Function::privateEvaluate(context, angleUnit);
+    return result;
   }
   /* Complex case */
   Expression * arguments[2];

@@ -43,8 +43,9 @@ Expression * HyperbolicSine::privateEvaluate(Context& context, AngleUnit angleUn
   }
   /* Float case */
   if (((Complex *)evaluation)->b() == 0) {
+    Expression * result = new Complex(Complex::Float(sinhf(evaluation->approximate(context, angleUnit))));
     delete evaluation;
-    return Function::privateEvaluate(context, angleUnit);
+    return result;
   }
   /* Complex case */
   Expression * arguments[2];

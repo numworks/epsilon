@@ -35,7 +35,7 @@ const char * messages[223][5] {
   {"Batterie faible", "Low battery", "Bateria baja", "Batterie leer", "Bateria fraca"},
 
   /* Variables */
-  {"Variables", "Variables", "Variables", "Variablen", "Variáveis"},
+  {"Variables", "Variables", "Variables", "Variablen", "Variaveis"},
   {"Nombres", "Numbers", "Numeros", "Zahlen", "Numeros"},
   {"Matrices", "Matrices", "Matrices", "Matrizen", "Matrizes"},
   {"Listes", "Lists", "Listas", "Listen", "Listas"},
@@ -115,9 +115,9 @@ const char * messages[223][5] {
   {"Axes", "Axes", "Ejes", "Achsen", "Eixos"},
   {"Zoom", "Zoom", "Zoom", "Zoom", "Zoom"},
   {"Initialisation", "Preadjustment", "Inicializacion", "Initialisierung", "Inicializacao"},
-  {" Deplacer : ", "Move: ", "Mover : ", "Verschieben :", "Mover :"},
-  {"Zoomer : ", "Zoom: ", "Zoom : ", "Zoom :", "Zoom :"},
-  {" ou ", " or ", " o ", "oder", "ou"},
+  {" Deplacer : ", " Move: ", " Mover : ", " Verschieben: ", " Mover : "},
+  {"Zoomer : ", "Zoom: ", "Zoom : ", "Zoom: ", "Zoom : "},
+  {" ou ", " or ", " o ", " oder ", " ou "},
   {"Trigonometrique", "Trigonometrical", "Trigonometrico", "Trigonometrisch", "Trigonometrico"},
   {"Abscisses entieres", "Integer", "Abscisas enteras", "Ganzzahl", "Inteiro"},
   {"Orthonorme", "Orthonormal", "Ortonormal", "Orthonormal", "Ortonormado"},
@@ -164,8 +164,8 @@ const char * messages[223][5] {
   {"N debut", "N start", "N inicio", "Startwert", "N inicio"},
   {"N fin", "N end", "N fin", "Endwert", "N fim"},
   {"Somme des termes", "Sum of terms", "Suma de terminos", "Summe der Glieder", "Soma dos termos"},
-  {"SELECTIONNER LE PREMIER TERME", "SELECT FIRST TERM", "SELECCIONAR EL PRIMER TERMINO", "Erster Glied", "Selecionar primeiro termo" },
-  {"SELECTIONNER LE DERNIER TERME", "SELECT LAST TERM", "SELECCIONAR EL ULTIMO TERMINO", "Letztes Glied", "Selecionar ultimo termo"},
+  {"Selectionner le premier terme ", "Select First Term ", "Seleccionar el premer termino ", "Erster Glied ", "Selecionar primeiro termo " },
+  {"Selectionner le dernier terme ", "Select last term ", "Seleccionar el ultimo termino ", "Letztes Glied ", "Selecionar ultimo termo "},
   {"Valeur non atteinte par la suite", "Value not reached by sequence", "No se alcanza este valor", "Der Wert wird nicht von der Folge erreicht", "O valor nao e alcancado pela sequencia"},
   /* Sequence: third tab */
   {"Colonne n", "n column", "Columna n", "n Spalte", "Coluna n"},
@@ -183,9 +183,9 @@ const char * messages[223][5] {
   {"Valeurs", "Values", "Valores", "Werte", "Valores"},
   {"Effectifs", "Sizes", "Frecuencias", "Haufigkeiten", "Frequencias"},
   {"Options de la colonne", "Column options", "Opciones de la columna", "Optionen Spalte", "Opcoes de coluna"},
-  {"Importer une liste", "Import from a list", "Importar una lista", "?", "?"}, // attention traduction !!!!!!!!!!!!!!!
+  {"Importer une liste", "Import from a list", "Importar una lista", "Laden eine Liste", "Importar de uma lista"},
   /* Statistics: second tab */
-  {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar", "?", "?"}, // attention traduction !!!!!!!!!!!!!!!
+  {"Aucune donnee a tracer", "No data to draw", "Ningunos datos que dibujar", "Keine Daten zu zeichnen", "Nao ha dados para desenhar"},
   {"Intervalle ", "Interval ", "Intervalo", "Intervall", "Intervalo"},
   {"Effectif", "   Size   ", "Frecuencia", "Haufigkeit", "Frequencia"},
   {"Frequence", "Frequency", "Relativa", "Relative", "Relativa"},
@@ -197,17 +197,17 @@ const char * messages[223][5] {
   {"Mediane", "Median", "Mediana", "Median", "Mediana"},
   {"Troisieme quartile", "Third quartile", "Tercer cuartil", "Oberes Quartil", "Quartil superior"},
   /* Statistics: fourth tab */
-  {"Aucune grandeur a calculer", "No values to calculate", "Ninguna medida que calcular"},
+  {"Aucune grandeur a calculer", "No values to calculate", "Ninguna medida que calcular", "Keine Grosse zu berechnen", "Nenhuma quantidade para calcular"},
   {"Effectif total", "Total size", "Poblacion", "Anzahl der Elemente", "Numero de itens"},
   {"Etendue", "Range", "Rango", "Spannweite", "Amplitude"},
   {"Moyenne", "Mean", "Media", "Mittelwert", "Media"},
   {"Ecart type", "Standard deviation", "Desviacion tipica", "Standardabweichung", "Desvio padrao"},
   {"Variance", "Variance", "Varianza", "Varianz", "Variancia"},
-  {"Ecart interquartile", "Interquartile range", "Rango intercuartilo", "Interquartilsabstand", "Amplitude interquartil"},
-  {"Somme des carres", "Sum of squares", "Suma cuadrados", "Summe der Quadratzahlen", "Soma dos quadrados"},
+  {"Ecart interquartile", "Interquartile range", "Rango intercuartilo", "Interquartilsabstand", "Interquartil"},
+  {"Somme des carres", "Sum of squares", "Suma cuadrados", "Quadratsumme", "Soma dos quadrados"},
 
   /* Probability */
-  {"Probabilites", "Probability", "Probabilidad", "Wahrscheinlichkeit", "Probabilidade"},
+  {"Probabilites", "Probability", "Probabilidad", "Wahrsch.", "Probabilidade"},
   {"PROBABILITES", "PROBABILITY", "PROBABILIDAD", "WAHRSCHEINLICHKEIT", "PROBABILIDADE"},
 
   {"Choisir le type de loi", "Choose the distribution", "Seleccionar la distribucion", "Wahlen Sie Verteilung", "Selecionar a distribuicao"},
@@ -243,7 +243,7 @@ const char * messages[223][5] {
   {"Droite de regression", "Regression line", "Recta de regresion", "Regressionsgerade", "Linha de regressao"},
   {"Prediction sachant X", "Prediction given X", "Prediccion dado X", "Berechne Y", "Predicao dado X"},
   {"Prediction sachant Y", "Prediction given Y", "Prediccion dado Y", "Berechne X", "Predicao dado Y"},
-  {"Valeur non atteinte par la regression", "Value not reached by regression", "No se alcanza este valor", "Der Wert wird nicht von der Regression erreicht", "Valor nao alcancado pela regressao"},
+  {"Valeur non atteinte par la regression", "Value not reached by regression", "No se alcanza este valor", "Wert wird nicht von der Regression erreicht", "Valor nao alcancado pela regressao"},
   {"Nombre de points", "Number of points", "Numero de puntos", "Punktanzahl", "Numero de pontos"},
   {"Covariance", "Covariance", "Covarianza", "Kovarianz", "Covariancia"},
 
@@ -271,7 +271,7 @@ const char * messages[223][5] {
   {"rad", "rad", "rad", "rad", "rad"},
   {"sci/", "sci/", "sci/", "sci/", "sci/"},
   {"Version du logiciel", "Software version", "Version de software", "Softwareversion", "Versao do software"},
-  {"Numero serie", "Serial number", "Numero serie", "Seriennummer", "Numero de serie"},
+  {"Numero serie", "Serial number", "Numero serie", "Seriennummer", "Numero serie"},
   {"Rappel mise a jour", "Update pop-up", "Pop-up de actualizacion", "Erinnerung: Update", "Alertas de atualizacao"},
 
   {"Vous allez lancer le test usine.", "You are starting the hardware", "Esta iniciando la prueba de", "Sie werden den Hardwaretest", "Voce vai executar o teste da planta."},
@@ -281,9 +281,9 @@ const char * messages[223][5] {
 
   /* On boarding */
   {"MISE A JOUR DISPONIBLE", "UPDATE AVAILABLE", "ACTUALIZACION DISPONIBLE", "UPDATE VERFUGBAR", "ATUALIZACAO DISPONIVEL"},
-  {"Des ameliorations importantes existent", "There are important upgrades", "Hay mejoras importantes"}, // attention traduction !!!!!!!!!!!!!!!
-  {"pour votre calculatrice.", "for your calculator.", "para su calculadora."}, // attention traduction !!!!!!!!!!!!!!!
-  {"Connectez-vous depuis votre ordinateur", "Browse our page from your computer", "Visita nuestra pagina desde su ordenador", "Melden Sie sich von Ihrem Computer an", "Navegue na nossa pagina a partir do seu computador"},
+  {"Des ameliorations importantes existent", "There are important upgrades", "Hay mejoras importantes", "Wichtige Verbesserungen fur Ihren", "Existem melhorias significativas"},
+  {"pour votre calculatrice.", "for your calculator.", "para su calculadora.", "Rechner stehen zur Verfugung.", "para a sua calculadora."},
+  {"Connectez-vous depuis votre ordinateur", "Browse our page from your computer", "Visita nuestra pagina desde su ordenador", "Melden Sie sich von Ihrem Computer an", "Navegue na nossa pagina do seu computador"},
   {"www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update"},
   {"Passer", "Skip", "Saltar", "Uberspringen", "Pular"},
 };

@@ -25,7 +25,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int index = 0; index < m_store->numberOfPairs(); index++) {
     drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::Red);
   }
-  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::Red, true);
+  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), Palette::Palette::YellowDark, true);
+  drawDot(ctx, rect, m_store->meanOfColumn(0), m_store->meanOfColumn(1), KDColorWhite);
 }
 
 char * GraphView::label(Axis axis, int index) const {

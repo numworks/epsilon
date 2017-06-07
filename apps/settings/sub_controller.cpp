@@ -11,8 +11,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
+    k_topBottomMargin, Metric::CommonLeftMargin, this),
   m_nodeModel(nullptr)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {

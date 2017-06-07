@@ -338,8 +338,8 @@ const char * universalMessages[244] {
   "Francais ",
   "English ",
   "Espanol ",
-  "Deutsch",
-  "Portugues",
+  "Deutsch ",
+  "Portugues ",
 
   "FCC ID",
 

@@ -31,7 +31,7 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
-  constexpr static int k_maxIntervalLegendLength = 30;
+  constexpr static int k_maxIntervalLegendLength = 33;
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
   Responder * tabController() const;

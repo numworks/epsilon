@@ -42,7 +42,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Copy && selectedColumn() == 1 && selectedRow() > 0) {
-    if (selectedRow() < 6) {
+    if (selectedRow() <= k_totalNumberOfDoubleBufferRows) {
       EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)selectableTableView()->selectedCell();
       if (myCell->firstTextSelected()) {
         Clipboard::sharedClipboard()->store(myCell->firstText());
@@ -82,17 +82,17 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
     }
   }
-  if (t->selectedColumn() == 1 && t->selectedRow() >= 0 && t->selectedRow() < 6) {
+  if (t->selectedColumn() == 1 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)t->selectedCell();
     bool firstSubCellSelected = true;
-    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY < 6) {
+    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
       EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       firstSubCellSelected = myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);
     app()->setFirstResponder(myCell);
   } else {
-    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY < 6) {
+    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
       EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       if (app()->firstResponder()->commonAncestorWith(myPreviousCell) == myPreviousCell) {
         app()->setFirstResponder(t);
@@ -135,7 +135,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   if (i == 0) {
-    if (j == 10) {
+    if (j == numberOfRows()-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
       myCell->setExpression(m_r2Layout);
       return;
@@ -146,12 +146,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     myCell->setAlignment(1.0f, 0.5f);
-    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::R, I18n::Message::Default};
+    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
     myCell->setMessage(titles[j-1]);
     return;
   }
-  if (i == 1 && j > 0 && j < 6) {
-    ArgCalculPointer calculationMethods[(k_totalNumberOfRows-1)/2] = {&Store::meanOfColumn, &Store::sumOfColumn,
+  if (i == 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
+    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn,
       &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     float calculation1 = (m_store->*calculationMethods[j-1])(0);
     float calculation2 = (m_store->*calculationMethods[j-1])(1);
@@ -163,10 +163,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setSecondText(buffer);
     return;
   }
-  if (i == 1 && j > 5) {
-    CalculPointer calculationMethods[(k_totalNumberOfRows-1)/2] = {&Store::numberOfPairs, &Store::covariance,
-      &Store::columnProductSum, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
-    float calculation = (m_store->*calculationMethods[j-6])();
+  if (i == 1 && j == 9) {
+    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
+    myCell->setText("ax+b");
+    return;
+  }
+  if (i == 1 && j > k_totalNumberOfDoubleBufferRows) {
+    assert(j != 9);
+    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::numberOfPairs, &Store::covariance,
+      &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
+    float calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -186,6 +192,7 @@ KDCoordinate CalculationController::rowHeight(int j) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == 0) {
     assert(index < k_maxNumberOfDisplayableRows);
+    assert(m_titleCells[index] != nullptr);
     return m_titleCells[index];
   }
   if (type == 1) {
@@ -197,10 +204,12 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     return m_columnTitleCell;
   }
   if (type == 3) {
-    assert(index < k_totalNumberOfRows/2);
+    assert(index < k_totalNumberOfDoubleBufferRows);
+    assert(m_doubleCalculationCells[index] != nullptr);
     return m_doubleCalculationCells[index];
   }
-  assert(index < k_totalNumberOfRows/2);
+  assert(index < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows);
+    assert(m_calculationCells[index] != nullptr);
   return m_calculationCells[index];
 }
 
@@ -215,13 +224,13 @@ int CalculationController::reusableCellCount(int type) {
     return 1;
   }
   if (type == 3) {
-    return k_maxNumberOfDisplayableRows/2;
+    return k_totalNumberOfDoubleBufferRows;
   }
-  return k_maxNumberOfDisplayableRows/2;
+  return k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 10) {
+  if (i == 0 && j == k_totalNumberOfRows-1) {
     return 1;
   }
   if (i == 0) {
@@ -230,7 +239,7 @@ int CalculationController::typeAtLocation(int i, int j) {
   if (j == 0) {
     return 2;
   }
-  if (j > 0 && j < 6) {
+  if (j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     return 3;
   }
   return 4;
@@ -247,10 +256,12 @@ View * CalculationController::loadView() {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
   }
-  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
+  for (int i = 0; i < k_totalNumberOfDoubleBufferRows; i++) {
     m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCell();
     m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[i]->setParentResponder(tableView);
+  }
+  for (int i = 0; i < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;i++) {
     m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
@@ -262,9 +273,11 @@ void CalculationController::unloadView(View * view) {
   m_r2TitleCell = nullptr;
   delete m_columnTitleCell;
   m_columnTitleCell = nullptr;
-  for (int i = 0; i < k_maxNumberOfDisplayableRows/2; i++) {
+  for (int i = 0; i < k_totalNumberOfDoubleBufferRows; i++) {
     delete m_doubleCalculationCells[i];
     m_doubleCalculationCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;i++) {
     delete m_calculationCells[i];
     m_calculationCells[i] = nullptr;
   }

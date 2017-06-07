@@ -146,7 +146,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);
-    myCell->setSubtitle("Vide");
+    myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
   }
 }
 

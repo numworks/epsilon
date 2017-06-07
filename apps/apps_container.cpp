@@ -36,7 +36,6 @@ AppsContainer::AppsContainer() :
   m_probabilitySnapshot(),
   m_regressionSnapshot()
 {
-  refreshPreferences();
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
@@ -159,6 +158,7 @@ void AppsContainer::run() {
 #if ON_BOARDING
   switchTo(onBoardingAppSnapshot());
 #else
+  refreshPreferences();
   switchTo(appSnapshotAtIndex(0));
 #endif
   Container::run();

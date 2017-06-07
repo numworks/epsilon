@@ -3,6 +3,8 @@
 #include <poincare/sine.h>
 #include <poincare/cosine.h>
 #include <poincare/fraction.h>
+#include <poincare/multiplication.h>
+#include <poincare/hyperbolic_tangent.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -38,10 +40,22 @@ Expression * Tangent::createComplexEvaluation(Expression * exp, Context & contex
   ((Function *)arguments[0])->setArgument(&exp, 1, true);
   arguments[1] = new Cosine();
   ((Function *)arguments[1])->setArgument(&exp, 1, true);
-  Expression * result = new Fraction(arguments, true);
-  delete arguments[1];
-  delete arguments[0];
+  Expression * result = new Fraction(arguments, false);
   Expression * resultEvaluation = result->evaluate(context, angleUnit);
+  delete result;
+  if (!isnan(((Complex *)resultEvaluation)->a()) && !isnan(((Complex *)resultEvaluation)->b())) {
+    return resultEvaluation;
+  }
+  delete resultEvaluation;
+  arguments[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));
+  arguments[1] = exp;
+  Expression * arg = new Multiplication(arguments, true);
+  delete arguments[0];
+  arguments[0] = new Complex(Complex::Cartesian(0.0f, 1.0f));
+  arguments[1] = new HyperbolicTangent();
+  ((Function *)arguments[1])->setArgument(&arg, 1, false);
+  result = new Multiplication(arguments, false);
+  resultEvaluation = result->evaluate(context, angleUnit);
   delete result;
   return resultEvaluation;
 }

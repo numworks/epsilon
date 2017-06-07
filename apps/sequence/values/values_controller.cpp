@@ -5,8 +5,8 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Interval * interval, uint32_t * modelVersion, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController, interval, modelVersion),
+ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_sequenceStore(sequenceStore),
@@ -15,7 +15,6 @@ ValuesController::ValuesController(Responder * parentResponder, SequenceStore * 
 #endif
   m_intervalParameterController(this, m_interval)
 {
-  updateNumberOfColumns();
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

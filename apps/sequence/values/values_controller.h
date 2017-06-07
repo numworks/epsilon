@@ -10,7 +10,7 @@ namespace Sequence {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Shared::Interval * interval, uint32_t * modelVersion, ButtonRowController * header);
+  ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Shared::Interval * interval, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
   IntervalParameterController * intervalParameterController() override;

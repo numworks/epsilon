@@ -15,7 +15,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval, uint32_t * modelVersion);
+  ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
   const char * title() override;
   Interval * interval();
   int numberOfColumns() override;
@@ -35,6 +35,7 @@ public:
   bool isEmpty() const override;
   Responder * defaultController() override;
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   static constexpr KDCoordinate k_topMargin = 10;
   static constexpr KDCoordinate k_bottomMargin = 15;
   static constexpr KDCoordinate k_leftMargin = 1;
@@ -49,6 +50,7 @@ protected:
   virtual void updateNumberOfColumns();
   Interval * m_interval;
   int m_numberOfColumns;
+  bool m_numberOfColumnsNeedUpdate;
 private:
   virtual Function * functionAtColumn(int i);
   Responder * tabController() const override;
@@ -69,7 +71,6 @@ private:
   EvenOddEditableTextCell * m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
-  uint32_t * m_modelVersion;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;
 };

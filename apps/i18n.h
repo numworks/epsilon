@@ -19,6 +19,7 @@ namespace I18n {
     Number,
     Matrix,
     List,
+    Empty,
 
     /* Toolbox */
     Toolbox,

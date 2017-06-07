@@ -4,7 +4,7 @@
 #include <escher.h>
 
 namespace I18n {
-  constexpr static int NumberOfLanguages = 3;
+  constexpr static int NumberOfLanguages = 5;
   enum class Message : uint16_t {
     Warning = 0,
     Ok = 1,
@@ -291,6 +291,8 @@ namespace I18n {
     French,
     English,
     Spanish,
+    German,
+    Portuguese,
 
     FccId,
 
@@ -379,7 +381,9 @@ namespace I18n {
     Default = 0,
     French = 1,
     English = 2,
-    Spanish = 3
+    Spanish = 3,
+    German = 4,
+    Portuguese = 5
   };
 }
 

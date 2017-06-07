@@ -8,14 +8,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval, uint32_t * modelVersion) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
   m_numberOfColumns(0),
+  m_numberOfColumnsNeedUpdate(true),
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
-  m_modelVersion(modelVersion),
   m_abscissaParameterController(this, intervalParameterController, parameterTitle),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
@@ -30,6 +30,10 @@ const char * ValuesController::title() {
 }
 
 int ValuesController::numberOfColumns() {
+  if (m_numberOfColumnsNeedUpdate) {
+    updateNumberOfColumns();
+    m_numberOfColumnsNeedUpdate = false;
+  }
   return m_numberOfColumns;
 }
 
@@ -228,13 +232,13 @@ Responder * ValuesController::defaultController() {
 }
 
 void ValuesController::viewWillAppear() {
-  uint32_t newModelVersion = functionStore()->storeChecksum();
-  if (*m_modelVersion != newModelVersion) {
-    *m_modelVersion = newModelVersion;
-    updateNumberOfColumns();
-  }
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
+}
+
+void ValuesController::viewDidDisappear() {
+  m_numberOfColumnsNeedUpdate = true;
+  EditableCellTableViewController::viewDidDisappear();
 }
 
 Function * ValuesController::functionAtColumn(int i) {
@@ -319,7 +323,7 @@ void ValuesController::unloadView(View * view) {
 }
 
 void ValuesController::updateNumberOfColumns() {
-  m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
+    m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 
 }

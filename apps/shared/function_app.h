@@ -16,8 +16,7 @@ public:
   public:
     Snapshot();
     CurveViewCursor * cursor();
-    uint32_t * graphModelVersion();
-    uint32_t * valuesModelVersion();
+    uint32_t * modelVersion();
     uint32_t * rangeVersion();
     Interval * interval();
     void reset() override;
@@ -25,8 +24,7 @@ public:
     CurveViewCursor m_cursor;
     Interval m_interval;
   private:
-    uint32_t m_graphModelVersion;
-    uint32_t m_valuesModelVersion;
+    uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
  };
   virtual ~FunctionApp() = default;

@@ -25,7 +25,6 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         m_cartesianFunction->setDisplayDerivative(!m_cartesianFunction->displayDerivative());
-        m_valuesController->updateNumberOfColumns();
         if (m_cartesianFunction->displayDerivative()) {
           m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()+1, m_valuesController->selectedRow());
         }

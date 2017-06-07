@@ -12,7 +12,7 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::Interval * interval, uint32_t * modelVersion, ButtonRowController * header);
+  ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::Interval * interval, ButtonRowController * header);
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;

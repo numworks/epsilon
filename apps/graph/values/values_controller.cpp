@@ -7,8 +7,8 @@ using namespace Poincare;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, uint32_t * modelVersion, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval, modelVersion),
+ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),
@@ -16,7 +16,6 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
   m_intervalParameterController(this, m_interval),
   m_derivativeParameterController(this)
 {
-  updateNumberOfColumns();
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -173,13 +172,13 @@ void ValuesController::unloadView(View * view) {
 }
 
 void ValuesController::updateNumberOfColumns() {
-  int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
+    int result = 1;
+    for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
+      if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
+        result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
+      }
     }
-  }
-  m_numberOfColumns = result;
+    m_numberOfColumns = result;
 }
 
 }

@@ -48,7 +48,6 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
       {
         m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());
         m_function->setDisplayDerivative(false);
-        m_valuesController->updateNumberOfColumns();
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;

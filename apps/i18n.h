@@ -205,6 +205,7 @@ namespace I18n {
     /* Regression */
     RegressionApp,
     RegressionAppCapital,
+    Regression,
     NoEnoughDataForRegression,
     Reg,
     RegressionSlope,

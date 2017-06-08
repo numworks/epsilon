@@ -24,7 +24,7 @@ public:
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
-  void setBannerView(BannerView * bannerView);
+  void setBannerView(View * bannerView);
   void setOkView(View * okView);
   float resolution() const;
 protected:
@@ -55,7 +55,7 @@ protected:
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
   virtual KDSize cursorSize();
-  BannerView * m_bannerView;
+  View * m_bannerView;
 private:
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

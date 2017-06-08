@@ -23,41 +23,31 @@ private:
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
-  class ContentView : public View {
+  class LegendView : public View {
   public:
-    class LegendView : public View {
-    public:
-      LegendView();
-      ~LegendView();
-      LegendView(const LegendView& other) = delete;
-      LegendView(LegendView&& other) = delete;
-      LegendView& operator=(const LegendView& other) = delete;
-      LegendView& operator=(LegendView&& other) = delete;
-      void drawRect(KDContext * ctx, KDRect rect) const override;
-      void setLegendMessage(I18n::Message message);
-      void setSumSubscript(float start);
-      void setSumSuperscript(float start, float end);
-      void setSumResult(const char * sequenceName, float result);
-    private:
-      void layoutSubviews() override;
-      int numberOfSubviews() const override;
-      View * subviewAtIndex(int index) override;
-      ExpressionView m_sum;
-      Poincare::ExpressionLayout * m_sumLayout;
-      MessageTextView m_legend;
-    };
-    ContentView(GraphView * graphView);
-    void layoutSubviews() override;
-    GraphView * graphView();
-    LegendView * legendView();
+    LegendView();
+    ~LegendView();
+    LegendView(const LegendView& other) = delete;
+    LegendView(LegendView&& other) = delete;
+    LegendView& operator=(const LegendView& other) = delete;
+    LegendView& operator=(LegendView&& other) = delete;
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void setLegendMessage(I18n::Message message);
+    void setSumSubscript(float start);
+    void setSumSuperscript(float start, float end);
+    void setSumResult(const char * sequenceName, float result);
+    KDSize minimalSizeForOptimalDisplay() const override;
   private:
+    constexpr static KDCoordinate k_legendHeight = 35;
+    void layoutSubviews() override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    GraphView * m_graphView;
-    LegendView m_legendView;
-    constexpr static KDCoordinate k_legendHeight = 35;
+    ExpressionView m_sum;
+    Poincare::ExpressionLayout * m_sumLayout;
+    MessageTextView m_legend;
   };
-  ContentView m_contentView;
+  GraphView * m_graphView;
+  LegendView m_legendView;
   CurveViewRange * m_graphRange;
   Sequence * m_sequence;
   Shared::CurveViewCursor * m_cursor;

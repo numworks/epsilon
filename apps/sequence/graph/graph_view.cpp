@@ -54,8 +54,10 @@ void GraphView::reload() {
   if (m_highlightedDotStart >= 0) {
     float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedDotStart)-1;
     float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedDotEnd)+2;
+    /* We exclude the banner frame from the dirty zone to avoid unnecessary
+     * redrawing */
     KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()));
+    bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
   }
 }
@@ -96,7 +98,7 @@ float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const
 
 KDSize GraphView::cursorSize() {
   if (m_verticalCursor) {
-    return KDSize(1, 2*bounds().height());
+    return KDSize(1, 0);
   }
   return CurveView::cursorSize();
 }

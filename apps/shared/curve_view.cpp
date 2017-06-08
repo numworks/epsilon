@@ -27,7 +27,8 @@ void CurveView::reload() {
   if (m_drawnRangeVersion != rangeVersion) {
     // FIXME: This should also be called if the *curve* changed
     m_drawnRangeVersion = rangeVersion;
-    markRectAsDirty(bounds());
+    KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->bounds().height() : 0;
+    markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
     if (label(Axis::Horizontal, 0) != nullptr) {
       computeLabels(Axis::Horizontal);
     }

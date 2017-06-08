@@ -203,7 +203,6 @@ void TermSumController::LegendView::setSumSubscript(float start) {
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
  m_sum.setExpression(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
- layoutSubviews();
 }
 
 void TermSumController::LegendView::setSumSuperscript(float start, float end) {
@@ -219,7 +218,6 @@ void TermSumController::LegendView::setSumSuperscript(float start, float end) {
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);
   m_sum.setAlignment(0.0f, 0.5f);
-  layoutSubviews();
 }
 
 void TermSumController::LegendView::setSumResult(const char * sequenceName, float result) {
@@ -233,7 +231,6 @@ void TermSumController::LegendView::setSumResult(const char * sequenceName, floa
   m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
   m_sum.setExpression(m_sumLayout);
   m_sum.setAlignment(0.5f, 0.5f);
-  layoutSubviews();
 }
 
 int TermSumController::LegendView::numberOfSubviews() const {

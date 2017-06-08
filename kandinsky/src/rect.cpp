@@ -69,6 +69,12 @@ void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
 }
 
 KDRect KDRect::unionedWith(const KDRect & other) const {
+  if (this->isEmpty()) {
+    return other;
+  }
+  if (other.isEmpty()) {
+    return *this;
+  }
   /* We should ignore coordinate whose size is zero
    * For example, if r1.height is zero, just ignore r1.y and r1.height. */
 

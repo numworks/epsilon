@@ -16,7 +16,8 @@ namespace Sequence {
 
 TermSumController::TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
   ViewController(parentResponder),
-  m_contentView(graphView),
+  m_graphView(graphView),
+  m_legendView(),
   m_graphRange(graphRange),
   m_sequence(nullptr),
   m_cursor(cursor),
@@ -33,27 +34,26 @@ const char * TermSumController::title() {
 }
 
 View * TermSumController::view() {
-  return &m_contentView;
+  return m_graphView;
 }
 
 void TermSumController::viewWillAppear() {
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-  m_contentView.graphView()->setVerticalCursor(true);
-  m_contentView.graphView()->setCursorView(&m_cursorView);
-  m_contentView.graphView()->setBannerView(nullptr);
-  m_contentView.graphView()->setOkView(nullptr);
-  m_contentView.graphView()->selectMainView(true);
-  m_contentView.graphView()->setHighlightColor(false);
-  m_contentView.graphView()->setHighlight(-1.0f,-1.0f);
-  m_contentView.graphView()->reload();
-  m_contentView.layoutSubviews();
+  m_graphView->setVerticalCursor(true);
+  m_graphView->setBannerView(&m_legendView);
+  m_graphView->setCursorView(&m_cursorView);
+  m_graphView->setOkView(nullptr);
+  m_graphView->selectMainView(true);
+  m_graphView->setHighlightColor(false);
+  m_graphView->setHighlight(-1.0f,-1.0f);
+  m_graphView->reload();
 
   m_bufferCursorPosition = 0;
   m_startSum = -1;
   m_endSum = -1;
   m_step = 0;
-  m_contentView.legendView()->setLegendMessage(I18n::Message::SelectFirstTerm);
-  m_contentView.legendView()->setSumSubscript(m_cursor->x());
+  m_legendView.setLegendMessage(I18n::Message::SelectFirstTerm);
+  m_legendView.setSumSubscript(m_cursor->x());
 }
 
 bool TermSumController::handleEvent(Ion::Events::Event event) {
@@ -65,14 +65,14 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     if (moveCursorHorizontallyToPosition(roundf(m_cursor->x()-1.0f))) {
-      m_contentView.graphView()->reload();
+      m_graphView->reload();
       return true;
     }
     return false;
   }
   if (event == Ion::Events::Right) {
     if (moveCursorHorizontallyToPosition(roundf(m_cursor->x()+1.0f))) {
-      m_contentView.graphView()->reload();
+      m_graphView->reload();
       return true;
     }
     return false;
@@ -83,7 +83,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     if (moveCursorHorizontallyToPosition(m_bufferCursorPosition)) {
-      m_contentView.graphView()->reload();
+      m_graphView->reload();
       return true;
     }
     return false;
@@ -98,35 +98,38 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
       m_step++;
       m_bufferCursorPosition = 0;
       m_startSum = m_cursor->x();
-      m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
-      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectLastTerm);
+      m_graphView->setHighlight(m_startSum,m_startSum);
+      m_legendView.setSumSuperscript(m_startSum, m_cursor->x());
+      m_legendView.setLegendMessage(I18n::Message::SelectLastTerm);
       return true;
     }
     m_step++;
     m_endSum = m_cursor->x();
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     float sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
-    m_contentView.legendView()->setSumResult(m_sequence->name(), sum);
-    m_contentView.legendView()->setLegendMessage(I18n::Message::Default);
-    m_contentView.graphView()->setHighlightColor(true);
-    m_contentView.graphView()->selectMainView(false);
+    m_legendView.setSumResult(m_sequence->name(), sum);
+    m_legendView.setLegendMessage(I18n::Message::Default);
+    m_graphView->setHighlightColor(true);
+    m_graphView->setCursorView(nullptr);
+    m_graphView->reload();
     return true;
   }
   if (event == Ion::Events::Back && m_step > 0) {
     m_step--;
     m_bufferCursorPosition = 0;
     if (m_step == 1) {
-      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectLastTerm);
-      m_contentView.graphView()->setHighlightColor(false);
-      m_contentView.graphView()->selectMainView(true);
-      m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
+      m_legendView.setLegendMessage(I18n::Message::SelectLastTerm);
+      m_graphView->setHighlightColor(false);
+      m_graphView->setCursorView(&m_cursorView);
+      m_graphView->reload();
+      m_legendView.setSumSuperscript(m_startSum, m_cursor->x());
     }
     if (m_step == 0) {
-      m_contentView.graphView()->setHighlight(-1,-1);
+      m_graphView->setHighlight(-1,-1);
       moveCursorHorizontallyToPosition(m_startSum);
-      m_contentView.legendView()->setLegendMessage(I18n::Message::SelectFirstTerm);
-      m_contentView.legendView()->setSumSubscript(m_startSum);
-      m_contentView.graphView()->reload();
+      m_legendView.setLegendMessage(I18n::Message::SelectFirstTerm);
+      m_legendView.setSumSubscript(m_startSum);
+      m_graphView->reload();
     }
     return true;
   }
@@ -145,79 +148,51 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
   float y = m_sequence->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   if (m_step == 0) {
-    m_contentView.legendView()->setSumSubscript(m_cursor->x());
+    m_legendView.setSumSubscript(m_cursor->x());
   }
   if (m_step == 1) {
-    m_contentView.graphView()->setHighlight(m_startSum, m_cursor->x());
-    m_contentView.legendView()->setSumSuperscript(m_startSum, m_cursor->x());
+    m_graphView->setHighlight(m_startSum, m_cursor->x());
+    m_legendView.setSumSuperscript(m_startSum, m_cursor->x());
   }
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
 void TermSumController::setSequence(Sequence * sequence) {
-  m_contentView.graphView()->selectSequence(sequence);
+  m_graphView->selectSequence(sequence);
   m_sequence = sequence;
-}
-
-/* Content View */
-
-TermSumController::ContentView::ContentView(GraphView * graphView) :
-  m_graphView(graphView)
-{
-}
-
-void TermSumController::ContentView::layoutSubviews() {
-  m_graphView->setFrame(bounds());
-  m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
-}
-
-GraphView * TermSumController::ContentView::graphView() {
-  return m_graphView;
-}
-
-TermSumController::ContentView::LegendView * TermSumController::ContentView::legendView() {
-  return &m_legendView;
-}
-
-int TermSumController::ContentView::numberOfSubviews() const {
-  return 2;
-}
-
-View * TermSumController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return m_graphView;
-  }
-  return &m_legendView;
 }
 
 /* Legend View */
 
-TermSumController::ContentView::LegendView::LegendView() :
+TermSumController::LegendView::LegendView() :
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
   m_sumLayout(nullptr),
   m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright)
 {
 }
 
-TermSumController::ContentView::LegendView::~LegendView() {
+TermSumController::LegendView::~LegendView() {
   if (m_sumLayout != nullptr) {
     delete m_sumLayout;
     m_sumLayout = nullptr;
   }
 }
 
-void TermSumController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
+void TermSumController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyMiddle);
 }
 
-void TermSumController::ContentView::LegendView::setLegendMessage(I18n::Message message) {
+KDSize TermSumController::LegendView::minimalSizeForOptimalDisplay() const {
+  return KDSize(0, k_legendHeight);
+}
+
+void TermSumController::LegendView::setLegendMessage(I18n::Message message) {
   m_legend.setMessage(message);
   layoutSubviews();
 }
 
-void TermSumController::ContentView::LegendView::setSumSubscript(float start) {
+void TermSumController::LegendView::setSumSubscript(float start) {
   if (m_sumLayout) {
     delete m_sumLayout;
     m_sumLayout = nullptr;
@@ -231,7 +206,7 @@ void TermSumController::ContentView::LegendView::setSumSubscript(float start) {
  layoutSubviews();
 }
 
-void TermSumController::ContentView::LegendView::setSumSuperscript(float start, float end) {
+void TermSumController::LegendView::setSumSuperscript(float start, float end) {
   if (m_sumLayout) {
     delete m_sumLayout;
     m_sumLayout = nullptr;
@@ -247,7 +222,7 @@ void TermSumController::ContentView::LegendView::setSumSuperscript(float start, 
   layoutSubviews();
 }
 
-void TermSumController::ContentView::LegendView::setSumResult(const char * sequenceName, float result) {
+void TermSumController::LegendView::setSumResult(const char * sequenceName, float result) {
   ExpressionLayout * childrenLayouts[3];
   char buffer[2+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   strlcpy(buffer, "= ", 3);
@@ -261,11 +236,11 @@ void TermSumController::ContentView::LegendView::setSumResult(const char * seque
   layoutSubviews();
 }
 
-int TermSumController::ContentView::LegendView::numberOfSubviews() const {
+int TermSumController::LegendView::numberOfSubviews() const {
   return 2;
 }
 
-View * TermSumController::ContentView::LegendView::subviewAtIndex(int index) {
+View * TermSumController::LegendView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return &m_sum;
@@ -273,7 +248,7 @@ View * TermSumController::ContentView::LegendView::subviewAtIndex(int index) {
   return &m_legend;
 }
 
-void TermSumController::ContentView::LegendView::layoutSubviews() {
+void TermSumController::LegendView::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate heigth = bounds().height();
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();

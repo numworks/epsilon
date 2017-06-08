@@ -58,7 +58,7 @@ void CurveView::setCursorView(View * cursorView) {
   m_cursorView = cursorView;
 }
 
-void CurveView::setBannerView(BannerView * bannerView) {
+void CurveView::setBannerView(View * bannerView) {
   m_bannerView = bannerView;
 }
 
@@ -477,6 +477,10 @@ void CurveView::layoutSubviews() {
     KDCoordinate xCursorPixelPosition = roundf(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = roundf(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
     KDRect cursorFrame(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
+    if (cursorSize().height() == 0) {
+      KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
+      cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, 0, cursorSize().width(),bounds().height()-bannerHeight);
+    }
     if (!m_mainViewSelected || isnan(m_curveViewCursor->x()) || isnan(m_curveViewCursor->y())
         || isinf(m_curveViewCursor->x()) || isinf(m_curveViewCursor->y())) {
       cursorFrame = KDRectZero;

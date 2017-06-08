@@ -55,6 +55,7 @@ protected:
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
   virtual KDSize cursorSize();
+  BannerView * m_bannerView;
 private:
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
@@ -81,7 +82,6 @@ private:
    * cursor views may be nullptr if not needed. */
   CurveViewRange * m_curveViewRange;
   CurveViewCursor * m_curveViewCursor;
-  BannerView * m_bannerView;
   View * m_cursorView;
   View * m_okView;
   bool m_mainViewSelected;

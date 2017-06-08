@@ -12,9 +12,9 @@ namespace Shared {
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView) :
   View(),
+  m_bannerView(bannerView),
   m_curveViewRange(curveViewRange),
   m_curveViewCursor(curveViewCursor),
-  m_bannerView(bannerView),
   m_cursorView(cursorView),
   m_okView(okView),
   m_mainViewSelected(false),

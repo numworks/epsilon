@@ -19,8 +19,10 @@ void HistogramView::reload() {
   CurveView::reload();
   float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart)-2;
   float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd)+2;
+  /* We deliberately do not mark as dirty the frame of the banner view to avoid
+   *unpleasant blinking of the drawing of the banner view. */
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()));
+    bounds().height()-m_bannerView->bounds().height()));
   markRectAsDirty(dirtyZone);
 }
 

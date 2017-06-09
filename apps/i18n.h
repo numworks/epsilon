@@ -214,6 +214,7 @@ namespace I18n {
     Regression,
     NoEnoughDataForRegression,
     Reg,
+    MeanDot,
     RegressionSlope,
     XPrediction,
     YPrediction,

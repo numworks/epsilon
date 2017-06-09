@@ -68,11 +68,11 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
-    if (m_expressions[indexMatrix] != nullptr) {
+    if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
     }
-    if (expression->type() == Expression::Type::Matrix) {
+    if (expression != nullptr && expression->type() == Expression::Type::Matrix) {
       m_matrixExpressions[indexMatrix] = expression->clone();
     }
     return;
@@ -84,6 +84,9 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;
+  }
+  if (expression == nullptr) {
+    return;
   }
   if (expression->type() == Expression::Type::Complex) {
     m_expressions[index] = expression->clone();

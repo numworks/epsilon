@@ -75,6 +75,18 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     app()->dismissModalViewController();
     return true;
   }
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
+    if (m_currentPage == Page::Scalar) {
+      const Symbol symbol = Symbol('A'+selectedRow());
+      m_context->setExpressionForSymbolName(nullptr, &symbol);
+    }
+    if (m_currentPage == Page::Matrix) {
+      const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
+      m_context->setExpressionForSymbolName(nullptr, &symbol);
+    }
+    m_selectableTableView.reloadData();
+    return true;
+  }
   return false;
 }
 

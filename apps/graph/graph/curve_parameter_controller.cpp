@@ -27,7 +27,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (selectedRow() == 0 || selectedRow() == 1))) {
     switch (selectedRow()) {
       case 0:
         return true;

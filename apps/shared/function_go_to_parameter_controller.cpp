@@ -41,4 +41,12 @@ void FunctionGoToParameterController::setFunction(Function * function) {
   m_function = function;
 }
 
+bool FunctionGoToParameterController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackController()->pop();
+    return true;
+  }
+  return false;
+}
+
 }

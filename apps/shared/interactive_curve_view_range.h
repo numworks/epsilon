@@ -24,7 +24,7 @@ public:
   void setYAuto(bool yAuto);
 
   // Window
-  void zoom(float ratio);
+  void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
   virtual void roundAbscissa();
   virtual void normalize();

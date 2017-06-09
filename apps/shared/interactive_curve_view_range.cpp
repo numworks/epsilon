@@ -85,26 +85,26 @@ void InteractiveCurveViewRange::setYAuto(bool yAuto) {
   }
 }
 
-void InteractiveCurveViewRange::zoom(float ratio) {
+void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMin = m_xMin;
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
-  if (2.0f*ratio*fabsf(xMax-xMin) < k_minFloat || 2.0f*ratio*fabsf(yMax-yMin) < k_minFloat) {
+  if (ratio*fabsf(xMax-xMin) < k_minFloat || ratio*fabsf(yMax-yMin) < k_minFloat) {
     return;
   }
-  float newXMin = clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false);
-  float newXMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
+  float newXMin = clipped(x*(1.0f-ratio)+ratio*xMin, false);
+  float newXMax = clipped(x*(1.0f-ratio)+ratio*xMax, true);
   if (!isnan(newXMin) && !isnan(newXMax)) {
-    m_xMax = clipped((xMax+xMin)/2.0f + ratio*fabsf(xMax-xMin), true);
-    MemoizedCurveViewRange::setXMin(clipped((xMax+xMin)/2.0f - ratio*fabsf(xMax-xMin), false));
+    m_xMax = newXMax;
+    MemoizedCurveViewRange::setXMin(newXMin);
   }
   m_yAuto = false;
-  float newYMin = clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false);
-  float newYMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
+  float newYMin = clipped(y*(1.0f-ratio)+ratio*yMin, false);
+  float newYMax = clipped(y*(1.0f-ratio)+ratio*yMax, true);
   if (!isnan(newYMin) && !isnan(newYMax)) {
-    m_yMax = clipped((yMax+yMin)/2.0f + ratio*fabsf(yMax-yMin), true);
-    MemoizedCurveViewRange::setYMin(clipped((yMax+yMin)/2.0f - ratio*fabsf(yMax-yMin), false));
+    m_yMax = newYMax;
+    MemoizedCurveViewRange::setYMin(newYMin);
   }
 }
 

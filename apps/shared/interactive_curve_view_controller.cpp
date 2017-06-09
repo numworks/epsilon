@@ -60,16 +60,12 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Plus) {
-    interactiveCurveViewRange()->zoom(1.0f/3.0f);
-    initCursorParameters();
-    reloadBannerView();
+    interactiveCurveViewRange()->zoom(2.0f/3.0f, m_cursor->x(), m_cursor->y());
     curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
-    interactiveCurveViewRange()->zoom(3.0f/4.0f);
-    initCursorParameters();
-    reloadBannerView();
+    interactiveCurveViewRange()->zoom(3.0f/2.0f, m_cursor->x(), m_cursor->y());
     curveView()->reload();
     return true;
   }

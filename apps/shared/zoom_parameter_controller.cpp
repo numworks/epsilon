@@ -21,12 +21,16 @@ View * ZoomParameterController::view() {
 
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
-    m_interactiveRange->zoom(1.0f/3.0f);
+    float meanX = (m_interactiveRange->xMin()+m_interactiveRange->xMax())/2.0f;
+    float meanY = (m_interactiveRange->yMin()+m_interactiveRange->yMax())/2.0f;
+    m_interactiveRange->zoom(2.0f/3.0f, meanX, meanY);
     m_contentView.curveView()->reload();
     return true;
   }
   if (event == Ion::Events::Minus) {
-    m_interactiveRange->zoom(3.0f/4.0f);
+    float meanX = (m_interactiveRange->xMin()+m_interactiveRange->xMax())/2.0f;
+    float meanY = (m_interactiveRange->yMin()+m_interactiveRange->yMax())/2.0f;
+    m_interactiveRange->zoom(3.0f/2.0f, meanX, meanY);
     m_contentView.curveView()->reload();
     return true;
   }

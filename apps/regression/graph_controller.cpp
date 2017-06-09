@@ -67,7 +67,7 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   if (m_selectedDotIndex == m_store->numberOfPairs()) {
-    legend = I18n::translate(I18n::Message::Mean);
+    legend = I18n::translate(I18n::Message::MeanDot);
     legendLength = strlen(legend);
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;

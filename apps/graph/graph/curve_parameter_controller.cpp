@@ -10,7 +10,9 @@ CurveParameterController::CurveParameterController(InteractiveCurveViewRange * g
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
+#if FUNCTION_CALCULATE_MENU
   m_calculationCell(I18n::Message::Compute),
+#endif
   m_derivativeCell(I18n::Message::DerivateNumber)
 {
 }
@@ -27,11 +29,19 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
+#if FUNCTION_CALCULATE_MENU
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (selectedRow() == 0 || selectedRow() == 1))) {
+#else
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
+#endif
     switch (selectedRow()) {
+#if FUNCTION_CALCULATE_MENU
       case 0:
         return true;
       case 1:
+#else
+      case 0:
+#endif
         return handleGotoSelection();
       case 2:
       {
@@ -53,7 +63,11 @@ int CurveParameterController::numberOfRows() {
 HighlightCell * CurveParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
+#if FUNCTION_CALCULATE_MENU
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
+#else
+  HighlightCell * cells[] = {&m_goToCell, &m_derivativeCell};
+#endif
   return cells[index];
 }
 

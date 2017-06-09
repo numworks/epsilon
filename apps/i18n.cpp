@@ -25,7 +25,7 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[225][5] {
+const char * messages[231][5] {
   {"Attention", "Warning", "Cuidado", "Achtung", "Atencao"},
   {"Valider", "Confirm", "Confirmar", "Bestatigen", "Confirmar"},
   {"Annuler", "Cancel", "Cancelar", "Abbrechen", "Cancelar"},
@@ -83,6 +83,12 @@ const char * messages[225][5] {
   {"Partie fractionnaire", "Fractional part", "Parte fraccionaria", "Bruchanteil" , "Parte fraccionaria"},
   {"Plafond", "Ceiling", "Techo", "Obergrenze", "Teto"},
   {"Arrondi n chiffres", "Rounding to n digits", "Redondeo n digitos", "Runden", "Arredondar"},
+  {"Cosinus hyperbolique", "Hyperbolic cosine", "Coseno hiperbolico", "Kosinus hyperbolicus", "Cosseno hiperbolico"},
+  {"Sinus hyperbolique", "Hyperbolic sine", "Seno hiperbolico", "Sinus hyperbolicus", "Seno hiperbolico"},
+  {"Tangente hyperbolique", "Hyperbolic tangent", "Tangente hiperbolica", "Tangens hyperbolicus", "Tangente hiperbolica"},
+  {"Argument cosinus hyperbolique", "Inverse hyperbolic cosine", "Argumento coseno hiperbolico", "Areakosinus hyperbolicus", "Arco cosseno hiperbolico"},
+  {"Argument sinus hyperbolique", "Inverse hyperbolic sine", "Argumento seno hiperbolico", "Areasinus hyperbolicus", "Arco seno hiperbolico"},
+  {"Argument tangente hyperbolique", "Inverse hyperbolic tangent", "Argumento tangente hiperbolica", "Areatangens hyperbolicus", "Arco tangente hiperbolica"},
   {"Intervalle fluctuation 95% (Term)", "Prediction interval 95%", "Intervalo de prediccion 95%", "Schwankungsbereich 95%", "Intervalo de previsao 95%"},
   {"Intervalle fluctuation simple (2de)", "Simple prediction interval", "Intervalo de prediccion simple", "Einfaches Schwankungsbereich", "Intervalo de previsao simples"},
   {"Intervalle confiance", "Confidence interval", "Intervalo de confianza", "Konfidenzintervall", "Intervalo de confianca"},
@@ -299,7 +305,7 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[244] {
+const char * universalMessages[238] {
   "",
   "alpha",
   "ALPHA",
@@ -314,13 +320,6 @@ const char * universalMessages[244] {
   "b",
   "r",
   sxy,
-
-  "cosh",
-  "sinh",
-  "tanh",
-  "acosh",
-  "asinh",
-  "atanh",
 
   "Xmin",
   "Xmax",

@@ -21,6 +21,7 @@ const Image * App::Descriptor::icon() {
 App::Snapshot::Snapshot() :
   m_store(),
   m_cursor(),
+  m_graphSelectedDotIndex(-1),
   m_modelVersion(0),
   m_rangeVersion(0)
 {
@@ -51,6 +52,10 @@ CurveViewCursor * App::Snapshot::cursor() {
   return &m_cursor;
 }
 
+int * App::Snapshot::graphSelectedDotIndex() {
+  return &m_graphSelectedDotIndex;
+}
+
 uint32_t * App::Snapshot::modelVersion() {
   return &m_modelVersion;
 }
@@ -64,7 +69,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion()),
+  m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

@@ -27,7 +27,7 @@ void PredictionParameterController::didBecomeFirstResponder() {
 }
 
 bool PredictionParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_goToParameterController.setXPrediction(selectedRow() == 0);
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->push(&m_goToParameterController);

@@ -12,6 +12,7 @@ class GoToParameterController : public FloatParameterController {
 public:
   GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   int numberOfRows() override;
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
   constexpr static float k_maxDisplayableFloat = 1E8f;
   CurveViewCursor * m_cursor;

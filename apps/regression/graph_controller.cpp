@@ -77,7 +77,7 @@ void GraphController::reloadBannerView() {
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;
   } else {
-    numberOfChar += Complex::convertFloatToText((float)m_selectedDotIndex, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    numberOfChar += Complex::convertFloatToText(roundf((float)m_selectedDotIndex+1.0f), buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   }
   legend = ")  ";
   legendLength = strlen(legend);

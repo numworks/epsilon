@@ -22,7 +22,9 @@ View * PredictionParameterController::view() {
 }
 
 void PredictionParameterController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  if (selectedRow() < 0) {
+    selectCellAtLocation(0, 0);
+  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 

@@ -9,6 +9,8 @@ app_objs += $(addprefix apps/hardware_test/,\
   pop_up_controller.o\
   reset_controller.o\
   screen_test_controller.o\
+  screen_test_controller.o\
+  usb_test_controller.o\
 )
 
 

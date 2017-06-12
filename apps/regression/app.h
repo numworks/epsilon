@@ -26,11 +26,13 @@ public:
     Descriptor * descriptor() override;
     Store * store();
     Shared::CurveViewCursor * cursor();
+    int * graphSelectedDotIndex();
     uint32_t * modelVersion();
     uint32_t * rangeVersion();
   private:
     Store m_store;
     Shared::CurveViewCursor m_cursor;
+    int m_graphSelectedDotIndex;
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
  };

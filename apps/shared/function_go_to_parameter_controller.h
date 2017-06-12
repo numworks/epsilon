@@ -11,7 +11,6 @@ public:
   FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
   void setFunction(Function * function);
-  bool handleEvent(Ion::Events::Event event) override;
 protected:
   bool setParameterAtIndex(int parameterIndex, float f) override;
   Function * m_function;

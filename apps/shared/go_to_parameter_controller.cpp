@@ -26,6 +26,14 @@ int GoToParameterController::reusableParameterCellCount(int type) {
   return 1;
 }
 
+bool GoToParameterController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackController()->pop();
+    return true;
+  }
+  return false;
+}
+
 void GoToParameterController::buttonAction() {
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->pop();

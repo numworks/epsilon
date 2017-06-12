@@ -212,12 +212,11 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       reinitExpression(function);
     } else {
       if (removeFunctionRow(function)) {
-        selectableTableView()->reloadData();
-        selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow());
+        selectCellAtLocation(selectedColumn(), selectedRow());
         if (selectedRow() >= numberOfRows()) {
-          selectableTableView()->selectCellAtLocation(0, 0);
-          selectableTableView()->selectCellAtLocation(selectedColumn(), numberOfRows()-1);
+          selectCellAtLocation(selectedColumn(), numberOfRows()-1);
         }
+        selectableTableView()->reloadData();
       }
     }
     return true;

@@ -43,7 +43,11 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
 #endif
         return handleGotoSelection();
+#if FUNCTION_CALCULATE_MENU
       case 2:
+#else
+      case 1:
+#endif
       {
         m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
         m_selectableTableView.reloadData();

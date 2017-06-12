@@ -43,7 +43,6 @@ View * TypeParameterController::view() {
 }
 
 void TypeParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }

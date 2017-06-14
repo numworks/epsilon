@@ -382,8 +382,8 @@ namespace I18n {
   };
   enum class Language : uint16_t {
     Default = 0,
-    French = 1,
-    English = 2,
+    English = 1,
+    French = 2,
     Spanish = 3,
     German = 4,
     Portuguese = 5

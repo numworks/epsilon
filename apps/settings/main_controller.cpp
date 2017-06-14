@@ -13,7 +13,7 @@ namespace Settings {
 const SettingsNode angleChildren[2] = {SettingsNode(I18n::Message::Degres), SettingsNode(I18n::Message::Radian)};
 const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Auto), SettingsNode(I18n::Message::Scientific)};
 const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
-const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::Spanish), SettingsNode(I18n::Message::German), SettingsNode(I18n::Message::Portuguese)};
+const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::Spanish), SettingsNode(I18n::Message::German), SettingsNode(I18n::Message::Portuguese)};
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
 

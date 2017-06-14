@@ -25,9 +25,6 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         m_cartesianFunction->setDisplayDerivative(!m_cartesianFunction->displayDerivative());
-        if (m_cartesianFunction->displayDerivative()) {
-          m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()+1, m_valuesController->selectedRow());
-        }
         m_selectableTableView.reloadData();
         return true;
       }
@@ -61,6 +58,13 @@ HighlightCell * FunctionParameterController::reusableCell(int index) {
 
 int FunctionParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
+}
+
+void FunctionParameterController::viewWillAppear() {
+  ValuesFunctionParameterController::viewWillAppear();
+  if (m_cartesianFunction->displayDerivative()) {
+    m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()+1, m_valuesController->selectedRow());
+  }
 }
 
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

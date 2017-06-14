@@ -17,6 +17,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setFunction(Shared::Function * function) override;
+  void viewWillAppear() override;
 private:
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;

@@ -34,6 +34,13 @@ Expression::Type Fraction::type() const {
 
 Expression * Fraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
   float norm = d->a()*d->a() + d->b()*d->b();
+  /* We handle the case of c and d pure real numbers apart. Even if the complex
+   * fraction is mathematically correct on real numbers, it requires more
+   * operations and is thus more likely to propagate errors due to float exact
+   * representation. */
+  if (d->b() == 0.0f && c->b() == 0.0f) {
+    return new Complex(Complex::Float(c->a()/d->a()));
+  }
   return new Complex(Complex::Cartesian((c->a()*d->a()+c->b()*d->b())/norm, (d->a()*c->b()-c->a()*d->b())/norm));
 }
 

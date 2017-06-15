@@ -44,7 +44,7 @@ void GraphController::reloadBannerView() {
   buffer[1] = '\'';
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
-  Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 }
 

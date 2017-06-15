@@ -14,30 +14,6 @@ Store::Store() :
 {
 }
 
-bool Store::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  if (!m_yAuto) {
-    return false;
-  }
-  float min = m_yMin;
-  float max = m_yMax;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_xMin <= m_data[0][k] && m_data[0][k] <= m_xMax) {
-      if (m_data[1][k] < min) {
-        min = m_data[1][k];
-      }
-      if (m_data[1][k] > max) {
-        max = m_data[1][k];
-      }
-    }
-  }
-  if (min == m_yMin && max == m_yMax) {
-    return false;
-  }
-  setYMin(min);
-  setYMax(max);
-  return true;
-}
-
 /* Dots */
 
 int Store::closestVerticalDot(int direction, float x) {
@@ -136,13 +112,9 @@ void Store::setDefault() {
   float min = minValueOfColumn(0);
   float max = maxValueOfColumn(0);
   float range = max - min;
-  InteractiveCurveViewRange::setXMin(min - k_displayLeftMarginRatio*range);
-  InteractiveCurveViewRange::setXMax(max + k_displayRightMarginRatio*range);
-  min = minValueOfColumn(1);
-  max = maxValueOfColumn(1);
-  range = max - min;
-  setYMin(min - k_displayBottomMarginRatio*range);
-  setYMax(max + k_displayTopMarginRatio*range);
+  setXMin(min - k_displayLeftMarginRatio*range);
+  setXMax(max + k_displayRightMarginRatio*range);
+  setYAuto(true);
 }
 
 /* Calculations */
@@ -240,6 +212,30 @@ float Store::squaredCorrelationCoefficient() {
     return 1.0f;
   }
   return cov*cov/(v0*v1);
+}
+
+InteractiveCurveViewRangeDelegate::Range Store::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  float min = FLT_MAX;
+  float max = -FLT_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_xMin <= m_data[0][k] && m_data[0][k] <= m_xMax) {
+      if (m_data[1][k] < min) {
+        min = m_data[1][k];
+      }
+      if (m_data[1][k] > max) {
+        max = m_data[1][k];
+      }
+    }
+  }
+  InteractiveCurveViewRangeDelegate::Range range;
+  range.min = min;
+  range.max = max;
+  return range;
+}
+
+float Store::addMargin(float x, float range, bool isMin) {
+  float ratio = isMin ? -k_displayBottomMarginRatio : k_displayTopMarginRatio;
+  return x+ratio*range;
 }
 
 }

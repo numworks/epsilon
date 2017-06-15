@@ -21,6 +21,7 @@ app_objs += $(addprefix apps/shared/,\
   initialisation_parameter_controller.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
+  interactive_curve_view_range_delegate.o\
   interval.o\
   interval_parameter_controller.o\
   list_controller.o\

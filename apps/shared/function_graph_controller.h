@@ -16,7 +16,6 @@ public:
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
   void viewWillAppear() override;
-  bool didChangeRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 protected:
   constexpr static float k_cursorTopMarginRatio = 0.068f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
@@ -31,6 +30,9 @@ private:
    * can move the cursor along the curve without panning the window */
   constexpr static float k_displayTopMarginRatio = 0.09f;
   constexpr static float k_displayBottomMarginRatio = 0.2f;
+
+  InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  float addMargin(float x, float range, bool isMin) override;
 
   void initRangeParameters() override;
   bool moveCursorVertically(int direction) override;

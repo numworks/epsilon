@@ -39,67 +39,6 @@ void FunctionGraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
 }
 
-bool FunctionGraphController::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  if (!interactiveCurveViewRange->yAuto()) {
-    return false;
-  }
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  if (functionStore()->numberOfActiveFunctions() <= 0) {
-    return false;
-  }
-  float min = FLT_MAX;
-  float max = -FLT_MAX;
-  float xMin = interactiveCurveViewRange->xMin();
-  float xMax = interactiveCurveViewRange->xMax();
-  float step = (xMax - xMin)/curveView()->resolution();
-  for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
-    Function * f = functionStore()->activeFunctionAtIndex(i);
-    float y = 0.0f;
-    for (int i = 0; i <= curveView()->resolution(); i++) {
-      float x = xMin + i*step;
-      y = f->evaluateAtAbscissa(x, myApp->localContext());
-      if (!isnan(y) && !isinf(y)) {
-        min = min < y ? min : y;
-        max = max > y ? max : y;
-      }
-    }
-  }
-  float range = max - min;
-  if (max < min) {
-    range = 0.0f;
-  }
-  if (interactiveCurveViewRange->yMin() == min-k_displayBottomMarginRatio*range
-      && interactiveCurveViewRange->yMax() == max+k_displayTopMarginRatio*range) {
-    return false;
-  }
-  if (min == max) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, max) : 1.0f;
-    min = min - step;
-    max = max + step;
-  }
-  if (min == FLT_MAX && max == -FLT_MAX) {
-    min = -1.0f;
-    max = 1.0f;
-  }
-  if (min == FLT_MAX) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(max)) : 1.0f;
-    min = max-step;
-  }
-   if (max == -FLT_MAX) {
-    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(min)) : 1.0f;
-    max = min+step;
-  }
-  interactiveCurveViewRange->setYMin(min-k_displayBottomMarginRatio*range);
-  interactiveCurveViewRange->setYMax(max+k_displayTopMarginRatio*range);
-  if (isinf(interactiveCurveViewRange->xMin())) {
-    interactiveCurveViewRange->setYMin(-FLT_MAX);
-  }
-  if (isinf(interactiveCurveViewRange->xMax())) {
-    interactiveCurveViewRange->setYMax(FLT_MAX);
-  }
-  return true;
-}
-
 bool FunctionGraphController::handleEnter() {
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   curveParameterController()->setFunction(f);
@@ -139,6 +78,42 @@ void FunctionGraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
   bannerView()->setLegendAtIndex(buffer, 1);
+}
+
+InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  float min = FLT_MAX;
+  float max = -FLT_MAX;
+  float xMin = interactiveCurveViewRange->xMin();
+  float xMax = interactiveCurveViewRange->xMax();
+  float step = (xMax - xMin)/curveView()->resolution();
+  if (functionStore()->numberOfActiveFunctions() <= 0) {
+    InteractiveCurveViewRangeDelegate::Range range;
+    range.min = xMin;
+    range.max = xMax;
+    return range;
+  }
+  for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
+    Function * f = functionStore()->activeFunctionAtIndex(i);
+    float y = 0.0f;
+    for (int i = 0; i <= curveView()->resolution(); i++) {
+      float x = xMin + i*step;
+      y = f->evaluateAtAbscissa(x, myApp->localContext());
+      if (!isnan(y) && !isinf(y)) {
+        min = min < y ? min : y;
+        max = max > y ? max : y;
+      }
+    }
+  }
+  InteractiveCurveViewRangeDelegate::Range range;
+  range.min = min;
+  range.max = max;
+  return range;
+}
+
+float FunctionGraphController::addMargin(float x, float range, bool isMin) {
+  float ratio = isMin ? -k_displayBottomMarginRatio : k_displayTopMarginRatio;
+  return x+ratio*range;
 }
 
 void FunctionGraphController::initRangeParameters() {

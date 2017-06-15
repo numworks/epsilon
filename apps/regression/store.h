@@ -9,8 +9,6 @@ namespace Regression {
 class Store : public Shared::InteractiveCurveViewRange, public Shared::FloatPairStore, public Shared::InteractiveCurveViewRangeDelegate {
 public:
   Store();
-  bool didChangeRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
-
   // Dots
   /* Return the closest dot to x above the regression curve if direction > 0,
    * below otherwise*/
@@ -41,6 +39,8 @@ private:
   constexpr static float k_displayRightMarginRatio = 0.05f;
   constexpr static float k_displayBottomMarginRatio = 0.5f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;
+  InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  float addMargin(float x, float range, bool isMin) override;
   float maxValueOfColumn(int i);
   float minValueOfColumn(int i);
 };

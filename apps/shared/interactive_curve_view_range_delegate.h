@@ -7,7 +7,15 @@ class InteractiveCurveViewRange;
 
 class InteractiveCurveViewRangeDelegate {
 public:
-  virtual bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) = 0;
+  bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
+protected:
+  struct Range {
+    float min;
+    float max;
+  };
+private:
+  virtual Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) = 0;
+  virtual float addMargin(float x, float range, bool isMin) = 0;
 };
 
 }

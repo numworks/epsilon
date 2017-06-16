@@ -20,7 +20,7 @@ extern "C" {
 }
 
 void abort() {
-#ifdef DEBUG
+#if DEBUG
   while (1) {
   }
 #else

@@ -14,3 +14,7 @@ endif
 
 include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
+
+OS_WITH_ONBOARDING_APP ?= 1
+
+SFLAGS += -DOS_WITH_ONBOARDING_APP=$(OS_WITH_ONBOARDING_APP)

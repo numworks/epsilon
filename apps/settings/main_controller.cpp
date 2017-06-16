@@ -17,25 +17,25 @@ const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
 
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
 const SettingsNode menu[7] =
 #else
 const SettingsNode menu[6] =
 #endif
   {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
   SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   SettingsNode(I18n::Message::UpdatePopUp),
 #endif
   SettingsNode(I18n::Message::About, aboutChildren, 3)};
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
 const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
 #else
 const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 6);
 #endif
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
 #endif
   m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
@@ -73,7 +73,7 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
     if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
       if (event == Ion::Events::Right) {
         return false;
@@ -114,7 +114,7 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   if (type == 2) {
     return &m_updateCell;
   }
@@ -133,7 +133,7 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 2) {
     return 1;
   }
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   if (j == 5) {
     return 2;
   }
@@ -162,7 +162,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myExpCell->setExpression(m_complexFormatLayout);
     return;
   }
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   if (index == 5) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();

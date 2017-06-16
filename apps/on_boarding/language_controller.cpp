@@ -7,7 +7,7 @@ namespace OnBoarding {
 LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController) :
   ViewController(parentResponder),
   m_logoController(logoController),
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   m_updateController(updateController),
 #endif
   m_selectableTableView(this, this, 0, 1, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
@@ -34,7 +34,7 @@ void LanguageController::didBecomeFirstResponder() {
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
     app()->displayModalViewController(m_updateController, 0.5f, 0.5f);
 #else
     AppsContainer * appsContainer = (AppsContainer *)app()->container();

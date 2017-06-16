@@ -1,4 +1,4 @@
 TOOLCHAIN = emscripten
 USE_LIBA = 0
 EXE = html
-ON_BOARDING ?= 0
+OS_WITH_ONBOARDING_APP ?= 0

@@ -6,10 +6,6 @@ extern "C" {
 #include <assert.h>
 }
 
-#ifndef ON_BOARDING
-#error This file expects ON_BOARDING to be defined
-#endif
-
 using namespace Shared;
 
 AppsContainer::AppsContainer() :
@@ -157,7 +153,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 }
 
 void AppsContainer::run() {
-#if ON_BOARDING
+#if OS_WITH_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else
   refreshPreferences();

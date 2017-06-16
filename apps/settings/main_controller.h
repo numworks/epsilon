@@ -30,7 +30,7 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   constexpr static int k_totalNumberOfCell = 7;
   MessageTableCellWithSwitch m_updateCell;
 #else

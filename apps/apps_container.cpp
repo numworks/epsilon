@@ -92,7 +92,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
-#if SOFTWARE_NEEDS_UPDATE
+#if OS_WITH_SOFTWARE_UPDATE_PROMPT
   if (activeApp()->snapshot()!= onBoardingAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }

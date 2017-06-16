@@ -17,21 +17,35 @@ const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
 
-const SettingsNode menu[7] = {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1), SettingsNode(I18n::Message::UpdatePopUp), SettingsNode(I18n::Message::About, aboutChildren, 3)};
+#if SOFTWARE_NEEDS_UPDATE
+const SettingsNode menu[7] =
+#else
+const SettingsNode menu[6] =
+#endif
+  {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
+#if SOFTWARE_NEEDS_UPDATE
+  SettingsNode(I18n::Message::UpdatePopUp),
+#endif
+  SettingsNode(I18n::Message::About, aboutChildren, 3)};
+#if SOFTWARE_NEEDS_UPDATE
 const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
-
+#else
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 6);
+#endif
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
+#if SOFTWARE_NEEDS_UPDATE
   m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
+#endif
+  m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
   m_complexFormatLayout(nullptr),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_nodeModel((Node *)&model),
   m_subController(this)
 {
-  for (int i = 0; i < k_totalNumberOfCell-1; i++) {
+  for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
   }
 }
@@ -59,6 +73,7 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+#if SOFTWARE_NEEDS_UPDATE
     if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
       if (event == Ion::Events::Right) {
         return false;
@@ -67,6 +82,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
       return true;
     }
+#endif
     m_subController.setNodeModel(m_nodeModel->children(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(&m_subController);
@@ -94,19 +110,21 @@ int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * MainController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == 0) {
-    assert(index < k_totalNumberOfCell-1);
+    assert(index < k_numberOfSimpleChevronCells);
     return &m_cells[index];
   }
   assert(index == 0);
-  if (type == 1) {
-    return &m_complexFormatCell;
+#if SOFTWARE_NEEDS_UPDATE
+  if (type == 2) {
+    return &m_updateCell;
   }
-  return &m_updateCell;
+#endif
+  return &m_complexFormatCell;
 }
 
 int MainController::reusableCellCount(int type) {
   if (type == 0) {
-    return k_totalNumberOfCell-2;
+    return k_numberOfSimpleChevronCells;
   }
   return 1;
 }
@@ -115,9 +133,11 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 2) {
     return 1;
   }
+#if SOFTWARE_NEEDS_UPDATE
   if (j == 5) {
     return 2;
   }
+#endif
   return 0;
 }
 
@@ -142,12 +162,14 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myExpCell->setExpression(m_complexFormatLayout);
     return;
   }
+#if SOFTWARE_NEEDS_UPDATE
   if (index == 5) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
     return;
   }
+#endif
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   switch (index) {
     case 0:

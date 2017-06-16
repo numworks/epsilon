@@ -24,10 +24,6 @@ SFLAGS += -Wall
 # Flags - Header dependency tracking
 SFLAGS += -MD -MP
 
-ifeq ($(DEBUG),1)
-SFLAGS += -DDEBUG=1
-endif
-
 # Language-specific flags
 CFLAGS = -std=c99
 CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics

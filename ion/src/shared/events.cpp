@@ -130,7 +130,7 @@ bool Event::isDefined() const {
   }
 }
 
-#ifdef DEBUG
+#if DEBUG
 
 static constexpr const char * s_nameForEvent[255] = {
  // Plain

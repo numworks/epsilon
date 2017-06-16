@@ -15,7 +15,7 @@ public:
   static constexpr Event Special(int i) { return Event(4*PageSize+i); }
 
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
-#ifdef DEBUG
+#if DEBUG
   uint8_t id() const { return m_id; }
   const char * name() const;
 #endif

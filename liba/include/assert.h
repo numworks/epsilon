@@ -3,7 +3,7 @@
 
 #include "private/macros.h"
 
-#ifdef DEBUG
+#if DEBUG
 #define assert(e)  ((void) ((e) ? ((void)0) : __assert(#e, __FILE__, __LINE__)))
 #else
 #define assert(e) ((void)0)

@@ -24,7 +24,9 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   LogoController * m_logoController;
+#if SOFTWARE_NEEDS_UPDATE
   UpdateController * m_updateController;
+#endif
   SelectableTableView m_selectableTableView;
   MessageTableCell m_cells[I18n::NumberOfLanguages];
 };

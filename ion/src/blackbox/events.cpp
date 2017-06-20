@@ -24,7 +24,9 @@ Event getEvent(int * timeout) {
     char filename[32];
     sprintf(filename, "event%d.png", sEventCount);
     Ion::Display::Blackbox::writeFrameBufferToFile(filename);
+#if DEBUG
     printf("Event %d is %s\n", sEventCount, event.name());
+#endif
   }
   return event;
 }

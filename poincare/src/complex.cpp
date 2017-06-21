@@ -392,7 +392,7 @@ ExpressionLayout * Complex::createPolarLayout(FloatDisplayMode floatDisplayMode)
 
 ExpressionLayout * Complex::createCartesianLayout(FloatDisplayMode floatDisplayMode) const {
   char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, ComplexFormat::Algebric);
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, ComplexFormat::Cartesian);
   return new StringLayout(buffer, numberOfChars);
 }
 

@@ -79,7 +79,7 @@ public:
     Default = 2
   };
   enum class ComplexFormat {
-    Algebric = 0,
+    Cartesian = 0,
     Polar = 1,
     Default = 2
   };

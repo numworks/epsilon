@@ -7,7 +7,7 @@ static Preferences s_preferences;
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::FloatDisplayMode::Decimal),
-  m_complexFormat(Expression::ComplexFormat::Algebric)
+  m_complexFormat(Expression::ComplexFormat::Cartesian)
 {
 }
 

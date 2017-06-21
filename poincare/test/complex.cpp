@@ -8,10 +8,10 @@
 using namespace Poincare;
 constexpr Expression::FloatDisplayMode Decimal = Expression::FloatDisplayMode::Decimal;
 constexpr Expression::FloatDisplayMode Scientific = Expression::FloatDisplayMode::Scientific;
-constexpr Expression::ComplexFormat Algebric = Expression::ComplexFormat::Algebric;
+constexpr Expression::ComplexFormat Cartesian = Expression::ComplexFormat::Cartesian;
 constexpr Expression::ComplexFormat Polar = Expression::ComplexFormat::Polar;
 
-void assert_cartesian_complex_converts_to(float a, float b, const char * result, Expression::FloatDisplayMode mode = Scientific, Expression::ComplexFormat format = Algebric, int significantDigits = 7, int bufferSize = 13+13+7+1) {
+void assert_cartesian_complex_converts_to(float a, float b, const char * result, Expression::FloatDisplayMode mode = Scientific, Expression::ComplexFormat format = Cartesian, int significantDigits = 7, int bufferSize = 13+13+7+1) {
   int tagSize = 8;
   unsigned char tag = 'X';
   char * taggedBuffer = (char *)malloc(bufferSize+2*tagSize);
@@ -76,17 +76,17 @@ QUIZ_CASE(poincare_complex_to_text) {
    * give the exact right number because of float represention. The closest
    * exact representation is -9.090897E-33. */
   assert_cartesian_complex_converts_to(-0.00000000000000000000000000000000909090964f, 0.0f, "-9.090897E-33");
-  assert_cartesian_complex_converts_to(123.421f, 0.0f, "123.4", Decimal, Algebric, 4, 6);
-  assert_cartesian_complex_converts_to(123.421f, 0.0f, "1.2E2", Decimal, Algebric, 5, 6);
+  assert_cartesian_complex_converts_to(123.421f, 0.0f, "123.4", Decimal, Cartesian, 4, 6);
+  assert_cartesian_complex_converts_to(123.421f, 0.0f, "1.2E2", Decimal, Cartesian, 5, 6);
 }
 
 QUIZ_CASE(poincare_complex_cartesian_to_text) {
-  assert_cartesian_complex_converts_to(1.0f, 2.0f, "1+2*i", Decimal, Algebric);
+  assert_cartesian_complex_converts_to(1.0f, 2.0f, "1+2*i", Decimal, Cartesian);
   assert_cartesian_complex_converts_to(1.0f, 2.0f, "2.236068*e^(1.107149*i)", Decimal, Polar);
-  assert_cartesian_complex_converts_to(-1.3f, 2.444f, "-1.3+2.444*i", Decimal, Algebric);
+  assert_cartesian_complex_converts_to(-1.3f, 2.444f, "-1.3+2.444*i", Decimal, Cartesian);
   assert_cartesian_complex_converts_to(-1.3f, 2.444f, "2.768237*e^(2.059649*i)", Decimal, Polar);
-  assert_cartesian_complex_converts_to(-1.3f, -2.444f, "-1.3-2.444*i", Decimal, Algebric);
-  assert_cartesian_complex_converts_to(64078208.0f, 119229408.0f, "6.407821E7+1.192294E8*i", Decimal, Algebric);
+  assert_cartesian_complex_converts_to(-1.3f, -2.444f, "-1.3-2.444*i", Decimal, Cartesian);
+  assert_cartesian_complex_converts_to(64078208.0f, 119229408.0f, "6.407821E7+1.192294E8*i", Decimal, Cartesian);
   assert_cartesian_complex_converts_to(64078208.0f, 119229408.0f, "1.353576E8*e^(1.07765*i)", Decimal, Polar);
 }
 

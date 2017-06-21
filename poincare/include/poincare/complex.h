@@ -65,6 +65,8 @@ private:
    * big, the printing stops when no more empty chars are available without
    * returning any warning. */
   static void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int i, int decimalMarkerPosition);
+  ExpressionLayout * createPolarLayout(FloatDisplayMode floatDisplayMode) const;
+  ExpressionLayout * createCartesianLayout(FloatDisplayMode floatDisplayMode) const;
   float m_a;
   float m_b;
 };

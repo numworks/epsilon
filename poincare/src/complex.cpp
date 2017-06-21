@@ -80,33 +80,9 @@ Expression::Type Complex::type() const {
 ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   if (complexFormat == ComplexFormat::Polar) {
-    char bufferBase[k_maxFloatBufferLength+2];
-    int numberOfCharInBase = 0;
-    char bufferSuperscript[k_maxFloatBufferLength+2];
-    int numberOfCharInSuperscript = 0;
-
-    if (r() != 1.0f || th() == 0.0f) {
-      numberOfCharInBase = convertFloatToText(r(), bufferBase, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
-      if (r() != 0.0f && th() != 0.0f) {
-        bufferBase[numberOfCharInBase++] = '*';
-      }
-    }
-    if (r() != 0.0f && th() != 0.0f) {
-        bufferBase[numberOfCharInBase++] = Ion::Charset::Exponential;
-        bufferBase[numberOfCharInBase] = 0;
-     }
-
-    if (r() != 0.0f && th() != 0.0f) {
-      numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
-      bufferSuperscript[numberOfCharInSuperscript++] = '*';
-      bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
-      bufferSuperscript[numberOfCharInSuperscript] = 0;
-    }
-    return new BaselineRelativeLayout(new StringLayout(bufferBase, numberOfCharInBase), new StringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript);
+    return createPolarLayout(floatDisplayMode);
   }
-  char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, complexFormat);
-  return new StringLayout(buffer, numberOfChars);
+  return createCartesianLayout(floatDisplayMode);
 }
 
 int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
@@ -383,6 +359,41 @@ void Complex::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,
     buffer[endChar--] = '0'+digit;
     dividend = quotien;
   }  while (endChar >= startChar);
+}
+
+ExpressionLayout * Complex::createPolarLayout(FloatDisplayMode floatDisplayMode) const {
+  char bufferBase[k_maxFloatBufferLength+2];
+  int numberOfCharInBase = 0;
+  char bufferSuperscript[k_maxFloatBufferLength+2];
+  int numberOfCharInSuperscript = 0;
+
+  if (r() != 1.0f || th() == 0.0f) {
+    numberOfCharInBase = convertFloatToText(r(), bufferBase, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
+    if (r() != 0.0f && th() != 0.0f) {
+      bufferBase[numberOfCharInBase++] = '*';
+    }
+  }
+  if (r() != 0.0f && th() != 0.0f) {
+    bufferBase[numberOfCharInBase++] = Ion::Charset::Exponential;
+    bufferBase[numberOfCharInBase] = 0;
+  }
+
+  if (r() != 0.0f && th() != 0.0f) {
+    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
+    bufferSuperscript[numberOfCharInSuperscript++] = '*';
+    bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
+    bufferSuperscript[numberOfCharInSuperscript] = 0;
+  }
+  if (numberOfCharInSuperscript == 0) {
+    return new StringLayout(bufferBase, numberOfCharInBase);
+  }
+  return new BaselineRelativeLayout(new StringLayout(bufferBase, numberOfCharInBase), new StringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript);
+}
+
+ExpressionLayout * Complex::createCartesianLayout(FloatDisplayMode floatDisplayMode) const {
+  char buffer[k_maxComplexBufferLength];
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, ComplexFormat::Algebric);
+  return new StringLayout(buffer, numberOfChars);
 }
 
 }

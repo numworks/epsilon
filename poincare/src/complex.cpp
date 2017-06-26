@@ -248,9 +248,6 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     displayMode = FloatDisplayMode::Scientific;
   }
 
-  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == FloatDisplayMode::Scientific ?
-    1 : exponentInBase10+1;
-
   // Number of char available for the mantissa
   int availableCharsForMantissaWithoutSign = numberOfSignificantDigits + 1;
   int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
@@ -285,6 +282,9 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     }
     exponentInBase10 = floorf(newLogBase10);
   }
+  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == FloatDisplayMode::Scientific ?
+    1 : exponentInBase10+1;
+
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
   if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {

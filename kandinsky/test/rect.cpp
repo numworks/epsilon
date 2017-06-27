@@ -54,7 +54,7 @@ QUIZ_CASE(kandinsky_rect_empty_union) {
 
   t = a.unionedWith(c);
   assert(t.x() == a.x());
-  assert(t.y() == c.y());
+  assert(t.y() == a.y());
   assert(t.width() == a.width());
-  assert(t.height() == 7);
+  assert(t.height() == a.height());
 }

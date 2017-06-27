@@ -79,6 +79,7 @@ QUIZ_CASE(poincare_complex_to_text) {
   assert_cartesian_complex_converts_to(123.421f, 0.0f, "123.4", Decimal, Cartesian, 4, 6);
   assert_cartesian_complex_converts_to(123.421f, 0.0f, "1.2E2", Decimal, Cartesian, 5, 6);
   assert_cartesian_complex_converts_to(9.999999f, 0.0f, "10", Decimal, Cartesian, 6);
+  assert_cartesian_complex_converts_to(-9.99999904f, 0.0f, "-10", Decimal, Cartesian, 6);
 }
 
 QUIZ_CASE(poincare_complex_cartesian_to_text) {

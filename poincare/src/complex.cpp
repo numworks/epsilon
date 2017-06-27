@@ -287,7 +287,7 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
 
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
-  if ((int)(mantissa * powf(10, - mantissaExponentInBase10)) > 0) {
+  if ((int)(fabsf(mantissa) * powf(10, - mantissaExponentInBase10)) > 0) {
     mantissa = mantissa/10;
   }
 

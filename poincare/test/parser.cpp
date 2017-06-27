@@ -11,7 +11,7 @@ constexpr Expression::AngleUnit Radian = Expression::AngleUnit::Radian;
 
 void assert_expression_parses_to(const char * text, float result, Context * context, Expression::AngleUnit angleUnit = Degree) {
   char buffer_text[100] = {};
-  for (int i=0; i<strlen(text); i++) {
+  for (uint32_t i=0; i<strlen(text); i++) {
     buffer_text[i] = text[i];
     if (text[i] == 'E') {
       buffer_text[i] = Ion::Charset::Exponent;

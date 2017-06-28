@@ -107,9 +107,11 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
-  m_backlightDimmingTimer.reset();
-  m_suspendTimer.reset();
-  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+  if (event.isKeyboardEvent()) {
+    m_backlightDimmingTimer.reset();
+    m_suspendTimer.reset();
+    Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+  }
 
   bool alphaLockWantsRedraw = m_window.updateAlphaLock();
 

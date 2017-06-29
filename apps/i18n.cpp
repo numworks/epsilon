@@ -235,7 +235,8 @@ const char * messages[232][5] {
   {"[a,b]: Interval", "[a,b] : Intervalle", "[a,b] : Intervalo", "[a,b] : Intervall", "[a,b] : Intervalo"},
   {lambdaExponentialEnglishDefinition, lambdaExponentialFrenchDefinition, lambdaExponentialSpanishDefinition, lambdaExponentialGermanDefinition, lambdaExponentialPortugueseDefinition},
   {meanEnglishDefinition, meanFrenchDefinition, meanSpanishDefinition, meanGermanDefinition, meanPortugueseDefinition},
-  {deviationEnglishDefinition, deviationFrenchDefinition, deviationSpanishDefinition, deviationGermanDefinition, deviationPortugueseDefinition},  {lambdaPoissonFrenchDefinition, lambdaPoissonEnglishDefinition, lambdaPoissonSpanishDefinition, lambdaPoissonGermanDefinition, lambdaPoissonPortugueseDefinition},
+  {deviationEnglishDefinition, deviationFrenchDefinition, deviationSpanishDefinition, deviationGermanDefinition, deviationPortugueseDefinition},
+  {lambdaPoissonEnglishDefinition, lambdaPoissonFrenchDefinition, lambdaPoissonSpanishDefinition, lambdaPoissonGermanDefinition, lambdaPoissonPortugueseDefinition},
 
   {"Calculate probabilities", "Calculer les probabilites", "Calcular las probabilidades", "Die Wahrscheinlichkeiten berechnen", "Calcular probabilidades"},
   {"Forbidden value", "Valeur interdite", "Valor prohibido","Verbotener Wert", "Valor proibida"},

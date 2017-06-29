@@ -1,5 +1,6 @@
 app_objs += $(addprefix apps/hardware_test/,\
   app.o\
+  arrow_view.o\
   battery_test_controller.o\
   keyboard_test_controller.o\
   keyboard_view.o\

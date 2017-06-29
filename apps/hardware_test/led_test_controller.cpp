@@ -43,23 +43,12 @@ KDColor LEDTestController::LEDColorAtIndex(int i) {
   return k_LEDColors[i];
 }
 
-const uint8_t arrowMask[10][9] = {
-  {0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF},
-  {0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF},
-  {0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-};
-
 LEDTestController::ContentView::ContentView() :
+  SolidColorView(KDColorWhite),
   m_ledColorIndicatorView(KDColorBlack),
   m_ledColorOutlineView(KDColorBlack),
-  m_ledView(KDText::FontSize::Large)
+  m_ledView(KDText::FontSize::Large),
+  m_arrowView()
 {
   m_ledView.setText("LED");
 }
@@ -68,24 +57,16 @@ SolidColorView * LEDTestController::ContentView::LEDColorIndicatorView() {
   return &m_ledColorIndicatorView;
 }
 
-KDColor s_arrowWorkingBuffer[10*9];
-
-void LEDTestController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-  ctx->fillRect(KDRect((Ion::Display::Width-k_arrowThickness)/2, k_arrowMargin+k_arrowHeight, k_arrowThickness, k_arrowLength), KDColorBlack);
-  KDRect frame((Ion::Display::Width-k_arrowWidth)/2, k_arrowMargin, k_arrowWidth, k_arrowHeight);
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)arrowMask, s_arrowWorkingBuffer);
-}
-
 void LEDTestController::ContentView::layoutSubviews() {
   KDSize ledSize = m_ledView.minimalSizeForOptimalDisplay();
-  m_ledView.setFrame(KDRect((Ion::Display::Width-ledSize.width()-k_indicatorSize-k_indicatorMargin)/2, k_arrowHeight+k_arrowLength+2*k_arrowMargin, ledSize.width(), ledSize.height()));
-  m_ledColorIndicatorView.setFrame(KDRect((Ion::Display::Width-k_indicatorSize)/2+k_indicatorMargin/2+ledSize.width()/2, k_arrowHeight+k_arrowLength+2*k_arrowMargin, k_indicatorSize, k_indicatorSize));
-  m_ledColorOutlineView.setFrame(KDRect((Ion::Display::Width-k_indicatorSize)/2+k_indicatorMargin/2+ledSize.width()/2-1, k_arrowHeight+k_arrowLength+2*k_arrowMargin-1, k_indicatorSize+2, k_indicatorSize+2));
+  m_ledView.setFrame(KDRect((Ion::Display::Width-ledSize.width()-k_indicatorSize-k_indicatorMargin)/2, k_arrowLength+2*k_arrowMargin, ledSize.width(), ledSize.height()));
+  m_ledColorIndicatorView.setFrame(KDRect((Ion::Display::Width-k_indicatorSize)/2+k_indicatorMargin/2+ledSize.width()/2, k_arrowLength+2*k_arrowMargin, k_indicatorSize, k_indicatorSize));
+  m_ledColorOutlineView.setFrame(KDRect((Ion::Display::Width-k_indicatorSize)/2+k_indicatorMargin/2+ledSize.width()/2-1, k_arrowLength+2*k_arrowMargin-1, k_indicatorSize+2, k_indicatorSize+2));
+  m_arrowView.setFrame(KDRect(0, k_arrowMargin, bounds().width(), k_arrowLength));
 }
 
 int LEDTestController::ContentView::numberOfSubviews() const {
-  return 3;
+  return 4;
 }
 
 View * LEDTestController::ContentView::subviewAtIndex(int index) {
@@ -95,7 +76,10 @@ View * LEDTestController::ContentView::subviewAtIndex(int index) {
   if (index == 1) {
     return &m_ledColorOutlineView;
   }
-  return &m_ledColorIndicatorView;
+  if (index == 2) {
+    return &m_ledColorIndicatorView;
+  }
+  return &m_arrowView;
 }
 
 }

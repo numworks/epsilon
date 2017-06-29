@@ -7,12 +7,18 @@ class FSMC {
 public:
   class BCR : Register32 {
   public:
+    enum class MTYP : uint8_t {
+      SRAM = 0,
+      PSRAM = 1,
+      NOR = 2
+    };
     enum class MWID : uint8_t {
       EIGHT_BITS = 0,
       SIXTEEN_BITS = 1
     };
     REGS_BOOL_FIELD(MBKEN, 0);
     REGS_BOOL_FIELD(MUXEN, 1);
+    REGS_TYPE_FIELD(MTYP, 3, 2);
     REGS_TYPE_FIELD(MWID, 5, 4);
     REGS_BOOL_FIELD(WREN, 12);
     REGS_BOOL_FIELD(EXTMOD, 14);
@@ -20,24 +26,36 @@ public:
 
   class BTR : Register32 {
   public:
+    enum class ACCMOD : uint8_t {
+      A = 0,
+      B = 1,
+      C = 2,
+      D = 3
+    };
     REGS_FIELD(ADDSET, uint8_t, 3, 0);
     REGS_FIELD(ADDHLD, uint8_t, 7, 4);
     REGS_FIELD(DATAST, uint8_t, 15, 8);
     REGS_FIELD(BUSTURN, uint8_t, 19, 16);
     REGS_FIELD(CLKDIV, uint8_t, 23, 20);
     REGS_FIELD(DATLAT, uint8_t, 27, 24);
-    REGS_FIELD(ACCMOD, uint8_t, 29, 28);
+    REGS_TYPE_FIELD(ACCMOD, 29, 28);
   };
 
   class BWTR : Register32 {
   public:
+    enum class ACCMOD : uint8_t {
+      A = 0,
+      B = 1,
+      C = 2,
+      D = 3
+    };
     REGS_FIELD(ADDSET, uint8_t, 3, 0);
     REGS_FIELD(ADDHLD, uint8_t, 7, 4);
     REGS_FIELD(DATAST, uint8_t, 15, 8);
     REGS_FIELD(BUSTURN, uint8_t, 19, 16);
     REGS_FIELD(CLKDIV, uint8_t, 23, 20);
     REGS_FIELD(DATLAT, uint8_t, 27, 24);
-    REGS_FIELD(ACCMOD, uint8_t, 29, 28);
+    REGS_TYPE_FIELD(ACCMOD, 29, 28);
   };
 
   constexpr FSMC() {}

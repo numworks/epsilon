@@ -7,16 +7,9 @@
 
 class AlphaLockView : public View {
 public:
-  enum class Status {
-    Default,
-    Alpha,
-    AlphaLock,
-    CapitalAlpha,
-    CapitalAlphaLock
-  };
   AlphaLockView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  bool setStatus(Status status);
+  bool setStatus(Ion::Events::ShiftAlphaStatus status);
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_lockRightMargin = 5;
@@ -25,7 +18,7 @@ private:
   View * subviewAtIndex(int index) override;
   LockView m_lockView;
   MessageTextView m_alphaView;
-  Status m_status;
+  Ion::Events::ShiftAlphaStatus m_status;
 };
 
 #endif

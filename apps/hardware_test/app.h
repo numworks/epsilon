@@ -19,6 +19,7 @@ public:
   ViewController * USBController();
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
+  bool processEvent(Ion::Events::Event e) override;
 private:
   App(Container * container, Snapshot * snapshot);
   KeyboardTestController m_keyboardController;

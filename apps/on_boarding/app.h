@@ -15,9 +15,10 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };
-  void reinitOnBoarding();
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
+  bool processEvent(Ion::Events::Event) override;
+  void didBecomeActive(Window * window) override;
 private:
   App(Container * container, Snapshot * snapshot);
   LanguageController m_languageController;

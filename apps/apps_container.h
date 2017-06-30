@@ -54,6 +54,7 @@ private:
   Window * window() override;
   int numberOfContainerTimers() override;
   Timer * containerTimerAtIndex(int i) override;
+  bool processEvent(Ion::Events::Event event);
   static constexpr int k_numberOfCommonApps = 8;
   static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;

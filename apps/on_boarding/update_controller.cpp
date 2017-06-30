@@ -13,7 +13,7 @@ View * UpdateController::view() {
 }
 
 bool UpdateController::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::Back) {
+  if (event != Ion::Events::Back && event != Ion::Events::OnOff) {
     app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {

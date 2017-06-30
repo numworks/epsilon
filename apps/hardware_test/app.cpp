@@ -36,4 +36,9 @@ Timer * App::timerAtIndex(int i) {
   return &m_USBTestController;
 }
 
+bool App::processEvent(Ion::Events::Event e) {
+  ::App::processEvent(e);
+  return true;
+}
+
 }

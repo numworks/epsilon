@@ -7,14 +7,14 @@
 
 namespace HardwareTest {
 
-class USBTestController : public ViewController {
+class USBTestController : public ViewController, public Timer {
 public:
   USBTestController(Responder * parentResponder);
   View * view() override;
-  bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event e) override;
 private:
+  bool fire() override;
   class ContentView : public SolidColorView {
   public:
     ContentView();
@@ -39,6 +39,7 @@ private:
   constexpr static const char * k_USBPlugText = "PLUG USB";
   constexpr static const char * k_USBUnplugText = "OK, UNPLUG USB";
   ContentView m_view;
+  bool m_shouldPlugUSB;
   ResetController m_resetController;
 };
 

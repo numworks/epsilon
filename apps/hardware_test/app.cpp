@@ -18,8 +18,22 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_keyboardController),
-  m_keyboardController(&m_modalViewController)
+  m_keyboardController(&m_modalViewController),
+  m_USBTestController(nullptr)
 {
+}
+
+ViewController * App::USBController() {
+  return &m_USBTestController;
+}
+
+int App::numberOfTimers() {
+  return firstResponder() == &m_USBTestController;
+}
+
+Timer * App::timerAtIndex(int i) {
+  assert(i == 0);
+  return &m_USBTestController;
 }
 
 }

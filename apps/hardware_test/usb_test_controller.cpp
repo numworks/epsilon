@@ -10,7 +10,9 @@ namespace HardwareTest {
 
 USBTestController::USBTestController(Responder * parentResponder) :
   ViewController(parentResponder),
+  Timer(1),
   m_view(),
+  m_shouldPlugUSB(true),
   m_resetController(this)
 {
 }
@@ -19,41 +21,31 @@ View * USBTestController::view() {
   return &m_view;
 }
 
-bool USBTestController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::UpperM) {
-    return true;
-  }
-  if (event == Ion::Events::OK) {
-    if (Ion::USB::isPlugged() && strcmp(m_view.USBTextView()->text(), k_USBPlugText) == 0) {
-      m_view.USBTextView()->setText(k_USBUnplugText);
-      m_view.arrowView()->setDirection(false);
-      m_view.arrowView()->setColor(KDColorRed);
-    }
-    if (!Ion::USB::isPlugged() && strcmp(m_view.USBTextView()->text(), k_USBUnplugText) == 0) {
-      ModalViewController * modal = (ModalViewController *)parentResponder();
-      modal->displayModalViewController(&m_resetController, 0.0f, 0.0f);
-    }
-  }
+bool USBTestController::handleEvent(Ion::Events::Event e) {
   return true;
 }
 
-void USBTestController::viewWillAppear() {
-  m_view.USBTextView()->setText(k_USBPlugText);
-  m_view.arrowView()->setDirection(true);
-      m_view.arrowView()->setColor(KDColorGreen);
+bool USBTestController::fire() {
+  if (Ion::USB::isPlugged() && m_shouldPlugUSB) {
+    m_view.USBTextView()->setText(k_USBUnplugText);
+    m_view.arrowView()->setDirection(false);
+    m_view.arrowView()->setColor(KDColorRed);
+    m_shouldPlugUSB = false;
+    return true;
+  }
+  if (!Ion::USB::isPlugged() && !m_shouldPlugUSB) {
+    ModalViewController * modal = (ModalViewController *)parentResponder();
+    modal->displayModalViewController(&m_resetController, 0.0f, 0.0f);
+    return true;
+  }
+  return false;
 }
 
-void USBTestController::didBecomeFirstResponder() {
-  Container * c = (Container *)app()->container();
-  /* We dispatch a random event that is caught by the hardware test application
-   * to force the window redraw. */
-  c->dispatchEvent(Ion::Events::UpperM);
-  while (!Ion::USB::isPlugged() && strcmp(m_view.USBTextView()->text(), k_USBPlugText) == 0) {}
-  /* We dispatch an event to force the window to redraw (and update the drawn
-   * instructions at the same type) */
-  c->dispatchEvent(Ion::Events::OK);
-  while (Ion::USB::isPlugged() && strcmp(m_view.USBTextView()->text(), k_USBUnplugText) == 0) {}
-  c->dispatchEvent(Ion::Events::OK);
+void USBTestController::viewWillAppear() {
+  m_shouldPlugUSB = true;
+  m_view.USBTextView()->setText(k_USBPlugText);
+  m_view.arrowView()->setDirection(true);
+  m_view.arrowView()->setColor(KDColorGreen);
 }
 
 void USBTestController::ContentView::USBView::drawRect(KDContext * ctx, KDRect rect) const {

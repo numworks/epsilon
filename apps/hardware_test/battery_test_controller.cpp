@@ -1,5 +1,6 @@
 #include "battery_test_controller.h"
 #include "../constant.h"
+#include "app.h"
 extern "C" {
 #include <assert.h>
 }
@@ -11,8 +12,7 @@ namespace HardwareTest {
 
 BatteryTestController::BatteryTestController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_view(),
-  m_usbTestController(this)
+  m_view()
 {
 }
 
@@ -24,7 +24,8 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
       ModalViewController * modal = (ModalViewController *)parentResponder();
-      modal->displayModalViewController(&m_usbTestController, 0.0f, 0.0f);
+      App * a = (App *)app();
+      modal->displayModalViewController(a->USBController(), 0.0f, 0.0f);
     }
   }
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());

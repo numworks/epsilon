@@ -5,6 +5,7 @@
 #include <escher/image.h>
 #include <escher/i18n.h>
 #include <escher/responder.h>
+#include <escher/timer.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
 
@@ -53,6 +54,8 @@ public:
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
+  virtual int numberOfTimers();
+  virtual Timer * timerAtIndex(int i);
 protected:
   App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;

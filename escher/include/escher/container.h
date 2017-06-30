@@ -31,6 +31,10 @@ protected:
   virtual Window * window() = 0;
 private:
   void step();
+  int numberOfTimers() override;
+  Timer * timerAtIndex(int i) override;
+  virtual int numberOfContainerTimers();
+  virtual Timer * containerTimerAtIndex(int i);
   App * m_activeApp;
 };
 

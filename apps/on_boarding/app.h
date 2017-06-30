@@ -16,8 +16,8 @@ public:
     Descriptor * descriptor() override;
   };
   void reinitOnBoarding();
-  bool hasTimer();
-  Timer * timer();
+  int numberOfTimers() override;
+  Timer * timerAtIndex(int i) override;
 private:
   App(Container * container, Snapshot * snapshot);
   LanguageController m_languageController;

@@ -1,5 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
+#include <assert.h>
 
 namespace OnBoarding {
 
@@ -23,11 +24,12 @@ void App::reinitOnBoarding() {
   m_languageController.reinitOnBoarding();
 }
 
-bool App::hasTimer() {
+int App::numberOfTimers() {
   return firstResponder() == &m_logoController;
 }
 
-Timer * App::timer() {
+Timer * App::timerAtIndex(int i) {
+  assert(i == 0);
   return &m_logoController;
 }
 

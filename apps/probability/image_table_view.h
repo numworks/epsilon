@@ -49,6 +49,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   void setCalculationAccordingToIndex(int index);
+  void hideDropdown();
   constexpr static int k_numberOfImages = 4;
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;

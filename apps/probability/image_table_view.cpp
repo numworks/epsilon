@@ -15,15 +15,6 @@ ImageCell::ImageCell() :
 {
 }
 
-void ImageCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0,0, width, k_imageMargin), KDColorWhite);
-  ctx->fillRect(KDRect(0,0, k_imageMargin, height), KDColorWhite);
-  ctx->fillRect(KDRect(0,height-k_imageMargin, width, k_imageMargin), KDColorWhite);
-  ctx->fillRect(KDRect(width-k_imageMargin,0, k_imageMargin, height), KDColorWhite);
-}
-
 int ImageCell::numberOfSubviews() const {
   return 1;
 }
@@ -34,9 +25,7 @@ View * ImageCell::subviewAtIndex(int index) {
 }
 
 void ImageCell::layoutSubviews() {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  m_iconView.setFrame(KDRect(k_imageMargin, k_imageMargin, width - 2*k_imageMargin, height-2*k_imageMargin));
+  m_iconView.setFrame(bounds());
 }
 
 void ImageCell::reloadCell() {
@@ -62,6 +51,14 @@ ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calcul
   m_calculationController(calculationController)
 {
   assert(m_calculation != nullptr);
+}
+
+void ImageTableView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->drawRect(KDRect(k_margin, k_margin, ImageCell::k_width+k_outline, ImageCell::k_height+k_outline), Palette::GreyMiddle);
+}
+
+KDSize ImageTableView::minimalSizeForOptimalDisplay() const {
+  return KDSize(2*k_totalMargin+ImageCell::k_width, k_totalMargin+3*ImageCell::k_height);
 }
 
 void ImageTableView::didBecomeFirstResponder() {
@@ -141,7 +138,7 @@ void ImageTableView::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate ImageTableView::cellHeight() {
-  return k_imageCellHeight;
+  return ImageCell::k_height;
 }
 
 int ImageTableView::numberOfSubviews() const {
@@ -154,7 +151,7 @@ View * ImageTableView::subviewAtIndex(int index) {
 }
 
 void ImageTableView::layoutSubviews() {
-  m_selectableTableView.setFrame(bounds());
+  m_selectableTableView.setFrame(KDRect(k_totalMargin, k_totalMargin, bounds().width()-2*k_totalMargin, bounds().height()-k_totalMargin));
 }
 
 }

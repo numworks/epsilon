@@ -92,156 +92,63 @@ QUIZ_CASE(poincare_parse_trigo) {
   }
 }
 
-QUIZ_CASE(poincare_trigo_approximate) {
-  Expression * e = Expression::parse("cos(3)");
+void assert_parsed_expression_approximate_to(const char * exp, float res) {
+  Expression * e = Expression::parse(exp);
   GlobalContext globalContext;
-  assert(e->approximate(globalContext, Expression::AngleUnit::Radian) == -0.9899924966f);
+  assert(fabsf(e->approximate(globalContext, Expression::AngleUnit::Radian) - res) < 0.0001f);
   delete e;
+}
 
-  e = Expression::parse("sin(3)");
-  assert(e->approximate(globalContext, Expression::AngleUnit::Radian) == 0.1411200081f);
+QUIZ_CASE(poincare_trigo_approximate) {
+  assert_parsed_expression_approximate_to("cos(3)",-0.98999249660044542f);
+  assert_parsed_expression_approximate_to("sin(3)", 0.14112000805986721f);
+  assert_parsed_expression_approximate_to("tan(3)",-0.1425465430742778f);
+  assert_parsed_expression_approximate_to("cosh(3)",10.067661995777765f);
+  assert_parsed_expression_approximate_to("cosh(3)",10.067661995777765f);
+  assert_parsed_expression_approximate_to("sinh(3)", 10.017874927409903f);
+  assert_parsed_expression_approximate_to("tanh(3)", 0.9950547537f);
+  assert_parsed_expression_approximate_to("acos(0.3)", 1.266103672779499f);
+  assert_parsed_expression_approximate_to("asin(0.3)", 0.304692654f);
+  assert_parsed_expression_approximate_to("atan(0.3)", 0.2914567945f);
+  assert_parsed_expression_approximate_to("acosh(3)", 1.762747174f);
+  assert_parsed_expression_approximate_to("asinh(0.3)", 0.2956730476f);
+  assert_parsed_expression_approximate_to("atanh(0.3)", 0.3095196042f);
+}
+
+void assert_parsed_expression_evaluates_to(const char * exp, float a, float b) {
+  char buffer[100];
+  strlcpy(buffer, exp, 100);
+  for (uint16_t i=0; i<strlen(buffer); i++) {
+    if (buffer[i] == 'E') {
+      buffer[i] = Ion::Charset::Exponent;
+    }
+    if (buffer[i] == 'e') {
+      buffer[i] = Ion::Charset::Exponential;
+    }
+    if (buffer[i] == 'j') {
+      buffer[i] = Ion::Charset::IComplex;
+    }
+  }
+  Expression * f = Expression::parse(buffer);
+  GlobalContext globalContext;
+  Expression * e = f->evaluate(globalContext, Expression::AngleUnit::Radian);
+  assert(fabsf((((Complex *)e)->a()) - a) < 0.0001f);
+  assert(fabsf((((Complex *)e)->b()) - b) < 0.0001f);
+  delete f;
   delete e;
-
-  e = Expression::parse("tan(3)");
-  assert(e->approximate(globalContext, Expression::AngleUnit::Radian) == -0.1425465431f);
-  delete e;
-
-  e = Expression::parse("cosh(3)");
-  assert(e->approximate(globalContext) == 10.067662f);
-  delete e;
-
-  e = Expression::parse("sinh(3)");
-  assert(e->approximate(globalContext) == 10.01787493f);
-  delete e;
-
-  e = Expression::parse("tanh(3)");
-  assert(0.9950547537f - 0.0000001f <= e->approximate(globalContext) &&
-    e->approximate(globalContext) <= 0.9950547537f + 0.0000001f);
-  delete e;
-
-  e = Expression::parse("acos(0.3)");
-  assert(fabsf(1.266103673f - e->approximate(globalContext, Expression::AngleUnit::Radian)) <= 0.000001f);
-  delete e;
-
-  e = Expression::parse("asin(0.3)");
-  assert(fabsf(0.304692654f - e->approximate(globalContext, Expression::AngleUnit::Radian)) <= 0.000001f);
-  delete e;
-
-  e = Expression::parse("atan(0.3)");
-  assert(fabsf(0.2914567945f - e->approximate(globalContext, Expression::AngleUnit::Radian)) <= 0.000001f);
-  delete e;
-
-  e = Expression::parse("acosh(3)");
-  assert(fabsf(1.762747174f - e->approximate(globalContext)) <= 0.000001f);
-  delete e;
-
-  e = Expression::parse("asinh(0.3)");
-  assert(fabsf(0.2956730476f - e->approximate(globalContext)) <= 0.000001f);
-  delete e;
-
-  e = Expression::parse("atanh(0.3)");
-  assert(fabsf(0.3095196042f - e->approximate(globalContext)) <= 0.000001f);
-  delete e;
-
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {
-  GlobalContext globalContext;
-  Expression * a = Expression::parse("cos(2)");
-  Expression * e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((-0.4161468365f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (-0.4161468365f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText1[10] ={'c','o', 's', '(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText1);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((-1.0086248134f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (-1.0086248134f + 0.000001f) &&
-      -0.8893951958f - 0.000001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <= -0.8893951958f + 0.000001f);
-  delete a;
-  delete e;
-
-  a = Expression::parse("sin(2)");
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((0.9092974268f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (0.9092974268f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText2[10] ={'s','i', 'n', '(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText2);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((1.16780727488f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (1.16780727488f + 0.000001f) &&
-      -0.768162763456f - 0.000001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <= -0.768162763456f + 0.000001f);
-  delete a;
-  delete e;
-
-  a = Expression::parse("tan(2)");
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((-2.185039863f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (-2.185039863f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText3[10] ={'t','a', 'n', '(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText3);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert(-0.27355308280f - 0.000001f <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= -0.27355308280f + 0.000001f &&
-      1.00281050758f - 0.000001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <=  1.00281050758f + 0.000001f);
-  delete a;
-  delete e;
-
-  a = Expression::parse("cosh(2)");
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((3.762195691f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (3.762195691f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText4[10] ={'c','o', 's', 'h','(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText4);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert(fabsf(((Complex *)e)->a()-14.754701170f) <  0.00001f &&
-      fabsf(((Complex *)e)->b()+22.963673499f) <  0.00001f);
-  delete a;
-  delete e;
-
-  a = Expression::parse("sinh(2)");
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((3.626860408f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (3.626860408f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText5[10] ={'s','i', 'n', 'h', '(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText5);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert(fabsf(((Complex *)e)->a()+14.74480518855f) <  0.00001f &&
-      fabsf(((Complex *)e)->b()-22.97908557788f) <  0.00001f);
-  delete a;
-  delete e;
-
-  a = Expression::parse("tanh(2)");
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert((0.9640275801f - 0.000001f) <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= (0.9640275801f + 0.000001f) && ((Complex *)e)->b() == 0.0f);
-  delete a;
-  delete e;
-
-  char expText6[10] ={'t','a', 'n', 'h','(', Ion::Charset::IComplex, '-', '4',')', 0};
-  a = Expression::parse(expText6);
-  e = a->evaluate(globalContext, Expression::AngleUnit::Radian);
-  assert(-1.0002790562f - 0.000001f <= (((Complex *)e)->a()) &&
-     (((Complex *)e)->a()) <= -1.0002790562f + 0.000001f &&
-      0.000610240921f - 0.000001f <= (((Complex *)e)->b()) &&
-     (((Complex *)e)->b()) <=  0.000610240921f + 0.000001f);
-  delete a;
-  delete e;
+  assert_parsed_expression_evaluates_to("cos(2)", -0.4161468365f, 0.0f);
+  assert_parsed_expression_evaluates_to("cos(j-4)",-1.0086248134f, -0.8893951958f);
+  assert_parsed_expression_evaluates_to("sin(2)",0.9092974268f, 0.0f);
+  assert_parsed_expression_evaluates_to("sin(j-4)", 1.16780727488f, -0.768162763456f);
+  assert_parsed_expression_evaluates_to("tan(2)",-2.18503986326151899f, 0.0f);
+  assert_parsed_expression_evaluates_to("tan(j-4)", -0.27355308280730f, 1.002810507583504f);
+  assert_parsed_expression_evaluates_to("cosh(2)", 3.762195691f, 0.0f);
+  assert_parsed_expression_evaluates_to("cosh(j-4)",14.754701170483756280f,-22.96367349919304059f);
+  assert_parsed_expression_evaluates_to("sinh(2)",3.62686040784701876f, 0.0f);
+  assert_parsed_expression_evaluates_to("sinh(j-4)", -14.744805188558725031023f, 22.979085577886129555168f);
+  assert_parsed_expression_evaluates_to("tanh(2)",0.9640275800758168839464f, 0.0f);
+  assert_parsed_expression_evaluates_to("tanh(j-4)", -1.00027905623446556836909f, 0.000610240921376259f);
 }

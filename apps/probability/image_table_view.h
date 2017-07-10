@@ -11,12 +11,10 @@ class CalculationController;
 class ImageCell : public HighlightCell {
 public:
   ImageCell();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override;
   void setImage(const Image * image, const Image * focusedImage);
-  constexpr static KDCoordinate k_imageMargin = 3;
-  constexpr static KDCoordinate k_imageWidth = 35;
-  constexpr static KDCoordinate k_imageHeight = 19;
+  constexpr static KDCoordinate k_width = 39;
+  constexpr static KDCoordinate k_height = 23;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
@@ -27,9 +25,10 @@ private:
 };
 
 class ImageTableView : public View, public Responder, public SimpleListViewDataSource, public SelectableTableViewDataSource {
-  public:
-    ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
-  void setCalculation(Calculation * calculation, int index);
+public:
+  ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -40,8 +39,11 @@ class ImageTableView : public View, public Responder, public SimpleListViewDataS
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  constexpr static KDCoordinate k_imageCellWidth = 2*ImageCell::k_imageMargin+ImageCell::k_imageWidth;
-  constexpr static KDCoordinate k_imageCellHeight = 2*ImageCell::k_imageMargin+ImageCell::k_imageHeight;
+  constexpr static KDCoordinate k_outline = 1;
+  constexpr static KDCoordinate k_margin = 3;
+  constexpr static KDCoordinate k_totalMargin = k_outline+k_margin;
+  constexpr static KDCoordinate k_oneCellWidth = 2*k_totalMargin+ImageCell::k_width;
+  constexpr static KDCoordinate k_oneCellHeight = 2*k_totalMargin+ImageCell::k_height;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

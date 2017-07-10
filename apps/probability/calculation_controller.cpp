@@ -74,24 +74,25 @@ void CalculationController::ContentView::layoutSubviews() {
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDSize charSize = KDText::stringSize(" ");
   KDCoordinate xCoordinate = 0;
-  m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_imageCellHeight, bounds().width(), bounds().height() - ImageTableView::k_imageCellHeight-titleHeight));
-  m_imageTableView.setFrame(KDRect(xCoordinate, titleHeight, ImageTableView::k_imageCellWidth, 3*ImageTableView::k_imageCellHeight));
-  xCoordinate += ImageTableView::k_imageCellWidth + k_textWidthMargin;
+  m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_oneCellHeight, bounds().width(), bounds().height() - ImageTableView::k_oneCellHeight-titleHeight));
+  KDSize tableSize = m_imageTableView.minimalSizeForOptimalDisplay();
+  m_imageTableView.setFrame(KDRect(xCoordinate, titleHeight, tableSize));
+  xCoordinate += tableSize.width() + k_textWidthMargin;
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
-  m_text[0].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, numberOfCharacters*charSize.width(), ImageCell::k_imageHeight));
+  m_text[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, k_textFieldWidth, ImageCell::k_imageHeight));
+  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
   numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
-  m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, numberOfCharacters*charSize.width(), ImageCell::k_imageHeight));
+  m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, k_textFieldWidth, ImageCell::k_imageHeight));
+  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
   if (m_calculation->numberOfParameters() > 2) {
     numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
-    m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, numberOfCharacters*charSize.width(), ImageCell::k_imageHeight));
+    m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
     xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight+ImageCell::k_imageMargin, k_textFieldWidth, ImageCell::k_imageHeight));
+    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
   }
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     willDisplayEditableCellAtIndex(k);
@@ -99,20 +100,20 @@ void CalculationController::ContentView::layoutSubviews() {
 }
 
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
   KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
+  ctx->fillRect(KDRect(0,titleHeight, bounds().width(), ImageTableView::k_oneCellWidth), KDColorWhite);
   KDSize charSize = KDText::stringSize(" ");
-  KDCoordinate xCoordinate = ImageTableView::k_imageCellWidth + k_textWidthMargin;
+  KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
 
-  ctx->drawRect(KDRect(xCoordinate-1, titleHeight+ImageCell::k_imageMargin-1, k_textFieldWidth+1, ImageCell::k_imageHeight+1), Palette::GreyMiddle);
+  ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, k_textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
 
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
   numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
 
-  ctx->drawRect(KDRect(xCoordinate-1, titleHeight+ImageCell::k_imageMargin-1, k_textFieldWidth+1, ImageCell::k_imageHeight+1), Palette::GreyMiddle);
+  ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, k_textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
 }
 
 LawCurveView * CalculationController::ContentView::lawCurveView() {

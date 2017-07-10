@@ -82,11 +82,11 @@ void ImageTableView::willExitResponderChain(Responder * nextFirstResponder) {
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_calculationController->setCalculationAccordingToIndex(selectedRow());
-    select(false);
-    setHighlight(true);
-    m_selectableTableView.reloadData();
-    m_calculationController->reload();
-    app()->setFirstResponder(parentResponder());
+    hideDropdown();
+    return true;
+  }
+  if (event == Ion::Events::Back) {
+    hideDropdown();
     return true;
   }
   return false;
@@ -158,6 +158,14 @@ View * ImageTableView::subviewAtIndex(int index) {
 
 void ImageTableView::layoutSubviews() {
   m_selectableTableView.setFrame(KDRect(k_totalMargin, k_totalMargin, bounds().width()-2*k_totalMargin, bounds().height()-k_totalMargin));
+}
+
+void ImageTableView::hideDropdown() {
+  select(false);
+  setHighlight(true);
+  m_selectableTableView.reloadData();
+  m_calculationController->reload();
+  app()->setFirstResponder(parentResponder());
 }
 
 }

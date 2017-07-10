@@ -203,7 +203,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && m_highlightedSubviewIndex == 0) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down) && m_highlightedSubviewIndex == 0) {
     m_contentView.imageTableView()->select(true);
     app()->setFirstResponder(m_contentView.imageTableView());
     return true;

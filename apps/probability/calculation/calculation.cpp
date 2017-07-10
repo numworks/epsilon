@@ -14,6 +14,10 @@ void Calculation::setLaw(Law * law) {
   compute(0);
 }
 
+int Calculation::numberOfEditableParameters() {
+  return numberOfParameters();
+}
+
 float Calculation::lowerBound() {
   return -INFINITY;
 }

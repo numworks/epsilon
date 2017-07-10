@@ -288,6 +288,7 @@ namespace I18n {
     LeftIntegralFirstLegend,
     LeftIntegralSecondLegend,
     FiniteIntegralLegend,
+    DiscreteLegend,
 
     RegressionFormula,
 

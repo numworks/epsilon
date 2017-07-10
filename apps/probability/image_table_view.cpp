@@ -4,9 +4,11 @@
 #include "images/calcul1_icon.h"
 #include "images/calcul2_icon.h"
 #include "images/calcul3_icon.h"
+#include "images/calcul4_icon.h"
 #include "images/focused_calcul1_icon.h"
 #include "images/focused_calcul2_icon.h"
 #include "images/focused_calcul3_icon.h"
+#include "images/focused_calcul4_icon.h"
 
 namespace Probability {
 
@@ -42,11 +44,12 @@ void ImageCell::setImage(const Image * image, const Image * focusedImage) {
   m_focusedIcon = focusedImage;
 }
 
-ImageTableView::ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController) :
+ImageTableView::ImageTableView(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController) :
   View(),
   Responder(parentResponder),
   m_selectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, nullptr, false, false),
   m_isSelected(false),
+  m_law(law),
   m_calculation(calculation),
   m_calculationController(calculationController)
 {
@@ -58,7 +61,7 @@ void ImageTableView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDSize ImageTableView::minimalSizeForOptimalDisplay() const {
-  return KDSize(2*k_totalMargin+ImageCell::k_width, k_totalMargin+3*ImageCell::k_height);
+  return KDSize(2*k_totalMargin+ImageCell::k_width, k_totalMargin+k_numberOfImages*ImageCell::k_height);
 }
 
 void ImageTableView::didBecomeFirstResponder() {
@@ -110,6 +113,9 @@ void ImageTableView::setHighlight(bool highlight) {
 
 int ImageTableView::numberOfRows() {
   if (m_isSelected) {
+    if (m_law->isContinuous()) {
+      return k_numberOfImages-1;
+    }
     return k_numberOfImages;
   }
   return 1;
@@ -127,8 +133,8 @@ int ImageTableView::reusableCellCount() {
 
 void ImageTableView::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ImageCell * myCell = (ImageCell *)cell;
-  const Image *  images[3] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon};
-  const Image * focusedImages[3] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon};
+  const Image *  images[k_numberOfImages] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon, ImageStore::Calcul4Icon};
+  const Image * focusedImages[k_numberOfImages] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
   if (!m_isSelected) {
     myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
   } else {

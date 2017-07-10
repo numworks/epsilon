@@ -26,7 +26,7 @@ private:
 
 class ImageTableView : public View, public Responder, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ImageTableView(Responder * parentResponder, Calculation * calculation, CalculationController * calculationController);
+  ImageTableView(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -49,11 +49,12 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   void setCalculationAccordingToIndex(int index);
-  constexpr static int k_numberOfImages = 3;
+  constexpr static int k_numberOfImages = 4;
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;
   bool m_isSelected;
   int m_selectedIcon;
+  Law * m_law;
   Calculation * m_calculation;
   CalculationController * m_calculationController;
 };

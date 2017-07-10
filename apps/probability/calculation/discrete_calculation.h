@@ -1,13 +1,13 @@
-#ifndef PROBABILITE_FINITE_INTEGRAL_CALCULATION_H
-#define PROBABILITE_FINITE_INTEGRAL_CALCULATION_H
+#ifndef PROBABILITE_DISCRETE_CALCULATION_H
+#define PROBABILITE_DISCRETE_CALCULATION_H
 
 #include "calculation.h"
 
 namespace Probability {
 
-class FiniteIntegralCalculation : public Calculation {
+class DiscreteCalculation : public Calculation {
 public:
-  FiniteIntegralCalculation();
+  DiscreteCalculation();
   Type type() override;
   int numberOfParameters() override;
   int numberOfEditableParameters() override;
@@ -18,8 +18,7 @@ public:
   float upperBound() override;
 private:
   void compute(int indexKnownElement) override;
-  float m_lowerBound;
-  float m_upperBound;
+  float m_abscissa;
   float m_result;
 };
 

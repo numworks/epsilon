@@ -10,13 +10,15 @@ public:
   enum class Type : uint8_t{
     LeftIntegral,
     FiniteIntegral,
-    RightIntegral
+    RightIntegral,
+    Discrete,
   };
   Calculation();
   virtual ~Calculation() = default;
   virtual Type type() = 0;
   void setLaw(Law * law);
   virtual int numberOfParameters() = 0;
+  virtual int numberOfEditableParameters();
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(float f, int index) = 0;
   virtual float parameterAtIndex(int index) = 0;

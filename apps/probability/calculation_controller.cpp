@@ -2,6 +2,7 @@
 #include "../constant.h"
 #include "../apps_container.h"
 #include "app.h"
+#include "calculation/discrete_calculation.h"
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
 #include "calculation/finite_integral_calculation.h"
@@ -15,7 +16,7 @@ namespace Probability {
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
   m_titleView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_lawCurveView(law, calculation),
-  m_imageTableView(parentResponder, calculation, calculationController),
+  m_imageTableView(parentResponder, law, calculation, calculationController),
   m_draftTextBuffer{},
   m_calculation(calculation)
 {
@@ -102,6 +103,9 @@ void CalculationController::ContentView::layoutSubviews() {
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
   ctx->fillRect(KDRect(0,titleHeight, bounds().width(), ImageTableView::k_oneCellWidth), KDColorWhite);
+  if (m_calculation->numberOfEditableParameters() == 0) {
+    return;
+  }
   KDSize charSize = KDText::stringSize(" ");
   KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
@@ -109,6 +113,9 @@ void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) 
 
   ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, k_textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
 
+  if (m_calculation->numberOfEditableParameters() < 2) {
+    return;
+  }
   xCoordinate += k_textFieldWidth + k_textWidthMargin;
   numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
@@ -167,6 +174,9 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
     case 2:
       new(m_calculation) RightIntegralCalculation();
       break;
+    case 3:
+      new(m_calculation) DiscreteCalculation();
+      break;
     default:
      return;
   }
@@ -174,7 +184,7 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1)) {
+  if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters())) {
     if (m_highlightedSubviewIndex == 0) {
       m_contentView.imageTableView()->select(false);
       m_contentView.imageTableView()->setHighlight(false);
@@ -202,7 +212,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Right && m_highlightedSubviewIndex < ContentView::k_maxNumberOfEditableFields - 1) || event == Ion::Events::Left || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+  return (event == Ion::Events::Right && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters()) || event == Ion::Events::Left || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/probability/,\
   app.o\
   calculation/calculation.o\
+  calculation/discrete_calculation.o\
   calculation/left_integral_calculation.o\
   calculation/right_integral_calculation.o\
   calculation/finite_integral_calculation.o\
@@ -27,11 +28,13 @@ app_images += $(addprefix apps/probability/images/,\
   calcul1_icon.png\
   calcul2_icon.png\
   calcul3_icon.png\
+  calcul4_icon.png\
   exponential_icon.png\
   focused_binomial_icon.png\
   focused_calcul1_icon.png\
   focused_calcul2_icon.png\
   focused_calcul3_icon.png\
+  focused_calcul4_icon.png\
   focused_exponential_icon.png\
   focused_normal_icon.png\
   focused_poisson_icon.png\

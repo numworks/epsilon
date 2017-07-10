@@ -307,7 +307,7 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[238] {
+const char * universalMessages[239] {
   "",
   "alpha",
   "ALPHA",
@@ -334,6 +334,7 @@ const char * universalMessages[238] {
   leftIntegralFirstLegend,
   ")=",
   finiteIntegralLegend,
+  "P(X=",
 
   " D: y=ax+b ",
 

@@ -82,13 +82,13 @@ void CalculationController::ContentView::layoutSubviews() {
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   m_text[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
-  xCoordinate += k_textFieldWidth + k_textWidthMargin;
+  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
+  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
   numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
   m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
-  xCoordinate += k_textFieldWidth + k_textWidthMargin;
+  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
+  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
   if (m_calculation->numberOfParameters() > 2) {
     numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
     m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
@@ -103,24 +103,23 @@ void CalculationController::ContentView::layoutSubviews() {
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
   ctx->fillRect(KDRect(0,titleHeight, bounds().width(), ImageTableView::k_oneCellWidth), KDColorWhite);
-  if (m_calculation->numberOfEditableParameters() == 0) {
-    return;
-  }
   KDSize charSize = KDText::stringSize(" ");
+  int numberOfCharacters;
   KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
-  KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+  KDCoordinate textFieldWidth = k_largeTextFieldWidth;
+  for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
+    if (m_calculation->numberOfEditableParameters() == i) {
+      return;
+    }
+    if (i == 2) {
+      textFieldWidth = k_textFieldWidth;
+    }
+    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(i)));
+    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
 
-  ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, k_textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
-
-  if (m_calculation->numberOfEditableParameters() < 2) {
-    return;
+    ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
+    xCoordinate += textFieldWidth + k_textWidthMargin;
   }
-  xCoordinate += k_textFieldWidth + k_textWidthMargin;
-  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-
-  ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, k_textFieldWidth+ImageTableView::k_outline, ImageCell::k_height+ImageTableView::k_outline), Palette::GreyMiddle);
 }
 
 LawCurveView * CalculationController::ContentView::lawCurveView() {
@@ -261,7 +260,7 @@ void CalculationController::didBecomeFirstResponder() {
   App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
   snapshot->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
-  for (int subviewIndex = 0; subviewIndex < 2; subviewIndex++) {
+  for (int subviewIndex = 0; subviewIndex < ContentView::k_maxNumberOfEditableFields; subviewIndex++) {
     EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);
     calculCell->setHighlighted(false);
   }

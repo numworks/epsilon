@@ -38,8 +38,9 @@ private:
     ImageTableView * imageTableView();
     EditableTextCell * calculationCellAtIndex(int index);
     void willDisplayEditableCellAtIndex(int index);
-  private:
     constexpr static int k_maxNumberOfEditableFields = 3;
+  private:
+    constexpr static KDCoordinate k_largeTextFieldWidth = 60;
     constexpr static KDCoordinate k_textFieldWidth = 50;
     constexpr static KDCoordinate k_textWidthMargin = 5;
     constexpr static KDCoordinate k_titleHeightMargin = 5;

@@ -1,4 +1,5 @@
 #include "finite_integral_calculation.h"
+#include "../law/normal_law.h"
 #include <assert.h>
 #include <ion.h>
 #include <math.h>
@@ -23,6 +24,9 @@ int FiniteIntegralCalculation::numberOfParameters() {
 }
 
 int FiniteIntegralCalculation::numberOfEditableParameters() {
+  if (m_law->type() == Law::Type::Normal) {
+    return 3;
+  }
   return 2;
 }
 
@@ -75,6 +79,13 @@ float FiniteIntegralCalculation::upperBound() {
 void FiniteIntegralCalculation::compute(int indexKnownElement) {
   if (m_law == nullptr) {
     return;
+  }
+  if (indexKnownElement == 2) {
+    assert(m_law->type() == Law::Type::Normal);
+    float p = (1.0f+m_result)/2.0f;
+    float a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
+    m_lowerBound = roundf((2.0f*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
+    m_upperBound = roundf(a/k_precision)*k_precision;
   }
   m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
   /* Results in probability application are rounder to 3 decimals */

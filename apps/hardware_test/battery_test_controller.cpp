@@ -12,7 +12,7 @@ namespace HardwareTest {
 BatteryTestController::BatteryTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_view(),
-  m_usbTestController(this)
+  m_resetController(this)
 {
 }
 
@@ -24,7 +24,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
       ModalViewController * modal = (ModalViewController *)parentResponder();
-      modal->displayModalViewController(&m_usbTestController, 0.0f, 0.0f);
+      modal->displayModalViewController(&m_resetController, 0.0f, 0.0f);
     }
   }
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());

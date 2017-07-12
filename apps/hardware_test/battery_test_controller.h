@@ -2,7 +2,7 @@
 #define HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
 
 #include <escher.h>
-#include "usb_test_controller.h"
+#include "reset_controller.h"
 
 namespace HardwareTest {
 
@@ -35,7 +35,7 @@ private:
   constexpr static const char * k_batteryNeedChargingText = "BATTERY: NEED RECHARGE";
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   ContentView m_view;
-  USBTestController m_usbTestController;
+  ResetController m_resetController;
 };
 
 }

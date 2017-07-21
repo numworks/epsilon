@@ -1,4 +1,5 @@
 #include <ion/events.h>
+#include "events.h"
 #include "display.h"
 extern "C" {
 #include <SDL/SDL.h>

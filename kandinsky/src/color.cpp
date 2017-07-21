@@ -26,18 +26,3 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
   // white.red() = 0x1F << 3 = 0xF8
 //  white.red() * 0xFF = 0xF708, we wanted 0xF800
 }
-
-uint8_t KDColor::red() {
-  uint8_t r5 = (m_value>>11)&0x1F;
-  return r5 << 3;
-}
-
-uint8_t KDColor::green() {
-  uint8_t g6 = (m_value>>5)&0x3F;
-  return g6 << 2;
-}
-
-uint8_t KDColor::blue() {
-  uint8_t b5 = m_value&0x1F;
-  return b5 << 3;
-}

@@ -5,15 +5,15 @@
 
 class Image {
 public:
-  constexpr Image(KDCoordinate width, KDCoordinate height, const unsigned char * data) :
-    m_width(width), m_height(height), m_data(data) {}
+  constexpr Image(KDCoordinate width, KDCoordinate height, const KDColor * pixels) :
+    m_width(width), m_height(height), m_pixels(pixels) {}
   KDCoordinate width() const { return m_width; }
   KDCoordinate height() const { return m_height; }
-  const KDColor * pixels() const { return (const KDColor *)m_data; }
+  const KDColor * pixels() const { return m_pixels; }
 private:
   KDCoordinate m_width;
   KDCoordinate m_height;
-  const unsigned char * m_data;
+  const KDColor * m_pixels;
 };
 
 #endif

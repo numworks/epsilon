@@ -8,6 +8,7 @@ namespace Display {
 namespace Emscripten {
 
 void init();
+void refresh();
 
 }
 }

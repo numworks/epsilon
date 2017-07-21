@@ -1,4 +1,5 @@
 #include <ion/events.h>
+#include "display.h"
 extern "C" {
 #include <SDL/SDL.h>
 }
@@ -28,6 +29,7 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 };
 
 Event getEvent(int * timeout) {
+  Ion::Display::Emscripten::refresh();
   if (sEvent != Ion::Events::None) {
     Ion::Events::Event event = sEvent;
     sEvent = Ion::Events::None;

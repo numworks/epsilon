@@ -96,7 +96,7 @@ void UniformLaw::setParameterAtIndex(float f, int index) {
 }
 
 float UniformLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
-  if (x < m_parameter1) {
+  if (x <= m_parameter1) {
     return 0.0f;
   }
   if (x < m_parameter2) {

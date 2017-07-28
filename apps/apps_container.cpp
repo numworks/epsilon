@@ -107,36 +107,31 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  bool alphaLockWantsRedraw = m_window.updateAlphaLock();
+
+  bool didProcessEvent = Container::dispatchEvent(event);
+
+  if (!didProcessEvent) {
+    didProcessEvent = processEvent(event);
+  }
   if (event.isKeyboardEvent()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   }
+  return didProcessEvent || alphaLockWantsRedraw;
+}
 
-  bool alphaLockWantsRedraw = m_window.updateAlphaLock();
-
-  // Home and Power buttons are not sent to apps. We handle them straight away.
-  if (event == Ion::Events::Home && activeApp()->snapshot() != onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot()) {
+bool AppsContainer::processEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Home || event == Ion::Events::Back) {
     switchTo(appSnapshotAtIndex(0));
     return true;
   }
-  if (event == Ion::Events::OnOff && activeApp()->snapshot() != hardwareTestAppSnapshot()) {
-    if (activeApp()->snapshot() == onBoardingAppSnapshot()) {
-      ((OnBoarding::App *)activeApp())->reinitOnBoarding();
-    }
+  if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;
   }
-  bool didProcessEvent = Container::dispatchEvent(event);
-  if (!didProcessEvent && event == Ion::Events::Back) {
-    switchTo(appSnapshotAtIndex(0));
-    return true;
-  }
-  if (!didProcessEvent && alphaLockWantsRedraw) {
-    window()->redraw();
-    return true;
-  }
-  return didProcessEvent;
+  return false;
 }
 
 void AppsContainer::switchTo(App::Snapshot * snapshot) {
@@ -149,9 +144,6 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
   }
   Container::switchTo(snapshot);
-  if (activeApp() != nullptr && activeApp()->snapshot() == onBoardingAppSnapshot()) {
-    ((OnBoarding::App *)activeApp())->reinitOnBoarding();
-  }
 }
 
 void AppsContainer::run() {

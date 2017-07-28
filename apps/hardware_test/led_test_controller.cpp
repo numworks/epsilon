@@ -20,10 +20,12 @@ View * LEDTestController::view() {
 }
 
 bool LEDTestController::handleEvent(Ion::Events::Event event) {
-  setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
-  if (m_LEDColorIndex == k_numberOfColors) {
-    ModalViewController * modal = (ModalViewController *)parentResponder();
-    modal->displayModalViewController(&m_batteryTestController, 0.0f, 0.0f);
+  if (event == Ion::Events::OK) {
+    setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
+    if (m_LEDColorIndex == k_numberOfColors) {
+      ModalViewController * modal = (ModalViewController *)parentResponder();
+      modal->displayModalViewController(&m_batteryTestController, 0.0f, 0.0f);
+    }
   }
   return true;
 }

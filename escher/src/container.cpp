@@ -1,5 +1,6 @@
 #include <escher/container.h>
 #include <ion.h>
+#include <assert.h>
 
 Container::Container() :
   RunLoop(),
@@ -48,3 +49,22 @@ void Container::run() {
   RunLoop::run();
 }
 
+int Container::numberOfTimers() {
+  return m_activeApp->numberOfTimers() + numberOfContainerTimers();
+}
+
+Timer * Container::timerAtIndex(int i) {
+  if (i < m_activeApp->numberOfTimers()) {
+    return m_activeApp->timerAtIndex(i);
+  }
+  return containerTimerAtIndex(i-m_activeApp->numberOfTimers());
+}
+
+int Container::numberOfContainerTimers() {
+  return 0;
+}
+
+Timer * Container::containerTimerAtIndex(int i) {
+  assert(false);
+  return nullptr;
+}

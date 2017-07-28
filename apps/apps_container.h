@@ -52,8 +52,8 @@ public:
   UpdateController * updatePopUpController();
 private:
   Window * window() override;
-  int numberOfTimers() override;
-  Timer * timerAtIndex(int i) override;
+  int numberOfContainerTimers() override;
+  Timer * containerTimerAtIndex(int i) override;
   static constexpr int k_numberOfCommonApps = 8;
   static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;

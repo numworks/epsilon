@@ -204,16 +204,11 @@ Window * AppsContainer::window() {
   return &m_window;
 }
 
-int AppsContainer::numberOfTimers() {
-  bool onBoardingTimer = activeApp()->snapshot() == onBoardingAppSnapshot() && ((OnBoarding::App *)activeApp())->hasTimer();
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) + onBoardingTimer;
+int AppsContainer::numberOfContainerTimers() {
+  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
-Timer * AppsContainer::timerAtIndex(int i) {
-  bool onBoardingTimer = activeApp()->snapshot() == onBoardingAppSnapshot() && ((OnBoarding::App *)activeApp())->hasTimer();
-  if (onBoardingTimer && i == 4) {
-    return ((OnBoarding::App *)activeApp())->timer();
-  }
-  Timer * timers[6] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer, &m_ledTimer};
+Timer * AppsContainer::containerTimerAtIndex(int i) {
+  Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
   return timers[i];
 }

@@ -4,50 +4,77 @@
 namespace Ion {
 namespace Events {
 
-static bool sIsShiftActive = false;
-static bool sIsAlphaActive = false;
-static bool sIsAlphaLocked = false;
-static bool sIsShiftAlphaLocked = false;
+static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
+
+ShiftAlphaStatus shiftAlphaStatus() {
+  return sShiftAlphaStatus;
+}
 
 bool isShiftActive() {
-  return sIsShiftActive;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 bool isAlphaActive() {
-  return sIsAlphaActive;
-}
-
-bool isAlphaLocked() {
-  return sIsAlphaLocked;
-}
-
-bool isShiftAlphaLocked() {
-  return sIsShiftAlphaLocked;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+;
 }
 
 void updateModifiersFromEvent(Event e) {
-  if (e == Shift) {
-    sIsShiftActive = !sIsShiftActive;
-  } else if (e == Alpha) {
-    if (sIsAlphaLocked || sIsShiftAlphaLocked) {
-      sIsAlphaLocked = false;
-      sIsShiftAlphaLocked = false;
-      sIsAlphaActive = false;
-    } else if (sIsAlphaActive) {
-      if (sIsShiftActive) {
-        sIsShiftAlphaLocked = true;
-        sIsAlphaActive = false;
-      } else {
-        sIsAlphaLocked = true;
-        sIsAlphaActive = false;
+  switch (sShiftAlphaStatus) {
+    case ShiftAlphaStatus::Default:
+      if (e == Shift) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
       }
-    } else {
-      sIsAlphaActive = true;
+      break;
+    case ShiftAlphaStatus::Shift:
+      if (e == Shift) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+      } else {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::Alpha:
+      if (e == Shift) {
+          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+        } else if (e == Alpha) {
+          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        } else {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
+        break;
+      case ShiftAlphaStatus::ShiftAlpha:
+        if (e == Shift) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+        } else if (e == Alpha) {
+          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+        } else {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
+        break;
+      case ShiftAlphaStatus::AlphaLock:
+        if (e == Shift) {
+          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
+        } else if (e == Alpha) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
+        break;
+      case ShiftAlphaStatus::AlphaLockShift:
+        if (e == Alpha) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+        } else {
+          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        }
+        break;
+      case ShiftAlphaStatus::ShiftAlphaLock:
+        if (e == Alpha) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
+        break;
     }
-  } else {
-    sIsShiftActive = false;
-    sIsAlphaActive = false;
-  }
 }
 
 static bool sleepWithTimeout(int duration, int * timeout) {
@@ -91,7 +118,7 @@ Event getEvent(int * timeout) {
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, sIsShiftActive || sIsShiftAlphaLocked, sIsAlphaActive || sIsAlphaLocked || sIsShiftAlphaLocked);
+      Event event(key, isShiftActive(), isAlphaActive());
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;

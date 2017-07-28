@@ -119,3 +119,12 @@ void App::willBecomeInactive() {
   setFirstResponder(nullptr);
   m_modalViewController.viewDidDisappear();
 }
+
+int App::numberOfTimers() {
+  return 0;
+}
+
+Timer * App::timerAtIndex(int i) {
+  assert(false);
+  return nullptr;
+}

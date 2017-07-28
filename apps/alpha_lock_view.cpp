@@ -3,7 +3,7 @@
 AlphaLockView::AlphaLockView() :
   View(),
   m_alphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_status(Status::Default)
+  m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
 
@@ -11,15 +11,22 @@ void AlphaLockView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::YellowDark);
 }
 
-bool AlphaLockView::setStatus(Status status) {
+bool AlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
   if (status != m_status) {
     m_status = status;
-    if (m_status == Status::Alpha || m_status == Status::AlphaLock) {
-      m_alphaView.setMessage(I18n::Message::Alpha);
-    } else if (m_status == Status::CapitalAlpha || m_status == Status::CapitalAlphaLock) {
-      m_alphaView.setMessage(I18n::Message::CapitalAlpha);
-    } else {
-      m_alphaView.setMessage(I18n::Message::Default);
+    switch (status) {
+      case Ion::Events::ShiftAlphaStatus::Alpha:
+      case Ion::Events::ShiftAlphaStatus::AlphaLock:
+      case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
+        m_alphaView.setMessage(I18n::Message::Alpha);
+        break;
+      case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
+      case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
+        m_alphaView.setMessage(I18n::Message::CapitalAlpha);
+        break;
+      default:
+        m_alphaView.setMessage(I18n::Message::Default);
+        break;
     }
     markRectAsDirty(bounds());
     return true;
@@ -36,13 +43,12 @@ KDSize AlphaLockView::minimalSizeForOptimalDisplay() const {
 
 int AlphaLockView::numberOfSubviews() const {
   switch (m_status) {
-    case Status::Alpha:
+    case Ion::Events::ShiftAlphaStatus::Alpha:
+    case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
       return 1;
-    case Status::AlphaLock:
-      return 2;
-    case Status::CapitalAlpha:
-      return 1;
-    case Status::CapitalAlphaLock:
+    case Ion::Events::ShiftAlphaStatus::AlphaLock:
+    case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
+    case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
       return 2;
     default:
       return 0;

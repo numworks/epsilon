@@ -20,10 +20,6 @@ App::App(Container * container, Snapshot * snapshot) :
 {
 }
 
-void App::reinitOnBoarding() {
-  m_languageController.reinitOnBoarding();
-}
-
 int App::numberOfTimers() {
   return firstResponder() == &m_logoController;
 }
@@ -31,6 +27,21 @@ int App::numberOfTimers() {
 Timer * App::timerAtIndex(int i) {
   assert(i == 0);
   return &m_logoController;
+}
+
+bool App::processEvent(Ion::Events::Event e) {
+  if (e == Ion::Events::Home) {
+    return true;
+  }
+  if (e == Ion::Events::OnOff) {
+    m_languageController.reinitOnBoarding();
+  }
+  return ::App::processEvent(e);
+}
+
+void App::didBecomeActive(Window * window) {
+  ::App::didBecomeActive(window);
+  m_languageController.reinitOnBoarding();
 }
 
 }

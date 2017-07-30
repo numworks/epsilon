@@ -6,6 +6,6 @@
 typedef int ssize_t;
 typedef unsigned int size_t;
 
-#define offsetof(st, m) __builtin_offsetof(st, m)
+#define offsetof(type, field) __builtin_offsetof(type, field)
 
 #endif

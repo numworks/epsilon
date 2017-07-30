@@ -109,6 +109,7 @@ endif
 tests += $(addprefix liba/test/, \
   aeabi.c \
   ieee754.c \
+  stddef.c \
   stdint.c \
   strlcpy.c \
   double.c \

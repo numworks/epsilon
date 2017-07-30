@@ -16,6 +16,7 @@ objs += $(addprefix liba/src/, \
   memmove.o \
   memset.o \
   strcmp.o \
+  strchr.o \
   strlcpy.o \
   strlen.o \
   external/sqlite/mem5.o \

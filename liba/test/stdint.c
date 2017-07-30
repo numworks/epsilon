@@ -14,16 +14,17 @@ QUIZ_CASE(liba_stdint_size) {
   assert(sizeof(int64_t) == 8);
 }
 
+#define assert_signed(type) assert((type)-1 < 0)
+#define assert_unsigned(type) assert((type)-1 >= 0)
+
 QUIZ_CASE(liba_stdint_signedness) {
-  int8_t i8 = -1;
-  assert(i8 == -1);
+  assert_signed(int8_t);
+  assert_signed(int16_t);
+  assert_signed(int32_t);
+  assert_signed(int64_t);
 
-  int16_t i16 = -1;
-  assert(i16 == -1);
-
-  int32_t i32 = -1;
-  assert(i32 == -1);
-
-  int64_t i64 = -1;
-  assert(i64 == -1);
+  assert_unsigned(uint8_t);
+  assert_unsigned(uint16_t);
+  assert_unsigned(uint32_t);
+  assert_unsigned(uint64_t);
 }

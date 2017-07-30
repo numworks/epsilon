@@ -13,6 +13,9 @@ QUIZ_CASE(liba_stdint_size) {
   assert(sizeof(int16_t) == 2);
   assert(sizeof(int32_t) == 4);
   assert(sizeof(int64_t) == 8);
+
+  assert(sizeof(uintptr_t) == sizeof(void *));
+  assert(sizeof(intptr_t) == sizeof(void *));
 }
 
 QUIZ_CASE(liba_stdint_signedness) {
@@ -25,4 +28,7 @@ QUIZ_CASE(liba_stdint_signedness) {
   assert_unsigned(uint16_t);
   assert_unsigned(uint32_t);
   assert_unsigned(uint64_t);
+
+  assert_signed(intptr_t);
+  assert_unsigned(uintptr_t);
 }

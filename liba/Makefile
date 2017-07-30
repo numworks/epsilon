@@ -11,6 +11,7 @@ objs += $(addprefix liba/src/, \
   isinfd.o \
   isinff.o \
   malloc.o \
+  memcmp.o \
   memcpy.o \
   memmove.o \
   memset.o \

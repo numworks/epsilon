@@ -23,12 +23,16 @@ Expression * ArcCosine::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float ArcCosine::privateApproximate(Context& context, AngleUnit angleUnit) const {
+Complex ArcCosine::computeComplex(const Complex c, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  if (angleUnit == AngleUnit::Degree) {
-    return acosf(m_args[0]->approximate(context, angleUnit))*180.0f/M_PI;
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
   }
-  return acosf(m_args[0]->approximate(context, angleUnit));
+  float result = acosf(c.a());
+  if (angleUnit == AngleUnit::Degree) {
+    return Complex::Float(result*180.0f/M_PI);
+  }
+  return Complex::Float(result);
 }
 
 }

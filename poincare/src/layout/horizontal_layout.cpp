@@ -11,7 +11,7 @@ namespace Poincare {
 HorizontalLayout::HorizontalLayout(ExpressionLayout ** children_layouts, int number_of_children) :
   ExpressionLayout(), m_number_of_children(number_of_children) {
   assert(number_of_children > 0);
-  m_children_layouts = (ExpressionLayout **)malloc(number_of_children*sizeof(ExpressionLayout *));
+  m_children_layouts = new ExpressionLayout *[number_of_children];
   for (int i=0; i<m_number_of_children; i++) {
     m_children_layouts[i] = children_layouts[i];
     m_children_layouts[i]->setParent(this);
@@ -25,7 +25,7 @@ HorizontalLayout::~HorizontalLayout() {
   for (int i=0; i<m_number_of_children; i++) {
     delete m_children_layouts[i];
   }
-  free(m_children_layouts);
+  delete[] m_children_layouts;
 }
 
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

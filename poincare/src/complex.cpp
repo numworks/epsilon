@@ -6,6 +6,7 @@ extern "C" {
 #include <math.h>
 #include <float.h>
 }
+#include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
 #include <ion.h>
@@ -56,44 +57,47 @@ Complex::Complex(const char * integralPart, int integralPartLength, bool integra
   m_b = 0.0f;
 }
 
-Expression * Complex::clone() const {
-  return new Complex(Cartesian(m_a, m_b));
-}
-
-float Complex::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  if (m_b == 0.0f) {
-    return m_a;
+float Complex::toFloat() const {
+  if (m_b != 0.0f) {
+    return NAN;
   }
-  return NAN;
+  return m_a;
 }
 
-Expression * Complex::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return clone();
+int Complex::numberOfRows() const {
+  return 1;
+}
+
+int Complex::numberOfColumns() const {
+  return 1;
 }
 
 Expression::Type Complex::type() const {
   return Type::Complex;
 }
 
-ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  if (complexFormat == ComplexFormat::Polar) {
-    return createPolarLayout(floatDisplayMode);
-  }
-  return createCartesianLayout(floatDisplayMode);
+Complex * Complex::clone() const {
+  return new Complex(Cartesian(m_a, m_b));
 }
 
-int Complex::writeTextInBuffer(char * buffer, int bufferSize) {
+Evaluation * Complex::cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands) const {
+  return this->clone();
+}
+
+int Complex::writeTextInBuffer(char * buffer, int bufferSize) const {
   return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
 }
 
-float Complex::a() {
+Evaluation * Complex::createInverse() const {
+  return new Complex(Cartesian(1.0f/m_a, -1.0f/m_b));
+}
+
+float Complex::a() const {
   return m_a;
 }
 
-float Complex::b() {
+float Complex::b() const {
   return m_b;
 }
 
@@ -116,8 +120,8 @@ float Complex::th() const {
   return result;
 }
 
-Complex * Complex::createConjugate() {
-  return new Complex(Complex::Cartesian(m_a, -m_b));
+Complex Complex::conjugate() const {
+  return Complex::Cartesian(m_a, -m_b);
 }
 
 int Complex::convertFloatToText(float f, char * buffer, int bufferSize,
@@ -150,6 +154,22 @@ Complex::Complex(float a, float b) :
   m_a(a),
   m_b(b)
 {
+}
+
+const Complex * Complex::complexOperand(int i) const {
+  return this;
+}
+
+Evaluation * Complex::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  return this->clone();
+}
+
+ExpressionLayout * Complex::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  if (complexFormat == ComplexFormat::Polar) {
+    return createPolarLayout(floatDisplayMode);
+  }
+  return createCartesianLayout(floatDisplayMode);
 }
 
 int Complex::convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode displayMode, ComplexFormat complexFormat) const {

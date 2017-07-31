@@ -43,13 +43,7 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat));
 }
 
-float Parenthesis::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return m_operand->approximate(context, angleUnit);
-}
-
-Expression * Parenthesis::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
+Evaluation * Parenthesis::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   return m_operand->evaluate(context, angleUnit);
 }
 

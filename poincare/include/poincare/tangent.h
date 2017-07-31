@@ -12,8 +12,8 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
 private:
-  float trigonometricApproximation(float x) const override;
-  Expression * createComplexEvaluation(Expression * arg, Context & context, AngleUnit angleUnit) const override;
+  Complex privateCompute(const Complex c, AngleUnit angleUnit) const override;
+  float computeForRadianReal(float x) const override;
 };
 
 }

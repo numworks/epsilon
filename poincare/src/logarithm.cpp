@@ -1,4 +1,5 @@
 #include <poincare/logarithm.h>
+#include <poincare/fraction.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -40,12 +41,26 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
   return l;
 }
 
-float Logarithm::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  if (m_numberOfArguments == 1) {
-    return log10f(m_args[0]->approximate(context, angleUnit));
+Complex Logarithm::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
   }
-  return log10f(m_args[1]->approximate(context, angleUnit))/log10f(m_args[0]->approximate(context, angleUnit));
+  return Complex::Float(log10f(c.a()));
+}
+
+Evaluation * Logarithm::privateEvaluate(Context & context, AngleUnit angleUnit) const {
+  if (m_numberOfArguments == 1) {
+    return Function::privateEvaluate(context, angleUnit);
+  }
+  Evaluation * x = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * n = m_args[1]->evaluate(context, angleUnit);
+  if (x->numberOfRows() != 1 || x->numberOfColumns() != 1 || n->numberOfRows() != 1 || n->numberOfColumns() != 1) {
+    return new Complex(Complex::Float(NAN));
+  }
+  Complex result = Fraction::compute(computeComplex(*(n->complexOperand(0)), angleUnit), computeComplex(*(x->complexOperand(0)), angleUnit));
+  delete x;
+  delete n;
+  return new Complex(result);
 }
 
 ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

@@ -24,15 +24,18 @@ Expression * Round::cloneWithDifferentOperands(Expression** newOperands,
   return r;
 }
 
-float Round::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float f1 = m_args[0]->approximate(context, angleUnit);
-  float f2 = m_args[1]->approximate(context, angleUnit);
+Evaluation * Round::privateEvaluate(Context & context, AngleUnit angleUnit) const {
+  Evaluation * f1Entry = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * f2Entry = m_args[1]->evaluate(context, angleUnit);
+  float f1 = f1Entry->toFloat();
+  float f2 = f2Entry->toFloat();
+  delete f1Entry;
+  delete f2Entry;
   if (isnan(f2) || f2 != (int)f2) {
-    return NAN;
+    return new Complex(Complex::Float(NAN));
   }
   float err = powf(10.0f, (int)f2);
-  return roundf(f1*err)/err;
+  return new Complex(Complex::Float(roundf(f1*err)/err));
 }
 
 }

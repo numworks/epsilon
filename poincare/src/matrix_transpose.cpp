@@ -26,21 +26,11 @@ Expression * MatrixTranspose::cloneWithDifferentOperands(Expression** newOperand
   return t;
 }
 
-float MatrixTranspose::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return NAN;
-}
-
-Expression * MatrixTranspose::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Complex) {
-    return evaluation;
-  }
-  Expression * transpose = ((Matrix *)evaluation)->createTranspose(context, angleUnit);
-  delete evaluation;
-  return transpose;
+Evaluation * MatrixTranspose::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * result = input->createTranspose();
+  delete input;
+  return result;
 }
 
 }

@@ -21,12 +21,12 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
+  static Complex compute(const Complex c);
+  static Evaluation * computeOnMatrix(Evaluation * m);
 private:
-  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Expression * m_operand;
-  Expression * evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const;
 };
 
 }

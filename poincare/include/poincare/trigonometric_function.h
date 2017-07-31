@@ -9,10 +9,9 @@ class TrigonometricFunction : public Function {
 public:
   TrigonometricFunction(const char * name);
 private:
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
-  virtual float trigonometricApproximation(float x) const = 0;
-  virtual Expression * createComplexEvaluation(Expression * arg, Context & context, AngleUnit angleUnit) const = 0;
+  Complex computeComplex(const Complex c, AngleUnit angleUnit) const override;
+  virtual float computeForRadianReal(float x) const = 0;
+  virtual Complex privateCompute(const Complex c, AngleUnit angleUnit) const = 0;
 };
 
 }

@@ -3,62 +3,33 @@
 #include <ion.h>
 #include <math.h>
 #include <assert.h>
+#include "helper.h"
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_fraction_approximate) {
-  GlobalContext globalContext;
-  Expression * f = Expression::parse("1/2");
-  assert(f->approximate(globalContext) == 0.5f);
-  delete f;
-}
-
 QUIZ_CASE(poincare_fraction_evaluate) {
-  GlobalContext globalContext;
-  Expression * a = Expression::parse("1/2");
-  Expression * e = a->evaluate(globalContext);
-  assert(e->approximate(globalContext) == 0.5f);
-  delete a;
-  delete e;
+  Complex a[1] = {Complex::Float(0.5f)};
+  assert_parsed_expression_evaluate_to("1/2", a, 1);
 
-  char expText1[50] ={'(','3','+',Ion::Charset::IComplex,')', '/', '(','4', '+', Ion::Charset::IComplex, ')',0};
-  a = Expression::parse(expText1);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e)->a() == 13.0f/17.0f && ((Complex *)e)->b() == 1.0f/17.0f);
-  delete a;
-  delete e;
+  Complex b[1] = {Complex::Cartesian(13.0f/17.0f, 1.0f/17.0f)};
+  assert_parsed_expression_evaluate_to("(3+I)/(4+I)", b, 1);
 
 #if MATRICES_ARE_DEFINED
-  a = Expression::parse("[[1,2][3,4][5,6]]/2");
-  e = a->evaluate(globalContext);
-  assert(e->operand(0)->approximate(globalContext) == 0.5f);
-  assert(e->operand(1)->approximate(globalContext) == 1.0f);
-  assert(e->operand(2)->approximate(globalContext) == 1.5f);
-  assert(e->operand(3)->approximate(globalContext) == 2.0f);
-  assert(e->operand(4)->approximate(globalContext) == 2.5f);
-  assert(e->operand(5)->approximate(globalContext) == 3.0f);
-  delete a;
-  delete e;
+  Complex c[6] = {Complex::Float(0.5f), Complex::Float(1.0f), Complex::Float(1.5f), Complex::Float(2.0f), Complex::Float(2.5f), Complex::Float(3.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2][3,4][5,6]]/2", c, 6);
 
-  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','/','(','4','+',Ion::Charset::IComplex, ')',0};
-  a = Expression::parse(expText2);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e->operand(0))->a() == 4.0f/17.0f && ((Complex *)e->operand(0))->b() == -1.0f/17.0f);
-  assert(((Complex *)e->operand(1))->a() == 9.0f/17.0f && ((Complex *)e->operand(1))->b() == 2.0f/17.0f);
-  assert(((Complex *)e->operand(2))->a() == 12.0f/17.0f && ((Complex *)e->operand(2))->b() == -3.0f/17.0f);
-  assert(((Complex *)e->operand(3))->a() == 16.0f/17.0f && ((Complex *)e->operand(3))->b() == -4.0f/17.0f);
-  assert(((Complex *)e->operand(4))->a() == 20.0f/17.0f && ((Complex *)e->operand(4))->b() == -5.0f/17.0f);
-  assert(((Complex *)e->operand(5))->a() == 24.0f/17.0f && ((Complex *)e->operand(5))->b() == -6.0f/17.0f);
-  delete a;
-  delete e;
+  Complex d[6] = {Complex::Cartesian(4.0f/17.0f, -1.0f/17.0f), Complex::Cartesian(9.0f/17.0f, 2.0/17.0f), Complex::Cartesian(12.0f/17.0f, -3.0f/17.0f), Complex::Cartesian(16.0f/17.0f, -4.0f/17.0f), Complex::Cartesian(20.0f/17.0f, -5.0f/17.0f), Complex::Cartesian(24.0f/17.0f, -6.0/17.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2+I][3,4][5,6]]/(4+I)", d, 6);
 
-  a = Expression::parse("[[1,2][3,4]]/[[3,4][5,6]]");
-  e = a->evaluate(globalContext);
-  assert(fabsf(e->operand(0)->approximate(globalContext) - 2.0f) < 0.000001f);
-  assert(fabsf(e->operand(1)->approximate(globalContext) - -1.0f) < 0.000001f);
-  assert(fabsf(e->operand(2)->approximate(globalContext) - 1.0f) < 0.000001f);
-  assert(fabsf(e->operand(3)->approximate(globalContext) - 0.0f) < 0.000001f);
-  delete a;
-  delete e;
+  Complex e[4] = {Complex::Float(2.0f), Complex::Float(-1.0f), Complex::Float(1.0f), Complex::Float(0.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2][3,4]]/[[3,4][5,6]]", e, 4);
+
+  Complex f[4] = {Complex::Float(-9.0f), Complex::Float(6.0f), Complex::Float(15.0f/2.0f), Complex::Float(-9.0f/2.0f)};
+  assert_parsed_expression_evaluate_to("3/[[3,4][5,6]]", f, 4);
+
+  // TODO: add this test when inverse of complex matrix is implemented
+  /*Complex g[4] = {Complex::Cartesian(-9.0f, -12.0f), Complex::Cartesian(6.0f, 8.0f), Complex::Cartesian(15.0f/2.0f, 10.0f), Complex::Cartesian(-9.0f/2.0f, -6.0f)};
+  assert_parsed_expression_evaluate_to("(3+4i)/[[1,2+i][3,4][5,6]]", g, 4);*/
+
 #endif
 }

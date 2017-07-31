@@ -24,19 +24,20 @@ Expression * PredictionInterval::cloneWithDifferentOperands(Expression** newOper
   return pi;
 }
 
-float PredictionInterval::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return NAN;
-}
-
-Expression * PredictionInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float p = m_args[0]->approximate(context, angleUnit);
-  float n = m_args[1]->approximate(context, angleUnit);
-  Expression * operands[2];
-  operands[0] = new Complex(Complex::Float(p - 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n)));
-  operands[1] = new Complex(Complex::Float(p + 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n)));
-  return new Matrix(new MatrixData(operands, 2, 2, 1, false));
+Evaluation * PredictionInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * pInput = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * nInput = m_args[1]->evaluate(context, angleUnit);
+  float p = pInput->toFloat();
+  float n = nInput->toFloat();
+  delete pInput;
+  delete nInput;
+  if (isnan(p) || isnan(n) || n != (int)n || n < 0.0f || p < 0.0f || p > 1.0f) {
+    return new Complex(Complex::Float(NAN));
+  }
+  Complex operands[2];
+  operands[0] = Complex::Float(p - 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n));
+  operands[1] = Complex::Float(p + 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n));
+  return new ComplexMatrix(operands, 2, 1);
 }
 
 }

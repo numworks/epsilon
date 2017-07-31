@@ -1,5 +1,6 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/matrix.h>
+#include <poincare/evaluation.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -24,19 +25,20 @@ Expression * ConfidenceInterval::cloneWithDifferentOperands(Expression** newOper
   return ci;
 }
 
-float ConfidenceInterval::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return NAN;
-}
-
-Expression * ConfidenceInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float f = m_args[0]->approximate(context, angleUnit);
-  float n = m_args[1]->approximate(context, angleUnit);
-  Expression * operands[2];
-  operands[0] = new Complex(Complex::Float(f - 1.0f/sqrtf(n)));
-  operands[1] = new Complex(Complex::Float(f + 1.0f/sqrtf(n)));
-  return new Matrix(new MatrixData(operands, 2, 2, 1, false));
+Evaluation * ConfidenceInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * fInput = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * nInput = m_args[1]->evaluate(context, angleUnit);
+  float f = fInput->toFloat();
+  float n = nInput->toFloat();
+  delete fInput;
+  delete nInput;
+  if (isnan(f) || isnan(n) || n != (int)n || n < 0.0f || f < 0.0f || f > 1.0f) {
+    return new Complex(Complex::Float(NAN));
+  }
+  Complex operands[2];
+  operands[0] = Complex::Float(f - 1.0f/sqrtf(n));
+  operands[1] = Complex::Float(f + 1.0f/sqrtf(n));
+  return new ComplexMatrix(operands, 2, 1);
 }
 
 }

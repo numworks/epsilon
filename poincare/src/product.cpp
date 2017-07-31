@@ -30,19 +30,18 @@ float Product::emptySequenceValue() const {
   return 1.0f;
 }
 
-float Product::approximateWithNextTerm(float sequence, float nextTerm) const {
-  return sequence * nextTerm;
-}
-
 ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
   return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout);
 }
 
-Expression * Product::evaluateWithNextTerm(Expression ** args, Context& context, AngleUnit angleUnit) const {
-  Expression * multiplication = new Multiplication(args, true);
-  Expression * result = multiplication->evaluate(context, angleUnit);
-  delete multiplication;
-  return result;
+Evaluation * Product::evaluateWithNextTerm(Evaluation * a, Evaluation * b) const {
+  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
+    return new Complex(Multiplication::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+  }
+  if (a->numberOfOperands() == 1) {
+    return Multiplication::computeOnComplexAndMatrix(a->complexOperand(0), b);
+  }
+  return Multiplication::computeOnMatrices(a, b);
 }
 
 }

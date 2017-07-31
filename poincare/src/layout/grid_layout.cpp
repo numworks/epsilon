@@ -11,7 +11,7 @@ GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int n
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
-  m_entryLayouts = (ExpressionLayout **)malloc(numberOfColumns*numberOfRows*sizeof(ExpressionLayout *));
+  m_entryLayouts = new ExpressionLayout *[numberOfColumns*numberOfRows];
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     m_entryLayouts[i] = entryLayouts[i];
     m_entryLayouts[i]->setParent(this);
@@ -23,7 +23,7 @@ GridLayout::~GridLayout() {
   for (int i=0; i<m_numberOfColumns*m_numberOfRows; i++) {
     delete m_entryLayouts[i];
   }
-  free(m_entryLayouts);
+  delete[] m_entryLayouts;
 }
 
 KDCoordinate GridLayout::rowBaseline(int i) {

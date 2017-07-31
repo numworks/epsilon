@@ -24,22 +24,13 @@ Expression * MatrixDimension::cloneWithDifferentOperands(Expression** newOperand
   return md;
 }
 
-float MatrixDimension::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return NAN;
-}
-
-Expression * MatrixDimension::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Complex) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
-  }
-  Expression * dimension = ((Matrix *)evaluation)->createDimensionMatrix(context, angleUnit);
-  delete evaluation;
-  return dimension;
+Evaluation * MatrixDimension::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
+  Complex operands[2];
+  operands[0] = Complex::Float((float)input->numberOfRows());
+  operands[1] = Complex::Float((float)input->numberOfColumns());
+  delete input;
+  return new ComplexMatrix(operands, 2, 1);
 }
 
 }

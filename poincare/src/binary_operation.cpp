@@ -1,4 +1,5 @@
 #include <poincare/binary_operation.h>
+#include <poincare/complex_matrix.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -6,6 +7,12 @@ extern "C" {
 }
 
 namespace Poincare {
+
+BinaryOperation::BinaryOperation()
+{
+  m_operands[0] = nullptr;
+  m_operands[1] = nullptr;
+}
 
 BinaryOperation::BinaryOperation(Expression ** operands, bool cloneOperands) {
   assert(operands != nullptr);
@@ -21,8 +28,12 @@ BinaryOperation::BinaryOperation(Expression ** operands, bool cloneOperands) {
 }
 
 BinaryOperation::~BinaryOperation() {
-  delete m_operands[1];
-  delete m_operands[0];
+  if (m_operands[1] != nullptr) {
+    delete m_operands[1];
+  }
+  if (m_operands[0] != nullptr) {
+    delete m_operands[0];
+  }
 }
 
 bool BinaryOperation::hasValidNumberOfArguments() const {
@@ -43,95 +54,51 @@ Expression * BinaryOperation::clone() const {
   return this->cloneWithDifferentOperands((Expression**) m_operands, 2, true);
 }
 
-Expression * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
-  Expression * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
-  Expression * result = nullptr;
-  switch (leftOperandEvalutation->type()) {
-    case Type::Complex:
-    {
-      switch (rightOperandEvalutation->type()) {
-        case Type::Complex:
-          result = evaluateOnComplex((Complex *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
-          break;
-        case Type::Matrix:
-          result = evaluateOnComplexAndMatrix((Complex *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
-          break;
-        default:
-          result = new Complex(Complex::Float(NAN));
-          break;
-      }
-    }
-    break;
-    case Type::Matrix:
-    {
-      switch (rightOperandEvalutation->type()) {
-        case Type::Complex:
-          result = evaluateOnMatrixAndComplex((Matrix *)leftOperandEvalutation, (Complex *)rightOperandEvalutation, context, angleUnit);
-          break;
-        case Type::Matrix:
-          result = evaluateOnMatrices((Matrix *)leftOperandEvalutation, (Matrix *)rightOperandEvalutation, context, angleUnit);
-          break;
-        default:
-          result = new Complex(Complex::Float(NAN));
-          break;
-      }
-    }
-    break;
-    default:
-      result = new Complex(Complex::Float(NAN));
-      break;
+Evaluation * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
+  Evaluation * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
+  Evaluation * result = nullptr;
+  if (leftOperandEvalutation->numberOfRows() == 1 && leftOperandEvalutation->numberOfColumns() == 1 && rightOperandEvalutation->numberOfRows() == 1 && rightOperandEvalutation->numberOfColumns() == 1) {
+    result = computeOnComplexes(leftOperandEvalutation->complexOperand(0), rightOperandEvalutation->complexOperand(0));
+  } else if (leftOperandEvalutation->numberOfRows() == 1 && leftOperandEvalutation->numberOfColumns() == 1) {
+    result = computeOnComplexAndComplexMatrix(leftOperandEvalutation->complexOperand(0), rightOperandEvalutation);
+  } else if (rightOperandEvalutation->numberOfRows() == 1 && rightOperandEvalutation->numberOfColumns() == 1) {
+    result = computeOnComplexMatrixAndComplex(leftOperandEvalutation, rightOperandEvalutation->complexOperand(0));
+  } else {
+    result = computeOnNumericalMatrices(leftOperandEvalutation, rightOperandEvalutation);
   }
   delete leftOperandEvalutation;
   delete rightOperandEvalutation;
+  if (result == nullptr) {
+    result = new Complex(Complex::Float(NAN));
+  }
   return result;
 }
 
-Expression * BinaryOperation::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
-  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
-    assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-    if (evaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(Complex::Float(NAN));
-      delete evaluation;
-      continue;
-    }
-    operands[i] = evaluateOnComplex((Complex *)evaluation, c, context, angleUnit);
-    delete evaluation;
+Evaluation * BinaryOperation::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * n) const {
+  return computeOnComplexMatrixAndComplex(n, c);
+}
+
+Evaluation * BinaryOperation::computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * d) const {
+  Complex * operands = new Complex[m->numberOfRows()*m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfOperands(); i++) {
+    operands[i] = privateCompute(*(m->complexOperand(i)), *d);
   }
-  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-  free(operands);
+  Evaluation * result = new ComplexMatrix(operands, m->numberOfRows(), m->numberOfColumns());
+  delete[] operands;
   return result;
 }
 
-Expression * BinaryOperation::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  return evaluateOnMatrixAndComplex(m, c, context, angleUnit);
-}
-
-Expression * BinaryOperation::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
-  if (m->numberOfColumns() != n->numberOfColumns() || m->numberOfRows() != n->numberOfRows()) {
-    return new Complex(Complex::Float(NAN));
+Evaluation * BinaryOperation::computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const {
+  if (m->numberOfRows() != n->numberOfRows() && m->numberOfColumns() != n->numberOfColumns()) {
+    return nullptr;
   }
-  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    Expression * mEvaluation = m->operand(i)->evaluate(context, angleUnit);
-    Expression * nEvaluation = n->operand(i)->evaluate(context, angleUnit);
-    assert(mEvaluation->type() == Type::Matrix || mEvaluation->type() == Type::Complex);
-    assert(nEvaluation->type() == Type::Matrix || nEvaluation->type() == Type::Complex);
-    if (mEvaluation->type() == Type::Matrix ||nEvaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(Complex::Float(NAN));
-      delete mEvaluation;
-      delete nEvaluation;
-      continue;
-    }
-    operands[i] = evaluateOnComplex((Complex *)mEvaluation, (Complex *)nEvaluation, context, angleUnit);
-    delete mEvaluation;
-    delete nEvaluation;
+  Complex * operands = new Complex[m->numberOfRows()*m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfOperands(); i++) {
+    operands[i] = privateCompute(*(m->complexOperand(i)), *(n->complexOperand(i)));
   }
-  Expression * result = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-  free(operands);
+  Evaluation * result = new ComplexMatrix(operands, m->numberOfRows(), m->numberOfColumns());
+  delete[] operands;
   return result;
 }
 

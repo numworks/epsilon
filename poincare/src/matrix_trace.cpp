@@ -24,18 +24,11 @@ Expression * MatrixTrace::cloneWithDifferentOperands(Expression** newOperands,
   return t;
 }
 
-float MatrixTrace::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Complex) {
-    float result = evaluation->approximate(context, angleUnit);
-    delete evaluation;
-    return result;
-  }
-  float trace = ((Matrix *)evaluation)->trace(context, angleUnit);
-  delete evaluation;
-  return trace;
+Evaluation * MatrixTrace::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * result = input->createTrace();
+  delete input;
+  return result;
 }
 
 }

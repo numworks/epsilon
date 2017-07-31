@@ -137,24 +137,22 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Expression * expression = expressionForIndex(index);
+  const Evaluation * evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    ((Complex *)expression)->writeTextInBuffer(buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
+    evaluation->writeTextInBuffer(buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
     myCell->setSubtitle(buffer);
     return;
   }
   myCell->displayExpression(true);
-  if (expression) {
-    assert(expression->type() == Expression::Type::Matrix);
-    Matrix * m = (Matrix *)expression;
+  if (evaluation) {
     /* TODO: implement list contexts */
-    myCell->setExpression((Expression *)expression);
+    myCell->setExpression(evaluation);
     char buffer[2*Complex::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = Complex::convertFloatToText(m->numberOfRows(), buffer, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    int numberOfChars = Complex::convertFloatToText(evaluation->numberOfRows(), buffer, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     buffer[numberOfChars++] = 'x';
-    Complex::convertFloatToText(m->numberOfColumns(), buffer+numberOfChars, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    Complex::convertFloatToText(evaluation->numberOfColumns(), buffer+numberOfChars, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);
@@ -203,7 +201,7 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+const Evaluation * VariableBoxController::ContentViewController::expressionForIndex(int index) {
   if (m_currentPage == Page::Scalar) {
     const Symbol symbol = Symbol('A'+index);
     return m_context->expressionForSymbol(&symbol);

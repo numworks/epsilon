@@ -3,6 +3,7 @@
 
 #include <poincare/context.h>
 #include <poincare/complex.h>
+#include <poincare/complex_matrix.h>
 
 namespace Poincare {
 
@@ -20,16 +21,16 @@ public:
   GlobalContext& operator=(GlobalContext&& other) = delete;
   /* The expression recorded in global context is already a final expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  const Expression * expressionForSymbol(const Symbol * symbol) override;
-  void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
+  const Evaluation * expressionForSymbol(const Symbol * symbol) override;
+  void setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
-  static Complex * defaultExpression();
+  static Evaluation * defaultExpression();
 private:
   int symbolIndex(const Symbol * symbol) const;
-  Expression * m_expressions[k_maxNumberOfScalarExpressions];
-  Expression * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  Evaluation * m_expressions[k_maxNumberOfScalarExpressions];
+  Evaluation * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   Complex m_pi;
   Complex m_e;
 };

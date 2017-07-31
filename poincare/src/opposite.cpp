@@ -1,4 +1,6 @@
 #include <poincare/opposite.h>
+#include <poincare/complex_matrix.h>
+#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -40,23 +42,27 @@ Expression * Opposite::clone() const {
   return this->cloneWithDifferentOperands((Expression**)&m_operand, 1, true);
 }
 
-Expression * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * operandEvalutation = m_operand->evaluate(context, angleUnit);
-  Expression * result = nullptr;
-  switch (operandEvalutation->type()) {
-    case Type::Complex:
-      result = new Complex(Complex::Cartesian(-((Complex *)operandEvalutation)->a(), -((Complex *)operandEvalutation)->b()));
-      break;
-    case Type::Matrix:
-      result = evaluateOnMatrix((Matrix *)operandEvalutation, context, angleUnit);
-      break;
-    default:
-      result = new Complex(Complex::Float(NAN));
-     break;
+Complex Opposite::compute(const Complex c) {
+  return Complex::Cartesian(-c.a(), -c.b());
+}
+
+Evaluation * Opposite::computeOnMatrix(Evaluation * m) {
+  Complex * operands = new Complex[m->numberOfRows() * m->numberOfColumns()];
+  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
+    Complex entry = *(m->complexOperand(i));
+    operands[i] = Complex::Cartesian(-entry.a(), -entry.b());
   }
-  delete operandEvalutation;
-  return result;
+  Evaluation * matrix = new ComplexMatrix(operands, m->numberOfColumns(), m->numberOfRows());
+  delete[] operands;
+  return matrix;
+}
+
+Evaluation * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * operandEvalutation = m_operand->evaluate(context, angleUnit);
+  if (operandEvalutation->numberOfRows() == 1 && operandEvalutation->numberOfColumns() == 1) {
+    return new Complex(compute(*(operandEvalutation->complexOperand(0))));
+  }
+  return computeOnMatrix(operandEvalutation);
 }
 
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
@@ -69,11 +75,6 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return new HorizontalLayout(children_layouts, 2);
 }
 
-float Opposite::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return -m_operand->approximate(context, angleUnit);
-}
-
 Expression::Type Opposite::type() const {
   return Expression::Type::Opposite;
 }
@@ -83,24 +84,6 @@ Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
   assert(newOperands != nullptr);
   assert(numberOfOperands == 1);
   return new Opposite(newOperands[0], cloneOperands);
-}
-
-Expression * Opposite::evaluateOnMatrix(Matrix * m, Context& context, AngleUnit angleUnit) const {
-  Expression ** operands = (Expression **)malloc(m->numberOfRows() * m->numberOfColumns()*sizeof(Expression *));
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    Expression * evaluation = m->operand(i)->evaluate(context, angleUnit);
-    assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-    if (evaluation->type() == Type::Matrix) {
-      operands[i] = new Complex(Complex::Float(NAN));
-      delete evaluation;
-      continue;
-    }
-    operands[i] = new Complex(Complex::Cartesian(-((Complex *)evaluation)->a(), -((Complex *)evaluation)->b()));
-    delete evaluation;
-  }
-  Expression * matrix = new Matrix(operands, m->numberOfRows() * m->numberOfColumns(), m->numberOfColumns(), m->numberOfRows(), false);
-  free(operands);
-  return matrix;
 }
 
 }

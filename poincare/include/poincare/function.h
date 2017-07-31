@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 #include <poincare/list_data.h>
+#include <poincare/complex.h>
+#include <poincare/complex_matrix.h>
 
 namespace Poincare {
 
@@ -24,8 +26,11 @@ public:
   int numberOfOperands() const override;
   Expression * clone() const override;
 protected:
+  virtual Complex computeComplex(const Complex c, AngleUnit angleUnit) const;
+  virtual Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  void build(Expression ** args, int numberOfArguments, bool clone);
+  void clean();
   Expression ** m_args;
   int m_numberOfArguments;
   int m_requiredNumberOfArguments;

@@ -1,4 +1,5 @@
 #include <poincare/binomial_coefficient.h>
+#include <poincare/evaluation.h>
 #include <poincare/complex.h>
 #include "layout/parenthesis_layout.h"
 #include "layout/grid_layout.h"
@@ -28,18 +29,21 @@ Expression * BinomialCoefficient::cloneWithDifferentOperands(Expression** newOpe
   return bc;
 }
 
-float BinomialCoefficient::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float n = m_args[0]->approximate(context, angleUnit);
-  float k = m_args[1]->approximate(context, angleUnit);
+Evaluation * BinomialCoefficient::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * nInput = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * kInput = m_args[1]->evaluate(context, angleUnit);
+  float n = nInput->toFloat();
+  float k = kInput->toFloat();
+  delete nInput;
+  delete kInput;
   if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || k > n || k < 0.0f || n < 0.0f) {
-    return NAN;
+    return new Complex(Complex::Float(NAN));
   }
   float result = 1.0f;
   for (int i = 0; i < (int)k; i++) {
     result *= (n-(float)i)/(k-(float)i);
   }
-  return roundf(result);
+  return new Complex(Complex::Float(roundf(result)));
 }
 
 ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

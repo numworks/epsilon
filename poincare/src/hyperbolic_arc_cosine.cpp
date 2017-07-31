@@ -23,10 +23,11 @@ Expression * HyperbolicArcCosine::cloneWithDifferentOperands(Expression** newOpe
   return c;
 }
 
-float HyperbolicArcCosine::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float x = m_args[0]->approximate(context, angleUnit);
-  return acoshf(x);
+Complex HyperbolicArcCosine::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
+  }
+  return Complex::Float(acoshf(c.a()));
 }
 
 }

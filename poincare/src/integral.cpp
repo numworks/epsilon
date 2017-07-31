@@ -31,19 +31,23 @@ Expression * Integral::cloneWithDifferentOperands(Expression** newOperands,
   return i;
 }
 
-float Integral::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
+Evaluation * Integral::privateEvaluate(Context & context, AngleUnit angleUnit) const {
   VariableContext xContext = VariableContext('x', &context);
-  float a = m_args[1]->approximate(context, angleUnit);
-  float b = m_args[2]->approximate(context, angleUnit);
+  Evaluation * aInput = m_args[1]->evaluate(context, angleUnit);
+  float a = aInput->toFloat();
+  delete aInput;
+  Evaluation * bInput = m_args[2]->evaluate(context, angleUnit);
+  float b = bInput->toFloat();
+  delete bInput;
   if (isnan(a) || isnan(b)) {
-    return NAN;
+    return new Complex(Complex::Float(NAN));
   }
 #ifdef LAGRANGE_METHOD
-  return lagrangeGaussQuadrature(a, b, xContext, angleUnit);
+  float result = lagrangeGaussQuadrature(a, b, xContext, angleUnit);
 #else
-  return adaptiveQuadrature(a, b, 0.1, k_maxNumberOfIterations, xContext, angleUnit);
+  float result = adaptiveQuadrature(a, b, 0.1, k_maxNumberOfIterations, xContext, angleUnit);
 #endif
+  return new Complex(Complex::Float(result));
 }
 
 ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
@@ -59,7 +63,10 @@ float Integral::functionValueAtAbscissa(float x, VariableContext xContext, Angle
   Complex e = Complex::Float(x);
   Symbol xSymbol = Symbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  return m_args[0]->approximate(xContext, angleUnit);
+  Evaluation * f = m_args[0]->evaluate(xContext, angleUnit);
+  float result = f->toFloat();
+  delete f;
+  return result;
 }
 
 #ifdef LAGRANGE_METHOD

@@ -24,10 +24,11 @@ Expression * Ceiling::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float Ceiling::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float f = m_args[0]->approximate(context, angleUnit);
-  return ceilf(f);
+Complex Ceiling::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
+  }
+  return Complex::Float(ceilf(c.a()));
 }
 
 }

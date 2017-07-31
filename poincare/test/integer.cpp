@@ -52,33 +52,20 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer("3293920983029832").divide_by(Integer("389090928")) == Integer("8465684"));
 }
 
-QUIZ_CASE(poincare_integer_approximate) {
+void assert_integer_evals_to(int i, float result) {
   GlobalContext globalContext;
-  assert(Integer(1).approximate(globalContext) == 1.0f);
-  assert(Integer("12345678").approximate(globalContext) == 12345678.0f);
-  assert(Integer("0").approximate(globalContext) == 0);
-  assert(Integer("-0").approximate(globalContext) == -0);
-  assert(Integer(-1).approximate(globalContext) == -1);
+  Evaluation * m = Integer(i).evaluate(globalContext);
+  assert(m->complexOperand(0)->a() == result);
+  assert(m->complexOperand(0)->b() == 0.0f);
+  assert(m->numberOfOperands() == 1);
+  delete m;
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {
-  GlobalContext globalContext;
-  Expression * e = Integer(1).evaluate(globalContext);
-  assert(e->approximate(globalContext) == 1.0f);
-  delete e;
-  e = Integer(12345678).evaluate(globalContext);
-  assert(e->approximate(globalContext) == 12345678.0f);
-  delete e;
-  e = Integer(0).evaluate(globalContext);
-  assert(e->approximate(globalContext) == 0.0f);
-  delete e;
-  e = Integer(-0).evaluate(globalContext);
-  assert(e->approximate(globalContext) == 0.0f);
-  delete e;
-  e = Integer(-0).evaluate(globalContext);
-  assert(e->approximate(globalContext) == 0.0f);
-  delete e;
-  e = Integer(-1).evaluate(globalContext);
-  assert(e->approximate(globalContext) == -1.0f);
-  delete e;
+  assert_integer_evals_to(1, 1.0f);
+  assert_integer_evals_to(12345678, 12345678.0f);
+  assert_integer_evals_to(0, 0.0f);
+  assert_integer_evals_to(-0, 0.0f);
+  assert_integer_evals_to(-1, -1.0f);
+  assert_integer_evals_to(12345678, 12345678.0f);
 }

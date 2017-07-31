@@ -12,9 +12,13 @@ public:
   Expression * cloneWithDifferentOperands(Expression** newOperands,
       int numnerOfOperands, bool cloneOperands = true) const override;
   bool isCommutative() const override;
+  static Complex compute(const Complex c, const Complex d);
+  static Evaluation * computeOnMatrices(Evaluation * m, Evaluation * n);
+  static Evaluation * computeOnComplexAndMatrix(const Complex * c, Evaluation * m);
 private:
-  Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const override;
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
+  Complex privateCompute(const Complex c, const Complex d) const override {
+    return compute(c, d);
+  }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };
 

@@ -26,18 +26,8 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
   return a;
 }
 
-float AbsoluteValue::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  float result = 0.0f;
-  if (evaluation->type() == Type::Matrix) {
-    result = NAN;
-  } else {
-    result = ((Complex *)evaluation)->r();
-  }
-  delete evaluation;
-  return result;
+Complex AbsoluteValue::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  return Complex::Float(c.r());
 }
 
 ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

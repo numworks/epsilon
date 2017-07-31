@@ -13,9 +13,8 @@ public:
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
   float emptySequenceValue() const override;
-  float approximateWithNextTerm(float sequence, float newTerm) const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
-  Expression * evaluateWithNextTerm(Expression ** args, Context& context, AngleUnit angleUnit) const override;
+  Evaluation * evaluateWithNextTerm(Evaluation * a, Evaluation * b) const override;
 };
 
 }

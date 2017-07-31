@@ -3,6 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix_data.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -12,7 +13,7 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
 {
   assert(listData != nullptr);
   m_numberOfColumns = listData->numberOfOperands();
-  m_operands = (Expression **)malloc(m_numberOfColumns*sizeof(Expression *));
+  m_operands = new Expression *[m_numberOfColumns];
   for (int i = 0; i < m_numberOfColumns; i++) {
     if (clone) {
       m_operands[i] = (Expression *)listData->operand(i)->clone();
@@ -27,7 +28,7 @@ MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numb
   m_numberOfColumns(numberOfColumns)
 {
   assert(newOperands != nullptr);
-  m_operands = (Expression **)malloc(m_numberOfRows*m_numberOfColumns*sizeof(Expression *));
+  m_operands = new Expression *[m_numberOfRows*m_numberOfColumns];
   for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
     if (cloneOperands) {
       m_operands[i] = i < numberOfOperands ? newOperands[i]->clone() : defaultExpression();
@@ -49,11 +50,11 @@ MatrixData::~MatrixData() {
       delete m_operands[i];
     }
   }
-  free(m_operands);
+  delete[] m_operands;
 }
 
 void MatrixData::pushListData(ListData * listData, bool clone) {
-  Expression ** newOperands = (Expression **)malloc(((m_numberOfRows+1)*m_numberOfColumns)*sizeof(Expression *));
+  Expression ** newOperands = new Expression * [(m_numberOfRows+1)*m_numberOfColumns];
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     newOperands[i] = m_operands[i];
   }
@@ -65,7 +66,7 @@ void MatrixData::pushListData(ListData * listData, bool clone) {
       newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? (Expression *)listData->operand(i) : defaultExpression();
     }
   }
-  free(m_operands);
+  delete[] m_operands;
   m_operands = newOperands;
   m_numberOfRows++;
 }

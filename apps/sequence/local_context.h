@@ -9,7 +9,7 @@ namespace Sequence {
 class LocalContext : public Poincare::VariableContext {
 public:
   LocalContext(Poincare::Context * parentContext);
-  const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
+  const Poincare::Evaluation * expressionForSymbol(const Poincare::Symbol * symbol) override;
   void setValueForSequenceRank(float value, const char * sequenceName, int rank);
 private:
   constexpr static int k_depth = 2;

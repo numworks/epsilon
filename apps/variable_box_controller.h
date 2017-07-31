@@ -56,7 +56,7 @@ private:
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
-    const Poincare::Expression * expressionForIndex(int index);
+    const Poincare::Evaluation * expressionForIndex(int index);
 
     Poincare::Context * m_context;
     TextField * m_textFieldCaller;

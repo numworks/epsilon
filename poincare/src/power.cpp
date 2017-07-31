@@ -5,14 +5,10 @@ extern "C" {
 }
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
+#include <poincare/opposite.h>
 #include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
-
-float Power::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return powf(m_operands[0]->approximate(context, angleUnit), m_operands[1]->approximate(context, angleUnit));
-}
 
 Expression::Type Power::type() const {
   return Type::Power;
@@ -35,85 +31,68 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
-Expression * Power::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  if (d->b() != 0.0f) {
+Complex Power::compute(const Complex c, const Complex d) {
+  if (d.b() != 0.0f) {
     /* First case c and d is complex */
-    if (c->b() != 0.0f || c->a() <= 0) {
-      return new Complex(Complex::Float(NAN));
+    if (c.b() != 0.0f || c.a() <= 0) {
+      return Complex::Float(NAN);
     }
     /* Second case only d is complex */
-    float radius = powf(c->a(), d->a());
-    float theta = d->b()*logf(c->a());
-    return new Complex(Complex::Polar(radius, theta));
+    float radius = powf(c.a(), d.a());
+    float theta = d.b()*logf(c.a());
+    return Complex::Polar(radius, theta);
   }
   /* Third case only c is complex */
-  float radius = powf(c->r(), d->a());
-  if (c->b() == 0 && d->a() == roundf(d->a())) {
+  float radius = powf(c.r(), d.a());
+  if (c.b() == 0 && d.a() == roundf(d.a())) {
     /* We handle the case "c float and d integer" separatly to avoid getting
      * complex result due to float representation: a float power an integer is
      * always real. */
-    return new Complex(Complex::Cartesian(radius, 0.0f));
+    return Complex::Cartesian(radius, 0.0f);
   }
-  if (c->a() < 0 && c->b() == 0 && d->a() == 0.5f) {
+  if (c.a() < 0 && c.b() == 0 && d.a() == 0.5f) {
     /* We handle the case "c negative float and d = 1/2" separatly to avoid
      * getting wrong result due to float representation: the squared root of
      * a negative float is always a pure imaginative. */
-    return new Complex(Complex::Cartesian(0.0f, radius));
+    return Complex::Cartesian(0.0f, radius);
   }
   /* Third case only c is complex */
-  float theta = d->a()*c->th();
-  return new Complex(Complex::Polar(radius, theta));
+  float theta = d.a()*c.th();
+  return Complex::Polar(radius, theta);
 }
 
-Expression * Power::evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const {
-  if (isnan(m_operands[1]->approximate(context, angleUnit)) || m_operands[1]->approximate(context, angleUnit) != (int)m_operands[1]->approximate(context, angleUnit)) {
-    return new Complex(Complex::Float(NAN));
-  }
+Evaluation * Power::computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * c) const {
  if (m->numberOfColumns() != m->numberOfRows()) {
     return new Complex(Complex::Float(NAN));
   }
-  float power = c->approximate(context, angleUnit);
+  float power = c->toFloat();
   if (isnan(power) || isinf(power) || power != (int)power || fabsf(power) > k_maxNumberOfSteps) {
     return new Complex(Complex::Float(NAN));
   }
-  if (power == 0.0f) {
-    /* Build the identity matrix with the same dimensions as m */
-    return Matrix::createIdentity(m->numberOfRows());
-  }
   if (power < 0.0f) {
-    Expression * inverse = m->createInverse(context, angleUnit);
-    Expression * operands[2];
-    operands[0] = inverse;
-    operands[1] = new Complex(Complex::Float(-power));;
-    Expression * power = new Power(operands, false);
-    Expression * result = power->evaluate(context, angleUnit);
-    delete power;
+    Evaluation * inverse = m->createInverse();
+    Complex minusC = Opposite::compute(*c);
+    Evaluation * result = Power::computeOnComplexMatrixAndComplex(inverse, &minusC);
+    delete inverse;
     return result;
   }
-  Expression * result = new Complex(Complex::Float(1.0f));
+  Evaluation * result = ComplexMatrix::createIdentity(m->numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (shouldStopProcessing()) {
       delete result;
       return new Complex(Complex::Float(NAN));
     }
-    Expression * operands[2];
-    operands[0] = result;
-    operands[1] = m;
-    Expression * multiplication = new Multiplication(operands, true);
-    Expression * newResult = multiplication->evaluate(context, angleUnit);
-    delete result;
-    result = newResult;
-    delete multiplication;
+    result = Multiplication::computeOnMatrices(result, m);
   }
   return result;
 }
 
-Expression * Power::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
+Evaluation * Power::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * m) const {
   return new Complex(Complex::Float(NAN));
 }
 
-Expression * Power::evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const {
+Evaluation * Power::computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const {
   return new Complex(Complex::Float(NAN));
 }
 

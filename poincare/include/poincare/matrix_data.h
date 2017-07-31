@@ -2,10 +2,11 @@
 #define POINCARE_MATRIX_DATA_H
 
 #include <poincare/list_data.h>
-#include <poincare/complex.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
+
+class Complex;
 
 class MatrixData {
 public:

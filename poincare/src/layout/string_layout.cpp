@@ -8,7 +8,7 @@ StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize 
   ExpressionLayout(),
   m_fontSize(fontSize)
 {
-  m_string = (char *)malloc(sizeof(char)*(length+1));
+  m_string = new char[length+1];
   memcpy(m_string, string, length);
   m_string[length] = 0;
   // Height of the font.
@@ -16,7 +16,7 @@ StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize 
 }
 
 StringLayout::~StringLayout() {
-  free(m_string);
+  delete[] m_string;
 }
 
 char * StringLayout::text() {

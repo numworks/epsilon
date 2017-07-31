@@ -6,13 +6,14 @@ namespace Sequence {
 
 LocalContext::LocalContext(Context * parentContext) :
   VariableContext('n', parentContext),
-  m_values{{Complex::Float(NAN), Complex::Float(NAN)}, {Complex::Float(NAN), Complex::Float(NAN)}
+  m_values{{Complex::Float(NAN), Complex::Float(NAN)},
+    {Complex::Float(NAN), Complex::Float(NAN)}
   //, {Complex::Float(NAN), Complex::Float(NAN)}
   }
 {
 }
 
-const Expression * LocalContext::expressionForSymbol(const Symbol * symbol) {
+const Evaluation * LocalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
       symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1 ||
 symbol->name() == Symbol::SpecialSymbols::wn || symbol->name() == Symbol::SpecialSymbols::wn1) {

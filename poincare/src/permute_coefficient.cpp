@@ -25,21 +25,25 @@ Expression * PermuteCoefficient::cloneWithDifferentOperands(Expression** newOper
   return pc;
 }
 
-float PermuteCoefficient::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float n = m_args[0]->approximate(context, angleUnit);
-  float k = m_args[1]->approximate(context, angleUnit);
+Evaluation * PermuteCoefficient::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * nInput = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * kInput = m_args[1]->evaluate(context, angleUnit);
+  float n = nInput->toFloat();
+  float k = kInput->toFloat();
+  delete nInput;
+  delete kInput;
   if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || n < 0.0f || k < 0.0f) {
-    return NAN;
+
+    return new Complex(Complex::Float(NAN));
   }
   if (k > n) {
-    return 0.0f;
+    return new Complex(Complex::Float(0.0f));
   }
   float result = 1.0f;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
   }
-  return roundf(result);
+  return new Complex(Complex::Float(roundf(result)));
 }
 
 }

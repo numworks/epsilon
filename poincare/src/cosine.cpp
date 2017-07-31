@@ -25,19 +25,13 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float Cosine::trigonometricApproximation(float x) const {
-  return cosf(x);
+Complex Cosine::compute(const Complex c) {
+  Complex arg = Complex::Cartesian(-c.b(), c.a());
+  return HyperbolicCosine::compute(arg);
 }
 
-Expression * Cosine::createComplexEvaluation(Expression * exp, Context & context, AngleUnit angleUnit) const {
-  assert(exp->type() == Type::Complex);
-  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)exp)->b(), ((Complex *)exp)->a()));
-  Function * cosh = new HyperbolicCosine();
-  cosh->setArgument(&arg, 1, true);
-  delete arg;
-  Expression * resultEvaluation = cosh->evaluate(context, angleUnit);
-  delete cosh;
-  return resultEvaluation;
+float Cosine::computeForRadianReal(float x) const {
+  return cosf(x);
 }
 
 }

@@ -1,28 +1,44 @@
 #ifndef POINCARE_COMPLEX_H
 #define POINCARE_COMPLEX_H
 
-#include <poincare/leaf_expression.h>
+#include <poincare/evaluation.h>
 #include <poincare/preferences.h>
 #include <math.h>
 
 namespace Poincare {
 
-class Complex : public LeafExpression {
+class Complex : public Evaluation {
 public:
+  Complex() : m_a(0.0f), m_b(0.0f) {}
   static Complex Float(float x);
   static Complex Cartesian(float a, float b);
   static Complex Polar(float r, float theta);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
+  float toFloat() const override;
+  const Complex * operand(int i) const override {
+    return complexOperand(i);
+  }
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
   Type type() const override;
-  Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) override;
-  float a();
-  float b();
+  Complex * clone() const override;
+  Evaluation * cloneWithDifferentOperands(Expression** newOperands,
+    int numberOfOperands, bool cloneOperands = true) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  Evaluation * createDeterminant() const override {
+    return clone();
+  }
+  Evaluation * createInverse() const override;
+  Evaluation * createTrace() const override {
+    return clone();
+  }
+  float a() const;
+  float b() const;
   float r() const;
   float th() const;
-  Complex * createConjugate();
+  Complex conjugate() const;
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches
@@ -41,10 +57,10 @@ public:
   }
 private:
   Complex(float a, float b);
+  const Complex * complexOperand(int i) const override;
   constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
-  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
+  Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always

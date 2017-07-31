@@ -2,47 +2,22 @@
 #include <poincare.h>
 #include <ion.h>
 #include <assert.h>
+#include "helper.h"
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_power_approximate) {
-  GlobalContext globalContext;
-  Expression * p = Expression::parse("2^3");
-  assert(p->approximate(globalContext) == 8.0f);
-  delete p;
-}
-
 QUIZ_CASE(poincare_power_evaluate) {
-  GlobalContext globalContext;
-  Expression * a = Expression::parse("2^3");
-  Expression * e = a->evaluate(globalContext);
-  assert(e->approximate(globalContext) == 8.0f);
-  delete a;
-  delete e;
+  Complex a[1] = {Complex::Float(8.0f)};
+  assert_parsed_expression_evaluate_to("2^3", a, 1);
 
-  char expText1[15] ={'(','3','+',Ion::Charset::IComplex, ')', '^', '4', 0};
-  a = Expression::parse(expText1);
-  e = a->evaluate(globalContext);
-  assert(28.0f - 0.00001f <= (((Complex *)e)->a()) && (((Complex *)e)->a()) <= 28.0f + 0.00001f &&
-          96.0f - 0.00001f <= (((Complex *)e)->b()) && (((Complex *)e)->b()) <= 96.0f + 0.00001f);
-  delete a;
-  delete e;
+  Complex b[1] = {Complex::Cartesian(28.0f, 96.0f)};
+  assert_parsed_expression_evaluate_to("(3+I)^4", b, 1);
 
-  char expText2[15] ={'4', '^','(','3','+',Ion::Charset::IComplex, ')', 0};
-  a = Expression::parse(expText2);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e)->a() == 11.7412464f && ((Complex *)e)->b() == 62.9137754f);
-  delete a;
-  delete e;
+  Complex c[1] = {Complex::Cartesian(11.7412464f, 62.9137754f)};
+  assert_parsed_expression_evaluate_to("4^(3+I)", c, 1);
 
 #if MATRICES_ARE_DEFINED
-  a = Expression::parse("[[1,2][3,4]]^3");
-  e = a->evaluate(globalContext);
-  assert(e->operand(0)->approximate(globalContext) == 37.0f);
-  assert(e->operand(1)->approximate(globalContext) == 54.0f);
-  assert(e->operand(2)->approximate(globalContext) == 81.0f);
-  assert(e->operand(3)->approximate(globalContext) == 118.0f);
-  delete a;
-  delete e;
+  Complex d[4] = {Complex::Float(37.0f), Complex::Float(54.0f), Complex::Float(81.0f), Complex::Float(118.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2][3,4]]^3", d, 4);
 #endif
 }

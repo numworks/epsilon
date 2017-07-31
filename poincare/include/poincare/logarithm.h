@@ -13,8 +13,9 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
+  Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  Complex computeComplex(const Complex c, AngleUnit angleUnit) const override;
 };
 
 }

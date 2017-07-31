@@ -24,10 +24,11 @@ Expression * FracPart::cloneWithDifferentOperands(Expression** newOperands,
   return fp;
 }
 
-float FracPart::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float f = m_args[0]->approximate(context, angleUnit);
-  return f-floorf(f);
+Complex FracPart::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
+  }
+  return Complex::Float(c.a()-floorf(c.a()));
 }
 
 }

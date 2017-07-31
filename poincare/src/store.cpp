@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <poincare/store.h>
 #include <ion.h>
+#include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
 #include "layout/horizontal_layout.h"
@@ -71,20 +72,14 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 }
 
 
-Expression * Store::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * valueEvaluation = m_value->evaluate(context, angleUnit);
+Evaluation * Store::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * valueEvaluation = m_value->evaluate(context, angleUnit);
   context.setExpressionForSymbolName(valueEvaluation, m_symbol);
   delete valueEvaluation;
   if (context.expressionForSymbol(m_symbol) != nullptr) {
     return context.expressionForSymbol(m_symbol)->clone();
   }
   return new Complex(Complex::Float(NAN));
-}
-
-float Store::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return NAN;
 }
 
 }

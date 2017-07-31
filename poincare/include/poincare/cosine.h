@@ -11,9 +11,12 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
+  static Complex compute(const Complex c);
 private:
-  float trigonometricApproximation(float x) const override;
-  Expression * createComplexEvaluation(Expression * arg, Context & context, AngleUnit angleUnit) const override;
+  Complex privateCompute(const Complex c, AngleUnit angleUnit) const override {
+    return compute(c);
+  }
+  float computeForRadianReal(float x) const override;
 };
 
 }

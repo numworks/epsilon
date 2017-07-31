@@ -13,6 +13,7 @@ objs += $(addprefix poincare/src/,\
   ceiling.o\
   complex.o\
   complex_argument.o\
+  complex_matrix.o\
   confidence_interval.o\
   conjugate.o\
   cosine.o\
@@ -20,6 +21,7 @@ objs += $(addprefix poincare/src/,\
   determinant.o\
   division_quotient.o\
   division_remainder.o\
+  evaluation.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -28,6 +30,7 @@ objs += $(addprefix poincare/src/,\
   frac_part.o\
   fraction.o\
   function.o\
+  expression_matrix.o\
   global_context.o\
   great_common_divisor.o\
   hyperbolic_arc_cosine.o\
@@ -96,6 +99,7 @@ tests += $(addprefix poincare/test/,\
   complex.cpp\
   fraction.cpp\
   function.cpp\
+  helper.cpp\
   identity.cpp\
   integer.cpp\
   matrix.cpp\

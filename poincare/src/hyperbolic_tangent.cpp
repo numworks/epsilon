@@ -26,38 +26,13 @@ Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOpera
   return ht;
 }
 
-float HyperbolicTangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return tanhf(m_args[0]->approximate(context, angleUnit));
-}
-
-Expression * HyperbolicTangent::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
+Complex HyperbolicTangent::compute(const Complex c) {
+  if (c.b() == 0.0f) {
+    return Complex::Float(tanhf(c.a()));
   }
-  /* Float case */
-  if (((Complex *)evaluation)->b() == 0) {
-    Expression * result = new Complex(Complex::Float(tanhf(evaluation->approximate(context, angleUnit))));
-    delete evaluation;
-    return result;
-  }
-  /* Complex case */
-  Expression * arguments[2];
-  arguments[0] = new HyperbolicSine();
-  ((Function *)arguments[0])->setArgument(&evaluation, 1, true);
-  arguments[1] = new HyperbolicCosine();
-  ((Function *)arguments[1])->setArgument(&evaluation, 1, true);
-  delete evaluation;
-  Expression * result = new Fraction(arguments, true);
-  delete arguments[1];
-  delete arguments[0];
-  Expression * resultEvaluation = result->evaluate(context, angleUnit);
-  delete result;
-  return resultEvaluation;
+  Complex arg1 = HyperbolicSine::compute(c);
+  Complex arg2 = HyperbolicCosine::compute(c);
+  return Fraction::compute(arg1, arg2);
 }
 
 }

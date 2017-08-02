@@ -119,6 +119,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   }
+  if (!didProcessEvent && alphaLockWantsRedraw) {
+    window()->redraw();
+    return true;
+  }
   return didProcessEvent || alphaLockWantsRedraw;
 }
 

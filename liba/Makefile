@@ -6,7 +6,9 @@ objs += $(addprefix liba/src/, \
   assert.o \
   errno.o \
   ieee754.o \
+  isnand.o \
   isnanf.o \
+  isinfd.o \
   isinff.o \
   malloc.o \
   memcpy.o \

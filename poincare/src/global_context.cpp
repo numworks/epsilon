@@ -33,8 +33,8 @@ GlobalContext::~GlobalContext() {
   }
 }
 
-Complex * GlobalContext::defaultExpression() {
-  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
+Evaluation * GlobalContext::defaultExpression() {
+  static Evaluation * defaultExpression = new Complex(Complex::Float(0.0f));
   return defaultExpression;
 }
 
@@ -43,7 +43,7 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
   return index;
 }
 
-const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
+const Evaluation * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
@@ -64,7 +64,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void GlobalContext::setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) {
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
@@ -72,8 +72,12 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
     }
-    if (expression != nullptr && expression->type() == Expression::Type::Matrix) {
-      m_matrixExpressions[indexMatrix] = expression->clone();
+    if (expression != nullptr) {
+      if (expression->numberOfOperands() == 1) {
+        m_matrixExpressions[indexMatrix] = new ComplexMatrix(expression->complexOperand(0), 1, 1);
+      } else {
+        m_matrixExpressions[indexMatrix] = expression->clone();
+      }
     }
     return;
   }
@@ -88,8 +92,8 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
   if (expression == nullptr) {
     return;
   }
-  if (expression->type() == Expression::Type::Complex) {
-    m_expressions[index] = expression->clone();
+  if (expression->numberOfOperands() == 1) {
+    m_expressions[index] = new Complex(*(expression->complexOperand(0)));
   } else {
     m_expressions[index] = new Complex(Complex::Float(NAN));
   }

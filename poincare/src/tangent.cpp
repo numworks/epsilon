@@ -29,35 +29,17 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-float Tangent::trigonometricApproximation(float x) const {
+float Tangent::computeForRadianReal(float x) const {
   return tanf(x);
 }
 
-Expression * Tangent::createComplexEvaluation(Expression * exp, Context & context, AngleUnit angleUnit) const {
-  assert(exp->type() == Type::Complex);
-  Expression * arguments[2];
-  arguments[0] = new Sine();
-  ((Function *)arguments[0])->setArgument(&exp, 1, true);
-  arguments[1] = new Cosine();
-  ((Function *)arguments[1])->setArgument(&exp, 1, true);
-  Expression * result = new Fraction(arguments, false);
-  Expression * resultEvaluation = result->evaluate(context, angleUnit);
-  delete result;
-  if (!isnan(((Complex *)resultEvaluation)->a()) && !isnan(((Complex *)resultEvaluation)->b())) {
-    return resultEvaluation;
+Complex Tangent::privateCompute(const Complex c, AngleUnit angleUnit) const {
+  Complex result = Fraction::compute(Sine::compute(c), Cosine::compute(c));
+  if (!isnan(result.a()) && !isnan(result.b())) {
+    return result;
   }
-  delete resultEvaluation;
-  arguments[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));
-  arguments[1] = exp;
-  Expression * arg = new Multiplication(arguments, true);
-  delete arguments[0];
-  arguments[0] = new Complex(Complex::Cartesian(0.0f, 1.0f));
-  arguments[1] = new HyperbolicTangent();
-  ((Function *)arguments[1])->setArgument(&arg, 1, false);
-  result = new Multiplication(arguments, false);
-  resultEvaluation = result->evaluate(context, angleUnit);
-  delete result;
-  return resultEvaluation;
+  Complex tanh = HyperbolicTangent::compute(Multiplication::compute(Complex::Cartesian(0.0f, -1.0f), c));
+  return Multiplication::compute(Complex::Cartesian(0.0f, 1.0f), tanh);
 }
 
 }

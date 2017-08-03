@@ -26,25 +26,14 @@ Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-float Sine::trigonometricApproximation(float x) const {
-  return sinf(x);
+Complex Sine::compute(const Complex c) {
+  Complex arg = Complex::Cartesian(-c.b(), c.a());
+  Complex sinh = HyperbolicSine::compute(arg);
+  return Multiplication::compute(Complex::Cartesian(0.0f, -1.0f), sinh);
 }
 
-Expression * Sine::createComplexEvaluation(Expression * exp, Context & context, AngleUnit angleUnit) const {
-  assert(exp->type() == Type::Complex);
-  Expression * arg = new Complex(Complex::Cartesian(-((Complex *)exp)->b(), ((Complex *)exp)->a()));
-  Function * sinh = new HyperbolicSine();
-  sinh->setArgument(&arg, 1, true);
-  delete arg;
-  Expression * args[2];
-  args[0] = new Complex(Complex::Cartesian(0.0f, -1.0f));
-  args[1] = sinh;
-  Multiplication * result = new Multiplication(args, true);
-  delete args[0];
-  delete args[1];
-  Expression * resultEvaluation = result->evaluate(context, angleUnit);
-  delete result;
-  return resultEvaluation;
+float Sine::computeForRadianReal(float x) const {
+  return sinf(x);
 }
 
 }

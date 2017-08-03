@@ -4,11 +4,13 @@
 #include <poincare/expression.h>
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <poincare/complex_matrix.h>
 
 namespace Poincare {
 
 class BinaryOperation : public Expression {
 public:
+  BinaryOperation();
   BinaryOperation(Expression ** operands, bool cloneOperands = true);
   ~BinaryOperation();
   BinaryOperation(const BinaryOperation& other) = delete;
@@ -21,11 +23,14 @@ public:
   Expression * clone() const override;
 protected:
   Expression * m_operands[2];
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
-  virtual Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Expression * evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const;
-  virtual Expression * evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const;
-  virtual Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const;
+  Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  virtual Evaluation * computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * n) const;
+  virtual Evaluation * computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * d) const;
+  virtual Evaluation * computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const;
+  Evaluation * computeOnComplexes(const Complex * c, const Complex * d) const {
+    return new Complex(privateCompute(*c, *d));
+  }
+  virtual Complex privateCompute(const Complex c, const Complex d) const = 0;
 };
 
 }

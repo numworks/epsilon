@@ -14,6 +14,7 @@ public:
   ListData& operator=(const ListData& other) = delete;
   ListData& operator=(ListData&& other) = delete;
   int numberOfOperands() const;
+  Expression ** operands() const;
   const Expression * operand(int i) const;
   void pushExpression(Expression * operand);
 private:

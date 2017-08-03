@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class Context;
+class Evaluation;
 
 class Expression {
 public:
@@ -31,6 +32,7 @@ public:
     Float,
     Floor,
     FracPart,
+    ExpressionMatrix,
     GreatCommonDivisor,
     HyperbolicArcCosine,
     HyperbolicArcSine,
@@ -43,7 +45,6 @@ public:
     Integral,
     Logarithm,
     LeastCommonMultiple,
-    Matrix,
     MatrixDimension,
     MatrixInverse,
     MatrixTrace,
@@ -51,6 +52,7 @@ public:
     Multiplication,
     NaperianLogarithm,
     NthRoot,
+    Evaluation,
     Opposite,
     PredictionInterval,
     Fraction,
@@ -131,14 +133,13 @@ public:
 
   /* The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  Evaluation * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   static float approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
-  virtual int writeTextInBuffer(char * buffer, int bufferSize);
+  virtual int writeTextInBuffer(char * buffer, int bufferSize) const;
 private:
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
-  virtual Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const = 0;
-  virtual float privateApproximate(Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const = 0;
   bool sequentialOperandsIdentity(const Expression * e) const;
   bool commutativeOperandsIdentity(const Expression * e) const;
   bool combinatoryCommutativeOperandsIdentity(const Expression * e,

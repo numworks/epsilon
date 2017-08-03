@@ -3,43 +3,35 @@
 #include <ion.h>
 #include <math.h>
 #include <assert.h>
+#include "helper.h"
 
 using namespace Poincare;
 
-constexpr Expression::AngleUnit Degree = Expression::AngleUnit::Degree;
-constexpr Expression::AngleUnit Radian = Expression::AngleUnit::Radian;
-
-void assert_expression_parses_to(const char * text, float result, Context * context, Expression::AngleUnit angleUnit = Degree) {
-  char buffer_text[100] = {};
-  for (uint32_t i=0; i<strlen(text); i++) {
-    buffer_text[i] = text[i];
-    if (text[i] == 'E') {
-      buffer_text[i] = Ion::Charset::Exponent;
-    }
-    if (text[i] == 'e') {
-      buffer_text[i] = Ion::Charset::Exponential;
-    }
-    if (text[i] == 'I') {
-      buffer_text[i] = Ion::Charset::IComplex;
-    }
-  }
-  Expression * a = Expression::parse(buffer_text);
-  assert(fabsf(a->approximate(*context, angleUnit) - result) < 0.0001f);
-}
-
 QUIZ_CASE(poincare_parser) {
-  GlobalContext globalContext;
-  assert_expression_parses_to("1.2*e^(1)", 1.2*M_E, &globalContext);
-  assert_expression_parses_to("e^2*e^(1)", powf(M_E, 2.0f)*M_E, &globalContext);
-  assert_expression_parses_to("2*3^4+2", 2.0f*powf(3.0f, 4.0f)+2.0f, &globalContext);
-  assert_expression_parses_to("-2*3^4+2", -2.0f*powf(3.0f, 4.0f)+2.0f, &globalContext);
-  assert_expression_parses_to("-sin(3)*2-3", -sinf(3.0f)*2.0f-3.0f, &globalContext, Radian);
-  assert_expression_parses_to("-.003", -0.003f, &globalContext);
-  assert_expression_parses_to(".02E2", 2.0f, &globalContext);
-  assert_expression_parses_to("5-2/3", 5.0f-2.0f/3.0f, &globalContext);
-  assert_expression_parses_to("2/3-5", 2.0f/3.0f-5.0f, &globalContext);
-  assert_expression_parses_to("-2/3-5", -2.0f/3.0f-5.0f, &globalContext);
-  assert_expression_parses_to("sin(3)2(4+2)", sinf(3.0f)*2.0f*(4.0f+2.0f), &globalContext, Radian);
-  assert_expression_parses_to("4/2*(2+3)", 4.0f/2.0f*(2.0f+3.0f), &globalContext, Radian);
-  assert_expression_parses_to("4/2*(2+3)", 4.0f/2.0f*(2.0f+3.0f), &globalContext, Radian);
+  Complex a[1] = {Complex::Float(1.2f*M_E)};
+  assert_parsed_expression_evaluate_to("1.2*X^(1)", a, 1);
+  Complex b[1] = {Complex::Float(powf(M_E, 2.0f)*M_E)};
+  assert_parsed_expression_evaluate_to("X^2*X^(1)", b, 1);
+  Complex c[1] = {Complex::Float(2.0f*powf(3.0f, 4.0f)+2.0f)};
+  assert_parsed_expression_evaluate_to("2*3^4+2", c, 1);
+  Complex d[1] = {Complex::Float(-2.0f*powf(3.0f, 4.0f)+2.0f)};
+  assert_parsed_expression_evaluate_to("-2*3^4+2", d,1);
+  Complex e[1] = {Complex::Float(-sinf(3.0f)*2.0f-3.0f)};
+  assert_parsed_expression_evaluate_to("-sin(3)*2-3", e, 1, Radian);
+  Complex f[1] = {Complex::Float(-0.003f)};
+  assert_parsed_expression_evaluate_to("-.003", f, 1);
+  Complex g[1] = {Complex::Float(2.0f)};
+  assert_parsed_expression_evaluate_to(".02E2", g, 1);
+  Complex h[1] = {Complex::Float(5.0f-2.0f/3.0f)};
+  assert_parsed_expression_evaluate_to("5-2/3", h, 1);
+  Complex i[1] = {Complex::Float(2.0f/3.0f-5.0f)};
+  assert_parsed_expression_evaluate_to("2/3-5", i, 1);
+  Complex j[1] = {Complex::Float(-2.0f/3.0f-5.0f)};
+  assert_parsed_expression_evaluate_to("-2/3-5", j, 1);
+  Complex k[1] = {Complex::Float(sinf(3.0f)*2.0f*(4.0f+2.0f))};
+  assert_parsed_expression_evaluate_to("sin(3)2(4+2)", k, 1, Radian);
+  Complex l[1] = {Complex::Float(4.0f/2.0f*(2.0f+3.0f))};
+  assert_parsed_expression_evaluate_to("4/2*(2+3)", l, 1, Radian);
+  Complex m[1] = {Complex::Float(4.0f/2.0f*(2.0f+3.0f))};
+  assert_parsed_expression_evaluate_to("4/2*(2+3)", m, 1, Radian);
 }

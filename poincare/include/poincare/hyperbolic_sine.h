@@ -11,9 +11,11 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
+  static Complex compute(const Complex c);
 private:
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  Complex computeComplex(const Complex c, AngleUnit angleUnit) const override {
+    return compute(c);
+  }
 };
 
 }

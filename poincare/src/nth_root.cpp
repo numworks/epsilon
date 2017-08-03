@@ -28,44 +28,30 @@ Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
   return r;
 }
 
-float NthRoot::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return powf(m_args[0]->approximate(context, angleUnit), 1.0f/m_args[1]->approximate(context, angleUnit));
-}
-
 ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat), m_args[1]->createLayout(floatDisplayMode, complexFormat));
 }
 
-Expression * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * baseEvaluation = m_args[0]->evaluate(context, angleUnit);
-  Expression * indexEvaluation = m_args[1]->evaluate(context, angleUnit);
-  assert(baseEvaluation->type() == Type::Matrix || baseEvaluation->type() == Type::Complex);
-  assert(indexEvaluation->type() == Type::Matrix || indexEvaluation->type() == Type::Complex);
-  if (baseEvaluation->type() == Type::Matrix || indexEvaluation->type() == Type::Matrix) {
-    delete baseEvaluation;
-    delete indexEvaluation;
-    return new Complex(Complex::Float(NAN));
+Evaluation * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * base = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * index = m_args[1]->evaluate(context, angleUnit);
+  Complex result = Complex::Float(NAN);
+  if (base->numberOfOperands() == 1 || index->numberOfOperands() == 1) {
+    result = compute(*(base->complexOperand(0)), *(index->complexOperand(0)));
   }
-  Expression * operands[2];
-  operands[0] = baseEvaluation;
-  Expression * operandChildren[2];
-  operandChildren[0] = new Complex(Complex::Float(1.0f));
-  operandChildren[1] = indexEvaluation;
-  Expression * fraction = new Fraction(operandChildren, true);
-  operands[1] = fraction->evaluate(context, angleUnit);
-  Expression * power = new Power(operands, true);
-  Expression * newResult = power->evaluate(context, angleUnit);
-  delete baseEvaluation;
-  delete operandChildren[0];
-  delete indexEvaluation;
-  delete fraction;
-  delete operands[1];
-  delete power;
-  return newResult;
+  delete base;
+  delete index;
+  return new Complex(result);
+}
+
+Complex NthRoot::compute(const Complex c, const Complex d) const {
+  if (c.b() == 0.0f && d.b() == 0.0f) {
+    return Complex::Float(powf(c.a(), 1.0f/d.a()));
+  }
+  Complex invIndex = Fraction::compute(Complex::Float(1.0f), d);
+  return Power::compute(c, invIndex);
 }
 
 }

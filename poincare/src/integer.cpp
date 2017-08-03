@@ -40,7 +40,7 @@ Integer::Integer(native_int_t i) {
   assert(sizeof(native_int_t) <= sizeof(native_uint_t));
   m_negative = (i<0);
   m_numberOfDigits = 1;
-  m_digits = (native_uint_t *)malloc(sizeof(native_uint_t));
+  m_digits = new native_uint_t[1];
   *m_digits = (native_uint_t)(i>0 ? i : -i);
 }
 
@@ -75,7 +75,7 @@ Integer::Integer(const char * digits, bool negative) {
 
 Integer::~Integer() {
   if (m_digits) {
-    free(m_digits);
+    delete[] m_digits;
   }
 }
 
@@ -129,7 +129,7 @@ Integer& Integer::operator=(Integer&& other) {
     // Release our ivars
     m_negative = 0;
     m_numberOfDigits = 0;
-    free(m_digits);
+    delete[] m_digits;
 
     // Pilfer other's ivars
     m_numberOfDigits = other.m_numberOfDigits;
@@ -175,7 +175,7 @@ Integer Integer::usum(const Integer &other, bool subtract, bool output_negative)
     // Addition can overflow
     size += 1;
   }
-  native_uint_t * digits = (native_uint_t *)malloc(size*sizeof(native_uint_t));
+  native_uint_t * digits = new native_uint_t [size];
   bool carry = false;
   for (uint16_t i = 0; i<size; i++) {
     native_uint_t a = (i >= m_numberOfDigits ? 0 : m_digits[i]);
@@ -194,7 +194,7 @@ Integer Integer::usum(const Integer &other, bool subtract, bool output_negative)
 Integer Integer::multiply_by(const Integer &other) const {
   assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
   uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
-  native_uint_t * digits = (native_uint_t *)malloc(productSize*sizeof(native_uint_t));
+  native_uint_t * digits = new native_uint_t [productSize];
   memset(digits, 0, productSize*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
@@ -251,16 +251,15 @@ Expression * Integer::clone() const {
   Integer * clone = new Integer((native_int_t)0);
   clone->m_numberOfDigits = m_numberOfDigits;
   clone->m_negative = m_negative;
-  free(clone->m_digits);
-  clone->m_digits = (native_uint_t *)malloc(m_numberOfDigits*sizeof(native_uint_t));
+  delete[] clone->m_digits;
+  clone->m_digits = new native_uint_t [m_numberOfDigits];
   for (unsigned int i=0;i<m_numberOfDigits; i++) {
     clone->m_digits[i] = m_digits[i];
   }
   return clone;
 }
 
-float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
+Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   union {
     uint32_t uint_result;
     float float_result;
@@ -288,7 +287,7 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
    * the integer whose 2-exponent is bigger than 255 cannot be stored as a
    * float (IEEE 754 floating point). The approximation is thus INFINITY. */
   if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 255) {
-    return INFINITY;
+    return new Complex(Complex::Float(INFINITY));
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
@@ -306,7 +305,8 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
-    return m_negative ? -0.0f : 0.0f;
+    float result = m_negative ? -0.0f : 0.0f;
+    return new Complex(Complex::Float(result));
   }
 
   uint_result = 0;
@@ -317,15 +317,10 @@ float Integer::privateApproximate(Context& context, AngleUnit angleUnit) const {
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
   if (exponent == 255 && isnan(float_result)) {
-    return INFINITY;
+    return new Complex(Complex::Float(INFINITY));
   }
 
-  return float_result;
-}
-
-Expression * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return new Complex(Complex::Float(approximate(context, angleUnit)));
+  return new Complex(Complex::Float(float_result));
 }
 
 Expression::Type Integer::type() const {

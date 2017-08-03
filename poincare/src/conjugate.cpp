@@ -26,22 +26,8 @@ Expression * Conjugate::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-float Conjugate::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return m_args[0]->approximate(context, angleUnit);
-}
-
-Expression * Conjugate::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
-  }
-  Expression * result = ((Complex *)evaluation)->createConjugate();
-  delete evaluation;
-  return result;
+Complex Conjugate::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  return c.conjugate();
 }
 
 ExpressionLayout * Conjugate::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

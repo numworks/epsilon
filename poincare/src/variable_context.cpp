@@ -11,17 +11,17 @@ VariableContext::VariableContext(char name, Context * parentContext) :
 {
 }
 
-void VariableContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void VariableContext::setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) {
   if (symbol->name() == m_name) {
-    assert(expression->type() == Expression::Type::Complex);
-    /* WARNING: We assume that the evaluation of expression is a reel */
-    m_value = Complex::Float(expression->approximate(*m_parentContext, Preferences::sharedPreferences()->angleUnit()));
+    assert(expression->numberOfOperands() == 1);
+    /* WARNING: We assume that the evaluation of expression is a real */
+    m_value = Complex::Float(expression->toFloat());
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbol);
   }
 }
 
-const Expression * VariableContext::expressionForSymbol(const Symbol * symbol) {
+const Evaluation * VariableContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == m_name) {
     return &m_value;
   } else {

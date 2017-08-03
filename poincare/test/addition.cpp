@@ -2,100 +2,32 @@
 #include <poincare.h>
 #include <ion.h>
 #include <assert.h>
+#include "helper.h"
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_addition_approximate) {
-  GlobalContext globalContext;
-  Expression * a = Expression::parse("1+2");
-  assert(a->approximate(globalContext) == 3.0f);
-  delete a;
-}
-
 QUIZ_CASE(poincare_addition_evaluate) {
-  GlobalContext globalContext;
-  Expression * a = Expression::parse("1+2");
-  Expression * e = a->evaluate(globalContext);
-  assert(e->approximate(globalContext) == 3.0f);
-  delete a;
-  delete e;
+  Complex a[1] = {Complex::Float(3.0f)};
+  assert_parsed_expression_evaluate_to("1+2", a, 1);
 
-  char expText1[8] ={'3','+',Ion::Charset::IComplex, '+', '4', '+', Ion::Charset::IComplex, 0};
-  a = Expression::parse(expText1);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e)->a() == 7.0f && ((Complex *)e)->b() == 2.0f);
-  delete a;
-  delete e;
+  Complex b[1] = {Complex::Cartesian(6.0f, 2.0f)};
+  assert_parsed_expression_evaluate_to("2+I+4+I", b, 1);
 
 #if MATRICES_ARE_DEFINED
-  a = Expression::parse("[[1,2][3,4][5,6]]+3");
-  e = a->evaluate(globalContext);
-  assert(e->operand(0)->approximate(globalContext) == 4.0f);
-  assert(e->operand(1)->approximate(globalContext) == 5.0f);
-  assert(e->operand(2)->approximate(globalContext) == 6.0f);
-  assert(e->operand(3)->approximate(globalContext) == 7.0f);
-  assert(e->operand(4)->approximate(globalContext) == 8.0f);
-  assert(e->operand(5)->approximate(globalContext) == 9.0f);
-  delete a;
-  delete e;
+  Complex c[6] = {Complex::Float(4.0f), Complex::Float(5.0f), Complex::Float(6.0f), Complex::Float(7.0f), Complex::Float(8.0f), Complex::Float(9.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2][3,4][5,6]]+3", c, 6);
 
-  char expText2[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','+','3','+',Ion::Charset::IComplex, 0};
-  a = Expression::parse(expText2);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e->operand(0))->a() == 4.0f && ((Complex *)e->operand(0))->b() == 1.0f);
-  assert(((Complex *)e->operand(1))->a() == 5.0f && ((Complex *)e->operand(1))->b() == 2.0f);
-  assert(((Complex *)e->operand(2))->a() == 6.0f && ((Complex *)e->operand(2))->b() == 1.0f);
-  assert(((Complex *)e->operand(3))->a() == 7.0f && ((Complex *)e->operand(3))->b() == 1.0f);
-  assert(((Complex *)e->operand(4))->a() == 8.0f && ((Complex *)e->operand(4))->b() == 1.0f);
-  assert(((Complex *)e->operand(5))->a() == 9.0f && ((Complex *)e->operand(5))->b() == 1.0f);
-  delete a;
-  delete e;
+  Complex d[6] = {Complex::Cartesian(4.0f, 1.0f), Complex::Cartesian(5.0f, 2.0f), Complex::Cartesian(6.0f, 1.0f), Complex::Cartesian(7.0f, 1.0f), Complex::Cartesian(8.0f, 1.0f), Complex::Cartesian(9.0f, 1.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2+I][3,4][5,6]]+3+I", d, 6);
 
-  a = Expression::parse("3+[[1,2][3,4][5,6]]");
-  e = a->evaluate(globalContext);
-  assert(e->operand(0)->approximate(globalContext) == 4.0f);
-  assert(e->operand(1)->approximate(globalContext) == 5.0f);
-  assert(e->operand(2)->approximate(globalContext) == 6.0f);
-  assert(e->operand(3)->approximate(globalContext) == 7.0f);
-  assert(e->operand(4)->approximate(globalContext) == 8.0f);
-  assert(e->operand(5)->approximate(globalContext) == 9.0f);
-  delete a;
-  delete e;
+  assert_parsed_expression_evaluate_to("3+[[1,2][3,4][5,6]]", c, 6);
 
-  char expText3[100] ={'3','+',Ion::Charset::IComplex, '+','[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']', 0};
-  a = Expression::parse(expText3);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e->operand(0))->a() == 4.0f && ((Complex *)e->operand(0))->b() == 1.0f);
-  assert(((Complex *)e->operand(1))->a() == 5.0f && ((Complex *)e->operand(1))->b() == 2.0f);
-  assert(((Complex *)e->operand(2))->a() == 6.0f && ((Complex *)e->operand(2))->b() == 1.0f);
-  assert(((Complex *)e->operand(3))->a() == 7.0f && ((Complex *)e->operand(3))->b() == 1.0f);
-  assert(((Complex *)e->operand(4))->a() == 8.0f && ((Complex *)e->operand(4))->b() == 1.0f);
-  assert(((Complex *)e->operand(5))->a() == 9.0f && ((Complex *)e->operand(5))->b() == 1.0f);
-  delete a;
-  delete e;
+  assert_parsed_expression_evaluate_to("3+I+[[1,2+I][3,4][5,6]]", d, 6);
 
-  a = Expression::parse("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]");
-  e = a->evaluate(globalContext);
-  assert(e->operand(0)->approximate(globalContext) == 2.0f);
-  assert(e->operand(1)->approximate(globalContext) == 4.0f);
-  assert(e->operand(2)->approximate(globalContext) == 6.0f);
-  assert(e->operand(3)->approximate(globalContext) == 8.0f);
-  assert(e->operand(4)->approximate(globalContext) == 10.0f);
-  assert(e->operand(5)->approximate(globalContext) == 12.0f);
-  delete a;
-  delete e;
+  Complex e[6] = {Complex::Float(2.0f), Complex::Float(4.0f), Complex::Float(6.0f), Complex::Float(8.0f), Complex::Float(10.0f), Complex::Float(12.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", e, 6);
 
-  char expText4[100] ={'[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6',']',']','+',
-    '[','[','1',',','2','+', Ion::Charset::IComplex,']','[','3',',','4',']','[','5',',','6','+', Ion::Charset::IComplex,']',']',0};
-  a = Expression::parse(expText4);
-  e = a->evaluate(globalContext);
-  assert(((Complex *)e->operand(0))->a() == 2.0f && ((Complex *)e->operand(0))->b() == 0.0f);
-  assert(((Complex *)e->operand(1))->a() == 4.0f && ((Complex *)e->operand(1))->b() == 2.0f);
-  assert(((Complex *)e->operand(2))->a() == 6.0f && ((Complex *)e->operand(2))->b() == 0.0f);
-  assert(((Complex *)e->operand(3))->a() == 8.0f && ((Complex *)e->operand(3))->b() == 0.0f);
-  assert(((Complex *)e->operand(4))->a() == 10.0f && ((Complex *)e->operand(4))->b() == 0.0f);
-  assert(((Complex *)e->operand(5))->a() == 12.0f && ((Complex *)e->operand(5))->b() == 1.0f);
-  delete a;
-  delete e;
+  Complex f[6] = {Complex::Cartesian(2.0f, 0.0f), Complex::Cartesian(4.0f, 2.0f), Complex::Cartesian(6.0f, 0.0f), Complex::Cartesian(8.0f, 0.0f), Complex::Cartesian(10.0f, 0.0f), Complex::Cartesian(12.0f, 0.0f)};
+  assert_parsed_expression_evaluate_to("[[1,2+I][3,4][5,6]]+[[1,2+I][3,4][5,6]]", f, 6);
 #endif
 }

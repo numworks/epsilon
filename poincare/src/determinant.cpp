@@ -24,18 +24,11 @@ Expression * Determinant::cloneWithDifferentOperands(Expression** newOperands,
   return d;
 }
 
-float Determinant::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Complex) {
-    float result = evaluation->approximate(context, angleUnit);
-    delete evaluation;
-    return result;
-  }
-  float det = ((Matrix *)evaluation)->determinant(context, angleUnit);
-  delete evaluation;
-  return det;
+Evaluation * Determinant::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
+  Evaluation * result = input->createDeterminant();
+  delete input;
+  return result;
 }
 
 }

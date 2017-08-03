@@ -30,19 +30,18 @@ float Sum::emptySequenceValue() const {
   return 0.0f;
 }
 
-float Sum::approximateWithNextTerm(float sequence, float nextTerm) const {
-  return sequence + nextTerm;
-}
-
 ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
   return new SumLayout(subscriptLayout, superscriptLayout, argumentLayout);
 }
 
-Expression * Sum::evaluateWithNextTerm(Expression ** args, Context& context, AngleUnit angleUnit) const {
-  Expression * addition = new Addition(args, true);
-  Expression * result = addition->evaluate(context, angleUnit);
-  delete addition;
-  return result;
+Evaluation * Sum::evaluateWithNextTerm(Evaluation * a, Evaluation * b) const {
+  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
+    return new Complex(Addition::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+  }
+  if (a->numberOfOperands() == 1) {
+    return Addition::computeOnComplexAndMatrix(a->complexOperand(0), b);
+  }
+  return Addition::computeOnMatrices(a, b);
 }
 
 }

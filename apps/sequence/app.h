@@ -39,7 +39,7 @@ public:
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
-  LocalContext m_nContext;
+  LocalContext<float> m_nContext;
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

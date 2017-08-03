@@ -104,8 +104,8 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   if (myCell->isEditing()) {
     return;
   }
-  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex::convertFloatToText(parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  Complex<float>::convertFloatToText(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   myCell->setAccessoryText(buffer);
 }
 
@@ -118,7 +118,7 @@ bool FloatParameterController::textFieldShouldFinishEditing(TextField * textFiel
 bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::approximate(text, *globalContext);
+  float floatBody = Expression::approximate<float>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;

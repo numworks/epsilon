@@ -94,28 +94,28 @@ QUIZ_CASE(poincare_parse_trigo) {
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {
-  Complex a[1] = {Complex::Float(-0.4161468365f)};
+  Complex<double> a[1] = {Complex<double>::Float(-0.4161468365)};
   assert_parsed_expression_evaluate_to("cos(2)", a, 1, Radian);
-  Complex a1[1] = {Complex::Cartesian(-1.0086248134f, -0.8893951958f)};
+  Complex<float> a1[1] = {Complex<float>::Cartesian(-1.0086248134f, -0.8893951958f)};
   assert_parsed_expression_evaluate_to("cos(I-4)", a1, 1, Radian);
-  Complex b[1] = {Complex::Float(0.9092974268f)};
+  Complex<double> b[1] = {Complex<double>::Float(0.9092974268)};
   assert_parsed_expression_evaluate_to("sin(2)", b, 1, Radian);
-  Complex b1[1] = {Complex::Cartesian( 1.16780727488f, -0.768162763456f)};
+  Complex<float> b1[1] = {Complex<float>::Cartesian( 1.16780727488f, -0.768162763456f)};
   assert_parsed_expression_evaluate_to("sin(I-4)", b1, 1, Radian);
-  Complex c[1] = {Complex::Float(-2.18503986326151899f)};
+  Complex<double> c[1] = {Complex<double>::Float(-2.18503986326151899)};
   assert_parsed_expression_evaluate_to("tan(2)", c, 1, Radian);
-  Complex c1[1] = {Complex::Cartesian(-0.27355308280730f, 1.002810507583504f)};
+  Complex<float> c1[1] = {Complex<float>::Cartesian(-0.27355308280730f, 1.002810507583504f)};
   assert_parsed_expression_evaluate_to("tan(I-4)", c1, 1, Radian);
-  Complex a2[1] = {Complex::Float(3.762195691f)};
+  Complex<double> a2[1] = {Complex<double>::Float(3.762195691)};
   assert_parsed_expression_evaluate_to("cosh(2)", a2, 1, Radian);
-  Complex a3[1] = {Complex::Cartesian(14.754701170483756280f,-22.96367349919304059f)};
+  Complex<float> a3[1] = {Complex<float>::Cartesian(14.754701170483756280f,-22.96367349919304059f)};
   assert_parsed_expression_evaluate_to("cosh(I-4)", a3, 1, Radian);
-  Complex b2[1] = {Complex::Float(3.62686040784701876f)};
+  Complex<double> b2[1] = {Complex<double>::Float(3.62686040784701876)};
   assert_parsed_expression_evaluate_to("sinh(2)", b2, 1, Radian);
-  Complex b3[1] = {Complex::Cartesian(-14.744805188558725031023f, 22.979085577886129555168f)};
+  Complex<float> b3[1] = {Complex<float>::Cartesian(-14.744805188558725031023f, 22.979085577886129555168f)};
   assert_parsed_expression_evaluate_to("sinh(I-4)", b3, 1, Radian);
-  Complex c2[1] = {Complex::Float(0.9640275800758168839464f)};
+  Complex<double> c2[1] = {Complex<double>::Float(0.9640275800758168839464)};
   assert_parsed_expression_evaluate_to("tanh(2)", c2, 1, Radian);
-  Complex c3[1] = {Complex::Cartesian(-1.00027905623446556836909f, 0.000610240921376259f)};
+  Complex<float> c3[1] = {Complex<float>::Cartesian(-1.00027905623446556836909f, 0.000610240921376259f)};
   assert_parsed_expression_evaluate_to("tanh(I-4)", c3, 1, Radian);
 }

@@ -24,11 +24,12 @@ Expression * FracPart::cloneWithDifferentOperands(Expression** newOperands,
   return fp;
 }
 
-Complex FracPart::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> FracPart::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(c.a()-std::floor(c.a()));
+  return Complex<T>::Float(c.a()-std::floor(c.a()));
 }
 
 }

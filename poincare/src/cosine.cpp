@@ -9,7 +9,7 @@ extern "C" {
 namespace Poincare {
 
 Cosine::Cosine() :
-  TrigonometricFunction("cos")
+  Function("cos")
 {
 }
 
@@ -25,13 +25,23 @@ Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
   return c;
 }
 
-Complex Cosine::compute(const Complex c) {
-  Complex arg = Complex::Cartesian(-c.b(), c.a());
+template<typename T>
+Complex<T> Cosine::compute(const Complex<T> c, AngleUnit angleUnit) {
+  assert(angleUnit != AngleUnit::Default);
+  if (c.b() == 0) {
+    T input = c.a();
+    if (angleUnit == AngleUnit::Degree) {
+      input *= M_PI/180.0f;
+    }
+    T result = std::cos(input);
+    // TODO: See if necessary with double????
+    if (input !=  0 && std::fabs(result/input) <= 1E-7f) {
+      return Complex<T>::Float(0);
+    }
+    return Complex<T>::Float(result);
+  }
+  Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
   return HyperbolicCosine::compute(arg);
-}
-
-float Cosine::computeForRadianReal(float x) const {
-  return std::cos(x);
 }
 
 }

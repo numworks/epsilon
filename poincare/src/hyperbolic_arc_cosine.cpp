@@ -23,11 +23,12 @@ Expression * HyperbolicArcCosine::cloneWithDifferentOperands(Expression** newOpe
   return c;
 }
 
-Complex HyperbolicArcCosine::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> HyperbolicArcCosine::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(std::acosh(c.a()));
+  return Complex<T>::Float(std::acosh(c.a()));
 }
 
 }

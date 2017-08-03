@@ -63,25 +63,21 @@ Expression * ExpressionMatrix::cloneWithDifferentOperands(Expression** newOperan
   return new ExpressionMatrix(newOperands, numberOfOperands, numberOfColumns(), numberOfRows(), cloneOperands);
 }
 
-Evaluation * ExpressionMatrix::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Complex * operands = new Complex[numberOfOperands()];
+template<typename T>
+Evaluation<T> * ExpressionMatrix::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Complex<T> * operands = new Complex<T>[numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    Evaluation * operandEvaluation = operand(i)->evaluate(context, angleUnit);
+    Evaluation<T> * operandEvaluation = operand(i)->evaluate<T>(context, angleUnit);
     if (operandEvaluation->numberOfOperands() != 1) {
-      operands[i] = Complex::Float(NAN);
+      operands[i] = Complex<T>::Float(NAN);
     } else {
       operands[i] = *(operandEvaluation->complexOperand(0));
     }
     delete operandEvaluation;
   }
-  Evaluation * matrix = new ComplexMatrix(operands, numberOfRows(), numberOfColumns());
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfRows(), numberOfColumns());
   delete[] operands;
   return matrix;
-}
-
-Complex * ExpressionMatrix::defaultExpression() {
-  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
-  return defaultExpression;
 }
 
 }

@@ -25,20 +25,21 @@ Expression * ConfidenceInterval::cloneWithDifferentOperands(Expression** newOper
   return ci;
 }
 
-Evaluation * ConfidenceInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * fInput = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * nInput = m_args[1]->evaluate(context, angleUnit);
-  float f = fInput->toFloat();
-  float n = nInput->toFloat();
+template<typename T>
+Evaluation<T> * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * fInput = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * nInput = m_args[1]->evaluate<T>(context, angleUnit);
+  T f = fInput->toScalar();
+  T n = nInput->toScalar();
   delete fInput;
   delete nInput;
-  if (isnan(f) || isnan(n) || n != (int)n || n < 0.0f || f < 0.0f || f > 1.0f) {
-    return new Complex(Complex::Float(NAN));
+  if (isnan(f) || isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex operands[2];
-  operands[0] = Complex::Float(f - 1.0f/std::sqrt(n));
-  operands[1] = Complex::Float(f + 1.0f/std::sqrt(n));
-  return new ComplexMatrix(operands, 2, 1);
+  Complex<T> operands[2];
+  operands[0] = Complex<T>::Float(f - 1/std::sqrt(n));
+  operands[1] = Complex<T>::Float(f + 1/std::sqrt(n));
+  return new ComplexMatrix<T>(operands, 2, 1);
 }
 
 }

@@ -23,11 +23,12 @@ Expression * HyperbolicArcTangent::cloneWithDifferentOperands(Expression** newOp
   return t;
 }
 
-Complex HyperbolicArcTangent::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> HyperbolicArcTangent::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(std::atanh(c.a()));
+  return Complex<T>::Float(std::atanh(c.a()));
 }
 
 }

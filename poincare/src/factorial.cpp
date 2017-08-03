@@ -25,20 +25,21 @@ Expression * Factorial::cloneWithDifferentOperands(Expression** newOperands,
   return f;
 }
 
-Complex Factorial::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  float n = c.a();
-  if (c.b() != 0.0f || isnan(n) || n != (int)n || n < 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> Factorial::templatedComputeComplex(const Complex<T> c) const {
+  T n = c.a();
+  if (c.b() != 0 || isnan(n) || n != (int)n || n < 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(c.r());
-  float result = 1.0f;
+  return Complex<T>::Float(c.r());
+  T result = 1;
   for (int i = 1; i <= (int)n; i++) {
-    result *= (float)i;
+    result *= (T)i;
     if (isinf(result)) {
-      return Complex::Float(result);
+      return Complex<T>::Float(result);
     }
   }
-  return Complex::Float(std::round(result));
+  return Complex<T>::Float(std::round(result));
 }
 
 ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

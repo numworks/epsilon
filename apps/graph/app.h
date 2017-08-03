@@ -40,7 +40,7 @@ public:
   Poincare::Context * localContext() override;
 private:
   App(Container * container, Snapshot * snapshot);
-  Poincare::VariableContext m_xContext;
+  Poincare::VariableContext<float> m_xContext;
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

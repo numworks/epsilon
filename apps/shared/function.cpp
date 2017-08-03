@@ -99,12 +99,13 @@ bool Function::isEmpty() {
   return m_text[0] == 0;
 }
 
-float Function::evaluateAtAbscissa(float x, Poincare::Context * context) const {
-  Poincare::VariableContext variableContext = Poincare::VariableContext(symbol(), context);
+template<typename T>
+T Function::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const {
+  Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
   Poincare::Symbol xSymbol = Poincare::Symbol(symbol());
-  Poincare::Complex e = Poincare::Complex::Float(x);
+  Poincare::Complex<T> e = Poincare::Complex<T>::Float(x);
   variableContext.setExpressionForSymbolName(&e, &xSymbol);
-  return expression()->approximate(variableContext);
+  return expression()->approximate<T>(variableContext);
 }
 
 void Function::tidy() {
@@ -119,3 +120,6 @@ void Function::tidy() {
 }
 
 }
+
+template float Shared::Function::templatedEvaluateAtAbscissa<float>(float, Poincare::Context*) const;
+template double Shared::Function::templatedEvaluateAtAbscissa<double>(double, Poincare::Context*) const;

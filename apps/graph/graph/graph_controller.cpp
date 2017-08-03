@@ -32,7 +32,7 @@ void GraphController::reloadBannerView() {
   if (!m_bannerView.displayDerivative()) {
     return;
   }
-  char buffer[k_maxNumberOfCharacters+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "00(x)=";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
@@ -44,7 +44,7 @@ void GraphController::reloadBannerView() {
   buffer[1] = '\'';
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
-  Complex::convertFloatToText(y, buffer + legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 }
 

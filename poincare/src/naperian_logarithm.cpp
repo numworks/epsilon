@@ -27,11 +27,12 @@ Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOpera
   return l;
 }
 
-Complex NaperianLogarithm::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> NaperianLogarithm::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(std::log(c.a()));
+  return Complex<T>::Float(std::log(c.a()));
 }
 
 }

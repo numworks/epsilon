@@ -15,9 +15,9 @@ void ADC(const char * input) {
   }
   float result = Ion::Battery::voltage();
   constexpr int precision = 8;
-  constexpr int bufferSize = Poincare::Complex::bufferSizeForFloatsWithPrecision(precision);
+  constexpr int bufferSize = Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(precision);
   char responseBuffer[bufferSize+4] = {'A', 'D', 'C', '='}; // ADC=
-  Poincare::Complex::convertFloatToText(result, responseBuffer+4, bufferSize, precision);
+  Poincare::Complex<float>::convertFloatToText(result, responseBuffer+4, bufferSize, precision);
   reply(responseBuffer);
 }
 

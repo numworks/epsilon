@@ -6,6 +6,7 @@
 
 namespace Poincare {
 
+template<class T>
 class Complex;
 
 class MatrixData {
@@ -25,7 +26,7 @@ private:
   int m_numberOfRows;
   int m_numberOfColumns;
   Expression ** m_operands;
-  static Complex * defaultExpression();
+  static Complex<double> * defaultExpression();
 };
 
 }

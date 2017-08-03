@@ -54,53 +54,55 @@ Expression * BinaryOperation::clone() const {
   return this->cloneWithDifferentOperands((Expression**) m_operands, 2, true);
 }
 
-Evaluation * BinaryOperation::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * leftOperandEvalutation = m_operands[0]->evaluate(context, angleUnit);
-  Evaluation * rightOperandEvalutation = m_operands[1]->evaluate(context, angleUnit);
-  Evaluation * result = nullptr;
+template<typename T> Evaluation<T> * BinaryOperation::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * leftOperandEvalutation = m_operands[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * rightOperandEvalutation = m_operands[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * result = nullptr;
   if (leftOperandEvalutation->numberOfRows() == 1 && leftOperandEvalutation->numberOfColumns() == 1 && rightOperandEvalutation->numberOfRows() == 1 && rightOperandEvalutation->numberOfColumns() == 1) {
-    result = computeOnComplexes(leftOperandEvalutation->complexOperand(0), rightOperandEvalutation->complexOperand(0));
+    result = new Complex<T>(privateCompute(*(leftOperandEvalutation->complexOperand(0)), *(rightOperandEvalutation->complexOperand(0))));
   } else if (leftOperandEvalutation->numberOfRows() == 1 && leftOperandEvalutation->numberOfColumns() == 1) {
     result = computeOnComplexAndComplexMatrix(leftOperandEvalutation->complexOperand(0), rightOperandEvalutation);
   } else if (rightOperandEvalutation->numberOfRows() == 1 && rightOperandEvalutation->numberOfColumns() == 1) {
     result = computeOnComplexMatrixAndComplex(leftOperandEvalutation, rightOperandEvalutation->complexOperand(0));
   } else {
-    result = computeOnNumericalMatrices(leftOperandEvalutation, rightOperandEvalutation);
+    result = computeOnComplexMatrices(leftOperandEvalutation, rightOperandEvalutation);
   }
   delete leftOperandEvalutation;
   delete rightOperandEvalutation;
   if (result == nullptr) {
-    result = new Complex(Complex::Float(NAN));
+    result = new Complex<T>(Complex<T>::Float(NAN));
   }
   return result;
 }
 
-Evaluation * BinaryOperation::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * n) const {
+template<typename T> Evaluation<T> * BinaryOperation::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * n) const {
   return computeOnComplexMatrixAndComplex(n, c);
 }
 
-Evaluation * BinaryOperation::computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * d) const {
-  Complex * operands = new Complex[m->numberOfRows()*m->numberOfColumns()];
+template<typename T> Evaluation<T> * BinaryOperation::templatedComputeOnComplexMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) const {
+  Complex<T> * operands = new Complex<T>[m->numberOfRows()*m->numberOfColumns()];
   for (int i = 0; i < m->numberOfOperands(); i++) {
     operands[i] = privateCompute(*(m->complexOperand(i)), *d);
   }
-  Evaluation * result = new ComplexMatrix(operands, m->numberOfRows(), m->numberOfColumns());
+  Evaluation<T> * result = new ComplexMatrix<T>(operands, m->numberOfRows(), m->numberOfColumns());
   delete[] operands;
   return result;
 }
 
-Evaluation * BinaryOperation::computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const {
+template<typename T> Evaluation<T> * BinaryOperation::templatedComputeOnComplexMatrices(Evaluation<T> * m, Evaluation<T> * n) const {
   if (m->numberOfRows() != n->numberOfRows() && m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }
-  Complex * operands = new Complex[m->numberOfRows()*m->numberOfColumns()];
+  Complex<T> * operands = new Complex<T>[m->numberOfRows()*m->numberOfColumns()];
   for (int i = 0; i < m->numberOfOperands(); i++) {
     operands[i] = privateCompute(*(m->complexOperand(i)), *(n->complexOperand(i)));
   }
-  Evaluation * result = new ComplexMatrix(operands, m->numberOfRows(), m->numberOfColumns());
+  Evaluation<T> * result = new ComplexMatrix<T>(operands, m->numberOfRows(), m->numberOfColumns());
   delete[] operands;
   return result;
 }
 
 }
 
+template Poincare::Evaluation<float>* Poincare::BinaryOperation::templatedComputeOnComplexAndComplexMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*) const;
+template Poincare::Evaluation<double>* Poincare::BinaryOperation::templatedComputeOnComplexAndComplexMatrix<double>(Poincare::Complex<double> const*, Poincare::Evaluation<double>*) const;

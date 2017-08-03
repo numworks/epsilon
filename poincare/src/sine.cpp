@@ -10,7 +10,7 @@ extern "C" {
 namespace Poincare {
 
 Sine::Sine() :
-  TrigonometricFunction("sin")
+  Function("sin")
 {
 }
 
@@ -26,14 +26,23 @@ Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-Complex Sine::compute(const Complex c) {
-  Complex arg = Complex::Cartesian(-c.b(), c.a());
-  Complex sinh = HyperbolicSine::compute(arg);
-  return Multiplication::compute(Complex::Cartesian(0.0f, -1.0f), sinh);
-}
-
-float Sine::computeForRadianReal(float x) const {
-  return std::sin(x);
+template<typename T>
+Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
+  if (c.b() == 0) {
+    T input = c.a();
+    if (angleUnit == AngleUnit::Degree) {
+      input *= M_PI/180;
+    }
+    T result = std::sin(input);
+    // TODO: See if necessary with double????
+    if (input !=  0 && std::fabs(result/input) <= 1E-7f) {
+      return Complex<T>::Float(0);
+    }
+    return Complex<T>::Float(result);
+  }
+  Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
+  Complex<T> sinh = HyperbolicSine::compute(arg);
+  return Multiplication::compute(Complex<T>::Cartesian(0, -1), sinh);
 }
 
 }

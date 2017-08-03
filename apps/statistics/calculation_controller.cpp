@@ -83,8 +83,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum};
     float calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    Complex<float>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
   }
 }

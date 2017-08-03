@@ -26,8 +26,9 @@ Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
   return a;
 }
 
-Complex AbsoluteValue::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  return Complex::Float(c.r());
+template<typename T>
+Complex<T> AbsoluteValue::templatedComputeComplex(const Complex<T> c) const {
+  return Complex<T>::Float(c.r());
 }
 
 ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

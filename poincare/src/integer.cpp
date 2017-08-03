@@ -262,7 +262,7 @@ Expression * Integer::clone() const {
   return clone;
 }
 
-Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
   union {
     uint32_t uint_result;
     float float_result;
@@ -290,7 +290,7 @@ Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) con
    * the integer whose 2-exponent is bigger than 255 cannot be stored as a
    * float (IEEE 754 floating point). The approximation is thus INFINITY. */
   if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 255) {
-    return new Complex(Complex::Float(INFINITY));
+    return new Complex<float>(Complex<float>::Float(INFINITY));
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
@@ -300,7 +300,7 @@ Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) con
   if (m_numberOfDigits >= 2) {
     native_uint_t beforeLastDigit = m_digits[m_numberOfDigits-2];
     mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
-  }
+}
 
   if ((m_numberOfDigits==1) && (m_digits[0]==0)) {
     /* This special case for 0 is needed, because the current algorithm assumes
@@ -309,7 +309,7 @@ Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) con
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
     float result = m_negative ? -0.0f : 0.0f;
-    return new Complex(Complex::Float(result));
+    return new Complex<float>(Complex<float>::Float(result));
   }
 
   uint_result = 0;
@@ -320,10 +320,79 @@ Evaluation * Integer::privateEvaluate(Context& context, AngleUnit angleUnit) con
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
   if (exponent == 255 && isnan(float_result)) {
-    return new Complex(Complex::Float(INFINITY));
+    return new Complex<float>(Complex<float>::Float(INFINITY));
   }
 
-  return new Complex(Complex::Float(float_result));
+  return new Complex<float>(Complex<float>::Float(float_result));
+}
+
+Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const {
+  union {
+    uint64_t uint_result;
+    double double_result;
+  };
+  assert(sizeof(double) == 8);
+  /* We're generating an IEEE 754 compliant double.
+  * Theses numbers are 64-bit values, stored as follow:
+  * sign (1 bit)
+  * exponent (11 bits)
+  * mantissa (52 bits)
+  *
+  * We can tell that:
+  * - the exponent is the length of our BigInt, in bits - 1 + 1023;
+  * - the mantissa is the beginning of our BigInt, discarding the first bit
+  */
+  native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
+  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
+
+  bool sign = m_negative;
+
+  uint16_t exponent = 1022;
+  /* if the exponent is bigger then 2047, it cannot be stored as a uint11. Also,
+   * the integer whose 2-exponent is bigger than 2047 cannot be stored as a
+   * double (IEEE 754 double point). The approximation is thus INFINITY. */
+  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 2047) {
+    return new Complex<double>(Complex<double>::Float(INFINITY));
+  }
+  exponent += (m_numberOfDigits-1)*32;
+  exponent += numberOfBitsInLastDigit;
+
+  uint64_t mantissa = 0;
+  mantissa |= ((uint64_t)lastDigit << (64-numberOfBitsInLastDigit));
+  int digitIndex = 2;
+  int numberOfBits = log2(lastDigit);
+  while (m_numberOfDigits >= digitIndex) {
+    lastDigit = m_digits[m_numberOfDigits-digitIndex];
+    numberOfBits += 32;
+    if (64 > numberOfBits) {
+      mantissa |= ((uint64_t)lastDigit << (64-numberOfBits));
+    } else {
+      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-64));
+    }
+    digitIndex++;
+  }
+
+  if ((m_numberOfDigits==1) && (m_digits[0]==0)) {
+    /* This special case for 0 is needed, because the current algorithm assumes
+     * that the big integer is non zero, thus puts the exponent to 126 (integer
+     * area), the issue is that when the mantissa is 0, a "shadow bit" is
+     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
+     */
+    float result = m_negative ? -0.0f : 0.0f;
+    return new Complex<double>(Complex<double>::Float(result));
+  }
+
+  uint_result = 0;
+  uint_result |= ((uint64_t)sign << 63);
+  uint_result |= ((uint64_t)exponent << 52);
+  uint_result |= ((uint64_t)mantissa >> (64-52-1) & 0xFFFFFFFFFFFFF);
+
+  /* If exponent is 2047 and the double is undefined, we have exceed IEEE 754
+   * representable double. */
+  if (exponent == 2047 && isnan(double_result)) {
+    return new Complex<double>(Complex<double>::Float(INFINITY));
+  }
+  return new Complex<double>(Complex<double>::Float(double_result));
 }
 
 Expression::Type Integer::type() const {

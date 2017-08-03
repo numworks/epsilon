@@ -13,7 +13,13 @@ public:
     int numberOfOperands, bool cloneOperands = true) const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Complex computeComplex(const Complex c, AngleUnit angleUnit) const override;
+  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
+    return templatedComputeComplex(c);
+  }
+  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
+    return templatedComputeComplex(c);
+  }
+  template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
 };
 
 }

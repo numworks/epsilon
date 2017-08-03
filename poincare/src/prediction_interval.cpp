@@ -24,20 +24,21 @@ Expression * PredictionInterval::cloneWithDifferentOperands(Expression** newOper
   return pi;
 }
 
-Evaluation * PredictionInterval::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * pInput = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * nInput = m_args[1]->evaluate(context, angleUnit);
-  float p = pInput->toFloat();
-  float n = nInput->toFloat();
+template<typename T>
+Evaluation<T> * PredictionInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * pInput = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * nInput = m_args[1]->evaluate<T>(context, angleUnit);
+  T p = pInput->toScalar();
+  T n = nInput->toScalar();
   delete pInput;
   delete nInput;
-  if (isnan(p) || isnan(n) || n != (int)n || n < 0.0f || p < 0.0f || p > 1.0f) {
-    return new Complex(Complex::Float(NAN));
+  if (isnan(p) || isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex operands[2];
-  operands[0] = Complex::Float(p - 1.96f*std::sqrt(p*(1.0f-p))/std::sqrt(n));
-  operands[1] = Complex::Float(p + 1.96f*std::sqrt(p*(1.0f-p))/std::sqrt(n));
-  return new ComplexMatrix(operands, 2, 1);
+  Complex<T> operands[2];
+  operands[0] = Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  operands[1] = Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  return new ComplexMatrix<T>(operands, 2, 1);
 }
 
 }

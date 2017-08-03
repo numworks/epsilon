@@ -198,8 +198,8 @@ void TermSumController::LegendView::setSumSubscript(float start) {
     m_sumLayout = nullptr;
   }
   const char sigma[3] = {' ',Ion::Charset::CapitalSigma, 0};
-  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex::convertFloatToText(start, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
  m_sum.setExpression(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
@@ -211,10 +211,10 @@ void TermSumController::LegendView::setSumSuperscript(float start, float end) {
     m_sumLayout = nullptr;
   }
   const char sigma[3] = {' ', Ion::Charset::CapitalSigma, 0};
-  char bufferStart[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex::convertFloatToText(start, bufferStart, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  char bufferEnd[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex::convertFloatToText(end, bufferEnd, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char bufferStart[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  Complex<float>::convertFloatToText(start, bufferStart, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char bufferEnd[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  Complex<double>::convertFloatToText(end, bufferEnd, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);
   m_sum.setAlignment(0.0f, 0.5f);
@@ -222,9 +222,9 @@ void TermSumController::LegendView::setSumSuperscript(float start, float end) {
 
 void TermSumController::LegendView::setSumResult(const char * sequenceName, float result) {
   ExpressionLayout * childrenLayouts[3];
-  char buffer[2+Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   strlcpy(buffer, "= ", 3);
-  Complex::convertFloatToText(result, buffer+2, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Complex<float>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
   childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[0] = m_sumLayout;

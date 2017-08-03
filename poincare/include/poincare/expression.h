@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class Context;
+template<class T>
 class Evaluation;
 
 class Expression {
@@ -133,17 +134,21 @@ public:
 
   /* The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  Evaluation * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  float approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  static float approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> Evaluation<T> * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const;
+protected:
+  typedef float SinglePrecision;
+  typedef double DoublePrecision;
 private:
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
-  virtual Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   bool sequentialOperandsIdentity(const Expression * e) const;
   bool commutativeOperandsIdentity(const Expression * e) const;
   bool combinatoryCommutativeOperandsIdentity(const Expression * e,
-    bool * operandMatched, int leftToMatch) const;
+      bool * operandMatched, int leftToMatch) const;
 };
 
 }

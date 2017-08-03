@@ -6,38 +6,54 @@
 
 namespace Poincare {
 
-class Complex : public Evaluation {
+namespace PrintFloat {
+  constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
+    // The wors case is -1.234E-38
+    return numberOfSignificantDigits + 7;
+  }
+  /* This function prints the int i in the buffer with a '.' at the position
+   * specified by the decimalMarkerPosition. It starts printing at the end of the
+   * buffer and print from right to left. The integer given should be of the right
+   * length to be written in bufferLength chars. If the integer is to small, the
+   * empty chars on the left side are completed with '0'. If the integer is too
+   * big, the printing stops when no more empty chars are available without
+   * returning any warning. */
+  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition);
+}
+
+template<typename T>
+class Complex : public Evaluation<T> {
 public:
-  Complex() : m_a(0.0f), m_b(0.0f) {}
-  static Complex Float(float x);
-  static Complex Cartesian(float a, float b);
-  static Complex Polar(float r, float theta);
+  Complex() : m_a(0), m_b(0) {}
+  static Complex<T> Float(T x);
+  static Complex<T> Cartesian(T a, T b);
+  static Complex<T> Polar(T r, T theta);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
-  float toFloat() const override;
-  const Complex * operand(int i) const override {
+  T toScalar() const override;
+  const Complex<T> * operand(int i) const override {
     return complexOperand(i);
   }
   int numberOfRows() const override;
   int numberOfColumns() const override;
-  Type type() const override;
-  Complex * clone() const override;
-  Evaluation * cloneWithDifferentOperands(Expression** newOperands,
+  Expression::Type type() const override;
+  Complex<T> * clone() const override;
+  Evaluation<T> * cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Evaluation * createDeterminant() const override {
+  Evaluation<T> * createDeterminant() const override {
     return clone();
   }
-  Evaluation * createInverse() const override;
-  Evaluation * createTrace() const override {
+  Evaluation<T> * createInverse() const override;
+  Evaluation<T> * createTrace() const override {
     return clone();
   }
-  float a() const;
-  float b() const;
-  float r() const;
-  float th() const;
-  Complex conjugate() const;
+  T a() const;
+  T b() const;
+  T r() const;
+  T th() const;
+  Complex<T> conjugate() const;
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches
@@ -49,17 +65,15 @@ public:
    * is truncated at the end of the buffer.
    * ConvertFloat to Text return the number of characters that have been written
    * in buffer (excluding the last \O character) */
-  static int convertFloatToText(float f, char * buffer, int bufferSize, int numberOfSignificantDigits, FloatDisplayMode mode = FloatDisplayMode::Default);
-  constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
-    // The wors case is -1.234E-38
-    return numberOfSignificantDigits + 7;
-  }
+  static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode mode = Expression::FloatDisplayMode::Default);
 private:
-  Complex(float a, float b);
-  const Complex * complexOperand(int i) const override;
+  Complex(T a, T b);
+  const Complex<T> * complexOperand(int i) const override;
   constexpr static int k_numberOfSignificantDigits = 7;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
+  Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Evaluation<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always
@@ -70,20 +84,12 @@ private:
   constexpr static int k_maxComplexBufferLength = 13+13+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, FloatDisplayMode FloatDisplayMode, ComplexFormat complexFormat) const;
-  static int convertFloatToTextPrivate(float f, char * buffer, int numberOfSignificantDigits, FloatDisplayMode mode);
-  /* This function prints the int i in the buffer with a '.' at the position
-   * specified by the decimalMarkerPosition. It starts printing at the end of the
-   * buffer and print from right to left. The integer given should be of the right
-   * length to be written in bufferLength chars. If the integer is to small, the
-   * empty chars on the left side are completed with '0'. If the integer is too
-   * big, the printing stops when no more empty chars are available without
-   * returning any warning. */
-  static void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int i, int decimalMarkerPosition);
-  ExpressionLayout * createPolarLayout(FloatDisplayMode floatDisplayMode) const;
-  ExpressionLayout * createCartesianLayout(FloatDisplayMode floatDisplayMode) const;
-  float m_a;
-  float m_b;
+  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const;
+  static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode);
+  ExpressionLayout * createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const;
+  ExpressionLayout * createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const;
+  T m_a;
+  T m_b;
 };
 
 }

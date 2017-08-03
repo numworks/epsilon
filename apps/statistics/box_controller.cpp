@@ -67,11 +67,11 @@ Responder * BoxController::tabController() const {
 void BoxController::reloadBannerView() {
   I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
   m_boxBannerView.setMessageAtIndex(calculationName[(int)m_view.selectedQuantile()], 0);
-  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
-  Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Complex<float>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_boxBannerView.setLegendAtIndex(buffer, 1);
 }
 

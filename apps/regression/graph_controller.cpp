@@ -61,7 +61,7 @@ bool GraphController::handleEnter() {
 void GraphController::reloadBannerView() {
   m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 3);
 
-  char buffer[k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChar = 0;
   const char * legend = " P(";
   int legendLength = strlen(legend);
@@ -78,7 +78,7 @@ void GraphController::reloadBannerView() {
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;
   } else {
-    numberOfChar += Complex::convertFloatToText(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    numberOfChar += Complex<float>::convertFloatToText(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   }
   legend = ")  ";
   legendLength = strlen(legend);
@@ -98,7 +98,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(x, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -116,7 +116,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(y, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -129,7 +129,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(slope, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(slope, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -142,7 +142,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(yIntercept, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(yIntercept, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -155,7 +155,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(r, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -168,7 +168,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex::convertFloatToText(r2, buffer+numberOfChar, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<float>::convertFloatToText(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);

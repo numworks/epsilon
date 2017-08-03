@@ -24,18 +24,19 @@ Expression * Round::cloneWithDifferentOperands(Expression** newOperands,
   return r;
 }
 
-Evaluation * Round::privateEvaluate(Context & context, AngleUnit angleUnit) const {
-  Evaluation * f1Entry = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * f2Entry = m_args[1]->evaluate(context, angleUnit);
-  float f1 = f1Entry->toFloat();
-  float f2 = f2Entry->toFloat();
+template<typename T>
+Evaluation<T> * Round::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * f1Entry = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * f2Entry = m_args[1]->evaluate<T>(context, angleUnit);
+  T f1 = f1Entry->toScalar();
+  T f2 = f2Entry->toScalar();
   delete f1Entry;
   delete f2Entry;
   if (isnan(f2) || f2 != (int)f2) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  float err = std::pow(10.0f, (int)f2);
-  return new Complex(Complex::Float(std::round(f1*err)/err));
+  T err = std::pow(10, std::floor(f2));
+  return new Complex<T>(Complex<T>::Float(std::round(f1*err)/err));
 }
 
 }

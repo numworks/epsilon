@@ -56,24 +56,21 @@ Expression * Function::clone() const {
   return this->cloneWithDifferentOperands(m_args, m_numberOfArguments, true);
 }
 
-Complex Function::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  return Complex::Float(NAN);
-}
-
-Evaluation * Function::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T>
+Evaluation<T> * Function::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (m_numberOfArguments != 1) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
-  Complex * operands = new Complex[input->numberOfRows()*input->numberOfColumns()];
+  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Complex<T> * operands = new Complex<T>[input->numberOfRows()*input->numberOfColumns()];
   for (int i = 0; i < input->numberOfOperands(); i++) {
     operands[i] = computeComplex(*input->complexOperand(i), angleUnit);
   }
-  Evaluation * result = nullptr;
+  Evaluation<T> * result = nullptr;
   if (input->numberOfOperands() == 1) {
-    result = new Complex(operands[0]);
+    result = new Complex<T>(operands[0]);
   } else {
-    result = new ComplexMatrix(operands, input->numberOfRows(), input->numberOfColumns());
+    result = new ComplexMatrix<T>(operands, input->numberOfRows(), input->numberOfColumns());
   }
   delete input;
   delete[] operands;

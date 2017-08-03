@@ -41,14 +41,14 @@ void BatteryTestController::viewWillAppear() {
 }
 
 void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryCharging) {
-  char bufferLevel[ContentView::k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char bufferLevel[ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   const char * legend = "Battery level: ";
   int legendLength = strlen(legend);
   strlcpy(bufferLevel, legend, legendLength+1);
-  Complex::convertFloatToText(batteryLevel, bufferLevel+legendLength, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Complex<float>::convertFloatToText(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
-  char bufferCharging[ContentView::k_maxNumberOfCharacters + Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char bufferCharging[ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChars = 0;
   legend = "Battery charging: ";
   legendLength = strlen(legend);

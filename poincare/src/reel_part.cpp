@@ -25,8 +25,9 @@ Expression * ReelPart::cloneWithDifferentOperands(Expression** newOperands,
   return rp;
 }
 
-Complex ReelPart::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  return Complex::Float(c.a());
+template<typename T>
+Complex<T> ReelPart::templatedComputeComplex(const Complex<T> c) const {
+  return Complex<T>::Float(c.a());
 }
 
 }

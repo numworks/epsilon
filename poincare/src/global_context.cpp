@@ -7,8 +7,8 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
-  m_pi(Complex::Float(M_PI)),
-  m_e(Complex::Float(M_E))
+  m_pi(Complex<double>::Float(M_PI)),
+  m_e(Complex<double>::Float(M_E))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -33,8 +33,8 @@ GlobalContext::~GlobalContext() {
   }
 }
 
-Evaluation * GlobalContext::defaultExpression() {
-  static Evaluation * defaultExpression = new Complex(Complex::Float(0.0f));
+Complex<double> * GlobalContext::defaultExpression() {
+  static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
   return defaultExpression;
 }
 
@@ -43,7 +43,7 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
   return index;
 }
 
-const Evaluation * GlobalContext::expressionForSymbol(const Symbol * symbol) {
+const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
@@ -64,7 +64,7 @@ const Evaluation * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) {
+void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
@@ -73,10 +73,12 @@ void GlobalContext::setExpressionForSymbolName(Evaluation * expression, const Sy
       m_matrixExpressions[indexMatrix] = nullptr;
     }
     if (expression != nullptr) {
-      if (expression->numberOfOperands() == 1) {
-        m_matrixExpressions[indexMatrix] = new ComplexMatrix(expression->complexOperand(0), 1, 1);
+      Evaluation<double> * evaluation = expression->evaluate<double>(*this);
+      if (evaluation->numberOfOperands() == 1) {
+        m_matrixExpressions[indexMatrix] = new ComplexMatrix<double>(evaluation->complexOperand(0), 1, 1);
+        delete evaluation;
       } else {
-        m_matrixExpressions[indexMatrix] = expression->clone();
+        m_matrixExpressions[indexMatrix] = (ComplexMatrix<double> *)evaluation;
       }
     }
     return;
@@ -92,11 +94,13 @@ void GlobalContext::setExpressionForSymbolName(Evaluation * expression, const Sy
   if (expression == nullptr) {
     return;
   }
-  if (expression->numberOfOperands() == 1) {
-    m_expressions[index] = new Complex(*(expression->complexOperand(0)));
+  Evaluation<double> * evaluation = expression->evaluate<double>(*this);
+  if (evaluation->numberOfOperands() == 1) {
+    m_expressions[index] = new Complex<double>(*(evaluation->complexOperand(0)));
   } else {
-    m_expressions[index] = new Complex(Complex::Float(NAN));
+    m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
   }
+  delete evaluation;
 }
 
 }

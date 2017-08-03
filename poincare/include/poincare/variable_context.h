@@ -6,14 +6,15 @@
 
 namespace Poincare {
 
+template<typename T>
 class VariableContext : public Context {
 public:
   VariableContext(char name, Context * parentContext = nullptr);
-  void setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) override;
-  const Evaluation * expressionForSymbol(const Symbol * symbol) override;
+  void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
+  const Expression * expressionForSymbol(const Symbol * symbol) override;
 private:
   char m_name;
-  Complex m_value;
+  Complex<T> m_value;
   Context * m_parentContext;
 };
 

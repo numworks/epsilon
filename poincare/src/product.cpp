@@ -26,17 +26,18 @@ Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
   return p;
 }
 
-float Product::emptySequenceValue() const {
-  return 1.0f;
+int Product::emptySequenceValue() const {
+  return 1;
 }
 
 ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
   return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout);
 }
 
-Evaluation * Product::evaluateWithNextTerm(Evaluation * a, Evaluation * b) const {
+template<typename T>
+Evaluation<T> * Product::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
   if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex(Multiplication::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+    return new Complex<T>(Multiplication::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
   }
   if (a->numberOfOperands() == 1) {
     return Multiplication::computeOnComplexAndMatrix(a->complexOperand(0), b);

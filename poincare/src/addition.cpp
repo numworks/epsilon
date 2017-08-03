@@ -26,16 +26,19 @@ ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return layout;
 }
 
-Complex Addition::compute(const Complex c, const Complex d) {
-  return Complex::Cartesian(c.a()+d.a(), c.b()+d.b());
+template<typename T>
+Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
+  return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-Evaluation * Addition::computeOnMatrices(Evaluation * m, Evaluation * n) {
+template<typename T>
+Evaluation<T> * Addition::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
   Addition a;
-  return a.computeOnNumericalMatrices(m,n);
+  return a.computeOnComplexMatrices(m,n);
 }
 
-Evaluation * Addition::computeOnComplexAndMatrix(const Complex * c, Evaluation * m) {
+template<typename T>
+Evaluation<T> * Addition::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
   Addition a;
   return a.computeOnComplexAndComplexMatrix(c,m);
 }
@@ -48,5 +51,14 @@ Expression * Addition::cloneWithDifferentOperands(Expression** newOperands,
 bool Addition::isCommutative() const {
   return true;
 }
+
+template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
+template Poincare::Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
+
+template Poincare::Evaluation<float>* Poincare::Addition::computeOnMatrices<float>(Poincare::Evaluation<float>*, Poincare::Evaluation<float>*);
+template Poincare::Evaluation<double>* Poincare::Addition::computeOnMatrices<double>(Poincare::Evaluation<double>*, Poincare::Evaluation<double>*);
+
+template Poincare::Evaluation<float>* Poincare::Addition::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);
+template Poincare::Evaluation<double>* Poincare::Addition::computeOnComplexAndMatrix<double>(Poincare::Complex<double> const*, Poincare::Evaluation<double>*);
 
 }

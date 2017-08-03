@@ -10,7 +10,7 @@ LocalContext::LocalContext(GlobalContext * parentContext, CalculationStore * cal
 {
 }
 
-Evaluation * LocalContext::ansValue() {
+Evaluation<double> * LocalContext::ansValue() {
   if (m_calculationStore->numberOfCalculations() == 0) {
     return m_parentContext->defaultExpression();
   }
@@ -18,13 +18,13 @@ Evaluation * LocalContext::ansValue() {
   return lastCalculation->output(m_parentContext);
 }
 
-void LocalContext::setExpressionForSymbolName(Evaluation * expression, const Symbol * symbol) {
+void LocalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
   if (symbol->name() != Symbol::SpecialSymbols::Ans) {
     m_parentContext->setExpressionForSymbolName(expression, symbol);
   }
 }
 
-const Evaluation * LocalContext::expressionForSymbol(const Symbol * symbol) {
+const Expression * LocalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::Ans) {
     return ansValue();
   } else {

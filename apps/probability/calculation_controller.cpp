@@ -65,8 +65,8 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 }
 
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
-  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Complex::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  Complex<double>::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_calculationCell[index].setText(buffer);
 }
 
@@ -218,7 +218,7 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField, 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
-  float floatBody = Expression::approximate(text, *globalContext);
+  double floatBody = Expression::approximate<double>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
@@ -286,8 +286,8 @@ void CalculationController::updateTitle() {
     m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Complex::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+    Complex<double>::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';

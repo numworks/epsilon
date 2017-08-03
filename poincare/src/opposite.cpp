@@ -42,25 +42,28 @@ Expression * Opposite::clone() const {
   return this->cloneWithDifferentOperands((Expression**)&m_operand, 1, true);
 }
 
-Complex Opposite::compute(const Complex c) {
-  return Complex::Cartesian(-c.a(), -c.b());
+template<typename T>
+Complex<T> Opposite::compute(const Complex<T> c) {
+  return Complex<T>::Cartesian(-c.a(), -c.b());
 }
 
-Evaluation * Opposite::computeOnMatrix(Evaluation * m) {
-  Complex * operands = new Complex[m->numberOfRows() * m->numberOfColumns()];
+template<typename T>
+Evaluation<T> * Opposite::computeOnMatrix(Evaluation<T> * m) {
+  Complex<T> * operands = new Complex<T>[m->numberOfRows() * m->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    Complex entry = *(m->complexOperand(i));
-    operands[i] = Complex::Cartesian(-entry.a(), -entry.b());
+    Complex<T> entry = *(m->complexOperand(i));
+    operands[i] = Complex<T>::Cartesian(-entry.a(), -entry.b());
   }
-  Evaluation * matrix = new ComplexMatrix(operands, m->numberOfColumns(), m->numberOfRows());
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, m->numberOfColumns(), m->numberOfRows());
   delete[] operands;
   return matrix;
 }
 
-Evaluation * Opposite::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * operandEvalutation = m_operand->evaluate(context, angleUnit);
+template<typename T>
+Evaluation<T> * Opposite::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * operandEvalutation = m_operand->evaluate<T>(context, angleUnit);
   if (operandEvalutation->numberOfRows() == 1 && operandEvalutation->numberOfColumns() == 1) {
-    return new Complex(compute(*(operandEvalutation->complexOperand(0))));
+    return new Complex<T>(compute(*(operandEvalutation->complexOperand(0))));
   }
   return computeOnMatrix(operandEvalutation);
 }
@@ -87,3 +90,6 @@ Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 }
+
+template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>);
+template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>);

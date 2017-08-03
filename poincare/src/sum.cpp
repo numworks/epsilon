@@ -26,17 +26,18 @@ Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-float Sum::emptySequenceValue() const {
-  return 0.0f;
+int Sum::emptySequenceValue() const {
+  return 0;
 }
 
 ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
   return new SumLayout(subscriptLayout, superscriptLayout, argumentLayout);
 }
 
-Evaluation * Sum::evaluateWithNextTerm(Evaluation * a, Evaluation * b) const {
+template<typename T>
+Evaluation<T> * Sum::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
   if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex(Addition::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+    return new Complex<T>(Addition::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
   }
   if (a->numberOfOperands() == 1) {
     return Addition::computeOnComplexAndMatrix(a->complexOperand(0), b);

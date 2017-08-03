@@ -406,12 +406,12 @@ void TextField::deleteCharPrecedingCursor() {
 }
 
 bool TextField::cursorIsBeforeScrollingFrame() {
-  return cursorLocation() * m_contentView.charWidth() < m_manualScrolling;
+  return cursorLocation() * m_contentView.charWidth() < m_manualScrollingOffset.x();
 }
 
 bool TextField::cursorIsAfterScrollingFrame() {
   KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-  return cursorLocation() * m_contentView.charWidth()+cursorWidth - m_manualScrolling > bounds().width();
+  return cursorLocation() * m_contentView.charWidth()+cursorWidth - m_manualScrollingOffset.x() > bounds().width();
 }
 
 void TextField::scrollToCursor() {
@@ -419,26 +419,23 @@ void TextField::scrollToCursor() {
     return;
   }
   if (cursorIsBeforeScrollingFrame()) {
-    m_manualScrolling = cursorLocation() * m_contentView.charWidth();
-    setContentOffset(KDPoint(m_manualScrolling, 0));
+    m_manualScrollingOffset = KDPoint(cursorLocation() * m_contentView.charWidth(), 0);
+    setContentOffset(m_manualScrollingOffset);
   }
   if (cursorIsAfterScrollingFrame()) {
     KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-    m_manualScrolling =  cursorLocation() * m_contentView.charWidth()+cursorWidth - bounds().width();
-    setContentOffset(KDPoint(m_manualScrolling, 0));
+    m_manualScrollingOffset = KDPoint(cursorLocation() * m_contentView.charWidth()+cursorWidth - bounds().width(), 0);
+    setContentOffset(m_manualScrollingOffset);
   }
 }
 
 void TextField::scrollToAvoidWhiteSpace() {
-  if (m_manualScrolling == 0 || m_manualScrolling + bounds().width() <= textLength() * m_contentView.charWidth()) {
+  if (m_manualScrollingOffset.x() == 0 || m_manualScrollingOffset.x() + bounds().width() <= textLength() * m_contentView.charWidth()) {
     return;
   }
   KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-  m_manualScrolling = textLength() * m_contentView.charWidth()+cursorWidth-bounds().width();
-  if (m_manualScrolling < 0) {
-    m_manualScrolling = 0;
-  }
-  setContentOffset(KDPoint(m_manualScrolling, 0));
+  m_manualScrollingOffset = KDPoint(min(textLength() * m_contentView.charWidth()+cursorWidth-bounds().width(), 0), 0);
+  setContentOffset(m_manualScrollingOffset);
 }
 
 

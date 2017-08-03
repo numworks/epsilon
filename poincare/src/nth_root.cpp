@@ -34,23 +34,25 @@ ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMod
   return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat), m_args[1]->createLayout(floatDisplayMode, complexFormat));
 }
 
-Evaluation * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * base = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * index = m_args[1]->evaluate(context, angleUnit);
-  Complex result = Complex::Float(NAN);
+template<typename T>
+Evaluation<T> * NthRoot::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * base = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * index = m_args[1]->evaluate<T>(context, angleUnit);
+  Complex<T> result = Complex<T>::Float(NAN);
   if (base->numberOfOperands() == 1 || index->numberOfOperands() == 1) {
     result = compute(*(base->complexOperand(0)), *(index->complexOperand(0)));
   }
   delete base;
   delete index;
-  return new Complex(result);
+  return new Complex<T>(result);
 }
 
-Complex NthRoot::compute(const Complex c, const Complex d) const {
-  if (c.b() == 0.0f && d.b() == 0.0f) {
-    return Complex::Float(std::pow(c.a(), 1.0f/d.a()));
+template<typename T>
+Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) const {
+  if (c.b() == 0 && d.b() == 0) {
+    return Complex<T>::Float(std::pow(c.a(), 1/d.a()));
   }
-  Complex invIndex = Fraction::compute(Complex::Float(1.0f), d);
+  Complex<T> invIndex = Fraction::compute(Complex<T>::Float(1), d);
   return Power::compute(c, invIndex);
 }
 

@@ -24,8 +24,9 @@ Expression * ImaginaryPart::cloneWithDifferentOperands(Expression** newOperands,
   return ip;
 }
 
-Complex ImaginaryPart::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  return Complex::Float(c.b());
+template<typename T>
+Complex<T> ImaginaryPart::templatedComputeComplex(const Complex<T> c) const {
+  return Complex<T>::Float(c.b());
 }
 
 }

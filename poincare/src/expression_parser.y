@@ -148,14 +148,14 @@ lstData:
 
 number:
   DIGITS { $$ = new Poincare::Integer($1.address, false); }
-  | DOT DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
-  | DIGITS DOT DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
-  | DOT DIGITS EE DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
-  | DIGITS DOT DIGITS EE DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
-  | DIGITS EE DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, nullptr, 0, $3.address, $3.length, false); }
-  | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
-  | DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex($1.address, $1.length, false, nullptr, 0, $4.address, $4.length, true); }
+  | DOT DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
+  | DIGITS DOT DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
+  | DOT DIGITS EE DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
+  | DIGITS DOT DIGITS EE DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
+  | DIGITS EE DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, nullptr, 0, $3.address, $3.length, false); }
+  | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
+  | DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, nullptr, 0, $4.address, $4.length, true); }
 
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }
@@ -169,7 +169,7 @@ exp:
   UNDEFINED        { $$ = $1; }
   | exp BANG       { $$ = new Poincare::Factorial($1, false); }
   | number             { $$ = $1; }
-  | ICOMPLEX         { $$ = new Poincare::Complex(Poincare::Complex::Cartesian(0.0f, 1.0f)); }
+  | ICOMPLEX         { $$ = new Poincare::Complex<double>(Poincare::Complex<double>::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }

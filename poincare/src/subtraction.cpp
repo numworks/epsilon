@@ -33,15 +33,19 @@ ExpressionLayout * Subtraction::privateCreateLayout(FloatDisplayMode floatDispla
   return new HorizontalLayout(children_layouts, 3);
 }
 
-Complex Subtraction::compute(const Complex c, const Complex d) {
-  return Complex::Cartesian(c.a()-d.a(), c.b() - d.b());
+template<typename T>
+Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
+  return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
 }
 
-Evaluation * Subtraction::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * m) const {
-  Evaluation * operand = computeOnComplexMatrixAndComplex(m, c);
-  Evaluation * result = Opposite::computeOnMatrix(operand);
+template<typename T> Evaluation<T> * Subtraction::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * m) const {
+  Evaluation<T> * operand = computeOnComplexMatrixAndComplex(m, c);
+  Evaluation<T> * result = Opposite::computeOnMatrix(operand);
   delete operand;
   return result;
 }
 
 }
+
+template Poincare::Complex<float> Poincare::Subtraction::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
+template Poincare::Complex<double> Poincare::Subtraction::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);

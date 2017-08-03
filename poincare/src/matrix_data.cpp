@@ -38,8 +38,8 @@ MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numb
   }
 }
 
-Complex * MatrixData::defaultExpression() {
-  static Complex * defaultExpression = new Complex(Complex::Float(0.0f));
+Complex<double> * MatrixData::defaultExpression() {
+  static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
   return defaultExpression;
 }
 

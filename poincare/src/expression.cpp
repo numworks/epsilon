@@ -59,30 +59,30 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
   }
 }
 
-Evaluation * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
   switch (angleUnit) {
     case AngleUnit::Default:
-      return privateEvaluate(context, Preferences::sharedPreferences()->angleUnit());
+      return privateEvaluate(T(), context, Preferences::sharedPreferences()->angleUnit());
     default:
-      return privateEvaluate(context, angleUnit);
+      return privateEvaluate(T(), context, angleUnit);
   }
 }
 
-float Expression::approximate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * evaluation = evaluate(context, angleUnit);
-  float result = evaluation->toFloat();
+template<typename T> T Expression::approximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * evaluation = evaluate<T>(context, angleUnit);
+  T result = evaluation->toScalar();
   delete evaluation;
   return result;
 }
 
-float Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
+template<typename T> T Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
   if (exp == nullptr) {
     return NAN;
   }
-  Evaluation * evaluation = exp->evaluate(context, angleUnit);
+  Evaluation<T> * evaluation = exp->evaluate<T>(context, angleUnit);
   delete exp;
-  float result = evaluation->toFloat();
+  T result = evaluation->toScalar();
   delete evaluation;
   return result;
 }
@@ -247,3 +247,10 @@ bool Expression::shouldStopProcessing() const {
 }
 
 }
+
+template Poincare::Evaluation<double> * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Evaluation<float> * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
+template double Poincare::Expression::approximate<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template float Poincare::Expression::approximate<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template double Poincare::Expression::approximate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template float Poincare::Expression::approximate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;

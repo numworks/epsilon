@@ -26,12 +26,13 @@ Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOpera
   return ht;
 }
 
-Complex HyperbolicTangent::compute(const Complex c) {
-  if (c.b() == 0.0f) {
-    return Complex::Float(std::tanh(c.a()));
+template<typename T>
+Complex<T> HyperbolicTangent::compute(const Complex<T> c) {
+  if (c.b() == 0) {
+    return Complex<T>::Float(std::tanh(c.a()));
   }
-  Complex arg1 = HyperbolicSine::compute(c);
-  Complex arg2 = HyperbolicCosine::compute(c);
+  Complex<T> arg1 = HyperbolicSine::compute(c);
+  Complex<T> arg2 = HyperbolicCosine::compute(c);
   return Fraction::compute(arg1, arg2);
 }
 

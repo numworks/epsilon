@@ -23,7 +23,7 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::approximate(text, *globalContext);
+  float floatBody = Expression::approximate<float>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
@@ -79,7 +79,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     // Special case 1: last row
     if (j == numberOfRows() - 1) {
       /* Display an empty line only if there is enough space for a new element in
@@ -93,7 +93,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     }
     if (!myEditableValueCell->isEditing()) {
       myCell->setEven(j%2 == 0);
-      Complex::convertFloatToText(dataAtLocation(i, j), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
+      Complex<float>::convertFloatToText(dataAtLocation(i, j), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
       myEditableValueCell->setText(buffer);
     }
     return;

@@ -43,8 +43,9 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat));
 }
 
-Evaluation * Parenthesis::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  return m_operand->evaluate(context, angleUnit);
+template<typename T>
+Evaluation<T> * Parenthesis::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  return m_operand->evaluate<T>(context, angleUnit);
 }
 
 Expression::Type Parenthesis::type() const {

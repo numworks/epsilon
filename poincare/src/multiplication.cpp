@@ -32,36 +32,43 @@ Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands
   return new Multiplication(newOperands, cloneOperands);
 }
 
-Complex Multiplication::compute(const Complex c, const Complex d) {
-  return Complex::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
+template<typename T>
+Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
+  return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
 }
 
-Evaluation * Multiplication::computeOnComplexAndMatrix(const Complex * c, Evaluation * m) {
+template<typename T>
+Evaluation<T> * Multiplication::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
   Multiplication mul;
   return mul.computeOnComplexAndComplexMatrix(c, m);
 }
 
-Evaluation * Multiplication::computeOnMatrices(Evaluation * m, Evaluation * n) {
+template<typename T>
+Evaluation<T> * Multiplication::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
   if (m->numberOfColumns() != n->numberOfRows()) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex * operands = new Complex[m->numberOfRows()*n->numberOfColumns()];
+  Complex<T> * operands = new Complex<T>[m->numberOfRows()*n->numberOfColumns()];
   for (int i = 0; i < m->numberOfRows(); i++) {
     for (int j = 0; j < n->numberOfColumns(); j++) {
-      float a = 0.0f;
-      float b = 0.0f;
+      T a = 0.0f;
+      T b = 0.0f;
       for (int k = 0; k < m->numberOfColumns(); k++) {
-        Complex mEntry = *(m->complexOperand(i*m->numberOfColumns()+k));
-        Complex nEntry = *(n->complexOperand(k*n->numberOfColumns()+j));
+        Complex<T> mEntry = *(m->complexOperand(i*m->numberOfColumns()+k));
+        Complex<T> nEntry = *(n->complexOperand(k*n->numberOfColumns()+j));
         a += mEntry.a()*nEntry.a() - mEntry.b()*nEntry.b();
         b += mEntry.b()*nEntry.a() + mEntry.a()*nEntry.b();
       }
-      operands[i*n->numberOfColumns()+j] = Complex::Cartesian(a, b);
+      operands[i*n->numberOfColumns()+j] = Complex<T>::Cartesian(a, b);
     }
   }
-  Evaluation * result = new ComplexMatrix(operands, n->numberOfColumns(), m->numberOfRows());
+  Evaluation<T> * result = new ComplexMatrix<T>(operands, n->numberOfColumns(), m->numberOfRows());
   delete[] operands;
   return result;
 }
 
+template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);
+template Poincare::Evaluation<double>* Poincare::Multiplication::computeOnComplexAndMatrix<double>(Poincare::Complex<double> const*, Poincare::Evaluation<double>*);
 }
+template Poincare::Complex<float> Poincare::Multiplication::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
+template Poincare::Complex<double> Poincare::Multiplication::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);

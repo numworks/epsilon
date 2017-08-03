@@ -44,11 +44,12 @@ Symbol::Symbol(char name) :
 {
 }
 
-Evaluation * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T>
+Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->clone();
+    return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
   }
-  return new Complex(Complex::Float(NAN));
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
 Expression::Type Symbol::type() const {

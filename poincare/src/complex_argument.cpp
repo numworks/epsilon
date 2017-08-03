@@ -25,8 +25,9 @@ Expression * ComplexArgument::cloneWithDifferentOperands(Expression** newOperand
   return ca;
 }
 
-Complex ComplexArgument::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  return Complex::Float(c.th());
+template<typename T>
+Complex<T> ComplexArgument::templatedComputeComplex(const Complex<T> c) const {
+  return Complex<T>::Float(c.th());
 }
 
 }

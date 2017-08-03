@@ -13,7 +13,7 @@ extern "C" {
 namespace Poincare {
 
 Tangent::Tangent() :
-  TrigonometricFunction("tan")
+  Function("tan")
 {
 }
 
@@ -29,17 +29,14 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-float Tangent::computeForRadianReal(float x) const {
-  return std::tan(x);
-}
-
-Complex Tangent::privateCompute(const Complex c, AngleUnit angleUnit) const {
-  Complex result = Fraction::compute(Sine::compute(c), Cosine::compute(c));
+template<typename T>
+Complex<T> Tangent::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
+  Complex<T> result = Fraction::compute(Sine::compute(c, angleUnit), Cosine::compute(c, angleUnit));
   if (!isnan(result.a()) && !isnan(result.b())) {
     return result;
   }
-  Complex tanh = HyperbolicTangent::compute(Multiplication::compute(Complex::Cartesian(0.0f, -1.0f), c));
-  return Multiplication::compute(Complex::Cartesian(0.0f, 1.0f), tanh);
+  Complex<T> tanh = HyperbolicTangent::compute(Multiplication::compute(Complex<T>::Cartesian(0, -1), c));
+  return Multiplication::compute(Complex<T>::Cartesian(0, 1), tanh);
 }
 
 }

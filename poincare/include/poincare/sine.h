@@ -1,22 +1,24 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/trigonometric_function.h>
+#include <poincare/function.h>
 
 namespace Poincare {
 
-class Sine : public TrigonometricFunction {
+class Sine : public Function {
 public:
   Sine();
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
-  static Complex compute(const Complex c);
+  template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
-  Complex privateCompute(const Complex c, AngleUnit angleUnit) const override {
-    return compute(c);
+  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
+    return compute(c, angleUnit);
   }
-  float computeForRadianReal(float x) const override;
+  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
+    return compute(c, angleUnit);
+  }
 };
 
 }

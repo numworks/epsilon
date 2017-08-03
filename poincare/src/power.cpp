@@ -31,69 +31,72 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
-Complex Power::compute(const Complex c, const Complex d) {
-  if (d.b() != 0.0f) {
+template<typename T>
+Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
+  if (d.b() != 0) {
     /* First case c and d is complex */
-    if (c.b() != 0.0f || c.a() <= 0) {
-      return Complex::Float(NAN);
+    if (c.b() != 0 || c.a() <= 0) {
+      return Complex<T>::Float(NAN);
     }
     /* Second case only d is complex */
-    float radius = std::pow(c.a(), d.a());
-    float theta = d.b()*std::log(c.a());
-    return Complex::Polar(radius, theta);
+    T radius = std::pow(c.a(), d.a());
+    T theta = d.b()*std::log(c.a());
+    return Complex<T>::Polar(radius, theta);
   }
   /* Third case only c is complex */
-  float radius = std::pow(c.r(), d.a());
+  T radius = std::pow(c.r(), d.a());
+  // TODO: is it still needed with double?
   if (c.b() == 0 && d.a() == std::round(d.a())) {
     /* We handle the case "c float and d integer" separatly to avoid getting
      * complex result due to float representation: a float power an integer is
      * always real. */
-    return Complex::Cartesian(radius, 0.0f);
+    return Complex<T>::Cartesian(radius, 0);
   }
-  if (c.a() < 0 && c.b() == 0 && d.a() == 0.5f) {
+  if (c.a() < 0 && c.b() == 0 && d.a() == 0.5) {
     /* We handle the case "c negative float and d = 1/2" separatly to avoid
      * getting wrong result due to float representation: the squared root of
      * a negative float is always a pure imaginative. */
-    return Complex::Cartesian(0.0f, radius);
+    return Complex<T>::Cartesian(0, radius);
   }
   /* Third case only c is complex */
-  float theta = d.a()*c.th();
-  return Complex::Polar(radius, theta);
+  T theta = d.a()*c.th();
+  return Complex<T>::Polar(radius, theta);
 }
 
-Evaluation * Power::computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * c) const {
+template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) const {
  if (m->numberOfColumns() != m->numberOfRows()) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  float power = c->toFloat();
+  T power = d->toScalar();
   if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  if (power < 0.0f) {
-    Evaluation * inverse = m->createInverse();
-    Complex minusC = Opposite::compute(*c);
-    Evaluation * result = Power::computeOnComplexMatrixAndComplex(inverse, &minusC);
+  if (power < 0) {
+    Evaluation<T> * inverse = m->createInverse();
+    Complex<T> minusC = Opposite::compute(*d);
+    Evaluation<T> * result = Power::computeOnComplexMatrixAndComplex(inverse, &minusC);
     delete inverse;
     return result;
   }
-  Evaluation * result = ComplexMatrix::createIdentity(m->numberOfRows());
+  Evaluation<T> * result = ComplexMatrix<T>::createIdentity(m->numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (shouldStopProcessing()) {
       delete result;
-      return new Complex(Complex::Float(NAN));
+      return new Complex<T>(Complex<T>::Float(NAN));
     }
     result = Multiplication::computeOnMatrices(result, m);
   }
   return result;
 }
 
-Evaluation * Power::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * m) const {
-  return new Complex(Complex::Float(NAN));
+template<typename T> Evaluation<T> * Power::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * n) const {
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
-Evaluation * Power::computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const {
-  return new Complex(Complex::Float(NAN));
+template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrices(Evaluation<T> * m, Evaluation<T> * n) const {
+
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
 }

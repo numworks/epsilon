@@ -129,7 +129,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
   // The cell is not a title cell and not editable
   if (j > 0 && i > 0) {
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     // Special case: last row
     if (j == numberOfRows() - 1) {
       int numberOfIntervalElements = m_interval->numberOfElements();
@@ -143,7 +143,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
     float x = m_interval->element(j-1);
-    Complex::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<float>::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }

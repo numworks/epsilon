@@ -114,15 +114,15 @@ float CurveView::floatToPixel(Axis axis, float f) const {
 }
 
 void CurveView::computeLabels(Axis axis) {
-  char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float step = gridUnit(axis);
   for (int index = 0; index < numberOfLabels(axis); index++) {
     float labelValue = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)))+index*2.0f*step;
     if (labelValue < step && labelValue > -step) {
       labelValue = 0.0f;
     }
-    Complex::convertFloatToText(labelValue, buffer,
-      Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
+    Complex<float>::convertFloatToText(labelValue, buffer,
+      PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
       Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     //TODO: check for size of label?
     strlcpy(label(axis, index), buffer, strlen(buffer)+1);

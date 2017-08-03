@@ -12,9 +12,11 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
 private:
-  Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
+  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Complex compute(const Complex c, const Complex d) const;
+  template<typename T> Complex<T> compute(const Complex<T> c, const Complex<T> d) const;
 };
 
 }

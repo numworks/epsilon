@@ -5,24 +5,28 @@
 
 namespace Poincare {
 
-class ComplexMatrix : public Evaluation {
+template<typename T>
+class ComplexMatrix : public Evaluation<T> {
 public:
-  ComplexMatrix(const Complex * complexes, int numberOfRows, int numberOfColumns);
+  ComplexMatrix(const Complex<T> * complexes, int numberOfRows, int numberOfColumns);
   ~ComplexMatrix();
   ComplexMatrix(const ComplexMatrix& other) = delete;
   ComplexMatrix(ComplexMatrix&& other) = delete;
   ComplexMatrix& operator=(const ComplexMatrix& other) = delete;
   ComplexMatrix& operator=(ComplexMatrix&& other) = delete;
-  float toFloat() const override;
-  const Complex * complexOperand(int i) const override;
+  T toScalar() const override;
+  const Complex<T> * complexOperand(int i) const override;
   int numberOfRows() const override;
   int numberOfColumns() const override;
-  ComplexMatrix * clone() const override;
-  ComplexMatrix * cloneWithDifferentOperands(Expression** newOperands,
+  ComplexMatrix<T> * clone() const override;
+  ComplexMatrix<T> * cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
-  static Evaluation * createIdentity(int dim);
+  static Evaluation<T> * createIdentity(int dim);
 private:
-  Complex * m_values;
+  Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Evaluation<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  Complex<T> * m_values;
   int m_numberOfRows;
   int m_numberOfColumns;
 };

@@ -17,7 +17,7 @@ public:
 protected:
   char * label(Axis axis, int index) const override;
 private:
-  char m_labels[k_maxNumberOfXLabels][Poincare::Complex::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float evaluateModelWithParameter(Model * law, float abscissa) const override;
   Law * m_law;
   Calculation * m_calculation;

@@ -23,16 +23,17 @@ Expression * ArcSine::cloneWithDifferentOperands(Expression** newOperands,
   return s;
 }
 
-Complex ArcSine::computeComplex(const Complex c, AngleUnit angleUnit) const {
+template<typename T>
+Complex<T> ArcSine::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
   assert(angleUnit != AngleUnit::Default);
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  float result = std::asin(c.a());
+  T result = std::asin(c.a());
   if (angleUnit == AngleUnit::Degree) {
-    return Complex::Float(result*180.0f/M_PI);
+    return Complex<T>::Float(result*180/M_PI);
   }
-  return Complex::Float(result);
+  return Complex<T>::Float(result);
 }
 
 }

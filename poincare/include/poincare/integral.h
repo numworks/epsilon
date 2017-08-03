@@ -13,21 +13,24 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-  Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
+  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  template<typename T>
   struct DetailedResult
   {
-    float integral;
-    float absoluteError;
+    T integral;
+    T absoluteError;
   };
   constexpr static int k_maxNumberOfIterations = 100;
 #ifdef LAGRANGE_METHOD
-  float lagrangeGaussQuadrature(float a, float b, VariableContext xContext, AngleUnit angleUnit) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #else
-  DetailedResult kronrodGaussQuadrature(float a, float b, VariableContext xContext, AngleUnit angleUnit) const;
-  float adaptiveQuadrature(float a, float b, float eps, int numberOfIterations, VariableContext xContext, AngleUnit angleUnit) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
+  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #endif
-  float functionValueAtAbscissa(float x, VariableContext xcontext, AngleUnit angleUnit) const;
+  template<typename T> T functionValueAtAbscissa(T x, VariableContext<T> xcontext, AngleUnit angleUnit) const;
 };
 
 }

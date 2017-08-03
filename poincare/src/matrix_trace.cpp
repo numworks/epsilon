@@ -24,9 +24,10 @@ Expression * MatrixTrace::cloneWithDifferentOperands(Expression** newOperands,
   return t;
 }
 
-Evaluation * MatrixTrace::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * result = input->createTrace();
+template<typename T>
+Evaluation<T> * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * result = input->createTrace();
   delete input;
   return result;
 }

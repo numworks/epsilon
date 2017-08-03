@@ -26,28 +26,29 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), m_args[2]->createLayout(floatDisplayMode, complexFormat), m_args[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
-Evaluation * Sequence::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * aInput = m_args[1]->evaluate(context, angleUnit);
-  Evaluation * bInput = m_args[2]->evaluate(context, angleUnit);
-  float start = aInput->toFloat();
-  float end = bInput->toFloat();
+template<typename T>
+Evaluation<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * aInput = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * bInput = m_args[2]->evaluate<T>(context, angleUnit);
+  T start = aInput->toScalar();
+  T end = bInput->toScalar();
   delete aInput;
   delete bInput;
   if (isnan(start) || isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  VariableContext nContext = VariableContext('n', &context);
+  VariableContext<T> nContext = VariableContext<T>('n', &context);
   Symbol nSymbol = Symbol('n');
-  Evaluation * result = new Complex(Complex::Float(emptySequenceValue()));
+  Evaluation<T> * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
   for (int i = (int)start; i <= (int)end; i++) {
     if (shouldStopProcessing()) {
       delete result;
-      return new Complex(Complex::Float(NAN));
+      return new Complex<T>(Complex<T>::Float(NAN));
     }
-    Complex iExpression = Complex::Float(i);
+    Complex<T> iExpression = Complex<T>::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
-    Evaluation * expression = m_args[0]->evaluate(nContext, angleUnit);
-    Evaluation * newResult = evaluateWithNextTerm(result, expression);
+    Evaluation<T> * expression = m_args[0]->evaluate<T>(nContext, angleUnit);
+    Evaluation<T> * newResult = evaluateWithNextTerm(result, expression);
     delete result;
     delete expression;
     result = newResult;

@@ -5,22 +5,22 @@
 
 namespace Poincare {
 
+template<class T>
 class Complex;
 
+template<typename T>
 class Evaluation : public Matrix {
 public:
-  virtual float toFloat() const = 0;
+  virtual T toScalar() const = 0;
   Type type() const override;
   bool hasValidNumberOfArguments() const override;
   virtual const Expression * operand(int i) const override;
-  virtual const Complex * complexOperand(int i) const = 0;
-  virtual Evaluation * clone() const override = 0;
-  virtual Evaluation * createTrace() const;
-  virtual Evaluation * createDeterminant() const;
-  virtual Evaluation * createInverse() const;
-  Evaluation * createTranspose() const;
-private:
-  Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  virtual const Complex<T> * complexOperand(int i) const = 0;
+  virtual Evaluation<T> * clone() const override = 0;
+  virtual Evaluation<T> * createTrace() const;
+  virtual Evaluation<T> * createDeterminant() const;
+  virtual Evaluation<T> * createInverse() const;
+  Evaluation<T> * createTranspose() const;
 };
 
 }

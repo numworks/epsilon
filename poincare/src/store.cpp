@@ -73,14 +73,13 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 }
 
 
-Evaluation * Store::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * valueEvaluation = m_value->evaluate(context, angleUnit);
-  context.setExpressionForSymbolName(valueEvaluation, m_symbol);
-  delete valueEvaluation;
+template<typename T>
+Evaluation<T> * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  context.setExpressionForSymbolName(m_value, m_symbol);
   if (context.expressionForSymbol(m_symbol) != nullptr) {
-    return context.expressionForSymbol(m_symbol)->clone();
+    return context.expressionForSymbol(m_symbol)->evaluate<T>(context, angleUnit);
   }
-  return new Complex(Complex::Float(NAN));
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
 }

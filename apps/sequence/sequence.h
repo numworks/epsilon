@@ -2,6 +2,7 @@
 #define SEQUENCE_SEQUENCE_H
 
 #include "../shared/function.h"
+#include <assert.h>
 
 namespace Sequence {
 
@@ -37,15 +38,21 @@ public:
   Poincare::ExpressionLayout * secondInitialConditionName();
   bool isDefined() override;
   bool isEmpty() override;
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const override;
-  float sumOfTermsBetweenAbscissa(float start, float end, Poincare::Context * context);
+  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
+    return templatedEvaluateAtAbscissa(x, context);
+  }
+  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
+    return templatedEvaluateAtAbscissa(x, context);
+  }
+  double sumOfTermsBetweenAbscissa(double start, double end, Poincare::Context * context);
   void tidy() override;
 private:
   constexpr static int k_maxRecurrentRank = 10000;
-  constexpr static float k_maxNumberOfTermsInSum = 100000.0f;
+  constexpr static double k_maxNumberOfTermsInSum = 100000.0;
   constexpr static size_t k_dataLengthInBytes = (3*TextField::maxBufferSize()+3)*sizeof(char)+1;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The sequence data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   char symbol() const override;
+  template<typename T> T templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const;
   Type m_type;
   char m_firstInitialConditionText[TextField::maxBufferSize()];
   char m_secondInitialConditionText[TextField::maxBufferSize()];
@@ -63,8 +70,43 @@ private:
    * superior rank k > n+1 is called, we avoid iterating from 0 but can start
    * from n. */
   constexpr static int k_maxRecurrenceDepth = 2;
-  mutable int m_indexBuffer[k_maxRecurrenceDepth];
-  mutable float m_buffer[k_maxRecurrenceDepth];
+  mutable int m_indexBufferFloat[k_maxRecurrenceDepth];
+  mutable int m_indexBufferDouble[k_maxRecurrenceDepth];
+  mutable float m_bufferFloat[k_maxRecurrenceDepth];
+  mutable double m_bufferDouble[k_maxRecurrenceDepth];
+  void resetBuffer() const;
+  template<typename T> void setBufferValue(T value, int i) const {
+    assert(i >= 0 && i < k_maxRecurrentRank);
+    if (sizeof(T) == sizeof(float)) {
+      m_bufferFloat[i] = value;
+    } else {
+      m_bufferDouble[i] = value;
+    }
+  }
+  template<typename T> void setBufferIndexValue(int index, int i) const {
+    assert(i >= 0 && i < k_maxRecurrentRank);
+    if (sizeof(T) == sizeof(float)) {
+      m_indexBufferFloat[i] = index;
+    } else {
+      m_indexBufferDouble[i] = index;
+    }
+  }
+  template<typename T> T bufferValue(int i) const {
+    assert(i >= 0 && i < k_maxRecurrentRank);
+    if (sizeof(T) == sizeof(float)) {
+      return m_bufferFloat[i];
+    } else {
+      return m_bufferDouble[i];
+    }
+  }
+  template<typename T> int indexBuffer(int i) const {
+    assert(i >= 0 && i < k_maxRecurrentRank);
+    if (sizeof(T) == sizeof(float)) {
+      return m_indexBufferFloat[i];
+    } else {
+      return m_indexBufferDouble[i];
+    }
+  }
 };
 
 }

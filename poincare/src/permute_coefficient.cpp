@@ -25,25 +25,26 @@ Expression * PermuteCoefficient::cloneWithDifferentOperands(Expression** newOper
   return pc;
 }
 
-Evaluation * PermuteCoefficient::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * nInput = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * kInput = m_args[1]->evaluate(context, angleUnit);
-  float n = nInput->toFloat();
-  float k = kInput->toFloat();
+template<typename T>
+Evaluation<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * nInput = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * kInput = m_args[1]->evaluate<T>(context, angleUnit);
+  T n = nInput->toScalar();
+  T k = kInput->toScalar();
   delete nInput;
   delete kInput;
   if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || n < 0.0f || k < 0.0f) {
 
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
   if (k > n) {
-    return new Complex(Complex::Float(0.0f));
+    return new Complex<T>(Complex<T>::Float(0));
   }
-  float result = 1.0f;
+  T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
   }
-  return new Complex(Complex::Float(std::round(result)));
+  return new Complex<T>(Complex<T>::Float(std::round(result)));
 }
 
 }

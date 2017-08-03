@@ -12,67 +12,90 @@ extern "C" {
 
 namespace Poincare {
 
-ComplexMatrix::ComplexMatrix(const Complex * complexes, int numberOfRows, int numberOfColumns) :
+template<typename T>
+ComplexMatrix<T>::ComplexMatrix(const Complex<T> * complexes, int numberOfRows, int numberOfColumns) :
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
   assert(complexes != nullptr);
-  m_values = new Complex[numberOfColumns*numberOfRows];
+  m_values = new Complex<T>[numberOfColumns*numberOfRows];
   for (int i = 0; i < numberOfColumns*numberOfRows; i++) {
     m_values[i] = complexes[i];
   }
 }
 
-ComplexMatrix::~ComplexMatrix() {
+template<typename T>
+ComplexMatrix<T>::~ComplexMatrix() {
   delete[] m_values;
 }
 
-float ComplexMatrix::toFloat() const {
+template<typename T>
+T ComplexMatrix<T>::toScalar() const {
   if (m_numberOfColumns != 1 || m_numberOfRows != 1) {
     return NAN;
   }
-  if (m_values[0].b() != 0.0f) {
+  if (m_values[0].b() != 0) {
     return NAN;
   }
   return m_values[0].a();
 }
 
-int ComplexMatrix::numberOfRows() const {
+template<typename T>
+int ComplexMatrix<T>::numberOfRows() const {
   return m_numberOfRows;
 }
 
-int ComplexMatrix::numberOfColumns() const {
+template<typename T>
+int ComplexMatrix<T>::numberOfColumns() const {
   return m_numberOfColumns;
 }
 
-const Complex * ComplexMatrix::complexOperand(int i) const {
+template<typename T>
+const Complex<T> * ComplexMatrix<T>::complexOperand(int i) const {
   return &m_values[i];
 }
 
-ComplexMatrix * ComplexMatrix::clone() const {
-  return this->cloneWithDifferentOperands((Expression **)&m_values, m_numberOfRows*m_numberOfColumns);
+template<typename T>
+ComplexMatrix<T> * ComplexMatrix<T>::clone() const {
+  return new ComplexMatrix<T>(m_values, m_numberOfRows, m_numberOfColumns);
 }
 
-ComplexMatrix * ComplexMatrix::cloneWithDifferentOperands(Expression** newOperands,
+template<typename T>
+ComplexMatrix<T> * ComplexMatrix<T>::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  return new ComplexMatrix((Complex *)newOperands[0], m_numberOfColumns, m_numberOfRows);
+  return new ComplexMatrix((Complex<T> *)newOperands[0], m_numberOfColumns, m_numberOfRows);
 }
 
-Evaluation * ComplexMatrix::createIdentity(int dim) {
-  Complex * operands = new Complex [dim*dim];
+template<typename T>
+Evaluation<T> * ComplexMatrix<T>::createIdentity(int dim) {
+  Complex<T> * operands = new Complex<T> [dim*dim];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       if (i == j) {
-        operands[i*dim+j] = Complex(Complex::Float(1.0));
+        operands[i*dim+j] = Complex<T>::Float(1.0);
       } else {
-        operands[i*dim+j] = Complex(Complex::Float(0.0));
+        operands[i*dim+j] = Complex<T>::Float(0.0);
       }
     }
   }
-  Evaluation * matrix = new ComplexMatrix(operands, dim, dim);
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, dim, dim);
   delete [] operands;
   return matrix;
 }
+
+template<typename T>
+template <class U>
+Evaluation<U> * ComplexMatrix<T>::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+  Complex<U> * values = new Complex<U>[m_numberOfColumns*m_numberOfRows];
+  for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
+    values[i] = Complex<U>::Cartesian(m_values[i].a(), m_values[i].b());
+  }
+  return new ComplexMatrix<U>(values, m_numberOfRows, m_numberOfColumns);
+
+}
+
+template class Poincare::ComplexMatrix<float>;
+template class Poincare::ComplexMatrix<double>;
 
 }

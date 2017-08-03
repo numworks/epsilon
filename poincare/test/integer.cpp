@@ -52,9 +52,10 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer("3293920983029832").divide_by(Integer("389090928")) == Integer("8465684"));
 }
 
-void assert_integer_evals_to(int i, float result) {
+template<typename T>
+void assert_integer_evals_to(int i, T result) {
   GlobalContext globalContext;
-  Evaluation * m = Integer(i).evaluate(globalContext);
+  Evaluation<T> * m = Integer(i).evaluate<T>(globalContext);
   assert(m->complexOperand(0)->a() == result);
   assert(m->complexOperand(0)->b() == 0.0f);
   assert(m->numberOfOperands() == 1);
@@ -63,9 +64,9 @@ void assert_integer_evals_to(int i, float result) {
 
 QUIZ_CASE(poincare_integer_evaluate) {
   assert_integer_evals_to(1, 1.0f);
-  assert_integer_evals_to(12345678, 12345678.0f);
+  assert_integer_evals_to(12345678, 12345678.0);
   assert_integer_evals_to(0, 0.0f);
-  assert_integer_evals_to(-0, 0.0f);
+  assert_integer_evals_to(-0, 0.0);
   assert_integer_evals_to(-1, -1.0f);
-  assert_integer_evals_to(12345678, 12345678.0f);
+  assert_integer_evals_to(12345678, 12345678.0);
 }

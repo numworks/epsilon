@@ -156,10 +156,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     float calculation1 = (m_store->*calculationMethods[j-1])(0);
     float calculation2 = (m_store->*calculationMethods[j-1])(1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex::convertFloatToText(calculation1, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    Complex<float>::convertFloatToText(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setFirstText(buffer);
-    Complex::convertFloatToText(calculation2, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<float>::convertFloatToText(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setSecondText(buffer);
     return;
   }
@@ -174,8 +174,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
     float calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex::convertFloatToText(calculation, buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    Complex<float>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
     return;
   }

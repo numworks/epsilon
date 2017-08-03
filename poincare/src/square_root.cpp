@@ -32,11 +32,12 @@ ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplay
   return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat),nullptr);
 }
 
-Complex SquareRoot::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() == 0.0f) {
-    return Complex::Float(std::sqrt(c.a()));
+template<typename T>
+Complex<T> SquareRoot::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() == 0) {
+    return Complex<T>::Float(std::sqrt(c.a()));
   }
-  return Power::compute(c, Complex::Float(0.5f));
+  return Power::compute(c, Complex<T>::Float(0.5));
 }
 
 }

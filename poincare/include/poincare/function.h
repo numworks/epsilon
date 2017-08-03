@@ -5,6 +5,7 @@
 #include <poincare/list_data.h>
 #include <poincare/complex.h>
 #include <poincare/complex_matrix.h>
+#include <math.h>
 
 namespace Poincare {
 
@@ -26,8 +27,15 @@ public:
   int numberOfOperands() const override;
   Expression * clone() const override;
 protected:
-  virtual Complex computeComplex(const Complex c, AngleUnit angleUnit) const;
-  virtual Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
+  virtual Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const {
+    return Complex<float>::Float(NAN);
+  }
+  virtual Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const {
+    return Complex<double>::Float(NAN);
+  }
+  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   void build(Expression ** args, int numberOfArguments, bool clone);
   void clean();

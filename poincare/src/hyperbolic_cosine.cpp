@@ -28,15 +28,16 @@ Expression * HyperbolicCosine::cloneWithDifferentOperands(Expression** newOperan
   return hc;
 }
 
-Complex HyperbolicCosine::compute(const Complex c) {
-  if (c.b() == 0.0f) {
-    return Complex::Float(std::cosh(c.a()));
+template<typename T>
+Complex<T> HyperbolicCosine::compute(const Complex<T> c) {
+  if (c.b() == 0) {
+    return Complex<T>::Float(std::cosh(c.a()));
   }
-  Complex e = Complex::Float(M_E);
-  Complex exp1 = Power::compute(e, c);
-  Complex exp2 = Power::compute(e, Complex::Cartesian(-c.a(), -c.b()));
-  Complex sum = Addition::compute(exp1, exp2);
-  return Fraction::compute(sum, Complex::Float(2.0f));
+  Complex<T> e = Complex<T>::Float(M_E);
+  Complex<T> exp1 = Power::compute(e, c);
+  Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
+  Complex<T> sum = Addition::compute(exp1, exp2);
+  return Fraction::compute(sum, Complex<T>::Float(2));
 }
 
 }

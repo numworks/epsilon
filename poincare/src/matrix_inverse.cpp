@@ -26,9 +26,10 @@ Expression * MatrixInverse::cloneWithDifferentOperands(Expression** newOperands,
   return i;
 }
 
-Evaluation * MatrixInverse::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * result = input->createInverse();
+template<typename T>
+Evaluation<T> * MatrixInverse::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * result = input->createInverse();
   delete input;
   return result;
 }

@@ -41,26 +41,28 @@ Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
   return l;
 }
 
-Complex Logarithm::computeComplex(const Complex c, AngleUnit angleUnit) const {
-  if (c.b() != 0.0f) {
-    return Complex::Float(NAN);
+template<typename T>
+Complex<T> Logarithm::templatedComputeComplex(const Complex<T> c) const {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex::Float(std::log10(c.a()));
+  return Complex<T>::Float(std::log10(c.a()));
 }
 
-Evaluation * Logarithm::privateEvaluate(Context & context, AngleUnit angleUnit) const {
+template<typename T>
+Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (m_numberOfArguments == 1) {
-    return Function::privateEvaluate(context, angleUnit);
+    return Function::templatedEvaluate<T>(context, angleUnit);
   }
-  Evaluation * x = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * n = m_args[1]->evaluate(context, angleUnit);
+  Evaluation<T> * x = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * n = m_args[1]->evaluate<T>(context, angleUnit);
   if (x->numberOfRows() != 1 || x->numberOfColumns() != 1 || n->numberOfRows() != 1 || n->numberOfColumns() != 1) {
-    return new Complex(Complex::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex result = Fraction::compute(computeComplex(*(n->complexOperand(0)), angleUnit), computeComplex(*(x->complexOperand(0)), angleUnit));
+  Complex<T> result = Fraction::compute<T>(templatedComputeComplex(*(n->complexOperand(0))), templatedComputeComplex(*(x->complexOperand(0))));
   delete x;
   delete n;
-  return new Complex(result);
+  return new Complex<T>(result);
 }
 
 ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

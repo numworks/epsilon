@@ -24,9 +24,11 @@ Expression * Determinant::cloneWithDifferentOperands(Expression** newOperands,
   return d;
 }
 
-Evaluation * Determinant::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation * input = m_args[0]->evaluate(context, angleUnit);
-  Evaluation * result = input->createDeterminant();
+template<typename T>
+Evaluation<T> * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+
+  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * result = input->createDeterminant();
   delete input;
   return result;
 }

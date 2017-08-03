@@ -6,7 +6,7 @@ using namespace Poincare;
 
 /* ContentViewController */
 
-VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, Context * context) :
+VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, GlobalContext * context) :
   ViewController(parentResponder),
   m_context(context),
   m_firstSelectedRow(0),
@@ -137,11 +137,11 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Evaluation * evaluation = expressionForIndex(index);
+  const Evaluation<double> * evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
-    char buffer[Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    evaluation->writeTextInBuffer(buffer, Complex::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    evaluation->writeTextInBuffer(buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
     myCell->setSubtitle(buffer);
     return;
   }
@@ -149,10 +149,10 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   if (evaluation) {
     /* TODO: implement list contexts */
     myCell->setExpression(evaluation);
-    char buffer[2*Complex::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = Complex::convertFloatToText(evaluation->numberOfRows(), buffer, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
+    int numberOfChars = Complex<float>::convertFloatToText(evaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     buffer[numberOfChars++] = 'x';
-    Complex::convertFloatToText(evaluation->numberOfColumns(), buffer+numberOfChars, Complex::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    Complex<float>::convertFloatToText(evaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);
@@ -167,7 +167,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   if (m_currentPage == Page::Scalar) {
     return k_leafRowHeight;
   }
-  const Expression * expression = expressionForIndex(index);
+  const Evaluation<double> * expression = expressionForIndex(index);
   if (expression) {
     ExpressionLayout * layout = expression->createLayout();
     KDCoordinate expressionHeight = layout->size().height();
@@ -201,14 +201,14 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-const Evaluation * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+const Evaluation<double> * VariableBoxController::ContentViewController::expressionForIndex(int index) {
   if (m_currentPage == Page::Scalar) {
     const Symbol symbol = Symbol('A'+index);
-    return m_context->expressionForSymbol(&symbol);
+    return m_context->evaluationForSymbol(&symbol);
   }
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionForSymbol(&symbol);
+    return m_context->evaluationForSymbol(&symbol);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {
@@ -277,7 +277,7 @@ void VariableBoxController::ContentViewController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-VariableBoxController::VariableBoxController(Context * context) :
+VariableBoxController::VariableBoxController(GlobalContext * context) :
   StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(this, context)
 {

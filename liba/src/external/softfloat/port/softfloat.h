@@ -3,17 +3,21 @@
 
 /* As instructed in the softfloat documentation, we do not expose the original
  * softfloat.h header. Instead, we create our own. This has the great upside of
- * letting us declare functions that takes native types (i.e. float, double). */
+ * letting us declare float64_t as a double instead of a struct. Of course this
+ * is valid if, and only if, sizeof(double) == 8. */
 
-int f64_to_ui32_r_minMag(double x, int i);
-double ui32_to_f64(int i);
+#include <stdbool.h>
+#include <stdint.h>
 
-int f64_eq(double x, double y);
-int f64_le(double x, double y);
-int f64_lt(double x, double y);
-double f64_add(double x, double y);
-double f64_sub(double x, double y);
-double f64_mul(double x, double y);
-double f64_div(double x, double y);
+typedef double float64_t;
+
+uint_fast32_t f64_to_ui32_r_minMag(float64_t x, bool i);
+bool f64_eq(float64_t x, float64_t y);
+bool f64_le(float64_t x, float64_t y);
+bool f64_lt(float64_t x, float64_t y);
+float64_t f64_add(float64_t x, float64_t y);
+float64_t f64_sub(float64_t x, float64_t y);
+float64_t f64_mul(float64_t x, float64_t y);
+float64_t f64_div(float64_t x, float64_t y);
 
 #endif

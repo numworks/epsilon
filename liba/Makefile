@@ -18,7 +18,6 @@ objs += $(addprefix liba/src/, \
 )
 
 objs += $(addprefix liba/src/external/openbsd/, \
-  a_atanf.o \
   e_acosf.o \
   e_acoshf.o \
   e_asinf.o \
@@ -37,6 +36,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   k_sinf.o \
   k_tanf.o \
   s_asinhf.o\
+  s_atanf.o \
   s_ceilf.o \
   s_copysignf.o \
   s_cosf.o \

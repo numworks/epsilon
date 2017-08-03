@@ -16,7 +16,7 @@ public:
 
   // Text
   void drawChar(char character, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
   void blendChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
   void blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
 

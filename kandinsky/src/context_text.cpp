@@ -27,11 +27,13 @@ void KDContext::drawChar(char character, KDPoint p, KDText::FontSize size, KDCol
       characterBuffer);
 }
 
-void KDContext::drawString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor) {
+void KDContext::drawString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength) {
   KDPoint position = p;
   int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
   KDPoint characterSize(characterWidth, 0);
-  while(*text != 0) {
+
+  const char * end = text+maxLength;
+  while(*text != 0 && text != end) {
     drawChar(*text, position, size, textColor, backgroundColor);
     text++;
     position = position.translatedBy(characterSize);

@@ -11,6 +11,7 @@
 #include "statistics/app.h"
 #include "on_boarding/app.h"
 #include "hardware_test/app.h"
+#include "code/app.h"
 #include "on_boarding/update_controller.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
@@ -55,7 +56,7 @@ private:
   int numberOfContainerTimers() override;
   Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
-  static constexpr int k_numberOfCommonApps = 8;
+  static constexpr int k_numberOfCommonApps = 9;
   static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
@@ -82,6 +83,7 @@ private:
   Statistics::App::Snapshot m_statisticsSnapshot;
   Probability::App::Snapshot m_probabilitySnapshot;
   Regression::App::Snapshot m_regressionSnapshot;
+  Code::App::Snapshot m_codeSnapshot;
 };
 
 #endif

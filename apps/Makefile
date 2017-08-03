@@ -9,6 +9,7 @@ include apps/sequence/Makefile
 include apps/settings/Makefile
 include apps/shared/Makefile
 include apps/statistics/Makefile
+include apps/code/Makefile
 #include apps/picview/Makefile
 
 app_objs += $(addprefix apps/,\

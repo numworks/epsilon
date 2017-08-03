@@ -13,13 +13,15 @@ LIBA_BEGIN_DECLS
 /* The C99 standard requires isinf and isnan to be defined as macros that can
  * handle arbitrary precision float numbers. The names of the functions called
  * by those macros (depending on the argument size) are not standardized though.
- * We're chosing isinff/isnanf for single-precision functions (which is the only
- * case we're actually handling). */
+ * We're chosing isinff/isnanf for single-precision functions, and isinfd/isnand
+ * for double-precision functions. */
 
 int isinff(float x);
-#define isinf(x) isinff(x)
+int isinfd(double d);
+#define isinf(x) (sizeof(x) == sizeof(float) ? isinff(x) : isinfd(x))
 int isnanf(float x);
-#define isnan(x) isnanf(x)
+int isnand(double x);
+#define isnan(x) (sizeof(x) == sizeof(float) ? isnanf(x) : isnand(x))
 
 float acosf(float x);
 float acoshf(float x);

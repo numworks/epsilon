@@ -3,6 +3,7 @@
 #include <math.h>
 #include <ion.h>
 #include <assert.h>
+#include "helper.h"
 
 using namespace Poincare;
 
@@ -34,21 +35,11 @@ QUIZ_CASE(poincare_parse_symbol) {
 
 
 QUIZ_CASE(poincare_symbol_approximate) {
-  GlobalContext globalContext;
-  char piText[2] = {Ion::Charset::SmallPi, 0};
-  Expression * e = Expression::parse(piText);
-  assert(fabsf(e->approximate(globalContext)-(float)M_PI) <= 0.0001f);
-  delete e;
-
-  char eText[2] = {Ion::Charset::Exponential, 0};
-  e = Expression::parse(eText);
-  assert(fabsf(e->approximate(globalContext)-(float)M_E) <= 0.0001f);
-
-  delete e;
-
-  char floatText[10] = {'1', '.', '2', Ion::Charset::Exponent, '3', 0};
-  e = Expression::parse(floatText);
-  assert(fabsf(e->approximate(globalContext)-1200.0f) <= 0.0001f);
-  delete e;
+  Complex a[1] = {Complex::Float(M_PI)};
+  assert_parsed_expression_evaluate_to("P", a, 1);
+  Complex b[1] = {Complex::Float(M_E)};
+  assert_parsed_expression_evaluate_to("X", b, 1);
+  Complex c[1] = {Complex::Float(1200.0f)};
+  assert_parsed_expression_evaluate_to("1.2E3", c, 1);
 }
 

@@ -12,7 +12,7 @@ public:
   void reloadCell() override;
   void setLabel(const char * text);
   void setSubtitle(const char * text);
-  void setExpression(Poincare::Expression * expression);
+  void setExpression(const Poincare::Expression * expression);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;

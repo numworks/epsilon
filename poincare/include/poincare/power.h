@@ -11,14 +11,16 @@ public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
+  static Complex compute(const Complex c, const Complex d);
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
-  Expression * evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const override;
-  Expression * evaluateOnMatrixAndComplex(Matrix * m, Complex * c, Context& context, AngleUnit angleUnit) const override;
-  Expression * evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const override;
-  Expression * evaluateOnMatrices(Matrix * m, Matrix * n, Context& context, AngleUnit angleUnit) const override;
+  Complex privateCompute(const Complex c, const Complex d) const override {
+    return compute(c, d);
+  }
+  Evaluation * computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * n) const override;
+  Evaluation * computeOnComplexMatrixAndComplex(Evaluation * m, const Complex * d) const override;
+  Evaluation * computeOnNumericalMatrices(Evaluation * m, Evaluation * n) const override;
 };
 
 }

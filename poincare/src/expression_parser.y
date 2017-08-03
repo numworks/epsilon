@@ -180,7 +180,7 @@ exp:
   | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
 /* MATRICES_ARE_DEFINED */
-  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); }
+  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::ExpressionMatrix($2); }
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
 
 final_exp:

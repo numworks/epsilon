@@ -13,7 +13,7 @@ public:
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
       int numberOfOperands, bool cloneOperands = true) const override;
 private:
-  float privateApproximate(Context & context, AngleUnit angleUnit) const override;
+  Evaluation * privateEvaluate(Context & context, AngleUnit angleUnit) const override;
   float growthRateAroundAbscissa(float x, float h, VariableContext variableContext, AngleUnit angleUnit) const;
   float approximateDerivate2(float x, float h, VariableContext xContext, AngleUnit angleUnit) const;
   constexpr static float k_maxErrorRateOnApproximation = 0.001f;

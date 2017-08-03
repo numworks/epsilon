@@ -27,18 +27,21 @@ Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
   return d;
 }
 
-float Derivative::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
+Evaluation * Derivative::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   VariableContext xContext = VariableContext('x', &context);
   Symbol xSymbol = Symbol('x');
-  float x = m_args[1]->approximate(context, angleUnit);
+  Evaluation * xInput = m_args[1]->evaluate(context, angleUnit);
+  float x = xInput->toFloat();
+  delete xInput;
   Complex e = Complex::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float functionValue = m_args[0]->approximate(xContext, angleUnit);
+  Evaluation * fInput = m_args[1]->evaluate(xContext, angleUnit);
+  float functionValue = fInput->toFloat();
+  delete fInput;
 
   // No complex/matrix version of Derivative
   if (isnan(x) || isnan(functionValue)) {
-    return NAN;
+    return new Complex(Complex::Float(NAN));
   }
 
   /* Ridders' Algorithm
@@ -96,23 +99,27 @@ float Derivative::privateApproximate(Context& context, AngleUnit angleUnit) cons
   }
   /* if the error is too big regarding the value, do not return the answer */
   if (err/ans > k_maxErrorRateOnApproximation || isnan(err)) {
-    return NAN;
+    return new Complex(Complex::Float(NAN));
   }
   if (err < FLT_MIN) {
-    return ans;
+    return new Complex(Complex::Float(ans));
   }
   err = powf(10.0f, (int)log10f(fabsf(err))+2.0f);
-  return roundf(ans/err)*err;
+  return new Complex(Complex::Float(roundf(ans/err)*err));
 }
 
 float Derivative::growthRateAroundAbscissa(float x, float h, VariableContext xContext, AngleUnit angleUnit) const {
   Symbol xSymbol = Symbol('x');
   Complex e = Complex::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
+  Evaluation * fInput = m_args[0]->evaluate(xContext, angleUnit);
+  float expressionPlus = fInput->toFloat();
+  delete fInput;
   e = Complex::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
+  fInput = m_args[0]->evaluate(xContext, angleUnit);
+  float expressionMinus = fInput->toFloat();
+  delete fInput;
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
@@ -120,13 +127,19 @@ float Derivative::approximateDerivate2(float x, float h, VariableContext xContex
   Symbol xSymbol = Symbol('x');
   Complex e = Complex::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionPlus = m_args[0]->approximate(xContext, angleUnit);
+  Evaluation * fInput = m_args[0]->evaluate(xContext, angleUnit);
+  float expressionPlus = fInput->toFloat();
+  delete fInput;
   e = Complex::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expression = m_args[0]->approximate(xContext, angleUnit);
+  fInput = m_args[0]->evaluate(xContext, angleUnit);
+  float expression = fInput->toFloat();
+  delete fInput;
   e = Complex::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  float expressionMinus = m_args[0]->approximate(xContext, angleUnit);
+  fInput = m_args[0]->evaluate(xContext, angleUnit);
+  float expressionMinus = fInput->toFloat();
+  delete fInput;
   return expressionPlus - 2.0f*expression + expressionMinus;
 }
 

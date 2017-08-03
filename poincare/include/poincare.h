@@ -12,6 +12,7 @@
 #include <poincare/ceiling.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
+#include <poincare/complex_matrix.h>
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
@@ -20,12 +21,15 @@
 #include <poincare/determinant.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
+#include <poincare/evaluation.h>
 #include <poincare/expression.h>
+#include <poincare/expression_layout.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>
 #include <poincare/fraction.h>
 #include <poincare/function.h>
+#include <poincare/expression_matrix.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
 #include <poincare/hyperbolic_arc_cosine.h>

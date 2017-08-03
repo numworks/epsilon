@@ -36,8 +36,7 @@ public:
   Expression * clone() const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  float privateApproximate(Context& context, AngleUnit angleUnit) const override;
-  Expression * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
+  Evaluation * privateEvaluate(Context& context, AngleUnit angleUnit) const override;
   Integer add(const Integer &other, bool inverse_other_negative) const;
   int8_t ucmp(const Integer &other) const; // -1, 0, or 1
   Integer usum(const Integer &other, bool subtract, bool output_negative) const;

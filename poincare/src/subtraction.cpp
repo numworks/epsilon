@@ -18,11 +18,6 @@ Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
   return new Subtraction(newOperands, cloneOperands);
 }
 
-float Subtraction::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return m_operands[0]->approximate(context, angleUnit) - m_operands[1]->approximate(context, angleUnit);
-}
-
 Expression::Type Subtraction::type() const {
   return Expression::Type::Subtraction;
 }
@@ -38,15 +33,14 @@ ExpressionLayout * Subtraction::privateCreateLayout(FloatDisplayMode floatDispla
   return new HorizontalLayout(children_layouts, 3);
 }
 
-Expression * Subtraction::evaluateOnComplex(Complex * c, Complex * d, Context& context, AngleUnit angleUnit) const {
-  return new Complex(Complex::Cartesian(c->a() - d->a(), c->b() - d->b()));
+Complex Subtraction::compute(const Complex c, const Complex d) {
+  return Complex::Cartesian(c.a()-d.a(), c.b() - d.b());
 }
 
-Expression * Subtraction::evaluateOnComplexAndMatrix(Complex * c, Matrix * m, Context& context, AngleUnit angleUnit) const {
-  Expression * operand = evaluateOnMatrixAndComplex(m, c, context, angleUnit);
-  Opposite * opposite = new Opposite(operand, false);
-  Expression * result = opposite->evaluate(context, angleUnit);
-  delete opposite;
+Evaluation * Subtraction::computeOnComplexAndComplexMatrix(const Complex * c, Evaluation * m) const {
+  Evaluation * operand = computeOnComplexMatrixAndComplex(m, c);
+  Evaluation * result = Opposite::computeOnMatrix(operand);
+  delete operand;
   return result;
 }
 

@@ -25,18 +25,8 @@ Expression * ComplexArgument::cloneWithDifferentOperands(Expression** newOperand
   return ca;
 }
 
-float ComplexArgument::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  float result = 0.0f;
-  if (evaluation->type() == Type::Matrix) {
-    result = NAN;
-  } else {
-    result = ((Complex *)evaluation)->th();
-  }
-  delete evaluation;
-  return result;
+Complex ComplexArgument::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  return Complex::Float(c.th());
 }
 
 }

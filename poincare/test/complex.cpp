@@ -14,7 +14,7 @@ constexpr Expression::ComplexFormat Polar = Expression::ComplexFormat::Polar;
 void assert_cartesian_complex_converts_to(float a, float b, const char * result, Expression::FloatDisplayMode mode = Scientific, Expression::ComplexFormat format = Cartesian, int significantDigits = 7, int bufferSize = 13+13+7+1) {
   int tagSize = 8;
   unsigned char tag = 'X';
-  char * taggedBuffer = (char *)malloc(bufferSize+2*tagSize);
+  char * taggedBuffer = new char[bufferSize+2*tagSize];
   memset(taggedBuffer, tag, bufferSize+2*tagSize);
   char * buffer = taggedBuffer + tagSize;
 
@@ -47,7 +47,7 @@ void assert_cartesian_complex_converts_to(float a, float b, const char * result,
 
   assert(strcmp(buffer, result) == 0);
 
-  free(taggedBuffer);
+  delete[] taggedBuffer;
 }
 
 QUIZ_CASE(poincare_complex_to_text) {
@@ -92,20 +92,16 @@ QUIZ_CASE(poincare_complex_cartesian_to_text) {
   assert_cartesian_complex_converts_to(64078208.0f, 119229408.0f, "1.353576E8*e^(1.07765*i)", Decimal, Polar);
 }
 
-QUIZ_CASE(poincare_complex_approximate) {
-  GlobalContext globalContext;
-  Expression * a = new Complex(Complex::Float(123.456f));
-  assert(a->approximate(globalContext) == 123.456f);
-  delete a;
-}
-
 QUIZ_CASE(poincare_complex_evaluate) {
   GlobalContext globalContext;
   Expression * a = new Complex(Complex::Float(123.456f));
-  Expression * e = a->evaluate(globalContext);
-  assert(e->approximate(globalContext) == 123.456f);
+  Evaluation * m = a->evaluate(globalContext);
+  assert(m->complexOperand(0)->a() == 123.456f);
+  assert(m->complexOperand(0)->b() == 0.0f);
+  assert(m->numberOfOperands() == 1);
+
   delete a;
-  delete e;
+  delete m;
 }
 
 QUIZ_CASE(poincare_complex_constructor) {

@@ -3,6 +3,7 @@
 #include <poincare/complex.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
+#include <poincare/complex_matrix.h>
 extern "C" {
 #include <assert.h>
 #include <math.h>
@@ -43,19 +44,9 @@ Symbol::Symbol(char name) :
 {
 }
 
-float Symbol::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  if (context.expressionForSymbol(this)) {
-    return context.expressionForSymbol(this)->approximate(context, angleUnit);
-  }
-  // TODO: decide with Leo what we should return
-  return NAN;
-}
-
-Expression * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
+Evaluation * Symbol::privateEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->evaluate(context, angleUnit);
+    return context.expressionForSymbol(this)->clone();
   }
   return new Complex(Complex::Float(NAN));
 }

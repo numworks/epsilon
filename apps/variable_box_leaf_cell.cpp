@@ -83,7 +83,7 @@ void VariableBoxLeafCell::setSubtitle(const char * text) {
   layoutSubviews();
 }
 
-void VariableBoxLeafCell::setExpression(Expression * expression) {
+void VariableBoxLeafCell::setExpression(const Expression * expression) {
   if(m_expressionLayout != nullptr) {
     delete m_expressionLayout;
     m_expressionLayout = nullptr;

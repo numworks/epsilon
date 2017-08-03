@@ -4,6 +4,7 @@
 #include <poincare/symbol.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
+#include <poincare/evaluation.h>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 extern "C" {
@@ -57,7 +58,7 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
   }
 }
 
-Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+Evaluation * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
   switch (angleUnit) {
     case AngleUnit::Default:
       return privateEvaluate(context, Preferences::sharedPreferences()->angleUnit());
@@ -67,21 +68,21 @@ Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
 }
 
 float Expression::approximate(Context& context, AngleUnit angleUnit) const {
-  switch (angleUnit) {
-    case AngleUnit::Default:
-      return privateApproximate(context, Preferences::sharedPreferences()->angleUnit());
-    default:
-      return privateApproximate(context, angleUnit);
-  }
+  Evaluation * evaluation = evaluate(context, angleUnit);
+  float result = evaluation->toFloat();
+  delete evaluation;
+  return result;
 }
 
 float Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
-  float result = NAN;
-  if (exp != nullptr) {
-    result = exp->approximate(context, angleUnit);
-    delete exp;
+  if (exp == nullptr) {
+    return NAN;
   }
+  Evaluation * evaluation = exp->evaluate(context, angleUnit);
+  delete exp;
+  float result = evaluation->toFloat();
+  delete evaluation;
   return result;
 }
 
@@ -103,7 +104,7 @@ Expression * Expression::simplify() const {
     /* We recursively simplify the children expressions.
      * Note that we are sure to get the samne number of children as we had before
      */
-    Expression ** simplifiedOperands = (Expression**) malloc(result->numberOfOperands() * sizeof(Expression*));
+    Expression ** simplifiedOperands = new Expression * [result->numberOfOperands()];
     for (int i = 0; i < result->numberOfOperands(); i++) {
       simplifiedOperands[i] = result->operand(i)->simplify();
     }
@@ -115,7 +116,7 @@ Expression * Expression::simplify() const {
     result = tmp;
 
     // The table is no longer needed.
-    free(simplifiedOperands);
+    delete [] simplifiedOperands;
 
     simplification_pass_was_useful = false;
     for (int i=0; i<knumberOfSimplifications; i++) {
@@ -180,7 +181,7 @@ bool Expression::commutativeOperandsIdentity(const Expression * e) const {
   /* We create a table allowing us to know which operands of the second
    * expression have been associated with one of the operands of the first
    * expression */
-  bool * operandMatched = (bool *) malloc (this->numberOfOperands() * sizeof(bool));
+  bool * operandMatched = new bool [this->numberOfOperands()];
   for (int i(0); i<this->numberOfOperands(); i++) {
     operandMatched[i] = false;
   }
@@ -188,7 +189,7 @@ bool Expression::commutativeOperandsIdentity(const Expression * e) const {
   // We call our recursive helper.
   bool commutativelyIdentical = this->combinatoryCommutativeOperandsIdentity(e, operandMatched, leftToMatch);
 
-  free(operandMatched);
+  delete [] operandMatched;
   return commutativelyIdentical;
 }
 
@@ -229,7 +230,7 @@ bool Expression::isCommutative() const {
   return false;
 }
 
-int Expression::writeTextInBuffer(char * buffer, int bufferSize) {
+int Expression::writeTextInBuffer(char * buffer, int bufferSize) const {
   return 0;
 }
 

@@ -76,7 +76,7 @@ ExpressionLayout * Calculation::inputLayout() {
   return m_inputLayout;
 }
 
-Expression * Calculation::output(Context * context) {
+Evaluation * Calculation::output(Context * context) {
   if (m_output == nullptr) {
     /* To ensure that the expression 'm_output' is a matrix or a complex, we
      * call 'evaluate'. */

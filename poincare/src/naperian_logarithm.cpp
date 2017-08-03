@@ -27,9 +27,11 @@ Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOpera
   return l;
 }
 
-float NaperianLogarithm::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return logf(m_args[0]->approximate(context, angleUnit));
+Complex NaperianLogarithm::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
+  }
+  return Complex::Float(logf(c.a()));
 }
 
 }

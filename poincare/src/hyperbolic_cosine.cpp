@@ -28,48 +28,15 @@ Expression * HyperbolicCosine::cloneWithDifferentOperands(Expression** newOperan
   return hc;
 }
 
-float HyperbolicCosine::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  return coshf(m_args[0]->approximate(context, angleUnit));
-}
-
-Expression * HyperbolicCosine::privateEvaluate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  Expression * evaluation = m_args[0]->evaluate(context, angleUnit);
-  assert(evaluation->type() == Type::Matrix || evaluation->type() == Type::Complex);
-  if (evaluation->type() == Type::Matrix) {
-    delete evaluation;
-    return new Complex(Complex::Float(NAN));
+Complex HyperbolicCosine::compute(const Complex c) {
+  if (c.b() == 0.0f) {
+    return Complex::Float(coshf(c.a()));
   }
-  /* Float case */
-  if (((Complex *)evaluation)->b() == 0) {
-    Expression * result = new Complex(Complex::Float(coshf(evaluation->approximate(context, angleUnit))));
-    delete evaluation;
-    return result;
-  }
-  /* Complex case */
-  Expression * arguments[2];
-  arguments[0] = new Complex(Complex::Float(M_E));
-  arguments[1] = evaluation;
-  Expression * exp1 = new Power(arguments, true);
-  arguments[1] = new Opposite(evaluation, true);
-  Expression * exp2 = new Power(arguments, true);
-  delete arguments[1];
-  delete arguments[0];
-  delete evaluation;
-  arguments[0] = exp1;
-  arguments[1] = exp2;
-  Expression * sum = new Addition(arguments, true);
-  delete exp1;
-  delete exp2;
-  arguments[0] = sum;
-  arguments[1] = new Complex(Complex::Float(2.0f));
-  Expression * result = new Fraction(arguments, true);
-  delete arguments[1];
-  delete arguments[0];
-  Expression * resultEvaluation = result->evaluate(context, angleUnit);
-  delete result;
-  return resultEvaluation;
+  Complex e = Complex::Float(M_E);
+  Complex exp1 = Power::compute(e, c);
+  Complex exp2 = Power::compute(e, Complex::Cartesian(-c.a(), -c.b()));
+  Complex sum = Addition::compute(exp1, exp2);
+  return Fraction::compute(sum, Complex::Float(2.0f));
 }
 
 }

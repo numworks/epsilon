@@ -23,10 +23,11 @@ Expression * HyperbolicArcTangent::cloneWithDifferentOperands(Expression** newOp
   return t;
 }
 
-float HyperbolicArcTangent::privateApproximate(Context& context, AngleUnit angleUnit) const {
-  assert(angleUnit != AngleUnit::Default);
-  float x = m_args[0]->approximate(context, angleUnit);
-  return atanhf(x);
+Complex HyperbolicArcTangent::computeComplex(const Complex c, AngleUnit angleUnit) const {
+  if (c.b() != 0.0f) {
+    return Complex::Float(NAN);
+  }
+  return Complex::Float(atanhf(c.a()));
 }
 
 }

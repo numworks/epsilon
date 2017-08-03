@@ -55,13 +55,48 @@ objs += $(addprefix liba/src/external/openbsd/, \
   w_lgammaf.o \
 )
 
+objs += $(addprefix liba/src/external/openbsd/, \
+  e_acos.o \
+  e_acosh.o \
+  e_asin.o \
+  e_atanh.o \
+  e_cosh.o \
+  e_exp.o \
+  e_lgamma_r.o \
+  e_log.o \
+  e_log10.o \
+  e_pow.o \
+  e_rem_pio2.o \
+  e_sinh.o \
+  e_sqrt.o \
+  k_cos.o \
+  k_rem_pio2.o \
+  k_sin.o \
+  k_tan.o \
+  s_asinh.o \
+  s_atan.o \
+  s_ceil.o \
+  s_copysign.o \
+  s_cos.o \
+  s_expm1.o \
+  s_fabs.o \
+  s_floor.o \
+  s_log1p.o \
+  s_round.o \
+  s_scalbn.o \
+  s_sin.o \
+  s_tan.o \
+  s_tanh.o \
+  w_lgamma.o \
+)
+
 liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -w
 # isnanf ans isinff are throwing implicit declaration warnings
 ifeq ($(DEBUG),1)
 # OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision
 # code. That's annoying because Clang rightfully decides to emit double-to-float
 # aeabi conversions when building in -O0 mode, and we really don't want to code
-# such functions. A simple workaround is to always build this file -Os.
+# such functions. A simple workaround is to always build those files -Os.
 liba/src/external/openbsd/e_expf.o: CFLAGS += -Os
 liba/src/external/openbsd/s_expm1f.o: CFLAGS += -Os
 liba/src/external/openbsd/s_log1pf.o: CFLAGS += -Os

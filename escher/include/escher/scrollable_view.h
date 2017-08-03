@@ -11,8 +11,7 @@ public:
   void reloadScroll();
 protected:
   void layoutSubviews() override;
-  bool rightViewIsInvisible();
-  KDCoordinate m_manualScrolling;
+  KDPoint m_manualScrollingOffset;
 private:
   virtual View * view() = 0;
 };

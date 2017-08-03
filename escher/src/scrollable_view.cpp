@@ -5,31 +5,47 @@
 ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
   Responder(parentResponder),
   ScrollView(view, dataSource, 0, 0, 0, 0, false, false),
-  m_manualScrolling(0)
+  m_manualScrollingOffset(KDPointZero)
 {
 }
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Right && rightViewIsInvisible()) {
-      KDCoordinate rightSpace = view()->minimalSizeForOptimalDisplay().width() - m_manualScrolling - bounds().width();
-      KDCoordinate scrollAdd = rightSpace > Metric::ScrollStep ? Metric::ScrollStep : rightSpace;
-      m_manualScrolling += scrollAdd;
-      setContentOffset(KDPoint(m_manualScrolling, 0));
-      return true;
+  KDPoint translation = KDPointZero;
+  if (event == Ion::Events::Left) {
+    KDCoordinate movementToEdge = m_manualScrollingOffset.x();
+    if (movementToEdge > 0) {
+      translation = KDPoint(-min(Metric::ScrollStep, movementToEdge), 0);
+    }
   }
-  if (event == Ion::Events::Left && m_manualScrolling > 0) {
-    KDCoordinate leftSpace = m_manualScrolling;
-    KDCoordinate scrollSubstract = leftSpace > Metric::ScrollStep ? Metric::ScrollStep : leftSpace;
-    m_manualScrolling -= scrollSubstract;
-    setContentOffset(KDPoint(m_manualScrolling, 0));
+  if (event == Ion::Events::Right) {
+    KDCoordinate movementToEdge =  view()->minimalSizeForOptimalDisplay().width() - bounds().width() - m_manualScrollingOffset.x();
+    if (movementToEdge > 0) {
+      translation = KDPoint(min(Metric::ScrollStep, movementToEdge), 0);
+    }
+  }
+  if (event == Ion::Events::Up) {
+    KDCoordinate movementToEdge = m_manualScrollingOffset.y();
+    if (movementToEdge > 0) {
+      translation = KDPoint(0, -min(Metric::ScrollStep, movementToEdge));
+    }
+  }
+  if (event == Ion::Events::Down) {
+    KDCoordinate movementToEdge =  view()->minimalSizeForOptimalDisplay().height() - bounds().height() - m_manualScrollingOffset.y();
+    if (movementToEdge > 0) {
+      translation = KDPoint(0, min(Metric::ScrollStep, movementToEdge));
+    }
+  }
+  if (translation != KDPointZero) {
+    m_manualScrollingOffset = m_manualScrollingOffset.translatedBy(translation);
+    setContentOffset(m_manualScrollingOffset);
     return true;
   }
   return false;
 }
 
 void ScrollableView::reloadScroll() {
-  m_manualScrolling = 0;
-  setContentOffset(KDPoint(m_manualScrolling, 0));
+  m_manualScrollingOffset = KDPointZero;
+  setContentOffset(m_manualScrollingOffset);
 }
 
 void ScrollableView::layoutSubviews() {
@@ -39,8 +55,3 @@ void ScrollableView::layoutSubviews() {
   view()->setSize(KDSize(viewWidth, viewHeight));
   ScrollView::layoutSubviews();
 }
-
-bool ScrollableView::rightViewIsInvisible() {
-  return view()->minimalSizeForOptimalDisplay().width() - m_manualScrolling > bounds().width();
-}
-

@@ -58,6 +58,7 @@ App::Snapshot * AppsContainer::appSnapshotAtIndex(int index) {
     &m_statisticsSnapshot,
     &m_probabilitySnapshot,
     &m_regressionSnapshot,
+    &m_codeSnapshot
   };
   assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
   assert(index >= 0 && index < k_numberOfCommonApps);

@@ -53,6 +53,8 @@
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>
+#include <escher/text_area.h>
+#include <escher/text_area_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_view.h>

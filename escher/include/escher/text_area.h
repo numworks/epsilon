@@ -9,7 +9,7 @@
 class TextArea : public ScrollableView, public ScrollViewDataSource {
 public:
   TextArea(Responder * parentResponder, char * textBuffer, size_t textBufferSize,
-    TextAreaDelegate * delegate = nullptr, KDText::FontSize size = KDText::FontSize::Large,
+    TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 
   void setDelegate(TextAreaDelegate * delegate);
@@ -71,12 +71,15 @@ private:
     ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize size,
       KDColor textColor, KDColor backgroundColor);
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    KDSize minimalSizeForOptimalDisplay() const override;
   private:
     Text m_text;
     KDText::FontSize m_fontSize;
     KDColor m_textColor;
     KDColor m_backgroundColor;
   };
+
+  View * view() override;
 
   ContentView m_contentView;
   TextAreaDelegate * m_delegate;

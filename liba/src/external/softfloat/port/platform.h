@@ -1,0 +1,7 @@
+#ifndef LIBA_SOFTFLOAT_PORT_PLATFORM_H
+#define LIBA_SOFTFLOAT_PORT_PLATFORM_H 1
+
+#define LITTLEENDIAN 1
+#define INLINE inline
+
+#endif

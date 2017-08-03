@@ -11,7 +11,8 @@
 
 typedef double float64_t;
 
-uint_fast32_t f64_to_ui32_r_minMag(float64_t x, bool i);
+float64_t i32_to_f64(int32_t i);
+int_fast32_t f64_to_i32_r_minMag(float64_t x, bool exact);
 bool f64_eq(float64_t x, float64_t y);
 bool f64_le(float64_t x, float64_t y);
 bool f64_lt(float64_t x, float64_t y);

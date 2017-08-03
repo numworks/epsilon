@@ -2,6 +2,7 @@
 #define LIBA_MATH_H
 
 #include "private/macros.h"
+#include <float.h>
 
 LIBA_BEGIN_DECLS
 
@@ -50,6 +51,29 @@ float sinhf(float x);
 float sqrtf(float x);
 float tanf(float x);
 float tanhf(float x);
+
+double acos(double x);
+double acosh(double x);
+double asin(double x);
+double asinh(double x);
+double atan(double x);
+double atanh(double x);
+double ceil(double x);
+double cos(double x);
+double cosh(double x);
+double exp(double x);
+double fabs(double x);
+double floor(double x);
+double lgamma(double x);
+double log10(double x);
+double log(double x);
+double pow(double x, double y);
+double round(double x);
+double sin(double x);
+double sinh(double x);
+double sqrt(double x);
+double tan(double x);
+double tanh(double x);
 
 LIBA_END_DECLS
 

@@ -51,7 +51,9 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context) {
   reset();
   strlcpy(m_inputText, c, sizeof(m_inputText));
-  input()->evaluate(*context)->writeTextInBuffer(m_outputText, sizeof(m_outputText));
+  Expression * evaluation = input()->evaluate(*context);
+  evaluation->writeTextInBuffer(m_outputText, sizeof(m_outputText));
+  delete evaluation;
 }
 
 const char * Calculation::inputText() {

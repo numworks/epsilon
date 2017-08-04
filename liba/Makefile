@@ -127,6 +127,8 @@ objs += $(addprefix liba/src/aeabi-rt/, \
 )
 
 liba/src/external/softfloat/src/%.o: CFLAGS += -Iliba/src/external/softfloat/include -Iliba/src/external/softfloat/src/8086 -Iliba/src/external/softfloat/port
+liba/src/external/softfloat/src/s_roundPackToF64.o: CFLAGS += -w
+# s_roundPackToF64 is throwing warnings
 
 objs += $(addprefix liba/src/external/softfloat/src/, \
   8086/s_propagateNaNF64UI.o \

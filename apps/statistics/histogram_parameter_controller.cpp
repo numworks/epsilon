@@ -32,7 +32,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-float HistogramParameterController::parameterAtIndex(int index) {
+double HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
   if (index == 0) {
     return m_store->barWidth();
@@ -40,10 +40,10 @@ float HistogramParameterController::parameterAtIndex(int index) {
   return m_store->firstDrawnBarAbscissa();
 }
 
-bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
-    float newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
+    double newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
     if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;

@@ -7,8 +7,8 @@ namespace Probability {
 
 LeftIntegralCalculation::LeftIntegralCalculation() :
   Calculation(),
-  m_upperBound(0.0f),
-  m_result(0.0f)
+  m_upperBound(0.0),
+  m_result(0.0)
 {
   compute(0);
 }
@@ -29,9 +29,9 @@ I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   return I18n::Message::LeftIntegralSecondLegend;
 }
 
-void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {
+void LeftIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 2);
-  float rf = std::round(f/k_precision)*k_precision;
+  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
     m_upperBound = rf;
   }
@@ -41,7 +41,7 @@ void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {
   compute(index);
 }
 
-float LeftIntegralCalculation::parameterAtIndex(int index) {
+double LeftIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return m_upperBound;
@@ -49,7 +49,7 @@ float LeftIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-float LeftIntegralCalculation::upperBound() {
+double LeftIntegralCalculation::upperBound() {
   return m_upperBound;
 }
 

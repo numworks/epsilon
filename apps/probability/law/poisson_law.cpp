@@ -59,12 +59,12 @@ float PoissonLaw::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
   }
-  float lResult = -m_parameter1+(int)x*std::log(m_parameter1)-std::lgamma(floorf(x)+1.0f);
+  float lResult = -m_parameter1+std::floor(x)*std::log(m_parameter1)-std::lgamma(std::floor(x)+1);
   return std::exp(lResult);
 }
 
-bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
-  if (x <= 0.0f || x > 999.0f) {
+bool PoissonLaw::authorizedValueAtIndex(double x, int index) const {
+  if (x <= 0.0 || x > 999.0) {
     return false;
   }
   return true;

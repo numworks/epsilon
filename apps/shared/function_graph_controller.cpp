@@ -125,12 +125,12 @@ void FunctionGraphController::initRangeParameters() {
 bool FunctionGraphController::moveCursorVertically(int direction) {
   Function * actualFunction = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+  double y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   Function * nextFunction = actualFunction;
-  float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
+  double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
-    float newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+    double newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
       m_indexFunctionSelectedByCursor = i;

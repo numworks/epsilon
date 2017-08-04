@@ -7,8 +7,8 @@ namespace Probability {
 
 RightIntegralCalculation::RightIntegralCalculation() :
   Calculation(),
-  m_lowerBound(0.0f),
-  m_result(0.0f)
+  m_lowerBound(0.0),
+  m_result(0.0)
 {
   compute(0);
 }
@@ -29,9 +29,9 @@ I18n::Message RightIntegralCalculation::legendForParameterAtIndex(int index) {
   return I18n::Message::RightIntegralSecondLegend;
 }
 
-void RightIntegralCalculation::setParameterAtIndex(float f, int index) {
+void RightIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 2);
-  float rf = std::round(f/k_precision)*k_precision;
+  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
     m_lowerBound = rf;
   }
@@ -41,7 +41,7 @@ void RightIntegralCalculation::setParameterAtIndex(float f, int index) {
   compute(index);
 }
 
-float RightIntegralCalculation::parameterAtIndex(int index) {
+double RightIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return m_lowerBound;
@@ -49,7 +49,7 @@ float RightIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-float RightIntegralCalculation::lowerBound() {
+double RightIntegralCalculation::lowerBound() {
   return m_lowerBound;
 }
 

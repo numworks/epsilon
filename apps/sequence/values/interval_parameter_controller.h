@@ -9,7 +9,7 @@ class IntervalParameterController : public Shared::IntervalParameterController {
 public:
   IntervalParameterController(Responder * parentResponder, Shared::Interval * interval);
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 
 }

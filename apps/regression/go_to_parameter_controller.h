@@ -16,8 +16,8 @@ public:
   const char * title() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   Store * m_store;
   bool m_xPrediction;
   GraphController * m_graphController;

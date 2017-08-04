@@ -32,7 +32,7 @@ public:
 protected:
   int activeCell();
   StackViewController * stackController();
-  virtual float parameterAtIndex(int index) = 0;
+  virtual double parameterAtIndex(int index) = 0;
   virtual SelectableTableView * selectableTableView();
   View * loadView() override;
   void unloadView(View * view) override;
@@ -43,7 +43,7 @@ private:
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   TextFieldDelegateApp * textFieldDelegateApp() override;
-  virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
   ButtonWithSeparator * m_okButton;
 };
 

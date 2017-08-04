@@ -9,7 +9,9 @@ GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * banne
   CurveView(store, cursor, bannerView, cursorView),
   m_store(store),
   m_xLabels{},
-  m_yLabels{}
+  m_yLabels{},
+  m_slope(NAN),
+  m_yIntercept(NAN)
 {
 }
 
@@ -20,6 +22,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Vertical);
   drawLabels(ctx, rect, Axis::Horizontal, true);
   drawLabels(ctx, rect, Axis::Vertical, true);
+  m_slope = m_store->slope();
+  m_yIntercept = m_store->yIntercept();
   drawCurve(ctx, rect, nullptr, Palette::YellowDark);
   for (int index = 0; index < m_store->numberOfPairs(); index++) {
     drawDot(ctx, rect, m_store->get(0,index), m_store->get(1,index), Palette::Red);
@@ -36,7 +40,7 @@ char * GraphView::label(Axis axis, int index) const {
 }
 
 float GraphView::evaluateModelWithParameter(Model * curve, float t) const {
-  return m_store->yValueForXValue(t);
+  return m_slope*t+m_yIntercept;
 }
 
 }

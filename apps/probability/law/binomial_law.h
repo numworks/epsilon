@@ -17,10 +17,17 @@ public:
   float yMax() override;
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
-  float evaluateAtAbscissa(float x) const override;
-  bool authorizedValueAtIndex(float x, int index) const override;
-  float cumulativeDistributiveInverseForProbability(float * probability) override;
-  float rightIntegralInverseForProbability(float * probability) override;
+  float evaluateAtAbscissa(float x) const override {
+    return templatedEvaluateAtAbscissa(x);
+  }
+  bool authorizedValueAtIndex(double x, int index) const override;
+  double cumulativeDistributiveInverseForProbability(double * probability) override;
+  double rightIntegralInverseForProbability(double * probability) override;
+protected:
+  double evaluateAtDiscreteAbscissa(int k) const override {
+    return templatedEvaluateAtAbscissa((double)k);
+  }
+  template<typename T> T templatedEvaluateAtAbscissa(T x) const;
 };
 
 }

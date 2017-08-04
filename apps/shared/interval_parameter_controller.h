@@ -16,13 +16,13 @@ public:
   int numberOfRows() override;
 protected:
   constexpr static int k_totalNumberOfCell = 3;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   Interval * m_interval;
   bool handleEvent(Ion::Events::Event event) override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  float parameterAtIndex(int index) override;
+  double parameterAtIndex(int index) override;
   void buttonAction() override;
   View * loadView() override;
   void unloadView(View * view) override;

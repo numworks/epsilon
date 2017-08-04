@@ -24,40 +24,40 @@ void Interval::deleteElementAtIndex(int index) {
   m_intervalBuffer[m_numberOfElements] = 0.0f;
 }
 
-float Interval::element(int i) {
+double Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
   computeElements();
   return m_intervalBuffer[i];
 }
 
-float Interval::start() {
+double Interval::start() {
   return m_start;
 }
 
-float Interval::end() {
+double Interval::end() {
   return m_end;
 }
 
-float Interval::step() {
+double Interval::step() {
   return m_step;
 }
 
-void Interval::setStart(float f) {
+void Interval::setStart(double f) {
   m_start = f;
   m_needCompute = true;
 }
 
-void Interval::setEnd(float f) {
+void Interval::setEnd(double f) {
   m_end = f;
   m_needCompute = true;
 }
 
-void Interval::setStep(float f) {
+void Interval::setStep(double f) {
   m_step = f;
   m_needCompute = true;
 }
 
-void Interval::setElement(int i, float f) {
+void Interval::setElement(int i, double f) {
   assert(i <= numberOfElements() && i < k_maxNumberOfElements);
   computeElements();
   m_intervalBuffer[i] = f;

@@ -33,7 +33,7 @@ HighlightCell * StoreController::titleCells(int index) {
   return m_titleCells[index];
 }
 
-bool StoreController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (columnIndex == 1) {
     if (floatBody < 0) {
       return false;

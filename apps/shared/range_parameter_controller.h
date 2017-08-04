@@ -20,8 +20,8 @@ public:
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   View * loadView() override;
   void unloadView(View * view) override;
   constexpr static int k_numberOfTextCell = 4;

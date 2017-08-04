@@ -12,14 +12,14 @@ public:
   int numberOfParameters() override;
   int numberOfEditableParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;
-  void setParameterAtIndex(float f, int index) override;
-  float parameterAtIndex(int index) override;
-  float lowerBound() override;
-  float upperBound() override;
+  void setParameterAtIndex(double f, int index) override;
+  double parameterAtIndex(int index) override;
+  double lowerBound() override;
+  double upperBound() override;
 private:
   void compute(int indexKnownElement) override;
-  float m_abscissa;
-  float m_result;
+  double m_abscissa;
+  double m_result;
 };
 
 }

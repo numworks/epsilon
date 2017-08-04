@@ -31,7 +31,7 @@ UpdateController::ContentView::ContentView() :
   m_messageTextView2(KDText::FontSize::Small, I18n::Message::UpdateMessage2, 0.5f, 0.5f),
   m_messageTextView3(KDText::FontSize::Small, I18n::Message::UpdateMessage3, 0.5f, 0.5f),
   m_messageTextView4(KDText::FontSize::Small, I18n::Message::UpdateMessage4, 0.5f, 0.5f, Palette::YellowDark),
-  m_skipView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5),
+  m_skipView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5f),
   m_okView()
 {
 }

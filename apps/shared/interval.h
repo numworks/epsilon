@@ -10,28 +10,28 @@ public:
   Interval(const Interval&) = delete;
   int numberOfElements();
   void deleteElementAtIndex(int index);
-  float element(int i);
-  float start();
-  float end();
-  float step();
-  void setStart(float f);
-  void setEnd(float f);
-  void setStep(float f);
-  void setElement(int i, float f);
+  double element(int i);
+  double start();
+  double end();
+  double step();
+  void setStart(double f);
+  void setEnd(double f);
+  void setStep(double f);
+  void setElement(int i, double f);
   // TODO: decide the max number of elements after optimization
   constexpr static int k_maxNumberOfElements = 100;
 private:
   void computeElements();
   int m_numberOfElements;
-  float m_intervalBuffer[k_maxNumberOfElements];
-  float m_start;
-  float m_end;
-  float m_step;
+  double m_intervalBuffer[k_maxNumberOfElements];
+  double m_start;
+  double m_end;
+  double m_step;
   bool m_needCompute;
 };
 
-typedef void (Interval::*SetterPointer)(float);
-typedef float (Interval::*GetterPointer)();
+typedef void (Interval::*SetterPointer)(double);
+typedef double (Interval::*GetterPointer)();
 
 }
 

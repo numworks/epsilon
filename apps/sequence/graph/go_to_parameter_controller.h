@@ -9,7 +9,7 @@ class GoToParameterController : public Shared::FunctionGoToParameterController {
 public:
   using Shared::FunctionGoToParameterController::FunctionGoToParameterController;
 private:
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 
 }

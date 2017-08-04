@@ -12,10 +12,10 @@ public:
   const char * title() override;
   void setFunction(Function * function);
 protected:
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   Function * m_function;
 private:
-  float parameterAtIndex(int index) override;
+  double parameterAtIndex(int index) override;
 };
 
 }

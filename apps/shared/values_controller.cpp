@@ -142,8 +142,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-    float x = m_interval->element(j-1);
-    Complex<float>::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    double x = m_interval->element(j-1);
+    Complex<double>::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }
@@ -280,12 +280,12 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   return false;
 }
 
-bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   m_interval->setElement(rowIndex-1, floatBody);
   return true;
 }
 
-float ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
+double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_interval->element(rowIndex-1);
 }
 
@@ -297,7 +297,7 @@ int ValuesController::maxNumberOfElements() const {
   return Interval::k_maxNumberOfElements;
 }
 
-float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnIndex) {
+double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   Function * function = functionAtColumn(columnIndex);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());

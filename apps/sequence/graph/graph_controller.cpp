@@ -46,34 +46,34 @@ bool GraphController::handleEnter() {
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  float xCursorPosition = std::round(m_cursor->x());
+  double xCursorPosition = std::round(m_cursor->x());
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
   /* The cursor moves by step of at minimum 1. If the windowRange is to large
    * compared to the resolution, the cursor takes bigger round step to cross
    * the window in approximatively resolution steps. */
-  float step = std::ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
-  step = step < 1.0f ? 1.0f : step;
-  float x = direction > 0 ? xCursorPosition + step:
+  double step = std::ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
+  step = step < 1.0 ? 1.0 : step;
+  double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
-  if (x < 0.0f) {
+  if (x < 0.0) {
     return false;
   }
   Sequence * s = m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = s->evaluateAtAbscissa(x, myApp->localContext());
+  double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
 void GraphController::initCursorParameters() {
-  float x = std::round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f);
+  double x = std::round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0);
   m_indexFunctionSelectedByCursor = 0;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;
-  float y = 0;
+  double y = 0;
   do {
     Sequence * firstFunction = m_sequenceStore->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());

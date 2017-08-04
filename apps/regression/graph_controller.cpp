@@ -88,7 +88,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = "x=";
-  float x = m_cursor->x();
+  double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (*m_selectedDotIndex == m_store->numberOfPairs()) {
     constexpr static char legX[] = {Ion::Charset::XBar, '=', 0};
@@ -98,7 +98,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -107,7 +107,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = "y=";
-  float y = m_cursor->y();
+  double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairs()) {
     constexpr static char legY[] = {Ion::Charset::YBar, '=', 0};
     legend = legY;
@@ -116,7 +116,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -125,11 +125,11 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " a=";
-  float slope = m_store->slope();
+  double slope = m_store->slope();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(slope, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(slope, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -138,11 +138,11 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " b=";
-  float yIntercept = m_store->yIntercept();
+  double yIntercept = m_store->yIntercept();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(yIntercept, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(yIntercept, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -151,11 +151,11 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = "           r=";
-  float r = m_store->correlationCoefficient();
+  double r = m_store->correlationCoefficient();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -164,11 +164,11 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " r2=";
-  float r2 = m_store->squaredCorrelationCoefficient();
+  double r2 = m_store->squaredCorrelationCoefficient();
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += Complex<float>::convertFloatToText(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += Complex<double>::convertFloatToText(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -181,8 +181,8 @@ void GraphController::initRangeParameters() {
 }
 
 void GraphController::initCursorParameters() {
-  float x = (m_store->xMin() + m_store->xMax())/2.0f;
-  float y = m_store->yValueForXValue(x);
+  double x = (m_store->xMin() + m_store->xMax())/2.0;
+  double y = m_store->yValueForXValue(x);
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   selectRegressionCurve();
@@ -205,16 +205,16 @@ bool GraphController::moveCursorHorizontally(int direction) {
     }
     return false;
   }
-  float x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
+  double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
   m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  float y = m_store->yValueForXValue(x);
+  double y = m_store->yValueForXValue(x);
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  float yRegressionCurve = m_store->yValueForXValue(m_cursor->x());
+  double yRegressionCurve = m_store->yValueForXValue(m_cursor->x());
   if (*m_selectedDotIndex >= 0) {
     if ((yRegressionCurve - m_cursor->y() > 0) == (direction > 0)) {
       *m_selectedDotIndex = -1;

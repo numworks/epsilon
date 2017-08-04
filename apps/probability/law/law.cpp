@@ -8,16 +8,17 @@ Law::Law() :
  Shared::CurveViewRange()
 {
 }
+
 float Law::xGridUnit() {
   return computeGridUnit(Axis::X, xMin(), xMax());
 }
 
-float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+double Law::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (!isContinuous()) {
     int end = std::round(x);
-    float result = 0.0f;
+    double result = 0.0;
     for (int k = 0; k <=end; k++) {
-      result += evaluateAtAbscissa(k);
+      result += evaluateAtDiscreteAbscissa(k);
       /* Avoid too long loop */
       if (result > k_maxProbability || k > k_maxNumberOfOperations) {
         break;
@@ -25,28 +26,28 @@ float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
     }
     return result;
   }
-  return 0.0f;
+  return 0.0;
 }
 
-float Law::rightIntegralFromAbscissa(float x) const {
+double Law::rightIntegralFromAbscissa(double x) const {
   if (isContinuous()) {
-    return 1.0f - cumulativeDistributiveFunctionAtAbscissa(x);
+    return 1.0 - cumulativeDistributiveFunctionAtAbscissa(x);
   }
-  return 1.0f - cumulativeDistributiveFunctionAtAbscissa(x-1.0f);
+  return 1.0 - cumulativeDistributiveFunctionAtAbscissa(x-1.0);
 }
 
-float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
+double Law::finiteIntegralBetweenAbscissas(double a, double b) const {
   if (b < a) {
-    return 0.0f;
+    return 0.0;
   }
   if (isContinuous()) {
     return cumulativeDistributiveFunctionAtAbscissa(b) - cumulativeDistributiveFunctionAtAbscissa(a);
   }
   int start = std::round(a);
   int end = std::round(b);
-  float result = 0.0f;
+  double result = 0.0;
   for (int k = start; k <=end; k++) {
-    result += evaluateAtAbscissa(k);
+    result += evaluateAtDiscreteAbscissa(k);
     /* Avoid too long loop */
     if (result > k_maxProbability || k-start > k_maxNumberOfOperations) {
       break;
@@ -55,57 +56,61 @@ float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
   return result;
 }
 
-float Law::cumulativeDistributiveInverseForProbability(float * probability) {
-  if (*probability >= 1.0f) {
+double Law::cumulativeDistributiveInverseForProbability(double * probability) {
+  if (*probability >= 1.0) {
     return INFINITY;
   }
   if (isContinuous()) {
-    return 0.0f;
+    return 0.0;
   }
-  if (*probability <= 0.0f) {
-    return 0.0f;
+  if (*probability <= 0.0) {
+    return 0.0;
   }
-  float p = 0.0f;
+  double p = 0.0;
   int k = 0;
   while (p < *probability && k < k_maxNumberOfOperations) {
-    p += evaluateAtAbscissa(k++);
+    p += evaluateAtDiscreteAbscissa(k++);
   }
   if (k == k_maxNumberOfOperations) {
-    *probability = 1.0f;
+    *probability = 1.0;
     return INFINITY;
   }
   *probability = p;
   if (isnan(*probability)) {
     return NAN;
   }
-  return k-1;
+  return k-1.0f;
 }
 
-float Law::rightIntegralInverseForProbability(float * probability) {
+double Law::rightIntegralInverseForProbability(double * probability) {
   if (isContinuous()) {
-    float f = 1.0f - *probability;
+    double f = 1.0 - *probability;
     return cumulativeDistributiveInverseForProbability(&f);
   }
-  if (*probability >= 1.0f) {
-    return 0.0f;
+  if (*probability >= 1.0) {
+    return 0.0;
   }
-  if (*probability <= 0.0f) {
+  if (*probability <= 0.0) {
     return INFINITY;
   }
-  float p = 0.0f;
+  double p = 0.0;
   int k = 0;
-  while (p < 1.0f - *probability && k < k_maxNumberOfOperations) {
-    p += evaluateAtAbscissa(k++);
+  while (p < 1.0 - *probability && k < k_maxNumberOfOperations) {
+    p += evaluateAtDiscreteAbscissa(k++);
   }
   if (k == k_maxNumberOfOperations) {
-    *probability = 1.0f;
+    *probability = 1.0;
     return INFINITY;
   }
-  *probability = 1.0f - (p - evaluateAtAbscissa(k-1));
+  *probability = 1.0 - (p - evaluateAtDiscreteAbscissa(k-1));
   if (isnan(*probability)) {
     return NAN;
   }
-  return k-1;
+  return k-1.0;
+}
+
+double Law::evaluateAtDiscreteAbscissa(int k) const {
+  return 0.0;
 }
 
 }

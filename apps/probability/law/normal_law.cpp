@@ -75,7 +75,7 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
   return (1.0f/(std::fabs(m_parameter2)*std::sqrt(2.0f*M_PI)))*std::exp(-0.5f*std::pow((x-m_parameter1)/m_parameter2,2));
 }
 
-bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
+bool NormalLaw::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
     return true;
   }
@@ -92,46 +92,46 @@ void NormalLaw::setParameterAtIndex(float f, int index) {
   }
 }
 
-float NormalLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+double NormalLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (m_parameter2 ==  0.0f) {
     return NAN;
   }
   return standardNormalCumulativeDistributiveFunctionAtAbscissa((x-m_parameter1)/std::fabs(m_parameter2));
 }
 
-float NormalLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+double NormalLaw::cumulativeDistributiveInverseForProbability(double * probability) {
   if (m_parameter2 ==  0.0f) {
     return NAN;
   }
   return standardNormalCumulativeDistributiveInverseForProbability(*probability)*std::fabs(m_parameter2) + m_parameter1;
 }
 
-float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float abscissa) const {
-  if (abscissa == 0.0f) {
-    return 0.5f;
+double NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(double abscissa) const {
+  if (abscissa == 0.0) {
+    return 0.5;
   }
-  if (abscissa < 0.0f) {
-    return 1.0f - standardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
+  if (abscissa < 0.0) {
+    return 1.0 - standardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
   if (abscissa > k_boundStandardNormalDistribution) {
-    return 1.0f;
+    return 1.0;
   }
   /* Waissi & Rossin's formula (error less than 0.0001) */
-  return 1.0f/(1.0f+std::exp(-std::sqrt(M_PI)*(k_beta1*std::pow(abscissa,5)+k_beta2*std::pow(abscissa,3)+k_beta3*abscissa)));
+  return 1.0/(1.0+std::exp(-std::sqrt(M_PI)*(k_beta1*std::pow(abscissa,5.0)+k_beta2*std::pow(abscissa,3.0)+k_beta3*abscissa)));
 }
 
-float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float probability) {
-  if (probability >= 1.0f) {
+double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(double probability) {
+  if (probability >= 1.0) {
     return INFINITY;
   }
-  if (probability <= 0.0f) {
+  if (probability <= 0.0) {
     return -INFINITY;
   }
-  if (probability < 0.5f) {
+  if (probability < 0.5) {
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
   /* Soranzo & Epure (error less than 0.001) */
-  return (k_alpha3/std::log(k_alpha2))*std::log(1.0f - std::log(-std::log(probability)/std::log(2.0f))/std::log(k_alpha1));
+  return (k_alpha3/std::log(k_alpha2))*std::log(1.0 - std::log(-std::log(probability)/std::log(2.0))/std::log(k_alpha1));
 }
 
 

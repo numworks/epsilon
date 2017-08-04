@@ -132,11 +132,11 @@ int ParametersController::reusableParameterCellCount(int type) {
   return m_law->numberOfParameter();
 }
 
-float ParametersController::parameterAtIndex(int index) {
+double ParametersController::parameterAtIndex(int index) {
   return m_law->parameterValueAtIndex(index);
 }
 
-bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;

@@ -65,7 +65,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);
 
-  float calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
+  double calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
   /* We then draw all the vertical lines of the box and then recolor the
    * the selected quantile (if there is one). As two quantiles can have the same
    * value, we cannot choose line colors and then color only once the vertical

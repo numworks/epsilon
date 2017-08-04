@@ -44,7 +44,7 @@ public:
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:
   StackViewController * stackController() const;
-  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   View * loadView() override;
   void unloadView(View * view) override;
   virtual void updateNumberOfColumns();
@@ -57,10 +57,10 @@ private:
   void configureAbscissa();
   void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  float dataAtLocation(int columnIndex, int rowIndex) override;
+  double dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
-  virtual float evaluationOfAbscissaAtColumn(float abscissa, int columnIndex);
+  virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
   constexpr static int k_maxNumberOfAbscissaCells = 10;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;

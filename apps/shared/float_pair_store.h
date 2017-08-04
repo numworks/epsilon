@@ -10,19 +10,19 @@ public:
   FloatPairStore();
   // Delete the implicit copy constructor: the object is heavy
   FloatPairStore(const FloatPairStore&) = delete;
-  float get(int i, int j);
-  void set(float f, int i, int j);
+  double get(int i, int j);
+  void set(double f, int i, int j);
   int numberOfPairs();
   void deletePairAtIndex(int j);
   void deleteAllPairs();
   void resetColumn(int i);
-  float sumOfColumn(int i);
+  double sumOfColumn(int i);
   uint32_t storeChecksum();
   constexpr static int k_maxNumberOfPairs = 100;
 protected:
-  virtual float defaultValue(int ii);
+  virtual double defaultValue(int i);
   int m_numberOfPairs;
-  float m_data[2][k_maxNumberOfPairs];
+  double m_data[2][k_maxNumberOfPairs];
 };
 
 }

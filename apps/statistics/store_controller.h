@@ -12,7 +12,7 @@ public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
-  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   HighlightCell * titleCells(int index) override;
   View * loadView() override;
   void unloadView(View * view) override;

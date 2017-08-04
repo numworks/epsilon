@@ -78,7 +78,7 @@ float UniformLaw::evaluateAtAbscissa(float t) const {
   return 0.0f;
 }
 
-bool UniformLaw::authorizedValueAtIndex(float x, int index) const {
+bool UniformLaw::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
     return true;
   }
@@ -95,17 +95,17 @@ void UniformLaw::setParameterAtIndex(float f, int index) {
   }
 }
 
-float UniformLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
+double UniformLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (x <= m_parameter1) {
-    return 0.0f;
+    return 0.0;
   }
   if (x < m_parameter2) {
     return (x-m_parameter1)/(m_parameter2-m_parameter1);
   }
-  return 1.0f;
+  return 1.0;
 }
 
-float UniformLaw::cumulativeDistributiveInverseForProbability(float * probability) {
+double UniformLaw::cumulativeDistributiveInverseForProbability(double * probability) {
   if (*probability >= 1.0f) {
     return m_parameter2;
   }

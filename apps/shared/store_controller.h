@@ -30,8 +30,8 @@ protected:
   View * loadView() override;
   void unloadView(View * view) override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
-  float dataAtLocation(int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
+  double dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElements() override;
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;

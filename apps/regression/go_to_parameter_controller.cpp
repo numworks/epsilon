@@ -29,7 +29,7 @@ const char * GoToParameterController::title() {
   return I18n::translate(I18n::Message::YPrediction);
 }
 
-float GoToParameterController::parameterAtIndex(int index) {
+double GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   if (m_xPrediction) {
     return m_cursor->x();
@@ -37,13 +37,13 @@ float GoToParameterController::parameterAtIndex(int index) {
   return m_cursor->y();
 }
 
-bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   if (std::fabs(f) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  float x = m_store->xValueForYValue(f);
+  double x = m_store->xValueForYValue(f);
   if (m_xPrediction) {
     x = m_store->yValueForXValue(f);
   }
@@ -52,7 +52,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
     return false;
   }
   if (isnan(x)) {
-    if (m_store->slope() < FLT_EPSILON && f == m_store->yIntercept()) {
+    if (m_store->slope() < DBL_EPSILON && f == m_store->yIntercept()) {
       m_graphController->selectRegressionCurve();
       m_cursor->moveTo(m_cursor->x(), f);
       return true;

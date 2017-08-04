@@ -18,11 +18,11 @@ int Calculation::numberOfEditableParameters() {
   return numberOfParameters();
 }
 
-float Calculation::lowerBound() {
+double Calculation::lowerBound() {
   return -INFINITY;
 }
 
-float Calculation::upperBound() {
+double Calculation::upperBound() {
   return INFINITY;
 }
 

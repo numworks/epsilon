@@ -18,22 +18,22 @@ public:
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
-  bool authorizedValueAtIndex(float x, int index) const override;
+  bool authorizedValueAtIndex(double x, int index) const override;
   void setParameterAtIndex(float f, int index) override;
-  float cumulativeDistributiveFunctionAtAbscissa(float x) const override;
-  float cumulativeDistributiveInverseForProbability(float * probability) override;
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
+  double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
-  constexpr static float k_maxRatioMuSigma = 1000.0f;
+  constexpr static double k_maxRatioMuSigma = 1000.0f;
   /* Waissi & Rossin constants */
-  constexpr static float k_beta1 = -0.0004406f;
-  constexpr static float k_beta2 = 0.0418198f;
-  constexpr static float k_beta3 = 0.9f;
-  constexpr static float k_boundStandardNormalDistribution = 3.291f;
-  constexpr static float k_alpha1 = 22.0f;
-  constexpr static float k_alpha2 = 41.0f;
-  constexpr static float k_alpha3 = 10.0f;
-  float standardNormalCumulativeDistributiveFunctionAtAbscissa(float abscissa) const;
-  float standardNormalCumulativeDistributiveInverseForProbability(float probability);
+  constexpr static double k_beta1 = -0.0004406;
+  constexpr static double k_beta2 = 0.0418198;
+  constexpr static double k_beta3 = 0.9;
+  constexpr static double k_boundStandardNormalDistribution = 3.291;
+  constexpr static double k_alpha1 = 22.0;
+  constexpr static double k_alpha2 = 41.0;
+  constexpr static double k_alpha3 = 10.0;
+  double standardNormalCumulativeDistributiveFunctionAtAbscissa(double abscissa) const;
+  double standardNormalCumulativeDistributiveInverseForProbability(double probability);
 };
 
 }

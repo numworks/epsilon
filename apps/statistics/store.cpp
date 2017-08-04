@@ -91,12 +91,12 @@ bool Store::scrollToSelectedBarIndex(int index) {
 
 /* Calculation */
 
-float Store::sumOfOccurrences() {
+double Store::sumOfOccurrences() {
   return sumOfColumn(1);
 }
 
-float Store::maxValue() {
-  float max = -FLT_MAX;
+double Store::maxValue() {
+  double max = -DBL_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_data[0][k] > max && m_data[1][k] > 0) {
       max = m_data[0][k];
@@ -105,8 +105,8 @@ float Store::maxValue() {
   return max;
 }
 
-float Store::minValue() {
-  float min = FLT_MAX;
+double Store::minValue() {
+  float min = DBL_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_data[0][k] < min && m_data[1][k] > 0) {
       min = m_data[0][k];
@@ -115,38 +115,38 @@ float Store::minValue() {
   return min;
 }
 
-float Store::range() {
+double Store::range() {
   return maxValue()-minValue();
 }
 
-float Store::mean() {
+double Store::mean() {
   return sum()/sumOfColumn(1);
 }
 
-float Store::variance() {
+double Store::variance() {
   float m = mean();
   return squaredValueSum()/sumOfColumn(1) - m*m;
 }
 
-float Store::standardDeviation() {
+double Store::standardDeviation() {
   return std::sqrt(variance());
 }
 
-float Store::firstQuartile() {
+double Store::firstQuartile() {
   int firstQuartileIndex = std::ceil(sumOfColumn(1)/4);
   return sortedElementNumber(firstQuartileIndex);
 }
 
-float Store::thirdQuartile() {
+double Store::thirdQuartile() {
   int thirdQuartileIndex = std::ceil(3*sumOfColumn(1)/4);
   return sortedElementNumber(thirdQuartileIndex);
 }
 
-float Store::quartileRange() {
+double Store::quartileRange() {
   return thirdQuartile()-firstQuartile();
 }
 
-float Store::median() {
+double Store::median() {
   int total = sumOfColumn(1);
   int halfTotal = total/2;
   int totalMod2 = total - 2*halfTotal;
@@ -159,7 +159,7 @@ float Store::median() {
   }
 }
 
-float Store::sum() {
+double Store::sum() {
   float result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[0][k]*m_data[1][k];
@@ -167,7 +167,7 @@ float Store::sum() {
   return result;
 }
 
-float Store::squaredValueSum() {
+double Store::squaredValueSum() {
   float result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[0][k]*m_data[0][k]*m_data[1][k];
@@ -177,11 +177,11 @@ float Store::squaredValueSum() {
 
 /* private methods */
 
-float Store::defaultValue(int i) {
+double Store::defaultValue(int i) {
   if (i == 0) {
-    return 0.0f;
+    return 0.0;
   }
-  return 1.0f;
+  return 1.0;
 }
 
 float Store::sumOfValuesBetween(float x1, float x2) {
@@ -194,21 +194,21 @@ float Store::sumOfValuesBetween(float x1, float x2) {
   return result;
 }
 
-float Store::sortedElementNumber(int k) {
+double Store::sortedElementNumber(int k) {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
-  float bufferValues[m_numberOfPairs];
-  memcpy(bufferValues, m_data[0], m_numberOfPairs*sizeof(float));
+  double bufferValues[m_numberOfPairs];
+  memcpy(bufferValues, m_data[0], m_numberOfPairs*sizeof(double));
   int sortedElementIndex = 0;
-  float cumulatedSize = 0.0f;
+  double cumulatedSize = 0.0;
   while (cumulatedSize < k) {
     sortedElementIndex = minIndex(bufferValues, m_numberOfPairs);
-    bufferValues[sortedElementIndex] = FLT_MAX;
+    bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedSize += m_data[1][sortedElementIndex];
   }
   return m_data[0][sortedElementIndex];
 }
 
-int Store::minIndex(float * bufferValues, int bufferLength) {
+int Store::minIndex(double * bufferValues, int bufferLength) {
   int index = 0;
   for (int i = 1; i < bufferLength; i++) {
     if (bufferValues[index] > bufferValues[i]) {

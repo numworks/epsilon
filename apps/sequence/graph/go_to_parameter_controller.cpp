@@ -5,7 +5,7 @@
 
 namespace Sequence {
 
-bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   return Shared::FunctionGoToParameterController::setParameterAtIndex(parameterIndex, std::round(f));
 }

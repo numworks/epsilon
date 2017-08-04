@@ -224,11 +224,11 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && m_highlightedSubviewIndex == 2) {
-    if (floatBody < 0.0f) {
-      floatBody = 0.0f;
+    if (floatBody < 0.0) {
+      floatBody = 0.0;
     }
-    if (floatBody > 1.0f) {
-      floatBody = 1.0f;
+    if (floatBody > 1.0) {
+      floatBody = 1.0;
     }
   }
   if (!m_law->isContinuous() && (m_highlightedSubviewIndex == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {

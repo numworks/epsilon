@@ -92,14 +92,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   return FloatParameterController::handleEvent(event);
 }
 
-float RangeParameterController::parameterAtIndex(int parameterIndex) {
+double RangeParameterController::parameterAtIndex(int parameterIndex) {
   ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
     &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   return (m_interactiveRange->*getters[index])();
 }
 
-bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f) {
   ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;

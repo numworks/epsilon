@@ -25,8 +25,8 @@ private:
   TextFieldDelegateApp * textFieldDelegateApp() override;
   static constexpr KDCoordinate k_cellHeight = 20;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
-  virtual bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) = 0;
-  virtual float dataAtLocation(int columnIndex, int rowIndex) = 0;
+  virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
+  virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;
   virtual int numberOfElements() = 0;
   virtual int maxNumberOfElements() const = 0;
 };

@@ -153,13 +153,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn,
       &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
-    float calculation1 = (m_store->*calculationMethods[j-1])(0);
-    float calculation2 = (m_store->*calculationMethods[j-1])(1);
+    double calculation1 = (m_store->*calculationMethods[j-1])(0);
+    double calculation2 = (m_store->*calculationMethods[j-1])(1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<float>::convertFloatToText(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<double>::convertFloatToText(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setFirstText(buffer);
-    Complex<float>::convertFloatToText(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<double>::convertFloatToText(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setSecondText(buffer);
     return;
   }
@@ -172,10 +172,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j != 9);
     CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::numberOfPairs, &Store::covariance,
       &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
-    float calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
+    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<float>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<double>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
     return;
   }

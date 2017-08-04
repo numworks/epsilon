@@ -119,7 +119,7 @@ void Store::setDefault() {
 
 /* Calculations */
 
-float Store::numberOfPairs() {
+double Store::numberOfPairs() {
   return m_numberOfPairs;
 }
 
@@ -143,73 +143,73 @@ float Store::minValueOfColumn(int i) {
   return min;
 }
 
-float Store::squaredValueSumOfColumn(int i) {
-  float result = 0;
+double Store::squaredValueSumOfColumn(int i) {
+  double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[i][k]*m_data[i][k];
   }
   return result;
 }
 
-float Store::columnProductSum() {
-  float result = 0;
+double Store::columnProductSum() {
+  double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[0][k]*m_data[1][k];
   }
   return result;
 }
 
-float Store::meanOfColumn(int i) {
+double Store::meanOfColumn(int i) {
   return sumOfColumn(i)/m_numberOfPairs;
 }
 
-float Store::varianceOfColumn(int i) {
-  float mean = meanOfColumn(i);
+double Store::varianceOfColumn(int i) {
+  double mean = meanOfColumn(i);
   return squaredValueSumOfColumn(i)/m_numberOfPairs - mean*mean;
 }
 
-float Store::standardDeviationOfColumn(int i) {
+double Store::standardDeviationOfColumn(int i) {
   return std::sqrt(varianceOfColumn(i));
 }
 
-float Store::covariance() {
+double Store::covariance() {
   return columnProductSum()/m_numberOfPairs - meanOfColumn(0)*meanOfColumn(1);
 }
 
-float Store::slope() {
+double Store::slope() {
   return covariance()/varianceOfColumn(0);
 }
 
-float Store::yIntercept() {
+double Store::yIntercept() {
   return meanOfColumn(1) - slope()*meanOfColumn(0);
 }
 
-float Store::yValueForXValue(float x) {
+double Store::yValueForXValue(double x) {
   return slope()*x+yIntercept();
 }
 
-float Store::xValueForYValue(float y) {
-  if (std::fabs(slope()) < FLT_EPSILON) {
+double Store::xValueForYValue(double y) {
+  if (std::fabs(slope()) < DBL_EPSILON) {
     return NAN;
   }
   return (y - yIntercept())/slope();
 }
 
-float Store::correlationCoefficient() {
-  float sd0 = standardDeviationOfColumn(0);
-  float sd1 = standardDeviationOfColumn(1);
-  if (sd0 == 0.0f || sd1 == 0.0f) {
-    return 1.0f;
+double Store::correlationCoefficient() {
+  double sd0 = standardDeviationOfColumn(0);
+  double sd1 = standardDeviationOfColumn(1);
+  if (sd0 == 0.0 || sd1 == 0.0) {
+    return 1.0;
   }
   return covariance()/(sd0*sd1);
 }
 
-float Store::squaredCorrelationCoefficient() {
-  float cov = covariance();
-  float v0 = varianceOfColumn(0);
-  float v1 = varianceOfColumn(1);
-  if (v0 == 0.0f || v1 == 0.0f) {
-    return 1.0f;
+double Store::squaredCorrelationCoefficient() {
+  double cov = covariance();
+  double v0 = varianceOfColumn(0);
+  double v1 = varianceOfColumn(1);
+  if (v0 == 0.0 || v1 == 0.0) {
+    return 1.0;
   }
   return cov*cov/(v0*v1);
 }

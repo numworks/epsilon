@@ -7,8 +7,8 @@ namespace Probability {
 
 DiscreteCalculation::DiscreteCalculation() :
   Calculation(),
-  m_abscissa(0.0f),
-  m_result(0.0f)
+  m_abscissa(0.0),
+  m_result(0.0)
 {
   compute(0);
 }
@@ -33,15 +33,15 @@ I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   return I18n::Message::LeftIntegralSecondLegend;
 }
 
-void DiscreteCalculation::setParameterAtIndex(float f, int index) {
+void DiscreteCalculation::setParameterAtIndex(double f, int index) {
   assert(index == 0);
-  float rf = std::round(f);
+  double rf = std::round(f);
   m_abscissa = rf;
   compute(index);
 }
 
 
-float DiscreteCalculation::parameterAtIndex(int index) {
+double DiscreteCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return m_abscissa;
@@ -49,11 +49,11 @@ float DiscreteCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-float DiscreteCalculation::lowerBound() {
+double DiscreteCalculation::lowerBound() {
   return m_abscissa;
 }
 
-float DiscreteCalculation::upperBound() {
+double DiscreteCalculation::upperBound() {
   return m_abscissa;
 }
 
@@ -61,7 +61,7 @@ void DiscreteCalculation::compute(int indexKnownElement) {
   if (m_law == nullptr) {
     return;
   }
-  m_result = m_law->evaluateAtAbscissa(m_abscissa);
+  m_result = m_law->evaluateAtDiscreteAbscissa(m_abscissa);
   /* Results in probability application are rounder to 3 decimals */
   m_result = std::round(m_result/k_precision)*k_precision;
 }

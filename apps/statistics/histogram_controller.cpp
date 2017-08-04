@@ -155,11 +155,11 @@ void HistogramController::reloadBannerView() {
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  float lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += Complex<float>::convertFloatToText(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  double lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
+  numberOfChar += Complex<double>::convertFloatToText(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ';';
-  float upperBound = m_store->endOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += Complex<float>::convertFloatToText(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  double upperBound = m_store->endOfBarAtIndex(*m_selectedBarIndex);
+  numberOfChar += Complex<double>::convertFloatToText(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = '[';
   legend = "                                  ";
   legendLength = strlen(legend);
@@ -172,8 +172,8 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  float size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += Complex<float>::convertFloatToText(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  double size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
+  numberOfChar += Complex<double>::convertFloatToText(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                            ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -185,8 +185,8 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  float frequency = size/m_store->sumOfColumn(1);
-  numberOfChar += Complex<float>::convertFloatToText(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  double frequency = size/m_store->sumOfColumn(1);
+  numberOfChar += Complex<double>::convertFloatToText(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                            ";
   legendLength = strlen(legend);
   strlcpy(buffer+numberOfChar, legend, legendLength+1);

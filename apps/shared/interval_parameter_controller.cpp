@@ -32,24 +32,24 @@ Interval * IntervalParameterController::interval() {
   return m_interval;
 }
 
-float IntervalParameterController::parameterAtIndex(int index) {
+double IntervalParameterController::parameterAtIndex(int index) {
   GetterPointer getters[k_totalNumberOfCell] = {&Interval::start, &Interval::end, &Interval::step};
   return (m_interval->*getters[index])();
 }
 
-bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f <= 0.0f && parameterIndex == 2) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  float start = parameterIndex == 0 ? f : m_interval->start();
-  float end = parameterIndex == 1 ? f : m_interval->end();
+  double start = parameterIndex == 0 ? f : m_interval->start();
+  double end = parameterIndex == 1 ? f : m_interval->end();
   if (start > end) {
     if (parameterIndex == 1) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    float g = f+1.0f;
+    double g = f+1.0;
     m_interval->setEnd(g);
   }
   SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};

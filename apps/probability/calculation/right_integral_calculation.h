@@ -11,13 +11,13 @@ public:
   Type type() override;
   int numberOfParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;
-  void setParameterAtIndex(float f, int index) override;
-  float parameterAtIndex(int index) override;
-  float lowerBound() override;
+  void setParameterAtIndex(double f, int index) override;
+  double parameterAtIndex(int index) override;
+  double lowerBound() override;
 private:
   void compute(int indexKnownElement) override;
-  float m_lowerBound;
-  float m_result;
+  double m_lowerBound;
+  double m_result;
 };
 
 }

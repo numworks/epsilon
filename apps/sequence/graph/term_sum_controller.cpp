@@ -64,14 +64,14 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     if (m_step > 0 && m_startSum >= m_cursor->x()) {
       return false;
     }
-    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()-1.0f))) {
+    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()-1.0))) {
       m_graphView->reload();
       return true;
     }
     return false;
   }
   if (event == Ion::Events::Right) {
-    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()+1.0f))) {
+    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()+1.0))) {
       m_graphView->reload();
       return true;
     }
@@ -106,7 +106,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     m_step++;
     m_endSum = m_cursor->x();
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-    float sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
+    double sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
     m_legendView.setSumResult(m_sequence->name(), sum);
     m_legendView.setLegendMessage(I18n::Message::Default);
     m_graphView->setHighlightColor(true);
@@ -140,12 +140,12 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
   if (position < 0) {
     return false;
   }
-  float x = position;
+  double x = position;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   if (m_sequence == nullptr) {
     return false;
   }
-  float y = m_sequence->evaluateAtAbscissa(x, myApp->localContext());
+  double y = m_sequence->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   if (m_step == 0) {
     m_legendView.setSumSubscript(m_cursor->x());
@@ -199,7 +199,7 @@ void TermSumController::LegendView::setSumSubscript(float start) {
   }
   const char sigma[3] = {' ',Ion::Charset::CapitalSigma, 0};
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  Complex<float>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
  m_sum.setExpression(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
@@ -214,17 +214,17 @@ void TermSumController::LegendView::setSumSuperscript(float start, float end) {
   char bufferStart[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex<float>::convertFloatToText(start, bufferStart, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   char bufferEnd[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex<double>::convertFloatToText(end, bufferEnd, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  Complex<float>::convertFloatToText(end, bufferEnd, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, 2), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
   m_sum.setExpression(m_sumLayout);
   m_sum.setAlignment(0.0f, 0.5f);
 }
 
-void TermSumController::LegendView::setSumResult(const char * sequenceName, float result) {
+void TermSumController::LegendView::setSumResult(const char * sequenceName, double result) {
   ExpressionLayout * childrenLayouts[3];
   char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   strlcpy(buffer, "= ", 3);
-  Complex<float>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
   childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[0] = m_sumLayout;

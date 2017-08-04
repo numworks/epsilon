@@ -8,9 +8,9 @@ namespace Probability {
 
 FiniteIntegralCalculation::FiniteIntegralCalculation() :
   Calculation(),
-  m_lowerBound(0.0f),
-  m_upperBound(1.0f),
-  m_result(0.0f)
+  m_lowerBound(0.0),
+  m_upperBound(1.0),
+  m_result(0.0)
 {
   compute(0);
 }
@@ -41,9 +41,9 @@ I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   return I18n::Message::LeftIntegralSecondLegend;
 }
 
-void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {
+void FiniteIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 3);
-  float rf = std::round(f/k_precision)*k_precision;
+  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
     m_lowerBound = rf;
   }
@@ -57,7 +57,7 @@ void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {
 }
 
 
-float FiniteIntegralCalculation::parameterAtIndex(int index) {
+double FiniteIntegralCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
     return m_lowerBound;
@@ -68,11 +68,11 @@ float FiniteIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-float FiniteIntegralCalculation::lowerBound() {
+double FiniteIntegralCalculation::lowerBound() {
   return m_lowerBound;
 }
 
-float FiniteIntegralCalculation::upperBound() {
+double FiniteIntegralCalculation::upperBound() {
   return m_upperBound;
 }
 
@@ -82,9 +82,9 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
   }
   if (indexKnownElement == 2) {
     assert(m_law->type() == Law::Type::Normal);
-    float p = (1.0f+m_result)/2.0f;
-    float a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
-    m_lowerBound = std::round((2.0f*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
+    double p = (1.0+m_result)/2.0;
+    double a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
+    m_lowerBound = std::round((2.0*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
     m_upperBound = std::round(a/k_precision)*k_precision;
   }
   m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);

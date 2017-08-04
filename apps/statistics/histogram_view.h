@@ -21,6 +21,9 @@ private:
   char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float m_highlightedBarStart;
   float m_highlightedBarEnd;
+  /* We memoize the total size to avoid recomputing it in double precision at
+   * every call to evaluateModelWithParameter() */
+  mutable float m_totalSize;
 };
 
 }

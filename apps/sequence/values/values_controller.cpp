@@ -46,7 +46,7 @@ IntervalParameterController * ValuesController::intervalParameterController() {
   return &m_intervalParameterController;
 }
 
-bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int rowIndex) {
+bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
       return false;
   }

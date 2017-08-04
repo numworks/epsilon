@@ -140,7 +140,7 @@ FunctionParameterController * ValuesController::functionParameterController() {
   return &m_functionParameterController;
 }
 
-float ValuesController::evaluationOfAbscissaAtColumn(float abscissa, int columnIndex) {
+double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   CartesianFunction * function = functionAtColumn(columnIndex);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   if (isDerivativeColumn(columnIndex)) {

@@ -69,25 +69,25 @@ float ExponentialLaw::evaluateAtAbscissa(float x) const {
   return m_parameter1*std::exp(-m_parameter1*x);
 }
 
-bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
-  if (x <= 0.0f || x > 7500.0f) {
+bool ExponentialLaw::authorizedValueAtIndex(double x, int index) const {
+  if (x <= 0.0 || x > 7500.0) {
     return false;
   }
   return true;
 }
 
-float ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
-  return 1.0f - std::exp(-m_parameter1*x);
+double ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
+  return 1.0 - std::exp((double)(-m_parameter1*x));
 }
 
-float ExponentialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
-  if (*probability >= 1.0f) {
+double ExponentialLaw::cumulativeDistributiveInverseForProbability(double * probability) {
+  if (*probability >= 1.0) {
     return INFINITY;
   }
-  if (*probability <= 0.0f) {
-    return 0.0f;
+  if (*probability <= 0.0) {
+    return 0.0;
   }
-  return -std::log(1.0f - *probability)/m_parameter1;
+  return -std::log(1.0 - *probability)/(double)m_parameter1;
 }
 
 }

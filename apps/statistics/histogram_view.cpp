@@ -11,7 +11,8 @@ HistogramView::HistogramView(Store * store, BannerView * bannerView) :
   m_store(store),
   m_labels{},
   m_highlightedBarStart(NAN),
-  m_highlightedBarEnd(NAN)
+  m_highlightedBarEnd(NAN),
+  m_totalSize(NAN)
 {
 }
 
@@ -27,6 +28,7 @@ void HistogramView::reload() {
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
+  m_totalSize = m_store->sumOfColumn(1);
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
@@ -55,7 +57,7 @@ char * HistogramView::label(Axis axis, int index) const {
 }
 
 float HistogramView::evaluateModelWithParameter(Model * curve, float t) const {
-  return m_store->heightOfBarAtValue(t)/m_store->sumOfColumn(1);
+  return m_store->heightOfBarAtValue(t)/m_totalSize;
 }
 
 }

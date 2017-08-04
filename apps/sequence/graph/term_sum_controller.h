@@ -35,7 +35,7 @@ private:
     void setLegendMessage(I18n::Message message);
     void setSumSubscript(float start);
     void setSumSuperscript(float start, float end);
-    void setSumResult(const char * sequenceName, float result);
+    void setSumResult(const char * sequenceName, double result);
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     constexpr static KDCoordinate k_legendHeight = 35;

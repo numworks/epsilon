@@ -22,8 +22,8 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   I18n::Message okButtonText() override;
   View * loadView() override;

@@ -15,12 +15,12 @@ const char * FunctionGoToParameterController::title() {
   return I18n::translate(I18n::Message::Goto);
 }
 
-float FunctionGoToParameterController::parameterAtIndex(int index) {
+double FunctionGoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   return m_cursor->x();
 }
 
-bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = m_function->evaluateAtAbscissa(f, myApp->localContext());

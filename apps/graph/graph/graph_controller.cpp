@@ -43,29 +43,29 @@ void GraphController::reloadBannerView() {
   buffer[0] = f->name()[0];
   buffer[1] = '\'';
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
+  double y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
   Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView.setLegendAtIndex(buffer, 2);
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  float xCursorPosition = m_cursor->x();
-  float x = direction > 0 ? xCursorPosition + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit :
+  double xCursorPosition = m_cursor->x();
+  double x = direction > 0 ? xCursorPosition + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit :
     xCursorPosition -  m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = f->evaluateAtAbscissa(x, myApp->localContext());
+  double y = f->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
 }
 
 void GraphController::initCursorParameters() {
-  float x = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  double x = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
   m_indexFunctionSelectedByCursor = 0;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;
-  float y = 0;
+  double y = 0;
   do {
     CartesianFunction * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());

@@ -15,7 +15,7 @@ public:
   I18n::Message emptyMessage() override;
   IntervalParameterController * intervalParameterController() override;
 private:
-  bool setDataAtLocation(float floatBody, int columnIndex, int rowIndex) override;
+  bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   constexpr static int k_maxNumberOfCells = 30;

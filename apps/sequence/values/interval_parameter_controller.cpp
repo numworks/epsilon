@@ -20,12 +20,12 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-bool IntervalParameterController::setParameterAtIndex(int parameterIndex, float f) {
+bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f < 0) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  float parameter = std::round(f);
+  double parameter = std::round(f);
   if (parameterIndex == 2 && parameter == 0.0f) {
     parameter = 1.0f;
   }

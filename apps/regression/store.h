@@ -21,19 +21,19 @@ public:
   void setDefault() override;
 
   // Calculation
-  float numberOfPairs();
-  float squaredValueSumOfColumn(int i);
-  float columnProductSum();
-  float meanOfColumn(int i);
-  float varianceOfColumn(int i);
-  float standardDeviationOfColumn(int i);
-  float covariance();
-  float slope();
-  float yIntercept();
-  float yValueForXValue(float x);
-  float xValueForYValue(float y);
-  float correlationCoefficient();
-  float squaredCorrelationCoefficient();
+  double numberOfPairs();
+  double squaredValueSumOfColumn(int i);
+  double columnProductSum();
+  double meanOfColumn(int i);
+  double varianceOfColumn(int i);
+  double standardDeviationOfColumn(int i);
+  double covariance();
+  double slope();
+  double yIntercept();
+  double yValueForXValue(double x);
+  double xValueForYValue(double y);
+  double correlationCoefficient();
+  double squaredCorrelationCoefficient();
 private:
   constexpr static float k_displayTopMarginRatio = 0.12f;
   constexpr static float k_displayRightMarginRatio = 0.05f;
@@ -45,8 +45,8 @@ private:
   float minValueOfColumn(int i);
 };
 
-typedef float (Store::*ArgCalculPointer)(int);
-typedef float (Store::*CalculPointer)();
+typedef double (Store::*ArgCalculPointer)(int);
+typedef double (Store::*CalculPointer)();
 typedef void (Store::*RangeMethodPointer)();
 
 }

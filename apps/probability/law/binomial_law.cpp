@@ -5,7 +5,7 @@
 namespace Probability {
 
 BinomialLaw::BinomialLaw() :
-  TwoParameterLaw(20.0f, 0.5f)
+  TwoParameterLaw(20.0, 0.5)
 {
 }
 
@@ -67,68 +67,72 @@ float BinomialLaw::yMax() {
   return result*(1.0f+ k_displayTopMarginRatio);
 }
 
-float BinomialLaw::evaluateAtAbscissa(float x) const {
-  if (m_parameter1 == 0.0f) {
-    if (m_parameter2 == 0.0f || m_parameter2 == 1.0f) {
-      return NAN;
-    }
-    if ((int)x == 0) {
-      return 1.0f;
-    }
-    return 0.0f;
-  }
-  if (m_parameter2 == 1.0f) {
-    if ((int)x == m_parameter1) {
-      return 1.0f;
-    }
-    return 0.0f;
-  }
-  if (m_parameter2 == 0.0f) {
-    if ((int)x == 0) {
-      return 1.0f;
-    }
-    return 0.0f;
-  }
-  if (x > m_parameter1) {
-    return 0.0f;
-  }
-  float lResult = std::lgamma(m_parameter1+1) - std::lgamma(floorf(x)+1.0f) - std::lgamma(m_parameter1 - floorf(x)+1.0f)+
-    (int)x*std::log(m_parameter2) + (m_parameter1-(int)x)*std::log(1-m_parameter2);
-  return std::exp(lResult);
-}
 
-bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
+bool BinomialLaw::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
-    if (x != (int)x || x < 0.0f || x > 999.0f) {
+    if (x != (int)x || x < 0.0 || x > 999.0) {
       return false;
     }
     return true;
   }
-  if (x < 0.0f || x > 1.0f) {
+  if (x < 0.0 || x > 1.0) {
     return false;
   }
   return true;
 }
 
-float BinomialLaw::cumulativeDistributiveInverseForProbability(float * probability) {
-  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
+double BinomialLaw::cumulativeDistributiveInverseForProbability(double * probability) {
+  if (m_parameter1 == 0.0 && (m_parameter2 == 0.0 || m_parameter2 == 1.0)) {
     return NAN;
   }
-  if (*probability >= 1.0f) {
+  if (*probability >= 1.0) {
     return m_parameter1;
   }
   return Law::cumulativeDistributiveInverseForProbability(probability);
 }
 
-float BinomialLaw::rightIntegralInverseForProbability(float * probability) {
-  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
+double BinomialLaw::rightIntegralInverseForProbability(double * probability) {
+  if (m_parameter1 == 0.0 && (m_parameter2 == 0.0 || m_parameter2 == 1.0)) {
     return NAN;
   }
-  if (*probability <= 0.0f) {
+  if (*probability <= 0.0) {
     return m_parameter1;
   }
   return Law::rightIntegralInverseForProbability(probability);
 }
 
+template<typename T>
+T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
+  if (m_parameter1 == 0) {
+    if (m_parameter2 == 0 || m_parameter2 == 1) {
+      return NAN;
+    }
+    if (floor(x) == 0) {
+      return 1;
+    }
+    return 0;
+  }
+  if (m_parameter2 == 1) {
+    if (floor(x) == m_parameter1) {
+      return 1;
+    }
+    return 0;
+  }
+  if (m_parameter2 == 0) {
+    if (floor(x) == 0) {
+      return 1;
+    }
+    return 0;
+  }
+  if (x > m_parameter1) {
+    return 0;
+  }
+  T lResult = std::lgamma(m_parameter1+1) - std::lgamma(std::floor(x)+1) - std::lgamma((T)m_parameter1 - std::floor(x)+1)+
+    std::floor(x)*std::log(m_parameter2) + (m_parameter1-std::floor(x))*std::log(1-m_parameter2);
+  return std::exp(lResult);
+}
 
 }
+
+template float Probability::BinomialLaw::templatedEvaluateAtAbscissa(float x) const;
+template double Probability::BinomialLaw::templatedEvaluateAtAbscissa(double x) const;

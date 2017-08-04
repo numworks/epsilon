@@ -13,6 +13,7 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 
   void setDelegate(TextAreaDelegate * delegate);
+  bool handleEvent(Ion::Events::Event event) override;
 
 private:
   class Text {
@@ -42,12 +43,12 @@ private:
 
     class Position {
     public:
-      Position(size_t column, size_t line) : m_column(column), m_line(line) {}
-      size_t column() const { return m_column; }
-      size_t line() const { return m_line; }
+      Position(int column, int line) : m_column(column), m_line(line) {}
+      int column() const { return m_column; }
+      int line() const { return m_line; }
     private:
-      size_t m_column;
-      size_t m_line;
+      int m_column;
+      int m_line;
     };
 
     LineIterator begin() const { return LineIterator(m_buffer); };
@@ -55,12 +56,11 @@ private:
 
     Position span() const;
 
-    void insert(char c, Position p);
-    void remove(Position p);
-  private:
+    Position positionAtIndex(size_t index);
     size_t indexAtPosition(Position p);
-    void insert(char c, size_t index);
-    void remove(size_t index);
+
+    void insertChar(char c, size_t index);
+    void removeChar(size_t index);
   private:
     char * m_buffer;
     size_t m_bufferSize;
@@ -72,7 +72,18 @@ private:
       KDColor textColor, KDColor backgroundColor);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
+    void insertText(const char * text);
+    void moveCursorIndex(int deltaX);
+    void moveCursorGeo(int deltaX, int deltaY);
+    void removeChar();
+    KDRect cursorRect();
   private:
+    int numberOfSubviews() const override;
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+    KDRect characterFrameAtIndex(size_t index);
+    TextCursorView m_cursorView;
+    size_t m_cursorIndex;
     Text m_text;
     KDText::FontSize m_fontSize;
     KDColor m_textColor;

@@ -1,8 +1,8 @@
 #ifndef CALCULATION_CALCULATION_H
 #define CALCULATION_CALCULATION_H
 
-#include <poincare.h>
 #include <escher.h>
+#include <poincare.h>
 
 namespace Calculation {
 

@@ -7,9 +7,11 @@ class EditorController : public ViewController {
 public:
   EditorController(Responder * parentResponder);
   View * view() override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 private:
-  char buffer[256];
+  void runPython();
+  char m_buffer[1024];
   TextArea m_view;
 };
 

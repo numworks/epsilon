@@ -8,8 +8,8 @@ mp_obj_t kandinsky_color(mp_obj_t red, mp_obj_t green, mp_obj_t blue) {
     MP_OBJ_NEW_SMALL_INT(
       KDColor::RGB888(
         mp_obj_get_int(red),
-        mp_obj_get_int(blue),
-        mp_obj_get_int(red)
+        mp_obj_get_int(green),
+        mp_obj_get_int(blue)
       )
     );
 }

@@ -69,7 +69,7 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
-#include python/Makefile
+include python/Makefile
 include escher/Makefile
 # Executable Makefiles
 include apps/Makefile

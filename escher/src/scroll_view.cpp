@@ -71,6 +71,43 @@ void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(contentWidth + m_leftMargin - offsetX, 0, width - contentWidth - m_leftMargin + offsetX, height), m_backgroundColor);
 }
 
+void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
+  if (!allowOverscroll && !m_contentView->bounds().contains(p)) {
+    return;
+  }
+  KDCoordinate offsetX = 0;
+  KDCoordinate offsetY = 0;
+  KDRect visibleRect = visibleContentRect();
+  if (visibleRect.left() > p.x()) {
+    offsetX = p.x() - visibleRect.left();
+  }
+  if (visibleRect.right() < p.x()) {
+    offsetX = p.x() - visibleRect.right();
+  }
+  if (visibleRect.top() > p.y()) {
+    offsetY = p.y() - visibleRect.top();
+  }
+  if (visibleRect.bottom() < p.y()) {
+    offsetY = p.y() - visibleRect.bottom();
+  }
+  if (offsetX != 0 || offsetY != 0) {
+    setContentOffset(contentOffset().translatedBy(KDPoint(offsetX, offsetY)));
+  }
+}
+
+void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
+  scrollToContentPoint(rect.topLeft(), allowOverscroll);
+  scrollToContentPoint(rect.bottomRight(), allowOverscroll);
+}
+
+KDRect ScrollView::visibleContentRect() {
+  return KDRect(
+    contentOffset().x(),
+    contentOffset().y(),
+    m_frame.width() - m_leftMargin - m_rightMargin,
+    m_frame.height() - m_topMargin - m_bottomMargin
+  );
+}
 
 void ScrollView::layoutSubviews() {
   // Layout contentView

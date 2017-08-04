@@ -19,9 +19,12 @@ public:
   KDCoordinate topMargin() const;
   KDCoordinate leftMargin() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
+  void scrollToContentRect(KDRect rect, bool allowOverscroll = false); // Minimal scrolling to make this rect visible
 protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling();
   KDCoordinate maxContentHeightDisplayableWithoutScrolling();
+  KDRect visibleContentRect();
   void layoutSubviews() override;
   void updateScrollIndicator();
   KDCoordinate m_topMargin;

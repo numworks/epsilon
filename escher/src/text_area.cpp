@@ -5,6 +5,11 @@
 #include <stddef.h>
 #include <assert.h>
 
+
+static inline size_t min(size_t a, size_t b) {
+  return (a>b ? b : a);
+}
+
 TextArea::Text::Text(char * buffer, size_t bufferSize) :
   m_buffer(buffer),
   m_bufferSize(bufferSize)
@@ -35,21 +40,40 @@ TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
 }
 
 size_t TextArea::Text::indexAtPosition(Position p) {
+  if (p.line() < 0) {
+    return 0;
+  }
   size_t y = 0;
+  const char * endOfLastLine = nullptr;
   for (Line l : *this) {
     if (p.line() == y) {
-      size_t x = (p.column() > l.length() ? l.length() : p.column());
+      size_t x = min(p.column(), l.length());
       return l.text() - m_buffer + x;
+    }
+    endOfLastLine = l.text() + l.length();
+    y++;
+  }
+  assert(endOfLastLine != nullptr && endOfLastLine >= m_buffer);
+  return endOfLastLine - m_buffer;
+}
+
+TextArea::Text::Position TextArea::Text::positionAtIndex(size_t index) {
+  assert(index < m_bufferSize);
+  const char * target = m_buffer + index;
+  size_t y = 0;
+  for (Line l : *this) {
+    if (l.text() <= target && l.text() + l.length() >= target) {
+      size_t x = target - l.text();
+      return Position(x, y);
     }
     y++;
   }
   assert(false);
-  return 0;
+  return Position(0, 0);
 }
 
-void TextArea::Text::insert(char c, size_t index) {
+void TextArea::Text::insertChar(char c, size_t index) {
   assert(index < m_bufferSize);
-  char * cursor = m_buffer + index;
   char previous = c;
   for (size_t i=index; i<m_bufferSize; i++) {
     char inserted = previous;
@@ -61,7 +85,7 @@ void TextArea::Text::insert(char c, size_t index) {
   }
 }
 
-void TextArea::Text::remove(size_t index) {
+void TextArea::Text::removeChar(size_t index) {
   assert(index < m_bufferSize);
   for (size_t i=index; i<m_bufferSize; i++) {
     m_buffer[i] = m_buffer[i+1];
@@ -87,6 +111,7 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
   View(),
+  m_cursorIndex(0),
   m_text(textBuffer, textBufferSize),
   m_fontSize(fontSize),
   m_textColor(textColor),
@@ -103,9 +128,6 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   );
 }
 
-size_t min(size_t a, size_t b) {
-  return (a>b ? b : a);
-}
 
 void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
@@ -142,6 +164,61 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
+int TextArea::ContentView::numberOfSubviews() const {
+  return 1;
+}
+
+View * TextArea::ContentView::subviewAtIndex(int index) {
+  return &m_cursorView;
+}
+
+void TextArea::ContentView::layoutSubviews() {
+  m_cursorView.setFrame(cursorRect());
+}
+
+void TextArea::TextArea::ContentView::insertText(const char * text) {
+  while (*text != 0) {
+    m_text.insertChar(*text++, m_cursorIndex++);
+  }
+  layoutSubviews(); // Reposition the cursor
+  markRectAsDirty(bounds()); // FIXME: Vastly suboptimal
+}
+
+void TextArea::TextArea::ContentView::removeChar() {
+  if (m_cursorIndex > 0) {
+    m_text.removeChar(--m_cursorIndex);
+  }
+  layoutSubviews(); // Reposition the cursor
+  markRectAsDirty(bounds()); // FIXME: Vastly suboptimal
+}
+
+KDRect TextArea::TextArea::ContentView::cursorRect() {
+  return characterFrameAtIndex(m_cursorIndex);
+}
+
+KDRect TextArea::TextArea::ContentView::characterFrameAtIndex(size_t index) {
+  KDSize charSize = KDText::stringSize(" ", m_fontSize);
+  Text::Position p = m_text.positionAtIndex(index);
+  return KDRect(
+    p.column() * charSize.width(),
+    p.line() * charSize.height(),
+    charSize.width(),
+    charSize.height()
+  );
+}
+
+void TextArea::TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
+  Text::Position p = m_text.positionAtIndex(m_cursorIndex);
+  m_cursorIndex = m_text.indexAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY));
+  layoutSubviews();
+}
+
+void TextArea::TextArea::ContentView::moveCursorIndex(int deltaX) {
+  // FIXME: bound checks!
+  m_cursorIndex += deltaX;
+  layoutSubviews();
+}
+
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, char * textBuffer,
@@ -151,6 +228,26 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   m_contentView(textBuffer, textBufferSize, fontSize, textColor, backgroundColor),
   m_delegate(delegate)
 {
+}
+
+bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    m_contentView.moveCursorIndex(-1);
+  } else if (event == Ion::Events::Right) {
+    m_contentView.moveCursorIndex(1);
+  } else if (event == Ion::Events::Up) {
+    m_contentView.moveCursorGeo(0, -1);
+  } else if (event == Ion::Events::Down) {
+    m_contentView.moveCursorGeo(0, 1);
+  } else if (event == Ion::Events::Backspace) {
+    m_contentView.removeChar();
+  } else if (event.hasText()) {
+    m_contentView.insertText(event.text());
+  } else {
+    return false;
+  }
+  scrollToContentRect(m_contentView.cursorRect());
+  return true;
 }
 
 View * TextArea::view() {

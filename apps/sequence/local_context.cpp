@@ -1,4 +1,5 @@
 #include "local_context.h"
+#include <math.h>
 
 using namespace Poincare;
 

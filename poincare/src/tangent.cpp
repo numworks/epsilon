@@ -7,8 +7,8 @@
 #include <poincare/hyperbolic_tangent.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -30,7 +30,7 @@ Expression::Type Tangent::type() const {
 }
 
 float Tangent::computeForRadianReal(float x) const {
-  return tanf(x);
+  return std::tan(x);
 }
 
 Complex Tangent::privateCompute(const Complex c, AngleUnit angleUnit) const {

@@ -3,8 +3,8 @@
 #include "layout/horizontal_layout.h"
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -38,7 +38,7 @@ Complex Factorial::computeComplex(const Complex c, AngleUnit angleUnit) const {
       return Complex::Float(result);
     }
   }
-  return Complex::Float(roundf(result));
+  return Complex::Float(std::round(result));
 }
 
 ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

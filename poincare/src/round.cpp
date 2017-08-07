@@ -2,8 +2,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -34,8 +34,8 @@ Evaluation * Round::privateEvaluate(Context & context, AngleUnit angleUnit) cons
   if (isnan(f2) || f2 != (int)f2) {
     return new Complex(Complex::Float(NAN));
   }
-  float err = powf(10.0f, (int)f2);
-  return new Complex(Complex::Float(roundf(f1*err)/err));
+  float err = std::pow(10.0f, (int)f2);
+  return new Complex(Complex::Float(std::round(f1*err)/err));
 }
 
 }

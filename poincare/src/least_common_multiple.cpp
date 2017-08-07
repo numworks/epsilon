@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -48,7 +48,7 @@ Evaluation * LeastCommonMultiple::privateEvaluate(Context & context, AngleUnit a
     a = b;
     b = r;
   }
-  return new Complex(Complex::Float(roundf((float)(product/a))));
+  return new Complex(Complex::Float(std::round((float)(product/a))));
 }
 
 }

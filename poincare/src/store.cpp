@@ -1,6 +1,7 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 }
 #include <poincare/store.h>
 #include <ion.h>

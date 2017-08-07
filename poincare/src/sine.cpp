@@ -4,8 +4,8 @@
 #include <poincare/multiplication.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -33,7 +33,7 @@ Complex Sine::compute(const Complex c) {
 }
 
 float Sine::computeForRadianReal(float x) const {
-  return sinf(x);
+  return std::sin(x);
 }
 
 }

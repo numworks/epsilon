@@ -1,6 +1,5 @@
 #include "graph_view.h"
 #include <assert.h>
-#include <math.h>
 
 using namespace Shared;
 

@@ -3,9 +3,9 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <float.h>
 }
+#include <cmath>
 #include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
@@ -22,7 +22,7 @@ Complex Complex::Cartesian(float a, float b) {
 }
 
 Complex Complex::Polar(float r, float th)  {
-  return Complex(r*cosf(th),r*sinf(th));
+  return Complex(r*std::cos(th),r*std::sin(th));
 }
 
 static inline float setSign(float f, bool negative) {
@@ -53,7 +53,7 @@ Complex::Complex(const char * integralPart, int integralPartLength, bool integra
   float j = digitsToFloat(fractionalPart, fractionalPartLength);
   float l = setSign(digitsToFloat(exponent, exponentLength), exponentNegative);
 
-  m_a = setSign((i + j*powf(10.0f, -ceilf(fractionalPartLength)))* powf(10.0f, l), integralNegative);
+  m_a = setSign((i + j*std::pow(10.0f, -std::ceil((float)fractionalPartLength)))* std::pow(10.0f, l), integralNegative);
   m_b = 0.0f;
 }
 
@@ -103,16 +103,16 @@ float Complex::b() const {
 
 float Complex::r() const {
   if (m_b == 0) {
-    return fabsf(m_a);
+    return std::fabs(m_a);
   }
-  return sqrtf(m_a*m_a + m_b*m_b);
+  return std::sqrt(m_a*m_a + m_b*m_b);
 }
 
 float Complex::th() const {
-  float result = atanf(m_b/m_a) + M_PI;
+  float result = std::atan(m_b/m_a) + M_PI;
   if (m_a >= 0.0f) {
     float a = m_a == 0.0f ? 0.0f : m_a;
-    result = atanf(m_b/a);
+    result = std::atan(m_b/a);
   }
   if (result > M_PI + FLT_EPSILON) {
     result = result - 2.0f*M_PI;
@@ -255,11 +255,11 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
     return currentChar;
   }
 
-  float logBase10 = f != 0.0f ? log10f(fabsf(f)) : 0;
-  int exponentInBase10 = floorf(logBase10);
+  float logBase10 = f != 0.0f ? std::log10(std::fabs(f)) : 0;
+  int exponentInBase10 = std::floor(logBase10);
   /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
    * but is stored as 7 in hardware. We catch these cases here. */
-  if (f != 0.0f && logBase10 == (int)logBase10 && fabsf(f) < powf(10.0f, logBase10)) {
+  if (f != 0.0f && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10.0f, logBase10)) {
     exponentInBase10--;
   }
 
@@ -276,49 +276,49 @@ int Complex::convertFloatToTextPrivate(float f, char * buffer, int numberOfSigni
   /* The number of digits in an integer is capped because the maximal integer is
    * 2^31 - 1. As our mantissa is an integer, we assert that we stay beyond this
    * threshold during computation. */
-  assert(availableCharsForMantissaWithoutSign - 1 < log10f(powf(2, 31)));
+  assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 31.0f)));
 
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
-  float mantissa = roundf(f * powf(10.0f, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  float mantissa = std::round(f * std::pow(10.0f, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
    * is too big (or too small), mantissa is now inf. We handle this case by
    * using logarithm function. */
   if (isnan(mantissa) || isinf(mantissa)) {
-    mantissa = roundf(powf(10.0f, log10f(fabsf(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-    mantissa = copysignf(mantissa, f);
+    mantissa = std::round(std::pow(10.0f, std::log10(std::fabs(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    mantissa = std::copysign(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
-  float truncatedMantissa = (int)(f * powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  float truncatedMantissa = (int)(f * std::pow(10.0f, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   if (isinf(truncatedMantissa) || isnan(truncatedMantissa)) {
-    truncatedMantissa = (int)(powf(10.0f, log10f(fabsf(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-    truncatedMantissa = copysignf(truncatedMantissa, f);
+    truncatedMantissa = (int)(std::pow(10.0f, std::log10(std::fabs(f))+(float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    truncatedMantissa = std::copysign(truncatedMantissa, f);
   }
   if (mantissa != truncatedMantissa) {
-    float newLogBase10 = mantissa != 0.0f ? log10f(fabsf(mantissa/powf(10, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal))) : 0.0f;
+    float newLogBase10 = mantissa != 0.0f ? std::log10(std::fabs(mantissa/std::pow(10.0f, availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal))) : 0.0f;
     if (isnan(newLogBase10) || isinf(newLogBase10)) {
-      newLogBase10 = log10f(fabsf(mantissa)) - (float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
+      newLogBase10 = std::log10(std::fabs(mantissa)) - (float)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
     }
-    exponentInBase10 = floorf(newLogBase10);
+    exponentInBase10 = std::floor(newLogBase10);
   }
   int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == FloatDisplayMode::Scientific ?
     1 : exponentInBase10+1;
 
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
-  if ((int)(fabsf(mantissa) * powf(10, - mantissaExponentInBase10)) > 0) {
+  if ((int)(std::fabs(mantissa) * std::pow(10.0f, - mantissaExponentInBase10)) > 0) {
     mantissa = mantissa/10;
   }
 
-  int numberOfCharExponent = exponentInBase10 != 0 ? log10f(fabsf((float)exponentInBase10)) + 1 : 1;
+  int numberOfCharExponent = exponentInBase10 != 0 ? std::log10(std::fabs((float)exponentInBase10)) + 1 : 1;
   if (exponentInBase10 < 0){
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;
   }
 
   // Supress the 0 on the right side of the mantissa
-  int dividend = fabsf((float)mantissa);
+  int dividend = std::fabs((float)mantissa);
   int quotien = dividend/10;
   int digit = dividend - quotien*10;
   int minimumNumberOfCharsInMantissa = 1;

@@ -1,5 +1,6 @@
 #include "values_controller.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Shared;
 
@@ -49,7 +50,7 @@ bool ValuesController::setDataAtLocation(float floatBody, int columnIndex, int r
   if (floatBody < 0) {
       return false;
   }
-  return Shared::ValuesController::setDataAtLocation(roundf(floatBody), columnIndex, rowIndex);
+  return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
 int ValuesController::maxNumberOfCells() {

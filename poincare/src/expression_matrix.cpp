@@ -5,7 +5,7 @@ extern "C" {
 #include <poincare/expression_matrix.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <string.h>
 

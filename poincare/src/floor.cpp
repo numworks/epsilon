@@ -2,8 +2,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -28,7 +28,7 @@ Complex Floor::computeComplex(const Complex c, AngleUnit angleUnit) const {
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(floorf(c.a()));
+  return Complex::Float(std::floor(c.a()));
 }
 
 }

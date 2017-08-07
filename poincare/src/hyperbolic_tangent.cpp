@@ -5,8 +5,8 @@
 #include <poincare/fraction.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -28,7 +28,7 @@ Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOpera
 
 Complex HyperbolicTangent::compute(const Complex c) {
   if (c.b() == 0.0f) {
-    return Complex::Float(tanhf(c.a()));
+    return Complex::Float(std::tanh(c.a()));
   }
   Complex arg1 = HyperbolicSine::compute(c);
   Complex arg2 = HyperbolicCosine::compute(c);

@@ -1,8 +1,8 @@
 #include <poincare/hyperbolic_arc_sine.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -27,7 +27,7 @@ Complex HyperbolicArcSine::computeComplex(const Complex c, AngleUnit angleUnit) 
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(asinhf(c.a()));
+  return Complex::Float(std::asinh(c.a()));
 }
 
 }

@@ -1,5 +1,5 @@
 #include "curve_view_range.h"
-#include <math.h>
+#include <cmath>
 #include <ion.h>
 #include <poincare.h>
 
@@ -17,8 +17,8 @@ CurveViewRange::CurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRan
 void CurveViewRange::roundAbscissa() {
   float xMin = m_xMin;
   float xMax = m_xMax;
-  float newXMin = clipped(roundf((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
-  float newXMax = clipped(roundf((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
+  float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
   if (isnan(newXMin) || isnan(newXMax)) {
     return;
   }

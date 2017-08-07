@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
-#include <math.h>
+#include <cmath>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"
@@ -148,13 +148,13 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex a0[1] = {Complex::Float(1.0f)};
   assert_parsed_expression_evaluate_to("abs(-1)", a0, 1);
 
-  Complex a1[1] = {Complex::Float(sqrtf(3.0f*3.0f+2.0f*2.0f))};
+  Complex a1[1] = {Complex::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
   assert_parsed_expression_evaluate_to("abs(3+2I)", a1, 1);
 
   Complex a2[4] = {Complex::Float(1.0f), Complex::Float(2.0f), Complex::Float(3.0f), Complex::Float(4.0f)};
   assert_parsed_expression_evaluate_to("abs([[1,-2][3,-4]])", a2, 4);
 
-  Complex a3[4] = {Complex::Float(sqrtf(3.0f*3.0f+2.0f*2.0f)), Complex::Float(sqrtf(3.0f*3.0f+4.0f*4.0f)), Complex::Float(sqrtf(5.0f*5.0f+2.0f*2.0f)), Complex::Float(sqrtf(3.0f*3.0f+2.0f*2.0f))};
+  Complex a3[4] = {Complex::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f)), Complex::Float(std::sqrt(3.0f*3.0f+4.0f*4.0f)), Complex::Float(std::sqrt(5.0f*5.0f+2.0f*2.0f)), Complex::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
   assert_parsed_expression_evaluate_to("abs([[3+2I,3+4I][5+2I,3+2I]])", a3, 4);
 
   Complex b[1] = {Complex::Float(210.0f)};
@@ -189,10 +189,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex k[1] = {Complex::Float(46098.0f)};
   assert_parsed_expression_evaluate_to("lcm(234,394)", k, 1);
 
-  Complex l[1] = {Complex::Float(logf(2.0f))};
+  Complex l[1] = {Complex::Float(std::log(2.0f))};
   assert_parsed_expression_evaluate_to("ln(2)", l, 1);
 
-  Complex m[1] = {Complex::Float(log10f(2.0f))};
+  Complex m[1] = {Complex::Float(std::log10(2.0f))};
   assert_parsed_expression_evaluate_to("log(2)", m, 1);
 
   Complex n[1] = {Complex::Float(5040.0f)};
@@ -207,10 +207,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex q[1] = {Complex::Float(9.0f)};
   assert_parsed_expression_evaluate_to("rem(29, 10)", q, 1);
 
-  Complex r[1] = {Complex::Float(powf(2.0f, 1.0f/3.0f))};
+  Complex r[1] = {Complex::Float(std::pow(2.0f, 1.0f/3.0f))};
   assert_parsed_expression_evaluate_to("root(2,3)", r, 1);
 
-  Complex s[1] = {Complex::Float(sqrtf(2.0f))};
+  Complex s[1] = {Complex::Float(std::sqrt(2.0f))};
   assert_parsed_expression_evaluate_to("R(2)", s, 1);
 
   Complex t[1] = {Complex::Float(49.0f)};
@@ -221,7 +221,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluate_to("trace([[1,2,3][4,5,6][7,8,9]])", u, 1);
 #endif
 
-  Complex v[2] = {Complex::Float(0.1f - sqrtf(1.0f/100.0f)), Complex::Float(0.1f + sqrtf(1.0f/100.0f))};
+  Complex v[2] = {Complex::Float(0.1f - std::sqrt(1.0f/100.0f)), Complex::Float(0.1f + std::sqrt(1.0f/100.0f))};
   assert_parsed_expression_evaluate_to("confidence(0.1, 100)", v, 2);
 
 #if MATRICES_ARE_DEFINED
@@ -237,10 +237,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluate_to("inverse([[1,2,3][4,5,-6][7,8,9]])", y, 9);
 #endif
 
-  Complex z[2] = {Complex::Float(0.1f-sqrtf(1.0f/100.0f)), Complex::Float(0.1f+sqrtf(1.0f/100.0f))};
+  Complex z[2] = {Complex::Float(0.1f-std::sqrt(1.0f/100.0f)), Complex::Float(0.1f+std::sqrt(1.0f/100.0f))};
   assert_parsed_expression_evaluate_to("prediction(0.1, 100)", z, 2);
 
-  Complex aa[2] = {Complex::Float(0.1f-1.96f*sqrtf((0.1f*(1.0f-0.1f))/100.0f)), Complex::Float(0.1f+1.96f*sqrtf((0.1f*(1.0f-0.1f))/100.0f))};
+  Complex aa[2] = {Complex::Float(0.1f-1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f)), Complex::Float(0.1f+1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f))};
   assert_parsed_expression_evaluate_to("prediction95(0.1, 100)", aa, 2);
 
   Complex ab[1] = {Complex::Cartesian(-100.0f, -540.0f)};

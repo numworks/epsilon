@@ -8,7 +8,7 @@ extern "C" {
 #include <poincare/complex.h>
 #include "layout/grid_layout.h"
 #include "layout/bracket_layout.h"
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <string.h>
 
@@ -66,13 +66,13 @@ Evaluation * Evaluation::createDeterminant() const {
     /* Search for pivot */
     int rowWithPivot = i;
     for (int row = i+1; row < dim; row++) {
-      if (fabsf(tempMat[rowWithPivot][i]) < fabsf(tempMat[row][i])) {
+      if (std::fabs(tempMat[rowWithPivot][i]) < std::fabs(tempMat[row][i])) {
         rowWithPivot = row;
       }
     }
     float valuePivot = tempMat[rowWithPivot][i];
     /* if the pivot is null, det = 0. */
-    if (fabsf(valuePivot) <= FLT_EPSILON) {
+    if (std::fabs(valuePivot) <= FLT_EPSILON) {
       for (int i = 0; i < dim; i++) {
         free(tempMat[i]);
       }
@@ -128,13 +128,13 @@ Evaluation * Evaluation::createInverse() const {
     /* Search for pivot */
     int rowWithPivot = i;
     for (int row = i+1; row < dim; row++) {
-      if (fabsf(inv[rowWithPivot][i]) < fabsf(inv[row][i])) {
+      if (std::fabs(inv[rowWithPivot][i]) < std::fabs(inv[row][i])) {
         rowWithPivot = row;
       }
     }
     float valuePivot = inv[rowWithPivot][i];
     /* if the pivot is null, the matrix in not invertible. */
-    if (fabsf(valuePivot) <= FLT_EPSILON) {
+    if (std::fabs(valuePivot) <= FLT_EPSILON) {
       for (int i = 0; i < dim; i++) {
         free(inv[i]);
       }

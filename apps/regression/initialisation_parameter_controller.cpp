@@ -1,6 +1,5 @@
 #include "initialisation_parameter_controller.h"
 #include <assert.h>
-#include <math.h>
 
 using namespace Shared;
 

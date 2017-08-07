@@ -1,7 +1,7 @@
 #include "interactive_curve_view_range_delegate.h"
 #include "interactive_curve_view_range.h"
 #include <float.h>
-#include <math.h>
+#include <cmath>
 
 namespace Shared {
 
@@ -30,11 +30,11 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     max = 1.0f;
   }
   if (min == FLT_MAX) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(max)) : 1.0f;
+    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, std::fabs(max)) : 1.0f;
     min = max-step;
   }
    if (max == -FLT_MAX) {
-    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, fabsf(min)) : 1.0f;
+    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, std::fabs(min)) : 1.0f;
     max = min+step;
   }
   interactiveCurveViewRange->setYMin(addMargin(min, range, true));

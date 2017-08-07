@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include <assert.h>
 #include <float.h>
+#include <cmath>
 
 using namespace Shared;
 using namespace Poincare;
@@ -38,7 +39,7 @@ float GoToParameterController::parameterAtIndex(int index) {
 
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex == 0);
-  if (fabsf(f) > k_maxDisplayableFloat) {
+  if (std::fabs(f) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
@@ -46,7 +47,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, float f) {
   if (m_xPrediction) {
     x = m_store->yValueForXValue(f);
   }
-  if (fabsf(x) > k_maxDisplayableFloat) {
+  if (std::fabs(x) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

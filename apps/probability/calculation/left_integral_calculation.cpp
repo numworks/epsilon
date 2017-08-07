@@ -1,7 +1,7 @@
 #include "left_integral_calculation.h"
 #include <assert.h>
 #include <ion.h>
-#include <math.h>
+#include <cmath>
 
 namespace Probability {
 
@@ -31,7 +31,7 @@ I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void LeftIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 2);
-  float rf = roundf(f/k_precision)*k_precision;
+  float rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
     m_upperBound = rf;
   }
@@ -60,10 +60,10 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
   if (indexKnownElement == 0) {
     m_result = m_law->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
     /* Results in probability application are rounder to 3 decimals */
-    m_result = roundf(m_result/k_precision)*k_precision;
+    m_result = std::round(m_result/k_precision)*k_precision;
   } else {
     m_upperBound = m_law->cumulativeDistributiveInverseForProbability(&m_result);
-    m_upperBound = roundf(m_upperBound/k_precision)*k_precision;
+    m_upperBound = std::round(m_upperBound/k_precision)*k_precision;
   }
 }
 

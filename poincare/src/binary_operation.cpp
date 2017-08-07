@@ -1,8 +1,8 @@
 #include <poincare/binary_operation.h>
 #include <poincare/complex_matrix.h>
+#include <cmath>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 }
 

@@ -1,5 +1,5 @@
 #include "memoized_curve_view_range.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <ion.h>
 
@@ -45,7 +45,7 @@ void MemoizedCurveViewRange::setXMin(float xMin) {
   }
   m_xMin = xMin;
   if (m_xMin >= m_xMax) {
-    m_xMax = xMin + powf(10.0f, floorf(log10f(fabsf(xMin)))-1.0f);
+    m_xMax = xMin + std::pow(10.0f, std::floor(std::log10(std::fabs(xMin)))-1.0f);
   }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 }
@@ -56,7 +56,7 @@ void MemoizedCurveViewRange::setXMax(float xMax) {
   }
   m_xMax = xMax;
   if (m_xMin >= m_xMax) {
-    m_xMin = xMax - powf(10.0f, floorf(log10f(fabsf(xMax)))-1.0f);
+    m_xMin = xMax - std::pow(10.0f, std::floor(std::log10(std::fabs(xMax)))-1.0f);
   }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
 }
@@ -67,7 +67,7 @@ void MemoizedCurveViewRange::setYMin(float yMin) {
   }
   m_yMin = yMin;
   if (m_yMin >= m_yMax) {
-    m_yMax = yMin + powf(10.0f, floorf(log10f(fabsf(yMin)))-1.0f);
+    m_yMax = yMin + std::pow(10.0f, std::floor(std::log10(std::fabs(yMin)))-1.0f);
   }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
 }
@@ -78,7 +78,7 @@ void MemoizedCurveViewRange::setYMax(float yMax) {
   }
   m_yMax = yMax;
   if (m_yMin >= m_yMax) {
-    m_yMin = yMax - + powf(10.0f, floorf(log10f(fabsf(yMax)))-1.0f);
+    m_yMin = yMax - + std::pow(10.0f, std::floor(std::log10(std::fabs(yMax)))-1.0f);
 
   }
   m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);

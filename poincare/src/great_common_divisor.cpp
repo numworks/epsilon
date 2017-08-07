@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -47,7 +47,7 @@ Evaluation * GreatCommonDivisor::privateEvaluate(Context & context, AngleUnit an
     a = b;
     b = r;
   }
-  return new Complex(Complex::Float(roundf((float)a)));
+  return new Complex(Complex::Float(std::round((float)a)));
 
 }
 

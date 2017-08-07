@@ -1,8 +1,8 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
-#include <math.h>
 }
+#include <cmath>
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
@@ -38,13 +38,13 @@ Complex Power::compute(const Complex c, const Complex d) {
       return Complex::Float(NAN);
     }
     /* Second case only d is complex */
-    float radius = powf(c.a(), d.a());
-    float theta = d.b()*logf(c.a());
+    float radius = std::pow(c.a(), d.a());
+    float theta = d.b()*std::log(c.a());
     return Complex::Polar(radius, theta);
   }
   /* Third case only c is complex */
-  float radius = powf(c.r(), d.a());
-  if (c.b() == 0 && d.a() == roundf(d.a())) {
+  float radius = std::pow(c.r(), d.a());
+  if (c.b() == 0 && d.a() == std::round(d.a())) {
     /* We handle the case "c float and d integer" separatly to avoid getting
      * complex result due to float representation: a float power an integer is
      * always real. */
@@ -66,7 +66,7 @@ Evaluation * Power::computeOnComplexMatrixAndComplex(Evaluation * m, const Compl
     return new Complex(Complex::Float(NAN));
   }
   float power = c->toFloat();
-  if (isnan(power) || isinf(power) || power != (int)power || fabsf(power) > k_maxNumberOfSteps) {
+  if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
     return new Complex(Complex::Float(NAN));
   }
   if (power < 0.0f) {

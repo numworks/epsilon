@@ -4,6 +4,7 @@
 #include <ion.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 constexpr Expression::FloatDisplayMode Decimal = Expression::FloatDisplayMode::Decimal;
@@ -72,10 +73,7 @@ QUIZ_CASE(poincare_complex_to_text) {
   /* Converting 0.00000001f into a decimal display would also overflow the
    * number of significant digits set to 7. */
   assert_cartesian_complex_converts_to(0.0000001f, 0.0f, "1E-7", Decimal);
-  /* The conversion of -0.00000000000000000000000000000000909090964f does not
-   * give the exact right number because of float represention. The closest
-   * exact representation is -9.090897E-33. */
-  assert_cartesian_complex_converts_to(-0.00000000000000000000000000000000909090964f, 0.0f, "-9.090897E-33");
+  assert_cartesian_complex_converts_to(-0.000000000000000000000000000000009090018f, 0.0f, "-9.090018E-33");
   assert_cartesian_complex_converts_to(123.421f, 0.0f, "123.4", Decimal, Cartesian, 4, 6);
   assert_cartesian_complex_converts_to(123.421f, 0.0f, "1.2E2", Decimal, Cartesian, 5, 6);
   assert_cartesian_complex_converts_to(9.999999f, 0.0f, "10", Decimal, Cartesian, 6);
@@ -106,11 +104,11 @@ QUIZ_CASE(poincare_complex_evaluate) {
 
 QUIZ_CASE(poincare_complex_constructor) {
   Complex * a = new Complex(Complex::Cartesian(2.0f, 3.0f));
-  assert(fabsf(a->a() - 2.0f) < 0.00001f && fabsf(a->b()-3.0f) < 0.00001f);
+  assert(std::fabs(a->a() - 2.0f) < 0.00001f && std::fabs(a->b()-3.0f) < 0.00001f);
   assert(a->r() == 3.60555124f && a->th() == 0.982793748f);
   delete a;
 
   a = new Complex(Complex::Polar(3.60555124f, 0.982793748f));
-  assert(fabsf(a->a() - 2.0f) < 0.00001f && fabsf(a->b()-3.0f) < 0.00001f);
+  assert(std::fabs(a->a() - 2.0f) < 0.00001f && std::fabs(a->b()-3.0f) < 0.00001f);
   delete a;
 }

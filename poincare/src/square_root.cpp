@@ -4,8 +4,8 @@
 #include "layout/nth_root_layout.h"
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -34,7 +34,7 @@ ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplay
 
 Complex SquareRoot::computeComplex(const Complex c, AngleUnit angleUnit) const {
   if (c.b() == 0.0f) {
-    return Complex::Float(sqrtf(c.a()));
+    return Complex::Float(std::sqrt(c.a()));
   }
   return Power::compute(c, Complex::Float(0.5f));
 }

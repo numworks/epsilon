@@ -1,6 +1,6 @@
 #include "box_view.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 using namespace Shared;
 
@@ -50,8 +50,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowBound = 0.35f;
   float upBound = 0.65f;
   // Draw the main box
-  KDCoordinate firstQuartilePixels = roundf(floatToPixel(Axis::Horizontal, m_store->firstQuartile()));
-  KDCoordinate thirdQuartilePixels = roundf(floatToPixel(Axis::Horizontal, m_store->thirdQuartile()));
+  KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->firstQuartile()));
+  KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->thirdQuartile()));
   KDCoordinate lowBoundPixel = floatToPixel(Axis::Vertical, upBound);
   KDCoordinate upBoundPixel = floatToPixel(Axis::Vertical, lowBound);
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,

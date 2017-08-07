@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include "../constant.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Shared;
 
@@ -37,7 +38,7 @@ bool StoreController::setDataAtLocation(float floatBody, int columnIndex, int ro
     if (floatBody < 0) {
       return false;
     }
-    m_store->set(roundf(floatBody), columnIndex, rowIndex-1);
+    m_store->set(std::round(floatBody), columnIndex, rowIndex-1);
     return true;
   }
   return Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex);

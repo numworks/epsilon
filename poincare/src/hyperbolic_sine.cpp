@@ -6,8 +6,8 @@
 #include <poincare/opposite.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -30,7 +30,7 @@ Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands
 
 Complex HyperbolicSine::compute(const Complex c) {
   if (c.b() == 0.0f) {
-    return Complex::Float(sinhf(c.a()));
+    return Complex::Float(std::sinh(c.a()));
   }
   Complex e = Complex::Float(M_E);
   Complex exp1 = Power::compute(e, c);

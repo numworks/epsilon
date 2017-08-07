@@ -1,6 +1,5 @@
 #include "law_curve_view.h"
 #include <assert.h>
-#include <math.h>
 
 using namespace Shared;
 

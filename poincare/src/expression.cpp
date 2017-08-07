@@ -5,6 +5,7 @@
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
 #include <poincare/evaluation.h>
+#include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 extern "C" {

@@ -1,6 +1,6 @@
 #include "normal_law.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <ion.h>
 
@@ -45,14 +45,14 @@ float NormalLaw::xMin() {
   if (m_parameter2 == 0.0f) {
     return m_parameter1 - 1.0f;
   }
-  return m_parameter1 - 5.0f*fabsf(m_parameter2);
+  return m_parameter1 - 5.0f*std::fabs(m_parameter2);
 }
 
 float NormalLaw::xMax() {
   if (m_parameter2 == 0.0f) {
     return m_parameter1 + 1.0f;
   }
-  return m_parameter1 + 5.0f*fabsf(m_parameter2);
+  return m_parameter1 + 5.0f*std::fabs(m_parameter2);
 }
 
 float NormalLaw::yMin() {
@@ -72,14 +72,14 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
   if (m_parameter2 == 0.0f) {
     return NAN;
   }
-  return (1.0f/(fabsf(m_parameter2)*sqrtf(2.0f*M_PI)))*expf(-0.5f*powf((x-m_parameter1)/m_parameter2,2));
+  return (1.0f/(std::fabs(m_parameter2)*std::sqrt(2.0f*M_PI)))*std::exp(-0.5f*std::pow((x-m_parameter1)/m_parameter2,2));
 }
 
 bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
     return true;
   }
-  if (x <= 0 || fabsf(m_parameter1/x) > k_maxRatioMuSigma) {
+  if (x <= 0 || std::fabs(m_parameter1/x) > k_maxRatioMuSigma) {
     return false;
   }
   return true;
@@ -87,7 +87,7 @@ bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
 
 void NormalLaw::setParameterAtIndex(float f, int index) {
   TwoParameterLaw::setParameterAtIndex(f, index);
-  if (index == 0 && fabsf(m_parameter1/m_parameter2) > k_maxRatioMuSigma) {
+  if (index == 0 && std::fabs(m_parameter1/m_parameter2) > k_maxRatioMuSigma) {
     m_parameter2 = m_parameter1/k_maxRatioMuSigma;
   }
 }
@@ -96,14 +96,14 @@ float NormalLaw::cumulativeDistributiveFunctionAtAbscissa(float x) const {
   if (m_parameter2 ==  0.0f) {
     return NAN;
   }
-  return standardNormalCumulativeDistributiveFunctionAtAbscissa((x-m_parameter1)/fabsf(m_parameter2));
+  return standardNormalCumulativeDistributiveFunctionAtAbscissa((x-m_parameter1)/std::fabs(m_parameter2));
 }
 
 float NormalLaw::cumulativeDistributiveInverseForProbability(float * probability) {
   if (m_parameter2 ==  0.0f) {
     return NAN;
   }
-  return standardNormalCumulativeDistributiveInverseForProbability(*probability)*fabsf(m_parameter2) + m_parameter1;
+  return standardNormalCumulativeDistributiveInverseForProbability(*probability)*std::fabs(m_parameter2) + m_parameter1;
 }
 
 float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float abscissa) const {
@@ -117,7 +117,7 @@ float NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(float ab
     return 1.0f;
   }
   /* Waissi & Rossin's formula (error less than 0.0001) */
-  return 1.0f/(1.0f+expf(-sqrtf(M_PI)*(k_beta1*powf(abscissa,5)+k_beta2*powf(abscissa,3)+k_beta3*abscissa)));
+  return 1.0f/(1.0f+std::exp(-std::sqrt(M_PI)*(k_beta1*std::pow(abscissa,5)+k_beta2*std::pow(abscissa,3)+k_beta3*abscissa)));
 }
 
 float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float probability) {
@@ -131,7 +131,7 @@ float NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(float
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
   /* Soranzo & Epure (error less than 0.001) */
-  return (k_alpha3/logf(k_alpha2))*logf(1.0f - logf(-logf(probability)/logf(2.0f))/logf(k_alpha1));
+  return (k_alpha3/std::log(k_alpha2))*std::log(1.0f - std::log(-std::log(probability)/std::log(2.0f))/std::log(k_alpha1));
 }
 
 

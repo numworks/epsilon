@@ -2,9 +2,9 @@
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
+#include <cmath>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 #include <float.h>
 #include <stdlib.h>
 }
@@ -111,12 +111,12 @@ Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, Vari
 
   float centr = 0.5f*(a+b);
   float hlgth = 0.5f*(b-a);
-  float dhlgth = fabsf(hlgth);
+  float dhlgth = std::fabs(hlgth);
 
   float resg =0.0f;
   float fc = functionValueAtAbscissa(centr, xContext, angleUnit);
   float resk = wgk[10]*fc;
-  float resabs = fabsf(resk);
+  float resabs = std::fabs(resk);
   for (int j = 0; j < 5; j++) {
     int jtw = 2*j+1;
     float absc = hlgth*xgk[jtw];
@@ -127,7 +127,7 @@ Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, Vari
     float fsum = fval1+fval2;
     resg += wg[j]*fsum;
     resk += wgk[jtw]*fsum;
-    resabs += wgk[jtw]*(fabsf(fval1)+fabsf(fval2));
+    resabs += wgk[jtw]*(std::fabs(fval1)+std::fabs(fval2));
   }
   for (int j = 0; j < 5; j++) {
     int jtwm1 = 2*j;
@@ -138,19 +138,19 @@ Integral::DetailedResult Integral::kronrodGaussQuadrature(float a, float b, Vari
     fv2[jtwm1] = fval2;
     float fsum = fval1+fval2;
     resk += wgk[jtwm1]*fsum;
-    resabs += wgk[jtwm1]*(fabsf(fval1)+fabsf(fval2));
+    resabs += wgk[jtwm1]*(std::fabs(fval1)+std::fabs(fval2));
   }
   float reskh = resk*0.5f;
-  float resasc = wgk[10]*fabsf(fc-reskh);
+  float resasc = wgk[10]*std::fabs(fc-reskh);
   for (int j = 0; j < 10; j++) {
-    resasc += wgk[j]*(fabsf(fv1[j]-reskh)+fabsf(fv2[j]-reskh));
+    resasc += wgk[j]*(std::fabs(fv1[j]-reskh)+std::fabs(fv2[j]-reskh));
   }
   float integral = resk*hlgth;
   resabs = resabs*dhlgth;
   resasc = resasc*dhlgth;
-  float abserr = fabsf((resk-resg)*hlgth);
+  float abserr = std::fabs((resk-resg)*hlgth);
   if (resasc != 0.0f && abserr != 0.0f) {
-    abserr = 1.0f > powf(200.0f*abserr/resasc, 1.5f)? resasc*powf(200.0f*abserr/resasc, 1.5f) : resasc;
+    abserr = 1.0f > std::pow(200.0f*abserr/resasc, 1.5f)? resasc*std::pow(200.0f*abserr/resasc, 1.5f) : resasc;
   }
   if (resabs > FLT_MAX/(50.0f*FLT_EPSILON)) {
     abserr = abserr > FLT_EPSILON*50.0f*resabs ? abserr : FLT_EPSILON*50.0f*resabs;

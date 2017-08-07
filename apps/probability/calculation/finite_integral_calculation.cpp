@@ -2,7 +2,7 @@
 #include "../law/normal_law.h"
 #include <assert.h>
 #include <ion.h>
-#include <math.h>
+#include <cmath>
 
 namespace Probability {
 
@@ -43,7 +43,7 @@ I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void FiniteIntegralCalculation::setParameterAtIndex(float f, int index) {
   assert(index >= 0 && index < 3);
-  float rf = roundf(f/k_precision)*k_precision;
+  float rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
     m_lowerBound = rf;
   }
@@ -84,12 +84,12 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
     assert(m_law->type() == Law::Type::Normal);
     float p = (1.0f+m_result)/2.0f;
     float a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
-    m_lowerBound = roundf((2.0f*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
-    m_upperBound = roundf(a/k_precision)*k_precision;
+    m_lowerBound = std::round((2.0f*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
+    m_upperBound = std::round(a/k_precision)*k_precision;
   }
   m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
   /* Results in probability application are rounder to 3 decimals */
-  m_result = roundf(m_result/k_precision)*k_precision;
+  m_result = std::round(m_result/k_precision)*k_precision;
 }
 
 }

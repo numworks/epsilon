@@ -6,7 +6,7 @@
 #include "../../../poincare/src/layout/horizontal_layout.h"
 
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 
 using namespace Shared;
@@ -64,14 +64,14 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     if (m_step > 0 && m_startSum >= m_cursor->x()) {
       return false;
     }
-    if (moveCursorHorizontallyToPosition(roundf(m_cursor->x()-1.0f))) {
+    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()-1.0f))) {
       m_graphView->reload();
       return true;
     }
     return false;
   }
   if (event == Ion::Events::Right) {
-    if (moveCursorHorizontallyToPosition(roundf(m_cursor->x()+1.0f))) {
+    if (moveCursorHorizontallyToPosition(std::round(m_cursor->x()+1.0f))) {
       m_graphView->reload();
       return true;
     }

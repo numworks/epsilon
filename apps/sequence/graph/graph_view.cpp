@@ -1,4 +1,5 @@
 #include "graph_view.h"
+#include <cmath>
 
 using namespace Shared;
 
@@ -26,7 +27,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     /* We draw a dot at every integer if WindowRange/Resolution < 1. Otherwise,
      * we draw a dot at every step where step is an integer wider than 1. */
     float windowRange = pixelToFloat(Axis::Horizontal, bounds().width()) - pixelToFloat(Axis::Horizontal, 0);
-    int step = ceilf(windowRange/resolution());
+    int step = std::ceil(windowRange/resolution());
     for (int x = rectXMin; x < rectXMax; x += step) {
       float y = evaluateModelWithParameter(s, x);
       if (isnan(y)) {

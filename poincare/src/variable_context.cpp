@@ -1,6 +1,9 @@
 #include <poincare/variable_context.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+extern "C" {
+#include <math.h>
+}
 
 namespace Poincare {
 

@@ -2,7 +2,8 @@
 #include <assert.h>
 
 QUIZ_CASE(double_arithmetic) {
-  assert(sizeof(double) == 8); // Our softfloat header assumes double == float64_t
+  assert((float)1.123456789101112 == 1.123456789101112f);
+  assert((double)1.12345f - 1.12345< 0.0000001);
   assert(3.12+2.00001 - 5.12001 < 0.0000000001);
   assert(1e106+1e104 - 1.01e106 < 0.0000000001);
   assert(1e-106+1e-104 - 1.01e104 < 0.0000000001);

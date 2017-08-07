@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 

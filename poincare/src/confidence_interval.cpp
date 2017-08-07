@@ -3,8 +3,8 @@
 #include <poincare/evaluation.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -36,8 +36,8 @@ Evaluation * ConfidenceInterval::privateEvaluate(Context& context, AngleUnit ang
     return new Complex(Complex::Float(NAN));
   }
   Complex operands[2];
-  operands[0] = Complex::Float(f - 1.0f/sqrtf(n));
-  operands[1] = Complex::Float(f + 1.0f/sqrtf(n));
+  operands[0] = Complex::Float(f - 1.0f/std::sqrt(n));
+  operands[1] = Complex::Float(f + 1.0f/std::sqrt(n));
   return new ComplexMatrix(operands, 2, 1);
 }
 

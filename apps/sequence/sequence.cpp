@@ -4,6 +4,7 @@
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include <assert.h>
 #include <string.h>
+#include <cmath>
 
 using namespace Shared;
 using namespace Poincare;
@@ -272,7 +273,7 @@ bool Sequence::isEmpty() {
 }
 
 float Sequence::evaluateAtAbscissa(float x, Poincare::Context * context) const {
-  float n = roundf(x);
+  float n = std::round(x);
   switch (m_type) {
     case Type::Explicite:
       if (n < 0) {
@@ -345,7 +346,7 @@ float Sequence::sumOfTermsBetweenAbscissa(float start, float end, Context * cont
   if (end-start > k_maxNumberOfTermsInSum || start + 1.0f == start) {
     return NAN;
   }
-  for (float i = roundf(start); i <= roundf(end); i = i + 1.0f) {
+  for (float i = std::round(start); i <= std::round(end); i = i + 1.0f) {
     /* When |start| >> 1.0f, start + 1.0f = start. In that case, quit the
      * infinite loop. */
     if (i == i-1.0f || i == i+1.0f) {

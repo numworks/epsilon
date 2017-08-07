@@ -4,8 +4,8 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 

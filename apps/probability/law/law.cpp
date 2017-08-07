@@ -1,5 +1,5 @@
 #include "law.h"
-#include <math.h>
+#include <cmath>
 #include <float.h>
 
 namespace Probability {
@@ -14,7 +14,7 @@ float Law::xGridUnit() {
 
 float Law::cumulativeDistributiveFunctionAtAbscissa(float x) const {
   if (!isContinuous()) {
-    int end = roundf(x);
+    int end = std::round(x);
     float result = 0.0f;
     for (int k = 0; k <=end; k++) {
       result += evaluateAtAbscissa(k);
@@ -42,8 +42,8 @@ float Law::finiteIntegralBetweenAbscissas(float a, float b) const {
   if (isContinuous()) {
     return cumulativeDistributiveFunctionAtAbscissa(b) - cumulativeDistributiveFunctionAtAbscissa(a);
   }
-  int start = roundf(a);
-  int end = roundf(b);
+  int start = std::round(a);
+  int end = std::round(b);
   float result = 0.0f;
   for (int k = start; k <=end; k++) {
     result += evaluateAtAbscissa(k);

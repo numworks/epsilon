@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
-#include <math.h>
+#include <cmath>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"

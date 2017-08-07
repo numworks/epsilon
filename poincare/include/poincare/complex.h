@@ -3,7 +3,6 @@
 
 #include <poincare/evaluation.h>
 #include <poincare/preferences.h>
-#include <math.h>
 
 namespace Poincare {
 

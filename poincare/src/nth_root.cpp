@@ -6,8 +6,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -48,7 +48,7 @@ Evaluation * NthRoot::privateEvaluate(Context& context, AngleUnit angleUnit) con
 
 Complex NthRoot::compute(const Complex c, const Complex d) const {
   if (c.b() == 0.0f && d.b() == 0.0f) {
-    return Complex::Float(powf(c.a(), 1.0f/d.a()));
+    return Complex::Float(std::pow(c.a(), 1.0f/d.a()));
   }
   Complex invIndex = Fraction::compute(Complex::Float(1.0f), d);
   return Power::compute(c, invIndex);

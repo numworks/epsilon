@@ -1,6 +1,6 @@
 #include "poisson_law.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <ion.h>
 
 namespace Probability {
@@ -38,7 +38,7 @@ float PoissonLaw::xMin() {
 
 float PoissonLaw::xMax() {
   assert(m_parameter1 != 0);
-  return (m_parameter1 + 5.0f*sqrtf(m_parameter1))*(1.0f+k_displayRightMarginRatio);
+  return (m_parameter1 + 5.0f*std::sqrt(m_parameter1))*(1.0f+k_displayRightMarginRatio);
 }
 
 float PoissonLaw::yMin() {
@@ -59,8 +59,8 @@ float PoissonLaw::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
   }
-  float lResult = -m_parameter1+(int)x*logf(m_parameter1)-lgammaf((int)x+1);
-  return expf(lResult);
+  float lResult = -m_parameter1+(int)x*std::log(m_parameter1)-std::lgamma(floorf(x)+1.0f);
+  return std::exp(lResult);
 }
 
 bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {

@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -43,7 +43,7 @@ Evaluation * PermuteCoefficient::privateEvaluate(Context& context, AngleUnit ang
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
   }
-  return new Complex(Complex::Float(roundf(result)));
+  return new Complex(Complex::Float(std::round(result)));
 }
 
 }

@@ -1,6 +1,7 @@
 #include "function_go_to_parameter_controller.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
+#include <cmath>
 
 namespace Shared {
 
@@ -23,7 +24,7 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, fl
   assert(parameterIndex == 0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
-  if (fabsf(f) > k_maxDisplayableFloat || fabsf(y) > k_maxDisplayableFloat) {
+  if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

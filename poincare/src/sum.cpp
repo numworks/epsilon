@@ -3,9 +3,9 @@
 #include "layout/sum_layout.h"
 extern "C" {
 #include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 }
+#include <cmath>
 
 namespace Poincare {
 

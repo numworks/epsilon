@@ -2,8 +2,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -34,7 +34,7 @@ Evaluation * DivisionQuotient::privateEvaluate(Context & context, AngleUnit angl
   if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return new Complex(Complex::Float(NAN));
   }
-  return new Complex(Complex::Float(floorf(f1/f2)));
+  return new Complex(Complex::Float(std::floor(f1/f2)));
 }
 
 }

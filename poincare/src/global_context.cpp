@@ -1,7 +1,7 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <ion.h>
 
 namespace Poincare {

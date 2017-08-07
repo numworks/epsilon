@@ -2,8 +2,8 @@
 #include <poincare/matrix.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -35,8 +35,8 @@ Evaluation * PredictionInterval::privateEvaluate(Context& context, AngleUnit ang
     return new Complex(Complex::Float(NAN));
   }
   Complex operands[2];
-  operands[0] = Complex::Float(p - 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n));
-  operands[1] = Complex::Float(p + 1.96f*sqrtf(p*(1.0f-p))/sqrtf(n));
+  operands[0] = Complex::Float(p - 1.96f*std::sqrt(p*(1.0f-p))/std::sqrt(n));
+  operands[1] = Complex::Float(p + 1.96f*std::sqrt(p*(1.0f-p))/std::sqrt(n));
   return new ComplexMatrix(operands, 2, 1);
 }
 

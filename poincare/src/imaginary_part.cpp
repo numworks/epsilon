@@ -1,8 +1,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/complex.h>
-
+#include <cmath>
 extern "C" {
-#include <math.h>
 #include <assert.h>
 }
 

@@ -2,6 +2,7 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
+#include <cmath>
 #include <poincare/function.h>
 #include <poincare/complex.h>
 #include "layout/horizontal_layout.h"

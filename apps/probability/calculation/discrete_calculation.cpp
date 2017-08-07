@@ -1,7 +1,7 @@
 #include "discrete_calculation.h"
 #include <assert.h>
 #include <ion.h>
-#include <math.h>
+#include <cmath>
 
 namespace Probability {
 
@@ -35,7 +35,7 @@ I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
 
 void DiscreteCalculation::setParameterAtIndex(float f, int index) {
   assert(index == 0);
-  float rf = roundf(f);
+  float rf = std::round(f);
   m_abscissa = rf;
   compute(index);
 }
@@ -63,7 +63,7 @@ void DiscreteCalculation::compute(int indexKnownElement) {
   }
   m_result = m_law->evaluateAtAbscissa(m_abscissa);
   /* Results in probability application are rounder to 3 decimals */
-  m_result = roundf(m_result/k_precision)*k_precision;
+  m_result = std::round(m_result/k_precision)*k_precision;
 }
 
 }

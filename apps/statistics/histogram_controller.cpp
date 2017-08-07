@@ -2,7 +2,6 @@
 #include "../apps_container.h"
 #include "app.h"
 #include <assert.h>
-#include <math.h>
 #include <float.h>
 
 using namespace Poincare;

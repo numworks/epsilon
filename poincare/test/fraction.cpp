@@ -1,7 +1,7 @@
 #include <quiz.h>
 #include <poincare.h>
 #include <ion.h>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include "helper.h"
 

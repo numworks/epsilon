@@ -1,9 +1,9 @@
 #include <poincare/naperian_logarithm.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 }
+#include <cmath>
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"
@@ -31,7 +31,7 @@ Complex NaperianLogarithm::computeComplex(const Complex c, AngleUnit angleUnit) 
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(logf(c.a()));
+  return Complex::Float(std::log(c.a()));
 }
 
 }

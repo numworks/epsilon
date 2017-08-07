@@ -1,7 +1,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/palette.h>
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 ButtonRowDelegate::ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer) :
   m_header(header),
@@ -85,7 +85,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
       Button * button = buttonAtIndex(i);
       totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
     }
-    widthMargin = roundf((bounds().width() - totalButtonWidth)/(nbOfButtons+1));
+    widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(nbOfButtons+1)));
     buttonHeightMargin = k_embossedStyleHeightMargin;
     buttonHeight = rowHeight- 2*k_embossedStyleHeightMargin;
   }
@@ -131,7 +131,7 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
     Button * button = buttonAtIndex(i);
     totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
   }
-  KDCoordinate widthMargin = roundf((bounds().width() - totalButtonWidth)/(numberOfButtons()+1));
+  KDCoordinate widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(numberOfButtons()+1)));
 
   int currentXOrigin = widthMargin-1;
   for (int i = 0; i < numberOfButtons(); i++) {

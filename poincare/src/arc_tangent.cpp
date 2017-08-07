@@ -1,8 +1,8 @@
 #include <poincare/arc_tangent.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -28,7 +28,7 @@ Complex ArcTangent::computeComplex(const Complex c, AngleUnit angleUnit) const {
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  float result = atanf(c.a());
+  float result = std::atan(c.a());
   if (angleUnit == AngleUnit::Degree) {
     return Complex::Float(result*180.0f/M_PI);
   }

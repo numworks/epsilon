@@ -1,8 +1,8 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
-#include <math.h>
 }
+#include <cmath>
 
 #include <poincare/multiplication.h>
 #include "layout/string_layout.h"

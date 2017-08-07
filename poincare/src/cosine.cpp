@@ -3,8 +3,8 @@
 #include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -31,7 +31,7 @@ Complex Cosine::compute(const Complex c) {
 }
 
 float Cosine::computeForRadianReal(float x) const {
-  return cosf(x);
+  return std::cos(x);
 }
 
 }

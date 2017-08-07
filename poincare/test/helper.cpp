@@ -4,6 +4,7 @@
 #include <ion.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 
@@ -31,8 +32,8 @@ void assert_parsed_expression_evaluate_to(const char * expression, Complex * res
   Expression * a = Expression::parse(buffer);
   Evaluation * m = a->evaluate(globalContext, angleUnit);
   for (int i = 0; i < numberOfEntries; i++) {
-    assert(fabsf(m->complexOperand(i)->a() - results[i].a()) < 0.0001f);
-    assert(fabsf(m->complexOperand(i)->b() - results[i].b()) < 0.0001f);
+    assert(std::fabs(m->complexOperand(i)->a() - results[i].a()) < 0.0001f);
+    assert(std::fabs(m->complexOperand(i)->b() - results[i].b()) < 0.0001f);
   }
   delete a;
   delete m;

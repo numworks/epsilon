@@ -1,8 +1,8 @@
 #include <poincare/hyperbolic_arc_tangent.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -27,7 +27,7 @@ Complex HyperbolicArcTangent::computeComplex(const Complex c, AngleUnit angleUni
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(atanhf(c.a()));
+  return Complex::Float(std::atanh(c.a()));
 }
 
 }

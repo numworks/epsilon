@@ -1,7 +1,7 @@
 #include "store.h"
 #include <assert.h>
 #include <float.h>
-#include <math.h>
+#include <cmath>
 #include <string.h>
 
 using namespace Shared;
@@ -27,7 +27,7 @@ int Store::closestVerticalDot(int direction, float x) {
   * otherwise */
   for (int index = 0; index < m_numberOfPairs; index++) {
     if ((m_xMin <= m_data[0][index] && m_data[0][index] <= m_xMax) &&
-        (fabsf(m_data[0][index] - x) < fabsf(nextX - x)) &&
+        (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x)) &&
         ((m_data[1][index] - yValueForXValue(m_data[0][index]) >= 0) == (direction > 0))) {
       // Handle edge case: if 2 dots have the same abscissa but different ordinates
       if (nextX != m_data[0][index] || ((nextY - m_data[1][index] >= 0) == (direction > 0))) {
@@ -39,7 +39,7 @@ int Store::closestVerticalDot(int direction, float x) {
   }
   // Compare with the mean dot
   if (m_xMin <= meanOfColumn(0) && meanOfColumn(0) <= m_xMax &&
-      (fabsf(meanOfColumn(0) - x) < fabsf(nextX - x)) &&
+      (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x)) &&
       ((meanOfColumn(1) - yValueForXValue(meanOfColumn(0)) >= 0) == (direction > 0))) {
     if (nextX != meanOfColumn(0) || ((nextY - meanOfColumn(1) >= 0) == (direction > 0))) {
       selectedDot = m_numberOfPairs;
@@ -63,7 +63,7 @@ int Store::nextDot(int direction, int dot) {
        * - the next dot is the closest one in abscissa to x
        * - the next dot is not the same as the selected one
        * - the next dot is at the right of the selected one */
-      if (fabsf(m_data[0][index] - x) < fabsf(nextX - x) &&
+      if (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x) &&
           (index != dot) &&
           (m_data[0][index] >= x)) {
         // Handle edge case: 2 dots have same abscissa
@@ -74,7 +74,7 @@ int Store::nextDot(int direction, int dot) {
       }
     }
     // Compare with the mean dot
-    if (fabsf(meanOfColumn(0) - x) < fabsf(nextX - x) &&
+    if (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x) &&
           (m_numberOfPairs != dot) &&
           (meanOfColumn(0) >= x)) {
       if (meanOfColumn(0) != x || (x > dot)) {
@@ -83,7 +83,7 @@ int Store::nextDot(int direction, int dot) {
     }
   } else {
     // Compare with the mean dot
-    if (fabsf(meanOfColumn(0) - x) < fabsf(nextX - x) &&
+    if (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x) &&
           (m_numberOfPairs != dot) &&
           (meanOfColumn(0) <= x)) {
       if (meanOfColumn(0) != x || (m_numberOfPairs < dot)) {
@@ -92,7 +92,7 @@ int Store::nextDot(int direction, int dot) {
       }
     }
     for (int index = m_numberOfPairs-1; index >= 0; index--) {
-      if (fabsf(m_data[0][index] - x) < fabsf(nextX - x) &&
+      if (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x) &&
           (index != dot) &&
           (m_data[0][index] <= x)) {
         // Handle edge case: 2 dots have same abscissa
@@ -169,7 +169,7 @@ float Store::varianceOfColumn(int i) {
 }
 
 float Store::standardDeviationOfColumn(int i) {
-  return sqrtf(varianceOfColumn(i));
+  return std::sqrt(varianceOfColumn(i));
 }
 
 float Store::covariance() {
@@ -189,7 +189,7 @@ float Store::yValueForXValue(float x) {
 }
 
 float Store::xValueForYValue(float y) {
-  if (fabsf(slope()) < FLT_EPSILON) {
+  if (std::fabs(slope()) < FLT_EPSILON) {
     return NAN;
   }
   return (y - yIntercept())/slope();

@@ -1,7 +1,7 @@
 #include "store.h"
 #include <assert.h>
 #include <float.h>
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <ion.h>
 
@@ -51,14 +51,14 @@ float Store::heightOfBarAtIndex(int index) {
 
 float Store::heightOfBarAtValue(float value) {
   float width = barWidth();
-  int barNumber = floorf((value - m_firstDrawnBarAbscissa)/width);
+  int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
   float lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
   float upperBound = m_firstDrawnBarAbscissa + (barNumber+1)*width;
   return sumOfValuesBetween(lowerBound, upperBound);
 }
 
 float Store::startOfBarAtIndex(int index) {
-  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*floorf((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
   return firstBarAbscissa + index * m_barWidth;
 }
 
@@ -67,8 +67,8 @@ float Store::endOfBarAtIndex(int index) {
 }
 
 int Store::numberOfBars() {
-  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*floorf((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
-  return ceilf((maxValue() - firstBarAbscissa)/m_barWidth)+1;
+  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+  return std::ceil((maxValue() - firstBarAbscissa)/m_barWidth)+1;
 }
 
 bool Store::scrollToSelectedBarIndex(int index) {
@@ -129,16 +129,16 @@ float Store::variance() {
 }
 
 float Store::standardDeviation() {
-  return sqrtf(variance());
+  return std::sqrt(variance());
 }
 
 float Store::firstQuartile() {
-  int firstQuartileIndex = ceilf(sumOfColumn(1)/4);
+  int firstQuartileIndex = std::ceil(sumOfColumn(1)/4);
   return sortedElementNumber(firstQuartileIndex);
 }
 
 float Store::thirdQuartile() {
-  int thirdQuartileIndex = ceilf(3*sumOfColumn(1)/4);
+  int thirdQuartileIndex = std::ceil(3*sumOfColumn(1)/4);
   return sortedElementNumber(thirdQuartileIndex);
 }
 

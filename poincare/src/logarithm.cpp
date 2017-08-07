@@ -1,8 +1,8 @@
 #include <poincare/logarithm.h>
 #include <poincare/fraction.h>
+#include <cmath>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 }
 #include "layout/baseline_relative_layout.h"
@@ -45,7 +45,7 @@ Complex Logarithm::computeComplex(const Complex c, AngleUnit angleUnit) const {
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(log10f(c.a()));
+  return Complex::Float(std::log10(c.a()));
 }
 
 Evaluation * Logarithm::privateEvaluate(Context & context, AngleUnit angleUnit) const {

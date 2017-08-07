@@ -6,7 +6,7 @@ extern "C" {
 #include <poincare/complex.h>
 #include "layout/grid_layout.h"
 #include "layout/bracket_layout.h"
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <string.h>
 

@@ -1,6 +1,7 @@
 #include "histogram_parameter_controller.h"
 #include "app.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Shared;
 
@@ -42,7 +43,7 @@ float HistogramParameterController::parameterAtIndex(int index) {
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
-    float newNumberOfBars = ceilf((m_store->maxValue() - m_store->minValue())/f);
+    float newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
     if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;

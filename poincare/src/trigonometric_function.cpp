@@ -2,8 +2,8 @@
 #include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -20,7 +20,7 @@ Complex TrigonometricFunction::computeComplex(const Complex c, AngleUnit angleUn
       input *= M_PI/180.0f;
     }
     float result = computeForRadianReal(input);
-    if (input !=  0.0f && fabsf(result/input) <= 1E-7f) {
+    if (input !=  0.0f && std::fabs(result/input) <= 1E-7f) {
       return Complex::Float(0.0f);
     }
     return Complex::Float(result);

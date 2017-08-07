@@ -2,8 +2,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -34,7 +34,7 @@ Evaluation * DivisionRemainder::privateEvaluate(Context & context, AngleUnit ang
   if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return new Complex(Complex::Float(NAN));
   }
-  return new Complex(Complex::Float(roundf(f1-f2*floorf(f1/f2))));
+  return new Complex(Complex::Float(std::round(f1-f2*std::floor(f1/f2))));
 }
 
 }

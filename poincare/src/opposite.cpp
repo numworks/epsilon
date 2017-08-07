@@ -4,8 +4,8 @@
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
-#include <math.h>
 }
+#include <cmath>
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
 #include "layout/string_layout.h"

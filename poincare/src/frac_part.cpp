@@ -2,8 +2,8 @@
 
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 
 namespace Poincare {
 
@@ -28,7 +28,7 @@ Complex FracPart::computeComplex(const Complex c, AngleUnit angleUnit) const {
   if (c.b() != 0.0f) {
     return Complex::Float(NAN);
   }
-  return Complex::Float(c.a()-floorf(c.a()));
+  return Complex::Float(c.a()-std::floor(c.a()));
 }
 
 }

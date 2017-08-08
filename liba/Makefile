@@ -93,8 +93,26 @@ objs += $(addprefix liba/src/external/openbsd/, \
   w_lgamma.o \
 )
 
-liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include -w
-# isnanf ans isinff are throwing implicit declaration warnings
+liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include
+liba/src/external/openbsd/e_lgammaf_r.o: CFLAGS += -w
+liba/src/external/openbsd/s_log1pf.o: CFLAGS += -w
+liba/src/external/openbsd/s_scalbnf.o: CFLAGS += -w
+liba/src/external/openbsd/e_acosh.o: CFLAGS += -w
+liba/src/external/openbsd/e_atanh.o: CFLAGS += -w
+liba/src/external/openbsd/e_cosh.o: CFLAGS += -w
+liba/src/external/openbsd/e_exp.o: CFLAGS += -w
+liba/src/external/openbsd/e_log.o: CFLAGS += -w
+liba/src/external/openbsd/e_lgamma_r.o: CFLAGS += -w
+liba/src/external/openbsd/e_pow.o: CFLAGS += -w
+liba/src/external/openbsd/e_rem_pio2.o: CFLAGS += -w
+liba/src/external/openbsd/e_sinh.o: CFLAGS += -w
+liba/src/external/openbsd/k_rem_pio2.o: CFLAGS += -w
+liba/src/external/openbsd/s_asinh.o: CFLAGS += -w
+liba/src/external/openbsd/s_log1p.o: CFLAGS += -w
+liba/src/external/openbsd/s_scalbn.o: CFLAGS += -w
+liba/src/external/openbsd/s_tanh.o: CFLAGS += -w
+liba/src/external/openbsd/w_lgamma.o: CFLAGS += -w
+# some openbsd classes are throwing implicit declaration warnings
 ifeq ($(DEBUG),1)
 # OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision
 # code. That's annoying because Clang rightfully decides to emit double-to-float

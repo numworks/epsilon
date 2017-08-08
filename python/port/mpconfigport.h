@@ -65,8 +65,8 @@
 // to print such value. So, we avoid int32_t and use int directly.
 #define UINT_FMT "%u"
 #define INT_FMT "%d"
-typedef int mp_int_t; // must be pointer size
-typedef unsigned mp_uint_t; // must be pointer size
+typedef intptr_t mp_int_t; // must be pointer size
+typedef uintptr_t mp_uint_t; // must be pointer size
 
 typedef long mp_off_t;
 

@@ -11,7 +11,8 @@ namespace Shared {
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_indexFunctionSelectedByCursor(0),
-  m_initialisationParameterController(this, interactiveRange)
+  m_initialisationParameterController(this, interactiveRange),
+  m_angleUnitVersion(Expression::AngleUnit::Radian)
 {
 }
 

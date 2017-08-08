@@ -141,6 +141,7 @@ public:
 protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
+  template<typename T> static T epsilon();
 private:
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;

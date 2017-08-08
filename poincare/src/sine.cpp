@@ -34,8 +34,9 @@ Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
       input *= M_PI/180;
     }
     T result = std::sin(input);
-    // TODO: See if necessary with double????
-    if (input !=  0 && std::fabs(result/input) <= 1E-7f) {
+    /* Cheat: see comment in cosine.cpp
+     * We cheat to avoid returning sin(Pi) = epsilon */
+    if (input !=  0 && std::fabs(result/input) <= epsilon<T>()) {
       return Complex<T>::Float(0);
     }
     return Complex<T>::Float(result);

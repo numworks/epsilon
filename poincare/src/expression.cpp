@@ -87,6 +87,11 @@ template<typename T> T Expression::approximate(const char * text, Context& conte
   return result;
 }
 
+template<typename T> T Expression::epsilon() {
+  static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
+  return epsilon;
+}
+
 Expression * Expression::simplify() const {
   /* We make sure that the simplification is deletable.
    * Indeed, we don't want an expression with some parts deletable and some not
@@ -254,3 +259,5 @@ template double Poincare::Expression::approximate<double>(char const*, Poincare:
 template float Poincare::Expression::approximate<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template double Poincare::Expression::approximate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
 template float Poincare::Expression::approximate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template double Poincare::Expression::epsilon<double>();
+template float Poincare::Expression::epsilon<float>();

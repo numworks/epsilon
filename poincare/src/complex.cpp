@@ -53,7 +53,16 @@ Complex<T> Complex<T>::Cartesian(T a, T b) {
 
 template<typename T>
 Complex<T> Complex<T>::Polar(T r, T th)  {
-  return Complex(r*std::cos(th),r*std::sin(th));
+  T c = std::cos(th);
+  T s = std::sin(th);
+  /* Cheat: see comment on cosine.cpp.
+   * Sine and cosine openbsd immplementationd are numerical approximation.
+   * We though want to avoid evaluating e^(i*pi) to -1+1E-17i. We thus round
+   * cosine and sine results to 0 if they are negligible compared to the
+   * argument th. */
+  c = th != 0 && std::fabs(c/th) <= Expression::epsilon<T>() ? 0 : c;
+  s = th != 0 && std::fabs(s/th) <= Expression::epsilon<T>() ? 0 : s;
+  return Complex(r*c,r*s);
 }
 
 template<typename T>

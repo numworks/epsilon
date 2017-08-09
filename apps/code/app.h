@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "editor_controller.h"
+#include "../shared/message_controller.h"
 
 namespace Code {
 
@@ -22,10 +23,11 @@ public:
   //int numberOfTimers() override;
   //Timer * timerAtIndex(int i) override;
   //bool processEvent(Ion::Events::Event) override;
-  //void didBecomeActive(Window * window) override;
+  void didBecomeActive(Window * window) override;
 private:
   App(Container * container, Snapshot * snapshot);
   EditorController m_editorController;
+  MessageController m_betaVersionController;
 };
 
 }

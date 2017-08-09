@@ -8,6 +8,8 @@ extern "C" {
 #include "py/stackctrl.h"
 }
 
+namespace Code {
+
 mp_obj_t execute_from_str(const char *str) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
@@ -53,7 +55,6 @@ void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_view);
 }
 
-
 View * EditorController::view() {
   return &m_view;
 }
@@ -86,4 +87,6 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
 }

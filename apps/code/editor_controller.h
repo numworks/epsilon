@@ -3,6 +3,8 @@
 
 #include <escher.h>
 
+namespace Code {
+
 class EditorController : public ViewController {
 public:
   EditorController(Responder * parentResponder);
@@ -14,6 +16,8 @@ private:
   char m_buffer[1024];
   TextArea m_view;
 };
+
+}
 
 #endif
 

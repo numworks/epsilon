@@ -3,11 +3,15 @@
 
 #include "../shared/message_controller.h"
 
+namespace OnBoarding {
+
 class UpdateController : public MessageController {
 public:
   UpdateController();
   bool handleEvent(Ion::Events::Event event) override;
 };
+
+}
 
 #endif
 

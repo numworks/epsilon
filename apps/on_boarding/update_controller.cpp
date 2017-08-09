@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+namespace OnBoarding {
+
 UpdateController::UpdateController() :
   MessageController(I18n::Message::UpdateAvailable, I18n::Message::UpdateMessage1, I18n::Message::UpdateMessage2, I18n::Message::UpdateMessage3, I18n::Message::UpdateMessage4)
 {
@@ -19,3 +21,4 @@ bool UpdateController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+}

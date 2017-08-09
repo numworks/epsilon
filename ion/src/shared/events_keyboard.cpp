@@ -19,6 +19,10 @@ bool isAlphaActive() {
 ;
 }
 
+void setShiftAlphaStatus(ShiftAlphaStatus s) {
+  sShiftAlphaStatus = s;
+}
+
 void updateModifiersFromEvent(Event e) {
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:

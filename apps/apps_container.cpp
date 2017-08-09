@@ -93,6 +93,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
+  resetShiftAlphaStatus();
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
   if (activeApp()->snapshot()!= onBoardingAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
@@ -140,6 +141,9 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App::Snapshot * snapshot) {
+  if (activeApp() && snapshot != activeApp()->snapshot()) {
+    resetShiftAlphaStatus();
+  }
   if (snapshot == hardwareTestAppSnapshot() || snapshot == onBoardingAppSnapshot()) {
     m_window.hideTitleBarView(true);
   } else {
@@ -209,4 +213,9 @@ int AppsContainer::numberOfContainerTimers() {
 Timer * AppsContainer::containerTimerAtIndex(int i) {
   Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
   return timers[i];
+}
+
+void AppsContainer::resetShiftAlphaStatus() {
+  Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  m_window.updateAlphaLock();
 }

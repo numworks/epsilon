@@ -56,6 +56,7 @@ private:
   int numberOfContainerTimers() override;
   Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
+  void resetShiftAlphaStatus();
   static constexpr int k_numberOfCommonApps = 9;
   static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;

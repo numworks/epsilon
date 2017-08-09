@@ -7,6 +7,9 @@ ShiftAlphaStatus shiftAlphaStatus() {
   return ShiftAlphaStatus::Default;
 }
 
+void setShiftAlphaStatus(ShiftAlphaStatus s) {
+}
+
 bool isShiftActive() {
   return false;
 }

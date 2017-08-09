@@ -51,6 +51,7 @@ enum class ShiftAlphaStatus {
 Event getEvent(int * timeout);
 
 ShiftAlphaStatus shiftAlphaStatus();
+void setShiftAlphaStatus(ShiftAlphaStatus s);
 bool isShiftActive();
 bool isAlphaActive();
 

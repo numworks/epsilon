@@ -160,12 +160,12 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate TextField::ContentView::textHeight() const {
-  KDSize textSize = KDText::stringSize(" ", m_fontSize);
+  KDSize textSize = KDText::charSize(m_fontSize);
   return textSize.height();
 }
 
 KDCoordinate TextField::ContentView::charWidth() {
-  KDSize textSize = KDText::stringSize(" ", m_fontSize);
+  KDSize textSize = KDText::charSize(m_fontSize);
   return textSize.width();
 }
 

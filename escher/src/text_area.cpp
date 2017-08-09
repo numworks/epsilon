@@ -120,7 +120,7 @@ TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDT
 }
 
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize charSize = KDText::stringSize(" ", m_fontSize);
+  KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position span = m_text.span();
   return KDSize(
     charSize.width() * span.column(),
@@ -132,7 +132,7 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
 void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
 
-  KDSize charSize = KDText::stringSize(" ", m_fontSize);
+  KDSize charSize = KDText::charSize(m_fontSize);
 
   // We want to draw even partially visible characters. So we need to round
   // down for the top left corner and up for the bottom right one.
@@ -197,7 +197,7 @@ KDRect TextArea::TextArea::ContentView::cursorRect() {
 }
 
 KDRect TextArea::TextArea::ContentView::characterFrameAtIndex(size_t index) {
-  KDSize charSize = KDText::stringSize(" ", m_fontSize);
+  KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position p = m_text.positionAtIndex(index);
   return KDRect(
     p.column() * charSize.width(),

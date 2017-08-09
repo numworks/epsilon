@@ -10,7 +10,7 @@ ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(d
   m_denominator_layout->setParent(this);
   m_baseline = m_numerator_layout->size().height()
     + k_fractionLineMargin
-    + KDText::stringSize(" ").height()/2;
+    + KDText::charSize().height()/2;
 }
 
 FractionLayout::~FractionLayout() {

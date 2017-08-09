@@ -1,7 +1,7 @@
 #include "exam_pop_up_controller.h"
+#include "apps_container.h"
 #include "i18n.h"
 #include "global_preferences.h"
-#include "apps_container.h"
 #include <assert.h>
 
 ExamPopUpController::ExamPopUpController() :
@@ -128,7 +128,7 @@ View * ExamPopUpController::ContentView::subviewAtIndex(int index) {
 void ExamPopUpController::ContentView::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDText::stringSize(" ", KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
   m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight));
   m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight));
   m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight));

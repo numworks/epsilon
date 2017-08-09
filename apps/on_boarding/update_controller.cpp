@@ -70,7 +70,7 @@ void UpdateController::ContentView::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDCoordinate titleHeight = m_titleTextView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate textHeight = KDText::stringSize(" ", KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
   m_titleTextView.setFrame(KDRect(0, k_titleMargin, width, titleHeight));
   m_messageTextView1.setFrame(KDRect(0, k_paragraphHeight, width, textHeight));
   m_messageTextView2.setFrame(KDRect(0, k_paragraphHeight+textHeight, width, textHeight));

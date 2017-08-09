@@ -72,9 +72,9 @@ void CalculationController::ContentView::willDisplayEditableCellAtIndex(int inde
 
 void CalculationController::ContentView::layoutSubviews() {
   markRectAsDirty(bounds());
-  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
+  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  KDSize charSize = KDText::stringSize(" ");
+  KDSize charSize = KDText::charSize();
   KDCoordinate xCoordinate = 0;
   m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_oneCellHeight, bounds().width(), bounds().height() - ImageTableView::k_oneCellHeight-titleHeight));
   KDSize tableSize = m_imageTableView.minimalSizeForOptimalDisplay();
@@ -102,9 +102,9 @@ void CalculationController::ContentView::layoutSubviews() {
 }
 
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleHeightMargin;
+  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
   ctx->fillRect(KDRect(0,titleHeight, bounds().width(), ImageTableView::k_oneCellWidth), KDColorWhite);
-  KDSize charSize = KDText::stringSize(" ");
+  KDSize charSize = KDText::charSize();
   int numberOfCharacters;
   KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
   KDCoordinate textFieldWidth = k_largeTextFieldWidth;

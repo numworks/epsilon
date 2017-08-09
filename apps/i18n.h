@@ -263,6 +263,8 @@ namespace I18n {
 
     /* UNIVERSAL MESSAGES */
     Default = 0x8000,
+    CodeApp,
+    CodeAppCapital,
     Alpha,
     CapitalAlpha,
     X,

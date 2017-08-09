@@ -27,6 +27,7 @@ app_objs += $(addprefix apps/shared/,\
   list_controller.o\
   list_parameter_controller.o\
   memoized_curve_view_range.o\
+  message_controller.o\
   new_function_cell.o\
   ok_view.o\
   range_parameter_controller.o\

@@ -2,7 +2,7 @@
 #define CODE_APP_H
 
 #include <escher.h>
-#include "editor_controller.h"
+#include "menu_controller.h"
 #include "../shared/message_controller.h"
 
 namespace Code {
@@ -26,8 +26,8 @@ public:
   void didBecomeActive(Window * window) override;
 private:
   App(Container * container, Snapshot * snapshot);
-  EditorController m_editorController;
   MessageController m_betaVersionController;
+  MenuController m_menuController;
 };
 
 }

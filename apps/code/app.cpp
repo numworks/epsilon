@@ -28,9 +28,9 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_editorController),
-  m_editorController(this),
-  m_betaVersionController(I18n::Message::BetaVersion, I18n::Message::BetaVersionMessage1, I18n::Message::BetaVersionMessage2, I18n::Message::BetaVersionMessage3, I18n::Message::BetaVersionMessage4)
+  ::App(container, snapshot, &m_menuController, I18n::Message::Warning),
+  m_betaVersionController(I18n::Message::BetaVersion, I18n::Message::BetaVersionMessage1, I18n::Message::BetaVersionMessage2, I18n::Message::BetaVersionMessage3, I18n::Message::BetaVersionMessage4),
+  m_menuController(this)
 {
 }
 

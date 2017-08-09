@@ -259,6 +259,8 @@ namespace I18n {
     BetaVersionMessage2,
     BetaVersionMessage3,
     BetaVersionMessage4,
+    EditProgram,
+    ExecuteProgram,
 
     /* On boarding */
     UpdateAvailable,

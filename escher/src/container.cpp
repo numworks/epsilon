@@ -1,5 +1,4 @@
 #include <escher/container.h>
-#include <ion.h>
 #include <assert.h>
 
 Container::Container() :
@@ -44,7 +43,6 @@ bool Container::dispatchEvent(Ion::Events::Event event) {
 }
 
 void Container::run() {
-  window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   window()->redraw();
   RunLoop::run();
 }

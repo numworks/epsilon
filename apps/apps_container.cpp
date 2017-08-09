@@ -152,6 +152,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 }
 
 void AppsContainer::run() {
+  window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
 #if OS_WITH_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else

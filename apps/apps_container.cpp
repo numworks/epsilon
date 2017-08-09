@@ -198,7 +198,7 @@ void AppsContainer::reloadTitleBar() {
   m_window.reloadTitleBar();
 }
 
-UpdateController * AppsContainer::updatePopUpController() {
+OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
   return &m_updateController;
 }
 

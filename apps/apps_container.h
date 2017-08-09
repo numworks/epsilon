@@ -50,7 +50,7 @@ public:
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void reloadTitleBar();
-  UpdateController * updatePopUpController();
+  OnBoarding::UpdateController * updatePopUpController();
 private:
   Window * window() override;
   int numberOfContainerTimers() override;
@@ -68,7 +68,7 @@ private:
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
-  UpdateController m_updateController;
+  OnBoarding::UpdateController m_updateController;
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
   USBTimer m_USBTimer;

@@ -34,6 +34,7 @@ py_objs = $(addprefix python/src/py/,\
   mpstate.o \
   nlrx86.o \
   nlrx64.o \
+  nlrthumb.o \
   nlrxtensa.o \
   nlrsetjmp.o \
   malloc.o \
@@ -133,7 +134,6 @@ py_objs = $(addprefix python/src/py/,\
   smallint.o \
   frozenmod.o \
 )
-#  nlrthumb.o \
 #  repl.o \
 
 py_objs += python/src/py/emitnative.o

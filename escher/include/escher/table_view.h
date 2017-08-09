@@ -59,10 +59,6 @@ protected:
     int numberOfDisplayableColumns() const;
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;
-    bool rowAtIndexIsBeforeFullyVisibleRange(int index) const;
-    bool columnAtIndexIsBeforeFullyVisibleRange(int index) const;
-    bool rowAtIndexIsAfterFullyVisibleRange(int index) const;
-    bool columnAtIndexIsAfterFullyVisibleRange(int index) const;
     int typeOfSubviewAtIndex(int index) const;
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */

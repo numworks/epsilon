@@ -145,6 +145,9 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {
+  if (j >= m_calculationStore->numberOfCalculations()) {
+    return 0;
+  }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   KDCoordinate inputHeight = calculation->inputLayout()->size().height();
   App * calculationApp = (App *)app();

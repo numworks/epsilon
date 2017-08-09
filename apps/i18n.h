@@ -253,6 +253,13 @@ namespace I18n {
     HardwareTestLaunch3,
     HardwareTestLaunch4,
 
+    /* Code */
+    BetaVersion,
+    BetaVersionMessage1,
+    BetaVersionMessage2,
+    BetaVersionMessage3,
+    BetaVersionMessage4,
+
     /* On boarding */
     UpdateAvailable,
     UpdateMessage1,

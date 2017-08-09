@@ -25,7 +25,7 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[232][5] {
+const char * messages[237][5] {
   {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
   {"Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar"},
   {"Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar"},
@@ -288,6 +288,13 @@ const char * messages[232][5] {
   {" test. At the end of the test, you", "Pour en sortir vous devrez", "fabrica. Para quitar la prueba,", "starten. Um den zu verlassen, mussen", "Para sair voce tem que executar"},
   {"will have to reset the device and", "effectuer un reset qui supprimera", "debera resetear su equipo.", "Sie einen Reset durchfuhren, der", "uma redefinicao, que ira apagar"},
   {"all your data will be deleted.", "vos donnees.", "", "Ihre Daten loschen werden.", "seus dados."},
+
+  /* Code */
+  {"BETA VERSION", "VERSION BETA", "??", "??", "??"},
+  {"The Python version you are using is not", "La version de Python que vous utilisez", "??", "??", "??"},
+  {"is not ???", "n'est pas une version definitive.", "??", "??", "??"},
+  {"You may encouter", "Il est possible que son utilisation soit", "??", "??", "??"},
+  {"BUGS!", "limitee et que certains bugs apparaissent.", "??", "??", "??"},
 
   /* On boarding */
   {"UPDATE AVAILABLE", "MISE A JOUR DISPONIBLE", "ACTUALIZACION DISPONIBLE", "UPDATE VERFUGBAR", "ATUALIZACAO DISPONIVEL"},

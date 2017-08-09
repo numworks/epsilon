@@ -12,7 +12,7 @@ StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize 
   memcpy(m_string, string, length);
   m_string[length] = 0;
   // Height of the font.
-  m_baseline = KDText::stringSize(" ", m_fontSize).height();
+  m_baseline = KDText::charSize(m_fontSize).height();
 }
 
 StringLayout::~StringLayout() {

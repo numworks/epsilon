@@ -22,7 +22,7 @@ void BannerView::setMessageAtIndex(I18n::Message text, int index) {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, KDText::stringSize(" ", KDText::FontSize::Small).height()*numberOfLines());
+  return KDSize(0, KDText::charSize(KDText::FontSize::Small).height()*numberOfLines());
 }
 
 int BannerView::numberOfSubviews() const {

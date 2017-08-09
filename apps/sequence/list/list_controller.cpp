@@ -67,7 +67,7 @@ KDCoordinate ListController::rowHeight(int j) {
     return defaultHeight;
   }
   KDCoordinate sequenceSize = layout->size().height();
-  return sequenceSize + defaultHeight - KDText::stringSize(" ").height();
+  return sequenceSize + defaultHeight - KDText::charSize().height();
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

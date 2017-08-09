@@ -39,7 +39,7 @@ View * LawController::ContentView::subviewAtIndex(int index) {
 }
 
 void LawController::ContentView::layoutSubviews() {
-  KDCoordinate titleHeight = KDText::stringSize("", KDText::FontSize::Small).height()+k_titleMargin;
+  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
 }

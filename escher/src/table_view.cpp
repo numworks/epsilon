@@ -99,22 +99,12 @@ KDCoordinate TableView::ContentView::width() const {
 }
 
 void TableView::ContentView::scrollToCell(int x, int y) const {
+  KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), m_dataSource->columnWidth(x), m_dataSource->rowHeight(y));
+  m_tableView->scrollToContentRect(cellRect, true);
+
+  /* Handle cases when the size of the view has decreased. */
   KDCoordinate contentOffsetX = m_tableView->contentOffset().x();
   KDCoordinate contentOffsetY = m_tableView->contentOffset().y();
-  if (columnAtIndexIsBeforeFullyVisibleRange(x)) {
-    // Let's scroll the tableView to put that cell on the left (while keeping the left margin)
-    contentOffsetX = m_dataSource->cumulatedWidthFromIndex(x);
-  } else if (columnAtIndexIsAfterFullyVisibleRange(x)) {
-    // Let's scroll the tableView to put that cell on the right (while keeping the right margin)
-    contentOffsetX = m_dataSource->cumulatedWidthFromIndex(x+1)+2*m_horizontalCellOverlapping - m_tableView->maxContentWidthDisplayableWithoutScrolling();
-  }
-  if (rowAtIndexIsBeforeFullyVisibleRange(y)) {
-    // Let's scroll the tableView to put that cell on the top (while keeping the top margin)
-    contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y);
-  } else if (rowAtIndexIsAfterFullyVisibleRange(y)) {
-    // Let's scroll the tableView to put that cell on the bottom (while keeping the bottom margin)
-    contentOffsetY = m_dataSource->cumulatedHeightFromIndex(y+1)+2*m_verticalCellOverlapping - m_tableView->maxContentHeightDisplayableWithoutScrolling();
-  }
   if (m_tableView->maxContentHeightDisplayableWithoutScrolling() > height()-contentOffsetY) {
     contentOffsetY = height() > m_tableView->maxContentHeightDisplayableWithoutScrolling() ? height()-m_tableView->maxContentHeightDisplayableWithoutScrolling() : 0;
   }
@@ -256,24 +246,4 @@ int TableView::ContentView::columnsScrollingOffset() const {
   KDCoordinate invisibleWidth = m_tableView->contentOffset().x()-m_tableView->leftMargin();
   invisibleWidth = invisibleWidth < 0 ? 0 : invisibleWidth;
   return m_dataSource->indexFromCumulatedWidth(invisibleWidth);
-}
-
-bool TableView::ContentView::rowAtIndexIsBeforeFullyVisibleRange(int index) const {
-  return index <= rowsScrollingOffset();
-}
-
-bool TableView::ContentView::columnAtIndexIsBeforeFullyVisibleRange(int index) const {
-  return index <= columnsScrollingOffset();
-}
-
-bool TableView::ContentView::rowAtIndexIsAfterFullyVisibleRange(int index) const {
-  int minHeightToDisplayRowAtIndex = m_dataSource->cumulatedHeightFromIndex(index+1);
-  int heightToTheBottomOfTheScreen = m_tableView->contentOffset().y()+m_tableView->maxContentHeightDisplayableWithoutScrolling()+m_tableView->topMargin();
-  return minHeightToDisplayRowAtIndex >= heightToTheBottomOfTheScreen;
-}
-
-bool TableView::ContentView::columnAtIndexIsAfterFullyVisibleRange(int index) const {
-  int minWidthToDisplayColumnAtIndex = m_dataSource->cumulatedWidthFromIndex(index+1);
-  int widthToTheRightOfTheScreen = m_tableView->contentOffset().x()+m_tableView->maxContentWidthDisplayableWithoutScrolling()+m_tableView->leftMargin();
-  return minWidthToDisplayColumnAtIndex >= widthToTheRightOfTheScreen;
 }

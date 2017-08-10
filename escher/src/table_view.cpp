@@ -18,7 +18,7 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 }
 
 KDSize TableView::size() const {
-  return m_contentView.size();
+  return m_contentView.minimalSizeForOptimalDisplay();
 }
 
 TableViewDataSource * TableView::dataSource() {
@@ -69,7 +69,7 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
 {
 }
 
-KDSize TableView::ContentView::size() const {
+KDSize TableView::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(width(), height());
 }
 
@@ -101,17 +101,6 @@ KDCoordinate TableView::ContentView::width() const {
 void TableView::ContentView::scrollToCell(int x, int y) const {
   KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), columnWidth(x), m_dataSource->rowHeight(y));
   m_tableView->scrollToContentRect(cellRect, true);
-
-  /* Handle cases when the size of the view has decreased. */
-  KDCoordinate contentOffsetX = m_tableView->contentOffset().x();
-  KDCoordinate contentOffsetY = m_tableView->contentOffset().y();
-  if (m_tableView->maxContentHeightDisplayableWithoutScrolling() > height()-contentOffsetY) {
-    contentOffsetY = height() > m_tableView->maxContentHeightDisplayableWithoutScrolling() ? height()-m_tableView->maxContentHeightDisplayableWithoutScrolling() : 0;
-  }
-  if (m_tableView->maxContentWidthDisplayableWithoutScrolling() > width()-contentOffsetX) {
-    contentOffsetX = width() > m_tableView->maxContentWidthDisplayableWithoutScrolling() ? width()-m_tableView->maxContentWidthDisplayableWithoutScrolling() : 0;
-  }
-  m_tableView->setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {

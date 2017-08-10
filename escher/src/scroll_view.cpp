@@ -10,8 +10,8 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource, KD
   KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
   View(),
   m_topMargin(topMargin),
-  m_dataSource(dataSource),
   m_contentView(contentView),
+  m_dataSource(dataSource),
   m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin),
   m_rightMargin(rightMargin),
@@ -93,6 +93,17 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   if (offsetX != 0 || offsetY != 0) {
     setContentOffset(contentOffset().translatedBy(KDPoint(offsetX, offsetY)));
   }
+
+  /* Handle cases when the size of the view has decreased. */
+  KDCoordinate contentOffsetX = contentOffset().x();
+  KDCoordinate contentOffsetY = contentOffset().y();
+  if (maxContentHeightDisplayableWithoutScrolling() > contentSize().height()-contentOffsetY) {
+    contentOffsetY = contentSize().height() > maxContentHeightDisplayableWithoutScrolling() ? contentSize().height()-maxContentHeightDisplayableWithoutScrolling() : 0;
+  }
+  if (maxContentWidthDisplayableWithoutScrolling() > contentSize().width()-contentOffsetX) {
+    contentOffsetX = contentSize().width() > maxContentWidthDisplayableWithoutScrolling() ? contentSize().width()-maxContentWidthDisplayableWithoutScrolling() : 0;
+  }
+  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
@@ -172,6 +183,10 @@ void ScrollView::updateScrollIndicator() {
       markRectAsDirty(m_horizontalScrollIndicator.frame());
     }
   }
+}
+
+KDSize ScrollView::contentSize() {
+  return m_contentView->minimalSizeForOptimalDisplay();
 }
 
 void ScrollView::setContentOffset(KDPoint offset) {

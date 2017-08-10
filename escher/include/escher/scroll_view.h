@@ -2,8 +2,8 @@
 #define ESCHER_SCROLL_VIEW_H
 
 #include <escher/view.h>
-#include <escher/scroll_view_indicator.h>
 #include <escher/scroll_view_data_source.h>
+#include <escher/scroll_view_indicator.h>
 #include <escher/palette.h>
 
 class ScrollView : public View {
@@ -27,17 +27,18 @@ protected:
   KDRect visibleContentRect();
   void layoutSubviews() override;
   void updateScrollIndicator();
+  KDSize contentSize();
   KDCoordinate m_topMargin;
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;
 #endif
+  View * m_contentView;
 private:
   ScrollViewDataSource * m_dataSource;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
-  View * m_contentView;
   ScrollViewIndicator m_verticalScrollIndicator;
   ScrollViewIndicator m_horizontalScrollIndicator;
   bool hasVerticalIndicator() const;

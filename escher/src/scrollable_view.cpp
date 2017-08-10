@@ -18,7 +18,7 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Right) {
-    KDCoordinate movementToEdge =  view()->minimalSizeForOptimalDisplay().width() - bounds().width() - m_manualScrollingOffset.x();
+    KDCoordinate movementToEdge =  m_contentView->minimalSizeForOptimalDisplay().width() - bounds().width() - m_manualScrollingOffset.x();
     if (movementToEdge > 0) {
       translation = KDPoint(min(Metric::ScrollStep, movementToEdge), 0);
     }
@@ -30,7 +30,7 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Down) {
-    KDCoordinate movementToEdge =  view()->minimalSizeForOptimalDisplay().height() - bounds().height() - m_manualScrollingOffset.y();
+    KDCoordinate movementToEdge =  m_contentView->minimalSizeForOptimalDisplay().height() - bounds().height() - m_manualScrollingOffset.y();
     if (movementToEdge > 0) {
       translation = KDPoint(0, min(Metric::ScrollStep, movementToEdge));
     }
@@ -49,9 +49,9 @@ void ScrollableView::reloadScroll() {
 }
 
 void ScrollableView::layoutSubviews() {
-  KDSize viewSize = view()->minimalSizeForOptimalDisplay();
+  KDSize viewSize = contentSize();
   KDCoordinate viewWidth = viewSize.width() < bounds().width() ? bounds().width() : viewSize.width();
   KDCoordinate viewHeight = viewSize.height() < bounds().height() ? bounds().height() : viewSize.height();
-  view()->setSize(KDSize(viewWidth, viewHeight));
+  m_contentView->setSize(KDSize(viewWidth, viewHeight));
   ScrollView::layoutSubviews();
 }

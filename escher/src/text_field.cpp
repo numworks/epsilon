@@ -437,8 +437,3 @@ void TextField::scrollToAvoidWhiteSpace() {
   m_manualScrollingOffset = KDPoint(min(textLength() * m_contentView.charWidth()+cursorWidth-bounds().width(), 0), 0);
   setContentOffset(m_manualScrollingOffset);
 }
-
-
-View * TextField::view() {
-  return &m_contentView;
-}

@@ -33,7 +33,7 @@ protected:
     HighlightCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();
-    KDSize size() const;
+    KDSize minimalSizeForOptimalDisplay() const override;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

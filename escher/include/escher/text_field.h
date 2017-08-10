@@ -93,7 +93,6 @@ private:
   bool cursorIsAfterScrollingFrame();
   void scrollToCursor();
   void scrollToAvoidWhiteSpace();
-  View * view() override;
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

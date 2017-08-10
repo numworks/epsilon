@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "menu_controller.h"
+#include "program.h"
 #include "../shared/message_controller.h"
 
 namespace Code {
@@ -17,12 +18,14 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
+    void reset() override;
     Descriptor * descriptor() override;
+    Program * program();
+  private:
+    Program m_program;
   };
-  //int numberOfTimers() override;
-  //Timer * timerAtIndex(int i) override;
-  //bool processEvent(Ion::Events::Event) override;
   void didBecomeActive(Window * window) override;
 private:
   App(Container * container, Snapshot * snapshot);

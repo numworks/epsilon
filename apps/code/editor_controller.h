@@ -14,7 +14,6 @@ public:
   void didBecomeFirstResponder() override;
 private:
   TextArea m_view;
-  Program * m_program;
 };
 
 }

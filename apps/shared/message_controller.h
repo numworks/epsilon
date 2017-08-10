@@ -6,13 +6,13 @@
 
 class MessageController : public ViewController {
 public:
-  MessageController(I18n::Message title, I18n::Message message1, I18n::Message message2, I18n::Message message3, I18n::Message message4);
+  MessageController(I18n::Message * messages, KDColor * colors);
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
   class ContentView : public View {
   public:
-    ContentView(I18n::Message title, I18n::Message message1, I18n::Message message2, I18n::Message message3, I18n::Message message4);
+    ContentView(I18n::Message * messages, KDColor * colors);
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
     constexpr static KDCoordinate k_titleMargin = 40;

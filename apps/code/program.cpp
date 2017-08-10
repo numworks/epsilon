@@ -32,4 +32,8 @@ void Program::setContent(const char * program) {
   memcpy(m_buffer, program, k_bufferSize);
 }
 
+int Program::bufferSize() const {
+  return k_bufferSize;
+}
+
 }

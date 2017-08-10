@@ -15,7 +15,7 @@ public:
   ParenthesisLayout& operator=(const ParenthesisLayout& other) = delete;
   ParenthesisLayout& operator=(ParenthesisLayout&& other) = delete;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
-  constexpr static KDCoordinate k_parenthesisCurveHeight = 6;
+  constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
@@ -23,6 +23,7 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_externWidthMargin = 1;
+  constexpr static KDCoordinate k_externHeightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   ExpressionLayout * m_operandLayout;

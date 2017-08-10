@@ -23,15 +23,16 @@ void ModalViewController::ContentView::setMainView(View * regularView) {
 }
 
 int ModalViewController::ContentView::numberOfSubviews() const {
-  if (m_isDisplayingModal) {
-    return 2;
-  }
-  return 1;
+  bool shouldDrawTheRegularViewBehind = m_topMargin != 0 || m_leftMargin != 0 || m_bottomMargin != 0 || m_rightMargin != 0;
+  return 1 + (m_isDisplayingModal && shouldDrawTheRegularViewBehind);
 }
 
 View * ModalViewController::ContentView::subviewAtIndex(int index) {
   switch (index) {
     case 0:
+      if (m_isDisplayingModal && numberOfSubviews() == 1) {
+        return m_currentModalView;
+      }
       return m_regularView;
     case 1:
       if (numberOfSubviews() == 2) {
@@ -59,8 +60,8 @@ KDRect ModalViewController::ContentView::frame() {
 void ModalViewController::ContentView::layoutSubviews() {
   assert(m_regularView != nullptr);
   m_regularView->setFrame(bounds());
-  if (numberOfSubviews() == 2) {
-  assert(m_currentModalView != nullptr);
+  if (m_isDisplayingModal) {
+    assert(m_currentModalView != nullptr);
     m_currentModalView->setFrame(frame());
   }
 }

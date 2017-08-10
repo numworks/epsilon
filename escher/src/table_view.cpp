@@ -99,7 +99,7 @@ KDCoordinate TableView::ContentView::width() const {
 }
 
 void TableView::ContentView::scrollToCell(int x, int y) const {
-  KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), m_dataSource->columnWidth(x), m_dataSource->rowHeight(y));
+  KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), columnWidth(x), m_dataSource->rowHeight(y));
   m_tableView->scrollToContentRect(cellRect, true);
 
   /* Handle cases when the size of the view has decreased. */

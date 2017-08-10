@@ -13,7 +13,7 @@ View * MessageController::view() {
 }
 
 bool MessageController::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::Back && event != Ion::Events::OnOff) {
+  if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::Home) {
     app()->dismissModalViewController();
     return true;
   }

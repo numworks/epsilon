@@ -43,7 +43,7 @@ size_t TextArea::Text::indexAtPosition(Position p) {
   if (p.line() < 0) {
     return 0;
   }
-  size_t y = 0;
+  int y = 0;
   const char * endOfLastLine = nullptr;
   for (Line l : *this) {
     if (p.line() == y) {
@@ -145,11 +145,11 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     rect.bottom()/charSize.height() + 1
   );
 
-  size_t y = 0;
+  int y = 0;
   size_t x = topLeft.column();
 
   for (Text::Line line : m_text) {
-    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < line.length()) {
+    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
       //drawString(line.text(), 0, y*charHeight); // Naive version
       ctx->drawString(
         line.text() + topLeft.column(),

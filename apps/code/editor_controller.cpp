@@ -4,8 +4,7 @@ namespace Code {
 
 EditorController::EditorController(Program * program) :
   ViewController(nullptr),
-  m_view(this, program->editableContent(), program->bufferSize()),
-  m_program(program)
+  m_view(this, program->editableContent(), program->bufferSize())
 {
 }
 

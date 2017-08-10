@@ -12,7 +12,6 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  View * view() override;
   ExpressionView m_expressionView;
 };
 

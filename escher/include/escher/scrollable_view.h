@@ -12,8 +12,6 @@ public:
 protected:
   void layoutSubviews() override;
   KDPoint m_manualScrollingOffset;
-private:
-  virtual View * view() = 0;
 };
 
 #endif

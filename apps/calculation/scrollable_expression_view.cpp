@@ -23,8 +23,4 @@ KDSize ScrollableExpressionView::minimalSizeForOptimalDisplay() const {
   return m_expressionView.minimalSizeForOptimalDisplay();
 }
 
-View * ScrollableExpressionView::view() {
-  return &m_expressionView;
-}
-
 }

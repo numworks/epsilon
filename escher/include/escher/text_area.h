@@ -90,8 +90,6 @@ private:
     KDColor m_backgroundColor;
   };
 
-  View * view() override;
-
   ContentView m_contentView;
   TextAreaDelegate * m_delegate;
 };

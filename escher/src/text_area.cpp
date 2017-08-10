@@ -248,10 +248,6 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else {
     return false;
   }
-  scrollToContentRect(m_contentView.cursorRect());
+  scrollToContentRect(m_contentView.cursorRect(), true);
   return true;
-}
-
-View * TextArea::view() {
-  return &m_contentView;
 }

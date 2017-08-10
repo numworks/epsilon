@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/code/,\
   app.o\
   editor_controller.o\
+  executor_controller.o\
   menu_controller.o\
   program.o\
 )

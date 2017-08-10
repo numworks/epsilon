@@ -184,6 +184,10 @@ void TextField::ContentView::deleteCharPrecedingCursor() {
   layoutSubviews();
 }
 
+KDRect TextField::ContentView::cursorRect() {
+  return KDRect(m_currentCursorLocation * charWidth(), 0, m_cursorView.minimalSizeForOptimalDisplay());
+}
+
 int TextField::ContentView::numberOfSubviews() const {
   return 1;
 }
@@ -282,7 +286,17 @@ void TextField::setCursorLocation(int location) {
 }
 
 bool TextField::insertTextAtLocation(const char * text, int location) {
-  return m_contentView.insertTextAtLocation(text, location);
+  if (m_contentView.insertTextAtLocation(text, location)) {
+    layoutSubviews();
+    return true;
+  }
+  return false;
+}
+
+void TextField::deleteCharPrecedingCursor() {
+  layoutSubviews();
+  m_contentView.deleteCharPrecedingCursor();
+  scrollToCursor();
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() const {
@@ -347,7 +361,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && isEditing()) {
     deleteCharPrecedingCursor();
-    layoutSubviews();
     return true;
   }
   if (event.hasText()) {
@@ -362,7 +375,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
       nextCursorLocation = cursorLocation() + strlen(event.text()) + cursorDelta;
     }
     setCursorLocation(nextCursorLocation);
-    layoutSubviews();
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
@@ -400,40 +412,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void TextField::deleteCharPrecedingCursor() {
-  m_contentView.deleteCharPrecedingCursor();
-  scrollToAvoidWhiteSpace();
-}
-
-bool TextField::cursorIsBeforeScrollingFrame() {
-  return cursorLocation() * m_contentView.charWidth() < m_manualScrollingOffset.x();
-}
-
-bool TextField::cursorIsAfterScrollingFrame() {
-  KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-  return cursorLocation() * m_contentView.charWidth()+cursorWidth - m_manualScrollingOffset.x() > bounds().width();
-}
-
 void TextField::scrollToCursor() {
   if (!isEditing()) {
     return;
   }
-  if (cursorIsBeforeScrollingFrame()) {
-    m_manualScrollingOffset = KDPoint(cursorLocation() * m_contentView.charWidth(), 0);
-    setContentOffset(m_manualScrollingOffset);
-  }
-  if (cursorIsAfterScrollingFrame()) {
-    KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-    m_manualScrollingOffset = KDPoint(cursorLocation() * m_contentView.charWidth()+cursorWidth - bounds().width(), 0);
-    setContentOffset(m_manualScrollingOffset);
-  }
-}
-
-void TextField::scrollToAvoidWhiteSpace() {
-  if (m_manualScrollingOffset.x() == 0 || m_manualScrollingOffset.x() + bounds().width() <= textLength() * m_contentView.charWidth()) {
-    return;
-  }
-  KDCoordinate cursorWidth = m_contentView.subviewAtIndex(0)->minimalSizeForOptimalDisplay().width();
-  m_manualScrollingOffset = KDPoint(min(textLength() * m_contentView.charWidth()+cursorWidth-bounds().width(), 0), 0);
-  setContentOffset(m_manualScrollingOffset);
+  scrollToContentRect(m_contentView.cursorRect());
 }

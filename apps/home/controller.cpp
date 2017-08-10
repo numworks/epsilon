@@ -112,14 +112,15 @@ int Controller::numberOfIcons() {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  /* When we display the rightest icon, the icon below is empty. As no icon is
-   * thus redrawn on the previous one, the cell is not cleaned. We need to
-   * redraw a white rect on the cell to hide the dirtyness below. Ideally,
-   * we would have redrawn all the background in white and then redraw visible
-   * cells. However, the redrawing takes time and is visible at scrolling.
-   * Here, we avoid the background complete redrawing but the code is a bit
+  /* If the number of apps (including home) is odd, when we display the
+   * rightest icon, the icon below is empty. As no icon is thus redrawn on the
+   * previous one, the cell is not cleaned. We need to redraw a white rect on
+   * the cell to hide the dirtyness below. Ideally, we would have redrawn all
+   * the background in white and then redraw visible cells. However, the
+   * redrawing takes time and is visible at scrolling. Here, we avoid the
+   * background complete redrawing but the code is a bit
    * clumsy. */
-  if (t->selectedColumn() == k_numberOfColumns -1) {
+  if (m_container->numberOfApps()%2 == 1 && t->selectedColumn() == k_numberOfColumns -1) {
     m_view.reloadBottomRightCorner(this);
   }
   /* To prevent the selectable table view to select cells that are unvisible,

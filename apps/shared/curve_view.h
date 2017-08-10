@@ -37,7 +37,7 @@ protected:
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static KDCoordinate k_cursorSize = 25;
-  constexpr static int k_externRectMargin = 1;
+  constexpr static int k_externRectMargin = 2;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,

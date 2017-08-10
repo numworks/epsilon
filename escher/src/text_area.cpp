@@ -245,6 +245,8 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
     m_contentView.removeChar();
   } else if (event.hasText()) {
     m_contentView.insertText(event.text());
+  } else if (event == Ion::Events::EXE) {
+    m_contentView.insertText("\n");
   } else {
     return false;
   }

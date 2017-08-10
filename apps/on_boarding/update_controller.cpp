@@ -14,7 +14,8 @@ UpdateController::UpdateController() :
 }
 
 bool UpdateController::handleEvent(Ion::Events::Event event) {
-  if (MessageController::handleEvent(event)) {
+  if (event != Ion::Events::Back && event != Ion::Events::OnOff) {
+    app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
       appsContainer->refreshPreferences();

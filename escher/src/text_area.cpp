@@ -123,7 +123,9 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position span = m_text.span();
   return KDSize(
-    charSize.width() * span.column(),
+    /* We take into account the space required to draw a cursor at the end of
+     * line by adding charSize.width() to the width. */
+    charSize.width() * (span.column()+1),
     charSize.height() * span.line()
   );
 }

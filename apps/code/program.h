@@ -11,6 +11,7 @@ public:
   const char * readOnlyContent() const;
   char * editableContent();
   void setContent(const char * program);
+  int bufferSize() const;
 private:
   constexpr static int k_bufferSize = 1024;
   char m_buffer[k_bufferSize];

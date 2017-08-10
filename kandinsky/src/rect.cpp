@@ -43,8 +43,8 @@ KDRect KDRect::intersectedWith(const KDRect & other) const {
   return KDRect(
       intersectionLeft,
       intersectionTop,
-      intersectionRight-intersectionLeft,
-      intersectionBottom-intersectionTop);
+      intersectionRight-intersectionLeft+1,
+      intersectionBottom-intersectionTop+1);
 }
 
 void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
@@ -96,13 +96,13 @@ KDRect KDRect::unionedWith(const KDRect & other) const {
   return KDRect(
     resultLeft,
     resultTop,
-    resultRight-resultLeft,
-    resultBottom-resultTop
+    resultRight-resultLeft+1,
+    resultBottom-resultTop+1
     );
 }
 
 bool KDRect::contains(KDPoint p) const {
-  return (p.x() >= x() && p.x() < right() && p.y() >= y() && p.y() < bottom());
+  return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
 }
 
 KDRect KDRect::translatedBy(KDPoint p) const {

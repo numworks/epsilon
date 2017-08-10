@@ -5,6 +5,24 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 
+/*   +-+-+-+-+-+
+ *   |x| | | | |
+ *   +-+-+-+-+-+
+ *   | | | | | |
+ *   +-+-+-+-+-+
+ *   | | | | |o|
+ *   +-+-+-+-+-+
+ *
+ *  Kandinsky rectangles are rectangles made of pixels. We defined them by the
+ *  coordinates of the top left pixel and the rectangle dimensions in pixels.
+ *  The pixel top left (located by the 'x' on the example) is at the coordinates
+ *  (left(), top()) = (x(), y()). The pixel bottom right (located by a 'o' on
+ *  the example) is at the coordinates (right(), bottom()). Also, the dimension
+ *  of the rectangle is then (right()-left()+1, bottom()-top()+1).
+ *  The example dimensions are (5, 3).
+ *
+ * */
+
 class KDRect {
 public:
   constexpr KDRect(KDCoordinate x, KDCoordinate y,
@@ -22,8 +40,8 @@ public:
   KDCoordinate height() const { return m_height; }
   KDSize size() const { return KDSize(m_width, m_height); }
   KDCoordinate top() const { return m_y; }
-  KDCoordinate right() const { return m_x+m_width; }
-  KDCoordinate bottom() const { return m_y+m_height; }
+  KDCoordinate right() const { return m_x+m_width-1; }
+  KDCoordinate bottom() const { return m_y+m_height-1; }
   KDCoordinate left() const { return m_x; }
 
   KDPoint topLeft() const { return KDPoint(left(), top()); }

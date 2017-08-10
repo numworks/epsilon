@@ -18,6 +18,11 @@ const Image * App::Descriptor::icon() {
   return ImageStore::CodeIcon;
 }
 
+App::Snapshot::Snapshot() :
+  m_program()
+{
+}
+
 App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
@@ -25,6 +30,14 @@ App * App::Snapshot::unpack(Container * container) {
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;
+}
+
+void App::Snapshot::reset() {
+  m_program.setContent("");
+}
+
+Program * App::Snapshot::program() {
+  return &m_program;
 }
 
 App::App(Container * container, Snapshot * snapshot) :

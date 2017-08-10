@@ -63,6 +63,7 @@ protected:
     KDCoordinate textHeight() const;
     KDCoordinate charWidth();
     void deleteCharPrecedingCursor();
+    KDRect cursorRect();
     View * subviewAtIndex(int index) override;
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
@@ -89,10 +90,7 @@ protected:
   ContentView m_contentView;
 private:
   void deleteCharPrecedingCursor();
-  bool cursorIsBeforeScrollingFrame();
-  bool cursorIsAfterScrollingFrame();
   void scrollToCursor();
-  void scrollToAvoidWhiteSpace();
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

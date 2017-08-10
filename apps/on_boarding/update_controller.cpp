@@ -4,8 +4,12 @@
 
 namespace OnBoarding {
 
+static I18n::Message sOnBoardingMessages[] = {I18n::Message::UpdateAvailable, I18n::Message::UpdateMessage1, I18n::Message::UpdateMessage2, I18n::Message::UpdateMessage3, I18n::Message::UpdateMessage4};
+
+static KDColor sOnBoardingColors[] = {KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, Palette::YellowDark};
+
 UpdateController::UpdateController() :
-  MessageController(I18n::Message::UpdateAvailable, I18n::Message::UpdateMessage1, I18n::Message::UpdateMessage2, I18n::Message::UpdateMessage3, I18n::Message::UpdateMessage4)
+  MessageController(sOnBoardingMessages, sOnBoardingColors)
 {
 }
 

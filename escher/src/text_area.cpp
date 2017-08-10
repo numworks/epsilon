@@ -248,6 +248,13 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else {
     return false;
   }
-  scrollToContentRect(m_contentView.cursorRect());
+  /* Technically, we do not need to overscroll in text area. However,
+   * logically, we should layout the scroll view before calling
+   * scrollToContentRect in case the size of the scroll view has changed and
+   * then call scrollToContentRect which call another layout of the scroll view
+   * if the offset has evolved. In order to avoid requiring two layouts, we
+   * allow overscrolling in scrollToContentRect and the last layout of the
+   * scroll view corrects the size of the scroll view only once. */
+  scrollToContentRect(m_contentView.cursorRect(), true);
   return true;
 }

@@ -27,6 +27,7 @@ void Container::switchTo(App::Snapshot * snapshot) {
   }
   if (m_activeApp) {
     m_activeApp->didBecomeActive(window());
+    window()->redraw();
   }
 }
 

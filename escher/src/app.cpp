@@ -109,7 +109,6 @@ void App::didBecomeActive(Window * window) {
   m_modalViewController.viewWillAppear();
   window->setContentView(view);
   setFirstResponder(&m_modalViewController);
-  window->redraw();
 }
 
 void App::willBecomeInactive() {

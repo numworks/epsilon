@@ -107,6 +107,11 @@ TextArea::Text::Position TextArea::Text::span() const {
   return Position(width, height);
 }
 
+size_t TextArea::Text::bufferLength() const {
+  return strlen(m_buffer);
+}
+
+
 /* TextArea::ContentView */
 
 TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
@@ -216,7 +221,9 @@ void TextArea::TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 }
 
 void TextArea::TextArea::ContentView::moveCursorIndex(int deltaX) {
-  // FIXME: bound checks!
+  if ((deltaX < 0 && m_cursorIndex <= 0) || (deltaX > 0 && m_cursorIndex >= m_text.bufferLength())) {
+    return;
+  }
   m_cursorIndex += deltaX;
   layoutSubviews();
 }

@@ -85,14 +85,16 @@ void TextArea::Text::insertChar(char c, size_t index) {
   }
 }
 
-void TextArea::Text::removeChar(size_t index) {
+char TextArea::Text::removeChar(size_t index) {
   assert(index < m_bufferSize);
+  char deletedChar = m_buffer[index];
   for (size_t i=index; i<m_bufferSize; i++) {
     m_buffer[i] = m_buffer[i+1];
     if (m_buffer[i] == 0) {
       break;
     }
   }
+  return deletedChar;
 }
 
 TextArea::Text::Position TextArea::Text::span() const {
@@ -184,19 +186,22 @@ void TextArea::ContentView::layoutSubviews() {
 }
 
 void TextArea::TextArea::ContentView::insertText(const char * text) {
+  bool lineBreak = false;
   while (*text != 0) {
+    lineBreak |= *text == '\n';
     m_text.insertChar(*text++, m_cursorIndex++);
   }
   layoutSubviews(); // Reposition the cursor
-  markRectAsDirty(bounds()); // FIXME: Vastly suboptimal
+  markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex-1, lineBreak));
 }
 
 void TextArea::TextArea::ContentView::removeChar() {
+  bool lineBreak = false;
   if (m_cursorIndex > 0) {
-    m_text.removeChar(--m_cursorIndex);
+    lineBreak = m_text.removeChar(--m_cursorIndex) == '\n';
   }
   layoutSubviews(); // Reposition the cursor
-  markRectAsDirty(bounds()); // FIXME: Vastly suboptimal
+  markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, lineBreak));
 }
 
 KDRect TextArea::TextArea::ContentView::cursorRect() {
@@ -226,6 +231,15 @@ void TextArea::TextArea::ContentView::moveCursorIndex(int deltaX) {
   }
   m_cursorIndex += deltaX;
   layoutSubviews();
+}
+
+KDRect TextArea::TextArea::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) {
+  KDRect charRect = characterFrameAtIndex(index);
+  KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
+  if (lineBreak) {
+      dirtyRect = dirtyRect.unionedWith(KDRect(0, charRect.bottom()+1, bounds().width(), bounds().height()-charRect.bottom()-1));
+  }
+  return dirtyRect;
 }
 
 /* TextArea */

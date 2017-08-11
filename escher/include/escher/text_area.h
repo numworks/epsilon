@@ -1,6 +1,7 @@
 #ifndef ESCHER_TEXT_AREA_H
 #define ESCHER_TEXT_AREA_H
 
+#include <assert.h>
 #include <string.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_area_delegate.h>
@@ -61,7 +62,10 @@ private:
 
     void insertChar(char c, size_t index);
     char removeChar(size_t index);
-    size_t bufferLength() const;
+    char operator[](int index) {
+      assert(index >= 0 && index < m_bufferSize);
+      return m_buffer[index];
+    }
   private:
     char * m_buffer;
     size_t m_bufferSize;

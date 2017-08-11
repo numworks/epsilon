@@ -1,5 +1,6 @@
 #include <ion.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "events.h"
 #include "display.h"
 

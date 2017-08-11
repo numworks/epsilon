@@ -61,6 +61,7 @@ private:
 
     void insertChar(char c, size_t index);
     void removeChar(size_t index);
+    size_t bufferLength() const;
   private:
     char * m_buffer;
     size_t m_bufferSize;

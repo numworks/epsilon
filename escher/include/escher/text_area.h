@@ -1,10 +1,10 @@
 #ifndef ESCHER_TEXT_AREA_H
 #define ESCHER_TEXT_AREA_H
 
+#include <string.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_area_delegate.h>
 #include <escher/text_cursor_view.h>
-#include <string.h>
 
 class TextArea : public ScrollableView, public ScrollViewDataSource {
 public:
@@ -60,7 +60,7 @@ private:
     size_t indexAtPosition(Position p);
 
     void insertChar(char c, size_t index);
-    void removeChar(size_t index);
+    char removeChar(size_t index);
     size_t bufferLength() const;
   private:
     char * m_buffer;
@@ -83,6 +83,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     KDRect characterFrameAtIndex(size_t index);
+    KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak);
     TextCursorView m_cursorView;
     size_t m_cursorIndex;
     Text m_text;

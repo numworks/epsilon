@@ -2,9 +2,9 @@
 #define ESCHER_SCROLL_VIEW_H
 
 #include <escher/view.h>
+#include <escher/palette.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
-#include <escher/palette.h>
 
 class ScrollView : public View {
 public:

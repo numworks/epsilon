@@ -73,7 +73,7 @@ TextArea::Text::Position TextArea::Text::positionAtIndex(size_t index) {
 }
 
 void TextArea::Text::insertChar(char c, size_t index) {
-  assert(index < m_bufferSize);
+  assert(index < m_bufferSize-1);
   char previous = c;
   for (size_t i=index; i<m_bufferSize; i++) {
     char inserted = previous;
@@ -86,7 +86,7 @@ void TextArea::Text::insertChar(char c, size_t index) {
 }
 
 char TextArea::Text::removeChar(size_t index) {
-  assert(index < m_bufferSize);
+  assert(index < m_bufferSize-1);
   char deletedChar = m_buffer[index];
   for (size_t i=index; i<m_bufferSize; i++) {
     m_buffer[i] = m_buffer[i+1];
@@ -181,6 +181,10 @@ void TextArea::ContentView::layoutSubviews() {
 }
 
 void TextArea::TextArea::ContentView::insertText(const char * text) {
+  int textSize = strlen(text);
+  if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
+    return;
+  }
   bool lineBreak = false;
   while (*text != 0) {
     lineBreak |= *text == '\n';

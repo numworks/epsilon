@@ -66,6 +66,12 @@ private:
       assert(index >= 0 && index < m_bufferSize);
       return m_buffer[index];
     }
+    size_t bufferSize() {
+      return m_bufferSize;
+    }
+    size_t textLength() {
+      return strlen(m_buffer);
+    }
   private:
     char * m_buffer;
     size_t m_bufferSize;

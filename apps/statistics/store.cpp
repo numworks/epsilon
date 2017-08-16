@@ -106,7 +106,7 @@ double Store::maxValue() {
 }
 
 double Store::minValue() {
-  float min = DBL_MAX;
+  double min = DBL_MAX;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_data[0][k] < min && m_data[1][k] > 0) {
       min = m_data[0][k];
@@ -160,7 +160,7 @@ double Store::median() {
 }
 
 double Store::sum() {
-  float result = 0;
+  double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[0][k]*m_data[1][k];
   }

@@ -20,7 +20,7 @@ public:
   float evaluateAtAbscissa(float x) const override {
     return templatedEvaluateAtAbscissa(x);
   }
-  bool authorizedValueAtIndex(double x, int index) const override;
+  bool authorizedValueAtIndex(float x, int index) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
   double rightIntegralInverseForProbability(double * probability) override;
 protected:

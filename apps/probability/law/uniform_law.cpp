@@ -78,7 +78,7 @@ float UniformLaw::evaluateAtAbscissa(float t) const {
   return 0.0f;
 }
 
-bool UniformLaw::authorizedValueAtIndex(double x, int index) const {
+bool UniformLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
     return true;
   }

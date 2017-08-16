@@ -68,14 +68,14 @@ float BinomialLaw::yMax() {
 }
 
 
-bool BinomialLaw::authorizedValueAtIndex(double x, int index) const {
+bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
-    if (x != (int)x || x < 0.0 || x > 999.0) {
+    if (x != (int)x || x < 0.0f || x > 999.0f) {
       return false;
     }
     return true;
   }
-  if (x < 0.0 || x > 1.0) {
+  if (x < 0.0f || x > 1.0f) {
     return false;
   }
   return true;

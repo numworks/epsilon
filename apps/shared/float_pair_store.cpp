@@ -60,7 +60,9 @@ double FloatPairStore::sumOfColumn(int i) {
 }
 
 uint32_t FloatPairStore::storeChecksum() {
-  size_t dataLengthInBytes = k_maxNumberOfPairs*2*sizeof(double);
+  /* TODO: we want m_numberOfPairs and not k_maxNumberOfPairs as we do not
+   * clear the  store when deleting pairs. However, this might trigger a bug? */
+  size_t dataLengthInBytes = m_numberOfPairs*2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes>>2);
 }

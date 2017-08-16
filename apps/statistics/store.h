@@ -19,7 +19,7 @@ public:
   float heightOfBarAtValue(float value);
   float startOfBarAtIndex(int index);
   float endOfBarAtIndex(int index);
-  int numberOfBars();
+  double numberOfBars();
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int index);
 

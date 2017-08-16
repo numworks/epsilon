@@ -66,8 +66,8 @@ float Store::endOfBarAtIndex(int index) {
   return startOfBarAtIndex(index+1);
 }
 
-int Store::numberOfBars() {
-  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+double Store::numberOfBars() {
+  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
   return std::ceil((maxValue() - firstBarAbscissa)/m_barWidth)+1;
 }
 

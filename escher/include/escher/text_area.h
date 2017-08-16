@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <string.h>
 #include <escher/scrollable_view.h>
-#include <escher/text_area_delegate.h>
 #include <escher/text_cursor_view.h>
+#include <escher/text_area_delegate.h>
 
 class TextArea : public ScrollableView, public ScrollViewDataSource {
 public:
@@ -62,7 +62,7 @@ private:
 
     void insertChar(char c, size_t index);
     char removeChar(size_t index);
-    char operator[](int index) {
+    char operator[](size_t index) {
       assert(index >= 0 && index < m_bufferSize);
       return m_buffer[index];
     }

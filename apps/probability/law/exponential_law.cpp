@@ -69,8 +69,8 @@ float ExponentialLaw::evaluateAtAbscissa(float x) const {
   return m_parameter1*std::exp(-m_parameter1*x);
 }
 
-bool ExponentialLaw::authorizedValueAtIndex(double x, int index) const {
-  if (x <= 0.0 || x > 7500.0) {
+bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
+  if (x <= 0.0f || x > 7500.0f) {
     return false;
   }
   return true;

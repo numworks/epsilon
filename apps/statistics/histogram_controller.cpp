@@ -1,6 +1,7 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
 #include "app.h"
+#include <cmath>
 #include <assert.h>
 #include <float.h>
 
@@ -199,13 +200,13 @@ bool HistogramController::moveSelection(int deltaIndex) {
   if (deltaIndex > 0) {
     do {
       newSelectedBarIndex++;
-    } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex < m_store->numberOfBars());
+    } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex < displayedNumberOfBars());
   } else {
     do {
       newSelectedBarIndex--;
     } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0);
   }
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars() && *m_selectedBarIndex != newSelectedBarIndex) {
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < displayedNumberOfBars() && *m_selectedBarIndex != newSelectedBarIndex) {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.setHighlight(m_store->startOfBarAtIndex(*m_selectedBarIndex), m_store->endOfBarAtIndex(*m_selectedBarIndex));
     m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
@@ -231,13 +232,14 @@ void HistogramController::initRangeParameters() {
   m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
   m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
   float yMax = -FLT_MAX;
-  for (int index = 0; index < m_store->numberOfBars(); index++) {
+  for (int index = 0; index < displayedNumberOfBars(); index++) {
     float size = m_store->heightOfBarAtIndex(index);
     if (size > yMax) {
       yMax = size;
     }
   }
   yMax = yMax/m_store->sumOfColumn(1);
+  yMax = yMax < 0 ? 1 : yMax;
   m_store->setYMin(-Store::k_displayBottomMarginRatio*yMax);
   m_store->setYMax(yMax*(1.0f+Store::k_displayTopMarginRatio));
 }
@@ -245,6 +247,7 @@ void HistogramController::initRangeParameters() {
 void HistogramController::initBarParameters() {
   float min = m_store->minValue();
   float max = m_store->maxValue();
+  max = min >= max ? min + std::pow(10.0f, std::floor(std::log10(std::fabs(min)))-1.0f) : max;
   m_store->setFirstDrawnBarAbscissa(min);
   float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, min, max);
   if (barWidth <= 0.0f) {
@@ -255,19 +258,24 @@ void HistogramController::initBarParameters() {
 
 void HistogramController::initBarSelection() {
   *m_selectedBarIndex = 0;
-  while ((m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 &&
-      *m_selectedBarIndex < m_store->numberOfBars()) ||
-      m_store->startOfBarAtIndex(*m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) {
+  while ((m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 ||
+      m_store->startOfBarAtIndex(*m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) &&      *m_selectedBarIndex < displayedNumberOfBars()) {
     *m_selectedBarIndex = *m_selectedBarIndex+1;
   }
-  if (*m_selectedBarIndex >= m_store->numberOfBars()) {
+  if (*m_selectedBarIndex >= displayedNumberOfBars()) {
     /* No bar is after m_firstDrawnBarAbscissa, so we select the first bar */
     *m_selectedBarIndex = 0;
-    while (m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 && *m_selectedBarIndex < m_store->numberOfBars()) {
+    while (m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 && *m_selectedBarIndex < displayedNumberOfBars()) {
       *m_selectedBarIndex = *m_selectedBarIndex+1;
     }
   }
   m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
+}
+
+int HistogramController::displayedNumberOfBars() {
+  float numberOfBars = m_store->numberOfBars();
+  numberOfBars = isnan(numberOfBars) || isinf(numberOfBars) || numberOfBars > Store::k_maxNumberOfBars ? 0 : numberOfBars;
+  return numberOfBars;
 }
 
 }

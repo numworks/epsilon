@@ -76,12 +76,13 @@ private:
  template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
-   * has the form -1.999999e-38 (7+6+1 char) (the auto mode is always
+   * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
    * shorter. */
-  constexpr static int k_maxFloatBufferLength = 7+6+1;
+  constexpr static int k_maxFloatBufferLength = 7+7+1;
   /* We here define the buffer size to write the lengthest complex possible.
-   * The worst case has the form -1.999999E-38*e^(-1.999999E-38*i) (13+13+7+1 char) */
-  constexpr static int k_maxComplexBufferLength = 13+13+7+1;
+   * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1
+   * char) */
+  constexpr static int k_maxComplexBufferLength = 14+14+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
   int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const;

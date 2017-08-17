@@ -6,4 +6,7 @@ app_objs += $(addprefix apps/code/,\
   program.o\
 )
 
+tests += $(addprefix apps/code/test/,\
+  mpprint.cpp\
+)
 app_images += apps/code/code_icon.png

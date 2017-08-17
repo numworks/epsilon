@@ -290,13 +290,13 @@ const char * messages[239][5] {
   {"all your data will be deleted.", "vos donnees.", "", "Ihre Daten loschen werden.", "seus dados."},
 
   /* Code */
-  {"BETA VERSION", "VERSION BETA", "??", "??", "??"},
-  {"The Python version you are using is not", "La version de Python que vous utilisez", "??", "??", "??"},
-  {"is not ???", "n'est pas une version definitive.", "??", "??", "??"},
-  {"You may encouter", "Il est possible que son utilisation soit", "??", "??", "??"},
-  {"BUGS!", "limitee et que certains bugs apparaissent.", "??", "??", "??"},
-  {"Edit program", "Editer le programme", "??", "??", "??"},
-  {"Execute program", "Executer le programme", "??", "??", "??"},
+  {"BETA VERSION", "VERSION BETA", "BETA VERSION", "BETA VERSION", "BETA VERSION"},
+  {"You are using a pre-release and", "La version de Python que vous utilisez", "No esta utilizando una version", "You are using a pre-release and", "You are using a pre-release and"},
+  {"feature-limited version of Python.", "n'est pas une version definitive.", "definitiva de Python.", "feature-limited version of Python.", "feature-limited version of Python."},
+  {"You may encounter some", "Il est possible que son utilisation soit", "Es posible que encuentre varios bugs", "You may encounter", "You may encounter"},
+  {"unexpected bugs.", "limitee et que certains bugs apparaissent.", "y que su utilizacion sea limitada.", "unexpected bugs.", "unexpected bugs."},
+  {"Edit program", "Editer le programme", "Editar el programa", "Programm bearbeiten", "Editar programa"},
+  {"Execute program", "Executer le programme", "Ejecutar el programa", "Programm ausfuhren", "Executar programa"},
 
   /* On boarding */
   {"UPDATE AVAILABLE", "MISE A JOUR DISPONIBLE", "ACTUALIZACION DISPONIBLE", "UPDATE VERFUGBAR", "ATUALIZACAO DISPONIVEL"},

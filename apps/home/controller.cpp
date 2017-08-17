@@ -126,7 +126,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
   /* To prevent the selectable table view to select cells that are unvisible,
    * we reselect the previous selected cell as soon as the selected cell is
    * unvisible. This trick does not create an endless loop as we ensure not to
-   * stay on a unvisible cell and to initiate the first cell on a visible one
+   * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
   int appIndex = (t->selectedRow()*k_numberOfColumns+t->selectedColumn())+1;
   if (appIndex >= m_container->numberOfApps()) {

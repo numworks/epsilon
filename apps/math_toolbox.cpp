@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string.h>
 
-/* TODO: find a shorter way to initiate tree models
+/* TODO: find a shorter way to initialize tree models
  * We create one model tree: each node keeps the label of the row it refers to
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */

@@ -53,7 +53,7 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
    * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,
    * pp. 75–76. */
 
-  // Initiate hh
+  // Initialize hh
   T h = std::fabs(x) < min ? k_minInitialRate : x/1000;
   T f2 = approximateDerivate2(x, h, xContext, angleUnit);
   f2 = std::fabs(f2) < min ? k_minInitialRate : f2;

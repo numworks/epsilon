@@ -75,7 +75,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     ctx->setClippingRect(absClippingRect);
     this->drawRect(ctx, rectNeedingRedraw);
   }
-  // This initiates the area that has been redrawn.
+  // This initializes the area that has been redrawn.
   KDRect redrawnArea = rectNeedingRedraw;
 
   // Then, let's recursively draw our children over ourself

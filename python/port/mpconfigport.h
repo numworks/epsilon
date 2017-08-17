@@ -72,8 +72,7 @@ typedef long mp_off_t;
 
 #define SEEK_CUR 1
 
-//#define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
-#define MP_PLAT_PRINT_STRN(str, len) ((void)0)
+#define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
 
 // extra built in names to add to the global namespace
 #define MICROPY_PORT_BUILTINS \

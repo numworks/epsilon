@@ -25,21 +25,47 @@ mp_obj_t execute_from_str(const char *str) {
   }
 }
 
+/* mp_hal_stdout_tx_strn_cooked symbol required by micropython at printing
+ * needs to access information about where to print (depending on the strings
+ * printed before). This 'context' is provided by the global sCurrentView that
+ * points to the content view only within the drawRect method (as runPython is
+ * called within drawRect). */
+static const ExecutorController::ContentView * sCurrentView = nullptr;
+
 extern "C"
 void mp_hal_stdout_tx_strn_cooked(const char * str, size_t len) {
-  KDContext * ctx = KDIonContext::sharedContext();
-  ctx->drawString(str, KDPoint(0, 0));
+  assert(sCurrentView != nullptr);
+  sCurrentView->print(str);
 }
 
 ExecutorController::ContentView::ContentView(Program * program) :
   View(),
-  m_program(program)
+  m_program(program),
+  m_printLocation(KDPointZero)
 {
 }
 
 void ExecutorController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  assert(ctx == KDIonContext::sharedContext());
+  clearScreen(ctx);
+
+  assert(sCurrentView == nullptr);
+  sCurrentView = this;
+
+  // Reinitialize the print location
+  m_printLocation = KDPointZero;
   runPython();
+
+  sCurrentView = nullptr;
+}
+
+void ExecutorController::ContentView::print(const char * str) const {
+  KDContext * ctx = KDIonContext::sharedContext();
+  m_printLocation = ctx->drawString(str, m_printLocation);
+  if (bounds().height() < m_printLocation.y()) {
+    clearScreen(ctx);
+    m_printLocation = KDPoint(m_printLocation.x(), 0);
+  }
 }
 
 void ExecutorController::ContentView::runPython() const {
@@ -58,6 +84,10 @@ void ExecutorController::ContentView::runPython() const {
   }
 
   free(pythonHeap);
+}
+
+void ExecutorController::ContentView::clearScreen(KDContext * ctx) const {
+  ctx->fillRect(bounds(), KDColorWhite);
 }
 
 ExecutorController::ExecutorController(Program * program) :

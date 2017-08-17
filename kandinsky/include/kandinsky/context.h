@@ -15,10 +15,8 @@ public:
   KDColor getPixel(KDPoint p);
 
   // Text
-  void drawChar(char character, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
-  void blendChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
-  void blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
+  KDPoint drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
+  KDPoint blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
@@ -35,6 +33,8 @@ protected:
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
 private:
   KDRect absoluteFillRect(KDRect rect);
+  KDPoint writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool blend);
+  void writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool blend);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

@@ -9,6 +9,7 @@ public:
     Small,
     Large
   };
+  constexpr static int k_tabCharacterWidth = 4;
   static KDSize stringSize(const char * text, FontSize size = FontSize::Large);
   static KDSize charSize(FontSize size = FontSize::Large);
 };

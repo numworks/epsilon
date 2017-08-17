@@ -97,6 +97,10 @@ char TextArea::Text::removeChar(size_t index) {
   return deletedChar;
 }
 
+void TextArea::Text::removeText() {
+  m_buffer[0] = 0;
+}
+
 TextArea::Text::Position TextArea::Text::span() const {
   size_t width = 0;
   size_t height = 0;
@@ -203,6 +207,13 @@ void TextArea::TextArea::ContentView::removeChar() {
   markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, lineBreak));
 }
 
+void TextArea::ContentView::removeText() {
+  m_text.removeText();
+  m_cursorIndex = 0;
+  layoutSubviews();
+  markRectAsDirty(bounds());
+}
+
 KDRect TextArea::TextArea::ContentView::cursorRect() {
   return characterFrameAtIndex(m_cursorIndex);
 }
@@ -270,7 +281,10 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
     m_contentView.insertText(event.text());
   } else if (event == Ion::Events::EXE) {
     m_contentView.insertText("\n");
-  } else {
+  } else if (event == Ion::Events::Clear) {
+    m_contentView.removeText();
+  } else
+  {
     return false;
   }
   /* Technically, we do not need to overscroll in text area. However,

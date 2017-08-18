@@ -11,6 +11,12 @@ LIBA_BEGIN_DECLS
 #define M_E 2.71828182845904523536028747135266250
 #define M_PI 3.14159265358979323846264338327950288
 
+#define FP_INFINITE 0x01
+#define FP_NAN 0x02
+#define FP_NORMAL 0x04
+#define FP_SUBNORMAL 0x08
+#define FP_ZERO 0x10
+
 /* The C99 standard requires isinf and isnan to be defined as macros that can
  * handle arbitrary precision float numbers. The names of the functions called
  * by those macros (depending on the argument size) are not standardized though.
@@ -23,12 +29,16 @@ int isinfd(double d);
 int isnanf(float x);
 int isnand(double x);
 #define isnan(x) (sizeof(x) == sizeof(float) ? isnanf(x) : isnand(x))
+int __fpclassifyf(float x);
+int __fpclassify(double x);
+#define fpclassify(x) ((sizeof (x) == sizeof (float)) ? __fpclassifyf(x) :  __fpclassify(x))
 
 float acosf(float x);
 float acoshf(float x);
 float asinf(float x);
 float asinhf(float x);
 float atanf(float x);
+float atan2f(float y, float x);
 float atanhf(float x);
 float ceilf(float x);
 float copysignf(float x, float y);
@@ -38,11 +48,14 @@ float expf(float x);
 float expm1f(float x);
 float fabsf(float x);
 float floorf(float x);
+float fmodf(float x, float y);
 float lgammaf(float x);
 float lgammaf_r(float x, int *signgamp);
 float log1pf(float x);
 float log10f(float x);
 float logf(float x);
+float nanf(const char *s);
+float nearbyintf(float x);
 float powf(float x, float y);
 float roundf(float x);
 float scalbnf(float x, int n);

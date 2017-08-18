@@ -4,7 +4,11 @@ liba/src/external/sqlite/mem5.o: CFLAGS += -w
 
 objs += $(addprefix liba/src/, \
   assert.o \
+  bzero.o \
+  ctype.o \
   errno.o \
+  fpclassify.o \
+  fpclassifyf.o \
   ieee754.o \
   isnand.o \
   isnanf.o \
@@ -15,6 +19,7 @@ objs += $(addprefix liba/src/, \
   memcpy.o \
   memmove.o \
   memset.o \
+  nearbyintf.o \
   strcmp.o \
   strchr.o \
   strlcpy.o \
@@ -27,8 +32,10 @@ objs += $(addprefix liba/src/external/openbsd/, \
   e_acoshf.o \
   e_asinf.o \
   e_atanhf.o \
+  e_atan2f.o \
   e_coshf.o \
   e_expf.o \
+  e_fmodf.o \
   e_lgammaf_r.o \
   e_log10f.o \
   e_logf.o \
@@ -85,6 +92,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_fabs.o \
   s_floor.o \
   s_log1p.o \
+  s_nan.o \
   s_round.o \
   s_scalbn.o \
   s_sin.o \

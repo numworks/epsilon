@@ -17,8 +17,15 @@ public:
   float yMax() override;
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
-  float evaluateAtAbscissa(float x) const override;
+  float evaluateAtAbscissa(float x) const override {
+    return templatedEvaluateAtAbscissa(x);
+  }
   bool authorizedValueAtIndex(float x, int index) const override;
+private:
+  double evaluateAtDiscreteAbscissa(int k) const override {
+    return templatedEvaluateAtAbscissa((double)k);
+  }
+  template<typename T> T templatedEvaluateAtAbscissa(T x) const;
 };
 
 }

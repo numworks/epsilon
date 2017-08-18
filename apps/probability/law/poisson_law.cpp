@@ -55,14 +55,6 @@ float PoissonLaw::yMax() {
   return result*(1.0f+ k_displayTopMarginRatio);
 }
 
-float PoissonLaw::evaluateAtAbscissa(float x) const {
-  if (x < 0.0f) {
-    return NAN;
-  }
-  float lResult = -m_parameter1+std::floor(x)*std::log(m_parameter1)-std::lgamma(std::floor(x)+1);
-  return std::exp(lResult);
-}
-
 bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
   if (x <= 0.0f || x > 999.0f) {
     return false;
@@ -70,4 +62,16 @@ bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
   return true;
 }
 
+template<typename T>
+T PoissonLaw::templatedEvaluateAtAbscissa(T x) const {
+  if (x < 0) {
+    return NAN;
+  }
+  T lResult = -(T)m_parameter1+std::floor(x)*std::log((T)m_parameter1)-std::lgamma(std::floor(x)+1);
+  return std::exp(lResult);
 }
+
+}
+
+template float Probability::PoissonLaw::templatedEvaluateAtAbscissa(float x) const;
+template double Probability::PoissonLaw::templatedEvaluateAtAbscissa(double x) const;

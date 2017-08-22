@@ -6,6 +6,7 @@ extern "C" {
 #include <float.h>
 }
 #include <cmath>
+#include <math.h>
 #include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"

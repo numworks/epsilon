@@ -1,7 +1,7 @@
 GIT := $(shell command -v git 2> /dev/null)
 PATCH_LEVEL = NONE
 ifdef GIT
-  PATCH_LEVEL = `git rev-parse --short HEAD`
+  PATCH_LEVEL = `git rev-parse HEAD | head -c 7`
 endif
 
 SFLAGS += -Iion/include -DKD_CONFIG_H=1

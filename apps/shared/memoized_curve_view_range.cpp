@@ -1,5 +1,6 @@
 #include "memoized_curve_view_range.h"
 #include <cmath>
+#include <math.h>
 #include <assert.h>
 #include <ion.h>
 

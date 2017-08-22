@@ -3,6 +3,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <cmath>
+#include <math.h>
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>

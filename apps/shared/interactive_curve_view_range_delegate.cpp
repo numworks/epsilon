@@ -1,7 +1,8 @@
 #include "interactive_curve_view_range_delegate.h"
 #include "interactive_curve_view_range.h"
-#include <float.h>
 #include <cmath>
+#include <float.h>
+#include <math.h>
 
 namespace Shared {
 

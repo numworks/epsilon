@@ -2,6 +2,7 @@
 
 extern "C" {
 #include <stdlib.h>
+#include "port.h"
 #include "py/compile.h"
 #include "py/runtime.h"
 #include "py/gc.h"
@@ -71,6 +72,8 @@ void ExecutorController::ContentView::print(const char * str) const {
 void ExecutorController::ContentView::runPython() const {
   // Initialized stack limit
   mp_stack_set_limit(40000);
+
+  mp_port_init_stack_top();
 
   char * pythonHeap = (char *)malloc(16384);
 

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <setjmp.h>
 
 #include "py/nlr.h"
 #include "py/compile.h"
@@ -9,51 +10,33 @@
 #include "py/gc.h"
 #include "py/mperrno.h"
 
-mp_uint_t gc_helper_get_regs_and_sp(mp_uint_t *regs);
+typedef jmp_buf regs_t;
+
+STATIC void gc_helper_get_regs(regs_t arr) {
+  setjmp(arr);
+}
+
+static char * python_stack_top = NULL;
+
+void mp_port_init_stack_top() {
+  char dummy;
+  python_stack_top = &dummy;
+}
 
 void gc_collect(void) {
-#if 0
-    gc_collect_start();
+  assert(python_stack_top != NULL);
+  gc_collect_start();
 
-    // get the registers and the sp
-    mp_uint_t regs[10];
-    mp_uint_t sp = gc_helper_get_regs_and_sp(regs);
+  /* get the registers.
+   * regs is the also the last object on the stack so the stack is bound by
+   * &regs and python_stack_top. */
+  regs_t regs;
+  gc_helper_get_regs(regs);
 
+  void **regs_ptr = (void**)(void*)&regs;
+  gc_collect_root(regs_ptr, ((uintptr_t)python_stack_top - (uintptr_t)&regs) / sizeof(uintptr_t));
 
-
-    /* Next we want to iterate through the whole stack
-     * Without threads, the stmhal version just refers to the top of the stack as _ram_end, because that's where the
-     * stack actually starts.
-     * This is going to need some help from Ion.
-     */
-
-
-    // trace the stack, including the registers (since they live on the stack in this function)
-    #if MICROPY_PY_THREAD
-    gc_collect_root((void**)sp, ((uint32_t)MP_STATE_THREAD(stack_top) - sp) / sizeof(uint32_t));
-    #else
-    gc_collect_root((void**)sp, ((uint32_t)&_ram_end - sp) / sizeof(uint32_t));
-    #endif
-
-    // trace root pointers from any threads
-    #if MICROPY_PY_THREAD
-    mp_thread_gc_others();
-    #endif
-
-    // end the GC
-    gc_collect_end();
-
-  // Let's just do nothing for now
-#else
-    // WARNING: This gc_collect implementation doesn't try to get root
-    // pointers from CPU registers, and thus may function incorrectly.
-    void *dummy;
-    gc_collect_start();
-    // FIXME
-    //gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
-    gc_collect_end();
-    //gc_dump_info();
-#endif
+  gc_collect_end();
 }
 
 mp_lexer_t *mp_lexer_new_from_file(const char *filename) {

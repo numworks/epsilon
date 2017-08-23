@@ -113,6 +113,10 @@ endif
 	@echo "CC      $@"
 	@$(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
+%.o: %.s
+	@echo "AS      $@"
+	@$(CC) $(SFLAGS) -c $< -o $@
+
 %.o: %.cpp
 	@echo "CXX     $@"
 	@$(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@

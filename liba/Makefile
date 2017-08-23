@@ -3,6 +3,8 @@ SFLAGS += -Iliba/include
 liba/src/external/sqlite/mem5.o: CFLAGS += -w
 
 objs += $(addprefix liba/src/, \
+  armv7m/setjmp.o \
+  armv7m/longjmp.o \
   assert.o \
   bzero.o \
   ctype.o \

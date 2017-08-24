@@ -86,6 +86,7 @@ Evaluation<double> * Calculation::output(Context * context) {
     Expression * exp = Expression::parse(m_outputText);
     if (exp != nullptr) {
       m_output = exp->evaluate<double>(*context);
+      delete exp;
     } else {
       m_output = new Complex<double>(Complex<double>::Float(NAN));
     }

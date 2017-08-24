@@ -23,7 +23,9 @@ void ModalViewController::ContentView::setMainView(View * regularView) {
 }
 
 int ModalViewController::ContentView::numberOfSubviews() const {
-  bool shouldDrawTheRegularViewBehind = m_topMargin != 0 || m_leftMargin != 0 || m_bottomMargin != 0 || m_rightMargin != 0;
+  KDRect regularFrame = bounds();
+  KDRect modalFrame = frame();
+  bool shouldDrawTheRegularViewBehind = !modalFrame.contains(regularFrame.topLeft()) || !modalFrame.contains(regularFrame.bottomRight());
   return 1 + (m_isDisplayingModal && shouldDrawTheRegularViewBehind);
 }
 
@@ -47,10 +49,11 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-KDRect ModalViewController::ContentView::frame() {
-  KDCoordinate modalHeight = m_currentModalView->minimalSizeForOptimalDisplay().height();
+KDRect ModalViewController::ContentView::frame() const {
+  KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSize(0,0);
+  KDCoordinate modalHeight = modalSize.height();
   modalHeight = modalHeight == 0 ? bounds().height()-m_topMargin-m_bottomMargin : modalHeight;
-  KDCoordinate modalWidth = m_currentModalView->minimalSizeForOptimalDisplay().width();
+  KDCoordinate modalWidth = modalSize.width();
   modalWidth = modalWidth == 0 ? bounds().width()-m_leftMargin-m_rightMargin : modalWidth;
   KDRect modalViewFrame(m_leftMargin + m_horizontalAlignment*(bounds().width()-m_leftMargin-m_rightMargin-modalWidth),
     m_topMargin+m_verticalAlignment*(bounds().height()-m_topMargin-m_bottomMargin-modalHeight), modalWidth, modalHeight);

@@ -62,10 +62,14 @@ Evaluation<T> * Opposite::computeOnMatrix(Evaluation<T> * m) {
 template<typename T>
 Evaluation<T> * Opposite::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * operandEvalutation = m_operand->evaluate<T>(context, angleUnit);
+  Evaluation<T> * result = nullptr;
   if (operandEvalutation->numberOfRows() == 1 && operandEvalutation->numberOfColumns() == 1) {
-    return new Complex<T>(compute(*(operandEvalutation->complexOperand(0))));
+    result = new Complex<T>(compute(*(operandEvalutation->complexOperand(0))));
+  } else {
+    result = computeOnMatrix(operandEvalutation);
   }
-  return computeOnMatrix(operandEvalutation);
+  delete operandEvalutation;
+  return result;
 }
 
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

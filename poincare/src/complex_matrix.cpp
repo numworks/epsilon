@@ -91,7 +91,9 @@ Evaluation<U> * ComplexMatrix<T>::templatedEvaluate(Context& context, Expression
   for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
     values[i] = Complex<U>::Cartesian(m_values[i].a(), m_values[i].b());
   }
-  return new ComplexMatrix<U>(values, m_numberOfRows, m_numberOfColumns);
+  Evaluation<U> * result = new ComplexMatrix<U>(values, m_numberOfRows, m_numberOfColumns);
+  delete [] values;
+  return result;
 
 }
 

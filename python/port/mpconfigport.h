@@ -103,3 +103,5 @@ extern const struct _mp_obj_module_t kandinsky_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&kandinsky_module) }
+
+#define MICROPY_KBD_EXCEPTION       (1)

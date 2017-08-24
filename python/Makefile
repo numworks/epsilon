@@ -174,8 +174,10 @@ python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
 port_objs += $(addprefix python/port/,\
   port.o \
+  interrupt_helper.o \
   modkandinsky.o \
   modkandinsky_impl.o \
+  mphalport.o \
 )
 
 # QSTR generation

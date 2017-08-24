@@ -3,6 +3,7 @@
 extern "C" {
 #include <stdlib.h>
 #include "port.h"
+#include "py/mphal.h"
 #include "py/compile.h"
 #include "py/runtime.h"
 #include "py/gc.h"
@@ -17,7 +18,9 @@ mp_obj_t execute_from_str(const char *str) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0/*MP_QSTR_*/, str, strlen(str), false);
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_FILE_INPUT);
     mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, false);
+    mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::A6);
     mp_call_function_0(module_fun);
+    mp_hal_set_interrupt_char(-1); // disable interrupt
     nlr_pop();
     return 0;
   } else {

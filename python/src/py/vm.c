@@ -29,6 +29,11 @@
 #include <string.h>
 #include <assert.h>
 
+/* TODO: We should rather not edit micropython file.
+ * Begining of the edited part */
+#include "../../port/interrupt_helper.h"
+/* End of the edited part */
+
 #include "py/mpstate.h"
 #include "py/nlr.h"
 #include "py/emitglue.h"
@@ -1278,6 +1283,12 @@ yield:
 
 pending_exception_check:
                 MICROPY_VM_HOOK_LOOP
+/* TODO: We should rather not edit micropython file. Find a way to call
+ * shouldInterrupt every now and then in the loop executing byte code without
+ * editing this file.
+ * Begining of the edited part */
+                shouldInterrupt();
+/* End of the edited part */
 
                 #if MICROPY_ENABLE_SCHEDULER
                 // This is an inlined variant of mp_handle_pending

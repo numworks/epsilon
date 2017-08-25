@@ -39,9 +39,18 @@ void FloatPairStore::deletePairAtIndex(int i) {
     m_data[0][k] = m_data[0][k+1];
     m_data[1][k] = m_data[1][k+1];
   }
+  /* We reset the values of the empty row to ensure the correctness of the
+   * checksum. */
+  m_data[0][m_numberOfPairs] = 0;
+  m_data[1][m_numberOfPairs] = 0;
 }
 
 void FloatPairStore::deleteAllPairs() {
+  /* We reset all values to 0 to ensure the correctness of the checksum.*/
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    m_data[0][k] = 0;
+    m_data[1][k] = 0;
+  }
   m_numberOfPairs = 0;
 }
 
@@ -60,9 +69,11 @@ double FloatPairStore::sumOfColumn(int i) {
 }
 
 uint32_t FloatPairStore::storeChecksum() {
-  /* TODO: we want m_numberOfPairs and not k_maxNumberOfPairs as we do not
-   * clear the  store when deleting pairs. However, this might trigger a bug? */
-  size_t dataLengthInBytes = m_numberOfPairs*2*sizeof(double);
+  /* Ideally, we would only compute the checksum of the first m_numberOfPairs
+   * pairs. However, the two values of a pair are not stored consecutively. We
+   * thus compute the checksum on all pairs and ensure to set the pair at 0
+   * when removing them. */
+  size_t dataLengthInBytes = k_maxNumberOfPairs*2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }

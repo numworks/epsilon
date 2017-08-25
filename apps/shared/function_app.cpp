@@ -9,7 +9,8 @@ FunctionApp::Snapshot::Snapshot() :
   m_cursor(),
   m_interval(),
   m_modelVersion(0),
-  m_rangeVersion(0)
+  m_rangeVersion(0),
+  m_angleUnitVersion(Expression::AngleUnit::Radian)
 {
   m_interval.setStart(0);
   m_interval.setEnd(10);
@@ -26,6 +27,10 @@ uint32_t * FunctionApp::Snapshot::modelVersion() {
 
 uint32_t * FunctionApp::Snapshot::rangeVersion() {
   return &m_rangeVersion;
+}
+
+Expression::AngleUnit * FunctionApp::Snapshot::angleUnitVersion() {
+  return &m_angleUnitVersion;
 }
 
 Interval * FunctionApp::Snapshot::interval() {

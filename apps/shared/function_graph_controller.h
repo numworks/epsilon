@@ -12,7 +12,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
 public:
-  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
   void viewWillAppear() override;
@@ -44,7 +44,7 @@ private:
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;
-  Poincare::Expression::AngleUnit m_angleUnitVersion;
+  Poincare::Expression::AngleUnit * m_angleUnitVersion;
 };
 
 }

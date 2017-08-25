@@ -18,6 +18,7 @@ public:
     CurveViewCursor * cursor();
     uint32_t * modelVersion();
     uint32_t * rangeVersion();
+    Poincare::Expression::AngleUnit * angleUnitVersion();
     Interval * interval();
     void reset() override;
   protected:
@@ -26,6 +27,7 @@ public:
   private:
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
+    Poincare::Expression::AngleUnit m_angleUnitVersion;
  };
   virtual ~FunctionApp() = default;
   virtual InputViewController * inputViewController() = 0;

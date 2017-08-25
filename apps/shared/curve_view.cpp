@@ -95,7 +95,7 @@ KDCoordinate CurveView::pixelLength(Axis axis) const {
 
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
   KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
-  return min(axis) + pixels*(max(axis)-min(axis))/pixelLength(axis);
+  return min(axis) + pixels*((max(axis)-min(axis))/pixelLength(axis));
 }
 
 float CurveView::floatToPixel(Axis axis, float f) const {
@@ -343,10 +343,10 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  int rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
+  float rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
   float rectMinLowerBound = firstBarAbscissa + rectMinBinNumber*barWidth;
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  int rectMaxBinNumber = std::floor((rectMax - firstBarAbscissa)/barWidth);
+  float rectMaxBinNumber = std::floor((rectMax - firstBarAbscissa)/barWidth);
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
@@ -369,7 +369,8 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
       binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, pyf - floatToPixel(Axis::Vertical, 0.0f));
     }
     KDColor binColor = defaultColor;
-    if (pxf >= std::floor(pHighlightLowerBound) && pxf <= std::floor(pHighlightUpperBound)) {
+    bool shouldColorBin = fillBar ? centerX >= highlightLowerBound && centerX <= highlightUpperBound : pxf >= floorf(pHighlightLowerBound) && pxf <= floorf(pHighlightUpperBound);
+    if (shouldColorBin) {
       binColor = highlightColor;
     }
     ctx->fillRect(binRect, binColor);

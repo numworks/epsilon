@@ -21,7 +21,7 @@ uint32_t Store::barChecksum() {
   float data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
   size_t dataLengthInBytes = 2*sizeof(float);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)data, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
 /* Histogram bars */

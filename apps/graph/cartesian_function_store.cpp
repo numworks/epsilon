@@ -24,7 +24,7 @@ uint32_t CartesianFunctionStore::storeChecksum() {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {
     checksums[i] = m_functions[i].checksum();
   }
-  return Ion::crc32((uint32_t *)checksums, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)checksums, dataLengthInBytes/sizeof(uint32_t));
 }
 
 CartesianFunction * CartesianFunctionStore::functionAtIndex(int i) {

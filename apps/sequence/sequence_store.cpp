@@ -17,7 +17,7 @@ uint32_t SequenceStore::storeChecksum() {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     checksums[i] = m_sequences[i].checksum();
   }
-  return Ion::crc32((uint32_t *)checksums, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)checksums, dataLengthInBytes/sizeof(uint32_t));
 }
 
 Sequence * SequenceStore::functionAtIndex(int i) {

@@ -41,7 +41,6 @@ private:
   void initBarSelection();
   // return true if the window has scrolled
   bool moveSelection(int deltaIndex);
-  int displayedNumberOfBars();
   HistogramBannerView m_bannerView;
   HistogramView m_view;
   Button m_settingButton;

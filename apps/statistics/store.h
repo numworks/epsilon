@@ -11,14 +11,14 @@ public:
   Store();
   uint32_t barChecksum();
   // Histogram bars
-  float barWidth();
-  void setBarWidth(float barWidth);
-  float firstDrawnBarAbscissa();
-  void setFirstDrawnBarAbscissa(float firstDrawnBarAbscissa);
-  float heightOfBarAtIndex(int index);
-  float heightOfBarAtValue(float value);
-  float startOfBarAtIndex(int index);
-  float endOfBarAtIndex(int index);
+  double barWidth();
+  void setBarWidth(double barWidth);
+  double firstDrawnBarAbscissa();
+  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa);
+  double heightOfBarAtIndex(int index);
+  double heightOfBarAtValue(double value);
+  double startOfBarAtIndex(int index);
+  double endOfBarAtIndex(int index);
   double numberOfBars();
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int index);
@@ -37,19 +37,19 @@ public:
   double median();
   double sum();
   double squaredValueSum();
-  constexpr static float k_maxNumberOfBars = 10000.0f;
+  constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
   constexpr static float k_displayBottomMarginRatio = 0.4f;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 private:
   double defaultValue(int i) override;
-  float sumOfValuesBetween(float x1, float x2);
+  double sumOfValuesBetween(double x1, double x2);
   double sortedElementNumber(int k);
   int minIndex(double * bufferValues, int bufferLength);
   // Histogram bars
-  float m_barWidth;
-  float m_firstDrawnBarAbscissa;
+  double m_barWidth;
+  double m_firstDrawnBarAbscissa;
 };
 
 typedef double (Store::*CalculPointer)();

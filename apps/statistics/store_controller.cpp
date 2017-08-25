@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include "../constant.h"
 #include <assert.h>
+#include <float.h>
 #include <cmath>
 
 using namespace Shared;
@@ -34,6 +35,9 @@ HighlightCell * StoreController::titleCells(int index) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
+  if (std::fabs(floatBody) > FLT_MAX) {
+    return false;
+  }
   if (columnIndex == 1) {
     if (floatBody < 0) {
       return false;

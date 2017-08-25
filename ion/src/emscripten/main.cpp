@@ -1,6 +1,6 @@
 #include <ion.h>
 #include "display.h"
-#include "events.h"
+#include "events_keyboard.h"
 
 int main(int argc, char * argv[]) {
   Ion::Display::Emscripten::init();

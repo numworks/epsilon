@@ -13,6 +13,7 @@ objs += $(addprefix ion/src/shared/, \
   console_line.o \
   console_stdio.o \
   events_keyboard.o \
+  events_modifier.o \
   power.o \
   random.o \
   dummy/backlight.o \

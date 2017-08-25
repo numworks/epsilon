@@ -18,5 +18,8 @@ bool isAlphaActive() {
   return false;
 }
 
+void updateModifiersFromEvent(Event e) {
+}
+
 }
 }

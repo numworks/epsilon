@@ -31,7 +31,7 @@ uint32_t Function::checksum() {
   strlcpy(data, m_text, TextField::maxBufferSize());
   data[k_dataLengthInBytes-2] = m_name != nullptr ? m_name[0] : 0;
   data[k_dataLengthInBytes-1] = m_active ? 1 : 0;
-  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
 }
 
 void Function::setContent(const char * c) {

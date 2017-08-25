@@ -64,7 +64,7 @@ uint32_t FloatPairStore::storeChecksum() {
    * clear the  store when deleting pairs. However, this might trigger a bug? */
   size_t dataLengthInBytes = m_numberOfPairs*2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)m_data, dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }
 
 double FloatPairStore::defaultValue(int i) {

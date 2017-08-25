@@ -89,7 +89,7 @@ uint32_t Sequence::checksum() {
   data[k_dataLengthInBytes-3] = (char)m_type;
   data[k_dataLengthInBytes-2] = name()!= nullptr ? name()[0] : 0;
   data[k_dataLengthInBytes-1] = isActive() ? 1 : 0;
-  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes>>2);
+  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
 }
 
 const char * Sequence::firstInitialConditionText() {

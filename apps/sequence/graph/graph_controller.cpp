@@ -2,11 +2,12 @@
 #include <cmath>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, modelVersion, rangeVersion),
+GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),

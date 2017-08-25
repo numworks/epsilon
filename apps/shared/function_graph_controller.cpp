@@ -8,11 +8,11 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_indexFunctionSelectedByCursor(0),
   m_initialisationParameterController(this, interactiveRange),
-  m_angleUnitVersion(Expression::AngleUnit::Radian)
+  m_angleUnitVersion(angleUnitVersion)
 {
 }
 
@@ -33,8 +33,8 @@ void FunctionGraphController::viewWillAppear() {
     functionGraphView()->setContext(myApp->localContext());
   }
   Expression::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
-  if (m_angleUnitVersion != newAngleUnitVersion) {
-    m_angleUnitVersion = newAngleUnitVersion;
+  if (*m_angleUnitVersion != newAngleUnitVersion) {
+    *m_angleUnitVersion = newAngleUnitVersion;
     initCursorParameters();
   }
   InteractiveCurveViewController::viewWillAppear();

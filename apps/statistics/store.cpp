@@ -12,57 +12,57 @@ namespace Statistics {
 Store::Store() :
   MemoizedCurveViewRange(),
   FloatPairStore(),
-  m_barWidth(1.0f),
-  m_firstDrawnBarAbscissa(0.0f)
+  m_barWidth(1.0),
+  m_firstDrawnBarAbscissa(0.0)
 {
 }
 
 uint32_t Store::barChecksum() {
-  float data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
-  size_t dataLengthInBytes = 2*sizeof(float);
+  double data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
+  size_t dataLengthInBytes = 2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
 /* Histogram bars */
 
-float Store::barWidth() {
+double Store::barWidth() {
   return m_barWidth;
 }
 
-void Store::setBarWidth(float barWidth) {
-  if (barWidth <= 0.0f) {
+void Store::setBarWidth(double barWidth) {
+  if (barWidth <= 0.0) {
     return;
   }
   m_barWidth = barWidth;
 }
 
-float Store::firstDrawnBarAbscissa() {
+double Store::firstDrawnBarAbscissa() {
   return m_firstDrawnBarAbscissa;
 }
 
-void Store::setFirstDrawnBarAbscissa(float firstBarAbscissa) {
+void Store::setFirstDrawnBarAbscissa(double firstBarAbscissa) {
   m_firstDrawnBarAbscissa = firstBarAbscissa;
 }
 
-float Store::heightOfBarAtIndex(int index) {
+double Store::heightOfBarAtIndex(int index) {
   return sumOfValuesBetween(startOfBarAtIndex(index), endOfBarAtIndex(index));
 }
 
-float Store::heightOfBarAtValue(float value) {
-  float width = barWidth();
+double Store::heightOfBarAtValue(double value) {
+  double width = barWidth();
   int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
-  float lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
-  float upperBound = m_firstDrawnBarAbscissa + (barNumber+1)*width;
+  double lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
+  double upperBound = m_firstDrawnBarAbscissa + (barNumber+1)*width;
   return sumOfValuesBetween(lowerBound, upperBound);
 }
 
-float Store::startOfBarAtIndex(int index) {
-  float firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+double Store::startOfBarAtIndex(int index) {
+  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
   return firstBarAbscissa + index * m_barWidth;
 }
 
-float Store::endOfBarAtIndex(int index) {
+double Store::endOfBarAtIndex(int index) {
   return startOfBarAtIndex(index+1);
 }
 
@@ -153,7 +153,7 @@ double Store::median() {
   if (totalMod2 == 0) {
     double minusMedian = sortedElementNumber(halfTotal);
     double maxMedian = sortedElementNumber(halfTotal+1);
-    return (minusMedian+maxMedian)/2.0f;
+    return (minusMedian+maxMedian)/2.0;
   } else {
     return sortedElementNumber(halfTotal+1);
   }
@@ -184,7 +184,7 @@ double Store::defaultValue(int i) {
   return 1.0;
 }
 
-float Store::sumOfValuesBetween(float x1, float x2) {
+double Store::sumOfValuesBetween(double x1, double x2) {
   int result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_data[0][k] < x2 && x1 <= m_data[0][k]) {

@@ -200,13 +200,13 @@ bool HistogramController::moveSelection(int deltaIndex) {
   if (deltaIndex > 0) {
     do {
       newSelectedBarIndex++;
-    } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex < displayedNumberOfBars());
+    } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex < m_store->numberOfBars());
   } else {
     do {
       newSelectedBarIndex--;
     } while (m_store->heightOfBarAtIndex(newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0);
   }
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < displayedNumberOfBars() && *m_selectedBarIndex != newSelectedBarIndex) {
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars() && *m_selectedBarIndex != newSelectedBarIndex) {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.setHighlight(m_store->startOfBarAtIndex(*m_selectedBarIndex), m_store->endOfBarAtIndex(*m_selectedBarIndex));
     m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
@@ -232,7 +232,7 @@ void HistogramController::initRangeParameters() {
   m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
   m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
   float yMax = -FLT_MAX;
-  for (int index = 0; index < displayedNumberOfBars(); index++) {
+  for (int index = 0; index < m_store->numberOfBars(); index++) {
     float size = m_store->heightOfBarAtIndex(index);
     if (size > yMax) {
       yMax = size;
@@ -259,23 +259,17 @@ void HistogramController::initBarParameters() {
 void HistogramController::initBarSelection() {
   *m_selectedBarIndex = 0;
   while ((m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 ||
-      m_store->startOfBarAtIndex(*m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) &&      *m_selectedBarIndex < displayedNumberOfBars()) {
+      m_store->startOfBarAtIndex(*m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) &&      *m_selectedBarIndex < m_store->numberOfBars()) {
     *m_selectedBarIndex = *m_selectedBarIndex+1;
   }
-  if (*m_selectedBarIndex >= displayedNumberOfBars()) {
+  if (*m_selectedBarIndex >= m_store->numberOfBars()) {
     /* No bar is after m_firstDrawnBarAbscissa, so we select the first bar */
     *m_selectedBarIndex = 0;
-    while (m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 && *m_selectedBarIndex < displayedNumberOfBars()) {
+    while (m_store->heightOfBarAtIndex(*m_selectedBarIndex) == 0 && *m_selectedBarIndex < m_store->numberOfBars()) {
       *m_selectedBarIndex = *m_selectedBarIndex+1;
     }
   }
   m_store->scrollToSelectedBarIndex(*m_selectedBarIndex);
-}
-
-int HistogramController::displayedNumberOfBars() {
-  float numberOfBars = m_store->numberOfBars();
-  numberOfBars = isnan(numberOfBars) || isinf(numberOfBars) || numberOfBars > Store::k_maxNumberOfBars ? 0 : numberOfBars;
-  return numberOfBars;
 }
 
 }

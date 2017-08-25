@@ -54,6 +54,7 @@ ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 bool isShiftActive();
 bool isAlphaActive();
+void updateModifiersFromEvent(Event e);
 
 // Plain
 

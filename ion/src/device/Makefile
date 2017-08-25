@@ -6,6 +6,7 @@ ion/src/shared/software_version.o: SFLAGS += -DHEADER_SECTION="__attribute__((se
 objs += $(addprefix ion/src/shared/, \
   console_line.o \
   events_keyboard.o \
+  events_modifier.o \
 )
 
 # If you need to profile execution, you can replace events_keyboard with

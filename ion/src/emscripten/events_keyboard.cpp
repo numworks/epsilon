@@ -1,5 +1,5 @@
 #include <ion/events.h>
-#include "events.h"
+#include "events_keyboard.h"
 #include "display.h"
 extern "C" {
 #include <SDL/SDL.h>
@@ -8,7 +8,7 @@ extern "C" {
 Ion::Events::Event sEvent = Ion::Events::None;
 
 void IonEventsEmscriptenPushEvent(int eventNumber) {
-  sEvent = Ion::Events::Event(eventNumber);
+  sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
 }
 
 namespace Ion {
@@ -33,6 +33,7 @@ Event getEvent(int * timeout) {
   Ion::Display::Emscripten::refresh();
   if (sEvent != Ion::Events::None) {
     Ion::Events::Event event = sEvent;
+    updateModifiersFromEvent(event);
     sEvent = Ion::Events::None;
     return event;
   }

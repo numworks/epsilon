@@ -124,7 +124,7 @@ double Store::mean() {
 }
 
 double Store::variance() {
-  float m = mean();
+  double m = mean();
   return squaredValueSum()/sumOfColumn(1) - m*m;
 }
 
@@ -151,8 +151,8 @@ double Store::median() {
   int halfTotal = total/2;
   int totalMod2 = total - 2*halfTotal;
   if (totalMod2 == 0) {
-    float minusMedian = sortedElementNumber(halfTotal);
-    float maxMedian = sortedElementNumber(halfTotal+1);
+    double minusMedian = sortedElementNumber(halfTotal);
+    double maxMedian = sortedElementNumber(halfTotal+1);
     return (minusMedian+maxMedian)/2.0f;
   } else {
     return sortedElementNumber(halfTotal+1);
@@ -168,7 +168,7 @@ double Store::sum() {
 }
 
 double Store::squaredValueSum() {
-  float result = 0;
+  double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[0][k]*m_data[0][k]*m_data[1][k];
   }

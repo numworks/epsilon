@@ -13,7 +13,9 @@
 namespace Probability {
 
 ImageCell::ImageCell() :
-  HighlightCell()
+  HighlightCell(),
+  m_icon(nullptr),
+  m_focusedIcon(nullptr)
 {
 }
 

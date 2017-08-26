@@ -62,7 +62,7 @@ private:
 
     void insertChar(char c, size_t index);
     char removeChar(size_t index);
-    void removeText();
+    int removeRemainingLine(size_t index, int direction);
     char operator[](size_t index) {
       assert(index >= 0 && index < m_bufferSize);
       return m_buffer[index];
@@ -88,7 +88,8 @@ private:
     void moveCursorIndex(int deltaX);
     void moveCursorGeo(int deltaX, int deltaY);
     void removeChar();
-    void removeText();
+    bool removeEndOfLine();
+    void removeStartOfLine();
     KDRect cursorRect();
   private:
     int numberOfSubviews() const override;

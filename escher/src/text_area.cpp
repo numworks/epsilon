@@ -97,8 +97,31 @@ char TextArea::Text::removeChar(size_t index) {
   return deletedChar;
 }
 
-void TextArea::Text::removeText() {
-  m_buffer[0] = 0;
+int TextArea::Text::removeRemainingLine(size_t index, int direction) {
+  assert(index >= 0 && index < m_bufferSize);
+  int jump = index;
+  while (m_buffer[jump] != '\n' && m_buffer[jump] != 0 && jump >= 0) {
+    jump += direction;
+  }
+  int delta = direction > 0 ? jump - index : index - jump;
+  if (delta == 0) {
+    return 0;
+  }
+  /* We stop at m_bufferSize-1 because:
+   * - if direction > 0: jump >= k+1 so we will reach the 0 before m_bufferSize-1
+   * - if direction < 0: k+1 will reach m_bufferSize. */
+  for (int k = index; k < m_bufferSize-1; k++) {
+    if (direction > 0) {
+      m_buffer[k] = m_buffer[jump++];
+    } else {
+      m_buffer[++jump] = m_buffer[k+1];
+    }
+    if (m_buffer[k] == 0) {
+      return delta;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 TextArea::Text::Position TextArea::Text::span() const {
@@ -207,11 +230,26 @@ void TextArea::TextArea::ContentView::removeChar() {
   markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, lineBreak));
 }
 
-void TextArea::ContentView::removeText() {
-  m_text.removeText();
-  m_cursorIndex = 0;
-  layoutSubviews();
-  markRectAsDirty(bounds());
+bool TextArea::ContentView::removeEndOfLine() {
+  int removedLine = m_text.removeRemainingLine(m_cursorIndex, 1);
+  if (removedLine > 0) {
+    layoutSubviews();
+    markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, false));
+    return true;
+  }
+  return false;
+}
+
+void TextArea::ContentView::removeStartOfLine() {
+  if (m_cursorIndex <= 0) {
+    return;
+  }
+  int removedLine = m_text.removeRemainingLine(m_cursorIndex-1, -1);
+  if (removedLine > 0) {
+    m_cursorIndex -= removedLine;
+    layoutSubviews();
+    markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, false));
+  }
 }
 
 KDRect TextArea::TextArea::ContentView::cursorRect() {
@@ -282,7 +320,9 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::EXE) {
     m_contentView.insertText("\n");
   } else if (event == Ion::Events::Clear) {
-    m_contentView.removeText();
+    if (!m_contentView.removeEndOfLine()) {
+      m_contentView.removeStartOfLine();
+    }
   } else
   {
     return false;

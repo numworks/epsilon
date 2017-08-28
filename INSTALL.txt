@@ -1,2 +1,0 @@
-- Download a toolchain from https://launchpad.net/gcc-arm-embedded/+download
-- Install openocd (tested with 0.8.0)

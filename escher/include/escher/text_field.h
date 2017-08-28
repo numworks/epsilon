@@ -63,6 +63,7 @@ protected:
     KDCoordinate textHeight() const;
     KDCoordinate charWidth();
     void deleteCharPrecedingCursor();
+    bool deleteEndOfLine();
     KDRect cursorRect();
     View * subviewAtIndex(int index) override;
     /* In some app (ie Calculation), text fields record expression results whose
@@ -90,6 +91,7 @@ protected:
   ContentView m_contentView;
 private:
   void deleteCharPrecedingCursor();
+  bool deleteEndOfLine();
   void scrollToCursor();
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;

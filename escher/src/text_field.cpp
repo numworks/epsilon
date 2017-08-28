@@ -184,6 +184,17 @@ void TextField::ContentView::deleteCharPrecedingCursor() {
   layoutSubviews();
 }
 
+bool TextField::ContentView::deleteEndOfLine() {
+  if (m_currentTextLength == m_currentCursorLocation) {
+    return false;
+  }
+  reload();
+  m_currentTextLength = m_currentCursorLocation;
+  m_draftTextBuffer[m_currentCursorLocation] = 0;
+  layoutSubviews();
+  return true;
+}
+
 KDRect TextField::ContentView::cursorRect() {
   return KDRect(m_currentCursorLocation * charWidth(), 0, m_cursorView.minimalSizeForOptimalDisplay());
 }
@@ -299,6 +310,15 @@ void TextField::deleteCharPrecedingCursor() {
   layoutSubviews();
 }
 
+bool TextField::deleteEndOfLine() {
+  if (m_contentView.deleteEndOfLine()) {
+    scrollToCursor();
+    layoutSubviews();
+    return true;
+  }
+  return false;
+}
+
 KDSize TextField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, m_contentView.textHeight());
 }
@@ -384,7 +404,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
-    setEditing(true, true);
+    if (!deleteEndOfLine()) {
+      setEditing(true, true);
+    }
     return true;
   }
   if (event == Ion::Events::Copy && !isEditing()) {

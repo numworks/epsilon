@@ -14,7 +14,7 @@ KDPoint KDContext::blendString(const char * text, KDPoint p, KDText::FontSize si
   return writeString(text, p, size, textColor, KDColorWhite, -1, true);
 }
 
-KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool blend) {
+KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool transparentBackground) {
   KDPoint position = p;
   int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
   int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT: BITMAP_SmallFont_CHARACTER_HEIGHT;
@@ -22,7 +22,7 @@ KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize si
 
   const char * end = text+maxLength;
   while(*text != 0 && text != end) {
-    writeChar(*text, position, size, textColor, backgroundColor, blend);
+    writeChar(*text, position, size, textColor, backgroundColor, transparentBackground);
     if (*text == '\n') {
       position = KDPoint(0, position.y()+characterHeight);
     } else if (*text == '\t') {
@@ -35,7 +35,7 @@ KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize si
   return position;
 }
 
-void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool blend) {
+void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool transparentBackground) {
   if (character == '\n' || character == '\t') {
     return;
   }
@@ -46,7 +46,7 @@ void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDCo
   KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;
 
   KDRect absoluteRect = absoluteFillRect(KDRect(p, characterWidth, characterHeight));
-  if (blend) {
+  if (transparentBackground) {
     pullRect(absoluteRect, characterBuffer);
   }
   KDCoordinate startingI = m_clippingRect.x() - p.translatedBy(m_origin).x();
@@ -62,7 +62,7 @@ void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDCo
       } else {
        intensity = bitmapSmallFont[(uint8_t)character-(uint8_t)firstCharacter][j + startingJ][i +startingI];
       }
-      KDColor backColor = blend ? *currentPixelAdress : backgroundColor;
+      KDColor backColor = transparentBackground ? *currentPixelAdress : backgroundColor;
       *currentPixelAdress = KDColor::blend(textColor, backColor, intensity);
     }
   }

@@ -79,7 +79,7 @@ bool NormalLaw::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
     return true;
   }
-  if (x <= 0 || std::fabs(m_parameter1/x) > k_maxRatioMuSigma) {
+  if (x <= FLT_MIN || std::fabs(m_parameter1/x) > k_maxRatioMuSigma) {
     return false;
   }
   return true;

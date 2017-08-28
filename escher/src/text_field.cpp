@@ -294,9 +294,9 @@ bool TextField::insertTextAtLocation(const char * text, int location) {
 }
 
 void TextField::deleteCharPrecedingCursor() {
-  layoutSubviews();
   m_contentView.deleteCharPrecedingCursor();
   scrollToCursor();
+  layoutSubviews();
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() const {

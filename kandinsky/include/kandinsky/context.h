@@ -33,8 +33,8 @@ protected:
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
 private:
   KDRect absoluteFillRect(KDRect rect);
-  KDPoint writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool blend);
-  void writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool blend);
+  KDPoint writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool transparentBackground);
+  void writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool transparentBackground);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

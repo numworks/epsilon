@@ -38,6 +38,9 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
                                  key_width,
                                  key_height,
                                  kCharForKey[k]);
+    if (kCharForKey[k][0] == '\0') {
+      m_buttons[k]->deactivate();
+    }
     if (kShortcutForKey[k]) {
       m_buttons[k]->shortcut(kShortcutForKey[k]);
     }

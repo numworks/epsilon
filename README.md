@@ -1,4 +1,4 @@
-<img src="https://www.numworks.com/resources/engineering/software/epsilon.svg" alt="NumWorks Epsilon logo" height="70" >
+<img src="https://www.numworks.com/resources/engineering/software/epsilon.svg" alt="NumWorks Epsilon logo" height="70" > [![Build Status](https://travis-ci.org/numworks/epsilon.svg)](https://travis-ci.org/numworks/epsilon)
 
 Epsilon is a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 

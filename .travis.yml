@@ -1,7 +1,9 @@
 language: cpp
+sudo: required
 compiler:
 - clang
 - gcc
 os:
 - linux
+before_install: sudo install libpng-dev
 script: make app.elf && make test.elf

@@ -141,6 +141,10 @@ QUIZ_CASE(poincare_parse_function) {
   assert(e->type() == Expression::Type::MatrixTranspose);
   delete e;
 #endif
+
+  e = Expression::parse("6!");
+  assert(e->type() == Expression::Type::Factorial);
+  delete e;
 }
 
 
@@ -264,4 +268,7 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   Complex<float> ah[1] = {Complex<float>::Float(2.325f)};
   assert_parsed_expression_evaluate_to("round(2.3245,3)", ah, 1);
+
+  Complex<double> ai[1] = {Complex<double>::Float(720.0f)};
+  assert_parsed_expression_evaluate_to("6!", ai, 1);
 }

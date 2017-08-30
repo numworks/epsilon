@@ -30,11 +30,11 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 };
 
 Event getEvent(int * timeout) {
-  Ion::Display::Emscripten::refresh();
-  if (sEvent != Ion::Events::None) {
-    Ion::Events::Event event = sEvent;
-    updateModifiersFromEvent(event);
-    sEvent = Ion::Events::None;
+  Display::Emscripten::refresh();
+  if (sEvent != None) {
+    Event event = sEvent;
+    Keyboard::updateModifiersFromEvent(event);
+    sEvent = None;
     return event;
   }
   SDL_Event event;
@@ -42,33 +42,28 @@ Event getEvent(int * timeout) {
     if (event.type == SDL_KEYDOWN) {
       switch(event.key.keysym.sym) {
         case SDLK_UP:
-          return Ion::Events::Up;
+          return Up;
         case SDLK_DOWN:
-          return Ion::Events::Down;
+          return Down;
         case SDLK_LEFT:
-          return Ion::Events::Left;
+          return Left;
         case SDLK_RIGHT:
-          return Ion::Events::Right;
+          return Right;
         case SDLK_RETURN:
-          return Ion::Events::OK;
+          return OK;
         case SDLK_ESCAPE:
-          return Ion::Events::Back;
+          return Back;
         case SDLK_BACKSPACE:
-          return Ion::Events::Backspace;
+          return Backspace;
       }
       if (event.key.keysym.unicode >= 32 && event.key.keysym.unicode < 127) {
         return sEventForASCIICharAbove32[event.key.keysym.unicode-32];
       }
     }
   }
-  return Ion::Events::None;
+  return None;
 }
 
-}
-}
-
-namespace Ion {
-namespace Events {
 namespace Emscripten {
 
 void init() {

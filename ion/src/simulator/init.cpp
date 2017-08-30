@@ -78,8 +78,8 @@ void Ion::msleep(long ms) {
     sDisplay->redraw();
     Fl::wait(0);
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    if (microseconds >= ms) {
+    long long milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+    if (milliseconds >= ms) {
       break;
     }
   }

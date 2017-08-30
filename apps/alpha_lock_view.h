@@ -9,7 +9,7 @@ class AlphaLockView : public View {
 public:
   AlphaLockView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  bool setStatus(Ion::Events::ShiftAlphaStatus status);
+  bool setStatus(Ion::Keyboard::ShiftAlphaStatus status);
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_lockRightMargin = 5;
@@ -18,7 +18,7 @@ private:
   View * subviewAtIndex(int index) override;
   LockView m_lockView;
   MessageTextView m_alphaView;
-  Ion::Events::ShiftAlphaStatus m_status;
+  Ion::Keyboard::ShiftAlphaStatus m_status;
 };
 
 #endif

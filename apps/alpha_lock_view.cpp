@@ -3,7 +3,7 @@
 AlphaLockView::AlphaLockView() :
   View(),
   m_alphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_status(Ion::Events::ShiftAlphaStatus::Default)
+  m_status(Ion::Keyboard::ShiftAlphaStatus::Default)
 {
 }
 
@@ -11,17 +11,17 @@ void AlphaLockView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::YellowDark);
 }
 
-bool AlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
+bool AlphaLockView::setStatus(Ion::Keyboard::ShiftAlphaStatus status) {
   if (status != m_status) {
     m_status = status;
     switch (status) {
-      case Ion::Events::ShiftAlphaStatus::Alpha:
-      case Ion::Events::ShiftAlphaStatus::AlphaLock:
-      case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
+      case Ion::Keyboard::ShiftAlphaStatus::Alpha:
+      case Ion::Keyboard::ShiftAlphaStatus::AlphaLock:
+      case Ion::Keyboard::ShiftAlphaStatus::AlphaLockShift:
         m_alphaView.setMessage(I18n::Message::Alpha);
         break;
-      case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
-      case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
+      case Ion::Keyboard::ShiftAlphaStatus::ShiftAlpha:
+      case Ion::Keyboard::ShiftAlphaStatus::ShiftAlphaLock:
         m_alphaView.setMessage(I18n::Message::CapitalAlpha);
         break;
       default:
@@ -43,12 +43,12 @@ KDSize AlphaLockView::minimalSizeForOptimalDisplay() const {
 
 int AlphaLockView::numberOfSubviews() const {
   switch (m_status) {
-    case Ion::Events::ShiftAlphaStatus::Alpha:
-    case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
+    case Ion::Keyboard::ShiftAlphaStatus::Alpha:
+    case Ion::Keyboard::ShiftAlphaStatus::ShiftAlpha:
       return 1;
-    case Ion::Events::ShiftAlphaStatus::AlphaLock:
-    case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
-    case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
+    case Ion::Keyboard::ShiftAlphaStatus::AlphaLock:
+    case Ion::Keyboard::ShiftAlphaStatus::AlphaLockShift:
+    case Ion::Keyboard::ShiftAlphaStatus::ShiftAlphaLock:
       return 2;
     default:
       return 0;

@@ -63,6 +63,10 @@ const char * Event::text() const {
   return info.text();
 }
 
+Event getEvent(int * timeout) {
+  return Keyboard::getEvent(timeout);
+}
+
 }
 }
 

@@ -8,7 +8,7 @@ extern "C" {
 Ion::Events::Event sEvent = Ion::Events::None;
 
 void IonEventsEmscriptenPushEvent(int eventNumber) {
-  sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
+  sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Keyboard::isShiftActive(), Ion::Keyboard::isAlphaActive());
 }
 
 namespace Ion {

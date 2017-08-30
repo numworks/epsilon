@@ -2,7 +2,7 @@
 #include <assert.h>
 
 namespace Ion {
-namespace Events {
+namespace Keyboard {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
 
@@ -23,62 +23,62 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
 }
 
-void updateModifiersFromEvent(Event e) {
+void updateModifiersFromEvent(Events::Event e) {
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
-      if (e == Shift) {
+      if (e == Events::Shift) {
         sShiftAlphaStatus = ShiftAlphaStatus::Shift;
-      } else if (e == Alpha) {
+      } else if (e == Events::Alpha) {
         sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
       }
       break;
     case ShiftAlphaStatus::Shift:
-      if (e == Shift) {
+      if (e == Events::Shift) {
         sShiftAlphaStatus = ShiftAlphaStatus::Default;
-      } else if (e == Alpha) {
+      } else if (e == Events::Alpha) {
         sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
       } else {
         sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     case ShiftAlphaStatus::Alpha:
-      if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::ShiftAlpha:
-        if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::AlphaLock:
-        if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::AlphaLockShift:
-        if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-        }
-        break;
-      case ShiftAlphaStatus::ShiftAlphaLock:
-        if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-    }
+      if (e == Events::Shift) {
+	sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+      } else if (e == Events::Alpha) {
+	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+      } else {
+	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::ShiftAlpha:
+      if (e == Events::Shift) {
+	sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+      } else if (e == Events::Alpha) {
+	sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+      } else {
+	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::AlphaLock:
+      if (e == Events::Shift) {
+	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
+      } else if (e == Events::Alpha) {
+	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::AlphaLockShift:
+      if (e == Events::Alpha) {
+	sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+      } else {
+	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+      }
+      break;
+    case ShiftAlphaStatus::ShiftAlphaLock:
+      if (e == Events::Alpha) {
+	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+  }
 }
 
 }

@@ -37,25 +37,8 @@ private:
   uint8_t m_id;
 };
 
-enum class ShiftAlphaStatus {
-  Default,
-  Shift,
-  Alpha,
-  ShiftAlpha,
-  AlphaLock,
-  AlphaLockShift,
-  ShiftAlphaLock,
-};
-
-extern Event pendingEvent;
 // Timeout is decremented
 Event getEvent(int * timeout);
-
-ShiftAlphaStatus shiftAlphaStatus();
-void setShiftAlphaStatus(ShiftAlphaStatus s);
-bool isShiftActive();
-bool isAlphaActive();
-void updateModifiersFromEvent(Event e);
 
 // Plain
 

@@ -42,7 +42,7 @@ bool TitleBarView::setIsPlugged(bool isPlugged) {
   return m_batteryView.setIsPlugged(isPlugged);
 }
 
-bool TitleBarView::setAlphaLockStatus(Ion::Events::ShiftAlphaStatus status) {
+bool TitleBarView::setAlphaLockStatus(Ion::Keyboard::ShiftAlphaStatus status) {
   return m_alphaLockView.setStatus(status);
 }
 

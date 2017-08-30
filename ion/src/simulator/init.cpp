@@ -19,8 +19,9 @@ static KDFrameBuffer * sFrameBuffer;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
 
+bool shouldTerminate = false;
 static void termination_callback(Fl_Widget *) {
-  Ion::Events::pendingEvent = Ion::Events::Termination;
+  shouldTerminate = true;
 }
 
 void init_platform() {

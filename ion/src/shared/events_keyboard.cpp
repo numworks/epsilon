@@ -2,7 +2,7 @@
 #include <assert.h>
 
 namespace Ion {
-namespace Events {
+namespace Keyboard {
 
 static bool sleepWithTimeout(int duration, int * timeout) {
   if (*timeout >= duration) {
@@ -16,31 +16,24 @@ static bool sleepWithTimeout(int duration, int * timeout) {
   }
 }
 
-Event pendingEvent = Events::None, sLastEvent = Events::None;
-Keyboard::State sLastKeyboardState;
+Events::Event sLastEvent = Events::None;
+State sLastKeyboardState;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
 
-bool canRepeatEvent(Event e) {
+bool canRepeatEvent(Events::Event e) {
   return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
 }
 
-Event getEvent(int * timeout) {
+Events::Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
-
-  if (pendingEvent != Events::None) {
-    Event event = pendingEvent;
-    pendingEvent = Events::None;
-    return event;
-  }
-
   int time = 0;
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
-    Keyboard::State state = Keyboard::scan();
+    State state = scan();
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 
@@ -51,8 +44,8 @@ Event getEvent(int * timeout) {
        * processors have an instruction (ARM thumb uses CLZ).
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
-      Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, isShiftActive(), isAlphaActive());
+      Key key = (Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+      Events::Event event(key, isShiftActive(), isAlphaActive());
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;

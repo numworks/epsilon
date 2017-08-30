@@ -61,10 +61,6 @@ const char * Calculation::inputText() {
   return m_inputText;
 }
 
-const char * Calculation::outputText() {
-  return m_outputText;
-}
-
 Expression * Calculation::input() {
   if (m_input == nullptr) {
     m_input = Expression::parse(m_inputText);

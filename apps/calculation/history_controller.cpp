@@ -3,6 +3,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
@@ -47,7 +49,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
-      editController->insertTextBody(calculation->outputText());
+      char outputText[2*::TextField::maxBufferSize()];
+      printOutputOfCalculationInBuffer(calculation, outputText, sizeof(outputText));
+      editController->insertTextBody(outputText);
     }
     return true;
   }
@@ -97,7 +101,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       Clipboard::sharedClipboard()->store(calculation->inputText());
     } else {
-      Clipboard::sharedClipboard()->store(calculation->outputText());
+      char outputText[2*::TextField::maxBufferSize()];
+      printOutputOfCalculationInBuffer(calculation, outputText, sizeof(outputText));
+      Clipboard::sharedClipboard()->store(outputText);
     }
     return true;
   }
@@ -198,6 +204,11 @@ void HistoryController::unloadView(View * view) {
     m_calculationHistory[i] = nullptr;
   }
   delete view;
+}
+
+void HistoryController::printOutputOfCalculationInBuffer(Calculation * calculation, char * buffer, int bufferSize) {
+  App * calculationApp = (App *)app();
+  calculation->output(calculationApp->localContext())->writeTextInBuffer(buffer, bufferSize, Expression::k_numberOfPrintedSignificantDigits);
 }
 
 }

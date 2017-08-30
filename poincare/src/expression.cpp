@@ -236,7 +236,7 @@ bool Expression::isCommutative() const {
   return false;
 }
 
-int Expression::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Expression::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   return 0;
 }
 

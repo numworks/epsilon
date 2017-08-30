@@ -15,13 +15,13 @@ extern "C" {
 namespace Poincare {
 
 
-void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition) {
+void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int64_t i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
    * in first position. When called by convertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferSize > 0 && decimalMarkerPosition != 0);
   int endChar = bufferSize - 1, startChar = 0;
-  int dividend = i, digit = 0, quotien = 0;
+  int64_t dividend = i, digit = 0, quotien = 0;
   if (i < 0) {
     buffer[startChar++] = '-';
     dividend = -i;
@@ -36,6 +36,7 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferSi
     }
     quotien = dividend/10;
     digit = dividend - quotien*10;
+    assert(digit >= 0 && digit <= 9);
     assert(endChar >= 0 && endChar < bufferSize);
     buffer[endChar--] = '0'+digit;
     dividend = quotien;
@@ -136,8 +137,8 @@ Evaluation<T> * Complex<T>::cloneWithDifferentOperands(Expression** newOperands,
 }
 
 template <class T>
-int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
+int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat(), numberOfSignificantDigits);
 }
 
 template <class T>
@@ -236,15 +237,15 @@ Evaluation<U> * Complex<T>::templatedEvaluate(Context& context, Expression::Angl
 }
 
 template <class T>
-int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat) const {
+int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat, int numberOfSignificantDigits) const {
   assert(displayMode != Expression::FloatDisplayMode::Default);
   int numberOfChars = 0;
   if (isnan(m_a) || isnan(m_b)) {
-    return convertFloatToText(NAN, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
+    return convertFloatToText(NAN, buffer, bufferSize, numberOfSignificantDigits, displayMode);
   }
   if (complexFormat == Expression::ComplexFormat::Polar) {
     if (r() != 1 || th() == 0) {
-      numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
+      numberOfChars = convertFloatToText(r(), buffer, bufferSize, numberOfSignificantDigits, displayMode);
       if (r() != 0 && th() != 0 && bufferSize > numberOfChars+1) {
         buffer[numberOfChars++] = '*';
         // Ensure that the string is null terminated even if buffer size is to small
@@ -259,7 +260,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
-      numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
+      numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
       if (bufferSize > numberOfChars+3) {
         buffer[numberOfChars++] = '*';
         buffer[numberOfChars++] = Ion::Charset::IComplex;
@@ -271,7 +272,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
   }
 
   if (m_a != 0 || m_b == 0) {
-    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
+    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, numberOfSignificantDigits, displayMode);
     if (m_b > 0 && !isnan(m_b) && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
@@ -279,7 +280,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
     }
   }
   if (m_b != 1 && m_b != -1 && m_b != 0) {
-    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
+    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = '*';
   }
   if (m_b == -1 && bufferSize > numberOfChars+1) {
@@ -340,11 +341,11 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   /* The number of digits in an integer is capped because the maximal integer is
    * 2^31 - 1. As our mantissa is an integer, we assert that we stay beyond this
    * threshold during computation. */
-  assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 31.0f)));
+  assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 63.0f)));
 
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
-  T mantissa = std::round(f * std::pow(10, (T)availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  int64_t mantissa = std::round(f * std::pow(10, (T)availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
    * is too big (or too small), mantissa is now inf. We handle this case by
    * using logarithm function. */
@@ -354,9 +355,9 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
-  T truncatedMantissa = (int)(f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+   int64_t truncatedMantissa = std::round(f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
   if (isinf(truncatedMantissa) || isnan(truncatedMantissa)) {
-    truncatedMantissa = (int)(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    truncatedMantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
     truncatedMantissa = std::copysign(truncatedMantissa, f);
   }
   if (mantissa != truncatedMantissa) {
@@ -420,13 +421,13 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
 
 template <class T>
 ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const {
-  char bufferBase[k_maxFloatBufferLength+2];
+  char bufferBase[k_printedFloatBufferLength+2];
   int numberOfCharInBase = 0;
-  char bufferSuperscript[k_maxFloatBufferLength+2];
+  char bufferSuperscript[k_printedComplexBufferLength+2];
   int numberOfCharInSuperscript = 0;
 
   if (r() != 1 || th() == 0) {
-    numberOfCharInBase = convertFloatToText(r(), bufferBase, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
+    numberOfCharInBase = convertFloatToText(r(), bufferBase, k_printedComplexBufferLength, Expression::k_numberOfPrintedSignificantDigits, floatDisplayMode);
     if (r() != 0 && th() != 0) {
       bufferBase[numberOfCharInBase++] = '*';
     }
@@ -437,7 +438,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   }
 
   if (r() != 0 && th() != 0) {
-    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
+    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, k_printedComplexBufferLength, Expression::k_numberOfPrintedSignificantDigits, floatDisplayMode);
     bufferSuperscript[numberOfCharInSuperscript++] = '*';
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
     bufferSuperscript[numberOfCharInSuperscript] = 0;
@@ -450,8 +451,8 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 
 template <class T>
 ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const {
-  char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, Expression::ComplexFormat::Cartesian);
+  char buffer[k_printedComplexBufferLength];
+  int numberOfChars = convertComplexToText(buffer, k_printedComplexBufferLength, floatDisplayMode, Expression::ComplexFormat::Cartesian, Expression::k_numberOfPrintedSignificantDigits);
   return new StringLayout(buffer, numberOfChars);
 }
 

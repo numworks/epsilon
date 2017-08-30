@@ -28,7 +28,7 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return layout;
 }
 
-int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   buffer[bufferSize-1] = 0;
   int currentChar = 0;
   if (currentChar >= bufferSize) {
@@ -43,7 +43,7 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
     if (currentChar >= bufferSize) {
       return currentChar;
     }
-    currentChar += operand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+    currentChar += operand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, numberOfSignificantDigits);
     if (currentChar >= bufferSize) {
       return currentChar;
     }
@@ -52,7 +52,7 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
       if (currentChar >= bufferSize) {
         return currentChar;
       }
-      currentChar += operand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+      currentChar += operand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, numberOfSignificantDigits);
       if (currentChar >= bufferSize) {
         return currentChar;
       }

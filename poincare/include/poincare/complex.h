@@ -18,7 +18,7 @@ namespace PrintFloat {
    * empty chars on the left side are completed with '0'. If the integer is too
    * big, the printing stops when no more empty chars are available without
    * returning any warning. */
-  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition);
+  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int64_t i, int decimalMarkerPosition);
 }
 
 template<typename T>
@@ -41,7 +41,7 @@ public:
   Complex<T> * clone() const override;
   Evaluation<T> * cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = Expression::k_numberOfStoredSignificantDigits) const override;
   Evaluation<T> * createDeterminant() const override {
     return clone();
   }
@@ -69,23 +69,25 @@ public:
 private:
   Complex(T a, T b);
   const Complex<T> * complexOperand(int i) const override;
-  constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
-  /* We here define the buffer size to write the lengthest float possible.
+  /* We here define the buffer size to write the lengthest printed float
+   * possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
    * shorter. */
-  constexpr static int k_maxFloatBufferLength = 7+7+1;
-  /* We here define the buffer size to write the lengthest complex possible.
+  constexpr static int k_printedFloatBufferLength = Expression::k_numberOfPrintedSignificantDigits+7+1;
+  constexpr static int k_maxFloatBufferLength = Expression::k_numberOfStoredSignificantDigits+7+1;
+  /* We here define the buffer size to write the lengthest printed complex
+   * possible.
    * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1
    * char) */
-  constexpr static int k_maxComplexBufferLength = 14+14+7+1;
+  constexpr static int k_printedComplexBufferLength = 2*Expression::k_numberOfPrintedSignificantDigits+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const;
+  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, int numberOfSignificantDigits) const;
   static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode);
   ExpressionLayout * createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const;
   ExpressionLayout * createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const;

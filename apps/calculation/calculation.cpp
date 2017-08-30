@@ -14,7 +14,6 @@ Calculation::Calculation() :
   m_outputLayout(nullptr)
 {
 }
-
 Calculation::~Calculation() {
   if (m_inputLayout != nullptr) {
     delete m_inputLayout;
@@ -90,9 +89,16 @@ Evaluation<double> * Calculation::output(Context * context) {
   if (m_output == nullptr) {
     /* To ensure that the expression 'm_output' is a matrix or a complex, we
      * call 'evaluate'. */
-    Expression * exp = Expression::parse(m_outputText);
+
+     /* If m_output has been tidied up, try to parse again but from the inputText
+      * to keep the precision */
+    Expression * exp = Expression::parse(m_inputText);
     if (exp != nullptr) {
+      // Reset the output text (in order not to clash with isEmpty)
+      m_outputText[0]=0;
       m_output = exp->evaluate<double>(*context);
+      // And recompute the output text
+      m_output->writeTextInBuffer(m_outputText, sizeof(m_outputText));
       delete exp;
     } else {
       m_output = new Complex<double>(Complex<double>::Float(NAN));

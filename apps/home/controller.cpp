@@ -120,7 +120,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (m_container->numberOfApps()%2 == 1 && t->selectedColumn() == k_numberOfColumns -1) {
+  if (m_container->numberOfApps()%2 == 0 && t->selectedColumn() == k_numberOfColumns -1) {
     m_view.reloadBottomRightCorner(this);
   }
   /* To prevent the selectable table view to select cells that are unvisible,

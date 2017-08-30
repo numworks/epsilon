@@ -33,3 +33,15 @@ apps/picview/image.c
 
 # Quiz output
 quiz/src/symbols.c
+
+# No generated icon & font files
+*_icon.cpp
+*_icon.h
+*_font.c
+*_font.h
+
+# Ignore inliner binary
+escher/image/inliner
+
+# Ignore generated qtsrdefs file
+python/port/genhdr/qstrdefs.generated.h

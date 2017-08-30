@@ -1,7 +1,19 @@
 language: cpp
-compiler:
-- clang
-- gcc
-os:
-- linux
-script: make app.elf && make test.elf
+sudo: required
+matrix:
+  include:
+    - compiler: gcc
+      env: PLATFORM=device
+    - compiler: clang
+      env: PLATFORM=simulator
+
+os: linux
+before_install:
+  # gcc-arm-none-eabi
+- if [ "$CXX" = "g++" ]; then wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2; fi
+- if [ "$CXX" = "g++" ]; then tar xfj gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2; fi
+- if [ "$CXX" = "g++" ]; then export PATH=gcc-arm-none-eabi-6-2017-q2-update/bin:$PATH; fi
+- if [ "$PLATFORM" = "simulator" ]; then sudo apt-get install libfltk1.3-dev; fi
+script:
+- make clean && make app.elf
+- make clean && make test.elf

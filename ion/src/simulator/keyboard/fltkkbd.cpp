@@ -5,15 +5,15 @@ constexpr int KeyboardRows = 9;
 constexpr int KeyboardColumns = 6;
 
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
-  "Left",   "Up",     "Down",   "Right",  "OK",     "Back",
+  "◁",   "△",     "▽",   "▷",  "OK",     "↺",
   "Home",   "Power",  "",       "",       "",       "",
-  "Shift",  "Alpha",  "x,n,t",  "Var",    "Toolbox",  "Clear",
-  "e^x",    "ln",     "log",    "i",      ",",      "x^y",
-  "sin",    "cos",    "tan",    "pi",     "root",   "square",
+  "shift",  "alpha",  "x,n,t",  "var",    "Toolbox",  "⌫",
+  "eˣ",    "ln",     "log",    "i",      ",",      "xʸ",
+  "sin",    "cos",    "tan",    "π",     "√‾‾",   "x²",
   "7",      "8",      "9",      "(",      ")",      "",
-  "4",      "5",      "6",      "x",      "%",      "",
-  "1",      "2",      "3",      "+",      "-",      "",
-  "0",      ".",      "x10^x",  "Ans",    "EXE",    ""
+  "4",      "5",      "6",      "×",      "÷",      "",
+  "1",      "2",      "3",      "+",      "−",      "",
+  "0",      ".",      "×10ˣ",  "Ans",    "EXE",    ""
 };
 
 static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {

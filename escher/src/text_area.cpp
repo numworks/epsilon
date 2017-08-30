@@ -110,7 +110,7 @@ int TextArea::Text::removeRemainingLine(size_t index, int direction) {
   /* We stop at m_bufferSize-1 because:
    * - if direction > 0: jump >= k+1 so we will reach the 0 before m_bufferSize-1
    * - if direction < 0: k+1 will reach m_bufferSize. */
-  for (int k = index; k < m_bufferSize-1; k++) {
+  for (size_t k = index; k < m_bufferSize-1; k++) {
     if (direction > 0) {
       m_buffer[k] = m_buffer[jump++];
     } else {

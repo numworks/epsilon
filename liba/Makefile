@@ -117,6 +117,7 @@ liba/src/external/openbsd/e_pow.o: CFLAGS += -w
 liba/src/external/openbsd/e_rem_pio2.o: CFLAGS += -w
 liba/src/external/openbsd/e_sinh.o: CFLAGS += -w
 liba/src/external/openbsd/k_rem_pio2.o: CFLAGS += -w
+liba/src/external/openbsd/k_rem_pio2f.o: CFLAGS += -w
 liba/src/external/openbsd/s_asinh.o: CFLAGS += -w
 liba/src/external/openbsd/s_log1p.o: CFLAGS += -w
 liba/src/external/openbsd/s_scalbn.o: CFLAGS += -w

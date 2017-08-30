@@ -47,6 +47,7 @@ enum class ShiftAlphaStatus {
   ShiftAlphaLock,
 };
 
+extern Event pendingEvent;
 // Timeout is decremented
 Event getEvent(int * timeout);
 

@@ -19,6 +19,10 @@ static KDFrameBuffer * sFrameBuffer;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
 
+static void termination_callback(Fl_Widget *) {
+  Ion::Events::pendingEvent = Ion::Events::Termination;
+}
+
 void init_platform() {
   Fl::visual(FL_RGB);
 
@@ -28,6 +32,7 @@ void init_platform() {
   int keyboard_height = screen_width;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
+  window->callback(termination_callback);
 
   KDColor * pixels = (KDColor *)malloc(Ion::Display::Width*Ion::Display::Height*sizeof(KDColor));
   sFrameBuffer = new KDFrameBuffer(pixels, KDSize(Ion::Display::Width, Ion::Display::Height));

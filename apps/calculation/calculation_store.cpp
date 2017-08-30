@@ -84,8 +84,13 @@ void CalculationStore::deleteAll() {
 }
 
 void CalculationStore::tidy() {
+  int lastCalculationIndex =  numberOfCalculations();
   for (int i = 0; i < k_maxNumberOfCalculations; i++) {
-    m_calculations[i].tidy();
+    if(i != lastCalculationIndex - 1) {
+      /** Cleanup all calculations except the last one in order to keep the last
+       *  calculation in memory */
+      m_calculations[i].tidy();
+    }
   }
 }
 

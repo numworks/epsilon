@@ -31,7 +31,6 @@ Complex<T> Factorial::templatedComputeComplex(const Complex<T> c) const {
   if (c.b() != 0 || isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Float(NAN);
   }
-  return Complex<T>::Float(c.r());
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;

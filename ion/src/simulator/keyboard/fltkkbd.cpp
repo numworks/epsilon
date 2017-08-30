@@ -17,15 +17,15 @@ static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
 };
 
 static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {
-  FL_Left, FL_Up, FL_Down, FL_Right, FL_Enter, FL_BackSpace,
-  FL_Escape, 0, 0, 0, 0, 0,
-  0, 0, 'x', 0, 0, 0,
+  FL_Left, FL_Up, FL_Down, FL_Right, FL_Enter, FL_Escape,
+  FL_Home, 0, 0, 0, 0, 0,
+  0, 0, 'x', 0, 0, FL_BackSpace,
   0, 0, 0, 'i', ',', 0,
   0, 0, 0, 0, 0, 0,
-  '7', '8', '0', '(',')', 0,
-  '4', '5', '6', '*', '%', 0,
+  '7', '8', '9', '(',')', 0,
+  '4', '5', '6', '*', '/', 0,
   '1', '2', '3', '+', '-', 0,
-  '0', '.', 0, 0, 0, 0
+  '0', '.', 0, 0, FL_KP_Enter, 0
 };
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {

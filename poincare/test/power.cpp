@@ -18,6 +18,6 @@ QUIZ_CASE(poincare_power_evaluate) {
 
 #if MATRICES_ARE_DEFINED
   Complex<double> d[4] = {Complex<double>::Float(37.0), Complex<double>::Float(54.0), Complex<double>::Float(81.0), Complex<double>::Float(118.0)};
-  assert_parsed_expression_evaluate_to("[[1,2][3,4]]^3", d, 4);
+  assert_parsed_expression_evaluate_to("[[1,2][3,4]]^3", d, 2, 2);
 #endif
 }

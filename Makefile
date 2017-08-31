@@ -95,10 +95,6 @@ products += $(dependencies)
 	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
 	@echo "==============================="
 
-.PHONY: %_run
-%_run: %.$(EXE)
-	$(GDB) -x gdb_script.gdb $<
-
 ifdef OBJCOPY
 products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin)
 %.hex: %.$(EXE)

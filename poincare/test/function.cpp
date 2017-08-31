@@ -156,10 +156,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluate_to("abs(3+2I)", a1, 1);
 
   Complex<double> a2[4] = {Complex<double>::Float(1.0), Complex<double>::Float(2.0), Complex<double>::Float(3.0), Complex<double>::Float(4.0)};
-  assert_parsed_expression_evaluate_to("abs([[1,-2][3,-4]])", a2, 4);
+  assert_parsed_expression_evaluate_to("abs([[1,-2][3,-4]])", a2, 2, 2);
 
   Complex<float> a3[4] = {Complex<float>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f)), Complex<float>::Float(std::sqrt(3.0f*3.0f+4.0f*4.0f)), Complex<float>::Float(std::sqrt(5.0f*5.0f+2.0f*2.0f)), Complex<float>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
-  assert_parsed_expression_evaluate_to("abs([[3+2I,3+4I][5+2I,3+2I]])", a3, 4);
+  assert_parsed_expression_evaluate_to("abs([[3+2I,3+4I][5+2I,3+2I]])", a3, 2, 2);
 
   Complex<double> b[1] = {Complex<double>::Float(210.0)};
   assert_parsed_expression_evaluate_to("binomial(10, 4)", b, 1);
@@ -238,7 +238,7 @@ QUIZ_CASE(poincare_function_evaluate) {
 
 #if MATRICES_ARE_DEFINED
   Complex<float> y[9] = {Complex<float>::Float(-31.0f/24.0f), Complex<float>::Float(-1.0f/12.0f), Complex<float>::Float(3.0f/8.0f), Complex<float>::Float(13.0f/12.0f), Complex<float>::Float(1.0f/6.0f), Complex<float>::Float(-1.0f/4.0f), Complex<float>::Float(1.0f/24.0f),Complex<float>::Float(-1.0f/12.0f), Complex<float>::Float(1.0f/24.0f)};
-  assert_parsed_expression_evaluate_to("inverse([[1,2,3][4,5,-6][7,8,9]])", y, 9);
+  assert_parsed_expression_evaluate_to("inverse([[1,2,3][4,5,-6][7,8,9]])", y, 3, 3);
 #endif
 
   Complex<double> z[2] = {Complex<double>::Float(0.1-std::sqrt(1.0/100.0)), Complex<double>::Float(0.1+std::sqrt(1.0/100.0))};
@@ -263,7 +263,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluate_to("sum(2+n*I,1,5)", af, 1);
 #if MATRICES_ARE_DEFINED
   Complex<double> ag[9] = {Complex<double>::Float(1.0), Complex<double>::Float(4.0), Complex<double>::Float(7.0), Complex<double>::Float(2.0), Complex<double>::Float(5.0), Complex<double>::Float(8.0), Complex<double>::Float(3.0), Complex<double>::Float(-6.0), Complex<double>::Float(9.0)};
-  assert_parsed_expression_evaluate_to("transpose([[1,2,3][4,5,-6][7,8,9]])", ag, 9);
+  assert_parsed_expression_evaluate_to("transpose([[1,2,3][4,5,-6][7,8,9]])", ag, 3, 3);
 #endif
 
   Complex<float> ah[1] = {Complex<float>::Float(2.325f)};

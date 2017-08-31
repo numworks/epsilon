@@ -5,3 +5,5 @@ constexpr Poincare::Expression::AngleUnit Radian = Poincare::Expression::AngleUn
 
 template<typename T>
 void assert_parsed_expression_evaluate_to(const char * expression, Poincare::Complex<T> * results, int numberOfEntries, Poincare::Expression::AngleUnit angleUnit = Degree);
+template<typename T>
+void assert_parsed_expression_evaluate_to(const char * expression, Poincare::Complex<T> * results, int numberOfRows, int numberOfColumns, Poincare::Expression::AngleUnit angleUnit = Degree);

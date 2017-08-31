@@ -27,5 +27,6 @@ typedef int64_t int_fast64_t;
 typedef uint8_t uint_least8_t;
 
 #define UINT64_C(c) c ## ULL
+#define INT64_C(c) c ## LL
 
 #endif

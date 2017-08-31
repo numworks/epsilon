@@ -8,10 +8,10 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_substraction_evaluate) {
   Complex<float> a[1] = {Complex<float>::Float(-1.0f)};
-  assert_parsed_expression_evaluate_to("1-2", a, 1);
+  assert_parsed_expression_evaluate_to("1-2", a);
 
   Complex<double> b[1] = {Complex<double>::Cartesian(-1.0, 0.0)};
-  assert_parsed_expression_evaluate_to("3+I-(4+I)", b, 1);
+  assert_parsed_expression_evaluate_to("3+I-(4+I)", b);
 
 #if MATRICES_ARE_DEFINED
   Complex<float> c[6] = {Complex<float>::Float(-2.0f), Complex<float>::Float(-1.0f), Complex<float>::Float(0.0f), Complex<float>::Float(1.0f), Complex<float>::Float(2.0f), Complex<float>::Float(3.0f)};

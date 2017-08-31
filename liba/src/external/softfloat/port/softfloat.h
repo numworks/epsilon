@@ -22,4 +22,10 @@ float64_t f64_sub(float64_t x, float64_t y);
 float64_t f64_mul(float64_t x, float64_t y);
 float64_t f64_div(float64_t x, float64_t y);
 
+float32_t i64_to_f32(int64_t i);
+float64_t i64_to_f64(int64_t i);
+int_fast64_t f32_to_i64_r_minMag(float32_t x, bool exact);
+int_fast64_t f64_to_i64_r_minMag(float64_t x, bool exact);
+
+
 #endif

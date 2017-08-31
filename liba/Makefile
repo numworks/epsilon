@@ -137,12 +137,13 @@ endif
 
 tests += $(addprefix liba/test/, \
   aeabi.c \
+  double.c \
   ieee754.c \
+  long.c \
   setjmp.c \
   stddef.c \
   stdint.c \
   strlcpy.c \
-  double.c \
 )
 
 # The use of aeabi-rt could be made conditional to an AEABI target.
@@ -152,6 +153,7 @@ objs += $(addprefix liba/src/aeabi-rt/, \
   double.o \
   llsl.o \
   llsr.o \
+  long.o \
   memclr.o \
   memcpy.o \
 )
@@ -169,6 +171,7 @@ objs += $(addprefix liba/src/external/softfloat/src/, \
   8086/s_propagateNaNF64UI.o \
   8086/softfloat_raiseFlags.o \
   f32_to_f64.o \
+  f32_to_i64_r_minMag.o\
   f64_add.o \
   f64_div.o \
   f64_eq.o \
@@ -177,8 +180,11 @@ objs += $(addprefix liba/src/external/softfloat/src/, \
   f64_mul.o \
   f64_sub.o \
   f64_to_i32_r_minMag.o \
+  f64_to_i64_r_minMag.o \
   f64_to_f32.o \
   i32_to_f64.o \
+  i64_to_f32.o \
+  i64_to_f64.o \
   s_addMagsF64.o \
   s_approxRecip32_1.o \
   s_approxRecip_1Ks.o \

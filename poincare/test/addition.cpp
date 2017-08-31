@@ -8,10 +8,10 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_addition_evaluate) {
   Complex<float> a[1] = {Complex<float>::Float(3.0f)};
-  assert_parsed_expression_evaluate_to("1+2", a, 1);
+  assert_parsed_expression_evaluate_to("1+2", a);
 
   Complex<double> b[1] = {Complex<double>::Cartesian(6.0, 2.0)};
-  assert_parsed_expression_evaluate_to("2+I+4+I", b, 1);
+  assert_parsed_expression_evaluate_to("2+I+4+I", b);
 
 #if MATRICES_ARE_DEFINED
   Complex<float> c[6] = {Complex<float>::Float(4.0f), Complex<float>::Float(5.0f), Complex<float>::Float(6.0f), Complex<float>::Float(7.0f), Complex<float>::Float(8.0f), Complex<float>::Float(9.0f)};

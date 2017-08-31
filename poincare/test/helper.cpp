@@ -9,7 +9,7 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_parsed_expression_evaluate_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
+void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
   char buffer[200];
   strlcpy(buffer, expression, 200);
   for (size_t i=0; i<strlen(buffer); i++) {
@@ -42,5 +42,5 @@ void assert_parsed_expression_evaluate_to(const char * expression, Complex<T> * 
   delete m;
 }
 
-template void assert_parsed_expression_evaluate_to<float>(char const*, Poincare::Complex<float>*, int, int, Poincare::Expression::AngleUnit);
-template void assert_parsed_expression_evaluate_to<double>(char const*, Poincare::Complex<double>*, int, int, Poincare::Expression::AngleUnit);
+template void assert_parsed_expression_evaluates_to<float>(char const*, Poincare::Complex<float>*, int, int, Poincare::Expression::AngleUnit);
+template void assert_parsed_expression_evaluates_to<double>(char const*, Poincare::Complex<double>*, int, int, Poincare::Expression::AngleUnit);

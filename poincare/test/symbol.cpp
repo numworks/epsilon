@@ -36,10 +36,10 @@ QUIZ_CASE(poincare_parse_symbol) {
 
 QUIZ_CASE(poincare_symbol_approximate) {
   Complex<double> a[1] = {Complex<double>::Float(M_PI)};
-  assert_parsed_expression_evaluate_to("P", a);
+  assert_parsed_expression_evaluates_to("P", a);
   Complex<float> b[1] = {Complex<float>::Float(M_E)};
-  assert_parsed_expression_evaluate_to("X", b);
+  assert_parsed_expression_evaluates_to("X", b);
   Complex<double> c[1] = {Complex<double>::Float(1200.0)};
-  assert_parsed_expression_evaluate_to("1.2E3", c);
+  assert_parsed_expression_evaluates_to("1.2E3", c);
 }
 

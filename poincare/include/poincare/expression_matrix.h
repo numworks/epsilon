@@ -8,7 +8,7 @@ namespace Poincare {
 class ExpressionMatrix : public Matrix {
 public:
   ExpressionMatrix(MatrixData * matrixData);
-  ExpressionMatrix(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
+  ExpressionMatrix(Expression ** newOperands, int numberOfOperands, int m_numberOfRows, int m_numberOfColumns, bool cloneOperands);
   ~ExpressionMatrix();
   ExpressionMatrix(const Matrix& other) = delete;
   ExpressionMatrix(Matrix&& other) = delete;

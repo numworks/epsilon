@@ -18,8 +18,8 @@ ComplexMatrix<T>::ComplexMatrix(const Complex<T> * complexes, int numberOfRows, 
   m_numberOfColumns(numberOfColumns)
 {
   assert(complexes != nullptr);
-  m_values = new Complex<T>[numberOfColumns*numberOfRows];
-  for (int i = 0; i < numberOfColumns*numberOfRows; i++) {
+  m_values = new Complex<T>[numberOfRows*numberOfColumns];
+  for (int i = 0; i < numberOfRows*numberOfColumns; i++) {
     m_values[i] = complexes[i];
   }
 }
@@ -31,7 +31,7 @@ ComplexMatrix<T>::~ComplexMatrix() {
 
 template<typename T>
 T ComplexMatrix<T>::toScalar() const {
-  if (m_numberOfColumns != 1 || m_numberOfRows != 1) {
+  if (m_numberOfRows != 1 || m_numberOfColumns != 1) {
     return NAN;
   }
   if (m_values[0].b() != 0) {
@@ -87,8 +87,8 @@ Evaluation<T> * ComplexMatrix<T>::createIdentity(int dim) {
 template<typename T>
 template <class U>
 Evaluation<U> * ComplexMatrix<T>::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
-  Complex<U> * values = new Complex<U>[m_numberOfColumns*m_numberOfRows];
-  for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
+  Complex<U> * values = new Complex<U>[m_numberOfRows*m_numberOfColumns];
+  for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     values[i] = Complex<U>::Cartesian(m_values[i].a(), m_values[i].b());
   }
   Evaluation<U> * result = new ComplexMatrix<U>(values, m_numberOfRows, m_numberOfColumns);

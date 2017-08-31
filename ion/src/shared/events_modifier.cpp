@@ -43,39 +43,39 @@ void updateModifiersFromEvent(Events::Event e) {
       break;
     case ShiftAlphaStatus::Alpha:
       if (e == Events::Shift) {
-	sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
       } else if (e == Events::Alpha) {
-	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
       } else {
-	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     case ShiftAlphaStatus::ShiftAlpha:
       if (e == Events::Shift) {
-	sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+        sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
       } else if (e == Events::Alpha) {
-	sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
       } else {
-	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     case ShiftAlphaStatus::AlphaLock:
       if (e == Events::Shift) {
-	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
+        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
       } else if (e == Events::Alpha) {
-	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     case ShiftAlphaStatus::AlphaLockShift:
       if (e == Events::Alpha) {
-	sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+        sShiftAlphaStatus = ShiftAlphaStatus::Shift;
       } else {
-	sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
       }
       break;
     case ShiftAlphaStatus::ShiftAlphaLock:
       if (e == Events::Alpha) {
-	sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
   }

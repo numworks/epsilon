@@ -79,7 +79,7 @@ private:
    * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
    * shorter. */
   constexpr static int k_printedFloatBufferLength = Expression::k_numberOfPrintedSignificantDigits+7+1;
-  constexpr static int k_maxFloatBufferLength = Expression::k_numberOfStoredSignificantDigits+7+1;
+  constexpr static int k_storedFloatBufferLength = Expression::k_numberOfStoredSignificantDigits+7+1;
   /* We here define the buffer size to write the lengthest printed complex
    * possible.
    * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1

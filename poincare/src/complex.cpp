@@ -189,7 +189,7 @@ int Complex<T>::convertFloatToText(T f, char * buffer, int bufferSize,
   if (mode == Expression::FloatDisplayMode::Default) {
     return convertFloatToText(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
   }
-  char tempBuffer[k_maxFloatBufferLength];
+  char tempBuffer[k_storedFloatBufferLength];
   int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
   /* if the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
@@ -338,8 +338,8 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
 
   // Compute mantissa
-  /* The number of digits in an integer is capped because the maximal integer is
-   * 2^31 - 1. As our mantissa is an integer, we assert that we stay beyond this
+  /* The number of digits in an int64_t is capped because the maximal integer is
+   * 2^63 - 1. As our mantissa is an integer, we assert that we stay beyond this
    * threshold during computation. */
   assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 63.0f)));
 
@@ -355,9 +355,9 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
-   int64_t truncatedMantissa = std::round(f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+   int64_t truncatedMantissa = f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   if (isinf(truncatedMantissa) || isnan(truncatedMantissa)) {
-    truncatedMantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    truncatedMantissa = std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
     truncatedMantissa = std::copysign(truncatedMantissa, f);
   }
   if (mantissa != truncatedMantissa) {
@@ -383,9 +383,9 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   // Supress the 0 on the right side of the mantissa
-  int dividend = std::fabs((T)mantissa);
-  int quotien = dividend/10;
-  int digit = dividend - quotien*10;
+  int64_t dividend = mantissa > 0 ? mantissa : -mantissa;
+  int64_t quotien = dividend/10;
+  int64_t digit = dividend - quotien*10;
   int minimumNumberOfCharsInMantissa = 1;
   while (digit == 0 && availableCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
       (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == Expression::FloatDisplayMode::Scientific)) {
@@ -404,16 +404,16 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   // Print mantissa
-  assert(availableCharsForMantissaWithSign < k_maxFloatBufferLength);
+  assert(availableCharsForMantissaWithSign < k_storedFloatBufferLength);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, mantissa, decimalMarkerPosition);
   if (displayMode == Expression::FloatDisplayMode::Decimal || exponentInBase10 == 0) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }
   // Print exponent
-  assert(availableCharsForMantissaWithSign < k_maxFloatBufferLength);
+  assert(availableCharsForMantissaWithSign < k_storedFloatBufferLength);
   buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
-  assert(numberOfCharExponent+availableCharsForMantissaWithSign+1 < k_maxFloatBufferLength);
+  assert(numberOfCharExponent+availableCharsForMantissaWithSign+1 < k_storedFloatBufferLength);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, exponentInBase10, -1);
   buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);

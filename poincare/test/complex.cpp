@@ -27,7 +27,7 @@ void assert_cartesian_complex_converts_to(T a, T b, const char * result, Express
   } else {
     Preferences::sharedPreferences()->setComplexFormat(format);
     Preferences::sharedPreferences()->setDisplayMode(mode);
-    Complex<T>::Cartesian(a, b).writeTextInBuffer(buffer, bufferSize);
+    Complex<T>::Cartesian(a, b).writeTextInBuffer(buffer, bufferSize, significantDigits);
   }
 
   for (int i=0; i<tagSize; i++) {

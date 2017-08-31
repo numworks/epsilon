@@ -264,6 +264,8 @@ QUIZ_CASE(poincare_function_evaluate) {
 #if MATRICES_ARE_DEFINED
   Complex<double> ag[9] = {Complex<double>::Float(1.0), Complex<double>::Float(4.0), Complex<double>::Float(7.0), Complex<double>::Float(2.0), Complex<double>::Float(5.0), Complex<double>::Float(8.0), Complex<double>::Float(3.0), Complex<double>::Float(-6.0), Complex<double>::Float(9.0)};
   assert_parsed_expression_evaluate_to("transpose([[1,2,3][4,5,-6][7,8,9]])", ag, 3, 3);
+  assert_parsed_expression_evaluate_to("transpose([[1,7,5][4,2,8]])", ag, 3, 2);
+  assert_parsed_expression_evaluate_to("transpose([[1,2][4,5][7,8]])", ag, 2, 3);
 #endif
 
   Complex<float> ah[1] = {Complex<float>::Float(2.325f)};

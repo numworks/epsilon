@@ -54,7 +54,7 @@ Evaluation<T> * Opposite::computeOnMatrix(Evaluation<T> * m) {
     Complex<T> entry = *(m->complexOperand(i));
     operands[i] = Complex<T>::Cartesian(-entry.a(), -entry.b());
   }
-  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, m->numberOfColumns(), m->numberOfRows());
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, m->numberOfRows(), m->numberOfColumns());
   delete[] operands;
   return matrix;
 }

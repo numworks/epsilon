@@ -188,7 +188,7 @@ Evaluation<T> * Evaluation<T>::createTranspose() const {
       operands[j*numberOfRows()+i] = *(complexOperand(i*numberOfColumns()+j));
     }
   }
-  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfRows(), numberOfColumns());
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfColumns(), numberOfRows());
   delete[] operands;
   return matrix;
 }

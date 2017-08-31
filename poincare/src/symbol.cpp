@@ -56,7 +56,7 @@ Expression::Type Symbol::type() const {
   return Expression::Type::Symbol;
 }
 
-const char Symbol::name() const {
+char Symbol::name() const {
   return m_name;
 }
 

@@ -64,7 +64,7 @@ template<typename T>
 ComplexMatrix<T> * ComplexMatrix<T>::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  return new ComplexMatrix((Complex<T> *)newOperands[0], m_numberOfColumns, m_numberOfRows);
+  return new ComplexMatrix((Complex<T> *)newOperands[0], m_numberOfRows, m_numberOfColumns);
 }
 
 template<typename T>

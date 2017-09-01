@@ -31,7 +31,7 @@ public:
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
   Type type() const override;
-  const char name() const;
+  char name() const;
   Expression * clone() const override;
   bool valueEquals(const Expression * e) const override;
   bool isMatrixSymbol() const;

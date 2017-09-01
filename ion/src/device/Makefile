@@ -5,7 +5,6 @@ ion/src/shared/software_version.o: SFLAGS += -DHEADER_SECTION="__attribute__((se
 
 objs += $(addprefix ion/src/shared/, \
   console_line.o \
-  events_keyboard.o \
   events_modifier.o \
 )
 
@@ -18,6 +17,7 @@ objs += $(addprefix ion/src/device/, \
   console.o \
   device.o\
   display.o\
+  events_keyboard.o\
   fcc_id.o\
   keyboard.o\
   led.o\

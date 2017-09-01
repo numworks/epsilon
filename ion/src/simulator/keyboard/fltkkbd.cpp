@@ -2,6 +2,7 @@
 #include "../init.h"
 #include "fltkkbd.h"
 #include <FL/Fl_Repeat_Button.H>
+#undef None // TODO: Remove me
 
 constexpr int KeyboardRows = 9;
 constexpr int KeyboardColumns = 6;

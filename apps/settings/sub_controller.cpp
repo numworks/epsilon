@@ -65,7 +65,7 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
-   * clicking on '6' on the serial number row. */
+   * clicking on '6' on the last row. */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1) {
     app()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;

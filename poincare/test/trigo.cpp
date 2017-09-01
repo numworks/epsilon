@@ -7,90 +7,18 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parse_trigo) {
-  {
-    Expression * e = Expression::parse("sin(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::Sine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("cos(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::Cosine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("tan(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::Tangent);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("cosh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicCosine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("sinh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicSine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("tanh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicTangent);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("acos(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::ArcCosine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("asin(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::ArcSine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("atan(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::ArcTangent);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("acosh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicArcCosine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("asinh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicArcSine);
-    delete e;
-    delete e2;
-  }
-  {
-    Expression * e = Expression::parse("atanh(0)");
-    Expression * e2 = e->simplify();
-    assert(e2->type() == Expression::Type::HyperbolicArcTangent);
-    delete e;
-    delete e2;
-  }
+  assert_parsed_simplified_expression_type("sin(0)", Expression::Type::Sine);
+  assert_parsed_simplified_expression_type("cos(0)", Expression::Type::Cosine);
+  assert_parsed_simplified_expression_type("tan(0)", Expression::Type::Tangent);
+  assert_parsed_simplified_expression_type("cosh(0)", Expression::Type::HyperbolicCosine);
+  assert_parsed_simplified_expression_type("sinh(0)", Expression::Type::HyperbolicSine);
+  assert_parsed_simplified_expression_type("tanh(0)", Expression::Type::HyperbolicTangent);
+  assert_parsed_simplified_expression_type("acos(0)", Expression::Type::ArcCosine);
+  assert_parsed_simplified_expression_type("asin(0)", Expression::Type::ArcSine);
+  assert_parsed_simplified_expression_type("atan(0)", Expression::Type::ArcTangent);
+  assert_parsed_simplified_expression_type("acosh(0)", Expression::Type::HyperbolicArcCosine);
+  assert_parsed_simplified_expression_type("asinh(0)", Expression::Type::HyperbolicArcSine);
+  assert_parsed_simplified_expression_type("atanh(0)", Expression::Type::HyperbolicArcTangent);
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {

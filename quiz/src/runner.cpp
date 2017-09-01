@@ -1,9 +1,10 @@
+#include "quiz.h"
 #include "symbols.h"
 #include <string.h>
 #include <kandinsky.h>
 #include <ion.h>
 
-void print(const char * message) {
+void quiz_print(const char * message) {
 #if QUIZ_USE_CONSOLE
   Ion::Console::writeLine(message);
 #else
@@ -23,11 +24,11 @@ void ion_app() {
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];
+    quiz_print(quiz_case_names[i]);
     c();
-    print(quiz_case_names[i]);
     i++;
   }
-  print("ALL TESTS FINISHED");
+  quiz_print("ALL TESTS FINISHED");
 #if !QUIZ_USE_CONSOLE
   while (1) {
     Ion::msleep(1000);

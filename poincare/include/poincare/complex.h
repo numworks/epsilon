@@ -3,6 +3,7 @@
 
 #include <poincare/evaluation.h>
 #include <poincare/preferences.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
@@ -17,8 +18,23 @@ namespace PrintFloat {
    * length to be written in bufferLength chars. If the integer is to small, the
    * empty chars on the left side are completed with '0'. If the integer is too
    * big, the printing stops when no more empty chars are available without
-   * returning any warning. */
-  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int64_t i, int decimalMarkerPosition);
+   * returning any warning.
+   * Warning: the buffer is not null terminated but is ensured to hold
+   * bufferLength chars. */
+  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize, int bufferLength, Integer i, int decimalMarkerPosition);
+
+  /* We here define the buffer size to write the lengthest printed float
+   * possible.
+   * At maximum, the number has 7 significant digits so, in the worst case it
+   * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
+   * shorter. */
+  constexpr static int k_printedFloatBufferLength = Expression::k_numberOfPrintedSignificantDigits+7+1;
+  constexpr static int k_storedFloatBufferLength = Expression::k_numberOfStoredSignificantDigits+7+1;
+  /* We here define the buffer size to write the lengthest printed complex
+   * possible.
+   * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1
+   * char) */
+  constexpr static int k_printedComplexBufferLength = 2*Expression::k_numberOfPrintedSignificantDigits+7+1;
 }
 
 template<typename T>
@@ -73,18 +89,6 @@ private:
   Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
-  /* We here define the buffer size to write the lengthest printed float
-   * possible.
-   * At maximum, the number has 7 significant digits so, in the worst case it
-   * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
-   * shorter. */
-  constexpr static int k_printedFloatBufferLength = Expression::k_numberOfPrintedSignificantDigits+7+1;
-  constexpr static int k_storedFloatBufferLength = Expression::k_numberOfStoredSignificantDigits+7+1;
-  /* We here define the buffer size to write the lengthest printed complex
-   * possible.
-   * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1
-   * char) */
-  constexpr static int k_printedComplexBufferLength = 2*Expression::k_numberOfPrintedSignificantDigits+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
   int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, int numberOfSignificantDigits) const;

@@ -12,6 +12,7 @@ extern "C" {
 
 #include "display/fltklcd.h"
 #include "keyboard/fltkkbd.h"
+#undef None // TODO: Remove me
 
 static FltkLCD * sDisplay;
 static FltkKbd * sKeyboard;

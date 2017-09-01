@@ -3,9 +3,11 @@ sudo: required
 matrix:
   include:
     - compiler: gcc
-      env: PLATFORM=device
+      env: PLATFORM=device EXT=elf
     - compiler: clang
-      env: PLATFORM=simulator
+      env: PLATFORM=simulator EXT=elf
+    - compiler: clang
+      env: PLATFORM=blackbox TOOLCHAIN=host-clang EXT=bin QUIZ_USE_CONSOLE=1
 
 os: linux
 before_install:
@@ -15,5 +17,6 @@ before_install:
 - if [ "$CXX" = "g++" ]; then export PATH=gcc-arm-none-eabi-6-2017-q2-update/bin:$PATH; fi
 - if [ "$PLATFORM" = "simulator" ]; then sudo apt-get install libfltk1.3-dev; fi
 script:
-- make clean && make app.elf
-- make clean && make test.elf
+- make clean && make app.$EXT
+- make clean && make test.$EXT
+- if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; fi

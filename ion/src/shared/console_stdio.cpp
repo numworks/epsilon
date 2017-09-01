@@ -9,7 +9,7 @@ char readChar() {
 }
 
 void writeChar(char c) {
-  printf("%c", c);
+  putchar(c);
   fflush(stdout);
 }
 

@@ -62,7 +62,7 @@ Evaluation<T> * Multiplication::computeOnMatrices(Evaluation<T> * m, Evaluation<
       operands[i*n->numberOfColumns()+j] = Complex<T>::Cartesian(a, b);
     }
   }
-  Evaluation<T> * result = new ComplexMatrix<T>(operands, n->numberOfColumns(), m->numberOfRows());
+  Evaluation<T> * result = new ComplexMatrix<T>(operands, m->numberOfRows(), n->numberOfColumns());
   delete[] operands;
   return result;
 }

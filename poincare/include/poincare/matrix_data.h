@@ -12,7 +12,7 @@ class Complex;
 class MatrixData {
 public:
   MatrixData(ListData * listData, bool clone);
-  MatrixData(Expression ** newOperands, int numberOfOperands, int m_numberOfColumns, int m_numberOfRows, bool cloneOperands);
+  MatrixData(Expression ** newOperands, int numberOfOperands, int m_numberOfRows, int m_numberOfColumns, bool cloneOperands);
   ~MatrixData();
   MatrixData(const MatrixData& other) = delete;
   MatrixData(MatrixData&& other) = delete;

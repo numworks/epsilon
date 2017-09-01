@@ -23,13 +23,13 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
   }
 }
 
-MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numberOfColumns, int numberOfRows, bool cloneOperands) :
+MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numberOfRows, int numberOfColumns, bool cloneOperands) :
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
   assert(newOperands != nullptr);
   m_operands = new Expression *[m_numberOfRows*m_numberOfColumns];
-  for (int i = 0; i < m_numberOfColumns*m_numberOfRows; i++) {
+  for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     if (cloneOperands) {
       m_operands[i] = i < numberOfOperands ? newOperands[i]->clone() : defaultExpression();
     } else {
@@ -44,7 +44,7 @@ Complex<double> * MatrixData::defaultExpression() {
 }
 
 MatrixData::~MatrixData() {
-  for (int i=0; i<m_numberOfColumns*m_numberOfRows; i++) {
+  for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
     // Warning: avoid deleting the defaultExpression
     if (m_operands[i] != defaultExpression()) {
       delete m_operands[i];

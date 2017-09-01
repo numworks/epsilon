@@ -65,7 +65,7 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) const {
- if (m->numberOfColumns() != m->numberOfRows()) {
+ if (m->numberOfRows() != m->numberOfColumns()) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T power = d->toScalar();

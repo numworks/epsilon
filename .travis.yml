@@ -3,7 +3,7 @@ sudo: required
 matrix:
   include:
     - compiler: gcc
-      env: EXT=elf
+      env: PLATFORM=device EXT=elf
     - compiler: clang
       env: PLATFORM=simulator EXT=elf
     - compiler: clang

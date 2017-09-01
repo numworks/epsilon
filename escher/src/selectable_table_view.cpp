@@ -60,11 +60,29 @@ void SelectableTableView::deselectTable() {
 }
 
 bool SelectableTableView::selectCellAtLocation(int i, int j) {
-  if (i < 0 || i >= dataSource()->numberOfColumns()) {
-    return false;
+  int nbrColumns = dataSource()->numberOfColumns();
+  int nbrRows    = dataSource()->numberOfRows();
+  if (i < 0) {
+    if (nbrColumns <= 2) {
+      return false;
+    }
+    i = nbrColumns-1;
+  } else if (i >= nbrColumns) {
+    if (nbrColumns <= 2) {
+      return false;
+    }
+    i = 0;
   }
-  if (j < 0 || j >= dataSource()->numberOfRows()) {
-    return false;
+  if (j < 0) {
+    if (nbrRows <= 2) {
+      return false;
+    }
+    j = nbrRows-1;
+  } else if (j >= nbrRows) {
+    if (nbrRows <= 2) {
+      return false;
+    }
+    j = 0;
   }
   unhighlightSelectedCell();
   int previousX = selectedColumn();

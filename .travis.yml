@@ -3,18 +3,15 @@ sudo: required
 matrix:
   include:
     - compiler: gcc
-      env: PLATFORM=device EXT=elf
+      env: EXT=elf
     - compiler: clang
       env: PLATFORM=simulator EXT=elf
     - compiler: clang
       env: PLATFORM=blackbox TOOLCHAIN=host-clang EXT=bin QUIZ_USE_CONSOLE=1
 
 os: linux
-before_install:
-  # gcc-arm-none-eabi
-- if [ "$CXX" = "g++" ]; then wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2; fi
-- if [ "$CXX" = "g++" ]; then tar xfj gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2; fi
-- if [ "$CXX" = "g++" ]; then export PATH=gcc-arm-none-eabi-6-2017-q2-update/bin:$PATH; fi
+install:
+- if [ "$PLATFORM" = "device" ]; then wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && tar xfj gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && export PATH=gcc-arm-none-eabi-6-2017-q2-update/bin:$PATH; fi
 - if [ "$PLATFORM" = "simulator" ]; then sudo apt-get install libfltk1.3-dev; fi
 script:
 - make clean && make app.$EXT

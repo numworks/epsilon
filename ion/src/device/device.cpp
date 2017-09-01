@@ -67,7 +67,7 @@ void Ion::reset() {
 
 static inline char hex(uint8_t d) {
   if (d > 9) {
-    return 'A'+d;
+    return 'A'+d-10;
   }
   return '0'+d;
 }

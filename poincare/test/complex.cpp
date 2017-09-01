@@ -14,6 +14,8 @@ constexpr Expression::ComplexFormat Polar = Expression::ComplexFormat::Polar;
 
 template<typename T>
 void assert_cartesian_complex_converts_to(T a, T b, const char * result, Expression::FloatDisplayMode mode = Scientific, Expression::ComplexFormat format = Cartesian, int significantDigits = 7, int bufferSize = 13+13+7+1) {
+  quiz_print(result);
+
   int tagSize = 8;
   unsigned char tag = 'X';
   char * taggedBuffer = new char[bufferSize+2*tagSize];

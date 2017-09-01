@@ -8,143 +8,44 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parse_function) {
-  Expression * e = Expression::parse("abs(-1)");
-  assert(e->type() == Expression::Type::AbsoluteValue);
-  delete e;
-
-  char argText[10] = {'a', 'r', 'g', '(', '2', '+', Ion::Charset::IComplex, ')', 0};
-  e = Expression::parse(argText);
-  assert(e->type() == Expression::Type::ComplexArgument);
-  delete e;
-
-  e = Expression::parse("binomial(10, 4)");
-  assert(e->type() == Expression::Type::BinomialCoefficient);
-  delete e;
-
-  e = Expression::parse("ceil(0.2)");
-  assert(e->type() == Expression::Type::Ceiling);
-  delete e;
-
-  e = Expression::parse("diff(2*x, 2)");
-  assert(e->type() == Expression::Type::Derivative);
-  delete e;
-
+  assert_parsed_expression_type("abs(-1)", Expression::Type::AbsoluteValue);
+  assert_parsed_expression_type("arg(2+I)", Expression::Type::ComplexArgument);
+  assert_parsed_expression_type("binomial(10, 4)", Expression::Type::BinomialCoefficient);
+  assert_parsed_expression_type("ceil(0.2)", Expression::Type::Ceiling);
+  assert_parsed_expression_type("diff(2*x, 2)", Expression::Type::Derivative);
 #if MATRICES_ARE_DEFINED
-  e = Expression::parse("dim([[2]])");
-  assert(e->type() == Expression::Type::MatrixDimension);
-  delete e;
-
-  e = Expression::parse("det([[1,2,3][4,5,6][7,8,9]])");
-  assert(e->type() == Expression::Type::Determinant);
-  delete e;
+  assert_parsed_expression_type("dim([[2]])", Expression::Type::MatrixDimension);
+  assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", Expression::Type::Determinant);
 #endif
-
-  e = Expression::parse("confidence(0.1, 100)");
-  assert(e->type() == Expression::Type::ConfidenceInterval);
-  delete e;
-
-  e = Expression::parse("conj(2)");
-  assert(e->type() == Expression::Type::Conjugate);
-  delete e;
-
-  e = Expression::parse("floor(2.3)");
-  assert(e->type() == Expression::Type::Floor);
-  delete e;
-
-  e = Expression::parse("frac(2.3)");
-  assert(e->type() == Expression::Type::FracPart);
-  delete e;
-
-  e = Expression::parse("gcd(2,3)");
-  assert(e->type() == Expression::Type::GreatCommonDivisor);
-  delete e;
-
-  char imText[10] = {'i', 'm', '(', '2', '+', Ion::Charset::IComplex, ')', 0};
-  e = Expression::parse(imText);
-  assert(e->type() == Expression::Type::ImaginaryPart);
-  delete e;
-
-  e = Expression::parse("int(x, 2, 3)");
-  assert(e->type() == Expression::Type::Integral);
-  delete e;
-
+  assert_parsed_expression_type("confidence(0.1, 100)", Expression::Type::ConfidenceInterval);
+  assert_parsed_expression_type("conj(2)", Expression::Type::Conjugate);
+  assert_parsed_expression_type("floor(2.3)", Expression::Type::Floor);
+  assert_parsed_expression_type("frac(2.3)", Expression::Type::FracPart);
+  assert_parsed_expression_type("gcd(2,3)", Expression::Type::GreatCommonDivisor);
+  assert_parsed_expression_type("im(2+I)", Expression::Type::ImaginaryPart);
+  assert_parsed_expression_type("int(x, 2, 3)", Expression::Type::Integral);
 #if MATRICES_ARE_DEFINED
-  e = Expression::parse("inverse([[1,2,3][4,5,6][7,8,9]])");
-  assert(e->type() == Expression::Type::MatrixInverse);
-  delete e;
+  assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixInverse);
 #endif
-
-  e = Expression::parse("lcm(2,3)");
-  assert(e->type() == Expression::Type::LeastCommonMultiple);
-  delete e;
-
-  e = Expression::parse("ln(2)");
-  assert(e->type() == Expression::Type::NaperianLogarithm);
-  delete e;
-
-  e = Expression::parse("log(2)");
-  assert(e->type() == Expression::Type::Logarithm);
-  delete e;
-
-  e = Expression::parse("permute(10, 4)");
-  assert(e->type() == Expression::Type::PermuteCoefficient);
-  delete e;
-
-  e = Expression::parse("prediction(0.1, 100)");
-  assert(e->type() == Expression::Type::ConfidenceInterval);
-  delete e;
-
-  e = Expression::parse("prediction95(0.1, 100)");
-  assert(e->type() == Expression::Type::PredictionInterval);
-  delete e;
-
-  e = Expression::parse("product(n, 4, 10)");
-  assert(e->type() == Expression::Type::Product);
-  delete e;
-
-  e = Expression::parse("quo(29, 10)");
-  assert(e->type() == Expression::Type::DivisionQuotient);
-  delete e;
-
-  char reText[10] = {'r', 'e', '(', '2', '+', Ion::Charset::IComplex, ')', 0};
-  e = Expression::parse(reText);
-  assert(e->type() == Expression::Type::ReelPart);
-  delete e;
-
-  e = Expression::parse("rem(29, 10)");
-  assert(e->type() == Expression::Type::DivisionRemainder);
-  delete e;
-
-  e = Expression::parse("root(2,3)");
-  assert(e->type() == Expression::Type::NthRoot);
-  delete e;
-
-  char text[5] = {Ion::Charset::Root, '(', '2', ')', 0};
-  e = Expression::parse(text);
-  assert(e->type() == Expression::Type::SquareRoot);
-  delete e;
-
-  e = Expression::parse("round(2,3)");
-  assert(e->type() == Expression::Type::Round);
-  delete e;
-
-  e = Expression::parse("sum(n, 4, 10)");
-  assert(e->type() == Expression::Type::Sum);
-  delete e;
-
+  assert_parsed_expression_type("lcm(2,3)", Expression::Type::LeastCommonMultiple);
+  assert_parsed_expression_type("ln(2)", Expression::Type::NaperianLogarithm);
+  assert_parsed_expression_type("log(2)", Expression::Type::Logarithm);
+  assert_parsed_expression_type("permute(10, 4)", Expression::Type::PermuteCoefficient);
+  assert_parsed_expression_type("prediction(0.1, 100)", Expression::Type::ConfidenceInterval);
+  assert_parsed_expression_type("prediction95(0.1, 100)", Expression::Type::PredictionInterval);
+  assert_parsed_expression_type("product(n, 4, 10)", Expression::Type::Product);
+  assert_parsed_expression_type("quo(29, 10)", Expression::Type::DivisionQuotient);
+  assert_parsed_expression_type("re(2+I)", Expression::Type::ReelPart);
+  assert_parsed_expression_type("rem(29, 10)", Expression::Type::DivisionRemainder);
+  assert_parsed_expression_type("root(2,3)", Expression::Type::NthRoot);
+  assert_parsed_expression_type("R(2)", Expression::Type::SquareRoot);
+  assert_parsed_expression_type("round(2,3)", Expression::Type::Round);
+  assert_parsed_expression_type("sum(n, 4, 10)", Expression::Type::Sum);
 #if MATRICES_ARE_DEFINED
-  e = Expression::parse("trace([[1,2,3][4,5,6][7,8,9]])");
-  assert(e->type() == Expression::Type::MatrixTrace);
-  delete e;
-
-  e = Expression::parse("transpose([[1,2,3][4,5,6][7,8,9]])");
-  assert(e->type() == Expression::Type::MatrixTranspose);
-  delete e;
+  assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixTrace);
+  assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixTranspose);
 #endif
-
-  e = Expression::parse("6!");
-  assert(e->type() == Expression::Type::Factorial);
-  delete e;
+  assert_parsed_expression_type("6!", Expression::Type::Factorial);
 }
 
 

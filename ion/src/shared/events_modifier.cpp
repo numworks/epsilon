@@ -24,6 +24,7 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
 }
 
 void updateModifiersFromEvent(Event e) {
+  assert(e.isKeyboardEvent());
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
       if (e == Shift) {

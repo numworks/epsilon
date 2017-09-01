@@ -3,8 +3,8 @@ extern "C" {
 #include <stdio.h>
 #include <unistd.h>
 }
+#include <chrono>
 #include "init.h"
-#include <ion.h>
 #include <kandinsky.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -19,6 +19,12 @@ static KDFrameBuffer * sFrameBuffer;
 
 #define FRAMEBUFFER_ADDRESS (sDisplay->m_framebuffer)
 
+Ion::Events::Event currentEvent = Ion::Events::None;
+
+void terminateHandler(Fl_Widget *) {
+  currentEvent = Ion::Events::Termination;
+}
+
 void init_platform() {
   Fl::visual(FL_RGB);
 
@@ -28,6 +34,7 @@ void init_platform() {
   int keyboard_height = screen_width;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
+  window->callback(terminateHandler);
 
 #if defined(_WIN32) || defined(_WIN64)
   Fl::set_font(FL_SYMBOL, "Arial Unicode MS");
@@ -72,6 +79,25 @@ Ion::Keyboard::State Ion::Keyboard::scan() {
 
   }
   return result;
+}
+
+Ion::Events::Event Ion::Events::getEvent(int * timeout) {
+  auto last = std::chrono::high_resolution_clock::now();
+  do {
+    sDisplay->redraw();
+    Fl::wait(*timeout / 1000.0);
+    auto next = std::chrono::high_resolution_clock::now();
+    long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(next - last).count();
+    last = next;
+    if (elapsed > *timeout) {
+      *timeout = 0;
+    } else {
+      *timeout -= elapsed;
+    }
+  } while (*timeout && currentEvent == None);
+  Event event = currentEvent;
+  currentEvent = None;
+  return event;
 }
 
 #include <chrono>

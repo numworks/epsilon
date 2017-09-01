@@ -4,6 +4,9 @@
 #include <ion.h>
 
 void print(const char * message) {
+#if QUIZ_USE_CONSOLE
+  Ion::Console::writeLine(message);
+#else
   static int line_y = 0;
   KDContext * ctx = KDIonContext::sharedContext();
   int line_height = KDText::stringSize("M").height();
@@ -13,6 +16,7 @@ void print(const char * message) {
     line_y = 0;
     // Clear screen maybe?
   }
+#endif
 }
 
 void ion_app() {
@@ -24,7 +28,9 @@ void ion_app() {
     i++;
   }
   print("ALL TESTS FINISHED");
+#if !QUIZ_USE_CONSOLE
   while (1) {
     Ion::msleep(1000);
   }
+#endif
 }

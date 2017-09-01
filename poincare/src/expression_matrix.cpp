@@ -16,9 +16,9 @@ ExpressionMatrix::ExpressionMatrix(MatrixData * matrixData) :
 {
 }
 
-ExpressionMatrix::ExpressionMatrix(Expression ** newOperands, int numberOfOperands, int numberOfColumns, int numberOfRows, bool cloneOperands)
+ExpressionMatrix::ExpressionMatrix(Expression ** newOperands, int numberOfOperands, int numberOfRows, int numberOfColumns, bool cloneOperands)
 {
-  m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfColumns, numberOfRows, cloneOperands);
+  m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfRows, numberOfColumns, cloneOperands);
 }
 
 ExpressionMatrix::~ExpressionMatrix() {
@@ -60,7 +60,7 @@ Expression::Type ExpressionMatrix::type() const {
 Expression * ExpressionMatrix::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  return new ExpressionMatrix(newOperands, numberOfOperands, numberOfColumns(), numberOfRows(), cloneOperands);
+  return new ExpressionMatrix(newOperands, numberOfOperands, numberOfRows(), numberOfColumns(), cloneOperands);
 }
 
 template<typename T>

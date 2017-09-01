@@ -31,7 +31,7 @@ const Expression * Evaluation<T>::operand(int i) const {
 
 template<typename T>
 Evaluation<T> * Evaluation<T>::createTrace() const {
-  if (numberOfColumns() != numberOfRows()) {
+  if (numberOfRows() != numberOfColumns()) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   int dim = numberOfRows();
@@ -45,7 +45,7 @@ Evaluation<T> * Evaluation<T>::createTrace() const {
 template<typename T>
 // TODO: implement determinant for complex matrix?
 Evaluation<T> * Evaluation<T>::createDeterminant() const {
-  if (numberOfColumns() != numberOfRows()) {
+  if (numberOfRows() != numberOfColumns()) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   int dim = numberOfRows();
@@ -107,7 +107,7 @@ Evaluation<T> * Evaluation<T>::createDeterminant() const {
 
 template<typename T>
 Evaluation<T> * Evaluation<T>::createInverse() const {
-  if (numberOfColumns() != numberOfRows()) {
+  if (numberOfRows() != numberOfColumns()) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   int dim = numberOfRows();
@@ -175,6 +175,7 @@ Evaluation<T> * Evaluation<T>::createInverse() const {
     delete[] inv[i];
   }
   delete[] inv;
+  // Intentionally swapping dimensions for inverse, although it doesn't make a difference because it is square
   Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfColumns(), numberOfRows());
   delete[] operands;
   return matrix;
@@ -188,7 +189,8 @@ Evaluation<T> * Evaluation<T>::createTranspose() const {
       operands[j*numberOfRows()+i] = *(complexOperand(i*numberOfColumns()+j));
     }
   }
-  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfRows(), numberOfColumns());
+  // Intentionally swapping dimensions for transpose
+  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, numberOfColumns(), numberOfRows());
   delete[] operands;
   return matrix;
 }

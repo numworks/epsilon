@@ -12,7 +12,7 @@ static uint32_t crc32(uint32_t crc, uint8_t data) {
 
 uint32_t Ion::crc32(const uint32_t * data, size_t length) {
   uint32_t crc = 0xFFFFFFFF;
-  for (int i=0; i<length; i++) {
+  for (size_t i=0; i<length; i++) {
     // FIXME: Assumes little-endian byte order!
     crc = ::crc32(crc, (uint8_t)((data[i] >> 24) & 0xFF));
     crc = ::crc32(crc, (uint8_t)((data[i] >> 16) & 0xFF));

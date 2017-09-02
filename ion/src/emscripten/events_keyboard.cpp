@@ -56,6 +56,66 @@ Event getEvent(int * timeout) {
   SDL_Event event;
   if (SDL_PollEvent(&event)) {
     if (event.type == SDL_KEYDOWN) {
+      if (event.key.keysym.mod & KMOD_CTRL) {
+        switch (event.key.keysym.sym) {
+          case SDLK_BACKSPACE:
+            return Clear;
+          case SDLK_x:
+            return Cut;
+          case SDLK_c:
+            return Copy;
+          case SDLK_v:
+            return Paste;
+        }
+      }
+      if (event.key.keysym.mod & KMOD_ALT) {
+        if (event.key.keysym.mod & KMOD_SHIFT) {
+          switch (event.key.keysym.sym) {
+            case SDLK_s:
+              return Arcsine;
+            case SDLK_c:
+              return Arccosine;
+            case SDLK_t:
+              return Arctangent;
+          }
+        }
+        switch (event.key.keysym.sym) {
+          case SDLK_ESCAPE:
+            return Home;
+          case SDLK_RETURN:
+            return OK;
+          case SDLK_v:
+            return Var;
+          case SDLK_BACKSPACE:
+            return Clear;
+          case SDLK_x:
+            return Exp;
+          case SDLK_n:
+            return Ln;
+          case SDLK_l:
+            return Log;
+          case SDLK_i:
+            return Imaginary;
+          case SDLK_EQUALS:
+            return Sto;
+          case SDLK_s:
+            return Sine;
+          case SDLK_c:
+            return Cosine;
+          case SDLK_t:
+            return Tangent;
+          case SDLK_p:
+            return Pi;
+          case SDLK_r:
+            return Sqrt;
+          case SDLK_2:
+            return Square;
+          case SDLK_e:
+            return EE;
+          case SDLK_a:
+            return Ans;
+        }
+      }
       switch(event.key.keysym.sym) {
         case SDLK_UP:
           return Up;
@@ -69,6 +129,8 @@ Event getEvent(int * timeout) {
           return EXE;
         case SDLK_ESCAPE:
           return Back;
+        case SDLK_TAB:
+          return Toolbox;
         case SDLK_BACKSPACE:
           return Backspace;
       }

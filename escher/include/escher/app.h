@@ -30,6 +30,16 @@ public:
   };
   class Snapshot {
   public:
+    class Register {
+    public:
+      Register(Snapshot * s);
+      Register * getNext();
+      Snapshot * getSnapshot();
+      static Register * getList();
+    private:
+      Register * m_listNext;
+      Snapshot * m_snapshot;
+    };
     virtual App * unpack(Container * container) = 0;
     void pack(App * app);
     /* reset all instances to their initial values */

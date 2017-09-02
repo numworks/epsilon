@@ -23,14 +23,7 @@ AppsContainer::AppsContainer() :
   m_backlightDimmingTimer(),
   m_hardwareTestSnapshot(),
   m_onBoardingSnapshot(),
-  m_homeSnapshot(),
-  m_calculationSnapshot(),
-  m_graphSnapshot(),
-  m_sequenceSnapshot(),
-  m_settingsSnapshot(),
-  m_statisticsSnapshot(),
-  m_probabilitySnapshot(),
-  m_regressionSnapshot()
+  m_homeSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
@@ -42,27 +35,23 @@ bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
 }
 
 int AppsContainer::numberOfApps() {
-  return k_numberOfCommonApps;
+  return m_numberOfCommonApps;
+}
+
+void AppsContainer::registerAppSnapshot(App::Snapshot *s) {
+  assert(m_numberOfCommonApps < k_maxNumberOfCommonApps);
+  m_commonAppSnapshots[m_numberOfCommonApps++] = s;
 }
 
 App::Snapshot * AppsContainer::appSnapshotAtIndex(int index) {
-  if (index < 0) {
+  if (index < 0 || index >= m_numberOfCommonApps) {
     return nullptr;
   }
-  App::Snapshot * snapshots[] = {
-    &m_homeSnapshot,
-    &m_calculationSnapshot,
-    &m_graphSnapshot,
-    &m_sequenceSnapshot,
-    &m_settingsSnapshot,
-    &m_statisticsSnapshot,
-    &m_probabilitySnapshot,
-    &m_regressionSnapshot,
-    &m_codeSnapshot
-  };
-  assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
-  assert(index >= 0 && index < k_numberOfCommonApps);
-  return snapshots[index];
+  return m_commonAppSnapshots[index];
+}
+
+App::Snapshot * AppsContainer::homeAppSnapshot() {
+  return &m_homeSnapshot;
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
@@ -75,7 +64,7 @@ App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
 
 void AppsContainer::reset() {
   Clipboard::sharedClipboard()->reset();
-  for (int i = 0; i < k_numberOfCommonApps; i++) {
+  for (int i = 0; i < m_numberOfCommonApps; i++) {
     appSnapshotAtIndex(i)->reset();
   }
 }
@@ -130,7 +119,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 
 bool AppsContainer::processEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    switchTo(appSnapshotAtIndex(0));
+    switchTo(&m_homeSnapshot);
     return true;
   }
   if (event == Ion::Events::OnOff) {
@@ -161,7 +150,7 @@ void AppsContainer::run() {
   switchTo(onBoardingAppSnapshot());
 #else
   refreshPreferences();
-  switchTo(appSnapshotAtIndex(0));
+  switchTo(&m_homeSnapshot);
 #endif
   Container::run();
   switchTo(nullptr);

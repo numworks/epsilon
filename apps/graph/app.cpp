@@ -86,4 +86,6 @@ Context * App::localContext() {
   return TextFieldDelegateApp::localContext();
 }
 
+static App::Snapshot::Register r(new App::Snapshot());
+
 }

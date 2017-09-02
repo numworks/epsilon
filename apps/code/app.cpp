@@ -56,4 +56,6 @@ void App::didBecomeActive(Window * window) {
   displayModalViewController(&m_betaVersionController, 0.5f, 0.5f);
 }
 
+static App::Snapshot::Register r(new App::Snapshot());
+
 }

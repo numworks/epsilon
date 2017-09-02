@@ -16,6 +16,27 @@ const Image * App::Descriptor::icon() {
   return nullptr;
 }
 
+static App::Snapshot::Register *s_registerListHead;
+
+App::Snapshot::Register::Register(App::Snapshot *s) :
+  m_listNext(s_registerListHead),
+  m_snapshot(s)
+{
+  s_registerListHead = this;
+}
+
+App::Snapshot::Register* App::Snapshot::Register::getNext() {
+  return m_listNext;
+}
+
+App::Snapshot* App::Snapshot::Register::getSnapshot() {
+  return m_snapshot;
+}
+
+App::Snapshot::Register* App::Snapshot::Register::getList() {
+  return s_registerListHead;
+}
+
 void App::Snapshot::pack(App * app) {
   tidy();
   delete app;

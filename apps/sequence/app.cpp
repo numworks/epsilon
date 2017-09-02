@@ -88,4 +88,6 @@ const char * App::XNT() {
   return "n";
 }
 
+static App::Snapshot::Register r(new App::Snapshot());
+
 }

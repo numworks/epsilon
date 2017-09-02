@@ -54,4 +54,6 @@ Context * App::localContext() {
   return &m_localContext;
 }
 
+static App::Snapshot::Register r(new App::Snapshot());
+
 }

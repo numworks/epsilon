@@ -32,4 +32,6 @@ App::App(Container * container, Snapshot * snapshot) :
 {
 }
 
+static App::Snapshot::Register r(new App::Snapshot());
+
 }

@@ -48,7 +48,7 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container,
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()));
     return true;
   }
   return false;
@@ -96,19 +96,19 @@ int Controller::reusableCellCount() {
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
-  int appIndex = (j*k_numberOfColumns+i)+1;
+  int appIndex = (j*k_numberOfColumns+i);
   if (appIndex >= m_container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex((j*k_numberOfColumns+i)+1)->descriptor();
+    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex(j*k_numberOfColumns+i)->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }
 
 int Controller::numberOfIcons() {
   assert(m_container->numberOfApps() > 0);
-  return m_container->numberOfApps() - 1;
+  return m_container->numberOfApps();
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
@@ -128,7 +128,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * unvisible. This trick does not create an endless loop as we ensure not to
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
-  int appIndex = (t->selectedRow()*k_numberOfColumns+t->selectedColumn())+1;
+  int appIndex = (t->selectedRow()*k_numberOfColumns+t->selectedColumn());
   if (appIndex >= m_container->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }

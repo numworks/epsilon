@@ -136,7 +136,7 @@ int MainController::typeAtLocation(int i, int j) {
     return 1;
   }
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (j == 5) {
+  if (j == 6) {
     return 2;
   }
 #endif
@@ -165,7 +165,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (index == 5) {
+  if (index == 6) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());

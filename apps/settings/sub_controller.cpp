@@ -196,8 +196,6 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
   }
   if (message == I18n::Message::Theme) {
     Preferences::sharedPreferences()->setTheme((Expression::Theme)valueIndex);
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->suspend();
   }
   if (message == I18n::Message::Language) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));

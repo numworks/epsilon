@@ -1,7 +1,7 @@
 #include <escher/palette.h>
 
-constexpr KDColor Palette:: YellowDark;
-constexpr KDColor Palette:: YellowLight;
+constexpr KDColor Palette::YellowDark;
+constexpr KDColor Palette::YellowLight;
 constexpr KDColor Palette::BlueDark;
 constexpr KDColor Palette::BlueLight;
 constexpr KDColor Palette::GreenDark;

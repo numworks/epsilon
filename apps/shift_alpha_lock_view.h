@@ -17,7 +17,7 @@ private:
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;
   LockView m_lockView;
-  MessageTextView m_alphaView;
+  MessageTextView m_modifierView;
   Ion::Events::ShiftAlphaStatus m_status;
 };
 

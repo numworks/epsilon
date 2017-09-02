@@ -15,7 +15,7 @@ public:
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
-  bool setAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
+  bool setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
   void refreshPreferences();
 private:
   constexpr static KDCoordinate k_batteryRightMargin = 5;
@@ -29,7 +29,7 @@ private:
   View * subviewAtIndex(int index) override;
   MessageTextView m_titleView;
   BatteryView m_batteryView;
-  ShiftAlphaLockView m_alphaLockView;
+  ShiftAlphaLockView m_shiftAlphaLockView;
   BufferTextView m_preferenceView;
   ImageView m_examModeIconView;
 };

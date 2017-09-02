@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "battery_view.h"
-#include "alpha_lock_view.h"
+#include "shift_alpha_lock_view.h"
 #include "i18n.h"
 
 class TitleBarView : public View {

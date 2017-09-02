@@ -1,8 +1,8 @@
-#include "alpha_lock_view.h"
+#include "shift_alpha_lock_view.h"
 
 AlphaLockView::AlphaLockView() :
   View(),
-  m_alphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_modifierView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
@@ -14,18 +14,21 @@ void AlphaLockView::drawRect(KDContext * ctx, KDRect rect) const {
 bool AlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
   if (status != m_status) {
     m_status = status;
-    switch (status) {
+    switch (m_status) {
       case Ion::Events::ShiftAlphaStatus::Alpha:
       case Ion::Events::ShiftAlphaStatus::AlphaLock:
       case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
-        m_alphaView.setMessage(I18n::Message::Alpha);
+        m_modifierView.setMessage(I18n::Message::Alpha);
         break;
       case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
       case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
-        m_alphaView.setMessage(I18n::Message::CapitalAlpha);
+        m_modifierView.setMessage(I18n::Message::CapitalAlpha);
         break;
-      default:
-        m_alphaView.setMessage(I18n::Message::Default);
+      case Ion::Events::ShiftAlphaStatus::Shift:
+        m_modifierView.setMessage(I18n::Message::Shift);
+        break;
+      case Ion::Events::ShiftAlphaStatus::Default:
+        m_modifierView.setMessage(I18n::Message::Default);
         break;
     }
     markRectAsDirty(bounds());
@@ -35,37 +38,38 @@ bool AlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
 }
 
 KDSize AlphaLockView::minimalSizeForOptimalDisplay() const {
-  KDSize alphaSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha));
+  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
-  KDCoordinate height = lockSize.height() > alphaSize.height() ? lockSize.height() : alphaSize.height();
-  return KDSize(alphaSize.width() + lockSize.width() + k_lockRightMargin, height);
+  KDCoordinate height = lockSize.height() > modifierSize.height() ? lockSize.height() : modifierSize.height();
+  return KDSize(modifierSize.width() + lockSize.width() + k_lockRightMargin, height);
 }
 
 int AlphaLockView::numberOfSubviews() const {
   switch (m_status) {
     case Ion::Events::ShiftAlphaStatus::Alpha:
+    case Ion::Events::ShiftAlphaStatus::Shift:
     case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
       return 1;
     case Ion::Events::ShiftAlphaStatus::AlphaLock:
     case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
     case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
       return 2;
-    default:
+    case Ion::Events::ShiftAlphaStatus::Default:
       return 0;
   }
 }
 
 View * AlphaLockView::subviewAtIndex(int index) {
   if (index == 0) {
-    return &m_alphaView;
+    return &m_modifierView;
   }
   return &m_lockView;
 }
 
 void AlphaLockView::layoutSubviews() {
-  KDSize alphaSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
-  m_alphaView.setFrame(KDRect(bounds().width() - alphaSize.width(), (bounds().height()- alphaSize.height())/2, alphaSize));
+  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
+  m_modifierView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize));
 
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
-  m_lockView.setFrame(KDRect(bounds().width() - alphaSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize));
+  m_lockView.setFrame(KDRect(bounds().width() - modifierSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize));
 }

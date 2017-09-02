@@ -7,6 +7,14 @@ class Palette {
 public:
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
   constexpr static KDColor YellowLight = KDColor::RGB24(0xffcc7b);
+  // Start additional theme colors
+  constexpr static KDColor BlueDark = KDColor::RGB24(0x1976D2);
+  constexpr static KDColor BlueLight = KDColor::RGB24(0x2196F3);
+  constexpr static KDColor GreenDark = KDColor::RGB24(0x388E3C);
+  constexpr static KDColor GreenLight = KDColor::RGB24(0x4CAF50);
+  constexpr static KDColor RedDark = KDColor::RGB24(0xd32f2f);
+  constexpr static KDColor RedLight = KDColor::RGB24(0xf44336);
+  // End additional theme colors
   constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);
   constexpr static KDColor PurpleDark = KDColor::RGB24(0x414147);
   constexpr static KDColor GreyWhite = KDColor::RGB24(0xf5f5f5);

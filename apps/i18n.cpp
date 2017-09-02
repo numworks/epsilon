@@ -25,7 +25,7 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[239][5] {
+const char * messages[244][5] {
   {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
   {"Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar"},
   {"Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar"},
@@ -263,6 +263,11 @@ const char * messages[239][5] {
   {"Angle measure", "Unite d'angle", "Medida del angulo", "Winkeleinheit", "Valor do angulo"},
   {"Result format", "Format resultat", "Formato resultado", "Zahlenformat", "Formato numerico"},
   {"Complex format", "Forme complexe", "Formato complejo", "Komplex", "Complexos"},
+  {"Theme", "Theme", "Theme", "Theme", "Theme"},
+  {"Yellow ", "Yellow ", "Yellow ", "Yellow ", "Yellow "},
+  {"Blue ", "Blue ", "Blue ", "Blue ", "Blue "},
+  {"Green ", "Green ", "Green ", "Green ", "Green "},
+  {"Red ", "Red ", "Red ", "Red ", "Red "},
   {"Language", "Langue", "Idioma", "Sprache", "Idioma"},
   {"Exam mode", "Mode examen", "Modo examen", "Testmodus", "Modo de Exame"},
   {"Activate exam mode", "Activer le mode examen", "Activar el modo examen", "Start Testmodus", "Inicio modo de exame"},

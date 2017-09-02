@@ -1,7 +1,9 @@
 #include "box_view.h"
 #include <assert.h>
 #include <cmath>
+#include <poincare/preferences.h>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
@@ -75,7 +77,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, 2);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Preferences::sharedPreferences()->themeDarkColor(), 2);
   }
 }
 

@@ -1,6 +1,8 @@
 #include "law_curve_view.h"
 #include <assert.h>
+#include <poincare/preferences.h>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Probability {
@@ -22,9 +24,9 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
   if (m_law->isContinuous()) {
-    drawCurve(ctx, rect, m_law, Palette::YellowDark, true, lowerBound, upperBound, true);
+    drawCurve(ctx, rect, m_law, Preferences::sharedPreferences()->themeDarkColor(), true, lowerBound, upperBound, true);
   } else {
-    drawHistogram(ctx, rect, m_law, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
+    drawHistogram(ctx, rect, m_law, 0, 1, false, Palette::GreyMiddle, Preferences::sharedPreferences()->themeDarkColor(), lowerBound, upperBound+0.5f);
   }
 }
 

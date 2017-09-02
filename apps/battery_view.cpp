@@ -1,4 +1,7 @@
 #include "battery_view.h"
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 const uint8_t flashMask[BatteryView::k_flashHeight][BatteryView::k_flashWidth] = {
   {0xDB, 0x00, 0x00, 0xFF},
@@ -65,22 +68,22 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
    *'content' depends on the charge */
   ctx->fillRect(KDRect(0, 0, k_elementWidth, k_batteryHeight), KDColorWhite);
   if (m_isCharging) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Palette::YellowLight);
+    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Preferences::sharedPreferences()->themeLightColor());
     KDRect frame((k_batteryWidth-k_flashWidth)/2, 0, k_flashWidth, k_flashHeight);
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, s_flashWorkingBuffer);
   }
   if (!m_isCharging && m_isPlugged && m_chargeState == Ion::Battery::Charge::FULL) {
     ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), KDColorWhite);
     KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);
-    ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, s_tickWorkingBuffer);
+    ctx->blendRectWithMask(frame, Preferences::sharedPreferences()->themeDarkColor(), (const uint8_t *)tickMask, s_tickWorkingBuffer);
   }
   if (!m_isCharging && m_chargeState == Ion::Battery::Charge::LOW) {
     ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);
-    ctx->fillRect(KDRect(3*k_elementWidth+k_separatorThickness, 0, k_batteryWidth-5*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Palette::YellowLight);
+    ctx->fillRect(KDRect(3*k_elementWidth+k_separatorThickness, 0, k_batteryWidth-5*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Preferences::sharedPreferences()->themeLightColor());
   }
   if (!m_isCharging && m_chargeState == Ion::Battery::Charge::SOMEWHERE_INBETWEEN) {
     ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, (k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, k_batteryHeight), KDColorWhite);
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness+(k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, 0, (k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, k_batteryHeight), Palette::YellowLight);
+    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness+(k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, 0, (k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, k_batteryHeight), Preferences::sharedPreferences()->themeLightColor());
   }
   if (!m_isCharging && !m_isPlugged && m_chargeState == Ion::Battery::Charge::FULL) {
     ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), KDColorWhite);

@@ -25,7 +25,7 @@ private:
   const char * firstAvailableName() override;
   const KDColor firstAvailableColor() override;
   static constexpr KDColor k_defaultColors[k_maxNumberOfFunctions] = {
-    Palette::Red, Palette::Blue,  Palette::YellowDark, Palette::Magenta,
+    Palette::Red, Palette::Blue, Palette::YellowDark, Palette::Magenta,
     //Palette::Pink, Palette::Turquoise, Palette::Orange,  Palette::Green
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {

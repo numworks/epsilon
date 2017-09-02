@@ -16,22 +16,24 @@ const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Defau
 const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::Spanish), SettingsNode(I18n::Message::German), SettingsNode(I18n::Message::Portuguese)};
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
+const SettingsNode themeChildren[4] = {SettingsNode(I18n::Message::ThemeYellow), SettingsNode(I18n::Message::ThemeBlue), SettingsNode(I18n::Message::ThemeGreen), SettingsNode(I18n::Message::ThemeRed)};
 
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsNode menu[7] =
+const SettingsNode menu[8] =
 #else
-const SettingsNode menu[6] =
+const SettingsNode menu[7] =
 #endif
   {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(I18n::Message::Theme, themeChildren, 4),
   SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
   SettingsNode(I18n::Message::UpdatePopUp),
 #endif
   SettingsNode(I18n::Message::About, aboutChildren, 3)};
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 8);
 #else
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 6);
+const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
 #endif
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
@@ -179,6 +181,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
       break;
     case 3:
+      myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)Preferences::sharedPreferences()->theme())->label());
+      break;
+    case 4:
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language()-1)->label());
       break;
     default:

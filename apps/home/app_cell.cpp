@@ -1,5 +1,8 @@
 #include "app_cell.h"
 #include <assert.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 namespace Home {
 
@@ -47,7 +50,7 @@ void AppCell::setVisible(bool visible) {
 void AppCell::reloadCell() {
   HighlightCell::reloadCell();
   m_nameView.setTextColor(isHighlighted() ? KDColorWhite : KDColorBlack);
-  m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
+  m_nameView.setBackgroundColor(isHighlighted() ? Preferences::sharedPreferences()->themeDarkColor() : KDColorWhite);
 }
 
 }

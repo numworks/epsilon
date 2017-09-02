@@ -1,5 +1,8 @@
 #include <escher/switch_view.h>
 #include <escher/palette.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 const uint8_t switchMask[SwitchView::k_switchHeight][SwitchView::k_switchWidth] = {
   {0xFF, 0xFF, 0xE1, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF},
@@ -57,7 +60,7 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate switchHalfHeight = k_switchHeight/2;
 
-  KDColor mainColor = m_state ? Palette::YellowDark : Palette::GreyDark;
+  KDColor mainColor = m_state ? Preferences::sharedPreferences()->themeDarkColor() : Palette::GreyDark;
   KDRect frame(width - k_switchWidth, heightCenter -switchHalfHeight, k_switchWidth, k_switchHeight);
   ctx->blendRectWithMask(frame, mainColor, (const uint8_t *)switchMask, s_switchWorkingBuffer);
   KDCoordinate onOffX = width - (m_state ? k_switchWidth : k_onOffSize);

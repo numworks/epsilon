@@ -1,5 +1,8 @@
 #include <escher/chevron_view.h>
 #include <escher/palette.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 const uint8_t chevronMask[ChevronView::k_chevronHeight][ChevronView::k_chevronWidth] = {
   {0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
@@ -29,7 +32,7 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate chevronHalfHeight = k_chevronHeight/2;
   KDRect frame(width - k_chevronWidth, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
-  ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)chevronMask, s_workingBuffer);
+  ctx->blendRectWithMask(frame, Preferences::sharedPreferences()->themeDarkColor(), (const uint8_t *)chevronMask, s_workingBuffer);
 }
 
 KDSize ChevronView::minimalSizeForOptimalDisplay() const {

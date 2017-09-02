@@ -29,7 +29,7 @@ private:
   View * subviewAtIndex(int index) override;
   MessageTextView m_titleView;
   BatteryView m_batteryView;
-  AlphaLockView m_alphaLockView;
+  ShiftAlphaLockView m_alphaLockView;
   BufferTextView m_preferenceView;
   ImageView m_examModeIconView;
 };

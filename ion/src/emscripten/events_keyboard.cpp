@@ -5,7 +5,7 @@ extern "C" {
 #include <SDL/SDL.h>
 }
 
-Ion::Events::Event sEvent = Ion::Events::None;
+static Ion::Events::Event sEvent = Ion::Events::None;
 
 void IonEventsEmscriptenPushEvent(int eventNumber) {
   sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());

@@ -7,7 +7,7 @@
 
 LIBA_BEGIN_DECLS
 
-#if __GLIBC__
+#if (__GLIBC__ || __MINGW32__)
 size_t strlcpy(char * dst, const char * src, size_t len);
 #endif
 

@@ -20,7 +20,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   if (textLength() == 0 &&
       (event == Ion::Events::Multiplication ||
        event == Ion::Events::Plus ||
-       event == Ion::Events::Minus ||
        event == Ion::Events::Power ||
        event == Ion::Events::Square ||
        event == Ion::Events::Division)) {

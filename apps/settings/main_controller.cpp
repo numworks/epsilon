@@ -151,12 +151,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       m_complexFormatLayout = nullptr;
     }
     if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Cartesian) {
-      const char text[6] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
-      m_complexFormatLayout = new StringLayout(text, 6, KDText::FontSize::Small);
+      const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
+      m_complexFormatLayout = new StringLayout(text, sizeof(text), KDText::FontSize::Small);
     } else {
-      const char base[3] = {'r', Ion::Charset::Exponential, 0};
-      const char superscrit[4] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' ', 0};
-      m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, 4, KDText::FontSize::Small), new StringLayout(superscrit, 3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+      const char base[] = {'r', Ion::Charset::Exponential};
+      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
+      m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, sizeof(base), KDText::FontSize::Small), new StringLayout(superscript, sizeof(superscript), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
     myExpCell->setExpression(m_complexFormatLayout);

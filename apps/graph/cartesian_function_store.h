@@ -2,7 +2,7 @@
 #define GRAPH_CARTESIAN_FUNCTION_STORE_H
 
 #include "cartesian_function.h"
-#include "../shared/function_store.h"
+#include "apps/shared/function_store.h"
 #include <stdint.h>
 #include <escher.h>
 

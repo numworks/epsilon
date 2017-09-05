@@ -1,7 +1,7 @@
 #ifndef GRAPH_CARTESIAN_FUNCTION_H
 #define GRAPH_CARTESIAN_FUNCTION_H
 
-#include "../shared/function.h"
+#include "apps/shared/function.h"
 
 namespace Graph {
 

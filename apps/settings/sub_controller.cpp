@@ -1,8 +1,8 @@
 #include "sub_controller.h"
-#include "../global_preferences.h"
-#include "../apps_container.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include "apps/global_preferences.h"
+#include "apps/apps_container.h"
+#include "poincare/src/layout/baseline_relative_layout.h"
+#include "poincare/src/layout/string_layout.h"
 #include <assert.h>
 
 using namespace Poincare;

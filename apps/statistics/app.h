@@ -7,7 +7,7 @@
 #include "store.h"
 #include "store_controller.h"
 #include "histogram_controller.h"
-#include "../shared/text_field_delegate_app.h"
+#include "apps/shared/text_field_delegate_app.h"
 
 namespace Statistics {
 

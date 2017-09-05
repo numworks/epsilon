@@ -4,11 +4,11 @@
 #include <escher.h>
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
-#include "../../shared/function_expression_cell.h"
+#include "apps/shared/function_expression_cell.h"
 #include "type_parameter_controller.h"
-#include "../../shared/new_function_cell.h"
-#include "../../shared/list_controller.h"
-#include "../../shared/text_field_delegate.h"
+#include "apps/shared/new_function_cell.h"
+#include "apps/shared/list_controller.h"
+#include "apps/shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
 

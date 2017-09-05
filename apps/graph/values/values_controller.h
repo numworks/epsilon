@@ -3,8 +3,8 @@
 
 #include "../cartesian_function_store.h"
 #include "../function_title_cell.h"
-#include "../../shared/values_controller.h"
-#include "../../shared/interval_parameter_controller.h"
+#include "apps/shared/values_controller.h"
+#include "apps/shared/interval_parameter_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
 

@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
 #define SEQUENCE_LIST_PARAM_CONTROLLER_H
 
-#include "../../shared/list_parameter_controller.h"
+#include "apps/shared/list_parameter_controller.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
 #include "type_parameter_controller.h"

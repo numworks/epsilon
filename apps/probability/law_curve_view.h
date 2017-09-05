@@ -1,8 +1,8 @@
 #ifndef PROBABILITY_LAW_CURVE_VIEW_H
 #define PROBABILITY_LAW_CURVE_VIEW_H
 
-#include "../shared/curve_view.h"
-#include "../constant.h"
+#include "apps/shared/curve_view.h"
+#include "apps/constant.h"
 #include "law/law.h"
 #include "calculation/calculation.h"
 #include <escher.h>

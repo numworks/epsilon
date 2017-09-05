@@ -1,7 +1,7 @@
 #ifndef GRAPH_FUNCTION_TITLE_CELL_H
 #define GRAPH_FUNCTION_TITLE_CELL_H
 
-#include "../shared/function_title_cell.h"
+#include "apps/shared/function_title_cell.h"
 
 namespace Graph {
 

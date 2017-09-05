@@ -1,7 +1,7 @@
 #include "store_controller.h"
 #include "app.h"
-#include "../apps_container.h"
-#include "../constant.h"
+#include "apps/apps_container.h"
+#include "apps/constant.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>

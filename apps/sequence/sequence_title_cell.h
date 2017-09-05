@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_TITLE_CELL_H
 #define SEQUENCE_SEQUENCE_TITLE_CELL_H
 
-#include "../shared/function_title_cell.h"
+#include "apps/shared/function_title_cell.h"
 
 namespace Sequence {
 

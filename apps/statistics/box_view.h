@@ -4,8 +4,8 @@
 #include <escher.h>
 #include "store.h"
 #include "box_range.h"
-#include "../constant.h"
-#include "../shared/curve_view.h"
+#include "apps/constant.h"
+#include "apps/shared/curve_view.h"
 
 namespace Statistics {
 

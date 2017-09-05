@@ -1,6 +1,6 @@
 #include "app.h"
 #include "stat_icon.h"
-#include "../i18n.h"
+#include "apps/i18n.h"
 
 using namespace Shared;
 

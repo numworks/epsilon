@@ -2,7 +2,7 @@
 #define SEQUENCE_BANNER_VIEW_H
 
 #include <escher.h>
-#include "../../shared/banner_view.h"
+#include "apps/shared/banner_view.h"
 
 namespace Sequence {
 

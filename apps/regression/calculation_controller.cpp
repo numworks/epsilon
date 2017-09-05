@@ -1,6 +1,6 @@
 #include "calculation_controller.h"
-#include "../constant.h"
-#include "../apps_container.h"
+#include "apps/constant.h"
+#include "apps/apps_container.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include <poincare.h>

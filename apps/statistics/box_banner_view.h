@@ -2,8 +2,8 @@
 #define STATISTICS_BOX_BANNER_VIEW_H
 
 #include <escher.h>
-#include "../shared/banner_view.h"
-#include "../i18n.h"
+#include "apps/shared/banner_view.h"
+#include "apps/i18n.h"
 
 namespace Statistics {
 

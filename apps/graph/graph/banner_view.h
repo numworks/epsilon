@@ -1,7 +1,7 @@
 #ifndef GRAPH_BANNER_VIEW_H
 #define GRAPH_BANNER_VIEW_H
 
-#include "../../shared/banner_view.h"
+#include "apps/shared/banner_view.h"
 
 namespace Graph {
 

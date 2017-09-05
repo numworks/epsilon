@@ -1,6 +1,6 @@
 #include "sequence_toolbox.h"
-#include "../../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../../poincare/src/layout/string_layout.h"
+#include "poincare/src/layout/baseline_relative_layout.h"
+#include "poincare/src/layout/string_layout.h"
 #include <assert.h>
 
 using namespace Poincare;

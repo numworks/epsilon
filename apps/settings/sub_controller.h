@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "settings_node.h"
-#include "../hardware_test/pop_up_controller.h"
+#include "apps/hardware_test/pop_up_controller.h"
 
 namespace Settings {
 

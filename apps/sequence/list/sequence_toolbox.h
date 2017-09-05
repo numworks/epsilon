@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
-#include "../../math_toolbox.h"
+#include "apps/math_toolbox.h"
 
 namespace Sequence {
 

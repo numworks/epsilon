@@ -2,7 +2,7 @@
 #define SEQUENCE_SEQUENCE_STORE_H
 
 #include "sequence.h"
-#include "../shared/function_store.h"
+#include "apps/shared/function_store.h"
 #include <stdint.h>
 #include <escher.h>
 

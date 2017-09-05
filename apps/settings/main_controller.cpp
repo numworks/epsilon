@@ -1,8 +1,8 @@
 #include "main_controller.h"
-#include "../global_preferences.h"
-#include "../i18n.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include "apps/global_preferences.h"
+#include "apps/i18n.h"
+#include "poincare/src/layout/baseline_relative_layout.h"
+#include "poincare/src/layout/string_layout.h"
 #include <assert.h>
 #include <poincare.h>
 

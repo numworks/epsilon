@@ -1,8 +1,8 @@
 #include "type_parameter_controller.h"
 #include "list_controller.h"
 #include <assert.h>
-#include "../../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../../poincare/src/layout/string_layout.h"
+#include "poincare/src/layout/baseline_relative_layout.h"
+#include "poincare/src/layout/string_layout.h"
 
 using namespace Poincare;
 

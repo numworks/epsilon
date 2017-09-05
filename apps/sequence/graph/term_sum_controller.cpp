@@ -1,9 +1,9 @@
 #include "term_sum_controller.h"
-#include "../../shared/text_field_delegate.h"
-#include "../../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../../poincare/src/layout/condensed_sum_layout.h"
-#include "../../../poincare/src/layout/string_layout.h"
-#include "../../../poincare/src/layout/horizontal_layout.h"
+#include "apps/shared/text_field_delegate.h"
+#include "poincare/src/layout/baseline_relative_layout.h"
+#include "poincare/src/layout/condensed_sum_layout.h"
+#include "poincare/src/layout/string_layout.h"
+#include "poincare/src/layout/horizontal_layout.h"
 
 #include <assert.h>
 #include <cmath>

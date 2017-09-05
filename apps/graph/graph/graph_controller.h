@@ -4,9 +4,9 @@
 #include "graph_view.h"
 #include "banner_view.h"
 #include "curve_parameter_controller.h"
-#include "../../shared/function_graph_controller.h"
-#include "../../shared/curve_view_cursor.h"
-#include "../../shared/interactive_curve_view_range.h"
+#include "apps/shared/function_graph_controller.h"
+#include "apps/shared/curve_view_cursor.h"
+#include "apps/shared/interactive_curve_view_range.h"
 #include "../cartesian_function_store.h"
 
 namespace Graph {

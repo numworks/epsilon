@@ -3,8 +3,8 @@
 
 #include <poincare.h>
 #include <escher.h>
-#include "../../shared/curve_view_range.h"
-#include "../../i18n.h"
+#include "apps/shared/curve_view_range.h"
+#include "apps/i18n.h"
 
 namespace Probability {
 

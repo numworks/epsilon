@@ -5,7 +5,7 @@
 #include "graph_view.h"
 #include "curve_view_range.h"
 #include "vertical_cursor_view.h"
-#include "../../shared/curve_view_cursor.h"
+#include "apps/shared/curve_view_cursor.h"
 
 namespace Sequence {
 

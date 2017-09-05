@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_H
 #define SEQUENCE_SEQUENCE_H
 
-#include "../shared/function.h"
+#include "apps/shared/function.h"
 #include <assert.h>
 
 namespace Sequence {

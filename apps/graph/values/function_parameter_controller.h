@@ -2,7 +2,7 @@
 #define GRAPH_FUNCTION_PARAM_CONTROLLER_H
 
 #include "../cartesian_function.h"
-#include "../../shared/values_function_parameter_controller.h"
+#include "apps/shared/values_function_parameter_controller.h"
 
 namespace Graph {
 

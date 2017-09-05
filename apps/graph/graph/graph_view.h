@@ -1,7 +1,7 @@
 #ifndef GRAPH_GRAPH_VIEW_H
 #define GRAPH_GRAPH_VIEW_H
 
-#include "../../shared/function_graph_view.h"
+#include "apps/shared/function_graph_view.h"
 #include "../cartesian_function_store.h"
 
 namespace Graph {

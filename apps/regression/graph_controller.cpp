@@ -1,5 +1,5 @@
 #include "graph_controller.h"
-#include "../apps_container.h"
+#include "apps/apps_container.h"
 #include <cmath>
 
 using namespace Poincare;

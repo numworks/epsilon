@@ -1,6 +1,6 @@
 #include "app.h"
 #include "settings_icon.h"
-#include "../i18n.h"
+#include "apps/i18n.h"
 
 namespace Settings {
 

@@ -9,7 +9,7 @@
 #include "graph/curve_view_range.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../shared/function_app.h"
+#include "apps/shared/function_app.h"
 
 namespace Sequence {
 

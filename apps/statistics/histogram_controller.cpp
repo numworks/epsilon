@@ -1,5 +1,5 @@
 #include "histogram_controller.h"
-#include "../apps_container.h"
+#include "apps/apps_container.h"
 #include "app.h"
 #include <cmath>
 #include <assert.h>

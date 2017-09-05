@@ -1,6 +1,6 @@
 #include "go_to_parameter_controller.h"
 #include "graph_controller.h"
-#include "../apps_container.h"
+#include "apps/apps_container.h"
 #include <assert.h>
 #include <float.h>
 #include <cmath>

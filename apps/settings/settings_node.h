@@ -1,7 +1,7 @@
 #ifndef SETTINGS_NODE_H
 #define SETTINGS_NODE_H
 
-#include "../node.h"
+#include "apps/node.h"
 
 namespace Settings {
 

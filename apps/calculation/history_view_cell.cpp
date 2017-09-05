@@ -1,6 +1,6 @@
 #include "history_view_cell.h"
 #include "app.h"
-#include "../constant.h"
+#include "apps/constant.h"
 #include "selectable_table_view.h"
 #include <assert.h>
 #include <string.h>

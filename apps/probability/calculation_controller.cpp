@@ -1,6 +1,6 @@
 #include "calculation_controller.h"
-#include "../constant.h"
-#include "../apps_container.h"
+#include "apps/constant.h"
+#include "apps/apps_container.h"
 #include "app.h"
 #include "calculation/discrete_calculation.h"
 #include "calculation/left_integral_calculation.h"

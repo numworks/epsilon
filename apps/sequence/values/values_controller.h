@@ -3,7 +3,7 @@
 
 #include "../sequence_store.h"
 #include "../sequence_title_cell.h"
-#include "../../shared/values_controller.h"
+#include "apps/shared/values_controller.h"
 #include "interval_parameter_controller.h"
 
 namespace Sequence {

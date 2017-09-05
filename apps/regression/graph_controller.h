@@ -7,8 +7,8 @@
 #include "graph_view.h"
 #include "initialisation_parameter_controller.h"
 #include "prediction_parameter_controller.h"
-#include "../shared/interactive_curve_view_controller.h"
-#include "../shared/curve_view_cursor.h"
+#include "apps/shared/interactive_curve_view_controller.h"
+#include "apps/shared/curve_view_cursor.h"
 
 namespace Regression {
 

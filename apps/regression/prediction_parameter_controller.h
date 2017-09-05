@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
-#include "../shared/curve_view_cursor.h"
+#include "apps/shared/curve_view_cursor.h"
 #include "go_to_parameter_controller.h"
 
 namespace Regression {

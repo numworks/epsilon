@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
-#include "../shared/store_controller.h"
+#include "apps/shared/store_controller.h"
 
 namespace Regression {
 

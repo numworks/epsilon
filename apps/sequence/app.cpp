@@ -1,5 +1,5 @@
 #include "app.h"
-#include "../apps_container.h"
+#include "apps/apps_container.h"
 #include "sequence_icon.h"
 
 using namespace Poincare;

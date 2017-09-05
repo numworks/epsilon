@@ -3,8 +3,8 @@
 
 #include <escher.h>
 #include "store.h"
-#include "../shared/tab_table_controller.h"
-#include "../shared/regular_table_view_data_source.h"
+#include "apps/shared/tab_table_controller.h"
+#include "apps/shared/regular_table_view_data_source.h"
 
 
 namespace Statistics {

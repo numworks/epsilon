@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
-#include "../i18n.h"
+#include "apps/i18n.h"
 
 namespace Regression {
 

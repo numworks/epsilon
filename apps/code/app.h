@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "menu_controller.h"
 #include "program.h"
-#include "../shared/message_controller.h"
+#include "apps/shared/message_controller.h"
 
 namespace Code {
 

@@ -6,7 +6,7 @@
 #include "histogram_view.h"
 #include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"
-#include "../shared/curve_view.h"
+#include "apps/shared/curve_view.h"
 
 namespace Statistics {
 

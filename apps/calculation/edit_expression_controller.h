@@ -2,7 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
-#include "../shared/text_field_delegate.h"
+#include "apps/shared/text_field_delegate.h"
 #include "history_controller.h"
 #include "calculation_store.h"
 #include "text_field.h"

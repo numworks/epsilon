@@ -6,7 +6,7 @@
 #include "law_controller.h"
 #include "calculation_controller.h"
 #include "parameters_controller.h"
-#include "../shared/text_field_delegate_app.h"
+#include "apps/shared/text_field_delegate_app.h"
 #include "law/binomial_law.h"
 #include "law/exponential_law.h"
 #include "law/normal_law.h"

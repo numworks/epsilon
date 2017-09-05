@@ -1,7 +1,7 @@
 #include "app.h"
-#include "../apps_container.h"
+#include "apps/apps_container.h"
 #include "graph_icon.h"
-#include "../i18n.h"
+#include "apps/i18n.h"
 
 using namespace Poincare;
 using namespace Shared;

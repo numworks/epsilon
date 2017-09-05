@@ -1,6 +1,6 @@
 #include "values_controller.h"
 #include <assert.h>
-#include "../../constant.h"
+#include "apps/constant.h"
 
 using namespace Shared;
 using namespace Poincare;

@@ -51,6 +51,11 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
     /* We handle the case "c float and d integer" separatly to avoid getting
      * complex result due to float representation: a float power an integer is
      * always real. */
+    if (c.a() < 0 && (d.a() < 0 || std::fmod(d.a(), 2.0))) {
+      /* A negative float power a negative integer is negative.
+       * A negative float power an odd integer is negative. */
+      radius = -radius;
+    }
     return Complex<T>::Cartesian(radius, 0);
   }
   if (c.a() < 0 && c.b() == 0 && d.a() == 0.5) {

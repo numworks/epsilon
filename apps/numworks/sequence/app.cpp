@@ -6,6 +6,10 @@ using namespace Poincare;
 
 namespace Sequence {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.sequence";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::SequenceApp;
 }

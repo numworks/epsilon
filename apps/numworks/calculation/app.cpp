@@ -9,6 +9,10 @@ using namespace Shared;
 
 namespace Calculation {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.calculation";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::CalculApp;
 }

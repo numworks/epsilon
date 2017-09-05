@@ -7,6 +7,10 @@ using namespace Shared;
 
 namespace Probability {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.probability";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::ProbaApp;
 }

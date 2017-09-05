@@ -6,6 +6,10 @@ using namespace Shared;
 
 namespace Regression {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.regression";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::RegressionApp;
 }

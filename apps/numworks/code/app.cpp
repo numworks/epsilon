@@ -6,6 +6,10 @@
 
 namespace Code {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.code";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::CodeApp;
 }

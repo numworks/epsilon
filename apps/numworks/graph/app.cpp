@@ -8,6 +8,10 @@ using namespace Shared;
 
 namespace Graph {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.graph";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::FunctionApp;
 }

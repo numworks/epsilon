@@ -4,6 +4,10 @@ extern "C" {
 #include <assert.h>
 }
 
+const char * App::Descriptor::uriName() {
+  return nullptr;
+}
+
 I18n::Message App::Descriptor::name() {
   return (I18n::Message)0;
 }

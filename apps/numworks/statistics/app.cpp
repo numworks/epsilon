@@ -6,6 +6,10 @@ using namespace Shared;
 
 namespace Statistics {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.statistics";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::StatsApp;
 }

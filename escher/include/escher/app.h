@@ -24,6 +24,7 @@ class App : public Responder {
 public:
   class Descriptor {
   public:
+    virtual const char * uriName();
     virtual I18n::Message name();
     virtual I18n::Message upperName();
     virtual const Image * icon();

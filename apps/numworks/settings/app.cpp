@@ -4,6 +4,10 @@
 
 namespace Settings {
 
+const char * App::Descriptor::uriName() {
+  return "numworks.settings";
+}
+
 I18n::Message App::Descriptor::name() {
   return I18n::Message::SettingsApp;
 }

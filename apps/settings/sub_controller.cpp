@@ -20,10 +20,10 @@ SubController::SubController(Responder * parentResponder) :
     m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);
     m_cells[i].setAccessoryTextColor(Palette::GreyDark);
   }
-  const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' ', 0};
-  m_complexFormatLayout[0] = new StringLayout(text, 6);
-  const char base[] = {'r', Ion::Charset::Exponential, 0};
-  const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' ', 0};
+  const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
+  m_complexFormatLayout[0] = new StringLayout(text, sizeof(text));
+  const char base[] = {'r', Ion::Charset::Exponential};
+  const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
   m_complexFormatLayout[1] = new BaselineRelativeLayout(new StringLayout(base, sizeof(base)), new StringLayout(superscript, sizeof(superscript)), BaselineRelativeLayout::Type::Superscript);
   for (int i = 0; i < 2; i++) {
     m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);

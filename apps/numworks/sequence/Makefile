@@ -1,6 +1,6 @@
-ifneq (,$(findstring com.numworks.sequence,${APPS_LIST}))
+ifneq (,$(findstring numworks.sequence,${APPS_LIST}))
 
-app_objs += $(addprefix apps/sequence/,\
+app_objs += $(addprefix apps/numworks/sequence/,\
   app.o\
   graph/banner_view.o\
   graph/curve_parameter_controller.o\
@@ -22,6 +22,6 @@ app_objs += $(addprefix apps/sequence/,\
   sequence_title_cell.o\
 )
 
-app_images += apps/sequence/sequence_icon.png
+app_images += apps/numworks/sequence/sequence_icon.png
 
 endif

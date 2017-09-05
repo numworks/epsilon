@@ -1,6 +1,6 @@
-ifneq (,$(findstring com.numworks.probability,${APPS_LIST}))
+ifneq (,$(findstring numworks.probability,${APPS_LIST}))
 
-app_objs += $(addprefix apps/probability/,\
+app_objs += $(addprefix apps/numworks/probability/,\
   app.o\
   calculation/calculation.o\
   calculation/discrete_calculation.o\
@@ -23,9 +23,9 @@ app_objs += $(addprefix apps/probability/,\
   parameters_controller.o\
 )
 
-app_images += apps/probability/probability_icon.png
+app_images += apps/numworks/probability/probability_icon.png
 
-app_images += $(addprefix apps/probability/images/,\
+app_images += $(addprefix apps/numworks/probability/images/,\
   binomial_icon.png\
   calcul1_icon.png\
   calcul2_icon.png\

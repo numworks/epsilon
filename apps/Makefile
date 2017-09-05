@@ -1,16 +1,4 @@
-include apps/calculation/Makefile
-include apps/graph/Makefile
-include apps/home/Makefile
-include apps/hardware_test/Makefile
-include apps/on_boarding/Makefile
-include apps/probability/Makefile
-include apps/regression/Makefile
-include apps/sequence/Makefile
-include apps/settings/Makefile
-include apps/shared/Makefile
-include apps/statistics/Makefile
-include apps/code/Makefile
-#include apps/picview/Makefile
+include apps/*/Makefile
 
 app_objs += $(addprefix apps/,\
   apps_container.o\

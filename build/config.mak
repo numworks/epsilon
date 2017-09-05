@@ -3,7 +3,9 @@
 PLATFORM ?= device
 VERBOSE ?= 0
 DEBUG ?= 0
-APPS_LIST?=$(addprefix com.numworks.,calculation graph sequence settings statistics probability regression code)
+APPS_LIST?=numworks.calculation numworks.graph numworks.sequence \
+  numworks.settings numworks.statistics numworks.probability \
+  numworks.regression numworks.code
 
 # Do not edit below this
 
@@ -24,3 +26,5 @@ SFLAGS += -DDEBUG=$(DEBUG)
 SFLAGS += -DOS_WITH_ONBOARDING_APP=$(OS_WITH_ONBOARDING_APP)
 SFLAGS += -DOS_WITH_SOFTWARE_UPDATE_PROMPT=$(OS_WITH_SOFTWARE_UPDATE_PROMPT)
 SFLAGS += -DQUIZ_USE_CONSOLE=$(QUIZ_USE_CONSOLE)
+SFLAGS += -DAPPS_LIST='"$(APPS_LIST)"'
+

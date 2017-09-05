@@ -1,6 +1,6 @@
-ifneq (,$(findstring com.numworks.graph,${APPS_LIST}))
+ifneq (,$(findstring numworks.graph,${APPS_LIST}))
 
-app_objs += $(addprefix apps/graph/,\
+app_objs += $(addprefix apps/numworks/graph/,\
   app.o\
   cartesian_function.o\
   cartesian_function_store.o\
@@ -15,6 +15,6 @@ app_objs += $(addprefix apps/graph/,\
   values/values_controller.o\
 )
 
-app_images += apps/graph/graph_icon.png
+app_images += apps/numworks/graph/graph_icon.png
 
 endif

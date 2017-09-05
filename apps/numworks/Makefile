@@ -1,0 +1,2 @@
+include apps/numworks/*/Makefile
+

@@ -1,6 +1,6 @@
-ifneq (,$(findstring com.numworks.regression,${APPS_LIST}))
+ifneq (,$(findstring numworks.regression,${APPS_LIST}))
 
-app_objs += $(addprefix apps/regression/,\
+app_objs += $(addprefix apps/numworks/regression/,\
   app.o\
   banner_view.o\
   calculation_controller.o\
@@ -14,6 +14,6 @@ app_objs += $(addprefix apps/regression/,\
   store_controller.o\
 )
 
-app_images += apps/regression/regression_icon.png
+app_images += apps/numworks/regression/regression_icon.png
 
 endif

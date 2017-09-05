@@ -1,6 +1,6 @@
-ifneq (,$(findstring com.numworks.statistics,${APPS_LIST}))
+ifneq (,$(findstring numworks.statistics,${APPS_LIST}))
 
-app_objs += $(addprefix apps/statistics/,\
+app_objs += $(addprefix apps/numworks/statistics/,\
   app.o\
   box_banner_view.o\
   box_controller.o\
@@ -15,6 +15,6 @@ app_objs += $(addprefix apps/statistics/,\
   store_controller.o\
 )
 
-app_images += apps/statistics/stat_icon.png
+app_images += apps/numworks/statistics/stat_icon.png
 
 endif

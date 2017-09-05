@@ -52,9 +52,16 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context) {
   reset();
   strlcpy(m_inputText, c, sizeof(m_inputText));
-  Evaluation<double> * evaluation = input()->evaluate<double>(*context);
-  evaluation->writeTextInBuffer(m_outputText, sizeof(m_outputText));
-  delete evaluation;
+  if(m_output==nullptr) {
+    // Re-evaluate from input directly (to deal 'ans' with more accuracy)
+    m_output = input()->evaluate<double>(*context);
+    m_output->writeTextInBuffer(m_outputText, sizeof(m_outputText));
+  }
+  else {
+    Evaluation<double> * evaluation = input()->evaluate<double>(*context);
+    evaluation->writeTextInBuffer(m_outputText, sizeof(m_outputText));
+    delete evaluation;
+  }
 }
 
 const char * Calculation::inputText() {

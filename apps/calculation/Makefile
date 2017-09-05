@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.calculation,${APPS_LIST}))
+
 app_objs += $(addprefix apps/calculation/,\
   app.o\
   calculation.o\
@@ -14,7 +16,11 @@ app_objs += $(addprefix apps/calculation/,\
 tests += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )
-test_objs += $(addprefix apps/calculation/, calculation.o calculation_store.o)
+test_objs += $(addprefix apps/calculation/,\
+  calculation.o\
+  calculation_store.o\
+)
 
 app_images += apps/calculation/calculation_icon.png
 
+endif

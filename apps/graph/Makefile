@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.graph,${APPS_LIST}))
+
 app_objs += $(addprefix apps/graph/,\
   app.o\
   cartesian_function.o\
@@ -14,3 +16,5 @@ app_objs += $(addprefix apps/graph/,\
 )
 
 app_images += apps/graph/graph_icon.png
+
+endif

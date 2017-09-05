@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.probability,${APPS_LIST}))
+
 app_objs += $(addprefix apps/probability/,\
   app.o\
   calculation/calculation.o\
@@ -43,3 +45,5 @@ app_images += $(addprefix apps/probability/images/,\
   poisson_icon.png\
   uniform_icon.png\
 )
+
+endif

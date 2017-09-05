@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.picview,${APPS_LIST}))
+
 app_objs += $(addprefix apps/picview/,\
   pic_view.o\
   picview_app.o\
@@ -16,3 +18,5 @@ apps/picview/image.raw: apps/picview/image.png
 	@ffmpeg -loglevel panic -vcodec png -i $^ -vcodec rawvideo -f rawvideo -pix_fmt rgb565 $@
 
 products += $(addprefix apps/picview/, image.raw image.c)
+
+endif

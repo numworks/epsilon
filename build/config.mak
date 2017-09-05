@@ -3,6 +3,7 @@
 PLATFORM ?= device
 VERBOSE ?= 0
 DEBUG ?= 0
+APPS_LIST?=$(addprefix com.numworks.,calculation graph sequence settings statistics probability regression code)
 
 # Do not edit below this
 

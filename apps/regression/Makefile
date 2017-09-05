@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.regression,${APPS_LIST}))
+
 app_objs += $(addprefix apps/regression/,\
   app.o\
   banner_view.o\
@@ -13,3 +15,5 @@ app_objs += $(addprefix apps/regression/,\
 )
 
 app_images += apps/regression/regression_icon.png
+
+endif

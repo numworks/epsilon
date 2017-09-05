@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.sequence,${APPS_LIST}))
+
 app_objs += $(addprefix apps/sequence/,\
   app.o\
   graph/banner_view.o\
@@ -21,3 +23,5 @@ app_objs += $(addprefix apps/sequence/,\
 )
 
 app_images += apps/sequence/sequence_icon.png
+
+endif

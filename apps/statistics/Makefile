@@ -1,3 +1,5 @@
+ifneq (,$(findstring com.numworks.statistics,${APPS_LIST}))
+
 app_objs += $(addprefix apps/statistics/,\
   app.o\
   box_banner_view.o\
@@ -14,3 +16,5 @@ app_objs += $(addprefix apps/statistics/,\
 )
 
 app_images += apps/statistics/stat_icon.png
+
+endif

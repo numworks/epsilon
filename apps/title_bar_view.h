@@ -15,7 +15,7 @@ public:
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
-  bool setAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
+  bool setAlphaLockStatus(Ion::Keyboard::ShiftAlphaStatus status);
   void refreshPreferences();
 private:
   constexpr static KDCoordinate k_batteryRightMargin = 5;

@@ -1,13 +1,13 @@
-#ifndef APPS_ALPHA_LOCK_VIEW_H
-#define APPS_ALPHA_LOCK_VIEW_H
+#ifndef APPS_SHIFT_ALPHA_LOCK_VIEW_H
+#define APPS_SHIFT_ALPHA_LOCK_VIEW_H
 
 #include <escher.h>
 #include "lock_view.h"
 #include "i18n.h"
 
-class AlphaLockView : public View {
+class ShiftAlphaLockView : public View {
 public:
-  AlphaLockView();
+  ShiftAlphaLockView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   bool setStatus(Ion::Events::ShiftAlphaStatus status);
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -17,7 +17,7 @@ private:
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;
   LockView m_lockView;
-  MessageTextView m_alphaView;
+  MessageTextView m_shiftAlphaView;
   Ion::Events::ShiftAlphaStatus m_status;
 };
 

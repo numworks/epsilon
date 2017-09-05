@@ -152,7 +152,7 @@ namespace I18n {
     ValueNotReachedBySequence,
     NColumn,
 
-  /* Statistics */
+    /* Statistics */
     StatsApp,
     StatsAppCapital,
     DataTab,
@@ -276,6 +276,7 @@ namespace I18n {
     CodeAppCapital,
     Alpha,
     CapitalAlpha,
+    Shift,
     X,
     Y,
     N,

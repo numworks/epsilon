@@ -15,6 +15,7 @@ char * strchr(const char * s, int c);
 int strcmp(const char * s1, const char * s2);
 size_t strlcpy(char * dst, const char * src, size_t len);
 size_t strlen(const char * s);
+char * strtok_r(char * s, const char * delim, char ** last);
 
 LIBA_END_DECLS
 

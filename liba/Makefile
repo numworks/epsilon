@@ -64,6 +64,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_sinf.o \
   s_tanf.o \
   s_tanhf.o \
+  strtok.o \
   w_lgammaf.o \
 )
 

@@ -174,4 +174,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   Complex<double> ai[1] = {Complex<double>::Float(720.0f)};
   assert_parsed_expression_evaluates_to("6!", ai);
+
+  Complex<float> aj[1] = {Complex<float>::Cartesian(0.0f, 1.0f)};
+  assert_parsed_expression_evaluates_to("R(-1)", aj);
+
+  Complex<double> ak[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
+  assert_parsed_expression_evaluates_to("root(-1,3)", ak);
 }

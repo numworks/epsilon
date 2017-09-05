@@ -2,6 +2,12 @@
 
 constexpr KDColor Palette::YellowDark;
 constexpr KDColor Palette::YellowLight;
+constexpr KDColor Palette::BlueDark;
+constexpr KDColor Palette::BlueLight;
+constexpr KDColor Palette::GreenDark;
+constexpr KDColor Palette::GreenLight;
+constexpr KDColor Palette::RedDark;
+constexpr KDColor Palette::RedLight;
 constexpr KDColor Palette::PurpleBright;
 constexpr KDColor Palette::PurpleDark;
 constexpr KDColor Palette::GreyWhite;

@@ -1,7 +1,9 @@
 #include "histogram_view.h"
 #include <assert.h>
 #include <math.h>
+#include <poincare/preferences.h>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
@@ -33,10 +35,10 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark,
+    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Preferences::sharedPreferences()->themeDarkColor(),
       m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
+    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Preferences::sharedPreferences()->themeDarkColor());
   }
 }
 

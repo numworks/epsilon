@@ -10,8 +10,8 @@ using namespace Poincare;
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDText::FontSize::Small, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
+  m_titleView(KDText::FontSize::Small, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Preferences::sharedPreferences()->themeDarkColor()),
+  m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Preferences::sharedPreferences()->themeDarkColor())
 {
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
@@ -19,7 +19,7 @@ TitleBarView::TitleBarView() :
 void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
   /* As we cheated to layout the title view, we have to fill a very thin
    * rectangle at the top with the background color. */
-  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::YellowDark);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Preferences::sharedPreferences()->themeDarkColor());
 }
 
 void TitleBarView::reload() {
@@ -28,6 +28,11 @@ void TitleBarView::reload() {
 
 void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
+}
+
+void TitleBarView::setBackgroundColor(KDColor color) {
+  m_titleView.setBackgroundColor(color);
+  m_preferenceView.setBackgroundColor(color);
 }
 
 bool TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
@@ -99,6 +104,7 @@ void TitleBarView::refreshPreferences() {
     strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), strlen(I18n::translate(I18n::Message::Sci))+1);
     numberOfChar += strlen(I18n::translate(I18n::Message::Deg));
   }
+  setBackgroundColor(Preferences::sharedPreferences()->themeDarkColor());
   buffer[numberOfChar] = 0;
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed

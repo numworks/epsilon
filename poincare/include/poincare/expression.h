@@ -86,6 +86,12 @@ public:
     Polar = 1,
     Default = 2
   };
+  enum class Theme {
+    Yellow = 0,
+    Blue = 1,
+    Green = 2,
+    Red = 3
+  };
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
   virtual bool hasValidNumberOfArguments() const = 0;

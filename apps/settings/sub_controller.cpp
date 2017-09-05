@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
+#include <apps/apps_container.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -193,6 +194,11 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
   if (message == I18n::Message::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
   }
+  if (message == I18n::Message::Theme) {
+    Preferences::sharedPreferences()->setTheme((Expression::Theme)valueIndex);
+    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    appsContainer->reloadTitleBar();
+  }
   if (message == I18n::Message::Language) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
@@ -209,6 +215,9 @@ int SubController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)Preferences::sharedPreferences()->complexFormat();
+  }
+  if (message == I18n::Message::Theme) {
+    return (int)Preferences::sharedPreferences()->theme();
   }
   if (message == I18n::Message::Language) {
     return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;

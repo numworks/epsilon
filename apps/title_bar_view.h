@@ -12,6 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reload();
   void setTitle(I18n::Message title);
+  void setBackgroundColor(KDColor color);
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);

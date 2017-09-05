@@ -1,14 +1,17 @@
 #include "alpha_lock_view.h"
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 AlphaLockView::AlphaLockView() :
   View(),
-  m_alphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_alphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Preferences::sharedPreferences()->themeDarkColor()),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
 
 void AlphaLockView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::YellowDark);
+  ctx->fillRect(bounds(), Preferences::sharedPreferences()->themeDarkColor());
 }
 
 bool AlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {

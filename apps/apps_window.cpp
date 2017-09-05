@@ -31,7 +31,7 @@ void AppsWindow::refreshPreferences() {
 }
 
 bool AppsWindow::updateAlphaLock() {
-  return m_titleBarView.setAlphaLockStatus(Ion::Events::shiftAlphaStatus());
+  return m_titleBarView.setShiftAlphaLockStatus(Ion::Events::shiftAlphaStatus());
 }
 
 void AppsWindow::hideTitleBarView(bool hide) {

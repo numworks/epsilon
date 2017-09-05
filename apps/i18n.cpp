@@ -316,12 +316,13 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[241] {
+const char * universalMessages[242] {
   "",
   "Python",
   "PYTHON (BETA)",
   "alpha",
   "ALPHA",
+  "shift",
   "x",
   "y",
   "n",

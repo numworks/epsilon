@@ -74,20 +74,29 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
+  if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-      if (m_nodeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
-        if (event == Ion::Events::Right) {
-          return false;
-        }
+    if (m_nodeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
-#endif
       return false;
     }
+#endif
+    if (m_nodeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
+      if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
+        int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+        int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
+        GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+        return true;
+      }
+      return false;
+    }
+  }
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_subController.setNodeModel(m_nodeModel->children(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(&m_subController);
@@ -174,6 +183,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   if (index == 3) {
+    MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
+    GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
+    myGauge->setLevel((float)GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT

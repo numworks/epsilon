@@ -25,8 +25,8 @@ SFLAGS += -Wall
 SFLAGS += -MD -MP
 
 # Language-specific flags
-CFLAGS = -std=c99
-CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
+CFLAGS += -std=c99
+CXXFLAGS += -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 products :=
 

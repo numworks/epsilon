@@ -20,6 +20,7 @@ objs += $(addprefix escher/src/,\
   expression_table_cell_with_pointer.o\
   expression_view.o\
   highlight_cell.o\
+  gauge_view.o\
   image_view.o\
   invocation.o\
   input_view_controller.o\
@@ -31,6 +32,7 @@ objs += $(addprefix escher/src/,\
   message_table_cell_with_chevron_and_message.o\
   message_table_cell_with_chevron_and_expression.o\
   message_table_cell_with_editable_text.o\
+  message_table_cell_with_gauge.o\
   message_table_cell_with_message.o\
   message_table_cell_with_switch.o\
   message_text_view.o\

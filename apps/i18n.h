@@ -245,6 +245,7 @@ namespace I18n {
     Deg,
     Rad,
     Sci,
+    Brightness,
     SoftwareVersion,
     SerialNumber,
     UpdatePopUp,

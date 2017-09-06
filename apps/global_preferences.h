@@ -17,10 +17,14 @@ public:
   void setExamMode(ExamMode examMode);
   bool showUpdatePopUp() const;
   void setShowUpdatePopUp(bool showUpdatePopUp);
+  int brightnessLevel() const;
+  void setBrightnessLevel(int brightnessLevel);
+  constexpr static int NumberOfBrightnessStates = 5;
 private:
   I18n::Language m_language;
   ExamMode m_examMode;
   bool m_showUpdatePopUp;
+  int m_brightnessLevel;
 };
 
 #endif

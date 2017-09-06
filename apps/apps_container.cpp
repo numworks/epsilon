@@ -103,7 +103,7 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
-  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+  Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
   m_backlightDimmingTimer.reset();
   window()->redraw(true);
 }
@@ -119,7 +119,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event.isKeyboardEvent()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
-    Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+    Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
     window()->redraw();

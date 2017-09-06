@@ -5,7 +5,8 @@ static GlobalPreferences s_globalPreferences;
 GlobalPreferences::GlobalPreferences() :
   m_language(I18n::Language::French),
   m_examMode(ExamMode::Desactivate),
-  m_showUpdatePopUp(true)
+  m_showUpdatePopUp(true),
+  m_brightnessLevel(Ion::Backlight::MaxBrightness)
 {
 }
 
@@ -40,5 +41,18 @@ bool GlobalPreferences::showUpdatePopUp() const {
 void GlobalPreferences::setShowUpdatePopUp(bool showUpdatePopUp) {
   if (showUpdatePopUp != m_showUpdatePopUp) {
     m_showUpdatePopUp = showUpdatePopUp;
+  }
+}
+
+int GlobalPreferences::brightnessLevel() const {
+  return m_brightnessLevel;
+}
+
+void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
+  if (m_brightnessLevel != brightnessLevel) {
+    brightnessLevel = brightnessLevel < 0 ? 0 : brightnessLevel;
+    brightnessLevel = brightnessLevel > Ion::Backlight::MaxBrightness ? Ion::Backlight::MaxBrightness : brightnessLevel;
+    m_brightnessLevel = brightnessLevel;
+    Ion::Backlight::setBrightness(m_brightnessLevel);
   }
 }

@@ -3,310 +3,296 @@
 #include <assert.h>
 
 namespace I18n {
+StandardMessage::StandardMessage(const char *english, const char *french, const char *spanish, const char *german, const char *portuguese) :
+  m_english(english), m_french(french), m_spanish(spanish),
+  m_german(german), m_portuguese(portuguese) {}
 
-constexpr static char lambdaExponentialFrenchDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
-constexpr static char lambdaExponentialEnglishDefinition[] = {Ion::Charset::SmallLambda, ':', ' ', 'R', 'a', 't','e',' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
-constexpr static char lambdaExponentialSpanishDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
-constexpr static char lambdaExponentialGermanDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
-constexpr static char lambdaExponentialPortugueseDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
-constexpr static char lambdaPoissonFrenchDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
-constexpr static char lambdaPoissonEnglishDefinition[] = {Ion::Charset::SmallLambda, ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
-constexpr static char lambdaPoissonSpanishDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
-constexpr static char lambdaPoissonGermanDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
-constexpr static char lambdaPoissonPortugueseDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
-constexpr static char meanFrenchDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'o', 'y', 'e', 'n', 'n', 'e', 0};
-constexpr static char meanEnglishDefinition[] = {Ion::Charset::SmallMu, ':', ' ', 'M', 'e', 'a', 'n', 0};
-constexpr static char meanSpanishDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'e', 'd', 'i', 'a', 0};
-constexpr static char meanGermanDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'E', 'r', 'w', 'a', 'r', 't', 'u', 'n', 'g', 's', 'w', 'e', 'r', 't', 0};
-constexpr static char meanPortugueseDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'e', 'd', 'i', 'a', 0};
-constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'E', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
-constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
-constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
-constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
-constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
+const char * StandardMessage::translate(Language l) const {
+  switch (l) {
+    case Language::English: return m_english;
+    case Language::French: return m_french ? m_french : m_english;
+    case Language::Spanish: return m_spanish ? m_spanish : m_english;
+    case Language::German: return m_german ? m_german : m_english;
+    case Language::Portuguese: return m_portuguese ? m_portuguese : m_english;
+    default: return nullptr;
+  }
+}
 
-const char * messages[240][5] {
-  {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
-  {"Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar"},
-  {"Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar"},
-  {"Next", "Suivant", "Siguiente", "Nachste", "Seguinte"},
-  {"Syntax error", "Attention a la syntaxe", "Error sintactico", "Syntaxfehler", "Erro de sintaxe"},
-  {"Math error", "Erreur mathematique", "Error matematico", "Mathematischen Fehler", "Erro matematico"},
-  {"Low battery", "Batterie faible", "Bateria baja", "Batterie leer", "Bateria fraca"},
+const char * translate(const Message * m, Language l) {
+  assert(m);
+  if (l == Language::Default) {
+    l = GlobalPreferences::sharedGlobalPreferences()->language();
+  }
+  return m->translate(l);
+}
 
-  /* Variables */
-  {"Variables", "Variables", "Variables", "Variablen", "Variaveis"},
-  {"Numbers", "Nombres", "Numeros", "Zahlen", "Numeros"},
-  {"Matrices", "Matrices", "Matrices", "Matrizen", "Matrizes"},
-  {"Lists", "Listes", "Listas", "Listen", "Listas"},
-  {"Empty", "Vide", "Vacio", "Leer", "Vacuo"},
+int numberOfLanguages() {
+  return NumberOfLanguages;
+}
 
-  /* Toolbox */
-  {"Toolbox", "Toolbox", "Toolbox", "Toolbox", "Toolbox"},
-  {"Absolute value", "Valeur absolue", "Valor absoluto", "Betragsfunktion", "Valor absoluto"},
-  {"nth-root", "Racine n-ieme", "Raiz enesima", "n-te Wurzel", "Radiciacao"},
-  {"Logarithm to base a", "Logarithme base a", "Logaritmo en base a", "Logarithmus zur Basis a", "Logaritmo na base a"},
-  {"Calculation", "Calculs", "Calculos", "Berechnung", "Calculo"},
-  {"Complex numbers", "Nombres complexes", "Numeros complejos", "Komplexen Zahlen", "Numeros complexos"},
-  {"Combinatorics", "Denombrement", "Combinatoria", "Kombinatorik", "Combinatoria"},
-  {"Arithmetic", "Arithmetique", "Aritmetica", "Arithmetisch", "Aritmetica"},
-  {"Matrix", "Matrices", "Matriz", "Matrizen", "Matrizes"},
-  {"List", "Listes", "Listas", "Listen", "Listas"},
-  {"Approximation", "Approximation", "Aproximacion", "Approximation", "Aproximacao"},
-  {"Hyperbolic trigonometry", "Trigonometrie hyperbolique", "Trigonometria hiperbolica", "Hyperbelfunktionen", "Funcoes hiperbolicas"},
-  {"Prediction Interval", "Intervalle fluctuation", "Interval de prediccion", "Konfidenzintervall", "Intervalo de confianca"},
-  {"Derivative", "Nombre derive", "Derivada", "Ableitung", "Derivada"},
-  {"Integral", "Integrale", "Integral", "Integral", "Integral"},
-  {"Sum", "Somme", "Suma", "Summe", "Somatorio"},
-  {"Product", "Produit", "Productorio", "Produkt", "Produto"},
-  {"Absolute value", "Module", "Modulo", "Betrag", "Modulo"},
-  {"Argument", "Argument", "Argumento", "Argument", "Argumento"},
-  {"Real part", "Partie reelle", "Parte real", "Realer Teil", "Parte real"},
-  {"Imaginary part", "Partie imaginaire", "Parte imaginaria", "Imaginarer Teil", "Parte imaginaria"},
-  {"Conjugate", "Conjugue", "Conjugado", "Konjugiert", "Conjugado"},
-  {"Combination", "k parmi n", "Combinacion", "Kombination", "Combinacao"},
-  {"Permutation", "Arrangement", "Variacion", "Permutation", "Permutacao"},
-  {"GCD", "PGCD", "MCD", "ggT", "MDC"},
-  {"LCM", "PPCM", "MCM", "kgV", "MMC"},
-  {"Remainder division p by q", "Reste division p par q", "Resto division p por q", "Rest", "Resto da divisao inteira"},
-  {"Quotient division p by q", "Quotient division p par q", "Cociente division p por q", "Ganzzahlquotient", "Quociente"},
-  {"Inverse", "Inverse", "Inversa", "Inverse", "Matriz inversa"},
-  {"Determinant", "Determinant", "Determinante", "Determinante", "Determinante"},
-  {"Transpose", "Transposee", "Transpuesta", "Transponierte", "Matriz transposta"},
-  {"Trace", "Trace ", "Traza", "Spur", "Traco"},
-  {"Size", "Taille", "Tamano", "Grosse", "Tamanho"},
-  {"Sort ascending ", "Tri croissant", "Clasificacion ascendente", "Sortieren aufsteigend", "Ordem crescente"},
-  {"Sort descending", "Tri decroissant", "Clasificacion descendente", "Sortieren absteigend", "Ordem decrescente"},
-  {"Maximum", "Maximum", "Maximo", "Maximalwert", "Maximo"},
-  {"Minimum", "Minimum", "Minimo", "Mindestwert", "Minimo"},
-  {"Floor", "Partie entiere", "Parte entera", "Untergrenze", "Parte inteira"},
-  {"Fractional part", "Partie fractionnaire", "Parte fraccionaria", "Bruchanteil" , "Parte fraccionaria"},
-  {"Ceiling", "Plafond", "Techo", "Obergrenze", "Teto"},
-  {"Rounding to n digits", "Arrondi n chiffres", "Redondeo n digitos", "Runden", "Arredondar"},
-  {"Hyperbolic cosine", "Cosinus hyperbolique", "Coseno hiperbolico", "Kosinus hyperbolicus", "Cosseno hiperbolico"},
-  {"Hyperbolic sine", "Sinus hyperbolique", "Seno hiperbolico", "Sinus hyperbolicus", "Seno hiperbolico"},
-  {"Hyperbolic tangent", "Tangente hyperbolique", "Tangente hiperbolica", "Tangens hyperbolicus", "Tangente hiperbolica"},
-  {"Inverse hyperbolic cosine", "Argument cosinus hyperbolique", "Argumento coseno hiperbolico", "Areakosinus hyperbolicus", "Arco cosseno hiperbolico"},
-  {"Inverse hyperbolic sine", "Argument sinus hyperbolique", "Argumento seno hiperbolico", "Areasinus hyperbolicus", "Arco seno hiperbolico"},
-  {"Inverse hyperbolic tangent", "Argument tangente hyperbolique", "Argumento tangente hiperbolica", "Areatangens hyperbolicus", "Arco tangente hiperbolica"},
-  {"Prediction interval 95%", "Intervalle fluctuation 95% (Term)", "Intervalo de prediccion 95%", "Schwankungsbereich 95%", "Intervalo de previsao 95%"},
-  {"Simple prediction interval", "Intervalle fluctuation simple (2de)", "Intervalo de prediccion simple", "Einfaches Schwankungsbereich", "Intervalo de previsao simples"},
-  {"Confidence interval", "Intervalle confiance", "Intervalo de confianza", "Konfidenzintervall", "Intervalo de confianca"},
 
-  /* Applications */
-  {"Applications", "Applications", "Aplicaciones", "Anwendungen", "Aplicações"},
-  {"APPLICATIONS", "APPLICATIONS", "APLICACIONES", "ANWENDUNGEN", "APLICACOES"},
+namespace Common {
+  constexpr static char lambdaExponentialFrenchDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
+  constexpr static char lambdaExponentialEnglishDefinition[] = {Ion::Charset::SmallLambda, ':', ' ', 'R', 'a', 't','e',' ', 'p', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
+  constexpr static char lambdaExponentialSpanishDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
+  constexpr static char lambdaExponentialGermanDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
+  constexpr static char lambdaExponentialPortugueseDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
+  constexpr static char lambdaPoissonFrenchDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'e', 0};
+  constexpr static char lambdaPoissonEnglishDefinition[] = {Ion::Charset::SmallLambda, ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
+  constexpr static char lambdaPoissonSpanishDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
+  constexpr static char lambdaPoissonGermanDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'e', 'r', 0};
+  constexpr static char lambdaPoissonPortugueseDefinition[] = {Ion::Charset::SmallLambda, ' ', ':', ' ', 'P', 'a', 'r', 'a', 'm', 'e', 't', 'r', 'o', 0};
+  constexpr static char meanFrenchDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'o', 'y', 'e', 'n', 'n', 'e', 0};
+  constexpr static char meanEnglishDefinition[] = {Ion::Charset::SmallMu, ':', ' ', 'M', 'e', 'a', 'n', 0};
+  constexpr static char meanSpanishDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'e', 'd', 'i', 'a', 0};
+  constexpr static char meanGermanDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'E', 'r', 'w', 'a', 'r', 't', 'u', 'n', 'g', 's', 'w', 'e', 'r', 't', 0};
+  constexpr static char meanPortugueseDefinition[] = {Ion::Charset::SmallMu, ' ', ':', ' ', 'M', 'e', 'd', 'i', 'a', 0};
+  constexpr static char deviationFrenchDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'E', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', 0};
+  constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', 0};
+  constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
+  constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
+  constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-  /* 1.Calculation */
-  {"Calculation", "Calculs", "Calculo", "Berechnung", "Calculo"},
-  {"CALCULATION", "CALCULS", "CALCULO", "BERECHNUNG", "CALCULO"},
-
-  /* 2.Function */
-  {"Functions", "Fonctions", "Funcion", "Funktionen", "Funcao"},
-  {"FUNCTIONS", "FONCTIONS", "FUNCION", "FUNKTIONEN", "FUNCAO"},
-  {"Functions", "Fonctions", "Funciones", "Funktionen", "Funcoes"},
-  {"Graph", "Graphique", "Grafico", "Graph", "Grafico"},
-  {"Table", "Tableau", "Tabla", "Tabelle", "Tabela"},
-    /* Function: first tab */
-  {"Plot graph", "Tracer le graphique", "Dibujar el grafico", "Graphen zeichnen", "Tracar o grafico"},
-  {"Display values", "Afficher les valeurs", "Visualizar los valores", "Werte anzeigen", "Exibir os valores"},
-  {"Function options", "Options de la fonction", "Opciones de la funcion", "Optionen Funktion", "Opcoes de funcao"},
-  {"Add function", "Ajouter une fonction", "Agregar una funcion", "Funktion hinzuzufugen", "Adicionar uma funcao"},
-  {"Delete function", "Supprimer la fonction", "Eliminar la funcion", "Funktion loschen", "Eliminar a funcao"},
-  {"No function to delete", "Pas de fonction a supprimer", "Ninguna funcion que eliminar", "Keine Funktion zu loschen", "Sem funcao para eliminar"},
-  {"Turn on/off", "Activer/Desactiver", "Activar/Desactivar", "Aktivieren/Deaktivieren", "Activar/Desactivar"},
-  {"Function color", "Couleur de la fonction", "Color de la funcion", "Farbe der Funktion", "Cor da funcao"},
-    /* Function: second tab */
-  {"No function", "Aucune fonction", "Ninguna funcion", "Keine funktion", "Nenhuma funcao"},
-  {"No function is turned on", "Aucune fonction activee", "Ninguna funcion activada", "Keine aktive Funktion", "Sem funcao ativada"},
-  {"Axes", "Axes", "Ejes", "Achsen", "Eixos"},
-  {"Zoom", "Zoom", "Zoom", "Zoom", "Zoom"},
-  {"Preadjustment", "Initialisation", "Inicializacion", "Initialisierung", "Inicializacao"},
-  {" Move: ", " Deplacer : ", " Mover : ", " Verschieben: ", " Mover : "},
-  {"Zoom: ", "Zoomer : ", "Zoom : ", "Zoom: ", "Zoom : "},
-  {" or ", " ou ", " o ", " oder ", " ou "},
-  {"Trigonometrical", "Trigonometrique", "Trigonometrico", "Trigonometrisch", "Trigonometrico"},
-  {"Integer", "Abscisses entieres", "Abscisas enteras", "Ganzzahl", "Inteiro"},
-  {"Orthonormal", "Orthonorme", "Ortonormal", "Orthonormal", "Ortonormado"},
-  {"Basic settings", "Reglages de base", "Ajustes basicos", "Grundeinstellungen", "Configuracoes basicas"},
-  {"Plot options", "Options de la courbe", "Opciones de la curva", "Plotoptionen", "Opcoes da curva"},
-  {"Calculate", "Calculer", "Calcular", "Berechnen", "Calcular"},
-  {"Go to", "Aller a", "Ir a", "Gehe zu", "Ir a"},
-  {"Value not reached by function", "Valeur non atteinte par la fonction", "No se alcanza este valor", "Der Wert wird nicht von der Funktion erreicht", "O valor nao e alcancado pela funcao"},
-  {"Zeros", "Zeros", "Raices", "Nullstellen", "Raizes"},
-  {"Tangent", "Tangente", "Tangente", "Tangente", "Tangente"},
-  {"Intersection", "Intersection", "Interseccion", "Schnittmenge", "Interseccao"},
-  {"Select lower bound", "Selectionner la borne inferieure", "Seleccionar el limite inferior", "Untere Integrationsgrenze", "Selecionar limite superior"},
-  {"Select upper bound", "Selectionner la borne superieure", "Seleccionar el limite superior", "Obere Integrationsgrenze", "Selecionar limite inferior"},
-  {"No zeros found", "Aucun zero trouve", "Ninguna raiz encontrada", "Keine Nullstelle gefunden", "Nenhuma encontrado de raiz"},
-    /* Function: third tab*/
-  {"Set the interval", "Regler l'intervalle", "Ajustar el intervalo", "Tabelleneinstell", "Ajustar o intervalo"},
-  {"X start", "X debut", "X inicio", "Startwert", "X inicio"},
-  {"X end", "X fin", "X fin", "Endwert", "X fim"},
-  {"Step", "Pas", "Incremento", "Schrittwert", "Passo"},
-  {"x column", "Colonne x", "Columna x", "X Spalte", "Coluna X"},
-  {"0(0) column", "Colonne 0(0)", "Columna 0(0)", "0(0) Spalte", "Coluna 0(0)"},
-  {"0'(x) column", "Colonne 0'(x)", "Columna 0'(x)", "0'(x) Spalte", "Coluna 0'(x)"},
-  {"Derivative function column", "Colonne de la fonction derivee", "Columna de la derivada", "Spalte der Ableitungsfunktion", "Coluna da funcao derivada"},
-  {"Clear column", "Effacer la colonne", "Borrar la columna", "Spalte loschen", "Excluir coluna"},
-  {"Export the column to a list", "Copier la colonne dans une liste", "Copiar la columna en una lista", "Die Spalte in einer Liste kopieren", "Copie a coluna em uma lista"},
-  {"Hide the derivative function", "Masquer la fonction derivee", "Ocultar la derivada", "Die Ableitungsfunktion ausblenden", "Esconder funcao derivada"},
-  /* Sequence */
-  {"Sequences", "Suites", "Sucesion", "Folge", "Sequencia"},
-  {"SEQUENCES", "SUITES", "SUCESION", "FOLGE", "SEQUENCIA"},
-  {"Sequences", "Suites", "Sucesiones", "Folgen", "Sequencias"},
-  /* Sequence: first tab */
-  {"Add sequence", "Ajouter une suite", "Agregar una sucesion", "Folge hinzuzufugen", "Adicionar uma sequencia"},
-  {"Choose sequence type", "Choisir le type de suite", "Seleccionar el tipo de sucesion", "Das Bildungsgesetz der Folge auswahlen", "Escolha o tipo de sequencia"},
-  {"Sequence type", "Type de suite", "Tipo de sucesion", "Bildungsgesetz der Folge", "Tipo de sequencia"},
-  {"Explicit expression", "Explicite", "Formula explicita", "Explizit", "Explicita"},
-  {"Recursive first order", "Recurrente d'ordre 1", "Recurrencia de orden uno", "Rekursiv, Ordnung 1", "Recorrencia de Primeira Ordem"},
-  {"Recursive second order", "Recurrente d'ordre 2", "Recurrencia de orden dos", "Rekursiv, Ordnung 2", "Recorrencia de Segunda Ordem"},
-  {"Sequence options", "Options de la suite", "Opciones de la sucesion", "Optionen Folge", "Opcoes de sequencia"},
-  {"Sequence color", "Couleur de la suite", "Color de la sucesion", "Farbe der Folge", "Cor da sequencia"},
-  {"Delete sequence", "Supprimer la suite", "Eliminar la sucesion", "Folge loschen", "Eliminar a sequencia"},
-  /* Sequence: second tab */
-  {"No sequence", "Aucune suite", "Ninguna sucesion", "Keine Folge", "Sem sequencia"},
-  {"No sequence is turned on", "Aucune suite activee", "Ninguna sucesion activada", "Keine aktive Folge", "Sem sequencia ativada"},
-  {"N start", "N debut", "N inicio", "Startwert", "N inicio"},
-  {"N end", "N fin", "N fin", "Endwert", "N fim"},
-  {"Sum of terms", "Somme des termes", "Suma de terminos", "Summe der Glieder", "Soma dos termos"},
-  {"Select First Term ", "Selectionner le premier terme ", "Seleccionar el premer termino ", "Erster Glied ", "Selecionar primeiro termo " },
-  {"Select last term ", "Selectionner le dernier terme ", "Seleccionar el ultimo termino ", "Letztes Glied ", "Selecionar ultimo termo "},
-  {"Value not reached by sequence", "Valeur non atteinte par la suite", "No se alcanza este valor", "Der Wert wird nicht von der Folge erreicht", "O valor nao e alcancado pela sequencia"},
-  /* Sequence: third tab */
-  {"n column", "Colonne n", "Columna n", "n Spalte", "Coluna n"},
-
-  /* Statistics */
-  {"Statistics", "Statistiques", "Estadistica", "Statistiken", "Estatistica"},
-  {"STATISTICS", "STATISTIQUES", "ESTADISTICA", "STATISTIKEN", "ESTATISTICA"},
-
-  {"Data", "Donnees", "Datos", "Daten", "Dados"},
-  {"Histogram", "Histogramme", "Histograma", "Histogramm", "Histograma"},
-  {"Box", "Boite", "Caja", "Boxplot", "Caixa"},
-  {"Stats", "Stats", "Medidas", "Stats", "Estat"},
-
-  /* Statistics: first tab */
-  {"Values", "Valeurs", "Valores", "Werte", "Valores"},
-  {"Sizes", "Effectifs", "Frecuencias", "Haufigkeiten", "Frequencias"},
-  {"Column options", "Options de la colonne", "Opciones de la columna", "Optionen Spalte", "Opcoes de coluna"},
-  {"Import from a list", "Importer une liste", "Importar una lista", "Laden eine Liste", "Importar de uma lista"},
-  /* Statistics: second tab */
-  {"No data to draw", "Aucune donnee a tracer", "Ningunos datos que dibujar", "Keine Daten zu zeichnen", "Nao ha dados para desenhar"},
-  {" Interval ", " Intervalle ", " Intervalo", " Intervall", " Intervalo"},
-  {" Size", " Effectif", " Frecuencia", " Haufigkeit", " Frequencia"},
-  {"Frequency", "Frequence", "Relativa", "Relative", "Relativa"},
-  {"Histogram settings", "Reglage de l'histogramme", "Parametros del histograma", "Einstellung des Histogramms", "Configurando o histograma"},
-  {"Bin width", "Largeur des rectangles", "Ancho del rectangulo", "Breite der Rechtecken", "Largura dos rectangulos"},
-  {"X start", "Debut de la serie", "Principio de la serie", "Beginn der Serie", "Inicio da serie"},
-  /* Statistics: third tab */
-  {"First quartile", "Premier quartile", "Primer cuartil", "Unteres Quartil", "Quartil inferior"},
-  {"Median", "Mediane", "Mediana", "Median", "Mediana"},
-  {"Third quartile", "Troisieme quartile", "Tercer cuartil", "Oberes Quartil", "Quartil superior"},
-  /* Statistics: fourth tab */
-  {"No values to calculate", "Aucune grandeur a calculer", "Ninguna medida que calcular", "Keine Grosse zu berechnen", "Nenhuma quantidade para calcular"},
-  {"Total size", "Effectif total", "Poblacion", "Anzahl der Elemente", "Numero de itens"},
-  {"Range", "Etendue", "Rango", "Spannweite", "Amplitude"},
-  {"Mean", "Moyenne", "Media", "Mittelwert", "Media"},
-  {"Standard deviation", "Ecart type", "Desviacion tipica", "Standardabweichung", "Desvio padrao"},
-  {"Variance", "Variance", "Varianza", "Varianz", "Variancia"},
-  {"Interquartile range", "Ecart interquartile", "Rango intercuartilo", "Interquartilsabstand", "Interquartil"},
-  {"Sum of squares", "Somme des carres", "Suma cuadrados", "Quadratsumme", "Soma dos quadrados"},
-
-  /* Probability */
-  {"Probability", "Probabilites", "Probabilidad", "Wahrsch.", "Probabilidade"},
-  {"PROBABILITY", "PROBABILITES", "PROBABILIDAD", "WAHRSCHEINLICHKEIT", "PROBABILIDADE"},
-
-  {"Choose the distribution", "Choisir le type de loi", "Seleccionar la distribucion", "Wahlen Sie Verteilung", "Selecionar a distribuicao"},
-  {"Binomial", "Binomiale", "Binomial", "Binomial", "Binomial"},
-  {"Uniform", "Uniforme", "Uniforme", "Uniform", "Uniforme"},
-  {"Exponential", "Exponentielle", "Exponencial", "Exponential", "Exponencial"},
-  {"Normal", "Normale", "Normal", "Normal", "Normal"},
-  {"Poisson", "Poisson", "Poisson", "Poisson", "Poisson"},
-
-  {"Binomial distribution", "Loi binomiale", "Distribucion binomial", "Binomialverteilung", "Distribuicao binomial"},
-  {"Uniform distribution", "Loi uniforme", "Distribucion uniforme", "Uniformverteilung", "Distribuicao uniforme"},
-  {"Exponential distribution", "Loi exponentielle", "Distribucion exponencial", "Exponentialverteilung", "Distribuicao exponencial"},
-  {"Normal distribution", "Loi normale", "Distribucion normal", "Normalverteilung", "Distribuicao normal"},
-  {"Poisson distribution", "Loi de Poisson", "Distribucion de Poisson", "Poisson-Verteilung", "Distribuicao de Poisson"},
-  {"Choose parameters", "Choisir les parametres", "Seleccionar parametros", "Parameter auswahlen", "Selecionar os parametros"},
-  {"n: Number of trials", "n : Nombre de repetitions", "n : Numero de ensayos ", "n : Anzahl der Versuche", "n : Numero de ensaios"},
-  {"p: Success probability", "p : Probabilite de succes", "p : Probabilidad de exito ", "p : Erfolgswahrscheinlichkeit", "p : Probabilidade de sucesso"},
-  {"[a,b]: Interval", "[a,b] : Intervalle", "[a,b] : Intervalo", "[a,b] : Intervall", "[a,b] : Intervalo"},
-  {lambdaExponentialEnglishDefinition, lambdaExponentialFrenchDefinition, lambdaExponentialSpanishDefinition, lambdaExponentialGermanDefinition, lambdaExponentialPortugueseDefinition},
-  {meanEnglishDefinition, meanFrenchDefinition, meanSpanishDefinition, meanGermanDefinition, meanPortugueseDefinition},
-  {deviationEnglishDefinition, deviationFrenchDefinition, deviationSpanishDefinition, deviationGermanDefinition, deviationPortugueseDefinition},
-  {lambdaPoissonEnglishDefinition, lambdaPoissonFrenchDefinition, lambdaPoissonSpanishDefinition, lambdaPoissonGermanDefinition, lambdaPoissonPortugueseDefinition},
-
-  {"Calculate probabilities", "Calculer les probabilites", "Calcular las probabilidades", "Die Wahrscheinlichkeiten berechnen", "Calcular probabilidades"},
-  {"Forbidden value", "Valeur interdite", "Valor prohibido","Verbotener Wert", "Valor proibida"},
-  {"Undefined value", "Valeur non definie", "Valor indefinido", "Undefinierter Wert", "Valor indefinido"},
-
-  /* Regression */
-  {"Regression", "Regressions", "Regresion", "Regression", "Regressao"},
-  {"REGRESSION", "REGRESSIONS", "REGRESION", "REGRESSION", "REGRESSAO"},
-
-  {"Regression", "Regression", "Regresion", "Regression", "Regressao"},
-  {"Not enough data for regerssion", "Pas assez de donnees pour une regression", "Escasez de datos para la regresion", "Nicht genug Daten fur eine Regression", "Nao ha dados suficientes para uma regressao"},
-  {"reg", "reg", "reg", "reg", "reg"},
-  {"mean", "moyen", "media", "mittel", "media"},
-  {"Regression line", "Droite de regression", "Recta de regresion", "Regressionsgerade", "Linha de regressao"},
-  {"Prediction given X", "Prediction sachant X", "Prediccion dado X", "Berechne Y", "Predicao dado X"},
-  {"Prediction given Y", "Prediction sachant Y", "Prediccion dado Y", "Berechne X", "Predicao dado Y"},
-  {"Value not reached by regression", "Valeur non atteinte par la regression", "No se alcanza este valor", "Wert wird nicht von der Regression erreicht", "Valor nao alcancado pela regressao"},
-  {"Number of points", "Nombre de points", "Numero de puntos", "Punktanzahl", "Numero de pontos"},
-  {"Covariance", "Covariance", "Covarianza", "Kovarianz", "Covariancia"},
-
-  /* Settings */
-  {"Settings", "Parametres", "Configuracion", "Einstellungen", "Configuracao"},
-  {"SETTINGS", "PARAMETRES", "CONFIGURACION", "EINSTELLUNGEN", "CONFIGURACAO"},
-  {"Angle measure", "Unite d'angle", "Medida del angulo", "Winkeleinheit", "Valor do angulo"},
-  {"Result format", "Format resultat", "Formato resultado", "Zahlenformat", "Formato numerico"},
-  {"Complex format", "Forme complexe", "Formato complejo", "Komplex", "Complexos"},
-  {"Language", "Langue", "Idioma", "Sprache", "Idioma"},
-  {"Exam mode", "Mode examen", "Modo examen", "Testmodus", "Modo de Exame"},
-  {"Activate exam mode", "Activer le mode examen", "Activar el modo examen", "Start Testmodus", "Inicio modo de exame"},
-  {"Exam mode: active", "Mode examen: actif", "Modo examen: activo", "Testmodus : aktiv", "Modo de exame : ativo"},
-  {"All your data will be ", "Toutes vos donnees seront ", "Todos sus datos se ", "Alle Ihre Daten werden ", "Todos os seus dados serao "},
-  {"deleted when you activate ", "supprimees si vous activez ", "eliminaran al activar ", "geloscht, wenn Sie den ", "apagados se voce ligar "},
-  {"the exam mode.", "le mode examen.", "el modo examen.", "Testmodus einschalten.", "o modo de exame."},
-  {"Exit the exam ", "Voulez-vous sortir ", "Salir del modo ", "Wollen Sie den Testmodus ", "Voce quer sair do modo de "},
-  {"mode?", "du mode examen ?", "examen ?", "verlassen?", "exame ?"},
-  {"About", "A propos", "Acerca", "Uber", "Acerca"},
-  {"Degrees ", "Degres ", "Grados ", "Grad ", "Graus "},
-  {"Radians ", "Radians ", "Radianes ", "Bogenmass ", "Radianos "},
-  {"Auto ", "Auto ", "Auto ", "Auto ", "Auto "},
-  {"Scientific ", "Scientifique ", "Cientifico ", "Wissenschaftlich ", "Cientifico "},
-  {"deg", "deg", "gra", "gra", "gra"},
-  {"rad", "rad", "rad", "rad", "rad"},
-  {"sci/", "sci/", "sci/", "sci/", "sci/"},
-  {"Brightness", "Luminosite", "Brillo", "Helligkeit", "Brilho"},
-  {"Software version", "Version du logiciel", "Version de software", "Softwareversion", "Versao do software"},
-  {"Serial number", "Numero serie", "Numero serie", "Seriennummer", "Numero serie"},
-  {"Update pop-up", "Rappel mise a jour", "Pop-up de actualizacion", "Erinnerung: Update", "Alertas de atualizacao"},
-
-  {"You are starting the hardware", "Vous allez lancer le test usine.", "Esta iniciando la prueba de", "Sie werden den Hardwaretest", "Voce vai executar o teste da planta."},
-  {" test. At the end of the test, you", "Pour en sortir vous devrez", "fabrica. Para quitar la prueba,", "starten. Um den zu verlassen, mussen", "Para sair voce tem que executar"},
-  {"will have to reset the device and", "effectuer un reset qui supprimera", "debera resetear su equipo.", "Sie einen Reset durchfuhren, der", "uma redefinicao, que ira apagar"},
-  {"all your data will be deleted.", "vos donnees.", "", "Ihre Daten loschen werden.", "seus dados."},
-
-  /* Code */
-  {"BETA VERSION", "VERSION BETA", "BETA VERSION", "BETA VERSION", "BETA VERSION"},
-  {"You are using a pre-release and", "La version de Python que vous utilisez", "No esta utilizando una version", "You are using a pre-release and", "You are using a pre-release and"},
-  {"feature-limited version of Python.", "n'est pas une version definitive.", "definitiva de Python.", "feature-limited version of Python.", "feature-limited version of Python."},
-  {"You may encounter some", "Il est possible que son utilisation soit", "Es posible que encuentre varios bugs", "You may encounter", "You may encounter"},
-  {"unexpected bugs.", "limitee et que certains bugs apparaissent.", "y que su utilizacion sea limitada.", "unexpected bugs.", "unexpected bugs."},
-  {"Edit program", "Editer le programme", "Editar el programa", "Programm bearbeiten", "Editar programa"},
-  {"Execute program", "Executer le programme", "Ejecutar el programa", "Programm ausfuhren", "Executar programa"},
-
-  /* On boarding */
-  {"UPDATE AVAILABLE", "MISE A JOUR DISPONIBLE", "ACTUALIZACION DISPONIBLE", "UPDATE VERFUGBAR", "ATUALIZACAO DISPONIVEL"},
-  {"There are important upgrades", "Des ameliorations importantes existent", "Hay mejoras importantes", "Wichtige Verbesserungen fur Ihren", "Existem melhorias significativas"},
-  {"for your calculator.", "pour votre calculatrice.", "para su calculadora.", "Rechner stehen zur Verfugung.", "para a sua calculadora."},
-  {"Browse our page from your computer", "Connectez-vous depuis votre ordinateur", "Visita nuestra pagina desde su ordenador", "Melden Sie sich von Ihrem Computer an", "Navegue na nossa pagina do seu computador"},
-  {"www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update"},
-  {"Skip", "Passer", "Saltar", "Uberspringen", "Pular"},
-};
+  const I18n::StandardMessage Warning("Warning", "Attention", "Cuidado", "Achtung", "Atencao");
+  const I18n::StandardMessage Ok("Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar");
+  const I18n::StandardMessage Cancel("Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar");
+  const I18n::StandardMessage Next("Next", "Suivant", "Siguiente", "Nachste", "Seguinte");
+  const I18n::StandardMessage SyntaxError("Syntax error", "Attention a la syntaxe", "Error sintactico", "Syntaxfehler", "Erro de sintaxe");
+  const I18n::StandardMessage MathError("Math error", "Erreur mathematique", "Error matematico", "Mathematischen Fehler", "Erro matematico");
+  const I18n::StandardMessage LowBattery("Low battery", "Batterie faible", "Bateria baja", "Batterie leer", "Bateria fraca");
+  const I18n::StandardMessage Variables("Variables", "Variables", "Variables", "Variablen", "Variaveis");
+  const I18n::StandardMessage Number("Numbers", "Nombres", "Numeros", "Zahlen", "Numeros");
+  const I18n::StandardMessage Matrix("Matrices", "Matrices", "Matrices", "Matrizen", "Matrizes");
+  const I18n::StandardMessage List("Lists", "Listes", "Listas", "Listen", "Listas");
+  const I18n::StandardMessage Empty("Empty", "Vide", "Vacio", "Leer", "Vacuo");
+  const I18n::StandardMessage Toolbox("Toolbox", "Toolbox", "Toolbox", "Toolbox", "Toolbox");
+  const I18n::StandardMessage AbsoluteValue("Absolute value", "Valeur absolue", "Valor absoluto", "Betragsfunktion", "Valor absoluto");
+  const I18n::StandardMessage NthRoot("nth-root", "Racine n-ieme", "Raiz enesima", "n-te Wurzel", "Radiciacao");
+  const I18n::StandardMessage BasedLogarithm("Logarithm to base a", "Logarithme base a", "Logaritmo en base a", "Logarithmus zur Basis a", "Logaritmo na base a");
+  const I18n::StandardMessage Calculation("Calculation", "Calculs", "Calculos", "Berechnung", "Calculo");
+  const I18n::StandardMessage ComplexNumber("Complex numbers", "Nombres complexes", "Numeros complejos", "Komplexen Zahlen", "Numeros complexos");
+  const I18n::StandardMessage Probability("Combinatorics", "Denombrement", "Combinatoria", "Kombinatorik", "Combinatoria");
+  const I18n::StandardMessage Arithmetic("Arithmetic", "Arithmetique", "Aritmetica", "Arithmetisch", "Aritmetica");
+  const I18n::StandardMessage Matrices("Matrix", "Matrices", "Matriz", "Matrizen", "Matrizes");
+  const I18n::StandardMessage Lists("List", "Listes", "Listas", "Listen", "Listas");
+  const I18n::StandardMessage Approximation("Approximation", "Approximation", "Aproximacion", "Approximation", "Aproximacao");
+  const I18n::StandardMessage HyperbolicTrigonometry("Hyperbolic trigonometry", "Trigonometrie hyperbolique", "Trigonometria hiperbolica", "Hyperbelfunktionen", "Funcoes hiperbolicas");
+  const I18n::StandardMessage Fluctuation("Prediction Interval", "Intervalle fluctuation", "Interval de prediccion", "Konfidenzintervall", "Intervalo de confianca");
+  const I18n::StandardMessage DerivateNumber("Derivative", "Nombre derive", "Derivada", "Ableitung", "Derivada");
+  const I18n::StandardMessage Integral("Integral", "Integrale", "Integral", "Integral", "Integral");
+  const I18n::StandardMessage Sum("Sum", "Somme", "Suma", "Summe", "Somatorio");
+  const I18n::StandardMessage Product("Product", "Produit", "Productorio", "Produkt", "Produto");
+  const I18n::StandardMessage ComplexAbsoluteValue("Absolute value", "Module", "Modulo", "Betrag", "Modulo");
+  const I18n::StandardMessage Agument("Argument", "Argument", "Argumento", "Argument", "Argumento");
+  const I18n::StandardMessage ReelPart("Real part", "Partie reelle", "Parte real", "Realer Teil", "Parte real");
+  const I18n::StandardMessage ImaginaryPart("Imaginary part", "Partie imaginaire", "Parte imaginaria", "Imaginarer Teil", "Parte imaginaria");
+  const I18n::StandardMessage Conjugate("Conjugate", "Conjugue", "Conjugado", "Konjugiert", "Conjugado");
+  const I18n::StandardMessage Combination("Combination", "k parmi n", "Combinacion", "Kombination", "Combinacao");
+  const I18n::StandardMessage Permutation("Permutation", "Arrangement", "Variacion", "Permutation", "Permutacao");
+  const I18n::StandardMessage GreatCommonDivisor("GCD", "PGCD", "MCD", "ggT", "MDC");
+  const I18n::StandardMessage LeastCommonMultiple("LCM", "PPCM", "MCM", "kgV", "MMC");
+  const I18n::StandardMessage Remainder("Remainder division p by q", "Reste division p par q", "Resto division p por q", "Rest", "Resto da divisao inteira");
+  const I18n::StandardMessage Quotient("Quotient division p by q", "Quotient division p par q", "Cociente division p por q", "Ganzzahlquotient", "Quociente");
+  const I18n::StandardMessage Inverse("Inverse", "Inverse", "Inversa", "Inverse", "Matriz inversa");
+  const I18n::StandardMessage Determinant("Determinant", "Determinant", "Determinante", "Determinante", "Determinante");
+  const I18n::StandardMessage Transpose("Transpose", "Transposee", "Transpuesta", "Transponierte", "Matriz transposta");
+  const I18n::StandardMessage Trace("Trace", "Trace ", "Traza", "Spur", "Traco");
+  const I18n::StandardMessage Dimension("Size", "Taille", "Tamano", "Grosse", "Tamanho");
+  const I18n::StandardMessage Sort("Sort ascending ", "Tri croissant", "Clasificacion ascendente", "Sortieren aufsteigend", "Ordem crescente");
+  const I18n::StandardMessage InvSort("Sort descending", "Tri decroissant", "Clasificacion descendente", "Sortieren absteigend", "Ordem decrescente");
+  const I18n::StandardMessage Maximum("Maximum", "Maximum", "Maximo", "Maximalwert", "Maximo");
+  const I18n::StandardMessage Minimum("Minimum", "Minimum", "Minimo", "Mindestwert", "Minimo");
+  const I18n::StandardMessage Floor("Floor", "Partie entiere", "Parte entera", "Untergrenze", "Parte inteira");
+  const I18n::StandardMessage FracPart("Fractional part", "Partie fractionnaire", "Parte fraccionaria", "Bruchanteil" , "Parte fraccionaria");
+  const I18n::StandardMessage Ceiling("Ceiling", "Plafond", "Techo", "Obergrenze", "Teto");
+  const I18n::StandardMessage Rounding("Rounding to n digits", "Arrondi n chiffres", "Redondeo n digitos", "Runden", "Arredondar");
+  const I18n::StandardMessage HyperbolicCosine("Hyperbolic cosine", "Cosinus hyperbolique", "Coseno hiperbolico", "Kosinus hyperbolicus", "Cosseno hiperbolico");
+  const I18n::StandardMessage HyperbolicSine("Hyperbolic sine", "Sinus hyperbolique", "Seno hiperbolico", "Sinus hyperbolicus", "Seno hiperbolico");
+  const I18n::StandardMessage HyperbolicTangent("Hyperbolic tangent", "Tangente hyperbolique", "Tangente hiperbolica", "Tangens hyperbolicus", "Tangente hiperbolica");
+  const I18n::StandardMessage InverseHyperbolicCosine("Inverse hyperbolic cosine", "Argument cosinus hyperbolique", "Argumento coseno hiperbolico", "Areakosinus hyperbolicus", "Arco cosseno hiperbolico");
+  const I18n::StandardMessage InverseHyperbolicSine("Inverse hyperbolic sine", "Argument sinus hyperbolique", "Argumento seno hiperbolico", "Areasinus hyperbolicus", "Arco seno hiperbolico");
+  const I18n::StandardMessage InverseHyperbolicTangent("Inverse hyperbolic tangent", "Argument tangente hyperbolique", "Argumento tangente hiperbolica", "Areatangens hyperbolicus", "Arco tangente hiperbolica");
+  const I18n::StandardMessage Prediction95("Prediction interval 95%", "Intervalle fluctuation 95% (Term)", "Intervalo de prediccion 95%", "Schwankungsbereich 95%", "Intervalo de previsao 95%");
+  const I18n::StandardMessage Prediction("Simple prediction interval", "Intervalle fluctuation simple (2de)", "Intervalo de prediccion simple", "Einfaches Schwankungsbereich", "Intervalo de previsao simples");
+  const I18n::StandardMessage Confidence("Confidence interval", "Intervalle confiance", "Intervalo de confianza", "Konfidenzintervall", "Intervalo de confianca");
+  const I18n::StandardMessage Apps("Applications", "Applications", "Aplicaciones", "Anwendungen", "Aplicações");
+  const I18n::StandardMessage AppsCapital("APPLICATIONS", "APPLICATIONS", "APLICACIONES", "ANWENDUNGEN", "APLICACOES");
+  const I18n::StandardMessage CalculApp("Calculation", "Calculs", "Calculo", "Berechnung", "Calculo");
+  const I18n::StandardMessage CalculAppCapital("CALCULATION", "CALCULS", "CALCULO", "BERECHNUNG", "CALCULO");
+  const I18n::StandardMessage FunctionApp("Functions", "Fonctions", "Funcion", "Funktionen", "Funcao");
+  const I18n::StandardMessage FunctionAppCapital("FUNCTIONS", "FONCTIONS", "FUNCION", "FUNKTIONEN", "FUNCAO");
+  const I18n::StandardMessage FunctionTab("Functions", "Fonctions", "Funciones", "Funktionen", "Funcoes");
+  const I18n::StandardMessage GraphTab("Graph", "Graphique", "Grafico", "Graph", "Grafico");
+  const I18n::StandardMessage ValuesTab("Table", "Tableau", "Tabla", "Tabelle", "Tabela");
+  const I18n::StandardMessage Plot("Plot graph", "Tracer le graphique", "Dibujar el grafico", "Graphen zeichnen", "Tracar o grafico");
+  const I18n::StandardMessage DisplayValues("Display values", "Afficher les valeurs", "Visualizar los valores", "Werte anzeigen", "Exibir os valores");
+  const I18n::StandardMessage FunctionOptions("Function options", "Options de la fonction", "Opciones de la funcion", "Optionen Funktion", "Opcoes de funcao");
+  const I18n::StandardMessage AddFunction("Add function", "Ajouter une fonction", "Agregar una funcion", "Funktion hinzuzufugen", "Adicionar uma funcao");
+  const I18n::StandardMessage DeleteFunction("Delete function", "Supprimer la fonction", "Eliminar la funcion", "Funktion loschen", "Eliminar a funcao");
+  const I18n::StandardMessage NoFunctionToDelete("No function to delete", "Pas de fonction a supprimer", "Ninguna funcion que eliminar", "Keine Funktion zu loschen", "Sem funcao para eliminar");
+  const I18n::StandardMessage ActivateDesactivate("Turn on/off", "Activer/Desactiver", "Activar/Desactivar", "Aktivieren/Deaktivieren", "Activar/Desactivar");
+  const I18n::StandardMessage FunctionColor("Function color", "Couleur de la fonction", "Color de la funcion", "Farbe der Funktion", "Cor da funcao");
+  const I18n::StandardMessage NoFunction("No function", "Aucune fonction", "Ninguna funcion", "Keine funktion", "Nenhuma funcao");
+  const I18n::StandardMessage NoActivatedFunction("No function is turned on", "Aucune fonction activee", "Ninguna funcion activada", "Keine aktive Funktion", "Sem funcao ativada");
+  const I18n::StandardMessage Axis("Axes", "Axes", "Ejes", "Achsen", "Eixos");
+  const I18n::StandardMessage Zoom("Zoom", "Zoom", "Zoom", "Zoom", "Zoom");
+  const I18n::StandardMessage Initialization("Preadjustment", "Initialisation", "Inicializacion", "Initialisierung", "Inicializacao");
+  const I18n::StandardMessage Move(" Move: ", " Deplacer : ", " Mover : ", " Verschieben: ", " Mover : ");
+  const I18n::StandardMessage ToZoom("Zoom: ", "Zoomer : ", "Zoom : ", "Zoom: ", "Zoom : ");
+  const I18n::StandardMessage Or(" or ", " ou ", " o ", " oder ", " ou ");
+  const I18n::StandardMessage Trigonometric("Trigonometrical", "Trigonometrique", "Trigonometrico", "Trigonometrisch", "Trigonometrico");
+  const I18n::StandardMessage RoundAbscissa("Integer", "Abscisses entieres", "Abscisas enteras", "Ganzzahl", "Inteiro");
+  const I18n::StandardMessage Orthonormal("Orthonormal", "Orthonorme", "Ortonormal", "Orthonormal", "Ortonormado");
+  const I18n::StandardMessage DefaultSetting("Basic settings", "Reglages de base", "Ajustes basicos", "Grundeinstellungen", "Configuracoes basicas");
+  const I18n::StandardMessage PlotOptions("Plot options", "Options de la courbe", "Opciones de la curva", "Plotoptionen", "Opcoes da curva");
+  const I18n::StandardMessage Compute("Calculate", "Calculer", "Calcular", "Berechnen", "Calcular");
+  const I18n::StandardMessage Goto("Go to", "Aller a", "Ir a", "Gehe zu", "Ir a");
+  const I18n::StandardMessage ValueNotReachedByFunction("Value not reached by function", "Valeur non atteinte par la fonction", "No se alcanza este valor", "Der Wert wird nicht von der Funktion erreicht", "O valor nao e alcancado pela funcao");
+  const I18n::StandardMessage Zeros("Zeros", "Zeros", "Raices", "Nullstellen", "Raizes");
+  const I18n::StandardMessage Tangent("Tangent", "Tangente", "Tangente", "Tangente", "Tangente");
+  const I18n::StandardMessage Intersection("Intersection", "Intersection", "Interseccion", "Schnittmenge", "Interseccao");
+  const I18n::StandardMessage SelectLowerBound("Select lower bound", "Selectionner la borne inferieure", "Seleccionar el limite inferior", "Untere Integrationsgrenze", "Selecionar limite superior");
+  const I18n::StandardMessage SelectUpperBound("Select upper bound", "Selectionner la borne superieure", "Seleccionar el limite superior", "Obere Integrationsgrenze", "Selecionar limite inferior");
+  const I18n::StandardMessage NoZeroFound("No zeros found", "Aucun zero trouve", "Ninguna raiz encontrada", "Keine Nullstelle gefunden", "Nenhuma encontrado de raiz");
+  const I18n::StandardMessage IntervalSet("Set the interval", "Regler l'intervalle", "Ajustar el intervalo", "Tabelleneinstell", "Ajustar o intervalo");
+  const I18n::StandardMessage XStart("X start", "X debut", "X inicio", "Startwert", "X inicio");
+  const I18n::StandardMessage XEnd("X end", "X fin", "X fin", "Endwert", "X fim");
+  const I18n::StandardMessage Step("Step", "Pas", "Incremento", "Schrittwert", "Passo");
+  const I18n::StandardMessage XColumn("x column", "Colonne x", "Columna x", "X Spalte", "Coluna X");
+  const I18n::StandardMessage FunctionColumn("0(0) column", "Colonne 0(0)", "Columna 0(0)", "0(0) Spalte", "Coluna 0(0)");
+  const I18n::StandardMessage DerivativeColumn("0'(x) column", "Colonne 0'(x)", "Columna 0'(x)", "0'(x) Spalte", "Coluna 0'(x)");
+  const I18n::StandardMessage DerivativeFunctionColumn("Derivative function column", "Colonne de la fonction derivee", "Columna de la derivada", "Spalte der Ableitungsfunktion", "Coluna da funcao derivada");
+  const I18n::StandardMessage ClearColumn("Clear column", "Effacer la colonne", "Borrar la columna", "Spalte loschen", "Excluir coluna");
+  const I18n::StandardMessage CopyColumnInList("Export the column to a list", "Copier la colonne dans une liste", "Copiar la columna en una lista", "Die Spalte in einer Liste kopieren", "Copie a coluna em uma lista");
+  const I18n::StandardMessage HideDerivativeColumn("Hide the derivative function", "Masquer la fonction derivee", "Ocultar la derivada", "Die Ableitungsfunktion ausblenden", "Esconder funcao derivada");
+  const I18n::StandardMessage SequenceApp("Sequences", "Suites", "Sucesion", "Folge", "Sequencia");
+  const I18n::StandardMessage SequenceAppCapital("SEQUENCES", "SUITES", "SUCESION", "FOLGE", "SEQUENCIA");
+  const I18n::StandardMessage SequenceTab("Sequences", "Suites", "Sucesiones", "Folgen", "Sequencias");
+  const I18n::StandardMessage AddSequence("Add sequence", "Ajouter une suite", "Agregar una sucesion", "Folge hinzuzufugen", "Adicionar uma sequencia");
+  const I18n::StandardMessage ChooseSequenceType("Choose sequence type", "Choisir le type de suite", "Seleccionar el tipo de sucesion", "Das Bildungsgesetz der Folge auswahlen", "Escolha o tipo de sequencia");
+  const I18n::StandardMessage SequenceType("Sequence type", "Type de suite", "Tipo de sucesion", "Bildungsgesetz der Folge", "Tipo de sequencia");
+  const I18n::StandardMessage Explicite("Explicit expression", "Explicite", "Formula explicita", "Explizit", "Explicita");
+  const I18n::StandardMessage SingleRecurrence("Recursive first order", "Recurrente d'ordre 1", "Recurrencia de orden uno", "Rekursiv, Ordnung 1", "Recorrencia de Primeira Ordem");
+  const I18n::StandardMessage DoubleRecurrence("Recursive second order", "Recurrente d'ordre 2", "Recurrencia de orden dos", "Rekursiv, Ordnung 2", "Recorrencia de Segunda Ordem");
+  const I18n::StandardMessage SequenceOptions("Sequence options", "Options de la suite", "Opciones de la sucesion", "Optionen Folge", "Opcoes de sequencia");
+  const I18n::StandardMessage SequenceColor("Sequence color", "Couleur de la suite", "Color de la sucesion", "Farbe der Folge", "Cor da sequencia");
+  const I18n::StandardMessage DeleteSequence("Delete sequence", "Supprimer la suite", "Eliminar la sucesion", "Folge loschen", "Eliminar a sequencia");
+  const I18n::StandardMessage NoSequence("No sequence", "Aucune suite", "Ninguna sucesion", "Keine Folge", "Sem sequencia");
+  const I18n::StandardMessage NoActivatedSequence("No sequence is turned on", "Aucune suite activee", "Ninguna sucesion activada", "Keine aktive Folge", "Sem sequencia ativada");
+  const I18n::StandardMessage NStart("N start", "N debut", "N inicio", "Startwert", "N inicio");
+  const I18n::StandardMessage NEnd("N end", "N fin", "N fin", "Endwert", "N fim");
+  const I18n::StandardMessage TermSum("Sum of terms", "Somme des termes", "Suma de terminos", "Summe der Glieder", "Soma dos termos");
+  const I18n::StandardMessage SelectFirstTerm("Select First Term ", "Selectionner le premier terme ", "Seleccionar el premer termino ", "Erster Glied ", "Selecionar primeiro termo " );
+  const I18n::StandardMessage SelectLastTerm("Select last term ", "Selectionner le dernier terme ", "Seleccionar el ultimo termino ", "Letztes Glied ", "Selecionar ultimo termo ");
+  const I18n::StandardMessage ValueNotReachedBySequence("Value not reached by sequence", "Valeur non atteinte par la suite", "No se alcanza este valor", "Der Wert wird nicht von der Folge erreicht", "O valor nao e alcancado pela sequencia");
+  const I18n::StandardMessage NColumn("n column", "Colonne n", "Columna n", "n Spalte", "Coluna n");
+  const I18n::StandardMessage StatsApp("Statistics", "Statistiques", "Estadistica", "Statistiken", "Estatistica");
+  const I18n::StandardMessage StatsAppCapital("STATISTICS", "STATISTIQUES", "ESTADISTICA", "STATISTIKEN", "ESTATISTICA");
+  const I18n::StandardMessage DataTab("Data", "Donnees", "Datos", "Daten", "Dados");
+  const I18n::StandardMessage HistogramTab("Histogram", "Histogramme", "Histograma", "Histogramm", "Histograma");
+  const I18n::StandardMessage BoxTab("Box", "Boite", "Caja", "Boxplot", "Caixa");
+  const I18n::StandardMessage StatTab("Stats", "Stats", "Medidas", "Stats", "Estat");
+  const I18n::StandardMessage Values("Values", "Valeurs", "Valores", "Werte", "Valores");
+  const I18n::StandardMessage Sizes("Sizes", "Effectifs", "Frecuencias", "Haufigkeiten", "Frequencias");
+  const I18n::StandardMessage ColumnOptions("Column options", "Options de la colonne", "Opciones de la columna", "Optionen Spalte", "Opcoes de coluna");
+  const I18n::StandardMessage ImportList("Import from a list", "Importer une liste", "Importar una lista", "Laden eine Liste", "Importar de uma lista");
+  const I18n::StandardMessage NoDataToPlot("No data to draw", "Aucune donnee a tracer", "Ningunos datos que dibujar", "Keine Daten zu zeichnen", "Nao ha dados para desenhar");
+  const I18n::StandardMessage Interval(" Interval ", " Intervalle ", " Intervalo", " Intervall", " Intervalo");
+  const I18n::StandardMessage Size(" Size", " Effectif", " Frecuencia", " Haufigkeit", " Frequencia");
+  const I18n::StandardMessage Frequency("Frequency", "Frequence", "Relativa", "Relative", "Relativa");
+  const I18n::StandardMessage HistogramSet("Histogram settings", "Reglage de l'histogramme", "Parametros del histograma", "Einstellung des Histogramms", "Configurando o histograma");
+  const I18n::StandardMessage RectangleWidth("Bin width", "Largeur des rectangles", "Ancho del rectangulo", "Breite der Rechtecken", "Largura dos rectangulos");
+  const I18n::StandardMessage BarStart("X start", "Debut de la serie", "Principio de la serie", "Beginn der Serie", "Inicio da serie");
+  const I18n::StandardMessage FirstQuartile("First quartile", "Premier quartile", "Primer cuartil", "Unteres Quartil", "Quartil inferior");
+  const I18n::StandardMessage Median("Median", "Mediane", "Mediana", "Median", "Mediana");
+  const I18n::StandardMessage ThirdQuartile("Third quartile", "Troisieme quartile", "Tercer cuartil", "Oberes Quartil", "Quartil superior");
+  const I18n::StandardMessage NoValueToCompute("No values to calculate", "Aucune grandeur a calculer", "Ninguna medida que calcular", "Keine Grosse zu berechnen", "Nenhuma quantidade para calcular");
+  const I18n::StandardMessage TotalSize("Total size", "Effectif total", "Poblacion", "Anzahl der Elemente", "Numero de itens");
+  const I18n::StandardMessage Range("Range", "Etendue", "Rango", "Spannweite", "Amplitude");
+  const I18n::StandardMessage Mean("Mean", "Moyenne", "Media", "Mittelwert", "Media");
+  const I18n::StandardMessage StandardDeviation("Standard deviation", "Ecart type", "Desviacion tipica", "Standardabweichung", "Desvio padrao");
+  const I18n::StandardMessage Deviation("Variance", "Variance", "Varianza", "Varianz", "Variancia");
+  const I18n::StandardMessage InterquartileRange("Interquartile range", "Ecart interquartile", "Rango intercuartilo", "Interquartilsabstand", "Interquartil");
+  const I18n::StandardMessage SquareSum("Sum of squares", "Somme des carres", "Suma cuadrados", "Quadratsumme", "Soma dos quadrados");
+  const I18n::StandardMessage ProbaApp("Probability", "Probabilites", "Probabilidad", "Wahrsch.", "Probabilidade");
+  const I18n::StandardMessage ProbaAppCapital("PROBABILITY", "PROBABILITES", "PROBABILIDAD", "WAHRSCHEINLICHKEIT", "PROBABILIDADE");
+  const I18n::StandardMessage ChooseLaw("Choose the distribution", "Choisir le type de loi", "Seleccionar la distribucion", "Wahlen Sie Verteilung", "Selecionar a distribuicao");
+  const I18n::StandardMessage Binomial("Binomial", "Binomiale", "Binomial", "Binomial", "Binomial");
+  const I18n::StandardMessage Uniforme("Uniform", "Uniforme", "Uniforme", "Uniform", "Uniforme");
+  const I18n::StandardMessage Exponential("Exponential", "Exponentielle", "Exponencial", "Exponential", "Exponencial");
+  const I18n::StandardMessage Normal("Normal", "Normale", "Normal", "Normal", "Normal");
+  const I18n::StandardMessage Poisson("Poisson", "Poisson", "Poisson", "Poisson", "Poisson");
+  const I18n::StandardMessage BinomialLaw("Binomial distribution", "Loi binomiale", "Distribucion binomial", "Binomialverteilung", "Distribuicao binomial");
+  const I18n::StandardMessage UniformLaw("Uniform distribution", "Loi uniforme", "Distribucion uniforme", "Uniformverteilung", "Distribuicao uniforme");
+  const I18n::StandardMessage ExponentialLaw("Exponential distribution", "Loi exponentielle", "Distribucion exponencial", "Exponentialverteilung", "Distribuicao exponencial");
+  const I18n::StandardMessage NormalLaw("Normal distribution", "Loi normale", "Distribucion normal", "Normalverteilung", "Distribuicao normal");
+  const I18n::StandardMessage PoissonLaw("Poisson distribution", "Loi de Poisson", "Distribucion de Poisson", "Poisson-Verteilung", "Distribuicao de Poisson");
+  const I18n::StandardMessage ChooseParameters("Choose parameters", "Choisir les parametres", "Seleccionar parametros", "Parameter auswahlen", "Selecionar os parametros");
+  const I18n::StandardMessage RepetitionNumber("n: Number of trials", "n : Nombre de repetitions", "n : Numero de ensayos ", "n : Anzahl der Versuche", "n : Numero de ensaios");
+  const I18n::StandardMessage SuccessProbability("p: Success probability", "p : Probabilite de succes", "p : Probabilidad de exito ", "p : Erfolgswahrscheinlichkeit", "p : Probabilidade de sucesso");
+  const I18n::StandardMessage IntervalDefinition("[a,b]: Interval", "[a,b] : Intervalle", "[a,b] : Intervalo", "[a,b] : Intervall", "[a,b] : Intervalo");
+  const I18n::StandardMessage LambdaExponentialDefinition(lambdaExponentialEnglishDefinition, lambdaExponentialFrenchDefinition, lambdaExponentialSpanishDefinition, lambdaExponentialGermanDefinition, lambdaExponentialPortugueseDefinition);
+  const I18n::StandardMessage MeanDefinition(meanEnglishDefinition, meanFrenchDefinition, meanSpanishDefinition, meanGermanDefinition, meanPortugueseDefinition);
+  const I18n::StandardMessage DeviationDefinition(deviationEnglishDefinition, deviationFrenchDefinition, deviationSpanishDefinition, deviationGermanDefinition, deviationPortugueseDefinition);
+  const I18n::StandardMessage LambdaPoissonDefinition(lambdaPoissonEnglishDefinition, lambdaPoissonFrenchDefinition, lambdaPoissonSpanishDefinition, lambdaPoissonGermanDefinition, lambdaPoissonPortugueseDefinition);
+  const I18n::StandardMessage ComputeProbability("Calculate probabilities", "Calculer les probabilites", "Calcular las probabilidades", "Die Wahrscheinlichkeiten berechnen", "Calcular probabilidades");
+  const I18n::StandardMessage ForbiddenValue("Forbidden value", "Valeur interdite", "Valor prohibido","Verbotener Wert", "Valor proibida");
+  const I18n::StandardMessage UndefinedValue("Undefined value", "Valeur non definie", "Valor indefinido", "Undefinierter Wert", "Valor indefinido");
+  const I18n::StandardMessage RegressionApp("Regression", "Regressions", "Regresion", "Regression", "Regressao");
+  const I18n::StandardMessage RegressionAppCapital("REGRESSION", "REGRESSIONS", "REGRESION", "REGRESSION", "REGRESSAO");
+  const I18n::StandardMessage Regression("Regression", "Regression", "Regresion", "Regression", "Regressao");
+  const I18n::StandardMessage NoEnoughDataForRegression("Not enough data for regerssion", "Pas assez de donnees pour une regression", "Escasez de datos para la regresion", "Nicht genug Daten fur eine Regression", "Nao ha dados suficientes para uma regressao");
+  const I18n::StandardMessage Reg("reg", "reg", "reg", "reg", "reg");
+  const I18n::StandardMessage MeanDot("mean", "moyen", "media", "mittel", "media");
+  const I18n::StandardMessage RegressionSlope("Regression line", "Droite de regression", "Recta de regresion", "Regressionsgerade", "Linha de regressao");
+  const I18n::StandardMessage XPrediction("Prediction given X", "Prediction sachant X", "Prediccion dado X", "Berechne Y", "Predicao dado X");
+  const I18n::StandardMessage YPrediction("Prediction given Y", "Prediction sachant Y", "Prediccion dado Y", "Berechne X", "Predicao dado Y");
+  const I18n::StandardMessage ValueNotReachedByRegression("Value not reached by regression", "Valeur non atteinte par la regression", "No se alcanza este valor", "Wert wird nicht von der Regression erreicht", "Valor nao alcancado pela regressao");
+  const I18n::StandardMessage NumberOfDots("Number of points", "Nombre de points", "Numero de puntos", "Punktanzahl", "Numero de pontos");
+  const I18n::StandardMessage Covariance("Covariance", "Covariance", "Covarianza", "Kovarianz", "Covariancia");
+  const I18n::StandardMessage SettingsApp("Settings", "Parametres", "Configuracion", "Einstellungen", "Configuracao");
+  const I18n::StandardMessage SettingsAppCapital("SETTINGS", "PARAMETRES", "CONFIGURACION", "EINSTELLUNGEN", "CONFIGURACAO");
+  const I18n::StandardMessage AngleUnit("Angle measure", "Unite d'angle", "Medida del angulo", "Winkeleinheit", "Valor do angulo");
+  const I18n::StandardMessage DisplayMode("Result format", "Format resultat", "Formato resultado", "Zahlenformat", "Formato numerico");
+  const I18n::StandardMessage ComplexFormat("Complex format", "Forme complexe", "Formato complejo", "Komplex", "Complexos");
+  const I18n::StandardMessage Language("Language", "Langue", "Idioma", "Sprache", "Idioma");
+  const I18n::StandardMessage ExamMode("Exam mode", "Mode examen", "Modo examen", "Testmodus", "Modo de Exame");
+  const I18n::StandardMessage ActivateExamMode("Activate exam mode", "Activer le mode examen", "Activar el modo examen", "Start Testmodus", "Inicio modo de exame");
+  const I18n::StandardMessage ExamModeActive("Exam mode: active", "Mode examen: actif", "Modo examen: activo", "Testmodus : aktiv", "Modo de exame : ativo");
+  const I18n::StandardMessage ActiveExamModeMessage1("All your data will be ", "Toutes vos donnees seront ", "Todos sus datos se ", "Alle Ihre Daten werden ", "Todos os seus dados serao ");
+  const I18n::StandardMessage ActiveExamModeMessage2("deleted when you activate ", "supprimees si vous activez ", "eliminaran al activar ", "geloscht, wenn Sie den ", "apagados se voce ligar ");
+  const I18n::StandardMessage ActiveExamModeMessage3("the exam mode.", "le mode examen.", "el modo examen.", "Testmodus einschalten.", "o modo de exame.");
+  const I18n::StandardMessage ExitExamMode1("Exit the exam ", "Voulez-vous sortir ", "Salir del modo ", "Wollen Sie den Testmodus ", "Voce quer sair do modo de ");
+  const I18n::StandardMessage ExitExamMode2("mode?", "du mode examen ?", "examen ?", "verlassen?", "exame ?");
+  const I18n::StandardMessage About("About", "A propos", "Acerca", "Uber", "Acerca");
+  const I18n::StandardMessage Degres("Degrees ", "Degres ", "Grados ", "Grad ", "Graus ");
+  const I18n::StandardMessage Radian("Radians ", "Radians ", "Radianes ", "Bogenmass ", "Radianos ");
+  const I18n::StandardMessage Auto("Auto ", "Auto ", "Auto ", "Auto ", "Auto ");
+  const I18n::StandardMessage Scientific("Scientific ", "Scientifique ", "Cientifico ", "Wissenschaftlich ", "Cientifico ");
+  const I18n::StandardMessage Deg("deg", "deg", "gra", "gra", "gra");
+  const I18n::StandardMessage Rad("rad", "rad", "rad", "rad", "rad");
+  const I18n::StandardMessage Sci("sci/", "sci/", "sci/", "sci/", "sci/");
+  const I18n::StandardMessage Brightness("Brightness", "Luminosite", "Brillo", "Helligkeit", "Brilho");
+  const I18n::StandardMessage SoftwareVersion("Software version", "Version du logiciel", "Version de software", "Softwareversion", "Versao do software");
+  const I18n::StandardMessage SerialNumber("Serial number", "Numero serie", "Numero serie", "Seriennummer", "Numero serie");
+  const I18n::StandardMessage UpdatePopUp("Update pop-up", "Rappel mise a jour", "Pop-up de actualizacion", "Erinnerung: Update", "Alertas de atualizacao");
+  const I18n::StandardMessage HardwareTestLaunch1("You are starting the hardware", "Vous allez lancer le test usine.", "Esta iniciando la prueba de", "Sie werden den Hardwaretest", "Voce vai executar o teste da planta.");
+  const I18n::StandardMessage HardwareTestLaunch2(" test. At the end of the test, you", "Pour en sortir vous devrez", "fabrica. Para quitar la prueba,", "starten. Um den zu verlassen, mussen", "Para sair voce tem que executar");
+  const I18n::StandardMessage HardwareTestLaunch3("will have to reset the device and", "effectuer un reset qui supprimera", "debera resetear su equipo.", "Sie einen Reset durchfuhren, der", "uma redefinicao, que ira apagar");
+  const I18n::StandardMessage HardwareTestLaunch4("all your data will be deleted.", "vos donnees.", "", "Ihre Daten loschen werden.", "seus dados.");
+  const I18n::StandardMessage BetaVersion("BETA VERSION", "VERSION BETA", "BETA VERSION", "BETA VERSION", "BETA VERSION");
+  const I18n::StandardMessage BetaVersionMessage1("You are using a pre-release and", "La version de Python que vous utilisez", "No esta utilizando una version", "You are using a pre-release and", "You are using a pre-release and");
+  const I18n::StandardMessage BetaVersionMessage2("feature-limited version of Python.", "n'est pas une version definitive.", "definitiva de Python.", "feature-limited version of Python.", "feature-limited version of Python.");
+  const I18n::StandardMessage BetaVersionMessage3("You may encounter some", "Il est possible que son utilisation soit", "Es posible que encuentre varios bugs", "You may encounter", "You may encounter");
+  const I18n::StandardMessage BetaVersionMessage4("unexpected bugs.", "limitee et que certains bugs apparaissent.", "y que su utilizacion sea limitada.", "unexpected bugs.", "unexpected bugs.");
+  const I18n::StandardMessage EditProgram("Edit program", "Editer le programme", "Editar el programa", "Programm bearbeiten", "Editar programa");
+  const I18n::StandardMessage ExecuteProgram("Execute program", "Executer le programme", "Ejecutar el programa", "Programm ausfuhren", "Executar programa");
+  const I18n::StandardMessage UpdateAvailable("UPDATE AVAILABLE", "MISE A JOUR DISPONIBLE", "ACTUALIZACION DISPONIBLE", "UPDATE VERFUGBAR", "ATUALIZACAO DISPONIVEL");
+  const I18n::StandardMessage UpdateMessage1("There are important upgrades", "Des ameliorations importantes existent", "Hay mejoras importantes", "Wichtige Verbesserungen fur Ihren", "Existem melhorias significativas");
+  const I18n::StandardMessage UpdateMessage2("for your calculator.", "pour votre calculatrice.", "para su calculadora.", "Rechner stehen zur Verfugung.", "para a sua calculadora.");
+  const I18n::StandardMessage UpdateMessage3("Browse our page from your computer", "Connectez-vous depuis votre ordinateur", "Visita nuestra pagina desde su ordenador", "Melden Sie sich von Ihrem Computer an", "Navegue na nossa pagina do seu computador");
+  const I18n::StandardMessage UpdateMessage4("www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update", "www.numworks.com/update");
+  const I18n::StandardMessage Skip("Skip", "Passer", "Saltar", "Uberspringen", "Pular");
 
 const char sxy[4] = {Ion::Charset::CapitalSigma, 'x', 'y', 0};
 constexpr static char mu[] = {Ion::Charset::SmallMu, 0};
@@ -316,147 +302,119 @@ constexpr static char rightIntegralSecondLegend[] = {Ion::Charset::LessEqual, 'X
 constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::LessEqual, 0};
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
-
-const char * universalMessages[242] {
-  "",
-  "Python",
-  "PYTHON (BETA)",
-  "alpha",
-  "ALPHA",
-  "shift",
-  "x",
-  "y",
-  "n",
-  "p",
-  mu,
-  sigma,
-  lambda,
-  "a",
-  "b",
-  "r",
-  sxy,
-
-  "Xmin",
-  "Xmax",
-  "Ymin",
-  "Ymax",
-  "Y auto",
-
-  "P(",
-  rightIntegralSecondLegend,
-  leftIntegralFirstLegend,
-  ")=",
-  finiteIntegralLegend,
-  "P(X=",
-
-  " D: y=ax+b ",
-
-  "Francais ",
-  "English ",
-  "Espanol ",
-  "Deutsch ",
-  "Portugues ",
-
-  "FCC ID",
-
-   /* Toolbox: commands */
-  "abs()",
-  "root(,)",
-  "log(,)",
-  "diff(,)",
-  "int(,,)",
-  "sum(,,)",
-  "product(,,)",
-  "arg()",
-  "re()",
-  "im()",
-  "conj()",
-  "binomial(,)",
-  "permute(,)",
-  "gcd(,)",
-  "lcm(,)",
-  "rem(,)",
-  "quo(,)",
-  "inverse()",
-  "det()",
-  "transpose()",
-  "trace()",
-  "dim()",
-  "sort<()",
-  "sort>()",
-  "max()",
-  "min()",
-  "floor()",
-  "frac()",
-  "ceil()",
-  "round(,)",
-  "cosh()",
-  "sinh()",
-  "tanh()",
-  "acosh()",
-  "asinh()",
-  "atanh()",
-  "prediction95(,)",
-  "prediction(,)",
-  "confidence(,)",
-
-  "abs(x)",
-  "root(x,n)",
-  "log(a,x)",
-  "diff(f(x),a)",
-  "int(f(x),a,b)",
-  "sum(f(n),nmin,nmax)",
-  "product(f(n),nmin,nmax)",
-  "arg(z)",
-  "re(z)",
-  "im(z)",
-  "conj(z)",
-  "binomial(n,k)",
-  "permute(n,r)",
-  "gcd(p,q)",
-  "lcm(p,q)",
-  "rem(p,q)",
-  "quo(p,q)",
-  "inverse(M)",
-  "det(M)",
-  "transpose(M)",
-  "trace(M)",
-  "dim(M)",
-  "sort<(L)",
-  "sort>(L)",
-  "max(L)",
-  "min(L)",
-  "floor(x)",
-  "frac(x)",
-  "ceil(x)",
-  "round(x,n)",
-  "cosh(x)",
-  "sinh(x)",
-  "tanh(x)",
-  "acosh(x)",
-  "asinh(x)",
-  "atanh(x)",
-  "prediction95(p,n)",
-  "prediction(p,n)",
-  "confidence(f,n)",
-};
-
-const char * translate(Message m, Language l) {
-  if ((int)m >= 0x8000) {
-    assert(universalMessages[(int)m - 0X8000] != nullptr);
-    return universalMessages[(int)m - 0x8000];
-  }
-  int languageIndex = (int)l;
-  if (l == Language::Default) {
-    languageIndex = (int) GlobalPreferences::sharedGlobalPreferences()->language();
-  }
-  assert(languageIndex > 0);
-  assert(((int)m*numberOfLanguages()+languageIndex-1)*sizeof(char *) < sizeof(messages));
-  return messages[(int)m][languageIndex-1];
-}
-
-int numberOfLanguages() {
-  return NumberOfLanguages;
+  const I18n::UniversalMessage Default("");
+  const I18n::UniversalMessage CodeApp("Python");
+  const I18n::UniversalMessage CodeAppCapital("PYTHON (BETA)");
+  const I18n::UniversalMessage Alpha("alpha");
+  const I18n::UniversalMessage CapitalAlpha("ALPHA");
+  const I18n::UniversalMessage Shift("shift");
+  const I18n::UniversalMessage X("x");
+  const I18n::UniversalMessage Y("y");
+  const I18n::UniversalMessage N("n");
+  const I18n::UniversalMessage P("p");
+  const I18n::UniversalMessage Mu(mu);
+  const I18n::UniversalMessage Sigma(sigma);
+  const I18n::UniversalMessage Lambda(lambda);
+  const I18n::UniversalMessage A("a");
+  const I18n::UniversalMessage B("b");
+  const I18n::UniversalMessage R("r");
+  const I18n::UniversalMessage Sxy(sxy);
+  const I18n::UniversalMessage XMin("Xmin");
+  const I18n::UniversalMessage XMax("Xmax");
+  const I18n::UniversalMessage YMin("Ymin");
+  const I18n::UniversalMessage YMax("Ymax");
+  const I18n::UniversalMessage YAuto("Y auto");
+  const I18n::UniversalMessage RightIntegralFirstLegend("P(");
+  const I18n::UniversalMessage RightIntegralSecondLegend(rightIntegralSecondLegend);
+  const I18n::UniversalMessage LeftIntegralFirstLegend(leftIntegralFirstLegend);
+  const I18n::UniversalMessage LeftIntegralSecondLegend(")=");
+  const I18n::UniversalMessage FiniteIntegralLegend(finiteIntegralLegend);
+  const I18n::UniversalMessage DiscreteLegend("P(X=");
+  const I18n::UniversalMessage RegressionFormula(" D: y=ax+b ");
+  const I18n::UniversalMessage French("Francais ");
+  const I18n::UniversalMessage English("English ");
+  const I18n::UniversalMessage Spanish("Espanol ");
+  const I18n::UniversalMessage German("Deutsch ");
+  const I18n::UniversalMessage Portuguese("Portugues ");
+  const I18n::UniversalMessage FccId("FCC ID");
+  const I18n::UniversalMessage AbsCommand("abs()");
+  const I18n::UniversalMessage RootCommand("root(,)");
+  const I18n::UniversalMessage LogCommand("log(,)");
+  const I18n::UniversalMessage DiffCommand("diff(,)");
+  const I18n::UniversalMessage IntCommand("int(,,)");
+  const I18n::UniversalMessage SumCommand("sum(,,)");
+  const I18n::UniversalMessage ProductCommand("product(,,)");
+  const I18n::UniversalMessage ArgCommand("arg()");
+  const I18n::UniversalMessage ReCommand("re()");
+  const I18n::UniversalMessage ImCommand("im()");
+  const I18n::UniversalMessage ConjCommand("conj()");
+  const I18n::UniversalMessage BinomialCommand("binomial(,)");
+  const I18n::UniversalMessage PermuteCommand("permute(,)");
+  const I18n::UniversalMessage GcdCommand("gcd(,)");
+  const I18n::UniversalMessage LcmCommand("lcm(,)");
+  const I18n::UniversalMessage RemCommand("rem(,)");
+  const I18n::UniversalMessage QuoCommand("quo(,)");
+  const I18n::UniversalMessage InverseCommand("inverse()");
+  const I18n::UniversalMessage DeterminantCommand("det()");
+  const I18n::UniversalMessage TransposeCommand("transpose()");
+  const I18n::UniversalMessage TraceCommand("trace()");
+  const I18n::UniversalMessage DimensionCommand("dim()");
+  const I18n::UniversalMessage SortCommand("sort<()");
+  const I18n::UniversalMessage InvSortCommand("sort>()");
+  const I18n::UniversalMessage MaxCommand("max()");
+  const I18n::UniversalMessage MinCommand("min()");
+  const I18n::UniversalMessage FloorCommand("floor()");
+  const I18n::UniversalMessage FracCommand("frac()");
+  const I18n::UniversalMessage CeilCommand("ceil()");
+  const I18n::UniversalMessage RoundCommand("round(,)");
+  const I18n::UniversalMessage CoshCommand("cosh()");
+  const I18n::UniversalMessage SinhCommand("sinh()");
+  const I18n::UniversalMessage TanhCommand("tanh()");
+  const I18n::UniversalMessage AcoshCommand("acosh()");
+  const I18n::UniversalMessage AsinhCommand("asinh()");
+  const I18n::UniversalMessage AtanhCommand("atanh()");
+  const I18n::UniversalMessage Prediction95Command("prediction95(,)");
+  const I18n::UniversalMessage PredictionCommand("prediction(,)");
+  const I18n::UniversalMessage ConfidenceCommand("confidence(,)");
+  const I18n::UniversalMessage AbsCommandWithArg("abs(x)");
+  const I18n::UniversalMessage RootCommandWithArg("root(x,n)");
+  const I18n::UniversalMessage LogCommandWithArg("log(a,x)");
+  const I18n::UniversalMessage DiffCommandWithArg("diff(f(x),a)");
+  const I18n::UniversalMessage IntCommandWithArg("int(f(x),a,b)");
+  const I18n::UniversalMessage SumCommandWithArg("sum(f(n),nmin,nmax)");
+  const I18n::UniversalMessage ProductCommandWithArg("product(f(n),nmin,nmax)");
+  const I18n::UniversalMessage ArgCommandWithArg("arg(z)");
+  const I18n::UniversalMessage ReCommandWithArg("re(z)");
+  const I18n::UniversalMessage ImCommandWithArg("im(z)");
+  const I18n::UniversalMessage ConjCommandWithArg("conj(z)");
+  const I18n::UniversalMessage BinomialCommandWithArg("binomial(n,k)");
+  const I18n::UniversalMessage PermuteCommandWithArg("permute(n,r)");
+  const I18n::UniversalMessage GcdCommandWithArg("gcd(p,q)");
+  const I18n::UniversalMessage LcmCommandWithArg("lcm(p,q)");
+  const I18n::UniversalMessage RemCommandWithArg("rem(p,q)");
+  const I18n::UniversalMessage QuoCommandWithArg("quo(p,q)");
+  const I18n::UniversalMessage InverseCommandWithArg("inverse(M)");
+  const I18n::UniversalMessage DeterminantCommandWithArg("det(M)");
+  const I18n::UniversalMessage TransposeCommandWithArg("transpose(M)");
+  const I18n::UniversalMessage TraceCommandWithArg("trace(M)");
+  const I18n::UniversalMessage DimensionCommandWithArg("dim(M)");
+  const I18n::UniversalMessage SortCommandWithArg("sort<(L)");
+  const I18n::UniversalMessage InvSortCommandWithArg("sort>(L)");
+  const I18n::UniversalMessage MaxCommandWithArg("max(L)");
+  const I18n::UniversalMessage MinCommandWithArg("min(L)");
+  const I18n::UniversalMessage FloorCommandWithArg("floor(x)");
+  const I18n::UniversalMessage FracCommandWithArg("frac(x)");
+  const I18n::UniversalMessage CeilCommandWithArg("ceil(x)");
+  const I18n::UniversalMessage RoundCommandWithArg("round(x,n)");
+  const I18n::UniversalMessage CoshCommandWithArg("cosh(x)");
+  const I18n::UniversalMessage SinhCommandWithArg("sinh(x)");
+  const I18n::UniversalMessage TanhCommandWithArg("tanh(x)");
+  const I18n::UniversalMessage AcoshCommandWithArg("acosh(x)");
+  const I18n::UniversalMessage AsinhCommandWithArg("asinh(x)");
+  const I18n::UniversalMessage AtanhCommandWithArg("atanh(x)");
+  const I18n::UniversalMessage Prediction95CommandWithArg("prediction95(p,n)");
+  const I18n::UniversalMessage PredictionCommandWithArg("prediction(p,n)");
+  const I18n::UniversalMessage ConfidenceCommandWithArg("confidence(f,n)");
 }
 
 }

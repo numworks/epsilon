@@ -18,7 +18,7 @@ public:
   GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
+  const I18n::Message *emptyMessage() override;
   void selectRegressionCurve();
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;    // (cursorHeight/2)/graphViewHeight

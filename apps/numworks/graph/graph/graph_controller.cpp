@@ -16,11 +16,11 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
   m_graphRange->setDelegate(this);
 }
 
-I18n::Message GraphController::emptyMessage() {
+const I18n::Message *GraphController::emptyMessage() {
   if (m_functionStore->numberOfDefinedFunctions() == 0) {
-    return I18n::Message::NoFunction;
+    return &I18n::Common::NoFunction;
   }
-  return I18n::Message::NoActivatedFunction;
+  return &I18n::Common::NoActivatedFunction;
 }
 
 BannerView * GraphController::bannerView() {

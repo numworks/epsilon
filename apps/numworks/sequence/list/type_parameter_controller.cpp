@@ -11,9 +11,9 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(I18n::Message::Explicite, cellLayout),
-  m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
-  m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
+  m_expliciteCell(&I18n::Common::Explicite, cellLayout),
+  m_singleRecurrenceCell(&I18n::Common::SingleRecurrence, cellLayout),
+  m_doubleRecurenceCell(&I18n::Common::DoubleRecurrence, cellLayout),
   m_expressionLayouts{},
   m_selectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, nullptr, false),
   m_sequenceStore(sequenceStore),
@@ -33,9 +33,9 @@ TypeParameterController::~TypeParameterController() {
 
 const char * TypeParameterController::title() {
   if (m_sequence) {
-    return I18n::translate(I18n::Message::SequenceType);
+    return I18n::translate(&I18n::Common::SequenceType);
   }
-  return I18n::translate(I18n::Message::ChooseSequenceType);
+  return I18n::translate(&I18n::Common::ChooseSequenceType);
 }
 
 View * TypeParameterController::view() {

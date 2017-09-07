@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  Shared::GoToParameterController(parentResponder, store, cursor, I18n::Message::X),
+  Shared::GoToParameterController(parentResponder, store, cursor, &I18n::Common::X),
   m_store(store),
   m_xPrediction(true),
   m_graphController(graphController)
@@ -24,9 +24,9 @@ void GoToParameterController::setXPrediction(bool xPrediction) {
 
 const char * GoToParameterController::title() {
   if (m_xPrediction) {
-    return I18n::translate(I18n::Message::XPrediction);
+    return I18n::translate(&I18n::Common::XPrediction);
   }
-  return I18n::translate(I18n::Message::YPrediction);
+  return I18n::translate(&I18n::Common::YPrediction);
 }
 
 double GoToParameterController::parameterAtIndex(int index) {
@@ -40,7 +40,7 @@ double GoToParameterController::parameterAtIndex(int index) {
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   if (std::fabs(f) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   double x = m_store->xValueForYValue(f);
@@ -48,7 +48,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     x = m_store->yValueForXValue(f);
   }
   if (std::fabs(x) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   if (isnan(x)) {
@@ -57,7 +57,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       m_cursor->moveTo(m_cursor->x(), f);
       return true;
     }
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
+    app()->displayWarning(&I18n::Common::ValueNotReachedByRegression);
     return false;
   }
   m_graphController->selectRegressionCurve();
@@ -77,9 +77,9 @@ void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
   if (m_xPrediction) {
-    myCell->setMessage(I18n::Message::X);
+    myCell->setMessage(&I18n::Common::X);
   } else {
-    myCell->setMessage(I18n::Message::Y);
+    myCell->setMessage(&I18n::Common::Y);
   }
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }

@@ -30,15 +30,15 @@ int FiniteIntegralCalculation::numberOfEditableParameters() {
   return 2;
 }
 
-I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
+const I18n::Message *FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return I18n::Message::RightIntegralFirstLegend;
+    return &I18n::Common::RightIntegralFirstLegend;
   }
   if (index == 1) {
-    return I18n::Message::FiniteIntegralLegend;
+    return &I18n::Common::FiniteIntegralLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return &I18n::Common::LeftIntegralSecondLegend;
 }
 
 void FiniteIntegralCalculation::setParameterAtIndex(double f, int index) {

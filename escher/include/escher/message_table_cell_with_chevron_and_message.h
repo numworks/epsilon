@@ -8,7 +8,7 @@ public:
   MessageTableCellWithChevronAndMessage(KDText::FontSize labelSize = KDText::FontSize::Small, KDText::FontSize contentSize = KDText::FontSize::Small);
   View * subAccessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setSubtitle(I18n::Message text);
+  void setSubtitle(const I18n::Message *text);
 private:
   MessageTextView m_subtitleView;
 };

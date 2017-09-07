@@ -6,7 +6,7 @@
 
 class MessageTableCellWithChevron : public MessageTableCell {
 public:
-  MessageTableCellWithChevron(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
+  MessageTableCellWithChevron(const I18n::Message *message = &I18n::NullMessage, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
 private:
   ChevronView m_accessoryView;

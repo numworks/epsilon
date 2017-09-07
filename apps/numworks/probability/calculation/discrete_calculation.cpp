@@ -25,12 +25,12 @@ int DiscreteCalculation::numberOfEditableParameters() {
   return 1;
 }
 
-I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
+const I18n::Message *DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::DiscreteLegend;
+    return &I18n::Common::DiscreteLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return &I18n::Common::LeftIntegralSecondLegend;
 }
 
 void DiscreteCalculation::setParameterAtIndex(double f, int index) {

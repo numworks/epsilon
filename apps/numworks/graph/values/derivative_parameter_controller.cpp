@@ -6,9 +6,9 @@ namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ViewController(valuesController),
-  m_hideColumn(I18n::Message::HideDerivativeColumn),
+  m_hideColumn(&I18n::Common::HideDerivativeColumn),
 #if COPY_COLUMN
-  m_copyColumn(I18n::Message::CopyColumnInList),
+  m_copyColumn(&I18n::Common::CopyColumnInList),
 #endif
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
@@ -18,7 +18,7 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
 }
 
 const char * DerivativeParameterController::title() {
-  strlcpy(m_pageTitle, I18n::translate(I18n::Message::DerivativeColumn), k_maxNumberOfCharsInTitle);
+  strlcpy(m_pageTitle, I18n::translate(&I18n::Common::DerivativeColumn), k_maxNumberOfCharsInTitle);
   for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
     if (m_pageTitle[currentChar] == '(') {
       m_pageTitle[currentChar-2] = *m_function->name();

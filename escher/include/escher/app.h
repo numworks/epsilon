@@ -25,8 +25,8 @@ public:
   class Descriptor {
   public:
     virtual const char * uriName();
-    virtual I18n::Message name();
-    virtual I18n::Message upperName();
+    virtual const I18n::Message *name();
+    virtual const I18n::Message *upperName();
     virtual const Image * icon();
   };
   class Snapshot {
@@ -59,7 +59,7 @@ public:
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
-  void displayWarning(I18n::Message warningMessage);
+  void displayWarning(const I18n::Message *warningMessage);
   const Container * container() const;
   uint8_t m_magic; // Poor man's RTTI
 
@@ -68,7 +68,7 @@ public:
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
 protected:
-  App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
+  App(Container * container, Snapshot * snapshot, ViewController * rootViewController, const I18n::Message *warningMessage = &I18n::NullMessage);
   ModalViewController m_modalViewController;
 private:
   Container * m_container;

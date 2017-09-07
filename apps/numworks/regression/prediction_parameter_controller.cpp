@@ -14,7 +14,7 @@ PredictionParameterController::PredictionParameterController(Responder * parentR
 }
 
 const char * PredictionParameterController::title() {
-  return I18n::translate(I18n::Message::RegressionSlope);
+  return I18n::translate(&I18n::Common::RegressionSlope);
 }
 
 View * PredictionParameterController::view() {
@@ -58,7 +58,7 @@ KDCoordinate PredictionParameterController::cellHeight() {
 
 void PredictionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
-  I18n::Message  titles[2] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
+  const I18n::Message * titles[2] = {&I18n::Common::XPrediction, &I18n::Common::YPrediction};
   myCell->setMessage(titles[index]);
 }
 

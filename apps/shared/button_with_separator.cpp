@@ -1,6 +1,6 @@
 #include "button_with_separator.h"
 
-ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, I18n::Message message, Invocation invocation) :
+ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, const I18n::Message *message, Invocation invocation) :
   Button(parentResponder, message, invocation, KDText::FontSize::Large, KDColorBlack)
 {
 }

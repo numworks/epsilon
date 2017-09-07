@@ -3,7 +3,7 @@
 
 namespace Shared {
 
-ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
+ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, const I18n::Message *functionColorMessage, const I18n::Message *deleteFunctionMessage) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
@@ -11,13 +11,13 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
 #if FUNCTION_COLOR_CHOICE
   m_colorCell(functionColorMessage),
 #endif
-  m_enableCell(I18n::Message::ActivateDesactivate),
+  m_enableCell(&I18n::Common::ActivateDesactivate),
   m_deleteCell(deleteFunctionMessage)
 {
 }
 
 const char * ListParameterController::title() {
-  return I18n::translate(I18n::Message::FunctionOptions);
+  return I18n::translate(&I18n::Common::FunctionOptions);
 }
 
 View * ListParameterController::view() {
@@ -108,7 +108,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
           stack->pop();
           return true;
         }
-        app()->displayWarning(I18n::Message::NoFunctionToDelete);
+        app()->displayWarning(&I18n::Common::NoFunctionToDelete);
         return true;
       }
   }

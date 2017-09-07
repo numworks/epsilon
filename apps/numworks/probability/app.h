@@ -27,8 +27,8 @@ public:
   class Descriptor : public ::App::Descriptor {
     public:
       const char * uriName() override;
-      I18n::Message name() override;
-      I18n::Message upperName() override;
+      const I18n::Message *name() override;
+      const I18n::Message *upperName() override;
       const Image * icon() override;
   };
   class Snapshot : public ::App::Snapshot {

@@ -3,14 +3,14 @@
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, const I18n::Message *title) :
   ViewController(parentResponder),
   m_pageTitle(title),
-  m_deleteColumn(I18n::Message::Default),
+  m_deleteColumn(&I18n::Common::Default),
 #if COPY_COLUMN
-  m_copyColumn(I18n::Message::Default),
+  m_copyColumn(&I18n::Common::Default),
 #endif
-  m_setInterval(I18n::Message::Default),
+  m_setInterval(&I18n::Common::Default),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_intervalParameterController(intervalParameterController)
@@ -28,9 +28,9 @@ View * ValuesParameterController::view() {
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
 #if COPY_COLUMN
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
+  const I18n::Message *labels[k_totalNumberOfCell] = {&I18n::Common::ClearColumn, &I18n::Common::CopyColumnInList, &I18n::Common::IntervalSet};
 #else
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::IntervalSet};
+  const I18n::Message *labels[k_totalNumberOfCell] = {&I18n::Common::ClearColumn, &I18n::Common::IntervalSet};
 #endif
   myCell->setMessage(labels[index]);
 }

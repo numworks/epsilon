@@ -10,12 +10,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.statistics";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::StatsApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::StatsApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::StatsAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::StatsAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

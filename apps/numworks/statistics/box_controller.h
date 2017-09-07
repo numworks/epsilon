@@ -16,7 +16,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
+  const I18n::Message *emptyMessage() override;
   Responder * defaultController() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;

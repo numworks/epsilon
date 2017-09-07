@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, header, &I18n::Common::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_sequenceStore(sequenceStore),
@@ -23,7 +23,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
-    mytitleCell->setMessage(I18n::Message::N);
+    mytitleCell->setMessage(&I18n::Common::N);
     return;
   }
   // The cell is a function title cell:
@@ -35,11 +35,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
-I18n::Message ValuesController::emptyMessage() {
+const I18n::Message *ValuesController::emptyMessage() {
   if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
-    return I18n::Message::NoSequence;
+    return &I18n::Common::NoSequence;
   }
-  return I18n::Message::NoActivatedSequence;
+  return &I18n::Common::NoActivatedSequence;
 }
 
 IntervalParameterController * ValuesController::intervalParameterController() {

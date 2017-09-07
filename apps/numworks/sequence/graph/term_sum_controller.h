@@ -32,7 +32,7 @@ private:
     LegendView& operator=(const LegendView& other) = delete;
     LegendView& operator=(LegendView&& other) = delete;
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setLegendMessage(I18n::Message message);
+    void setLegendMessage(const I18n::Message *message);
     void setSumSubscript(float start);
     void setSumSuperscript(float start, float end);
     void setSumResult(const char * sequenceName, double result);

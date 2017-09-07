@@ -20,7 +20,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
 }
 
 const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
+  return I18n::translate(&I18n::Common::StatTab);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -53,8 +53,8 @@ bool CalculationController::isEmpty() const {
   return false;
 }
 
-I18n::Message CalculationController::emptyMessage() {
-  return I18n::Message::NoValueToCompute;
+const I18n::Message *CalculationController::emptyMessage() {
+  return &I18n::Common::NoValueToCompute;
 }
 
 Responder * CalculationController::defaultController() {
@@ -74,7 +74,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   if (i == 0) {
-    I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum};
+    const I18n::Message *titles[k_totalNumberOfRows] = {&I18n::Common::TotalSize, &I18n::Common::Minimum, &I18n::Common::Maximum, &I18n::Common::Range, &I18n::Common::Mean, &I18n::Common::StandardDeviation, &I18n::Common::Deviation, &I18n::Common::FirstQuartile, &I18n::Common::ThirdQuartile, &I18n::Common::Median, &I18n::Common::InterquartileRange, &I18n::Common::Sum, &I18n::Common::SquareSum};
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     myCell->setMessage(titles[j]);
   } else {

@@ -15,7 +15,7 @@ public:
   ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::Interval * interval, ButtonRowController * header);
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  I18n::Message emptyMessage() override;
+  const I18n::Message *emptyMessage() override;
   Shared::IntervalParameterController * intervalParameterController() override;
   void updateNumberOfColumns() override;
 private:

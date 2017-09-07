@@ -26,11 +26,11 @@ void GraphController::viewWillAppear() {
   FunctionGraphController::viewWillAppear();
 }
 
-I18n::Message GraphController::emptyMessage() {
+const I18n::Message *GraphController::emptyMessage() {
   if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
-    return I18n::Message::NoSequence;
+    return &I18n::Common::NoSequence;
   }
-  return I18n::Message::NoActivatedSequence;
+  return &I18n::Common::NoActivatedSequence;
 }
 
 TermSumController * GraphController::termSumController() {

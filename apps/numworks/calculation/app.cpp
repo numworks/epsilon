@@ -13,12 +13,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.calculation";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::CalculApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::CalculApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::CalculAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::CalculAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

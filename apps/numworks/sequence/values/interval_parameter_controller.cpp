@@ -15,14 +15,14 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::NStart, I18n::Message::NEnd, I18n::Message::Step};
+  const I18n::Message *labels[k_totalNumberOfCell] = {&I18n::Common::NStart, &I18n::Common::NEnd, &I18n::Common::Step};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f < 0) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   double parameter = std::round(f);

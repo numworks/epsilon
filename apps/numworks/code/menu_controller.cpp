@@ -51,7 +51,7 @@ KDCoordinate MenuController::cellHeight() {
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message titles[k_totalNumberOfCells] = {I18n::Message::EditProgram, I18n::Message::ExecuteProgram};
+  const I18n::Message *titles[k_totalNumberOfCells] = {&I18n::Common::EditProgram, &I18n::Common::ExecuteProgram};
   myCell->setMessage(titles[index]);
 }
 

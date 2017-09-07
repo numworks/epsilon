@@ -39,7 +39,7 @@ protected:
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
-  virtual I18n::Message okButtonText();
+  virtual const I18n::Message *okButtonText();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   TextFieldDelegateApp * textFieldDelegateApp() override;

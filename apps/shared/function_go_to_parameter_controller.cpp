@@ -5,14 +5,14 @@
 
 namespace Shared {
 
-FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const I18n::Message *symbol) :
   GoToParameterController(parentResponder, graphRange, cursor, symbol),
   m_function(nullptr)
 {
 }
 
 const char * FunctionGoToParameterController::title() {
-  return I18n::translate(I18n::Message::Goto);
+  return I18n::translate(&I18n::Common::Goto);
 }
 
 double FunctionGoToParameterController::parameterAtIndex(int index) {
@@ -25,11 +25,11 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, do
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
   if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   if (isnan(y) || isinf(y)) {
-    app()->displayWarning(I18n::Message::ValueNotReachedByFunction);
+    app()->displayWarning(&I18n::Common::ValueNotReachedByFunction);
     return false;
   }
   m_cursor->moveTo(f, y);

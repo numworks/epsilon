@@ -7,7 +7,7 @@
 namespace Shared {
 class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title);
+  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, const I18n::Message *title);
 
   View * view() override;
   const char * title() override;
@@ -25,7 +25,7 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 2;
 #endif
-  I18n::Message m_pageTitle;
+  const I18n::Message *m_pageTitle;
   MessageTableCell m_deleteColumn;
   MessageTableCellWithChevron m_setInterval;
   SelectableTableView m_selectableTableView;

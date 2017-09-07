@@ -21,7 +21,7 @@
 namespace Probability {
 
 LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDText::FontSize::Small, &I18n::Common::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -44,12 +44,12 @@ void LawController::ContentView::layoutSubviews() {
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
 }
 
-static I18n::Message sMessages[] = {
-  I18n::Message::Binomial,
-  I18n::Message::Uniforme,
-  I18n::Message::Exponential,
-  I18n::Message::Normal,
-  I18n::Message::Poisson
+static const I18n::Message *sMessages[] = {
+  &I18n::Common::Binomial,
+  &I18n::Common::Uniforme,
+  &I18n::Common::Exponential,
+  &I18n::Common::Normal,
+  &I18n::Common::Poisson
 };
 
 LawController::LawController(Responder * parentResponder, Law * law, ParametersController * parametersController) :

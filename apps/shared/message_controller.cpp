@@ -2,7 +2,7 @@
 #include "../apps_container.h"
 #include <assert.h>
 
-MessageController::MessageController(I18n::Message * messages, KDColor * colors) :
+MessageController::MessageController(const I18n::Message ** messages, KDColor * colors) :
   ViewController(nullptr),
   m_contentView(messages, colors)
 {
@@ -20,13 +20,13 @@ bool MessageController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-MessageController::ContentView::ContentView(I18n::Message * messages, KDColor * colors) :
+MessageController::ContentView::ContentView(const I18n::Message ** messages, KDColor * colors) :
   m_titleTextView(KDText::FontSize::Large, messages[0], 0.5f, 0.5f, colors[0]),
   m_messageTextView1(KDText::FontSize::Small, messages[1], 0.5f, 0.5f, colors[1]),
   m_messageTextView2(KDText::FontSize::Small, messages[2], 0.5f, 0.5f, colors[2]),
   m_messageTextView3(KDText::FontSize::Small, messages[3], 0.5f, 0.5f, colors[3]),
   m_messageTextView4(KDText::FontSize::Small, messages[4], 0.5f, 0.5f, colors[4]),
-  m_skipView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5f),
+  m_skipView(KDText::FontSize::Small, &I18n::Common::Skip, 1.0f, 0.5f),
   m_okView()
 {
 }

@@ -8,17 +8,17 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
   FunctionCurveParameterController(graphRange, cursor),
-  m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
+  m_goToParameterController(this, graphRange, cursor, &I18n::Common::X),
   m_bannerView(bannerView),
 #if FUNCTION_CALCULATE_MENU
-  m_calculationCell(I18n::Message::Compute),
+  m_calculationCell(&I18n::Common::Compute),
 #endif
-  m_derivativeCell(I18n::Message::DerivateNumber)
+  m_derivativeCell(&I18n::Common::DerivateNumber)
 {
 }
 
 const char * CurveParameterController::title() {
-  return I18n::translate(I18n::Message::PlotOptions);
+  return I18n::translate(&I18n::Common::PlotOptions);
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

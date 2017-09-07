@@ -8,15 +8,15 @@ namespace Probability {
 class PoissonLaw : public OneParameterLaw {
 public:
   PoissonLaw();
-  I18n::Message title() override;
+  const I18n::Message *title() override;
   Type type() const override;
   bool isContinuous() const override;
   float xMin() override;
   float yMin() override;
   float xMax() override;
   float yMax() override;
-  I18n::Message parameterNameAtIndex(int index) override;
-  I18n::Message parameterDefinitionAtIndex(int index) override;
+  const I18n::Message *parameterNameAtIndex(int index) override;
+  const I18n::Message *parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override {
     return templatedEvaluateAtAbscissa(x);
   }

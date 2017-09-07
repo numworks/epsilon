@@ -10,7 +10,7 @@ public:
   LeftIntegralCalculation();
   Type type() override;
   int numberOfParameters() override;
-  I18n::Message legendForParameterAtIndex(int index) override;
+  const I18n::Message *legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
   double upperBound() override;

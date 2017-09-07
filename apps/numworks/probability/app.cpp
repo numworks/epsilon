@@ -11,12 +11,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.probability";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::ProbaApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::ProbaApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::ProbaAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::ProbaAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

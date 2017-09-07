@@ -5,7 +5,7 @@
 
 class ButtonWithSeparator : public Button {
 public:
-  ButtonWithSeparator(Responder * parentResponder, I18n::Message textBody, Invocation invocation);
+  ButtonWithSeparator(Responder * parentResponder, const I18n::Message *textBody, Invocation invocation);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_margin = 5;

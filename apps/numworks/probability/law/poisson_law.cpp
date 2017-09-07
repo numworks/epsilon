@@ -10,8 +10,8 @@ PoissonLaw::PoissonLaw() :
 {
 }
 
-I18n::Message PoissonLaw::title() {
-  return I18n::Message::PoissonLaw;
+const I18n::Message *PoissonLaw::title() {
+  return &I18n::Common::PoissonLaw;
 }
 
 Law::Type PoissonLaw::type() const {
@@ -22,14 +22,14 @@ bool PoissonLaw::isContinuous() const {
   return false;
 }
 
-I18n::Message PoissonLaw::parameterNameAtIndex(int index) {
+const I18n::Message *PoissonLaw::parameterNameAtIndex(int index) {
   assert(index == 0);
-  return I18n::Message::Lambda;
+  return &I18n::Common::Lambda;
 }
 
-I18n::Message PoissonLaw::parameterDefinitionAtIndex(int index) {
+const I18n::Message *PoissonLaw::parameterDefinitionAtIndex(int index) {
   assert(index == 0);
-  return I18n::Message::LambdaPoissonDefinition;
+  return &I18n::Common::LambdaPoissonDefinition;
 }
 
 float PoissonLaw::xMin() {

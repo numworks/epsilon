@@ -10,7 +10,7 @@ AppsWindow::AppsWindow() :
 {
 }
 
-void AppsWindow::setTitle(I18n::Message title) {
+void AppsWindow::setTitle(const I18n::Message *title) {
   m_titleBarView.setTitle(title);
 }
 

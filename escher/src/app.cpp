@@ -8,12 +8,12 @@ const char * App::Descriptor::uriName() {
   return nullptr;
 }
 
-I18n::Message App::Descriptor::name() {
-  return (I18n::Message)0;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::NullMessage;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return (I18n::Message)0;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::NullMessage;
 }
 
 const Image * App::Descriptor::icon() {
@@ -52,7 +52,7 @@ void App::Snapshot::reset() {
 void App::Snapshot::tidy() {
 }
 
-App::App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
+App::App(Container * container, Snapshot * snapshot, ViewController * rootViewController, const I18n::Message *warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(this, rootViewController),
@@ -119,7 +119,7 @@ void App::dismissModalViewController() {
   m_modalViewController.dismissModalViewController();
 }
 
-void App::displayWarning(I18n::Message warningMessage) {
+void App::displayWarning(const I18n::Message *warningMessage) {
   m_warningController.setLabel(warningMessage);
   m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }

@@ -10,12 +10,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.sequence";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::SequenceApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::SequenceApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::SequenceAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::SequenceAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

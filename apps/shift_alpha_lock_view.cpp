@@ -2,7 +2,7 @@
 
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),
-  m_shiftAlphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_shiftAlphaView(KDText::FontSize::Small, &I18n::Common::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
@@ -18,17 +18,17 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
       case Ion::Events::ShiftAlphaStatus::Alpha:
       case Ion::Events::ShiftAlphaStatus::AlphaLock:
       case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
-        m_shiftAlphaView.setMessage(I18n::Message::Alpha);
+        m_shiftAlphaView.setMessage(&I18n::Common::Alpha);
         break;
       case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
       case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
-        m_shiftAlphaView.setMessage(I18n::Message::CapitalAlpha);
+        m_shiftAlphaView.setMessage(&I18n::Common::CapitalAlpha);
         break;
       case Ion::Events::ShiftAlphaStatus::Shift:
-        m_shiftAlphaView.setMessage(I18n::Message::Shift);
+        m_shiftAlphaView.setMessage(&I18n::Common::Shift);
         break;
       case Ion::Events::ShiftAlphaStatus::Default:
-        m_shiftAlphaView.setMessage(I18n::Message::Default);
+        m_shiftAlphaView.setMessage(&I18n::Common::Default);
         break;
     }
     markRectAsDirty(bounds());
@@ -38,7 +38,7 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
 }
 
 KDSize ShiftAlphaLockView::minimalSizeForOptimalDisplay() const {
-  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
+  KDSize modifierSize = KDText::stringSize(I18n::translate(&I18n::Common::Alpha), KDText::FontSize::Small);
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
   KDCoordinate height = lockSize.height() > modifierSize.height() ? lockSize.height() : modifierSize.height();
   return KDSize(modifierSize.width() + lockSize.width() + k_lockRightMargin, height);
@@ -67,7 +67,7 @@ View * ShiftAlphaLockView::subviewAtIndex(int index) {
 }
 
 void ShiftAlphaLockView::layoutSubviews() {
-  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
+  KDSize modifierSize = KDText::stringSize(I18n::translate(&I18n::Common::Alpha), KDText::FontSize::Small);
   m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize));
 
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();

@@ -11,7 +11,7 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
 }
 
 const char * IntervalParameterController::title() {
-  return I18n::translate(I18n::Message::IntervalSet);
+  return I18n::translate(&I18n::Common::IntervalSet);
 }
 
 int IntervalParameterController::numberOfRows() {
@@ -23,7 +23,7 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::Step};
+  const I18n::Message *labels[k_totalNumberOfCell] = {&I18n::Common::XStart, &I18n::Common::XEnd, &I18n::Common::Step};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
@@ -39,14 +39,14 @@ double IntervalParameterController::parameterAtIndex(int index) {
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f <= 0.0f && parameterIndex == 2) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   double start = parameterIndex == 0 ? f : m_interval->start();
   double end = parameterIndex == 1 ? f : m_interval->end();
   if (start > end) {
     if (parameterIndex == 1) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      app()->displayWarning(&I18n::Common::ForbiddenValue);
       return false;
     }
     double g = f+1.0;
@@ -86,7 +86,7 @@ void IntervalParameterController::buttonAction() {
 View * IntervalParameterController::loadView() {
   SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_intervalCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+    m_intervalCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, &I18n::Common::Default);
   }
   return tableView;
 }

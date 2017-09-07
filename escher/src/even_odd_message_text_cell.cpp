@@ -3,7 +3,7 @@
 
 EvenOddMessageTextCell::EvenOddMessageTextCell(KDText::FontSize size) :
   EvenOddCell(),
-  m_messageTextView(size, (I18n::Message)0, 0.5f, 0.5f)
+  m_messageTextView(size, &I18n::NullMessage, 0.5f, 0.5f)
 {
 }
 
@@ -17,7 +17,7 @@ void EvenOddMessageTextCell::setEven(bool even) {
   m_messageTextView.setBackgroundColor(backgroundColor());
 }
 
-void EvenOddMessageTextCell::setMessage(I18n::Message title, KDColor textColor) {
+void EvenOddMessageTextCell::setMessage(const I18n::Message *title, KDColor textColor) {
   m_messageTextView.setMessage(title);
   m_messageTextView.setTextColor(textColor);
 }

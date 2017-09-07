@@ -5,10 +5,10 @@ namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store) :
   ViewController(parentResponder),
-  m_deleteColumn(I18n::Message::ClearColumn),
+  m_deleteColumn(&I18n::Common::ClearColumn),
 #if COPY_IMPORT_LIST
-  m_copyColumn(I18n::Message::CopyColumnInList),
-  m_importList(I18n::Message::ImportList),
+  m_copyColumn(&I18n::Common::CopyColumnInList),
+  m_importList(&I18n::Common::ImportList),
 #endif
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
@@ -22,7 +22,7 @@ void StoreParameterController::selectXColumn(bool xColumnSelected) {
 }
 
 const char * StoreParameterController::title() {
-  return I18n::translate(I18n::Message::ColumnOptions);
+  return I18n::translate(&I18n::Common::ColumnOptions);
 }
 
 View * StoreParameterController::view() {

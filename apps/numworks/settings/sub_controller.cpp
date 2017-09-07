@@ -57,7 +57,7 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
      * dismissing a pop-up for instance. */
     selectCellAtLocation(0, valueIndexForPreference(m_nodeModel->label()));
   }
-  if (m_nodeModel->label() == I18n::Message::ExamMode) {
+  if (m_nodeModel->label() == &I18n::Common::ExamMode) {
     m_selectableTableView.reloadData();
   }
   app()->setFirstResponder(&m_selectableTableView);
@@ -66,13 +66,13 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == &I18n::Common::About && selectedRow() == numberOfRows()-1) {
     app()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Behavious of "Exam mode" menu*/
-    if (m_nodeModel->label() == I18n::Message::ExamMode) {
+    if (m_nodeModel->label() == &I18n::Common::ExamMode) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;
       }
@@ -81,7 +81,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Behaviour of "About" menu */
-    if (m_nodeModel->label() == I18n::Message::About) {
+    if (m_nodeModel->label() == &I18n::Common::About) {
       if (selectedRow() == 0) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
@@ -118,14 +118,14 @@ int SubController::numberOfRows() {
 HighlightCell * SubController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_nodeModel->label() == &I18n::Common::ComplexFormat) {
     return &m_complexFormatCells[index];
   }
   return &m_cells[index];
 }
 
 int SubController::reusableCellCount() {
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_nodeModel->label() == &I18n::Common::ComplexFormat) {
     return 2;
   }
   return k_totalNumberOfCell;
@@ -136,17 +136,17 @@ KDCoordinate SubController::cellHeight() {
 }
 
 void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_nodeModel->label() == &I18n::Common::ComplexFormat) {
     return;
   }
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
   myCell->setMessage(m_nodeModel->children(index)->label());
   myCell->setMessageFontSize(KDText::FontSize::Large);
   myCell->setAccessoryText("");
-  if (m_nodeModel->label() == I18n::Message::ExamMode && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
-    myCell->setMessage(I18n::Message::ExamModeActive);
+  if (m_nodeModel->label() == &I18n::Common::ExamMode && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+    myCell->setMessage(&I18n::Common::ExamModeActive);
   }
-  if (m_nodeModel->label() == I18n::Message::About) {
+  if (m_nodeModel->label() == &I18n::Common::About) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
     switch (index) {
@@ -183,34 +183,34 @@ StackViewController * SubController::stackController() const {
   return (StackViewController *)parentResponder();
 }
 
-void SubController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
-  if (message == I18n::Message::AngleUnit) {
+void SubController::setPreferenceWithValueIndex(const I18n::Message *message, int valueIndex) {
+  if (message == &I18n::Common::AngleUnit) {
     Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
   }
-  if (message == I18n::Message::DisplayMode) {
+  if (message == &I18n::Common::DisplayMode) {
     Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
   }
-  if (message == I18n::Message::ComplexFormat) {
+  if (message == &I18n::Common::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
   }
-  if (message == I18n::Message::Language) {
+  if (message == &I18n::Common::Language) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->reloadTitleBar();
   }
 }
 
-int SubController::valueIndexForPreference(I18n::Message message) {
-  if (message == I18n::Message::AngleUnit) {
+int SubController::valueIndexForPreference(const I18n::Message *message) {
+  if (message == &I18n::Common::AngleUnit) {
     return (int)Preferences::sharedPreferences()->angleUnit();
   }
-  if (message == I18n::Message::DisplayMode) {
+  if (message == &I18n::Common::DisplayMode) {
     return (int)Preferences::sharedPreferences()->displayMode();
   }
-  if (message == I18n::Message::ComplexFormat) {
+  if (message == &I18n::Common::ComplexFormat) {
     return (int)Preferences::sharedPreferences()->complexFormat();
   }
-  if (message == I18n::Message::Language) {
+  if (message == &I18n::Common::Language) {
     return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
   }
   return 0;

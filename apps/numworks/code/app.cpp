@@ -10,12 +10,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.code";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::CodeApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::CodeApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::CodeAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::CodeAppCapital;
 }
 
 const Image * App::Descriptor::icon() {
@@ -44,12 +44,12 @@ Program * App::Snapshot::program() {
   return &m_program;
 }
 
-static I18n::Message sCodeMessages[] = {I18n::Message::BetaVersion, I18n::Message::BetaVersionMessage1, I18n::Message::BetaVersionMessage2, I18n::Message::BetaVersionMessage3, I18n::Message::BetaVersionMessage4};
+static const I18n::Message *sCodeMessages[] = {&I18n::Common::BetaVersion, &I18n::Common::BetaVersionMessage1, &I18n::Common::BetaVersionMessage2, &I18n::Common::BetaVersionMessage3, &I18n::Common::BetaVersionMessage4};
 
 static KDColor sCodeColors[] = {KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_menuController, I18n::Message::Warning),
+  ::App(container, snapshot, &m_menuController, &I18n::Common::Warning),
   m_betaVersionController(sCodeMessages, sCodeColors),
   m_menuController(this, snapshot->program())
 {

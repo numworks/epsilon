@@ -8,12 +8,12 @@ extern "C" {
 
 namespace Home {
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::Apps;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::Apps;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::AppsCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::AppsCapital;
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -26,7 +26,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_controller, I18n::Message::Warning),
+  ::App(container, snapshot, &m_controller, &I18n::Common::Warning),
   m_controller(&m_modalViewController, (AppsContainer *)container, snapshot)
 {
 }

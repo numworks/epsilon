@@ -5,7 +5,7 @@ namespace Shared {
 
 FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   ViewController(nullptr),
-  m_goToCell(I18n::Message::Goto),
+  m_goToCell(&I18n::Common::Goto),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_function(nullptr)

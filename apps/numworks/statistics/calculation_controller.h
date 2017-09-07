@@ -18,7 +18,7 @@ public:
   void didBecomeFirstResponder() override;
 
   bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
+  const I18n::Message *emptyMessage() override;
   Responder * defaultController() override;
 
   int numberOfRows() override;

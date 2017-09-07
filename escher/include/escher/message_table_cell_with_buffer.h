@@ -6,7 +6,7 @@
 
 class MessageTableCellWithBuffer : public MessageTableCell {
 public:
-  MessageTableCellWithBuffer(I18n::Message message = (I18n::Message)0, KDText::FontSize fontSize = KDText::FontSize::Small, KDText::FontSize accessoryFontSize = KDText::FontSize::Large, KDColor accessoryTextColor = KDColorBlack);
+  MessageTableCellWithBuffer(const I18n::Message *message = &I18n::NullMessage, KDText::FontSize fontSize = KDText::FontSize::Small, KDText::FontSize accessoryFontSize = KDText::FontSize::Large, KDColor accessoryTextColor = KDColorBlack);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * textBody);

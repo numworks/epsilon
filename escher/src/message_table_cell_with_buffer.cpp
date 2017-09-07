@@ -1,7 +1,7 @@
 #include <escher/message_table_cell_with_buffer.h>
 #include <escher/palette.h>
 
-MessageTableCellWithBuffer::MessageTableCellWithBuffer(I18n::Message message, KDText::FontSize fontSize, KDText::FontSize accessoryFontSize, KDColor accessoryTextColor) :
+MessageTableCellWithBuffer::MessageTableCellWithBuffer(const I18n::Message *message, KDText::FontSize fontSize, KDText::FontSize accessoryFontSize, KDColor accessoryTextColor) :
   MessageTableCell(message, fontSize),
   m_accessoryView(accessoryFontSize, 1.0f, 0.5f, accessoryTextColor)
 {

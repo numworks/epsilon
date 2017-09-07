@@ -21,12 +21,12 @@ int RightIntegralCalculation::numberOfParameters() {
   return 2;
 }
 
-I18n::Message RightIntegralCalculation::legendForParameterAtIndex(int index) {
+const I18n::Message *RightIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::RightIntegralFirstLegend;
+    return &I18n::Common::RightIntegralFirstLegend;
   }
-  return I18n::Message::RightIntegralSecondLegend;
+  return &I18n::Common::RightIntegralSecondLegend;
 }
 
 void RightIntegralCalculation::setParameterAtIndex(double f, int index) {

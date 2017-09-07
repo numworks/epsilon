@@ -7,15 +7,15 @@ using namespace Shared;
 namespace Sequence {
 
 ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
-  Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence),
-  m_typeCell(I18n::Message::SequenceType),
+  Shared::ListParameterController(listController, sequenceStore, &I18n::Common::SequenceColor, &I18n::Common::DeleteSequence),
+  m_typeCell(&I18n::Common::SequenceType),
   m_typeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
 }
 
 const char * ListParameterController::title() {
-  return I18n::translate(I18n::Message::SequenceOptions);
+  return I18n::translate(&I18n::Common::SequenceOptions);
 }
 
 void ListParameterController::setFunction(Shared::Function * function) {

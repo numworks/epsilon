@@ -8,9 +8,9 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_firstParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_secondParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_titleView(KDText::FontSize::Small, &I18n::Common::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_firstParameterDefinition(KDText::FontSize::Small, &I18n::NullMessage, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_secondParameterDefinition(KDText::FontSize::Small, &I18n::NullMessage, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -138,7 +138,7 @@ double ParametersController::parameterAtIndex(int index) {
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);
@@ -160,8 +160,8 @@ void ParametersController::buttonAction() {
   stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
-I18n::Message ParametersController::okButtonText() {
-  return I18n::Message::Next;
+const I18n::Message *ParametersController::okButtonText() {
+  return &I18n::Common::Next;
 }
 
 View * ParametersController::loadView() {

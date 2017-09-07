@@ -10,37 +10,37 @@ using namespace Poincare;
 
 namespace Settings {
 
-const SettingsNode angleChildren[2] = {SettingsNode(I18n::Message::Degres), SettingsNode(I18n::Message::Radian)};
-const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Auto), SettingsNode(I18n::Message::Scientific)};
-const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
-const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::Spanish), SettingsNode(I18n::Message::German), SettingsNode(I18n::Message::Portuguese)};
-const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
-const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
+const SettingsNode angleChildren[2] = {SettingsNode(&I18n::Common::Degres), SettingsNode(&I18n::Common::Radian)};
+const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(&I18n::Common::Auto), SettingsNode(&I18n::Common::Scientific)};
+const SettingsNode complexFormatChildren[2] = {SettingsNode(&I18n::Common::Default), SettingsNode(&I18n::Common::Default)};
+const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(&I18n::Common::English), SettingsNode(&I18n::Common::French), SettingsNode(&I18n::Common::Spanish), SettingsNode(&I18n::Common::German), SettingsNode(&I18n::Common::Portuguese)};
+const SettingsNode examChildren[1] = {SettingsNode(&I18n::Common::ActivateExamMode)};
+const SettingsNode aboutChildren[3] = {SettingsNode(&I18n::Common::SoftwareVersion), SettingsNode(&I18n::Common::SerialNumber), SettingsNode(&I18n::Common::FccId)};
 
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
 const SettingsNode menu[8] =
 #else
 const SettingsNode menu[7] =
 #endif
-  {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Brightness), SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
+  {SettingsNode(&I18n::Common::AngleUnit, angleChildren, 2), SettingsNode(&I18n::Common::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(&I18n::Common::ComplexFormat, complexFormatChildren, 2),
+  SettingsNode(&I18n::Common::Brightness), SettingsNode(&I18n::Common::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(&I18n::Common::ExamMode, examChildren, 1),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  SettingsNode(I18n::Message::UpdatePopUp),
+  SettingsNode(&I18n::Common::UpdatePopUp),
 #endif
-  SettingsNode(I18n::Message::About, aboutChildren, 3)};
+  SettingsNode(&I18n::Common::About, aboutChildren, 3)};
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 8);
+const SettingsNode model = SettingsNode(&I18n::Common::SettingsApp, menu, 8);
 #else
-const SettingsNode model = SettingsNode(I18n::Message::SettingsApp, menu, 7);
+const SettingsNode model = SettingsNode(&I18n::Common::SettingsApp, menu, 7);
 #endif
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
+  m_updateCell(&I18n::Common::Default, KDText::FontSize::Large),
 #endif
-  m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
-  m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
+  m_complexFormatCell(&I18n::Common::Default, KDText::FontSize::Large),
+  m_brightnessCell(&I18n::Common::Default, KDText::FontSize::Large),
   m_complexFormatLayout(nullptr),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
@@ -76,7 +76,7 @@ void MainController::didBecomeFirstResponder() {
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (m_nodeModel->children(selectedRow())->numberOfChildren() == 0) {
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-    if (m_nodeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
+    if (m_nodeModel->children(selectedRow())->label() == &I18n::Common::UpdatePopUp) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -85,7 +85,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       return false;
     }
 #endif
-    if (m_nodeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
+    if (m_nodeModel->children(selectedRow())->label() == &I18n::Common::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -208,7 +208,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       myTextCell->setSubtitle(m_nodeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language()-1)->label());
       break;
     default:
-      myTextCell->setSubtitle(I18n::Message::Default);
+      myTextCell->setSubtitle(&I18n::Common::Default);
       break;
   }
 }

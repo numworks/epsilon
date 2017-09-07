@@ -8,7 +8,7 @@ namespace Shared {
 class BannerView : public View {
 public:
   void setLegendAtIndex(char * text, int index);
-  void setMessageAtIndex(I18n::Message text, int index);
+  void setMessageAtIndex(const I18n::Message *text, int index);
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   int numberOfSubviews() const override;

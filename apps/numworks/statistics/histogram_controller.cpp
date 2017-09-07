@@ -15,7 +15,7 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
   ButtonRowDelegate(header, nullptr),
   m_bannerView(),
   m_view(store, &m_bannerView),
-  m_settingButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
+  m_settingButton(this, &I18n::Common::HistogramSet, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = (HistogramController *) context;
     StackViewController * stack = ((StackViewController *)histogramController->stackController());
     stack->push(histogramController->histogramParameterController());
@@ -30,7 +30,7 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
 }
 
 const char * HistogramController::title() {
-  return I18n::translate(I18n::Message::HistogramTab);
+  return I18n::translate(&I18n::Common::HistogramTab);
 }
 
 View * HistogramController::view() {
@@ -120,8 +120,8 @@ bool HistogramController::isEmpty() const {
   return false;
 }
 
-I18n::Message HistogramController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
+const I18n::Message *HistogramController::emptyMessage() {
+  return &I18n::Common::NoDataToPlot;
 }
 
 Responder * HistogramController::defaultController() {

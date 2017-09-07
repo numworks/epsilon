@@ -8,8 +8,8 @@ UniformLaw::UniformLaw() :
 {
 }
 
-I18n::Message UniformLaw::title() {
-  return I18n::Message::UniformLaw;
+const I18n::Message *UniformLaw::title() {
+  return &I18n::Common::UniformLaw;
 }
 
 Law::Type UniformLaw::type() const {
@@ -20,21 +20,21 @@ bool UniformLaw::isContinuous() const {
   return true;
 }
 
-I18n::Message UniformLaw::parameterNameAtIndex(int index) {
+const I18n::Message *UniformLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::A;
+    return &I18n::Common::A;
   } else {
-    return I18n::Message::B;
+    return &I18n::Common::B;
   }
 }
 
-I18n::Message UniformLaw::parameterDefinitionAtIndex(int index) {
+const I18n::Message *UniformLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::IntervalDefinition;
+    return &I18n::Common::IntervalDefinition;
   } else {
-    return I18n::Message::Default;
+    return &I18n::Common::Default;
   }
 }
 

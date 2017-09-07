@@ -21,12 +21,12 @@ int LeftIntegralCalculation::numberOfParameters() {
   return 2;
 }
 
-I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
+const I18n::Message *LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::LeftIntegralFirstLegend;
+    return &I18n::Common::LeftIntegralFirstLegend;
   }
-  return I18n::Message::LeftIntegralSecondLegend;
+  return &I18n::Common::LeftIntegralSecondLegend;
 }
 
 void LeftIntegralCalculation::setParameterAtIndex(double f, int index) {

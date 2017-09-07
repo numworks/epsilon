@@ -12,7 +12,7 @@ class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Shared::Interval * interval, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  I18n::Message emptyMessage() override;
+  const I18n::Message *emptyMessage() override;
   IntervalParameterController * intervalParameterController() override;
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;

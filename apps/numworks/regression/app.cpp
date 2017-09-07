@@ -10,12 +10,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.regression";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::RegressionApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::RegressionApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::RegressionAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::RegressionAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

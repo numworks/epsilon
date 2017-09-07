@@ -11,8 +11,8 @@ NormalLaw::NormalLaw() :
 {
 }
 
-I18n::Message NormalLaw::title() {
-  return I18n::Message::NormalLaw;
+const I18n::Message *NormalLaw::title() {
+  return &I18n::Common::NormalLaw;
 }
 
 Law::Type NormalLaw::type() const {
@@ -23,21 +23,21 @@ bool NormalLaw::isContinuous() const {
   return true;
 }
 
-I18n::Message NormalLaw::parameterNameAtIndex(int index) {
+const I18n::Message *NormalLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::Mu;
+    return &I18n::Common::Mu;
   } else {
-    return I18n::Message::Sigma;
+    return &I18n::Common::Sigma;
   }
 }
 
-I18n::Message NormalLaw::parameterDefinitionAtIndex(int index) {
+const I18n::Message *NormalLaw::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::MeanDefinition;
+    return &I18n::Common::MeanDefinition;
   } else {
-    return I18n::Message::DeviationDefinition;
+    return &I18n::Common::DeviationDefinition;
   }
 }
 

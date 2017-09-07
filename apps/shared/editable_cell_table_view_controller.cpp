@@ -25,11 +25,11 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   Context * globalContext = appsContainer->globalContext();
   double floatBody = Expression::approximate<double>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+    app()->displayWarning(&I18n::Common::UndefinedValue);
     return false;
   }
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    app()->displayWarning(&I18n::Common::ForbiddenValue);
     return false;
   }
   selectableTableView()->reloadData();

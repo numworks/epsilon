@@ -8,15 +8,15 @@ using namespace Shared;
 namespace Graph {
 
 ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
+  Shared::ListController(parentResponder, functionStore, header, footer, &I18n::Common::AddFunction),
   m_functionTitleCells{},
   m_expressionCells{},
-  m_parameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
+  m_parameterController(this, functionStore, &I18n::Common::FunctionColor, &I18n::Common::DeleteFunction)
 {
 }
 
 const char * ListController::title() {
-  return I18n::translate(I18n::Message::FunctionTab);
+  return I18n::translate(&I18n::Common::FunctionTab);
 }
 
 int ListController::numberOfRows() {

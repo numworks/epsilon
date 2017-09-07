@@ -15,7 +15,7 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
 }
 
 const char * HistogramParameterController::title() {
-  return I18n::translate(I18n::Message::HistogramSet);
+  return I18n::translate(&I18n::Common::HistogramSet);
 }
 
 int HistogramParameterController::numberOfRows() {
@@ -27,7 +27,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
+  const I18n::Message *labels[k_numberOfCells] = {&I18n::Common::RectangleWidth, &I18n::Common::BarStart};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
@@ -45,13 +45,13 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   if (parameterIndex == 0) {
     double newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
     if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars || m_store->firstDrawnBarAbscissa() > m_store->maxValue()+f) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      app()->displayWarning(&I18n::Common::ForbiddenValue);
       return false;
     }
     m_store->setBarWidth(f);
   } else {
     if (f > m_store->maxValue()+m_store->barWidth()) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      app()->displayWarning(&I18n::Common::ForbiddenValue);
       return false;
     }
     m_store->setFirstDrawnBarAbscissa(f);
@@ -71,7 +71,7 @@ int HistogramParameterController::reusableParameterCellCount(int type) {
 View * HistogramParameterController::loadView() {
   SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   for (int i = 0; i < k_numberOfCells; i++) {
-    m_cells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+    m_cells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, &I18n::Common::Default);
   }
   return tableView;
 }

@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Shared {
 
 TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  ::App(container, snapshot, rootViewController, I18n::Message::Warning),
+  ::App(container, snapshot, rootViewController, &I18n::Common::Warning),
   TextFieldDelegate()
 {
 }
@@ -43,7 +43,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
       delete exp;
     }
     if (invalidText) {
-      textField->app()->displayWarning(I18n::Message::SyntaxError);
+      textField->app()->displayWarning(&I18n::Common::SyntaxError);
       return true;
     }
   }

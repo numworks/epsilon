@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, const I18n::Message *parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
@@ -17,7 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_abscissaTitleCell(nullptr),
   m_abscissaCells{},
   m_abscissaParameterController(this, intervalParameterController, parameterTitle),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
+  m_setIntervalButton(this, &I18n::Common::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
@@ -26,7 +26,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 }
 
 const char * ValuesController::title() {
-  return I18n::translate(I18n::Message::ValuesTab);
+  return I18n::translate(&I18n::Common::ValuesTab);
 }
 
 int ValuesController::numberOfColumns() {

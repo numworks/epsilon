@@ -5,17 +5,17 @@
 
 class Node {
 public:
-  constexpr Node(I18n::Message label = I18n::Message::Default, int numberOfChildren = 0) :
+  constexpr Node(const I18n::Message *label = &I18n::Common::Default, int numberOfChildren = 0) :
     m_label(label),
     m_numberOfChildren(numberOfChildren)
   {
   };
   virtual const Node * children(int index) const = 0;
-  I18n::Message label() const;
+  const I18n::Message *label() const;
   int numberOfChildren() const;
   bool isNull() const;
 protected:
-  I18n::Message m_label;
+  const I18n::Message *m_label;
   int m_numberOfChildren;
 };
 

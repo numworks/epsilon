@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-MessageTableCell::MessageTableCell(I18n::Message label, KDText::FontSize size, Layout layout) :
+MessageTableCell::MessageTableCell(const I18n::Message *label, KDText::FontSize size, Layout layout) :
   TableCell(layout),
   m_messageTextView(size, label, 0, 0.5, KDColorBlack, KDColorWhite)
 {
@@ -18,7 +18,7 @@ void MessageTableCell::setHighlighted(bool highlight) {
   m_messageTextView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCell::setMessage(I18n::Message text) {
+void MessageTableCell::setMessage(const I18n::Message *text) {
   m_messageTextView.setMessage(text);
   layoutSubviews();
 }

@@ -30,7 +30,7 @@ TermSumController::TermSumController(Responder * parentResponder, GraphView * gr
 }
 
 const char * TermSumController::title() {
-  return I18n::translate(I18n::Message::TermSum);
+  return I18n::translate(&I18n::Common::TermSum);
 }
 
 View * TermSumController::view() {
@@ -52,7 +52,7 @@ void TermSumController::viewWillAppear() {
   m_startSum = -1;
   m_endSum = -1;
   m_step = 0;
-  m_legendView.setLegendMessage(I18n::Message::SelectFirstTerm);
+  m_legendView.setLegendMessage(&I18n::Common::SelectFirstTerm);
   m_legendView.setSumSubscript(m_cursor->x());
 }
 
@@ -100,7 +100,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
       m_startSum = m_cursor->x();
       m_graphView->setHighlight(m_startSum,m_startSum);
       m_legendView.setSumSuperscript(m_startSum, m_cursor->x());
-      m_legendView.setLegendMessage(I18n::Message::SelectLastTerm);
+      m_legendView.setLegendMessage(&I18n::Common::SelectLastTerm);
       return true;
     }
     m_step++;
@@ -108,7 +108,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     double sum = m_sequence->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
     m_legendView.setSumResult(m_sequence->name(), sum);
-    m_legendView.setLegendMessage(I18n::Message::Default);
+    m_legendView.setLegendMessage(&I18n::Common::Default);
     m_graphView->setHighlightColor(true);
     m_graphView->setCursorView(nullptr);
     m_graphView->reload();
@@ -118,7 +118,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     m_step--;
     m_bufferCursorPosition = 0;
     if (m_step == 1) {
-      m_legendView.setLegendMessage(I18n::Message::SelectLastTerm);
+      m_legendView.setLegendMessage(&I18n::Common::SelectLastTerm);
       m_graphView->setHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
       m_graphView->reload();
@@ -127,7 +127,7 @@ bool TermSumController::handleEvent(Ion::Events::Event event) {
     if (m_step == 0) {
       m_graphView->setHighlight(-1,-1);
       moveCursorHorizontallyToPosition(m_startSum);
-      m_legendView.setLegendMessage(I18n::Message::SelectFirstTerm);
+      m_legendView.setLegendMessage(&I18n::Common::SelectFirstTerm);
       m_legendView.setSumSubscript(m_startSum);
       m_graphView->reload();
     }
@@ -168,7 +168,7 @@ void TermSumController::setSequence(Sequence * sequence) {
 TermSumController::LegendView::LegendView() :
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
   m_sumLayout(nullptr),
-  m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright)
+  m_legend(KDText::FontSize::Small, &I18n::Common::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright)
 {
 }
 
@@ -187,7 +187,7 @@ KDSize TermSumController::LegendView::minimalSizeForOptimalDisplay() const {
   return KDSize(0, k_legendHeight);
 }
 
-void TermSumController::LegendView::setLegendMessage(I18n::Message message) {
+void TermSumController::LegendView::setLegendMessage(const I18n::Message *message) {
   m_legend.setMessage(message);
   layoutSubviews();
 }

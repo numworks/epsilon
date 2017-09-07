@@ -14,7 +14,7 @@ InitialisationParameterController::InitialisationParameterController(Responder *
 }
 
 const char * InitialisationParameterController::title() {
-  return I18n::translate(I18n::Message::Initialization);
+  return I18n::translate(&I18n::Common::Initialization);
 }
 
 View * InitialisationParameterController::view() {
@@ -59,7 +59,7 @@ KDCoordinate InitialisationParameterController::cellHeight() {
 
 void InitialisationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message titles[3] = {I18n::Message::RoundAbscissa, I18n::Message::Orthonormal, I18n::Message::DefaultSetting};
+  const I18n::Message *titles[3] = {&I18n::Common::RoundAbscissa, &I18n::Common::Orthonormal, &I18n::Common::DefaultSetting};
   myCell->setMessage(titles[index]);
 }
 

@@ -12,12 +12,12 @@ const char * App::Descriptor::uriName() {
   return "numworks.graph";
 }
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::FunctionApp;
+const I18n::Message *App::Descriptor::name() {
+  return &I18n::Common::FunctionApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::FunctionAppCapital;
+const I18n::Message *App::Descriptor::upperName() {
+  return &I18n::Common::FunctionAppCapital;
 }
 
 const Image * App::Descriptor::icon() {

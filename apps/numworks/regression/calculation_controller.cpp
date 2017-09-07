@@ -32,7 +32,7 @@ CalculationController::~CalculationController() {
 }
 
 const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
+  return I18n::translate(&I18n::Common::StatTab);
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -108,8 +108,8 @@ bool CalculationController::isEmpty() const {
   return false;
 }
 
-I18n::Message CalculationController::emptyMessage() {
-  return I18n::Message::NoValueToCompute;
+const I18n::Message *CalculationController::emptyMessage() {
+  return &I18n::Common::NoValueToCompute;
 }
 
 Responder * CalculationController::defaultController() {
@@ -142,11 +142,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     }
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     if (j == 0) {
-      myCell->setMessage(I18n::Message::Default);
+      myCell->setMessage(&I18n::Common::Default);
       return;
     }
     myCell->setAlignment(1.0f, 0.5f);
-    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
+    const I18n::Message *titles[k_totalNumberOfRows-1] = {&I18n::Common::Mean, &I18n::Common::Sum, &I18n::Common::SquareSum, &I18n::Common::StandardDeviation, &I18n::Common::Deviation, &I18n::Common::NumberOfDots, &I18n::Common::Covariance, &I18n::Common::Sxy, &I18n::Common::Regression, &I18n::Common::A, &I18n::Common::B, &I18n::Common::R, &I18n::Common::Default};
     myCell->setMessage(titles[j-1]);
     return;
   }

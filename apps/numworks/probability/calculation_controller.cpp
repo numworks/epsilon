@@ -15,7 +15,7 @@ using namespace Shared;
 namespace Probability {
 
 CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
-  m_titleView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDText::FontSize::Small, &I18n::Common::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_lawCurveView(law, calculation),
   m_imageTableView(parentResponder, law, calculation, calculationController),
   m_draftTextBuffer{},
@@ -220,7 +220,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   Context * globalContext = probaApp->container()->globalContext();
   double floatBody = Expression::approximate<double>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+    app()->displayWarning(&I18n::Common::UndefinedValue);
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && m_highlightedSubviewIndex == 2) {

@@ -25,7 +25,7 @@ private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  I18n::Message okButtonText() override;
+  const I18n::Message *okButtonText() override;
   View * loadView() override;
   void unloadView(View * view) override;
   class ContentView : public View {

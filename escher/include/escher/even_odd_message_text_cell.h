@@ -10,7 +10,7 @@ public:
   EvenOddMessageTextCell(KDText::FontSize size = KDText::FontSize::Large);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
+  void setMessage(const I18n::Message *textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

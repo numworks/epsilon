@@ -6,7 +6,7 @@ BannerView::BannerView() :
   m_dotNameView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_xView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_yView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_regressionTypeView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_regressionTypeView(KDText::FontSize::Small, &I18n::NullMessage, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_slopeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_yInterceptView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_rView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),

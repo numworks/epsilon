@@ -38,7 +38,7 @@ private:
   Cell m_cells[k_totalNumberOfModels];
   SelectableTableView m_selectableTableView;
   ContentView m_contentView;
-  I18n::Message * m_messages;
+  const I18n::Message ** m_messages;
   Law * m_law;
   ParametersController * m_parametersController;
 

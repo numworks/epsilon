@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::ListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
+  Shared::ListController(parentResponder, sequenceStore, header, footer, &I18n::Common::AddSequence),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
   m_expressionCells{},
@@ -20,7 +20,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
 }
 
 const char * ListController::title() {
-  return I18n::translate(I18n::Message::SequenceTab);
+  return I18n::translate(&I18n::Common::SequenceTab);
 }
 
 Toolbox * ListController::toolboxForTextField(TextField * textField) {

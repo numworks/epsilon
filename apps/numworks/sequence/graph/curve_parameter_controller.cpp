@@ -8,14 +8,14 @@ namespace Sequence {
 
 CurveParameterController::CurveParameterController(GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FunctionCurveParameterController(graphRange, cursor),
-  m_goToParameterController(this, graphRange, cursor, I18n::Message::N),
-  m_sumCell(I18n::Message::TermSum),
+  m_goToParameterController(this, graphRange, cursor, &I18n::Common::N),
+  m_sumCell(&I18n::Common::TermSum),
   m_graphController(graphController)
 {
 }
 
 const char * CurveParameterController::title() {
-  return I18n::translate(I18n::Message::SequenceOptions);
+  return I18n::translate(&I18n::Common::SequenceOptions);
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {

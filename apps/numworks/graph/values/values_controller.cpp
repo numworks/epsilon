@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, CartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, header, &I18n::Common::XColumn, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),
@@ -32,7 +32,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
-    mytitleCell->setMessage(I18n::Message::X);
+    mytitleCell->setMessage(&I18n::Common::X);
     return;
   }
   // The cell is a function title cell:
@@ -54,11 +54,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
-I18n::Message ValuesController::emptyMessage() {
+const I18n::Message *ValuesController::emptyMessage() {
   if (m_functionStore->numberOfDefinedFunctions() == 0) {
-    return I18n::Message::NoFunction;
+    return &I18n::Common::NoFunction;
   }
-  return I18n::Message::NoActivatedFunction;
+  return &I18n::Common::NoActivatedFunction;
 }
 
 IntervalParameterController * ValuesController::intervalParameterController() {

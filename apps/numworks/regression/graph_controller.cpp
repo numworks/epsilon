@@ -30,11 +30,11 @@ bool GraphController::isEmpty() const {
   return false;
 }
 
-I18n::Message GraphController::emptyMessage() {
+const I18n::Message *GraphController::emptyMessage() {
   if (m_store->numberOfPairs() == 0) {
-    return I18n::Message::NoDataToPlot;
+    return &I18n::Common::NoDataToPlot;
   }
-  return I18n::Message::NoEnoughDataForRegression;
+  return &I18n::Common::NoEnoughDataForRegression;
 }
 
 void GraphController::selectRegressionCurve() {
@@ -59,7 +59,7 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 3);
+  m_bannerView.setMessageAtIndex(&I18n::Common::RegressionFormula, 3);
 
   char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChar = 0;
@@ -68,12 +68,12 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   if (*m_selectedDotIndex == m_store->numberOfPairs()) {
-    legend = I18n::translate(I18n::Message::MeanDot);
+    legend = I18n::translate(&I18n::Common::MeanDot);
     legendLength = strlen(legend);
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;
   } else if (*m_selectedDotIndex < 0) {
-    legend = I18n::translate(I18n::Message::Reg);
+    legend = I18n::translate(&I18n::Common::Reg);
     legendLength = strlen(legend);
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;

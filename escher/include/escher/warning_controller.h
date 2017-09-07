@@ -8,8 +8,8 @@
 
 class WarningController : public ViewController {
 public:
-  WarningController(Responder * parentResponder, I18n::Message warningMessage);
-  void setLabel(I18n::Message message);
+  WarningController(Responder * parentResponder, const I18n::Message *warningMessage);
+  void setLabel(const I18n::Message *message);
   const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -17,7 +17,7 @@ private:
   class ContentView : public SolidColorView {
   public:
     ContentView();
-    void setLabel(I18n::Message message);
+    void setLabel(const I18n::Message *message);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
@@ -29,7 +29,7 @@ private:
   };
 
   ContentView m_contentView;
-  I18n::Message m_warningMessage;
+  const I18n::Message *m_warningMessage;
 };
 
 #endif

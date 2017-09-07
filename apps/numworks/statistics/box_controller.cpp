@@ -16,7 +16,7 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
 }
 
 const char * BoxController::title() {
-  return I18n::translate(I18n::Message::BoxTab);
+  return I18n::translate(&I18n::Common::BoxTab);
 }
 
 View * BoxController::view() {
@@ -52,8 +52,8 @@ bool BoxController::isEmpty() const {
   return false;
 }
 
-I18n::Message BoxController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
+const I18n::Message *BoxController::emptyMessage() {
+  return &I18n::Common::NoDataToPlot;
 }
 
 Responder * BoxController::defaultController() {
@@ -65,7 +65,7 @@ Responder * BoxController::tabController() const {
 }
 
 void BoxController::reloadBannerView() {
-  I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
+  const I18n::Message *calculationName[5] = {&I18n::Common::Minimum, &I18n::Common::FirstQuartile, &I18n::Common::Median, &I18n::Common::ThirdQuartile, &I18n::Common::Maximum};
   m_boxBannerView.setMessageAtIndex(calculationName[(int)m_view.selectedQuantile()], 0);
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,

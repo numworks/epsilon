@@ -4,7 +4,7 @@
 
 namespace Shared {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const I18n::Message *symbol) :
   FloatParameterController(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),

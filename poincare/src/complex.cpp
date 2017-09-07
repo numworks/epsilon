@@ -54,6 +54,10 @@ Complex<T> Complex<T>::Cartesian(T a, T b) {
 
 template<typename T>
 Complex<T> Complex<T>::Polar(T r, T th)  {
+  // If the radius is 0, theta may be undefined but shouldn't be able to affect the result.
+  if (r == 0) {
+    return Complex(0,0);
+  }
   T c = std::cos(th);
   T s = std::sin(th);
   /* Cheat: see comment on cosine.cpp.

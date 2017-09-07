@@ -1,6 +1,6 @@
 include build/config.mak
 
-VERSION ?= 1.1.1
+VERSION ?= 1.1.2
 
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)

@@ -20,4 +20,7 @@ QUIZ_CASE(poincare_power_evaluate) {
   Complex<double> d[4] = {Complex<double>::Float(37.0), Complex<double>::Float(54.0), Complex<double>::Float(81.0), Complex<double>::Float(118.0)};
   assert_parsed_expression_evaluates_to("[[1,2][3,4]]^3", d, 2, 2);
 #endif
+
+  Complex<float> e[1] = {Complex<float>::Float(0.0f)};
+  assert_parsed_expression_evaluates_to("0^2", e);
 }

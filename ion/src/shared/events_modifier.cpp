@@ -11,11 +11,11 @@ ShiftAlphaStatus shiftAlphaStatus() {
 }
 
 bool isShiftActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 bool isAlphaActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 ;
 }
 
@@ -64,13 +64,6 @@ void updateModifiersFromEvent(Event e) {
           sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
         } else if (e == Alpha) {
           sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::AlphaLockShift:  // no longer used
-        if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
         }
         break;
       case ShiftAlphaStatus::ShiftAlphaLock:

@@ -43,7 +43,6 @@ enum class ShiftAlphaStatus {
   Alpha,
   ShiftAlpha,
   AlphaLock,
-  AlphaLockShift,
   ShiftAlphaLock,
 };
 

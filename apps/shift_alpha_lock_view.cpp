@@ -17,7 +17,6 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
     switch (m_status) {
       case Ion::Events::ShiftAlphaStatus::Alpha:
       case Ion::Events::ShiftAlphaStatus::AlphaLock:
-      case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
         m_shiftAlphaView.setMessage(I18n::Message::Alpha);
         break;
       case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
@@ -51,7 +50,6 @@ int ShiftAlphaLockView::numberOfSubviews() const {
     case Ion::Events::ShiftAlphaStatus::ShiftAlpha:
       return 1;
     case Ion::Events::ShiftAlphaStatus::AlphaLock:
-    case Ion::Events::ShiftAlphaStatus::AlphaLockShift:
     case Ion::Events::ShiftAlphaStatus::ShiftAlphaLock:
       return 2;
     case Ion::Events::ShiftAlphaStatus::Default:

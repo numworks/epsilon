@@ -67,7 +67,7 @@ int LanguageController::reusableCellCount() {
 
 void LanguageController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *) cell;
-  I18n::Message languages[I18n::NumberOfLanguages] = {I18n::Message::English, I18n::Message::French, I18n::Message::Spanish, I18n::Message::German, I18n::Message::Portuguese};
+  const I18n::Message *languages[I18n::NumberOfLanguages] = {&I18n::Common::English, &I18n::Common::French, &I18n::Common::Spanish, &I18n::Common::German, &I18n::Common::Portuguese};
   myCell->setMessage(languages[index]);
 }
 

@@ -43,12 +43,12 @@ bool ExamPopUpController::isActivatingExamMode() {
 }
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
-  m_cancelButton(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
+  m_cancelButton(parentResponder, &I18n::Common::Cancel, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     Container * container = (Container *)controller->app()->container();
     container->activeApp()->dismissModalViewController();
   }, parentResponder), KDText::FontSize::Small),
-  m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
+  m_okButton(parentResponder, &I18n::Common::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Desactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
@@ -61,10 +61,10 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     container->refreshPreferences();
     container->activeApp()->dismissModalViewController();
   }, parentResponder), KDText::FontSize::Small),
-  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView1(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView2(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
+  m_warningTextView(KDText::FontSize::Small, &I18n::Common::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView1(KDText::FontSize::Small, &I18n::Common::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView2(KDText::FontSize::Small, &I18n::Common::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView3(KDText::FontSize::Small, &I18n::Common::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 
@@ -91,13 +91,13 @@ int ExamPopUpController::ContentView::selectedButton() {
 
 void ExamPopUpController::ContentView::setMessages(bool activingExamMode) {
   if (activingExamMode) {
-    m_messageTextView1.setMessage(I18n::Message::ActiveExamModeMessage1);
-    m_messageTextView2.setMessage(I18n::Message::ActiveExamModeMessage2);
-    m_messageTextView3.setMessage(I18n::Message::ActiveExamModeMessage3);
+    m_messageTextView1.setMessage(&I18n::Common::ActiveExamModeMessage1);
+    m_messageTextView2.setMessage(&I18n::Common::ActiveExamModeMessage2);
+    m_messageTextView3.setMessage(&I18n::Common::ActiveExamModeMessage3);
   } else {
-    m_messageTextView1.setMessage(I18n::Message::ExitExamMode1);
-    m_messageTextView2.setMessage(I18n::Message::ExitExamMode2);
-    m_messageTextView3.setMessage(I18n::Message::Default);
+    m_messageTextView1.setMessage(&I18n::Common::ExitExamMode1);
+    m_messageTextView2.setMessage(&I18n::Common::ExitExamMode2);
+    m_messageTextView3.setMessage(&I18n::Common::Default);
   }
 }
 

@@ -3,11 +3,11 @@
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
-  m_textView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack)
+  m_textView(KDText::FontSize::Small, &I18n::NullMessage, 0.5f, 0.5f, KDColorWhite, KDColorBlack)
 {
 }
 
-void WarningController::ContentView::setLabel(I18n::Message label) {
+void WarningController::ContentView::setLabel(const I18n::Message *label) {
   m_textView.setMessage(label);
 }
 
@@ -28,14 +28,14 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const  {
   return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
 }
 
-WarningController::WarningController(Responder * parentResponder, I18n::Message warningMessage) :
+WarningController::WarningController(Responder * parentResponder, const I18n::Message *warningMessage) :
   ViewController(parentResponder),
   m_contentView(),
   m_warningMessage(warningMessage)
 {
 }
 
-void WarningController::setLabel(I18n::Message label) {
+void WarningController::setLabel(const I18n::Message *label) {
   m_contentView.setLabel(label);
 }
 

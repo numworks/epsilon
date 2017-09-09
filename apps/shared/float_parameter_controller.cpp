@@ -120,7 +120,7 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   Context * globalContext = appsContainer->globalContext();
   double floatBody = Expression::approximate<double>(text, *globalContext);
   if (isnan(floatBody) || isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+    app()->displayWarning(&I18n::Common::UndefinedValue);
     return false;
   }
   if (!setParameterAtIndex(selectedRow(), floatBody)) {
@@ -184,8 +184,8 @@ void FloatParameterController::buttonAction() {
   stack->pop();
 }
 
-I18n::Message FloatParameterController::okButtonText() {
-  return I18n::Message::Ok;
+const I18n::Message *FloatParameterController::okButtonText() {
+  return &I18n::Common::Ok;
 }
 
 View * FloatParameterController::loadView() {

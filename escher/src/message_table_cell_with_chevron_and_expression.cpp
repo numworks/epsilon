@@ -1,7 +1,7 @@
 #include <escher/message_table_cell_with_chevron_and_expression.h>
 #include <escher/palette.h>
 
-MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, KDText::FontSize size) :
+MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(const I18n::Message *message, KDText::FontSize size) :
   MessageTableCellWithChevron(message, size),
   m_subtitleView(1.0f, 0.5f, Palette::GreyDark)
 {

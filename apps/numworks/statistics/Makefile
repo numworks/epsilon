@@ -1,0 +1,20 @@
+ifneq (,$(findstring numworks.statistics,${APPS_LIST}))
+
+app_objs += $(addprefix apps/numworks/statistics/,\
+  app.o\
+  box_banner_view.o\
+  box_controller.o\
+  box_range.o\
+  box_view.o\
+  calculation_controller.o\
+  histogram_banner_view.o\
+  histogram_controller.o\
+  histogram_parameter_controller.o\
+  histogram_view.o\
+  store.o\
+  store_controller.o\
+)
+
+app_images += apps/numworks/statistics/stat_icon.png
+
+endif

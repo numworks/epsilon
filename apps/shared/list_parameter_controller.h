@@ -10,7 +10,7 @@ namespace Shared {
 
 class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage);
+  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, const I18n::Message *functionColorMessage, const I18n::Message *deleteFunctionMessage);
 
   View * view() override;
   const char * title() override;

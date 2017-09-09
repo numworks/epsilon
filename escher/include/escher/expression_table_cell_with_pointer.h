@@ -7,10 +7,10 @@
 
 class ExpressionTableCellWithPointer : public ExpressionTableCell {
 public:
-  ExpressionTableCellWithPointer(I18n::Message accessoryMessage = (I18n::Message)0, Layout layout = Layout::Horizontal);
+  ExpressionTableCellWithPointer(const I18n::Message *accessoryMessage = &I18n::NullMessage, Layout layout = Layout::Horizontal);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryMessage(I18n::Message messageBody);
+  void setAccessoryMessage(const I18n::Message *messageBody);
 private:
   MessageTextView m_accessoryView;
 };

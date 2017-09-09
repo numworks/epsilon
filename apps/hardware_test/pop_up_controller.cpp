@@ -33,20 +33,20 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 
 PopUpController::ContentView::ContentView(Responder * parentResponder) :
   Responder(parentResponder),
-  m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
+  m_cancelButton(this, &I18n::Common::Cancel, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     view->app()->dismissModalViewController();
   }, this), KDText::FontSize::Small),
-  m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
+  m_okButton(this, &I18n::Common::Ok, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
   }, this), KDText::FontSize::Small),
-  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView1(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView2(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView4(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
+  m_warningTextView(KDText::FontSize::Small, &I18n::Common::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView1(KDText::FontSize::Small, &I18n::Common::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView2(KDText::FontSize::Small, &I18n::Common::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView3(KDText::FontSize::Small, &I18n::Common::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView4(KDText::FontSize::Small, &I18n::Common::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 

@@ -1,16 +1,16 @@
 #include <escher/message_table_cell_with_message.h>
 #include <escher/palette.h>
 
-MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
+MessageTableCellWithMessage::MessageTableCellWithMessage(const I18n::Message *message, Layout layout) :
   MessageTableCell(message, KDText::FontSize::Small, layout),
-  m_accessoryView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f)
+  m_accessoryView(KDText::FontSize::Small, &I18n::NullMessage, 0.0f, 0.5f)
 {
   if (layout != Layout::Vertical) {
     m_accessoryView.setAlignment(1.0f, 0.5f);
   }
 }
 
-void MessageTableCellWithMessage::setAccessoryMessage(I18n::Message textBody) {
+void MessageTableCellWithMessage::setAccessoryMessage(const I18n::Message *textBody) {
   m_accessoryView.setMessage(textBody);
   reloadCell();
 }

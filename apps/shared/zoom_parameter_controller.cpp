@@ -12,7 +12,7 @@ ZoomParameterController::ZoomParameterController(Responder * parentResponder, In
 }
 
 const char * ZoomParameterController::title() {
-  return I18n::translate(I18n::Message::Zoom);
+  return I18n::translate(&I18n::Common::Zoom);
 }
 
 View * ZoomParameterController::view() {
@@ -98,7 +98,7 @@ CurveView * ZoomParameterController::ContentView::curveView() {
 
 ZoomParameterController::ContentView::LegendView::LegendView()
 {
-  I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
+  const I18n::Message *messages[k_numberOfLegends] = {&I18n::Common::Move, &I18n::Common::ToZoom, &I18n::Common::Or};
   float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFontSize(KDText::FontSize::Small);

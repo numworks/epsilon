@@ -17,7 +17,7 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
 }
 
 const char * VariableBoxController::ContentViewController::title() {
-  return I18n::translate(I18n::Message::Variables);
+  return I18n::translate(&I18n::Common::Variables);
 }
 
 View * VariableBoxController::ContentViewController::view() {
@@ -128,7 +128,7 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
 
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
-    I18n::Message label = nodeLabelAtIndex(index);
+    const I18n::Message *label = nodeLabelAtIndex(index);
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(label);
     return;
@@ -156,7 +156,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);
-    myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
+    myCell->setSubtitle(I18n::translate(&I18n::Common::Empty));
   }
 }
 
@@ -246,12 +246,12 @@ void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int i
   }
 }
 
-I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
+const I18n::Message *VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
 #if LIST_VARIABLES
-  I18n::Message labels[3] = {I18n::Message::Number, I18n::Message::List, I18n::Message::Matrix};
+  const I18n::Message *labels[3] = {&I18n::Common::Number, &I18n::Common::List, &I18n::Common::Matrix};
 #else
-  I18n::Message labels[2] = {I18n::Message::Number, I18n::Message::Matrix};
+  const I18n::Message *labels[2] = {&I18n::Common::Number, &I18n::Common::Matrix};
 #endif
   return labels[index];
 }

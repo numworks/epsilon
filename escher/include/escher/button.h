@@ -9,7 +9,7 @@
 
 class Button : public HighlightCell, public Responder {
 public:
-  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
+  Button(Responder * parentResponder, const I18n::Message *textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
   KDSize minimalSizeForOptimalDisplay() const override;

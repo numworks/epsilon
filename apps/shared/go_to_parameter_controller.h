@@ -10,7 +10,7 @@ namespace Shared {
 
 class GoToParameterController : public FloatParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, const I18n::Message *symbol);
   int numberOfRows() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
@@ -25,7 +25,7 @@ private:
   void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText * m_abscisseCell;
-  I18n::Message m_abscissaSymbol;
+  const I18n::Message *m_abscissaSymbol;
 };
 
 }

@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 #include <escher/app.h>
 
-MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
+MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, const I18n::Message *message) :
   Responder(parentResponder),
   MessageTableCell(message),
   m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), textFieldDelegate, true, KDText::FontSize::Large, 1.0f, 0.5f)

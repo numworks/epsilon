@@ -55,7 +55,7 @@ private:
     constexpr static KDCoordinate k_nodeRowHeight = 40;
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
-    I18n::Message nodeLabelAtIndex(int index);
+    const I18n::Message *nodeLabelAtIndex(int index);
     const Poincare::Evaluation<double> * expressionForIndex(int index);
 
     Poincare::GlobalContext * m_context;

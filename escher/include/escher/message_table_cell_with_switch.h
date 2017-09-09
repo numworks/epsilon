@@ -6,7 +6,7 @@
 
 class MessageTableCellWithSwitch : public MessageTableCell {
 public:
-  MessageTableCellWithSwitch(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
+  MessageTableCellWithSwitch(const I18n::Message *message = &I18n::NullMessage, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
 private:
   SwitchView m_accessoryView;

@@ -1,7 +1,7 @@
 #include <escher/message_table_cell_with_gauge.h>
 #include <escher/palette.h>
 
-MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message, KDText::FontSize size) :
+MessageTableCellWithGauge::MessageTableCellWithGauge(const I18n::Message *message, KDText::FontSize size) :
   MessageTableCell(message, size),
   m_accessoryView()
 {

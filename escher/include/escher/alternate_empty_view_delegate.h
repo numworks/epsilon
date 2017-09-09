@@ -9,7 +9,7 @@ class AlternateEmptyViewController;
 class AlternateEmptyViewDelegate {
 public:
   virtual bool isEmpty() const = 0;
-  virtual I18n::Message emptyMessage() = 0;
+  virtual const I18n::Message *emptyMessage() = 0;
   virtual Responder * defaultController() = 0;
 };
 

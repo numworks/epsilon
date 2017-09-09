@@ -11,7 +11,7 @@ namespace Shared {
 
 class ListController : public DynamicViewController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
+  ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, const I18n::Message *text);
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
@@ -53,7 +53,7 @@ private:
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) = 0;
   EvenOddCell * m_emptyCell;
-  I18n::Message m_addNewMessage;
+  const I18n::Message *m_addNewMessage;
   NewFunctionCell * m_addNewFunction;
   Button m_plotButton;
   Button m_valuesButton;

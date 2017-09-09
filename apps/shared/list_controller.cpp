@@ -3,19 +3,19 @@
 
 namespace Shared {
 
-ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
+ListController::ListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, const I18n::Message *text) :
   DynamicViewController(parentResponder),
   ButtonRowDelegate(header, footer),
   m_functionStore(functionStore),
   m_emptyCell(nullptr),
   m_addNewMessage(text),
   m_addNewFunction(nullptr),
-  m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
+  m_plotButton(this, &I18n::Common::Plot, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(1);
   }, this), KDText::FontSize::Small, Palette::PurpleBright),
-  m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
+  m_valuesButton(this, &I18n::Common::DisplayValues, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(2);

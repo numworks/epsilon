@@ -16,7 +16,7 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
 }
 
 const char * RangeParameterController::title() {
-  return I18n::translate(I18n::Message::Axis);
+  return I18n::translate(&I18n::Common::Axis);
 }
 
 int RangeParameterController::numberOfRows() {
@@ -43,7 +43,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
+  const I18n::Message *labels[k_numberOfTextCell+1] = {&I18n::Common::XMin, &I18n::Common::XMax, &I18n::Common::Default, &I18n::Common::YMin, &I18n::Common::YMax};
   myCell->setMessage(labels[index]);
   KDColor yColor = m_interactiveRange->yAuto() ? Palette::GreyDark : KDColorBlack;
   KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
@@ -125,9 +125,9 @@ int RangeParameterController::reusableParameterCellCount(int type) {
 
 View * RangeParameterController::loadView() {
   SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
-  m_yAutoCell = new MessageTableCellWithSwitch(I18n::Message::YAuto);
+  m_yAutoCell = new MessageTableCellWithSwitch(&I18n::Common::YAuto);
   for (int i = 0; i < k_numberOfTextCell; i++) {
-    m_rangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+    m_rangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, &I18n::Common::Default);
   }
   return tableView;
 }

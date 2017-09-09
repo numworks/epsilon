@@ -15,7 +15,7 @@ void BannerView::setLegendAtIndex(char * text, int index) {
   layoutSubviews();
 }
 
-void BannerView::setMessageAtIndex(I18n::Message text, int index) {
+void BannerView::setMessageAtIndex(const I18n::Message *text, int index) {
   MessageTextView * textView = messageTextViewAtIndex(index);
   textView->setMessage(text);
   layoutSubviews();

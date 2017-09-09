@@ -45,8 +45,7 @@ private:
   static constexpr KDCoordinate k_indicatorThickness = 28;
   static constexpr KDCoordinate k_indicatorMargin = 116;
   static constexpr int k_numberOfColumns = 4;
-  static constexpr int k_numberOfApps = 10;
-  static constexpr int k_maxNumberOfCells = 16;
+  static constexpr int k_maxNumberOfCells = 64;
   static constexpr int k_cellHeight = 98;
   static constexpr int k_cellWidth = 104;
   ContentView m_view;

@@ -2,7 +2,7 @@
 
 namespace I18n {
 
-const char * translate(Message m, Language l) {
+const char * translate(const Message * m, Language l) {
   return nullptr;
 }
 

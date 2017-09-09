@@ -8,10 +8,6 @@ app_objs += $(addprefix apps/numworks/code/,\
   program.o\
 )
 
-tests += $(addprefix apps/numworks/code/test/,\
-  mpprint.cpp\
-)
-
 app_images += apps/numworks/code/code_icon.png
 
 endif

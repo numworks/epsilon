@@ -29,19 +29,6 @@ mp_obj_t execute_from_str(const char *str) {
   }
 }
 
-/* mp_hal_stdout_tx_strn_cooked symbol required by micropython at printing
- * needs to access information about where to print (depending on the strings
- * printed before). This 'context' is provided by the global sCurrentView that
- * points to the content view only within the drawRect method (as runPython is
- * called within drawRect). */
-static const ExecutorController::ContentView * sCurrentView = nullptr;
-
-extern "C"
-void mp_hal_stdout_tx_strn_cooked(const char * str, size_t len) {
-  assert(sCurrentView != nullptr);
-  sCurrentView->print(str);
-}
-
 ExecutorController::ContentView::ContentView(Program * program) :
   View(),
   m_program(program),
@@ -53,14 +40,13 @@ void ExecutorController::ContentView::drawRect(KDContext * ctx, KDRect rect) con
   assert(ctx == KDIonContext::sharedContext());
   clearScreen(ctx);
 
-  assert(sCurrentView == nullptr);
-  sCurrentView = this;
+  enableCatch();
 
   // Reinitialize the print location
   m_printLocation = KDPointZero;
   runPython();
 
-  sCurrentView = nullptr;
+  disableCatch();
 }
 
 void ExecutorController::ContentView::print(const char * str) const {

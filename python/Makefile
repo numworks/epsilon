@@ -178,6 +178,7 @@ port_objs += $(addprefix python/port/,\
   modkandinsky.o \
   modkandinsky_impl.o \
   mphalport.o \
+  python_stdout_catcher.o \
 )
 
 # QSTR generation

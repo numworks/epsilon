@@ -2,6 +2,7 @@
 #include <poincare.h>
 #include <ion.h>
 #include <assert.h>
+#include <cmath>
 #include "helper.h"
 
 using namespace Poincare;
@@ -23,4 +24,7 @@ QUIZ_CASE(poincare_power_evaluate) {
 
   Complex<float> e[1] = {Complex<float>::Float(0.0f)};
   assert_parsed_expression_evaluates_to("0^2", e);
+
+  Complex<double> f[1] = {Complex<double>::Float(std::exp(-M_PI_2))};
+  assert_parsed_expression_evaluates_to("I^I", f);
 }

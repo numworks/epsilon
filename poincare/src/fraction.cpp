@@ -3,7 +3,7 @@ extern "C" {
 #include <string.h>
 #include <float.h>
 }
-
+#include <cmath>
 #include <poincare/fraction.h>
 #include <poincare/multiplication.h>
 #include "layout/fraction_layout.h"
@@ -29,15 +29,47 @@ Expression::Type Fraction::type() const {
 
 template<typename T>
 Complex<T> Fraction::compute(const Complex<T> c, const Complex<T> d) {
-  T norm = d.a()*d.a() + d.b()*d.b();
-  /* We handle the case of c and d pure real numbers apart. Even if the complex
-   * fraction is mathematically correct on real numbers, it requires more
-   * operations and is thus more likely to propagate errors due to float exact
-   * representation. */
-  if (d.b() == 0 && c.b() == 0) {
-    return Complex<T>::Float(c.a()/d.a());
+  // We want to avoid multiplies in the middle of the calculation that could overflow.
+  // aa, ab, ba, bb, min, max = |d.a| <= |d.b| ? (c.a, c.b, -c.a, c.b, d.a, d.b) : (c.b, c.a, c.b, -c.a, d.b, d.a)
+  // c    c.a+c.b*i   d.a-d.b*i   1/max    (c.a+c.b*i) * (d.a-d.b*i) / max
+  // - == --------- * --------- * ----- == -------------------------------
+  // d    d.a+d.b*i   d.a-d.b*i   1/max    (d.a+d.b*i) * (d.a-d.b*i) / max
+  //      (c.a*d.a - c.a*d.b*i + c.b*i*d.a - c.b*i*d.b*i) / max
+  //   == -----------------------------------------------------
+  //      (d.a*d.a - d.a*d.b*i + d.b*i*d.a - d.b*i*d.b*i) / max
+  //      (c.a*d.a - c.b*d.b*i^2 + c.b*d.b*i - c.a*d.a*i) / max
+  //   == -----------------------------------------------------
+  //                  (d.a*d.a - d.b*d.b*i^2) / max
+  //      (c.a*d.a/max + c.b*d.b/max) + (c.b*d.b/max - c.a*d.a/max)*i
+  //   == -----------------------------------------------------------
+  //                         d.a^2/max + d.b^2/max
+  //      aa*min/max + ab*max/max   bb*min/max + ba*max/max
+  //   == ----------------------- + -----------------------*i
+  //       min^2/max + max^2/max     min^2/max + max^2/max
+  //       min/max*aa + ab     min/max*bb + ba
+  //   == ----------------- + -----------------*i
+  //      min/max*min + max   min/max*min + max
+  // |min| <= |max| => |min/max| <= 1
+  //                => |min/max*x| <= |x|
+  //                => |min/max*x+y| <= |x|+|y|
+  // So the calculation is guaranteed to not overflow until the last divides as
+  // long as none of the input values have the representation's maximum exponent.
+  T aa = c.a(), ab = c.b(), ba = -aa, bb = ab;
+  T min = d.a(), max = d.b();
+  if (std::fabs(max) < std::fabs(min)) {
+    T temp = min;
+    min = max;
+    max = temp;
+    temp = aa;
+    aa = ab;
+    ab = temp;
+    temp = ba;
+    ba = bb;
+    bb = temp;
   }
-  return Complex<T>::Cartesian((c.a()*d.a()+c.b()*d.b())/norm, (d.a()*c.b()-c.a()*d.b())/norm);
+  T temp = min/max;
+  T norm = temp*min + max;
+  return Complex<T>::Cartesian((temp*aa + ab) / norm, (temp*bb + ba) / norm);
 }
 
 template<typename T> Evaluation<T> * Fraction::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * n) const {
@@ -56,5 +88,8 @@ template<typename T> Evaluation<T> * Fraction::templatedComputeOnComplexMatrices
   delete inverse;
   return result;
 }
+
+template Complex<float> Fraction::compute(const Complex<float>, const Complex<float>);
+template Complex<double> Fraction::compute(const Complex<double>, const Complex<double>);
 
 }

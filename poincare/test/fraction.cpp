@@ -32,4 +32,10 @@ QUIZ_CASE(poincare_fraction_evaluate) {
   assert_parsed_expression_evaluates_to("(3+4i)/[[1,2+i][3,4][5,6]]", g, 2, 2);*/
 
 #endif
+
+  Complex<float> h[1] = {Complex<float>::Cartesian(.5f, -.5f)};
+  assert_parsed_expression_evaluates_to("1E20/(1E20+1E20I)", h);
+
+  Complex<double> i[1] = {Complex<double>::Cartesian(.5, -.5)};
+  assert_parsed_expression_evaluates_to("1E155/(1E155+1E155I)", i);
 }

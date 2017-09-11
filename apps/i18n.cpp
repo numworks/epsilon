@@ -247,7 +247,7 @@ const char * messages[240][5] {
   {"REGRESSION", "REGRESSIONS", "REGRESION", "REGRESSION", "REGRESSAO"},
 
   {"Regression", "Regression", "Regresion", "Regression", "Regressao"},
-  {"Not enough data for regerssion", "Pas assez de donnees pour une regression", "Escasez de datos para la regresion", "Nicht genug Daten fur eine Regression", "Nao ha dados suficientes para uma regressao"},
+  {"Not enough data for regression", "Pas assez de donnees pour une regression", "Escasez de datos para la regresion", "Nicht genug Daten fur eine Regression", "Nao ha dados suficientes para uma regressao"},
   {"reg", "reg", "reg", "reg", "reg"},
   {"mean", "moyen", "media", "mittel", "media"},
   {"Regression line", "Droite de regression", "Recta de regresion", "Regressionsgerade", "Linha de regressao"},

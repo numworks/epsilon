@@ -25,7 +25,7 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[239][5] {
+const char * messages[240][5] {
   {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
   {"Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar"},
   {"Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar"},
@@ -280,6 +280,7 @@ const char * messages[239][5] {
   {"deg", "deg", "gra", "gra", "gra"},
   {"rad", "rad", "rad", "rad", "rad"},
   {"sci/", "sci/", "sci/", "sci/", "sci/"},
+  {"Brightness", "Luminosite", "Brillo", "Helligkeit", "Brilho"},
   {"Software version", "Version du logiciel", "Version de software", "Softwareversion", "Versao do software"},
   {"Serial number", "Numero serie", "Numero serie", "Seriennummer", "Numero serie"},
   {"Update pop-up", "Rappel mise a jour", "Pop-up de actualizacion", "Erinnerung: Update", "Alertas de atualizacao"},
@@ -316,12 +317,13 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[241] {
+const char * universalMessages[242] {
   "",
   "Python",
   "PYTHON (BETA)",
   "alpha",
   "ALPHA",
+  "shift",
   "x",
   "y",
   "n",

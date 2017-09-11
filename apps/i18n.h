@@ -152,7 +152,7 @@ namespace I18n {
     ValueNotReachedBySequence,
     NColumn,
 
-  /* Statistics */
+    /* Statistics */
     StatsApp,
     StatsAppCapital,
     DataTab,
@@ -245,6 +245,7 @@ namespace I18n {
     Deg,
     Rad,
     Sci,
+    Brightness,
     SoftwareVersion,
     SerialNumber,
     UpdatePopUp,
@@ -276,6 +277,7 @@ namespace I18n {
     CodeAppCapital,
     Alpha,
     CapitalAlpha,
+    Shift,
     X,
     Y,
     N,

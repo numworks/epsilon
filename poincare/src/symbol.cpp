@@ -64,7 +64,7 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   if (m_name == SpecialSymbols::Ans) {
-    return new StringLayout("ans", 4);
+    return new StringLayout("ans", 3);
   }
   if (m_name == SpecialSymbols::un) {
     return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
@@ -85,9 +85,8 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
     return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (isMatrixSymbol()) {
-    char mi[3] = "M0";
-    mi[1] = m_name-(char)SpecialSymbols::M0+'0';
-    return new StringLayout(mi, 2);
+    const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };
+    return new StringLayout(mi, sizeof(mi));
   }
   return new StringLayout(&m_name, 1);
 }

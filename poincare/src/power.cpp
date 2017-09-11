@@ -46,20 +46,6 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   }
   /* Third case only c is complex */
   T radius = std::pow(c.r(), d.a());
-  // TODO: is it still needed with double?
-  if (c.b() == 0 && d.a() == std::round(d.a())) {
-    /* We handle the case "c float and d integer" separatly to avoid getting
-     * complex result due to float representation: a float power an integer is
-     * always real. */
-    return Complex<T>::Cartesian(radius, 0);
-  }
-  if (c.a() < 0 && c.b() == 0 && d.a() == 0.5) {
-    /* We handle the case "c negative float and d = 1/2" separatly to avoid
-     * getting wrong result due to float representation: the squared root of
-     * a negative float is always a pure imaginative. */
-    return Complex<T>::Cartesian(0, radius);
-  }
-  /* Third case only c is complex */
   T theta = d.a()*c.th();
   return Complex<T>::Polar(radius, theta);
 }

@@ -116,7 +116,7 @@ int TextArea::Text::removeRemainingLine(size_t index, int direction) {
     } else {
       m_buffer[++jump] = m_buffer[k+1];
     }
-    if (m_buffer[k] == 0) {
+    if (m_buffer[k] == 0 || m_buffer[k+1] == 0) {
       return delta;
     }
   }

@@ -42,8 +42,8 @@ bool TitleBarView::setIsPlugged(bool isPlugged) {
   return m_batteryView.setIsPlugged(isPlugged);
 }
 
-bool TitleBarView::setAlphaLockStatus(Ion::Events::ShiftAlphaStatus status) {
-  return m_alphaLockView.setStatus(status);
+bool TitleBarView::setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status) {
+  return m_shiftAlphaLockView.setStatus(status);
 }
 
 int TitleBarView::numberOfSubviews() const {
@@ -61,7 +61,7 @@ View * TitleBarView::subviewAtIndex(int index) {
     return &m_examModeIconView;
   }
   if (index == 3) {
-    return &m_alphaLockView;
+    return &m_shiftAlphaLockView;
   }
   return &m_batteryView;
 }
@@ -81,8 +81,8 @@ void TitleBarView::layoutSubviews() {
   } else {
     m_examModeIconView.setFrame(KDRectZero);
   }
-  KDSize alphaLockSize = m_alphaLockView.minimalSizeForOptimalDisplay();
-  m_alphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_batteryRightMargin-k_alphaRightMargin-alphaLockSize.width(), (bounds().height()- alphaLockSize.height())/2, alphaLockSize));
+  KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
+  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_batteryRightMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
 }
 
 void TitleBarView::refreshPreferences() {

@@ -4,7 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -44,7 +44,7 @@ Evaluation<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUni
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
   }
-  return new Complex<T>(Complex<T>::Float(std::round(result)));
+  return new Complex<T>(Complex<T>::Float(round(result)));
 }
 
 }

@@ -1,6 +1,6 @@
 #include "exponential_law.h"
 #include <assert.h>
-#include <cmath>
+#include <math.h>
 #include <float.h>
 #include <ion.h>
 
@@ -66,7 +66,7 @@ float ExponentialLaw::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
   }
-  return m_parameter1*std::exp(-m_parameter1*x);
+  return m_parameter1*exp(-m_parameter1*x);
 }
 
 bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
@@ -77,7 +77,7 @@ bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 double ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return 1.0 - std::exp((double)(-m_parameter1*x));
+  return 1.0 - exp((double)(-m_parameter1*x));
 }
 
 double ExponentialLaw::cumulativeDistributiveInverseForProbability(double * probability) {
@@ -87,7 +87,7 @@ double ExponentialLaw::cumulativeDistributiveInverseForProbability(double * prob
   if (*probability <= 0.0) {
     return 0.0;
   }
-  return -std::log(1.0 - *probability)/(double)m_parameter1;
+  return -log(1.0 - *probability)/(double)m_parameter1;
 }
 
 }

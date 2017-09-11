@@ -3,7 +3,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -36,8 +36,8 @@ Evaluation<T> * PredictionInterval::templatedEvaluate(Context& context, AngleUni
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   Complex<T> operands[2];
-  operands[0] = Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
-  operands[1] = Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  operands[0] = Complex<T>::Float(p - 1.96*sqrt(p*(1.0-p))/sqrt(n));
+  operands[1] = Complex<T>::Float(p + 1.96*sqrt(p*(1.0-p))/sqrt(n));
   return new ComplexMatrix<T>(operands, 2, 1);
 }
 

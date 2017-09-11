@@ -1,5 +1,5 @@
 #include "graph_controller.h"
-#include <cmath>
+#include <math.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -47,14 +47,14 @@ bool GraphController::handleEnter() {
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  double xCursorPosition = std::round(m_cursor->x());
+  double xCursorPosition = round(m_cursor->x());
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
   /* The cursor moves by step of at minimum 1. If the windowRange is to large
    * compared to the resolution, the cursor takes bigger round step to cross
    * the window in approximatively resolution steps. */
-  double step = std::ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
+  double step = ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
   step = step < 1.0 ? 1.0 : step;
   double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
@@ -70,7 +70,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 void GraphController::initCursorParameters() {
-  double x = std::round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0);
+  double x = round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0);
   m_indexFunctionSelectedByCursor = 0;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;

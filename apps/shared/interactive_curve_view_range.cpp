@@ -1,7 +1,7 @@
 #include "interactive_curve_view_range.h"
 #include <poincare.h>
 #include <ion.h>
-#include <cmath>
+#include <math.h>
 #include <stddef.h>
 #include <assert.h>
 
@@ -90,7 +90,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
-  if (ratio*std::fabs(xMax-xMin) < k_minFloat || ratio*std::fabs(yMax-yMin) < k_minFloat) {
+  if (ratio*fabs(xMax-xMin) < k_minFloat || ratio*fabs(yMax-yMin) < k_minFloat) {
     return;
   }
   float newXMin = clipped(x*(1.0f-ratio)+ratio*xMin, false);
@@ -122,8 +122,8 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::roundAbscissa() {
   float xMin = m_xMin;
   float xMax = m_xMax;
-  float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
-  float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  float newXMin = clipped(round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
+  float newXMax = clipped(round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
   if (isnan(newXMin) || isnan(newXMax)) {
     return;
   }
@@ -178,16 +178,16 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
   if (axis == Axis::X) {
     float range = m_xMax - m_xMin;
-    if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = std::pow(10.0f, std::floor(std::log10(std::fabs(position)))-1.0f);
+    if (fabs(position/range) > k_maxRatioPositionRange) {
+      range = pow(10.0f, floor(log10(fabs(position)))-1.0f);
     }
     m_xMax = clipped(position + range/2.0f, true);
     MemoizedCurveViewRange::setXMin(clipped(position - range/2.0f, false));
   } else {
     m_yAuto = false;
     float range = m_yMax - m_yMin;
-    if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = std::pow(10.0f, std::floor(std::log10(std::fabs(position)))-1.0f);
+    if (fabs(position/range) > k_maxRatioPositionRange) {
+      range = pow(10.0f, floor(log10(fabs(position)))-1.0f);
     }
     m_yMax = clipped(position + range/2.0f, true);
     MemoizedCurveViewRange::setYMin(clipped(position - range/2.0f, false));

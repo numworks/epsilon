@@ -4,7 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -38,7 +38,7 @@ Complex<T> Factorial::templatedComputeComplex(const Complex<T> c) const {
       return Complex<T>::Float(result);
     }
   }
-  return Complex<T>::Float(std::round(result));
+  return Complex<T>::Float(round(result));
 }
 
 ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

@@ -2,7 +2,7 @@
 #include "../constant.h"
 #include <assert.h>
 #include <string.h>
-#include <cmath>
+#include <math.h>
 #include <float.h>
 
 using namespace Poincare;
@@ -117,7 +117,7 @@ void CurveView::computeLabels(Axis axis) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   float step = gridUnit(axis);
   for (int index = 0; index < numberOfLabels(axis); index++) {
-    float labelValue = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)))+index*2.0f*step;
+    float labelValue = 2.0f*step*(ceil(min(axis)/(2.0f*step)))+index*2.0f*step;
     if (labelValue < step && labelValue > -step) {
       labelValue = 0.0f;
     }
@@ -131,7 +131,7 @@ void CurveView::computeLabels(Axis axis) {
 
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const {
   float step = gridUnit(axis);
-  float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
+  float start = 2.0f*step*(ceil(min(axis)/(2.0f*step)));
   float end = max(axis);
   int i = 0;
   for (float x = start; x < end; x += 2.0f*step) {
@@ -184,14 +184,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   switch(axis) {
     case Axis::Horizontal:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
-          std::round(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
+          round(floatToPixel(Axis::Horizontal, lowerBound)), round(floatToPixel(Axis::Vertical, coordinate)),
+          round(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
           );
       break;
     case Axis::Vertical:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
-          thickness,  std::round(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
+          round(floatToPixel(Axis::Horizontal, coordinate)), round(floatToPixel(Axis::Vertical, upperBound)),
+          thickness,  round(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
       );
       break;
   }
@@ -225,8 +225,8 @@ KDColor s_dotWorkingBuffer[dotDiameter*dotDiameter];
 KDColor s_oversizeDotWorkingBuffer[oversizeDotDiameter*oversizeDotDiameter];
 
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize) const {
-  KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
-  KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
+  KDCoordinate px = round(floatToPixel(Axis::Horizontal, x));
+  KDCoordinate py = round(floatToPixel(Axis::Vertical, y));
   if ((px + dotDiameter < rect.left() - k_externRectMargin || px - dotDiameter > rect.right() + k_externRectMargin) ||
       (py + dotDiameter < rect.top() - k_externRectMargin || py - dotDiameter > rect.bottom() + k_externRectMargin)) {
     return;
@@ -320,9 +320,9 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
-      KDRect colorRect((int)pxf, std::round(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - std::round(pyf));
-      if (floatToPixel(Axis::Vertical, 0.0f) < std::round(pyf)) {
-        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, std::round(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+      KDRect colorRect((int)pxf, round(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - round(pyf));
+      if (floatToPixel(Axis::Vertical, 0.0f) < round(pyf)) {
+        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, round(pyf) - floatToPixel(Axis::Vertical, 0.0f));
       }
       ctx->fillRect(colorRect, color);
     }
@@ -343,10 +343,10 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  float rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
+  float rectMinBinNumber = floor((rectMin - firstBarAbscissa)/barWidth);
   float rectMinLowerBound = firstBarAbscissa + rectMinBinNumber*barWidth;
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  float rectMaxBinNumber = std::floor((rectMax - firstBarAbscissa)/barWidth);
+  float rectMaxBinNumber = floor((rectMax - firstBarAbscissa)/barWidth);
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
@@ -361,9 +361,9 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
     if (isnan(y)) {
       continue;
     }
-    KDCoordinate pxf = std::round(floatToPixel(Axis::Horizontal, x));
-    KDCoordinate pyf = std::round(floatToPixel(Axis::Vertical, y));
-    KDCoordinate pixelBarWidth = fillBar ? std::round(floatToPixel(Axis::Horizontal, x+barWidth)) - std::round(floatToPixel(Axis::Horizontal, x))-1 : 2;
+    KDCoordinate pxf = round(floatToPixel(Axis::Horizontal, x));
+    KDCoordinate pyf = round(floatToPixel(Axis::Vertical, y));
+    KDCoordinate pixelBarWidth = fillBar ? round(floatToPixel(Axis::Horizontal, x+barWidth)) - round(floatToPixel(Axis::Horizontal, x))-1 : 2;
     KDRect binRect(pxf, pyf, pixelBarWidth, floatToPixel(Axis::Vertical, 0.0f) - pyf);
     if (floatToPixel(Axis::Vertical, 0.0f) < pyf) {
       binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, pyf - floatToPixel(Axis::Vertical, 0.0f));
@@ -382,7 +382,7 @@ int CurveView::numberOfLabels(Axis axis) const {
   if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
     return 0;
   }
-  return std::ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
+  return ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
 float CurveView::evaluateModelWithParameter(Model * curve, float t) const {
@@ -461,8 +461,8 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   }
   uint8_t shiftedMask[stampSize][stampSize];
   KDColor workingBuffer[stampSize*stampSize];
-  float dx = pxf - std::floor(pxf);
-  float dy = pyf - std::floor(pyf);
+  float dx = pxf - floor(pxf);
+  float dy = pyf - floor(pyf);
   /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
    * dx and dy would be rounded to one tenth or one hundredth to choose the
    * right shifted mask. */
@@ -477,8 +477,8 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
 
 void CurveView::layoutSubviews() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
-    KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
-    KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+    KDCoordinate xCursorPixelPosition = round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    KDCoordinate yCursorPixelPosition = round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
     KDRect cursorFrame(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
     if (cursorSize().height() == 0) {
       KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;

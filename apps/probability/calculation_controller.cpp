@@ -7,7 +7,7 @@
 #include "calculation/right_integral_calculation.h"
 #include "calculation/finite_integral_calculation.h"
 #include <assert.h>
-#include <cmath>
+#include <math.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -232,7 +232,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
     }
   }
   if (!m_law->isContinuous() && (m_highlightedSubviewIndex == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
-    floatBody = std::round(floatBody);
+    floatBody = round(floatBody);
   }
   m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
   if (event == Ion::Events::Right || event == Ion::Events::Left) {

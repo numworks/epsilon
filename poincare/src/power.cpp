@@ -2,7 +2,6 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include <cmath>
 #include <math.h>
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
@@ -40,12 +39,12 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
       return Complex<T>::Float(NAN);
     }
     /* Second case only d is complex */
-    T radius = std::pow(c.a(), d.a());
-    T theta = d.b()*std::log(c.a());
+    T radius = pow(c.a(), d.a());
+    T theta = d.b()*log(c.a());
     return Complex<T>::Polar(radius, theta);
   }
   /* Third case only c is complex */
-  T radius = std::pow(c.r(), d.a());
+  T radius = pow(c.r(), d.a());
   T theta = d.a()*c.th();
   return Complex<T>::Polar(radius, theta);
 }
@@ -55,7 +54,7 @@ template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndCo
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T power = d->toScalar();
-  if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
+  if (isnan(power) || isinf(power) || power != (int)power || fabs(power) > k_maxNumberOfSteps) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   if (power < 0) {

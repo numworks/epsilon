@@ -33,7 +33,7 @@ Evaluation<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUni
   T k = kInput->toScalar();
   delete nInput;
   delete kInput;
-  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || n < 0.0f || k < 0.0f) {
+  if (std::isnan(n) || std::isnan(k) || n != (int)n || k != (int)k || n < 0.0f || k < 0.0f) {
 
     return new Complex<T>(Complex<T>::Float(NAN));
   }

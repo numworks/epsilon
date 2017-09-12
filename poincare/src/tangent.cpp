@@ -32,7 +32,7 @@ Expression::Type Tangent::type() const {
 template<typename T>
 Complex<T> Tangent::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
   Complex<T> result = Fraction::compute(Sine::compute(c, angleUnit), Cosine::compute(c, angleUnit));
-  if (!isnan(result.a()) && !isnan(result.b())) {
+  if (!std::isnan(result.a()) && !std::isnan(result.b())) {
     return result;
   }
   Complex<T> tanh = HyperbolicTangent::compute(Multiplication::compute(Complex<T>::Cartesian(0, -1), c));

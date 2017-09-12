@@ -42,7 +42,7 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
   delete fInput;
 
   // No complex/matrix version of Derivative
-  if (isnan(x) || isnan(functionValue)) {
+  if (std::isnan(x) || std::isnan(functionValue)) {
   return new Complex<T>(Complex<T>::Float(NAN));
   }
 
@@ -100,7 +100,7 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
     }
   }
   /* if the error is too big regarding the value, do not return the answer */
-  if (err/ans > k_maxErrorRateOnApproximation || isnan(err)) {
+  if (err/ans > k_maxErrorRateOnApproximation || std::isnan(err)) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   if (err < min) {

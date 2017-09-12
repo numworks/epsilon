@@ -61,7 +61,7 @@ float BinomialLaw::yMin() {
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || isnan(result)) {
+  if (result <= 0.0f || std::isnan(result)) {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);

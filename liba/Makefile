@@ -12,10 +12,6 @@ objs += $(addprefix liba/src/, \
   fpclassify.o \
   fpclassifyf.o \
   ieee754.o \
-  isnand.o \
-  isnanf.o \
-  isinfd.o \
-  isinff.o \
   malloc.o \
   memcmp.o \
   memcpy.o \

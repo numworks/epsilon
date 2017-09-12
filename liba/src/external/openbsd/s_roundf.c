@@ -34,7 +34,7 @@ roundf(float x)
 {
 	float t;
 
-	if (isinff(x) || isnanf(x))
+	if (isinf(x) || isnan(x))
 		return (x);
 
 	if (x >= 0.0) {

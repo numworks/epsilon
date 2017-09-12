@@ -16,6 +16,8 @@ public:
   DynamicHierarchy& operator=(DynamicHierarchy&& other) = delete;
   int numberOfOperands() const override;
   const Expression * operand(int i) const override;
+  void setNumberOfOperand(int numberOfOperand);
+  void stealOperandsFrom(DynamicHierarchy * sibling);
 protected:
   Expression ** operands() override;
   Expression ** m_operands;

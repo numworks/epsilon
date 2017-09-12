@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-#include poincare/src/simplify/Makefile
+include poincare/src/simplify/Makefile
 
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
@@ -98,22 +98,26 @@ objs += $(addprefix poincare/src/layout/,\
 )
 
 tests += $(addprefix poincare/test/,\
+  simplify_easy.cpp\
+)
+
+tests_orig += $(addprefix poincare/test/,\
   addition.cpp\
   complex.cpp\
   fraction.cpp\
   function.cpp\
   helper.cpp\
+  identity.cpp\
   integer.cpp\
   matrix.cpp\
   parser.cpp\
   product.cpp\
   power.cpp\
   subtraction.cpp\
+  simplify_utils.cpp\
   symbol.cpp\
   trigo.cpp\
 )
-#  simplify_utils.cpp\
-#  identity.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o

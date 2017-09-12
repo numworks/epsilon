@@ -30,6 +30,11 @@ ComplexMatrix<T>::~ComplexMatrix() {
 }
 
 template<typename T>
+Expression::Type ComplexMatrix<T>::type() const {
+  return Expression::Type::ComplexMatrix;
+}
+
+template<typename T>
 T ComplexMatrix<T>::toScalar() const {
   if (m_numberOfRows != 1 || m_numberOfColumns != 1) {
     return NAN;

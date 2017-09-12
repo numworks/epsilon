@@ -15,21 +15,15 @@ Expression::Type Multiplication::type() const {
   return Expression::Type::Multiplication;
 }
 
-ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * children_layouts[3];
-  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
-  children_layouts[1] = new StringLayout("*", 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 3);
+char Multiplication::operatorChar() const {
+  return '*';
 }
 
 Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
+  assert(numberOfOperands >= 2);
   assert(newOperands != nullptr);
-  return new Multiplication(newOperands, cloneOperands);
+  return new Multiplication(newOperands, numberOfOperands, cloneOperands);
 }
 
 template<typename T>

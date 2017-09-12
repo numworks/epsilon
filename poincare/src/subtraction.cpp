@@ -14,23 +14,16 @@ namespace Poincare {
 Expression * Subtraction::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  assert(numberOfOperands == 2);
-  return new Subtraction(newOperands, cloneOperands);
+  assert(numberOfOperands >= 2);
+  return new Subtraction(newOperands, numberOfOperands, cloneOperands);
 }
 
 Expression::Type Subtraction::type() const {
   return Expression::Type::Subtraction;
 }
 
-ExpressionLayout * Subtraction::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * children_layouts[3];
-  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
-  char string[2] = {'-', '\0'};
-  children_layouts[1] = new StringLayout(string, 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 3);
+char Subtraction::operatorChar() const {
+  return '-';
 }
 
 template<typename T>

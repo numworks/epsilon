@@ -100,6 +100,11 @@ bool Symbol::valueEquals(const Expression * e) const {
   return (m_name == ((Symbol *)e)->m_name);
 }
 
+bool Symbol::valueGreaterThan(const Expression * e) const {
+  assert(e->type() == Expression::Type::Symbol);
+  return (m_name > ((Symbol *)e)->m_name);
+}
+
 bool Symbol::isMatrixSymbol() const {
   if (m_name >= (char)SpecialSymbols::M0 && m_name <= (char)SpecialSymbols::M9) {
     return true;

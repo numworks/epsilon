@@ -13,63 +13,62 @@ class Evaluation;
 class Expression {
 public:
   enum class Type : uint8_t {
-    AbsoluteValue,
+    Integer = 0,
+    Complex,
+    Symbol,
+    Parenthesis,
+    Opposite,
     Addition,
+    Subtraction,
+    Multiplication,
+    Fraction,
+    Power,
+    Sum,
+    Product,
+    DivisionQuotient,
+    DivisionRemainder,
+    GreatCommonDivisor,
+    LeastCommonMultiple,
+    Floor,
+    Ceiling,
+    Round,
+    FracPart,
+    AbsoluteValue,
+    Factorial,
+    ImaginaryPart,
+    ReelPart,
+    ComplexArgument,
+    Conjugate,
+    Logarithm,
+    NaperianLogarithm,
+    SquareRoot,
+    NthRoot,
+    Cosine,
+    Sine,
+    Tangent,
     ArcCosine,
     ArcSine,
     ArcTangent,
-    BinomialCoefficient,
-    Ceiling,
-    Complex,
-    ComplexArgument,
-    ConfidenceInterval,
-    Conjugate,
-    Cosine,
-    Derivative,
-    Determinant,
-    DivisionQuotient,
-    DivisionRemainder,
-    Factorial,
-    Float,
-    Floor,
-    FracPart,
-    ExpressionMatrix,
-    GreatCommonDivisor,
-    HyperbolicArcCosine,
-    HyperbolicArcSine,
-    HyperbolicArcTangent,
     HyperbolicCosine,
     HyperbolicSine,
     HyperbolicTangent,
-    ImaginaryPart,
-    Integer,
+    HyperbolicArcCosine,
+    HyperbolicArcSine,
+    HyperbolicArcTangent,
+    Derivative,
     Integral,
-    Logarithm,
-    LeastCommonMultiple,
+    BinomialCoefficient,
+    PermuteCoefficient,
+    ConfidenceInterval,
+    PredictionInterval,
+    ExpressionMatrix,
+    ComplexMatrix,
     MatrixDimension,
     MatrixInverse,
     MatrixTrace,
     MatrixTranspose,
-    Multiplication,
-    NaperianLogarithm,
-    NthRoot,
-    Evaluation,
-    Opposite,
-    PredictionInterval,
-    Fraction,
-    Parenthesis,
-    PermuteCoefficient,
-    Power,
-    Product,
-    ReelPart,
-    Round,
-    Sine,
-    SquareRoot,
+    Determinant,
     Store,
-    Sum,
-    Subtraction,
-    Symbol,
-    Tangent,
   };
   enum class AngleUnit {
     Degree = 0,
@@ -98,35 +97,15 @@ public:
 
   // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
 
-  /* This tests whether two expressions are the same, this takes into account
-   * commutativity of operators.
-   *
-   * For example 3+5 is identical to 5+3 but is not identical to 8.
+  /* This tests whether two expressions are the same, it heavily relies on the
+   * fact that operands are sorted.
    */
   bool isIdenticalTo(const Expression * e) const;
-
-  /* This tests whether two expressions are equivalent.
-   * This is done by testing wheter they simplify to the same expression.
-   *
-   * For example:
-   * - 3+5 and 4+4 are equivalent.
-   * - (x+y)*z and x*z+y*z are equivalent.
-   *
-   * Here we assume that two equivalent expressions have the same
-   * simplification, we don't really know whether that's the case,
-   * nevertheless we are sure that if two expressions simplify to the same
-   * expression they are indeed equivalent.
-   */
-  bool isEquivalentTo(Expression * e) const;
-
-  /* Compare the value of two expressions.
-   * This only make sense if the two values are of the same type
-   */
-  virtual bool valueEquals(const Expression * e) const;
-  Expression * simplify() const;
+  bool isGreaterThan(const Expression * e) const;
+  //Expression * simplify() const;
+  virtual void sort();
 
   virtual Type type() const = 0;
-  virtual bool isCommutative() const;
 
    typedef bool (*CircuitBreaker)(const Expression * e);
    static void setCircuitBreaker(CircuitBreaker cb);
@@ -142,14 +121,16 @@ protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   template<typename T> static T epsilon();
+  /* Compare (== and >) the type of the root node of 2 expressions.
+   * This behavior makes sense for value-less nodes (addition, product, fraction
+   * power, etc… For nodes with a value (Integer, Complex), this must be over-
+   * -riden. */
+  virtual bool nodeEquals(const Expression * e) const;
+  virtual bool nodeGreaterThan(const Expression * e) const;
 private:
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  bool sequentialOperandsIdentity(const Expression * e) const;
-  bool commutativeOperandsIdentity(const Expression * e) const;
-  bool combinatoryCommutativeOperandsIdentity(const Expression * e,
-      bool * operandMatched, int leftToMatch) const;
 };
 
 }

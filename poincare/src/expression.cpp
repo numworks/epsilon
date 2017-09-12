@@ -92,10 +92,24 @@ template<typename T> T Expression::epsilon() {
   return epsilon;
 }
 
-Expression * Expression::simplify() const {
-  /* We make sure that the simplification is deletable.
+/*Expression * Expression::simplify() const {
+  // pre-process:
+  // - remonter les noeuds de matrices en root ou les faire disparaitre
+  // - division and subtraction are turned into multiplication and addition
+  // - oppostive are turned into multiplication
+  // - associative expression are collapsed
+  // Simplify:
+  // - see Romain notes
+  // Post-process:
+  // - pattern a+(-1)*b -> a-b
+  // - pattern a*b^(-1) -> a/b
+  // - pattern (-1)*a -> -a
+
+
+
+  * We make sure that the simplification is deletable.
    * Indeed, we don't want an expression with some parts deletable and some not
-   */
+   *
 
   // If we have a leaf node nothing can be simplified.
   if (this->numberOfOperands()==0) {
@@ -107,16 +121,16 @@ Expression * Expression::simplify() const {
 
   bool simplification_pass_was_useful = true;
   while (simplification_pass_was_useful) {
-    /* We recursively simplify the children expressions.
+    * We recursively simplify the children expressions.
      * Note that we are sure to get the samne number of children as we had before
-     */
+     *
     Expression ** simplifiedOperands = new Expression * [result->numberOfOperands()];
     for (int i = 0; i < result->numberOfOperands(); i++) {
       simplifiedOperands[i] = result->operand(i)->simplify();
     }
 
-    /* Note that we don't need to clone the simplified children because they are
-     * already cloned before. */
+    * Note that we don't need to clone the simplified children because they are
+     * already cloned before. *
     tmp = result->cloneWithDifferentOperands(simplifiedOperands, result->numberOfOperands(), false);
     delete result;
     result = tmp;
@@ -138,102 +152,53 @@ Expression * Expression::simplify() const {
   }
 
   return result;
+}*/
+
+bool Expression::isIdenticalTo(const Expression * e) const {
+  if (!this->nodeEquals(e) || e->numberOfOperands() != this->numberOfOperands()) {
+    return false;
+  }
+  /* The children must be sorted! */
+  for (int i = 0; i < this->numberOfOperands(); i++) {
+    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
+      return false;
+    }
+  }
+  return true;
 }
 
-bool Expression::sequentialOperandsIdentity(const Expression * e) const {
-  /* Here we simply test all operands for identity in the order they are defined
-   * in. */
-  for (int i=0; i<this->numberOfOperands(); i++) {
+bool Expression::nodeEquals(const Expression * e) const {
+  return e->type() == this->type();
+}
+
+bool Expression::isGreaterThan(const Expression * e) const {
+  if (!this->nodeEquals(e)) {
+    return this->nodeGreaterThan(e);
+  }
+  for (int i = 0; i < this->numberOfOperands(); i++) {
+    // The NULL node is the least node type.
+    if (e->numberOfOperands() <= i) {
+      return true;
+    }
+    if (this->operand(i)->isGreaterThan(e->operand(i))) {
+      return true;
+    }
     if (!this->operand(i)->isIdenticalTo(e->operand(i))) {
       return false;
     }
   }
-  return true;
-}
-
-bool Expression::combinatoryCommutativeOperandsIdentity(const Expression * e,
-    bool * operandMatched, int leftToMatch) const {
-  if (leftToMatch == 0) {
-    return true;
-  }
-
-  // We try to test for equality the i-th operand of our first expression.
-  int i = this->numberOfOperands() - leftToMatch;
-  for (int j = 0; j<e->numberOfOperands(); j++) {
-    /* If the operand of the second expression has already been associated with
-     * a previous operand we skip it */
-    if (operandMatched[j]) {
-      continue;
-    }
-    if (this->operand(i)->isIdenticalTo(e->operand(j))) {
-      // We managed to match this operand.
-      operandMatched[j] = true;
-      /* We check that we can match the rest in this configuration, if so we
-       * are good. */
-      if (this->combinatoryCommutativeOperandsIdentity(e, operandMatched, leftToMatch - 1)) {
-        return true;
-      }
-      // Otherwise we backtrack.
-      operandMatched[j] = false;
-    }
-  }
-
-  return false;
-}
-
-bool Expression::commutativeOperandsIdentity(const Expression * e) const {
-  int leftToMatch = this->numberOfOperands();
-
-  /* We create a table allowing us to know which operands of the second
-   * expression have been associated with one of the operands of the first
-   * expression */
-  bool * operandMatched = new bool [this->numberOfOperands()];
-  for (int i(0); i<this->numberOfOperands(); i++) {
-    operandMatched[i] = false;
-  }
-
-  // We call our recursive helper.
-  bool commutativelyIdentical = this->combinatoryCommutativeOperandsIdentity(e, operandMatched, leftToMatch);
-
-  delete [] operandMatched;
-  return commutativelyIdentical;
-}
-
-bool Expression::isIdenticalTo(const Expression * e) const {
-  if (e->type() != this->type() || e->numberOfOperands() != this->numberOfOperands()) {
+  // The NULL node is the least node type.
+  if (e->numberOfOperands() > numberOfOperands()) {
     return false;
   }
-  if (this->isCommutative()) {
-    if (!this->commutativeOperandsIdentity(e)) {
-      return false;
-    }
-  } else {
-    if (!this->sequentialOperandsIdentity(e)) {
-      return false;
-    }
-  }
-  return this->valueEquals(e);
-}
-
-bool Expression::isEquivalentTo(Expression * e) const {
-  Expression * a = this->simplify();
-  Expression * b = e->simplify();
-  bool result = a->isIdenticalTo(b);
-  delete a;
-  delete b;
-  return result;
-}
-
-bool Expression::valueEquals(const Expression * e) const {
-  assert(this->type() == e->type());
-  /* This behavior makes sense for value-less nodes (addition, product, fraction
-   * power, etc… For nodes with a value (Integer, Float), this must be over-
-   * -riden. */
   return true;
 }
 
-bool Expression::isCommutative() const {
-  return false;
+bool Expression::nodeGreaterThan(const Expression * e) const {
+  return e->type() > this->type();
+}
+
+void Expression::sort() {
 }
 
 int Expression::writeTextInBuffer(char * buffer, int bufferSize) const {

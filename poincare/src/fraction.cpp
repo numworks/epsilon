@@ -12,9 +12,9 @@ namespace Poincare {
 
 Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
+  assert(numberOfOperands >= 2);
   assert(newOperands != nullptr);
-  return new Fraction(newOperands, cloneOperands);
+  return new Fraction(newOperands, numberOfOperands, cloneOperands);
 }
 
 ExpressionLayout * Fraction::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

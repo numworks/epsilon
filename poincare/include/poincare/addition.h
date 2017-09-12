@@ -1,17 +1,16 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/commutative_operation.h>
 
 namespace Poincare {
 
-class Addition : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Addition : public CommutativeOperation {
+  using CommutativeOperation::CommutativeOperation;
 public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,
       int numnerOfOperands, bool cloneOperands = true) const override;
-  bool isCommutative() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m);
@@ -22,7 +21,7 @@ private:
   Complex<double> privateCompute(const Complex<double> c, const Complex<double> d) const override {
     return compute(c, d);
   }
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  char operatorChar() const override;
 };
 
 }

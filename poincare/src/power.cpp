@@ -17,8 +17,8 @@ Expression::Type Power::type() const {
 
 Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
-  return new Power(newOperands, cloneOperands);
+  assert(numberOfOperands >= 2);
+  return new Power(newOperands, numberOfOperands, cloneOperands);
 }
 
 ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

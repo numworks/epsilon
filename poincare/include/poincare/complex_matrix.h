@@ -14,6 +14,7 @@ public:
   ComplexMatrix(ComplexMatrix&& other) = delete;
   ComplexMatrix& operator=(const ComplexMatrix& other) = delete;
   ComplexMatrix& operator=(ComplexMatrix&& other) = delete;
+  Expression::Type type() const override;
   T toScalar() const override;
   const Complex<T> * complexOperand(int i) const override;
   int numberOfRows() const override;

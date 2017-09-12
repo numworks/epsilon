@@ -442,4 +442,9 @@ bool Integer::valueEquals(const Expression * e) const {
   return (*this == *(Integer *)e); // FIXME: Remove operator overloading
 }
 
+bool Integer::valueGreaterThan(const Expression * e) const {
+  assert(e->type() == Type::Integer);
+  return (*(Integer *)e < *this); // FIXME: Remove operator overloading
+}
+
 }

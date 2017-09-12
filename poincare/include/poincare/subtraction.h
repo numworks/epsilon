@@ -1,19 +1,19 @@
 #ifndef POINCARE_SUBSTRACTION_H
 #define POINCARE_SUBSTRACTION_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/n_ary_operation.h>
 
 namespace Poincare {
 
-class Subtraction : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Subtraction : public NAryOperation {
+  using NAryOperation::NAryOperation;
 public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,
     int numnerOfOperands, bool cloneOperands = true) const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  char operatorChar() const override;
 
   Evaluation<float> * computeOnComplexAndComplexMatrix(const Complex<float> * c, Evaluation<float> * n) const override {
     return templatedComputeOnComplexAndComplexMatrix(c, n);

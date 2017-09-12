@@ -1,12 +1,12 @@
 #ifndef POINCARE_POWER_H
 #define POINCARE_POWER_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/n_ary_operation.h>
 
 namespace Poincare {
 
-class Power : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Power : public NAryOperation {
+  using NAryOperation::NAryOperation;
 public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,

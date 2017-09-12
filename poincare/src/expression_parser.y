@@ -171,12 +171,12 @@ exp:
   | number             { $$ = $1; }
   | ICOMPLEX         { $$ = new Poincare::Complex<double>(Poincare::Complex<double>::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }
-  | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, false); }
-  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
-  | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, false);  }
-  | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, false);  }
-  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
-  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
+  | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
+  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, 2, false); }
+  | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+  | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, 2, false); }
+  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, 2, false); }
   | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
 /* MATRICES_ARE_DEFINED */

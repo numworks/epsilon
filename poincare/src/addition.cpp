@@ -14,18 +14,6 @@ Expression::Type Addition::type() const {
   return Type::Addition;
 }
 
-ExpressionLayout * Addition::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout** children_layouts = new ExpressionLayout * [3];
-  children_layouts[0] = m_operands[0]->createLayout(floatDisplayMode, complexFormat);
-  children_layouts[1] = new StringLayout("+", 1);
-  children_layouts[2] = m_operands[1]->type() == Type::Opposite ? new ParenthesisLayout(m_operands[1]->createLayout(floatDisplayMode, complexFormat)) : m_operands[1]->createLayout(floatDisplayMode, complexFormat);
-  ExpressionLayout * layout = new HorizontalLayout(children_layouts, 3);
-  delete[] children_layouts;
-  return layout;
-}
-
 template<typename T>
 Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
@@ -45,11 +33,11 @@ Evaluation<T> * Addition::computeOnComplexAndMatrix(const Complex<T> * c, Evalua
 
 Expression * Addition::cloneWithDifferentOperands(Expression** newOperands,
     int numberOfOperands, bool cloneOperands) const {
-  return new Addition(newOperands, cloneOperands);
+  return new Addition(newOperands, numberOfOperands, cloneOperands);
 }
 
-bool Addition::isCommutative() const {
-  return true;
+char Addition::operatorChar() const {
+  return '+';
 }
 
 template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);

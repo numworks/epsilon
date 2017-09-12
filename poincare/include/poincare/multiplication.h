@@ -1,12 +1,12 @@
 #ifndef POINCARE_MULTIPLICATION_H
 #define POINCARE_MULTIPLICATION_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/commutative_operation.h>
 
 namespace Poincare {
 
-class Multiplication : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Multiplication : public CommutativeOperation {
+  using CommutativeOperation::CommutativeOperation;
 public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,
@@ -15,7 +15,7 @@ public:
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m);
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  char operatorChar() const override;
 
    Evaluation<float> * computeOnComplexMatrices(Evaluation<float> * m, Evaluation<float> * n) const override {
     return computeOnMatrices(m, n);

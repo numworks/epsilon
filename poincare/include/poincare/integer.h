@@ -31,10 +31,10 @@ public:
   bool operator<(const Integer &other) const;
   bool operator==(const Integer &other) const;
 
-  bool valueEquals(const Expression * e) const override;
-
   Expression * clone() const override;
 private:
+  bool valueEquals(const Expression * e) const override;
+  bool valueGreaterThan(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;

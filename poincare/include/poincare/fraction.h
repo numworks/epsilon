@@ -1,12 +1,12 @@
 #ifndef POINCARE_FRACTION_H
 #define POINCARE_FRACTION_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/n_ary_operation.h>
 
 namespace Poincare {
 
-class Fraction : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Fraction : public NAryOperation {
+  using NAryOperation::NAryOperation;
 public:
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression** newOperands,

@@ -25,4 +25,21 @@ Expression * LeafExpression::cloneWithDifferentOperands(Expression** newOperands
   return this->clone();
 }
 
+void LeafExpression::sort() {
+}
+
+bool LeafExpression::nodeEquals(const Expression * e) const {
+  if (!Expression::nodeEquals(e)) {
+    return valueEquals(e);
+  }
+  return false;
+}
+
+bool LeafExpression::nodeGreaterThan(const Expression * e) const {
+  if (Expression::nodeEquals(e)) {
+    return valueGreaterThan(e);
+  }
+  return Expression::nodeGreaterThan(e);
+}
+
 }

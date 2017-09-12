@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-include poincare/src/simplify/Makefile
+#include poincare/src/simplify/Makefile
 
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
@@ -8,9 +8,9 @@ objs += $(addprefix poincare/src/,\
   arc_cosine.o\
   arc_sine.o\
   arc_tangent.o\
-  binary_operation.o\
   binomial_coefficient.o\
   ceiling.o\
+  commutative_operation.o\
   complex.o\
   complex_argument.o\
   complex_matrix.o\
@@ -53,6 +53,7 @@ objs += $(addprefix poincare/src/,\
   matrix_trace.o\
   matrix_transpose.o\
   multiplication.o\
+  n_ary_operation.o\
   naperian_logarithm.o\
   nth_root.o\
   opposite.o\
@@ -99,17 +100,17 @@ tests += $(addprefix poincare/test/,\
   fraction.cpp\
   function.cpp\
   helper.cpp\
-  identity.cpp\
   integer.cpp\
   matrix.cpp\
   parser.cpp\
   product.cpp\
   power.cpp\
-  simplify_utils.cpp\
   subtraction.cpp\
   symbol.cpp\
   trigo.cpp\
 )
+#  simplify_utils.cpp\
+#  identity.cpp\
 
 # tests += $(addprefix poincare/test/,\
   addition.cpp\

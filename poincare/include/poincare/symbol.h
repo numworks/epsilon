@@ -33,9 +33,10 @@ public:
   Type type() const override;
   char name() const;
   Expression * clone() const override;
-  bool valueEquals(const Expression * e) const override;
   bool isMatrixSymbol() const;
 private:
+  bool valueEquals(const Expression * e) const override;
+  bool valueGreaterThan(const Expression * e) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;

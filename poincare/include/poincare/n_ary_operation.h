@@ -1,5 +1,5 @@
-#ifndef POINCARE_BINARY_OPERATION_H
-#define POINCARE_BINARY_OPERATION_H
+#ifndef POINCARE_N_ARY_OPERATION_H
+#define POINCARE_N_ARY_OPERATION_H
 
 #include <poincare/expression.h>
 #include <poincare/matrix.h>
@@ -8,21 +8,23 @@
 
 namespace Poincare {
 
-class BinaryOperation : public Expression {
+class NAryOperation : public Expression {
 public:
-  BinaryOperation();
-  BinaryOperation(Expression ** operands, bool cloneOperands = true);
-  ~BinaryOperation();
-  BinaryOperation(const BinaryOperation& other) = delete;
-  BinaryOperation(BinaryOperation&& other) = delete;
-  BinaryOperation& operator=(const BinaryOperation& other) = delete;
-  BinaryOperation& operator=(BinaryOperation&& other) = delete;
+  NAryOperation();
+  NAryOperation(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
+  ~NAryOperation();
+  NAryOperation(const NAryOperation& other) = delete;
+  NAryOperation(NAryOperation&& other) = delete;
+  NAryOperation& operator=(const NAryOperation& other) = delete;
+  NAryOperation& operator=(NAryOperation&& other) = delete;
   bool hasValidNumberOfArguments() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
   Expression * clone() const override;
 protected:
-  Expression * m_operands[2];
+  Expression ** m_operands;
+  int m_numberOfOperands;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
@@ -53,6 +55,8 @@ protected:
 
   virtual Complex<float> privateCompute(const Complex<float> c, const Complex<float> d) const = 0;
   virtual Complex<double> privateCompute(const Complex<double> c, const Complex<double> d) const = 0;
+private:
+  virtual char operatorChar() const;
 };
 
 }

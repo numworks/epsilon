@@ -1,7 +1,7 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
-#include <cmath>
+#include <math.h>
 extern "C" {
 #include <assert.h>
 #include <float.h>
@@ -54,11 +54,11 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
    * pp. 75–76. */
 
   // Initialize hh
-  T h = std::fabs(x) < min ? k_minInitialRate : x/1000;
+  T h = fabs(x) < min ? k_minInitialRate : x/1000;
   T f2 = approximateDerivate2(x, h, xContext, angleUnit);
-  f2 = std::fabs(f2) < min ? k_minInitialRate : f2;
-  T hh = std::sqrt(std::fabs(functionValue/(f2/(std::pow(h,2)))))/10;
-  hh = std::fabs(hh) < min ? k_minInitialRate : hh;
+  f2 = fabs(f2) < min ? k_minInitialRate : f2;
+  T hh = sqrt(fabs(functionValue/(f2/(pow(h,2)))))/10;
+  hh = fabs(hh) < min ? k_minInitialRate : hh;
   /* Make hh an exactly representable number */
   volatile T temp =  x+hh;
   hh = temp - x;
@@ -86,7 +86,7 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
     for (int j = 1; j < 10; j++) {
       a[j][i] = (a[j-1][i]*fac-a[j-1][i-1])/(fac-1);
       fac = k_rateStepSize*k_rateStepSize*fac;
-      errt = std::fabs(a[j][i]-a[j-1][i]) > std::fabs(a[j][i]-a[j-1][i-1]) ? std::fabs(a[j][i]-a[j-1][i]) : std::fabs(a[j][i]-a[j-1][i-1]);
+      errt = fabs(a[j][i]-a[j-1][i]) > fabs(a[j][i]-a[j-1][i-1]) ? fabs(a[j][i]-a[j-1][i]) : fabs(a[j][i]-a[j-1][i-1]);
       /* Update error and answer if error decreases */
       if (errt < err) {
         err = errt;
@@ -95,7 +95,7 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
     }
     /* If higher extrapolation order significantly increases the error, return
      * early */
-    if (std::fabs(a[i][i]-a[i-1][i-1]) > 2*err) {
+    if (fabs(a[i][i]-a[i-1][i-1]) > 2*err) {
       break;
     }
   }
@@ -106,8 +106,8 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
   if (err < min) {
     return new Complex<T>(Complex<T>::Float(ans));
   }
-  err = std::pow((T)10, std::floor(std::log10(std::fabs(err)))+2);
-  return new Complex<T>(Complex<T>::Float(std::round(ans/err)*err));
+  err = pow((T)10, floor(log10(fabs(err)))+2);
+  return new Complex<T>(Complex<T>::Float(round(ans/err)*err));
 }
 
 template<typename T>

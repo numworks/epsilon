@@ -3,7 +3,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -35,8 +35,8 @@ Evaluation<T> * Round::templatedEvaluate(Context& context, AngleUnit angleUnit) 
   if (isnan(f2) || f2 != (int)f2) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
-  T err = std::pow(10, std::floor(f2));
-  return new Complex<T>(Complex<T>::Float(std::round(f1*err)/err));
+  T err = pow(10, floor(f2));
+  return new Complex<T>(Complex<T>::Float(round(f1*err)/err));
 }
 
 }

@@ -2,7 +2,7 @@
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
-#include <cmath>
+#include <math.h>
 extern "C" {
 #include <assert.h>
 #include <float.h>
@@ -117,12 +117,12 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
 
   T centr = 0.5*(a+b);
   T hlgth = 0.5*(b-a);
-  T dhlgth = std::fabs(hlgth);
+  T dhlgth = fabs(hlgth);
 
   T resg = 0;
   T fc = functionValueAtAbscissa(centr, xContext, angleUnit);
   T resk = wgk[10]*fc;
-  T resabs = std::fabs(resk);
+  T resabs = fabs(resk);
   for (int j = 0; j < 5; j++) {
     int jtw = 2*j+1;
     T absc = hlgth*xgk[jtw];
@@ -133,7 +133,7 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
     T fsum = fval1+fval2;
     resg += wg[j]*fsum;
     resk += wgk[jtw]*fsum;
-    resabs += wgk[jtw]*(std::fabs(fval1)+std::fabs(fval2));
+    resabs += wgk[jtw]*(fabs(fval1)+fabs(fval2));
   }
   for (int j = 0; j < 5; j++) {
     int jtwm1 = 2*j;
@@ -144,19 +144,19 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
     fv2[jtwm1] = fval2;
     T fsum = fval1+fval2;
     resk += wgk[jtwm1]*fsum;
-    resabs += wgk[jtwm1]*(std::fabs(fval1)+std::fabs(fval2));
+    resabs += wgk[jtwm1]*(fabs(fval1)+fabs(fval2));
   }
   T reskh = resk*0.5;
-  T resasc = wgk[10]*std::fabs(fc-reskh);
+  T resasc = wgk[10]*fabs(fc-reskh);
   for (int j = 0; j < 10; j++) {
-    resasc += wgk[j]*(std::fabs(fv1[j]-reskh)+std::fabs(fv2[j]-reskh));
+    resasc += wgk[j]*(fabs(fv1[j]-reskh)+fabs(fv2[j]-reskh));
   }
   T integral = resk*hlgth;
   resabs = resabs*dhlgth;
   resasc = resasc*dhlgth;
-  T abserr = std::fabs((resk-resg)*hlgth);
+  T abserr = fabs((resk-resg)*hlgth);
   if (resasc != 0 && abserr != 0) {
-    abserr = 1 > std::pow((T)(200*abserr/resasc), (T)1.5)? resasc*std::pow((T)(200*abserr/resasc), (T)1.5) : resasc;
+    abserr = 1 > pow((T)(200*abserr/resasc), (T)1.5)? resasc*pow((T)(200*abserr/resasc), (T)1.5) : resasc;
   }
   if (resabs > max/(50.0*epsilon)) {
     abserr = abserr > epsilon*50*resabs ? abserr : epsilon*50*resabs;

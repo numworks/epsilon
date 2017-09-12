@@ -1,6 +1,6 @@
 #include "graph_controller.h"
 #include "../apps_container.h"
-#include <cmath>
+#include <math.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -78,7 +78,7 @@ void GraphController::reloadBannerView() {
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;
   } else {
-    numberOfChar += Complex<float>::convertFloatToText(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    numberOfChar += Complex<float>::convertFloatToText(round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   }
   legend = ")  ";
   legendLength = strlen(legend);

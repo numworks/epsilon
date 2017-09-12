@@ -1,6 +1,6 @@
 #include "binomial_law.h"
 #include <assert.h>
-#include <cmath>
+#include <math.h>
 
 namespace Probability {
 
@@ -127,9 +127,9 @@ T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
   if (x > m_parameter1) {
     return 0;
   }
-  T lResult = std::lgamma(m_parameter1+1) - std::lgamma(std::floor(x)+1) - std::lgamma((T)m_parameter1 - std::floor(x)+1)+
-    std::floor(x)*std::log(m_parameter2) + (m_parameter1-std::floor(x))*std::log(1-m_parameter2);
-  return std::exp(lResult);
+  T lResult = lgamma(m_parameter1+1) - lgamma(floor(x)+1) - lgamma((T)m_parameter1 - floor(x)+1)+
+    floor(x)*log(m_parameter2) + (m_parameter1-floor(x))*log(1-m_parameter2);
+  return exp(lResult);
 }
 
 }

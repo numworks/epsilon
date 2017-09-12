@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -44,7 +44,7 @@ Evaluation<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUn
   for (int i = 0; i < (int)k; i++) {
     result *= (n-(T)i)/(k-(T)i);
   }
-  return new Complex<T>(Complex<T>::Float(std::round(result)));
+  return new Complex<T>(Complex<T>::Float(round(result)));
 }
 
 ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

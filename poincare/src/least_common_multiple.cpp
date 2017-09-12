@@ -4,7 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -49,7 +49,7 @@ Evaluation<T> * LeastCommonMultiple::templatedEvaluate(Context& context, AngleUn
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(std::round((T)(product/a))));
+  return new Complex<T>(Complex<T>::Float(round((T)(product/a))));
 }
 
 }

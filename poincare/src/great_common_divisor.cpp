@@ -4,7 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
+#include <math.h>
 
 namespace Poincare {
 
@@ -48,7 +48,7 @@ Evaluation<T> * GreatCommonDivisor::templatedEvaluate(Context& context, AngleUni
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(std::round((T)a)));
+  return new Complex<T>(Complex<T>::Float(round((T)a)));
 }
 
 }

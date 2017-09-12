@@ -33,7 +33,7 @@ Evaluation<T> * ConfidenceInterval::templatedEvaluate(Context& context, AngleUni
   T n = nInput->toScalar();
   delete fInput;
   delete nInput;
-  if (isnan(f) || isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
+  if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   Complex<T> operands[2];

@@ -41,7 +41,7 @@ float MemoizedCurveViewRange::yGridUnit() {
 }
 
 void MemoizedCurveViewRange::setXMin(float xMin) {
-  if (isnan(xMin)) {
+  if (std::isnan(xMin)) {
     return;
   }
   m_xMin = xMin;
@@ -52,7 +52,7 @@ void MemoizedCurveViewRange::setXMin(float xMin) {
 }
 
 void MemoizedCurveViewRange::setXMax(float xMax) {
-  if (isnan(xMax)) {
+  if (std::isnan(xMax)) {
     return;
   }
   m_xMax = xMax;
@@ -63,7 +63,7 @@ void MemoizedCurveViewRange::setXMax(float xMax) {
 }
 
 void MemoizedCurveViewRange::setYMin(float yMin) {
-  if (isnan(yMin)) {
+  if (std::isnan(yMin)) {
     return;
   }
   m_yMin = yMin;
@@ -74,7 +74,7 @@ void MemoizedCurveViewRange::setYMin(float yMin) {
 }
 
 void MemoizedCurveViewRange::setYMax(float yMax) {
-  if (isnan(yMax)) {
+  if (std::isnan(yMax)) {
     return;
   }
   m_yMax = yMax;

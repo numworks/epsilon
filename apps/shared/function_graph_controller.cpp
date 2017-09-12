@@ -100,7 +100,7 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     for (int i = 0; i <= curveView()->resolution(); i++) {
       float x = xMin + i*step;
       y = f->evaluateAtAbscissa(x, myApp->localContext());
-      if (!isnan(y) && !isinf(y)) {
+      if (!std::isnan(y) && !std::isinf(y)) {
         min = min < y ? min : y;
         max = max > y ? max : y;
       }

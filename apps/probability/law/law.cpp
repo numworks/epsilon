@@ -76,7 +76,7 @@ double Law::cumulativeDistributiveInverseForProbability(double * probability) {
     return INFINITY;
   }
   *probability = p;
-  if (isnan(*probability)) {
+  if (std::isnan(*probability)) {
     return NAN;
   }
   return k-1.0f;
@@ -103,7 +103,7 @@ double Law::rightIntegralInverseForProbability(double * probability) {
     return INFINITY;
   }
   *probability = 1.0 - (p - evaluateAtDiscreteAbscissa(k-1));
-  if (isnan(*probability)) {
+  if (std::isnan(*probability)) {
     return NAN;
   }
   return k-1.0;

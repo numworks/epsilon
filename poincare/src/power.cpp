@@ -58,7 +58,7 @@ template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndCo
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T power = d->toScalar();
-  if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
+  if (std::isnan(power) || std::isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   if (power < 0) {

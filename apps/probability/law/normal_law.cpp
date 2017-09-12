@@ -62,7 +62,7 @@ float NormalLaw::yMin() {
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (isnan(result) || result <= 0.0f) {
+  if (std::isnan(result) || result <= 0.0f) {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);

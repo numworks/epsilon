@@ -40,10 +40,10 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
   }
   interactiveCurveViewRange->setYMin(addMargin(min, range, true));
   interactiveCurveViewRange->setYMax(addMargin(max, range, false));
-  if (isinf(interactiveCurveViewRange->xMin())) {
+  if (std::isinf(interactiveCurveViewRange->xMin())) {
     interactiveCurveViewRange->setYMin(-FLT_MAX);
   }
-  if (isinf(interactiveCurveViewRange->xMax())) {
+  if (std::isinf(interactiveCurveViewRange->xMax())) {
     interactiveCurveViewRange->setYMax(FLT_MAX);
   }
   return true;

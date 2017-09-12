@@ -37,7 +37,7 @@ Evaluation<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUn
   T k = kInput->toScalar();
   delete nInput;
   delete kInput;
-  if (isnan(n) || isnan(k) || n != (int)n || k != (int)k || k > n || k < 0 || n < 0) {
+  if (std::isnan(n) || std::isnan(k) || n != (int)n || k != (int)k || k > n || k < 0 || n < 0) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T result = 1;

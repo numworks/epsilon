@@ -69,7 +69,7 @@ void GraphController::initCursorParameters() {
   do {
     CartesianFunction * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
-  } while (isnan(y) && functionIndex < functionStore()->numberOfActiveFunctions());
+  } while (std::isnan(y) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
   interactiveCurveViewRange()->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }

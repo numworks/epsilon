@@ -28,7 +28,7 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, do
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  if (isnan(y) || isinf(y)) {
+  if (std::isnan(y) || std::isinf(y)) {
     app()->displayWarning(I18n::Message::ValueNotReachedByFunction);
     return false;
   }

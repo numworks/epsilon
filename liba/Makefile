@@ -140,6 +140,7 @@ tests += $(addprefix liba/test/, \
   double.c \
   ieee754.c \
   long.c \
+  math.c \
   setjmp.c \
   stddef.c \
   stdint.c \

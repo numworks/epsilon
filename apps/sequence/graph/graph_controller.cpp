@@ -78,7 +78,7 @@ void GraphController::initCursorParameters() {
   do {
     Sequence * firstFunction = m_sequenceStore->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
-  } while (isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
+  } while (std::isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }

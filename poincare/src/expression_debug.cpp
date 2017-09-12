@@ -1,7 +1,9 @@
-#include <poincare/context.h>
+#include <poincare/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
 #include <iostream>
+
+namespace Poincare {
 
 void print_expression(const Expression * e, int indentationLevel) {
   if (indentationLevel>0) {
@@ -10,28 +12,33 @@ void print_expression(const Expression * e, int indentationLevel) {
     }
     std::cout << "|-";
   }
-  Context context;
+  GlobalContext context;
   switch (e->type()) {
     case Expression::Type::Addition:
       std::cout << "Addition";
       break;
+    case Expression::Type::Multiplication:
+      std::cout << "Multiplication";
+      break;
     case Expression::Type::Cosine:
       std::cout << "Cosine";
       break;
-    case Expression::Type::Float:
+/*    case Expression::Type::Float:
       std::cout << "Float()";
-      break;
+      break;*/
     case Expression::Type::Integer:
       std::cout << "Integer(";
-      std::cout << e->approximate(context);
+      std::cout << e->approximate<double>(context);
       std::cout << ")";
       break;
     case Expression::Type::Fraction:
       std::cout << "Fraction";
       break;
+      /*
     case Expression::Type::Matrix:
       std::cout << "Matrix";
       break;
+      */
     case Expression::Type::Parenthesis:
       std::cout << "Parenthesis";
       break;
@@ -58,4 +65,6 @@ void print_expression(const Expression * e, int indentationLevel) {
   for (int i=0; i<e->numberOfOperands(); i++) {
     print_expression(e->operand(i), indentationLevel+1);
   }
+}
+
 }

@@ -51,4 +51,28 @@ Expression ** DynamicHierarchy::operands() {
   return m_operands;
 }
 
+void DynamicHierarchy::stealOperandsFrom(DynamicHierarchy * sibling) {
+  assert(this->type() == sibling->type()); // Could work, but wouldn't make much sense
+
+  int resultingSize = this->numberOfOperands() + sibling->numberOfOperands();
+  Expression ** operands = new Expression * [resultingSize];
+
+  for (int i=0; i<numberOfOperands(); i++) {
+    operands[i] = m_operands[i];
+  }
+  for (int j=0; j<sibling->numberOfOperands(); j++) {
+    operands[numberOfOperands()+j] = sibling->operands()[j];
+  }
+
+  delete[] m_operands;
+  m_operands = operands;
+  m_numberOfOperands = resultingSize;
+
+  sibling->setNumberOfOperand(0); // Stolen!
+}
+
+void DynamicHierarchy::setNumberOfOperand(int numberOfOperand) {
+  m_numberOfOperands = 0;
+}
+
 }

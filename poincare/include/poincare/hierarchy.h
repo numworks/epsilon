@@ -9,6 +9,8 @@ class Hierarchy : public Expression {
 public:
   Hierarchy(int numberOfOperands);
   void swapOperands(int i, int j);
+  void replaceOperand(Expression * oldChild, Expression * newChild);
+  void removeOperand(Expression * oldChild);
   void sort() override;
 protected:
   int m_numberOfOperands;

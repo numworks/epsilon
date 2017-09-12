@@ -12,7 +12,7 @@ extern "C" {
 #include <assert.h>
 }
 
-#include "simplify/rules.h"
+//#include "simplify/rules.h"
 
 int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
 
@@ -37,6 +37,9 @@ Expression * Expression::parse(char const * string) {
   }
   poincare_expression_yy_delete_buffer(buf);
 
+  if (expression) {
+    expression->setParentPointer(nullptr);
+  }
   return expression;
 }
 
@@ -212,6 +215,17 @@ int Expression::nodeComparesTo(const Expression * e) const {
     return 1;
   }
   return -1;
+}
+
+void Expression::setParentPointer(Expression * parent) {
+  if (this == parent) {
+    // TODO: this case should be useless once complex is a leaf expression!
+    return;
+  }
+  m_parent = parent;
+  for (int i=0; i<numberOfOperands(); i++) {
+    ((Expression *)operand(i))->setParentPointer(this);
+  }
 }
 
 }

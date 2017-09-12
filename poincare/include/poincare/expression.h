@@ -113,6 +113,7 @@ public:
    */
   int comparesTo(const Expression * e) const;
   //Expression * simplify() const;
+  void simplify();
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -137,6 +138,10 @@ private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
+  Expression * parent() const { return m_parent; }
+private:
+  void setParentPointer(Expression * parent);
+  Expression * m_parent;
 };
 
 }

@@ -19,6 +19,31 @@ void Hierarchy::swapOperands(int i, int j) {
   op[j] = temp;
 }
 
+void Hierarchy::replaceOperand(Expression * oldChild, Expression * newChild) {
+  Expression ** op = operands();
+  for (int i=0; i<m_numberOfOperands; i++) {
+    if (op[i] == oldChild) {
+      delete oldChild;
+      op[i] = newChild;
+      break;
+    }
+  }
+}
+
+void Hierarchy::removeOperand(Expression * oldChild) {
+  Expression ** op = operands();
+  for (int i=0; i<m_numberOfOperands; i++) {
+    if (op[i] == oldChild) {
+      delete oldChild;
+      m_numberOfOperands--;
+      for (int j=i; j<m_numberOfOperands; j++) {
+        op[j] = op[j+1];
+      }
+      break;
+    }
+  }
+}
+
 void Hierarchy::sort() {
   // First, sort every child
   Expression::sort();

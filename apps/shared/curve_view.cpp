@@ -314,7 +314,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
       return;
     }
     float y = evaluateModelWithParameter(curve, x);
-    if (isnan(y)|| isinf(y)) {
+    if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
     float pxf = floatToPixel(Axis::Horizontal, x);
@@ -327,7 +327,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
       ctx->fillRect(colorRect, color);
     }
     stampAtLocation(ctx, rect, pxf, pyf, color);
-    if (x <= rectMin || isnan(evaluateModelWithParameter(curve, x-xStep))) {
+    if (x <= rectMin || std::isnan(evaluateModelWithParameter(curve, x-xStep))) {
       continue;
     }
     if (continuously) {
@@ -358,7 +358,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
     }
     float centerX = fillBar ? x+barWidth/2.0f : x;
     float y = evaluateModelWithParameter(model, centerX);
-    if (isnan(y)) {
+    if (std::isnan(y)) {
       continue;
     }
     KDCoordinate pxf = std::round(floatToPixel(Axis::Horizontal, x));
@@ -396,7 +396,7 @@ KDSize CurveView::cursorSize() {
 void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
-  if (isnan(pyf) || isnan(pvf)) {
+  if (std::isnan(pyf) || std::isnan(pvf)) {
     return;
   }
   // No need to draw if both dots are outside visible area
@@ -404,10 +404,10 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
     return;
   }
   // If one of the dot is infinite, we cap it with a dot outside area
-  if (isinf(pyf)) {
+  if (std::isinf(pyf)) {
     pyf = pyf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
   }
-  if (isinf(pvf)) {
+  if (std::isinf(pvf)) {
     pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
   }
   if (pyf - (float)circleDiameter/2.0f < pvf && pvf < pyf + (float)circleDiameter/2.0f) {
@@ -422,7 +422,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
      * can draw a 'straight' line between the two */
     float pxf = floatToPixel(Axis::Horizontal, x);
     float puf = floatToPixel(Axis::Horizontal, u);
-    if (isnan(pxf) || isnan(puf)) {
+    if (std::isnan(pxf) || std::isnan(puf)) {
       return;
     }
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
@@ -484,8 +484,8 @@ void CurveView::layoutSubviews() {
       KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
       cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, 0, cursorSize().width(),bounds().height()-bannerHeight);
     }
-    if (!m_mainViewSelected || isnan(m_curveViewCursor->x()) || isnan(m_curveViewCursor->y())
-        || isinf(m_curveViewCursor->x()) || isinf(m_curveViewCursor->y())) {
+    if (!m_mainViewSelected || std::isnan(m_curveViewCursor->x()) || std::isnan(m_curveViewCursor->y())
+        || std::isinf(m_curveViewCursor->x()) || std::isinf(m_curveViewCursor->y())) {
       cursorFrame = KDRectZero;
     }
     m_cursorView->setFrame(cursorFrame);

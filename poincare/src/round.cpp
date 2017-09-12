@@ -32,7 +32,7 @@ Evaluation<T> * Round::templatedEvaluate(Context& context, AngleUnit angleUnit) 
   T f2 = f2Entry->toScalar();
   delete f1Entry;
   delete f2Entry;
-  if (isnan(f2) || f2 != (int)f2) {
+  if (std::isnan(f2) || f2 != (int)f2) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T err = std::pow(10, std::floor(f2));

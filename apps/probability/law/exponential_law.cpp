@@ -53,7 +53,7 @@ float ExponentialLaw::yMin() {
 
 float ExponentialLaw::yMax() {
   float result = m_parameter1;
-  if (result <= 0.0f || isnan(result)) {
+  if (result <= 0.0f || std::isnan(result)) {
     result = 1.0f;
   }
   if (result <= 0.0f) {

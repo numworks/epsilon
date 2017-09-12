@@ -34,7 +34,7 @@ Evaluation<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUni
   T end = bInput->toScalar();
   delete aInput;
   delete bInput;
-  if (isnan(start) || isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
+  if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   VariableContext<T> nContext = VariableContext<T>('n', &context);

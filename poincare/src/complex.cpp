@@ -271,7 +271,7 @@ template <class T>
 int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat) const {
   assert(displayMode != Expression::FloatDisplayMode::Default);
   int numberOfChars = 0;
-  if (isnan(m_a) || isnan(m_b)) {
+  if (std::isnan(m_a) || std::isnan(m_b)) {
     return convertFloatToText(NAN, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
   }
   if (complexFormat == Expression::ComplexFormat::Polar) {
@@ -304,7 +304,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
 
   if (m_a != 0 || m_b == 0) {
     numberOfChars = convertFloatToText(m_a, buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
-    if (m_b > 0 && !isnan(m_b) && bufferSize > numberOfChars+1) {
+    if (m_b > 0 && !std::isnan(m_b) && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
       buffer[numberOfChars] = 0;
@@ -328,7 +328,7 @@ template <class T>
 int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode) {
   assert(mode != Expression::FloatDisplayMode::Default);
   assert(numberOfSignificantDigits > 0);
-  if (isinf(f)) {
+  if (std::isinf(f)) {
     int currentChar = 0;
     if (f < 0) {
       buffer[currentChar++] = '-';
@@ -340,7 +340,7 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     return currentChar;
   }
 
-  if (isnan(f)) {
+  if (std::isnan(f)) {
     int currentChar = 0;
     buffer[currentChar++] = 'u';
     buffer[currentChar++] = 'n';
@@ -380,20 +380,20 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
    * is too big (or too small), mantissa is now inf. We handle this case by
    * using logarithm function. */
-  if (isnan(mantissa) || isinf(mantissa)) {
+  if (std::isnan(mantissa) || std::isinf(mantissa)) {
     mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
     mantissa = std::copysign(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
   T truncatedMantissa = (int)(f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-  if (isinf(truncatedMantissa) || isnan(truncatedMantissa)) {
+  if (std::isinf(truncatedMantissa) || std::isnan(truncatedMantissa)) {
     truncatedMantissa = (int)(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
     truncatedMantissa = std::copysign(truncatedMantissa, f);
   }
   if (mantissa != truncatedMantissa) {
     T newLogBase10 = mantissa != 0 ? std::log10(std::fabs(mantissa/std::pow((T)10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)))) : 0;
-    if (isnan(newLogBase10) || isinf(newLogBase10)) {
+    if (std::isnan(newLogBase10) || std::isinf(newLogBase10)) {
       newLogBase10 = std::log10(std::fabs((T)mantissa)) - (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
     }
     exponentInBase10 = std::floor(newLogBase10);
@@ -457,7 +457,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   char bufferSuperscript[k_maxFloatBufferLength+2];
   int numberOfCharInSuperscript = 0;
 
-  if (isnan(r()) || isnan(th())) {
+  if (std::isnan(r()) || std::isnan(th())) {
     numberOfCharInBase = convertFloatToText(NAN, bufferBase, k_maxComplexBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
     return new StringLayout(bufferBase, numberOfCharInBase);
   }

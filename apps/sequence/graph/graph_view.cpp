@@ -30,7 +30,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     int step = std::ceil(windowRange/resolution());
     for (int x = rectXMin; x < rectXMax; x += step) {
       float y = evaluateModelWithParameter(s, x);
-      if (isnan(y)) {
+      if (std::isnan(y)) {
         continue;
       }
       drawDot(ctx, rect, x, y, s->color());

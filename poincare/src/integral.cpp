@@ -40,7 +40,7 @@ Evaluation<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUn
   Evaluation<T> * bInput = m_args[2]->evaluate<T>(context, angleUnit);
   T b = bInput->toScalar();
   delete bInput;
-  if (isnan(a) || isnan(b)) {
+  if (std::isnan(a) || std::isnan(b)) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
 #ifdef LAGRANGE_METHOD

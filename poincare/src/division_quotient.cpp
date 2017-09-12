@@ -32,7 +32,7 @@ Evaluation<T> * DivisionQuotient::templatedEvaluate(Context& context, AngleUnit 
   T f2 = f2Input->toScalar();
   delete f1Input;
   delete f2Input;
-  if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   return new Complex<T>(Complex<T>::Float(std::floor(f1/f2)));

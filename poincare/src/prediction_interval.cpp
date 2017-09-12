@@ -32,7 +32,7 @@ Evaluation<T> * PredictionInterval::templatedEvaluate(Context& context, AngleUni
   T n = nInput->toScalar();
   delete pInput;
   delete nInput;
-  if (isnan(p) || isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
+  if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   Complex<T> operands[2];

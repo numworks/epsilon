@@ -319,7 +319,7 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
 
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
-  if (exponent == 255 && isnan(float_result)) {
+  if (exponent == 255 && std::isnan(float_result)) {
     return new Complex<float>(Complex<float>::Float(INFINITY));
   }
 
@@ -389,7 +389,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
 
   /* If exponent is 2047 and the double is undefined, we have exceed IEEE 754
    * representable double. */
-  if (exponent == 2047 && isnan(double_result)) {
+  if (exponent == 2047 && std::isnan(double_result)) {
     return new Complex<double>(Complex<double>::Float(INFINITY));
   }
   return new Complex<double>(Complex<double>::Float(double_result));

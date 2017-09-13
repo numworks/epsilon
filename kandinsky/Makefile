@@ -1,13 +1,11 @@
 SFLAGS += -Ikandinsky/include
 objs += $(addprefix kandinsky/src/,\
   color.o\
-  context.o\
   context_line.o\
   context_pixel.o\
   context_rect.o\
   context_text.o\
   framebuffer.o\
-  framebuffer_context.o\
   ion_context.o\
   large_font.o\
   rect.o\

@@ -1,7 +1,5 @@
 #include <kandinsky/text.h>
 #include <string.h>
-#include "small_font.h"
-#include "large_font.h"
 
 KDSize KDText::stringSize(const char * text, FontSize size) {
   if (text == nullptr) {

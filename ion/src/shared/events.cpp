@@ -14,7 +14,12 @@ public:
   static constexpr EventData Textless() { return EventData(k_textless); }
   static constexpr EventData Text(const char * text) { return EventData(text); }
   bool isDefined() const { return (m_data != nullptr); }
-  const char * text() const;
+  const char * text() const {
+    if (m_data == nullptr || m_data == k_textless) {
+      return nullptr;
+    }
+    return m_data;
+  }
 private:
   static constexpr const char * k_textless = "";
   constexpr EventData(const char * data) : m_data(data) {}
@@ -86,13 +91,6 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("W"), T("X"), T("Y"), T("Z"), U(), U(),
   U(), U(), U(), U(), U(), U(),
 };
-
-const char * EventData::text() const {
-  if (m_data == nullptr || m_data == k_textless) {
-    return nullptr;
-  }
-  return m_data;
-}
 
 Event::Event(Keyboard::Key key, bool shift, bool alpha) {
   // We're mapping a key, shift and alpha to an event

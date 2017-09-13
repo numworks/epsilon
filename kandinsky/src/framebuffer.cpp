@@ -1,16 +1,6 @@
 #include <kandinsky/framebuffer.h>
 #include <string.h>
 
-KDFrameBuffer::KDFrameBuffer(KDColor * pixels, KDSize size) :
-  m_pixels(pixels),
-  m_size(size)
-{
-}
-
-KDRect KDFrameBuffer::bounds() {
-  return KDRect(KDPointZero, m_size);
-}
-
 KDColor * KDFrameBuffer::pixelAddress(KDPoint p) const {
     return m_pixels + p.x() + p.y()*m_size.width();
 }

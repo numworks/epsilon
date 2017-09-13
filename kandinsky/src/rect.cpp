@@ -1,31 +1,10 @@
 #include <kandinsky/rect.h>
 
-KDRect::KDRect(KDPoint p, KDSize s) :
-  m_x(p.x()), m_y(p.y()),
-  m_width(s.width()), m_height(s.height())
-{
-}
-
-KDRect::KDRect(KDCoordinate x, KDCoordinate y, KDSize s) :
-  m_x(x), m_y(y),
-  m_width(s.width()), m_height(s.height())
-{
-}
-
-KDRect::KDRect(KDPoint p, KDCoordinate width, KDCoordinate height) :
-  m_x(p.x()), m_y(p.y()),
-  m_width(width), m_height(height)
-{
-}
-
-void KDRect::setOrigin(KDPoint p) { m_x = p.x(); m_y = p.y(); }
-void KDRect::setSize(KDSize s) { m_width = s.width(); m_height = s.height(); }
-
 bool KDRect::intersects(const KDRect & other) const {
   return (
       other.right() >= left() &&
-      other.left() <= right() &&
-      other.top() <= bottom() &&
+      other.left() < rightp1() &&
+      other.top() < bottomp1() &&
       other.bottom() >= top()
       );
 }
@@ -144,24 +123,4 @@ KDRect KDRect::differencedWith(const KDRect & other) const {
 
 bool KDRect::contains(KDPoint p) const {
   return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
-}
-
-bool KDRect::isAbove(KDPoint p) const {
-  return (p.y() >= y());
-}
-
-bool KDRect::isUnder(KDPoint p) const {
-  return (p.y() <= bottom());
-}
-
-KDRect KDRect::translatedBy(KDPoint p) const {
-  return KDRect(x() + p.x(), y() + p.y(), width(), height());
-}
-
-KDRect KDRect::movedTo(KDPoint p) const {
-  return KDRect(p.x(), p.y(), width(), height());
-}
-
-bool KDRect::isEmpty() const {
-  return (width() == 0 || height() == 0);
 }

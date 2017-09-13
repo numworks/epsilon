@@ -87,7 +87,7 @@ void shutdownTimer() {
 }
 
 void enforceState(bool red, bool green, bool blue) {
-  bool states[3] = {red, green, blue};
+  static const bool states[3] = {red, green, blue};
   for (int i=0; i<3; i++) {
     GPIOPin p = RGBPins[i];
     if (states[i]) {

@@ -1,5 +1,4 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304
 header_name {.h}
 code_name {.cpp}
 widget_class UserInterface {open

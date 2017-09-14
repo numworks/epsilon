@@ -1,3 +1,6 @@
+snapshots += Regression::App::Snapshot
+snapshot_headers += apps/regression/app.h
+
 app_objs += $(addprefix apps/regression/,\
   app.o\
   banner_view.o\

@@ -1,3 +1,6 @@
+snapshots += Sequence::App::Snapshot
+snapshot_headers += apps/sequence/app.h
+
 app_objs += $(addprefix apps/sequence/,\
   app.o\
   graph/banner_view.o\

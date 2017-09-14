@@ -1,15 +1,22 @@
 #include "apps_container_storage.h"
 
+#ifndef APPS_CONTAINER_SNAPSHOT_CONSTRUCTORS
+#error Missing snapshot constructors
+#endif
+
+#ifndef APPS_CONTAINER_SNAPSHOT_LIST
+#error Missing snapshot list
+#endif
+
+#ifndef APPS_CONTAINER_SNAPSHOT_COUNT
+#error Missing snapshot count
+#endif
+
+constexpr int k_numberOfCommonApps = 1+APPS_CONTAINER_SNAPSHOT_COUNT; // Take the Home app into account
+
 AppsContainerStorage::AppsContainerStorage() :
-  AppsContainer(),
-  m_calculationSnapshot(),
-  m_graphSnapshot(),
-  m_sequenceSnapshot(),
-  m_settingsSnapshot(),
-  m_statisticsSnapshot(),
-  m_probabilitySnapshot(),
-  m_regressionSnapshot(),
-  m_codeSnapshot()
+  AppsContainer()
+  APPS_CONTAINER_SNAPSHOT_CONSTRUCTORS
 {
 }
 
@@ -22,15 +29,8 @@ App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
     return nullptr;
   }
   App::Snapshot * snapshots[] = {
-    homeAppSnapshot(),
-    &m_calculationSnapshot,
-    &m_graphSnapshot,
-    &m_sequenceSnapshot,
-    &m_settingsSnapshot,
-    &m_statisticsSnapshot,
-    &m_probabilitySnapshot,
-    &m_regressionSnapshot,
-    &m_codeSnapshot
+    homeAppSnapshot()
+    APPS_CONTAINER_SNAPSHOT_LIST
   };
   assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
   assert(index >= 0 && index < k_numberOfCommonApps);

@@ -25,7 +25,7 @@ void init_platform() {
   int margin = 10;
   int screen_width = Ion::Display::Width;
   int screen_height = Ion::Display::Height;
-  int keyboard_height = screen_width;
+  int keyboard_height = 450;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 

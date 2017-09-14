@@ -21,6 +21,24 @@ objs += $(addprefix ion/src/shared/, \
   dummy/fcc_id.o \
 )
 
+# FLTK Image pre-processor
+FLUID := fluid
+
+%.h %.cpp : %.fl
+	@echo "FLUID   $@"
+	@$(FLUID) -c $<
+	@mv -f *_icon.{h,cpp} ion/src/simulator/keyboard/
+
+fl_files += $(addprefix ion/src/simulator/keyboard/, kbdimage_icon.fl)
+
+fl_file_objs := $(fl_files:.fl=.o)
+.SECONDARY: $(fl_files:.fl=.cpp)
+$(objs): $(fl_file_objs)
+
+FLUID_PRODUCTS = $(1:.fl=.h) $(1:.fl=.cpp) $(1:.fl=.o)
+
+products += $(call FLUID_PRODUCTS,$(fl_files))
+
 SFLAGS += `fltk-config --cflags`
 LDFLAGS += `fltk-config --ldflags`
 

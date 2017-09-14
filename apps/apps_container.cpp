@@ -21,16 +21,9 @@ AppsContainer::AppsContainer() :
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
-  m_hardwareTestSnapshot(),
-  m_onBoardingSnapshot(),
   m_homeSnapshot(),
-  m_calculationSnapshot(),
-  m_graphSnapshot(),
-  m_sequenceSnapshot(),
-  m_settingsSnapshot(),
-  m_statisticsSnapshot(),
-  m_probabilitySnapshot(),
-  m_regressionSnapshot()
+  m_onBoardingSnapshot(),
+  m_hardwareTestSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
@@ -39,30 +32,6 @@ AppsContainer::AppsContainer() :
 bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
   return state.keyDown(Ion::Keyboard::Key::A6);
-}
-
-int AppsContainer::numberOfApps() {
-  return k_numberOfCommonApps;
-}
-
-App::Snapshot * AppsContainer::appSnapshotAtIndex(int index) {
-  if (index < 0) {
-    return nullptr;
-  }
-  App::Snapshot * snapshots[] = {
-    &m_homeSnapshot,
-    &m_calculationSnapshot,
-    &m_graphSnapshot,
-    &m_sequenceSnapshot,
-    &m_settingsSnapshot,
-    &m_statisticsSnapshot,
-    &m_probabilitySnapshot,
-    &m_regressionSnapshot,
-    &m_codeSnapshot
-  };
-  assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
-  assert(index >= 0 && index < k_numberOfCommonApps);
-  return snapshots[index];
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
@@ -75,7 +44,7 @@ App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
 
 void AppsContainer::reset() {
   Clipboard::sharedClipboard()->reset();
-  for (int i = 0; i < k_numberOfCommonApps; i++) {
+  for (int i = 0; i < numberOfApps(); i++) {
     appSnapshotAtIndex(i)->reset();
   }
 }

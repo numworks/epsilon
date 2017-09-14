@@ -1,6 +1,6 @@
-#include "apps_container.h"
+#include "apps_container_storage.h"
 
-AppsContainer container;
+AppsContainerStorage container;
 
 void ion_app() {
   container.run();

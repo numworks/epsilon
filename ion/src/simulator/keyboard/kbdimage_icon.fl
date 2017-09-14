@@ -1,0 +1,11 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0304
+header_name {.h}
+code_name {.cpp}
+widget_class UserInterface {open
+  xywh {0 44 320 450} type Double visible
+} {
+  Fl_Box {} {selected
+    image {keyboard.png} xywh {0 0 320 450}
+  }
+}

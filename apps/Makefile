@@ -14,6 +14,7 @@ include apps/code/Makefile
 
 app_objs += $(addprefix apps/,\
   apps_container.o\
+  apps_container_storage.o\
   apps_window.o\
   battery_timer.o\
   battery_view.o\

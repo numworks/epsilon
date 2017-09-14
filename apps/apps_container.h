@@ -2,16 +2,8 @@
 #define APPS_CONTAINER_H
 
 #include "home/app.h"
-#include "graph/app.h"
-#include "probability/app.h"
-#include "calculation/app.h"
-#include "regression/app.h"
-#include "sequence/app.h"
-#include "settings/app.h"
-#include "statistics/app.h"
 #include "on_boarding/app.h"
 #include "hardware_test/app.h"
-#include "code/app.h"
 #include "on_boarding/update_controller.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
@@ -33,8 +25,8 @@ class AppsContainer : public Container {
 public:
   AppsContainer();
   static bool poincareCircuitBreaker(const Poincare::Expression * e);
-  int numberOfApps();
-  App::Snapshot * appSnapshotAtIndex(int index);
+  virtual int numberOfApps() = 0;
+  virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
   App::Snapshot * hardwareTestAppSnapshot();
   App::Snapshot * onBoardingAppSnapshot();
   void reset();
@@ -51,14 +43,14 @@ public:
   void shutdownDueToLowBattery();
   void reloadTitleBar();
   OnBoarding::UpdateController * updatePopUpController();
+protected:
+  Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:
   Window * window() override;
   int numberOfContainerTimers() override;
   Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
-  static constexpr int k_numberOfCommonApps = 9;
-  static constexpr int k_totalNumberOfApps = 2+k_numberOfCommonApps;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
 #if USE_PIC_VIEW_APP
@@ -74,17 +66,9 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
-  HardwareTest::App::Snapshot m_hardwareTestSnapshot;
-  OnBoarding::App::Snapshot m_onBoardingSnapshot;
   Home::App::Snapshot m_homeSnapshot;
-  Calculation::App::Snapshot m_calculationSnapshot;
-  Graph::App::Snapshot m_graphSnapshot;
-  Sequence::App::Snapshot m_sequenceSnapshot;
-  Settings::App::Snapshot m_settingsSnapshot;
-  Statistics::App::Snapshot m_statisticsSnapshot;
-  Probability::App::Snapshot m_probabilitySnapshot;
-  Regression::App::Snapshot m_regressionSnapshot;
-  Code::App::Snapshot m_codeSnapshot;
+  OnBoarding::App::Snapshot m_onBoardingSnapshot;
+  HardwareTest::App::Snapshot m_hardwareTestSnapshot;
 };
 
 #endif

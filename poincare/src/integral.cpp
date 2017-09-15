@@ -171,14 +171,14 @@ template<typename T>
 T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext<T> xContext, AngleUnit angleUnit) const {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, xContext, angleUnit);
   T result = quadKG.integral;
-  if (numberOfIterations < k_maxNumberOfIterations && quadKG.absoluteError > eps) {
+  if (quadKG.absoluteError <= eps) {
+    return result;
+  } else if (--numberOfIterations > 0) {
     T m = (a+b)/2;
-    result = adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations+1, xContext, angleUnit) + adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations+1, xContext, angleUnit);
-  }
-  if (quadKG.absoluteError > eps) {
+    return adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, xContext, angleUnit) + adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, xContext, angleUnit);
+  } else {
     return NAN;
   }
-  return result;
 }
 #endif
 

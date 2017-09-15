@@ -82,10 +82,6 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
                                         kXYWHForKey[k][KEY_W],
                                         kXYWHForKey[k][KEY_H],
                                         kCharForKey[k]);
-      if (kShortcutForKey[k]) {
-          m_buttons[k]->shortcut(kShortcutForKey[k]);
-      }
-
     if (kCharForKey[k][0] == '\0') {
       m_buttons[k]->deactivate();
     }

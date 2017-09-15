@@ -22,7 +22,7 @@ AppsContainer * TextFieldDelegateApp::container() {
 }
 
 const char * TextFieldDelegateApp::XNT() {
-  return "x";
+  return "X";
 }
 
 const char * TextFieldDelegateApp::privateXNT(TextField * textField) {

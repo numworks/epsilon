@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "fltkkbd.h"
-#include "kbdimage_icon.cpp"
+#include "kbdimage_icon.h"
 
 
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
@@ -57,7 +57,7 @@ static const int kXYWHForKey[Ion::Keyboard::NumberOfKeys][4] = {
   {14, 404, 34, 22}, {78, 404, 34, 22}, {142, 404, 34, 22}, {206, 404, 34, 22}, {270, 404, 34, 22}, {0, 0,  0,  0}
 };
 
-static Fl_Box* Bkg_Image = NULL;
+static Fl_Group* Bkg_Image = NULL;
 
 class Fl_Push_Button : public Fl_Button {
 public:
@@ -96,9 +96,7 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
     m_buttons[k]->clear_visible_focus();
   }
 
-  Fl_Image* kb = image_keyboard();
-  Bkg_Image = new Fl_Box(x, y, kb->w(), kb->h());
-  Bkg_Image->image(kb);
+  Bkg_Image = new UserInterface (x, y, w, h);
 
   end();
 }

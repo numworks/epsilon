@@ -75,7 +75,9 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 
 template<typename T>
 Evaluation<T> * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(m_value, m_symbol);
+  Evaluation<T> * valueEvaluation = m_value->evaluate<T>(context, angleUnit);
+  context.setExpressionForSymbolName(valueEvaluation, m_symbol);
+  delete valueEvaluation;
   if (context.expressionForSymbol(m_symbol) != nullptr) {
     return context.expressionForSymbol(m_symbol)->evaluate<T>(context, angleUnit);
   }

@@ -63,7 +63,7 @@ class Fl_Push_Button : public Fl_Button {
 public:
     Fl_Push_Button (int X, int Y, int W, int H, const char *l = 0) : Fl_Button(X, Y, W, H, l) {
         this->box(FL_FLAT_BOX);
-        this->down_color(FL_BACKGROUND_COLOR);
+        this->down_color(Fl_Color(0XE2E2E200));
     }
 
 protected:

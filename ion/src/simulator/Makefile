@@ -27,7 +27,7 @@ FLUID := fluid
 %.h %.cpp : %.fl
 	@echo "FLUID   $@"
 	@$(FLUID) -c $<
-	@mv -f *_icon.{h,cpp} ion/src/simulator/keyboard/
+	@mv -f *_icon.* ion/src/simulator/keyboard/
 
 fl_files += $(addprefix ion/src/simulator/keyboard/, kbdimage_icon.fl)
 

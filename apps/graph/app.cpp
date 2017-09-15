@@ -86,4 +86,8 @@ Context * App::localContext() {
   return TextFieldDelegateApp::localContext();
 }
 
+const char * App::XNT() {
+  return "x";
+}
+
 }

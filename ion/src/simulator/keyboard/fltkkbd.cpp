@@ -19,7 +19,7 @@ static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {
   FL_Left, FL_Up, FL_Down, FL_Right, FL_Enter, FL_Escape,
   FL_Home, 0, 0, 0, 0, 0,
   0, 0, 'x', 0, 0, FL_BackSpace,
-  0, 0, 0, 'i', ',', '^',
+  0, 0, 0, 'i', ',', 0,
   0, 0, 0, 0, 0, 0,
   '7', '8', '9', '(',')', 0,
   '4', '5', '6', '*', '/', 0,
@@ -57,12 +57,7 @@ static const int kXYWHForKey[Ion::Keyboard::NumberOfKeys][4] = {
   {14, 404, 34, 22}, {78, 404, 34, 22}, {142, 404, 34, 22}, {206, 404, 34, 22}, {270, 404, 34, 22}, {0, 0,  0,  0}
 };
 
-<<<<<<< HEAD
 static Fl_Group* Bkg_Image = NULL;
-=======
-static Fl_Box* Bkg_Image = NULL;
-static Fl_Image *image_keyboard();
->>>>>>> origin/master
 
 class Fl_Push_Button : public Fl_Button {
 public:
@@ -90,7 +85,6 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
       if (kShortcutForKey[k]) {
           m_buttons[k]->shortcut(kShortcutForKey[k]);
       }
-      m_buttons[k]->clear_visible_focus();
 
     if (kCharForKey[k][0] == '\0') {
       m_buttons[k]->deactivate();

@@ -57,7 +57,12 @@ static const int kXYWHForKey[Ion::Keyboard::NumberOfKeys][4] = {
   {14, 404, 34, 22}, {78, 404, 34, 22}, {142, 404, 34, 22}, {206, 404, 34, 22}, {270, 404, 34, 22}, {0, 0,  0,  0}
 };
 
+<<<<<<< HEAD
 static Fl_Group* Bkg_Image = NULL;
+=======
+static Fl_Box* Bkg_Image = NULL;
+static Fl_Image *image_keyboard();
+>>>>>>> origin/master
 
 class Fl_Push_Button : public Fl_Button {
 public:

@@ -21,7 +21,7 @@ public:
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 private:
-  bool cursorInToken(TextField * textField, const char * token);
+  const char * privateXNT(TextField * textField);
 };
 
 }

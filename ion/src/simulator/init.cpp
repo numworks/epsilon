@@ -28,6 +28,7 @@ void init_platform() {
   int keyboard_height = 450;
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
+  window->color (Fl_Color(0XDDDDDD00));  // For better blending with the keyboard image
 
   KDColor * pixels = (KDColor *)malloc(Ion::Display::Width*Ion::Display::Height*sizeof(KDColor));
   sFrameBuffer = new KDFrameBuffer(pixels, KDSize(Ion::Display::Width, Ion::Display::Height));

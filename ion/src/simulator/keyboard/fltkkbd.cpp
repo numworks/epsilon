@@ -91,7 +91,9 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
     m_buttons[k]->clear_visible_focus();
   }
 
-  Bkg_Image = new UserInterface (x, y, w, h);
+  // The keyboard image includes the margins so shift the anchor point left & up
+  int margin = x;
+  Bkg_Image = new UserInterface (x-margin, y-margin, w+2*margin, h+2*margin);
 
   end();
 }

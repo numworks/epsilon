@@ -25,10 +25,51 @@ const char * TextFieldDelegateApp::XNT() {
   return "x";
 }
 
-bool TextFieldDelegateApp::cursorInToken(TextField * textField, const char * token) {
-  /* TODO: find a way to return true when cursor is in token(?,,). Warning: be
-   * able to differenciate sum(int(x,1,2),3,4) and sum(2*n,2,3) */
-  return false;
+const char * TextFieldDelegateApp::privateXNT(TextField * textField) {
+  static constexpr struct { const char *name, *xnt; } sFunctions[] = {
+    { "diff", "x" }, { "int", "x" },
+    { "product", "n" }, { "sum", "n" }
+  };
+  // Let's assume everything before the cursor is nested correctly, which is reasonable if the expression is being entered left-to-right.
+  const char * text = textField->text();
+  int location = textField->cursorLocation();
+  unsigned level = 0;
+  while (location >= 1) {
+    location--;
+    switch (text[location]) {
+      case '(':
+        // Check if we are skipping to the next matching '('.
+        if (level) {
+          level--;
+          break;
+        }
+        // Skip over whitespace.
+        while (location >= 1 && text[location-1] == ' ') {
+          location--;
+        }
+        // We found the next innermost function we are currently in.
+        for (int i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
+          const char * name = sFunctions[i].name;
+          size_t length = strlen(name);
+          if (location >= length && memcmp(&text[location-length], name, length) == 0) {
+            return sFunctions[i].xnt;
+          }
+        }
+        break;
+      case ',':
+        // Commas encountered while skipping to the next matching '(' should be ignored.
+        if (level) {
+          break;
+        }
+        // FALLTHROUGH
+      case ')':
+        // Skip to the next matching '('.
+        level++;
+        break;
+    }
+  }
+  // Fallback to the default
+  return XNT();
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -61,13 +102,9 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
     if (!textField->isEditing()) {
       textField->setEditing(true);
     }
-    if (cursorInToken(textField, "sum") || cursorInToken(textField, "product")) {
-      textField->insertTextAtLocation("n", textField->cursorLocation());
-      textField->setCursorLocation(textField->cursorLocation()+strlen("n"));
-      return true;
-    }
-    textField->insertTextAtLocation(XNT(), textField->cursorLocation());
-    textField->setCursorLocation(textField->cursorLocation()+strlen(XNT()));
+    const char * xnt = privateXNT(textField);
+    textField->insertTextAtLocation(xnt, textField->cursorLocation());
+    textField->setCursorLocation(textField->cursorLocation()+strlen(xnt));
     return true;
   }
   return false;

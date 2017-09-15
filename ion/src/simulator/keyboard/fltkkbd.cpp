@@ -58,6 +58,7 @@ static const int kXYWHForKey[Ion::Keyboard::NumberOfKeys][4] = {
 };
 
 static Fl_Box* Bkg_Image = NULL;
+static Fl_Image *image_keyboard();
 
 class Fl_Push_Button : public Fl_Button {
 public:

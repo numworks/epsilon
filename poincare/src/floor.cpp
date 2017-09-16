@@ -1,4 +1,5 @@
 #include <poincare/floor.h>
+#include "layout/floor_layout.h"
 
 extern "C" {
 #include <assert.h>
@@ -32,6 +33,10 @@ Complex<T> Floor::templatedComputeComplex(const Complex<T> c) const {
   return Complex<T>::Float(std::floor(c.a()));
 }
 
+ExpressionLayout * Floor::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new FloorLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
-
+}

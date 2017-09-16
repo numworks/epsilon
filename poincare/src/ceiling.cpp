@@ -1,4 +1,5 @@
 #include <poincare/ceiling.h>
+#include "layout/ceiling_layout.h"
 
 extern "C" {
 #include <assert.h>
@@ -32,6 +33,10 @@ Complex<T> Ceiling::templatedComputeComplex(const Complex<T> c) const {
   return Complex<T>::Float(std::ceil(c.a()));
 }
 
+ExpressionLayout * Ceiling::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new CeilingLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
-
+}

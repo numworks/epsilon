@@ -75,7 +75,6 @@ objs += $(addprefix poincare/src/,\
   variable_context.o\
 )
 objs += $(addprefix poincare/src/layout/,\
-  absolute_value_layout.o\
   baseline_relative_layout.o\
   bracket_layout.o\
   condensed_sum_layout.o\

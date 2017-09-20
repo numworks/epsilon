@@ -341,8 +341,16 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLocation()-1);
     return true;
   }
+  if (event == Ion::Events::Origin && isEditing()) {
+    setCursorLocation(0);
+    return true;
+  }
   if (event == Ion::Events::Right && isEditing() && cursorLocation() < textLength()) {
     setCursorLocation(cursorLocation()+1);
+    return true;
+  }
+  if (event == Ion::Events::End && isEditing()) {
+    setCursorLocation(textLength());
     return true;
   }
   if (m_delegate->textFieldDidReceiveEvent(this, event)) {

@@ -128,4 +128,14 @@ QUIZ_CASE(poincare_complex_constructor) {
   b = new Complex<double>(Complex<double>::Polar(12.04159457879229548012824103, 1.4876550949));
   assert(std::fabs(b->a() - 1.0) < 0.0000000001 && std::fabs(b->b()-12.0) < 0.0000000001);
   delete b;
+
+  Complex<float> * c = new Complex<float>(Complex<float>::Cartesian(-2.0e20f, 2.0e20f));
+  assert(c->a() == -2.0e20f && c->b() == 2.0e20f);
+  assert(c->r() == 2.0e20f*(float)M_SQRT2 && c->th() == 3*(float)M_PI_4);
+  delete c;
+
+  Complex<double> * d = new Complex<double>(Complex<double>::Cartesian(1.0e155, -1.0e155));
+  assert(d->a() == 1.0e155 && d->b() == -1.0e155);
+  assert(d->r() == 1.0e155*M_SQRT2 && d->th() == -M_PI_4);
+  delete d;
 }

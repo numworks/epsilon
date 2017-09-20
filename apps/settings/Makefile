@@ -1,3 +1,6 @@
+snapshots += Settings::App::Snapshot
+snapshot_headers += apps/settings/app.h
+
 app_objs += $(addprefix apps/settings/,\
   app.o\
   main_controller.o\

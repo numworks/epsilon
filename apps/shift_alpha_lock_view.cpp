@@ -57,6 +57,7 @@ int ShiftAlphaLockView::numberOfSubviews() const {
     case Ion::Events::ShiftAlphaStatus::Default:
       return 0;
   }
+  return 0;
 }
 
 View * ShiftAlphaLockView::subviewAtIndex(int index) {

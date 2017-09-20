@@ -197,6 +197,12 @@ T Complex<T>::r() const {
 
 template <class T>
 T Complex<T>::th() const {
+  if (m_b == 0) {
+    return m_a < 0 ? M_PI : 0;
+  }
+  if (m_a == 0) {
+    return std::copysign((T)M_PI_2, m_b);
+  }
   T result = std::atan(m_b/m_a) + M_PI;
   if (m_a >= 0) {
     T a = m_a == 0 ? 0 : m_a;

@@ -180,4 +180,7 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   Complex<double> ak[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
   assert_parsed_expression_evaluates_to("root(-1,3)", ak);
+
+  Complex<double> al[1] = {Complex<double>::Float(0)};
+  assert_parsed_expression_evaluates_to("arg(0)", al);
 }

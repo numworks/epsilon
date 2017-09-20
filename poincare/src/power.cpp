@@ -45,6 +45,9 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   //     == e^((ln(c.r^d.a) + ln(e^(c.th*d.b*i^2)))  +  (ln(c.r)*d.b + c.th*d.a)*i)
   //     == e^(ln(c.r^d.a * e^(-c.th*d.b)))  *  e^((ln(c.r)*d.b + c.th*d.a)*i)
   //     == c.r^d.a*e^(-c.th*d.b) * e^((ln(c.r)*d.b + c.th*d.a)*i)
+  if (c.a() == 0 && c.b() == 0) { // ln(c.r) and c.th are undefined
+    return Complex<T>::Float(d.a() > 0 ? 0 : NAN);
+  }
   T radius = std::pow(c.r(), d.a()) * std::exp(-c.th() * d.b());
   T theta = std::log(c.r())*d.b() + c.th()*d.a();
   return Complex<T>::Polar(radius, theta);

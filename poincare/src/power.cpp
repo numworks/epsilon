@@ -34,19 +34,22 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 
 template<typename T>
 Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
-  if (d.b() != 0) {
-    /* First case c and d is complex */
-    if (c.b() != 0 || c.a() <= 0) {
-      return Complex<T>::Float(NAN);
-    }
-    /* Second case only d is complex */
-    T radius = std::pow(c.a(), d.a());
-    T theta = d.b()*std::log(c.a());
-    return Complex<T>::Polar(radius, theta);
+  // c == c.r * e^(c.th*i)
+  // d == d.a + d.b*i
+  // c^d == e^(ln(c^d))
+  //     == e^(ln(c) * d)
+  //     == e^(ln(c.r * e^(c.th*i))  *  (d.a + d.b*i))
+  //     == e^((ln(c.r) + ln(e^(c.th*i)))  *  (d.a + d.b*i))
+  //     == e^((ln(c.r) + c.th*i)  *  (d.a + d.b*i))
+  //     == e^(ln(c.r)*d.a + ln(c.r)*d.b*i + c.th*i*d.a + c.th*i*d.b*i)
+  //     == e^((ln(c.r^d.a) + ln(e^(c.th*d.b*i^2)))  +  (ln(c.r)*d.b + c.th*d.a)*i)
+  //     == e^(ln(c.r^d.a * e^(-c.th*d.b)))  *  e^((ln(c.r)*d.b + c.th*d.a)*i)
+  //     == c.r^d.a*e^(-c.th*d.b) * e^((ln(c.r)*d.b + c.th*d.a)*i)
+  if (c.a() == 0 && c.b() == 0) { // ln(c.r) and c.th are undefined
+    return Complex<T>::Float(d.a() > 0 ? 0 : NAN);
   }
-  /* Third case only c is complex */
-  T radius = std::pow(c.r(), d.a());
-  T theta = d.a()*c.th();
+  T radius = std::pow(c.r(), d.a()) * std::exp(-c.th() * d.b());
+  T theta = std::log(c.r())*d.b() + c.th()*d.a();
   return Complex<T>::Polar(radius, theta);
 }
 
@@ -86,4 +89,6 @@ template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrices(Ev
   return new Complex<T>(Complex<T>::Float(NAN));
 }
 
+template Complex<float> Power::compute<float>(Complex<float>, Complex<float>);
+template Complex<double> Power::compute<double>(Complex<double>, Complex<double>);
 }

@@ -1,3 +1,6 @@
+snapshots += Graph::App::Snapshot
+snapshot_headers += apps/graph/app.h
+
 app_objs += $(addprefix apps/graph/,\
   app.o\
   cartesian_function.o\

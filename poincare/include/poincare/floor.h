@@ -19,6 +19,7 @@ private:
     return templatedComputeComplex(c);
   }
   template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };
 
 }

@@ -161,10 +161,38 @@ T Complex<T>::b() const {
 
 template <class T>
 T Complex<T>::r() const {
+  // We want to avoid a^2 and b^2 which could both easily overflow.
+  // min, max = minmax(abs(a), abs(b)) (*minmax returns both arguments sorted*)
+  // abs(a + bi) == sqrt(a^2 + b^2)
+  //             == sqrt(abs(a)^2 + abs(b)^2)
+  //             == sqrt(min^2 + max^2)
+  //             == sqrt((min^2 + max^2) * max^2/max^2)
+  //             == sqrt((min^2 + max^2) / max^2)*sqrt(max^2)
+  //             == sqrt(min^2/max^2 + 1) * max
+  //             == sqrt((min/max)^2 + 1) * max
+  // min >= 0 &&
+  // max >= 0 &&
+  // min <= max => min/max <= 1
+  //            => (min/max)^2 <= 1
+  //            => (min/max)^2 + 1 <= 2
+  //            => sqrt((min/max)^2 + 1) <= sqrt(2)
+  // So the calculation is guaranteed to not overflow until the final multiply.
+  // If (min/max)^2 underflows then min doesn't contribute anything significant
+  // compared to max, and the formula reduces to simply max as it should.
+  // We do need to be careful about the case where a == 0 && b == 0 which would
+  // cause a division by zero.
+  T min = std::fabs(m_a);
   if (m_b == 0) {
-    return std::fabs(m_a);
+    return min;
   }
-  return std::sqrt(m_a*m_a + m_b*m_b);
+  T max = std::fabs(m_b);
+  if (max < min) {
+    T temp = min;
+    min = max;
+    max = temp;
+  }
+  T temp = min/max;
+  return std::sqrt(temp*temp + 1) * max;
 }
 
 template <class T>

@@ -1,17 +1,17 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/function.h>
+#include <poincare/static_hierarchy.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
 
-class Integral : public Function {
+class Integral : public StaticHierarchy<3> {
+  using StaticHierarchy<3>::StaticHierarchy;
 public:
-  Integral();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  bool isCommutative() const override;
 private:
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }

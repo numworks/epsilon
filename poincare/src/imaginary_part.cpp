@@ -7,25 +7,21 @@ extern "C" {
 
 namespace Poincare {
 
-ImaginaryPart::ImaginaryPart() :
-  Function("im")
-{
-}
-
 Expression::Type ImaginaryPart::type() const {
   return Type::ImaginaryPart;
 }
 
-Expression * ImaginaryPart::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ImaginaryPart * ip = new ImaginaryPart();
-  ip->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return ip;
+Expression * ImaginaryPart::clone() const {
+  ImaginaryPart * a = new ImaginaryPart(m_operands, true);
+  return a;
+}
+
+bool ImaginaryPart::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> ImaginaryPart::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> ImaginaryPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.b());
 }
 

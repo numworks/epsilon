@@ -14,13 +14,11 @@ public:
   Store(Store&& other) = delete;
   Store& operator=(const Store& other) = delete;
   Store& operator=(Store&& other) = delete;
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
+  Expression * clone() const override;
+  bool isCommutative() const override;
   const Expression * operand(int i) const override;
   int numberOfOperands() const override;
-  Expression * clone() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

@@ -9,21 +9,17 @@ extern "C" {
 
 namespace Poincare {
 
-Derivative::Derivative() :
-  Function("diff", 2)
-{
-}
-
 Expression::Type Derivative::type() const {
   return Type::Derivative;
 }
 
-Expression * Derivative::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Derivative * d = new Derivative();
-  d->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return d;
+Expression * Derivative::clone() const {
+  Derivative * a = new Derivative(m_operands, true);
+  return a;
+}
+
+bool Derivative::isCommutative() const {
+  return false;
 }
 
 template<typename T>
@@ -31,13 +27,13 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Symbol xSymbol = Symbol('x');
-  Evaluation<T> * xInput = m_args[1]->evaluate<T>(context, angleUnit);
+  Symbol xSymbol('x');
+  Evaluation<T> * xInput = operand(1)->evaluate<T>(context, angleUnit);
   T x = xInput->toScalar();
   delete xInput;
   Complex<T> e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = m_args[1]->evaluate<T>(xContext, angleUnit);
+  Evaluation<T> * fInput = operand(1)->evaluate<T>(xContext, angleUnit);
   T functionValue = fInput->toScalar();
   delete fInput;
 
@@ -112,15 +108,15 @@ Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleU
 
 template<typename T>
 T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
-  Symbol xSymbol = Symbol('x');
+  Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = m_args[0]->evaluate<T>(xContext, angleUnit);
+  Evaluation<T> * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionPlus = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = m_args[0]->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionMinus = fInput->toScalar();
   delete fInput;
   return (expressionPlus - expressionMinus)/(2*h);
@@ -128,20 +124,20 @@ T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, An
 
 template<typename T>
 T Derivative::approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
-  Symbol xSymbol = Symbol('x');
+  Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = m_args[0]->evaluate<T>(xContext, angleUnit);
+  Evaluation<T> * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionPlus = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = m_args[0]->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expression = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = m_args[0]->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionMinus = fInput->toScalar();
   delete fInput;
   return expressionPlus - 2.0*expression + expressionMinus;

@@ -8,27 +8,23 @@ extern "C" {
 
 namespace Poincare {
 
-GreatCommonDivisor::GreatCommonDivisor() :
-  Function("gcd", 2)
-{
-}
-
 Expression::Type GreatCommonDivisor::type() const {
   return Type::GreatCommonDivisor;
 }
 
-Expression * GreatCommonDivisor::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  GreatCommonDivisor * gcd = new GreatCommonDivisor();
-  gcd->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return gcd;
+Expression * GreatCommonDivisor::clone() const {
+  GreatCommonDivisor * a = new GreatCommonDivisor(m_operands, true);
+  return a;
+}
+
+bool GreatCommonDivisor::isCommutative() const {
+  return true;
 }
 
 template<typename T>
 Evaluation<T> * GreatCommonDivisor::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * f2Input = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * f2Input = operand(1)->evaluate<T>(context, angleUnit);
   T f1 = f1Input->toScalar();
   T f2 = f2Input->toScalar();
   delete f1Input;

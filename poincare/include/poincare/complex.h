@@ -31,16 +31,23 @@ public:
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
-  T toScalar() const override;
-  const Complex<T> * operand(int i) const override {
-    return complexOperand(i);
-  }
-  int numberOfRows() const override;
-  int numberOfColumns() const override;
+
+  T a() const;
+  T b() const;
+  T r() const;
+  T th() const;
+  Complex<T> conjugate() const;
+
+  /* Expression */
   Expression::Type type() const override;
   Complex<T> * clone() const override;
-  Evaluation<T> * cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
+  bool isCommutative() const override;
+  bool hasValidNumberOfArguments() const override;
+
+  /* Evaluation */
+  T toScalar() const override;
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Evaluation<T> * createDeterminant() const override {
     return clone();
@@ -49,11 +56,6 @@ public:
   Evaluation<T> * createTrace() const override {
     return clone();
   }
-  T a() const;
-  T b() const;
-  T r() const;
-  T th() const;
-  Complex<T> conjugate() const;
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches

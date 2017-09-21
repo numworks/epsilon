@@ -7,25 +7,21 @@ extern "C" {
 
 namespace Poincare {
 
-FracPart::FracPart() :
-  Function("frac")
-{
-}
-
 Expression::Type FracPart::type() const {
   return Type::FracPart;
 }
 
-Expression * FracPart::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  FracPart * fp = new FracPart();
-  fp->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return fp;
+Expression * FracPart::clone() const {
+  FracPart * c = new FracPart(m_operands, true);
+  return c;
+}
+
+bool FracPart::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> FracPart::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> FracPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

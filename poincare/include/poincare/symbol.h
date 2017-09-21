@@ -1,11 +1,11 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/leaf_expression.h>
+#include <poincare/static_hierarchy.h>
 
 namespace Poincare {
 
-class Symbol : public LeafExpression {
+class Symbol : public StaticHierarchy<0> {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -30,13 +30,14 @@ public:
   };
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
-  Type type() const override;
+  Symbol(Symbol&& other); // C++11 move constructor
   char name() const;
+  Type type() const override;
   Expression * clone() const override;
   bool isMatrixSymbol() const;
+  bool isCommutative() const override;
 private:
-  bool valueEquals(const Expression * e) const override;
-  bool valueGreaterThan(const Expression * e) const override;
+  int nodeComparesTo(const Expression * e) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;

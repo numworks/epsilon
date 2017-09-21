@@ -7,26 +7,22 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixTrace::MatrixTrace() :
-  Function("trace")
-{
-}
-
 Expression::Type MatrixTrace::type() const {
   return Type::MatrixTrace;
 }
 
-Expression * MatrixTrace::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  MatrixTrace * t = new MatrixTrace();
-  t->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return t;
+Expression * MatrixTrace::clone() const {
+  MatrixTrace * a = new MatrixTrace(m_operands, true);
+  return a;
+}
+
+bool MatrixTrace::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
   Evaluation<T> * result = input->createTrace();
   delete input;
   return result;

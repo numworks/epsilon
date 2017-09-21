@@ -1,7 +1,7 @@
 #ifndef POINCARE_INTEGER_H
 #define POINCARE_INTEGER_H
 
-#include <poincare/leaf_expression.h>
+#include <poincare/static_hierarchy.h>
 #include <stdint.h>
 
 typedef int32_t native_int_t;
@@ -10,11 +10,10 @@ typedef uint64_t double_native_uint_t;
 
 namespace Poincare {
 
-class Integer : public LeafExpression {
+class Integer : public StaticHierarchy<0> {
 public:
   Integer(native_int_t i);
   Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
-  Type type() const override;
 
   ~Integer();
   Integer(Integer&& other); // C++11 move constructor
@@ -31,10 +30,12 @@ public:
   bool operator<(const Integer &other) const;
   bool operator==(const Integer &other) const;
 
+  /* Expression */
+  Type type() const override;
   Expression * clone() const override;
+  bool isCommutative() const override;
 private:
-  bool valueEquals(const Expression * e) const override;
-  bool valueGreaterThan(const Expression * e) const override;
+  int nodeComparesTo(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;

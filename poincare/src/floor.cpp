@@ -7,25 +7,21 @@ extern "C" {
 
 namespace Poincare {
 
-Floor::Floor() :
-  Function("floor")
-{
-}
-
 Expression::Type Floor::type() const {
   return Type::Floor;
 }
 
-Expression * Floor::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Floor * f = new Floor();
-  f->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return f;
+Expression * Floor::clone() const {
+  Floor * c = new Floor(m_operands, true);
+  return c;
+}
+
+bool Floor::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> Floor::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> Floor::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

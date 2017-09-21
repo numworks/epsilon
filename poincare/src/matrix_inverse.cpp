@@ -9,26 +9,22 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixInverse::MatrixInverse() :
-  Function("inverse")
-{
-}
-
 Expression::Type MatrixInverse::type() const {
   return Type::MatrixInverse;
 }
 
-Expression * MatrixInverse::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  MatrixInverse * i = new MatrixInverse();
-  i->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return i;
+Expression * MatrixInverse::clone() const {
+  MatrixInverse * a = new MatrixInverse(m_operands, true);
+  return a;
+}
+
+bool MatrixInverse::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * MatrixInverse::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
   Evaluation<T> * result = input->createInverse();
   delete input;
   return result;

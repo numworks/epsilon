@@ -12,30 +12,26 @@ extern "C" {
 
 namespace Poincare {
 
-Tangent::Tangent() :
-  Function("tan")
-{
-}
-
-Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Tangent * t = new Tangent();
-  t->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return t;
-}
-
 Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
+Expression * Tangent::clone() const {
+  Tangent * a = new Tangent(m_operands, true);
+  return a;
+}
+
+bool Tangent::isCommutative() const {
+  return false;
+}
+
 template<typename T>
-Complex<T> Tangent::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
-  Complex<T> result = Fraction::compute(Sine::compute(c, angleUnit), Cosine::compute(c, angleUnit));
+Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  Complex<T> result = Fraction::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
   if (!isnan(result.a()) && !isnan(result.b())) {
     return result;
   }
-  Complex<T> tanh = HyperbolicTangent::compute(Multiplication::compute(Complex<T>::Cartesian(0, -1), c));
+  Complex<T> tanh = HyperbolicTangent::computeOnComplex(Multiplication::compute(Complex<T>::Cartesian(0, -1), c), angleUnit);
   return Multiplication::compute(Complex<T>::Cartesian(0, 1), tanh);
 }
 

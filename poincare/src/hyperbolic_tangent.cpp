@@ -10,29 +10,26 @@ extern "C" {
 
 namespace Poincare {
 
-HyperbolicTangent::HyperbolicTangent() :
-  Function("tanh")
-{
-}
-
 Expression::Type HyperbolicTangent::type() const {
   return Type::HyperbolicTangent;
 }
 
-Expression * HyperbolicTangent::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  HyperbolicTangent * ht = new HyperbolicTangent();
-  ht->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return ht;
+Expression * HyperbolicTangent::clone() const {
+  HyperbolicTangent * a = new HyperbolicTangent(m_operands, true);
+  return a;
+}
+
+bool HyperbolicTangent::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> HyperbolicTangent::compute(const Complex<T> c) {
+Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     return Complex<T>::Float(std::tanh(c.a()));
   }
-  Complex<T> arg1 = HyperbolicSine::compute(c);
-  Complex<T> arg2 = HyperbolicCosine::compute(c);
+  Complex<T> arg1 = HyperbolicSine::computeOnComplex(c, angleUnit);
+  Complex<T> arg2 = HyperbolicCosine::computeOnComplex(c, angleUnit);
   return Fraction::compute(arg1, arg2);
 }
 

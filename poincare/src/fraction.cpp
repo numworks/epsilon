@@ -10,21 +10,16 @@ extern "C" {
 
 namespace Poincare {
 
-Expression * Fraction::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands >= 2);
-  assert(newOperands != nullptr);
-  return new Fraction(newOperands, numberOfOperands, cloneOperands);
-}
-
-ExpressionLayout * Fraction::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new FractionLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat), m_operands[1]->createLayout(floatDisplayMode, complexFormat));
-}
-
 Expression::Type Fraction::type() const {
   return Type::Fraction;
+}
+
+Expression * Fraction::clone() const {
+  return new Fraction(m_operands, true);
+}
+
+bool Fraction::isCommutative() const {
+  return false;
 }
 
 template<typename T>
@@ -40,14 +35,14 @@ Complex<T> Fraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian((c.a()*d.a()+c.b()*d.b())/norm, (d.a()*c.b()-c.a()*d.b())/norm);
 }
 
-template<typename T> Evaluation<T> * Fraction::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * n) const {
+template<typename T> Evaluation<T> * Fraction::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n) {
   Evaluation<T> * inverse = n->createInverse();
   Evaluation<T> * result = Multiplication::computeOnComplexAndMatrix(c, inverse);
   delete inverse;
   return result;
 }
 
-template<typename T> Evaluation<T> * Fraction::templatedComputeOnComplexMatrices(Evaluation<T> * m, Evaluation<T> * n) const {
+template<typename T> Evaluation<T> * Fraction::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
   if (m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }
@@ -55,6 +50,12 @@ template<typename T> Evaluation<T> * Fraction::templatedComputeOnComplexMatrices
   Evaluation<T> * result = Multiplication::computeOnMatrices(m, inverse);
   delete inverse;
   return result;
+}
+
+ExpressionLayout * Fraction::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new FractionLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

@@ -32,7 +32,7 @@
 class AppsContainer : public Container {
 public:
   AppsContainer();
-  static bool poincareCircuitBreaker(const Poincare::Expression * e);
+  static bool poincareCircuitBreaker();
   int numberOfApps();
   App::Snapshot * appSnapshotAtIndex(int index);
   App::Snapshot * hardwareTestAppSnapshot();

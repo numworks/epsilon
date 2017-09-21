@@ -9,24 +9,25 @@ extern "C" {
 namespace Poincare {
 
 Factorial::Factorial(Expression * argument, bool clone) :
-  Function("fact")
+  StaticHierarchy<1>(&argument, clone)
 {
-  setArgument(&argument, 1, clone);
 }
 
 Expression::Type Factorial::type() const {
   return Type::Factorial;
 }
 
-Expression * Factorial::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Factorial * f = new Factorial(newOperands[0], cloneOperands);
-  return f;
+Expression * Factorial::clone() const {
+  Factorial * a = new Factorial(m_operands[0], true);
+  return a;
+}
+
+bool Factorial::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> Factorial::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   T n = c.a();
   if (c.b() != 0 || isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Float(NAN);
@@ -45,7 +46,7 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new StringLayout("!", 1);
   return new HorizontalLayout(childrenLayouts, 2);
 }

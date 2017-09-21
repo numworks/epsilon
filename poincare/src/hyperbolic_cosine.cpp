@@ -11,25 +11,21 @@ extern "C" {
 
 namespace Poincare {
 
-HyperbolicCosine::HyperbolicCosine() :
-  Function("cosh")
-{
-}
-
 Expression::Type HyperbolicCosine::type() const {
   return Type::HyperbolicCosine;
 }
 
-Expression * HyperbolicCosine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  HyperbolicCosine * hc = new HyperbolicCosine();
-  hc->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return hc;
+Expression * HyperbolicCosine::clone() const {
+  HyperbolicCosine * a = new HyperbolicCosine(m_operands, true);
+  return a;
+}
+
+bool HyperbolicCosine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> HyperbolicCosine::compute(const Complex<T> c) {
+Complex<T> HyperbolicCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     return Complex<T>::Float(std::cosh(c.a()));
   }

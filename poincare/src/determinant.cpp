@@ -1,5 +1,6 @@
 #include <poincare/determinant.h>
 #include <poincare/matrix.h>
+#include <poincare/evaluation.h>
 extern "C" {
 #include <assert.h>
 }
@@ -7,27 +8,23 @@ extern "C" {
 
 namespace Poincare {
 
-Determinant::Determinant() :
-  Function("det")
-{
-}
-
 Expression::Type Determinant::type() const {
   return Type::Determinant;
 }
 
-Expression * Determinant::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Determinant * d = new Determinant();
-  d->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return d;
+Expression * Determinant::clone() const {
+  Determinant * a = new Determinant(m_operands, true);
+  return a;
+}
+
+bool Determinant::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
 
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
   Evaluation<T> * result = input->createDeterminant();
   delete input;
   return result;

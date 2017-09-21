@@ -15,11 +15,6 @@ extern "C" {
 namespace Poincare {
 
 template<typename T>
-bool Evaluation<T>::hasValidNumberOfArguments() const {
-  return true;
-}
-
-template<typename T>
 const Expression * Evaluation<T>::operand(int i) const {
   return complexOperand(i);
 }

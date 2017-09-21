@@ -1,27 +1,39 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/commutative_operation.h>
+#include <poincare/dynamic_hierarchy.h>
+#include <poincare/layout_engine.h>
+#include <poincare/evaluation_engine.h>
 
 namespace Poincare {
 
-class Addition : public CommutativeOperation {
-  using CommutativeOperation::CommutativeOperation;
+class Addition : public DynamicHierarchy {
+  using DynamicHierarchy::DynamicHierarchy;
 public:
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression** newOperands,
-      int numnerOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  bool isCommutative() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-  template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
-  template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m);
+  template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
+    return EvaluationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
+  }
+  template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
 private:
-  Complex<float> privateCompute(const Complex<float> c, const Complex<float> d) const override {
-    return compute(c, d);
+  template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
-  Complex<double> privateCompute(const Complex<double> c, const Complex<double> d) const override {
-    return compute(c, d);
+  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  char operatorChar() const override;
+  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  }
+
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "+");
+  }
 };
 
 }

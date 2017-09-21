@@ -39,7 +39,9 @@ Integer::Integer(Integer&& other) {
   other.m_digits = NULL;
 }
 
-Integer::Integer(native_int_t i) {
+Integer::Integer(native_int_t i) :
+  StaticHierarchy<0>()
+{
   assert(sizeof(native_int_t) <= sizeof(native_uint_t));
   m_negative = (i<0);
   m_numberOfDigits = 1;
@@ -85,6 +87,7 @@ Integer::~Integer() {
 // Private methods
 
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
+  StaticHierarchy<0>(),
   m_digits(digits),
   m_numberOfDigits(numberOfDigits),
   m_negative(negative) {
@@ -250,6 +253,10 @@ Integer Integer::divide_by(const Integer &other) const {
   return Division(*this, other).m_quotient;
 }
 
+Expression::Type Integer::type() const {
+  return Type::Integer;
+}
+
 Expression * Integer::clone() const {
   Integer * clone = new Integer((native_int_t)0);
   clone->m_numberOfDigits = m_numberOfDigits;
@@ -260,6 +267,10 @@ Expression * Integer::clone() const {
     clone->m_digits[i] = m_digits[i];
   }
   return clone;
+}
+
+bool Integer::isCommutative() const {
+  return false;
 }
 
 Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
@@ -395,10 +406,6 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
   return new Complex<double>(Complex<double>::Float(double_result));
 }
 
-Expression::Type Integer::type() const {
-  return Type::Integer;
-}
-
 ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -437,14 +444,19 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   return new StringLayout(buffer, size);
 }
 
-bool Integer::valueEquals(const Expression * e) const {
+int Integer::nodeComparesTo(const Expression * e) const {
+  int typeComparison = Expression::nodeComparesTo(e);
+  if (typeComparison != 0) {
+    return typeComparison;
+  }
   assert(e->type() == Type::Integer);
-  return (*this == *(Integer *)e); // FIXME: Remove operator overloading
-}
-
-bool Integer::valueGreaterThan(const Expression * e) const {
-  assert(e->type() == Type::Integer);
-  return (*(Integer *)e < *this); // FIXME: Remove operator overloading
+  if (*this == *(Integer *)e) {
+    return 0;
+  }
+  if (*(Integer *)e < *this) {
+    return 1;
+  }
+  return -1;
 }
 
 }

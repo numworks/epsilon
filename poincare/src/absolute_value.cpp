@@ -9,32 +9,28 @@ extern "C" {
 
 namespace Poincare {
 
-AbsoluteValue::AbsoluteValue() :
-  Function("abs")
-{
-}
-
 Expression::Type AbsoluteValue::type() const {
   return Type::AbsoluteValue;
 }
 
-Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  AbsoluteValue * a = new AbsoluteValue();
-  a->setArgument(newOperands, numberOfOperands, cloneOperands);
+Expression * AbsoluteValue::clone() const {
+  AbsoluteValue * a = new AbsoluteValue(m_operands, true);
   return a;
 }
 
+bool AbsoluteValue::isCommutative() const {
+  return false;
+}
+
 template<typename T>
-Complex<T> AbsoluteValue::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.r());
 }
 
 ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new AbsoluteValueLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat));
+  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

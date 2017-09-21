@@ -6,25 +6,22 @@ extern "C" {
 
 namespace Poincare {
 
-HyperbolicArcSine::HyperbolicArcSine() :
-  Function("asinh")
-{
-}
-
 Expression::Type HyperbolicArcSine::type() const {
   return Type::HyperbolicArcSine;
 }
 
-Expression * HyperbolicArcSine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  HyperbolicArcSine * s = new HyperbolicArcSine();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * HyperbolicArcSine::clone() const {
+  HyperbolicArcSine * a = new HyperbolicArcSine(m_operands, true);
+  return a;
+}
+
+
+bool HyperbolicArcSine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> HyperbolicArcSine::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> HyperbolicArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

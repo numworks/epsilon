@@ -19,8 +19,7 @@ void CartesianFunction::setDisplayDerivative(bool display) {
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
   Poincare::Complex<double> abscissa = Poincare::Complex<double>::Float(x);
   Poincare::Expression * args[2] = {expression(), &abscissa};
-  Poincare::Derivative derivative;
-  derivative.setArgument(args, 2, true);
+  Poincare::Derivative derivative(args, true);
   return derivative.approximate<double>(*context);
 }
 

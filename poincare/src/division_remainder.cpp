@@ -1,4 +1,5 @@
 #include <poincare/division_remainder.h>
+#include <poincare/complex.h>
 
 extern "C" {
 #include <assert.h>
@@ -7,27 +8,23 @@ extern "C" {
 
 namespace Poincare {
 
-DivisionRemainder::DivisionRemainder() :
-  Function("rem", 2)
-{
-}
-
 Expression::Type DivisionRemainder::type() const {
   return Type::DivisionRemainder;
 }
 
-Expression * DivisionRemainder::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  DivisionRemainder * dr = new DivisionRemainder();
-  dr->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return dr;
+Expression * DivisionRemainder::clone() const {
+  DivisionRemainder * a = new DivisionRemainder(m_operands, true);
+  return a;
+}
+
+bool DivisionRemainder::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * DivisionRemainder::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * f2Input = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * f2Input = operand(1)->evaluate<T>(context, angleUnit);
   T f1 = f1Input->toScalar();
   T f2 = f2Input->toScalar();
   delete f1Input;

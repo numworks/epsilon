@@ -77,7 +77,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   }
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     if (m_currentPage == Page::Scalar) {
-      const Symbol symbol = Symbol('A'+selectedRow());
+      const Symbol symbol('A'+selectedRow());
       m_context->setExpressionForSymbolName(nullptr, &symbol);
     }
     if (m_currentPage == Page::Matrix) {

@@ -28,10 +28,6 @@ Store::~Store() {
   delete m_value;
 }
 
-bool Store::hasValidNumberOfArguments() const {
-  return m_value->hasValidNumberOfArguments();
-}
-
 Expression::Type Store::type() const {
   return Type::Store;
 }
@@ -48,17 +44,11 @@ int Store::numberOfOperands() const {
 }
 
 Expression * Store::clone() const {
-  Expression * newOperands[2];
-  newOperands[0] = m_symbol;
-  newOperands[1] = m_value;
-  return this->cloneWithDifferentOperands(newOperands, 2, true);
+  return new Store(m_symbol, m_value, true);
 }
 
-Expression * Store::cloneWithDifferentOperands(Expression ** newOperands, int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands == 2);
-  assert(newOperands != nullptr);
-  assert(newOperands[0]->type() == Type::Symbol);
-  return new Store((Symbol *)newOperands[0], newOperands[1], cloneOperands);
+bool Store::isCommutative() const {
+  return false;
 }
 
 ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

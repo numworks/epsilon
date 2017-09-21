@@ -105,50 +105,6 @@ Complex<T>::Complex(const char * integralPart, int integralPartLength, bool inte
   m_b = 0;
 }
 
-template<typename T>
-T Complex<T>::toScalar() const {
-  if (m_b != 0) {
-    return NAN;
-  }
-  return m_a;
-}
-
-template<typename T>
-int Complex<T>::numberOfRows() const {
-  return 1;
-}
-
-template<typename T>
-int Complex<T>::numberOfColumns() const {
-  return 1;
-}
-
-template<typename T>
-Expression::Type Complex<T>::type() const {
-  return Expression::Type::Complex;
-}
-
-template <class T>
-Complex<T> * Complex<T>::clone() const {
-  return new Complex<T>(*this);
-}
-
-template <class T>
-Evaluation<T> * Complex<T>::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  return this->clone();
-}
-
-template <class T>
-int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
-}
-
-template <class T>
-Evaluation<T> * Complex<T>::createInverse() const {
-  return new Complex<T>(Cartesian(1/m_a, -1/m_b));
-}
-
 template <class T>
 T Complex<T>::a() const {
   return m_a;
@@ -183,6 +139,54 @@ T Complex<T>::th() const {
 template <class T>
 Complex<T> Complex<T>::conjugate() const {
   return Cartesian(m_a, -m_b);
+}
+
+template<typename T>
+Expression::Type Complex<T>::type() const {
+  return Expression::Type::Complex;
+}
+
+template <class T>
+Complex<T> * Complex<T>::clone() const {
+  return new Complex<T>(*this);
+}
+
+template <class T>
+bool Complex<T>::isCommutative() const {
+  return false;
+}
+
+template<typename T>
+bool Complex<T>:: hasValidNumberOfArguments() const {
+  return true;
+}
+
+template<typename T>
+T Complex<T>::toScalar() const {
+  if (m_b != 0) {
+    return NAN;
+  }
+  return m_a;
+}
+
+template<typename T>
+int Complex<T>::numberOfRows() const {
+  return 1;
+}
+
+template<typename T>
+int Complex<T>::numberOfColumns() const {
+  return 1;
+}
+
+template <class T>
+int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
+}
+
+template <class T>
+Evaluation<T> * Complex<T>::createInverse() const {
+  return new Complex<T>(Cartesian(1/m_a, -1/m_b));
 }
 
 template <class T>

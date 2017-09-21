@@ -1,29 +1,25 @@
 #ifndef POINCARE_LOGARITHM_H
 #define POINCARE_LOGARITHM_H
 
-#include <poincare/function.h>
+#include <poincare/layout_engine.h>
+#include <poincare/bounded_static_hierarchy.h>
+#include <poincare/evaluation_engine.h>
 
 namespace Poincare {
 
-class Logarithm : public Function {
+class Logarithm : public BoundedStaticHierarchy<2>  {
+  using BoundedStaticHierarchy<2>::BoundedStaticHierarchy;
 public:
-  Logarithm();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  bool isCommutative() const override;
 private:
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
-  }
-  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
-  }
-  template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
+
 };
 
 }

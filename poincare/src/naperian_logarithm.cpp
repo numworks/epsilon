@@ -10,25 +10,21 @@ extern "C" {
 
 namespace Poincare {
 
-NaperianLogarithm::NaperianLogarithm() :
-  Function("ln")
-{
-}
-
 Expression::Type NaperianLogarithm::type() const {
   return Type::NaperianLogarithm;
 }
 
-Expression * NaperianLogarithm::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  NaperianLogarithm * l = new NaperianLogarithm();
-  l->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return l;
+Expression * NaperianLogarithm::clone() const {
+  NaperianLogarithm * a = new NaperianLogarithm(m_operands, true);
+  return a;
+}
+
+bool NaperianLogarithm::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> NaperianLogarithm::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

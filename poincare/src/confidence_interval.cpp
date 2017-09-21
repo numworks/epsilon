@@ -1,6 +1,7 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/matrix.h>
-#include <poincare/evaluation.h>
+#include <poincare/complex_matrix.h>
+#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,27 +9,23 @@ extern "C" {
 
 namespace Poincare {
 
-ConfidenceInterval::ConfidenceInterval() :
-  Function("confidence", 2)
-{
-}
-
 Expression::Type ConfidenceInterval::type() const {
   return Type::ConfidenceInterval;
 }
 
-Expression * ConfidenceInterval::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ConfidenceInterval * ci = new ConfidenceInterval();
-  ci->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return ci;
+Expression * ConfidenceInterval::clone() const {
+  ConfidenceInterval * a = new ConfidenceInterval(m_operands, true);
+  return a;
+}
+
+bool ConfidenceInterval::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * fInput = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * nInput = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * fInput = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * nInput = operand(1)->evaluate<T>(context, angleUnit);
   T f = fInput->toScalar();
   T n = nInput->toScalar();
   delete fInput;

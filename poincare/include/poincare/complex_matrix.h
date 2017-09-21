@@ -6,7 +6,7 @@
 namespace Poincare {
 
 template<typename T>
-class ComplexMatrix : public Evaluation<T> {
+class ComplexMatrix : public Evaluation<T>  {
 public:
   ComplexMatrix(const Complex<T> * complexes, int numberOfRows, int numberOfColumns);
   ~ComplexMatrix();
@@ -14,14 +14,21 @@ public:
   ComplexMatrix(ComplexMatrix&& other) = delete;
   ComplexMatrix& operator=(const ComplexMatrix& other) = delete;
   ComplexMatrix& operator=(ComplexMatrix&& other) = delete;
+
+  /* Expression */
   Expression::Type type() const override;
+  ComplexMatrix<T> * clone() const override;
+  bool isCommutative() const override;
+
+  /* Evaluation */
   T toScalar() const override;
-  const Complex<T> * complexOperand(int i) const override;
   int numberOfRows() const override;
   int numberOfColumns() const override;
-  ComplexMatrix<T> * clone() const override;
-  ComplexMatrix<T> * cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
+  const Complex<T> * complexOperand(int i) const override;
+  /* If the buffer is too small, the function fills the buffer until reaching
+   * buffer size */
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+
   static Evaluation<T> * createIdentity(int dim);
 private:
   Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

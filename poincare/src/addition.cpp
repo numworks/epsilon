@@ -4,9 +4,6 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
-#include "layout/parenthesis_layout.h"
 
 namespace Poincare {
 
@@ -14,30 +11,17 @@ Expression::Type Addition::type() const {
   return Type::Addition;
 }
 
+Expression * Addition::clone() const {
+  return new Addition(m_operands, m_numberOfOperands, true);
+}
+
+bool Addition::isCommutative() const {
+  return true;
+}
+
 template<typename T>
 Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
-}
-
-template<typename T>
-Evaluation<T> * Addition::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
-  Addition a;
-  return a.computeOnComplexMatrices(m,n);
-}
-
-template<typename T>
-Evaluation<T> * Addition::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
-  Addition a;
-  return a.computeOnComplexAndComplexMatrix(c,m);
-}
-
-Expression * Addition::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  return new Addition(newOperands, numberOfOperands, cloneOperands);
-}
-
-char Addition::operatorChar() const {
-  return '+';
 }
 
 template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);

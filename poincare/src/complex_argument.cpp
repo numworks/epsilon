@@ -8,25 +8,21 @@ extern "C" {
 
 namespace Poincare {
 
-ComplexArgument::ComplexArgument() :
-  Function("arg")
-{
-}
-
 Expression::Type ComplexArgument::type() const {
   return Type::ComplexArgument;
 }
 
-Expression * ComplexArgument::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ComplexArgument * ca = new ComplexArgument();
-  ca->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return ca;
+Expression * ComplexArgument::clone() const {
+  ComplexArgument * a = new ComplexArgument(m_operands, true);
+  return a;
+}
+
+bool ComplexArgument::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> ComplexArgument::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> ComplexArgument::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.th());
 }
 

@@ -1,13 +1,14 @@
 #ifndef POINCARE_SEQUENCE_H
 #define POINCARE_SEQUENCE_H
 
-#include <poincare/function.h>
+#include <poincare/layout_engine.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/evaluation_engine.h>
 
 namespace Poincare {
 
-class Sequence : public Function {
-public:
-  Sequence(const char * name);
+class Sequence : public StaticHierarchy<3>  {
+  using StaticHierarchy<3>::StaticHierarchy;
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;

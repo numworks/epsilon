@@ -12,37 +12,21 @@ extern "C" {
 
 namespace Poincare {
 
-Logarithm::Logarithm() :
-  Function("log", 2)
-{
-}
-
-bool Logarithm::hasValidNumberOfArguments() const {
-  if (m_numberOfArguments != 1 && m_numberOfArguments != 2) {
-    return false;
-  }
-  for (int i = 0; i < m_numberOfArguments; i++) {
-    if (!m_args[i]->hasValidNumberOfArguments()) {
-      return false;
-    }
-  }
-  return true;
-}
-
 Expression::Type Logarithm::type() const {
   return Type::Logarithm;
 }
 
-Expression * Logarithm::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Logarithm * l = new Logarithm();
-  l->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return l;
+Expression * Logarithm::clone() const {
+  Logarithm * a = new Logarithm(m_operands, true);
+  return a;
+}
+
+bool Logarithm::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> Logarithm::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }
@@ -51,15 +35,15 @@ Complex<T> Logarithm::templatedComputeComplex(const Complex<T> c) const {
 
 template<typename T>
 Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  if (m_numberOfArguments == 1) {
-    return Function::templatedEvaluate<T>(context, angleUnit);
+  if (m_numberOfOperands == 1) {
+    return EvaluationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
-  Evaluation<T> * x = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * n = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * x = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * n = operand(1)->evaluate<T>(context, angleUnit);
   if (x->numberOfRows() != 1 || x->numberOfColumns() != 1 || n->numberOfRows() != 1 || n->numberOfColumns() != 1) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex<T> result = Fraction::compute<T>(templatedComputeComplex(*(n->complexOperand(0))), templatedComputeComplex(*(x->complexOperand(0))));
+  Complex<T> result = Fraction::compute<T>(computeOnComplex(*(n->complexOperand(0)), angleUnit), computeOnComplex(*(x->complexOperand(0)), angleUnit));
   delete x;
   delete n;
   return new Complex<T>(result);
@@ -68,12 +52,12 @@ Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUn
 ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  if (m_numberOfArguments == 1) {
-    return Function::privateCreateLayout(floatDisplayMode, complexFormat);
+  if (m_numberOfOperands == 1) {
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout(m_name, strlen(m_name)), m_args[0]->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(m_args[1]->createLayout(floatDisplayMode, complexFormat));
+  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout("log", strlen("log")), operand(0)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
+  childrenLayouts[1] = new ParenthesisLayout(operand(1)->createLayout(floatDisplayMode, complexFormat));
   return new HorizontalLayout(childrenLayouts, 2);
 }
 

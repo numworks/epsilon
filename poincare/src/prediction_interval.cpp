@@ -1,5 +1,7 @@
 #include <poincare/prediction_interval.h>
 #include <poincare/matrix.h>
+#include <poincare/complex_matrix.h>
+#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 }
@@ -7,27 +9,23 @@ extern "C" {
 
 namespace Poincare {
 
-PredictionInterval::PredictionInterval() :
-  Function("prediction95", 2)
-{
-}
-
 Expression::Type PredictionInterval::type() const {
   return Type::PredictionInterval;
 }
 
-Expression * PredictionInterval::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  PredictionInterval * pi = new PredictionInterval();
-  pi->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return pi;
+Expression * PredictionInterval::clone() const {
+  PredictionInterval * a = new PredictionInterval(m_operands, true);
+  return a;
+}
+
+bool PredictionInterval::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * PredictionInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * pInput = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * nInput = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * pInput = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * nInput = operand(1)->evaluate<T>(context, angleUnit);
   T p = pInput->toScalar();
   T n = nInput->toScalar();
   delete pInput;

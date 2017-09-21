@@ -6,11 +6,11 @@
 namespace Poincare {
 
 class Product : public Sequence {
+  using Sequence::Sequence;
 public:
-  Product();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  bool isCommutative() const override;
 private:
   int emptySequenceValue() const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;

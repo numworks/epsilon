@@ -32,7 +32,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
   Poincare::Symbol * symbol;
   Poincare::ListData * listData;
   Poincare::MatrixData * matrixData;
-  Poincare::Function * function;
+  Poincare::StaticHierarchy<0> * function;
   /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
    * While Flex guarantees that yytext is NULL-terminated when building tokens,
    * it does so by temporarily swapping in a NULL terminated in the input text.
@@ -172,16 +172,16 @@ exp:
   | ICOMPLEX         { $$ = new Poincare::Complex<double>(Poincare::Complex<double>::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
-  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, 2, false); }
+  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
   | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
   | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, 2, false); }
-  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, 2, false); }
-  | MINUS exp %prec UNARY_MINUS           { $$ = new Poincare::Opposite($2, false); }
-  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = new Poincare::Parenthesis($2, false); }
+  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
+  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
+  | MINUS exp %prec UNARY_MINUS           { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
+  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::ExpressionMatrix($2); }
-  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, true); delete $3; }
+  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, $3->numberOfOperands(), true); delete $3; }
 
 final_exp:
   exp      { $$ = $1; }

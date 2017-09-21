@@ -9,8 +9,8 @@ objs += $(addprefix poincare/src/,\
   arc_sine.o\
   arc_tangent.o\
   binomial_coefficient.o\
+  bounded_static_hierarchy.o\
   ceiling.o\
-  commutative_operation.o\
   complex.o\
   complex_argument.o\
   complex_matrix.o\
@@ -21,7 +21,9 @@ objs += $(addprefix poincare/src/,\
   determinant.o\
   division_quotient.o\
   division_remainder.o\
+  dynamic_hierarchy.o\
   evaluation.o\
+  evaluation_engine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -29,10 +31,10 @@ objs += $(addprefix poincare/src/,\
   floor.o\
   frac_part.o\
   fraction.o\
-  function.o\
   expression_matrix.o\
   global_context.o\
   great_common_divisor.o\
+  hierarchy.o\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
   hyperbolic_arc_tangent.o\
@@ -42,8 +44,8 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   integer.o\
   integral.o\
+  layout_engine.o\
   list_data.o\
-  leaf_expression.o\
   least_common_multiple.o\
   logarithm.o\
   matrix.o\
@@ -53,7 +55,6 @@ objs += $(addprefix poincare/src/,\
   matrix_trace.o\
   matrix_transpose.o\
   multiplication.o\
-  n_ary_operation.o\
   naperian_logarithm.o\
   nth_root.o\
   opposite.o\
@@ -68,6 +69,7 @@ objs += $(addprefix poincare/src/,\
   sequence.o\
   sine.o\
   square_root.o\
+  static_hierarchy.o\
   store.o\
   subtraction.o\
   sum.o\
@@ -75,6 +77,7 @@ objs += $(addprefix poincare/src/,\
   tangent.o\
   variable_context.o\
 )
+
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\
   baseline_relative_layout.o\
@@ -111,22 +114,6 @@ tests += $(addprefix poincare/test/,\
 )
 #  simplify_utils.cpp\
 #  identity.cpp\
-
-# tests += $(addprefix poincare/test/,\
-  addition.cpp\
-  float.cpp\
-  fraction.cpp\
-  identity.cpp\
-  integer.cpp\
-  matrix.cpp\
-  product.cpp\
-  power.cpp\
-  simplify_utils.cpp\
-  simplify_addition.cpp\
-  simplify_product.cpp\
-  subtraction.cpp\
-  trigo.cpp\
-)
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o

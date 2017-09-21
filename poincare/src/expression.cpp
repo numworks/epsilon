@@ -1,7 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
-#include <poincare/function.h>
 #include <poincare/symbol.h>
+#include <poincare/static_hierarchy.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
 #include <poincare/evaluation.h>
@@ -40,6 +40,26 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+void Expression::setCircuitBreaker(CircuitBreaker cb) {
+  sCircuitBreaker = cb;
+}
+
+bool Expression::shouldStopProcessing() {
+  if (sCircuitBreaker == nullptr) {
+    return false;
+  }
+  return sCircuitBreaker();
+}
+
+bool Expression::hasValidNumberOfArguments() const {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (!operand(i)->hasValidNumberOfArguments()) {
+      return false;
+    }
+  }
+  return true;
+}
+
 ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
     case FloatDisplayMode::Default:
@@ -57,6 +77,36 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
           return privateCreateLayout(floatDisplayMode, complexFormat);
       }
   }
+}
+
+void Expression::sort() {
+  if (this->type() == Type::Complex) {
+    // TODO: this case should be useless once complex is a leaf expression!
+    return;
+  }
+  for (int i = 0; i < numberOfOperands(); i++) {
+    ((Expression *)operand(i))->sort(); // TODO: implement an editatble operand?
+  }
+}
+
+int Expression::comparesTo(const Expression * e) const {
+  if (this->nodeComparesTo(e) != 0) {
+    return this->nodeComparesTo(e);
+  }
+  for (int i = 0; i < this->numberOfOperands(); i++) {
+    // The NULL node is the least node type.
+    if (e->numberOfOperands() <= i) {
+      return 1;
+    }
+    if (this->operand(i)->comparesTo(e->operand(i)) != 0) {
+      return this->operand(i)->comparesTo(e->operand(i));
+    }
+  }
+  // The NULL node is the least node type.
+  if (e->numberOfOperands() > numberOfOperands()) {
+    return -1;
+  }
+  return 0;
 }
 
 template<typename T> Evaluation<T> * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
@@ -85,11 +135,6 @@ template<typename T> T Expression::approximate(const char * text, Context& conte
   T result = evaluation->toScalar();
   delete evaluation;
   return result;
-}
-
-template<typename T> T Expression::epsilon() {
-  static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
-  return epsilon;
 }
 
 /*Expression * Expression::simplify() const {
@@ -154,66 +199,19 @@ template<typename T> T Expression::epsilon() {
   return result;
 }*/
 
-bool Expression::isIdenticalTo(const Expression * e) const {
-  if (!this->nodeEquals(e) || e->numberOfOperands() != this->numberOfOperands()) {
-    return false;
+template<typename T> T Expression::epsilon() {
+  static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
+  return epsilon;
+}
+
+int Expression::nodeComparesTo(const Expression * e) const {
+  if (e->type() == this->type()) {
+    return 0;
   }
-  /* The children must be sorted! */
-  for (int i = 0; i < this->numberOfOperands(); i++) {
-    if (!e->operand(i)->isIdenticalTo(this->operand(i))) {
-      return false;
-    }
+  if (e->type() > this->type()) {
+    return 1;
   }
-  return true;
-}
-
-bool Expression::nodeEquals(const Expression * e) const {
-  return e->type() == this->type();
-}
-
-bool Expression::isGreaterThan(const Expression * e) const {
-  if (!this->nodeEquals(e)) {
-    return this->nodeGreaterThan(e);
-  }
-  for (int i = 0; i < this->numberOfOperands(); i++) {
-    // The NULL node is the least node type.
-    if (e->numberOfOperands() <= i) {
-      return true;
-    }
-    if (this->operand(i)->isGreaterThan(e->operand(i))) {
-      return true;
-    }
-    if (!this->operand(i)->isIdenticalTo(e->operand(i))) {
-      return false;
-    }
-  }
-  // The NULL node is the least node type.
-  if (e->numberOfOperands() > numberOfOperands()) {
-    return false;
-  }
-  return true;
-}
-
-bool Expression::nodeGreaterThan(const Expression * e) const {
-  return e->type() > this->type();
-}
-
-void Expression::sort() {
-}
-
-int Expression::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return 0;
-}
-
-void Expression::setCircuitBreaker(CircuitBreaker cb) {
-  sCircuitBreaker = cb;
-}
-
-bool Expression::shouldStopProcessing() const {
-  if (sCircuitBreaker == nullptr) {
-    return false;
-  }
-  return sCircuitBreaker(this);
+  return -1;
 }
 
 }

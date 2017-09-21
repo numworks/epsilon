@@ -102,7 +102,7 @@ bool Function::isEmpty() {
 template<typename T>
 T Function::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const {
   Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
-  Poincare::Symbol xSymbol = Poincare::Symbol(symbol());
+  Poincare::Symbol xSymbol(symbol());
   Poincare::Complex<T> e = Poincare::Complex<T>::Float(x);
   variableContext.setExpressionForSymbolName(&e, &xSymbol);
   return expression()->approximate<T>(variableContext);

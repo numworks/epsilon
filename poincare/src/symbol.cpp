@@ -44,6 +44,20 @@ Symbol::Symbol(char name) :
 {
 }
 
+Symbol::Symbol(Symbol&& other) :
+  m_name(other.m_name)
+{
+  m_numberOfOperands = other.m_numberOfOperands;
+}
+
+Expression * Symbol::clone() const {
+  return new Symbol(m_name);
+}
+
+bool Symbol::isCommutative() const {
+  return false;
+}
+
 template<typename T>
 Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
@@ -91,18 +105,19 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return new StringLayout(&m_name, 1);
 }
 
-Expression * Symbol::clone() const {
-  return new Symbol(m_name);
-}
-
-bool Symbol::valueEquals(const Expression * e) const {
+int Symbol::nodeComparesTo(const Expression * e) const {
+  int typeComparison = Expression::nodeComparesTo(e);
+  if (typeComparison != 0) {
+    return typeComparison;
+  }
   assert(e->type() == Expression::Type::Symbol);
-  return (m_name == ((Symbol *)e)->m_name);
-}
-
-bool Symbol::valueGreaterThan(const Expression * e) const {
-  assert(e->type() == Expression::Type::Symbol);
-  return (m_name > ((Symbol *)e)->m_name);
+  if (m_name == ((Symbol *)e)->m_name) {
+    return 0;
+  }
+  if ((m_name > ((Symbol *)e)->m_name)) {
+    return 1;
+  }
+  return -1;
 }
 
 bool Symbol::isMatrixSymbol() const {

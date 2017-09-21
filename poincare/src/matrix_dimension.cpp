@@ -7,26 +7,22 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixDimension::MatrixDimension() :
-  Function("dimension")
-{
-}
-
 Expression::Type MatrixDimension::type() const {
   return Type::MatrixDimension;
 }
 
-Expression * MatrixDimension::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  MatrixDimension * md = new MatrixDimension();
-  md->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return md;
+Expression * MatrixDimension::clone() const {
+  MatrixDimension * a = new MatrixDimension(m_operands, true);
+  return a;
+}
+
+bool MatrixDimension::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
   Complex<T> operands[2];
   operands[0] = Complex<T>::Float((T)input->numberOfRows());
   operands[1] = Complex<T>::Float((T)input->numberOfColumns());

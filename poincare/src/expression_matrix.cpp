@@ -25,15 +25,17 @@ ExpressionMatrix::~ExpressionMatrix() {
   delete m_matrixData;
 }
 
-bool ExpressionMatrix::hasValidNumberOfArguments() const {
-  for (int i = 0; i < numberOfOperands(); i++) {
-    if (!operand(i)->hasValidNumberOfArguments()) {
-      return false;
-    }
-  }
-  return true;
+Expression::Type ExpressionMatrix::type() const {
+  return Type::ExpressionMatrix;
 }
 
+Expression * ExpressionMatrix::clone() const {
+  return new ExpressionMatrix(m_matrixData->operands(), numberOfOperands(), numberOfRows(), numberOfColumns(), true);
+}
+
+bool ExpressionMatrix::isCommutative() const {
+  return false;
+}
 
 int ExpressionMatrix::numberOfRows() const {
   return m_matrixData->numberOfRows();
@@ -47,20 +49,6 @@ const Expression * ExpressionMatrix::operand(int i) const {
   assert(i >= 0);
   assert(i < numberOfOperands());
   return m_matrixData->operands()[i];
-}
-
-Expression * ExpressionMatrix::clone() const {
-  return this->cloneWithDifferentOperands(m_matrixData->operands(), numberOfOperands(), true);
-}
-
-Expression::Type ExpressionMatrix::type() const {
-  return Type::ExpressionMatrix;
-}
-
-Expression * ExpressionMatrix::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  return new ExpressionMatrix(newOperands, numberOfOperands, numberOfRows(), numberOfColumns(), cloneOperands);
 }
 
 template<typename T>

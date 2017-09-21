@@ -9,25 +9,21 @@ extern "C" {
 
 namespace Poincare {
 
-Sine::Sine() :
-  Function("sin")
-{
-}
-
 Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Sine * s = new Sine();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * Sine::clone() const {
+  Sine * a = new Sine(m_operands, true);
+  return a;
+}
+
+bool Sine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Sine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     T input = c.a();
     if (angleUnit == AngleUnit::Degree) {
@@ -42,7 +38,7 @@ Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
     return Complex<T>::Float(result);
   }
   Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
-  Complex<T> sinh = HyperbolicSine::compute(arg);
+  Complex<T> sinh = HyperbolicSine::computeOnComplex(arg, angleUnit);
   return Multiplication::compute(Complex<T>::Cartesian(0, -1), sinh);
 }
 

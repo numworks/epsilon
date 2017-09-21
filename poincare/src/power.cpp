@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <cmath>
 #include <math.h>
+#include <poincare/complex_matrix.h>
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
@@ -15,21 +16,12 @@ Expression::Type Power::type() const {
   return Type::Power;
 }
 
-Expression * Power::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands >= 2);
-  return new Power(newOperands, numberOfOperands, cloneOperands);
+Expression * Power::clone() const {
+  return new Power(m_operands, true);
 }
 
-ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  Expression * indiceOperand = m_operands[1];
-  // Delete eventual parentheses of the indice in the pretty print
-  if (m_operands[1]->type() == Type::Parenthesis) {
-    indiceOperand = (Expression *)m_operands[1]->operand(0);
-  }
-  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
+bool Power::isCommutative() const {
+  return false;
 }
 
 template<typename T>
@@ -50,7 +42,7 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Polar(radius, theta);
 }
 
-template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) const {
+template<typename T> Evaluation<T> * Power::computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) {
  if (m->numberOfRows() != m->numberOfColumns()) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
@@ -60,8 +52,8 @@ template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndCo
   }
   if (power < 0) {
     Evaluation<T> * inverse = m->createInverse();
-    Complex<T> minusC = Opposite::compute(*d);
-    Evaluation<T> * result = Power::computeOnComplexMatrixAndComplex(inverse, &minusC);
+    Complex<T> minusC = Opposite::compute(*d, AngleUnit::Default);
+    Evaluation<T> * result = Power::computeOnMatrixAndComplex(inverse, &minusC);
     delete inverse;
     return result;
   }
@@ -77,13 +69,24 @@ template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrixAndCo
   return result;
 }
 
-template<typename T> Evaluation<T> * Power::templatedComputeOnComplexAndComplexMatrix(const Complex<T> * c, Evaluation<T> * n) const {
+template<typename T> Evaluation<T> * Power::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n) {
   return new Complex<T>(Complex<T>::Float(NAN));
 }
 
-template<typename T> Evaluation<T> * Power::templatedComputeOnComplexMatrices(Evaluation<T> * m, Evaluation<T> * n) const {
+template<typename T> Evaluation<T> * Power::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
 
   return new Complex<T>(Complex<T>::Float(NAN));
+}
+
+ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  Expression * indiceOperand = m_operands[1];
+  // Delete eventual parentheses of the indice in the pretty print
+  if (m_operands[1]->type() == Type::Parenthesis) {
+    indiceOperand = (Expression *)m_operands[1]->operand(0);
+  }
+  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
 }

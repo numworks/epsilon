@@ -8,25 +8,21 @@ extern "C" {
 
 namespace Poincare {
 
-Cosine::Cosine() :
-  Function("cos")
-{
-}
-
 Expression::Type Cosine::type() const {
   return Type::Cosine;
 }
 
-Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Cosine * c = new Cosine();
-  c->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return c;
+Expression * Cosine::clone() const {
+  Cosine * a = new Cosine(m_operands, true);
+  return a;
+}
+
+bool Cosine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> Cosine::compute(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Cosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() == 0) {
     T input = c.a();
@@ -47,7 +43,7 @@ Complex<T> Cosine::compute(const Complex<T> c, AngleUnit angleUnit) {
     return Complex<T>::Float(result);
   }
   Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
-  return HyperbolicCosine::compute(arg);
+  return HyperbolicCosine::computeOnComplex(arg, angleUnit);
 }
 
 }

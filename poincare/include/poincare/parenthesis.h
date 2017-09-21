@@ -1,25 +1,17 @@
 #ifndef POINCARE_PARENTHESIS_H
 #define POINCARE_PARENTHESIS_H
 
-#include <poincare/expression.h>
+#include <poincare/static_hierarchy.h>
 
 namespace Poincare {
 
-class Parenthesis : public Expression {
+class Parenthesis : public StaticHierarchy<1> {
 public:
-  Parenthesis(Expression * operand, bool cloneOperands = true);
-  ~Parenthesis();
-  Parenthesis(const Parenthesis& other) = delete;
-  Parenthesis(Parenthesis&& other) = delete;
-  Parenthesis& operator=(const Parenthesis& other) = delete;
-  Parenthesis& operator=(Parenthesis&& other) = delete;
-  bool hasValidNumberOfArguments() const override;
-  const Expression * operand(int i) const override;
-  int numberOfOperands() const override;
+  using StaticHierarchy<1>::StaticHierarchy;
+public:
   Expression * clone() const override;
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression** newOperands,
-    int numnerOfOperands, bool cloneOperands = true) const override;
+  bool isCommutative() const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

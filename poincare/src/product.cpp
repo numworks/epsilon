@@ -9,21 +9,17 @@ extern "C" {
 
 namespace Poincare {
 
-Product::Product() :
-  Sequence("product")
-{
-}
-
 Expression::Type Product::type() const {
   return Type::Product;
 }
 
-Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Product * p = new Product();
-  p->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return p;
+Expression * Product::clone() const {
+  Product * a = new Product(m_operands, true);
+  return a;
+}
+
+bool Product::isCommutative() const {
+  return false;
 }
 
 int Product::emptySequenceValue() const {

@@ -8,27 +8,23 @@ extern "C" {
 
 namespace Poincare {
 
-PermuteCoefficient::PermuteCoefficient() :
-  Function("permute", 2)
-{
-}
-
 Expression::Type PermuteCoefficient::type() const {
   return Type::PermuteCoefficient;
 }
 
-Expression * PermuteCoefficient::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  PermuteCoefficient * pc = new PermuteCoefficient();
-  pc->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return pc;
+Expression * PermuteCoefficient::clone() const {
+  PermuteCoefficient * b = new PermuteCoefficient(m_operands, true);
+  return b;
+}
+
+bool PermuteCoefficient::isCommutative() const {
+  return false;
 }
 
 template<typename T>
 Evaluation<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * nInput = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * kInput = m_args[1]->evaluate<T>(context, angleUnit);
+  Evaluation<T> * nInput = operand(0)->evaluate<T>(context, angleUnit);
+  Evaluation<T> * kInput = operand(1)->evaluate<T>(context, angleUnit);
   T n = nInput->toScalar();
   T k = kInput->toScalar();
   delete nInput;

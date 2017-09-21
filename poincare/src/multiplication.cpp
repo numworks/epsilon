@@ -5,6 +5,7 @@ extern "C" {
 #include <cmath>
 
 #include <poincare/multiplication.h>
+#include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -15,26 +16,17 @@ Expression::Type Multiplication::type() const {
   return Expression::Type::Multiplication;
 }
 
-char Multiplication::operatorChar() const {
-  return '*';
+Expression * Multiplication::clone() const {
+  return new Multiplication(m_operands, m_numberOfOperands, true);
 }
 
-Expression * Multiplication::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(numberOfOperands >= 2);
-  assert(newOperands != nullptr);
-  return new Multiplication(newOperands, numberOfOperands, cloneOperands);
+bool Multiplication::isCommutative() const {
+  return true;
 }
 
 template<typename T>
 Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
-}
-
-template<typename T>
-Evaluation<T> * Multiplication::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
-  Multiplication mul;
-  return mul.computeOnComplexAndComplexMatrix(c, m);
 }
 
 template<typename T>

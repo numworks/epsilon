@@ -2,7 +2,6 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression_layout.h>
-#include <kandinsky.h>
 
 namespace Poincare {
 
@@ -70,11 +69,6 @@ public:
     Determinant,
     Store,
   };
-  enum class AngleUnit {
-    Degree = 0,
-    Radian = 1,
-    Default = 2
-  };
   enum class FloatDisplayMode {
     Decimal = 0,
     Scientific = 1,
@@ -85,52 +79,64 @@ public:
     Polar = 1,
     Default = 2
   };
+  enum class AngleUnit {
+    Degree = 0,
+    Radian = 1,
+    Default = 2
+  };
+  /* Constructor & Destructor */
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
-  virtual bool hasValidNumberOfArguments() const = 0;
-  ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
+
+  /* Poor man's RTTI */
+  virtual Type type() const = 0;
+
+   /* Circuit breaker */
+   typedef bool (*CircuitBreaker)();
+   static void setCircuitBreaker(CircuitBreaker cb);
+   static bool shouldStopProcessing();
+
+  /* Hierarchy */
+  virtual bool hasValidNumberOfArguments() const;
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   virtual Expression * clone() const = 0;
-  virtual Expression * cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const = 0;
 
-  // TODO: Consider std::unique_ptr - see https://google-styleguide.googlecode.com/svn/trunk/cppguide.html#Ownership_and_Smart_Pointers
+  /* Layout Engine */
+  ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
 
-  /* This tests whether two expressions are the same, it heavily relies on the
+  /* Commutative rule */
+  virtual bool isCommutative() const = 0;
+  virtual void sort();
+  /* This tests whether two expressions are the =, <, >, it heavily relies on the
    * fact that operands are sorted.
    */
-  bool isIdenticalTo(const Expression * e) const;
-  bool isGreaterThan(const Expression * e) const;
+  int comparesTo(const Expression * e) const;
   //Expression * simplify() const;
-  virtual void sort();
 
-  virtual Type type() const = 0;
-
-   typedef bool (*CircuitBreaker)(const Expression * e);
-   static void setCircuitBreaker(CircuitBreaker cb);
-   bool shouldStopProcessing() const;
-
-  /* The function evaluate creates a new expression and thus mallocs memory.
+  /* Evaluation Engine
+   * The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
   template<typename T> Evaluation<T> * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
-  virtual int writeTextInBuffer(char * buffer, int bufferSize) const;
 protected:
+  /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   template<typename T> static T epsilon();
-  /* Compare (== and >) the type of the root node of 2 expressions.
+  /* Compare (== < and >) the type of the root node of 2 expressions.
    * This behavior makes sense for value-less nodes (addition, product, fraction
    * power, etc… For nodes with a value (Integer, Complex), this must be over-
    * -riden. */
-  virtual bool nodeEquals(const Expression * e) const;
-  virtual bool nodeGreaterThan(const Expression * e) const;
+  virtual int nodeComparesTo(const Expression * e) const;
 private:
+  /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
+  /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+
 };
 
 }

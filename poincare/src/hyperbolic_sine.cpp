@@ -11,25 +11,21 @@ extern "C" {
 
 namespace Poincare {
 
-HyperbolicSine::HyperbolicSine() :
-  Function("sinh")
-{
-}
-
 Expression::Type HyperbolicSine::type() const {
   return Type::HyperbolicSine;
 }
 
-Expression * HyperbolicSine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  HyperbolicSine * hs = new HyperbolicSine();
-  hs->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return hs;
+Expression * HyperbolicSine::clone() const {
+  HyperbolicSine * a = new HyperbolicSine(m_operands, true);
+  return a;
+}
+
+bool HyperbolicSine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> HyperbolicSine::compute(const Complex<T> c) {
+Complex<T> HyperbolicSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     return Complex<T>::Float(std::sinh(c.a()));
   }

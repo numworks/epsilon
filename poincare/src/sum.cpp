@@ -9,21 +9,17 @@ extern "C" {
 
 namespace Poincare {
 
-Sum::Sum() :
-  Sequence("sum")
-{
-}
-
 Expression::Type Sum::type() const {
   return Type::Sum;
 }
 
-Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Sum * s = new Sum();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * Sum::clone() const {
+  Sum * a = new Sum(m_operands, true);
+  return a;
+}
+
+bool Sum::isCommutative() const {
+  return false;
 }
 
 int Sum::emptySequenceValue() const {

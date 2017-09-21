@@ -6,25 +6,21 @@ extern "C" {
 
 namespace Poincare {
 
-HyperbolicArcTangent::HyperbolicArcTangent() :
-  Function("atanh")
-{
-}
-
 Expression::Type HyperbolicArcTangent::type() const {
   return Type::HyperbolicArcTangent;
 }
 
-Expression * HyperbolicArcTangent::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  HyperbolicArcTangent * t = new HyperbolicArcTangent();
-  t->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return t;
+Expression * HyperbolicArcTangent::clone() const {
+  HyperbolicArcTangent * a = new HyperbolicArcTangent(m_operands, true);
+  return a;
+}
+
+bool HyperbolicArcTangent::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> HyperbolicArcTangent::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> HyperbolicArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

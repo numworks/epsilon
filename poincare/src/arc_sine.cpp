@@ -6,25 +6,21 @@ extern "C" {
 
 namespace Poincare {
 
-ArcSine::ArcSine() :
-  Function("asin")
-{
-}
-
 Expression::Type ArcSine::type() const {
   return Type::ArcSine;
 }
 
-Expression * ArcSine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ArcSine * s = new ArcSine();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * ArcSine::clone() const {
+  ArcSine * a = new ArcSine(m_operands, true);
+  return a;
+}
+
+bool ArcSine::isCommutative() const {
+  return false;
 }
 
 template<typename T>
-Complex<T> ArcSine::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
+Complex<T> ArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

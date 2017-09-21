@@ -7,25 +7,21 @@ extern "C" {
 
 namespace Poincare {
 
-Ceiling::Ceiling() :
-  Function("ceil")
-{
-}
-
 Expression::Type Ceiling::type() const {
   return Type::Ceiling;
 }
 
-Expression * Ceiling::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Ceiling * c = new Ceiling();
-  c->setArgument(newOperands, numberOfOperands, cloneOperands);
+Expression * Ceiling::clone() const {
+  Ceiling * c = new Ceiling(m_operands, true);
   return c;
 }
 
+bool Ceiling::isCommutative() const {
+  return false;
+}
+
 template<typename T>
-Complex<T> Ceiling::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

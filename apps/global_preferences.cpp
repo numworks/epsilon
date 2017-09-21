@@ -3,7 +3,7 @@
 static GlobalPreferences s_globalPreferences;
 
 GlobalPreferences::GlobalPreferences() :
-  m_language(I18n::Language::French),
+  m_language(I18n::Language::English),
   m_examMode(ExamMode::Desactivate),
   m_showUpdatePopUp(true),
   m_brightnessLevel(Ion::Backlight::MaxBrightness)

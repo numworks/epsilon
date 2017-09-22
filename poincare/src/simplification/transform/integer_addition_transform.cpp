@@ -1,17 +1,17 @@
-#include "integer_addition.h"
+#include "integer_addition_transform.h"
 #include <assert.h>
 #include <poincare/addition.h>
 #include <poincare/integer.h>
 #include <utility>
 
 namespace Poincare {
+namespace Simplification {
 
-void IntegerAddition::apply(Expression * root, Expression * captures[]) const {
+void IntegerAdditionTransform::apply(Expression * root, Expression * captures[]) const {
   assert(captures[0]->type() == Expression::Type::Integer);
   assert(captures[1]->type() == Expression::Type::Integer);
   assert(captures[2]->type() == Expression::Type::Addition);
   assert(captures[2] == root);
-#if 0
 
   Integer * i1 = (Integer *)(captures[0]);
   Integer * i2 = (Integer *)(captures[1]);
@@ -29,7 +29,7 @@ void IntegerAddition::apply(Expression * root, Expression * captures[]) const {
     a->replaceOperand(i1, r);
     a->removeOperand(i2);
   }
-#endif
 }
 
+}
 }

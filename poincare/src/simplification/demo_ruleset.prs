@@ -1,7 +1,10 @@
 DemoRuleset
 
 // (a+b)+c -> a+b+c
-Addition.a(Addition.b) -> MergeAdditionTransform(a,b);
+Addition.a(Addition.b) -> MergeDynamicHierarchyTransform(a,b);
+
+// (a*b)*c -> a*b*c
+Multiplication.a(Multiplication.b) -> MergeDynamicHierarchyTransform(a,b);
 
 // Int+Int -> Int
 Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);

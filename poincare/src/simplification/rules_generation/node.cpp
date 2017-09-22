@@ -47,7 +47,7 @@ void Node::generateSelector(Rule * rule) {
 }
 
 void Node::generateTransform() {
-  std::cout << "constexpr " << *m_name  << " t;" << std::endl;
+  std::cout << "constexpr " << *m_name  << " transform;" << std::endl;
 }
 
 int Node::indexOfChildrenWithIdentifier(std::string identifier) {

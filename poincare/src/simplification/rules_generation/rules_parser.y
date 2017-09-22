@@ -97,13 +97,28 @@ int yyerror(std::vector<Rule *> ** rules, const char *s) {
 }
 
 int main(void) {
+  std::string rulesetName = "MyRuleSet";
   std::vector<Rule *> * rules = new std::vector<Rule *>();
 
   yyparse(&rules);
 
+  std::cout << "namespace " << rulesetName << "Rules {" << std::endl;
+
   for (int i=0; i<rules->size(); i++) {
     rules->at(i)->generate(i);
   }
+
+  std::cout << "constexpr Rule rules[" << rules->size() << "] = {";
+  for (int i=0; i<rules->size(); i++) {
+    std::cout << "Rule" << i << "::rule";
+    if (i+1 != rules->size()) {
+      std::cout << ", ";
+    }
+  }
+  std::cout << "};" << std::endl;
+  std::cout << "};" << std::endl;
+  std::cout << "constexpr RuleSet " << rulesetName << "(" << rulesetName << "Rules::rules, " << rules->size() << ");" << std::endl;
+
 #if 0
 
   std::cout << "#include \"rules.h\"" << std::endl;

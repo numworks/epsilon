@@ -7,9 +7,9 @@ void Rule::generate(int index) {
   m_selector->identifyAnonymousChildren(&selectorIndex);
   m_selector->generateSelector(this);
   m_transform->generateTransform();
-  std::cout << "constexpr Rule r(&"
+  std::cout << "constexpr Rule rule(&"
     << m_selector->identifier()
-    << ", &t);" << std::endl;
+    << ", &transform);" << std::endl;
   std::cout << "}" << std::endl;
 }
 

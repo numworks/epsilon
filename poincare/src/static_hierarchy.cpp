@@ -32,16 +32,15 @@ void StaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, 
 }
 
 template<int T>
-bool StaticHierarchy<T>::hasValidNumberOfArguments() const {
-  //return Hierarchy::hasValidNumberOfArguments();
-  return true;
+bool StaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
+  return numberOfOperands == T;
 }
 
 template<int T>
 void StaticHierarchy<T>::build(Expression * const * operands, int numberOfOperands, bool cloneOperands) {
   assert(operands != nullptr);
-  int clippedNumberOfOperands = numberOfOperands > T ? T : numberOfOperands;
-  for (int i=0; i<clippedNumberOfOperands; i++) {
+  assert(numberOfOperands <= T);
+  for (int i=0; i < numberOfOperands; i++) {
     assert(operands[i] != nullptr);
     if (cloneOperands) {
       m_operands[i] = operands[i]->clone();

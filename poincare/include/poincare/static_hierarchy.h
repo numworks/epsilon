@@ -20,8 +20,8 @@ public:
 
   virtual void setArgument(ListData * listData, int numberOfEntries, bool clone);
   int numberOfOperands() const override { return T; }
-  bool hasValidNumberOfArguments() const override;
   Expression * const * operands() const override { return m_operands; }
+  virtual bool hasValidNumberOfOperands(int numberOfOperands) const;
 protected:
   void build(Expression * const * operands, int numberOfOperands, bool cloneOperands);
   Expression * m_operands[T];

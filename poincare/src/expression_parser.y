@@ -181,7 +181,7 @@ exp:
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::ExpressionMatrix($2); }
-  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; $1->setArgument($3, $3->numberOfOperands(), true); delete $3; }
+  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), true); delete $3; }
 
 final_exp:
   exp      { $$ = $1; }
@@ -190,4 +190,5 @@ final_exp:
 
 void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, const char * msg) {
   // Handle the error!
+  // TODO: handle explicitely different type of errors (division by 0, missing parenthesis). This should call back the container to display a pop up with a message corresponding to the error?
 }

@@ -11,7 +11,7 @@ public:
   BoundedStaticHierarchy();
   BoundedStaticHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
   int numberOfOperands() const override { return m_numberOfOperands; }
-  bool hasValidNumberOfArguments() const override;
+  bool hasValidNumberOfOperands(int numberOfOperands) const override;
 private:
   int m_numberOfOperands;
 };

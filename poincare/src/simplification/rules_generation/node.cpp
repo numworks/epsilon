@@ -4,34 +4,7 @@
 #include <sstream>
 #include <cassert>
 
-Node::Node(Type type, std::string * typeName) :
-  m_type(type),
-  m_typeName(typeName),
-  m_referenceMode(ReferenceMode::None),
-  m_referenceName(nullptr),
-  m_value(nullptr),
-  m_parent(nullptr)
-{
-  m_children = new std::vector<Node *>();
-}
-
-Node::~Node() {
-  delete m_children;
-}
-
-void Node::setReference(ReferenceMode mode, std::string * referenceName) {
-  assert(m_referenceName == nullptr);
-  m_referenceName = referenceName;
-  m_referenceMode = mode;
-}
-
-void Node::setValue(std::string * value) {
-  assert(m_value == nullptr);
-  m_value = value;
-}
-
 void Node::setChildren(std::vector<Node *> * children) {
-  assert(m_children->size() == 0);
   delete m_children;
   m_children = children;
   for (Node * child : *m_children) {
@@ -39,7 +12,64 @@ void Node::setChildren(std::vector<Node *> * children) {
   }
 }
 
+void Node::identifyAnonymousChildren(int * index) {
+  if (m_identifier == nullptr) {
+    m_identifier = new std::string("s" + std::to_string(*index));
+    (*index)++;
+  }
+  for (Node * child : *m_children) {
+    child->identifyAnonymousChildren(index);
+  }
+}
+
 // Generation
+
+void Node::generateSelector(Rule * rule) {
+  int i = 0;
+
+  for (Node * child : *m_children) {
+    child->generateSelector(rule);
+  }
+
+  if (m_children->size() > 0) {
+    std::cout
+      << "constexpr const Selector * "
+      << identifier() << "Children[] = {";
+    for (Node * child : *m_children) {
+      std::cout  << "&" << child->identifier();
+      if (child != m_children->back()) {
+        std::cout << ", ";
+      }
+    }
+    std::cout << "};" << std::endl;
+  }
+  std::cout << "constexpr TypeSelector " << identifier() << "(Expression::Type::" << *m_name << ", " << rule->indexOfIdentifierInTransform(*m_identifier) << ");" << std::endl;
+}
+
+void Node::generateTransform() {
+  std::cout << "constexpr " << *m_name  << " t;" << std::endl;
+}
+
+int Node::indexOfChildrenWithIdentifier(std::string identifier) {
+  for (int i=0; i<m_children->size(); i++) {
+    if (*(m_children->at(i)->m_identifier) == identifier) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+std::string Node::identifier() {
+  if (m_identifier) {
+    return *m_identifier;
+  }
+  return "NOIDEA";
+}
+
+
+
+#if 0
 
 std::string Node::generateSelectorConstructor(Rule * context) {
   std::ostringstream result;
@@ -191,3 +221,4 @@ int Node::generateTree(bool selector, Rule * context, int index, int indentation
   }
   return generatedCount;
 }
+#endif

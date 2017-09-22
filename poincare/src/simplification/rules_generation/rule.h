@@ -5,13 +5,14 @@
 
 class Rule {
 public:
-  Rule(Node * selector, Node * builder);
-  ~Rule();
-  void generate(std::string rule_name);
-  Node * selector();
+  Rule(Node * selector, Node * transform) :
+    m_selector(selector), m_transform(transform) {}
+  void generate(int index);
+  void identifyAnonymousSelectors();
+  int indexOfIdentifierInTransform(std::string identifier);
 private:
   Node * m_selector;
-  Node * m_builder;
+  Node * m_transform;
 };
 
 #endif

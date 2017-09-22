@@ -66,26 +66,16 @@ rule:
 
 node:
   CAPITALIZED_IDENTIFIER {
-      $$ = new Node(Node::Type::Expression, $1);
+      $$ = new Node($1, nullptr, nullptr);
     }
-  | DOLLAR CAPITALIZED_IDENTIFIER {
-      $$ = new Node(Node::Type::Generator, $2);
+  | CAPITALIZED_IDENTIFIER PERIOD IDENTIFIER {
+      $$ = new Node($1, $3, nullptr);
+    }
+  | CAPITALIZED_IDENTIFIER LEFT_BRACKET VALUE RIGHT_BRACKET {
+      $$ = new Node($1, nullptr, $3);
     }
   | IDENTIFIER {
-      $$ = new Node(Node::Type::Any);
-      $$->setReference(Node::ReferenceMode::SingleNode, $1);
-    }
-  | IDENTIFIER ASTERISK {
-      $$ = new Node(Node::Type::Any);
-      $$->setReference(Node::ReferenceMode::Wildcard, $1);
-    }
-  | node PERIOD IDENTIFIER {
-      $$ = $1;
-      $$->setReference(Node::ReferenceMode::SingleNode, $3);
-    }
-  | node LEFT_BRACKET VALUE RIGHT_BRACKET {
-      $$ = $1;
-      $$->setValue($3);
+      $$ = new Node(nullptr, $1, nullptr);
     }
   | node LEFT_PARENTHESIS node_list RIGHT_PARENTHESIS {
       $$ = $1;
@@ -111,6 +101,11 @@ int main(void) {
 
   yyparse(&rules);
 
+  for (int i=0; i<rules->size(); i++) {
+    rules->at(i)->generate(i);
+  }
+#if 0
+
   std::cout << "#include \"rules.h\"" << std::endl;
   std::cout << "#include \"simplification_generator.h\"" << std::endl;
   std::cout << std::endl;
@@ -135,6 +130,7 @@ std::cout << "  Simplification((ExpressionSelector *)" << name.str() << "Selecto
   std::cout << std::endl;
   std::cout << "constexpr int Poincare::knumberOfSimplifications = " << rules->size() << ";" << std::endl;
 
+#endif
   delete rules;
   return 0;
 }

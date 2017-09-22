@@ -1,10 +1,11 @@
-#ifndef POINCARE_SIMPLIFY_COMBINATION_H
-#define POINCARE_SIMPLIFY_COMBINATION_H
+#ifndef POINCARE_SIMPLIFICATION_SELECTOR_COMBINATION_H
+#define POINCARE_SIMPLIFICATION_SELECTOR_COMBINATION_H
 
 #include <poincare/expression.h>
 #include "selector.h"
 
 namespace Poincare {
+namespace Simplification {
 
 /* Combination is the association of two tables: a selectors table and an expressions
  * table.
@@ -35,6 +36,7 @@ private:
   bool m_firstIteration;
 };
 
+}
 }
 
 #endif

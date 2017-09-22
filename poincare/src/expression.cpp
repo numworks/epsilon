@@ -54,15 +54,6 @@ bool Expression::shouldStopProcessing() {
   return sCircuitBreaker();
 }
 
-bool Expression::hasValidNumberOfArguments() const {
-  for (int i = 0; i < numberOfOperands(); i++) {
-    if (!operand(i)->hasValidNumberOfArguments()) {
-      return false;
-    }
-  }
-  return true;
-}
-
 ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
     case FloatDisplayMode::Default:

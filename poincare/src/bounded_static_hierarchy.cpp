@@ -20,8 +20,8 @@ BoundedStaticHierarchy<T>::BoundedStaticHierarchy(Expression * const * operands,
 }
 
 template<int T>
-bool BoundedStaticHierarchy<T>::hasValidNumberOfArguments() const {
-  return true;
+bool BoundedStaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
+  return numberOfOperands >= 1 && numberOfOperands <= T;
 }
 
 template class Poincare::BoundedStaticHierarchy<2>;

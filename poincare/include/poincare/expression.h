@@ -98,7 +98,6 @@ public:
    static bool shouldStopProcessing();
 
   /* Hierarchy */
-  virtual bool hasValidNumberOfArguments() const; // FIXME: Remove?
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   virtual Expression * clone() const = 0;

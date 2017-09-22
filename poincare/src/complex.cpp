@@ -157,11 +157,6 @@ bool Complex<T>::isCommutative() const {
 }
 
 template<typename T>
-bool Complex<T>:: hasValidNumberOfArguments() const {
-  return true;
-}
-
-template<typename T>
 T Complex<T>::toScalar() const {
   if (m_b != 0) {
     return NAN;

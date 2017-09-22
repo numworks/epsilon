@@ -25,7 +25,7 @@ public:
     return evaluationForSymbol(symbol);
   }
   const Evaluation<double> * evaluationForSymbol(const Symbol * symbol);
-  void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
+  void setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;

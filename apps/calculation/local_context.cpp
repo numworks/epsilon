@@ -18,7 +18,7 @@ Evaluation<double> * LocalContext::ansValue() {
   return lastCalculation->output(m_parentContext);
 }
 
-void LocalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void LocalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
   if (symbol->name() != Symbol::SpecialSymbols::Ans) {
     m_parentContext->setExpressionForSymbolName(expression, symbol);
   }

@@ -16,7 +16,7 @@ VariableContext<T>::VariableContext(char name, Context * parentContext) :
 }
 
 template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
   if (symbol->name() == m_name) {
     if (expression == nullptr) {
       return;

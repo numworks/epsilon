@@ -39,7 +39,7 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 
 template<typename T>
 Evaluation<T> * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(const_cast<Expression *>(value()), symbol());
+  context.setExpressionForSymbolName(value(), symbol());
   if (context.expressionForSymbol(symbol()) != nullptr) {
     return context.expressionForSymbol(symbol())->evaluate<T>(context, angleUnit);
   }

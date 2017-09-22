@@ -64,7 +64,7 @@ const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * sym
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);

@@ -7,15 +7,14 @@
 namespace Poincare {
 namespace Simplification {
 
-void IntegerAdditionTransform::apply(Expression * root, Expression * captures[]) const {
-  assert(captures[0]->type() == Expression::Type::Integer);
+void IntegerAdditionTransform::apply(Expression * captures[]) const {
+  assert(captures[0]->type() == Expression::Type::Addition);
   assert(captures[1]->type() == Expression::Type::Integer);
-  assert(captures[2]->type() == Expression::Type::Addition);
-  assert(captures[2] == root);
+  assert(captures[2]->type() == Expression::Type::Integer);
 
-  Integer * i1 = (Integer *)(captures[0]);
-  Integer * i2 = (Integer *)(captures[1]);
-  Addition * a = (Addition *)(captures[2]);
+  Addition * a = (Addition *)(captures[0]);
+  Integer * i1 = (Integer *)(captures[1]);
+  Integer * i2 = (Integer *)(captures[2]);
 
   Integer resultOnStack = i1->add(*i2);
   Integer * r = new Integer(std::move(resultOnStack));

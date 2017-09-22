@@ -43,7 +43,11 @@ void Node::generateSelector(Rule * rule) {
     }
     std::cout << "};" << std::endl;
   }
-  std::cout << "constexpr TypeSelector " << identifier() << "(Expression::Type::" << *m_name << ", " << rule->indexOfIdentifierInTransform(*m_identifier) << ");" << std::endl;
+  std::cout << "constexpr TypeSelector " << identifier() << "(Expression::Type::" << *m_name << ", " << rule->indexOfIdentifierInTransform(*m_identifier);
+  if (m_children->size() > 0) {
+    std::cout << ", " << identifier() <<"Children, " << m_children->size();
+  }
+  std::cout << ");" << std::endl;
 }
 
 void Node::generateTransform() {

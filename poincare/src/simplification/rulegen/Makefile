@@ -1,23 +1,25 @@
-rulegen_dir=poincare/src/simplification/rulegen
+prefix = poincare/src/simplification/rulegen
 
-rulegen_objs := $(addprefix $(rulegen_dir)/,\
+rulegen_objs := $(addprefix $(prefix)/,\
   rules_parser.o\
   rules_lexer.o\
   node.o\
   rule.o\
 )
 
-$(rulegen_dir)/rules_parser.cpp: $(rulegen_dir)/rules_parser.y
+# Note: we cannot use $prefix in the receipe because Make expands it when the
+# command is run, at which time prefix might have been replaced.
+$(prefix)/rules_parser.cpp: $(prefix)/rules_parser.y
 	@echo "BISON   $@"
-	bison --defines=$(rulegen_dir)/rules_tokens.h $< -o $@
+	@bison --defines=poincare/src/simplification/rulegen/rules_tokens.h $< -o $@
 
-$(rulegen_dir)/rules_lexer.cpp: $(rulegen_dir)/rules_lexer.l $(rulegen_dir)/rules_parser.cpp
+$(prefix)/rules_lexer.cpp: $(prefix)/rules_lexer.l $(prefix)/rules_parser.cpp
 	@echo "FLEX    $@"
 	@flex -o $@ $<
 
-RULEGEN := $(rulegen_dir)/rulegen
+RULEGEN := $(prefix)/rulegen
 
-products += $(rulegen_objs) $(RULEGEN) $(addprefix $(rulegen_dir)/,\
+products += $(rulegen_objs) $(RULEGEN) $(addprefix $(prefix)/,\
   rules_tokens.h\
   rules_parser.cpp\
   rules_lexer.cpp\

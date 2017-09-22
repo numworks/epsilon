@@ -2,6 +2,7 @@
 #define POINCARE_COMPLEX_MATRIX_H
 
 #include <poincare/evaluation.h>
+#include <assert.h>
 
 namespace Poincare {
 
@@ -19,6 +20,12 @@ public:
   Expression::Type type() const override;
   ComplexMatrix<T> * clone() const override;
   bool isCommutative() const override;
+
+  // TODO: Remove these 2 functions
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {
+    assert(false);
+  }
+  void swapOperands(int i, int j) override { assert(false); }
 
   /* Evaluation */
   T toScalar() const override;

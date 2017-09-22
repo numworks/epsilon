@@ -68,6 +68,7 @@ public:
     MatrixTranspose,
     Determinant,
     Store,
+    Undefined = 255
   };
   enum class FloatDisplayMode {
     Decimal = 0,
@@ -97,23 +98,42 @@ public:
    static bool shouldStopProcessing();
 
   /* Hierarchy */
-  virtual bool hasValidNumberOfArguments() const;
+  virtual bool hasValidNumberOfArguments() const; // FIXME: Remove?
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   virtual Expression * clone() const = 0;
+  virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) = 0;
+
+  /* Sorting */
+  virtual bool isCommutative() const = 0;
+  virtual void sort();
+  int comparesTo(const Expression * e) const;
+  virtual void swapOperands(int i, int j) = 0;
+
+#if 0
+  /*
+   *
+   * 1*a, 0+a -> a -> On a besoin de pouvoir supprimer un operand d'une addition
+   *                            -> DynamicHierarchy::removeOperand(Expression * e);
+   * 0*a,a^0 -> 0 ou 1 -> On a besoin de remplacer un élément par un autre dans son parent
+   *                            -> Expression::replaceOperand(Expression * old, Expression * new, bool deleteOld);
+   * a/b,a-b -> a*b^-1 -> On a besoin de supprimer un noeud (/) en récupérant ses enfants, puis de le remplacer dans son parent
+   *                            -> Expression::operand(i) puis Expression::shallowDelete();
+   * a+(b+c) -> +(a,b,c) -> On a besoin de supprimer un noeud en récupérant ses enfants, puis de rajouter des enfants à un noeud
+   *                            -> DynamicHierarchy::addOperands(Expression ** e, int numberOfOperands);
+   * (x+y)*z*t -> x*(z*t) + y*(z*t) -> On atomize le * et le plus, et on recombine/clone
+   * ln(a*b) -> ln(a) + ln(b)
+*/
+#endif
+
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
 
-  /* Commutative rule */
-  virtual bool isCommutative() const = 0;
-  virtual void sort();
-  /* This tests whether two expressions are the =, <, >, it heavily relies on the
-   * fact that operands are sorted.
-   */
-  int comparesTo(const Expression * e) const;
-  //Expression * simplify() const;
-  void simplify();
+
+  Expression * parent() const { return m_parent; }
+  void setParent(Expression * parent, bool deep = false);
+  static void simplify(Expression ** e);
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -138,9 +158,7 @@ private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
-  Expression * parent() const { return m_parent; }
 private:
-  void setParentPointer(Expression * parent);
   Expression * m_parent;
 };
 

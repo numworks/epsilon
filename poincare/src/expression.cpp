@@ -38,7 +38,7 @@ Expression * Expression::parse(char const * string) {
   poincare_expression_yy_delete_buffer(buf);
 
   if (expression) {
-    expression->setParentPointer(nullptr);
+    expression->setParent(nullptr, true);
   }
   return expression;
 }
@@ -88,7 +88,25 @@ void Expression::sort() {
     return;
   }
   for (int i = 0; i < numberOfOperands(); i++) {
-    ((Expression *)operand(i))->sort(); // TODO: implement an editatble operand?
+    ((Expression *)operand(i))->sort(); // TODO: implement an editable operand?
+  }
+
+  // Second, sort all children together if the expression is commutative
+  if (!isCommutative()) {
+    return;
+  }
+  // TODO: use a heap sort instead of a buble sort
+  for (int i = numberOfOperands()-1; i > 0; i--) {
+    bool isSorted = true;
+    for (int j = 0; j < numberOfOperands()-1; j++) {
+      if (operand(j)->comparesTo(operand(j+1)) > 0) {
+        swapOperands(j, j+1);
+        isSorted = false;
+      }
+    }
+    if (isSorted) {
+      return;
+    }
   }
 }
 
@@ -217,14 +235,16 @@ int Expression::nodeComparesTo(const Expression * e) const {
   return -1;
 }
 
-void Expression::setParentPointer(Expression * parent) {
+void Expression::setParent(Expression * parent, bool deep) {
   if (this == parent) {
     // TODO: this case should be useless once complex is a leaf expression!
     return;
   }
   m_parent = parent;
-  for (int i=0; i<numberOfOperands(); i++) {
-    ((Expression *)operand(i))->setParentPointer(this);
+  if (deep) {
+    for (int i=0; i<numberOfOperands(); i++) {
+      ((Expression *)operand(i))->setParent(this);
+    }
   }
 }
 

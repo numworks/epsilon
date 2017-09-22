@@ -3,29 +3,23 @@
 
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
+#include <poincare/static_hierarchy.h>
 
 namespace Poincare {
 
-class Store : public Expression {
+class Store : public StaticHierarchy<2> {
 public:
-  Store(Symbol * symbol, Expression * value, bool clone = true);
-  ~Store();
-  Store(const Store& other) = delete;
-  Store(Store&& other) = delete;
-  Store& operator=(const Store& other) = delete;
-  Store& operator=(Store&& other) = delete;
+  using StaticHierarchy<2>::StaticHierarchy;
   Type type() const override;
   Expression * clone() const override;
   bool isCommutative() const override;
-  const Expression * operand(int i) const override;
-  int numberOfOperands() const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
-  Symbol * m_symbol;
-  Expression * m_value;
+  const Symbol * symbol() const { return static_cast<const Symbol *>(operand(0)); }
+  const Expression * value() const { return operand(1); }
 };
 
 }

@@ -17,8 +17,7 @@ Expression::Type Logarithm::type() const {
 }
 
 Expression * Logarithm::clone() const {
-  Logarithm * a = new Logarithm(m_operands, true);
-  return a;
+  return new Logarithm(operands(), true);
 }
 
 bool Logarithm::isCommutative() const {
@@ -35,7 +34,7 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
 
 template<typename T>
 Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  if (m_numberOfOperands == 1) {
+  if (numberOfOperands() == 1) {
     return EvaluationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
   Evaluation<T> * x = operand(0)->evaluate<T>(context, angleUnit);
@@ -52,7 +51,7 @@ Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUn
 ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  if (m_numberOfOperands == 1) {
+  if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
   ExpressionLayout * childrenLayouts[2];

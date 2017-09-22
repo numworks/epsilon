@@ -6,9 +6,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_simplify_easy) {
-  Expression * e = Expression::parse("1+1+2*3+4+5");
+  Expression * e = Expression::parse("1+1+ln(2)+5+98");
   print_expression(e, 0);
-  e->simplify();
+  Expression::simplify(&e);
   print_expression(e, 0);
   delete e;
 }

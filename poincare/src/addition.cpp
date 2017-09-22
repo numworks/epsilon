@@ -12,7 +12,7 @@ Expression::Type Addition::type() const {
 }
 
 Expression * Addition::clone() const {
-  return new Addition(m_operands, m_numberOfOperands, true);
+  return new Addition(operands(), numberOfOperands(), true);
 }
 
 bool Addition::isCommutative() const {

@@ -7,23 +7,21 @@ namespace Poincare {
 
 template<int T>
 BoundedStaticHierarchy<T>::BoundedStaticHierarchy() :
-  StaticHierarchy<T>()
+  StaticHierarchy<T>(),
+  m_numberOfOperands(0)
 {
 }
 
 template<int T>
-BoundedStaticHierarchy<T>::BoundedStaticHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands)
+BoundedStaticHierarchy<T>::BoundedStaticHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+  m_numberOfOperands(numberOfOperands)
 {
-  StaticHierarchy<T>::m_numberOfOperands = numberOfOperands;
   StaticHierarchy<T>::build(operands, numberOfOperands, cloneOperands);
 }
 
 template<int T>
 bool BoundedStaticHierarchy<T>::hasValidNumberOfArguments() const {
-  if (StaticHierarchy<T>::m_numberOfOperands <= 0 || StaticHierarchy<T>::m_numberOfOperands > T) {
-    return false;
-  }
-  return Hierarchy::hasValidNumberOfArguments();
+  return true;
 }
 
 template class Poincare::BoundedStaticHierarchy<2>;

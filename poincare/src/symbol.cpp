@@ -47,7 +47,6 @@ Symbol::Symbol(char name) :
 Symbol::Symbol(Symbol&& other) :
   m_name(other.m_name)
 {
-  m_numberOfOperands = other.m_numberOfOperands;
 }
 
 Expression * Symbol::clone() const {

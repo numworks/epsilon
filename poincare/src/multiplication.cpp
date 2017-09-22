@@ -17,7 +17,7 @@ Expression::Type Multiplication::type() const {
 }
 
 Expression * Multiplication::clone() const {
-  return new Multiplication(m_operands, m_numberOfOperands, true);
+  return new Multiplication(operands(), numberOfOperands(), true);
 }
 
 bool Multiplication::isCommutative() const {

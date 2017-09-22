@@ -1,23 +1,23 @@
-dir=poincare/src/simplification/rules_generation
+rulegen_dir=poincare/src/simplification/rulegen
 
-rulegen_objs := $(addprefix $(dir)/,\
+rulegen_objs := $(addprefix $(rulegen_dir)/,\
   rules_parser.o\
   rules_lexer.o\
   node.o\
   rule.o\
 )
 
-$(dir)/rules_parser.cpp: $(dir)/rules_parser.y
+$(rulegen_dir)/rules_parser.cpp: $(rulegen_dir)/rules_parser.y
 	@echo "BISON   $@"
-	@bison --defines=poincare/src/simplification/rules_generation/rules_tokens.h $< -o $@
+	bison --defines=$(rulegen_dir)/rules_tokens.h $< -o $@
 
-$(dir)/rules_lexer.cpp: $(dir)/rules_lexer.l $(dir)/rules_parser.cpp
+$(rulegen_dir)/rules_lexer.cpp: $(rulegen_dir)/rules_lexer.l $(rulegen_dir)/rules_parser.cpp
 	@echo "FLEX    $@"
 	@flex -o $@ $<
 
-RULEGEN := $(dir)/rulegen
+RULEGEN := $(rulegen_dir)/rulegen
 
-products += $(rulegen_objs) $(RULEGEN) $(addprefix $(dir)/,\
+products += $(rulegen_objs) $(RULEGEN) $(addprefix $(rulegen_dir)/,\
   rules_tokens.h\
   rules_parser.cpp\
   rules_lexer.cpp\

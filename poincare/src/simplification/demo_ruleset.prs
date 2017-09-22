@@ -1,4 +1,7 @@
 DemoRuleset
 
+// (a+b)+c -> a+b+c
+Addition.a(Addition.b) -> MergeAdditionTransform(a,b);
+
 // Int+Int -> Int
 Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);

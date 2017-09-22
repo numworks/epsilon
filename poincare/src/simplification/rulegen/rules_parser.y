@@ -102,10 +102,16 @@ int main(void) {
 
   yyparse(&rules);
 
-  std::cout << "namespace " << rulesetName << "Rules {" << std::endl;
+  std::cout << "#include \"ruleset.h\"" << std::endl << std::endl;
+
+  std::cout << "namespace Poincare {" << std::endl;
+  std::cout << "namespace Simplification {" << std::endl << std::endl;
+
+  std::cout << "namespace " << rulesetName << "Rules {" << std::endl << std::endl;
 
   for (int i=0; i<rules->size(); i++) {
     rules->at(i)->generate(i);
+    std::cout << std::endl;
   }
 
   std::cout << "constexpr Rule rules[" << rules->size() << "] = {";
@@ -116,8 +122,9 @@ int main(void) {
     }
   }
   std::cout << "};" << std::endl;
-  std::cout << "};" << std::endl;
+  std::cout << "};" << std::endl << std::endl;
   std::cout << "constexpr RuleSet " << rulesetName << "(" << rulesetName << "Rules::rules, " << rules->size() << ");" << std::endl;
+  std::cout << std::endl << "}" << std::endl << "}" << std::endl;
 
 #if 0
 

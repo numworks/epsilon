@@ -1,12 +1,14 @@
-include poincare/src/simplification/rules_generation/Makefile
+include poincare/src/simplification/rulegen/Makefile
 
 dir=poincare/src/simplification
 
-$(dir)/rules.cpp: $(RULEGEN) $(dir)/rules.pr
+%.h: $(RULEGEN) %.prs
 	@echo "RULEGEN $@"
-	@$(RULEGEN) < $(dir)/rules.pr > $@
+	@$(RULEGEN) < $(word 2,$^) > $@
 
-products += $(dir)/rules.cpp
+rulesets = demo_ruleset.h
+expression_simplify.o: $(addprefix $(dir), $(rulesets))
+products += $(addprefix $(dir), $(rulesets))
 
 objs += $(addprefix $(dir)/,\
   expression_simplify.o \

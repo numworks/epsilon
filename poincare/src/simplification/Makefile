@@ -19,5 +19,5 @@ objs += $(addprefix $(prefix)/,\
   selector/selector.o \
   selector/type_selector.o \
   transform/integer_addition_transform.o \
-  transform/merge_addition_transform.o \
+  transform/merge_dynamic_hierarchy_transform.o \
 )

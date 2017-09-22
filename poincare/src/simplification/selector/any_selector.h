@@ -1,9 +1,10 @@
-#ifndef POINCARE_SIMPLIFY_ANY_SELECTOR_H
-#define POINCARE_SIMPLIFY_ANY_SELECTOR_H
+#ifndef POINCARE_SIMPLIFICATION_SELECTOR_ANY_SELECTOR_H
+#define POINCARE_SIMPLIFICATION_SELECTOR_ANY_SELECTOR_H
 
 #include "selector.h"
 
 namespace Poincare {
+namespace Simplification {
 
 class AnySelector : public Selector {
 public:
@@ -11,6 +12,7 @@ public:
   bool acceptsLocationInCombination(const Combination * combination, int location) const override;
 };
 
+}
 }
 
 #endif

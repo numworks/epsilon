@@ -1,6 +1,7 @@
 #include "rule.h"
 
 namespace Poincare {
+namespace Simplification {
 
 bool Rule::apply(Expression * e) const {
   if (immediateApply(e)) {
@@ -27,4 +28,5 @@ bool Rule::immediateApply(Expression * e) const {
   return false;
 }
 
+}
 }

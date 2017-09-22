@@ -3,6 +3,7 @@
 #include <assert.h>
 
 namespace Poincare {
+namespace Simplification {
 
 bool Selector::match(const Expression * e, Expression ** captures) const {
   // Si pour commencer, e ne correspond pas  mon petit test  moi perso, c'est mort!
@@ -47,4 +48,5 @@ bool Selector::match(const Expression * e, Expression ** captures) const {
   return false;
 }
 
+}
 }

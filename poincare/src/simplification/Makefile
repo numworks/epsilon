@@ -1,6 +1,6 @@
 #include poincare/src/simplify/rules_generation/Makefile
 
-dir=poincare/src/simplify
+dir=poincare/src/simplification
 
 $(dir)/rules.cpp: $(RULEGEN) $(dir)/rules.pr
 	@echo "RULEGEN $@"
@@ -9,11 +9,10 @@ $(dir)/rules.cpp: $(RULEGEN) $(dir)/rules.pr
 products += $(dir)/rules.cpp
 
 objs += $(addprefix $(dir)/,\
-  combination.o \
-  expression.o \
+  expression_simplify.o \
   rule.o \
-  integer_addition.o \
-  merge_addition.o \
-  type_selector.o \
-  selector.o \
+  selector/combination.o \
+  selector/selector.o \
+  selector/type_selector.o \
+  transform/merge_addition_transform.o \
 )

@@ -2,6 +2,7 @@
 #include "combination.h"
 
 namespace Poincare {
+namespace Simplification {
 
 bool TypeSelector::immediateMatch(const Expression * e) const {
   return (e->type() == m_type);
@@ -21,4 +22,5 @@ bool TypeSelector::acceptsLocationInCombination(const Combination * combination,
   return immediateMatch(combination->expressionForSelectorIndex(location));
 }
 
+}
 }

@@ -2,6 +2,7 @@
 #include <assert.h>
 
 namespace Poincare {
+namespace Simplification {
 
 Combination::Combination(const Selector * const * selectors, int numberOfSelectors, const Expression * rootExpression) :
   m_selectors(selectors),
@@ -63,4 +64,5 @@ bool Combination::next() {
   return false;
 }
 
+}
 }

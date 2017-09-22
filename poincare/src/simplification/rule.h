@@ -1,10 +1,11 @@
-#ifndef POINCARE_SIMPLIFY_RULE_H
-#define POINCARE_SIMPLIFY_RULE_H
+#ifndef POINCARE_SIMPLIFICATION_RULE_H
+#define POINCARE_SIMPLIFICATION_RULE_H
 
-#include "selector.h"
-#include "transform.h"
+#include "selector/selector.h"
+#include "transform/transform.h"
 
 namespace Poincare {
+namespace Simplification {
 
 class Rule {
 public:
@@ -18,6 +19,7 @@ private:
   const Transform * m_transform;
 };
 
+}
 }
 
 #endif

@@ -1,19 +1,22 @@
 #include "rule.h"
 #include <iostream>
 
-Rule::Rule(Node * selector, Node * builder) :
-  m_selector(selector), m_builder(builder) {
+void Rule::generate(int index) {
+  std::cout << "namespace Rule" << index << " {" << std::endl;
+  int selectorIndex = 0;
+  m_selector->identifyAnonymousChildren(&selectorIndex);
+  m_selector->generateSelector(this);
+  m_transform->generateTransform();
+  std::cout << "constexpr Rule r(&"
+    << m_selector->identifier()
+    << ", &t);" << std::endl;
+  std::cout << "}" << std::endl;
 }
 
-Rule::~Rule() {
-  delete m_builder;
-  delete m_selector;
+int Rule::indexOfIdentifierInTransform(std::string identifier) {
+  return m_transform->indexOfChildrenWithIdentifier(identifier);
 }
-
-Node * Rule::selector() {
-  return m_selector;
-}
-
+#if 0
 void Rule::generate(std::string rule_name) {
   std::cout << "constexpr ExpressionSelector " << rule_name << "Selector[" << m_selector->totalDescendantCountIncludingSelf() << "] = {" << std::endl;
   m_selector->generateSelectorTree(this);
@@ -23,3 +26,4 @@ void Rule::generate(std::string rule_name) {
   m_builder->generateBuilderTree(this);
   std::cout << "};" << std::endl;
 }
+#endif

@@ -1,4 +1,4 @@
-#include poincare/src/simplify/rules_generation/Makefile
+include poincare/src/simplification/rules_generation/Makefile
 
 dir=poincare/src/simplification
 

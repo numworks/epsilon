@@ -8,39 +8,31 @@ class Rule;
 
 class Node {
 public:
-  enum class Type {
-    Expression,
-    Generator,
-    Any
-  };
-  enum class ReferenceMode {
-    None,
-    SingleNode,
-    Wildcard
-  };
-
-  // Creating Nodes
-  Node(Type type, std::string * typeName = nullptr);
-  ~Node();
-  void setReference(ReferenceMode mode, std::string * referenceName);
-  void setValue(std::string * value);
+  Node(std::string * name, std::string * identifier, std::string * value) :
+    m_name(name),
+    m_identifier(identifier),
+    m_value(value),
+    m_children(new std::vector<Node *>()),
+    m_parent(nullptr) { }
   void setChildren(std::vector<Node *> * children);
+  void identifyAnonymousChildren(int * index);
 
-  int totalDescendantCountIncludingSelf();
-  int flatIndexOfChildNamed(std::string name);
-  int flatIndexOfChildRef(Node * node);
-
-  void generateSelectorTree(Rule * context);
-  void generateBuilderTree(Rule * context);
+  void generateSelector(Rule * rule);
+  void generateTransform();
+  int indexOfChildrenWithIdentifier(std::string identifier);
+  std::string identifier();
 private:
+  int selectorCaptureIndexInRule(Rule * rule);
+  int selectorIndexInRule(Rule * rule);
+
+  /*
   int generateTree(bool selector, Rule * context, int index, int indentationLevel);
   std::string generateSelectorConstructor(Rule * context);
   std::string generateBuilderConstructor(Rule * context);
+  */
 
-  Type m_type;
-  std::string * m_typeName;
-  ReferenceMode m_referenceMode;
-  std::string * m_referenceName;
+  std::string * m_name;
+  std::string * m_identifier;
   std::string * m_value;
   std::vector<Node *> * m_children;
   Node * m_parent;

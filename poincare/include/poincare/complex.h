@@ -3,6 +3,7 @@
 
 #include <poincare/evaluation.h>
 #include <poincare/preferences.h>
+#include <assert.h>
 
 namespace Poincare {
 
@@ -43,6 +44,10 @@ public:
   Complex<T> * clone() const override;
   bool isCommutative() const override;
   bool hasValidNumberOfArguments() const override;
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {
+    assert(false);
+  }
+  void swapOperands(int i, int j) override { assert(false); }
 
   /* Evaluation */
   T toScalar() const override;

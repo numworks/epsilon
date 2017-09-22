@@ -7,13 +7,13 @@ extern "C" {
 namespace Poincare {
 
 DynamicHierarchy::DynamicHierarchy() :
-  Hierarchy(0),
-  m_operands(nullptr)
+  m_operands(nullptr),
+  m_numberOfOperands(0)
 {
 }
 
-DynamicHierarchy::DynamicHierarchy(Expression ** operands, int numberOfOperands, bool cloneOperands) :
-  Hierarchy(numberOfOperands)
+DynamicHierarchy::DynamicHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+  m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);
   assert(numberOfOperands >= 2);
@@ -31,48 +31,41 @@ DynamicHierarchy::DynamicHierarchy(Expression ** operands, int numberOfOperands,
 DynamicHierarchy::~DynamicHierarchy() {
   if (m_operands != nullptr) {
     for (int i = 0; i < m_numberOfOperands; i++) {
-      delete m_operands[i];
+      if (m_operands[i] != nullptr) {
+        delete m_operands[i];
+      }
     }
   }
   delete[] m_operands;
 }
 
-int DynamicHierarchy::numberOfOperands() const {
-  return m_numberOfOperands;
-}
-
-const Expression * DynamicHierarchy::operand(int i) const {
-  assert(i >= 0);
-  assert(i < m_numberOfOperands);
-  return m_operands[i];
-}
-
-Expression ** DynamicHierarchy::operands() {
-  return m_operands;
-}
-
-void DynamicHierarchy::stealOperandsFrom(DynamicHierarchy * sibling) {
-  assert(this->type() == sibling->type()); // Could work, but wouldn't make much sense
-
-  int resultingSize = this->numberOfOperands() + sibling->numberOfOperands();
-  Expression ** operands = new Expression * [resultingSize];
-
-  for (int i=0; i<numberOfOperands(); i++) {
-    operands[i] = m_operands[i];
+void DynamicHierarchy::addOperands(Expression * const * operands, int numberOfOperands) {
+  assert(numberOfOperands > 0);
+  Expression ** newOperands = new Expression * [m_numberOfOperands+numberOfOperands];
+  for (int i=0; i<m_numberOfOperands; i++) {
+    newOperands[i] = m_operands[i];
   }
-  for (int j=0; j<sibling->numberOfOperands(); j++) {
-    operands[numberOfOperands()+j] = sibling->operands()[j];
+  for (int i=0; i<numberOfOperands; i++) {
+    newOperands[i+m_numberOfOperands] = operands[i];
   }
-
   delete[] m_operands;
-  m_operands = operands;
-  m_numberOfOperands = resultingSize;
-
-  sibling->setNumberOfOperand(0); // Stolen!
+  m_operands = newOperands;
+  m_numberOfOperands += numberOfOperands;
 }
 
-void DynamicHierarchy::setNumberOfOperand(int numberOfOperand) {
-  m_numberOfOperands = 0;
+void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemoval) {
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (operand(i) == e) {
+      if (deleteAfterRemoval) {
+        delete m_operands[i];
+      }
+      for (int j=i; j<m_numberOfOperands; j++) {
+        m_operands[j] = m_operands[j+1];
+      }
+      m_numberOfOperands--;
+      break;
+    }
+  }
 }
 
 }

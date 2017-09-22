@@ -11,6 +11,7 @@ void IntegerAddition::apply(Expression * root, Expression * captures[]) const {
   assert(captures[1]->type() == Expression::Type::Integer);
   assert(captures[2]->type() == Expression::Type::Addition);
   assert(captures[2] == root);
+#if 0
 
   Integer * i1 = (Integer *)(captures[0]);
   Integer * i2 = (Integer *)(captures[1]);
@@ -21,8 +22,14 @@ void IntegerAddition::apply(Expression * root, Expression * captures[]) const {
   //r->add(resultOnStack);
   // FIXME: Beeeeuargl
 
-  a->replaceOperand(i1, r);
-  a->removeOperand(i2);
+  if (a->numberOfOperands() == 2) {
+    ((Hierarchy *)a->parent())->replaceOperand(a, r);
+  } else {
+    assert(a->numberOfOperands() > 2);
+    a->replaceOperand(i1, r);
+    a->removeOperand(i2);
+  }
+#endif
 }
 
 }

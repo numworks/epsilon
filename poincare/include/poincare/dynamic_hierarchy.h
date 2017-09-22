@@ -8,19 +8,21 @@ namespace Poincare {
 class DynamicHierarchy : public Hierarchy {
 public:
   DynamicHierarchy();
-  DynamicHierarchy(Expression ** operands, int numberOfOperands, bool cloneOperands = true);
+  DynamicHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
   ~DynamicHierarchy();
-  DynamicHierarchy(const DynamicHierarchy& other) = delete;
-  DynamicHierarchy(DynamicHierarchy&& other) = delete;
-  DynamicHierarchy& operator=(const DynamicHierarchy& other) = delete;
-  DynamicHierarchy& operator=(DynamicHierarchy&& other) = delete;
-  int numberOfOperands() const override;
-  const Expression * operand(int i) const override;
-  void setNumberOfOperand(int numberOfOperand);
-  void stealOperandsFrom(DynamicHierarchy * sibling);
-protected:
-  Expression ** operands() override;
+  DynamicHierarchy(const DynamicHierarchy & other) = delete;
+  DynamicHierarchy(DynamicHierarchy && other) = delete;
+  DynamicHierarchy& operator=(const DynamicHierarchy & other) = delete;
+  DynamicHierarchy& operator=(DynamicHierarchy && other) = delete;
+
+  int numberOfOperands() const override { return m_numberOfOperands; }
+  Expression * const * operands() const override { return m_operands; };
+
+  void removeOperand(const Expression * e, bool deleteAfterRemoval = true);
+  void addOperands(Expression * const * operands, int numberOfOperands);
+private:
   Expression ** m_operands;
+  int m_numberOfOperands;
 };
 
 }

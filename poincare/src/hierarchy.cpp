@@ -5,63 +5,37 @@ extern "C" {
 
 namespace Poincare {
 
-Hierarchy::Hierarchy(int numberOfOperands) :
-  m_numberOfOperands(numberOfOperands)
-{
+const Expression * Hierarchy::operand(int i) const {
+  assert(i >= 0);
+  assert(i < numberOfOperands());
+  return operands()[i];
 }
 
 void Hierarchy::swapOperands(int i, int j) {
-  assert(i < numberOfOperands());
-  assert(j < numberOfOperands());
-  Expression ** op = operands();
+  assert(i >= 0 && i < numberOfOperands());
+  assert(j >= 0 && j < numberOfOperands());
+  Expression ** op = const_cast<Expression **>(operands());
   Expression * temp = op[i];
   op[i] = op[j];
   op[j] = temp;
 }
 
-void Hierarchy::replaceOperand(Expression * oldChild, Expression * newChild) {
-  Expression ** op = operands();
-  for (int i=0; i<m_numberOfOperands; i++) {
-    if (op[i] == oldChild) {
-      delete oldChild;
-      op[i] = newChild;
-      break;
-    }
+void Hierarchy::detachOperands() {
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    op[i] = nullptr;
   }
 }
 
-void Hierarchy::removeOperand(Expression * oldChild) {
-  Expression ** op = operands();
-  for (int i=0; i<m_numberOfOperands; i++) {
-    if (op[i] == oldChild) {
-      delete oldChild;
-      m_numberOfOperands--;
-      for (int j=i; j<m_numberOfOperands; j++) {
-        op[j] = op[j+1];
+void Hierarchy::replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) {
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (op[i] == oldOperand) {
+      if (deleteOldOperand) {
+        delete oldOperand;
       }
+      op[i] = newOperand;
       break;
-    }
-  }
-}
-
-void Hierarchy::sort() {
-  // First, sort every child
-  Expression::sort();
-  // Second, sort all children together if the expression is commutative
-  if (!isCommutative()) {
-    return;
-  }
-  // TODO: use a heap sort instead of a buble sort
-  for (int i = numberOfOperands()-1; i > 0; i--) {
-    bool isSorted = true;
-    for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (operand(j)->comparesTo(operand(j+1)) > 0) {
-        swapOperands(j, j+1);
-        isSorted = false;
-      }
-    }
-    if (isSorted) {
-      return;
     }
   }
 }

@@ -36,7 +36,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
   /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
    * While Flex guarantees that yytext is NULL-terminated when building tokens,
    * it does so by temporarily swapping in a NULL terminated in the input text.
-   * Of course that hack has vanished when the pointer is fed into Bison.
+   * Of course that hack has vanished by the time the pointer is fed into Bison.
    * We thus record the length of the char fed into Flex in a structure and give
    * it to the object constructor called by Bison along with the char *. */
   struct {
@@ -185,9 +185,9 @@ exp:
 
 final_exp:
   exp      { $$ = $1; }
-  | exp STO symb   { $$ = new Poincare::Store($3, $1, false); };
+  | exp STO symb   { Poincare::Expression * terms[2] = {$3,$1}; $$ = new Poincare::Store(terms, false); };
 %%
 
-void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char const *msg) {
+void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, const char * msg) {
   // Handle the error!
 }

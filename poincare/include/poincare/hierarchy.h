@@ -7,15 +7,11 @@ namespace Poincare {
 
 class Hierarchy : public Expression {
 public:
-  Hierarchy(int numberOfOperands);
-  void swapOperands(int i, int j);
-  void replaceOperand(Expression * oldChild, Expression * newChild);
-  void removeOperand(Expression * oldChild);
-  void sort() override;
-protected:
-  int m_numberOfOperands;
-private:
-  virtual Expression ** operands() = 0;
+  const Expression * operand(int i) const override;
+  void swapOperands(int i, int j) override;
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override;
+  void detachOperands(); // Removes all operands WITHOUT deleting them
+  virtual Expression * const * operands() const = 0;
 };
 
 }

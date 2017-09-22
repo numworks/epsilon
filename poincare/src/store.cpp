@@ -13,38 +13,12 @@ extern "C" {
 
 namespace Poincare {
 
-Store::Store(Symbol * symbol, Expression * value, bool clone) :
-  m_symbol(symbol),
-  m_value(value)
-{
-  if (clone) {
-    m_symbol = (Symbol *)symbol->clone();
-    m_value = value->clone();
-  }
-}
-
-Store::~Store() {
-  delete m_symbol;
-  delete m_value;
-}
-
 Expression::Type Store::type() const {
   return Type::Store;
 }
 
-const Expression * Store::operand(int i) const {
-  if (i == 0) {
-    return m_symbol;
-  }
-  return m_value;
-}
-
-int Store::numberOfOperands() const {
-  return 2;
-}
-
 Expression * Store::clone() const {
-  return new Store(m_symbol, m_value, true);
+  return new Store(operands(), true);
 }
 
 bool Store::isCommutative() const {
@@ -55,19 +29,19 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[3];
-  childrenLayouts[0] = m_value->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);
   const char stoSymbol[2] = {Ion::Charset::Sto, 0};
   childrenLayouts[1] = new StringLayout(stoSymbol, 1);
-  childrenLayouts[2] = m_symbol->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(childrenLayouts, 3);
 }
 
 
 template<typename T>
 Evaluation<T> * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(m_value, m_symbol);
-  if (context.expressionForSymbol(m_symbol) != nullptr) {
-    return context.expressionForSymbol(m_symbol)->evaluate<T>(context, angleUnit);
+  context.setExpressionForSymbolName(const_cast<Expression *>(value()), symbol());
+  if (context.expressionForSymbol(symbol()) != nullptr) {
+    return context.expressionForSymbol(symbol())->evaluate<T>(context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }

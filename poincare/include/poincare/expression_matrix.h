@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_MATRIX_H
 
 #include <poincare/matrix.h>
+#include <assert.h>
 
 namespace Poincare {
 
@@ -19,6 +20,12 @@ public:
   Type type() const override;
   Expression * clone() const override;
   bool isCommutative() const override;
+
+  // TODO: Remove these 2 functions
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {
+    assert(false);
+  }
+  void swapOperands(int i, int j) override { assert(false); }
 
   /* Evaluation */
   int numberOfRows() const override;

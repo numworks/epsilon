@@ -11,8 +11,10 @@ void MergeAddition::apply(Expression * root, Expression * captures[]) const {
 
   Addition * a0 = (Addition *)(captures[0]);
   Addition * a1 = (Addition *)(captures[1]);
-  a1->stealOperandsFrom(a0);
-  a1->removeOperand(a0);
+  a1->removeOperand(a0, false);
+  a1->addOperands(a0->operands(), a0->numberOfOperands());
+  a0->detachOperands();
+  delete a0;
 }
 
 }

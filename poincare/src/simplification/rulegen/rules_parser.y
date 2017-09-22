@@ -3,14 +3,19 @@
 
 /* When calling the parser, we will provide yyparse with an extra parameter : a
  * backpointer to the resulting expression. */
-%parse-param { std::vector<Rule *> ** rules }
+%parse-param { ParserResult * result }
 
 %{
 #include "rule.h"
 
+struct ParserResult {
+  std::string * name;
+  std::vector<Rule *> * rules;
+};
+
 int yylex();
-int yyparse(std::vector<Rule *> ** rules);
-int yyerror(std::vector<Rule *> ** rules, const char *s);
+int yyparse(ParserResult * result);
+int yyerror(ParserResult * result, const char * s);
 %}
 
 
@@ -55,7 +60,7 @@ int yyerror(std::vector<Rule *> ** rules, const char *s);
 %%
 
 root:
-  rule_list { *rules = $1; }
+  CAPITALIZED_IDENTIFIER rule_list { result->name = $1; result->rules = $2; }
 
 rule_list:
   rule { $$ = new std::vector<Rule *>(); $$->push_back($1); }
@@ -91,39 +96,39 @@ node_list:
 #include <sstream>
 #include <iostream>
 
-int yyerror(std::vector<Rule *> ** rules, const char *s) {
+int yyerror(ParserResult * result, const char *s) {
   printf("Error: %s\n",s);
   return 0;
 }
 
 int main(void) {
-  std::string rulesetName = "MyRuleSet";
-  std::vector<Rule *> * rules = new std::vector<Rule *>();
+  ParserResult result;
+  //std::vector<Rule *> * rules = new std::vector<Rule *>();
 
-  yyparse(&rules);
+  yyparse(&result);
 
   std::cout << "#include \"ruleset.h\"" << std::endl << std::endl;
 
   std::cout << "namespace Poincare {" << std::endl;
   std::cout << "namespace Simplification {" << std::endl << std::endl;
 
-  std::cout << "namespace " << rulesetName << "Rules {" << std::endl << std::endl;
+  std::cout << "namespace " << *(result.name) << "Rules {" << std::endl << std::endl;
 
-  for (int i=0; i<rules->size(); i++) {
-    rules->at(i)->generate(i);
+  for (int i=0; i<result.rules->size(); i++) {
+    result.rules->at(i)->generate(i);
     std::cout << std::endl;
   }
 
-  std::cout << "constexpr Rule rules[" << rules->size() << "] = {";
-  for (int i=0; i<rules->size(); i++) {
+  std::cout << "constexpr Rule rules[" << result.rules->size() << "] = {";
+  for (int i=0; i<result.rules->size(); i++) {
     std::cout << "Rule" << i << "::rule";
-    if (i+1 != rules->size()) {
+    if (i+1 != result.rules->size()) {
       std::cout << ", ";
     }
   }
   std::cout << "};" << std::endl;
   std::cout << "};" << std::endl << std::endl;
-  std::cout << "constexpr RuleSet " << rulesetName << "(" << rulesetName << "Rules::rules, " << rules->size() << ");" << std::endl;
+  std::cout << "constexpr Ruleset " << *(result.name) << "(" << *(result.name) << "Rules::rules, " << result.rules->size() << ");" << std::endl;
   std::cout << std::endl << "}" << std::endl << "}" << std::endl;
 
 #if 0
@@ -153,6 +158,5 @@ std::cout << "  Simplification((ExpressionSelector *)" << name.str() << "Selecto
   std::cout << "constexpr int Poincare::knumberOfSimplifications = " << rules->size() << ";" << std::endl;
 
 #endif
-  delete rules;
   return 0;
 }

@@ -9,7 +9,7 @@ namespace Simplification {
 class IntegerAdditionTransform : public Transform {
 public:
   constexpr IntegerAdditionTransform() {};
-  void apply(Expression * root, Expression * captures[]) const override;
+  void apply(Expression * captures[]) const override;
 };
 
 }

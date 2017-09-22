@@ -8,7 +8,7 @@ namespace Simplification {
 
 class Transform {
 public:
-  virtual void apply(Expression * root, Expression * captures[]) const = 0;
+  virtual void apply(Expression * captures[]) const = 0;
 };
 
 }

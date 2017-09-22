@@ -36,8 +36,8 @@ void Expression::simplify(Expression ** e) {
   root.sort();
   // Only unconditional simplify
   int ruleIndex = 0;
-  while (ruleIndex < Simplification::DemoRuleSet.numberOfRules()) {
-    const Simplification::Rule * rule = Simplification::DemoRuleSet.ruleAtIndex(ruleIndex++);
+  while (ruleIndex < Simplification::DemoRuleset.numberOfRules()) {
+    const Simplification::Rule * rule = Simplification::DemoRuleset.ruleAtIndex(ruleIndex++);
     if (rule->apply(&root)) {
       root.sort();
       std::cout << "-----" << std::endl;

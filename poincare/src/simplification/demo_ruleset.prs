@@ -1,2 +1,4 @@
+DemoRuleset
+
 // Int+Int -> Int
-Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b);
+Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);

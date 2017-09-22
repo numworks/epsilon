@@ -102,7 +102,7 @@ public:
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   virtual Expression * clone() const = 0;
-  virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) = 0;
+  virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
 
   /* Sorting */
   virtual bool isCommutative() const = 0;

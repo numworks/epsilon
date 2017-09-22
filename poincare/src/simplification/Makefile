@@ -14,5 +14,6 @@ objs += $(addprefix $(dir)/,\
   selector/combination.o \
   selector/selector.o \
   selector/type_selector.o \
+  transform/integer_addition_transform.o \
   transform/merge_addition_transform.o \
 )

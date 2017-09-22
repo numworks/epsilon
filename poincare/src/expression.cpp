@@ -243,7 +243,7 @@ void Expression::setParent(Expression * parent, bool deep) {
   m_parent = parent;
   if (deep) {
     for (int i=0; i<numberOfOperands(); i++) {
-      ((Expression *)operand(i))->setParent(this);
+      ((Expression *)operand(i))->setParent(this, deep);
     }
   }
 }

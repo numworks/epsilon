@@ -23,9 +23,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Cosine:
       std::cout << "Cosine";
       break;
-/*    case Expression::Type::Float:
-      std::cout << "Float()";
-      break;*/
+    case Expression::Type::NaperianLogarithm:
+      std::cout << "Ln";
+      break;
     case Expression::Type::Integer:
       std::cout << "Integer(";
       std::cout << e->approximate<double>(context);

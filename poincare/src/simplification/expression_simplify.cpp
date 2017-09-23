@@ -2,7 +2,6 @@
 #include "../expression_debug.h"
 #include <iostream>
 #include <poincare/static_hierarchy.h>
-#include "transform/integer_addition_transform.h"
 #include "demo_ruleset.h"
 
 namespace Poincare {

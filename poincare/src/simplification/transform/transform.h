@@ -6,10 +6,13 @@
 namespace Poincare {
 namespace Simplification {
 
-class Transform {
-public:
-  virtual void apply(Expression * captures[]) const = 0;
-};
+using Transform = void (*)(Expression * captures[]);
+
+void SubtractionTransform(Expression * captures[]);
+void FractionTransform(Expression * captures[]);
+void MergeDynamicHierarchyTransform(Expression * captures[]);
+void IntegerAdditionTransform(Expression * captures[]);
+void PowerPowerTransform(Expression * captures[]);
 
 }
 }

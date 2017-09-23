@@ -108,6 +108,7 @@ int main(void) {
   yyparse(&result);
 
   std::cout << "#include \"ruleset.h\"" << std::endl << std::endl;
+  std::cout << "#include \"transform/transform.h\"" << std::endl << std::endl;
 
   std::cout << "namespace Poincare {" << std::endl;
   std::cout << "namespace Simplification {" << std::endl << std::endl;

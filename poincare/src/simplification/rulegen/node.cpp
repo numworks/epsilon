@@ -50,10 +50,6 @@ void Node::generateSelector(Rule * rule) {
   std::cout << ");" << std::endl;
 }
 
-void Node::generateTransform() {
-  std::cout << "constexpr " << *m_name  << " transform;" << std::endl;
-}
-
 int Node::indexOfChildrenWithIdentifier(std::string identifier) {
   for (int i=0; i<m_children->size(); i++) {
     if (*(m_children->at(i)->m_identifier) == identifier) {

@@ -1,14 +1,11 @@
-#include "subtraction_transform.h"
+#include "transform.h"
 #include <assert.h>
 #include <poincare/addition.h>
 #include <poincare/integer.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 
-namespace Poincare {
-namespace Simplification {
-
-void SubtractionTransform::apply(Expression * captures[]) const {
+void Poincare::Simplification::SubtractionTransform(Expression * captures[]) {
   assert(captures[0]->type() == Expression::Type::Subtraction);
 
   Subtraction * s = static_cast<Subtraction *>(captures[0]);
@@ -25,7 +22,4 @@ void SubtractionTransform::apply(Expression * captures[]) const {
 
   s->detachOperands();
   delete s;
-}
-
-}
 }

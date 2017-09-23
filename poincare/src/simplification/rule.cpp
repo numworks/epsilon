@@ -22,7 +22,7 @@ bool Rule::apply(Expression * e) const {
 bool Rule::immediateApply(Expression * e) const {
   Expression * m[5]; // En fait, 5 est un upper-bound très facilement calculable par notre compilateur de regle. C'est le max du nombre de capture de toutes les règles. Oui, on pourrait faire un truc dynamique qui n'alloue que ce dont le selecteur actuel a besoin, mais bon...
   if (m_selector->match(e, m)) {
-    m_transform->apply(m);
+    m_transform(m);
     return true;
   }
   return false;

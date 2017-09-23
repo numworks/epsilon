@@ -18,9 +18,9 @@ public:
   void identifyAnonymousChildren(int * index);
 
   void generateSelector(Rule * rule);
-  void generateTransform();
   int indexOfChildrenWithIdentifier(std::string identifier);
   std::string identifier();
+  std::string name() { return *m_name; }
 private:
   int selectorCaptureIndexInRule(Rule * rule);
   int selectorIndexInRule(Rule * rule);

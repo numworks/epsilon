@@ -4,7 +4,7 @@ DemoRuleset
 Subtraction.a -> SubtractionTransform(a);
 
 // a/b -> a*b^-1
-//Division.a -> ReplaceDivisionTransform(a);
+Fraction.a -> FractionTransform(a);
 
 // (a+b)+c -> a+b+c
 Addition.a(Addition.b) -> MergeDynamicHierarchyTransform(a,b);

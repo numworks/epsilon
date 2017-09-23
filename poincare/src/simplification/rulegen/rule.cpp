@@ -6,10 +6,9 @@ void Rule::generate(int index) {
   int selectorIndex = 0;
   m_selector->identifyAnonymousChildren(&selectorIndex);
   m_selector->generateSelector(this);
-  m_transform->generateTransform();
   std::cout << "constexpr Rule rule(&"
-    << m_selector->identifier()
-    << ", &transform);" << std::endl;
+    << m_selector->identifier() << ", "
+    << m_transform->name() << ");" << std::endl;
   std::cout << "}" << std::endl;
 }
 

@@ -4,7 +4,7 @@
 
 #include <stddef.h>
 #include <assert.h>
-
+#include <limits>
 
 static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
@@ -284,6 +284,12 @@ void TextArea::TextArea::ContentView::moveCursorIndex(int deltaX) {
   layoutSubviews();
 }
 
+void TextArea::TextArea::ContentView::moveCursorIndexAbsolute(int x) {
+  Text::Position p = m_text.positionAtIndex(m_cursorIndex);
+  m_cursorIndex = m_text.indexAtPosition(Text::Position(x, p.line()));
+  layoutSubviews();
+}
+
 KDRect TextArea::TextArea::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) {
   KDRect charRect = characterFrameAtIndex(index);
   KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
@@ -307,8 +313,12 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
 bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     m_contentView.moveCursorIndex(-1);
+  } else if (event == Ion::Events::Origin) {
+    m_contentView.moveCursorIndexAbsolute(0);
   } else if (event == Ion::Events::Right) {
     m_contentView.moveCursorIndex(1);
+  } else if (event == Ion::Events::End) {
+    m_contentView.moveCursorIndexAbsolute(std::numeric_limits<int>::max());
   } else if (event == Ion::Events::Up) {
     m_contentView.moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {

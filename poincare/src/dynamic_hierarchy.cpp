@@ -12,12 +12,12 @@ DynamicHierarchy::DynamicHierarchy() :
 {
 }
 
-DynamicHierarchy::DynamicHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
   m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);
   assert(numberOfOperands >= 2);
-  m_operands = new Expression * [numberOfOperands];
+  m_operands = new const Expression * [numberOfOperands];
   for (int i=0; i<numberOfOperands; i++) {
     assert(operands[i] != nullptr);
     if (cloneOperands) {
@@ -39,9 +39,9 @@ DynamicHierarchy::~DynamicHierarchy() {
   delete[] m_operands;
 }
 
-void DynamicHierarchy::addOperands(Expression * const * operands, int numberOfOperands) {
+void DynamicHierarchy::addOperands(const Expression * const * operands, int numberOfOperands) {
   assert(numberOfOperands > 0);
-  Expression ** newOperands = new Expression * [m_numberOfOperands+numberOfOperands];
+  const Expression ** newOperands = new const Expression * [m_numberOfOperands+numberOfOperands];
   for (int i=0; i<m_numberOfOperands; i++) {
     newOperands[i] = m_operands[i];
   }

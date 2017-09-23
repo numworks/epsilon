@@ -13,7 +13,7 @@ BoundedStaticHierarchy<T>::BoundedStaticHierarchy() :
 }
 
 template<int T>
-BoundedStaticHierarchy<T>::BoundedStaticHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
   m_numberOfOperands(numberOfOperands)
 {
   StaticHierarchy<T>::build(operands, numberOfOperands, cloneOperands);

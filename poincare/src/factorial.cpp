@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Factorial::Factorial(Expression * argument, bool clone) :
+Factorial::Factorial(const Expression * argument, bool clone) :
   StaticHierarchy<1>(&argument, clone)
 {
 }

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Factorial : public StaticHierarchy<1> {
 public:
-  Factorial(Expression * argument, bool clone = true);
+  Factorial(const Expression * argument, bool clone = true);
   Type type() const override;
   Expression * clone() const override;
   bool isCommutative() const override;

@@ -81,7 +81,7 @@ template<typename T> Evaluation<T> * Power::computeOnMatrices(Evaluation<T> * m,
 ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  Expression * indiceOperand = m_operands[1];
+  const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = (Expression *)m_operands[1]->operand(0);

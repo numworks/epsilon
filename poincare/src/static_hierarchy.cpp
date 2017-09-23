@@ -12,7 +12,7 @@ StaticHierarchy<T>::StaticHierarchy() :
 }
 
 template<int T>
-StaticHierarchy<T>::StaticHierarchy(Expression * const * operands, bool cloneOperands)
+StaticHierarchy<T>::StaticHierarchy(const Expression * const * operands, bool cloneOperands)
 {
   build(operands, T, cloneOperands);
 }
@@ -37,7 +37,7 @@ bool StaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
 }
 
 template<int T>
-void StaticHierarchy<T>::build(Expression * const * operands, int numberOfOperands, bool cloneOperands) {
+void StaticHierarchy<T>::build(const Expression * const * operands, int numberOfOperands, bool cloneOperands) {
   assert(operands != nullptr);
   assert(numberOfOperands <= T);
   for (int i=0; i < numberOfOperands; i++) {

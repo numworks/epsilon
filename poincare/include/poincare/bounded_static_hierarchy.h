@@ -9,7 +9,7 @@ template<int T>
 class BoundedStaticHierarchy : public StaticHierarchy<T> {
 public:
   BoundedStaticHierarchy();
-  BoundedStaticHierarchy(Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
+  BoundedStaticHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
   int numberOfOperands() const override { return m_numberOfOperands; }
   bool hasValidNumberOfOperands(int numberOfOperands) const override;
 private:

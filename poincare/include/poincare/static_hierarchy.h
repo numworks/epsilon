@@ -11,7 +11,7 @@ class StaticHierarchy : public Hierarchy {
 public:
 
   StaticHierarchy();
-  StaticHierarchy(Expression * const * operands, bool cloneOperands = true);
+  StaticHierarchy(const Expression * const * operands, bool cloneOperands = true);
   ~StaticHierarchy();
   StaticHierarchy(const StaticHierarchy & other) = delete;
   StaticHierarchy(StaticHierarchy && other) = delete;
@@ -20,11 +20,11 @@ public:
 
   virtual void setArgument(ListData * listData, int numberOfEntries, bool clone);
   int numberOfOperands() const override { return T; }
-  Expression * const * operands() const override { return m_operands; }
+  const Expression * const * operands() const override { return m_operands; }
   virtual bool hasValidNumberOfOperands(int numberOfOperands) const;
 protected:
-  void build(Expression * const * operands, int numberOfOperands, bool cloneOperands);
-  Expression * m_operands[T];
+  void build(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
+  const Expression * m_operands[T];
 };
 
 }

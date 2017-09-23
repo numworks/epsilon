@@ -3,6 +3,7 @@
 
 #include "rule.h"
 #include "selector/type_selector.h"
+#include "transform/subtraction_transform.h"
 #include "transform/integer_addition_transform.h"
 #include "transform/merge_dynamic_hierarchy_transform.h"
 

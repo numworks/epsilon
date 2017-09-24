@@ -85,6 +85,7 @@ public:
     Radian = 1,
     Default = 2
   };
+
   /* Constructor & Destructor */
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
@@ -141,6 +142,8 @@ public:
   template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
 protected:
+  /* Constructor */
+  Expression() : m_parent(nullptr) {}
   /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;

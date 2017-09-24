@@ -38,7 +38,7 @@ Expression * Expression::parse(char const * string) {
   poincare_expression_yy_delete_buffer(buf);
 
   if (expression) {
-    expression->setParent(nullptr, true);
+    expression->recursivelySetAsParentOfChildren();
   }
   return expression;
 }
@@ -226,16 +226,11 @@ int Expression::nodeComparesTo(const Expression * e) const {
   return -1;
 }
 
-void Expression::setParent(Expression * parent, bool deep) {
-  if (this == parent) {
-    // TODO: this case should be useless once complex is a leaf expression!
-    return;
-  }
-  m_parent = parent;
-  if (deep) {
-    for (int i=0; i<numberOfOperands(); i++) {
-      ((Expression *)operand(i))->setParent(this, deep);
-    }
+void Expression::recursivelySetAsParentOfChildren() {
+  for (int i=0; i<numberOfOperands(); i++) {
+    Expression * child = const_cast<Expression *>(operand(i));
+    child->setParent(this);
+    child->recursivelySetAsParentOfChildren();
   }
 }
 

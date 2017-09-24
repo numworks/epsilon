@@ -9,10 +9,12 @@ namespace Simplification {
 // The return value tells wether the transform could be applied
 using Transform = bool (*)(Expression * captures[]);
 
+bool RemoveParenthesisTransform(Expression * captures[]);
 bool SubtractionTransform(Expression * captures[]);
 bool FractionTransform(Expression * captures[]);
 bool MergeDynamicHierarchyTransform(Expression * captures[]);
 bool IntegerAdditionTransform(Expression * captures[]);
+bool IntegerMultiplicationTransform(Expression * captures[]);
 bool PowerPowerTransform(Expression * captures[]);
 
 }

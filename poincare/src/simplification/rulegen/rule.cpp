@@ -8,7 +8,8 @@ void Rule::generate(int index) {
   m_selector->generateSelector(this);
   std::cout << "constexpr Rule rule(&"
     << m_selector->identifier() << ", "
-    << m_transform->name() << ");" << std::endl;
+    << m_transform->name() << ", "
+    << m_transform->numberOfChildren() << ");" << std::endl;
   std::cout << "}" << std::endl;
 }
 

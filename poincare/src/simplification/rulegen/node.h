@@ -21,6 +21,7 @@ public:
   int indexOfChildrenWithIdentifier(std::string identifier);
   std::string identifier();
   std::string name() { return *m_name; }
+  int numberOfChildren() { return m_children->size(); }
 private:
   int selectorCaptureIndexInRule(Rule * rule);
   int selectorIndexInRule(Rule * rule);

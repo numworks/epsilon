@@ -4,7 +4,7 @@
 #include <poincare/integer.h>
 #include <utility>
 
-void Poincare::Simplification::IntegerAdditionTransform(Expression * captures[]) {
+bool Poincare::Simplification::IntegerAdditionTransform(Expression * captures[]) {
   assert(captures[0]->type() == Expression::Type::Addition);
   assert(captures[1]->type() == Expression::Type::Integer);
   assert(captures[2]->type() == Expression::Type::Integer);
@@ -25,4 +25,6 @@ void Poincare::Simplification::IntegerAdditionTransform(Expression * captures[])
     a->replaceOperand(i1, r);
     a->removeOperand(i2);
   }
+
+  return true;
 }

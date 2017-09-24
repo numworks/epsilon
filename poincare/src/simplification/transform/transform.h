@@ -6,13 +6,14 @@
 namespace Poincare {
 namespace Simplification {
 
-using Transform = void (*)(Expression * captures[]);
+// The return value tells wether the transform could be applied
+using Transform = bool (*)(Expression * captures[]);
 
-void SubtractionTransform(Expression * captures[]);
-void FractionTransform(Expression * captures[]);
-void MergeDynamicHierarchyTransform(Expression * captures[]);
-void IntegerAdditionTransform(Expression * captures[]);
-void PowerPowerTransform(Expression * captures[]);
+bool SubtractionTransform(Expression * captures[]);
+bool FractionTransform(Expression * captures[]);
+bool MergeDynamicHierarchyTransform(Expression * captures[]);
+bool IntegerAdditionTransform(Expression * captures[]);
+bool PowerPowerTransform(Expression * captures[]);
 
 }
 }

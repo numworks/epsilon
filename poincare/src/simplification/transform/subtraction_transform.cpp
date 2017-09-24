@@ -5,7 +5,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 
-void Poincare::Simplification::SubtractionTransform(Expression * captures[]) {
+bool Poincare::Simplification::SubtractionTransform(Expression * captures[]) {
   assert(captures[0]->type() == Expression::Type::Subtraction);
 
   Subtraction * s = static_cast<Subtraction *>(captures[0]);
@@ -21,4 +21,6 @@ void Poincare::Simplification::SubtractionTransform(Expression * captures[]) {
 
   s->detachOperands();
   delete s;
+
+  return true;
 }

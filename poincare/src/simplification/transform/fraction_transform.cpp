@@ -6,7 +6,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 
-void Poincare::Simplification::FractionTransform(Expression * captures[]) {
+bool Poincare::Simplification::FractionTransform(Expression * captures[]) {
   assert(captures[0]->type() == Expression::Type::Fraction);
 
   Fraction * d = static_cast<Fraction *>(captures[0]);
@@ -22,4 +22,6 @@ void Poincare::Simplification::FractionTransform(Expression * captures[]) {
 
   d->detachOperands();
   delete d;
+
+  return true;
 }

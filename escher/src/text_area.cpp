@@ -4,7 +4,7 @@
 
 #include <stddef.h>
 #include <assert.h>
-#include <limits>
+#include <limits.h>
 
 static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
@@ -318,7 +318,7 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Right) {
     m_contentView.moveCursorIndex(1);
   } else if (event == Ion::Events::End) {
-    m_contentView.moveCursorIndexAbsolute(std::numeric_limits<int>::max());
+    m_contentView.moveCursorIndexAbsolute(INT_MAX);
   } else if (event == Ion::Events::Up) {
     m_contentView.moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {

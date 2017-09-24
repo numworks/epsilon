@@ -12,8 +12,6 @@ extern "C" {
 #include <assert.h>
 }
 
-//#include "simplify/rules.h"
-
 int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
 
 namespace Poincare {
@@ -148,68 +146,6 @@ template<typename T> T Expression::approximate(const char * text, Context& conte
   delete evaluation;
   return result;
 }
-
-/*Expression * Expression::simplify() const {
-  // pre-process:
-  // - remonter les noeuds de matrices en root ou les faire disparaitre
-  // - division and subtraction are turned into multiplication and addition
-  // - oppostive are turned into multiplication
-  // - associative expression are collapsed
-  // Simplify:
-  // - see Romain notes
-  // Post-process:
-  // - pattern a+(-1)*b -> a-b
-  // - pattern a*b^(-1) -> a/b
-  // - pattern (-1)*a -> -a
-
-
-
-  * We make sure that the simplification is deletable.
-   * Indeed, we don't want an expression with some parts deletable and some not
-   *
-
-  // If we have a leaf node nothing can be simplified.
-  if (this->numberOfOperands()==0) {
-    return this->clone();
-  }
-
-  Expression * result = this->clone();
-  Expression * tmp = nullptr;
-
-  bool simplification_pass_was_useful = true;
-  while (simplification_pass_was_useful) {
-    * We recursively simplify the children expressions.
-     * Note that we are sure to get the samne number of children as we had before
-     *
-    Expression ** simplifiedOperands = new Expression * [result->numberOfOperands()];
-    for (int i = 0; i < result->numberOfOperands(); i++) {
-      simplifiedOperands[i] = result->operand(i)->simplify();
-    }
-
-    * Note that we don't need to clone the simplified children because they are
-     * already cloned before. *
-    tmp = result->cloneWithDifferentOperands(simplifiedOperands, result->numberOfOperands(), false);
-    delete result;
-    result = tmp;
-
-    // The table is no longer needed.
-    delete [] simplifiedOperands;
-
-    simplification_pass_was_useful = false;
-    for (int i=0; i<knumberOfSimplifications; i++) {
-      const Simplification * simplification = (simplifications + i); // Pointer arithmetics
-      Expression * simplified = simplification->simplify(result);
-      if (simplified != nullptr) {
-        simplification_pass_was_useful = true;
-        delete result;
-        result = simplified;
-        break;
-      }
-    }
-  }
-
-  return result;
-}*/
 
 template<typename T> T Expression::epsilon() {
   static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;

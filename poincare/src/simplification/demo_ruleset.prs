@@ -1,5 +1,8 @@
 DemoRuleset
 
+// Remove parenthesis
+Parenthesis.a -> RemoveParenthesisTransform(a);
+
 // a-b -> a+(-1)*b
 Subtraction.a -> SubtractionTransform(a);
 
@@ -14,6 +17,9 @@ Multiplication.a(Multiplication.b) -> MergeDynamicHierarchyTransform(a,b);
 
 // Int+Int -> Int
 Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);
+
+// Int*Int -> Int
+Multiplication.a(Integer.b,Integer.c) -> IntegerMultiplicationTransform(a,b,c);
 
 // (b^c)^d -> b^(c*d)
 //Power.a(Power(b,c),d) -> PowerPowerTransform(a,b,c,d)

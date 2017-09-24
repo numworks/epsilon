@@ -9,7 +9,6 @@ namespace Poincare {
 template<int T>
 class StaticHierarchy : public Hierarchy {
 public:
-
   StaticHierarchy();
   StaticHierarchy(const Expression * const * operands, bool cloneOperands = true);
   ~StaticHierarchy();

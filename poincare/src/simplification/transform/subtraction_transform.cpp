@@ -9,7 +9,6 @@ void Poincare::Simplification::SubtractionTransform(Expression * captures[]) {
   assert(captures[0]->type() == Expression::Type::Subtraction);
 
   Subtraction * s = static_cast<Subtraction *>(captures[0]);
-
   assert(s->numberOfOperands() == 2);
 
   const Integer * minusOne = new Integer(-1);

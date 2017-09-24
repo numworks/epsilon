@@ -7,12 +7,14 @@ extern "C" {
 namespace Poincare {
 
 DynamicHierarchy::DynamicHierarchy() :
+  Hierarchy(),
   m_operands(nullptr),
   m_numberOfOperands(0)
 {
 }
 
 DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+  Hierarchy(),
   m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);
@@ -25,6 +27,7 @@ DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numb
     } else {
       m_operands[i] = operands[i];
     }
+    const_cast<Expression *>(m_operands[i])->setParent(this);
   }
 }
 
@@ -46,6 +49,7 @@ void DynamicHierarchy::addOperands(const Expression * const * operands, int numb
     newOperands[i] = m_operands[i];
   }
   for (int i=0; i<numberOfOperands; i++) {
+    const_cast<Expression *>(operands[i])->setParent(this);
     newOperands[i+m_numberOfOperands] = operands[i];
   }
   delete[] m_operands;
@@ -58,6 +62,8 @@ void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemov
     if (operand(i) == e) {
       if (deleteAfterRemoval) {
         delete m_operands[i];
+      } else {
+        const_cast<Expression *>(m_operands[i])->setParent(nullptr);
       }
       for (int j=i; j<m_numberOfOperands; j++) {
         m_operands[j] = m_operands[j+1];

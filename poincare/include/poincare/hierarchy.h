@@ -7,6 +7,7 @@ namespace Poincare {
 
 class Hierarchy : public Expression {
 public:
+  using Expression::Expression;
   const Expression * operand(int i) const override;
   void swapOperands(int i, int j) override;
   void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) override;

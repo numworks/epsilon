@@ -9,12 +9,9 @@ extern "C" {
 #include "layout/string_layout.h"
 #include <utility>
 
-#define MAX(a,b) ((a)>(b)?a:b)
-
 namespace Poincare {
 
-
-// Helper functions
+static inline int max(int x, int y) { return (x>y ? x : y); }
 
 uint8_t log2(Integer::native_uint_t v) {
   constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(Integer::native_uint_t);
@@ -251,7 +248,7 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
 }
 
 Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative) {
-  uint16_t size = MAX(a.m_numberOfDigits, b.m_numberOfDigits);
+  uint16_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
   if (!subtract) {
     // Addition can overflow
     size += 1;

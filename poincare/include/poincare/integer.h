@@ -31,7 +31,7 @@ public:
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
-  int checksum() const override;
+  int identifier() const override;
   int compareTo(const Expression * e) const override;
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;

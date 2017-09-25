@@ -53,7 +53,7 @@ Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
 
-int Symbol::checksum() const {
+int Symbol::identifier() const {
   return m_name;
 }
 

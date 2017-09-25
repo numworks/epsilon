@@ -12,11 +12,11 @@ poincare/src/expression_parser.cpp
 poincare/src/expression_parser.hpp
 
 # No rulegen generated files
-poincare/src/simplify/rules_generation/rules_tokens.h
-poincare/src/simplify/rules_generation/rules_lexer.cpp
-poincare/src/simplify/rules_generation/rules_parser.cpp
-poincare/src/simplify/rules_generation/rulegen
-poincare/src/simplify/rules.cpp
+poincare/src/simplification/rulegen/rules_tokens.h
+poincare/src/simplification/rulegen/rules_lexer.cpp
+poincare/src/simplification/rulegen/rules_parser.cpp
+poincare/src/simplification/rulegen/rulegen
+poincare/src/simplification/demo_ruleset.h
 
 # Font related generated files.
 kandinsky/fonts/rasterizer

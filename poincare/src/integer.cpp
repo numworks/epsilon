@@ -291,11 +291,10 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
   }
 }
 
-int Integer::checksum() const {
-  if (m_numberOfDigits <= 0) {
-    return 0;
-  }
-  return m_digits[0];
+int Integer::identifier() const {
+  assert(m_numberOfDigits > 0);
+  int sign = m_negative ? -1 : 1;
+  return sign*m_digits[0];
 }
 
 /*

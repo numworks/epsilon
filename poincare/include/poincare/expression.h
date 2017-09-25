@@ -2,6 +2,9 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression_layout.h>
+extern "C" {
+#include <assert.h>
+}
 
 namespace Poincare {
 
@@ -93,11 +96,14 @@ public:
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
+  // Allow to narrow down some nodes when querying the Expression tree.
+  // Currently implemented by Symbol and Integer
+  virtual int identifier() const { assert(false); return 0; }
 
-   /* Circuit breaker */
-   typedef bool (*CircuitBreaker)();
-   static void setCircuitBreaker(CircuitBreaker cb);
-   static bool shouldStopProcessing();
+  /* Circuit breaker */
+  typedef bool (*CircuitBreaker)();
+  static void setCircuitBreaker(CircuitBreaker cb);
+  static bool shouldStopProcessing();
 
   /* Hierarchy */
   virtual const Expression * operand(int i) const = 0;
@@ -106,7 +112,6 @@ public:
   void setParent(Expression * parent) { m_parent = parent; }
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
   virtual void swapOperands(int i, int j) = 0;
-  virtual int checksum() const;
 
   /* Sorting */
   virtual bool isCommutative() const { return false; }

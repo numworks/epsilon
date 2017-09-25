@@ -34,7 +34,7 @@ public:
   char name() const;
   Type type() const override;
   Expression * clone() const override;
-  int checksum() const override;
+  int identifier() const override;
   int compareTo(const Expression * e) const override;
   bool isMatrixSymbol() const;
 private:

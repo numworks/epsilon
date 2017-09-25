@@ -8,9 +8,6 @@
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
-extern "C" {
-#include <assert.h>
-}
 
 int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
 
@@ -97,11 +94,6 @@ void Expression::sort() {
       return;
     }
   }
-}
-
-int Expression::checksum() const {
-  assert(false);
-  return 0;
 }
 
 int Expression::compareTo(const Expression * e) const {

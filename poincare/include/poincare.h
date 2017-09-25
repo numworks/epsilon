@@ -57,7 +57,7 @@
 #include <poincare/prediction_interval.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>
-#include <poincare/reel_part.h>
+#include <poincare/real_part.h>
 #include <poincare/round.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>

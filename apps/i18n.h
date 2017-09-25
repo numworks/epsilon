@@ -41,7 +41,7 @@ namespace I18n {
     Product,
     ComplexAbsoluteValue,
     Agument,
-    ReelPart,
+    RealPart,
     ImaginaryPart,
     Conjugate,
     Combination,

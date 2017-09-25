@@ -28,7 +28,10 @@ bool Selector::match(const Expression * e, Expression ** captures) const {
   if (m_numberOfChildren == 0) {
     return true;
   }
-  //
+  // Si le match doit être total, il faut le même nombre d'enfants dans e que d'enfants du selector ...
+  if (!m_childrenPartialMatch && m_numberOfChildren != e->numberOfOperands()) {
+    return false;
+  }
   Combination combination(m_children, m_numberOfChildren, e);
   while (combination.next()){
     bool allChildrenMatched = true;

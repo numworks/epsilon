@@ -5,30 +5,31 @@
 namespace Poincare {
 namespace Simplification {
 
-bool Selector::match(const Expression * e, Expression ** captures) const {
-  // Si pour commencer, e ne correspond pas  mon petit test  moi perso, c'est mort!
+bool Selector::match(const Expression * e, Expression ** captures, int captureLength) const {
+  // Test that root selector match root expression
   if (!immediateMatch(e)) {
     return false;
   }
-
+  // Capture the expression if required
   if (m_captureIndex >= 0) {
-    assert(m_captureIndex < 5); // Le upper-bound calcul avant
+    assert(m_captureIndex < captureLength);
     //FIXME: No cast
     captures[m_captureIndex] = (Expression *)e;
   }
-
-  // Maintenant si mon petit test a march, encore faut-il que ceux des mes fils marchent aussi
-  // En pratique, je veux retourner OUI ssi j'arrive  trouver une combinaison telle que chacun de mes fils matchent.
-  // LA, chiant : eviter l'explosion combinatoire !!!
-  // C'est MAINTENANT qu'on va utiliser le fait que e est triee !!
-  // La difficult tant d'viter de considrer plein de cas inutiles
-
-  // Ici, le code va tre un truc du genre
-  //
+  /* If the root selector matched the root expression, we still have to test
+   * that every selector's child can match an expression's child: we return
+   * true if a combination linking every selector child to an expression child
+   * does exist. To avoid combinatorial explosion, we rely on the fact that the
+   * expression AND the selector are sorted enabling us to skip many useless
+   * cases. */
   if (m_numberOfChildren == 0) {
     return true;
   }
-  // Si le match doit être total, il faut le même nombre d'enfants dans e que d'enfants du selector ...
+  /* If we want a complete match (meaning every expression's child are matched
+   * by a selector's child), the number of selector children should equal the
+   * number of expression children. And that is the only condition to add to
+   * get a total match! */
+
   if (!m_childrenPartialMatch && m_numberOfChildren != e->numberOfOperands()) {
     return false;
   }
@@ -38,7 +39,7 @@ bool Selector::match(const Expression * e, Expression ** captures) const {
     for (int i=0; i<m_numberOfChildren; i++) {
       const Selector * child = m_children[i];
       const Expression * expression = combination.expressionForSelectorIndex(i);
-      if (!child->match(expression, captures)) {
+      if (!child->match(expression, captures, captureLength)) {
         allChildrenMatched = false;
         break;
       }

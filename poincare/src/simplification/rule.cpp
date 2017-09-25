@@ -21,7 +21,7 @@ bool Rule::apply(Expression * e) const {
 
 bool Rule::immediateApply(Expression * e) const {
   Expression * captures[m_captureLength];
-  if (m_selector->match(e, captures)) {
+  if (m_selector->match(e, captures, m_captureLength)) {
     return m_transform(captures);
   }
   return false;

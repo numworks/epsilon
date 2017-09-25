@@ -14,7 +14,7 @@ public:
     m_captureIndex(captureIndex), m_children(children), m_numberOfChildren(numberOfChildren), m_childrenPartialMatch(childrenPartialMatch) {}
   virtual bool acceptsLocationInCombination(const Combination * combination, int location) const = 0;
   virtual bool immediateMatch(const Expression * e) const = 0;
-  bool match(const Expression * e, Expression ** captures) const;
+  bool match(const Expression * e, Expression ** captures, int captureLength) const;
 private:
   int m_captureIndex;
   const Selector * const * m_children;

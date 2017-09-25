@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <stdint.h>
-#include <kandinsky.h>
 }
+#include <kandinsky.h>
 
 #if ESCHER_VIEW_LOGGING
 #include <iostream>
@@ -26,12 +26,21 @@ class View {
   friend class TransparentView;
 public:
   View();
-  virtual ~View();
+  virtual ~View() {
+    for (int i = 0; i < numberOfSubviews(); i++) {
+      View * subview = subviewAtIndex(i);
+      if (subview != nullptr) {
+        subview->m_superview = nullptr;
+      }
+    }
+  }
   View(const View& other) = delete;
   View(View&& other) = delete;
   View& operator=(const View& other) = delete;
   View& operator=(View&& other) = delete;
-  void resetSuperview();
+  void resetSuperview() {
+    m_superview = nullptr;
+  }
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
    * Kandinsky library using the provided context. */
@@ -66,8 +75,12 @@ protected:
 #endif
   KDRect m_frame;
 private:
-  virtual int numberOfSubviews() const;
-  virtual View * subviewAtIndex(int index);
+  virtual int numberOfSubviews() const {
+    return 0;
+  }
+  virtual View * subviewAtIndex(int index) {
+    return nullptr;
+  }
   virtual void layoutSubviews();
   virtual const Window * window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);

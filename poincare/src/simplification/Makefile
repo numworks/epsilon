@@ -17,6 +17,7 @@ objs += $(addprefix $(prefix)/,\
   rule.o \
   selector/combination.o \
   selector/selector.o \
+  selector/type_and_value_selector.o \
   selector/type_selector.o \
   transform/fraction_transform.o \
   transform/remove_parenthesis_transform.o \

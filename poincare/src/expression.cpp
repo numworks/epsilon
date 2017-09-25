@@ -99,6 +99,11 @@ void Expression::sort() {
   }
 }
 
+int Expression::checksum() const {
+  assert(false);
+  return 0;
+}
+
 int Expression::comparesTo(const Expression * e) const {
   if (this->nodeComparesTo(e) != 0) {
     return this->nodeComparesTo(e);

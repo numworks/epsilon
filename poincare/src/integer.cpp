@@ -269,6 +269,12 @@ Expression * Integer::clone() const {
   return clone;
 }
 
+int Integer::checksum() const {
+  if (m_numberOfDigits <= 0) {
+    return 0;
+  }
+  return m_digits[0];
+}
 bool Integer::isCommutative() const {
   return false;
 }

@@ -13,7 +13,7 @@ bool Poincare::Simplification::IntegerAdditionTransform(Expression * captures[])
   Integer * i1 = (Integer *)(captures[1]);
   Integer * i2 = (Integer *)(captures[2]);
 
-  Integer resultOnStack = i1->add(*i2);
+  Integer resultOnStack = Integer::Addition(*i1, *i2);
   Integer * r = new Integer(std::move(resultOnStack));
   //r->add(resultOnStack);
   // FIXME: Beeeeuargl

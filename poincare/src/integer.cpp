@@ -7,54 +7,42 @@ extern "C" {
 }
 #include <poincare/complex.h>
 #include "layout/string_layout.h"
+#include <utility>
 
 #define MAX(a,b) ((a)>(b)?a:b)
-#define NATIVE_UINT_BIT_COUNT (8*sizeof(native_uint_t))
 
 namespace Poincare {
 
-uint8_t log2(native_uint_t v) {
-  assert(NATIVE_UINT_BIT_COUNT < 256); // Otherwise uint8_t isn't OK
-  for (uint8_t i=0; i<NATIVE_UINT_BIT_COUNT; i++) {
-    if (v < ((native_uint_t)1<<i)) {
+
+// Helper functions
+
+uint8_t log2(Integer::native_uint_t v) {
+  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(Integer::native_uint_t);
+  static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a native_uint_t");
+  for (uint8_t i=0; i<nativeUnsignedIntegerBitCount; i++) {
+    if (v < ((Integer::native_uint_t)1<<i)) {
       return i;
     }
   }
   return 32;
 }
 
-static inline char char_from_digit(native_uint_t digit) {
+static inline char char_from_digit(Integer::native_uint_t digit) {
   return '0'+digit;
 }
 
-Integer::Integer(Integer&& other) {
-  // Pilfer other's data
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_digits = other.m_digits;
-  m_negative = other.m_negative;
-
-  // Reset other
-  other.m_negative = 0;
-  other.m_numberOfDigits = 0;
-  other.m_digits = NULL;
+static inline int8_t sign(bool negative) {
+  return 1 - 2*(int8_t)negative;
 }
 
-Integer::Integer(native_int_t i) :
-  StaticHierarchy<0>()
-{
-  assert(sizeof(native_int_t) <= sizeof(native_uint_t));
-  m_negative = (i<0);
-  m_numberOfDigits = 1;
-  m_digits = new native_uint_t[1];
-  *m_digits = (native_uint_t)(i>0 ? i : -i);
-}
+// Constructors
 
 /* Caution: string is NOT guaranteed to be NULL-terminated! */
-Integer::Integer(const char * digits, bool negative) {
-  m_negative = negative;
-
+Integer::Integer(const char * digits, bool negative) :
+  Integer(0)
+{
   if (digits != nullptr && digits[0] == '-') {
-    m_negative = true;
+    negative = true;
     digits++;
   }
 
@@ -63,161 +51,153 @@ Integer::Integer(const char * digits, bool negative) {
   if (digits != nullptr) {
     Integer base = Integer(10);
     while (*digits >= '0' && *digits <= '9') {
-      result = result.multiply_by(base);
-      result = result.add(Integer(*digits-'0'));
+      result = Multiplication(result, base);
+      result = Addition(result, Integer(*digits-'0'));
       digits++;
     }
   }
 
+  *this = std::move(result);
+  m_negative = negative;
+#if 0
   // Pilfer v's ivars
   m_numberOfDigits = result.m_numberOfDigits;
-  m_digits = result.m_digits;
+  if (result.usesImmediateDigit()) {
+    m_digit = result.m_digit;
+  } else {
+    m_digits = result.m_digits;
+  }
 
   // Zero-out v
   result.m_numberOfDigits = 0;
-  result.m_digits = NULL;
+  if (result.usesImmediateDigit()) {
+    result.m_digit = 0;
+  } else {
+    result.m_digits = NULL;
+  }
+#endif
 }
 
 Integer::~Integer() {
-  if (m_digits) {
+  if (!usesImmediateDigit()) {
+    assert(m_digits != nullptr);
     delete[] m_digits;
   }
 }
 
-// Private methods
-
-Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
-  StaticHierarchy<0>(),
-  m_digits(digits),
-  m_numberOfDigits(numberOfDigits),
-  m_negative(negative) {
-}
-
-int8_t Integer::ucmp(const Integer &other) const {
-  if (m_numberOfDigits < other.m_numberOfDigits) {
-    return -1;
-  } else if (other.m_numberOfDigits < m_numberOfDigits) {
-    return 1;
+Integer::Integer(Integer && other) {
+  // Pilfer other's data
+  if (other.usesImmediateDigit()) {
+    m_digit = other.m_digit;
+  } else {
+    m_digits = other.m_digits;
   }
-  for (uint16_t i = 0; i < m_numberOfDigits; i++) {
-    // Digits are stored most-significant last
-    native_uint_t digit = m_digits[m_numberOfDigits-i-1];
-    native_uint_t otherDigit = other.m_digits[m_numberOfDigits-i-1];
-    if (digit < otherDigit) {
-      return -1;
-    } else if (otherDigit < digit) {
-      return 1;
-    }
-  }
-  return 0;
+  m_numberOfDigits = other.m_numberOfDigits;
+  m_negative = other.m_negative;
+
+  // Reset other
+  other.m_digit = 0;
+  other.m_numberOfDigits = 1;
+  other.m_negative = 0;
 }
 
-static inline int8_t sign(bool negative) {
-  return 1 - 2*(int8_t)negative;
-}
-
-bool Integer::operator<(const Integer &other) const {
-  if (m_negative != other.m_negative) {
-    return m_negative;
-  }
-  return (sign(m_negative)*ucmp(other) < 0);
-}
-
-bool Integer::operator==(const Integer &other) const {
-  if (m_negative != other.m_negative) {
-    return false;
-  }
-  return (ucmp(other) == 0);
-}
-
-Integer& Integer::operator=(Integer&& other) {
+Integer& Integer::operator=(Integer && other) {
   if (this != &other) {
     // Release our ivars
-    m_negative = 0;
-    m_numberOfDigits = 0;
-    delete[] m_digits;
+    if (!usesImmediateDigit()) {
+      assert(m_digits != nullptr);
+      delete[] m_digits;
+    }
 
     // Pilfer other's ivars
+    if (other.usesImmediateDigit()) {
+      m_digit = other.m_digit;
+    } else {
+      m_digits = other.m_digits;
+    }
     m_numberOfDigits = other.m_numberOfDigits;
-    m_digits = other.m_digits;
     m_negative = other.m_negative;
+
     // Reset other
+    other.m_digit = 0;
+    other.m_numberOfDigits = 1;
     other.m_negative = 0;
-    other.m_numberOfDigits = 0;
-    other.m_digits = NULL;
   }
   return *this;
 }
 
-Integer Integer::add(const Integer &other, bool inverse_other_negative) const {
-  bool other_negative = (inverse_other_negative ? !other.m_negative : other.m_negative);
-  if (m_negative == other_negative) {
-    return usum(other, false, m_negative);
-  } else {
-    /* The signs are different, this is in fact a subtraction
-     * s = this+other = (abs(this)-abs(other) OR abs(other)-abs(this))
-     * 1/abs(this)>abs(other) : s = sign*udiff(this, other)
-     * 2/abs(other)>abs(this) : s = sign*udiff(other, this)
-     * sign? sign of the greater! */
-    if (ucmp(other) >= 0) {
-      return usum(other, true, m_negative);
-    } else {
-      return other.usum(*this, true, other_negative);
-    }
-  }
+// Expression subclassing
+
+Expression::Type Integer::type() const {
+  return Type::Integer;
 }
 
-Integer Integer::add(const Integer &other) const {
-  return add(other, false);
+Expression * Integer::clone() const {
+  native_uint_t * cloneDigits = new native_uint_t [m_numberOfDigits];
+  for (uint16_t i=0; i<m_numberOfDigits; i++) {
+    cloneDigits[i] = digit(i);
+  }
+  return new Integer(cloneDigits, m_numberOfDigits, m_negative);
 }
 
-Integer Integer::subtract(const Integer &other) const {
-  return add(other, true);
+// Comparison
+
+int Integer::nodeComparesTo(const Expression * e) const {
+  int typeComparison = Expression::nodeComparesTo(e);
+  if (typeComparison != 0) {
+    return typeComparison;
+  }
+  assert(e->type() == Expression::Type::Integer);
+  const Integer * other = static_cast<const Integer *>(e);
+
+  if (m_negative && !other->m_negative) {
+    return -1;
+  }
+  if (!m_negative && other->m_negative) {
+    return 1;
+  }
+  return sign(m_negative)*ucmp(*this, *other);
 }
 
-Integer Integer::usum(const Integer &other, bool subtract, bool output_negative) const {
-  uint16_t size = MAX(m_numberOfDigits, other.m_numberOfDigits);
-  if (!subtract) {
-    // Addition can overflow
-    size += 1;
-  }
-  native_uint_t * digits = new native_uint_t [size];
-  bool carry = false;
-  for (uint16_t i = 0; i<size; i++) {
-    native_uint_t a = (i >= m_numberOfDigits ? 0 : m_digits[i]);
-    native_uint_t b = (i >= other.m_numberOfDigits ? 0 : other.m_digits[i]);
-    native_uint_t result = (subtract ? a - b - carry : a + b + carry);
-    digits[i] = result;
-    carry = (subtract ? (a<result) : ((a>result)||(b>result))); // There's been an underflow or overflow
-  }
-  while (digits[size-1] == 0 && size>1) {
-    size--;
-    // We could realloc digits to a smaller size. Probably not worth the trouble.
-  }
-  return Integer(digits, size, output_negative);
+bool Integer::isEqualTo(const Integer & other) const {
+  return (nodeComparesTo(&other) == 0);
 }
 
-Integer Integer::multiply_by(const Integer &other) const {
+bool Integer::isLowerThan(const Integer & other) const {
+  return (nodeComparesTo(&other) < 0);
+}
+
+// Arithmetic
+
+Integer Integer::Addition(const Integer & a, const Integer & b) {
+  return addition(a, b, false);
+}
+
+Integer Integer::Subtraction(const Integer & a, const Integer & b) {
+  return addition(a, b, true);
+}
+
+Integer Integer::Multiplication(const Integer & a, const Integer & b) {
   assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
-  uint16_t productSize = other.m_numberOfDigits + m_numberOfDigits;
+  uint16_t productSize = a.m_numberOfDigits + b.m_numberOfDigits;
   native_uint_t * digits = new native_uint_t [productSize];
   memset(digits, 0, productSize*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
-  for (uint16_t i=0; i<m_numberOfDigits; i++) {
-    double_native_uint_t a = m_digits[i];
+  for (uint16_t i=0; i<a.m_numberOfDigits; i++) {
+    double_native_uint_t aDigit = a.digit(i);
     carry = 0;
-    for (uint16_t j=0; j<other.m_numberOfDigits; j++) {
-      double_native_uint_t b = other.m_digits[j];
-      /* The fact that a and b are double_native is very important, otherwise
-       * the product might end up being computed on single_native size and
-       * then zero-padded. */
-      double_native_uint_t p = a*b + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
+    for (uint16_t j=0; j<b.m_numberOfDigits; j++) {
+      double_native_uint_t bDigit = b.digit(j);
+      /* The fact that aDigit and bDigit are double_native is very important,
+       * otherwise the product might end up being computed on single_native size
+       * and then zero-padded. */
+      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
       native_uint_t * l = (native_uint_t *)&p;
       digits[i+j] = l[0];
       carry = l[1];
     }
-    digits[i+other.m_numberOfDigits] += carry;
+    digits[i+b.m_numberOfDigits] += carry;
   }
 
   while (digits[productSize-1] == 0 && productSize>1) {
@@ -225,48 +205,90 @@ Integer Integer::multiply_by(const Integer &other) const {
     /* At this point we could realloc m_digits to a smaller size. */
   }
 
-  return Integer(digits, productSize, m_negative != other.m_negative);
+  return Integer(digits, productSize, a.m_negative != b.m_negative);
 }
 
-Division::Division(const Integer &numerator, const Integer &denominator) :
-m_quotient(Integer((native_int_t)0)),
-m_remainder(Integer((native_int_t)0)) {
-  // FIXME: First, test if denominator is zero.
+/*Integer Integer::Division(const Integer & a, const Integer & b) {
+  return IntegerDivision(a, b).quotient();
+}
+*/
 
-  if (numerator < denominator) {
-    m_quotient = Integer((native_int_t)0);
-    m_remainder = numerator.add(Integer((native_int_t)0));
-    // FIXME: This is a ugly way to bypass creating a copy constructor!
-    return;
+
+// Private methods
+
+  /* WARNING: This constructor takes ownership of the digits array! */
+Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
+    m_numberOfDigits(numberOfDigits),
+    m_negative(negative)
+{
+  assert(digits != nullptr);
+  if (numberOfDigits == 1) {
+    m_digit = digits[0];
+    delete[] digits;
+  } else {
+    assert(numberOfDigits > 1);
+    m_digits = digits;
   }
+}
 
-  // Recursive case
-  *this = Division(numerator, denominator.add(denominator));
-  m_quotient = m_quotient.add(m_quotient);
-  if (!(m_remainder < denominator)) {
-    m_remainder = m_remainder.subtract(denominator);
-    m_quotient = m_quotient.add(Integer(1));
+int8_t Integer::ucmp(const Integer & a, const Integer & b) {
+  if (a.m_numberOfDigits < b.m_numberOfDigits) {
+    return -1;
+  } else if (a.m_numberOfDigits > b.m_numberOfDigits) {
+    return 1;
   }
-}
-
-Integer Integer::divide_by(const Integer &other) const {
-  return Division(*this, other).m_quotient;
-}
-
-Expression::Type Integer::type() const {
-  return Type::Integer;
-}
-
-Expression * Integer::clone() const {
-  Integer * clone = new Integer((native_int_t)0);
-  clone->m_numberOfDigits = m_numberOfDigits;
-  clone->m_negative = m_negative;
-  delete[] clone->m_digits;
-  clone->m_digits = new native_uint_t [m_numberOfDigits];
-  for (unsigned int i=0;i<m_numberOfDigits; i++) {
-    clone->m_digits[i] = m_digits[i];
+  for (uint16_t i = 0; i < a.m_numberOfDigits; i++) {
+    // Digits are stored most-significant last
+    native_uint_t aDigit = a.digit(a.m_numberOfDigits-i-1);
+    native_uint_t bDigit = b.digit(b.m_numberOfDigits-i-1);
+    if (aDigit < bDigit) {
+      return -1;
+    } else if (aDigit > bDigit) {
+      return 1;
+    }
   }
-  return clone;
+  return 0;
+}
+
+Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative) {
+  uint16_t size = MAX(a.m_numberOfDigits, b.m_numberOfDigits);
+  if (!subtract) {
+    // Addition can overflow
+    size += 1;
+  }
+  native_uint_t * digits = new native_uint_t [size];
+  bool carry = false;
+  for (uint16_t i = 0; i<size; i++) {
+    native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
+    native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
+    native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
+    digits[i] = result;
+    carry = (subtract ? (aDigit<result) : ((aDigit>result)||(bDigit>result))); // There's been an underflow or overflow
+  }
+  while (digits[size-1] == 0 && size>1) {
+    size--;
+    // We could realloc digits to a smaller size. Probably not worth the trouble.
+  }
+  return Integer(digits, size, outputNegative);
+}
+
+
+Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative) {
+  bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
+  if (a.m_negative == bNegative) {
+    return usum(a, b, false, a.m_negative);
+  } else {
+    /* The signs are different, this is in fact a subtraction
+     * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
+     * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
+     * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
+     * sign? sign of the greater! */
+    if (ucmp(a, b) >= 0) {
+      return usum(a, b, true, a.m_negative);
+    } else {
+      return usum(b, a, true, bNegative);
+    }
+  }
 }
 
 int Integer::checksum() const {
@@ -275,6 +297,30 @@ int Integer::checksum() const {
   }
   return m_digits[0];
 }
+
+/*
+Integer Integer::divide_by(const Integer &other) const {
+  return IntegerDivision(*this, other).m_quotient;
+}
+
+
+Multiplication Integer::primeFactorization() const {
+  Integer result = this;
+  Integer i = 2;
+  while (i<result) {
+    Int occurrencesOfI = 0;
+    while (i divides result) {
+      result = remainder;
+      occurrencesOfI += 1;
+    }
+    if (occurrencesOfI > 0) {
+      set(i, occurrencesOfI);
+    }
+    i++;
+  }
+}
+
+*/
 
 Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
   union {
@@ -294,7 +340,7 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
 
-  native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
+  native_uint_t lastDigit = digit(m_numberOfDigits-1);
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
 
   bool sign = m_negative;
@@ -312,11 +358,11 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
   uint32_t mantissa = 0;
   mantissa |= (lastDigit << (32-numberOfBitsInLastDigit));
   if (m_numberOfDigits >= 2) {
-    native_uint_t beforeLastDigit = m_digits[m_numberOfDigits-2];
+    native_uint_t beforeLastDigit = digit(m_numberOfDigits-2);
     mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
 }
 
-  if ((m_numberOfDigits==1) && (m_digits[0]==0)) {
+  if ((m_numberOfDigits==1) && (digit(0)==0)) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
@@ -356,7 +402,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
   * - the exponent is the length of our BigInt, in bits - 1 + 1023;
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
-  native_uint_t lastDigit = m_digits[m_numberOfDigits-1];
+  native_uint_t lastDigit = digit(m_numberOfDigits-1);
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
 
   bool sign = m_negative;
@@ -376,7 +422,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
   int digitIndex = 2;
   int numberOfBits = log2(lastDigit);
   while (m_numberOfDigits >= digitIndex) {
-    lastDigit = m_digits[m_numberOfDigits-digitIndex];
+    lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
     if (64 > numberOfBits) {
       mantissa |= ((uint64_t)lastDigit << (64-numberOfBits));
@@ -386,7 +432,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
     digitIndex++;
   }
 
-  if ((m_numberOfDigits==1) && (m_digits[0]==0)) {
+  if ((m_numberOfDigits==1) && (digit(0)==0)) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
@@ -423,17 +469,17 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   char buffer[255];
 
   Integer base = Integer(10);
-  Division d = Division(*this, base);
+  IntegerDivision d = IntegerDivision(*this, base);
   int size = 0;
-  if (*this == Integer((native_int_t)0)) {
+  if (isEqualTo(Integer(0))) {
     buffer[size++] = '0';
   }
-  while (!(d.m_remainder == Integer((native_int_t)0) &&
-        d.m_quotient == Integer((native_int_t)0))) {
+  while (!d.remainder().isEqualTo(Integer(0)) &&
+        d.quotient().isEqualTo(Integer(0))) {
     assert(size<255); //TODO: malloc an extra buffer
-    char c = char_from_digit(d.m_remainder.m_digits[0]);
+    char c = char_from_digit(d.remainder().digit(0));
     buffer[size++] = c;
-    d = Division(d.m_quotient, base);
+    d = IntegerDivision(d.quotient(), base);
   }
   buffer[size] = 0;
 
@@ -447,19 +493,28 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   return new StringLayout(buffer, size);
 }
 
-int Integer::nodeComparesTo(const Expression * e) const {
-  int typeComparison = Expression::nodeComparesTo(e);
-  if (typeComparison != 0) {
-    return typeComparison;
+// Class IntegerDivision
+
+IntegerDivision::IntegerDivision(const Integer & numerator, const Integer & denominator) :
+  m_quotient(Integer(0)),
+  m_remainder(Integer(0))
+{
+  // FIXME: First, test if denominator is zero.
+
+  if (numerator.isLowerThan(denominator)) {
+    m_quotient = Integer(0);
+    m_remainder = Integer::Addition(numerator, Integer(0));
+    // FIXME: This is a ugly way to bypass creating a copy constructor!
+    return;
   }
-  assert(e->type() == Type::Integer);
-  if (*this == *(Integer *)e) {
-    return 0;
+
+  // Recursive case
+  *this = IntegerDivision(numerator, Integer::Addition(denominator, denominator));
+  m_quotient = Integer::Addition(m_quotient, m_quotient);
+  if (!(m_remainder.isLowerThan(denominator))) {
+    m_remainder = Integer::Subtraction(m_remainder, denominator);
+    m_quotient = Integer::Addition(m_quotient, Integer(1));
   }
-  if (*(Integer *)e < *this) {
-    return 1;
-  }
-  return -1;
 }
 
 }

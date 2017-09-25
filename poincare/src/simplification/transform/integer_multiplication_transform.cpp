@@ -13,7 +13,7 @@ bool Poincare::Simplification::IntegerMultiplicationTransform(Expression * captu
   Integer * i1 = static_cast<Integer *>(captures[1]);
   Integer * i2 = static_cast<Integer *>(captures[2]);
 
-  Integer resultOnStack = i1->multiply_by(*i2);
+  Integer resultOnStack = Integer::Multiplication(*i1, *i2);
   Integer * r = new Integer(std::move(resultOnStack));
   //r->add(resultOnStack);
   // FIXME: Beeeeuargl

@@ -142,8 +142,8 @@ Expression * Integer::clone() const {
 
 // Comparison
 
-int Integer::nodeComparesTo(const Expression * e) const {
-  int typeComparison = Expression::nodeComparesTo(e);
+int Integer::compareTo(const Expression * e) const {
+  int typeComparison = Expression::compareTo(e);
   if (typeComparison != 0) {
     return typeComparison;
   }
@@ -160,11 +160,11 @@ int Integer::nodeComparesTo(const Expression * e) const {
 }
 
 bool Integer::isEqualTo(const Integer & other) const {
-  return (nodeComparesTo(&other) == 0);
+  return (compareTo(&other) == 0);
 }
 
 bool Integer::isLowerThan(const Integer & other) const {
-  return (nodeComparesTo(&other) < 0);
+  return (compareTo(&other) < 0);
 }
 
 // Arithmetic

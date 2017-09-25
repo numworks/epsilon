@@ -88,7 +88,7 @@ void Expression::sort() {
   for (int i = numberOfOperands()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (operand(j)->comparesTo(operand(j+1)) > 0) {
+      if (operand(j)->compareTo(operand(j+1)) > 0) {
         swapOperands(j, j+1);
         isSorted = false;
       }
@@ -104,17 +104,20 @@ int Expression::checksum() const {
   return 0;
 }
 
-int Expression::comparesTo(const Expression * e) const {
-  if (this->nodeComparesTo(e) != 0) {
-    return this->nodeComparesTo(e);
+int Expression::compareTo(const Expression * e) const {
+  if (e->type() > this->type()) {
+    return 1;
+  }
+  if (e->type() < this->type()) {
+    return -1;
   }
   for (int i = 0; i < this->numberOfOperands(); i++) {
     // The NULL node is the least node type.
     if (e->numberOfOperands() <= i) {
       return 1;
     }
-    if (this->operand(i)->comparesTo(e->operand(i)) != 0) {
-      return this->operand(i)->comparesTo(e->operand(i));
+    if (this->operand(i)->compareTo(e->operand(i)) != 0) {
+      return this->operand(i)->compareTo(e->operand(i));
     }
   }
   // The NULL node is the least node type.
@@ -155,16 +158,6 @@ template<typename T> T Expression::approximate(const char * text, Context& conte
 template<typename T> T Expression::epsilon() {
   static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
-}
-
-int Expression::nodeComparesTo(const Expression * e) const {
-  if (e->type() == this->type()) {
-    return 0;
-  }
-  if (e->type() > this->type()) {
-    return 1;
-  }
-  return -1;
 }
 
 void Expression::recursivelySetAsParentOfChildren() {

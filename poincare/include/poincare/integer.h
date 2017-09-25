@@ -32,7 +32,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int checksum() const override;
-  int nodeComparesTo(const Expression * e) const override;
+  int compareTo(const Expression * e) const override;
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
 

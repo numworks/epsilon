@@ -111,7 +111,7 @@ public:
   /* Sorting */
   virtual bool isCommutative() const { return false; }
   virtual void sort();
-  int comparesTo(const Expression * e) const;
+  virtual int compareTo(const Expression * e) const;
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
@@ -135,7 +135,6 @@ protected:
    * This behavior makes sense for value-less nodes (addition, product, fraction
    * power, etc… For nodes with a value (Integer, Complex), this must be over-
    * -riden. */
-  virtual int nodeComparesTo(const Expression * e) const;
 private:
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;

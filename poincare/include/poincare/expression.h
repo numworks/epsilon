@@ -35,7 +35,7 @@ public:
     AbsoluteValue,
     Factorial,
     ImaginaryPart,
-    ReelPart,
+    RealPart,
     ComplexArgument,
     Conjugate,
     Logarithm,

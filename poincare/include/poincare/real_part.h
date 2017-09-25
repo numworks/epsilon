@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class ReelPart : public StaticHierarchy<1>  {
+class RealPart : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

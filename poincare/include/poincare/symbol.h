@@ -34,6 +34,7 @@ public:
   char name() const;
   Type type() const override;
   Expression * clone() const override;
+  int checksum() const override;
   bool isMatrixSymbol() const;
   bool isCommutative() const override;
 private:

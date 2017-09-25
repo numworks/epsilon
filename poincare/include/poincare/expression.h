@@ -106,6 +106,7 @@ public:
   void setParent(Expression * parent) { m_parent = parent; }
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
   virtual void swapOperands(int i, int j) = 0;
+  virtual int checksum() const;
 
   /* Sorting */
   virtual bool isCommutative() const = 0;

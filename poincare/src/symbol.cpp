@@ -53,6 +53,10 @@ Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
 
+int Symbol::checksum() const {
+  return m_name;
+}
+
 bool Symbol::isCommutative() const {
   return false;
 }

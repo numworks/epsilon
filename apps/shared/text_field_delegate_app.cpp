@@ -32,7 +32,7 @@ const char * TextFieldDelegateApp::privateXNT(TextField * textField) {
   };
   // Let's assume everything before the cursor is nested correctly, which is reasonable if the expression is being entered left-to-right.
   const char * text = textField->text();
-  int location = textField->cursorLocation();
+  size_t location = textField->cursorLocation();
   unsigned level = 0;
   while (location >= 1) {
     location--;
@@ -48,7 +48,7 @@ const char * TextFieldDelegateApp::privateXNT(TextField * textField) {
           location--;
         }
         // We found the next innermost function we are currently in.
-        for (int i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
+        for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
           const char * name = sFunctions[i].name;
           size_t length = strlen(name);
           if (location >= length && memcmp(&text[location-length], name, length) == 0) {

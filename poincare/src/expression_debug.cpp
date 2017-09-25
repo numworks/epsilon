@@ -31,8 +31,8 @@ void print_expression(const Expression * e, int indentationLevel) {
       std::cout << e->approximate<double>(context);
       std::cout << ")";
       break;
-    case Expression::Type::Fraction:
-      std::cout << "Fraction";
+    case Expression::Type::Division:
+      std::cout << "Division";
       break;
       /*
     case Expression::Type::Matrix:

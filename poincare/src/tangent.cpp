@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/sine.h>
 #include <poincare/cosine.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/multiplication.h>
 #include <poincare/hyperbolic_tangent.h>
 extern "C" {
@@ -23,7 +23,7 @@ Expression * Tangent::clone() const {
 
 template<typename T>
 Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  Complex<T> result = Fraction::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
+  Complex<T> result = Division::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
   if (!isnan(result.a()) && !isnan(result.b())) {
     return result;
   }

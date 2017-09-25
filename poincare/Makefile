@@ -19,6 +19,7 @@ objs += $(addprefix poincare/src/,\
   cosine.o\
   derivative.o\
   determinant.o\
+  division.o\
   division_quotient.o\
   division_remainder.o\
   dynamic_hierarchy.o\
@@ -30,7 +31,6 @@ objs += $(addprefix poincare/src/,\
   factorial.o\
   floor.o\
   frac_part.o\
-  fraction.o\
   expression_matrix.o\
   global_context.o\
   great_common_divisor.o\
@@ -104,7 +104,7 @@ tests += $(addprefix poincare/test/,\
 tests_orig += $(addprefix poincare/test/,\
   addition.cpp\
   complex.cpp\
-  fraction.cpp\
+  division.cpp\
   function.cpp\
   helper.cpp\
   identity.cpp\

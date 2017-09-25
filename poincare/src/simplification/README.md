@@ -37,7 +37,7 @@ you need a wildcard", but "ln(a)" is allright because ln has only one child)
 Addition(Integer(0),...) -> Addition(...)
 Product(Integer(0),...) -> Integer(0)
 
-Fraction(Fraction(a,b),c) -> Fraction(a,Product(b,c))
+Division(Division(a,b),c) -> Division(a,Product(b,c))
 
 Build(type=addition)
  - integer(0)

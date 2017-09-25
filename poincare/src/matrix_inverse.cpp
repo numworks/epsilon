@@ -1,7 +1,7 @@
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 extern "C" {
 #include <assert.h>
 }

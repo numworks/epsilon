@@ -1,12 +1,12 @@
-#ifndef POINCARE_FRACTION_H
-#define POINCARE_FRACTION_H
+#ifndef POINCARE_DIVISION_H
+#define POINCARE_DIVISION_H
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/evaluation_engine.h>
 
 namespace Poincare {
 
-class Fraction : public StaticHierarchy<2> {
+class Division : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

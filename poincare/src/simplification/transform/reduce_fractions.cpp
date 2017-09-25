@@ -1,6 +1,6 @@
 // Match a pattern Int*Int^-1
 // can match pow(6,-1)*ln(x)*4. We want 2/3.ln(x).
-bool SimplificationIntegerFraction(Multiplication * multiplication, Integer * numerator, Power * power, Integer * denominator) {
+bool SimplificationIntegerDivision(Multiplication * multiplication, Integer * numerator, Power * power, Integer * denominator) {
   Integer gcd = Arithmetic::GCD(*numerator, *denominator);
   if (gcd.isEqualTo(Integer(1))) {
     return false;

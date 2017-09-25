@@ -23,7 +23,7 @@ public:
     Addition,
     Subtraction,
     Multiplication,
-    Fraction,
+    Division,
     Power,
     Sum,
     Product,

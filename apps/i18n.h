@@ -178,6 +178,8 @@ namespace I18n {
     Range,
     Mean,
     StandardDeviation,
+    StandardDeviationSigma,
+    SampleStandardDeviationS,
     Deviation,
     InterquartileRange,
     SquareSum,

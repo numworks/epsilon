@@ -25,7 +25,14 @@ constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
 
-const char * messages[240][5] {
+constexpr static char frenchStandardDeviationSigma[] = {'E', 'c', 'a', 'r', 't', '-', 't', 'y', 'p', 'e', ' ', Ion::Charset::SmallSigma, 0};
+constexpr static char englishStandardDeviationSigma[] = {'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', ' ','d','e', 'v', 'i', 'a', 't','i','o','n', ' ', Ion::Charset::SmallSigma, 0};
+constexpr static char spanishStandardDeviationSigma[] = {'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a', ' ', Ion::Charset::SmallSigma, 0};
+constexpr static char germanStandardDeviationSigma[] = {'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', ' ', Ion::Charset::SmallSigma, 0};
+constexpr static char portugueseStandardDeviationSigma[] = {'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', ' ', Ion::Charset::SmallSigma, 0};
+
+
+const char * messages[242][5] {
   {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
   {"Confirm", "Valider", "Confirmar", "Bestatigen", "Confirmar"},
   {"Cancel", "Annuler", "Cancelar", "Abbrechen", "Cancelar"},
@@ -209,6 +216,8 @@ const char * messages[240][5] {
   {"Range", "Etendue", "Rango", "Spannweite", "Amplitude"},
   {"Mean", "Moyenne", "Media", "Mittelwert", "Media"},
   {"Standard deviation", "Ecart type", "Desviacion tipica", "Standardabweichung", "Desvio padrao"},
+  {englishStandardDeviationSigma, frenchStandardDeviationSigma, spanishStandardDeviationSigma, germanStandardDeviationSigma, portugueseStandardDeviationSigma},
+  {"Sample std deviation s", "Ecart type echantillon s", "Desviacion tipica muestral s", "Standardabweichung s", "Desvio padrao amostral s"},
   {"Variance", "Variance", "Varianza", "Varianz", "Variancia"},
   {"Interquartile range", "Ecart interquartile", "Rango intercuartilo", "Interquartilsabstand", "Interquartil"},
   {"Sum of squares", "Somme des carres", "Suma cuadrados", "Quadratsumme", "Soma dos quadrados"},

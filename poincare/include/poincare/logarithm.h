@@ -12,7 +12,6 @@ class Logarithm : public BoundedStaticHierarchy<2>  {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

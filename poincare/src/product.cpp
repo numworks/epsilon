@@ -18,10 +18,6 @@ Expression * Product::clone() const {
   return a;
 }
 
-bool Product::isCommutative() const {
-  return false;
-}
-
 int Product::emptySequenceValue() const {
   return 1;
 }

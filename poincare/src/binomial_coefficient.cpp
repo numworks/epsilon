@@ -21,10 +21,6 @@ Expression * BinomialCoefficient::clone() const {
   return b;
 }
 
-bool BinomialCoefficient::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * nInput = operand(0)->evaluate<T>(context, angleUnit);

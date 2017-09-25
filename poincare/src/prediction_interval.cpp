@@ -18,10 +18,6 @@ Expression * PredictionInterval::clone() const {
   return a;
 }
 
-bool PredictionInterval::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * PredictionInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * pInput = operand(0)->evaluate<T>(context, angleUnit);

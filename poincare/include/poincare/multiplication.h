@@ -12,7 +12,7 @@ class Multiplication : public DynamicHierarchy {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
+  bool isCommutative() const override { return true; }
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

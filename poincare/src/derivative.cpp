@@ -18,10 +18,6 @@ Expression * Derivative::clone() const {
   return a;
 }
 
-bool Derivative::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;

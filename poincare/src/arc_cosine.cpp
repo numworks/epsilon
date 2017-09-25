@@ -15,10 +15,6 @@ Expression * ArcCosine::clone() const {
   return a;
 }
 
-bool ArcCosine::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> ArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);

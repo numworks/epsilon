@@ -57,10 +57,6 @@ int Symbol::checksum() const {
   return m_name;
 }
 
-bool Symbol::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {

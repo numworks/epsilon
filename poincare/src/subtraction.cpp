@@ -20,10 +20,6 @@ Expression * Subtraction::clone() const {
   return new Subtraction(m_operands, true);
 }
 
-bool Subtraction::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());

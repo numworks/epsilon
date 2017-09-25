@@ -20,10 +20,6 @@ Expression * Logarithm::clone() const {
   return new Logarithm(operands(), true);
 }
 
-bool Logarithm::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

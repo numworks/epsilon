@@ -33,10 +33,6 @@ Expression * ExpressionMatrix::clone() const {
   return new ExpressionMatrix(m_matrixData->operands(), numberOfOperands(), numberOfRows(), numberOfColumns(), true);
 }
 
-bool ExpressionMatrix::isCommutative() const {
-  return false;
-}
-
 int ExpressionMatrix::numberOfRows() const {
   return m_matrixData->numberOfRows();
 }

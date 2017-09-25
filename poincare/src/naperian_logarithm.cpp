@@ -19,10 +19,6 @@ Expression * NaperianLogarithm::clone() const {
   return a;
 }
 
-bool NaperianLogarithm::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

@@ -18,10 +18,6 @@ Expression * Conjugate::clone() const {
   return a;
 }
 
-bool Conjugate::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Conjugate::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return c.conjugate();

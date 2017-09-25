@@ -34,7 +34,6 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int checksum() const override;
-  bool isCommutative() const override;
 private:
   int nodeComparesTo(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;

@@ -16,10 +16,6 @@ Expression * Floor::clone() const {
   return c;
 }
 
-bool Floor::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Floor::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

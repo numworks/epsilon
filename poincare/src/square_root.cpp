@@ -18,10 +18,6 @@ Expression * SquareRoot::clone() const {
   return a;
 }
 
-bool SquareRoot::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0 && c.a() >= 0) {

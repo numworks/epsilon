@@ -21,10 +21,6 @@ Expression * Opposite::clone() const {
   return o;
 }
 
-bool Opposite::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());

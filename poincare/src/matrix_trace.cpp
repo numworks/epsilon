@@ -16,10 +16,6 @@ Expression * MatrixTrace::clone() const {
   return a;
 }
 
-bool MatrixTrace::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);

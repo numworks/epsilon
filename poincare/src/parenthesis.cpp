@@ -17,10 +17,6 @@ Expression * Parenthesis::clone() const {
   return o;
 }
 
-bool Parenthesis::isCommutative() const {
-  return false;
-}
-
 ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);

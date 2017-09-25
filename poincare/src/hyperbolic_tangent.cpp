@@ -19,10 +19,6 @@ Expression * HyperbolicTangent::clone() const {
   return a;
 }
 
-bool HyperbolicTangent::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {

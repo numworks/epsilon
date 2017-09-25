@@ -13,7 +13,6 @@ class Tangent : public StaticHierarchy<1>  {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

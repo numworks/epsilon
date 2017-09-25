@@ -17,10 +17,6 @@ Expression * GreatCommonDivisor::clone() const {
   return a;
 }
 
-bool GreatCommonDivisor::isCommutative() const {
-  return true;
-}
-
 template<typename T>
 Evaluation<T> * GreatCommonDivisor::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);

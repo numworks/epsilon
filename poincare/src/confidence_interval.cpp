@@ -18,10 +18,6 @@ Expression * ConfidenceInterval::clone() const {
   return a;
 }
 
-bool ConfidenceInterval::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * fInput = operand(0)->evaluate<T>(context, angleUnit);

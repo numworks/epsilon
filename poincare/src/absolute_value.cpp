@@ -18,10 +18,6 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
-bool AbsoluteValue::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.r());

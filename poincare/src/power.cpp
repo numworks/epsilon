@@ -20,10 +20,6 @@ Expression * Power::clone() const {
   return new Power(m_operands, true);
 }
 
-bool Power::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   if (d.b() != 0) {

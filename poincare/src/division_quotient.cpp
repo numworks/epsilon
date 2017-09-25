@@ -17,10 +17,6 @@ Expression * DivisionQuotient::clone() const {
   return a;
 }
 
-bool DivisionQuotient::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * DivisionQuotient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);

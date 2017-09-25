@@ -22,10 +22,6 @@ Expression * Factorial::clone() const {
   return a;
 }
 
-bool Factorial::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   T n = c.a();

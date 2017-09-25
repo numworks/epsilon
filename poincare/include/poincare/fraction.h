@@ -11,7 +11,6 @@ class Fraction : public StaticHierarchy<2> {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {

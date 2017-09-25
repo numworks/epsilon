@@ -17,10 +17,6 @@ Expression * LeastCommonMultiple::clone() const {
   return a;
 }
 
-bool LeastCommonMultiple::isCommutative() const {
-  return true;
-}
-
 template<typename T>
 Evaluation<T> * LeastCommonMultiple::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);

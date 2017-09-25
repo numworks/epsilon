@@ -17,10 +17,6 @@ Expression * ReelPart::clone() const {
   return a;
 }
 
-bool ReelPart::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> ReelPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.a());

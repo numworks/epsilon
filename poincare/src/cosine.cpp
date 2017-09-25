@@ -17,10 +17,6 @@ Expression * Cosine::clone() const {
   return a;
 }
 
-bool Cosine::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Cosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);

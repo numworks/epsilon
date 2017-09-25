@@ -15,10 +15,6 @@ Expression * HyperbolicArcCosine::clone() const {
   return a;
 }
 
-bool HyperbolicArcCosine::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> HyperbolicArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

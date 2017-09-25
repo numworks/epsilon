@@ -20,10 +20,6 @@ Expression * HyperbolicCosine::clone() const {
   return a;
 }
 
-bool HyperbolicCosine::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> HyperbolicCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {

@@ -16,10 +16,6 @@ Expression * FracPart::clone() const {
   return c;
 }
 
-bool FracPart::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> FracPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

@@ -21,10 +21,6 @@ Expression * Tangent::clone() const {
   return a;
 }
 
-bool Tangent::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   Complex<T> result = Fraction::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));

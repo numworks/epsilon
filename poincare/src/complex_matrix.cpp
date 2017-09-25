@@ -40,11 +40,6 @@ ComplexMatrix<T> * ComplexMatrix<T>::clone() const {
 }
 
 template<typename T>
-bool ComplexMatrix<T>::isCommutative() const {
-  return false;
-}
-
-template<typename T>
 T ComplexMatrix<T>::toScalar() const {
   if (m_numberOfRows != 1 || m_numberOfColumns != 1) {
     return NAN;

@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/addition.h>
 #include <poincare/power.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/opposite.h>
 extern "C" {
 #include <assert.h>
@@ -29,7 +29,7 @@ Complex<T> HyperbolicCosine::computeOnComplex(const Complex<T> c, AngleUnit angl
   Complex<T> exp1 = Power::compute(e, c);
   Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
   Complex<T> sum = Addition::compute(exp1, exp2);
-  return Fraction::compute(sum, Complex<T>::Float(2));
+  return Division::compute(sum, Complex<T>::Float(2));
 }
 
 }

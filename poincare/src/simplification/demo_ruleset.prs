@@ -7,7 +7,7 @@ Parenthesis.a -> RemoveParenthesisTransform(a);
 Subtraction.a -> SubtractionTransform(a);
 
 // a/b -> a*b^-1
-Fraction.a -> FractionTransform(a);
+Division.a -> DivisionTransform(a);
 
 // (a+b)+c -> a+b+c
 Addition.a(Addition.b) -> MergeDynamicHierarchyTransform(a,b);

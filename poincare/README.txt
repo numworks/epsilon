@@ -11,7 +11,7 @@ Simplify fractions
  (x^2+5.x+6)/(x+2) -> x+3
 Polynomials
  (x+1)^2-x^2 -> 2*x+1
-Fractions
+Divisions
  (2*x)/(x^2-1) - 1/(x-1) -> 1/(x+1)
 Functional identities
   ln(2x) - ln(x) -> ln(2)

@@ -1,6 +1,6 @@
 #include <poincare/nth_root.h>
 #include <poincare/complex.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/power.h>
 #include "layout/nth_root_layout.h"
 
@@ -30,7 +30,7 @@ Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) {
   if (c.a() >= 0 && c.b() == 0 && d.b() == 0) {
     return Complex<T>::Float(std::pow(c.a(), 1/d.a()));
   }
-  Complex<T> invIndex = Fraction::compute(Complex<T>::Float(1), d);
+  Complex<T> invIndex = Division::compute(Complex<T>::Float(1), d);
   return Power::compute(c, invIndex);
 }
 

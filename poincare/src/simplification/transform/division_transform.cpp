@@ -1,15 +1,15 @@
 #include "transform.h"
 #include <assert.h>
 #include <poincare/addition.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/integer.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 
-bool Poincare::Simplification::FractionTransform(Expression * captures[]) {
-  assert(captures[0]->type() == Expression::Type::Fraction);
+bool Poincare::Simplification::DivisionTransform(Expression * captures[]) {
+  assert(captures[0]->type() == Expression::Type::Division);
 
-  Fraction * d = static_cast<Fraction *>(captures[0]);
+  Division * d = static_cast<Division *>(captures[0]);
   assert(d->numberOfOperands() == 2);
 
   const Integer * minusOne = new Integer(-1);

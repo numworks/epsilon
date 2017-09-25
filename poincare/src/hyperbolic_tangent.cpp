@@ -2,7 +2,7 @@
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/complex.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 extern "C" {
 #include <assert.h>
 }
@@ -26,7 +26,7 @@ Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> c, AngleUnit ang
   }
   Complex<T> arg1 = HyperbolicSine::computeOnComplex(c, angleUnit);
   Complex<T> arg2 = HyperbolicCosine::computeOnComplex(c, angleUnit);
-  return Fraction::compute(arg1, arg2);
+  return Division::compute(arg1, arg2);
 }
 
 }

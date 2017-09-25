@@ -7,7 +7,7 @@
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_fraction_evaluate) {
+QUIZ_CASE(poincare_division_evaluate) {
   Complex<float> a[1] = {Complex<float>::Float(0.5f)};
   assert_parsed_expression_evaluates_to("1/2", a);
 

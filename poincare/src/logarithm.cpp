@@ -1,5 +1,5 @@
 #include <poincare/logarithm.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -38,7 +38,7 @@ Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUn
   if (x->numberOfRows() != 1 || x->numberOfColumns() != 1 || n->numberOfRows() != 1 || n->numberOfColumns() != 1) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
-  Complex<T> result = Fraction::compute<T>(computeOnComplex(*(n->complexOperand(0)), angleUnit), computeOnComplex(*(x->complexOperand(0)), angleUnit));
+  Complex<T> result = Division::compute<T>(computeOnComplex(*(n->complexOperand(0)), angleUnit), computeOnComplex(*(x->complexOperand(0)), angleUnit));
   delete x;
   delete n;
   return new Complex<T>(result);

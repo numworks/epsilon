@@ -19,6 +19,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
+#include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/evaluation.h>
@@ -27,7 +28,6 @@
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>
-#include <poincare/fraction.h>
 #include <poincare/expression_matrix.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>

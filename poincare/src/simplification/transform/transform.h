@@ -11,7 +11,7 @@ using Transform = bool (*)(Expression * captures[]);
 
 bool RemoveParenthesisTransform(Expression * captures[]);
 bool SubtractionTransform(Expression * captures[]);
-bool FractionTransform(Expression * captures[]);
+bool DivisionTransform(Expression * captures[]);
 bool MergeDynamicHierarchyTransform(Expression * captures[]);
 bool IntegerAdditionTransform(Expression * captures[]);
 bool IntegerMultiplicationTransform(Expression * captures[]);

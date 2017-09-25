@@ -25,7 +25,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 
 /* All symbols (both terminals and non-terminals) may have a value associated
  * with them. In our case, it's going to be either an Expression (for example,
- * when parsing (a/b) we want to create a new Fraction), or a string (this will
+ * when parsing (a/b) we want to create a new Division), or a string (this will
  * be useful to retrieve the value of Integers for example). */
 %union {
   Poincare::Expression * expression;
@@ -175,7 +175,7 @@ exp:
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
   | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
   | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Fraction(terms, false); }
+  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Division(terms, false); }
   | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
   | MINUS exp %prec UNARY_MINUS           { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }

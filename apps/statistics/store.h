@@ -31,6 +31,7 @@ public:
   double mean();
   double variance();
   double standardDeviation();
+  double sampleStandardDeviation();
   double firstQuartile();
   double thirdQuartile();
   double quartileRange();

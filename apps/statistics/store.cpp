@@ -132,6 +132,12 @@ double Store::standardDeviation() {
   return std::sqrt(variance());
 }
 
+double Store::sampleStandardDeviation() {
+  double n = sumOfColumn(1);
+  double s = std::sqrt(n/(n-1.0));
+  return s*standardDeviation();
+}
+
 double Store::firstQuartile() {
   int firstQuartileIndex = std::ceil(sumOfColumn(1)/4);
   return sortedElementNumber(firstQuartileIndex);

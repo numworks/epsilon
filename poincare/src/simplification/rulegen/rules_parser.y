@@ -18,11 +18,6 @@ int yyparse(ParserResult * result);
 int yyerror(ParserResult * result, const char * s);
 %}
 
-
-/* All symbols (both terminals and non-terminals) may have a value associated
- * with them. In our case, it's going to be either an Expression (for example,
- * when parsing (a/b) we want to create a new Fraction), or a string (this will
- * be useful to retrieve the value of Integers for example). */
 %union {
   std::vector<Rule *> * rule_list;
   std::vector<Node *> * node_list;

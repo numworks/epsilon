@@ -18,10 +18,6 @@ Expression * Sine::clone() const {
   return a;
 }
 
-bool Sine::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Sine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {

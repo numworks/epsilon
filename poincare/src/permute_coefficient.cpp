@@ -17,10 +17,6 @@ Expression * PermuteCoefficient::clone() const {
   return b;
 }
 
-bool PermuteCoefficient::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * nInput = operand(0)->evaluate<T>(context, angleUnit);

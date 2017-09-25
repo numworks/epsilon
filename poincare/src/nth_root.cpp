@@ -19,10 +19,6 @@ Expression * NthRoot::clone() const {
   NthRoot * a = new NthRoot(m_operands, true);  return a;
 }
 
-bool NthRoot::isCommutative() const {
-  return false;
-}
-
 ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);

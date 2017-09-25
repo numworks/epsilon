@@ -10,7 +10,6 @@ class Product : public Sequence {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 private:
   int emptySequenceValue() const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;

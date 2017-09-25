@@ -17,10 +17,6 @@ Expression * ComplexArgument::clone() const {
   return a;
 }
 
-bool ComplexArgument::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> ComplexArgument::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.th());

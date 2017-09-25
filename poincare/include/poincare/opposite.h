@@ -12,7 +12,6 @@ class Opposite : public StaticHierarchy<1> {
 public:
   Expression * clone() const override;
   Type type() const override;
-  bool isCommutative() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

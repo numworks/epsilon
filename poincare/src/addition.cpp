@@ -15,10 +15,6 @@ Expression * Addition::clone() const {
   return new Addition(operands(), numberOfOperands(), true);
 }
 
-bool Addition::isCommutative() const {
-  return true;
-}
-
 template<typename T>
 Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());

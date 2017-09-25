@@ -18,10 +18,6 @@ Expression * Fraction::clone() const {
   return new Fraction(m_operands, true);
 }
 
-bool Fraction::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Fraction::compute(const Complex<T> c, const Complex<T> d) {
   T norm = d.a()*d.a() + d.b()*d.b();

@@ -17,10 +17,6 @@ Expression * Determinant::clone() const {
   return a;
 }
 
-bool Determinant::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
 

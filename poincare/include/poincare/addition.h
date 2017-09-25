@@ -12,7 +12,7 @@ class Addition : public DynamicHierarchy {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
+  bool isCommutative() const override { return true; }
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
     return EvaluationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);

@@ -19,7 +19,6 @@ public:
   /* Expression */
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 
   // TODO: Remove these 2 functions
   void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {

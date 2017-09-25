@@ -42,7 +42,6 @@ public:
   /* Expression */
   Expression::Type type() const override;
   Complex<T> * clone() const override;
-  bool isCommutative() const override;
   void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {
     assert(false);
   }

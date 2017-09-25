@@ -16,10 +16,6 @@ Expression * ImaginaryPart::clone() const {
   return a;
 }
 
-bool ImaginaryPart::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> ImaginaryPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.b());

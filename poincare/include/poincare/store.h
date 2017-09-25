@@ -12,7 +12,6 @@ public:
   using StaticHierarchy<2>::StaticHierarchy;
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

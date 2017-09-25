@@ -16,10 +16,6 @@ Expression * Round::clone() const {
   return c;
 }
 
-bool Round::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * Round::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * f1Entry = operand(0)->evaluate<T>(context, angleUnit);

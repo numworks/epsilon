@@ -15,10 +15,6 @@ Expression * HyperbolicArcTangent::clone() const {
   return a;
 }
 
-bool HyperbolicArcTangent::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> HyperbolicArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

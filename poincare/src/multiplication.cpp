@@ -20,10 +20,6 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
-bool Multiplication::isCommutative() const {
-  return true;
-}
-
 template<typename T>
 Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());

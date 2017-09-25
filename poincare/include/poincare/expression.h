@@ -109,7 +109,7 @@ public:
   virtual int checksum() const;
 
   /* Sorting */
-  virtual bool isCommutative() const = 0;
+  virtual bool isCommutative() const { return false; }
   virtual void sort();
   int comparesTo(const Expression * e) const;
 

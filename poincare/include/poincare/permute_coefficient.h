@@ -11,7 +11,6 @@ class PermuteCoefficient : public StaticHierarchy<2>  {
 public:
   Type type() const override;
   Expression * clone() const override;
-  bool isCommutative() const override;
 private:
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }

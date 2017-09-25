@@ -18,10 +18,6 @@ Expression * Sum::clone() const {
   return a;
 }
 
-bool Sum::isCommutative() const {
-  return false;
-}
-
 int Sum::emptySequenceValue() const {
   return 0;
 }

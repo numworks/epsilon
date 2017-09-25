@@ -151,11 +151,6 @@ Complex<T> * Complex<T>::clone() const {
   return new Complex<T>(*this);
 }
 
-template <class T>
-bool Complex<T>::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 T Complex<T>::toScalar() const {
   if (m_b != 0) {

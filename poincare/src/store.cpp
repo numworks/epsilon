@@ -21,10 +21,6 @@ Expression * Store::clone() const {
   return new Store(operands(), true);
 }
 
-bool Store::isCommutative() const {
-  return false;
-}
-
 ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);

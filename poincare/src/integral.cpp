@@ -23,10 +23,6 @@ Expression * Integral::clone() const {
   return a;
 }
 
-bool Integral::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
   VariableContext<T> xContext = VariableContext<T>('x', &context);

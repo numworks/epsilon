@@ -275,9 +275,6 @@ int Integer::checksum() const {
   }
   return m_digits[0];
 }
-bool Integer::isCommutative() const {
-  return false;
-}
 
 Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
   union {

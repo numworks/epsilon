@@ -17,10 +17,6 @@ Expression * DivisionRemainder::clone() const {
   return a;
 }
 
-bool DivisionRemainder::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * DivisionRemainder::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->evaluate<T>(context, angleUnit);

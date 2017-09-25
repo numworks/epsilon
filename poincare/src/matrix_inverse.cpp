@@ -18,10 +18,6 @@ Expression * MatrixInverse::clone() const {
   return a;
 }
 
-bool MatrixInverse::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * MatrixInverse::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);

@@ -15,10 +15,6 @@ Expression * ArcTangent::clone() const {
   return a;
 }
 
-bool ArcTangent::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> ArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);

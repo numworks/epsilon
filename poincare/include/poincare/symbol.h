@@ -36,7 +36,6 @@ public:
   Expression * clone() const override;
   int checksum() const override;
   bool isMatrixSymbol() const;
-  bool isCommutative() const override;
 private:
   int nodeComparesTo(const Expression * e) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

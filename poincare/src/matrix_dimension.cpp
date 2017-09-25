@@ -16,10 +16,6 @@ Expression * MatrixDimension::clone() const {
   return a;
 }
 
-bool MatrixDimension::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);

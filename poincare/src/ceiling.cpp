@@ -16,10 +16,6 @@ Expression * Ceiling::clone() const {
   return c;
 }
 
-bool Ceiling::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() != 0) {

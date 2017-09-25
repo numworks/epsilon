@@ -11,7 +11,6 @@ public:
 public:
   Expression * clone() const override;
   Type type() const override;
-  bool isCommutative() const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

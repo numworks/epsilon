@@ -18,10 +18,6 @@ Expression * MatrixTranspose::clone() const {
   return a;
 }
 
-bool MatrixTranspose::isCommutative() const {
-  return false;
-}
-
 template<typename T>
 Evaluation<T> * MatrixTranspose::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);

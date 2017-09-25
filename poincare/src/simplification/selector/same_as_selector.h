@@ -8,8 +8,8 @@ namespace Simplification {
 
 class SameAsSelector : public Selector {
 public:
-  constexpr SameAsSelector(int originalIndex, int captureIndex = -1, Selector ** children = nullptr, int numberOfChildren = 0) :
-    Selector(captureIndex, children, numberOfChildren), m_originalIndex(originalIndex) {}
+  constexpr SameAsSelector(int originalIndex, int captureIndex = -1, Selector ** children = nullptr, int numberOfChildren = 0, bool childrenPartialMatch = true) :
+    Selector(captureIndex, children, numberOfChildren, childrenPartialMatch), m_originalIndex(originalIndex) {}
   bool acceptsLocationInCombination(const Combination * combination, int location) const override;
 private:
   int m_originalIndex;

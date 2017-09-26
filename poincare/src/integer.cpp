@@ -205,11 +205,24 @@ Integer Integer::Multiplication(const Integer & a, const Integer & b) {
   return Integer(digits, productSize, a.m_negative != b.m_negative);
 }
 
-/*Integer Integer::Division(const Integer & a, const Integer & b) {
-  return IntegerDivision(a, b).quotient();
-}
-*/
+IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
+  // FIXME: First, test if denominator is zero.
 
+  if (numerator.isLowerThan(denominator)) {
+    IntegerDivision div = {.quotient = 0, .remainder = Integer::Addition(numerator, Integer(0))};
+    // FIXME: This is a ugly way to bypass creating a copy constructor!
+    return div;
+  }
+
+  // Recursive case
+  IntegerDivision div = Division(numerator, Integer::Addition(denominator, denominator));
+  div.quotient = Integer::Addition(div.quotient, div.quotient);
+  if (!(div.remainder.isLowerThan(denominator))) {
+    div.remainder = Integer::Subtraction(div.remainder, denominator);
+    div.quotient = Integer::Addition(div.quotient, Integer(1));
+  }
+  return div;
+}
 
 // Private methods
 
@@ -296,7 +309,7 @@ int Integer::identifier() const {
 
 /*
 Integer Integer::divide_by(const Integer &other) const {
-  return IntegerDivision(*this, other).m_quotient;
+  return Division(*this, other).quotient;
 }
 
 
@@ -465,17 +478,17 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   char buffer[255];
 
   Integer base = Integer(10);
-  IntegerDivision d = IntegerDivision(*this, base);
+  IntegerDivision d = Division(*this, base);
   int size = 0;
   if (isEqualTo(Integer(0))) {
     buffer[size++] = '0';
   }
-  while (!(d.remainder().isEqualTo(Integer(0)) &&
-        d.quotient().isEqualTo(Integer(0)))) {
+  while (!(d.remainder.isEqualTo(Integer(0)) &&
+        d.quotient.isEqualTo(Integer(0)))) {
     assert(size<255); //TODO: malloc an extra buffer
-    char c = char_from_digit(d.remainder().digit(0));
+    char c = char_from_digit(d.remainder.digit(0));
     buffer[size++] = c;
-    d = IntegerDivision(d.quotient(), base);
+    d = Division(d.quotient, base);
   }
   buffer[size] = 0;
 
@@ -487,30 +500,6 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   }
 
   return new StringLayout(buffer, size);
-}
-
-// Class IntegerDivision
-
-IntegerDivision::IntegerDivision(const Integer & numerator, const Integer & denominator) :
-  m_quotient(Integer(0)),
-  m_remainder(Integer(0))
-{
-  // FIXME: First, test if denominator is zero.
-
-  if (numerator.isLowerThan(denominator)) {
-    m_quotient = Integer(0);
-    m_remainder = Integer::Addition(numerator, Integer(0));
-    // FIXME: This is a ugly way to bypass creating a copy constructor!
-    return;
-  }
-
-  // Recursive case
-  *this = IntegerDivision(numerator, Integer::Addition(denominator, denominator));
-  m_quotient = Integer::Addition(m_quotient, m_quotient);
-  if (!(m_remainder.isLowerThan(denominator))) {
-    m_remainder = Integer::Subtraction(m_remainder, denominator);
-    m_quotient = Integer::Addition(m_quotient, Integer(1));
-  }
 }
 
 }

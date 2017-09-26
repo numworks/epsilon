@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+struct IntegerDivision;
+
 class Integer : public StaticHierarchy<0> {
 public:
   typedef int32_t native_int_t;
@@ -40,6 +42,7 @@ public:
   static Integer Addition(const Integer & i, const Integer & j);
   static Integer Subtraction(const Integer & i, const Integer & j);
   static Integer Multiplication(const Integer & i, const Integer & j);
+  static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   //static Integer Division(const Integer & i, const Integer & j);
   //static IntegerDivision division(const Integer & i, const Integer & j);
 private:
@@ -69,14 +72,9 @@ private:
   static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_native_uint_t should be twice the size of native_uint_t");
 };
 
-class IntegerDivision {
-public:
-  IntegerDivision(const Integer & numerator, const Integer & denominator);
-  const Integer & quotient() { return m_quotient; }
-  const Integer & remainder() { return m_remainder; }
-private:
-  Integer m_quotient;
-  Integer m_remainder;
+struct IntegerDivision {
+  Integer quotient;
+  Integer remainder;
 };
 
 }

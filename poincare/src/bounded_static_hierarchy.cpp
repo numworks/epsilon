@@ -20,6 +20,12 @@ BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * ope
 }
 
 template<int T>
+void BoundedStaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, bool clone) {
+  StaticHierarchy<T>::setArgument(listData, numberOfOperands, clone);
+  m_numberOfOperands = listData->numberOfOperands();
+}
+
+template<int T>
 bool BoundedStaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
   return numberOfOperands >= 1 && numberOfOperands <= T;
 }

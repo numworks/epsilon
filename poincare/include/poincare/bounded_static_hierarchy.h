@@ -10,6 +10,7 @@ class BoundedStaticHierarchy : public StaticHierarchy<T> {
 public:
   BoundedStaticHierarchy();
   BoundedStaticHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
+  void setArgument(ListData * listData, int numberOfEntries, bool clone) override;
   int numberOfOperands() const override { return m_numberOfOperands; }
   bool hasValidNumberOfOperands(int numberOfOperands) const override;
 private:

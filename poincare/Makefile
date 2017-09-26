@@ -102,7 +102,7 @@ tests += $(addprefix poincare/test/,\
   simplify_easy.cpp\
 )
 
-tests_orig += $(addprefix poincare/test/,\
+tests += $(addprefix poincare/test/,\
   addition.cpp\
   complex.cpp\
   division.cpp\

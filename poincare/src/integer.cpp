@@ -470,8 +470,8 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   if (isEqualTo(Integer(0))) {
     buffer[size++] = '0';
   }
-  while (!d.remainder().isEqualTo(Integer(0)) &&
-        d.quotient().isEqualTo(Integer(0))) {
+  while (!(d.remainder().isEqualTo(Integer(0)) &&
+        d.quotient().isEqualTo(Integer(0)))) {
     assert(size<255); //TODO: malloc an extra buffer
     char c = char_from_digit(d.remainder().digit(0));
     buffer[size++] = c;

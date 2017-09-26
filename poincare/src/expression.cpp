@@ -153,6 +153,10 @@ template<typename T> T Expression::epsilon() {
 }
 
 void Expression::recursivelySetAsParentOfChildren() {
+  if (this->type() == Type::Complex) {
+    // TODO: this case should be useless once complex is a leaf expression!
+    return;
+  }
   for (int i=0; i<numberOfOperands(); i++) {
     Expression * child = const_cast<Expression *>(operand(i));
     child->setParent(this);

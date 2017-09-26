@@ -30,6 +30,9 @@ public:
   Integer(const Integer& other) = delete;
   Integer& operator=(const Integer& other) = delete;
 
+  // Setter
+  void setNegative(bool negative);
+
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;

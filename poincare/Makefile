@@ -8,6 +8,7 @@ objs += $(addprefix poincare/src/,\
   arc_cosine.o\
   arc_sine.o\
   arc_tangent.o\
+  arithmetic.o\
   binomial_coefficient.o\
   bounded_static_hierarchy.o\
   ceiling.o\

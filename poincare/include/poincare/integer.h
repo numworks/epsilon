@@ -16,7 +16,7 @@ public:
   typedef uint64_t double_native_uint_t;
 
   // FIXME: This constructor should be constexpr
-  Integer(native_int_t i) :
+  Integer(native_int_t i = 0) :
     StaticHierarchy<0>(),
     m_digit(i>0 ? i : -i),
     m_numberOfDigits(1),

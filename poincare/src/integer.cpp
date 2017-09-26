@@ -129,6 +129,10 @@ Expression::Type Integer::type() const {
   return Type::Integer;
 }
 
+void Integer::setNegative(bool negative) {
+  m_negative = negative;
+}
+
 Expression * Integer::clone() const {
   native_uint_t * cloneDigits = new native_uint_t [m_numberOfDigits];
   for (uint16_t i=0; i<m_numberOfDigits; i++) {

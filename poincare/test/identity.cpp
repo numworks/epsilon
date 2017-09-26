@@ -29,8 +29,8 @@ QUIZ_CASE(poincare_identity_simple_term) {
 }
 
 QUIZ_CASE(poincare_identity_commutativity) {
-  assert(identical_to("1+2", "2+1"));
+  assert(equivalent_to("1+2", "2+1"));
   //assert(identical_to("1*2", "2*1"));
-  assert(!identical_to("1-2", "2-1"));
-  assert(!identical_to("1/2", "2/1"));
+  assert(!equivalent_to("1-2", "2-1"));
+  assert(!equivalent_to("1/2", "2/1"));
 }

@@ -49,9 +49,9 @@ QUIZ_CASE(poincare_integer_multiplication) {
 }
 
 QUIZ_CASE(poincare_integer_divide) {
-//  assert(Integer(8).divide_by(Integer(4)) == Integer(2));
-//  assert(Integer("3293920983029832").divide_by(Integer("38928")) == Integer("84615726033"));
-//  assert(Integer("3293920983029832").divide_by(Integer("389090928")) == Integer("8465684"));
+  assert(Integer::Division(Integer(8), Integer(4)).quotient.isEqualTo(Integer(2)) && Integer::Division(Integer(8), Integer(4)).remainder.isEqualTo(Integer(0)));
+  assert(Integer::Division(Integer("3293920983030066"), Integer(38928)).quotient.isEqualTo(Integer("84615726033")) && Integer::Division(Integer("3293920983030066"), Integer(38928)).remainder.isEqualTo(Integer(17442)));
+  assert(Integer::Division(Integer("3293920983030066"), Integer("389282362616")).quotient.isEqualTo(Integer(8461)) && Integer::Division(Integer("3293920983030066"), Integer("389282362616")).remainder.isEqualTo(Integer("202912936090")));
 }
 
 template<typename T>

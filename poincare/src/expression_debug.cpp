@@ -1,6 +1,7 @@
 #include <poincare/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
+#include <poincare/integer.h>
 #include <iostream>
 
 namespace Poincare {
@@ -65,6 +66,20 @@ void print_expression(const Expression * e, int indentationLevel) {
   for (int i=0; i<e->numberOfOperands(); i++) {
     print_expression(e->operand(i), indentationLevel+1);
   }
+}
+
+void print_prime_factorization(Integer * outputFactors, Integer * outputCoefficients, int outputLength) {
+  GlobalContext context;
+  for (int index = 0; index < outputLength; index++) {
+    if (outputCoefficients[index].isEqualTo(Integer(0))) {
+      break;
+    }
+    std::cout << outputFactors[index].approximate<double>(context);
+    std::cout << "^";
+    std::cout << outputCoefficients[index].approximate<double>(context);
+    std::cout << "+";
+  }
+  std::cout <<"  "<< std::endl;
 }
 
 }

@@ -30,7 +30,8 @@ public:
   Integer(const Integer& other) = delete;
   Integer& operator=(const Integer& other) = delete;
 
-  // Setter
+  // Getter & Setter
+  bool isNegative() { return m_negative; }
   void setNegative(bool negative);
 
   // Expression subclassing

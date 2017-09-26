@@ -308,7 +308,7 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
 int Integer::identifier() const {
   assert(m_numberOfDigits > 0);
   int sign = m_negative ? -1 : 1;
-  return sign*m_digits[0];
+  return sign*m_digit;
 }
 
 /*

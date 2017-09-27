@@ -3,6 +3,7 @@
 
 #include "rule.h"
 #include "selector/type_selector.h"
+#include "selector/type_and_identifier_selector.h"
 
 namespace Poincare {
 namespace Simplification {

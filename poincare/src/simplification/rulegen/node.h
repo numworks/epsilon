@@ -19,10 +19,10 @@ public:
 
   void generateSelector(Rule * rule);
   int indexOfChildrenWithIdentifier(std::string identifier);
-  std::string identifier();
-  std::string name() { return *m_name; }
-  std::string value();
-  int intValue();
+  std::string identifier() const;
+  std::string name() const { return *m_name; }
+  std::string value() const;
+  int intValue() const;
   int numberOfChildren() { return m_children->size(); }
 private:
   int selectorCaptureIndexInRule(Rule * rule);

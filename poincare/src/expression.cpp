@@ -97,11 +97,11 @@ void Expression::sort() {
 }
 
 int Expression::compareTo(const Expression * e) const {
-  if (e->type() > this->type()) {
-    return 1;
-  }
-  if (e->type() < this->type()) {
+  if (this->type() < e->type()) {
     return -1;
+  }
+  if (this->type() > e->type()) {
+    return 1;
   }
   for (int i = 0; i < this->numberOfOperands(); i++) {
     // The NULL node is the least node type.

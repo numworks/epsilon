@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <ion/charset.h>
 
 void Node::setChildren(std::vector<Node *> * children) {
   delete m_children;
@@ -43,7 +44,20 @@ void Node::generateSelector(Rule * rule) {
     }
     std::cout << "};" << std::endl;
   }
-  std::cout << "constexpr TypeSelector " << identifier() << "(Expression::Type::" << *m_name << ", " << rule->indexOfIdentifierInTransform(*m_identifier);
+  std::cout << "constexpr ";
+  if (name().compare("Any") == 0) {
+    std::cout << "AnySelector " << identifier() << "(";
+  } else if (name().compare("SameAs") == 0) {
+    assert(value().compare("NOVALUE") != 0);
+    std::cout << "SameAsSelector " << identifier() << "(" << value() << ", ";
+  } else {
+    if (m_value) {
+      std::cout << "TypeAndIdentifierSelector " << identifier() << "(Expression::Type::" << name() << ", " << intValue() << ", ";
+    } else {
+      std::cout << "TypeSelector " << identifier() << "(Expression::Type::" << name() << ", ";
+    }
+  }
+  std::cout << rule->indexOfIdentifierInTransform(*m_identifier);
   if (m_children->size() > 0) {
     std::cout << ", " << identifier() <<"Children, " << m_children->size();
   }
@@ -59,6 +73,12 @@ int Node::indexOfChildrenWithIdentifier(std::string identifier) {
   return -1;
 }
 
+std::string Node::value() {
+  if (m_value) {
+    return *m_value;
+  }
+  return "NOVALUE";
+}
 
 std::string Node::identifier() {
   if (m_identifier) {
@@ -67,7 +87,28 @@ std::string Node::identifier() {
   return "NOIDEA";
 }
 
-
+int Node::intValue() {
+  assert(m_value);
+  // TODO: handle m_value = "Pi", "e", "i" ...
+  if (m_value->compare("Pi") == 0) {
+    return Ion::Charset::SmallPi;
+  }
+  if (m_value->compare("i") == 0) {
+    return Ion::Charset::IComplex;
+  }
+  // read number
+  int result = 0;
+  int base = 1;
+  for (int i=m_value->size()-1; i>=0; i--) {
+    if (m_value->at(i) == '-') {
+      return -result;
+    }
+    int digit = m_value->at(i)-'0';
+    result = result+base*digit;
+    base *= 10;
+  }
+  return result;
+}
 
 #if 0
 

@@ -25,7 +25,7 @@ products += $(rulegen_objs) $(RULEGEN) $(addprefix $(prefix)/,\
   rules_lexer.cpp\
 )
 
-GENERATOR_CXXFLAGS = -std=c++11 -Wno-deprecated-register
+GENERATOR_CXXFLAGS = -std=c++11 -Wno-deprecated-register -Iion/include
 
 $(rulegen_objs): %.o: %.cpp
 	@echo "HOSTCC  $@"

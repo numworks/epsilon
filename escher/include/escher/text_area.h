@@ -87,10 +87,12 @@ private:
     void insertText(const char * text);
     void moveCursorIndex(int deltaX);
     void moveCursorGeo(int deltaX, int deltaY);
+    void moveCursorIndexAbsolute(int x);
     void removeChar();
     bool removeEndOfLine();
     void removeStartOfLine();
     KDRect cursorRect();
+
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

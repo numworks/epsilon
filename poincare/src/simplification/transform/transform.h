@@ -16,6 +16,7 @@ bool MergeDynamicHierarchyTransform(Expression * captures[]);
 bool IntegerAdditionTransform(Expression * captures[]);
 bool IntegerMultiplicationTransform(Expression * captures[]);
 bool PowerPowerTransform(Expression * captures[]);
+bool IntegerFractionReductionTransform(Expression * captures[]);
 
 }
 }

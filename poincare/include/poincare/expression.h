@@ -116,6 +116,10 @@ public:
   /* Sorting */
   virtual bool isCommutative() const { return false; }
   virtual void sort();
+  /* compareTo returns:
+   *   1 if this > e
+   *   -1 if this < e
+   *   0 if this == e */
   virtual int compareTo(const Expression * e) const;
 
   /* Layout Engine */

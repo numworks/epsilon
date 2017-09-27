@@ -23,3 +23,6 @@ Multiplication.a(Integer.b,Integer.c) -> IntegerMultiplicationTransform(a,b,c);
 
 // (b^c)^d -> b^(c*d)
 //Power.a(Power(b,c),d) -> PowerPowerTransform(a,b,c,d)
+
+// int*int^-1 -> int.a*int.b^-1 with gcd(a,b) = 1
+Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> IntegerFractionReductionTransform(a,b,c,d);

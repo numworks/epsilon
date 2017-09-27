@@ -121,10 +121,7 @@ Integer Integer::denominator(Integer * exponent) {
 }
 
 Integer::~Integer() {
-  if (!usesImmediateDigit()) {
-    assert(m_digits != nullptr);
-    delete[] m_digits;
-  }
+  releaseDynamicIvars();
 }
 
 Integer::Integer(Integer && other) {
@@ -143,14 +140,24 @@ Integer::Integer(Integer && other) {
   other.m_negative = 0;
 }
 
+Integer::Integer(const Integer& other) {
+  // Copy other's data
+  if (other.usesImmediateDigit()) {
+    m_digit = other.m_digit;
+  } else {
+    native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
+    for (int i=0; i<other.m_numberOfDigits; i++) {
+      digits[i] = other.m_digits[i];
+    }
+    m_digits = digits;
+  }
+  m_numberOfDigits = other.m_numberOfDigits;
+  m_negative = other.m_negative;
+}
+
 Integer& Integer::operator=(Integer && other) {
   if (this != &other) {
-    // Release our ivars
-    if (!usesImmediateDigit()) {
-      assert(m_digits != nullptr);
-      delete[] m_digits;
-    }
-
+    releaseDynamicIvars();
     // Pilfer other's ivars
     if (other.usesImmediateDigit()) {
       m_digit = other.m_digit;
@@ -168,6 +175,25 @@ Integer& Integer::operator=(Integer && other) {
   return *this;
 }
 
+Integer& Integer::operator=(const Integer& other) {
+  if (this != &other) {
+    releaseDynamicIvars();
+    // Copy other's ivars
+    if (other.usesImmediateDigit()) {
+      m_digit = other.m_digit;
+    } else {
+      native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
+      for (int i=0; i<other.m_numberOfDigits; i++) {
+        digits[i] = other.m_digits[i];
+      }
+      m_digits = digits;
+    }
+    m_numberOfDigits = other.m_numberOfDigits;
+    m_negative = other.m_negative;
+  }
+  return *this;
+}
+
 // Expression subclassing
 
 Expression::Type Integer::type() const {
@@ -179,11 +205,7 @@ void Integer::setNegative(bool negative) {
 }
 
 Expression * Integer::clone() const {
-  native_uint_t * cloneDigits = new native_uint_t [m_numberOfDigits];
-  for (uint16_t i=0; i<m_numberOfDigits; i++) {
-    cloneDigits[i] = digit(i);
-  }
-  return new Integer(cloneDigits, m_numberOfDigits, m_negative);
+  return new Integer(*this);
 }
 
 // Comparison
@@ -287,6 +309,13 @@ Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool neg
   } else {
     assert(numberOfDigits > 1);
     m_digits = digits;
+  }
+}
+
+void Integer::releaseDynamicIvars() {
+  if (!usesImmediateDigit()) {
+    assert(m_digits != nullptr);
+    delete[] m_digits;
   }
 }
 

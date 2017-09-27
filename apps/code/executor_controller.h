@@ -15,7 +15,7 @@ public:
   public:
     ContentView(Program * program);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void print(const char * str) const;
+    void print(const char * str, int len) const;
   private:
     void runPython() const;
     void clearScreen(KDContext * ctx) const;
@@ -29,4 +29,3 @@ private:
 }
 
 #endif
-

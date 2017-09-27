@@ -39,7 +39,7 @@ static const ExecutorController::ContentView * sCurrentView = nullptr;
 extern "C"
 void mp_hal_stdout_tx_strn_cooked(const char * str, size_t len) {
   assert(sCurrentView != nullptr);
-  sCurrentView->print(str);
+  sCurrentView->print(str, len);
 }
 
 ExecutorController::ContentView::ContentView(Program * program) :
@@ -63,9 +63,9 @@ void ExecutorController::ContentView::drawRect(KDContext * ctx, KDRect rect) con
   sCurrentView = nullptr;
 }
 
-void ExecutorController::ContentView::print(const char * str) const {
+void ExecutorController::ContentView::print(const char * str, int len) const {
   KDContext * ctx = KDIonContext::sharedContext();
-  m_printLocation = ctx->drawString(str, m_printLocation);
+  m_printLocation = ctx->drawString(str, m_printLocation, KDText::FontSize::Large, KDColorBlack, KDColorWhite, len);
   if (bounds().height() < m_printLocation.y()) {
     clearScreen(ctx);
     m_printLocation = KDPoint(m_printLocation.x(), 0);

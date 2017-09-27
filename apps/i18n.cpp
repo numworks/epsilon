@@ -217,7 +217,7 @@ const char * messages[242][5] {
   {"Mean", "Moyenne", "Media", "Mittelwert", "Media"},
   {"Standard deviation", "Ecart type", "Desviacion tipica", "Standardabweichung", "Desvio padrao"},
   {englishStandardDeviationSigma, frenchStandardDeviationSigma, spanishStandardDeviationSigma, germanStandardDeviationSigma, portugueseStandardDeviationSigma},
-  {"Sample std deviation s", "Ecart type echantillon", "Desviacion tipica muestral s", "Standardabweichung s", "Desvio padrao amostral s"},
+  {"Sample std deviation s", "Ecart type echantillon", "Desv. tipica muestral s", "Standardabweichung s", "Desvio padrao amostral s"},
   {"Variance", "Variance", "Varianza", "Varianz", "Variancia"},
   {"Interquartile range", "Ecart interquartile", "Rango intercuartilo", "Interquartilsabstand", "Interquartil"},
   {"Sum of squares", "Somme des carres", "Suma cuadrados", "Quadratsumme", "Soma dos quadrados"},

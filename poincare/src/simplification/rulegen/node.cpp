@@ -73,21 +73,21 @@ int Node::indexOfChildrenWithIdentifier(std::string identifier) {
   return -1;
 }
 
-std::string Node::value() {
+std::string Node::value() const {
   if (m_value) {
     return *m_value;
   }
   return "NOVALUE";
 }
 
-std::string Node::identifier() {
+std::string Node::identifier() const {
   if (m_identifier) {
     return *m_identifier;
   }
   return "NOIDEA";
 }
 
-int Node::intValue() {
+int Node::intValue() const {
   assert(m_value);
   // TODO: handle m_value = "Pi", "e", "i" ...
   if (m_value->compare("Pi") == 0) {

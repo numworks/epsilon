@@ -75,6 +75,51 @@ Integer::Integer(const char * digits, bool negative) :
 #endif
 }
 
+Integer Integer::exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
+  Integer base = Integer(10);
+  Integer power = Integer(0);
+  for (int i = 0; i < exponentLength; i++) {
+    power = Multiplication(power, base);
+    power = Addition(power, Integer(*exponent-'0'));
+    exponent++;
+  }
+  if (exponentNegative) {
+    power.setNegative(true);
+  }
+  return Subtraction(Integer(fractionalPartLength), power);
+}
+
+Integer Integer::numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent) {
+  Integer zero = Integer(0);
+  Integer base = Integer(10);
+  Integer numerator = Integer(integralPart, negative);
+  for (int i = 0; i < fractionalPartLength; i++) {
+    numerator = Multiplication(numerator, base);
+    numerator = Addition(numerator, Integer(*fractionalPart-'0'));
+    fractionalPart++;
+  }
+  if (exponent->isNegative()) {
+    while (exponent->compareTo(&zero) != 0) {
+      numerator = Multiplication(numerator, base);
+      *exponent = Addition(*exponent, Integer(1));
+    }
+  }
+  return numerator;
+}
+
+Integer Integer::denominator(Integer * exponent) {
+  Integer zero = Integer(0);
+  Integer base = Integer(10);
+  Integer denominator = Integer(1);
+  if (!exponent->isNegative()) {
+    while (exponent->compareTo(&zero) != 0) {
+      denominator = Multiplication(denominator, base);
+      *exponent = Subtraction(*exponent, Integer(1));
+    }
+  }
+  return denominator;
+}
+
 Integer::~Integer() {
   if (!usesImmediateDigit()) {
     assert(m_digits != nullptr);

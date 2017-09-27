@@ -24,6 +24,10 @@ public:
   {
   }
   Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
+  static Integer exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
+  static Integer numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent);
+  static Integer denominator(Integer * exponent);
+
   ~Integer();
   Integer(Integer&& other); // C++11 move constructor
   Integer& operator=(Integer&& other); // C++11 move assignment operator

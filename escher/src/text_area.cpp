@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <assert.h>
+#include <limits.h>
 
 
 static inline size_t min(size_t a, size_t b) {
@@ -47,7 +48,8 @@ size_t TextArea::Text::indexAtPosition(Position p) {
   const char * endOfLastLine = nullptr;
   for (Line l : *this) {
     if (p.line() == y) {
-      size_t x = min(p.column(), l.length());
+      size_t x = p.column() < 0 ? 0 : p.column();
+      x = min(x, l.length());
       return l.text() - m_buffer + x;
     }
     endOfLastLine = l.text() + l.length();
@@ -313,6 +315,10 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
     m_contentView.moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
     m_contentView.moveCursorGeo(0, 1);
+  } else if (event == Ion::Events::Origin) {
+     m_contentView.moveCursorGeo(-INT_MAX, 0);
+  } else if (event == Ion::Events::End) {
+     m_contentView.moveCursorGeo(INT_MAX, 0);
   } else if (event == Ion::Events::Backspace) {
     m_contentView.removeChar();
   } else if (event.hasText()) {

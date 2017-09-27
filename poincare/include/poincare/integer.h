@@ -35,7 +35,7 @@ public:
   Integer& operator=(const Integer& other); // C++11 copy assignment operator
 
   // Getter & Setter
-  bool isNegative() { return m_negative; }
+  bool isNegative() const { return m_negative; }
   void setNegative(bool negative);
 
   // Expression subclassing

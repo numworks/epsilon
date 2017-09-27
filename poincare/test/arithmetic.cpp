@@ -19,7 +19,7 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
   cout << "gcd(" << a.approximate<float>(context);
   cout << ", " << b.approximate<float>(context) << ") = ";
 #endif
-  Integer gcd = Arithmetic::GCD(std::move(a), std::move(b));
+  Integer gcd = Arithmetic::GCD(&a, &b);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << gcd.approximate<float>(context) << endl;
 #endif
@@ -34,7 +34,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   cout << "---- Primes factorization ----"  << endl;
   cout << "Decomp(" << a.approximate<float>(context) << ") = ";
 #endif
-  Arithmetic::PrimeFactorization(std::move(a), outputFactors, outputCoefficients, 10);
+  Arithmetic::PrimeFactorization(&a, outputFactors, outputCoefficients, 10);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_prime_factorization(outputFactors, outputCoefficients, 10);
 #endif

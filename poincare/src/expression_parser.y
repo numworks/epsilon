@@ -148,14 +148,15 @@ lstData:
 
 number:
   DIGITS { $$ = new Poincare::Integer($1.address, false); }
-  | DOT DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, nullptr, 0, false); }
-  | DIGITS DOT DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, nullptr, 0, false); }
-  | DOT DIGITS EE DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, $4.address, $4.length, false); }
-  | DIGITS DOT DIGITS EE DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, $5.address, $5.length, false); }
-  | DIGITS EE DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, nullptr, 0, $3.address, $3.length, false); }
-  | DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>(nullptr, 0, false, $2.address, $2.length, $5.address, $5.length, true); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, $3.address, $3.length, $6.address, $6.length, true); }
-  | DIGITS EE MINUS DIGITS { $$ = new Poincare::Complex<double>($1.address, $1.length, false, nullptr, 0, $4.address, $4.length, true); }
+  | DOT DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($2.length, nullptr, 0, false); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator(nullptr, 0, $2.address, $2.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DIGITS DOT DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($3.length, nullptr, 0, false); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator($1.address, $1.length, $3.address, $3.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DOT DIGITS EE DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($2.length, $4.address, $4.length, false); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator(nullptr, 0, $2.address, $2.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DIGITS DOT DIGITS EE DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($3.length, $5.address, $5.length, false) ; Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator($1.address, $1.length, $3.address, $3.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))} ;
+$$ = new Poincare::Division(terms, false); }
+  | DIGITS EE DIGITS { Poincare::Integer exp = Poincare::Integer::exponent(0, $3.address, $3.length, false); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator($1.address, $1.length, nullptr, 0, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DOT DIGITS EE MINUS DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($2.length, $5.address, $5.length, true); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator(nullptr, 0, $2.address, $2.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { Poincare::Integer exp = Poincare::Integer::exponent($3.length, $6.address, $6.length, true); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator($1.address, $1.length, $3.address, $3.length, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
+  | DIGITS EE MINUS DIGITS { Poincare::Integer exp = Poincare::Integer::exponent(0, $4.address, $4.length, true); Poincare::Expression * terms[2] = {new Poincare::Integer(Poincare::Integer::numerator($1.address, $1.length, nullptr, 0, false, &exp)), new Poincare::Integer(Poincare::Integer::denominator(&exp))}; $$ = new Poincare::Division(terms, false); }
 
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }

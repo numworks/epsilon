@@ -24,6 +24,8 @@ public:
   std::string value() const;
   int intValue() const;
   int numberOfChildren() { return m_children->size(); }
+  int compareTo(Node * node) const;
+  void sort();
 private:
   int selectorCaptureIndexInRule(Rule * rule);
   int selectorIndexInRule(Rule * rule);

@@ -26,6 +26,7 @@ void Node::identifyAnonymousChildren(int * index) {
 // Generation
 
 void Node::generateSelector(Rule * rule) {
+  sort();
   int i = 0;
 
   for (Node * child : *m_children) {
@@ -108,6 +109,93 @@ int Node::intValue() const {
     base *= 10;
   }
   return result;
+}
+
+int Node::compareTo(Node * n) const {
+  if (m_name->compare("Any")) {
+    if (n->m_name->compare("Any")) {
+      if (identifier().compare(n->identifier()) == 0) {
+        return 0;
+      } else if (identifier().compare(n->identifier()) > 0) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else if (n->m_name->compare("SameAs")) {
+      if (identifier().compare(n->value()) == 0) {
+        return -1;
+      } else if (identifier().compare(n->value()) > 0) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else {
+      return 1;
+    }
+  } else if (m_name->compare("SameAs")) {
+    if (n->m_name->compare("Any")) {
+      if (value().compare(n->identifier()) == 0) {
+        return 1;
+      } else if (value().compare(n->identifier()) > 0) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else if (n->m_name->compare("SameAs")) {
+      if (value().compare(n->value()) == 0) {
+        return 0;
+      } else if (value().compare(n->value()) > 0) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else {
+      return 1;
+    }
+  } else {
+    if (n->m_name->compare("Any")) {
+      return -1;
+    } else if (n->m_name->compare("SameAs")) {
+      return -1;
+    } else {
+      if (name().compare(n->name()) != 0) {
+        if (name().compare(n->name()) > 0) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else {
+        if (intValue() == n->intValue()) {
+         return 0;
+        } else if (intValue() > n->intValue()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+    }
+  }
+}
+
+void Node::sort() {
+  if (m_children->size() == 0) {
+    return;
+  }
+  for (Node * child : *m_children) {
+    child->sort();
+  }
+  for (int i = m_children->size()-1; i > 0; i--) {
+    bool isSorted = true;
+    for (int j = 0; j < m_children->size()-1; j++) {
+      if (m_children->at(j)->compareTo(m_children->at(j+1)) > 0) {
+        std::swap(m_children->at(j), m_children->at(j+1));
+        isSorted = false;
+      }
+    }
+    if (isSorted) {
+      return;
+    }
+  }
 }
 
 #if 0

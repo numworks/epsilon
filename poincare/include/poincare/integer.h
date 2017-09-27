@@ -31,8 +31,8 @@ public:
   ~Integer();
   Integer(Integer&& other); // C++11 move constructor
   Integer& operator=(Integer&& other); // C++11 move assignment operator
-  Integer(const Integer& other) = delete;
-  Integer& operator=(const Integer& other) = delete;
+  Integer(const Integer& other); // C++11 copy constructor
+  Integer& operator=(const Integer& other); // C++11 copy assignment operator
 
   // Getter & Setter
   bool isNegative() { return m_negative; }
@@ -55,6 +55,7 @@ public:
   //static IntegerDivision division(const Integer & i, const Integer & j);
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);
+  void releaseDynamicIvars();
   static int8_t ucmp(const Integer & a, const Integer & b); // -1, 0, or 1
   static Integer usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative);
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);

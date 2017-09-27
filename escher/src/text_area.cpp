@@ -304,6 +304,7 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   m_contentView(textBuffer, textBufferSize, fontSize, textColor, backgroundColor),
   m_delegate(delegate)
 {
+  assert(textBufferSize < INT_MAX/2);
 }
 
 bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
@@ -316,9 +317,9 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Down) {
     m_contentView.moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Origin) {
-     m_contentView.moveCursorGeo(-INT_MAX, 0);
+     m_contentView.moveCursorGeo(-INT_MAX/2, 0);
   } else if (event == Ion::Events::End) {
-     m_contentView.moveCursorGeo(INT_MAX, 0);
+     m_contentView.moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
     m_contentView.removeChar();
   } else if (event.hasText()) {

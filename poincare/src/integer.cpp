@@ -587,10 +587,14 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   char buffer[255];
 
   Integer base = Integer(10);
-  IntegerDivision d = Division(*this, base);
+  Integer abs = *this;
+  abs.setNegative(false);
+  IntegerDivision d = udiv(abs, base);
   int size = 0;
   if (isEqualTo(Integer(0))) {
     buffer[size++] = '0';
+  } else if (isNegative()) {
+    buffer[size++] = '-';
   }
   while (!(d.remainder.isEqualTo(Integer(0)) &&
         d.quotient.isEqualTo(Integer(0)))) {
@@ -602,7 +606,8 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   buffer[size] = 0;
 
   // Flip the string
-  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+  int startChar = isNegative() ? 1 : 0;
+  for (int i=startChar, j=size-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;

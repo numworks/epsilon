@@ -277,22 +277,35 @@ Integer Integer::Multiplication(const Integer & a, const Integer & b) {
 }
 
 IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
-  // FIXME: First, test if denominator is zero.
-
-  if (numerator.isLowerThan(denominator)) {
-    IntegerDivision div = {.quotient = 0, .remainder = Integer::Addition(numerator, Integer(0))};
-    // FIXME: This is a ugly way to bypass creating a copy constructor!
-    return div;
+  if (!numerator.isNegative() && !denominator.isNegative()) {
+    return udiv(numerator, denominator);
   }
-
-  // Recursive case
-  IntegerDivision div = Division(numerator, Integer::Addition(denominator, denominator));
-  div.quotient = Integer::Addition(div.quotient, div.quotient);
-  if (!(div.remainder.isLowerThan(denominator))) {
-    div.remainder = Integer::Subtraction(div.remainder, denominator);
-    div.quotient = Integer::Addition(div.quotient, Integer(1));
+  Integer absNumerator = numerator;
+  absNumerator.setNegative(false);
+  Integer absDenominator = denominator;
+  absDenominator.setNegative(false);
+  IntegerDivision usignedDiv = udiv(absNumerator, absDenominator);
+  if (usignedDiv.remainder.isEqualTo(Integer(0))) {
+    if (!numerator.isNegative() || !denominator.isNegative()) {
+      usignedDiv.quotient.setNegative(true);
+    }
+    return usignedDiv;
   }
-  return div;
+  if (numerator.isNegative()) {
+    if (denominator.isNegative()) {
+      usignedDiv.remainder.setNegative(true);
+      usignedDiv.quotient = Addition(usignedDiv.quotient, Integer(1));
+      usignedDiv.remainder = Integer::Subtraction(usignedDiv.remainder, denominator);
+   } else {
+      usignedDiv.quotient.setNegative(true);
+      usignedDiv.quotient = Subtraction(usignedDiv.quotient, Integer(1));
+      usignedDiv.remainder = Integer::Subtraction(denominator, usignedDiv.remainder);
+    }
+  } else {
+    assert(denominator.isNegative());
+    usignedDiv.quotient.setNegative(true);
+  }
+  return usignedDiv;
 }
 
 // Private methods
@@ -377,6 +390,24 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
       return usum(b, a, true, bNegative);
     }
   }
+}
+
+IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
+  assert(!numerator.isNegative() && !denominator.isNegative());
+  // FIXME: First, test if denominator is zero.
+  if (numerator.isLowerThan(denominator)) {
+    IntegerDivision div = {.quotient = 0, .remainder = numerator};
+    return div;
+  }
+
+  // Recursive case
+  IntegerDivision div = Division(numerator, Integer::Addition(denominator, denominator));
+  div.quotient = Integer::Addition(div.quotient, div.quotient);
+  if (!(div.remainder.isLowerThan(denominator))) {
+    div.remainder = Integer::Subtraction(div.remainder, denominator);
+    div.quotient = Integer::Addition(div.quotient, Integer(1));
+  }
+  return div;
 }
 
 int Integer::identifier() const {

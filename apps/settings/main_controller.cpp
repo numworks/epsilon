@@ -13,7 +13,6 @@ namespace Settings {
 const SettingsNode angleChildren[2] = {SettingsNode(I18n::Message::Degres), SettingsNode(I18n::Message::Radian)};
 const SettingsNode FloatDisplayModeChildren[2] = {SettingsNode(I18n::Message::Auto), SettingsNode(I18n::Message::Scientific)};
 const SettingsNode complexFormatChildren[2] = {SettingsNode(I18n::Message::Default), SettingsNode(I18n::Message::Default)};
-const SettingsNode languageChildren[I18n::NumberOfLanguages] = {SettingsNode(I18n::Message::English), SettingsNode(I18n::Message::French), SettingsNode(I18n::Message::Spanish), SettingsNode(I18n::Message::German), SettingsNode(I18n::Message::Portuguese)};
 const SettingsNode examChildren[1] = {SettingsNode(I18n::Message::ActivateExamMode)};
 const SettingsNode aboutChildren[3] = {SettingsNode(I18n::Message::SoftwareVersion), SettingsNode(I18n::Message::SerialNumber), SettingsNode(I18n::Message::FccId)};
 
@@ -23,7 +22,7 @@ const SettingsNode menu[8] =
 const SettingsNode menu[7] =
 #endif
   {SettingsNode(I18n::Message::AngleUnit, angleChildren, 2), SettingsNode(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsNode(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsNode(I18n::Message::Brightness), SettingsNode(I18n::Message::Language, languageChildren, I18n::NumberOfLanguages), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
+  SettingsNode(I18n::Message::Brightness), SettingsNode(I18n::Message::Language), SettingsNode(I18n::Message::ExamMode, examChildren, 1),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
   SettingsNode(I18n::Message::UpdatePopUp),
 #endif
@@ -45,7 +44,8 @@ MainController::MainController(Responder * parentResponder) :
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_nodeModel((Node *)&model),
-  m_subController(this)
+  m_subController(this),
+  m_languageController(this, 13)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -91,6 +91,13 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
         GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+        return true;
+      }
+      return false;
+    }
+    if (m_nodeModel->children(selectedRow())->label() == I18n::Message::Language) {
+      if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+        stackController()->push(&m_languageController);
         return true;
       }
       return false;
@@ -186,6 +193,13 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
+    return;
+  }
+  if (index == 4) {
+    I18n::Message languages[I18n::NumberOfLanguages] = {I18n::Message::English, I18n::Message::French, I18n::Message::Spanish, I18n::Message::German, I18n::Message::Portuguese};
+    int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+    MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
+    myTextCell->setSubtitle(languages[index]);
     return;
   }
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT

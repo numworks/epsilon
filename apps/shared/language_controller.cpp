@@ -1,6 +1,7 @@
 #include "language_controller.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
+#include "../i18n.h"
 
 namespace Shared {
 
@@ -60,9 +61,7 @@ int LanguageController::reusableCellCount() {
 }
 
 void LanguageController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *) cell;
-  I18n::Message languages[I18n::NumberOfLanguages] = {I18n::Message::English, I18n::Message::French, I18n::Message::Spanish, I18n::Message::German, I18n::Message::Portuguese};
-  myCell->setMessage(languages[index]);
+  static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
 }
 
 }

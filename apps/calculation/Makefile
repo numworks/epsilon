@@ -14,6 +14,14 @@ app_objs += $(addprefix apps/calculation/,\
   text_field.o\
 )
 
+i18n_files += $(addprefix apps/calculation/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
 tests += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )

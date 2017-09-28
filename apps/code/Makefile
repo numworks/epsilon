@@ -9,6 +9,14 @@ app_objs += $(addprefix apps/code/,\
   program.o\
 )
 
+i18n_files += $(addprefix apps/code/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
 tests += $(addprefix apps/code/test/,\
   mpprint.cpp\
 )

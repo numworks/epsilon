@@ -22,6 +22,7 @@
 \, { return(COMMA); }
 \; { return(SEMICOLON); }
 \. { return(PERIOD); }
+\! { return BANG; }
 "//".* {} /* ignore single line comments */
 
 [ \t\n] {} /* ignore line jump and whitespaces */

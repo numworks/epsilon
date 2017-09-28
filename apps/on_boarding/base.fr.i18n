@@ -1,0 +1,6 @@
+UpdateAvailable = "MISE A JOUR DISPONIBLE"
+UpdateMessage1 = "Des ameliorations importantes existent"
+UpdateMessage2 = "pour votre calculatrice."
+UpdateMessage3 = "Connectez-vous depuis votre ordinateur"
+UpdateMessage4 = "www.numworks.com/update"
+Skip = "Passer"

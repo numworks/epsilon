@@ -23,4 +23,12 @@ app_objs += $(addprefix apps/sequence/,\
   sequence_title_cell.o\
 )
 
+i18n_files += $(addprefix apps/sequence/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
 app_images += apps/sequence/sequence_icon.png

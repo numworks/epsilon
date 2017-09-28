@@ -1,3 +1,5 @@
+EPSILON_I18N_LANGUAGES ?= en fr es de pt
+
 include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
@@ -51,6 +53,36 @@ snapshots_count = $(words $(snapshots))
 snapshot_includes = $(foreach i,$(snapshot_headers),-include $(i) )
 
 apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count)
+
+
+i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N_LANGUAGES)))
+i18n_files += $(addprefix apps/,\
+  shared.de.i18n\
+  shared.en.i18n\
+  shared.es.i18n\
+  shared.fr.i18n\
+  shared.pt.i18n\
+  shared.universal.i18n\
+  toolbox.de.i18n\
+  toolbox.en.i18n\
+  toolbox.es.i18n\
+  toolbox.fr.i18n\
+  toolbox.pt.i18n\
+  variables.de.i18n\
+  variables.en.i18n\
+  variables.es.i18n\
+  variables.fr.i18n\
+  variables.pt.i18n\
+)
+
+apps/i18n.h: apps/i18n.cpp
+apps/i18n.cpp: $(i18n_files)
+	@echo "I18N    $@"
+	@python apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N_LANGUAGES) --files $^
+
+$(app_objs): apps/i18n.h
+
+products += apps/i18n.h apps/i18n.cpp
 
 app_images += apps/exam_icon.png
 

@@ -4,9 +4,9 @@
 
 namespace Shared {
 
-LanguageController::LanguageController(Responder * parentResponder) :
+LanguageController::LanguageController(Responder * parentResponder, KDCoordinate topMargin) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
+  m_selectableTableView(this, this, 0, 1, topMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
 {
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -15,7 +15,12 @@ LanguageController::LanguageController(Responder * parentResponder) :
 
 void LanguageController::resetSelection() {
   m_selectableTableView.deselectTable();
-  selectCellAtLocation(0, 0);
+  int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+  selectCellAtLocation(0, index);
+}
+
+const char * LanguageController::title() {
+  return I18n::translate(I18n::Message::Language);
 }
 
 View * LanguageController::view() {
@@ -24,6 +29,10 @@ View * LanguageController::view() {
 
 void LanguageController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
+}
+
+void LanguageController::viewWillAppear() {
+  resetSelection();
 }
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {

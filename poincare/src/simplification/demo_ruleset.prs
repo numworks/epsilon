@@ -24,6 +24,9 @@ Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);
 // Int*Int -> Int
 Multiplication.a(Integer.b,Integer.c) -> IntegerMultiplicationTransform(a,b,c);
 
+// Int^Int -> Int || Int^(-1)
+Power.a(Integer.b,Integer.c) -> IntegerPowerTransform(a, b, c);
+
 // (b^c)^d -> b^(c*d)
 //Power.a(Power(b,c),d) -> PowerPowerTransform(a,b,c,d)
 

@@ -308,6 +308,18 @@ IntegerDivision Integer::Division(const Integer & numerator, const Integer & den
   return usignedDiv;
 }
 
+Integer Integer::Power(const Integer & i, const Integer & j) {
+  // TODO: optimize with dichotomia
+  assert(!j.isNegative());
+  Integer index = j;
+  Integer result = Integer(1);
+  while (!index.isEqualTo(Integer(0))) {
+    result = Multiplication(result, i);
+    index = Subtraction(index, Integer(1));
+  }
+  return result;
+}
+
 // Private methods
 
   /* WARNING: This constructor takes ownership of the digits array! */

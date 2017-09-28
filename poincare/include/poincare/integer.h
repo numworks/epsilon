@@ -51,6 +51,7 @@ public:
   static Integer Subtraction(const Integer & i, const Integer & j);
   static Integer Multiplication(const Integer & i, const Integer & j);
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
+  static Integer Power(const Integer & i, const Integer & j);
   //static Integer Division(const Integer & i, const Integer & j);
   //static IntegerDivision division(const Integer & i, const Integer & j);
 private:

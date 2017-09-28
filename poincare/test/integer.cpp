@@ -52,6 +52,12 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer::Division(Integer(8), Integer(4)).quotient.isEqualTo(Integer(2)) && Integer::Division(Integer(8), Integer(4)).remainder.isEqualTo(Integer(0)));
   assert(Integer::Division(Integer("3293920983030066"), Integer(38928)).quotient.isEqualTo(Integer("84615726033")) && Integer::Division(Integer("3293920983030066"), Integer(38928)).remainder.isEqualTo(Integer(17442)));
   assert(Integer::Division(Integer("3293920983030066"), Integer("389282362616")).quotient.isEqualTo(Integer(8461)) && Integer::Division(Integer("3293920983030066"), Integer("389282362616")).remainder.isEqualTo(Integer("202912936090")));
+  assert(Integer::Division(Integer("-18940566"), Integer("499030")).quotient.isEqualTo(Integer(-38)) && Integer::Division(Integer("-18940566"), Integer("499030")).remainder.isEqualTo(Integer("22574")));
+  assert(Integer::Division(Integer("234567909876"), Integer("-234567898")).quotient.isEqualTo(Integer(-1000)) && Integer::Division(Integer("234567909876"), Integer("-234567898")).remainder.isEqualTo(Integer("11876")));
+  assert(Integer::Division(Integer("-567"), Integer("-12")).quotient.isEqualTo(Integer(48)) && Integer::Division(Integer("-567"), Integer("-12")).remainder.isEqualTo(Integer("9")));
+  assert(Integer::Division(Integer("-576"), Integer("-12")).quotient.isEqualTo(Integer(48)) && Integer::Division(Integer("-576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
+  assert(Integer::Division(Integer("576"), Integer("-12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
+  assert(Integer::Division(Integer("-576"), Integer("12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("-576"), Integer("12")).remainder.isEqualTo(Integer("0")));
 }
 
 template<typename T>

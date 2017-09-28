@@ -59,6 +59,7 @@ private:
   static int8_t ucmp(const Integer & a, const Integer & b); // -1, 0, or 1
   static Integer usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative);
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
+  static IntegerDivision udiv(const Integer & a, const Integer & b);
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;

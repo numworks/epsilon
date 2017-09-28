@@ -60,7 +60,7 @@ void Node::generateSelector(Rule * rule) {
   }
   std::cout << rule->indexOfIdentifierInTransform(*m_identifier);
   if (m_children->size() > 0) {
-    std::cout << ", " << identifier() <<"Children, " << m_children->size();
+    std::cout << ", " << identifier() <<"Children, " << m_children->size() << ", " << m_partialMatch;
   }
   std::cout << ");" << std::endl;
 }

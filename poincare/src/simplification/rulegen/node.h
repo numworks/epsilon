@@ -8,10 +8,11 @@ class Rule;
 
 class Node {
 public:
-  Node(std::string * name, std::string * identifier, std::string * value) :
+  Node(std::string * name, std::string * identifier, std::string * value, bool partialMatch = true) :
     m_name(name),
     m_identifier(identifier),
     m_value(value),
+    m_partialMatch(partialMatch),
     m_children(new std::vector<Node *>()),
     m_parent(nullptr) { }
   void setChildren(std::vector<Node *> * children);
@@ -39,6 +40,7 @@ private:
   std::string * m_name;
   std::string * m_identifier;
   std::string * m_value;
+  bool m_partialMatch;
   std::vector<Node *> * m_children;
   Node * m_parent;
 };

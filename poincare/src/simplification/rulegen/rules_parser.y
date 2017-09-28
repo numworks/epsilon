@@ -43,6 +43,7 @@ int yyerror(ParserResult * result, const char * s);
 %token COMMA
 %token SEMICOLON
 %token PERIOD
+%token BANG
 %token DOLLAR
 %token ASTERISK
 
@@ -73,6 +74,15 @@ node:
     }
   | CAPITALIZED_IDENTIFIER LEFT_BRACKET VALUE RIGHT_BRACKET {
       $$ = new Node($1, nullptr, $3);
+    }
+  | CAPITALIZED_IDENTIFIER BANG {
+      $$ = new Node($1, nullptr, nullptr, false);
+    }
+  | CAPITALIZED_IDENTIFIER BANG PERIOD IDENTIFIER {
+      $$ = new Node($1, $4, nullptr, false);
+    }
+  | CAPITALIZED_IDENTIFIER BANG LEFT_BRACKET VALUE RIGHT_BRACKET {
+      $$ = new Node($1, nullptr, $4, false);
     }
   | IDENTIFIER {
       $$ = new Node(nullptr, $1, nullptr);

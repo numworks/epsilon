@@ -1,0 +1,7 @@
+Warning = "Cuidado"
+Ok = "Confirmar"
+Cancel = "Cancelar"
+Next = "Siguiente"
+SyntaxError = "Error sintactico"
+MathError = "Error matematico"
+LowBattery = "Bateria baja"

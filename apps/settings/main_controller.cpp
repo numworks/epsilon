@@ -196,10 +196,8 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   if (index == 4) {
-    I18n::Message languages[I18n::NumberOfLanguages] = {I18n::Message::English, I18n::Message::French, I18n::Message::Spanish, I18n::Message::German, I18n::Message::Portuguese};
     int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
-    MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
-    myTextCell->setSubtitle(languages[index]);
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT

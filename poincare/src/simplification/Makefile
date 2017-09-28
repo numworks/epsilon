@@ -26,5 +26,6 @@ objs += $(addprefix $(prefix)/,\
   transform/integer_fraction_addition_transform.o \
   transform/integer_fraction_reduction_transform.o \
   transform/merge_dynamic_hierarchy_transform.o \
+  transform/opposite_transform.o \
 )
 

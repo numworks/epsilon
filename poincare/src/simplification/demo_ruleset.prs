@@ -6,6 +6,9 @@ Parenthesis.a -> RemoveParenthesisTransform(a);
 // a-b -> a+(-1)*b
 Subtraction.a -> SubtractionTransform(a);
 
+// -a -> (-1)*a
+Opposite.a -> OppositeTransform(a);
+
 // a/b -> a*b^-1
 Division.a -> DivisionTransform(a);
 

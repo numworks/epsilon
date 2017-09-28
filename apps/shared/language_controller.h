@@ -8,11 +8,13 @@ namespace Shared {
 
 class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  LanguageController(Responder * parentResponder);
+  LanguageController(Responder * parentResponder, KDCoordinate topMargin);
   void resetSelection();
 
   View * view() override;
+  const char * title() override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   int numberOfRows() override;

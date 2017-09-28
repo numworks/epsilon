@@ -193,11 +193,6 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
   if (message == I18n::Message::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
   }
-  if (message == I18n::Message::Language) {
-    GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(valueIndex+1));
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->reloadTitleBar();
-  }
 }
 
 int SubController::valueIndexForPreference(I18n::Message message) {
@@ -209,9 +204,6 @@ int SubController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)Preferences::sharedPreferences()->complexFormat();
-  }
-  if (message == I18n::Message::Language) {
-    return (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
   }
   return 0;
 }

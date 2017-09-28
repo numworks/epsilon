@@ -23,6 +23,7 @@ objs += $(addprefix $(prefix)/,\
   transform/remove_parenthesis_transform.o \
   transform/subtraction_transform.o \
   transform/integer_addition_transform.o \
+  transform/integer_fraction_addition_transform.o \
   transform/integer_fraction_reduction_transform.o \
   transform/integer_multiplication_transform.o \
   transform/merge_dynamic_hierarchy_transform.o \

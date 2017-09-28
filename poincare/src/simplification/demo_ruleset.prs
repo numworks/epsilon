@@ -26,3 +26,6 @@ Multiplication.a(Integer.b,Integer.c) -> IntegerMultiplicationTransform(a,b,c);
 
 // int*int^-1 -> int.a*int.b^-1 with gcd(a,b) = 1
 Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> IntegerFractionReductionTransform(a,b,c,d);
+
+// int*int^-1+int*int^-1 -> int*int^-1
+Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Multiplication!.f(Integer.g,Power.h(Integer.i, Integer[-1]))) -> IntegerFractionAdditionTransform(a,b,c,d,e,f,g,h,i);

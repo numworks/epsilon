@@ -17,6 +17,7 @@ bool IntegerAdditionTransform(Expression * captures[]);
 bool IntegerMultiplicationTransform(Expression * captures[]);
 bool PowerPowerTransform(Expression * captures[]);
 bool IntegerFractionReductionTransform(Expression * captures[]);
+bool IntegerFractionAdditionTransform(Expression * captures[]);
 
 }
 }

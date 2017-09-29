@@ -48,3 +48,6 @@ Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Integer
 
 // Int^(-1) + Int*Int^-1 -> Int*Int^-1
 Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Power.f(Integer.g, Integer[-1])) -> InverseIntegerRationalAdditionTransform(a,b,c,d,e,f,g);
+
+// Int^(Int*Int^(-1)) -> Int*Int^(Int*Int^(-1))*exp(i*Pi*Int/Int)
+Power.a(Integer.b, Multiplication.c(Integer.d, Power.e(Integer.f, Integer[-1]))) -> RationalPowerTransform(a,b,c,d,e,f);

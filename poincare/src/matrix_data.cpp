@@ -23,7 +23,7 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
   }
 }
 
-MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numberOfRows, int numberOfColumns, bool cloneOperands) :
+MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numberOfRows, int numberOfColumns, bool cloneOperands, Expression * parent) :
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
@@ -35,6 +35,7 @@ MatrixData::MatrixData(Expression ** newOperands, int numberOfOperands, int numb
     } else {
       m_operands[i] = i < numberOfOperands ? newOperands[i] : defaultExpression();
     }
+    const_cast<Expression *>(m_operands[i])->setParent(parent);
   }
 }
 

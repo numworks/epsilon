@@ -21,6 +21,7 @@ ComplexMatrix<T>::ComplexMatrix(const Complex<T> * complexes, int numberOfRows, 
   m_values = new Complex<T>[numberOfRows*numberOfColumns];
   for (int i = 0; i < numberOfRows*numberOfColumns; i++) {
     m_values[i] = complexes[i];
+    m_values[i].setParent(this);
   }
 }
 

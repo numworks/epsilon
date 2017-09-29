@@ -18,7 +18,7 @@ ExpressionMatrix::ExpressionMatrix(MatrixData * matrixData) :
 
 ExpressionMatrix::ExpressionMatrix(Expression ** newOperands, int numberOfOperands, int numberOfRows, int numberOfColumns, bool cloneOperands)
 {
-  m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfRows, numberOfColumns, cloneOperands);
+  m_matrixData = new MatrixData(newOperands, numberOfOperands, numberOfRows, numberOfColumns, cloneOperands, this);
 }
 
 ExpressionMatrix::~ExpressionMatrix() {

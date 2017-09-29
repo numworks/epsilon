@@ -44,12 +44,12 @@ void StaticHierarchy<T>::build(const Expression * const * operands, int numberOf
   assert(numberOfOperands <= T);
   for (int i=0; i < numberOfOperands; i++) {
     assert(operands[i] != nullptr);
-    const_cast<Expression *>(operands[i])->setParent(this);
     if (cloneOperands) {
       m_operands[i] = operands[i]->clone();
     } else {
       m_operands[i] = operands[i];
     }
+    const_cast<Expression *>(m_operands[i])->setParent(this);
   }
 }
 

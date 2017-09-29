@@ -32,9 +32,6 @@ Expression * Expression::parse(char const * string) {
   }
   poincare_expression_yy_delete_buffer(buf);
 
-  if (expression) {
-    expression->recursivelySetAsParentOfChildren();
-  }
   return expression;
 }
 
@@ -150,18 +147,6 @@ template<typename T> T Expression::approximate(const char * text, Context& conte
 template<typename T> T Expression::epsilon() {
   static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
-}
-
-void Expression::recursivelySetAsParentOfChildren() {
-  if (this->type() == Type::Complex) {
-    // TODO: this case should be useless once complex is a leaf expression!
-    return;
-  }
-  for (int i=0; i<numberOfOperands(); i++) {
-    Expression * child = const_cast<Expression *>(operand(i));
-    child->setParent(this);
-    child->recursivelySetAsParentOfChildren();
-  }
 }
 
 }

@@ -150,7 +150,6 @@ private:
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  void recursivelySetAsParentOfChildren();
 private:
   Expression * m_parent;
 };

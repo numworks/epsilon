@@ -25,6 +25,7 @@ bool OppositeTransform(Expression * captures[]);
 bool SquareRootTransform(Expression * captures[]);
 bool NthRootTransform(Expression * captures[]);
 bool RationalPowerTransform(Expression * captures[]);
+bool ReplaceWithTransform(Expression * captures[]);
 
 }
 }

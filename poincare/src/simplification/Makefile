@@ -29,6 +29,7 @@ objs += $(addprefix $(prefix)/,\
   transform/rational_addition_transform.o \
   transform/rational_reduction_transform.o \
   transform/rational_power_transform.o \
+  transform/replace_with_transform.o \
   transform/root_transform.o \
 )
 

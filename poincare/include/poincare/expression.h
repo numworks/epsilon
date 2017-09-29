@@ -110,6 +110,7 @@ public:
   virtual int numberOfOperands() const = 0;
   Expression * parent() const { return m_parent; }
   void setParent(Expression * parent) { m_parent = parent; }
+  bool hasAncestor(const Expression * e) const;
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
   virtual void swapOperands(int i, int j) = 0;
 

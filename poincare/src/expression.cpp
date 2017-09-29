@@ -65,6 +65,16 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
   }
 }
 
+bool Expression::hasAncestor(const Expression * e) const {
+  if (m_parent == e) {
+    return true;
+  }
+  if (m_parent == nullptr) {
+    return false;
+  }
+  return hasAncestor(m_parent);
+}
+
 void Expression::sort() {
   if (this->type() == Type::Complex) {
     // TODO: this case should be useless once complex is a leaf expression!

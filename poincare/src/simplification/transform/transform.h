@@ -18,6 +18,8 @@ bool IntegerMultiplicationTransform(Expression * captures[]);
 bool PowerPowerTransform(Expression * captures[]);
 bool RationalReductionTransform(Expression * captures[]);
 bool RationalAdditionTransform(Expression * captures[]);
+bool IntegerRationalAdditionTransform(Expression * captures[]);
+bool InverseIntegerRationalAdditionTransform(Expression * captures[]);
 bool IntegerPowerTransform(Expression * captures[]);
 bool OppositeTransform(Expression * captures[]);
 

@@ -35,3 +35,9 @@ Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> RationalReductio
 
 // Int*Int^-1+Int*Int^-1 -> Int*Int^-1
 Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Multiplication!.f(Integer.g,Power.h(Integer.i, Integer[-1]))) -> RationalAdditionTransform(a,b,c,d,e,f,g,h,i);
+
+// Int + Int*Int^-1 -> Int*Int^-1
+Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Integer.f) -> IntegerRationalAdditionTransform(a,b,c,d,e,f);
+
+// Int^(-1) + Int*Int^-1 -> Int*Int^-1
+Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Power.f(Integer.g, Integer[-1])) -> InverseIntegerRationalAdditionTransform(a,b,c,d,e,f,g);

@@ -292,7 +292,7 @@ T Sequence::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const 
       for (int i = start; i < n; i++) {
         subContext.setValueForSequenceRank(un, name(), 0);
         Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol);
+        subContext.setExpressionForSymbolName(&e, &nSymbol, subContext);
         un = expression()->approximate<T>(subContext);
       }
       setBufferValue(un, 0);
@@ -323,7 +323,7 @@ T Sequence::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const 
         subContext.setValueForSequenceRank(un, name(), 0);
         subContext.setValueForSequenceRank(un1, name(), 1);
         Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol);
+        subContext.setExpressionForSymbolName(&e, &nSymbol, subContext);
         un = un1;
         un1 = expression()->approximate<T>(subContext);
       }

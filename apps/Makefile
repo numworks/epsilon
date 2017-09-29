@@ -1,4 +1,4 @@
-#include apps/calculation/Makefile
+include apps/calculation/Makefile
 include apps/graph/Makefile
 include apps/home/Makefile
 include apps/hardware_test/Makefile

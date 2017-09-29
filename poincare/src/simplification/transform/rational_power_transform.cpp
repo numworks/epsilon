@@ -6,6 +6,8 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/arithmetic.h>
+#include <poincare/symbol.h>
+#include <ion.h>
 
 bool Poincare::Simplification::RationalPowerTransform(Expression * captures[]) {
   Power * p0 = static_cast<Power *>(captures[0]);
@@ -40,7 +42,15 @@ bool Poincare::Simplification::RationalPowerTransform(Expression * captures[]) {
     return false;
   }
   if (i0->isNegative()) {
-  // TODO if i0.isNegtative?
+    const Symbol * exp = new Symbol(Ion::Charset::Exponential);
+    const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);
+    const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
+    const Expression * multOperands[4] = {iComplex, pi, i1->clone(), p1->clone()};
+    Multiplication * mExp = new Multiplication(multOperands, 4, false);
+    const Expression * powOperands[2] = {exp, mExp};
+    const Power * pExp = new Power(powOperands, false);
+    const Expression * operand[1] = {pExp};
+    m->addOperands(operand, 1);
   }
   m->replaceOperand(i1, new Integer(r1), true);
   const Expression * powerOperands[2] = {new Integer(r2), p1};

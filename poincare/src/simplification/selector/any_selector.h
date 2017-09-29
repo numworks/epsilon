@@ -8,8 +8,13 @@ namespace Simplification {
 
 class AnySelector : public Selector {
 public:
-  using Selector;
-  bool acceptsLocationInCombination(const Combination * combination, int location) const override;
+  using Selector::Selector;
+  bool acceptsLocationInCombination(const Combination * combination, int location) const override {
+    return true;
+  }
+  bool immediateMatch(const Expression * e) const override {
+    return true;
+  }
 };
 
 }

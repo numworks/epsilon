@@ -6,7 +6,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/integer.h>
 
-bool Poincare::Simplification::IntegerFractionAdditionTransform(Expression * captures[]) {
+bool Poincare::Simplification::RationalAdditionTransform(Expression * captures[]) {
   Integer * n1 = (Integer *)(captures[2]);
   Integer * d1 = (Integer *)(captures[4]);
   Integer * n2 = (Integer *)(captures[6]);

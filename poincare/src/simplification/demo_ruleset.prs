@@ -30,8 +30,8 @@ Power.a(Integer.b,Integer.c) -> IntegerPowerTransform(a, b, c);
 // (b^c)^d -> b^(c*d)
 //Power.a(Power(b,c),d) -> PowerPowerTransform(a,b,c,d)
 
-// int*int^-1 -> int.a*int.b^-1 with gcd(a,b) = 1
-Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> IntegerFractionReductionTransform(a,b,c,d);
+// Int*Int^-1 -> Int.a*Int.b^-1 with gcd(a,b) = 1
+Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> RationalReductionTransform(a,b,c,d);
 
-// int*int^-1+int*int^-1 -> int*int^-1
-Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Multiplication!.f(Integer.g,Power.h(Integer.i, Integer[-1]))) -> IntegerFractionAdditionTransform(a,b,c,d,e,f,g,h,i);
+// Int*Int^-1+Int*Int^-1 -> Int*Int^-1
+Addition.a(Multiplication!.b(Integer.c,Power.d(Integer.e, Integer[-1])), Multiplication!.f(Integer.g,Power.h(Integer.i, Integer[-1]))) -> RationalAdditionTransform(a,b,c,d,e,f,g,h,i);

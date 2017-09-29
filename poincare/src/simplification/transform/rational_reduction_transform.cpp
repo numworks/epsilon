@@ -5,7 +5,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/integer.h>
 
-bool Poincare::Simplification::IntegerFractionReductionTransform(Expression * captures[]) {
+bool Poincare::Simplification::RationalReductionTransform(Expression * captures[]) {
   Multiplication * m = static_cast<Multiplication *>(captures[0]);
   Power * p = static_cast<Power *>(captures[2]);
   Integer * i1 = (Integer *)(captures[1]);

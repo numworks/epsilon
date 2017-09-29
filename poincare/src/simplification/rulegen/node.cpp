@@ -89,7 +89,9 @@ std::string Node::identifier() const {
 }
 
 int Node::intValue() const {
-  assert(m_value);
+  if (m_value == nullptr) {
+    return -INT_MAX;
+  }
   // TODO: handle m_value = "Pi", "e", "i" ...
   if (m_value->compare("Pi") == 0) {
     return Ion::Charset::SmallPi;
@@ -112,8 +114,8 @@ int Node::intValue() const {
 }
 
 int Node::compareTo(Node * n) const {
-  if (m_name->compare("Any")) {
-    if (n->m_name->compare("Any")) {
+  if (m_name->compare("Any") == 0) {
+    if (n->m_name->compare("Any") == 0) {
       if (identifier().compare(n->identifier()) == 0) {
         return 0;
       } else if (identifier().compare(n->identifier()) > 0) {
@@ -121,7 +123,7 @@ int Node::compareTo(Node * n) const {
       } else {
         return -1;
       }
-    } else if (n->m_name->compare("SameAs")) {
+    } else if (n->m_name->compare("SameAs") == 0) {
       if (identifier().compare(n->value()) == 0) {
         return -1;
       } else if (identifier().compare(n->value()) > 0) {
@@ -132,8 +134,8 @@ int Node::compareTo(Node * n) const {
     } else {
       return 1;
     }
-  } else if (m_name->compare("SameAs")) {
-    if (n->m_name->compare("Any")) {
+  } else if (m_name->compare("SameAs") == 0) {
+    if (n->m_name->compare("Any") == 0) {
       if (value().compare(n->identifier()) == 0) {
         return 1;
       } else if (value().compare(n->identifier()) > 0) {
@@ -141,7 +143,7 @@ int Node::compareTo(Node * n) const {
       } else {
         return -1;
       }
-    } else if (n->m_name->compare("SameAs")) {
+    } else if (n->m_name->compare("SameAs") == 0) {
       if (value().compare(n->value()) == 0) {
         return 0;
       } else if (value().compare(n->value()) > 0) {
@@ -153,9 +155,9 @@ int Node::compareTo(Node * n) const {
       return 1;
     }
   } else {
-    if (n->m_name->compare("Any")) {
+    if (n->m_name->compare("Any") == 0) {
       return -1;
-    } else if (n->m_name->compare("SameAs")) {
+    } else if (n->m_name->compare("SameAs") == 0) {
       return -1;
     } else {
       if (name().compare(n->name()) != 0) {

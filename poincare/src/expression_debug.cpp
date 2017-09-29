@@ -2,6 +2,7 @@
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
 #include <poincare/integer.h>
+#include <ion.h>
 #include <iostream>
 
 namespace Poincare {
@@ -35,6 +36,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Division:
       std::cout << "Division";
       break;
+    case Expression::Type::Opposite:
+      std::cout << "Opposite";
+      break;
       /*
     case Expression::Type::Matrix:
       std::cout << "Matrix";
@@ -56,7 +60,21 @@ void print_expression(const Expression * e, int indentationLevel) {
       std::cout << "Subtraction";
       break;
     case Expression::Type::Symbol:
-      std::cout << "Symbol(" << ((Symbol*)e)->name() << ")";
+     std::cout << "Symbol(";
+      switch (((Symbol*)e)->name()) {
+        case Ion::Charset::SmallPi:
+          std::cout << "PI";
+          break;
+        case Ion::Charset::IComplex:
+          std::cout << "i";
+          break;
+        case Ion::Charset::Exponential:
+          std::cout << "e";
+          break;
+        default:
+          std::cout << ((Symbol*)e)->name();
+      }
+      std::cout << ")";
       break;
     case Expression::Type::Tangent:
       std::cout << "Tangent";

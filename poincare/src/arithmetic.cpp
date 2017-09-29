@@ -3,6 +3,8 @@
 
 namespace Poincare {
 
+const Integer Arithmetic::k_primorial32("525896479052627740771371797072411912900610967452630");
+
 Integer Arithmetic::GCD(const Integer * a, const Integer * b) {
   Integer i = *a;
   Integer j = *b;
@@ -28,17 +30,18 @@ int primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 13, 17, 
 
 // we can go to 7907*7907 = 62 520 649
 void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, Integer * outputCoefficients, int outputLength) {
-  assert(!n->isNegative());
+  // TODO: Find the prime factorization of any number. When k_numberOfPrimeFactors is overflow, try every number as divisor.
   assert(n->isLowerThan(Integer(primeFactors[k_numberOfPrimeFactors-1]*primeFactors[k_numberOfPrimeFactors-1])));
   for (int index = 0; index < outputLength; index++) {
     outputCoefficients[index] = Integer(0);
   }
-  if (n->isEqualTo(Integer(1))) {
+  Integer m = *n;
+  m.setNegative(false);
+  if (m.isEqualTo(Integer(1))) {
     return;
   }
   int t = 0; // n prime factor index
   int k = 0; // prime factor index
-  Integer m = *n;
   outputFactors[t] = Integer(primeFactors[k]);
   IntegerDivision d = {.quotient = 0, .remainder = 0};
   bool stopCondition;

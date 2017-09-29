@@ -20,7 +20,7 @@ Expression * Parenthesis::clone() const {
 ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat));
+  return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
 template<typename T>

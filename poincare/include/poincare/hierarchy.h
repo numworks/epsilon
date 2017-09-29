@@ -11,8 +11,11 @@ public:
   const Expression * operand(int i) const override;
   void swapOperands(int i, int j) override;
   void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) override;
+  void detachOperand(const Expression * e); // Removes an operand WITHOUT deleting it
   void detachOperands(); // Removes all operands WITHOUT deleting them
   virtual const Expression * const * operands() const = 0;
+private:
+  void detachOperandAtIndex(int i);
 };
 
 }

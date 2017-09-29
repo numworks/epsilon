@@ -21,14 +21,17 @@ void Hierarchy::swapOperands(int i, int j) {
   op[j] = temp;
 }
 
-void Hierarchy::detachOperands() {
-  Expression ** op = const_cast<Expression **>(operands());
+void Hierarchy::detachOperand(const Expression * e) {
   for (int i=0; i<numberOfOperands(); i++) {
-    // When detachOperands is called, it's very likely that said operands have been stolen
-    if (op[i]->parent() == this) {
-      const_cast<Expression *>(op[i])->setParent(nullptr);
+    if (operand(i) == e) {
+      detachOperandAtIndex(i);
     }
-    op[i] = nullptr;
+  }
+}
+
+void Hierarchy::detachOperands() {
+  for (int i=0; i<numberOfOperands(); i++) {
+    detachOperandAtIndex(i);
   }
 }
 
@@ -49,6 +52,15 @@ void Hierarchy::replaceOperand(const Expression * oldOperand, Expression * newOp
       break;
     }
   }
+}
+
+void Hierarchy::detachOperandAtIndex(int i) {
+  Expression ** op = const_cast<Expression **>(operands());
+  // When detachOperands is called, it's very likely that said operands have been stolen
+  if (op[i]->parent() == this) {
+    const_cast<Expression *>(op[i])->setParent(nullptr);
+  }
+  op[i] = nullptr;
 }
 
 }

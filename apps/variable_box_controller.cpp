@@ -78,11 +78,11 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     if (m_currentPage == Page::Scalar) {
       const Symbol symbol('A'+selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol);
+      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
       const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol);
+      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
     }
     m_selectableTableView.reloadData();
     return true;
@@ -137,7 +137,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Evaluation<double> * evaluation = expressionForIndex(index);
+  const Expression * evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
@@ -148,11 +148,13 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   myCell->displayExpression(true);
   if (evaluation) {
     /* TODO: implement list contexts */
-    myCell->setExpression(evaluation);
+    // TODO: handle matrix and scalar!
+    const Matrix * matrixEvaluation = static_cast<const Matrix *>(evaluation);
+    myCell->setExpression(matrixEvaluation);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = Complex<float>::convertFloatToText(evaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    int numberOfChars = Complex<float>::convertFloatToText(matrixEvaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     buffer[numberOfChars++] = 'x';
-    Complex<float>::convertFloatToText(evaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    Complex<float>::convertFloatToText(matrixEvaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);
@@ -167,7 +169,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   if (m_currentPage == Page::Scalar) {
     return k_leafRowHeight;
   }
-  const Evaluation<double> * expression = expressionForIndex(index);
+  const Expression * expression = expressionForIndex(index);
   if (expression) {
     ExpressionLayout * layout = expression->createLayout();
     KDCoordinate expressionHeight = layout->size().height();
@@ -201,14 +203,14 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-const Evaluation<double> * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
   if (m_currentPage == Page::Scalar) {
     const Symbol symbol = Symbol('A'+index);
-    return m_context->evaluationForSymbol(&symbol);
+    return m_context->expressionForSymbol(&symbol);
   }
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->evaluationForSymbol(&symbol);
+    return m_context->expressionForSymbol(&symbol);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {

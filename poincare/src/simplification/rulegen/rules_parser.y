@@ -75,6 +75,9 @@ node:
   | CAPITALIZED_IDENTIFIER LEFT_BRACKET VALUE RIGHT_BRACKET {
       $$ = new Node($1, nullptr, $3);
     }
+  | CAPITALIZED_IDENTIFIER PERIOD IDENTIFIER LEFT_BRACKET VALUE RIGHT_BRACKET {
+      $$ = new Node($1, $3, $5);
+    }
   | CAPITALIZED_IDENTIFIER BANG {
       $$ = new Node($1, nullptr, nullptr, false);
     }

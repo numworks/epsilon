@@ -22,6 +22,8 @@ bool IntegerRationalAdditionTransform(Expression * captures[]);
 bool InverseIntegerRationalAdditionTransform(Expression * captures[]);
 bool IntegerPowerTransform(Expression * captures[]);
 bool OppositeTransform(Expression * captures[]);
+bool SquareRootTransform(Expression * captures[]);
+bool NthRootTransform(Expression * captures[]);
 
 }
 }

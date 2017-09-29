@@ -12,6 +12,13 @@ Opposite.a -> OppositeTransform(a);
 // a/b -> a*b^-1
 Division.a -> DivisionTransform(a);
 
+// sqrt(a) -> a^(1/2)
+SquareRoot.a -> SquareRootTransform(a);
+
+// root(a, b) -> a^(1/b)
+NthRoot.a -> NthRootTransform(a);
+
+
 // (a+b)+c -> a+b+c
 Addition.a(Addition.b) -> MergeDynamicHierarchyTransform(a,b);
 

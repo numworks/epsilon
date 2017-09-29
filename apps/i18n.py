@@ -128,13 +128,7 @@ def print_implementation(data, path, locales):
     for message in data["messages"]:
         f.write("  {")
         for locale in locales:
-            if not locale in data["data"]:
-                sys.stderr.write("Error: Undefined locale \"" + locale + "\"\n")
-                sys.exit(-1)
-            if not message in data["data"][locale]:
-                sys.stderr.write("Error: Undefined key \"" + message + "\" for locale \"" + locale + "\"\n")
-                sys.exit(-1)
-            f.write(locale + message + ", ")#; + data["data"][locale][message] + ",\n")
+            f.write(locale + message + ", ")
         f.write("},\n")
     f.write("};\n")
     f.write("\n")

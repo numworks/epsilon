@@ -12,7 +12,7 @@ public:
     e->setParent(this);
   }
   ~SimplificationRoot() {
-    replaceOperand(operand(0), nullptr, false);
+    detachOperand(operand(0));
     /* We don't want to clone the expression provided at construction.
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }

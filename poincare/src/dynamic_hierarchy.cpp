@@ -60,18 +60,23 @@ void DynamicHierarchy::addOperands(const Expression * const * operands, int numb
 void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemoval) {
   for (int i=0; i<numberOfOperands(); i++) {
     if (operand(i) == e) {
-      if (deleteAfterRemoval) {
-        delete m_operands[i];
-      } else {
-        const_cast<Expression *>(m_operands[i])->setParent(nullptr);
-      }
-      for (int j=i; j<m_numberOfOperands; j++) {
-        m_operands[j] = m_operands[j+1];
-      }
-      m_numberOfOperands--;
+      removeOperandAtIndex(i, deleteAfterRemoval);
       break;
     }
   }
+}
+
+void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
+  //FIXME: Do something here if we don't want to have a single child
+  if (deleteAfterRemoval) {
+    delete m_operands[i];
+  } else {
+    const_cast<Expression *>(m_operands[i])->setParent(nullptr);
+  }
+  for (int j=i; j<m_numberOfOperands; j++) {
+    m_operands[j] = m_operands[j+1];
+  }
+  m_numberOfOperands--;
 }
 
 }

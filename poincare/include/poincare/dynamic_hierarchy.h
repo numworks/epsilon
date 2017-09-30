@@ -21,6 +21,7 @@ public:
   void removeOperand(const Expression * e, bool deleteAfterRemoval = true);
   void addOperands(const Expression * const * operands, int numberOfOperands);
 private:
+  void removeOperandAtIndex(int i, bool deleteAfterRemoval);
   const Expression ** m_operands;
   int m_numberOfOperands;
 };

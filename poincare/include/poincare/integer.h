@@ -64,6 +64,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;
+  bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(int i) const {
@@ -77,7 +78,7 @@ private:
     native_uint_t m_digit;
   };
   uint16_t m_numberOfDigits; // In base native_uint_max
-  bool m_negative;
+  bool m_negative; // Make sure zero cannot be negative
 
   static_assert(sizeof(native_int_t) <= sizeof(native_uint_t), "native_uint_t should be able to contain native_int_t data");
   static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_native_uint_t should be twice the size of native_uint_t");

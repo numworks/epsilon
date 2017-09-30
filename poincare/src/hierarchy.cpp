@@ -36,6 +36,11 @@ void Hierarchy::detachOperands() {
 }
 
 void Hierarchy::replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) {
+  assert(newOperand != nullptr);
+  // Caution: handle the case where we replace an operand with a descendant of ours.
+  if (newOperand->hasAncestor(this)) {
+    static_cast<Hierarchy *>(newOperand->parent())->detachOperand(newOperand);
+  }
   Expression ** op = const_cast<Expression **>(operands());
   for (int i=0; i<numberOfOperands(); i++) {
     if (op[i] == oldOperand) {

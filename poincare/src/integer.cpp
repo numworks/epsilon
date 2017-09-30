@@ -55,6 +55,10 @@ Integer::Integer(const char * digits, bool negative) :
   }
 
   *this = std::move(result);
+
+  if (isZero()) {
+    negative = false;
+  }
   m_negative = negative;
 #if 0
   // Pilfer v's ivars
@@ -201,6 +205,7 @@ Expression::Type Integer::type() const {
 }
 
 void Integer::setNegative(bool negative) {
+  assert(!(negative && isZero())); // Zero cannot be negative
   m_negative = negative;
 }
 
@@ -331,6 +336,10 @@ Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool neg
   if (numberOfDigits == 1) {
     m_digit = digits[0];
     delete[] digits;
+    if (isZero()) {
+      // Normalize zero
+      m_negative = false;
+    }
   } else {
     assert(numberOfDigits > 1);
     m_digits = digits;
@@ -492,7 +501,7 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
     mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
 }
 
-  if ((m_numberOfDigits==1) && (digit(0)==0)) {
+  if (isZero()) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
@@ -562,7 +571,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
     digitIndex++;
   }
 
-  if ((m_numberOfDigits==1) && (digit(0)==0)) {
+  if (isZero()) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is

@@ -66,13 +66,14 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
 }
 
 bool Expression::hasAncestor(const Expression * e) const {
+  assert(m_parent != this);
   if (m_parent == e) {
     return true;
   }
   if (m_parent == nullptr) {
     return false;
   }
-  return hasAncestor(m_parent);
+  return m_parent->hasAncestor(e);
 }
 
 void Expression::sort() {

@@ -112,7 +112,9 @@ public:
   void setParent(Expression * parent) { m_parent = parent; }
   bool hasAncestor(const Expression * e) const;
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
+  void replaceWith(Expression * newOperand);
   virtual void swapOperands(int i, int j) = 0;
+  void removeFromParent();
 
   /* Sorting */
   virtual bool isCommutative() const { return false; }

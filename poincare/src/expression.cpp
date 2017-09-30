@@ -1,6 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/symbol.h>
+#include <poincare/dynamic_hierarchy.h>
 #include <poincare/static_hierarchy.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
@@ -74,6 +75,17 @@ bool Expression::hasAncestor(const Expression * e) const {
     return false;
   }
   return m_parent->hasAncestor(e);
+}
+
+void Expression::replaceWith(Expression * newOperand) {
+  assert(m_parent != nullptr);
+  m_parent->replaceOperand(this, newOperand);
+}
+
+void Expression::removeFromParent() {
+  assert(m_parent != nullptr);
+  assert(m_parent->type() == Expression::Type::Addition || m_parent->type() == Expression::Type::Multiplication); // Weak assertion. We just want to make sure this is actually a DynamicHierarchy
+  static_cast<DynamicHierarchy *>(m_parent)->removeOperand(this);
 }
 
 void Expression::sort() {

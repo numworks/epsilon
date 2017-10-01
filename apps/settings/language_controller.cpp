@@ -3,7 +3,7 @@
 namespace Settings {
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {
-  if (Shared::LanguageController::handleEvent(event)) {
+  if (Shared::LanguageController::handleEvent(event) || event == Ion::Events::Left) {
     static_cast<StackViewController *>(parentResponder())->pop();
     return true;
   }

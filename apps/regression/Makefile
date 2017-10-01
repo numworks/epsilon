@@ -15,4 +15,12 @@ app_objs += $(addprefix apps/regression/,\
   store_controller.o\
 )
 
+i18n_files += $(addprefix apps/regression/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
 app_images += apps/regression/regression_icon.png

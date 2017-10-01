@@ -40,7 +40,7 @@ public:
   static constexpr KDCoordinate k_bottomMargin = 15;
   static constexpr KDCoordinate k_leftMargin = 1;
   static constexpr KDCoordinate k_rightMargin = 15;
-  static constexpr KDCoordinate k_abscissaCellWidth = 150;
+  static constexpr KDCoordinate k_abscissaCellWidth = 100;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:
   StackViewController * stackController() const;

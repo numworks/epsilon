@@ -24,6 +24,14 @@ app_objs += $(addprefix apps/probability/,\
   parameters_controller.o\
 )
 
+i18n_files += $(addprefix apps/probability/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
 app_images += apps/probability/probability_icon.png
 
 app_images += $(addprefix apps/probability/images/,\

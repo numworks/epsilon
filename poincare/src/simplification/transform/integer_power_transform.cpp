@@ -12,7 +12,7 @@ bool Simplification::IntegerPowerTransform(Expression * captures[]) {
   Power * p = static_cast<Power *>(captures[0]);
   Integer * i1 = static_cast<Integer *>(captures[1]);
   Integer * i2 = static_cast<Integer *>(captures[2]);
-
+  Expression * result = nullptr;
   if (i2->isNegative()) {
     if (i2->isEqualTo(Integer(-1))) {
       return false;
@@ -20,12 +20,11 @@ bool Simplification::IntegerPowerTransform(Expression * captures[]) {
     Integer absI2 = *i2;
     absI2.setNegative(false);
     Expression * operands[2] = {new Integer(Integer::Power(*i1, absI2)), new Integer(-1)};
-    Power * d = new Power(operands, false);
-    static_cast<Hierarchy *>(p->parent())->replaceOperand(p, d, true);
-    return true;
+    result = new Power(operands, false);
+  } else {
+    result = new Integer(Integer::Power(*i1, *i2));
   }
-  Integer * r = new Integer(Integer::Power(*i1, *i2));
-  static_cast<Hierarchy *>(p->parent())->replaceOperand(p, r, true);
+  static_cast<Hierarchy *>(p->parent())->replaceOperand(p, result, true);
   return true;
 }
 

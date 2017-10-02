@@ -43,7 +43,7 @@ bool Selector::match(const Expression * e, Expression ** captures, int captureLe
   if (!m_childrenPartialMatch && m_numberOfChildren != e->numberOfOperands()) {
     return false;
   }
-  Combination combination(m_children, m_numberOfChildren, e);
+  Combination combination(m_children, m_numberOfChildren, e, e->isCommutative());
   while (combination.next()){
     bool allChildrenMatched = true;
     for (int i=0; i<m_numberOfChildren; i++) {

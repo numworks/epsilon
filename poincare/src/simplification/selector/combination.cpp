@@ -4,16 +4,13 @@
 namespace Poincare {
 namespace Simplification {
 
-Combination::Combination(const Selector * const * selectors, int numberOfSelectors, const Expression * rootExpression) :
+Combination::Combination(const Selector * const * selectors, int numberOfSelectors, const Expression * rootExpression, bool enableCrossings) :
   m_selectors(selectors),
   m_numberOfSelectors(numberOfSelectors),
   m_rootExpression(rootExpression),
-  m_firstIteration(true)
+  m_firstIteration(true),
+  m_enableCrossings(enableCrossings)
 {
-  //FIXME: Not needed? We need to make sure the array is zero-initialized
-  for (int i=0; i<m_numberOfSelectors; i++) {
-    m_expressionIndexForSelectorIndex[i] = 0;
-  }
   assert(m_numberOfSelectors < 255);
 }
 
@@ -40,6 +37,7 @@ bool Combination::expressionIndexForSelectorIndexIsValidAtDigit(int digit) const
 
 bool Combination::next() {
   int digit = m_firstIteration ? 0 : m_numberOfSelectors-1;
+  resetExpressionIndexForSelectorIndex(digit);
   bool forceOneIncrementation = !m_firstIteration;
   m_firstIteration = false;
 
@@ -48,6 +46,7 @@ bool Combination::next() {
       // Good, go "deeper"
       if (digit < (m_numberOfSelectors-1)) {
         digit++;
+        resetExpressionIndexForSelectorIndex(digit);
       } else {
         return true;
       }
@@ -55,7 +54,7 @@ bool Combination::next() {
       m_expressionIndexForSelectorIndex[digit]++;
       forceOneIncrementation = false;
       if (m_expressionIndexForSelectorIndex[digit] >= m_rootExpression->numberOfOperands()) {
-        m_expressionIndexForSelectorIndex[digit] = 0;
+        resetExpressionIndexForSelectorIndex(digit);
         digit--;
         forceOneIncrementation = true;
       }
@@ -64,5 +63,8 @@ bool Combination::next() {
   return false;
 }
 
+void Combination::resetExpressionIndexForSelectorIndex(int digit) {
+  m_expressionIndexForSelectorIndex[digit] = m_enableCrossings || digit < 1 ? 0 : m_expressionIndexForSelectorIndex[digit-1]+1;
+}
 }
 }

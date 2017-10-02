@@ -9,7 +9,6 @@ bool Poincare::Simplification::RemoveParenthesisTransform(Expression * captures[
   assert(p->numberOfOperands() == 1);
 
   static_cast<Hierarchy *>(p->parent())->replaceOperand(p, const_cast<Expression *>(p->operand(0)), false);
-  p->detachOperands();
   delete p;
 
   return true;

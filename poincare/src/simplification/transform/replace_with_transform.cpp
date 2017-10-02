@@ -10,10 +10,6 @@ bool Poincare::Simplification::ReplaceWithTransform(Expression * captures[]) {
   assert(a->parent() != nullptr);
   assert(b != nullptr);
 
-  if (b->hasAncestor(a)) {
-    static_cast<Hierarchy *>(b->parent())->detachOperand(b);
-  }
-
   static_cast<Hierarchy *>(a->parent())->replaceOperand(a, const_cast<Expression *>(b));
 
   return true;

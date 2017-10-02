@@ -19,7 +19,7 @@ bool TypeSelector::acceptsLocationInCombination(const Combination * combination,
     return false;
   }
 
-  return immediateMatch(combination->expressionForSelectorIndex(location));
+  return Selector::acceptsLocationInCombination(combination, location);
 }
 
 }

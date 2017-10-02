@@ -15,7 +15,6 @@ products += $(rulesets)
 objs += $(addprefix $(prefix)/,\
   expression_simplify.o \
   rule.o \
-  selector/any_selector.o \
   selector/combination.o \
   selector/selector.o \
   selector/type_and_identifier_selector.o \

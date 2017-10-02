@@ -186,6 +186,9 @@ void Node::sort() {
   for (Node * child : *m_children) {
     child->sort();
   }
+  if (!isCommutative()) {
+    return;
+  }
   for (int i = m_children->size()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < m_children->size()-1; j++) {
@@ -198,6 +201,13 @@ void Node::sort() {
       return;
     }
   }
+}
+
+bool Node::isCommutative() {
+  if (m_name->compare("Addition") == 0 || m_name->compare("Multiplication") == 0) {
+    return true;
+  }
+  return false;
 }
 
 #if 0

@@ -30,7 +30,7 @@ public:
 private:
   int selectorCaptureIndexInRule(Rule * rule);
   int selectorIndexInRule(Rule * rule);
-
+  bool isCommutative();
   /*
   int generateTree(bool selector, Rule * context, int index, int indentationLevel);
   std::string generateSelectorConstructor(Rule * context);

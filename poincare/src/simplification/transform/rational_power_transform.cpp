@@ -57,7 +57,7 @@ bool Poincare::Simplification::RationalPowerTransform(Expression * captures[]) {
   Power * p2 = new Power(powerOperands, false);
   m->replaceOperand(p1, p2, false);
 
-  p0->replaceOperand(m, nullptr, false);
+  p0->detachOperand(m);
   static_cast<Hierarchy *>(p0->parent())->replaceOperand(p0, m, true);
   return true;
 }

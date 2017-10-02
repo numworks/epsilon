@@ -67,7 +67,6 @@ void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemov
 }
 
 void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
-  //FIXME: Do something here if we don't want to have a single child
   if (deleteAfterRemoval) {
     delete m_operands[i];
   } else {
@@ -77,6 +76,9 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
     m_operands[j] = m_operands[j+1];
   }
   m_numberOfOperands--;
+  if (numberOfOperands() == 1) {
+    replaceWith(const_cast<Expression *>(operand(0)));
+  }
 }
 
 }

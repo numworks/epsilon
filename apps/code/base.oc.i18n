@@ -1,0 +1,7 @@
+BetaVersion = "VERSION BETA"
+BetaVersionMessage1 = "La version de Python qu'utilizatz"
+BetaVersionMessage2 = "es pas una version definitiva."
+BetaVersionMessage3 = "Pòt arribar que son utilizacion siá"
+BetaVersionMessage4 = "limitada e qu'i aja de bugs."
+EditProgram = "Modificar lo programa"
+ExecuteProgram = "Executar lo programa"

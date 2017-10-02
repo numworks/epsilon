@@ -20,6 +20,7 @@ objs += $(addprefix $(prefix)/,\
   selector/type_and_identifier_selector.o \
   selector/type_selector.o \
   transform/division_transform.o \
+  transform/remove_child_transform.o \
   transform/remove_parenthesis_transform.o \
   transform/subtraction_transform.o \
   transform/integer_dynamic_hierarchy_transform.o \

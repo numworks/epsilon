@@ -4,10 +4,10 @@ DemoRuleset
 Multiplication.a(Integer.b[0]) -> ReplaceWithTransform(a,b);
 
 // 1*a -> a
-//Multiplication.a(Integer.b[1]) -> RemoveChildTransform(a,b);
+Multiplication.a(Integer.b[1]) -> RemoveChildTransform(a,b);
 
 // a+0 -> a
-//Addition.a(Integer.b[0]) -> RemoveChildTransform(a,b);
+Addition.a(Integer.b[0]) -> RemoveChildTransform(a,b);
 
 // a^1 -> a
 Power.a(Any.b,Integer.c[1]) -> ReplaceWithTransform(a,b);

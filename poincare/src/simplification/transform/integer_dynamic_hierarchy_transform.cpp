@@ -18,14 +18,8 @@ static bool IntegerDynamicHierarchyTransform(Expression * captures[], Operation 
   Integer resultOnStack = operation(*i1, *i2);
   Integer * r = new Integer(std::move(resultOnStack));
 
-  if (a->numberOfOperands() == 2) {
-    static_cast<Hierarchy *>(a->parent())->replaceOperand(a, r);
-  } else {
-    assert(a->numberOfOperands() > 2);
-    a->replaceOperand(i1, r);
-    a->removeOperand(i2);
-  }
-
+  a->replaceOperand(i1, r);
+  a->removeOperand(i2);
   return true;
 }
 

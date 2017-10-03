@@ -20,6 +20,7 @@ i18n_files += $(addprefix apps/regression/,\
   base.en.i18n\
   base.es.i18n\
   base.fr.i18n\
+  base.oc.i18n\
   base.pt.i18n\
 )
 

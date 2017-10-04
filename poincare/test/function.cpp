@@ -35,7 +35,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("prediction95(0.1, 100)", Expression::Type::PredictionInterval);
   assert_parsed_expression_type("product(n, 4, 10)", Expression::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", Expression::Type::DivisionQuotient);
-  assert_parsed_expression_type("re(2+I)", Expression::Type::ReelPart);
+  assert_parsed_expression_type("re(2+I)", Expression::Type::RealPart);
   assert_parsed_expression_type("rem(29, 10)", Expression::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", Expression::Type::NthRoot);
   assert_parsed_expression_type("R(2)", Expression::Type::SquareRoot);

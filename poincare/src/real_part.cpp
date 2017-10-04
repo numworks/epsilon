@@ -14,7 +14,7 @@ RealPart::RealPart() :
 }
 
 Expression::Type RealPart::type() const {
-  return Type::ReelPart;
+  return Type::RealPart;
 }
 
 Expression * RealPart::cloneWithDifferentOperands(Expression** newOperands,

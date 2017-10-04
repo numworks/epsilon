@@ -457,7 +457,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   char bufferSuperscript[k_maxFloatBufferLength+2];
   int numberOfCharInSuperscript = 0;
 
-  if (isnan(m_a) || isnan(m_b)) {
+  if (isnan(r()) || isnan(th())) {
     numberOfCharInBase = convertFloatToText(NAN, bufferBase, k_maxComplexBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
     return new StringLayout(bufferBase, numberOfCharInBase);
   }

@@ -61,7 +61,7 @@ public:
     PermuteCoefficient,
     Power,
     Product,
-    ReelPart,
+    RealPart,
     Round,
     Sine,
     SquareRoot,

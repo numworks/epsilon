@@ -39,12 +39,42 @@ Integer::Integer(Integer&& other) {
   other.m_digits = NULL;
 }
 
+Integer::Integer(const Integer& other) {
+  // Copy other's data
+  m_numberOfDigits = other.m_numberOfDigits;
+  m_negative = other.m_negative;
+  // Duplicate m_digits objects
+  m_digits = new native_uint_t[m_numberOfDigits];
+  for (int k = 0; k < m_numberOfDigits; k++) {
+    m_digits[k] = other.m_digits[k];
+  }
+}
+
+static_assert(sizeof(native_int_t) == sizeof(native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
+
 Integer::Integer(native_int_t i) {
-  assert(sizeof(native_int_t) <= sizeof(native_uint_t));
   m_negative = (i<0);
   m_numberOfDigits = 1;
   m_digits = new native_uint_t[1];
   *m_digits = (native_uint_t)(i>0 ? i : -i);
+}
+
+static_assert(sizeof(double_native_int_t) == 2*sizeof(native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
+
+Integer::Integer(double_native_int_t i) {
+  m_negative = (i<0);
+
+  double_native_uint_t j = (double_native_uint_t)(i>0 ? i : -i);
+  native_uint_t * digits = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *digits;
+  native_uint_t mostSignificantDigit = *(digits+1);
+
+  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  m_digits = new native_uint_t[m_numberOfDigits];
+  m_digits[0] = leastSignificantDigit;
+  if (m_numberOfDigits == 2) {
+    m_digits[1] = mostSignificantDigit;
+  }
 }
 
 /* Caution: string is NOT guaranteed to be NULL-terminated! */
@@ -146,6 +176,19 @@ Integer& Integer::operator=(Integer&& other) {
   return *this;
 }
 
+Integer& Integer::operator=(const Integer& other) {
+  if (this != &other) {
+    m_negative = other.m_negative;
+    m_numberOfDigits = other.m_numberOfDigits;
+    // Duplicate m_digits objects
+    m_digits = new native_uint_t[m_numberOfDigits];
+    for (int k = 0; k < m_numberOfDigits; k++) {
+      m_digits[k] = other.m_digits[k];
+    }
+  }
+  return *this;
+}
+
 Integer Integer::add(const Integer &other, bool inverse_other_negative) const {
   bool other_negative = (inverse_other_negative ? !other.m_negative : other.m_negative);
   if (m_negative == other_negative) {
@@ -232,8 +275,7 @@ m_remainder(Integer((native_int_t)0)) {
 
   if (numerator < denominator) {
     m_quotient = Integer((native_int_t)0);
-    m_remainder = numerator.add(Integer((native_int_t)0));
-    // FIXME: This is a ugly way to bypass creating a copy constructor!
+    m_remainder = numerator;
     return;
   }
 
@@ -400,27 +442,39 @@ Expression::Type Integer::type() const {
 }
 
 ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  /* If the integer is too long, this method may overflow the stack.
+  char buffer[k_maxIntegerTextSize];
+  int size = convertToText(buffer, k_maxIntegerTextSize);
+  return new StringLayout(buffer, size);
+}
+
+bool Integer::valueEquals(const Expression * e) const {
+  assert(e->type() == Type::Integer);
+  return (*this == *(Integer *)e); // FIXME: Remove operator overloading
+}
+
+int Integer::convertToText(char * buffer, int bufferSize) const {
+  /* If the integer is too long, convertToText may overflow the stack.
    * Experimentally, we can display at most integer whose number of digits is
    * around 7. However, to avoid crashing when the stack is already half full,
    * we decide not to display integers whose number of digits > 5. */
+  assert(bufferSize >= 4);
   if (m_numberOfDigits > 5) {
-    return new StringLayout("inf", 3);
+    strlcpy(buffer, "inf", 4);
+    return 3;
   }
-
-  char buffer[255];
-
   Integer base = Integer(10);
-  Division d = Division(*this, base);
+  Integer abs = m_negative ? Integer(0).subtract(*this) : *this;
+  Division d = Division(abs, base);
   int size = 0;
   if (*this == Integer((native_int_t)0)) {
     buffer[size++] = '0';
   }
+  if (m_negative) {
+    buffer[size++] = '-';
+  }
   while (!(d.m_remainder == Integer((native_int_t)0) &&
         d.m_quotient == Integer((native_int_t)0))) {
-    assert(size<255); //TODO: malloc an extra buffer
+    assert(size<bufferSize); //TODO: malloc an extra buffer
     char c = char_from_digit(d.m_remainder.m_digits[0]);
     buffer[size++] = c;
     d = Division(d.m_quotient, base);
@@ -428,18 +482,12 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   buffer[size] = 0;
 
   // Flip the string
-  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+  for (int i=m_negative, j=size-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;
   }
-
-  return new StringLayout(buffer, size);
-}
-
-bool Integer::valueEquals(const Expression * e) const {
-  assert(e->type() == Type::Integer);
-  return (*this == *(Integer *)e); // FIXME: Remove operator overloading
+  return size;
 }
 
 }

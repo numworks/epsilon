@@ -6,6 +6,7 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_integer) {
   assert(Integer(123) == Integer(123));
+  assert(Integer((int64_t)1234567891011121314) == Integer((int64_t)1234567891011121314));
   assert(Integer("123") == Integer(123));
   assert(!(Integer("-123") == Integer(123)));
   assert(Integer("-123") == Integer(-123));

@@ -14,7 +14,7 @@ public:
   virtual int numberOfColumns() const = 0;
   /* If the buffer is too small, the function fills the buffer until reaching
    * buffer size */
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = k_numberOfStoredSignificantDigits) const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };

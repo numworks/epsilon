@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 typedef int32_t native_int_t;
+typedef int64_t double_native_int_t;
 typedef uint32_t native_uint_t;
 typedef uint64_t double_native_uint_t;
 
@@ -13,14 +14,15 @@ namespace Poincare {
 class Integer : public LeafExpression {
 public:
   Integer(native_int_t i);
+  Integer(double_native_int_t i);
   Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
   Type type() const override;
 
   ~Integer();
   Integer(Integer&& other); // C++11 move constructor
   Integer& operator=(Integer&& other); // C++11 move assignment operator
-  Integer(const Integer& other) = delete;
-  Integer& operator=(const Integer& other) = delete;
+  Integer(const Integer& other); // C++11 copy constructor operator
+  Integer& operator=(const Integer& other); // C++11 copy assignment operator
 
   // Arithmetic
   Integer add(const Integer &other) const;
@@ -34,7 +36,9 @@ public:
   bool valueEquals(const Expression * e) const override;
 
   Expression * clone() const override;
+  int convertToText(char * buffer, int bufferSize) const;
 private:
+  constexpr static int k_maxIntegerTextSize = 200;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;

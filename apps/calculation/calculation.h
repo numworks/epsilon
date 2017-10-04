@@ -17,7 +17,6 @@ public:
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
   const char * inputText();
-  const char * outputText();
   Poincare::Expression * input();
   Poincare::ExpressionLayout * inputLayout();
   Poincare::Evaluation<double> * output(Poincare::Context * context);

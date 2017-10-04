@@ -86,6 +86,8 @@ public:
     Polar = 1,
     Default = 2
   };
+  constexpr static int k_numberOfPrintedSignificantDigits = 7;
+  constexpr static int k_numberOfStoredSignificantDigits = 15;
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
   virtual bool hasValidNumberOfArguments() const = 0;
@@ -137,7 +139,7 @@ public:
   template<typename T> Evaluation<T> * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
-  virtual int writeTextInBuffer(char * buffer, int bufferSize) const;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = k_numberOfStoredSignificantDigits) const;
 protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;

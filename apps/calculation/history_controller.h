@@ -33,6 +33,7 @@ public:
   void unloadView(View * view) override;
 private:
   CalculationSelectableTableView * selectableTableView();
+  void printOutputOfCalculationInBuffer(Calculation * calculation, char * buffer, int bufferSize);
   constexpr static int k_maxNumberOfDisplayedRows = 5;
   HistoryViewCell * m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;

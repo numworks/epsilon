@@ -5,9 +5,9 @@
 
 namespace Poincare {
 
-class ReelPart : public Function {
+class RealPart : public Function {
 public:
-  ReelPart();
+  RealPart();
   Type type() const override;
   Expression * cloneWithDifferentOperands(Expression ** newOperands,
     int numberOfOperands, bool cloneOperands = true) const override;

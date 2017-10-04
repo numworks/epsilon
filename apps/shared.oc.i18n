@@ -1,0 +1,7 @@
+Warning = "Mèfi"
+Ok = "Validar"
+Cancel = "Anullar"
+Next = "Seguent"
+SyntaxError = "Atencion a la sintaxi"
+MathError = "Error matematica"
+LowBattery = "Batariá febla"

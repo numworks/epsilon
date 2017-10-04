@@ -1,4 +1,4 @@
-#include <poincare/reel_part.h>
+#include <poincare/real_part.h>
 #include <poincare/complex.h>
 
 extern "C" {

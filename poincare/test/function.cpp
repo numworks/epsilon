@@ -127,11 +127,11 @@ QUIZ_CASE(poincare_function_evaluate) {
 #endif
 
   Complex<double> v[2] = {Complex<double>::Float(0.1 - std::sqrt(1.0/100.0)), Complex<double>::Float(0.1 + std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("confidence(0.1, 100)", v, 2);
+  assert_parsed_expression_evaluates_to("confidence(0.1, 100)", v, 1, 2);
 
 #if MATRICES_ARE_DEFINED
   Complex<float> w[2] = {Complex<float>::Float(2.0f), Complex<float>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("dim([[1,2,3][4,5,-6]])", w, 2);
+  assert_parsed_expression_evaluates_to("dim([[1,2,3][4,5,-6]])", w, 1, 2);
 #endif
 
   Complex<double> x[1] = {Complex<double>::Cartesian(3.0, -2.0)};
@@ -143,10 +143,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 #endif
 
   Complex<double> z[2] = {Complex<double>::Float(0.1-std::sqrt(1.0/100.0)), Complex<double>::Float(0.1+std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("prediction(0.1, 100)", z, 2);
+  assert_parsed_expression_evaluates_to("prediction(0.1, 100)", z, 1, 2);
 
   Complex<float> aa[2] = {Complex<float>::Float(0.1f-1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f)), Complex<float>::Float(0.1f+1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f))};
-  assert_parsed_expression_evaluates_to("prediction95(0.1, 100)", aa, 2);
+  assert_parsed_expression_evaluates_to("prediction95(0.1, 100)", aa, 1, 2);
 
   Complex<double> ab[1] = {Complex<double>::Cartesian(-100.0, -540.0)};
   assert_parsed_expression_evaluates_to("product(2+n*I, 1, 5)", ab);

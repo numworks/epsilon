@@ -22,6 +22,8 @@ public:
   void addOperands(const Expression * const * operands, int numberOfOperands);
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
+  int compareToSameTypeExpression(const Expression * e) const override;
+  int compareToGreaterTypeExpression(const Expression * e) const override;
   const Expression ** m_operands;
   int m_numberOfOperands;
 };

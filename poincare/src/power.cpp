@@ -7,6 +7,7 @@ extern "C" {
 #include <poincare/complex_matrix.h>
 #include <poincare/power.h>
 #include <poincare/multiplication.h>
+#include <poincare/integer.h>
 #include <poincare/opposite.h>
 #include "layout/baseline_relative_layout.h"
 
@@ -83,6 +84,23 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
     indiceOperand = (Expression *)m_operands[1]->operand(0);
   }
   return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
+}
+
+int Power::compareToSameTypeExpression(const Expression * e) const {
+  int baseComparison = operand(0)->compareTo(static_cast<const Power *>(e)->operand(0));
+  if (baseComparison != 0) {
+    return baseComparison;
+  }
+  return operand(1)->compareTo(static_cast<const Power *>(e)->operand(1));
+}
+
+int Power::compareToGreaterTypeExpression(const Expression * e) const {
+  int baseComparison = operand(0)->compareTo(e);
+  if (baseComparison != 0) {
+    return baseComparison;
+  }
+  Integer one(1);
+  return operand(1)->compareTo(&one);
 }
 
 }

@@ -42,7 +42,6 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int identifier() const override;
-  int compareTo(const Expression * e) const override;
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
 
@@ -71,6 +70,9 @@ private:
     assert(i >= 0 && i<m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
+
+  /* Sorting */
+  int compareToSameTypeExpression(const Expression * e) const override;
 
   // Small integer optimization. Similar to short string optimization.
   union {

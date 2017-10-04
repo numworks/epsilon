@@ -15,16 +15,19 @@ class Evaluation;
 class Expression {
 public:
   enum class Type : uint8_t {
-    AbsoluteValue = 0,
+    Undefined = 0,
+    Integer = 1, // Rational
+    Multiplication,
+    Power,
     Addition,
+    Factorial,
+    AbsoluteValue,
     ArcCosine,
     ArcSine,
     ArcTangent,
     BinomialCoefficient,
     Ceiling,
-    Complex,
     ComplexArgument,
-    ComplexMatrix,
     ConfidenceInterval,
     Conjugate,
     Cosine,
@@ -33,8 +36,6 @@ public:
     Division,
     DivisionQuotient,
     DivisionRemainder,
-    ExpressionMatrix,
-    Factorial,
     Floor,
     FracPart,
     GreatCommonDivisor,
@@ -45,7 +46,6 @@ public:
     HyperbolicSine,
     HyperbolicTangent,
     ImaginaryPart,
-    Integer,
     Integral,
     LeastCommonMultiple,
     Logarithm,
@@ -53,13 +53,11 @@ public:
     MatrixInverse,
     MatrixTrace,
     MatrixTranspose,
-    Multiplication,
     NaperianLogarithm,
     NthRoot,
     Opposite,
     Parenthesis,
     PermuteCoefficient,
-    Power,
     PredictionInterval,
     Product,
     RealPart,
@@ -69,9 +67,12 @@ public:
     Store,
     Subtraction,
     Sum,
-    Symbol,
     Tangent,
-    Undefined = 255
+    Symbol,
+
+    Complex,
+    ComplexMatrix,
+    ExpressionMatrix,
   };
   enum class FloatDisplayMode {
     Decimal = 0,
@@ -123,7 +124,7 @@ public:
    *   1 if this > e
    *   -1 if this < e
    *   0 if this == e */
-  virtual int compareTo(const Expression * e) const;
+  int compareTo(const Expression * e) const;
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
@@ -153,7 +154,14 @@ private:
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-private:
+  /* Sorting */
+  virtual int compareToGreaterTypeExpression(const Expression * e) const {
+    return -1;
+  }
+  /* Pure virtual? What should be the implementation of complex? */
+  virtual int compareToSameTypeExpression(const Expression * e) const {
+    return 0;
+  }
   Expression * m_parent;
 };
 

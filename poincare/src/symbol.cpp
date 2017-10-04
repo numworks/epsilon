@@ -57,21 +57,6 @@ int Symbol::identifier() const {
   return m_name;
 }
 
-int Symbol::compareTo(const Expression * e) const {
-  int typeComparison = Expression::compareTo(e);
-  if (typeComparison != 0) {
-    return typeComparison;
-  }
-  assert(e->type() == Expression::Type::Symbol);
-  if (m_name == ((Symbol *)e)->m_name) {
-    return 0;
-  }
-  if ((m_name > ((Symbol *)e)->m_name)) {
-    return 1;
-  }
-  return -1;
-}
-
 template<typename T>
 Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
@@ -124,6 +109,17 @@ bool Symbol::isMatrixSymbol() const {
     return true;
   }
   return false;
+}
+
+int Symbol::compareToSameTypeExpression(const Expression * e) const {
+  assert(e->type() == Expression::Type::Symbol);
+  if (m_name == ((Symbol *)e)->m_name) {
+    return 0;
+  }
+  if ((m_name > ((Symbol *)e)->m_name)) {
+    return 1;
+  }
+  return -1;
 }
 
 }

@@ -23,6 +23,7 @@ public:
   virtual bool hasValidNumberOfOperands(int numberOfOperands) const;
 protected:
   void build(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
+  int compareToSameTypeExpression(const Expression * e) const override;
   const Expression * m_operands[T];
 };
 

@@ -25,7 +25,10 @@ private:
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 
-    ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+
+  int compareToGreaterTypeExpression(const Expression * e) const override;
+  int compareToSameTypeExpression(const Expression * e) const override;
 };
 
 }

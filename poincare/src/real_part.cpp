@@ -8,25 +8,25 @@ extern "C" {
 
 namespace Poincare {
 
-ReelPart::ReelPart() :
+RealPart::RealPart() :
   Function("re")
 {
 }
 
-Expression::Type ReelPart::type() const {
+Expression::Type RealPart::type() const {
   return Type::ReelPart;
 }
 
-Expression * ReelPart::cloneWithDifferentOperands(Expression** newOperands,
+Expression * RealPart::cloneWithDifferentOperands(Expression** newOperands,
         int numberOfOperands, bool cloneOperands) const {
   assert(newOperands != nullptr);
-  ReelPart * rp = new ReelPart();
+  RealPart * rp = new RealPart();
   rp->setArgument(newOperands, numberOfOperands, cloneOperands);
   return rp;
 }
 
 template<typename T>
-Complex<T> ReelPart::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> RealPart::templatedComputeComplex(const Complex<T> c) const {
   return Complex<T>::Float(c.a());
 }
 

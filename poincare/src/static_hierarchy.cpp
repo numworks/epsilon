@@ -53,6 +53,24 @@ void StaticHierarchy<T>::build(const Expression * const * operands, int numberOf
   }
 }
 
+template<int T>
+int StaticHierarchy<T>::compareToSameTypeExpression(const Expression * e) const {
+  for (int i = 0; i < this->numberOfOperands(); i++) {
+    // The NULL node is the least node type.
+    if (e->numberOfOperands() <= i) {
+      return 1;
+    }
+    if (this->operand(i)->compareTo(e->operand(i)) != 0) {
+      return this->operand(i)->compareTo(e->operand(i));
+    }
+  }
+  // The NULL node is the least node type.
+  if (e->numberOfOperands() > numberOfOperands()) {
+    return -1;
+  }
+  return 0;
+}
+
 template class Poincare::StaticHierarchy<0>;
 template class Poincare::StaticHierarchy<1>;
 template class Poincare::StaticHierarchy<2>;

@@ -117,26 +117,13 @@ void Expression::sort() {
 }
 
 int Expression::compareTo(const Expression * e) const {
-  if (this->type() < e->type()) {
-    return -1;
-  }
   if (this->type() > e->type()) {
-    return 1;
+    return -(e->compareTo(this));
+  } else if (this->type() == e->type()) {
+    return compareToSameTypeExpression(e);
+  } else {
+    return compareToGreaterTypeExpression(e);
   }
-  for (int i = 0; i < this->numberOfOperands(); i++) {
-    // The NULL node is the least node type.
-    if (e->numberOfOperands() <= i) {
-      return 1;
-    }
-    if (this->operand(i)->compareTo(e->operand(i)) != 0) {
-      return this->operand(i)->compareTo(e->operand(i));
-    }
-  }
-  // The NULL node is the least node type.
-  if (e->numberOfOperands() > numberOfOperands()) {
-    return -1;
-  }
-  return 0;
 }
 
 template<typename T> Evaluation<T> * Expression::evaluate(Context& context, AngleUnit angleUnit) const {

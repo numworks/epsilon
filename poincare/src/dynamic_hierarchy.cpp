@@ -18,7 +18,6 @@ DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numb
   m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);
-  assert(numberOfOperands >= 2);
   m_operands = new const Expression * [numberOfOperands];
   for (int i=0; i<numberOfOperands; i++) {
     assert(operands[i] != nullptr);
@@ -79,6 +78,40 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   if (numberOfOperands() == 1) {
     replaceWith(const_cast<Expression *>(operand(0)));
   }
+}
+
+int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
+  int m = this->numberOfOperands();
+  int n = e->numberOfOperands();
+  for (int i = 1; i <= m; i++) {
+    // The NULL node is the least node type.
+    if (n <= i) {
+      return 1;
+    }
+    if (this->operand(m-i)->compareTo(e->operand(n-i)) != 0) {
+      return this->operand(m-i)->compareTo(e->operand(n-i));
+    }
+  }
+  // The NULL node is the least node type.
+  if (n > m) {
+    return -1;
+  }
+  return 0;
+}
+
+int DynamicHierarchy::compareToGreaterTypeExpression(const Expression * e) const {
+  int m = numberOfOperands();
+  if (m == 0) {
+    return -1;
+  }
+  /* Compare e to last term of hierarchy. */
+  if (operand(m-1)->compareTo(e) != 0) {
+    return operand(m-1)->compareTo(e);
+  }
+  if (m > 1) {
+    return 1;
+  }
+  return 0;
 }
 
 }

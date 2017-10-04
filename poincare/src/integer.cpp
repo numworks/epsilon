@@ -215,11 +215,7 @@ Expression * Integer::clone() const {
 
 // Comparison
 
-int Integer::compareTo(const Expression * e) const {
-  int typeComparison = Expression::compareTo(e);
-  if (typeComparison != 0) {
-    return typeComparison;
-  }
+int Integer::compareToSameTypeExpression(const Expression * e) const {
   assert(e->type() == Expression::Type::Integer);
   const Integer * other = static_cast<const Integer *>(e);
 

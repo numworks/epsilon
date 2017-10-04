@@ -47,4 +47,15 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   return new HorizontalLayout(childrenLayouts, 2);
 }
 
+int Factorial::compareToGreaterTypeExpression(const Expression * e) const {
+  if (operand(0)->compareTo(e) == 0) {
+    return 1;
+  }
+  return operand(0)->compareTo(e);
+}
+
+int Factorial::compareToSameTypeExpression(const Expression * e) const {
+  return operand(0)->compareTo(e->operand(0));
+}
+
 }

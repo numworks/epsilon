@@ -20,6 +20,8 @@ private:
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int compareToGreaterTypeExpression(const Expression * e) const override;
+  int compareToSameTypeExpression(const Expression * e) const override;
 };
 
 }

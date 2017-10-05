@@ -12,6 +12,10 @@
 
 int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
 
+//TODO: delete
+#include <iostream>
+#include "expression_debug.h"
+
 namespace Poincare {
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
@@ -66,6 +70,45 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
   }
 }
 
+class SimplificationRoot : public StaticHierarchy<1> {
+public:
+  SimplificationRoot(Expression * e) : StaticHierarchy<1>(&e, false) {
+    e->setParent(this);
+  }
+  ~SimplificationRoot() {
+    detachOperand(operand(0));
+    /* We don't want to clone the expression provided at construction.
+     * So we don't want it to be deleted when we're destroyed (parent destructor). */
+  }
+  Expression * clone() const override { return nullptr; }
+  Type type() const override { return Expression::Type::Undefined; }
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return nullptr;
+  }
+  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return nullptr;
+  }
+  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return nullptr;
+  }
+};
+
+void Expression::simplify(Expression ** e) {
+  SimplificationRoot root(*e);
+  root.simplify();
+  *e = (Expression *)(root.operand(0));
+}
+
+void Expression::simplify() {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    ((Expression *)operand(i))->simplify();
+    std::cout << "-----" << std::endl;
+    print_expression(this, 0);
+    std::cout << "-----" << std::endl;
+  }
+  privateSimplify();
+}
+
 bool Expression::hasAncestor(const Expression * e) const {
   assert(m_parent != this);
   if (m_parent == e) {
@@ -77,43 +120,15 @@ bool Expression::hasAncestor(const Expression * e) const {
   return m_parent->hasAncestor(e);
 }
 
-void Expression::replaceWith(Expression * newOperand) {
+void Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
   assert(m_parent != nullptr);
-  m_parent->replaceOperand(this, newOperand);
+  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
 }
 
 void Expression::removeFromParent() {
   assert(m_parent != nullptr);
   assert(m_parent->type() == Expression::Type::Addition || m_parent->type() == Expression::Type::Multiplication); // Weak assertion. We just want to make sure this is actually a DynamicHierarchy
   static_cast<DynamicHierarchy *>(m_parent)->removeOperand(this);
-}
-
-void Expression::sort() {
-  if (this->type() == Type::Complex) {
-    // TODO: this case should be useless once complex is a leaf expression!
-    return;
-  }
-  for (int i = 0; i < numberOfOperands(); i++) {
-    ((Expression *)operand(i))->sort(); // TODO: implement an editable operand?
-  }
-
-  // Second, sort all children together if the expression is commutative
-  if (!isCommutative()) {
-    return;
-  }
-  // TODO: use a heap sort instead of a buble sort
-  for (int i = numberOfOperands()-1; i > 0; i--) {
-    bool isSorted = true;
-    for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (operand(j)->compareTo(operand(j+1)) > 0) {
-        swapOperands(j, j+1);
-        isSorted = false;
-      }
-    }
-    if (isSorted) {
-      return;
-    }
-  }
 }
 
 int Expression::compareTo(const Expression * e) const {

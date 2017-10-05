@@ -2,6 +2,7 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/dynamic_hierarchy.h>
+#include <poincare/integer.h>
 #include <poincare/layout_engine.h>
 #include <poincare/evaluation_engine.h>
 
@@ -34,6 +35,11 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "+");
   }
+  /* Simplification */
+  void privateSimplify() override;
+  void factorizeChildren(Expression * e1, Expression * e2);
+  static const Integer RationalFactor(Expression * e);
+  static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
 };
 
 }

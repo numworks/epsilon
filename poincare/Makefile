@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-include poincare/src/simplification/Makefile
+#include poincare/src/simplification/Makefile
 
 objs += $(addprefix poincare/src/,\
   absolute_value.o\

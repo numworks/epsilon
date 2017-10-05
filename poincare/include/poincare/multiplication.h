@@ -18,6 +18,8 @@ public:
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
+
+  static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

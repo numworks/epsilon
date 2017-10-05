@@ -56,6 +56,31 @@ void DynamicHierarchy::addOperands(const Expression * const * operands, int numb
   m_numberOfOperands += numberOfOperands;
 }
 
+void DynamicHierarchy::mergeOperands(DynamicHierarchy * d) {
+  removeOperand(d, false);
+  addOperands(d->operands(), d->numberOfOperands());
+  d->detachOperands();
+  delete d;
+}
+
+void DynamicHierarchy::addOperandAtIndex(Expression * operand, int index) {
+  assert(index >= 0 && index <= m_numberOfOperands);
+  const Expression ** newOperands = new const Expression * [m_numberOfOperands+1];
+  int j = 0;
+  for (int i=0; i<=m_numberOfOperands; i++) {
+    if (i == index) {
+      operand->setParent(this);
+      newOperands[i] = operand;
+    } else {
+      newOperands[i] = m_operands[j++];
+    }
+  }
+  delete[] m_operands;
+  m_operands = newOperands;
+  m_numberOfOperands += 1;
+}
+
+
 void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemoval) {
   for (int i=0; i<numberOfOperands(); i++) {
     if (operand(i) == e) {
@@ -75,9 +100,6 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
     m_operands[j] = m_operands[j+1];
   }
   m_numberOfOperands--;
-  if (numberOfOperands() == 1) {
-    replaceWith(const_cast<Expression *>(operand(0)));
-  }
 }
 
 int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
@@ -112,6 +134,21 @@ int DynamicHierarchy::compareToGreaterTypeExpression(const Expression * e) const
     return 1;
   }
   return 0;
+}
+
+void DynamicHierarchy::sortChildren() {
+  for (int i = numberOfOperands()-1; i > 0; i--) {
+    bool isSorted = true;
+    for (int j = 0; j < numberOfOperands()-1; j++) {
+      if (operand(j)->compareTo(operand(j+1)) > 0) {
+        swapOperands(j, j+1);
+        isSorted = false;
+      }
+    }
+    if (isSorted) {
+      return;
+    }
+  }
 }
 
 }

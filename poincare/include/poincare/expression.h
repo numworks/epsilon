@@ -113,13 +113,12 @@ public:
   void setParent(Expression * parent) { m_parent = parent; }
   bool hasAncestor(const Expression * e) const;
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
-  void replaceWith(Expression * newOperand);
+  void replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
   virtual void swapOperands(int i, int j) = 0;
   void removeFromParent();
 
   /* Sorting */
   virtual bool isCommutative() const { return false; }
-  virtual void sort();
   /* compareTo returns:
    *   1 if this > e
    *   -1 if this < e
@@ -129,6 +128,7 @@ public:
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
 
+  /* Simplification */
   static void simplify(Expression ** e);
 
   /* Evaluation Engine
@@ -158,6 +158,10 @@ private:
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;
   }
+  /* Simplification */
+  void simplify();
+  // TODO: should be virtual pure
+  virtual void privateSimplify() {};// = 0;
   /* Pure virtual? What should be the implementation of complex? */
   virtual int compareToSameTypeExpression(const Expression * e) const {
     return 0;

@@ -23,6 +23,10 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
+void Parenthesis::privateSimplify() {
+  replaceWith(const_cast<Expression *>(operand(0)), true);
+}
+
 template<typename T>
 Evaluation<T> * Parenthesis::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   return operand(0)->evaluate<T>(context, angleUnit);

@@ -127,6 +127,7 @@ public:
 
   /* Simplification */
   static void simplify(Expression ** e);
+  void simplify();
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -156,7 +157,6 @@ private:
     return -1;
   }
   /* Simplification */
-  void simplify();
   // TODO: should be virtual pure
   virtual void privateSimplify() {};// = 0;
   /* Pure virtual? What should be the implementation of complex? */

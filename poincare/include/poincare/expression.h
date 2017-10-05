@@ -16,7 +16,8 @@ class Expression {
 public:
   enum class Type : uint8_t {
     Undefined = 0,
-    Integer = 1, // Rational
+    Rational = 1,
+    Integer = 2, // delete
     Multiplication,
     Power,
     Addition,

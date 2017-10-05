@@ -59,7 +59,6 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2) {
   } else {
     const Expression * operands[2] = {r, e1};
     e1->replaceWith(new Multiplication(operands, 2, true), true);
-    sortChildren();
   }
 }
 

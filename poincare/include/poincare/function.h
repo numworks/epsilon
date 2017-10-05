@@ -5,7 +5,7 @@
 #include <poincare/list_data.h>
 #include <poincare/complex.h>
 #include <poincare/complex_matrix.h>
-#include <math.h>
+#include <cmath>
 
 namespace Poincare {
 

@@ -1,6 +1,6 @@
 #include "calculation.h"
 #include <string.h>
-#include <math.h>
+#include <cmath>
 using namespace Poincare;
 
 namespace Calculation {

@@ -59,7 +59,7 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
   }
 }
 /*
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 
 void KDDrawAntiAliasedLine(KDPoint p1, KDPoint p2, KDCoordinate width, KDColor frontColor, KDColor backColor) {

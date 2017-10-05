@@ -38,7 +38,7 @@
  * which is not installed by default on MacOS, we thus made the choice to prefer
  * compatibility with MacOS's default version (2.3) instead of using the code
  * requires feature. */
-#include <math.h>
+#include <cmath>
 #include <poincare.h>
 #include "expression_parser.hpp"
 using namespace Poincare;

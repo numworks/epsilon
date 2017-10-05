@@ -1,7 +1,7 @@
 #include "function_graph_controller.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 
 using namespace Poincare;

@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
-#include <math.h>
+#include <cmath>
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "banner_view.h"

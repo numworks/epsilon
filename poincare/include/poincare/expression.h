@@ -118,7 +118,6 @@ public:
   void removeFromParent();
 
   /* Sorting */
-  virtual bool isCommutative() const { return false; }
   /* compareTo returns:
    *   1 if this > e
    *   -1 if this < e

@@ -85,7 +85,15 @@ void Multiplication::privateSimplify() {
      *   return;
      * }*/
   }
+  /* Second loop, distribute addition */
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (operand(i)->type() == Type::Addition) {
+      distributeOnChildAtIndex(i);
+      return;
+    }
+  }
   sortChildren();
+  /* Now, no more node can be an addition or a multiplication */
   for (int i = 0; i < numberOfOperands()-1; i++) {
     // TODO: maybe delete operand Rational(1,1) and at the end test if the numberOfOperand is 0, return Rational(1,1)?
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
@@ -113,6 +121,19 @@ void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
     e1->replaceWith(new Power(operands, false), false);
   }
   s->privateSimplify();
+}
+
+void Multiplication::distributeOnChildAtIndex(int i) {
+  Addition * a = static_cast<Addition *>((Expression *) operand(i));
+  for (int j = 0; j < a->numberOfOperands(); j++) {
+    Expression * termJ = const_cast<Expression *>(a->operand(j));
+    replaceOperand(operand(i), termJ->clone(), false);
+    Expression * m = clone();
+    a->replaceOperand(termJ, m, true);
+    m->privateSimplify();
+  }
+  replaceWith(a, true);
+  a->privateSimplify();
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {

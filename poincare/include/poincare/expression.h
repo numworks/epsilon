@@ -127,7 +127,8 @@ public:
 
   /* Simplification */
   static void simplify(Expression ** e);
-  void simplify();
+  // TODO: should be virtual pure
+  virtual void privateSimplify() {};// = 0;
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -157,8 +158,7 @@ private:
     return -1;
   }
   /* Simplification */
-  // TODO: should be virtual pure
-  virtual void privateSimplify() {};// = 0;
+  void simplify();
   /* Pure virtual? What should be the implementation of complex? */
   virtual int compareToSameTypeExpression(const Expression * e) const {
     return 0;

@@ -2,7 +2,7 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/dynamic_hierarchy.h>
-#include <poincare/integer.h>
+#include <poincare/rational.h>
 #include <poincare/layout_engine.h>
 #include <poincare/evaluation_engine.h>
 
@@ -37,7 +37,7 @@ private:
   /* Simplification */
   void privateSimplify() override;
   void factorizeChildren(Expression * e1, Expression * e2);
-  static const Integer RationalFactor(Expression * e);
+  static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
 };
 

@@ -50,13 +50,13 @@ Evaluation<T> * Multiplication::computeOnMatrices(Evaluation<T> * m, Evaluation<
 }
 
 bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
-  int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Integer ? e1->numberOfOperands()-1 : e1->numberOfOperands();
-  int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Integer ? e2->numberOfOperands()-1 : e2->numberOfOperands();
+  int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfOperands()-1 : e1->numberOfOperands();
+  int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfOperands()-1 : e2->numberOfOperands();
   if (numberOfNonRationalFactors1 != numberOfNonRationalFactors2) {
     return false;
   }
-  int firstNonRationalOperand1 = e1->operand(0)->type() == Type::Integer ? 1 : 0;
-  int firstNonRationalOperand2 = e2->operand(0)->type() == Type::Integer ? 1 : 0;
+  int firstNonRationalOperand1 = e1->operand(0)->type() == Type::Rational ? 1 : 0;
+  int firstNonRationalOperand2 = e2->operand(0)->type() == Type::Rational ? 1 : 0;
   for (int i = 0; i < numberOfNonRationalFactors1; i++) {
     if (e1->operand(firstNonRationalOperand1+i)->compareTo(e2->operand(firstNonRationalOperand2+i)) != 0) {
       return false;

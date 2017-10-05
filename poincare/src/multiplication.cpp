@@ -69,15 +69,20 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
 }
 
 void Multiplication::privateSimplify() {
-  for (int i=0; i<numberOfOperands(); i++) {
-    Expression * o = (Expression *)operand(i);
+  /* First loop: merge all multiplication, break if 0 or undef */
+  int index = 0;
+  while (index < numberOfOperands()) {
+    Expression * o = (Expression *)operand(index++);
     if (o->type() == Type::Multiplication) {
       mergeOperands(static_cast<Multiplication *>(o));
+      index = 0;
     } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       replaceWith(new Rational(Integer(0)), true);
+      return;
     }
     /* if (o->type() == Type::Undefined) {
      *   replaceWith(new Undefined(), true);
+     *   return;
      * }*/
   }
   sortChildren();
@@ -100,8 +105,6 @@ void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
   const Expression * addOperands[2] = {CreateExponent(e1), CreateExponent(e2)};
   removeOperand(e2, true);
   Expression * s = new Addition(addOperands, 2, false);
-  s->setParent(this);
-  s->simplify();
   removeOperand(e2, true);
   if (e1->type() == Type::Power) {
     e1->replaceOperand(e1->operand(1), s, true);
@@ -109,6 +112,7 @@ void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
     const Expression * operands[2] = {e1, s};
     e1->replaceWith(new Power(operands, false), false);
   }
+  s->privateSimplify();
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {

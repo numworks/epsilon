@@ -19,6 +19,8 @@ public:
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
 
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
+  /* Simplification */
+  void immediateSimplify() override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -33,7 +35,6 @@ private:
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "*");
   }
   /* Simplification */
-  void immediateSimplify() override;
   void factorizeChildren(Expression * e1, Expression * e2);
   void distributeOnChildAtIndex(int index);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);

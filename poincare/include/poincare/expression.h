@@ -97,9 +97,6 @@ public:
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
-  // Allow to narrow down some nodes when querying the Expression tree.
-  // Currently implemented by Symbol and Integer
-  virtual int identifier() const { assert(false); return 0; }
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
@@ -115,7 +112,7 @@ public:
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
   void replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
   virtual void swapOperands(int i, int j) = 0;
-  void removeFromParent();
+  //void removeFromParent();
 
   /* Sorting */
   /* compareTo returns:

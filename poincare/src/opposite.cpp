@@ -1,6 +1,8 @@
 #include <poincare/opposite.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -24,6 +26,14 @@ Expression * Opposite::clone() const {
 template<typename T>
 Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());
+}
+
+void Opposite::immediateSimplify() {
+  const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(0)};
+  detachOperand(operand(0));
+  Multiplication * m = new Multiplication(multOperands, 2, false);
+  replaceWith(m, true);
+  m->immediateSimplify();
 }
 
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

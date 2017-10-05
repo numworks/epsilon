@@ -22,13 +22,16 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 void Addition::privateSimplify() {
-  for (int i=0; i<numberOfOperands(); i++) {
-    Expression * o = (Expression *)operand(i);
+  int index = 0;
+  while (index < numberOfOperands()) {
+    Expression * o = (Expression *)operand(index++);
     if (o->type() == Type::Addition) {
       mergeOperands(static_cast<Addition *>(o));
+      index = 0;
     }
     /* if (o->type() == Type::Undefined) {
      *   replaceWith(new Undefined(), true);
+     *   return;
      * }*/
   }
   sortChildren();

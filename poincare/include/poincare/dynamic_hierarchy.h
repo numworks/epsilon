@@ -20,6 +20,9 @@ public:
 
   void removeOperand(const Expression * e, bool deleteAfterRemoval = true);
   void addOperands(const Expression * const * operands, int numberOfOperands);
+  void addOperandAtIndex(Expression * operand, int index);
+  void mergeOperands(DynamicHierarchy * d);
+  void sortChildren();
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
   int compareToSameTypeExpression(const Expression * e) const override;

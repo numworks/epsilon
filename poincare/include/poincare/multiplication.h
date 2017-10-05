@@ -33,7 +33,7 @@ private:
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "*");
   }
   /* Simplification */
-  void privateSimplify() override;
+  void immediateSimplify() override;
   void factorizeChildren(Expression * e1, Expression * e2);
   void distributeOnChildAtIndex(int index);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);

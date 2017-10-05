@@ -128,7 +128,7 @@ public:
   /* Simplification */
   static void simplify(Expression ** e);
   // TODO: should be virtual pure
-  virtual void privateSimplify() {};// = 0;
+  virtual void immediateSimplify() {};// = 0;
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.

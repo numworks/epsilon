@@ -68,7 +68,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
   return true;
 }
 
-void Multiplication::privateSimplify() {
+void Multiplication::immediateSimplify() {
   /* First loop: merge all multiplication, break if 0 or undef */
   int index = 0;
   while (index < numberOfOperands()) {
@@ -120,7 +120,7 @@ void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
     const Expression * operands[2] = {e1, s};
     e1->replaceWith(new Power(operands, false), false);
   }
-  s->privateSimplify();
+  s->immediateSimplify();
 }
 
 void Multiplication::distributeOnChildAtIndex(int i) {
@@ -130,10 +130,10 @@ void Multiplication::distributeOnChildAtIndex(int i) {
     replaceOperand(operand(i), termJ->clone(), false);
     Expression * m = clone();
     a->replaceOperand(termJ, m, true);
-    m->privateSimplify();
+    m->immediateSimplify();
   }
   replaceWith(a, true);
-  a->privateSimplify();
+  a->immediateSimplify();
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {

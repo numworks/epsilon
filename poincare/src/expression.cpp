@@ -125,11 +125,11 @@ void Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
   m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
 }
 
-void Expression::removeFromParent() {
+/*void Expression::removeFromParent() {
   assert(m_parent != nullptr);
   assert(m_parent->type() == Expression::Type::Addition || m_parent->type() == Expression::Type::Multiplication); // Weak assertion. We just want to make sure this is actually a DynamicHierarchy
   static_cast<DynamicHierarchy *>(m_parent)->removeOperand(this);
-}
+}*/
 
 int Expression::compareTo(const Expression * e) const {
   if (this->type() > e->type()) {

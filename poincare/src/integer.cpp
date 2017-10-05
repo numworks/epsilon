@@ -427,36 +427,6 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   return div;
 }
 
-int Integer::identifier() const {
-  assert(m_numberOfDigits > 0);
-  int sign = m_negative ? -1 : 1;
-  return sign*m_digit;
-}
-
-/*
-Integer Integer::divide_by(const Integer &other) const {
-  return Division(*this, other).quotient;
-}
-
-
-Multiplication Integer::primeFactorization() const {
-  Integer result = this;
-  Integer i = 2;
-  while (i<result) {
-    Int occurrencesOfI = 0;
-    while (i divides result) {
-      result = remainder;
-      occurrencesOfI += 1;
-    }
-    if (occurrencesOfI > 0) {
-      set(i, occurrencesOfI);
-    }
-    i++;
-  }
-}
-
-*/
-
 Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
   union {
     uint32_t uint_result;

@@ -53,10 +53,6 @@ Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
 
-int Symbol::identifier() const {
-  return m_name;
-}
-
 template<typename T>
 Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {

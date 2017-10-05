@@ -12,6 +12,9 @@ extern "C" {
 #include "layout/baseline_relative_layout.h"
 #include <ion.h>
 
+using std::isinf;
+using std::isnan;
+
 namespace Poincare {
 
 

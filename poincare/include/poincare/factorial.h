@@ -1,7 +1,11 @@
 #ifndef POINCARE_FACTORIAL_H
 #define POINCARE_FACTORIAL_H
 
+#include <cmath>
 #include <poincare/function.h>
+
+using std::isinf;
+using std::isnan;
 
 namespace Poincare {
 

@@ -39,9 +39,12 @@
  * compatibility with MacOS's default version (2.3) instead of using the code
  * requires feature. */
 #include <math.h>
+#include <cmath>
 #include <poincare.h>
 #include "expression_parser.hpp"
 using namespace Poincare;
+using std::isinf;
+using std::isnan;
 
 /* Flex has provision for reading files. We'll never use this, so we're defining
  * YY_INPUT which effectively disables taking input from a file. */

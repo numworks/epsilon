@@ -1,7 +1,11 @@
 #ifndef POINCARE_LEAST_COMMON_MULTIPLE_H
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
+#include <cmath>
 #include <poincare/function.h>
+
+using std::isinf;
+using std::isnan;
 
 namespace Poincare {
 

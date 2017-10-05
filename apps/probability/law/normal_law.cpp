@@ -4,6 +4,9 @@
 #include <float.h>
 #include <ion.h>
 
+using std::isinf;
+using std::isnan;
+
 namespace Probability {
 
 NormalLaw::NormalLaw() :

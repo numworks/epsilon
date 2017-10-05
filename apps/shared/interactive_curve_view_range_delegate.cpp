@@ -4,6 +4,9 @@
 #include <float.h>
 #include <math.h>
 
+using std::isinf;
+using std::isnan;
+
 namespace Shared {
 
 

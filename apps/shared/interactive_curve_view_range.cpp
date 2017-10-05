@@ -6,6 +6,8 @@
 #include <assert.h>
 
 using namespace Poincare;
+using std::isinf;
+using std::isnan;
 
 namespace Shared {
 

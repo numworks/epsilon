@@ -2,6 +2,9 @@
 #include <assert.h>
 #include <cmath>
 
+using std::isinf;
+using std::isnan;
+
 namespace Probability {
 
 BinomialLaw::BinomialLaw() :

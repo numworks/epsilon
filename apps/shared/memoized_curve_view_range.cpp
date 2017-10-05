@@ -4,6 +4,9 @@
 #include <assert.h>
 #include <ion.h>
 
+using std::isinf;
+using std::isnan;
+
 namespace Shared {
 
 MemoizedCurveViewRange::MemoizedCurveViewRange() :

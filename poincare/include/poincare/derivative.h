@@ -1,8 +1,12 @@
 #ifndef POINCARE_DERIVATIVE_H
 #define POINCARE_DERIVATIVE_H
 
+#include <cmath>
 #include <poincare/function.h>
 #include <poincare/variable_context.h>
+
+using std::isinf;
+using std::isnan;
 
 namespace Poincare {
 

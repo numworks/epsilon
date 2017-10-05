@@ -5,6 +5,8 @@
 #include <ion.h>
 
 namespace Probability {
+using std::isinf;
+using std::isnan;
 
 ExponentialLaw::ExponentialLaw() :
   OneParameterLaw(1.0f)

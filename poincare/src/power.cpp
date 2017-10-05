@@ -9,6 +9,9 @@ extern "C" {
 #include <poincare/opposite.h>
 #include "layout/baseline_relative_layout.h"
 
+using std::isinf;
+using std::isnan;
+
 namespace Poincare {
 
 Expression::Type Power::type() const {

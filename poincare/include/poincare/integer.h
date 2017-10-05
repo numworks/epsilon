@@ -7,6 +7,11 @@
 
 namespace Poincare {
 
+/* All algorithm should be improved with:
+ * Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann */
+
+// TODO: Integer should not be an expression!
+
 struct IntegerDivision;
 
 class Integer : public StaticHierarchy<0> {
@@ -52,6 +57,8 @@ public:
   static Integer Power(const Integer & i, const Integer & j);
   //static Integer Division(const Integer & i, const Integer & j);
   //static IntegerDivision division(const Integer & i, const Integer & j);
+  bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1); };
+  bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);
   void releaseDynamicIvars();
@@ -62,7 +69,6 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;
-  bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(int i) const {

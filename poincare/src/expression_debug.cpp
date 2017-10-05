@@ -2,6 +2,7 @@
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
 #include <poincare/integer.h>
+#include <poincare/rational.h>
 #include <ion.h>
 #include <iostream>
 
@@ -52,6 +53,13 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Product:
       std::cout << "Product";
+      break;
+    case Expression::Type::Rational:
+      std::cout << "Rational(";
+      std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>(context);
+      std::cout << ", ";
+      std::cout << static_cast<const Rational * >(e)->denominator().approximate<double>(context);
+      std::cout << ")";
       break;
     case Expression::Type::Sine:
       std::cout << "Sine";

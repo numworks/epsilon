@@ -65,6 +65,7 @@ objs += $(addprefix poincare/src/,\
   prediction_interval.o\
   preferences.o\
   product.o\
+  rational.o\
   real_part.o\
   round.o\
   sequence.o\

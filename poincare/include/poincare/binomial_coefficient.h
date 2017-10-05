@@ -2,6 +2,10 @@
 #define POINCARE_BINOMIAL_COEFFICIENT_H
 
 #include <poincare/function.h>
+#include <cmath>
+
+using std::isinf;
+using std::isnan;
 
 namespace Poincare {
 

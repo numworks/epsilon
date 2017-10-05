@@ -1,7 +1,11 @@
 #ifndef POINCARE_DIVISION_QUOTIENT_H
 #define POINCARE_DIVISION_QUOTIENT_H
 
+#include <cmath>
 #include <poincare/function.h>
+
+using std::isinf;
+using std::isnan;
 
 namespace Poincare {
 

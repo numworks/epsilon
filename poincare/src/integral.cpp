@@ -12,6 +12,9 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/integral_layout.h"
 
+using std::isinf;
+using std::isnan;
+
 namespace Poincare {
 
 Integral::Integral() :

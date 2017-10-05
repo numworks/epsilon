@@ -6,6 +6,9 @@ extern "C" {
 }
 #include <cmath>
 
+using std::isinf;
+using std::isnan;
+
 namespace Poincare {
 
 GreatCommonDivisor::GreatCommonDivisor() :

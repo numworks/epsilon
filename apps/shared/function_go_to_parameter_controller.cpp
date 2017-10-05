@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <cmath>
 
+using std::isinf;
+using std::isnan;
+
 namespace Shared {
 
 FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :

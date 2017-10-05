@@ -2,6 +2,8 @@
 #include <cmath>
 
 using namespace Shared;
+using std::isinf;
+using std::isnan;
 
 namespace Sequence {
 

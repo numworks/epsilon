@@ -2,6 +2,9 @@
 #include <cmath>
 #include <float.h>
 
+using std::isinf;
+using std::isnan;
+
 namespace Probability {
 
 Law::Law() :

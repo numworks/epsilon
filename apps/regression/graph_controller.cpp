@@ -4,6 +4,8 @@
 
 using namespace Poincare;
 using namespace Shared;
+using std::isinf;
+using std::isnan;
 
 namespace Regression {
 

@@ -1,6 +1,6 @@
 #include "function.h"
 #include <string.h>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;

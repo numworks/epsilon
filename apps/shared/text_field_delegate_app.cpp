@@ -1,6 +1,6 @@
 #include "text_field_delegate_app.h"
 #include "../apps_container.h"
-#include <math.h>
+#include <cmath>
 #include <string.h>
 
 using namespace Poincare;

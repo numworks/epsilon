@@ -1,6 +1,6 @@
 #include "interactive_curve_view_controller.h"
 #include "text_field_delegate_app.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;

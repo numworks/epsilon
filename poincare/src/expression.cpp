@@ -106,7 +106,7 @@ void Expression::simplify() {
     print_expression(this, 0);
     std::cout << "-----" << std::endl;
   }
-  privateSimplify();
+  immediateSimplify();
 }
 
 bool Expression::hasAncestor(const Expression * e) const {

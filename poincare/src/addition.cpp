@@ -21,7 +21,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-void Addition::privateSimplify() {
+void Addition::immediateSimplify() {
   int index = 0;
   while (index < numberOfOperands()) {
     Expression * o = (Expression *)operand(index++);

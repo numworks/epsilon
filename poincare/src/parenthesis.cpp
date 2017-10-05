@@ -23,7 +23,7 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
-void Parenthesis::privateSimplify() {
+void Parenthesis::immediateSimplify() {
   replaceWith(const_cast<Expression *>(operand(0)), true);
 }
 

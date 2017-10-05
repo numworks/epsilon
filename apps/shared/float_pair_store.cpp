@@ -1,5 +1,5 @@
 #include "float_pair_store.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>

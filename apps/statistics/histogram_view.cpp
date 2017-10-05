@@ -1,6 +1,6 @@
 #include "histogram_view.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 using namespace Shared;
 

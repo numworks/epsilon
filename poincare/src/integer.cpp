@@ -3,8 +3,8 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <math.h>
 }
+#include <cmath>
 #include <poincare/complex.h>
 #include "layout/string_layout.h"
 

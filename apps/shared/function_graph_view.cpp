@@ -1,6 +1,6 @@
 #include "function_graph_view.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 using namespace Poincare;
 

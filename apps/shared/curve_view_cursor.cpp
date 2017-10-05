@@ -1,5 +1,5 @@
 #include "curve_view_cursor.h"
-#include <math.h>
+#include <cmath>
 
 namespace Shared {
 

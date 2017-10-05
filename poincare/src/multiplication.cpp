@@ -5,6 +5,9 @@ extern "C" {
 #include <cmath>
 
 #include <poincare/multiplication.h>
+#include <poincare/rational.h>
+#include <poincare/addition.h>
+#include <poincare/power.h>
 #include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
@@ -63,6 +66,60 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
     }
   }
   return true;
+}
+
+void Multiplication::privateSimplify() {
+  for (int i=0; i<numberOfOperands(); i++) {
+    Expression * o = (Expression *)operand(i);
+    if (o->type() == Type::Multiplication) {
+      mergeOperands(static_cast<Multiplication *>(o));
+    } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
+      replaceWith(new Rational(Integer(0)), true);
+    }
+    /* if (o->type() == Type::Undefined) {
+     *   replaceWith(new Undefined(), true);
+     * }*/
+  }
+  sortChildren();
+  for (int i = 0; i < numberOfOperands()-1; i++) {
+    // TODO: maybe delete operand Rational(1,1) and at the end test if the numberOfOperand is 0, return Rational(1,1)?
+    if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
+      Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
+      replaceOperand(operand(i), new Rational(a), true);
+      removeOperand(operand(i+1), true);
+    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1))) {
+      factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+    }
+  }
+  if (numberOfOperands() == 1) {
+    replaceWith(const_cast<Expression *>(operand(0)), true);
+  }
+}
+
+void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
+  const Expression * addOperands[2] = {CreateExponent(e1), CreateExponent(e2)};
+  removeOperand(e2, true);
+  Expression * s = new Addition(addOperands, 2, false);
+  s->setParent(this);
+  s->simplify();
+  removeOperand(e2, true);
+  if (e1->type() == Type::Power) {
+    e1->replaceOperand(e1->operand(1), s, true);
+  } else {
+    const Expression * operands[2] = {e1, s};
+    e1->replaceWith(new Power(operands, false), false);
+  }
+}
+
+const Expression * Multiplication::CreateExponent(Expression * e) {
+  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Integer(1);
+  return n;
+}
+
+bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {
+  const Expression * f1 = e1->type() == Type::Power ? e1->operand(0) : e1;
+  const Expression * f2 = e2->type() == Type::Power ? e2->operand(0) : e2;
+  return (f1->compareTo(f2) == 0);
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

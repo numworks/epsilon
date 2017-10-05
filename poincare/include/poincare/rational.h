@@ -25,6 +25,9 @@ public:
   Type type() const override;
   Expression * clone() const override;
 
+  // Basic test
+  bool isZero() const { return m_numerator.isZero(); }
+
   // Arithmetic
   static Rational Addition(const Rational & i, const Rational & j);
   static Rational Multiplication(const Rational & i, const Rational & j);

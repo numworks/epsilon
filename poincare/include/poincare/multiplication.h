@@ -38,6 +38,7 @@ private:
   void factorizeChildren(Expression * e1, Expression * e2);
   void distributeOnChildAtIndex(int index);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
+  static bool TermHasRationalBaseAndExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
 };
 

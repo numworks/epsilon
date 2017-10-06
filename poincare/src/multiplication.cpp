@@ -100,7 +100,7 @@ void Multiplication::immediateSimplify() {
       Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
-    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1))) {
+    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && !(TermHasRationalBaseAndExponent(operand(i)) && TermHasRationalBaseAndExponent(operand(i+1)))) {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     }
   }
@@ -148,6 +148,12 @@ bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Express
   const Expression * f1 = e1->type() == Type::Power ? e1->operand(0) : e1;
   const Expression * f2 = e2->type() == Type::Power ? e2->operand(0) : e2;
   return (f1->compareTo(f2) == 0);
+}
+
+bool Multiplication::TermHasRationalBaseAndExponent(const Expression * e) {
+  bool hasRationalBase = e->type() == Type::Power ? e->operand(0)->type() == Type::Rational : e->type() == Type::Rational;
+  bool hasRationalExponent = e->type() == Type::Power ? e->operand(1)->type() == Type::Rational : true;
+  return hasRationalBase && hasRationalExponent;
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

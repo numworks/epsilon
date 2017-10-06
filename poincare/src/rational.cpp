@@ -71,8 +71,13 @@ Rational Rational::Multiplication(const Rational & i, const Rational & j) {
 }
 
 Rational Rational::Power(const Rational & i, const Integer & j) {
-  Integer  newNumerator = Integer::Power(i.numerator(), j);
-  Integer  newDenominator = Integer::Power(i.denominator(), j);
+  Integer absJ = j;
+  absJ.setNegative(false);
+  Integer newNumerator = Integer::Power(i.numerator(), absJ);
+  Integer newDenominator = Integer::Power(i.denominator(), absJ);
+  if (j.isNegative()) {
+    return Rational(newDenominator, newNumerator);
+  }
   return Rational(newNumerator, newDenominator);
 }
 

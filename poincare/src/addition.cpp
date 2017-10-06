@@ -36,7 +36,6 @@ void Addition::immediateSimplify() {
   }
   sortChildren();
   for (int i = 0; i < numberOfOperands()-1; i++) {
-    // TODO: maybe delete operand Rational(0,1) and at the end test if the numberOfOperand is 0, return Rational(0,1)?
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
       Rational a = Rational::Addition(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
@@ -44,6 +43,9 @@ void Addition::immediateSimplify() {
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     }
+  }
+  if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
+    removeOperand(operand(0), true);
   }
   if (numberOfOperands() == 1) {
     replaceWith(const_cast<Expression *>(operand(0)), true);

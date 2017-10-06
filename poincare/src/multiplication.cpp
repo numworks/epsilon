@@ -104,6 +104,9 @@ void Multiplication::immediateSimplify() {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     }
   }
+  if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isOne()) {
+    removeOperand(operand(0), true);
+  }
   if (numberOfOperands() == 1) {
     replaceWith(const_cast<Expression *>(operand(0)), true);
   }

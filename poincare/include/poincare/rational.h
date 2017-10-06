@@ -27,10 +27,13 @@ public:
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
+  bool isOne() const { return m_numerator.isOne() && m_denominator.isOne(); }
+  bool isNegative() const { return m_numerator.isNegative(); }
 
   // Arithmetic
   static Rational Addition(const Rational & i, const Rational & j);
   static Rational Multiplication(const Rational & i, const Rational & j);
+  static Rational Power(const Rational & i, const Integer & j);
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;

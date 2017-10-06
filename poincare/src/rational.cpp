@@ -70,6 +70,12 @@ Rational Rational::Multiplication(const Rational & i, const Rational & j) {
   return Rational(newNumerator, newDenominator);
 }
 
+Rational Rational::Power(const Rational & i, const Integer & j) {
+  Integer  newNumerator = Integer::Power(i.numerator(), j);
+  Integer  newDenominator = Integer::Power(i.denominator(), j);
+  return Rational(newNumerator, newDenominator);
+}
+
 // Comparison
 
 int Rational::compareToSameTypeExpression(const Expression * e) const {

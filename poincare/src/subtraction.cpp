@@ -4,6 +4,9 @@ extern "C" {
 }
 
 #include <poincare/subtraction.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
+#include <poincare/addition.h>
 #include <poincare/opposite.h>
 #include <poincare/complex_matrix.h>
 #include "layout/horizontal_layout.h"
@@ -23,6 +26,17 @@ Expression * Subtraction::clone() const {
 template<typename T>
 Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
+}
+
+void Subtraction::immediateSimplify() {
+  const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(1)};
+  Multiplication * m = new Multiplication(multOperands, 2, false);
+  const Expression * addOperands[2] = {operand(0), m};
+  Addition * a = new Addition(addOperands, 2, false);
+  m->immediateSimplify();
+  detachOperands();
+  replaceWith(a, true);
+  a->immediateSimplify();
 }
 
 template<typename T> Evaluation<T> * Subtraction::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {

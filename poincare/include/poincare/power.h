@@ -34,7 +34,7 @@ private:
   int compareToSameTypeExpression(const Expression * e) const override;
   /* Simplification */
   void immediateSimplify() override;
-  void simplifyPowerPower(Power * p, Rational * r);
+  void simplifyPowerPower(Power * p, Expression * r);
   void simplifyPowerMultiplication(Multiplication * m, Rational * r);
   void simplifyRationalRationalPower(Rational * a, Rational * b);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r);

@@ -23,6 +23,16 @@ Expression * Power::clone() const {
   return new Power(m_operands, true);
 }
 
+bool Power::isPositive() const {
+  if (operand(1)->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(operand(1));
+    if (r->denominator().isOne() && Integer::Division(r->numerator(), Integer(2)).remainder.isZero()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 template<typename T>
 Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   if (d.b() != 0) {

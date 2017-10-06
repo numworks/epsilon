@@ -95,6 +95,9 @@ public:
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
   virtual Expression * clone() const = 0;
+  /* If isPositive is false, the expression has no sign (it does have to be
+   * negative) */
+  virtual bool isPositive() const { return false; }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

@@ -42,6 +42,9 @@ void Addition::immediateSimplify() {
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+      if (operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isZero()) {
+        removeOperand(operand(i), true);
+      }
     }
   }
   if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
@@ -61,6 +64,7 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2) {
     } else {
       static_cast<Multiplication *>(e1)->addOperandAtIndex(r, 0);
     }
+    e1->immediateSimplify();
   } else {
     const Expression * operands[2] = {r, e1};
     e1->replaceWith(new Multiplication(operands, 2, true), true);

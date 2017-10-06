@@ -33,7 +33,6 @@ private:
   int compareToSameTypeExpression(const Expression * e) const override;
   /* Simplification */
   void immediateSimplify() override;
-  void simplifyRationalPower(Expression * e, Rational * b);
   void simplifyPowerPower(Power * p, Rational * r);
   void simplifyPowerMultiplication(Multiplication * m, Rational * r);
   void simplifyRationalRationalPower(Rational * a, Rational * b);

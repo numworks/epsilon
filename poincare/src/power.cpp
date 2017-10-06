@@ -112,6 +112,7 @@ void Power::immediateSimplify() {
   }
   if (operand(0)->type() == Type::Rational) {
     const Rational * a = static_cast<const Rational *>(operand(0));
+    // 0^x
     if (a->isZero()) {
       if (operand(1)->type() == Type::Rational) {
         const Rational * b = static_cast<const Rational *>(operand(1));
@@ -124,43 +125,49 @@ void Power::immediateSimplify() {
         }
       }
     }
+    // 1^x
     if (a->isOne()) {
       replaceWith(new Rational(Integer(1)), true);
       return;
     }
   }
   if (operand(1)->type() == Type::Rational) {
-    const Rational * b = static_cast<const Rational *>(operand(1));
-    simplifyRationalPower(const_cast<Expression *>(operand(0)), const_cast<Rational *>(b));
+    Rational * b = static_cast<Rational *>((Expression *)operand(1));
+    // x^0
+    if (b->isZero()) {
+      replaceWith(new Rational(Integer(0)), true);
+      return;
+    }
+    // x^1
+    if (b->isOne()) {
+      replaceWith(new Rational(Integer(1), true));
+      return;
+    }
+    /* a^n with n Integer */
+    if (b->denominator().isOne()) {
+      if (operand(0)->type() == Type::Rational) {
+        Rational * e = static_cast<Rational *>((Expression *)operand(0));
+        Rational r = Rational::Power(*(e), b->numerator());
+        replaceWith(new Rational(r),true);
+        return;
+      } else if (operand(0)->type() == Type::Power) {
+        Power * e = static_cast<Power *>((Expression *)operand(0));
+        simplifyPowerPower(e, b);
+        return;
+      } else if (operand(0)->type() == Type::Multiplication) {
+        Multiplication * e = static_cast<Multiplication *>((Expression *)operand(0));
+        simplifyPowerMultiplication(e, b);
+        return;
+      }
+    }
+    // p^q with p, q rationals
+    if (operand(0)->type() == Type::Rational) {
+      simplifyRationalRationalPower(static_cast<Rational *>((Expression *)operand(0)), b);
+      return;
+    }
   }
   // TODO: (a^b)^c -> a^(b+c) if a > 0
   // TODO: (a*b)^c -> |a|^c*(sign(a)*b)^c
-}
-
-void Power::simplifyRationalPower(Expression * e, Rational * b) {
-  if (b->isZero()) {
-    replaceWith(new Rational(Integer(0)), true);
-    return;
-  }
-  if (b->isOne()) {
-    replaceWith(new Rational(Integer(1), true));
-    return;
-  }
-  /* a^n with n Integer */
-  if (b->denominator().isOne()) {
-    if (e->type() == Type::Rational) {
-      Rational r = Rational::Power(*(static_cast<Rational *>(e)), b->numerator());
-      replaceWith(new Rational(r),true);
-      return;
-    } else if (e->type() == Type::Power) {
-      return simplifyPowerPower(static_cast<Power *>(e), b);
-    } else if (e->type() == Type::Multiplication) {
-      return simplifyPowerMultiplication(static_cast<Multiplication *>(e), b);
-    }
-  }
-  if (e->type() == Type::Rational) {
-    return simplifyRationalRationalPower(static_cast<Rational *>((Expression *)operand(0)), b);
-  }
 }
 
 void Power::simplifyPowerPower(Power * p, Rational * r) {
@@ -168,9 +175,7 @@ void Power::simplifyPowerPower(Power * p, Rational * r) {
   Multiplication * m = new Multiplication(multOperands, 2, false);
   replaceOperand(r, m, false);
   m->immediateSimplify();
-  if (operand(1)->type() == Type::Rational) {
-    simplifyRationalPower(const_cast<Expression *>(operand(0)), static_cast<Rational *>((Expression *)operand(1)));
-  }
+  immediateSimplify();
 }
 
 void Power::simplifyPowerMultiplication(Multiplication * m, Rational * r) {
@@ -180,7 +185,7 @@ void Power::simplifyPowerMultiplication(Multiplication * m, Rational * r) {
     const Expression * powOperands[2] = {factor, rCopy};
     Power * p = new Power(powOperands, false);
     m->replaceOperand(factor, p, false);
-    p->simplifyRationalPower(const_cast<Expression *>(p->operand(0)), static_cast<Rational *>(rCopy));
+    p->immediateSimplify();
   }
   detachOperand(m);
   replaceWith(m, true); // delete r

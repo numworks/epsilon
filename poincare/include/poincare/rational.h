@@ -24,6 +24,7 @@ public:
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
+  bool isPositive() const override { return !isNegative(); }
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }

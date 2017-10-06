@@ -13,6 +13,7 @@ class Power : public StaticHierarchy<2> {
 public:
   Type type() const override;
   Expression * clone() const override;
+  bool isPositive() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;

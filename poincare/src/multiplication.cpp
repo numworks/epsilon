@@ -140,7 +140,7 @@ void Multiplication::distributeOnChildAtIndex(int i) {
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {
-  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Integer(1);
+  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(Integer(1));
   return n;
 }
 

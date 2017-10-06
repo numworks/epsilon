@@ -67,6 +67,7 @@
 #include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
+#include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 
 #endif

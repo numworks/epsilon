@@ -1,6 +1,7 @@
 #include <poincare/addition.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/multiplication.h>
+#include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -28,11 +29,10 @@ void Addition::immediateSimplify() {
     if (o->type() == Type::Addition) {
       mergeOperands(static_cast<Addition *>(o));
       index = 0;
+    } else if (o->type() == Type::Undefined) {
+      replaceWith(new Undefined(), true);
+      return;
     }
-    /* if (o->type() == Type::Undefined) {
-     *   replaceWith(new Undefined(), true);
-     *   return;
-     * }*/
   }
   sortChildren();
   for (int i = 0; i < numberOfOperands()-1; i++) {

@@ -9,6 +9,7 @@ extern "C" {
 #include <poincare/addition.h>
 #include <poincare/power.h>
 #include <poincare/complex_matrix.h>
+#include <poincare/undefined.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -79,11 +80,10 @@ void Multiplication::immediateSimplify() {
     } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       replaceWith(new Rational(Integer(0)), true);
       return;
+    } else if (o->type() == Type::Undefined) {
+      replaceWith(new Undefined(), true);
+      return;
     }
-    /* if (o->type() == Type::Undefined) {
-     *   replaceWith(new Undefined(), true);
-     *   return;
-     * }*/
   }
   /* Second loop, distribute addition */
   for (int i=0; i<numberOfOperands(); i++) {

@@ -3,6 +3,8 @@
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/evaluation_engine.h>
+#include <poincare/rational.h>
+#include <poincare/multiplication.h>
 
 namespace Poincare {
 
@@ -29,6 +31,12 @@ private:
 
   int compareToGreaterTypeExpression(const Expression * e) const override;
   int compareToSameTypeExpression(const Expression * e) const override;
+  /* Simplification */
+  void immediateSimplify() override;
+  void simplifyRationalPower(Expression * e, Rational * b);
+  void simplifyPowerPower(Power * p, Rational * r);
+  void simplifyPowerMultiplication(Multiplication * m, Rational * r);
+  void simplifyRationalRationalPower(Rational * a, Rational * b);
 };
 
 }

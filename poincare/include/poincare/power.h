@@ -37,6 +37,7 @@ private:
   void simplifyPowerPower(Power * p, Rational * r);
   void simplifyPowerMultiplication(Multiplication * m, Rational * r);
   void simplifyRationalRationalPower(Rational * a, Rational * b);
+  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r);
 };
 
 }

@@ -4,10 +4,13 @@ extern "C" {
 }
 #include <cmath>
 #include <math.h>
+#include <ion.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/power.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
+#include <poincare/arithmetic.h>
+#include <poincare/symbol.h>
 #include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
@@ -123,12 +126,15 @@ void Power::immediateSimplify() {
     }
     if (a->isOne()) {
       replaceWith(new Rational(Integer(1)), true);
+      return;
     }
   }
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     simplifyRationalPower(const_cast<Expression *>(operand(0)), const_cast<Rational *>(b));
   }
+  // TODO: (a^b)^c -> a^(b+c) if a > 0
+  // TODO: (a*b)^c -> |a|^c*(sign(a)*b)^c
 }
 
 void Power::simplifyRationalPower(Expression * e, Rational * b) {
@@ -182,16 +188,71 @@ void Power::simplifyPowerMultiplication(Multiplication * m, Rational * r) {
 }
 
 void Power::simplifyRationalRationalPower(Rational * a, Rational * b) {
-  /*const Expression * n = SimplifyIntegerRationalPower(a->numerator(), b);
-  const Expression * d = SimplifyIntegerRationalPower(a->denominator(), b);
-  const Expression * multOp[2] = {n, d};
+  Expression * n = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
+  Expression * d = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
+  Rational * minusOne = new Rational(Integer(-1));
+  const Expression * powOp[2] = {d, minusOne};
+  Power * p = new Power(powOp, false);
+  const Expression * multOp[2] = {n, p};
   Multiplication * m = new Multiplication(multOp, 2, false);
+  if (d->type() == Type::Rational && static_cast<Rational *>(d)->isOne()) {
+    p->replaceWith(new Rational(Integer(1)), true);
+  } else if (d->type() == Type::Multiplication) {
+    p->simplifyPowerMultiplication(static_cast<Multiplication *>(d), minusOne);
+  }
   replaceWith(m, true);
-  m->immediateSimplify();*/
+  m->immediateSimplify();
 }
 
-/*Expression * Power::SimplifyIntegerRationalPower(Integer i, Rational * r) {
-// TODO
-}*/
+Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r) {
+  assert(!i.isZero());
+  if (i.isOne()) {
+    return new Rational(Integer(1));
+  }
+  if (Arithmetic::k_primorial32.isLowerThan(i)) {
+    const Expression * powOp[2] = {new Rational(i), r->clone()};
+    // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
+    return new Power(powOp, false);
+  }
+  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
+  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
+  Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+
+  Integer r1 = Integer(1);
+  Integer r2 = Integer(1);
+  int index = 0;
+  while (!coefficients[index].isZero()) {
+    Integer n = Integer::Multiplication(coefficients[index], r->numerator());
+    IntegerDivision div = Integer::Division(n, r->denominator());
+    r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
+    r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
+    index++;
+  }
+  Rational * p1 = new Rational(r2);
+  Rational * p2 = new Rational(Integer(1), r->denominator());
+  const Expression * powerOperands[2] = {p1, p2};
+  Power * p = new Power(powerOperands, false);
+  if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
+    return p;
+  }
+  const Expression * multOp[2] = {new Rational(r1), p};
+  Multiplication * m = new Multiplication(multOp, 2, false);
+  if (r2.isOne()) {
+    m->removeOperand(p);
+  }
+  if (i.isNegative()) {
+    const Symbol * exp = new Symbol(Ion::Charset::Exponential);
+    const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);
+    const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
+    const Expression * multExpOperands[3] = {iComplex, pi, r->clone()};
+    Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
+    const Expression * powOperands[2] = {exp, mExp};
+    const Power * pExp = new Power(powOperands, false);
+    const Expression * operand[1] = {pExp};
+    m->addOperands(operand, 1);
+  }
+  m->sortChildren();
+  return m;
+}
 
 }

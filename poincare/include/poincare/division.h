@@ -12,6 +12,8 @@ public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  /* Simplification */
+  void immediateSimplify() override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

@@ -20,7 +20,7 @@ public:
   // Getter
   const Integer numerator() const;
   const Integer denominator() const;
-
+  void setNegative(bool negative) { m_numerator.setNegative(negative); }
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;

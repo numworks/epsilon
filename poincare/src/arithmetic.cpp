@@ -30,8 +30,9 @@ int primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 13, 17, 
 
 // we can go to 7907*7907 = 62 520 649
 void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, Integer * outputCoefficients, int outputLength) {
-  // TODO: Find the prime factorization of any number. When k_numberOfPrimeFactors is overflow, try every number as divisor.
-  assert(n->isLowerThan(Integer(primeFactors[k_numberOfPrimeFactors-1]*primeFactors[k_numberOfPrimeFactors-1])));
+  /* First we look for prime divisors in the table primeFactors (to speed up
+   * the prime factorization for low numbers). When k_numberOfPrimeFactors is
+   * overflow, try every number as divisor. */
   for (int index = 0; index < outputLength; index++) {
     outputCoefficients[index] = Integer(0);
   }
@@ -42,11 +43,12 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
   }
   int t = 0; // n prime factor index
   int k = 0; // prime factor index
-  outputFactors[t] = Integer(primeFactors[k]);
+  Integer testedPrimeFactor = Integer(primeFactors[k]); // prime factor
+  outputFactors[t] = testedPrimeFactor;
   IntegerDivision d = {.quotient = 0, .remainder = 0};
   bool stopCondition;
   do {
-    d = Integer::Division(m, Integer(primeFactors[k]));
+    d = Integer::Division(m, testedPrimeFactor);
     stopCondition = outputFactors[t].isLowerThan(d.quotient); // We evaluate the condition here in case we move d.quotient in n
     if (d.remainder.isEqualTo(Integer(0))) {
       outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));
@@ -56,11 +58,12 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
       }
       continue;
     }
-    k++;
     if (!outputCoefficients[t].isEqualTo(Integer(0))) {
       t++;
     }
-    outputFactors[t] = Integer(primeFactors[k]);
+    k++;
+    testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer(primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(1));
+    outputFactors[t] = testedPrimeFactor;
   } while (stopCondition);
   outputFactors[t] = std::move(m);
   outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));

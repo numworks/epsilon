@@ -42,8 +42,12 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
     if (outputCoefficients[index].isEqualTo(Integer(0))) {
       break;
     }
-    assert(outputFactors[index].identifier() == factors[index]); // Cheat: instead of comparing to integers, we compare only identifier as we know that prime factors and their coefficients will always be lower than 2^32.
-    assert(outputCoefficients[index].identifier() == coefficients[index]);
+    /* Cheat: instead of comparing to integers, we compare their approximations
+     * (the relation between integers and their approximation is a surjection,
+     * however different integers are really likely to have different
+     * approximations... */
+    assert(outputFactors[index].approximate<float>(context) == Integer(factors[index]).approximate<float>(context));
+    assert(outputCoefficients[index].approximate<float>(context) == Integer(coefficients[index]).approximate<float>(context));
   }
 }
 
@@ -62,4 +66,7 @@ QUIZ_CASE(poincare_arithmetic) {
   int factors2[3] = {2,5, 7};
   int coefficients2[3] = {2,4,2};
   assert_prime_factorization_equals_to(Integer(122500), factors2, coefficients2, 3);
+  int factors3[8] = {3,7,11, 13, 19, 3607, 3803, 52579};
+  int coefficients3[8] = {4,2,2,2,2,2,2,2};
+  assert_prime_factorization_equals_to(Integer("15241578780673678515622620750190521"), factors3, coefficients3, 8);
 }

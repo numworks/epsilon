@@ -102,9 +102,9 @@ void Expression::simplify(Expression ** e) {
 void Expression::simplify() {
   for (int i = 0; i < numberOfOperands(); i++) {
     ((Expression *)operand(i))->simplify();
-    std::cout << "-----" << std::endl;
+    /*std::cout << "-----" << std::endl;
     print_expression(this, 0);
-    std::cout << "-----" << std::endl;
+    std::cout << "-----" << std::endl;*/
   }
   immediateSimplify();
 }

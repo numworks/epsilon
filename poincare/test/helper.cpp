@@ -8,7 +8,7 @@
 
 using namespace Poincare;
 
-static Expression * parse_expression(const char * expression) {
+Expression * parse_expression(const char * expression) {
   quiz_print(expression);
   char buffer[200];
   strlcpy(buffer, expression, sizeof(buffer));

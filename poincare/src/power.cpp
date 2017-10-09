@@ -151,7 +151,7 @@ void Power::immediateSimplify() {
     }
     // x^1
     if (b->isOne()) {
-      replaceWith(new Rational(Integer(1), true));
+      replaceWith(const_cast<Expression *>(operand(0)), true);
       return;
     }
     // p^q with p, q rationals

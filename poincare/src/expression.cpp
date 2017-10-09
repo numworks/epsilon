@@ -89,9 +89,10 @@ public:
   }
 };
 
-void Expression::simplify(Expression ** e) {
+void Expression::simplifyAndBeautify(Expression ** e) {
   SimplificationRoot root(*e);
   root.simplify();
+  root.beautify();
   *e = (Expression *)(root.operand(0));
 }
 
@@ -100,6 +101,13 @@ void Expression::simplify() {
     ((Expression *)operand(i))->simplify();
   }
   immediateSimplify();
+}
+
+void Expression::beautify() {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    ((Expression *)operand(i))->beautify();
+  }
+  immediateBeautify();
 }
 
 bool Expression::hasAncestor(const Expression * e) const {

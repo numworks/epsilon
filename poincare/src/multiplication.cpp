@@ -72,6 +72,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
 void Multiplication::immediateSimplify() {
   /* First loop: merge all multiplication, break if 0 or undef */
   int index = 0;
+  /* TODO: optimize, do we have to restart index = 0 at every merging? */
   while (index < numberOfOperands()) {
     Expression * o = (Expression *)operand(index++);
     if (o->type() == Type::Multiplication) {

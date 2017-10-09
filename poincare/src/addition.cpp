@@ -23,6 +23,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 void Addition::immediateSimplify() {
+  /* TODO: optimize, do we have to restart index = 0 at every merging? */
   int index = 0;
   while (index < numberOfOperands()) {
     Expression * o = (Expression *)operand(index++);

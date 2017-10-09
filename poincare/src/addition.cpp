@@ -35,16 +35,22 @@ void Addition::immediateSimplify() {
     }
   }
   sortChildren();
-  for (int i = 0; i < numberOfOperands()-1; i++) {
+  int i = 0;
+  while (i < numberOfOperands()-1) {
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
       Rational a = Rational::Addition(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
-      if (operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isZero()) {
+      if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isZero()) {
         removeOperand(operand(i), true);
+        if (i > 0) {
+          i--;
+        }
       }
+    } else {
+      i++;
     }
   }
   if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
@@ -67,7 +73,9 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2) {
     e1->immediateSimplify();
   } else {
     const Expression * operands[2] = {r, e1};
-    e1->replaceWith(new Multiplication(operands, 2, true), true);
+    Multiplication * m = new Multiplication(operands, 2, true);
+    e1->replaceWith(m, true);
+    m->immediateSimplify();
   }
 }
 

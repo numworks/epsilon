@@ -94,7 +94,8 @@ void Multiplication::immediateSimplify() {
   }
   sortChildren();
   /* Now, no more node can be an addition or a multiplication */
-  for (int i = 0; i < numberOfOperands()-1; i++) {
+  int i = 0;
+  while (i < numberOfOperands()-1) {
     // TODO: maybe delete operand Rational(1,1) and at the end test if the numberOfOperand is 0, return Rational(1,1)?
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
       Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
@@ -104,6 +105,14 @@ void Multiplication::immediateSimplify() {
       factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
       factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+    }
+    if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isOne()) {
+      removeOperand(operand(i), true);
+      if (i > 0) {
+        i--;
+      }
+    } else {
+      i++;
     }
   }
   if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isOne()) {
@@ -120,11 +129,15 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2) {
   Expression * s = new Addition(addOperands, 2, false);
   if (e1->type() == Type::Power) {
     e1->replaceOperand(e1->operand(1), s, true);
+    s->immediateSimplify();
+    e1->immediateSimplify();
   } else {
     const Expression * operands[2] = {e1, s};
-    e1->replaceWith(new Power(operands, false), false);
+    Power * p = new Power(operands, false);
+    s->immediateSimplify();
+    e1->replaceWith(p, false);
+    p->immediateSimplify();
   }
-  s->immediateSimplify();
 }
 
 void Multiplication::factorizeExponent(Expression * e1, Expression * e2) {
@@ -135,6 +148,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2) {
   Expression * m = new Multiplication(multOperands, 2, false);
   e1->replaceOperand(e1->operand(0), m, true);
   m->immediateSimplify();
+  e1->immediateSimplify();
 }
 
 void Multiplication::distributeOnChildAtIndex(int i) {

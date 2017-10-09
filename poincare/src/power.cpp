@@ -179,26 +179,28 @@ void Power::immediateSimplify() {
       return;
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*)^r if a rational
-    // TODO: this rule should apply on a positive (and not only a rational)
-    if (m->operand(0)->type() == Type::Rational) {
-      Expression * r = const_cast<Expression *>(operand(1));
-      Expression * rCopy = r->clone();
-      Rational * factor = static_cast<Rational *>((Expression *)m->operand(0));
-      if (factor->isNegative()) {
-        m->replaceOperand(factor, new Rational(Integer(-1)), false);
-      } else {
-        m->removeOperand(factor, false);
+    for (int i = 0; i < m->numberOfOperands(); i++) {
+      if (m->operand(i)->isPositive() || m->operand(i)->type() == Type::Rational) {
+        Expression * r = const_cast<Expression *>(operand(1));
+        Expression * rCopy = r->clone();
+        Expression * factor = const_cast<Expression *>(m->operand(0));
+        if (!factor->isPositive()) {
+          m->replaceOperand(factor, new Rational(Integer(-1)), false);
+          static_cast<Rational *>(factor)->setNegative(false);
+        } else {
+          m->removeOperand(factor, false);
+        }
+        m->immediateSimplify();
+        const Expression * powOperands[2] = {factor, rCopy};
+        Power * p = new Power(powOperands, false);
+        const Expression * multOperands[2] = {p, clone()};
+        Multiplication * root = new Multiplication(multOperands, 2, false);
+        p->immediateSimplify();
+        const_cast<Expression *>(root->operand(1))->immediateSimplify();
+        replaceWith(root, true);
+        root->immediateSimplify();
+        return;
       }
-      m->immediateSimplify();
-      factor->setNegative(false);
-      const Expression * powOperands[2] = {factor, rCopy};
-      Power * p = new Power(powOperands, false);
-      const Expression * multOperands[2] = {p, clone()};
-      Multiplication * root = new Multiplication(multOperands, 2, false);
-      p->immediateSimplify();
-      replaceWith(root, true);
-      root->immediateSimplify();
-      return;
     }
   }
   // a^(b+c) -> Rational(a^b)*a^c with a and b rational

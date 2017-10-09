@@ -121,8 +121,21 @@ void Power::immediateSimplify() {
     replaceWith(new Undefined(), true);
     return;
   }
+  if (operand(1)->type() == Type::Rational) {
+    const Rational * b = static_cast<const Rational *>(operand(1));
+    // x^0
+    if (b->isZero()) {
+      replaceWith(new Rational(Integer(1)), true);
+      return;
+    }
+    // x^1
+    if (b->isOne()) {
+      replaceWith(const_cast<Expression *>(operand(0)), true);
+      return;
+    }
+  }
   if (operand(0)->type() == Type::Rational) {
-    const Rational * a = static_cast<const Rational *>(operand(0));
+    Rational * a = static_cast<Rational *>((Expression *)operand(0));
     // 0^x
     if (a->isZero()) {
       if (operand(1)->type() == Type::Rational) {
@@ -141,22 +154,9 @@ void Power::immediateSimplify() {
       replaceWith(new Rational(Integer(1)), true);
       return;
     }
-  }
-  if (operand(1)->type() == Type::Rational) {
-    Rational * b = static_cast<Rational *>((Expression *)operand(1));
-    // x^0
-    if (b->isZero()) {
-      replaceWith(new Rational(Integer(0)), true);
-      return;
-    }
-    // x^1
-    if (b->isOne()) {
-      replaceWith(const_cast<Expression *>(operand(0)), true);
-      return;
-    }
     // p^q with p, q rationals
-    if (operand(0)->type() == Type::Rational) {
-      simplifyRationalRationalPower(this, static_cast<Rational *>((Expression *)operand(0)), b);
+    if (operand(1)->type() == Type::Rational) {
+      simplifyRationalRationalPower(this, a, static_cast<Rational *>((Expression *)operand(1)));
       return;
     }
   }

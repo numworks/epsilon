@@ -107,7 +107,7 @@ int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
   int n = e->numberOfOperands();
   for (int i = 1; i <= m; i++) {
     // The NULL node is the least node type.
-    if (n <= i) {
+    if (n < i) {
       return 1;
     }
     if (this->operand(m-i)->compareTo(e->operand(n-i)) != 0) {

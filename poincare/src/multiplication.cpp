@@ -100,8 +100,10 @@ void Multiplication::immediateSimplify() {
       Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
-    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && !(TermHasRationalBaseAndExponent(operand(i)) && TermHasRationalBaseAndExponent(operand(i+1)))) {
-      factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && !TermHasRationalBase(operand(i))) {
+      factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+    } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
+      factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     }
   }
   if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isOne()) {
@@ -112,11 +114,10 @@ void Multiplication::immediateSimplify() {
   }
 }
 
-void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
+void Multiplication::factorizeBase(Expression * e1, Expression * e2) {
   const Expression * addOperands[2] = {CreateExponent(e1), CreateExponent(e2)};
   removeOperand(e2, true);
   Expression * s = new Addition(addOperands, 2, false);
-  removeOperand(e2, true);
   if (e1->type() == Type::Power) {
     e1->replaceOperand(e1->operand(1), s, true);
   } else {
@@ -124,6 +125,16 @@ void Multiplication::factorizeChildren(Expression * e1, Expression * e2) {
     e1->replaceWith(new Power(operands, false), false);
   }
   s->immediateSimplify();
+}
+
+void Multiplication::factorizeExponent(Expression * e1, Expression * e2) {
+  const Expression * multOperands[2] = {e1->operand(0)->clone(), e2->operand(0)};
+  // TODO: remove cast, everything is a hierarchy
+  static_cast<Hierarchy *>(e2)->detachOperand(e2->operand(0));
+  removeOperand(e2, true);
+  Expression * m = new Multiplication(multOperands, 2, false);
+  e1->replaceOperand(e1->operand(0), m, true);
+  m->immediateSimplify();
 }
 
 void Multiplication::distributeOnChildAtIndex(int i) {
@@ -150,10 +161,19 @@ bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Express
   return (f1->compareTo(f2) == 0);
 }
 
-bool Multiplication::TermHasRationalBaseAndExponent(const Expression * e) {
+bool Multiplication::TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2) {
+  Rational one = Rational(1);
+  return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->compareTo(e2->operand(1)) == 0);
+}
+
+bool Multiplication::TermHasRationalBase(const Expression * e) {
   bool hasRationalBase = e->type() == Type::Power ? e->operand(0)->type() == Type::Rational : e->type() == Type::Rational;
+  return hasRationalBase;
+}
+
+bool Multiplication::TermHasRationalExponent(const Expression * e) {
   bool hasRationalExponent = e->type() == Type::Power ? e->operand(1)->type() == Type::Rational : true;
-  return hasRationalBase && hasRationalExponent;
+  return hasRationalExponent;
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

@@ -253,8 +253,16 @@ void Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rat
     result->replaceWith(new Rational(r),true);
     return;
   }
-  Expression * n = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
-  Expression * d = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
+  Expression * n = nullptr;
+  Expression * d = nullptr;
+  if (b->isNegative()) {
+    b->setNegative(false);
+    n = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
+    d = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
+  } else {
+    n = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
+    d = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
+  }
   Rational * minusOne = new Rational(Integer(-1));
   const Expression * powOp[2] = {d, minusOne};
   Power * p = new Power(powOp, false);

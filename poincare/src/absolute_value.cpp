@@ -18,6 +18,12 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
+void AbsoluteValue::immediateSimplify() {
+  if (operand(0)->isPositive()) {
+    replaceWith(const_cast<Expression *>(operand(0)), true);
+  }
+}
+
 template<typename T>
 Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.r());

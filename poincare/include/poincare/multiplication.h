@@ -35,10 +35,13 @@ private:
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "*");
   }
   /* Simplification */
-  void factorizeChildren(Expression * e1, Expression * e2);
+  void factorizeBase(Expression * e1, Expression * e2);
+  void factorizeExponent(Expression * e1, Expression * e2);
   void distributeOnChildAtIndex(int index);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
-  static bool TermHasRationalBaseAndExponent(const Expression * e);
+  static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
+  static bool TermHasRationalBase(const Expression * e);
+  static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
 };
 

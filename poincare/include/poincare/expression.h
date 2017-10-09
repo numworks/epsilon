@@ -156,13 +156,13 @@ private:
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  /* Simplification */
+  void simplify();
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;
   }
-  /* Simplification */
-  void simplify();
-  /* Pure virtual? What should be the implementation of complex? */
+  /* What should be the implementation of complex? */
   virtual int compareToSameTypeExpression(const Expression * e) const {
     return 0;
   }

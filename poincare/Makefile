@@ -100,11 +100,13 @@ objs += $(addprefix poincare/src/layout/,\
   sum_layout.o\
 )
 
-testsi += $(addprefix poincare/test/,\
+tests += $(addprefix poincare/test/,\
+  arithmetic.cpp\
+  helper.cpp\
   simplify_easy.cpp\
 )
 
-tests += $(addprefix poincare/test/,\
+testsi += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   complex.cpp\

@@ -4,6 +4,7 @@
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
 #include <poincare/complex_matrix.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -51,6 +52,21 @@ Symbol::Symbol(Symbol&& other) :
 
 Expression * Symbol::clone() const {
   return new Symbol(m_name);
+}
+
+bool Symbol::isPositive() const {
+  /* TODO: Maybe, we will want to know that from a context given in parameter:
+  if (context.expressionForSymbol(this) != nullptr) {
+    return context.expressionForSymbol(this)->isPositive(context);
+  }
+  return false;*/
+  if (m_name == Ion::Charset::SmallPi) {
+    return true;
+  }
+  if (m_name == Ion::Charset::Exponential) {
+    return true;
+  }
+  return false;
 }
 
 template<typename T>

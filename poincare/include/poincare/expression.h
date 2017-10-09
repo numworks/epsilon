@@ -129,7 +129,7 @@ public:
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
 
   /* Simplification */
-  static void simplify(Expression ** e);
+  static void simplifyAndBeautify(Expression ** e);
   // TODO: should be virtual pure
   virtual void immediateSimplify() {};// = 0;
 
@@ -158,6 +158,8 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   /* Simplification */
   void simplify();
+  void beautify();
+  virtual void immediateBeautify() {};
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;

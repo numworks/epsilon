@@ -16,14 +16,14 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Simplify: " << expression << "----"  << endl;
 #endif
-  Expression::simplify(&e);
+  Expression::simplifyAndBeautify(&e);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
 #endif
   Expression * f = parse_expression(simplifiedExpression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- compared to: " << simplifiedExpression << "----"  << endl;
-  Expression::simplify(&f);
+  Expression::simplifyAndBeautify(&f);
   print_expression(f, 0);
 #endif
   assert(e->compareTo(f) == 0);

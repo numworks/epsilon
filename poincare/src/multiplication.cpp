@@ -131,6 +131,8 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  mergeNegativePower();
   squashUnaryHierarchy();
 }
 
@@ -173,6 +175,28 @@ void Multiplication::distributeOnChildAtIndex(int i) {
   }
   replaceWith(a, true);
   a->immediateSimplify();
+}
+
+void Multiplication::mergeNegativePower() {
+  Multiplication * m = new Multiplication();
+  int i = 0;
+  while (i < numberOfOperands()) {
+    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
+      const Expression * e = operand(i);
+      const_cast<Expression *>(e->operand(1))->turnIntoPositive();
+      removeOperand(e, false);
+      m->addOperands(&e, 1);
+    } else {
+      i++;
+    }
+  }
+  if (m->numberOfOperands() == 0) {
+    return;
+  }
+  const Expression * powOperands[2] = {m, new Integer(-1)};
+  const Power * p = new Power(powOperands, false);
+  const Expression * multOperand[1] = {p};
+  addOperands(multOperand, 1);
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {

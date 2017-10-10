@@ -118,6 +118,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("2^P*(1/2)^P", "1");
   assert_parsed_expression_simplify_to("A^3*A^(-3)", "1");
   assert_parsed_expression_simplify_to("1+A+2+B+3", "6+A+B");
+  assert_parsed_expression_simplify_to("(x+1)*(x+2)", "x^2+3x+2");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

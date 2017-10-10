@@ -97,7 +97,12 @@ void Multiplication::immediateSimplify() {
   /* Now, no more node can be an addition or a multiplication */
   int i = 0;
   while (i < numberOfOperands()-1) {
-    // TODO: maybe delete operand Rational(1,1) and at the end test if the numberOfOperand is 0, return Rational(1,1)?
+    if (deleteUselessFactor(i) && i > 0) {
+      i--;
+    }
+    if (i == numberOfOperands()-1) {
+      break;
+    }
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
       Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
@@ -106,18 +111,9 @@ void Multiplication::immediateSimplify() {
       factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
       factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
-    }
-    if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isOne()) {
-      removeOperand(operand(i), true);
-      if (i > 0) {
-        i--;
-      }
     } else {
       i++;
     }
-  }
-  if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isOne()) {
-    removeOperand(operand(0), true);
   }
   if (numberOfOperands() == 1) {
     replaceWith(const_cast<Expression *>(operand(0)), true);
@@ -189,6 +185,15 @@ bool Multiplication::TermHasRationalBase(const Expression * e) {
 bool Multiplication::TermHasRationalExponent(const Expression * e) {
   bool hasRationalExponent = e->type() == Type::Power ? e->operand(1)->type() == Type::Rational : true;
   return hasRationalExponent;
+}
+
+bool Multiplication::deleteUselessFactor(int index) {
+  assert(index < numberOfOperands() && numberOfOperands() > 1);
+  if (operand(index)->type() == Type::Rational && static_cast<const Rational *>(operand(index))->isOne()) {
+    removeOperand(operand(index), true);
+    return true;
+  }
+  return false;
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

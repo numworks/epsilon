@@ -97,7 +97,7 @@ void Multiplication::immediateSimplify() {
   /* Now, no more node can be an addition or a multiplication */
   int i = 0;
   while (i < numberOfOperands()-1) {
-    if (deleteUselessFactor(i) && i > 0) {
+    if (deleteUselessOperand(i) && i > 0) {
       i--;
     }
     if (i == numberOfOperands()-1) {
@@ -115,9 +115,7 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
-  if (numberOfOperands() == 1) {
-    replaceWith(const_cast<Expression *>(operand(0)), true);
-  }
+  squashUnaryHierarchy();
 }
 
 void Multiplication::factorizeBase(Expression * e1, Expression * e2) {
@@ -187,13 +185,8 @@ bool Multiplication::TermHasRationalExponent(const Expression * e) {
   return hasRationalExponent;
 }
 
-bool Multiplication::deleteUselessFactor(int index) {
-  assert(index < numberOfOperands() && numberOfOperands() > 1);
-  if (operand(index)->type() == Type::Rational && static_cast<const Rational *>(operand(index))->isOne()) {
-    removeOperand(operand(index), true);
-    return true;
-  }
-  return false;
+bool Multiplication::isUselessOperand(const Rational * r) {
+  return r->isOne();
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

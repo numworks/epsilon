@@ -151,4 +151,20 @@ void DynamicHierarchy::sortChildren() {
   }
 }
 
+void DynamicHierarchy::squashUnaryHierarchy() {
+  assert(parent() != nullptr);
+  if (numberOfOperands() == 1) {
+    replaceWith(const_cast<Expression *>(operand(0)), true);
+  }
+}
+
+bool DynamicHierarchy::deleteUselessOperand(int index) {
+  assert(index < numberOfOperands() && numberOfOperands() > 1);
+  if (operand(index)->type() == Type::Rational && isUselessOperand(static_cast<const Rational *>(operand(index)))) {
+    removeOperand(operand(index), true);
+    return true;
+  }
+  return false;
+}
+
 }

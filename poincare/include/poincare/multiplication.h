@@ -43,7 +43,7 @@ private:
   static bool TermHasRationalBase(const Expression * e);
   static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
-  bool deleteUselessFactor(int index);
+  bool isUselessOperand(const Rational * r) override;
 };
 
 }

@@ -40,28 +40,23 @@ void Addition::immediateSimplify() {
   sortChildren();
   int i = 0;
   while (i < numberOfOperands()-1) {
+    if (deleteUselessOperand(i) && i > 0) {
+      i--;
+    }
+    if (i == numberOfOperands()-1) {
+      break;
+    }
     if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
       Rational a = Rational::Addition(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
       factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
-      if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isZero()) {
-        removeOperand(operand(i), true);
-        if (i > 0) {
-          i--;
-        }
-      }
     } else {
       i++;
     }
   }
-  if (numberOfOperands() > 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
-    removeOperand(operand(0), true);
-  }
-  if (numberOfOperands() == 1) {
-    replaceWith(const_cast<Expression *>(operand(0)), true);
-  }
+  squashUnaryHierarchy();
 }
 
 void Addition::factorizeChildren(Expression * e1, Expression * e2) {
@@ -123,6 +118,11 @@ void Addition::immediateBeautify() {
     }
     index++;
   }
+}
+
+
+bool Addition::isUselessOperand(const Rational * r) {
+  return r->isZero();
 }
 
 template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);

@@ -2,6 +2,7 @@
 #define POINCARE_DYNAMIC_HIERARCHY_H
 
 #include <poincare/hierarchy.h>
+#include <poincare/rational.h>
 
 namespace Poincare {
 
@@ -23,10 +24,14 @@ public:
   void addOperandAtIndex(Expression * operand, int index);
   void mergeOperands(DynamicHierarchy * d);
   void sortChildren();
+  void squashUnaryHierarchy();
+protected:
+  bool deleteUselessOperand(int index);
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
   int compareToSameTypeExpression(const Expression * e) const override;
   int compareToGreaterTypeExpression(const Expression * e) const override;
+  virtual bool isUselessOperand(const Rational * r) = 0;
   const Expression ** m_operands;
   int m_numberOfOperands;
 };

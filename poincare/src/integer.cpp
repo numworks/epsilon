@@ -225,7 +225,7 @@ int Integer::compareToSameTypeExpression(const Expression * e) const {
   if (!m_negative && other->m_negative) {
     return 1;
   }
-  return sign(m_negative)*ucmp(*this, *other);
+  return ::Poincare::sign(m_negative)*ucmp(*this, *other);
 }
 
 bool Integer::isEqualTo(const Integer & other) const {

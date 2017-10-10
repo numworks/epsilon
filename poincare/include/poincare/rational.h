@@ -24,13 +24,13 @@ public:
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
-  bool isPositive() const override { return !isNegative(); }
+  int sign() const override;
+  void turnIntoPositive() override { m_numerator.setNegative(false); }
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
   bool isOne() const { return m_numerator.isOne() && m_denominator.isOne(); }
   bool isMinusOne() const { return m_numerator.isMinusOne() && m_denominator.isOne(); }
-  bool isNegative() const { return m_numerator.isNegative(); }
 
   // Arithmetic
   static Rational Addition(const Rational & i, const Rational & j);

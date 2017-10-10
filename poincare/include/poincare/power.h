@@ -39,7 +39,7 @@ private:
   void simplifyPowerPower(Power * p, Expression * r);
   void simplifyPowerMultiplication(Multiplication * m, Expression * r);
   void simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b);
-  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r);
+  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
 };
 
 }

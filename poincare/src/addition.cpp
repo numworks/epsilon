@@ -1,6 +1,8 @@
 #include <poincare/addition.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/multiplication.h>
+#include <poincare/subtraction.h>
+#include <poincare/opposite.h>
 #include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
@@ -95,6 +97,32 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   const Expression * f1 = (e1->type() == Type::Multiplication && e1->numberOfOperands() == 2 && e1->operand(0)->type() == Type::Rational) ? e1->operand(1) : e1;
   const Expression * f2 = (e2->type() == Type::Multiplication && e2->numberOfOperands() == 2 && e2->operand(0)->type() == Type::Rational) ? e2->operand(1) : e2;
   return (f1->compareTo(f2) == 0);
+}
+
+void Addition::immediateBeautify() {
+  int index = 0;
+  while (index < numberOfOperands()) {
+    // a+(-1)*b+... -> a-b+...
+    if (operand(index)->type() == Type::Multiplication && static_cast<const Multiplication *>(operand(index))->operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
+      Multiplication * m = static_cast<Multiplication *>((Expression *)operand(index));
+      m->removeOperand(m->operand(0), true);
+      if (m->numberOfOperands() == 1) {
+        m->replaceWith(const_cast<Expression *>(m->operand(0)), true);
+      }
+      const Expression * replacedOperand = operand(index);
+      if (index == 0) {
+        const Expression * opOperand[1] = {replacedOperand};
+        Opposite * o = new Opposite(opOperand, false);
+        replaceOperand(const_cast<Expression *>(replacedOperand), o, false);
+      } else {
+        const Expression * subOperands[2] = {operand(index-1), replacedOperand};
+        removeOperand(operand(index-1), false);
+        Subtraction * s = new Subtraction(subOperands, false);
+        replaceOperand(const_cast<Expression *>(replacedOperand), s, false);
+      }
+    }
+    index++;
+  }
 }
 
 template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);

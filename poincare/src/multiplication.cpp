@@ -147,7 +147,7 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2) {
     const Expression * operands[2] = {e1, s};
     Power * p = new Power(operands, false);
     s->immediateSimplify();
-    e1->replaceWith(p, false);
+    replaceOperand(e1, p, false);
     p->immediateSimplify();
   }
 }

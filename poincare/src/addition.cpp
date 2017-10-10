@@ -101,9 +101,7 @@ void Addition::immediateBeautify() {
     if (operand(index)->type() == Type::Multiplication && static_cast<const Multiplication *>(operand(index))->operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
       Multiplication * m = static_cast<Multiplication *>((Expression *)operand(index));
       m->removeOperand(m->operand(0), true);
-      if (m->numberOfOperands() == 1) {
-        m->replaceWith(const_cast<Expression *>(m->operand(0)), true);
-      }
+      m->squashUnaryHierarchy();
       const Expression * replacedOperand = operand(index);
       if (index == 0) {
         const Expression * opOperand[1] = {replacedOperand};

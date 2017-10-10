@@ -10,6 +10,7 @@ extern "C" {
 #include <poincare/power.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/undefined.h>
+#include <poincare/division.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -131,8 +132,6 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  mergeNegativePower();
   squashUnaryHierarchy();
 }
 
@@ -177,28 +176,6 @@ void Multiplication::distributeOnChildAtIndex(int i) {
   a->immediateSimplify();
 }
 
-void Multiplication::mergeNegativePower() {
-  Multiplication * m = new Multiplication();
-  int i = 0;
-  while (i < numberOfOperands()) {
-    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
-      const Expression * e = operand(i);
-      const_cast<Expression *>(e->operand(1))->turnIntoPositive();
-      removeOperand(e, false);
-      m->addOperands(&e, 1);
-    } else {
-      i++;
-    }
-  }
-  if (m->numberOfOperands() == 0) {
-    return;
-  }
-  const Expression * powOperands[2] = {m, new Integer(-1)};
-  const Power * p = new Power(powOperands, false);
-  const Expression * multOperand[1] = {p};
-  addOperands(multOperand, 1);
-}
-
 const Expression * Multiplication::CreateExponent(Expression * e) {
   Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(Integer(1));
   return n;
@@ -227,6 +204,60 @@ bool Multiplication::TermHasRationalExponent(const Expression * e) {
 
 bool Multiplication::isUselessOperand(const Rational * r) {
   return r->isOne();
+}
+
+void Multiplication::immediateBeautify() {
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  mergeNegativePower();
+
+  int index = 0;
+  while (index < numberOfOperands()) {
+    // a*b^(-1)*... -> a*.../b
+    if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
+      Power * p = static_cast<Power *>((Expression *)operand(index));
+      const Expression * denominatorOperand = p->operand(0);
+      p->detachOperand(denominatorOperand);
+      removeOperand(p, true);
+      Multiplication * m = (Multiplication *)clone();
+      const Expression * divOperands[2] = {m, denominatorOperand};
+      Division * d = new Division(divOperands, false);
+      m->squashUnaryHierarchy();
+      replaceWith(d, true);
+      return;
+    }
+    index++;
+  }
+}
+
+void Multiplication::mergeNegativePower() {
+  Multiplication * m = new Multiplication();
+  int i = 0;
+  while (i < numberOfOperands()) {
+    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
+      const Expression * e = operand(i);
+      const_cast<Expression *>(e->operand(1))->turnIntoPositive();
+      // TODO: should we call const_cast<Expression *>(e->operand(1))->immediateSimplify
+      removeOperand(e, false);
+      m->addOperands(&e, 1);
+      const_cast<Expression *>(e)->immediateSimplify();
+    } else {
+      i++;
+    }
+  }
+  if (m->numberOfOperands() == 0) {
+    return;
+  }
+  if (numberOfOperands() == 0) {
+    const Expression * op[1] = {new Rational(Integer(1))};
+    addOperands(op, 1);
+  }
+  const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
+  const Power * p = new Power(powOperands, false);
+  m->squashUnaryHierarchy();
+  m->sortChildren();
+  const Expression * multOperand[1] = {p};
+  addOperands(multOperand, 1);
+  sortChildren();
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

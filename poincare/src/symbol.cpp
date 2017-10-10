@@ -54,19 +54,19 @@ Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
 
-bool Symbol::isPositive() const {
+int Symbol::sign() const {
   /* TODO: Maybe, we will want to know that from a context given in parameter:
   if (context.expressionForSymbol(this) != nullptr) {
     return context.expressionForSymbol(this)->isPositive(context);
   }
   return false;*/
   if (m_name == Ion::Charset::SmallPi) {
-    return true;
+    return 1;
   }
   if (m_name == Ion::Charset::Exponential) {
-    return true;
+    return 1;
   }
-  return false;
+  return 0;
 }
 
 template<typename T>

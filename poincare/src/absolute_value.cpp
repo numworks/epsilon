@@ -19,7 +19,7 @@ Expression * AbsoluteValue::clone() const {
 }
 
 void AbsoluteValue::immediateSimplify() {
-  if (operand(0)->isPositive()) {
+  if (operand(0)->sign() > 0) {
     replaceWith(const_cast<Expression *>(operand(0)), true);
   }
 }

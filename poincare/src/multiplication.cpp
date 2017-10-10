@@ -24,6 +24,22 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
+int Multiplication::sign() const {
+  int sign = 0;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    sign *= operand(i)->sign();
+  }
+  return sign;
+}
+
+void Multiplication::turnIntoPositive() {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (operand(i)->sign() < 0) {
+      const_cast<Expression *>(operand(i))->turnIntoPositive();
+    }
+  }
+}
+
 template<typename T>
 Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());

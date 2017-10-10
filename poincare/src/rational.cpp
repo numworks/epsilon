@@ -56,6 +56,13 @@ Expression * Rational::clone() const {
   return new Rational(m_numerator, m_denominator);
 }
 
+int Rational::sign() const {
+  if (m_numerator.isNegative()) {
+    return -1;
+  }
+  return 1;
+}
+
 // Basic operations
 
 Rational Rational::Addition(const Rational & i, const Rational & j) {

@@ -24,14 +24,26 @@ Expression * Power::clone() const {
   return new Power(m_operands, true);
 }
 
-bool Power::isPositive() const {
-  if (operand(1)->type() == Type::Rational) {
+int Power::sign() const {
+  if (operand(0)->sign() > 0 && operand(1)->sign() != 0) {
+    return 1;
+  }
+  if (operand(0)->sign() < 0 && operand(1)->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(1));
-    if (r->denominator().isOne() && Integer::Division(r->numerator(), Integer(2)).remainder.isZero()) {
-      return true;
+    if (r->denominator().isOne()) {
+      if (Integer::Division(r->numerator(), Integer(2)).remainder.isZero()) {
+        return 1;
+      } else {
+        return -1;
+      }
     }
   }
-  return false;
+  return 0;
+}
+
+void Power::turnIntoPositive() {
+  assert(operand(0)->sign() < 0);
+  const_cast<Expression *>(operand(0))->turnIntoPositive();
 }
 
 template<typename T>
@@ -138,15 +150,13 @@ void Power::immediateSimplify() {
     Rational * a = static_cast<Rational *>((Expression *)operand(0));
     // 0^x
     if (a->isZero()) {
-      if (operand(1)->type() == Type::Rational) {
-        const Rational * b = static_cast<const Rational *>(operand(1));
-        if (!b->isNegative()) {
-          replaceWith(new Rational(Integer(0)), true);
-          return;
-        } else {
-          replaceWith(new Undefined(), true);
-          return;
-        }
+      if (operand(1)->sign() > 0) {
+        replaceWith(new Rational(Integer(0)), true);
+        return;
+      }
+      if (operand(1)->sign() < 0) {
+        replaceWith(new Undefined(), true);
+        return;
       }
     }
     // 1^x
@@ -164,7 +174,7 @@ void Power::immediateSimplify() {
   if (operand(0)->type() == Type::Power) {
     Power * p = static_cast<Power *>((Expression *)operand(0));
     // Check is a > 0 or c is Integer
-    if (p->operand(0)->isPositive() ||
+    if (p->operand(0)->sign() > 0 ||
         (operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)operand(1))->denominator().isOne())) {
       simplifyPowerPower(p, const_cast<Expression *>(operand(1)));
       return;
@@ -180,11 +190,11 @@ void Power::immediateSimplify() {
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*)^r if a rational
     for (int i = 0; i < m->numberOfOperands(); i++) {
-      if (m->operand(i)->isPositive() || m->operand(i)->type() == Type::Rational) {
+      if (m->operand(i)->sign() > 0 || m->operand(i)->type() == Type::Rational) {
         Expression * r = const_cast<Expression *>(operand(1));
         Expression * rCopy = r->clone();
         Expression * factor = const_cast<Expression *>(m->operand(0));
-        if (!factor->isPositive()) {
+        if (factor->sign() < 0) {
           m->replaceOperand(factor, new Rational(Integer(-1)), false);
           static_cast<Rational *>(factor)->setNegative(false);
         } else {
@@ -255,7 +265,7 @@ void Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rat
   }
   Expression * n = nullptr;
   Expression * d = nullptr;
-  if (b->isNegative()) {
+  if (b->sign() < 0) {
     b->setNegative(false);
     n = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
     d = CreateSimplifiedIntegerRationalPower(a->numerator(), b);

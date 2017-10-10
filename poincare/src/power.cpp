@@ -245,11 +245,10 @@ void Power::simplifyPowerPower(Power * p, Expression * e) {
 
 void Power::simplifyPowerMultiplication(Multiplication * m, Expression * r) {
   for (int index = 0; index < m->numberOfOperands(); index++) {
-    Expression * rCopy = r->clone();
     Expression * factor = const_cast<Expression *>(m->operand(index));
-    const Expression * powOperands[2] = {factor, rCopy};
-    Power * p = new Power(powOperands, false);
-    m->replaceOperand(factor, p, false);
+    const Expression * powOperands[2] = {factor, r};
+    Power * p = new Power(powOperands, true); // We copy r and factor to avoid inheritance issues
+    m->replaceOperand(factor, p, true);
     p->immediateSimplify();
   }
   detachOperand(m);

@@ -267,32 +267,26 @@ void Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rat
   Expression * d = nullptr;
   if (b->sign() < 0) {
     b->setNegative(false);
-    n = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
-    d = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
+    n = CreateSimplifiedIntegerRationalPower(a->denominator(), b, false);
+    d = CreateSimplifiedIntegerRationalPower(a->numerator(), b, true);
   } else {
-    n = CreateSimplifiedIntegerRationalPower(a->numerator(), b);
-    d = CreateSimplifiedIntegerRationalPower(a->denominator(), b);
+    n = CreateSimplifiedIntegerRationalPower(a->numerator(), b, false);
+    d = CreateSimplifiedIntegerRationalPower(a->denominator(), b, true);
   }
-  Rational * minusOne = new Rational(Integer(-1));
-  const Expression * powOp[2] = {d, minusOne};
-  Power * p = new Power(powOp, false);
-  const Expression * multOp[2] = {n, p};
+  const Expression * multOp[2] = {n, d};
   Multiplication * m = new Multiplication(multOp, 2, false);
-  if (d->type() == Type::Rational && static_cast<Rational *>(d)->isOne()) {
-    p->replaceWith(new Rational(Integer(1)), true);
-  } else if (d->type() == Type::Multiplication) {
-    p->simplifyPowerMultiplication(static_cast<Multiplication *>(d), minusOne);
-  }
   result->replaceWith(m, true);
   m->immediateSimplify();
 }
 
-Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r) {
+Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator) {
   assert(!i.isZero());
+  assert(r->sign() > 0);
   if (i.isOne()) {
     return new Rational(Integer(1));
   }
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
+    r->setNegative(isDenominator);
     const Expression * powOp[2] = {new Rational(i), r->clone()};
     // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
     return new Power(powOp, false);
@@ -312,13 +306,15 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     index++;
   }
   Rational * p1 = new Rational(r2);
-  Rational * p2 = new Rational(Integer(1), r->denominator());
+  Integer one = isDenominator ? Integer(-1) : Integer(1);
+  Rational * p2 = new Rational(one, r->denominator());
   const Expression * powerOperands[2] = {p1, p2};
   Power * p = new Power(powerOperands, false);
   if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
     return p;
   }
-  const Expression * multOp[2] = {new Rational(r1), p};
+  Rational * r3 = isDenominator ? new Rational(Integer(1), r1) : new Rational(r1);
+  const Expression * multOp[2] = {r3, p};
   Multiplication * m = new Multiplication(multOp, 2, false);
   if (r2.isOne()) {
     m->removeOperand(p);

@@ -29,6 +29,7 @@ public:
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
   bool isOne() const { return m_numerator.isOne() && m_denominator.isOne(); }
+  bool isMinusOne() const { return m_numerator.isMinusOne() && m_denominator.isOne(); }
   bool isNegative() const { return m_numerator.isNegative(); }
 
   // Arithmetic

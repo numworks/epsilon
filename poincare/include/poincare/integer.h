@@ -58,6 +58,7 @@ public:
   //static Integer Division(const Integer & i, const Integer & j);
   //static IntegerDivision division(const Integer & i, const Integer & j);
   bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && !m_negative); };
+  bool isMinusOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && m_negative); };
   bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);

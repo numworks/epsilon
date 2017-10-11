@@ -8,6 +8,7 @@ extern "C" {
 #include <poincare/rational.h>
 #include <poincare/addition.h>
 #include <poincare/power.h>
+#include <poincare/opposite.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/undefined.h>
 #include <poincare/division.h>
@@ -236,10 +237,16 @@ Expression * Multiplication::immediateBeautify() {
           Multiplication * m = new Multiplication(multOperands, 2, false);
           denominatorOperand->replaceWith(m, true);
         }
-        if (!r->numerator().isOne() || numeratorOperand->numberOfOperands()) {
+        if ((!r->numerator().isMinusOne() && !r->numerator().isOne()) || numeratorOperand->numberOfOperands() == 1) {
           numeratorOperand->replaceOperand(r, new Rational(r->numerator()), true);
         } else {
-          numeratorOperand->removeOperand(r, true);
+          if (r->numerator().isOne()) {
+            numeratorOperand->removeOperand(r, true);
+          } else {
+            const Expression * oppOperand[1] = {numeratorOperand->clone()};
+            Opposite * o = new Opposite(oppOperand, false);
+            numeratorOperand->replaceWith(o, true);
+          }
         }
       }
       numeratorOperand->squashUnaryHierarchy();
@@ -247,6 +254,14 @@ Expression * Multiplication::immediateBeautify() {
       return d;
     }
     index++;
+  }
+  if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isMinusOne()) {
+    removeOperand((Expression *)operand(0), true);
+    Expression * e = squashUnaryHierarchy();
+    const Expression * oppOperand[1] = {e->clone()};
+    Opposite * o = new Opposite(oppOperand, false);
+    e->replaceWith(o, true);
+    return o;
   }
   return this;
 }

@@ -1,7 +1,3 @@
-BetaVersion = "BETA VERSION"
-BetaVersionMessage1 = "You are using a pre-release and"
-BetaVersionMessage2 = "feature-limited version of Python."
-BetaVersionMessage3 = "You may encounter some"
-BetaVersionMessage4 = "unexpected bugs."
+Console = "Console"
 EditProgram = "Edit program"
 ExecuteProgram = "Execute program"

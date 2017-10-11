@@ -1,7 +1,3 @@
-BetaVersion = "VERSION BETA"
-BetaVersionMessage1 = "La version de Python que vous utilisez"
-BetaVersionMessage2 = "n'est pas une version definitive."
-BetaVersionMessage3 = "Il est possible que son utilisation soit"
-BetaVersionMessage4 = "limitee et que certains bugs apparaissent."
+Console = "Console"
 EditProgram = "Editer le programme"
 ExecuteProgram = "Executer le programme"

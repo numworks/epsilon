@@ -26,10 +26,8 @@ public:
   private:
     Program m_program;
   };
-  void didBecomeActive(Window * window) override;
 private:
   App(Container * container, Snapshot * snapshot);
-  MessageController m_betaVersionController;
   MenuController m_menuController;
 };
 

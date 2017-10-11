@@ -62,6 +62,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("2*A*B*C+2.3*A*B+3*A^2+5.2*A*B*C+4*A^2", "36/5*ABC+23/10*AB+7A^2");
   assert_parsed_expression_simplify_to("3*A^4*B^x*B^2*(A^2+2)*2*1.2", "36/5*A^6*B^(x+2)+72/5*A^4*B^(x+2)");
   assert_parsed_expression_simplify_to("A*(B+C)*(D+3)", "ABD+3AB+ACD+3AC");
+  assert_parsed_expression_simplify_to("A/B", "A/B");
   assert_parsed_expression_simplify_to("-5P+3P", "-2P");
   assert_parsed_expression_simplify_to("(A*B)^2", "A^2*B^2");
   assert_parsed_expression_simplify_to("(A*B)^2*A+4*A^3", "A^3*B^2+4A^3");

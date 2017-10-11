@@ -132,8 +132,6 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  mergeNegativePower();
   squashUnaryHierarchy();
 }
 
@@ -208,7 +206,13 @@ bool Multiplication::isUselessOperand(const Rational * r) {
   return r->isOne();
 }
 
-void Multiplication::immediateBeautify() {
+Expression * Multiplication::immediateBeautify() {
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  Expression * e = mergeNegativePower();
+  if (e->type() == Type::Power) {
+    return e->immediateBeautify();
+  }
+  assert(e == this);
   int index = 0;
   while (index < numberOfOperands()) {
     // a*b^(-1)*... -> a*.../b
@@ -240,13 +244,14 @@ void Multiplication::immediateBeautify() {
       }
       numeratorOperand->squashUnaryHierarchy();
       replaceWith(d, true);
-      return;
+      return d;
     }
     index++;
   }
+  return this;
 }
 
-void Multiplication::mergeNegativePower() {
+Expression * Multiplication::mergeNegativePower() {
   Multiplication * m = new Multiplication();
   int i = 0;
   while (i < numberOfOperands()) {
@@ -262,7 +267,7 @@ void Multiplication::mergeNegativePower() {
     }
   }
   if (m->numberOfOperands() == 0) {
-    return;
+    return this;
   }
   const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
@@ -271,6 +276,7 @@ void Multiplication::mergeNegativePower() {
   const Expression * multOperand[1] = {p};
   addOperands(multOperand, 1);
   sortChildren();
+  return squashUnaryHierarchy();
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

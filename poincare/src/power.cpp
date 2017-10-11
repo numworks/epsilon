@@ -10,6 +10,7 @@ extern "C" {
 #include <poincare/opposite.h>
 #include <poincare/addition.h>
 #include <poincare/undefined.h>
+#include <poincare/division.h>
 #include <poincare/arithmetic.h>
 #include <poincare/symbol.h>
 #include "layout/baseline_relative_layout.h"
@@ -331,6 +332,21 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   }
   m->sortChildren();
   return m;
+}
+
+Expression * Power::immediateBeautify() {
+  if (operand(1)->sign() < 0) {
+    const_cast<Expression *>(operand(1))->turnIntoPositive();
+    Expression * p = clone();
+    const Expression * divOperands[2] = {new Rational(Integer(1)), p};
+    Division * d = new Division(divOperands, false);
+    if (p->operand(1)->type() == Type::Rational && static_cast<const Rational *>(p->operand(1))->isOne()) {
+      p->replaceWith(const_cast<Expression *>(p->operand(0)), true);
+    }
+    replaceWith(d, true);
+    return d;
+  }
+  return this;
 }
 
 }

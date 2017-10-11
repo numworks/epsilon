@@ -159,8 +159,8 @@ void DynamicHierarchy::squashUnaryHierarchy() {
 }
 
 bool DynamicHierarchy::deleteUselessOperand(int index) {
-  assert(index < numberOfOperands() && numberOfOperands() > 1);
-  if (operand(index)->type() == Type::Rational && isUselessOperand(static_cast<const Rational *>(operand(index)))) {
+  assert(index < numberOfOperands());
+  if (numberOfOperands() >1 && operand(index)->type() == Type::Rational && isUselessOperand(static_cast<const Rational *>(operand(index)))) {
     removeOperand(operand(index), true);
     return true;
   }

@@ -39,7 +39,7 @@ void Addition::immediateSimplify() {
   }
   sortChildren();
   int i = 0;
-  while (i < numberOfOperands()-1) {
+  while (i < numberOfOperands()) {
     if (deleteUselessOperand(i) && i > 0) {
       i--;
     }

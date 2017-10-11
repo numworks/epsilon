@@ -253,8 +253,8 @@ void Multiplication::mergeNegativePower() {
   }
   const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
   const Power * p = new Power(powOperands, false);
-  m->squashUnaryHierarchy();
   m->sortChildren();
+  m->squashUnaryHierarchy();
   const Expression * multOperand[1] = {p};
   addOperands(multOperand, 1);
   sortChildren();

@@ -2,7 +2,6 @@
 #include "../apps_container.h"
 #include "code_icon.h"
 #include "../i18n.h"
-#include <assert.h>
 
 namespace Code {
 
@@ -40,20 +39,12 @@ Program * App::Snapshot::program() {
   return &m_program;
 }
 
-static I18n::Message sCodeMessages[] = {I18n::Message::BetaVersion, I18n::Message::BetaVersionMessage1, I18n::Message::BetaVersionMessage2, I18n::Message::BetaVersionMessage3, I18n::Message::BetaVersionMessage4};
-
 static KDColor sCodeColors[] = {KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_menuController, I18n::Message::Warning),
-  m_betaVersionController(sCodeMessages, sCodeColors),
   m_menuController(this, snapshot->program())
 {
-}
-
-void App::didBecomeActive(Window * window) {
-  ::App::didBecomeActive(window);
-  displayModalViewController(&m_betaVersionController, 0.5f, 0.5f);
 }
 
 }

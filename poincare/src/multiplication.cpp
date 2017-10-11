@@ -132,6 +132,8 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  mergeNegativePower();
   squashUnaryHierarchy();
 }
 
@@ -207,9 +209,6 @@ bool Multiplication::isUselessOperand(const Rational * r) {
 }
 
 void Multiplication::immediateBeautify() {
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  mergeNegativePower();
-
   int index = 0;
   while (index < numberOfOperands()) {
     // a*b^(-1)*... -> a*.../b
@@ -218,10 +217,10 @@ void Multiplication::immediateBeautify() {
       const Expression * denominatorOperand = p->operand(0);
       p->detachOperand(denominatorOperand);
       removeOperand(p, true);
-      Multiplication * m = (Multiplication *)clone();
-      const Expression * divOperands[2] = {m, denominatorOperand};
+      Multiplication * numeratorOperand = (Multiplication *)clone();
+      const Expression * divOperands[2] = {numeratorOperand, denominatorOperand};
       Division * d = new Division(divOperands, false);
-      m->squashUnaryHierarchy();
+      numeratorOperand->squashUnaryHierarchy();
       replaceWith(d, true);
       return;
     }
@@ -247,12 +246,8 @@ void Multiplication::mergeNegativePower() {
   if (m->numberOfOperands() == 0) {
     return;
   }
-  if (numberOfOperands() == 0) {
-    const Expression * op[1] = {new Rational(Integer(1))};
-    addOperands(op, 1);
-  }
   const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
-  const Power * p = new Power(powOperands, false);
+  Power * p = new Power(powOperands, false);
   m->sortChildren();
   m->squashUnaryHierarchy();
   const Expression * multOperand[1] = {p};

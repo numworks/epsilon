@@ -94,7 +94,7 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   return (f1->compareTo(f2) == 0);
 }
 
-void Addition::immediateBeautify() {
+Expression * Addition::immediateBeautify() {
   int index = 0;
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...
@@ -116,6 +116,7 @@ void Addition::immediateBeautify() {
     }
     index++;
   }
+  return this;
 }
 
 

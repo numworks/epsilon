@@ -89,11 +89,12 @@ public:
   }
 };
 
-void Expression::simplifyAndBeautify(Expression ** e) {
-  SimplificationRoot root(*e);
+void Expression::simplifyAndBeautify(Expression ** expressionAddress) {
+  SimplificationRoot root(*expressionAddress);
   root.simplify();
-  root.beautify();
-  *e = (Expression *)(root.operand(0));
+  Expression * e = (Expression *)root.operand(0);
+  beautify(&e);
+  *expressionAddress = (Expression *)(root.operand(0));
 }
 
 void Expression::simplify() {
@@ -103,11 +104,12 @@ void Expression::simplify() {
   immediateSimplify();
 }
 
-void Expression::beautify() {
-  for (int i = 0; i < numberOfOperands(); i++) {
-    ((Expression *)operand(i))->beautify();
+void Expression::beautify(Expression ** expressionAddress) {
+  *expressionAddress = (*expressionAddress)->immediateBeautify();
+  for (int i = 0; i < (*expressionAddress)->numberOfOperands(); i++) {
+    Expression * e = (Expression *)(*expressionAddress)->operand(i);
+    beautify(&e);
   }
-  immediateBeautify();
 }
 
 bool Expression::hasAncestor(const Expression * e) const {

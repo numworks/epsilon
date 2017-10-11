@@ -24,7 +24,7 @@ public:
   void addOperandAtIndex(Expression * operand, int index);
   void mergeOperands(DynamicHierarchy * d);
   void sortChildren();
-  void squashUnaryHierarchy();
+  Expression * squashUnaryHierarchy();
 protected:
   bool deleteUselessOperand(int index);
 private:

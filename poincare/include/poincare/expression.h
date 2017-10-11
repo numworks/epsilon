@@ -132,9 +132,10 @@ public:
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
 
   /* Simplification */
-  static void simplifyAndBeautify(Expression ** e);
+  static void simplifyAndBeautify(Expression ** expressionAddress);
   // TODO: should be virtual pure
   virtual void immediateSimplify() {};// = 0;
+  virtual Expression * immediateBeautify() { return this; };
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -161,8 +162,8 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   /* Simplification */
   void simplify();
-  void beautify();
-  virtual void immediateBeautify() {};
+  // beautify cannot be dynamic as it changes the expression and THEN its new children
+  static void beautify(Expression ** expressionAddress);
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;

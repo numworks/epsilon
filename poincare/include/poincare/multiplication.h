@@ -46,9 +46,9 @@ private:
   static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   bool isUselessOperand(const Rational * r) override;
-  // Warning: mergeNegativePower return always a multiplication: *(b^-1,c^-1) -> *((bc)^-1)
-  void immediateBeautify() override;
-  void mergeNegativePower();
+  // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
+  Expression * immediateBeautify() override;
+  Expression * mergeNegativePower();
 };
 
 }

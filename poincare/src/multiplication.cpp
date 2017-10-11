@@ -214,12 +214,30 @@ void Multiplication::immediateBeautify() {
     // a*b^(-1)*... -> a*.../b
     if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
       Power * p = static_cast<Power *>((Expression *)operand(index));
-      const Expression * denominatorOperand = p->operand(0);
+      Expression * denominatorOperand = const_cast<Expression *>(p->operand(0));
       p->detachOperand(denominatorOperand);
       removeOperand(p, true);
       Multiplication * numeratorOperand = (Multiplication *)clone();
       const Expression * divOperands[2] = {numeratorOperand, denominatorOperand};
       Division * d = new Division(divOperands, false);
+      /* We want 1/3*Pi*(ln(2))^-1 -> Pi/(3ln(2)) and not ((1/3)Pi)/ln(2)*/
+      if (numeratorOperand->operand(0)->type() == Type::Rational && !static_cast<const Rational *>(numeratorOperand->operand(0))->denominator().isOne()) {
+        Rational * r = static_cast<Rational *>((Expression *)numeratorOperand->operand(0));
+        if (denominatorOperand->type() == Type::Multiplication) {
+          const Expression * integerDenominator[1] = {new Rational(r->denominator())};
+          static_cast<Multiplication *>(denominatorOperand)->addOperands(integerDenominator, 1);
+          static_cast<Multiplication *>(denominatorOperand)->sortChildren();
+        } else {
+          const Expression * multOperands[2] = {new Rational(r->denominator()), denominatorOperand->clone()};
+          Multiplication * m = new Multiplication(multOperands, 2, false);
+          denominatorOperand->replaceWith(m, true);
+        }
+        if (!r->numerator().isOne() || numeratorOperand->numberOfOperands()) {
+          numeratorOperand->replaceOperand(r, new Rational(r->numerator()), true);
+        } else {
+          numeratorOperand->removeOperand(r, true);
+        }
+      }
       numeratorOperand->squashUnaryHierarchy();
       replaceWith(d, true);
       return;

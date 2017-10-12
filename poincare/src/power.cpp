@@ -10,6 +10,8 @@ extern "C" {
 #include <poincare/opposite.h>
 #include <poincare/addition.h>
 #include <poincare/undefined.h>
+#include <poincare/square_root.h>
+#include <poincare/nth_root.h>
 #include <poincare/division.h>
 #include <poincare/arithmetic.h>
 #include <poincare/symbol.h>
@@ -331,7 +333,20 @@ Expression * Power::immediateBeautify() {
     const Expression * divOperands[2] = {new Rational(Integer(1)), p};
     Division * d = new Division(divOperands, false);
     p->immediateSimplify();
-    return replaceWith(d, true);
+    replaceWith(d, true);
+    return d->immediateBeautify();
+  }
+  if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->numerator().isOne()) {
+    Integer index = static_cast<const Rational *>(operand(1))->denominator();
+    Integer two = Integer(2);
+    if (index.compareTo(&two) == 0) {
+      const Expression * sqrtOperand[1] = {operand(0)};
+      SquareRoot * sqr = new SquareRoot(sqrtOperand, true);
+      return replaceWith(sqr, true);
+    }
+    const Expression * rootOperand[2] = {operand(0)->clone(), new Rational(index)};
+    NthRoot * nr = new NthRoot(rootOperand, false);
+    return replaceWith(nr, true);
   }
   return this;
 }
@@ -342,9 +357,9 @@ Expression * Power::createDenominator() {
     const_cast<Expression *>(denominator->operand(1))->turnIntoPositive();
 
     const_cast<Expression *>(denominator->operand(1))->simplify();
-      if (denominator->operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)denominator->operand(1))->isOne()) {
-    delete denominator;
-    return operand(0)->clone();
+    if (denominator->operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)denominator->operand(1))->isOne()) {
+      delete denominator;
+      return operand(0)->clone();
     }
     return denominator;
   }

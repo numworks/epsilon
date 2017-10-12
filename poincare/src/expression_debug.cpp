@@ -23,6 +23,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Multiplication:
       std::cout << "Multiplication";
       break;
+    case Expression::Type::NthRoot:
+      std::cout << "NthRoot";
+      break;
     case Expression::Type::Cosine:
       std::cout << "Cosine";
       break;
@@ -63,6 +66,9 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Sine:
       std::cout << "Sine";
+      break;
+    case Expression::Type::SquareRoot:
+      std::cout << "SquareRoot";
       break;
     case Expression::Type::Subtraction:
       std::cout << "Subtraction";

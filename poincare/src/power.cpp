@@ -8,6 +8,7 @@ extern "C" {
 #include <poincare/complex_matrix.h>
 #include <poincare/power.h>
 #include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
 #include <poincare/addition.h>
 #include <poincare/undefined.h>
 #include <poincare/square_root.h>
@@ -328,6 +329,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
 }
 
 Expression * Power::immediateBeautify() {
+  // X^-y -> 1/(X->immediateBeautify)^y
   if (operand(1)->sign() < 0) {
     Expression * p = createDenominator();
     const Expression * divOperands[2] = {new Rational(Integer(1)), p};
@@ -347,6 +349,12 @@ Expression * Power::immediateBeautify() {
     const Expression * rootOperand[2] = {operand(0)->clone(), new Rational(index)};
     NthRoot * nr = new NthRoot(rootOperand, false);
     return replaceWith(nr, true);
+  }
+  // +(a,b)^c ->(+(a,b))^c
+  if (operand(0)->type() == Type::Addition || operand(0)->type() == Type::Multiplication) {
+    const Expression * o[1] = {operand(0)};
+    Parenthesis * p = new Parenthesis(o, true);
+    replaceOperand(operand(0), p, true);
   }
   return this;
 }

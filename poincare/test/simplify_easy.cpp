@@ -132,6 +132,10 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("1/x^2+1/(x^2*P)", "(P+1)/(x^2*P)");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^3*P)", "(Px+1)/(x^3*P)");
   assert_parsed_expression_simplify_to("4x/x^2+3P/(x^3*P)", "(4*x^2*P+3P)/(x^3*P)");
+  assert_parsed_expression_simplify_to("x^(1/2)", "R(x)");
+  assert_parsed_expression_simplify_to("x^(-1/2)", "1/R(x)");
+  assert_parsed_expression_simplify_to("x^(1/7)", "root(x, 7)");
+  assert_parsed_expression_simplify_to("x^(-1/7)", "1/root(x, 7)");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

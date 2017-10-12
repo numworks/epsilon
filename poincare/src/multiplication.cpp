@@ -11,6 +11,7 @@ extern "C" {
 #include <poincare/opposite.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/undefined.h>
+#include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
 #include <poincare/division.h>
 #include "layout/string_layout.h"
@@ -216,6 +217,15 @@ Expression * Multiplication::immediateBeautify() {
     return e->immediateBeautify();
   }
   assert(e == this);
+  // Add parenthesis: *(+(a,b), c) -> *((+(a,b)), c
+  for (int index = 0; index < numberOfOperands(); index++) {
+    // Add parenthesis to addition - (a+b)*c
+    if (operand(index)->type() == Type::Addition ) {
+      const Expression * o[1] = {operand(index)};
+      Parenthesis * p = new Parenthesis(o, true);
+      replaceOperand(operand(index), p, true);
+    }
+  }
   for (int index = 0; index < numberOfOperands(); index++) {
     // a*b^(-1)*... -> a*.../b
     if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
@@ -250,7 +260,11 @@ Expression * Multiplication::immediateBeautify() {
           }
         }
       }
-      numeratorOperand->squashUnaryHierarchy();
+      Expression * newNumeratorOperand = numeratorOperand->squashUnaryHierarchy();
+      // Delete parenthesis unnecessary on numerator
+      if (newNumeratorOperand->type() == Type::Parenthesis) {
+        newNumeratorOperand->replaceWith((Expression *)newNumeratorOperand->operand(0), true);
+      }
       replaceWith(d, true);
       return d;
     }

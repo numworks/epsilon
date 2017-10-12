@@ -13,6 +13,7 @@ public:
   int numberOfLines() const;
   void pushCommand(const char * text, size_t length);
   void pushResult(const char * text, size_t length);
+  void deleteLastLineIfEmpty();
 private:
   static constexpr char CommandMarker = 0x01;
   static constexpr char ResultMarker = 0x02;
@@ -25,6 +26,7 @@ private:
    * old ConsoleLines. deleteFirstLine() deletes the first ConsoleLine of
    * m_history and shifts the rest of the ConsoleLines towards the beginning of
    * m_history. */
+  void deleteLastLine();
   char m_history[k_historySize];
   /* The m_history variable sequentially stores an array of ConsoleLine objects.
    * Each ConsoleLine is stored as follow:

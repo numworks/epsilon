@@ -8,7 +8,6 @@ MenuController::MenuController(Responder * parentResponder, Program * program) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_editorController(program),
-  m_executorController(program),
   m_consoleController(parentResponder)
 {
 }
@@ -23,7 +22,7 @@ void MenuController::didBecomeFirstResponder() {
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
-  ViewController * vc[3] = {&m_editorController, &m_executorController, &m_consoleController};
+  ViewController * vc[2] = {&m_editorController, &m_consoleController};
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     app()->displayModalViewController(vc[selectedRow()], 0.5f, 0.5f);
     return true;
@@ -52,7 +51,7 @@ KDCoordinate MenuController::cellHeight() {
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message titles[k_totalNumberOfCells] = {I18n::Message::EditProgram, I18n::Message::ExecuteProgram, I18n::Message::Console};
+  I18n::Message titles[k_totalNumberOfCells] = {I18n::Message::EditProgram, I18n::Message::Console};
   // TODO: translate Console in the .i18n
   myCell->setMessage(titles[index]);
 }

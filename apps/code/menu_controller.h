@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "console_controller.h"
 #include "editor_controller.h"
-#include "executor_controller.h"
 #include "program.h"
 
 namespace Code {
@@ -21,11 +20,10 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_totalNumberOfCells = 3;
+  constexpr static int k_totalNumberOfCells = 2;
   MessageTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   EditorController m_editorController;
-  ExecutorController m_executorController;
   ConsoleController m_consoleController;
 };
 

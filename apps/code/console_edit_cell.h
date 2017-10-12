@@ -5,6 +5,8 @@
 #include <escher/highlight_cell.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
+#include <escher/message_text_view.h>
+#include "console_line.h"
 
 namespace Code {
 
@@ -26,6 +28,7 @@ public:
 private:
   char m_textBuffer[TextField::maxBufferSize()];
   char m_draftTextBuffer[TextField::maxBufferSize()];
+  MessageTextView m_promptView;
   TextField m_textField;
 };
 

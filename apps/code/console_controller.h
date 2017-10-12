@@ -12,6 +12,11 @@ namespace Code {
 class ConsoleController : public ViewController, public ListViewDataSource, public ScrollViewDataSource, public TextFieldDelegate {
 public:
   ConsoleController(Responder * parentResponder);
+  ~ConsoleController();
+  ConsoleController(const ConsoleController& other) = delete;
+  ConsoleController(ConsoleController&& other) = delete;
+  ConsoleController operator=(const ConsoleController& other) = delete;
+  ConsoleController& operator=(ConsoleController&& other) = delete;
 
   // ViewController
   View * view() override { return &m_tableView; }
@@ -34,15 +39,23 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textFied) override;
 
+  // Python
+  void initPython();
+  void executePython(const char * str);
+  void stopPython();
+
+  // Other
+  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 private:
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
   static constexpr int k_numberOfLineCells = 15; // May change depending on the height
-  static constexpr int k_rowHeight = 20;
+  int m_rowHeight;
   ConsoleStore m_consoleStore;
   TableView m_tableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
+  char * m_pythonHeap;
 };
 }
 

@@ -27,7 +27,7 @@ Expression * Multiplication::clone() const {
 }
 
 int Multiplication::sign() const {
-  int sign = 0;
+  int sign = 1;
   for (int i = 0; i < numberOfOperands(); i++) {
     sign *= operand(i)->sign();
   }

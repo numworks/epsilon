@@ -6,6 +6,7 @@
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
 #include <poincare/evaluation.h>
+#include <poincare/undefined.h>
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
@@ -78,6 +79,7 @@ public:
   }
   Expression * clone() const override { return nullptr; }
   Type type() const override { return Expression::Type::Undefined; }
+  Expression * immediateSimplify() override { return this; }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }
@@ -110,6 +112,15 @@ void Expression::beautify(Expression ** expressionAddress) {
     Expression * e = (Expression *)(*expressionAddress)->operand(i);
     beautify(&e);
   }
+}
+
+Expression * Expression::immediateSimplify() {
+  for (int i = 0; i< numberOfOperands(); i++) {
+    if (operand(i)->type() == Type::Undefined) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  return this;
 }
 
 bool Expression::hasAncestor(const Expression * e) const {

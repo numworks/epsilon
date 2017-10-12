@@ -218,7 +218,7 @@ Expression * Power::immediateSimplify() {
       Multiplication * m = new Multiplication(multOperands, 2, false);
       simplifyRationalRationalPower(p1, static_cast<Rational *>((Expression *)p1->operand(0)), static_cast<Rational *>((Expression *)(p1->operand(1)->operand(0))));
       replaceWith(m, true);
-      return immediateSimplify();
+      return m->immediateSimplify();
     }
   }
   return this;

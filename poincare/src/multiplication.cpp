@@ -104,15 +104,23 @@ void Multiplication::immediateSimplify() {
       return;
     }
   }
+  factorize();
   /* Second loop, distribute addition */
-  for (int i=0; i<numberOfOperands(); i++) {
-    if (operand(i)->type() == Type::Addition) {
-      distributeOnChildAtIndex(i);
-      return;
+  if (parent() && parent()->type() == Type::Addition) {
+    for (int i=0; i<numberOfOperands(); i++) {
+      if (operand(i)->type() == Type::Addition) {
+        distributeOnChildAtIndex(i);
+        return;
+      }
     }
+    /* Now, no more node can be an addition or a multiplication */
+    factorize();
   }
+  squashUnaryHierarchy();
+}
+
+void Multiplication::factorize() {
   sortChildren();
-  /* Now, no more node can be an addition or a multiplication */
   int i = 0;
   while (i < numberOfOperands()) {
     if (deleteUselessOperand(i) && i > 0) {
@@ -133,7 +141,6 @@ void Multiplication::immediateSimplify() {
       i++;
     }
   }
-  squashUnaryHierarchy();
 }
 
 void Multiplication::factorizeBase(Expression * e1, Expression * e2) {

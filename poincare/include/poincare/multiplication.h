@@ -37,6 +37,7 @@ private:
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "*");
   }
   /* Simplification */
+  void factorize();
   void factorizeBase(Expression * e1, Expression * e2);
   void factorizeExponent(Expression * e1, Expression * e2);
   void distributeOnChildAtIndex(int index);

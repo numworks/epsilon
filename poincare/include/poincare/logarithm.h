@@ -22,6 +22,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Simplification */
   Expression * splitInteger(Integer i, bool isDenominator);
+  Expression * immediateBeautify() override;
 };
 
 }

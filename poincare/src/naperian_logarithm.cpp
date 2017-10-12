@@ -1,8 +1,11 @@
 #include <poincare/naperian_logarithm.h>
+#include <poincare/symbol.h>
+#include <poincare/logarithm.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
+#include <ion.h>
 #include <cmath>
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -17,6 +20,13 @@ Expression::Type NaperianLogarithm::type() const {
 Expression * NaperianLogarithm::clone() const {
   NaperianLogarithm * a = new NaperianLogarithm(m_operands, true);
   return a;
+}
+
+Expression * NaperianLogarithm::immediateSimplify() {
+  const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
+  Logarithm * l = new Logarithm(logOperands, 2, false);
+  replaceWith(l, true);
+  return l->immediateSimplify();
 }
 
 template<typename T>

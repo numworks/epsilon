@@ -23,6 +23,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "ln");
   }
+  Expression * immediateSimplify() override;
 };
 
 }

@@ -4,8 +4,11 @@
 #include <poincare/rational.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
+#include <poincare/symbol.h>
 #include <poincare/arithmetic.h>
+#include <poincare/naperian_logarithm.h>
 #include <cmath>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -94,6 +97,21 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator) {
     index++;
   }
   return a;
+}
+
+Expression * Logarithm::immediateBeautify() {
+  Symbol e = Symbol(Ion::Charset::Exponential);
+  const Expression * logOperand[1] = {operand(0)};
+  if (numberOfOperands() == 2 && operand(1)->compareTo(&e) == 0) {
+    NaperianLogarithm * nl = new NaperianLogarithm(logOperand, true);
+    return replaceWith(nl, true);
+  }
+  Rational one = Rational(Integer(1));
+  if (numberOfOperands() == 2 && operand(1)->compareTo(&one) == 0) {
+    Logarithm * l = new Logarithm(logOperand, 1, true);
+    return replaceWith(l, true);
+  }
+  return this;
 }
 
 template<typename T>

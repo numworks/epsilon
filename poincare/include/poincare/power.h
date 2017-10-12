@@ -18,6 +18,7 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
   Expression * immediateSimplify() override;
+  Expression * createDenominator();
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n);
@@ -37,9 +38,9 @@ private:
   int compareToSameTypeExpression(const Expression * e) const override;
   /* Simplification */
   Expression * immediateBeautify() override;
-  void simplifyPowerPower(Power * p, Expression * r);
-  void simplifyPowerMultiplication(Multiplication * m, Expression * r);
-  void simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b);
+  Expression * simplifyPowerPower(Power * p, Expression * r);
+  Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r);
+  Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
 };
 

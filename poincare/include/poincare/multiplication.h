@@ -23,6 +23,8 @@ public:
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Simplification */
   Expression * immediateSimplify() override;
+  Expression * createDenominator();
+  void leastCommonMultiple(Expression * factor);
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

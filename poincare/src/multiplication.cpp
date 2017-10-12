@@ -87,7 +87,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
   return true;
 }
 
-void Multiplication::immediateSimplify() {
+Expression * Multiplication::immediateSimplify() {
   /* First loop: merge all multiplication, break if 0 or undef */
   int index = 0;
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
@@ -97,27 +97,21 @@ void Multiplication::immediateSimplify() {
       mergeOperands(static_cast<Multiplication *>(o));
       index = 0;
     } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
-      replaceWith(new Rational(Integer(0)), true);
-      return;
+      return replaceWith(new Rational(Integer(0)), true);
     } else if (o->type() == Type::Undefined) {
-      replaceWith(new Undefined(), true);
-      return;
+      return replaceWith(new Undefined(), true);
     }
   }
   factorize();
-  /* Second loop, distribute addition */
-  if (parent() && parent()->type() == Type::Addition) {
-    for (int i=0; i<numberOfOperands(); i++) {
-      if (operand(i)->type() == Type::Addition) {
-        distributeOnChildAtIndex(i);
-        return;
-      }
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (operand(i)->type() == Type::Addition) {
+      return distributeOnChildAtIndex(i);
     }
-    /* Now, no more node can be an addition or a multiplication */
-    factorize();
   }
-  squashUnaryHierarchy();
-}
+  /* Now, no more node can be an addition or a multiplication */
+  factorize();
+  return squashUnaryHierarchy();
+  }
 
 void Multiplication::factorize() {
   sortChildren();
@@ -171,7 +165,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2) {
   e1->immediateSimplify();
 }
 
-void Multiplication::distributeOnChildAtIndex(int i) {
+Expression * Multiplication::distributeOnChildAtIndex(int i) {
   Addition * a = static_cast<Addition *>((Expression *) operand(i));
   for (int j = 0; j < a->numberOfOperands(); j++) {
     Expression * termJ = const_cast<Expression *>(a->operand(j));
@@ -181,7 +175,7 @@ void Multiplication::distributeOnChildAtIndex(int i) {
     m->immediateSimplify();
   }
   replaceWith(a, true);
-  a->immediateSimplify();
+  return a->immediateSimplify();
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {

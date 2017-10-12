@@ -24,7 +24,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-void Addition::immediateSimplify() {
+Expression * Addition::immediateSimplify() {
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
   int index = 0;
   while (index < numberOfOperands()) {
@@ -33,8 +33,7 @@ void Addition::immediateSimplify() {
       mergeOperands(static_cast<Addition *>(o));
       index = 0;
     } else if (o->type() == Type::Undefined) {
-      replaceWith(new Undefined(), true);
-      return;
+      return replaceWith(new Undefined(), true);
     }
   }
   sortChildren();
@@ -56,7 +55,11 @@ void Addition::immediateSimplify() {
       i++;
     }
   }
-  squashUnaryHierarchy();
+  Expression * newExpression = squashUnaryHierarchy();
+  if (newExpression == this) {
+    return factorizeOnCommonDenominator();
+  }
+  return newExpression;
 }
 
 void Addition::factorizeChildren(Expression * e1, Expression * e2) {

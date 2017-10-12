@@ -22,7 +22,7 @@ public:
 
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Simplification */
-  void immediateSimplify() override;
+  Expression * immediateSimplify() override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -40,7 +40,7 @@ private:
   void factorize();
   void factorizeBase(Expression * e1, Expression * e2);
   void factorizeExponent(Expression * e1, Expression * e2);
-  void distributeOnChildAtIndex(int index);
+  Expression * distributeOnChildAtIndex(int index);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);

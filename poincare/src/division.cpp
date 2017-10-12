@@ -20,15 +20,15 @@ Expression * Division::clone() const {
   return new Division(m_operands, true);
 }
 
-void Division::immediateSimplify() {
+Expression * Division::immediateSimplify() {
   const Expression * powOperands[2] = {operand(1), new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
   const Expression * multOperands[2] = {operand(0), p};
   Multiplication * m = new Multiplication(multOperands, 2, false);
-  p->immediateSimplify();
+  p->simplify();
   detachOperands();
   replaceWith(m, true);
-  m->immediateSimplify();
+  return m->immediateSimplify();
 }
 
 template<typename T>

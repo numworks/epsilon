@@ -23,8 +23,8 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
-void Parenthesis::immediateSimplify() {
-  replaceWith(const_cast<Expression *>(operand(0)), true);
+Expression * Parenthesis::immediateSimplify() {
+  return replaceWith(const_cast<Expression *>(operand(0)), true);
 }
 
 template<typename T>

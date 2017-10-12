@@ -18,10 +18,11 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
-void AbsoluteValue::immediateSimplify() {
+Expression * AbsoluteValue::immediateSimplify() {
   if (operand(0)->sign() > 0) {
-    replaceWith(const_cast<Expression *>(operand(0)), true);
+    return replaceWith(const_cast<Expression *>(operand(0)), true);
   }
+  return this;
 }
 
 template<typename T>

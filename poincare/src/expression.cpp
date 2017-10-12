@@ -97,11 +97,11 @@ void Expression::simplifyAndBeautify(Expression ** expressionAddress) {
   *expressionAddress = (Expression *)(root.operand(0));
 }
 
-void Expression::simplify() {
+Expression * Expression::simplify() {
   for (int i = 0; i < numberOfOperands(); i++) {
     ((Expression *)operand(i))->simplify();
   }
-  immediateSimplify();
+  return immediateSimplify();
 }
 
 void Expression::beautify(Expression ** expressionAddress) {
@@ -123,9 +123,10 @@ bool Expression::hasAncestor(const Expression * e) const {
   return m_parent->hasAncestor(e);
 }
 
-void Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
+Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
   assert(m_parent != nullptr);
   m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
+  return newOperand;
 }
 
 /*void Expression::removeFromParent() {

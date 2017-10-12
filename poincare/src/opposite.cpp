@@ -28,12 +28,12 @@ Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());
 }
 
-void Opposite::immediateSimplify() {
+Expression * Opposite::immediateSimplify() {
   const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(0)};
   detachOperand(operand(0));
   Multiplication * m = new Multiplication(multOperands, 2, false);
   replaceWith(m, true);
-  m->immediateSimplify();
+  return m->immediateSimplify();
 }
 
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

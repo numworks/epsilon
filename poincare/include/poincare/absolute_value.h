@@ -22,7 +22,7 @@ private:
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  void immediateSimplify() override;
+  Expression * immediateSimplify() override;
 };
 
 }

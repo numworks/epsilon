@@ -22,7 +22,7 @@ private:
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Simplification */
-  void immediateSimplify() override;
+  Expression * immediateSimplify() override;
 };
 
 }

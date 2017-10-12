@@ -19,7 +19,7 @@ Expression * NthRoot::clone() const {
   NthRoot * a = new NthRoot(m_operands, true);  return a;
 }
 
-void NthRoot::immediateSimplify() {
+Expression * NthRoot::immediateSimplify() {
   const Expression * inverseOperands[2] = {operand(1), new Rational(Integer(-1))};
   Power * invIndex = new Power(inverseOperands, false);
   const Expression * powOperands[2] = {operand(0), invIndex};
@@ -27,7 +27,7 @@ void NthRoot::immediateSimplify() {
   invIndex->immediateSimplify();
   detachOperands();
   replaceWith(p, true);
-  p->immediateSimplify();
+  return p->immediateSimplify();
 }
 
 ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

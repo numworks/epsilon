@@ -14,7 +14,7 @@ public:
   Type type() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
   /* Simplification */
-  void immediateSimplify() override;
+  Expression * immediateSimplify() override;
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit, compute<float>);

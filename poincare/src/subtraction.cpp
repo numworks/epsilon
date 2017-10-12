@@ -28,7 +28,7 @@ Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
 }
 
-void Subtraction::immediateSimplify() {
+Expression * Subtraction::immediateSimplify() {
   const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(1)};
   Multiplication * m = new Multiplication(multOperands, 2, false);
   const Expression * addOperands[2] = {operand(0), m};
@@ -36,7 +36,7 @@ void Subtraction::immediateSimplify() {
   m->immediateSimplify();
   detachOperands();
   replaceWith(a, true);
-  a->immediateSimplify();
+  return a->immediateSimplify();
 }
 
 template<typename T> Evaluation<T> * Subtraction::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {

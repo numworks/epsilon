@@ -17,7 +17,7 @@ public:
   void turnIntoPositive() override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
-  void immediateSimplify() override;
+  Expression * immediateSimplify() override;
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n);

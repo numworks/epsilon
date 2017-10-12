@@ -117,7 +117,7 @@ public:
   void setParent(Expression * parent) { m_parent = parent; }
   bool hasAncestor(const Expression * e) const;
   virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
-  void replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
+  Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
   virtual void swapOperands(int i, int j) = 0;
   //void removeFromParent();
 
@@ -133,8 +133,9 @@ public:
 
   /* Simplification */
   static void simplifyAndBeautify(Expression ** expressionAddress);
+  Expression * simplify();
   // TODO: should be virtual pure
-  virtual void immediateSimplify() {};// = 0;
+  virtual Expression * immediateSimplify() { return this; };// = 0;
   virtual Expression * immediateBeautify() { return this; };
 
   /* Evaluation Engine
@@ -161,7 +162,6 @@ private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   /* Simplification */
-  void simplify();
   // beautify cannot be dynamic as it changes the expression and THEN its new children
   static void beautify(Expression ** expressionAddress);
   /* Sorting */

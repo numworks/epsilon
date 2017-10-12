@@ -1,3 +1,4 @@
 Console = "Console"
+ConsoleError = "Error"
 EditProgram = "Editar el programa"
 ExecuteProgram = "Ejecutar el programa"

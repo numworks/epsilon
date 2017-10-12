@@ -50,6 +50,15 @@ void ConsoleStore::pushResult(const char * text, size_t length) {
   push(ResultMarker, text, length);
 }
 
+
+void ConsoleStore::deleteLastLineIfEmpty() {
+  ConsoleLine lastLine = lineAtIndex(numberOfLines()-1);
+  char lastLineFirstChar = lastLine.text()[0];
+  if (lastLineFirstChar == 0 || lastLineFirstChar == '\n') {
+    deleteLastLine();
+  }
+}
+
 void ConsoleStore::push(const char marker, const char * text, size_t length) {
   // TODO: Verify that the text field does not accept texts that are bigger than
   // k_historySize, or put an alert message if the command is too big.
@@ -88,14 +97,37 @@ void ConsoleStore::deleteFirstLine() {
   if (m_history[0] == 0) {
     return;
   }
-  int indexOfSecondLineMarker = 1;
-  while (m_history[indexOfSecondLineMarker] != 0) {
-    indexOfSecondLineMarker++;
+  int secondLineMarkerIndex = 1;
+  while (m_history[secondLineMarkerIndex] != 0) {
+    secondLineMarkerIndex++;
   }
-  indexOfSecondLineMarker++;
-  for (int i=0; i<k_historySize - indexOfSecondLineMarker; i++) {
-    m_history[i] = m_history[indexOfSecondLineMarker+i];
+  secondLineMarkerIndex++;
+  for (int i=0; i<k_historySize - secondLineMarkerIndex; i++) {
+    m_history[i] = m_history[secondLineMarkerIndex+i];
   }
+}
+
+void ConsoleStore::deleteLastLine() {
+  int lineCount = numberOfLines();
+  if (lineCount < 0) {
+    return;
+  }
+  if (lineCount == 1) {
+    deleteFirstLine();
+    return;
+  }
+  int currentLineIndex = 1;
+  int lastLineMarkerIndex = 0;
+  for (int i=0; i<k_historySize; i++) {
+    if (m_history[i] == 0) {
+      currentLineIndex++;
+      if (currentLineIndex == lineCount) {
+        lastLineMarkerIndex = i+1;
+        break;
+      }
+    }
+  }
+  m_history[lastLineMarkerIndex] = 0;
 }
 
 }

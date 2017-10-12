@@ -291,7 +291,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   Integer r1 = Integer(1);
   Integer r2 = Integer(1);
   int index = 0;
-  while (!coefficients[index].isZero()) {
+  while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
     Integer n = Integer::Multiplication(coefficients[index], r->numerator());
     IntegerDivision div = Integer::Division(n, r->denominator());
     r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));

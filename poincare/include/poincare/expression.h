@@ -135,7 +135,7 @@ public:
   static void simplifyAndBeautify(Expression ** expressionAddress);
   Expression * simplify();
   // TODO: should be virtual pure
-  virtual Expression * immediateSimplify() { return this; };// = 0;
+  virtual Expression * immediateSimplify();
   virtual Expression * immediateBeautify() { return this; };
 
   /* Evaluation Engine

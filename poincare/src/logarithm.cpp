@@ -22,7 +22,7 @@ Expression::Type Logarithm::type() const {
 }
 
 Expression * Logarithm::clone() const {
-  return new Logarithm(operands(), true);
+  return new Logarithm(operands(), numberOfOperands(), true);
 }
 
 template<typename T>

@@ -136,6 +136,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("x^(-1/2)", "1/R(x)");
   assert_parsed_expression_simplify_to("x^(1/7)", "root(x, 7)");
   assert_parsed_expression_simplify_to("x^(-1/7)", "1/root(x, 7)");
+  assert_parsed_expression_simplify_to("log(12925)", "log(47)+log(11)+2*log(5)");
+  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "log(7, 6)+3log(11, 6)+log(17,6)-log(47,6)-2*log(5,6)");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

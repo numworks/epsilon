@@ -214,8 +214,7 @@ Expression * Multiplication::immediateBeautify() {
     return e->immediateBeautify();
   }
   assert(e == this);
-  int index = 0;
-  while (index < numberOfOperands()) {
+  for (int index = 0; index < numberOfOperands(); index++) {
     // a*b^(-1)*... -> a*.../b
     if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
       Power * p = static_cast<Power *>((Expression *)operand(index));
@@ -253,8 +252,8 @@ Expression * Multiplication::immediateBeautify() {
       replaceWith(d, true);
       return d;
     }
-    index++;
   }
+  // -1*A -> -A
   if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isMinusOne()) {
     removeOperand((Expression *)operand(0), true);
     Expression * e = squashUnaryHierarchy();

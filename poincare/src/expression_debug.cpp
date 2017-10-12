@@ -29,6 +29,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Cosine:
       std::cout << "Cosine";
       break;
+    case Expression::Type::Logarithm:
+      std::cout << "Log";
+      break;
     case Expression::Type::NaperianLogarithm:
       std::cout << "Ln";
       break;

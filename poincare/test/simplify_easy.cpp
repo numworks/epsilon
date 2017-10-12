@@ -128,6 +128,10 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("A^(-1)*B^(-1)", "1/(AB)");
   assert_parsed_expression_simplify_to("-11/(22P+11P)", "-1/(3P)");
   assert_parsed_expression_simplify_to("-A", "-A");
+  assert_parsed_expression_simplify_to("1/(x+1)+1/(P+2)", "(P+x+3)/((x+1)(P+2))");
+  assert_parsed_expression_simplify_to("1/x^2+1/(x^2*P)", "(P+1)/(x^2*P)");
+  assert_parsed_expression_simplify_to("1/x^2+1/(x^3*P)", "(Px+1)/(x^3*P)");
+  assert_parsed_expression_simplify_to("4x/x^2+3P/(x^3*P)", "(4*x^2*P+3P)/(x^3*P)");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

@@ -11,6 +11,7 @@ extern "C" {
 #include <poincare/opposite.h>
 #include <poincare/complex_matrix.h>
 #include <poincare/undefined.h>
+#include <poincare/subtraction.h>
 #include <poincare/division.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
@@ -266,6 +267,23 @@ Expression * Multiplication::immediateBeautify() {
   return this;
 }
 
+Expression * Multiplication::createDenominator() {
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  Expression * e = mergeNegativePower();
+  if (e->type() == Type::Power) {
+    return static_cast<Power *>(e)->createDenominator();
+  }
+  assert(e == this);
+  for (int index = 0; index < numberOfOperands(); index++) {
+    // a*b^(-1)*... -> a*.../b
+    if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
+      Power * p = static_cast<Power *>((Expression *)operand(index));
+      return p->operand(0)->clone();
+    }
+  }
+  return nullptr;
+}
+
 Expression * Multiplication::mergeNegativePower() {
   Multiplication * m = new Multiplication();
   int i = 0;
@@ -292,6 +310,34 @@ Expression * Multiplication::mergeNegativePower() {
   addOperands(multOperand, 1);
   sortChildren();
   return squashUnaryHierarchy();
+}
+
+void Multiplication::leastCommonMultiple(Expression * factor) {
+  if (factor->type() == Type::Multiplication) {
+    for (int j = 0; j < factor->numberOfOperands(); j++) {
+      leastCommonMultiple((Expression *)factor->operand(j));
+    }
+    return;
+  }
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (TermsHaveIdenticalBase(operand(i), factor)) {
+      const Expression * index[2] = {CreateExponent((Expression *)operand(i)), CreateExponent(factor)};
+      Subtraction * sub = new Subtraction(index, false);
+      Expression::simplifyAndBeautify((Expression **)&sub);
+      if (sub->sign() < 0) { // index[0] < index[1]
+        factor->replaceOperand((Expression *)factor->operand(1), new Opposite((Expression **)&sub, true), true);
+        factor->simplify();
+        factorizeBase((Expression *)operand(i), factor);
+      } else if (sub->sign() == 0) {
+        factorizeBase((Expression *)operand(i), factor);
+      } else {}
+      delete sub;
+      return;
+    }
+  }
+  const Expression * newOp[1] = {factor->clone()};
+  addOperands(newOp, 1);
+  sortChildren();
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

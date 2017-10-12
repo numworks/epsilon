@@ -2,6 +2,7 @@
 #include <poincare/complex_matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
+#include <poincare/power.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
 extern "C" {
@@ -60,6 +61,42 @@ Expression * Addition::immediateSimplify() {
     return factorizeOnCommonDenominator();
   }
   return newExpression;
+}
+
+Expression * Addition::factorizeOnCommonDenominator() {
+  Multiplication * commonDenom = new Multiplication();
+  for (int i = 0; i < numberOfOperands(); i++) {
+    Expression * denominator = nullptr;
+    if (operand(i)->type() == Type::Power) {
+      Power * p = static_cast<Power *>((Expression *)operand(i));
+      denominator = p->createDenominator();
+    } else if (operand(i)->type() == Type::Multiplication) {
+      Multiplication * m = static_cast<Multiplication *>((Expression *)operand(i));
+      denominator = m->createDenominator();
+    }
+    if (denominator != nullptr) {
+      commonDenom->leastCommonMultiple(denominator);
+      delete denominator;
+    }
+  }
+  if (commonDenom->numberOfOperands() == 0) {
+    return this;
+  }
+  for (int i = 0; i < numberOfOperands(); i++) {
+    Multiplication * m = (Multiplication *)commonDenom->clone();
+    Expression * currentTerm = (Expression *)operand(i);
+    Expression * newOp[1] = {currentTerm->clone()};
+    m->addOperands(newOp, 1);
+    replaceOperand(currentTerm, m, true);
+  }
+  this->simplify();
+  const Expression * powOperands[2] = {commonDenom, new Rational(Integer(-1))};
+  Power * p = new Power(powOperands, false);
+  commonDenom->simplify();
+  const Expression * multOperands[2] = {clone(),p};
+  Multiplication * result = new Multiplication(multOperands, 2, false);
+  replaceWith(result, true);
+  return result;
 }
 
 void Addition::factorizeChildren(Expression * e1, Expression * e2) {

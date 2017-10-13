@@ -1,20 +1,20 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/layout_engine.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/trigonometrical_function.h>
 
 namespace Poincare {
 
-class Sine : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class Sine : public TrigonometricalFunction {
+  using TrigonometricalFunction::TrigonometricalFunction;
 public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
-  Expression * immediateSimplify() override;
 private:
+  Trigonometry::Function trigonometricalFunctionType() const override {
+    return Trigonometry::Function::Sine;
+  }
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }

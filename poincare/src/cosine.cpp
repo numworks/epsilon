@@ -3,7 +3,6 @@
 #include <poincare/complex.h>
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
-#include <poincare/trigonometry.h>
 #include <poincare/multiplication.h>
 #include <ion.h>
 extern "C" {
@@ -20,38 +19,6 @@ Expression::Type Cosine::type() const {
 Expression * Cosine::clone() const {
   Cosine * a = new Cosine(m_operands, true);
   return a;
-}
-
-Expression * Cosine::immediateSimplify() {
-  Expression * lookup = Trigonometry::table(operand(0), Trigonometry::Function::Cosine, false);
-  if (lookup != nullptr) {
-    return replaceWith(lookup, true);
-  }
-  if (operand(0)->sign() < 0) {
-    ((Expression *)operand(0))->turnIntoPositive();
-    return immediateSimplify(); // recursive
-  }
-  if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
-    // Replace argument in [0, Pi[
-    if (r->denominator().isLowerThan(r->numerator())) {
-      IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-      Rational * newR = new Rational(div.remainder, r->denominator());
-      const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
-      const_cast<Expression *>(operand(0))->immediateSimplify();
-      if (Integer::Division(div.quotient, Integer(2)).remainder.isOne()) {
-        Expression * simplifiedCosine = immediateSimplify(); // recursive
-        const Expression * multOperands[2] = {new Rational(Integer(-1)), simplifiedCosine->clone()};
-        Multiplication * m = new Multiplication(multOperands, 2, false);
-        return simplifiedCosine->replaceWith(m, true)->immediateSimplify();
-      } else {
-        return immediateSimplify(); // recursive
-      }
-    }
-    assert(r->sign() > 0);
-    assert(r->numerator().isLowerThan(r->denominator()));
-  }
-  return this;
 }
 
 template<typename T>

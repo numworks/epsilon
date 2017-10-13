@@ -12,6 +12,7 @@ class Cosine : public StaticHierarchy<1>  {
 public:
   Type type() const override;
   Expression * clone() const override;
+  Expression * immediateSimplify() override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

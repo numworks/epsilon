@@ -42,6 +42,7 @@ void Multiplication::turnIntoPositive() {
       const_cast<Expression *>(operand(i))->turnIntoPositive();
     }
   }
+  immediateSimplify();
 }
 
 template<typename T>
@@ -305,7 +306,6 @@ Expression * Multiplication::mergeNegativePower() {
     if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
       const Expression * e = operand(i);
       const_cast<Expression *>(e->operand(1))->turnIntoPositive();
-      // TODO: should we call const_cast<Expression *>(e->operand(1))->immediateSimplify
       removeOperand(e, false);
       m->addOperands(&e, 1);
       const_cast<Expression *>(e)->immediateSimplify();

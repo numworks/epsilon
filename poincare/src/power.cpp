@@ -363,8 +363,6 @@ Expression * Power::createDenominator() {
   if (operand(1)->sign() < 0) {
     Expression * denominator = clone();
     const_cast<Expression *>(denominator->operand(1))->turnIntoPositive();
-
-    const_cast<Expression *>(denominator->operand(1))->simplify();
     if (denominator->operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)denominator->operand(1))->isOne()) {
       delete denominator;
       return operand(0)->clone();

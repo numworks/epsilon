@@ -1,5 +1,6 @@
 #include "console_controller.h"
 #include <apps/i18n.h>
+#include "app.h"
 
 extern "C" {
 #include <stdlib.h>
@@ -135,6 +136,11 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   m_tableView.reloadData();
   m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
+  return true;
+}
+
+bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+  app()->dismissModalViewController();
   return true;
 }
 

@@ -26,9 +26,12 @@ public:
   private:
     Program m_program;
   };
+  StackViewController * stackViewController() { return &m_codeStackViewController; }
 private:
   App(Container * container, Snapshot * snapshot);
+  ButtonRowController m_listFooter;
   MenuController m_menuController;
+  StackViewController m_codeStackViewController;
 };
 
 }

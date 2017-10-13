@@ -163,7 +163,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   /* Simplification */
   // beautify cannot be dynamic as it changes the expression and THEN its new children
-  static void beautify(Expression ** expressionAddress);
+  Expression * beautify();
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;

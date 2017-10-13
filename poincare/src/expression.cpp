@@ -94,8 +94,7 @@ public:
 void Expression::simplifyAndBeautify(Expression ** expressionAddress) {
   SimplificationRoot root(*expressionAddress);
   root.simplify();
-  Expression * e = (Expression *)root.operand(0);
-  beautify(&e);
+  root.beautify();
   *expressionAddress = (Expression *)(root.operand(0));
 }
 
@@ -106,11 +105,10 @@ Expression * Expression::simplify() {
   return immediateSimplify();
 }
 
-void Expression::beautify(Expression ** expressionAddress) {
-  *expressionAddress = (*expressionAddress)->immediateBeautify();
-  for (int i = 0; i < (*expressionAddress)->numberOfOperands(); i++) {
-    Expression * e = (Expression *)(*expressionAddress)->operand(i);
-    beautify(&e);
+Expression * Expression::beautify() {
+  Expression * e = immediateBeautify();
+  for (int i = 0; i < e->numberOfOperands(); i++) {
+    ((Expression *)e->operand(i))->beautify();
   }
 }
 

@@ -3,6 +3,7 @@
 #include <poincare/complex.h>
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
+#include <poincare/trigonometry.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -42,6 +43,10 @@ Expression * Cosine::immediateSimplify() {
     }
     assert(r->sign() > 0);
     assert(r->numerator().isLowerThan(r->denominator()));
+    Expression * lookup = Trigonometry::table(operand(0), Trigonometry::Function::Cosine, false);
+    if (lookup != nullptr) {
+      return replaceWith(lookup, true);
+    }
   }
   return this;
 }

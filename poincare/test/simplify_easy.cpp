@@ -139,6 +139,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log(12925)", "log(47)+log(11)+2*log(5)");
   assert_parsed_expression_simplify_to("ln(12925)", "ln(47)+ln(11)+2*ln(5)");
   assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "log(7, 6)+3log(11, 6)+log(17,6)-log(47,6)-2*log(5,6)");
+  assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
   assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "undef");
   assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5"); // TODO: put 5 on denominator?
   assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2"); // Check for parenthesis

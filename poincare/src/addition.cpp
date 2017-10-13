@@ -141,22 +141,21 @@ Expression * Addition::immediateBeautify() {
     if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
       Multiplication * m = static_cast<Multiplication *>((Expression *)operand(index));
       m->removeOperand(m->operand(0), true);
-      m->squashUnaryHierarchy();
-      const Expression * replacedOperand = operand(index);
+      const Expression * subtractant = m->squashUnaryHierarchy();
       if (index == 0) {
-        const Expression * opOperand[1] = {replacedOperand};
-        Opposite * o = new Opposite(opOperand, false);
-        replaceOperand(const_cast<Expression *>(replacedOperand), o, false);
+        const Expression * opOperand[1] = {subtractant};
+        Opposite * o = new Opposite(opOperand, true);
+        replaceOperand(const_cast<Expression *>(subtractant), o, true);
       } else {
-        const Expression * subOperands[2] = {operand(index-1), replacedOperand};
+        const Expression * subOperands[2] = {operand(index-1), subtractant->clone()};
         removeOperand(operand(index-1), false);
         Subtraction * s = new Subtraction(subOperands, false);
-        replaceOperand(const_cast<Expression *>(replacedOperand), s, false);
+        replaceOperand(const_cast<Expression *>(subtractant), s, true);
       }
     }
     index++;
   }
-  return this;
+  return squashUnaryHierarchy();
 }
 
 

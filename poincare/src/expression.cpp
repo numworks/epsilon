@@ -87,6 +87,7 @@ Expression * Expression::beautify() {
   for (int i = 0; i < e->numberOfOperands(); i++) {
     ((Expression *)e->operand(i))->beautify();
   }
+  return e;
 }
 
 Expression * Expression::immediateSimplify() {

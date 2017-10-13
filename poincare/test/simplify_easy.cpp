@@ -144,11 +144,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5"); // TODO: put 5 on denominator?
   assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2"); // Check for parenthesis
   assert_parsed_expression_simplify_to("cos(0)", "1");
-  assert_parsed_expression_simplify_to("cos(P)", "0");
+  assert_parsed_expression_simplify_to("cos(P)", "-1");
   assert_parsed_expression_simplify_to("cos(P*35/29)", "cos(P*6/29)");
   assert_parsed_expression_simplify_to("cos(-P*35/29)", "cos(P*6/29)");
   assert_parsed_expression_simplify_to("cos(P*340000)", "1");
-  assert_parsed_expression_simplify_to("cos(-P*340000)", "1");
+  assert_parsed_expression_simplify_to("cos(-P*340001)", "-1");
   assert_parsed_expression_simplify_to("cos(P/12)", "(R(6)+R(2))/4");
   assert_parsed_expression_simplify_to("cos(-P/12)", "(R(6)+R(2))/4");
   assert_parsed_expression_simplify_to("cos(-P*R(2))", "cos(P*R(2))");

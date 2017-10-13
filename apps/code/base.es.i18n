@@ -1,3 +1,4 @@
+AddScript = "Add a script"
 Console = "Console"
 ConsoleError = "Error"
 EditProgram = "Editar el programa"

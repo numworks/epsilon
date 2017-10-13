@@ -26,24 +26,24 @@ App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
 
+void App::Snapshot::reset() {
+  m_program.setContent("");
+}
+
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;
-}
-
-void App::Snapshot::reset() {
-  m_program.setContent("");
 }
 
 Program * App::Snapshot::program() {
   return &m_program;
 }
 
-static KDColor sCodeColors[] = {KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
-
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_menuController, I18n::Message::Warning),
-  m_menuController(this, snapshot->program())
+  ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
+  m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
+  m_menuController(&m_listFooter, snapshot->program(), &m_listFooter),
+  m_codeStackViewController(&m_modalViewController, &m_listFooter)
 {
 }
 

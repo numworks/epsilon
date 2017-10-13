@@ -28,12 +28,13 @@ Expression * Cosine::immediateSimplify() {
   if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::SmallPi) {
     return replaceWith(new Rational(Integer(0)), true);
   }
+  if (operand(0)->sign() < 0) {
+    ((Expression *)operand(0))->turnIntoPositive();
+    return immediateSimplify(); // recursive
+  }
   if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
-    if (r->sign() < 0) {
-      r->setNegative(false);
-      return immediateSimplify(); // recursive
-    }
+    // Replace argument in [0, Pi[
     if (r->denominator().isLowerThan(r->numerator())) {
       IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
       Rational * newR = new Rational(div.remainder, r->denominator());

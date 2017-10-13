@@ -1,6 +1,9 @@
 #include <poincare/cosine.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/complex.h>
+#include <poincare/symbol.h>
+#include <poincare/rational.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -15,6 +18,32 @@ Expression::Type Cosine::type() const {
 Expression * Cosine::clone() const {
   Cosine * a = new Cosine(m_operands, true);
   return a;
+}
+
+Expression * Cosine::immediateSimplify() {
+  if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
+    return replaceWith(new Rational(Integer(1)), true);
+      }
+  if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::SmallPi) {
+    return replaceWith(new Rational(Integer(0)), true);
+  }
+  if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
+    Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
+    if (r->sign() < 0) {
+      r->setNegative(false);
+      return immediateSimplify(); // recursive
+    }
+    if (r->denominator().isLowerThan(r->numerator())) {
+      IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
+      Rational * newR = new Rational(div.remainder, r->denominator());
+      const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
+      const_cast<Expression *>(operand(0))->immediateSimplify();
+      return immediateSimplify(); // recursive
+    }
+    assert(r->sign() > 0);
+    assert(r->numerator().isLowerThan(r->denominator()));
+  }
+  return this;
 }
 
 template<typename T>

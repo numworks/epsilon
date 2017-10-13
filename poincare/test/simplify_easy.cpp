@@ -143,6 +143,13 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "undef");
   assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5"); // TODO: put 5 on denominator?
   assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2"); // Check for parenthesis
+  assert_parsed_expression_simplify_to("cos(0)", "1");
+  assert_parsed_expression_simplify_to("cos(P)", "0");
+  assert_parsed_expression_simplify_to("cos(P*35/29)", "cos(P*6/29)");
+  assert_parsed_expression_simplify_to("cos(-P*35/29)", "cos(P*6/29)");
+  assert_parsed_expression_simplify_to("cos(P*340000)", "1");
+  assert_parsed_expression_simplify_to("cos(-P*340000)", "1");
+
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

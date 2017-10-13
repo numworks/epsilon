@@ -3,7 +3,6 @@
 #include <poincare/complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/symbol.h>
-#include <poincare/trigonometry.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -19,41 +18,6 @@ Expression::Type Sine::type() const {
 Expression * Sine::clone() const {
   Sine * a = new Sine(m_operands, true);
   return a;
-}
-
-Expression * Sine::immediateSimplify() {
-  Expression * lookup = Trigonometry::table(operand(0), Trigonometry::Function::Sine, false);
-  if (lookup != nullptr) {
-    return replaceWith(lookup, true);
-  }
-  if (operand(0)->sign() < 0) {
-    ((Expression *)operand(0))->turnIntoPositive();
-    ((Expression *)operand(0))->immediateSimplify();
-    const Expression * multOperands[2] = {new Rational(Integer(-1)), clone()};
-    Multiplication * m = new Multiplication(multOperands, 2, false);
-    ((Expression *)m->operand(1))->immediateSimplify();
-    return replaceWith(m, true)->immediateSimplify();
-  }
-  if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
-    if (r->denominator().isLowerThan(r->numerator())) {
-      IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-      Rational * newR = new Rational(div.remainder, r->denominator());
-      const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
-      const_cast<Expression *>(operand(0))->immediateSimplify();
-      if (Integer::Division(div.quotient, Integer(2)).remainder.isOne()) {
-        Expression * simplifiedSine = immediateSimplify(); // recursive
-        const Expression * multOperands[2] = {new Rational(Integer(-1)), simplifiedSine->clone()};
-        Multiplication * m = new Multiplication(multOperands, 2, false);
-        return simplifiedSine->replaceWith(m, true)->immediateSimplify();
-      } else {
-        return immediateSimplify(); // recursive
-      }
-    }
-    assert(r->sign() > 0);
-    assert(r->numerator().isLowerThan(r->denominator()));
-  }
-  return this;
 }
 
 template<typename T>

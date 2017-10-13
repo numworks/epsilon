@@ -12,7 +12,7 @@ public:
     Sine = 1,
   };
   static Expression * table(const Expression * e, Function f, bool inverse); // , Function f, bool inverse
-  constexpr static int k_numberOfEntries = 3;
+  constexpr static int k_numberOfEntries = 17;
 };
 
 }

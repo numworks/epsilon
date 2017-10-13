@@ -7,6 +7,7 @@
 #include <poincare/matrix_data.h>
 #include <poincare/evaluation.h>
 #include <poincare/undefined.h>
+#include <poincare/simplification_root.h>
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
@@ -66,30 +67,6 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
       }
   }
 }
-
-class SimplificationRoot : public StaticHierarchy<1> {
-public:
-  SimplificationRoot(Expression * e) : StaticHierarchy<1>(&e, false) {
-    e->setParent(this);
-  }
-  ~SimplificationRoot() {
-    detachOperand(operand(0));
-    /* We don't want to clone the expression provided at construction.
-     * So we don't want it to be deleted when we're destroyed (parent destructor). */
-  }
-  Expression * clone() const override { return nullptr; }
-  Type type() const override { return Expression::Type::Undefined; }
-  Expression * immediateSimplify() override { return this; }
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return nullptr;
-  }
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return nullptr;
-  }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return nullptr;
-  }
-};
 
 void Expression::simplifyAndBeautify(Expression ** expressionAddress) {
   SimplificationRoot root(*expressionAddress);

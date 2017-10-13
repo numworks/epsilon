@@ -13,6 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  Expression * immediateSimplify() override;
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);

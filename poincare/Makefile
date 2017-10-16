@@ -77,7 +77,7 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
-  trigonometrical_function.o\
+  trigonometric_function.o\
   trigonometry.o\
   undefined.o\
   variable_context.o\

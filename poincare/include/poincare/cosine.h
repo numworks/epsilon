@@ -1,12 +1,12 @@
 #ifndef POINCARE_COSINE_H
 #define POINCARE_COSINE_H
 
-#include <poincare/trigonometric_function.h>
+#include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class Cosine : public TrigonometricFunction  {
-  using TrigonometricFunction::TrigonometricFunction;
+class Cosine : public Trigonometry  {
+  using Trigonometry::Trigonometry;
 public:
   Type type() const override;
   Expression * clone() const override;

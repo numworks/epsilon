@@ -6,7 +6,7 @@ namespace Poincare {
 
 static_assert('\x89' == Ion::Charset::SmallPi, "Incorrect");
 constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
-{{"\x89",            "\x89*3^(-1)",       "-1"},
+{{"\x89",            "\x89*(-2)^(-1)",       "-1"},
  {"\x89*11*12^(-1)", "\x89*(-5)*12^(-1)", "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)"},
  {"\x89*7*8^(-1)",   "\x89*(-3)*8^(-1)",  "-(2+2^(1/2))^(1/2)*2^(-1)"},
  {"\x89*5*6^(-1)",   "\x89*(-3)^(-1)",    "-3^(1/2)*2^(-1)"},
@@ -23,7 +23,7 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
  {"\x89*6^(-1)",     "\x89*3^(-1)",       "3^(1/2)*2^(-1)"},
  {"\x89*8^(-1)",     "\x89*3*8^(-1)",     "(2+2^(1/2))^(1/2)*2^(-1)"},
  {"\x89*12^(-1)",    "\x89*5*12^(-1)",    "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)"},
- {"0",               "\x89*5*12^(-1)",    "1"}
+ {"0",               "\x89*2^(-1)",    "1"}
 };
 
 Expression * Trigonometry::table(const Expression * e, Function f, bool inverse) {

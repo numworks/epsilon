@@ -1,4 +1,4 @@
-TOOLCHAIN ?= host-clang
+TOOLCHAIN ?= host-gcc
 USE_LIBA = 0
 EXE = elf
 OS_WITH_ONBOARDING_APP ?= 0

@@ -130,7 +130,7 @@ void Multiplication::factorize() {
       Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
-    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && !TermHasRationalBase(operand(i))) {
+    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
       factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
     } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
       factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
@@ -193,7 +193,6 @@ bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Express
 }
 
 bool Multiplication::TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2) {
-  Rational one = Rational(1);
   return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->compareTo(e2->operand(1)) == 0);
 }
 
@@ -202,9 +201,17 @@ bool Multiplication::TermHasRationalBase(const Expression * e) {
   return hasRationalBase;
 }
 
-bool Multiplication::TermHasRationalExponent(const Expression * e) {
-  bool hasRationalExponent = e->type() == Type::Power ? e->operand(1)->type() == Type::Rational : true;
-  return hasRationalExponent;
+bool Multiplication::TermHasIntegerExponent(const Expression * e) {
+  if (e->type() != Type::Power) {
+    return true;
+  }
+  if (e->operand(1)->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(e->operand(1));
+    if (r->denominator().isOne()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 bool Multiplication::isUselessOperand(const Rational * r) {

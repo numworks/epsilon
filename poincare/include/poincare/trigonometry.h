@@ -13,7 +13,7 @@ class Trigonometry : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Expression * immediateSimplify() override;
-  constexpr static int k_numberOfEntries = 18;
+  constexpr static int k_numberOfEntries = 24;
 protected:
   enum class Function {
     Cosine = 0,

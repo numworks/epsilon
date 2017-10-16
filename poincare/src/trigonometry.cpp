@@ -65,18 +65,24 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
  {"\x89*11*12^(-1)", "\x89*(-5)*12^(-1)", "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)"},
  {"\x89*7*8^(-1)",   "\x89*(-3)*8^(-1)",  "-(2+2^(1/2))^(1/2)*2^(-1)"},
  {"\x89*5*6^(-1)",   "\x89*(-3)^(-1)",    "-3^(1/2)*2^(-1)"},
+ {"\x89*4*5^(-1)",   "",                  "(-5^(1/2)-1)*4^(-1)"},
  {"\x89*3*4^(-1)",   "\x89*(-4)^(-1)",    "(-1)*(2^(-1/2))"},
  {"\x89*2*3^(-1)",   "\x89*(-6)^(-1)",    "-0.5" },
  {"\x89*5*8^(-1)",   "\x89*(-8)^(-1)",    "(2-2^(1/2))^(1/2)*(-2)^(-1)"},
+ {"\x89*3*5^(-1)",   "",                  "(1-5^(1/2))*4^(-1)"},
  {"\x89*7*12^(-1)",  "\x89*(-12)^(-1)",   "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)"},
  {"\x89*2^(-1)",     "0",                 "0"},
  {"\x89*2^(-1)",     "\x89",              "0"},
  {"\x89*5*12^(-1)",  "\x89*12^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)"},
- {"\x89*3^(-1)",     "\x89*6^(-1)",       "0.5"},
+ {"\x89*2*5^(-1)",   "",                  "(5^(1/2)-1)*4^(-1)"},
  {"\x89*3*8^(-1)",   "\x89*8^(-1)",       "(2-2^(1/2))^(1/2)*2^(-1)"},
+ {"\x89*3^(-1)",     "\x89*6^(-1)",       "0.5"},
+ {"",                "\x89*5^(-1)",       "(5/8-5^(1/2))/8)^(1/2)"},
  {"\x89*4^(-1)",     "\x89*4^(-1)",       "2^(-1/2)"},
+ {"\x89*5^(-1)",     "",                  "(5^(1/2)+1)*4^(-1)"},
  {"\x89*6^(-1)",     "\x89*3^(-1)",       "3^(1/2)*2^(-1)"},
  {"\x89*8^(-1)",     "\x89*3*8^(-1)",     "(2+2^(1/2))^(1/2)*2^(-1)"},
+ {"",                "\x89*2*5^(-1)",     "(5/8+5^(1/2)/8)^(1/2)"},
  {"\x89*12^(-1)",    "\x89*5*12^(-1)",    "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)"},
  {"0",               "\x89*2^(-1)",    "1"}
 };
@@ -86,10 +92,16 @@ Expression * Trigonometry::table(const Expression * e, Function f, bool inverse)
   int outputIndex = inverse ? (int)f : 2;
   for (int i = 0; i < k_numberOfEntries; i++) {
     Expression * input = Expression::parse(cheatTable[i][inputIndex]);
+    if (input == nullptr) {
+      continue;
+    }
     SimplificationRoot inputRoot(input);
     inputRoot.simplify(); // input expression does not change, no root needed and we can use entry after
     if (inputRoot.operand(0)->compareTo(e) == 0) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
+      if (output == nullptr) {
+        return nullptr;
+      }
       SimplificationRoot outputRoot(output);
       return (Expression *)(outputRoot.simplify())->operand(0);
     }

@@ -149,10 +149,14 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(-P*35/29)", "-cos(P*6/29)");
   assert_parsed_expression_simplify_to("cos(P*340000)", "1");
   assert_parsed_expression_simplify_to("cos(-P*340001)", "-1");
+  assert_parsed_expression_simplify_to("cos(-P*R(2))", "cos(P*R(2))");
+  assert_parsed_expression_simplify_to("cos(1311P/6)", "0");
   assert_parsed_expression_simplify_to("cos(P/12)", "(R(6)+R(2))/4");
   assert_parsed_expression_simplify_to("cos(-P/12)", "(R(6)+R(2))/4");
-  assert_parsed_expression_simplify_to("cos(-P*R(2))", "cos(P*R(2))");
-
+  assert_parsed_expression_simplify_to("cos(-P17/8)", "R(R(2)+2)/2");
+  assert_parsed_expression_simplify_to("cos(41P/6)", "-R(3)/2");
+  assert_parsed_expression_simplify_to("cos(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("cos(-P/3)", "1/2");
   assert_parsed_expression_simplify_to("sin(0)", "0");
   assert_parsed_expression_simplify_to("sin(P)", "0");
   assert_parsed_expression_simplify_to("sin(P*35/29)", "-sin(P*6/29)");
@@ -163,6 +167,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(P/12)", "(R(6)-R(2))/4");
   assert_parsed_expression_simplify_to("sin(-P/12)", "(R(2)-R(6))/4");
   assert_parsed_expression_simplify_to("sin(-P*R(2))", "-sin(P*R(2))");
+  assert_parsed_expression_simplify_to("sin(1311P/6)", "1");
+  assert_parsed_expression_simplify_to("sin(-P17/8)", "-R(-R(2)+2)/2");
+  assert_parsed_expression_simplify_to("sin(41P/6)", "1/2");
+  assert_parsed_expression_simplify_to("sin(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("sin(-P/3)", "-R(3)/2");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

@@ -14,6 +14,7 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
   Expression * immediateSimplify() override;
+  Expression * immediateBeautify() override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -29,6 +30,8 @@ private:
   }
 
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+
+  Expression * factorOfTypeInOperand(Type type, int operandIndex, int k);
 };
 
 }

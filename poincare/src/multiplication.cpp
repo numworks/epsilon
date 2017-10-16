@@ -267,7 +267,7 @@ Expression * Multiplication::immediateBeautify() {
         newNumeratorOperand->replaceWith((Expression *)newNumeratorOperand->operand(0), true);
       }
       replaceWith(d, true);
-      return d;
+      return d->immediateBeautify();
     }
   }
   // -1*A -> -A

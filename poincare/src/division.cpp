@@ -7,7 +7,9 @@ extern "C" {
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/tangent.h>
 #include <poincare/multiplication.h>
+#include <poincare/opposite.h>
 #include "layout/fraction_layout.h"
 
 namespace Poincare {
@@ -29,6 +31,82 @@ Expression * Division::immediateSimplify() {
   detachOperands();
   replaceWith(m, true);
   return m->immediateSimplify();
+}
+
+Expression * Division::immediateBeautify() {
+  for (int operandIndex = 0; operandIndex < 2; operandIndex++) {
+    int k = 0;
+    while (true) {
+      Expression * sin = factorOfTypeInOperand(Type::Sine, operandIndex, k);
+      Expression * cos = factorOfTypeInOperand(Type::Cosine, 1-operandIndex, k);
+      if (sin == nullptr || cos == nullptr) {
+        break;
+      }
+      if (sin->operand(0)->compareTo(cos->operand(0)) != 0) {
+        continue;
+      }
+      const Expression * tanOp[1] = {sin->operand(0)};
+      Tangent * t = new Tangent(tanOp, true);
+      sin->replaceWith(t, true);
+      if (cos->parent()->type() == Type::Multiplication) {
+        Multiplication * parent = static_cast<Multiplication *>((Expression *)cos->parent());
+        parent->removeOperand(cos, true);
+        return parent->squashUnaryHierarchy();
+      } else if (cos->parent()->type() == Type::Opposite) {
+        if (operandIndex == 0) {
+          const Expression * oppOperand[1] = {operand(0)};
+          Opposite * o = new Opposite(oppOperand, true);
+          return replaceWith(o, true);
+        } else {
+          assert(operandIndex == 1);
+          replaceOperand((Expression *)cos->parent(), new Rational(Integer(-1)), true);
+        }
+      } else {
+        if (operandIndex == 0) {
+        return replaceWith((Expression *)operand(k), true);
+        } else {
+          assert(operandIndex == 1);
+          replaceOperand(cos, new Rational(Integer(1)), true);
+        }
+      }
+      k++;
+    }
+  }
+  return this;
+}
+
+Expression * Division::factorOfTypeInOperand(Type type, int operandIndex, int k) {
+  if (operand(operandIndex)->type() == type && k == 0) {
+    return (Expression *)operand(operandIndex);
+  }
+  if (operand(operandIndex)->type() == Type::Multiplication) {
+    int counter = -1;
+    for (int i = 0; i < operand(operandIndex)->numberOfOperands(); i++) {
+      if (operand(operandIndex)->operand(i)->type() == type) {
+        counter++;
+        if (counter == k) {
+          return ((Expression *)operand(operandIndex)->operand(i));
+        }
+      }
+    }
+  }
+  if (operand(operandIndex)->type() == Type::Opposite) {
+    if (operand(operandIndex)->operand(0)->type() == type && k == 0) {
+      return ((Expression *)operand(operandIndex)->operand(0));
+    } else if (operand(operandIndex)->operand(0)->type() == Type::Multiplication) {
+      int counter = -1;
+      for (int i = 0; i < operand(operandIndex)->operand(0)->numberOfOperands(); i++) {
+        if (operand(operandIndex)->operand(0)->operand(i)->type() == type) {
+          counter++;
+          if (counter == k) {
+            return ((Expression *)operand(operandIndex)->operand(i));
+          }
+        }
+      }
+
+    }
+  }
+  return nullptr;
 }
 
 template<typename T>

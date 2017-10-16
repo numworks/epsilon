@@ -157,6 +157,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(41P/6)", "-R(3)/2");
   assert_parsed_expression_simplify_to("cos(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
   assert_parsed_expression_simplify_to("cos(-P/3)", "1/2");
+  assert_parsed_expression_simplify_to("cos(41P/5)", "(5^(1/2)+1)*4^(-1)");
   assert_parsed_expression_simplify_to("sin(0)", "0");
   assert_parsed_expression_simplify_to("sin(P)", "0");
   assert_parsed_expression_simplify_to("sin(P*35/29)", "-sin(P*6/29)");
@@ -172,6 +173,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(41P/6)", "1/2");
   assert_parsed_expression_simplify_to("sin(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
   assert_parsed_expression_simplify_to("sin(-P/3)", "-R(3)/2");
+  assert_parsed_expression_simplify_to("sin(17P/5)", "-R(5/8+R(5)/8)");
 
   assert_parsed_expression_simplify_to("tan(0)", "0");
   assert_parsed_expression_simplify_to("tan(P)", "0");

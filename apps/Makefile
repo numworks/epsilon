@@ -1,4 +1,5 @@
 EPSILON_I18N_LANGUAGES ?= en fr es de pt
+EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code
 
 include apps/shared/Makefile
 include apps/home/Makefile
@@ -6,19 +7,10 @@ include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 snapshots =
 
-# You can select below which apps you want to include in your build, as well as
-# their order on the home screen. Each Makefile below is responsible for setting
+# All selected apps are included. Each Makefile below is responsible for setting
 # the $snapshots variable (name of the snapshot class) and the $snapshot_headers
 # (path to the snapshot header).
-include apps/calculation/Makefile
-include apps/graph/Makefile
-include apps/sequence/Makefile
-include apps/settings/Makefile
-include apps/statistics/Makefile
-include apps/probability/Makefile
-include apps/regression/Makefile
-include apps/code/Makefile
-#include apps/picview/Makefile
+$(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
 app_objs += $(addprefix apps/,\
   apps_container.o\

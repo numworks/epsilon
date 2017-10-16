@@ -49,6 +49,8 @@ info:
 	@echo "CXXFLAGS = $(CXXFLAGS)"
 	@echo "SFLAGS = $(SFLAGS)"
 	@echo "LDFLAGS = $(LDFLAGS)"
+	@echo "EPSILON_APPS = $(EPSILON_APPS)"
+	@echo "EPSILON_I18N_LANGUAGES = $(EPSILON_I18N_LANGUAGES)"
 	@echo "==============================="
 
 # Each sub-Makefile can either add objects to the $(objs) variable or define a

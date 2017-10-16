@@ -1,18 +1,18 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/trigonometrical_function.h>
+#include <poincare/trigonometric_function.h>
 
 namespace Poincare {
 
-class Sine : public TrigonometricalFunction {
-  using TrigonometricalFunction::TrigonometricalFunction;
+class Sine : public TrigonometricFunction {
+  using TrigonometricFunction::TrigonometricFunction;
 public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
-  Trigonometry::Function trigonometricalFunctionType() const override {
+  Trigonometry::Function trigonometricFunctionType() const override {
     return Trigonometry::Function::Sine;
   }
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

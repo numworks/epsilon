@@ -3,7 +3,7 @@
 namespace Code {
 
 Program::Program() :
-  m_buffer("")
+  m_buffer()
 {
   const char program[] = R"(# This program draws a Mandelbrot fractal set
 # N_iteration: degree of precision

@@ -16,9 +16,15 @@ namespace Poincare {
 
 Rational::Rational(const Integer numerator, const Integer denominator) {
   assert(!denominator.isZero());
-  Integer gcd = Arithmetic::GCD(&numerator, &denominator);
-  m_numerator = Integer::Division(numerator, gcd).quotient;
-  m_denominator = Integer::Division(denominator, gcd).quotient;
+  if (numerator.isOne() || denominator.isOne()) {
+    // Avoid computing GCD if possible
+    m_numerator = numerator;
+    m_denominator = denominator;
+  } else {
+    Integer gcd = Arithmetic::GCD(&numerator, &denominator);
+    m_numerator = Integer::Division(numerator, gcd).quotient;
+    m_denominator = Integer::Division(denominator, gcd).quotient;
+  }
   if (m_numerator.isNegative() && m_denominator.isNegative()) {
     m_numerator.setNegative(false);
     m_denominator.setNegative(false);

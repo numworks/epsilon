@@ -3,6 +3,7 @@
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/evaluation_engine.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -30,7 +31,9 @@ private:
   }
 
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "/");
+  }
   Expression * factorOfTypeInOperand(Type type, int operandIndex, int k);
 };
 

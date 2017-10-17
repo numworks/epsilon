@@ -6,6 +6,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <cmath>
+#include <ion.h>
 
 namespace Poincare {
 
@@ -16,6 +17,11 @@ Expression::Type SquareRoot::type() const {
 Expression * SquareRoot::clone() const {
   SquareRoot * a = new SquareRoot(m_operands, true);
   return a;
+}
+
+static_assert('\x90' == Ion::Charset::Root, "Incorrect");
+int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "\x90");
 }
 
 template<typename T>

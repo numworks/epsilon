@@ -2,6 +2,7 @@
 #define POINCARE_NTH_ROOT_H
 
 #include <poincare/static_hierarchy.h>
+#include <poincare/layout_engine.h>
 #include <poincare/complex.h>
 
 namespace Poincare {
@@ -17,6 +18,9 @@ private:
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "root");
+  }
   Expression * immediateSimplify() override;
 };
 

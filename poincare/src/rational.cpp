@@ -117,5 +117,19 @@ ExpressionLayout * Rational::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return new FractionLayout(numeratorLayout, denominatorLayout);
 }
 
+int Rational::writeTextInBuffer(char * buffer, int bufferSize) const {
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = m_numerator.writeTextInBuffer(buffer, bufferSize);
+  if (m_denominator.isOne()) {
+    return numberOfChar;
+  }
+  if (numberOfChar >= bufferSize-1) {
+    return numberOfChar;
+  }
+  buffer[numberOfChar++] = '/';
+  numberOfChar += m_denominator.writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  return numberOfChar;
+}
+
 }
 

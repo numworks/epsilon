@@ -21,8 +21,12 @@ private:
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "sinh");
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  }
+  const char * name() const { return "sinh"; }
 };
 
 }

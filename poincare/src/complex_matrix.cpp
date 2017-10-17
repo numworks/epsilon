@@ -67,53 +67,6 @@ const Complex<T> * ComplexMatrix<T>::complexOperand(int i) const {
 }
 
 template<typename T>
-int ComplexMatrix<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
-  buffer[bufferSize-1] = 0;
-  int currentChar = 0;
-  if (currentChar >= bufferSize) {
-    return 0;
-  }
-  buffer[currentChar++] = '[';
-  if (currentChar >= bufferSize) {
-    return currentChar;
-  }
-  for (int i = 0; i < numberOfRows(); i++) {
-    buffer[currentChar++] = '[';
-    if (currentChar >= bufferSize) {
-      return currentChar;
-    }
-    currentChar += complexOperand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
-    if (currentChar >= bufferSize) {
-      return currentChar;
-    }
-    for (int j = 1; j < numberOfColumns(); j++) {
-      buffer[currentChar++] = ',';
-      if (currentChar >= bufferSize) {
-        return currentChar;
-      }
-      currentChar += complexOperand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
-      if (currentChar >= bufferSize) {
-        return currentChar;
-      }
-    }
-    currentChar = strlen(buffer);
-    if (currentChar >= bufferSize) {
-      return currentChar;
-    }
-    buffer[currentChar++] = ']';
-    if (currentChar >= bufferSize) {
-      return currentChar;
-    }
-  }
-  buffer[currentChar++] = ']';
-  if (currentChar >= bufferSize) {
-    return currentChar;
-  }
-  buffer[currentChar] = 0;
-  return currentChar;
-}
-
-template<typename T>
 Evaluation<T> * ComplexMatrix<T>::createIdentity(int dim) {
   Complex<T> * operands = new Complex<T> [dim*dim];
   for (int i = 0; i < dim; i++) {

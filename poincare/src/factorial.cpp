@@ -54,6 +54,20 @@ int Factorial::compareToGreaterTypeExpression(const Expression * e) const {
   return operand(0)->compareTo(e);
 }
 
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize);
+  if (numberOfChar >= bufferSize-1) {
+    return numberOfChar;
+  }
+  buffer[numberOfChar++] = '!';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 int Factorial::compareToSameTypeExpression(const Expression * e) const {
   return operand(0)->compareTo(e->operand(0));
 }

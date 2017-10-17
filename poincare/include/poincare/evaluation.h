@@ -12,7 +12,6 @@ template<typename T>
 class Evaluation : public Matrix {
 public:
   virtual T toScalar() const = 0;
-  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
   virtual const Expression * operand(int i) const override;
   virtual const Complex<T> * complexOperand(int i) const = 0;
   virtual Evaluation<T> * clone() const override = 0;

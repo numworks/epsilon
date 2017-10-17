@@ -19,8 +19,12 @@ private:
   template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext<T> variableContext, AngleUnit angleUnit) const;
   template<typename T> T approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "diff");
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  }
+  const char * name() const { return "diff"; }
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

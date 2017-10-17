@@ -10,6 +10,7 @@ extern "C" {
 #include <poincare/context.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
+#include <ion.h>
 
 namespace Poincare {
 
@@ -19,6 +20,11 @@ Expression::Type Store::type() const {
 
 Expression * Store::clone() const {
   return new Store(operands(), true);
+}
+
+static_assert('\x8F' == Ion::Charset::Sto, "Incorrect");
+int Store::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "\x8F");
 }
 
 ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

@@ -10,6 +10,7 @@ public:
   int numberOfOperands() const override;
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 };

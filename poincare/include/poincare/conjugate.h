@@ -3,6 +3,7 @@
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/evaluation_engine.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -20,6 +21,9 @@ private:
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "conjugate");
+  }
 };
 
 }

@@ -18,6 +18,10 @@ Expression * Sum::clone() const {
   return a;
 }
 
+const char * Sum::name() const {
+  return "sum";
+}
+
 int Sum::emptySequenceValue() const {
   return 0;
 }

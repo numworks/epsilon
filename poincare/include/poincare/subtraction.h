@@ -32,8 +32,12 @@ private:
   }
 
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "-");
+    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  }
+  const char * name() const { return "-"; }
 };
 
 }

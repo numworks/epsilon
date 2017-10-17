@@ -21,6 +21,7 @@ public:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return nullptr;
   }

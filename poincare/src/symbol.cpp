@@ -116,6 +116,19 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return new StringLayout(&m_name, 1);
 }
 
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  if (bufferSize == 1) {
+    buffer[bufferSize-1] = 0;
+    return 0;
+  }
+  buffer[0] = m_name;
+  buffer[1] = 0;
+  return 1;
+}
+
 bool Symbol::isMatrixSymbol() const {
   if (m_name >= (char)SpecialSymbols::M0 && m_name <= (char)SpecialSymbols::M9) {
     return true;

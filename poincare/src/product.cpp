@@ -18,6 +18,10 @@ Expression * Product::clone() const {
   return a;
 }
 
+const char * Product::name() const {
+  return "product";
+}
+
 int Product::emptySequenceValue() const {
   return 1;
 }

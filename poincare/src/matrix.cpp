@@ -28,4 +28,50 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return layout;
 }
 
+int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int currentChar = 0;
+  if (currentChar >= bufferSize-1) {
+    return 0;
+  }
+  buffer[currentChar++] = '[';
+  if (currentChar >= bufferSize-1) {
+    return currentChar;
+  }
+  for (int i = 0; i < numberOfRows(); i++) {
+    buffer[currentChar++] = '[';
+    if (currentChar >= bufferSize-1) {
+      return currentChar;
+    }
+    currentChar += operand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+    if (currentChar >= bufferSize-1) {
+      return currentChar;
+    }
+    for (int j = 1; j < numberOfColumns(); j++) {
+      buffer[currentChar++] = ',';
+      if (currentChar >= bufferSize-1) {
+        return currentChar;
+      }
+      currentChar += operand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+      if (currentChar >= bufferSize-1) {
+        return currentChar;
+      }
+    }
+    currentChar = strlen(buffer);
+    if (currentChar >= bufferSize-1) {
+      return currentChar;
+    }
+    buffer[currentChar++] = ']';
+    if (currentChar >= bufferSize-1) {
+      return currentChar;
+    }
+  }
+  buffer[currentChar++] = ']';
+  buffer[currentChar] = 0;
+  return currentChar;
+}
+
 }

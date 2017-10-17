@@ -29,5 +29,12 @@ ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayM
   return new StringLayout(buffer, numberOfChars);
 }
 
+int Undefined::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  return strlcpy(buffer, "undef", bufferSize);
+}
+
 }
 

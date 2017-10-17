@@ -560,24 +560,27 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
   return new Complex<double>(Complex<double>::Float(double_result));
 }
 
-ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
   /* If the integer is too long, this method may overflow the stack.
    * Experimentally, we can display at most integer whose number of digits is
    * around 7. However, to avoid crashing when the stack is already half full,
    * we decide not to display integers whose number of digits > 5. */
   if (m_numberOfDigits > 5) {
-    return new StringLayout("inf", 3);
+    return strlcpy(buffer, "inf", 4);
   }
-
-  char buffer[255];
 
   Integer base = Integer(10);
   Integer abs = *this;
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
   int size = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
   if (isEqualTo(Integer(0))) {
     buffer[size++] = '0';
   } else if (isNegative()) {
@@ -585,8 +588,10 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
   }
   while (!(d.remainder.isEqualTo(Integer(0)) &&
         d.quotient.isEqualTo(Integer(0)))) {
-    assert(size<255); //TODO: malloc an extra buffer
     char c = char_from_digit(d.remainder.digit(0));
+    if (size >= bufferSize-1) {
+      return bufferSize-1;
+    }
     buffer[size++] = c;
     d = Division(d.quotient, base);
   }
@@ -599,8 +604,13 @@ ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMod
     buffer[i] = buffer[j];
     buffer[j] = c;
   }
+  return size;
+}
 
-  return new StringLayout(buffer, size);
+ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  char buffer[255];
+  int numberOfChars = writeTextInBuffer(buffer, 255);
+  return new StringLayout(buffer, numberOfChars);
 }
 
 }

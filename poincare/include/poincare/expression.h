@@ -130,6 +130,7 @@ public:
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
+  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Simplification */
   static void simplifyAndBeautify(Expression ** expressionAddress);

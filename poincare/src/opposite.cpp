@@ -46,6 +46,19 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return new HorizontalLayout(children_layouts, 2);
 }
 
+int Opposite::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = 0;
+  if (bufferSize == 1) { return 0; }
+  buffer[numberOfChar++] = '-';
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 }
 
 template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);

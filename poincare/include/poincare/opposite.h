@@ -23,6 +23,7 @@ private:
   return EvaluationEngine::map<double>(this, context, angleUnit, compute<double>);
   }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 };
 
 }

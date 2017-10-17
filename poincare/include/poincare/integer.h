@@ -48,6 +48,7 @@ public:
   Expression * clone() const override;
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   // Arithmetic
   static Integer Addition(const Integer & i, const Integer & j);

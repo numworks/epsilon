@@ -33,7 +33,6 @@ public:
   const Complex<T> * complexOperand(int i) const override;
   /* If the buffer is too small, the function fills the buffer until reaching
    * buffer size */
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   static Evaluation<T> * createIdentity(int dim);
 private:

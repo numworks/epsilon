@@ -33,6 +33,9 @@ private:
   }
 
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "^");
+  }
 
   int compareToGreaterTypeExpression(const Expression * e) const override;
   int compareToSameTypeExpression(const Expression * e) const override;

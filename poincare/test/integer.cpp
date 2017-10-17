@@ -58,6 +58,14 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer::Division(Integer("-576"), Integer("-12")).quotient.isEqualTo(Integer(48)) && Integer::Division(Integer("-576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
   assert(Integer::Division(Integer("576"), Integer("-12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
   assert(Integer::Division(Integer("-576"), Integer("12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("-576"), Integer("12")).remainder.isEqualTo(Integer("0")));
+ assert(Integer::Division(Integer("12345678910111213141516171819202122232425"), Integer("10")).remainder.isEqualTo(Integer("5")));
+  assert(Integer::Division(Integer("12345678910111213141516171819202122232425"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212223242")));
+  assert(Integer::Division(Integer("1234567891011121314151617181920212223242"), Integer("10")).quotient.isEqualTo(Integer("123456789101112131415161718192021222324")) && Integer::Division(Integer("1234567891011121314151617181920212223242"), Integer("10")).remainder.isEqualTo(Integer("2")));
+  assert(Integer::Division(Integer("123456789101112131415161718192021222324"), Integer("10")).quotient.isEqualTo(Integer("12345678910111213141516171819202122232")) && Integer::Division(Integer("123456789101112131415161718192021222324"), Integer("10")).remainder.isEqualTo(Integer("4")));
+  assert(Integer::Division(Integer("12345678910111213141516171819202122232"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212223")) && Integer::Division(Integer("12345678910111213141516171819202122232"), Integer("10")).remainder.isEqualTo(Integer("2")));
+  assert(Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).quotient.isEqualTo(Integer("123456789101112131415161718192021222")) && Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).remainder.isEqualTo(Integer("3")));
+  assert(Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).quotient.isEqualTo(Integer("12345678910111213141516171819202122")) && Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).remainder.isEqualTo(Integer("2")));
+  assert(Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212")) && Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).remainder.isEqualTo(Integer("2")));
 }
 
 template<typename T>

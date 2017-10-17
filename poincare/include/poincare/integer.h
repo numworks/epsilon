@@ -16,6 +16,7 @@ struct IntegerDivision;
 
 class Integer : public StaticHierarchy<0> {
 public:
+  typedef uint16_t half_native_uint_t;
   typedef int32_t native_int_t;
   typedef uint32_t native_uint_t;
   typedef uint64_t double_native_uint_t;
@@ -63,6 +64,7 @@ public:
   bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);
+  static Integer monome16Bits(int biggestDigit, int length);
   void releaseDynamicIvars();
   static int8_t ucmp(const Integer & a, const Integer & b); // -1, 0, or 1
   static Integer usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative);
@@ -74,10 +76,21 @@ private:
 
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(int i) const {
-    assert(i >= 0 && i<m_numberOfDigits);
+    assert(i >= 0 && i < m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
-
+  uint16_t numberOfDigits16() const {
+    native_uint_t bigDigit = digit(m_numberOfDigits-1);
+    native_uint_t base16 = 1<<16;
+    return (bigDigit >= base16 ? 2*m_numberOfDigits : 2*m_numberOfDigits-1);
+  }
+  half_native_uint_t digit16(int i) const {
+    assert(i >= 0);
+    if (i >= numberOfDigits16()) {
+      return 0;
+    }
+    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)m_digits)[i]);
+  }
   /* Sorting */
   int compareToSameTypeExpression(const Expression * e) const override;
 

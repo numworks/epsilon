@@ -409,20 +409,62 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
   }
 }
 
+Integer Integer::monome16Bits(int biggestDigit, int length) {
+  assert(biggestDigit != 0);
+  half_native_uint_t * digits = (half_native_uint_t *)new native_uint_t [(length+1)/2];
+  memset(digits, 0, (length+1)/2*sizeof(native_uint_t));
+  digits[length-1] = biggestDigit;
+  int lengthInBase32 = length%2 == 1 ? length/2+1 : length/2;
+  return Integer((native_uint_t *)digits, lengthInBase32, false);
+}
+
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
-  assert(!numerator.isNegative() && !denominator.isNegative());
-  // FIXME: First, test if denominator is zero.
+  /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
+   * (Algorithm 1.6) */
+  assert(!denominator.isZero());
   if (numerator.isLowerThan(denominator)) {
     IntegerDivision div = {.quotient = 0, .remainder = numerator};
     return div;
   }
+  Integer A = numerator;
+  Integer B = denominator;
+  native_uint_t base = (double_native_uint_t)1 << 16;
+  native_uint_t d = base/(native_uint_t)(B.digit16(B.numberOfDigits16()-1)+1);
+  A = Multiplication(Integer(d), A);
+  B = Multiplication(Integer(d), B);
 
-  // Recursive case
-  IntegerDivision div = Division(numerator, Integer::Addition(denominator, denominator));
-  div.quotient = Integer::Addition(div.quotient, div.quotient);
-  if (!(div.remainder.isLowerThan(denominator))) {
-    div.remainder = Integer::Subtraction(div.remainder, denominator);
-    div.quotient = Integer::Addition(div.quotient, Integer(1));
+  int n = B.numberOfDigits16();
+  int m = A.numberOfDigits16()-n;
+  half_native_uint_t * qDigits = (half_native_uint_t *)new native_uint_t [m/2+1];
+  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
+  Integer betam = monome16Bits(1, m+1);
+  Integer betaMB = Multiplication(betam, B); // can swift all digits by m!
+  if (!A.isLowerThan(betaMB)) {
+    qDigits[m] = 1;
+    A = Subtraction(A, betaMB);
+  }
+  for (int j = m-1; j >= 0; j--) {
+    native_uint_t base = 1 << 16;
+    native_uint_t qj2 = ((native_uint_t)A.digit16(n+j)*base+(native_uint_t)A.digit16(n+j-1))/(native_uint_t)B.digit16(n-1);
+    half_native_uint_t baseMinus1 = (1 << 16) -1;
+    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
+    Integer factor = qDigits[j] > 0 ? monome16Bits(qDigits[j], j+1) : Integer(0);
+    A = Subtraction(A, Multiplication(factor, B));
+    Integer m = Multiplication(monome16Bits(1, j+1), B);
+    while (A.isLowerThan(Integer(0))) {
+      qDigits[j] = qDigits[j]-1;
+      A = Addition(A, m);
+    }
+  }
+  int qNumberOfDigits = m+1;
+  while (qDigits[qNumberOfDigits-1] == 0 && qNumberOfDigits > 1) {
+    qNumberOfDigits--;
+    // We could realloc digits to a smaller size. Probably not worth the trouble.
+  }
+  int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
+  IntegerDivision div = {.quotient = Integer((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
+  if (d != 1 && !div.remainder.isZero()) {
+    div.remainder = udiv(div.remainder, Integer(d)).quotient;
   }
   return div;
 }
@@ -569,9 +611,9 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
    * Experimentally, we can display at most integer whose number of digits is
    * around 7. However, to avoid crashing when the stack is already half full,
    * we decide not to display integers whose number of digits > 5. */
-  if (m_numberOfDigits > 5) {
+  /*if (m_numberOfDigits > 12) {
     return strlcpy(buffer, "inf", 4);
-  }
+  }*/
 
   Integer base = Integer(10);
   Integer abs = *this;
@@ -590,7 +632,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
         d.quotient.isEqualTo(Integer(0)))) {
     char c = char_from_digit(d.remainder.digit(0));
     if (size >= bufferSize-1) {
-      return bufferSize-1;
+      return strlcpy(buffer, "inf", bufferSize);
     }
     buffer[size++] = c;
     d = Division(d.quotient, base);

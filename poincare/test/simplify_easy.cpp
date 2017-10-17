@@ -110,6 +110,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("R(x*144*P^2)", "12*P*R(x)");
   assert_parsed_expression_simplify_to("R(x*144*P)", "12*R(xP)");
   assert_parsed_expression_simplify_to("abs(P)", "P");
+  assert_parsed_expression_simplify_to("abs(-P)", "P");
   assert_parsed_expression_simplify_to("R(2)*R(3)", "R(6)");
   assert_parsed_expression_simplify_to("2*2^P", "2*2^P");
   assert_parsed_expression_simplify_to("A-A", "0");

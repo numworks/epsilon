@@ -22,6 +22,11 @@ Expression * AbsoluteValue::immediateSimplify() {
   if (operand(0)->sign() > 0) {
     return replaceWith(const_cast<Expression *>(operand(0)), true);
   }
+  if (operand(0)->sign() < 0) {
+    Expression * op = const_cast<Expression *>(operand(0));
+    Expression * newOp = op->turnIntoPositive();
+    return replaceWith(newOp, true);
+  }
   return this;
 }
 

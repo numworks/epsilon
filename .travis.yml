@@ -10,12 +10,10 @@ addons:
 
 matrix:
   include:
-    - compiler: gcc
-      env: PLATFORM=device EXT=elf
-    - compiler: clang
-      env: PLATFORM=simulator EXT=elf
-    - compiler: clang
-      env: PLATFORM=blackbox TOOLCHAIN=host-clang EXT=bin QUIZ_USE_CONSOLE=1
+    - env: PLATFORM=device EXT=elf
+    - env: PLATFORM=simulator EXT=elf
+    - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
+    - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
 
 os: linux
 script:

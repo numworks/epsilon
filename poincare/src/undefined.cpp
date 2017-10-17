@@ -25,7 +25,7 @@ Evaluation<double> * Undefined::privateEvaluate(DoublePrecision p, Context& cont
 
 ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   char buffer[16];
-  int numberOfChars = Complex<float>::convertFloatToText(NAN, buffer, 16, 0, floatDisplayMode);
+  int numberOfChars = Complex<float>::convertFloatToText(NAN, buffer, 16, 1, floatDisplayMode);
   return new StringLayout(buffer, numberOfChars);
 }
 

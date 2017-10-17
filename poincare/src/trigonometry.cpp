@@ -19,8 +19,9 @@ Expression * Trigonometry::immediateSimplify() {
     return replaceWith(lookup, true);
   }
   if (operand(0)->sign() < 0) {
-    ((Expression *)operand(0))->turnIntoPositive();
-    ((Expression *)operand(0))->immediateSimplify();
+    Expression * op = const_cast<Expression *>(operand(0));
+    Expression * newOp = op->turnIntoPositive();
+    newOp->immediateSimplify();
     if (trigonometricFunctionType() == Trigonometry::Function::Cosine) {
       return immediateSimplify();
     } else if (trigonometricFunctionType() == Trigonometry::Function::Sine) {

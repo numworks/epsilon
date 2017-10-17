@@ -14,7 +14,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override;
-  void turnIntoPositive() override;
+  Expression * turnIntoPositive() override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
   Expression * immediateSimplify() override;

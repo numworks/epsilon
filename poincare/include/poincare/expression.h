@@ -100,7 +100,7 @@ public:
    *  1 means the expression is positive
    *  0 means the sign is unknown */
   virtual int sign() const { return false; }
-  virtual void turnIntoPositive() { assert(false); }
+  virtual Expression * turnIntoPositive() { assert(false); return nullptr; }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

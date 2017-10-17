@@ -13,8 +13,8 @@ namespace Sequence {
 Sequence::Sequence(const char * text, KDColor color) :
   Function(text, color),
   m_type(Type::Explicite),
-  m_firstInitialConditionText(""),
-  m_secondInitialConditionText(""),
+  m_firstInitialConditionText(),
+  m_secondInitialConditionText(),
   m_firstInitialConditionExpression(nullptr),
   m_secondInitialConditionExpression(nullptr),
   m_firstInitialConditionLayout(nullptr),

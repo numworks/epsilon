@@ -11,10 +11,10 @@ Integer Arithmetic::GCD(const Integer * a, const Integer * b) {
   i.setNegative(false);
   j.setNegative(false);
   do {
-    if (i.isEqualTo(Integer(0))) {
+    if (i.isZero()) {
       return j;
     }
-    if (j.isEqualTo(Integer(0))) {
+    if (j.isZero()) {
       return i;
     }
     if (j.isLowerThan(i)) {

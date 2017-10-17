@@ -45,9 +45,10 @@ int Power::sign() const {
   return 0;
 }
 
-void Power::turnIntoPositive() {
+Expression * Power::turnIntoPositive() {
   assert(operand(0)->sign() < 0);
   const_cast<Expression *>(operand(0))->turnIntoPositive();
+  return this;
 }
 
 template<typename T>
@@ -362,8 +363,8 @@ Expression * Power::immediateBeautify() {
 Expression * Power::createDenominator() {
   if (operand(1)->sign() < 0) {
     Expression * denominator = clone();
-    const_cast<Expression *>(denominator->operand(1))->turnIntoPositive();
-    if (denominator->operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)denominator->operand(1))->isOne()) {
+    Expression * newExponent = const_cast<Expression *>(denominator->operand(1))->turnIntoPositive();
+    if (newExponent->type() == Type::Rational && static_cast<Rational *>(newExponent)->isOne()) {
       delete denominator;
       return operand(0)->clone();
     }

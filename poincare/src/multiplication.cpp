@@ -36,13 +36,13 @@ int Multiplication::sign() const {
   return sign;
 }
 
-void Multiplication::turnIntoPositive() {
+Expression * Multiplication::turnIntoPositive() {
   for (int i = 0; i < numberOfOperands(); i++) {
     if (operand(i)->sign() < 0) {
       const_cast<Expression *>(operand(i))->turnIntoPositive();
     }
   }
-  immediateSimplify();
+  return immediateSimplify();
 }
 
 template<typename T>

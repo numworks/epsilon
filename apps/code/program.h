@@ -7,14 +7,13 @@ namespace Code {
 
 class Program {
 public:
-  Program();
+  Program(char * textBuffer, size_t sizeOfBuffer);
   const char * readOnlyContent() const;
   char * editableContent();
-  void setContent(const char * program);
   int bufferSize() const;
 private:
-  constexpr static int k_bufferSize = 1024;
-  char m_buffer[k_bufferSize];
+  size_t m_bufferSize;
+  char * m_textBuffer;
 };
 
 }

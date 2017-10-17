@@ -3,17 +3,19 @@
 
 #include <escher.h>
 #include "console_controller.h"
-#include "editor_controller.h"
+#include "program_parameter_controller.h"
 #include <apps/shared/new_function_cell.h>
-#include "program.h"
+#include "program_store.h"
 
 namespace Code {
 
 class MenuController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, Program * program, ButtonRowController * footer);
+  MenuController(Responder * parentResponder, ProgramStore * programStore, ButtonRowController * footer);
   ConsoleController * consoleController();
-  StackViewController * stackViewController() { return m_stackViewController; }
+  StackViewController * stackViewController();
+  void configureProgram();
+  void addProgram();
 
   /* ViewController */
   View * view() override;
@@ -31,14 +33,15 @@ public:
   int numberOfButtons(ButtonRowController::Position position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 private:
-  constexpr static int k_totalNumberOfCells = 2;
-  MessageTableCell m_cells[k_totalNumberOfCells];
+  constexpr static int k_maxNumberOfCells = 5; //TODO
+  static constexpr KDCoordinate k_rowHeight = 50; //TODO create common parent class with Shared::ListController
+  ProgramStore * m_programStore;
+  MessageTableCell m_cells[k_maxNumberOfCells];
   Shared::NewFunctionCell m_addNewProgramCell;
-  StackViewController * m_stackViewController;
-  EditorController m_editorController;
-  ConsoleController m_consoleController;
-  SelectableTableView m_selectableTableView;
   Button m_consoleButton;
+  SelectableTableView m_selectableTableView;
+  ConsoleController m_consoleController;
+  ProgramParameterController m_programParameterController;
 };
 
 }

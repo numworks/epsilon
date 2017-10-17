@@ -10,6 +10,8 @@ app_objs += $(addprefix apps/code/,\
   editor_controller.o\
   menu_controller.o\
   program.o\
+  program_parameter_controller.o\
+  program_store.o\
 )
 
 i18n_files += $(addprefix apps/code/,\

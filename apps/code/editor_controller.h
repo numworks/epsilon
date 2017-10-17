@@ -8,8 +8,9 @@ namespace Code {
 
 class EditorController : public ViewController {
 public:
-  EditorController(Program * program);
-  View * view() override;
+  EditorController();
+  void setProgram(Program program);
+  View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 private:

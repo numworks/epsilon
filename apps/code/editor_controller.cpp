@@ -2,14 +2,14 @@
 
 namespace Code {
 
-EditorController::EditorController(Program * program) :
+EditorController::EditorController() :
   ViewController(nullptr),
-  m_view(this, program->editableContent(), program->bufferSize())
+  m_view(this)
 {
 }
 
-View * EditorController::view() {
-  return &m_view;
+void EditorController::setProgram(Program program){
+  m_view.setText(program.editableContent(), program.bufferSize());
 }
 
 bool EditorController::handleEvent(Ion::Events::Event event) {

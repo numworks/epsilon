@@ -4,19 +4,22 @@
 
 namespace Code {
 
-MenuController::MenuController(Responder * parentResponder, Program * program, ButtonRowController * footer) :
+MenuController::MenuController(Responder * parentResponder, ProgramStore * programStore, ButtonRowController * footer) :
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
+  m_programStore(programStore),
   m_addNewProgramCell(I18n::Message::AddScript),
-  m_editorController(program),
-  m_consoleController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
     MenuController * menu = (MenuController *)context;
     menu->app()->displayModalViewController(menu->consoleController(), 0.5f, 0.5f);
-  }, this))
+  }, this)),
+  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false),
+  m_consoleController(parentResponder),
+  m_programParameterController(nullptr, I18n::Message::ScriptOptions, m_programStore)
 {
-  m_stackViewController = (StackViewController *) (parentResponder->parentResponder()); // TODO: Dirty?
+  for (int i = 0; i< k_maxNumberOfCells; i++) {
+    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+  }
 }
 
 ConsoleController * MenuController::consoleController() {
@@ -38,46 +41,65 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   } else if (event == Ion::Events::Up) {
-    footer()->setSelectedButton(-1);
-    m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
-    app()->setFirstResponder(&m_selectableTableView);
-    return true;
+    if (m_selectableTableView.selectedRow()<0) {
+      footer()->setSelectedButton(-1);
+      m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
+      app()->setFirstResponder(&m_selectableTableView);
+      return true;
+    }
   }
-  ViewController * vc[2] = {&m_editorController, &m_consoleController};
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    app()->displayModalViewController(vc[selectedRow()], 0.5f, 0.5f);
-    return true;
+    int selectedRow = m_selectableTableView.selectedRow();
+    if (selectedRow >= 0 && selectedRow < m_programStore->numberOfPrograms()) {
+      configureProgram();
+      return true;
+    } else if (selectedRow == m_programStore->numberOfPrograms()) {
+      addProgram();
+      return true;
+    }
   }
   return false;
 }
 
+void MenuController::configureProgram() {
+  m_programParameterController.setProgram(m_selectableTableView.selectedRow());
+  stackViewController()->push(&m_programParameterController);
+}
+
+void MenuController::addProgram() {
+  m_selectableTableView.selectCellAtLocation(0, 0);
+  m_programStore->addDefaultProgram();
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, numberOfRows()-2);
+}
+
 int MenuController::numberOfRows() {
-  return k_totalNumberOfCells + 1;
+  return m_programStore->numberOfPrograms() + 1;
+  //TODO do not add the addProgram row if there can be no more programs stored.
 };
 
 KDCoordinate MenuController::cellHeight() {
-  return Metric::ParameterCellHeight;
+  return k_rowHeight;
 }
 
 HighlightCell * MenuController::reusableCell(int index) {
   assert(index >= 0);
-  if (index < k_totalNumberOfCells) {
+  if (index < m_programStore->numberOfPrograms()) {
     return &m_cells[index];
   }
-  assert(index == k_totalNumberOfCells);
+  assert(index == m_programStore->numberOfPrograms());
   return &m_addNewProgramCell;
 }
 
 int MenuController::reusableCellCount() {
-  return k_totalNumberOfCells + 1;
+  return m_programStore->numberOfPrograms() + 1;
 }
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index < k_totalNumberOfCells) {
+  if (index < m_programStore->numberOfPrograms()) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
-    I18n::Message titles[k_totalNumberOfCells] = {I18n::Message::EditProgram, I18n::Message::Console};
-    // TODO: translate Console in the .i18n
-    myCell->setMessage(titles[index]);
+    // TODO: store script names
+    myCell->setMessage(I18n::Message::Console);
   }
 }
 
@@ -87,7 +109,11 @@ int MenuController::numberOfButtons(ButtonRowController::Position position) cons
 
 Button * MenuController::buttonAtIndex(int index, ButtonRowController::Position position) const {
   assert(index == 0);
-  return (Button *) (&m_consoleButton);
+  return const_cast<Button *>(&m_consoleButton);
+}
+
+StackViewController * MenuController::stackViewController() {
+ return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }
 
 }

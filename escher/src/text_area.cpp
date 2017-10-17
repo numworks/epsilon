@@ -1,6 +1,5 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
-#include <assert.h>
 
 #include <stddef.h>
 #include <assert.h>
@@ -15,7 +14,11 @@ TextArea::Text::Text(char * buffer, size_t bufferSize) :
   m_buffer(buffer),
   m_bufferSize(bufferSize)
 {
-  assert(m_buffer != nullptr);
+}
+
+void TextArea::Text::setText(char * buffer, size_t bufferSize) {
+  m_buffer = buffer;
+  m_bufferSize = bufferSize;
 }
 
 TextArea::Text::Line::Line(const char * text) :
@@ -41,6 +44,7 @@ TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
 }
 
 size_t TextArea::Text::indexAtPosition(Position p) {
+  assert(m_buffer != nullptr);
   if (p.line() < 0) {
     return 0;
   }
@@ -60,6 +64,7 @@ size_t TextArea::Text::indexAtPosition(Position p) {
 }
 
 TextArea::Text::Position TextArea::Text::positionAtIndex(size_t index) {
+  assert(m_buffer != nullptr);
   assert(index < m_bufferSize);
   const char * target = m_buffer + index;
   size_t y = 0;
@@ -75,6 +80,7 @@ TextArea::Text::Position TextArea::Text::positionAtIndex(size_t index) {
 }
 
 void TextArea::Text::insertChar(char c, size_t index) {
+  assert(m_buffer != nullptr);
   assert(index < m_bufferSize-1);
   char previous = c;
   for (size_t i=index; i<m_bufferSize; i++) {
@@ -88,6 +94,7 @@ void TextArea::Text::insertChar(char c, size_t index) {
 }
 
 char TextArea::Text::removeChar(size_t index) {
+  assert(m_buffer != nullptr);
   assert(index < m_bufferSize-1);
   char deletedChar = m_buffer[index];
   for (size_t i=index; i<m_bufferSize; i++) {
@@ -100,6 +107,7 @@ char TextArea::Text::removeChar(size_t index) {
 }
 
 int TextArea::Text::removeRemainingLine(size_t index, int direction) {
+  assert(m_buffer != nullptr);
   assert(index >= 0 && index < m_bufferSize);
   int jump = index;
   while (m_buffer[jump] != '\n' && m_buffer[jump] != 0 && jump >= 0) {
@@ -127,6 +135,7 @@ int TextArea::Text::removeRemainingLine(size_t index, int direction) {
 }
 
 TextArea::Text::Position TextArea::Text::span() const {
+  assert(m_buffer != nullptr);
   size_t width = 0;
   size_t height = 0;
   for (Line l : *this) {
@@ -207,6 +216,11 @@ View * TextArea::ContentView::subviewAtIndex(int index) {
 
 void TextArea::ContentView::layoutSubviews() {
   m_cursorView.setFrame(cursorRect());
+}
+
+void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
+  m_text.setText(textBuffer, textBufferSize);
+  m_cursorIndex = 0;
 }
 
 void TextArea::TextArea::ContentView::insertText(const char * text) {
@@ -305,6 +319,10 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   m_delegate(delegate)
 {
   assert(textBufferSize < INT_MAX/2);
+}
+
+void TextArea::setText(char * textBuffer, size_t textBufferSize) {
+  m_contentView.setText(textBuffer, textBufferSize);
 }
 
 bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {

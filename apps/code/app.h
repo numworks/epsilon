@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "menu_controller.h"
-#include "program.h"
+#include "program_store.h"
 #include "../shared/message_controller.h"
 
 namespace Code {
@@ -22,9 +22,9 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    Program * program();
+    ProgramStore * programStore();
   private:
-    Program m_program;
+    ProgramStore m_programStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
 private:

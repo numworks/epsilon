@@ -9,17 +9,19 @@
 
 class TextArea : public ScrollableView, public ScrollViewDataSource {
 public:
-  TextArea(Responder * parentResponder, char * textBuffer, size_t textBufferSize,
+  TextArea(Responder * parentResponder, char * textBuffer = nullptr, size_t textBufferSize = 0,
     TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 
   void setDelegate(TextAreaDelegate * delegate);
   bool handleEvent(Ion::Events::Event event) override;
+  void setText(char * textBuffer, size_t textBufferSize);
 
 private:
   class Text {
   public:
     Text(char * buffer, size_t bufferSize);
+    void setText(char * buffer, size_t bufferSize);
 
     class Line {
     public:
@@ -84,6 +86,7 @@ private:
       KDColor textColor, KDColor backgroundColor);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
+    void setText(char * textBuffer, size_t textBufferSize);
     void insertText(const char * text);
     void moveCursorIndex(int deltaX);
     void moveCursorGeo(int deltaX, int deltaY);

@@ -17,9 +17,8 @@ const Image * App::Descriptor::icon() {
   return ImageStore::CodeIcon;
 }
 
-App::Snapshot::Snapshot() :
-  m_program()
-{
+App::Snapshot::Snapshot() {
+  m_programStore.addDefaultProgram();
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -27,7 +26,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_program.setContent("");
+  m_programStore.deleteAll();
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -35,14 +34,14 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-Program * App::Snapshot::program() {
-  return &m_program;
+ProgramStore * App::Snapshot::programStore() {
+  return &m_programStore;
 }
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
-  m_menuController(&m_listFooter, snapshot->program(), &m_listFooter),
+  m_menuController(&m_listFooter, snapshot->programStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter)
 {
 }

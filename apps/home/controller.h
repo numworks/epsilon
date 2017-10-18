@@ -42,13 +42,12 @@ private:
   };
   AppsContainer * m_container;
   static constexpr KDCoordinate k_sideMargin = 4;
-  static constexpr KDCoordinate k_indicatorThickness = 28;
-  static constexpr KDCoordinate k_indicatorMargin = 116;
-  static constexpr int k_numberOfColumns = 4;
-  static constexpr int k_numberOfApps = 10;
+  static constexpr KDCoordinate k_indicatorThickness = 20;
+  static constexpr KDCoordinate k_indicatorMargin = 14;
+  static constexpr int k_numberOfColumns = 3;
   static constexpr int k_maxNumberOfCells = 16;
-  static constexpr int k_cellHeight = 98;
-  static constexpr int k_cellWidth = 104;
+  static constexpr int k_cellHeight = 111;
+  static constexpr int k_cellWidth = 97;
   ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
   SelectableTableViewDataSource * m_selectionDataSource;

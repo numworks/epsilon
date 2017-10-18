@@ -22,7 +22,7 @@ void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void Controller::ContentView::reloadBottomRightCorner(SimpleTableViewDataSource * dataSource) {
   /* We mark the bottom right corner (where an empty space can be) as dirty. */
-  markRectAsDirty(KDRect(dataSource->cellWidth()*2, dataSource->cellHeight(), dataSource->cellWidth(), dataSource->cellHeight()));
+  markRectAsDirty(KDRect(dataSource->cellWidth(), dataSource->cellHeight(), dataSource->cellWidth()*2, dataSource->cellHeight()));
 }
 
 int Controller::ContentView::numberOfSubviews() const {
@@ -117,15 +117,15 @@ int Controller::numberOfIcons() {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  /* If the number of apps (including home) is odd, when we display the
-   * rightest icon, the icon below is empty. As no icon is thus redrawn on the
+  /* If the number of apps is not a multiple of three, when we display the
+   * bottomest icons, the icon below is empty. As no icon is thus redrawn on the
    * previous one, the cell is not cleaned. We need to redraw a white rect on
    * the cell to hide the dirtyness below. Ideally, we would have redrawn all
    * the background in white and then redraw visible cells. However, the
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (m_container->numberOfApps()%2 == 0 && t->selectedColumn() == k_numberOfColumns -1) {
+  if ((m_container->numberOfApps()-1)%3 != 0 && t->selectedRow() == numberOfRows() - 1) {
     m_view.reloadBottomRightCorner(this);
   }
   /* To prevent the selectable table view to select cells that are unvisible,

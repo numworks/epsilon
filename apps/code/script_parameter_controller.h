@@ -8,10 +8,13 @@
 
 namespace Code {
 
+class MenuController;
+
 class ScriptParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore);
+  ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore, MenuController * menuController);
   void setScript(int i);
+  void dismissScriptParameterController();
 
   /* ViewController */
   View * view() override;
@@ -28,6 +31,7 @@ public:
 
 private:
   constexpr static int k_totalNumberOfCell = 4;
+  StackViewController * stackController();
   I18n::Message m_pageTitle;
   MessageTableCell m_editScript;
   MessageTableCell m_renameScript;
@@ -36,6 +40,8 @@ private:
   SelectableTableView m_selectableTableView;
   EditorController m_editorController;
   ScriptStore * m_scriptStore;
+  MenuController * m_menuController;
+  int m_currentScriptIndex;
 };
 
 }

@@ -56,20 +56,20 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
   int numberOfChar = 0;
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
-  if (numberOfChar >= bufferSize-1) { return 0; }
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   numberOfChar += expression->operand(0)->writeTextInBuffer(buffer, bufferSize);
   for (int i=1; i<numberOfOperands; i++) {
-    if (numberOfChar >= bufferSize-1) { return 0; }
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
-    if (numberOfChar >= bufferSize-1) { return 0; }
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     if (expression->operand(i)->type() == Expression::Type::Opposite) {
       buffer[numberOfChar++] = '(';
-      if (numberOfChar >= bufferSize-1) { return 0; }
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
     numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
     if (expression->operand(i)->type() == Expression::Type::Opposite) {
       buffer[numberOfChar++] = ')';
-      if (numberOfChar >= bufferSize-1) { return 0; }
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
   }
   buffer[numberOfChar] = 0;
@@ -80,21 +80,22 @@ int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expressio
   if (bufferSize == 0) {
     return -1;
   }
+  buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
   numberOfChar += strlcpy(buffer, operatorName, bufferSize);
-  if (numberOfChar >= bufferSize-1) { return 0; }
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = '(';
-  if (numberOfChar >= bufferSize-1) { return 0; }
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 0);
   numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   for (int i = 1; i < numberOfOperands; i++) {
-    if (numberOfChar >= bufferSize-1) { return 0; }
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     buffer[numberOfChar++] = ',';
-    if (numberOfChar >= bufferSize-1) { return 0; }
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   }
-  if (numberOfChar >= bufferSize-1) { return 0; }
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = ')';
   buffer[numberOfChar] = 0;
   return numberOfChar;

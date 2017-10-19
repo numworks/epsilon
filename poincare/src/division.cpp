@@ -142,7 +142,9 @@ template<typename T> Evaluation<T> * Division::computeOnMatrices(Evaluation<T> *
 ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new FractionLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
+  const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);
+  const Expression * denominator = operand(1)->type() == Type::Parenthesis ? operand(1)->operand(0) : operand(1);
+  return new FractionLayout(numerator->createLayout(floatDisplayMode, complexFormat), denominator->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

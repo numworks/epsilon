@@ -2,9 +2,9 @@
 #include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <assert.h>
+#include <cmath>
 extern "C" {
 #include <assert.h>
-#include <math.h>
 }
 
 #include "layout/string_layout.h"
@@ -78,14 +78,10 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-Evaluation<float> * Decimal::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
-  // TODO: implement when needed, use Integer.privateEvaluate
-  return new Complex<float>(Complex<float>::Float(NAN));
-}
-
-Evaluation<double> * Decimal::privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const {
-  // TODO: implement when needed, use Integer.privateEvaluate
-  return new Complex<double>(Complex<double>::Float(NAN));
+template<typename T> Evaluation<T> * Decimal::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+  T m = m_mantissa.approximate<T>();
+  int numberOfDigits = numberOfDigitsInMantissa();
+  return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
 }
 
 int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
@@ -129,14 +125,7 @@ ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMod
 }
 
 Expression * Decimal::immediateSimplify() {
-  int numberOfDigits = 1;
-  Integer mantissaCopy = m_mantissa;
-  IntegerDivision d = Integer::Division(mantissaCopy, Integer(10));
-  while (!d.quotient.isZero()) {
-    mantissaCopy = d.quotient;
-    d = Integer::Division(mantissaCopy, Integer(10));
-    numberOfDigits++;
-  }
+  int numberOfDigits = numberOfDigitsInMantissa();
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);
   if (m_exponent >= numberOfDigits-1) {
@@ -151,6 +140,18 @@ int Decimal::compareToSameTypeExpression(const Expression * e) const {
   // We should not get there are decimal are turned into Rational before simplification
   assert(false);
   return 0;
+}
+
+int Decimal::numberOfDigitsInMantissa() const {
+  int numberOfDigits = 1;
+  Integer mantissaCopy = m_mantissa;
+  IntegerDivision d = Integer::Division(mantissaCopy, Integer(10));
+  while (!d.quotient.isZero()) {
+    mantissaCopy = d.quotient;
+    d = Integer::Division(mantissaCopy, Integer(10));
+    numberOfDigits++;
+  }
+  return numberOfDigits;
 }
 
 }

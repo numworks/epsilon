@@ -1,8 +1,9 @@
 #include "script_parameter_controller.h"
+#include "menu_controller.h"
 
 namespace Code {
 
-ScriptParameterController::ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore) :
+ScriptParameterController::ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore, MenuController * menuController) :
   ViewController(parentResponder),
   m_pageTitle(title),
   m_editScript(I18n::Message::Default),
@@ -11,12 +12,20 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_deleteScript(I18n::Message::Default),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_scriptStore(scriptStore)
+  m_scriptStore(scriptStore),
+  m_menuController(menuController),
+  m_currentScriptIndex(-1)
 {
 }
 
 void ScriptParameterController::setScript(int i){
   m_editorController.setScript(m_scriptStore->editableScript(i));
+  m_currentScriptIndex = i;
+}
+
+void ScriptParameterController::dismissScriptParameterController() {
+  m_currentScriptIndex = -1;
+  stackController()->pop();
 }
 
 View * ScriptParameterController::view() {
@@ -34,6 +43,10 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         app()->displayModalViewController(&m_editorController, 0.5f, 0.5f);
         return true;
       //TODO other cases
+      case 3:
+        m_menuController->deleteScriptAtIndex(m_currentScriptIndex);
+        dismissScriptParameterController();
+        return true;
       default:
         assert(false);
         return false;
@@ -43,9 +56,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {
- if (selectedRow() < 0) {
-    selectCellAtLocation(0, 0);
-  }
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -73,6 +84,10 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   MessageTableCell * myCell = (MessageTableCell *)cell;
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::EditScript, I18n::Message::RenameScript, I18n::Message::AutoImportScript, I18n::Message::DeleteScript};
   myCell->setMessage(labels[index]);
+}
+
+StackViewController * ScriptParameterController::stackController() {
+    return static_cast<StackViewController *>(parentResponder());
 }
 
 }

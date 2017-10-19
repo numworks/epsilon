@@ -15,7 +15,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   }, this)),
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false),
   m_consoleController(parentResponder, m_scriptStore),
-  m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore)
+  m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this)
 {
   for (int i = 0; i< k_maxNumberOfCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -71,6 +71,11 @@ void MenuController::addScript() {
   m_scriptStore->addNewScript();
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, numberOfRows()-2);
+}
+
+void MenuController::deleteScriptAtIndex(int i) {
+  m_scriptStore->deleteScript(i);
+  m_selectableTableView.reloadData();
 }
 
 int MenuController::numberOfRows() {

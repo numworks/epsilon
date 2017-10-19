@@ -9,6 +9,8 @@
 
 namespace Code {
 
+class ScriptParameterController;
+
 class MenuController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public ButtonRowDelegate {
 public:
   MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
@@ -16,6 +18,7 @@ public:
   StackViewController * stackViewController();
   void configureScript();
   void addScript();
+  void deleteScriptAtIndex(int i);
 
   /* ViewController */
   View * view() override;

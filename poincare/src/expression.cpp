@@ -92,6 +92,7 @@ template<typename T> T Expression::epsilon() {
   return epsilon;
 }
 
+#if POINCARE_SIMPLIFY
 Expression * Expression::simplify() const {
   /* We make sure that the simplification is deletable.
    * Indeed, we don't want an expression with some parts deletable and some not
@@ -139,6 +140,7 @@ Expression * Expression::simplify() const {
 
   return result;
 }
+#endif
 
 bool Expression::sequentialOperandsIdentity(const Expression * e) const {
   /* Here we simply test all operands for identity in the order they are defined
@@ -215,6 +217,7 @@ bool Expression::isIdenticalTo(const Expression * e) const {
   return this->valueEquals(e);
 }
 
+#if POINCARE_SIMPLIFY
 bool Expression::isEquivalentTo(Expression * e) const {
   Expression * a = this->simplify();
   Expression * b = e->simplify();
@@ -223,6 +226,7 @@ bool Expression::isEquivalentTo(Expression * e) const {
   delete b;
   return result;
 }
+#endif
 
 bool Expression::valueEquals(const Expression * e) const {
   assert(this->type() == e->type());

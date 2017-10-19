@@ -99,7 +99,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   w_lgamma.o \
 )
 
-liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include
+liba/src/external/openbsd/%.o: SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
 liba/src/external/openbsd/e_lgammaf_r.o: CFLAGS += -w
 liba/src/external/openbsd/s_log1pf.o: CFLAGS += -w
 liba/src/external/openbsd/s_scalbnf.o: CFLAGS += -w

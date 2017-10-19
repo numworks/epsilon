@@ -73,6 +73,39 @@ float sqrtf(float x);
 float tanf(float x);
 float tanhf(float x);
 
+double acos(double x);
+double acosh(double x);
+double asin(double x);
+double asinh(double x);
+double atan(double x);
+double atanh(double x);
+double ceil(double x);
+double copysign(double x, double y);
+double cos(double x);
+double cosh(double x);
+double exp(double x);
+double expm1(double x);
+double fabs(double x);
+double floor(double x);
+double lgamma(double x);
+double lgamma_r(double x, int *signgamp);
+double log1p(double x);
+double log10(double x);
+double log(double x);
+double pow(double x, double y);
+double round(double x);
+double scalbn(double x, int n);
+double sin(double x);
+double sinh(double x);
+double sqrt(double x);
+double tan(double x);
+double tanh(double x);
+
+/* The C99 standard says that any libc function can be re-declared as a macro.
+ * (See N1124 paragraph 7.1.4). This means that C files willing to actually
+ * implement said functions should either re-define the prototype or #undef the
+ * macro. */
+
 #define acosf(x) __builtin_acosf(x)
 #define acoshf(x) __builtin_acoshf(x)
 #define asinf(x) __builtin_asinf(x)
@@ -104,34 +137,6 @@ float tanhf(float x);
 #define sqrtf(x) __builtin_sqrtf(x)
 #define tanf(x) __builtin_tanf(x)
 #define tanhf(x) __builtin_tanhf(x)
-
-double acos(double x);
-double acosh(double x);
-double asin(double x);
-double asinh(double x);
-double atan(double x);
-double atanh(double x);
-double ceil(double x);
-double copysign(double x, double y);
-double cos(double x);
-double cosh(double x);
-double exp(double x);
-double expm1(double x);
-double fabs(double x);
-double floor(double x);
-double lgamma(double x);
-double lgamma_r(double x, int *signgamp);
-double log1p(double x);
-double log10(double x);
-double log(double x);
-double pow(double x, double y);
-double round(double x);
-double scalbn(double x, int n);
-double sin(double x);
-double sinh(double x);
-double sqrt(double x);
-double tan(double x);
-double tanh(double x);
 
 #define acos(x) __builtin_acos(x)
 #define acosh(x) __builtin_acosh(x)

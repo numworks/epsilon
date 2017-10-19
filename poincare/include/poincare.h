@@ -17,6 +17,7 @@
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
+#include <poincare/decimal.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/division.h>

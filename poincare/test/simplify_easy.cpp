@@ -33,6 +33,18 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 
 QUIZ_CASE(poincare_simplify_easy) {
+  assert_parsed_expression_simplify_to("0000.000000", "0");
+  assert_parsed_expression_simplify_to(".000000", "0");
+  assert_parsed_expression_simplify_to("0000", "0");
+  assert_parsed_expression_simplify_to("0.1234567", "1234567/10000000");
+  assert_parsed_expression_simplify_to("123.4567", "1234567/10000");
+  assert_parsed_expression_simplify_to("0.1234", "1234/10000");
+  assert_parsed_expression_simplify_to("0.1234000", "1234/10000");
+  assert_parsed_expression_simplify_to("001234000", "1234000");
+  assert_parsed_expression_simplify_to("001.234000E3", "1234");
+  assert_parsed_expression_simplify_to("001234000E-4", "1234/10");
+  assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3*2)/9-4/7+1/98", "ln(2)+2347/882");
+  assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3*2)/9-4/7+1/98", "ln(2)+2347/882");
   assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3*2)/9-4/7+1/98", "ln(2)+2347/882");
   assert_parsed_expression_simplify_to("3/4+5/4-12+1/567", "-5669/567");
   assert_parsed_expression_simplify_to("34/78+67^(-1)", "1178/2613");

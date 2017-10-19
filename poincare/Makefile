@@ -18,6 +18,7 @@ objs += $(addprefix poincare/src/,\
   confidence_interval.o\
   conjugate.o\
   cosine.o\
+  decimal.o\
   derivative.o\
   determinant.o\
   division.o\

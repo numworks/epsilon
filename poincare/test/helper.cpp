@@ -32,6 +32,7 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
   delete e;
 }
 
+#if POINCARE_SIMPLIFY
 void assert_parsed_simplified_expression_type(const char * expression, Poincare::Expression::Type type) {
   Expression * e = parse_expression(expression);
   Expression * e2 = e->simplify();
@@ -40,6 +41,7 @@ void assert_parsed_simplified_expression_type(const char * expression, Poincare:
   delete e;
   delete e2;
 }
+#endif
 
 template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {

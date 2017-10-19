@@ -7,6 +7,7 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parse_trigo) {
+#if POINCARE_SIMPLIFY
   assert_parsed_simplified_expression_type("sin(0)", Expression::Type::Sine);
   assert_parsed_simplified_expression_type("cos(0)", Expression::Type::Cosine);
   assert_parsed_simplified_expression_type("tan(0)", Expression::Type::Tangent);
@@ -19,6 +20,7 @@ QUIZ_CASE(poincare_parse_trigo) {
   assert_parsed_simplified_expression_type("acosh(0)", Expression::Type::HyperbolicArcCosine);
   assert_parsed_simplified_expression_type("asinh(0)", Expression::Type::HyperbolicArcSine);
   assert_parsed_simplified_expression_type("atanh(0)", Expression::Type::HyperbolicArcTangent);
+#endif
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {

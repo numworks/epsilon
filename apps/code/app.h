@@ -2,9 +2,9 @@
 #define CODE_APP_H
 
 #include <escher.h>
-#include "menu_controller.h"
-#include "program_store.h"
 #include "../shared/message_controller.h"
+#include "menu_controller.h"
+#include "script_store.h"
 
 namespace Code {
 
@@ -22,9 +22,9 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    ProgramStore * programStore();
+    ScriptStore * scriptStore();
   private:
-    ProgramStore m_programStore;
+    ScriptStore m_scriptStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
 private:

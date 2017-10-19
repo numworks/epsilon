@@ -2,14 +2,14 @@
 #define CODE_EDITOR_CONTROLLER_H
 
 #include <escher.h>
-#include "program.h"
+#include "script.h"
 
 namespace Code {
 
 class EditorController : public ViewController {
 public:
   EditorController();
-  void setProgram(Program program);
+  void setScript(Script script);
   View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

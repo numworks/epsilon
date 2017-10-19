@@ -2,20 +2,20 @@
 #define CODE_MENU_CONTROLLER_H
 
 #include <escher.h>
-#include "console_controller.h"
-#include "program_parameter_controller.h"
 #include <apps/shared/new_function_cell.h>
-#include "program_store.h"
+#include "console_controller.h"
+#include "script_parameter_controller.h"
+#include "script_store.h"
 
 namespace Code {
 
 class MenuController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, ProgramStore * programStore, ButtonRowController * footer);
+  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
   ConsoleController * consoleController();
   StackViewController * stackViewController();
-  void configureProgram();
-  void addProgram();
+  void configureScript();
+  void addScript();
 
   /* ViewController */
   View * view() override;
@@ -35,13 +35,13 @@ public:
 private:
   constexpr static int k_maxNumberOfCells = 5; //TODO
   static constexpr KDCoordinate k_rowHeight = 50; //TODO create common parent class with Shared::ListController
-  ProgramStore * m_programStore;
+  ScriptStore * m_scriptStore;
   MessageTableCell m_cells[k_maxNumberOfCells];
-  Shared::NewFunctionCell m_addNewProgramCell;
+  Shared::NewFunctionCell m_addNewScriptCell;
   Button m_consoleButton;
   SelectableTableView m_selectableTableView;
   ConsoleController m_consoleController;
-  ProgramParameterController m_programParameterController;
+  ScriptParameterController m_scriptParameterController;
 };
 
 }

@@ -8,8 +8,8 @@ EditorController::EditorController() :
 {
 }
 
-void EditorController::setProgram(Program program){
-  m_view.setText(program.editableContent(), program.bufferSize());
+void EditorController::setScript(Script script){
+  m_view.setText(script.editableContent(), script.bufferSize());
 }
 
 bool EditorController::handleEvent(Ion::Events::Event event) {

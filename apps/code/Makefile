@@ -9,9 +9,9 @@ app_objs += $(addprefix apps/code/,\
   console_store.o\
   editor_controller.o\
   menu_controller.o\
-  program.o\
-  program_parameter_controller.o\
-  program_store.o\
+  script.o\
+  script_parameter_controller.o\
+  script_store.o\
 )
 
 i18n_files += $(addprefix apps/code/,\
@@ -22,7 +22,4 @@ i18n_files += $(addprefix apps/code/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/code/test/,\
-  mpprint.cpp\
-)
 app_images += apps/code/code_icon.png

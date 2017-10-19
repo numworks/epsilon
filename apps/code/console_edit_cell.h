@@ -6,7 +6,6 @@
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <escher/message_text_view.h>
-#include "console_line.h"
 
 namespace Code {
 

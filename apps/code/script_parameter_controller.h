@@ -1,17 +1,17 @@
-#ifndef CODE_PROGRAM_PARAMETER_CONTROLLER_H
-#define CODE_PROGRAM_PARAMETER_CONTROLLER_H
+#ifndef CODE_SCRIPT_PARAMETER_CONTROLLER_H
+#define CODE_SCRIPT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
 #include "../i18n.h"
 #include "editor_controller.h"
-#include "program_store.h"
+#include "script_store.h"
 
 namespace Code {
 
-class ProgramParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ScriptParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ProgramParameterController(Responder * parentResponder, I18n::Message title, ProgramStore * programStore);
-  void setProgram(int i);
+  ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore);
+  void setScript(int i);
 
   /* ViewController */
   View * view() override;
@@ -29,13 +29,13 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 4;
   I18n::Message m_pageTitle;
-  MessageTableCell m_editProgram;
-  MessageTableCell m_renameProgram;
-  MessageTableCellWithSwitch m_autoImportProgram;
-  MessageTableCell m_deleteProgram;
+  MessageTableCell m_editScript;
+  MessageTableCell m_renameScript;
+  MessageTableCellWithSwitch m_autoImportScript;
+  MessageTableCell m_deleteScript;
   SelectableTableView m_selectableTableView;
   EditorController m_editorController;
-  ProgramStore * m_programStore;
+  ScriptStore * m_scriptStore;
 };
 
 }

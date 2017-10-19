@@ -1,5 +1,7 @@
 #include <math.h>
 
+#undef nearbyintf
+
 /* nearbyintf is not supposed to be the same as roundf according to openBSD
  * documentation. Indeed:
  * - they round halfway cases to the nearest integer instead of away from zero

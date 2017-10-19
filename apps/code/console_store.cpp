@@ -50,7 +50,6 @@ void ConsoleStore::pushResult(const char * text, size_t length) {
   push(ResultMarker, text, length);
 }
 
-
 void ConsoleStore::deleteLastLineIfEmpty() {
   ConsoleLine lastLine = lineAtIndex(numberOfLines()-1);
   char lastLineFirstChar = lastLine.text()[0];

@@ -2,21 +2,25 @@
 #define CODE_CONSOLE_CONTROLLER_H
 
 #include <escher.h>
-#include <escher/text_field_delegate.h>
-#include "console_store.h"
-#include "console_line_cell.h"
+#include <python/port/port.h>
+
 #include "console_edit_cell.h"
+#include "console_line_cell.h"
+#include "console_store.h"
+#include "script_store.h"
 
 namespace Code {
 
-class ConsoleController : public ViewController, public ListViewDataSource, public ScrollViewDataSource, public TextFieldDelegate {
+class ConsoleController : public ViewController, public ListViewDataSource, public ScrollViewDataSource, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  ConsoleController(Responder * parentResponder);
+  ConsoleController(Responder * parentResponder, ScriptStore * scriptStore);
   ~ConsoleController();
   ConsoleController(const ConsoleController& other) = delete;
   ConsoleController(ConsoleController&& other) = delete;
   ConsoleController operator=(const ConsoleController& other) = delete;
   ConsoleController& operator=(ConsoleController&& other) = delete;
+
+  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
   // ViewController
   View * view() override { return &m_tableView; }
@@ -40,23 +44,31 @@ public:
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
   Toolbox * toolboxForTextField(TextField * textFied) override;
 
-  // Python
-  void initPython();
-  void executePython(const char * str);
-  void stopPython();
+  // MicroPython::ExecutionEnvironment
+  void printText(const char * text, size_t length) override;
 
-  // Other
-  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 private:
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
-  static constexpr int k_numberOfLineCells = 15; // May change depending on the height
+  static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
+  static constexpr int k_pythonHeapSize = 16384;
+  static constexpr int k_outputAccumulationBufferSize = 40;
+  void flushOutputAccumulationBufferToStore();
+  void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
+  void emptyOutputAccumulationBuffer();
+  int firstNewLineCharIndex(const char * text, size_t length);
   int m_rowHeight;
   ConsoleStore m_consoleStore;
   TableView m_tableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char * m_pythonHeap;
+  char * m_outputAccumulationBuffer;
+  /* The Python machine might call printText several times to print a single
+   * string. We thus use m_outputAccumulationBuffer to store and concatenate the
+   * different strings until a new line char appears in the text. When this
+   * happens, or when m_outputAccumulationBuffer is full, we create a new
+   * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
 };
 }
 

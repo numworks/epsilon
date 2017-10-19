@@ -1,62 +1,32 @@
 #include "console_controller.h"
 #include <apps/i18n.h>
 #include "app.h"
+#include <assert.h>
 
 extern "C" {
 #include <stdlib.h>
-#include "port.h"
-#include "py/mphal.h"
-#include "py/compile.h"
-#include "py/runtime.h"
-#include "py/gc.h"
-#include "py/stackctrl.h"
 }
 
 namespace Code {
 
-/* mp_hal_stdout_tx_strn_cooked symbol required by micropython at printing
- * needs to access information about where to print. This 'context' is provided
- * by the global sCurrentConsoleStore that points to the console store. */
-
-static ConsoleStore * sCurrentConsoleStore = nullptr;
-
-extern "C"
-void mp_hal_stdout_tx_strn_cooked(const char * str, size_t len) {
-  assert(sCurrentConsoleStore != nullptr);
-  sCurrentConsoleStore->pushResult(str, len);
-}
-
-mp_obj_t execute_from_str(const char *str) {
-  nlr_buf_t nlr;
-  if (nlr_push(&nlr) == 0) {
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
-    mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-    mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
-    mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::A6);
-    mp_call_function_0(module_fun);
-    mp_hal_set_interrupt_char(-1); // Disable interrupt
-    nlr_pop();
-    return 0;
-  } else {
-    // Uncaught exception
-    return (mp_obj_t) nlr.ret_val;
-  }
-}
-
-ConsoleController::ConsoleController(Responder * parentResponder) :
+ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   TextFieldDelegate(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
   m_tableView(this, this, 0, 0),
   m_editCell(this, this)
 {
-  assert(sCurrentConsoleStore == nullptr);
-  sCurrentConsoleStore = &m_consoleStore;
-  initPython();
+  m_outputAccumulationBuffer = (char *)malloc(k_outputAccumulationBufferSize);
+  emptyOutputAccumulationBuffer();
+  m_pythonHeap = (char *)malloc(k_pythonHeapSize);
+  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  MicroPython::registerScriptProvider(scriptStore);
 }
 
 ConsoleController::~ConsoleController() {
-  stopPython();
+  MicroPython::deinit();
+  free(m_pythonHeap);
+  free(m_outputAccumulationBuffer);
 }
 
 void ConsoleController::viewWillAppear() {
@@ -131,7 +101,10 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   m_consoleStore.pushCommand(text, strlen(text));
-  executePython(text);
+  assert(m_outputAccumulationBuffer[0] == '\0');
+  runCode(text);
+  flushOutputAccumulationBufferToStore();
+  m_consoleStore.deleteLastLineIfEmpty();
   textField->setText("");
   m_tableView.reloadData();
   m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
@@ -148,26 +121,63 @@ Toolbox * ConsoleController::toolboxForTextField(TextField * textFied) {
   return nullptr;
 }
 
-void ConsoleController::initPython() {
-  mp_stack_set_limit(40000);
-  mp_port_init_stack_top();
-
-  m_pythonHeap = (char *)malloc(16384);
-  gc_init(m_pythonHeap, m_pythonHeap + 16384);
-
-  mp_init();
-}
-
-void ConsoleController::executePython(const char * str) {
-  if (execute_from_str(str)) {
-    mp_hal_stdout_tx_strn_cooked(I18n::translate(I18n::Message::ConsoleError), 5);
+/* printText is called by the Python machine.
+ * The text argument is not always null-terminated. */
+void ConsoleController::printText(const char * text, size_t length) {
+  int textCutIndex = firstNewLineCharIndex(text, length);
+  // If there is no new line in text, just append it to the output accumulation
+  // buffer.
+  if (textCutIndex >= length) {
+    appendTextToOutputAccumulationBuffer(text, length);
+    return;
   }
-  m_consoleStore.deleteLastLineIfEmpty();
+  // If there is a new line in the middle of the text, we have to store at least
+  // two new console lines in the console store.
+  if (textCutIndex < length - 1) {
+    printText(text, textCutIndex + 1);
+    printText(&text[textCutIndex+1], length - (textCutIndex + 1));
+    return;
+  }
+  // If there is a new line at the end of the text, we have to store the line in
+  // the console store.
+  if (textCutIndex == length - 1) {
+    appendTextToOutputAccumulationBuffer(text, length-1);
+    flushOutputAccumulationBufferToStore();
+  }
 }
 
-void ConsoleController::stopPython() {
-  free(m_pythonHeap);
-  sCurrentConsoleStore = nullptr;
+void ConsoleController::flushOutputAccumulationBufferToStore() {
+  m_consoleStore.pushResult(m_outputAccumulationBuffer, strlen(m_outputAccumulationBuffer));
+  emptyOutputAccumulationBuffer();
+}
+
+void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, size_t length) {
+  int endOfAccumulatedText = strlen(m_outputAccumulationBuffer);
+  int spaceLeft = k_outputAccumulationBufferSize - endOfAccumulatedText;
+  if (spaceLeft > length) {
+    memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, length);
+    return;
+  }
+  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, spaceLeft-1);
+  flushOutputAccumulationBufferToStore();
+  appendTextToOutputAccumulationBuffer(&text[spaceLeft-1], length - (spaceLeft - 1));
+}
+
+void ConsoleController::emptyOutputAccumulationBuffer() {
+  for (int i = 0; i < k_outputAccumulationBufferSize; i++) {
+    m_outputAccumulationBuffer[i] = 0;
+  }
+}
+
+int ConsoleController::firstNewLineCharIndex(const char * text, size_t length) {
+  int index = 0;
+  while (index < length) {
+    if (text[index] == '\n') {
+      return index;
+    }
+    index++;
+  }
+  return index;
 }
 
 }

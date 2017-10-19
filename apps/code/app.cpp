@@ -18,7 +18,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() {
-  m_programStore.addDefaultProgram();
+  m_scriptStore.addMandelbrotScript();
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -26,7 +26,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_programStore.deleteAll();
+  m_scriptStore.deleteAll();
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -34,14 +34,14 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-ProgramStore * App::Snapshot::programStore() {
-  return &m_programStore;
+ScriptStore * App::Snapshot::scriptStore() {
+  return &m_scriptStore;
 }
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
-  m_menuController(&m_listFooter, snapshot->programStore(), &m_listFooter),
+  m_menuController(&m_listFooter, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter)
 {
 }

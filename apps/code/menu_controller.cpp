@@ -4,18 +4,18 @@
 
 namespace Code {
 
-MenuController::MenuController(Responder * parentResponder, ProgramStore * programStore, ButtonRowController * footer) :
+MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer) :
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
-  m_programStore(programStore),
-  m_addNewProgramCell(I18n::Message::AddScript),
+  m_scriptStore(scriptStore),
+  m_addNewScriptCell(I18n::Message::AddScript),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
     MenuController * menu = (MenuController *)context;
     menu->app()->displayModalViewController(menu->consoleController(), 0.5f, 0.5f);
   }, this)),
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false),
-  m_consoleController(parentResponder),
-  m_programParameterController(nullptr, I18n::Message::ScriptOptions, m_programStore)
+  m_consoleController(parentResponder, m_scriptStore),
+  m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore)
 {
   for (int i = 0; i< k_maxNumberOfCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -50,32 +50,32 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int selectedRow = m_selectableTableView.selectedRow();
-    if (selectedRow >= 0 && selectedRow < m_programStore->numberOfPrograms()) {
-      configureProgram();
+    if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts()) {
+      configureScript();
       return true;
-    } else if (selectedRow == m_programStore->numberOfPrograms()) {
-      addProgram();
+    } else if (selectedRow == m_scriptStore->numberOfScripts()) {
+      addScript();
       return true;
     }
   }
   return false;
 }
 
-void MenuController::configureProgram() {
-  m_programParameterController.setProgram(m_selectableTableView.selectedRow());
-  stackViewController()->push(&m_programParameterController);
+void MenuController::configureScript() {
+  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
+  stackViewController()->push(&m_scriptParameterController);
 }
 
-void MenuController::addProgram() {
+void MenuController::addScript() {
   m_selectableTableView.selectCellAtLocation(0, 0);
-  m_programStore->addDefaultProgram();
+  m_scriptStore->addNewScript();
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, numberOfRows()-2);
 }
 
 int MenuController::numberOfRows() {
-  return m_programStore->numberOfPrograms() + 1;
-  //TODO do not add the addProgram row if there can be no more programs stored.
+  return m_scriptStore->numberOfScripts() + 1;
+  //TODO do not add the addScript row if there can be no more scripts stored.
 };
 
 KDCoordinate MenuController::cellHeight() {
@@ -84,19 +84,19 @@ KDCoordinate MenuController::cellHeight() {
 
 HighlightCell * MenuController::reusableCell(int index) {
   assert(index >= 0);
-  if (index < m_programStore->numberOfPrograms()) {
+  if (index < m_scriptStore->numberOfScripts()) {
     return &m_cells[index];
   }
-  assert(index == m_programStore->numberOfPrograms());
-  return &m_addNewProgramCell;
+  assert(index == m_scriptStore->numberOfScripts());
+  return &m_addNewScriptCell;
 }
 
 int MenuController::reusableCellCount() {
-  return m_programStore->numberOfPrograms() + 1;
+  return m_scriptStore->numberOfScripts() + 1;
 }
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index < m_programStore->numberOfPrograms()) {
+  if (index < m_scriptStore->numberOfScripts()) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     // TODO: store script names
     myCell->setMessage(I18n::Message::Console);

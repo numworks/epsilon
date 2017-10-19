@@ -1,16 +1,16 @@
-#ifndef CODE_PROGRAM_H
-#define CODE_PROGRAM_H
+#ifndef CODE_SCRIPT_H
+#define CODE_SCRIPT_H
 
 #include <escher.h>
 
 namespace Code {
 
-class Program {
+class Script {
 public:
-  Program(char * textBuffer, size_t sizeOfBuffer);
+  Script(char * textBuffer = nullptr, size_t sizeOfBuffer = 0);
   const char * readOnlyContent() const;
   char * editableContent();
-  int bufferSize() const;
+  size_t bufferSize() const;
 private:
   size_t m_bufferSize;
   char * m_textBuffer;

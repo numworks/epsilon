@@ -174,6 +174,7 @@ python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
 port_objs += $(addprefix python/port/,\
   port.o \
+  import_helper.o\
   interrupt_helper.o \
   modkandinsky.o \
   modkandinsky_impl.o \

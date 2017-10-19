@@ -8,6 +8,10 @@
 #error This file expects PATCH_LEVEL to be defined
 #endif
 
+#ifndef VERSION
+#error This file expects VERSION to be defined
+#endif
+
 #ifndef HEADER_SECTION
 #define HEADER_SECTION
 #endif
@@ -16,8 +20,8 @@ class VersionInfo {
 public:
   constexpr VersionInfo() :
     m_header(Magic),
-    m_version(STR(VERSION)),
-    m_patchLevel(STR(PATCH_LEVEL)),
+    m_version{VERSION},
+    m_patchLevel{PATCH_LEVEL},
     m_footer(Magic) { }
   const char * version() const {
     assert(m_header == Magic);

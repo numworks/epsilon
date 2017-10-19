@@ -99,6 +99,18 @@ Expression * Expression::immediateSimplify() {
   return this;
 }
 
+bool Expression::containType(Type t) const {
+  if (type() == t) {
+    return true;
+  }
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (operand(i)->containType(t)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Expression::hasAncestor(const Expression * e) const {
   assert(m_parent != this);
   if (m_parent == e) {

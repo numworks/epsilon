@@ -115,11 +115,11 @@ Evaluation<double> * Rational::privateEvaluate(DoublePrecision p, Context& conte
 }
 
 ExpressionLayout * Rational::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  ExpressionLayout * numeratorLayout = m_numerator.createLayout(floatDisplayMode, complexFormat);
+  ExpressionLayout * numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;
   }
-  ExpressionLayout * denominatorLayout = m_denominator.createLayout(floatDisplayMode, complexFormat);
+  ExpressionLayout * denominatorLayout = m_denominator.createLayout();
   return new FractionLayout(numeratorLayout, denominatorLayout);
 }
 

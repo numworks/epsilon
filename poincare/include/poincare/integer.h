@@ -14,7 +14,7 @@ namespace Poincare {
 
 struct IntegerDivision;
 
-class Integer : public StaticHierarchy<0> {
+class Integer {
 public:
   typedef uint16_t half_native_uint_t;
   typedef int32_t native_int_t;
@@ -23,7 +23,6 @@ public:
 
   // FIXME: This constructor should be constexpr
   Integer(native_int_t i = 0) :
-    StaticHierarchy<0>(),
     m_digit(i>0 ? i : -i),
     m_numberOfDigits(1),
     m_negative(i<0)
@@ -44,12 +43,17 @@ public:
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative);
 
-  // Expression subclassing
-  Type type() const override;
-  Expression * clone() const override;
+  // Comparison
+  int compareTo(const Integer * i) const;
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+
+  // Layout
+  int writeTextInBuffer(char * buffer, int bufferSize) const;
+  ExpressionLayout * createLayout() const;
+
+  // Approximation
+  template<typename T> T approximate() const;
 
   // Arithmetic
   static Integer Addition(const Integer & i, const Integer & j);
@@ -70,10 +74,6 @@ private:
   static Integer usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative);
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
   static IntegerDivision udiv(const Integer & a, const Integer & b);
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override;
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override;
-
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(int i) const {
     assert(i >= 0 && i < m_numberOfDigits);
@@ -91,9 +91,6 @@ private:
     }
     return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)m_digits)[i]);
   }
-  /* Sorting */
-  int compareToSameTypeExpression(const Expression * e) const override;
-
   // Small integer optimization. Similar to short string optimization.
   union {
     const native_uint_t * m_digits; // Little-endian

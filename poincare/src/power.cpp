@@ -129,7 +129,7 @@ int Power::compareToGreaterTypeExpression(const Expression * e) const {
   if (baseComparison != 0) {
     return baseComparison;
   }
-  Integer one(1);
+  Rational one(Integer(1));
   return operand(1)->compareTo(&one);
 }
 

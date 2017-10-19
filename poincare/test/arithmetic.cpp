@@ -13,26 +13,24 @@ using namespace std;
 using namespace Poincare;
 
 void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
-  GlobalContext context;
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- GCD ----"  << endl;
-  cout << "gcd(" << a.approximate<float>(context);
-  cout << ", " << b.approximate<float>(context) << ") = ";
+  cout << "gcd(" << a.approximate<float>();
+  cout << ", " << b.approximate<float>() << ") = ";
 #endif
   Integer gcd = Arithmetic::GCD(&a, &b);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
-  cout << gcd.approximate<float>(context) << endl;
+  cout << gcd.approximate<float>() << endl;
 #endif
   assert(gcd.compareTo(&c) == 0);
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
-  GlobalContext context;
   Integer outputFactors[1000];
   Integer outputCoefficients[1000];
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Primes factorization ----"  << endl;
-  cout << "Decomp(" << a.approximate<float>(context) << ") = ";
+  cout << "Decomp(" << a.approximate<float>() << ") = ";
 #endif
   Arithmetic::PrimeFactorization(&a, outputFactors, outputCoefficients, 10);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
@@ -46,8 +44,8 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
      * (the relation between integers and their approximation is a surjection,
      * however different integers are really likely to have different
      * approximations... */
-    assert(outputFactors[index].approximate<float>(context) == Integer(factors[index]).approximate<float>(context));
-    assert(outputCoefficients[index].approximate<float>(context) == Integer(coefficients[index]).approximate<float>(context));
+    assert(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>());
+    assert(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>());
   }
 }
 

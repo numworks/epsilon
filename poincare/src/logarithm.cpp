@@ -74,7 +74,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator) {
     if (!isDenominator) {
       return e;
     }
-    const Expression * multOperands[2] = {new Integer(-1), e};
+    const Expression * multOperands[2] = {new Rational(Integer(-1)), e};
     Multiplication * m = new Multiplication(multOperands, 2, false);
     return m;
   }

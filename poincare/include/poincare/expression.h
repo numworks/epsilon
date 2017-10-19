@@ -139,6 +139,7 @@ public:
   // TODO: should be virtual pure
   virtual Expression * immediateSimplify();
   virtual Expression * immediateBeautify() { return this; };
+  bool containType(Type type) const;
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.

@@ -104,14 +104,10 @@ int Rational::compareToSameTypeExpression(const Expression * e) const {
   return i1.compareTo(&i2);
 }
 
-Evaluation<float> * Rational::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
-  // TODO: implement when needed, use Integer.privateEvaluate
-  return new Complex<float>(Complex<float>::Float(NAN));
-}
-
-Evaluation<double> * Rational::privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const {
-  // TODO: implement when needed, use Integer.privateEvaluate
-  return new Complex<double>(Complex<double>::Float(NAN));
+template<typename T> Evaluation<T> * Rational::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+  T n = m_numerator.approximate<T>();
+  T d = m_denominator.approximate<T>();
+  return new Complex<T>(Complex<T>::Float(n/d));
 }
 
 ExpressionLayout * Rational::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

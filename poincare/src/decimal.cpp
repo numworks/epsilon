@@ -105,7 +105,7 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
     }
   }
   currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
-  if (m_exponent > 0 && m_exponent < currentChar) {
+  if (m_exponent >= 0 && m_exponent < currentChar) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
     for (int i = currentChar; i > m_exponent; i--) {
       buffer[i+1] = buffer[i];
@@ -113,7 +113,7 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
     buffer[m_exponent+1] = '.';
     currentChar++;
   }
-  if (m_exponent > 0 && m_exponent > currentChar) {
+  if (m_exponent >= 0 && m_exponent > currentChar) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
     for (int i = currentChar; i < m_exponent; i++) {
       buffer[currentChar++] = '0';
@@ -150,6 +150,7 @@ Expression * Decimal::immediateSimplify() {
 int Decimal::compareToSameTypeExpression(const Expression * e) const {
   // We should not get there are decimal are turned into Rational before simplification
   assert(false);
+  return 0;
 }
 
 }

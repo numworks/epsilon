@@ -17,7 +17,6 @@ public:
   enum class Type : uint8_t {
     Undefined = 0,
     Rational = 1,
-    Integer = 2, // delete
     Decimal,
     Multiplication,
     Power,

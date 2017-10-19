@@ -70,12 +70,7 @@ QUIZ_CASE(poincare_integer_divide) {
 
 template<typename T>
 void assert_integer_evals_to(int i, T result) {
-  GlobalContext globalContext;
-  Evaluation<T> * m = Integer(i).evaluate<T>(globalContext);
-  assert(m->complexOperand(0)->a() == result);
-  assert(m->complexOperand(0)->b() == 0.0f);
-  assert(m->numberOfOperands() == 1);
-  delete m;
+  assert(Integer(i).approximate<T>() == result);
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {

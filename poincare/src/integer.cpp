@@ -60,23 +60,6 @@ Integer::Integer(const char * digits, bool negative) :
     negative = false;
   }
   m_negative = negative;
-#if 0
-  // Pilfer v's ivars
-  m_numberOfDigits = result.m_numberOfDigits;
-  if (result.usesImmediateDigit()) {
-    m_digit = result.m_digit;
-  } else {
-    m_digits = result.m_digits;
-  }
-
-  // Zero-out v
-  result.m_numberOfDigits = 0;
-  if (result.usesImmediateDigit()) {
-    result.m_digit = 0;
-  } else {
-    result.m_digits = NULL;
-  }
-#endif
 }
 
 Integer Integer::exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
@@ -198,27 +181,14 @@ Integer& Integer::operator=(const Integer& other) {
   return *this;
 }
 
-// Expression subclassing
-
-Expression::Type Integer::type() const {
-  return Type::Integer;
-}
-
 void Integer::setNegative(bool negative) {
   assert(!(negative && isZero())); // Zero cannot be negative
   m_negative = negative;
 }
 
-Expression * Integer::clone() const {
-  return new Integer(*this);
-}
-
 // Comparison
 
-int Integer::compareToSameTypeExpression(const Expression * e) const {
-  assert(e->type() == Expression::Type::Integer);
-  const Integer * other = static_cast<const Integer *>(e);
-
+int Integer::compareTo(const Integer * other) const {
   if (m_negative && !other->m_negative) {
     return -1;
   }
@@ -429,6 +399,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   Integer A = numerator;
   Integer B = denominator;
   native_uint_t base = (double_native_uint_t)1 << 16;
+  // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
   native_uint_t d = base/(native_uint_t)(B.digit16(B.numberOfDigits16()-1)+1);
   A = Multiplication(Integer(d), A);
   B = Multiplication(Integer(d), B);
@@ -438,7 +409,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   half_native_uint_t * qDigits = (half_native_uint_t *)new native_uint_t [m/2+1];
   memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
   Integer betam = monome16Bits(1, m+1);
-  Integer betaMB = Multiplication(betam, B); // can swift all digits by m!
+  Integer betaMB = Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
   if (!A.isLowerThan(betaMB)) {
     qDigits[m] = 1;
     A = Subtraction(A, betaMB);
@@ -469,7 +440,9 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   return div;
 }
 
-Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
+template<typename T>
+T Integer::approximate() const {
+  if (sizeof(T) == sizeof(float)) {
   union {
     uint32_t uint_result;
     float float_result;
@@ -497,7 +470,7 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
    * the integer whose 2-exponent is bigger than 255 cannot be stored as a
    * float (IEEE 754 floating point). The approximation is thus INFINITY. */
   if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 255) {
-    return new Complex<float>(Complex<float>::Float(INFINITY));
+    return INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
@@ -516,7 +489,7 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
     float result = m_negative ? -0.0f : 0.0f;
-    return new Complex<float>(Complex<float>::Float(result));
+    return result;
   }
 
   uint_result = 0;
@@ -527,13 +500,10 @@ Evaluation<float> * Integer::privateEvaluate(SinglePrecision p, Context& context
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
   if (exponent == 255 && isnan(float_result)) {
-    return new Complex<float>(Complex<float>::Float(INFINITY));
+    return INFINITY;
   }
-
-  return new Complex<float>(Complex<float>::Float(float_result));
-}
-
-Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const {
+  return float_result;
+  } else {
   union {
     uint64_t uint_result;
     double double_result;
@@ -559,7 +529,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
    * the integer whose 2-exponent is bigger than 2047 cannot be stored as a
    * double (IEEE 754 double point). The approximation is thus INFINITY. */
   if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 2047) {
-    return new Complex<double>(Complex<double>::Float(INFINITY));
+    return INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
@@ -586,7 +556,7 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
     float result = m_negative ? -0.0f : 0.0f;
-    return new Complex<double>(Complex<double>::Float(result));
+    return result;
   }
 
   uint_result = 0;
@@ -597,9 +567,10 @@ Evaluation<double> * Integer::privateEvaluate(DoublePrecision p, Context& contex
   /* If exponent is 2047 and the double is undefined, we have exceed IEEE 754
    * representable double. */
   if (exponent == 2047 && isnan(double_result)) {
-    return new Complex<double>(Complex<double>::Float(INFINITY));
+    return INFINITY;
   }
-  return new Complex<double>(Complex<double>::Float(double_result));
+  return double_result;
+  }
 }
 
 int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
@@ -649,10 +620,13 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
   return size;
 }
 
-ExpressionLayout * Integer::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Integer::createLayout() const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
   return new StringLayout(buffer, numberOfChars);
 }
+
+template float Poincare::Integer::approximate<float>() const;
+template double Poincare::Integer::approximate<double>() const;
 
 }

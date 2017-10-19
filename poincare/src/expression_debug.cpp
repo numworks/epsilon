@@ -35,11 +35,6 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::NaperianLogarithm:
       std::cout << "Ln";
       break;
-    case Expression::Type::Integer:
-      std::cout << "Integer(";
-      std::cout << e->approximate<double>(context);
-      std::cout << ")";
-      break;
     case Expression::Type::Division:
       std::cout << "Division";
       break;
@@ -62,9 +57,9 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Rational:
       std::cout << "Rational(";
-      std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>(context);
+      std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>();
       std::cout << ", ";
-      std::cout << static_cast<const Rational * >(e)->denominator().approximate<double>(context);
+      std::cout << static_cast<const Rational * >(e)->denominator().approximate<double>();
       std::cout << ")";
       break;
     case Expression::Type::Sine:
@@ -104,14 +99,13 @@ void print_expression(const Expression * e, int indentationLevel) {
 }
 
 void print_prime_factorization(Integer * outputFactors, Integer * outputCoefficients, int outputLength) {
-  GlobalContext context;
   for (int index = 0; index < outputLength; index++) {
     if (outputCoefficients[index].isEqualTo(Integer(0))) {
       break;
     }
-    std::cout << outputFactors[index].approximate<double>(context);
+    std::cout << outputFactors[index].approximate<double>();
     std::cout << "^";
-    std::cout << outputCoefficients[index].approximate<double>(context);
+    std::cout << outputCoefficients[index].approximate<double>();
     std::cout << "+";
   }
   std::cout <<"  "<< std::endl;

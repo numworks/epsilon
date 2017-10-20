@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <assert.h>
+#include <ion.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -90,6 +91,34 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
   }
   buffer[bufferSize-1] = 0;
   int currentChar = 0;
+  if (currentChar >= bufferSize-1) { return bufferSize-1; }
+  if (m_mantissa.isZero()) {
+    buffer[currentChar++] = '0';
+    buffer[currentChar] = 0;
+    return currentChar;
+  }
+  int nbOfDigitsInMantissa = numberOfDigitsInMantissa();
+  int numberOfRequiredDigits = nbOfDigitsInMantissa > m_exponent ? nbOfDigitsInMantissa : m_exponent;
+  numberOfRequiredDigits = m_exponent < 0 ? 1+nbOfDigitsInMantissa-m_exponent : numberOfRequiredDigits;
+  /* The number would be too long if we print it as a natural decimal */
+  if (numberOfRequiredDigits > k_maxLength) {
+    if (nbOfDigitsInMantissa == 1) {
+      currentChar +=m_mantissa.writeTextInBuffer(buffer, bufferSize);
+    } else {
+      currentChar++;
+      currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+      buffer[0] = buffer[1];
+      buffer[1] = '.';
+    }
+    if (m_exponent == 0) {
+      return currentChar;
+    }
+    if (currentChar >= bufferSize-1) { return bufferSize-1; }
+    buffer[currentChar++] = Ion::Charset::Exponent;
+    currentChar += Integer(m_exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+    return currentChar;
+  }
+  /* Print a natural decimal number */
   if (m_exponent < 0) {
     for (int i = 0; i <= -m_exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }

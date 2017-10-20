@@ -31,6 +31,7 @@ private:
   /* Sorting */
   int compareToSameTypeExpression(const Expression * e) const override;
 
+  constexpr static int k_maxLength = 10;
   Integer m_mantissa;
   int m_exponent;
 };

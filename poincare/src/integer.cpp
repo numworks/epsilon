@@ -442,21 +442,20 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 
 template<typename T>
 T Integer::approximate() const {
-  if (sizeof(T) == sizeof(float)) {
   union {
-    uint32_t uint_result;
-    float float_result;
-  };
-  assert(sizeof(float) == 4);
-  /* We're generating an IEEE 754 compliant float.
-  * Theses numbers are 32-bit values, stored as follow:
-  * sign (1 bit)
-  * exponent (8 bits)
-  * mantissa (23 bits)
+    uint64_t uint_result;
+    T float_result;
+  } u;
+  assert(sizeof(T) == 4 || sizeof(T) == 8);
+  /* We're generating an IEEE 754 compliant float(double).
+  * Theses numbers are 32(64)-bit values, stored as follow:
+  * sign: 1 bit (1 bit)
+  * exponent: 8 bits (11 bits)
+  * mantissa: 23 bits (52 bits)
   *
   * We can tell that:
   * - the sign is going to be 0 for now, we only handle positive numbers
-  * - the exponent is the length of our BigInt, in bits - 1 + 127;
+  * - the exponent is the length of our BigInt, in bits - 1 + 127 (-1+1023);
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
 
@@ -465,86 +464,33 @@ T Integer::approximate() const {
 
   bool sign = m_negative;
 
-  uint8_t exponent = 126;
-  /* if the exponent is bigger then 255, it cannot be stored as a uint8. Also,
-   * the integer whose 2-exponent is bigger than 255 cannot be stored as a
-   * float (IEEE 754 floating point). The approximation is thus INFINITY. */
-  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 255) {
-    return INFINITY;
-  }
-  exponent += (m_numberOfDigits-1)*32;
-  exponent += numberOfBitsInLastDigit;
-
-  uint32_t mantissa = 0;
-  mantissa |= (lastDigit << (32-numberOfBitsInLastDigit));
-  if (m_numberOfDigits >= 2) {
-    native_uint_t beforeLastDigit = digit(m_numberOfDigits-2);
-    mantissa |= (beforeLastDigit >> numberOfBitsInLastDigit);
-}
-
-  if (isZero()) {
-    /* This special case for 0 is needed, because the current algorithm assumes
-     * that the big integer is non zero, thus puts the exponent to 126 (integer
-     * area), the issue is that when the mantissa is 0, a "shadow bit" is
-     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
-     */
-    float result = m_negative ? -0.0f : 0.0f;
-    return result;
-  }
-
-  uint_result = 0;
-  uint_result |= (sign << 31);
-  uint_result |= (exponent << 23);
-  uint_result |= (mantissa >> (32-23-1) & 0x7FFFFF);
-
-  /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
-   * representable float. */
-  if (exponent == 255 && isnan(float_result)) {
-    return INFINITY;
-  }
-  return float_result;
-  } else {
-  union {
-    uint64_t uint_result;
-    double double_result;
-  };
-  assert(sizeof(double) == 8);
-  /* We're generating an IEEE 754 compliant double.
-  * Theses numbers are 64-bit values, stored as follow:
-  * sign (1 bit)
-  * exponent (11 bits)
-  * mantissa (52 bits)
-  *
-  * We can tell that:
-  * - the exponent is the length of our BigInt, in bits - 1 + 1023;
-  * - the mantissa is the beginning of our BigInt, discarding the first bit
-  */
-  native_uint_t lastDigit = digit(m_numberOfDigits-1);
-  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
-
-  bool sign = m_negative;
-
-  uint16_t exponent = 1022;
-  /* if the exponent is bigger then 2047, it cannot be stored as a uint11. Also,
-   * the integer whose 2-exponent is bigger than 2047 cannot be stored as a
-   * double (IEEE 754 double point). The approximation is thus INFINITY. */
-  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> 2047) {
+  int signNbBit = 1;
+  int exponentNbBit = sizeof(T) == sizeof(float) ? 8 : 11;
+  int mantissaNbBit = sizeof(T) == sizeof(float) ? 23 : 52;
+  int totalNumberOfBits = signNbBit + exponentNbBit + mantissaNbBit;
+  uint16_t exponent = (1 << (exponentNbBit-1)) -2;
+  /* if the exponent is bigger then 255 (2047), it cannot be stored as a
+   * uint8(uint11). Also, the integer whose 2-exponent is bigger than 255(2047)
+   * cannot be stored as a float (IEEE 754 floating(double) point). The
+   * approximation is thus INFINITY. */
+  int maxExponent = (1 << exponentNbBit) -1;
+  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> maxExponent) {
     return INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit;
 
   uint64_t mantissa = 0;
-  mantissa |= ((uint64_t)lastDigit << (64-numberOfBitsInLastDigit));
+  mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
   int numberOfBits = log2(lastDigit);
   while (m_numberOfDigits >= digitIndex) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
-    if (64 > numberOfBits) {
-      mantissa |= ((uint64_t)lastDigit << (64-numberOfBits));
+    if (totalNumberOfBits > numberOfBits) {
+      mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
     } else {
-      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-64));
+      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-totalNumberOfBits));
     }
     digitIndex++;
   }
@@ -555,22 +501,22 @@ T Integer::approximate() const {
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
-    float result = m_negative ? -0.0f : 0.0f;
+    T result = m_negative ? -0.0 : 0.0;
     return result;
   }
 
-  uint_result = 0;
-  uint_result |= ((uint64_t)sign << 63);
-  uint_result |= ((uint64_t)exponent << 52);
-  uint_result |= ((uint64_t)mantissa >> (64-52-1) & 0xFFFFFFFFFFFFF);
+  u.uint_result = 0;
+  u.uint_result |= ((uint64_t)sign << (totalNumberOfBits-1));
+  u.uint_result |= ((uint64_t)exponent << mantissaNbBit);
+  uint64_t oneOnMantissaBits = mantissaNbBit == 23 ? 0x7FFFFF : 0xFFFFFFFFFFFFF;
+  u.uint_result |= ((uint64_t)mantissa >> (totalNumberOfBits-mantissaNbBit-1) & oneOnMantissaBits);
 
-  /* If exponent is 2047 and the double is undefined, we have exceed IEEE 754
-   * representable double. */
-  if (exponent == 2047 && isnan(double_result)) {
+  /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
+   * representable float. */
+  if (exponent == maxExponent && isnan(u.float_result)) {
     return INFINITY;
   }
-  return double_result;
-  }
+  return u.float_result;
 }
 
 int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {

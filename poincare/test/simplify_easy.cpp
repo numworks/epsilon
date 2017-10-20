@@ -21,9 +21,9 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
   print_expression(e, 0);
 #endif
   Expression * f = parse_expression(simplifiedExpression);
+  Expression::simplifyAndBeautify(&f);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- compared to: " << simplifiedExpression << "----"  << endl;
-  Expression::simplifyAndBeautify(&f);
   print_expression(f, 0);
 #endif
   assert(e->compareTo(f) == 0);

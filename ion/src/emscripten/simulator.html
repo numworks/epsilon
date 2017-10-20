@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NumWorks graphing calculator</title>
+<style>
+.keys {
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.key {
+  margin-top: 6px;
+  border: 1px solid #333;
+  border-radius: 2px;
+  padding: 2px 3px;
+  text-align: center;
+  min-width: 26px;
+  display: inline-block; }
+
+.calculator {
+  position: relative;
+  display: inline-block;
+  text-align: left; }
+  .calculator > img {
+    /* Rely on the img content to set the dimensions */
+    max-height: 100vh;
+    max-width: 100%;
+    display: block; }
+  .calculator .screen {
+    position: absolute;
+    top: 10.3%;
+    left: 24.25%;
+    width: 52.1%;
+    height: 23.2%;
+    border: 0 none; }
+  .calculator .keyboard {
+    position: absolute;
+    top: 37%;
+    left: 19%;
+    width: 63%;
+    bottom: 14%; }
+    .calculator .keyboard a {
+      border-radius: 40%;
+      display: block;
+      float: left; }
+    .calculator .keyboard a:hover {
+      background-color: rgba(0, 0, 0, 0.1); }
+    .calculator .keyboard a:active {
+      background-color: rgba(0, 0, 0, 0.2); }
+    .calculator .keyboard .nav {
+      position: absolute;
+      top: 0;
+      height: 27%;
+      width: 100%; }
+      .calculator .keyboard .nav a {
+        position: absolute; }
+      .calculator .keyboard .nav .left {
+        top: 36%;
+        left: 3%;
+        width: 15%;
+        height: 28%; }
+      .calculator .keyboard .nav .right {
+        top: 36%;
+        left: 17%;
+        width: 15%;
+        height: 28%; }
+      .calculator .keyboard .nav .top {
+        top: 7%;
+        left: 12.5%;
+        width: 10%;
+        height: 40%; }
+      .calculator .keyboard .nav .bottom {
+        top: 53%;
+        left: 12.5%;
+        width: 10%;
+        height: 40%; }
+      .calculator .keyboard .nav .home {
+        top: 12%;
+        left: 42%;
+        width: 16%;
+        height: 33%; }
+      .calculator .keyboard .nav .power {
+        top: 54%;
+        left: 42%;
+        width: 16%;
+        height: 33%; }
+      .calculator .keyboard .nav .ok {
+        top: 30%;
+        left: 68%;
+        width: 13%;
+        height: 38%; }
+      .calculator .keyboard .nav .back {
+        top: 30%;
+        left: 84%;
+        width: 13%;
+        height: 38%; }
+    .calculator .keyboard .functions {
+      position: absolute;
+      top: 26.75%;
+      left: 1%;
+      width: 98%; }
+      .calculator .keyboard .functions a {
+        margin: 1.7% 1%;
+        width: 14.65%;
+        height: 0;
+        padding-top: 10%; }
+    .calculator .keyboard .digits {
+      position: absolute;
+      top: 57%;
+      left: 0.5%;
+      width: 98%; }
+      .calculator .keyboard .digits a {
+        margin: 1.8% 2%;
+        width: 16%;
+        height: 0;
+        padding-top: 11%; }
+</style>
+  </head>
+  <body>
+    <div>
+      <p>NumWorks simulator - beta version - contact@numworks.com</p>
+    </div>
+    <div class="calculator">
+      <img src="background.jpg" alt="NumWorks Calculator">
+      <canvas id="screen" class="screen" oncontextmenu="event.preventDefault()"></canvas>
+      <div class="keyboard">
+        <div class="nav">
+          <a class="left" href="" data-key="0"></a>
+          <a class="top" href="" data-key="1"></a>
+          <a class="bottom" href="" data-key="2"></a>
+          <a class="right" href="" data-key="3"></a>
+          <a class="ok" href="" data-key="4"></a>
+          <a class="back" href="" data-key="5"></a>
+          <a class="home" href="" data-key="6"></a>
+          <a class="power" href="" data-key="7"></a>
+        </div>
+        <div class="functions">
+          <a href="" data-key="12"></a>
+          <a href="" data-key="13"></a>
+          <a href="" data-key="14"></a>
+          <a href="" data-key="15"></a>
+          <a href="" data-key="16"></a>
+          <a href="" data-key="17"></a>
+          <a href="" data-key="18"></a>
+          <a href="" data-key="19"></a>
+          <a href="" data-key="20"></a>
+          <a href="" data-key="21"></a>
+          <a href="" data-key="22"></a>
+          <a href="" data-key="23"></a>
+          <a href="" data-key="24"></a>
+          <a href="" data-key="25"></a>
+          <a href="" data-key="26"></a>
+          <a href="" data-key="27"></a>
+          <a href="" data-key="28"></a>
+          <a href="" data-key="29"></a>
+        </div>
+        <div class="digits">
+          <a href="" data-key="30"></a>
+          <a href="" data-key="31"></a>
+          <a href="" data-key="32"></a>
+          <a href="" data-key="33"></a>
+          <a href="" data-key="34"></a>
+          <a href="" data-key="36"></a>
+          <a href="" data-key="37"></a>
+          <a href="" data-key="38"></a>
+          <a href="" data-key="39"></a>
+          <a href="" data-key="40"></a>
+          <a href="" data-key="42"></a>
+          <a href="" data-key="43"></a>
+          <a href="" data-key="44"></a>
+          <a href="" data-key="45"></a>
+          <a href="" data-key="46"></a>
+          <a href="" data-key="48"></a>
+          <a href="" data-key="49"></a>
+          <a href="" data-key="50"></a>
+          <a href="" data-key="51"></a>
+          <a href="" data-key="52"></a>
+        </div>
+      </div>
+    </div>
+    <script>
+var Module = {
+  arguments: ["fr"],
+  preRun: [],
+  postRun: [],
+  print: function(text) {
+    console.log(text);
+  },
+  printErr: function(text) {
+    console.error(text);
+  },
+  canvas: document.getElementById("screen")
+};
+    </script>
+    <script src="firmware.js"></script>
+    <script>
+var buttons = document.querySelectorAll(".calculator .keyboard a");
+for (var i=0; i< buttons.length; i++) {
+  var button = buttons[i];
+  button.addEventListener("click", function(e) {
+    console.log("CLICK");
+    Module._IonEventsEmscriptenPushEvent(this.getAttribute("data-key"));
+    e.preventDefault();
+  });
+}
+
+  window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+  }, false);
+    </script>
+  </body>
+</html>

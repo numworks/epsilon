@@ -14,11 +14,12 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override;
-  Expression * turnIntoPositive() override;
+  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
-  Expression * immediateSimplify() override;
-  Expression * createDenominator();
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
+  Expression * createDenominator(Context & context, AngleUnit angleUnit);
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n);
@@ -40,10 +41,10 @@ private:
   int compareToGreaterTypeExpression(const Expression * e) const override;
   int compareToSameTypeExpression(const Expression * e) const override;
   /* Simplification */
-  Expression * immediateBeautify() override;
-  Expression * simplifyPowerPower(Power * p, Expression * r);
-  Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r);
-  Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b);
+  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, AngleUnit angleUnit);
+  Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
+  Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
 };
 

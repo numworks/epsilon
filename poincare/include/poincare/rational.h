@@ -25,7 +25,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override;
-  Expression * turnIntoPositive() override { m_numerator.setNegative(false); return this; }
+  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { m_numerator.setNegative(false); return this; }
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }

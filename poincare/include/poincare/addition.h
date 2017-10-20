@@ -21,7 +21,8 @@ public:
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   /* Simplification */
-  Expression * immediateSimplify() override;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -41,9 +42,9 @@ private:
   }
   const char * name() const { return "+"; }
   /* Simplification */
-  Expression * immediateBeautify() override;
-  Expression * factorizeOnCommonDenominator();
-  void factorizeChildren(Expression * e1, Expression * e2);
+  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
+  void factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
   bool isUselessOperand(const Rational * r) override;

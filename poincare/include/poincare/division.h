@@ -14,8 +14,9 @@ public:
   Expression * clone() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   /* Simplification */
-  Expression * immediateSimplify() override;
-  Expression * immediateBeautify() override;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
+  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

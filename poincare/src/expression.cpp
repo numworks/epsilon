@@ -68,29 +68,32 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
   }
 }
 
-void Expression::simplifyAndBeautify(Expression ** expressionAddress) {
+void Expression::simplifyAndBeautify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
+  if (angleUnit == AngleUnit::Default) {
+    angleUnit = Preferences::sharedPreferences()->angleUnit();
+  }
   SimplificationRoot root(*expressionAddress);
-  root.simplify();
-  root.beautify();
+  root.simplify(context, angleUnit);
+  root.beautify(context, angleUnit);
   *expressionAddress = (Expression *)(root.operand(0));
 }
 
-Expression * Expression::simplify() {
+Expression * Expression::simplify(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
-    ((Expression *)operand(i))->simplify();
+    ((Expression *)operand(i))->simplify(context, angleUnit);
   }
-  return immediateSimplify();
+  return immediateSimplify(context, angleUnit);
 }
 
-Expression * Expression::beautify() {
-  Expression * e = immediateBeautify();
+Expression * Expression::beautify(Context & context, AngleUnit angleUnit) {
+  Expression * e = immediateBeautify(context, angleUnit);
   for (int i = 0; i < e->numberOfOperands(); i++) {
-    ((Expression *)e->operand(i))->beautify();
+    ((Expression *)e->operand(i))->beautify(context, angleUnit);
   }
   return e;
 }
 
-Expression * Expression::immediateSimplify() {
+Expression * Expression::immediateSimplify(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i< numberOfOperands(); i++) {
     if (operand(i)->type() == Type::Undefined) {
       return replaceWith(new Undefined(), true);

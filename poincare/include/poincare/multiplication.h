@@ -13,7 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override;
-  Expression * turnIntoPositive() override;
+  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -22,9 +22,10 @@ public:
 
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Simplification */
-  Expression * immediateSimplify() override;
-  Expression * createDenominator();
-  void leastCommonMultiple(Expression * factor);
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
+  Expression * createDenominator(Context & context, AngleUnit angleUnit);
+  void leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit);
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -43,10 +44,10 @@ private:
   }
   const char * name() const { return "*"; }
   /* Simplification */
-  void factorize();
-  void factorizeBase(Expression * e1, Expression * e2);
-  void factorizeExponent(Expression * e1, Expression * e2);
-  Expression * distributeOnChildAtIndex(int index);
+  void factorize(Context & context, AngleUnit angleUnit);
+  void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
+  void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
+  Expression * distributeOnChildAtIndex(int index, Context & context, AngleUnit angleUnit);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
@@ -54,8 +55,8 @@ private:
   static const Expression * CreateExponent(Expression * e);
   bool isUselessOperand(const Rational * r) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
-  Expression * immediateBeautify() override;
-  Expression * mergeNegativePower();
+  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
 };
 
 }

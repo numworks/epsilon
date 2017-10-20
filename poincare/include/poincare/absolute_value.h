@@ -13,7 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override { return 1; }
-  Expression * turnIntoPositive() override { return this; }
+  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { return this; }
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
@@ -26,7 +26,8 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "abs");
   }
-  Expression * immediateSimplify() override;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
 };
 
 }

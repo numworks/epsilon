@@ -22,18 +22,18 @@ Expression * Division::clone() const {
   return new Division(m_operands, true);
 }
 
-Expression * Division::immediateSimplify() {
+Expression * Division::immediateSimplify(Context& context, AngleUnit angleUnit) {
   const Expression * powOperands[2] = {operand(1), new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
   const Expression * multOperands[2] = {operand(0), p};
   Multiplication * m = new Multiplication(multOperands, 2, false);
-  p->simplify();
+  p->simplify(context, angleUnit);
   detachOperands();
   replaceWith(m, true);
-  return m->immediateSimplify();
+  return m->immediateSimplify(context, angleUnit);
 }
 
-Expression * Division::immediateBeautify() {
+Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit) {
   for (int operandIndex = 0; operandIndex < 2; operandIndex++) {
     int k = 0;
     while (true) {

@@ -17,7 +17,7 @@ public:
   }
   Expression * clone() const override { return nullptr; }
   Type type() const override { return Expression::Type::Undefined; }
-  Expression * immediateSimplify() override { return this; }
+  Expression * immediateSimplify(Context & context, AngleUnit angleUnit) override { return this; }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }

@@ -13,22 +13,22 @@ extern "C" {
 
 namespace Poincare {
 
-Expression * Trigonometry::immediateSimplify() {
-  Expression * lookup = Trigonometry::table(operand(0), trigonometricFunctionType(), false);
+Expression * Trigonometry::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  Expression * lookup = Trigonometry::table(operand(0), trigonometricFunctionType(), false, context, angleUnit);
   if (lookup != nullptr) {
     return replaceWith(lookup, true);
   }
   if (operand(0)->sign() < 0) {
     Expression * op = const_cast<Expression *>(operand(0));
-    Expression * newOp = op->turnIntoPositive();
-    newOp->immediateSimplify();
+    Expression * newOp = op->turnIntoPositive(context, angleUnit);
+    newOp->immediateSimplify(context, angleUnit);
     if (trigonometricFunctionType() == Trigonometry::Function::Cosine) {
-      return immediateSimplify();
+      return immediateSimplify(context, angleUnit);
     } else if (trigonometricFunctionType() == Trigonometry::Function::Sine) {
       const Expression * multOperands[2] = {new Rational(Integer(-1)), clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      ((Expression *)m->operand(1))->immediateSimplify();
-      return replaceWith(m, true)->immediateSimplify();
+      ((Expression *)m->operand(1))->immediateSimplify(context, angleUnit);
+      return replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
     assert(false);
   }
@@ -43,15 +43,15 @@ Expression * Trigonometry::immediateSimplify() {
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
       const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
-      const_cast<Expression *>(operand(0))->immediateSimplify();
+      const_cast<Expression *>(operand(0))->immediateSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne()) {
-        Expression * simplifiedCosine = immediateSimplify(); // recursive
+        Expression * simplifiedCosine = immediateSimplify(context, angleUnit); // recursive
         const Expression * multOperands[2] = {new Rational(Integer(-1)), simplifiedCosine->clone()};
         Multiplication * m = new Multiplication(multOperands, 2, false);
-        return simplifiedCosine->replaceWith(m, true)->immediateSimplify();
+        return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
       } else {
 
-        return immediateSimplify(); // recursive
+        return immediateSimplify(context, angleUnit); // recursive
       }
     }
     assert(r->sign() > 0);
@@ -88,7 +88,7 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
  {"0",               "\x89*2^(-1)",    "1"}
 };
 
-Expression * Trigonometry::table(const Expression * e, Function f, bool inverse) {
+Expression * Trigonometry::table(const Expression * e, Function f, bool inverse, Context & context, AngleUnit angleUnit) {
   int inputIndex = inverse ? 2 : (int)f;
   int outputIndex = inverse ? (int)f : 2;
   for (int i = 0; i < k_numberOfEntries; i++) {
@@ -97,14 +97,14 @@ Expression * Trigonometry::table(const Expression * e, Function f, bool inverse)
       continue;
     }
     SimplificationRoot inputRoot(input);
-    inputRoot.simplify(); // input expression does not change, no root needed and we can use entry after
+    inputRoot.simplify(context, angleUnit); // input expression does not change, no root needed and we can use entry after
     if (inputRoot.operand(0)->compareTo(e) == 0) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
       if (output == nullptr) {
         return nullptr;
       }
       SimplificationRoot outputRoot(output);
-      return (Expression *)(outputRoot.simplify())->operand(0);
+      return (Expression *)(outputRoot.simplify(context, angleUnit))->operand(0);
     }
   }
   return nullptr;

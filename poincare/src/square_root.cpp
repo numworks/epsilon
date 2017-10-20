@@ -19,7 +19,7 @@ Expression * SquareRoot::clone() const {
   return a;
 }
 
-static_assert('\x90' == Ion::Charset::Root, "Incorrect");
+static_assert('\x90' == Ion::Charset::Root, "Unicode error");
 int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize) const {
   return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "\x90");
 }

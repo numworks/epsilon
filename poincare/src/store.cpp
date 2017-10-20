@@ -10,7 +10,6 @@ extern "C" {
 #include <poincare/context.h>
 #include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
-#include <ion.h>
 
 namespace Poincare {
 

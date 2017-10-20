@@ -60,7 +60,7 @@ Expression * Trigonometry::immediateSimplify(Context& context, AngleUnit angleUn
   return this;
 }
 
-static_assert('\x89' == Ion::Charset::SmallPi, "Incorrect");
+static_assert('\x89' == Ion::Charset::SmallPi, "Unicode error");
 constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
 {{"\x89",            "\x89*(-2)^(-1)",       "-1"},
  {"\x89*11*12^(-1)", "\x89*(-5)*12^(-1)", "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)"},

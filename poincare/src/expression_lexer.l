@@ -145,6 +145,7 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \x8f { return STO; }
 \+ { return PLUS; }
 \- { return MINUS; }
+\x93 { return MULTIPLY; }
 \* { return MULTIPLY; }
 \/ { return DIVIDE; }
 \^ { return POW; }

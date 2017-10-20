@@ -42,7 +42,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
-  const char * name() const { return "*"; }
+  static const char * name();
   /* Simplification */
   void factorize(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);

@@ -14,6 +14,7 @@ extern "C" {
 #include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
 #include <poincare/division.h>
+#include <ion.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
@@ -359,6 +360,11 @@ void Multiplication::leastCommonMultiple(Expression * factor, Context & context,
   const Expression * newOp[1] = {factor->clone()};
   addOperands(newOp, 1);
   sortChildren();
+}
+
+static_assert('\x94' == Ion::Charset::MiddleDot, "Unicode error");
+const char * Multiplication::name() {
+  return "\x94";
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

@@ -34,6 +34,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 
 QUIZ_CASE(poincare_simplify_easy) {
+  assert_parsed_expression_simplify_to("X^(P)*X^(5)", "X^(P+5)");
   assert_parsed_expression_simplify_to("0000.000000", "0");
   assert_parsed_expression_simplify_to(".000000", "0");
   assert_parsed_expression_simplify_to("0000", "0");

@@ -38,7 +38,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
-  const char * name() const { return "-"; }
+  static const char * name() { return "-"; }
 };
 
 }

@@ -12,16 +12,16 @@ namespace Poincare {
 class Trigonometry : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
-  constexpr static int k_numberOfEntries = 24;
-protected:
   enum class Function {
     Cosine = 0,
     Sine = 1,
   };
-  virtual Function trigonometricFunctionType() const = 0;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
+  constexpr static int k_numberOfEntries = 24;
   static Expression * table(const Expression * e, Function f, bool inverse, Context & context, AngleUnit angleUnit); // , Function f, bool inverse
+protected:
+  virtual Function trigonometricFunctionType() const = 0;
 };
 
 }

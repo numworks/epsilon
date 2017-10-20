@@ -36,13 +36,13 @@ int Multiplication::sign() const {
   return sign;
 }
 
-Expression * Multiplication::turnIntoPositive() {
+Expression * Multiplication::turnIntoPositive(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
     if (operand(i)->sign() < 0) {
-      const_cast<Expression *>(operand(i))->turnIntoPositive();
+      const_cast<Expression *>(operand(i))->turnIntoPositive(context, angleUnit);
     }
   }
-  return immediateSimplify();
+  return immediateSimplify(context, angleUnit);
 }
 
 template<typename T>
@@ -90,7 +90,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
   return true;
 }
 
-Expression * Multiplication::immediateSimplify() {
+Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angleUnit) {
   /* First loop: merge all multiplication, break if 0 or undef */
   int index = 0;
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
@@ -105,18 +105,18 @@ Expression * Multiplication::immediateSimplify() {
       return replaceWith(new Undefined(), true);
     }
   }
-  factorize();
+  factorize(context, angleUnit);
   for (int i=0; i<numberOfOperands(); i++) {
     if (operand(i)->type() == Type::Addition) {
-      return distributeOnChildAtIndex(i);
+      return distributeOnChildAtIndex(i, context, angleUnit);
     }
   }
   /* Now, no more node can be an addition or a multiplication */
-  factorize();
+  factorize(context, angleUnit);
   return squashUnaryHierarchy();
   }
 
-void Multiplication::factorize() {
+void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
   sortChildren();
   int i = 0;
   while (i < numberOfOperands()) {
@@ -131,54 +131,54 @@ void Multiplication::factorize() {
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
-      factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+      factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
     } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
-      factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+      factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
     } else {
       i++;
     }
   }
 }
 
-void Multiplication::factorizeBase(Expression * e1, Expression * e2) {
+void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
   const Expression * addOperands[2] = {CreateExponent(e1), CreateExponent(e2)};
   removeOperand(e2, true);
   Expression * s = new Addition(addOperands, 2, false);
   if (e1->type() == Type::Power) {
     e1->replaceOperand(e1->operand(1), s, true);
-    s->immediateSimplify();
-    e1->immediateSimplify();
+    s->immediateSimplify(context, angleUnit);
+    e1->immediateSimplify(context, angleUnit);
   } else {
     const Expression * operands[2] = {e1, s};
     Power * p = new Power(operands, false);
-    s->immediateSimplify();
+    s->immediateSimplify(context, angleUnit);
     replaceOperand(e1, p, false);
-    p->immediateSimplify();
+    p->immediateSimplify(context, angleUnit);
   }
 }
 
-void Multiplication::factorizeExponent(Expression * e1, Expression * e2) {
+void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
   const Expression * multOperands[2] = {e1->operand(0)->clone(), e2->operand(0)};
   // TODO: remove cast, everything is a hierarchy
   static_cast<Hierarchy *>(e2)->detachOperand(e2->operand(0));
   removeOperand(e2, true);
   Expression * m = new Multiplication(multOperands, 2, false);
   e1->replaceOperand(e1->operand(0), m, true);
-  m->immediateSimplify();
-  e1->immediateSimplify();
+  m->immediateSimplify(context, angleUnit);
+  e1->immediateSimplify(context, angleUnit);
 }
 
-Expression * Multiplication::distributeOnChildAtIndex(int i) {
+Expression * Multiplication::distributeOnChildAtIndex(int i, Context & context, AngleUnit angleUnit) {
   Addition * a = static_cast<Addition *>((Expression *) operand(i));
   for (int j = 0; j < a->numberOfOperands(); j++) {
     Expression * termJ = const_cast<Expression *>(a->operand(j));
     replaceOperand(operand(i), termJ->clone(), false);
     Expression * m = clone();
     a->replaceOperand(termJ, m, true);
-    m->immediateSimplify();
+    m->immediateSimplify(context, angleUnit);
   }
   replaceWith(a, true);
-  return a->immediateSimplify();
+  return a->immediateSimplify(context, angleUnit);
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {
@@ -218,11 +218,11 @@ bool Multiplication::isUselessOperand(const Rational * r) {
   return r->isOne();
 }
 
-Expression * Multiplication::immediateBeautify() {
+Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angleUnit) {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  Expression * e = mergeNegativePower();
+  Expression * e = mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
-    return e->immediateBeautify();
+    return e->immediateBeautify(context, angleUnit);
   }
   assert(e == this);
   // Add parenthesis: *(+(a,b), c) -> *((+(a,b)), c
@@ -274,7 +274,7 @@ Expression * Multiplication::immediateBeautify() {
         newNumeratorOperand->replaceWith((Expression *)newNumeratorOperand->operand(0), true);
       }
       replaceWith(d, true);
-      return d->immediateBeautify();
+      return d->immediateBeautify(context, angleUnit);
     }
   }
   // -1*A -> -A
@@ -289,11 +289,11 @@ Expression * Multiplication::immediateBeautify() {
   return this;
 }
 
-Expression * Multiplication::createDenominator() {
+Expression * Multiplication::createDenominator(Context & context, AngleUnit angleUnit) {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  Expression * e = mergeNegativePower();
+  Expression * e = mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
-    return static_cast<Power *>(e)->createDenominator();
+    return static_cast<Power *>(e)->createDenominator(context, angleUnit);
   }
   assert(e == this);
   for (int index = 0; index < numberOfOperands(); index++) {
@@ -306,16 +306,16 @@ Expression * Multiplication::createDenominator() {
   return nullptr;
 }
 
-Expression * Multiplication::mergeNegativePower() {
+Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit angleUnit) {
   Multiplication * m = new Multiplication();
   int i = 0;
   while (i < numberOfOperands()) {
     if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
       const Expression * e = operand(i);
-      const_cast<Expression *>(e->operand(1))->turnIntoPositive();
+      const_cast<Expression *>(e->operand(1))->turnIntoPositive(context, angleUnit);
       removeOperand(e, false);
       m->addOperands(&e, 1);
-      const_cast<Expression *>(e)->immediateSimplify();
+      const_cast<Expression *>(e)->immediateSimplify(context, angleUnit);
     } else {
       i++;
     }
@@ -333,10 +333,10 @@ Expression * Multiplication::mergeNegativePower() {
   return squashUnaryHierarchy();
 }
 
-void Multiplication::leastCommonMultiple(Expression * factor) {
+void Multiplication::leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit) {
   if (factor->type() == Type::Multiplication) {
     for (int j = 0; j < factor->numberOfOperands(); j++) {
-      leastCommonMultiple((Expression *)factor->operand(j));
+      leastCommonMultiple((Expression *)factor->operand(j), context, angleUnit);
     }
     return;
   }
@@ -344,13 +344,13 @@ void Multiplication::leastCommonMultiple(Expression * factor) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {
       const Expression * index[2] = {CreateExponent((Expression *)operand(i)), CreateExponent(factor)};
       Subtraction * sub = new Subtraction(index, false);
-      Expression::simplifyAndBeautify((Expression **)&sub);
+      Expression::simplifyAndBeautify((Expression **)&sub, context, angleUnit);
       if (sub->sign() < 0) { // index[0] < index[1]
         factor->replaceOperand((Expression *)factor->operand(1), new Opposite((Expression **)&sub, true), true);
-        factor->simplify();
-        factorizeBase((Expression *)operand(i), factor);
+        factor->simplify(context, angleUnit);
+        factorizeBase((Expression *)operand(i), factor, context, angleUnit);
       } else if (sub->sign() == 0) {
-        factorizeBase((Expression *)operand(i), factor);
+        factorizeBase((Expression *)operand(i), factor, context, angleUnit);
       } else {}
       delete sub;
       return;

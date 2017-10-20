@@ -45,9 +45,9 @@ int Power::sign() const {
   return 0;
 }
 
-Expression * Power::turnIntoPositive() {
+Expression * Power::turnIntoPositive(Context & context, AngleUnit angleUnit) {
   assert(operand(0)->sign() < 0);
-  const_cast<Expression *>(operand(0))->turnIntoPositive();
+  const_cast<Expression *>(operand(0))->turnIntoPositive(context, angleUnit);
   return this;
 }
 
@@ -133,7 +133,7 @@ int Power::compareToGreaterTypeExpression(const Expression * e) const {
   return operand(1)->compareTo(&one);
 }
 
-Expression * Power::immediateSimplify() {
+Expression * Power::immediateSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->type() == Type::Undefined || operand(1)->type() == Type::Undefined) {
     return replaceWith(new Undefined(), true);
   }
@@ -165,7 +165,7 @@ Expression * Power::immediateSimplify() {
     }
     // p^q with p, q rationals
     if (operand(1)->type() == Type::Rational) {
-      return simplifyRationalRationalPower(this, a, static_cast<Rational *>((Expression *)operand(1)));
+      return simplifyRationalRationalPower(this, a, static_cast<Rational *>((Expression *)operand(1)), context, angleUnit);
     }
   }
   // (a^b)^c -> a^(b+c) if a > 0 or c is integer
@@ -174,7 +174,7 @@ Expression * Power::immediateSimplify() {
     // Check is a > 0 or c is Integer
     if (p->operand(0)->sign() > 0 ||
         (operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)operand(1))->denominator().isOne())) {
-      return simplifyPowerPower(p, const_cast<Expression *>(operand(1)));
+      return simplifyPowerPower(p, const_cast<Expression *>(operand(1)), context, angleUnit);
     }
   }
   // (a*b*c*...)^r ?
@@ -182,7 +182,7 @@ Expression * Power::immediateSimplify() {
     Multiplication * m = static_cast<Multiplication *>((Expression *)operand(0));
     // (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
     if (operand(1)->type() == Type::Rational && static_cast<Rational *>((Expression *)operand(1))->denominator().isOne()) {
-      return simplifyPowerMultiplication(m, const_cast<Expression *>(operand(1)));
+      return simplifyPowerMultiplication(m, const_cast<Expression *>(operand(1)), context, angleUnit);
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*)^r if a rational
     for (int i = 0; i < m->numberOfOperands(); i++) {
@@ -196,15 +196,15 @@ Expression * Power::immediateSimplify() {
         } else {
           m->removeOperand(factor, false);
         }
-        m->immediateSimplify();
+        m->immediateSimplify(context, angleUnit);
         const Expression * powOperands[2] = {factor, rCopy};
         Power * p = new Power(powOperands, false);
         const Expression * multOperands[2] = {p, clone()};
         Multiplication * root = new Multiplication(multOperands, 2, false);
-        p->immediateSimplify();
-        const_cast<Expression *>(root->operand(1))->immediateSimplify();
+        p->immediateSimplify(context, angleUnit);
+        const_cast<Expression *>(root->operand(1))->immediateSimplify(context, angleUnit);
         replaceWith(root, true);
-        return root->immediateSimplify();
+        return root->immediateSimplify(context, angleUnit);
       }
     }
   }
@@ -218,15 +218,15 @@ Expression * Power::immediateSimplify() {
       Power * p2 = static_cast<Power *>(clone());
       const Expression * multOperands[2] = {p1, p2};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      simplifyRationalRationalPower(p1, static_cast<Rational *>((Expression *)p1->operand(0)), static_cast<Rational *>((Expression *)(p1->operand(1)->operand(0))));
+      simplifyRationalRationalPower(p1, static_cast<Rational *>((Expression *)p1->operand(0)), static_cast<Rational *>((Expression *)(p1->operand(1)->operand(0))), context, angleUnit);
       replaceWith(m, true);
-      return m->immediateSimplify();
+      return m->immediateSimplify(context, angleUnit);
     }
   }
   return this;
 }
 
-Expression * Power::simplifyPowerPower(Power * p, Expression * e) {
+Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& context, AngleUnit angleUnit) {
   Expression * p0 = const_cast<Expression *>(p->operand(0));
   Expression * p1 = const_cast<Expression *>(p->operand(1));
   p->detachOperands();
@@ -234,25 +234,25 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e) {
   Multiplication * m = new Multiplication(multOperands, 2, false);
   replaceOperand(e, m, false);
   replaceOperand(p, p0, true);
-  m->immediateSimplify();
-  return immediateSimplify();
+  m->immediateSimplify(context, angleUnit);
+  return immediateSimplify(context, angleUnit);
 }
 
-Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r) {
+Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, AngleUnit angleUnit) {
   for (int index = 0; index < m->numberOfOperands(); index++) {
     Expression * factor = const_cast<Expression *>(m->operand(index));
     const Expression * powOperands[2] = {factor, r};
     Power * p = new Power(powOperands, true); // We copy r and factor to avoid inheritance issues
     m->replaceOperand(factor, p, true);
-    p->immediateSimplify();
+    p->immediateSimplify(context, angleUnit);
   }
   detachOperand(m);
   Expression * newExpression = replaceWith(m, true); // delete r
-  m->immediateSimplify();
+  m->immediateSimplify(context, angleUnit);
   return newExpression;
 }
 
-Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b) {
+Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context& context, AngleUnit angleUnit) {
   if (b->denominator().isOne()) {
     Rational r = Rational::Power(*a, b->numerator());
     return result->replaceWith(new Rational(r),true);
@@ -270,7 +270,7 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   const Expression * multOp[2] = {n, d};
   Multiplication * m = new Multiplication(multOp, 2, false);
   Expression * newExpression = result->replaceWith(m, true);
-  m->immediateSimplify();
+  m->immediateSimplify(context, angleUnit);
   return newExpression;
 }
 
@@ -329,15 +329,15 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   return m;
 }
 
-Expression * Power::immediateBeautify() {
+Expression * Power::immediateBeautify(Context& context, AngleUnit angleUnit) {
   // X^-y -> 1/(X->immediateBeautify)^y
   if (operand(1)->sign() < 0) {
-    Expression * p = createDenominator();
+    Expression * p = createDenominator(context, angleUnit);
     const Expression * divOperands[2] = {new Rational(Integer(1)), p};
     Division * d = new Division(divOperands, false);
-    p->immediateSimplify();
+    p->immediateSimplify(context, angleUnit);
     replaceWith(d, true);
-    return d->immediateBeautify();
+    return d->immediateBeautify(context, angleUnit);
   }
   if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->numerator().isOne()) {
     Integer index = static_cast<const Rational *>(operand(1))->denominator();
@@ -360,10 +360,10 @@ Expression * Power::immediateBeautify() {
   return this;
 }
 
-Expression * Power::createDenominator() {
+Expression * Power::createDenominator(Context & context, AngleUnit angleUnit) {
   if (operand(1)->sign() < 0) {
     Expression * denominator = clone();
-    Expression * newExponent = const_cast<Expression *>(denominator->operand(1))->turnIntoPositive();
+    Expression * newExponent = const_cast<Expression *>(denominator->operand(1))->turnIntoPositive(context, angleUnit);
     if (newExponent->type() == Type::Rational && static_cast<Rational *>(newExponent)->isOne()) {
       delete denominator;
       return operand(0)->clone();

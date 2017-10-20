@@ -20,7 +20,8 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Expression * immediateSimplify() override;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+
 private:
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }

@@ -100,7 +100,7 @@ public:
    *  1 means the expression is positive
    *  0 means the sign is unknown */
   virtual int sign() const { return false; }
-  virtual Expression * turnIntoPositive() { assert(false); return nullptr; }
+  virtual Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
@@ -133,11 +133,11 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Simplification */
-  static void simplifyAndBeautify(Expression ** expressionAddress);
-  Expression * simplify();
+  static void simplifyAndBeautify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  Expression * simplify(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * immediateSimplify();
-  virtual Expression * immediateBeautify() { return this; };
+  virtual Expression * immediateSimplify(Context & context, AngleUnit angleUnit);
+  virtual Expression * immediateBeautify(Context & context, AngleUnit angleUnit) { return this; };
   bool containType(Type type) const;
 
   /* Evaluation Engine
@@ -165,7 +165,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   /* Simplification */
   // beautify cannot be dynamic as it changes the expression and THEN its new children
-  Expression * beautify();
+  Expression * beautify(Context & context, AngleUnit angleUnit);
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;

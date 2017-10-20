@@ -25,7 +25,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-Expression * Addition::immediateSimplify() {
+Expression * Addition::immediateSimplify(Context& context, AngleUnit angleUnit) {
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
   int index = 0;
   while (index < numberOfOperands()) {
@@ -51,31 +51,31 @@ Expression * Addition::immediateSimplify() {
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
-      factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)));
+      factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
     } else {
       i++;
     }
   }
   Expression * newExpression = squashUnaryHierarchy();
   if (newExpression == this) {
-    return factorizeOnCommonDenominator();
+    return factorizeOnCommonDenominator(context, angleUnit);
   }
   return newExpression;
 }
 
-Expression * Addition::factorizeOnCommonDenominator() {
+Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit) {
   Multiplication * commonDenom = new Multiplication();
   for (int i = 0; i < numberOfOperands(); i++) {
     Expression * denominator = nullptr;
     if (operand(i)->type() == Type::Power) {
       Power * p = static_cast<Power *>((Expression *)operand(i));
-      denominator = p->createDenominator();
+      denominator = p->createDenominator(context, angleUnit);
     } else if (operand(i)->type() == Type::Multiplication) {
       Multiplication * m = static_cast<Multiplication *>((Expression *)operand(i));
-      denominator = m->createDenominator();
+      denominator = m->createDenominator(context, angleUnit);
     }
     if (denominator != nullptr) {
-      commonDenom->leastCommonMultiple(denominator);
+      commonDenom->leastCommonMultiple(denominator, context, angleUnit);
       delete denominator;
     }
   }
@@ -89,17 +89,17 @@ Expression * Addition::factorizeOnCommonDenominator() {
     m->addOperands(newOp, 1);
     replaceOperand(currentTerm, m, true);
   }
-  this->simplify();
+  this->simplify(context, angleUnit);
   const Expression * powOperands[2] = {commonDenom, new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
-  commonDenom->simplify();
+  commonDenom->simplify(context, angleUnit);
   const Expression * multOperands[2] = {clone(),p};
   Multiplication * result = new Multiplication(multOperands, 2, false);
   replaceWith(result, true);
   return result;
 }
 
-void Addition::factorizeChildren(Expression * e1, Expression * e2) {
+void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
   Rational * r = new Rational(Rational::Addition(RationalFactor(e1), RationalFactor(e2)));
   removeOperand(e2, true);
   if (e1->type() == Type::Multiplication) {
@@ -108,12 +108,12 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2) {
     } else {
       static_cast<Multiplication *>(e1)->addOperandAtIndex(r, 0);
     }
-    e1->immediateSimplify();
+    e1->immediateSimplify(context, angleUnit);
   } else {
     const Expression * operands[2] = {r, e1};
     Multiplication * m = new Multiplication(operands, 2, true);
     e1->replaceWith(m, true);
-    m->immediateSimplify();
+    m->immediateSimplify(context, angleUnit);
   }
 }
 
@@ -134,7 +134,7 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   return (f1->compareTo(f2) == 0);
 }
 
-Expression * Addition::immediateBeautify() {
+Expression * Addition::immediateBeautify(Context & context, AngleUnit angleUnit) {
   int index = 0;
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...

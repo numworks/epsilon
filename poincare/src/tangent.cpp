@@ -21,16 +21,16 @@ Expression * Tangent::clone() const {
   return a;
 }
 
-Expression * Tangent::immediateSimplify() {
+Expression * Tangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
   const Expression * op[1] = {operand(0)};
   Sine * s = new Sine(op, true);
   Cosine * c = new Cosine(op, true);
   const Expression * divisionOperands[2] = {s, c};
   Division * d = new Division(divisionOperands, false);
-  c->immediateSimplify();
-  s->immediateSimplify();
+  c->immediateSimplify(context, angleUnit);
+  s->immediateSimplify(context, angleUnit);
   Expression * newExpression = replaceWith(d, true);
-  return newExpression->simplify();
+  return newExpression->simplify(context, angleUnit);
 }
 
 template<typename T>

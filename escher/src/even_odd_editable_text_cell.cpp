@@ -2,10 +2,10 @@
 #include <escher/app.h>
 #include <assert.h>
 
-EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size) :
+EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer, KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   EvenOddCell(),
   Responder(parentResponder),
-  m_editableCell(this, delegate, draftTextBuffer, size, 1.0f, 0.5f, KDColorBlack, KDColorWhite)
+  m_editableCell(this, delegate, draftTextBuffer, size, horizontalAlignment, verticalAlignment, KDColorBlack, KDColorWhite, topMargin, rightMargin, bottomMargin, leftMargin)
 {
 }
 
@@ -23,14 +23,6 @@ void EvenOddEditableTextCell::setEven(bool even) {
   m_editableCell.textField()->setBackgroundColor(backgroundColor());
 }
 
-const char * EvenOddEditableTextCell::text() const {
-  return m_editableCell.text();
-}
-
-void EvenOddEditableTextCell::setText(const char * textContent) {
-  m_editableCell.setText(textContent);
-}
-
 int EvenOddEditableTextCell::numberOfSubviews() const {
   return 1;
 }
@@ -46,12 +38,4 @@ void EvenOddEditableTextCell::layoutSubviews() {
 
 void EvenOddEditableTextCell::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editableCell);
-}
-
-bool EvenOddEditableTextCell::isEditing() {
-  return m_editableCell.isEditing();
-}
-
-void EvenOddEditableTextCell::setEditing(bool isEditing) {
-  m_editableCell.setEditing(isEditing);
 }

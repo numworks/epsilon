@@ -47,7 +47,7 @@ void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTabl
   }
   if (cellAtLocationIsEditable(previousSelectedCellX, previousSelectedCellY)) {
     EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
+    myCell->editableTextCell()->textField()->setEditing(false);
     if (app()->firstResponder() == myCell->editableTextCell()->textField()) {
       app()->setFirstResponder(t);
     }
@@ -84,17 +84,17 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     if (j == numberOfRows() - 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
-      if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->isEditing()) {
+      if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->editableTextCell()->textField()->isEditing()) {
         myCell->setEven(j%2 == 0);
         buffer[0] = 0;
-        myEditableValueCell->setText(buffer);
+        myEditableValueCell->editableTextCell()->textField()->setText(buffer);
         return;
       }
     }
-    if (!myEditableValueCell->isEditing()) {
+    if (!myEditableValueCell->editableTextCell()->textField()->isEditing()) {
       myCell->setEven(j%2 == 0);
       Complex<double>::convertFloatToText(dataAtLocation(i, j), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
-      myEditableValueCell->setText(buffer);
+      myEditableValueCell->editableTextCell()->textField()->setText(buffer);
     }
     return;
   } else {

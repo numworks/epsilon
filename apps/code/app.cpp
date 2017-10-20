@@ -18,7 +18,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() {
-  m_scriptStore.addMandelbrotScript();
+  m_scriptStore.addFactorialScript();
 }
 
 App * App::Snapshot::unpack(Container * container) {

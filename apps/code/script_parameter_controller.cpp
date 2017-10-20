@@ -38,14 +38,21 @@ const char * ScriptParameterController::title() {
 
 bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    int i = m_currentScriptIndex;
     switch (selectedRow()) {
       case 0:
         app()->displayModalViewController(&m_editorController, 0.5f, 0.5f);
         return true;
-      //TODO other cases
-      case 3:
-        m_menuController->deleteScriptAtIndex(m_currentScriptIndex);
+      case 1:
         dismissScriptParameterController();
+        m_menuController->renameScriptAtIndex(i);
+        return true;
+      case 2:
+      //Auto-import TODO
+        return true;
+      case 3:
+        dismissScriptParameterController();
+        m_menuController->deleteScriptAtIndex(i);
         return true;
       default:
         assert(false);

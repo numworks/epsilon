@@ -20,11 +20,14 @@ public:
   Script script(const char * name);
   /* script(const char * name) looks for a script that has the right name and
    * returns it. If there is no such script, it returns an empty Script. */
+  char * nameOfScript(int i);
   char * editableNameOfScript(int i);
   int sizeOfEditableNameOfScript(int i);
   int numberOfScripts() const;
   bool addNewScript();
   bool addMandelbrotScript();
+  bool addFactorialScript();
+  bool renameScript(int i, const char * newName);
   void deleteScript(int i);
   void deleteAll();
 
@@ -37,10 +40,11 @@ private:
   static constexpr char NoAutoImportationMarker = 0x03;
   /* We made sure that these chars are not used in ion/include/ion/charset.h */
   static constexpr int k_historySize = 1024;
-  char * nameOfScript(int i);
+  static constexpr char k_defaultScriptName[] = ".py";
   bool copyName(int position, const char * name = nullptr);
-  int indexOfScriptContent(int i) const;
   int indexOfScript(int i) const;
+  int indexOfScriptName(int i) const;
+  int indexOfScriptContent(int i) const;
   int lastIndexOfScript(int i) const;
   int indexOfFirstFreeSpaceMarker() const;
   int sizeOfFreeSpace() const;
@@ -51,7 +55,8 @@ private:
   void cleanAndMoveFreeSpaceAfterScriptContent(int i);
   void cleanAndMoveFreeSpaceAfterScriptName(int i);
   bool copyMandelbrotScriptOnFreeSpace();
-  bool copyDefaultScriptOnFreeSpace();
+  bool copyFactorialScriptOnFreeSpace();
+  bool copyEmptyScriptOnFreeSpace();
   int indexBeginningFilename(const char * path);
   char m_history[k_historySize];
   /* The m_history variable sequentially stores scripts as text buffers.

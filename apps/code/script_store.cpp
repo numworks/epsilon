@@ -4,6 +4,8 @@
 
 namespace Code {
 
+constexpr char ScriptStore::k_defaultScriptName[];
+
 ScriptStore::ScriptStore() :
   m_numberOfScripts(0),
   m_lastEditedStringPosition(0)
@@ -31,11 +33,13 @@ Script ScriptStore::editableScript(int i) {
 
 Script ScriptStore::script(int i) {
   assert(i >= 0 && i < numberOfScripts());
+  cleanFreeSpace();
   int beginningOfScriptContent = indexOfScriptContent(i);
   return Script(&m_history[beginningOfScriptContent], strlen(&m_history[beginningOfScriptContent]) + 1);
 }
 
 Script ScriptStore::script(const char * name) {
+  cleanFreeSpace();
   for (int i=0; i<numberOfScripts(); i++) {
     const char * nameScripti = nameOfScript(i);
     if (strcmp(nameScripti, name) == 0) {
@@ -45,16 +49,27 @@ Script ScriptStore::script(const char * name) {
   return Script();
 }
 
+char * ScriptStore::nameOfScript(int i) {
+  cleanFreeSpace();
+  return &m_history[indexOfScriptName(i)];
+}
+
 char * ScriptStore::editableNameOfScript(int i) {
   assert (i >= 0 && i < numberOfScripts());
   cleanAndMoveFreeSpaceAfterScriptName(i);
-  return &m_history[indexOfScript(i)+1];
+  return &m_history[indexOfScriptName(i)];
 }
 
 int ScriptStore::sizeOfEditableNameOfScript(int i) {
-  int namePosition = indexOfScript(i)+1;
-  int contentPosition = indexOfScriptContent(i);
-  return contentPosition-namePosition;
+  // Compute the size of the name of the script, including the free space of m_history
+  int sizeOfEditableNameScript = 0;
+  for (int j=indexOfScriptName(i); j<k_historySize-1; j++) {
+    if (m_history[j] == FreeSpaceMarker && m_history[j+1] != FreeSpaceMarker) {
+      break;
+    }
+    sizeOfEditableNameScript++;
+  }
+  return sizeOfEditableNameScript;
 }
 
 int ScriptStore::numberOfScripts() const {
@@ -70,7 +85,28 @@ bool ScriptStore::addNewScript() {
   int beginningNewScript = indexOfFirstFreeSpaceMarker();
   m_history[beginningNewScript] = AutoImportationMarker;
   if (copyName(beginningNewScript + 1)) {
-    if (copyDefaultScriptOnFreeSpace()) {
+    if (copyEmptyScriptOnFreeSpace()) {
+      m_numberOfScripts++;
+      m_lastEditedStringPosition = indexOfScriptContent(numberOfScripts()-1);
+      return true;
+    }
+  }
+  for (int i = beginningNewScript; i<k_historySize; i++) {
+    m_history[i] = FreeSpaceMarker;
+  }
+  return false;
+}
+
+bool ScriptStore::addFactorialScript() {
+  int sizeFreeSpace = sizeOfFreeSpace();
+  if (sizeFreeSpace < 4) {
+    return false;
+  }
+  cleanAndMoveFreeSpaceAfterScriptContent(numberOfScripts()-1);
+  int beginningNewScript = indexOfFirstFreeSpaceMarker();
+  m_history[beginningNewScript] = AutoImportationMarker;
+  if (copyName(beginningNewScript + 1, "factorial.py")) {
+    if (copyFactorialScriptOnFreeSpace()) {
       m_numberOfScripts++;
       m_lastEditedStringPosition = indexOfScriptContent(numberOfScripts()-1);
       return true;
@@ -103,11 +139,21 @@ bool ScriptStore::addMandelbrotScript() {
   return false;
 }
 
+bool ScriptStore::renameScript(int i, const char * newName) {
+  assert (i >= 0 && i < numberOfScripts());
+  cleanAndMoveFreeSpaceAfterScriptName(i);
+  if (strlen(newName) <= sizeOfEditableNameOfScript(i)) {
+    copyName(indexOfScriptName(i), newName);
+    return true;
+  }
+  return false;
+}
+
 void ScriptStore::deleteScript(int i) {
   assert (i >= 0 && i < numberOfScripts());
   cleanAndMoveFreeSpaceAfterScriptContent(i);
   int indexOfCharToDelete = indexOfScript(i);
-  while (m_history[indexOfCharToDelete] != FreeSpaceMarker) {
+  while (m_history[indexOfCharToDelete] != FreeSpaceMarker && indexOfCharToDelete < k_historySize) {
     m_history[indexOfCharToDelete] = FreeSpaceMarker;
     indexOfCharToDelete++;
   }
@@ -127,10 +173,6 @@ const char * ScriptStore::contentOfScript(const char * name) {
   return script(filename).readOnlyContent();
 }
 
-char * ScriptStore::nameOfScript(int i) {
-  return &m_history[indexOfScript(i)+1];
-}
-
 bool ScriptStore::copyName(int position, const char * name) {
   if (name) {
     int len = strlen(name);
@@ -140,31 +182,21 @@ bool ScriptStore::copyName(int position, const char * name) {
     memcpy(&m_history[position], name, len+1);
     return true;
   } else {
-    const char newName[] = "script.py";
-    int len = strlen(newName);
+    int len = strlen(k_defaultScriptName);
     if (len > sizeOfFreeSpace() - 1) { // We keep at keast one free char.
       return false;
     }
-    memcpy(&m_history[position], &newName, len+1);
+    memcpy(&m_history[position], k_defaultScriptName, len+1);
     return true;
 
   }
-}
-
-int ScriptStore::indexOfScriptContent(int i) const {
-  int indexOfScriptContent = indexOfScript(i)+1;
-  while (m_history[indexOfScriptContent] != 0 ) {
-    indexOfScriptContent++;
-  }
-  indexOfScriptContent++;
-  return indexOfScriptContent;
 }
 
 int ScriptStore::indexOfScript(int i) const {
   assert (i >= 0 && i < numberOfScripts());
   int currentScriptNumber = 0;
   int beginningOfScript = 0;
-  while (m_history[beginningOfScript] == FreeSpaceMarker) {
+  while (m_history[beginningOfScript] == FreeSpaceMarker && beginningOfScript < k_historySize) {
     beginningOfScript++;
   }
   if (i == 0) {
@@ -180,7 +212,7 @@ int ScriptStore::indexOfScript(int i) const {
         currentScriptNumber++;
         if (currentScriptNumber == i) {
           j++;
-          while (m_history[j] == FreeSpaceMarker) {
+          while (m_history[j] == FreeSpaceMarker && j < beginningOfScript) {
             j++;
           }
           return j;
@@ -192,7 +224,24 @@ int ScriptStore::indexOfScript(int i) const {
   return 0;
 }
 
+int ScriptStore::indexOfScriptName(int i) const {
+  assert (i >= 0 && i < numberOfScripts());
+  return indexOfScript(i)+1;
+}
+
+
+int ScriptStore::indexOfScriptContent(int i) const {
+  assert (i >= 0 && i < numberOfScripts());
+  int indexOfScriptContent = indexOfScriptName(i);
+  while (m_history[indexOfScriptContent] != 0 && indexOfScriptContent<k_historySize) {
+    indexOfScriptContent++;
+  }
+  indexOfScriptContent++;
+  return indexOfScriptContent;
+}
+
 int ScriptStore::lastIndexOfScript(int i) const {
+  assert (i >= 0 && i < numberOfScripts());
   int indexOfPrgm = indexOfScriptContent(i);
   int lastIndexOfScript = indexOfPrgm + strlen(&m_history[indexOfPrgm]);
   return lastIndexOfScript;
@@ -231,13 +280,16 @@ void ScriptStore::cleanFreeSpace() {
   }
   int indexOfCharToChangeIntoFreeSpaceMarker = m_lastEditedStringPosition
     + strlen (&m_history[m_lastEditedStringPosition]) + 1;
-  while (m_history[indexOfCharToChangeIntoFreeSpaceMarker] != FreeSpaceMarker) {
+  while (m_history[indexOfCharToChangeIntoFreeSpaceMarker] != FreeSpaceMarker
+      && indexOfCharToChangeIntoFreeSpaceMarker<k_historySize)
+  {
     m_history[indexOfCharToChangeIntoFreeSpaceMarker] = FreeSpaceMarker;
     indexOfCharToChangeIntoFreeSpaceMarker ++;
   }
 }
 
 void ScriptStore::moveFreeSpaceAfterScriptContent(int i) {
+  assert (i >= 0 && i < numberOfScripts());
   int indexOfFreeSpace = indexOfFirstFreeSpaceMarker();
   int newFreeSpacePosition = lastIndexOfScript(i) + 1;
   if (indexOfFreeSpace < newFreeSpacePosition) {
@@ -247,8 +299,9 @@ void ScriptStore::moveFreeSpaceAfterScriptContent(int i) {
 }
 
 void ScriptStore::moveFreeSpaceAfterScriptName(int i) {
-  int newFreeSpacePosition = indexOfScript(i);
-  while (m_history[newFreeSpacePosition] != 0) {
+  assert (i >= 0 && i < numberOfScripts());
+  int newFreeSpacePosition = indexOfScriptName(i);
+  while (m_history[newFreeSpacePosition] != 0 && newFreeSpacePosition < k_historySize) {
     newFreeSpacePosition++;
   }
   newFreeSpacePosition++;
@@ -256,6 +309,7 @@ void ScriptStore::moveFreeSpaceAfterScriptName(int i) {
 }
 
 void ScriptStore::moveFreeSpaceAtPosition(int i) {
+  assert (i >= 0 && i < k_historySize);
   int indexOfFreeSpace = indexOfFirstFreeSpaceMarker();
   if (indexOfFreeSpace != i){
 
@@ -281,12 +335,13 @@ void ScriptStore::moveFreeSpaceAtPosition(int i) {
     }
   }
 
-  m_lastEditedStringPosition = i-2;
-  while (m_lastEditedStringPosition > 1 && m_history[m_lastEditedStringPosition-1] != 0) {
+  m_lastEditedStringPosition = i-1;
+  while (m_lastEditedStringPosition > 0
+      && m_history[m_lastEditedStringPosition-1] != 0
+      && m_history[m_lastEditedStringPosition-1] != AutoImportationMarker
+      && m_history[m_lastEditedStringPosition-1] != NoAutoImportationMarker)
+  {
     m_lastEditedStringPosition--;
-  }
-  if (m_lastEditedStringPosition <= 1) {
-    m_lastEditedStringPosition = 0;
   }
 }
 
@@ -336,7 +391,7 @@ for x in range(320):
   return true;
 }
 
-bool ScriptStore::copyDefaultScriptOnFreeSpace() {
+bool ScriptStore::copyFactorialScriptOnFreeSpace() {
   const char script[] = R"(def factorial(n):
   if n == 0:
     return 1
@@ -352,12 +407,23 @@ bool ScriptStore::copyDefaultScriptOnFreeSpace() {
   return true;
 }
 
+bool ScriptStore::copyEmptyScriptOnFreeSpace() {
+  const char script[] = "\0";
+
+  int len = 1;
+  if (len > sizeOfFreeSpace() - 1) { // We keep at keast one free char.
+    return false;
+  }
+  memcpy(&m_history[indexOfFirstFreeSpaceMarker()], script, len);
+  return true;
+}
+
 int ScriptStore::indexBeginningFilename(const char * path) {
-    int beginningFilename = strlen(path)-1;
-    while (beginningFilename > 0 && path[beginningFilename - 1] != '\\') {
-      beginningFilename--;
-    }
-    return beginningFilename;
+  int beginningFilename = strlen(path)-1;
+  while (beginningFilename > 0 && path[beginningFilename - 1] != '\\') {
+    beginningFilename--;
+  }
+  return beginningFilename;
 }
 
 }

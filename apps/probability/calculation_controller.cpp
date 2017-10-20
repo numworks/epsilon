@@ -23,8 +23,8 @@ CalculationController::ContentView::ContentView(Responder * parentResponder, Cal
 {
   for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
     m_calculationCell[i].setParentResponder(parentResponder);
-    m_calculationCell[i].setTextFieldDelegate(calculationController);
-    m_calculationCell[i].setTextFieldDraftTextBuffer(m_draftTextBuffer);
+    m_calculationCell[i].textField()->setDelegate(calculationController);
+    m_calculationCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 
@@ -67,7 +67,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   Complex<double>::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  m_calculationCell[index].setText(buffer);
+  m_calculationCell[index].textField()->setText(buffer);
 }
 
 void CalculationController::ContentView::layoutSubviews() {

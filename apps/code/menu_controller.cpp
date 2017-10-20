@@ -1,6 +1,7 @@
 #include "menu_controller.h"
 #include "../i18n.h"
 #include <assert.h>
+#include <escher/metric.h>
 
 namespace Code {
 
@@ -17,9 +18,14 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_consoleController(parentResponder, m_scriptStore),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this)
 {
-  for (int i = 0; i< k_maxNumberOfCells; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+  for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
+    m_scriptCells[i].setParentResponder(&m_selectableTableView);
+    m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_scriptCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
+    m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
+    m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
   }
+  m_selectableTableView.selectCellAtLocation(0, 0);
 }
 
 ConsoleController * MenuController::consoleController() {
@@ -31,7 +37,6 @@ View * MenuController::view() {
 }
 
 void MenuController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -41,7 +46,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   } else if (event == Ion::Events::Up) {
-    if (m_selectableTableView.selectedRow()<0) {
+    if (m_selectableTableView.selectedRow() < 0) {
       footer()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
       app()->setFirstResponder(&m_selectableTableView);
@@ -73,6 +78,16 @@ void MenuController::addScript() {
   m_selectableTableView.selectCellAtLocation(0, numberOfRows()-2);
 }
 
+void MenuController::renameScriptAtIndex(int i) {
+  assert(i>=0 && i<m_scriptStore->numberOfScripts());
+  EvenOddEditableTextCell * myCell = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell());
+  myCell->setHighlighted(false);
+  const char * previousText = myCell->editableTextCell()->textField()->text();
+  myCell->editableTextCell()->textField()->setEditing(true);
+  myCell->editableTextCell()->textField()->setText(previousText);
+  app()->setFirstResponder(myCell);
+}
+
 void MenuController::deleteScriptAtIndex(int i) {
   m_scriptStore->deleteScript(i);
   m_selectableTableView.reloadData();
@@ -87,25 +102,97 @@ KDCoordinate MenuController::cellHeight() {
   return k_rowHeight;
 }
 
-HighlightCell * MenuController::reusableCell(int index) {
-  assert(index >= 0);
-  if (index < m_scriptStore->numberOfScripts()) {
-    return &m_cells[index];
-  }
-  assert(index == m_scriptStore->numberOfScripts());
-  return &m_addNewScriptCell;
+KDCoordinate MenuController::rowHeight(int j) {
+  return cellHeight();
 }
 
-int MenuController::reusableCellCount() {
-  return m_scriptStore->numberOfScripts() + 1;
+KDCoordinate MenuController::cumulatedHeightFromIndex(int j) {
+  return cellHeight() * j;
+}
+
+int MenuController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  KDCoordinate height = cellHeight();
+  if (height == 0) {
+    return 0;
+  }
+  return (offsetY - 1) / height;
+}
+
+HighlightCell * MenuController::reusableCell(int index, int type) {
+  assert(index >= 0);
+  if (type == ScriptCellType) {
+    assert(index >=0 && index < k_maxNumberOfDisplayableScriptCells);
+    return &m_scriptCells[index];
+  } else {
+    assert(type == AddScriptCellType && index == 0);
+    return &m_addNewScriptCell;
+  }
+}
+
+int MenuController::reusableCellCount(int type) {
+  if (type == AddScriptCellType) {
+    return 1;
+  }
+  assert(type == ScriptCellType);
+  return k_maxNumberOfDisplayableScriptCells;
+}
+
+int MenuController::typeAtLocation(int i, int j) {
+  assert(i==0);
+  assert(j>=0 && j<numberOfRows());
+  if (j == numberOfRows()-1) {
+    return AddScriptCellType;
+  } else {
+    return ScriptCellType;
+  }
 }
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index < m_scriptStore->numberOfScripts()) {
-    MessageTableCell * myCell = (MessageTableCell *)cell;
-    // TODO: store script names
-    myCell->setMessage(I18n::Message::Console);
+    EvenOddEditableTextCell * myCell =  static_cast<EvenOddEditableTextCell *>(cell);
+    myCell->editableTextCell()->textField()->setText(m_scriptStore->nameOfScript(index));
+    myCell->setEven(index%2 == 0);
+  } else {
+    assert(index == m_scriptStore->numberOfScripts());
+    Shared::NewFunctionCell * myCell =  static_cast<Shared::NewFunctionCell *>(cell);
+    myCell->setEven(index%2 == 0);
   }
+}
+
+bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE
+    || event == Ion::Events::Down || event == Ion::Events::Up;
+}
+
+bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  return false;
+}
+
+bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (m_scriptStore->renameScript(m_selectableTableView.selectedRow(), text)) {
+    int currentRow = m_selectableTableView.selectedRow();
+    if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
+      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
+    } else if (event == Ion::Events::Up && currentRow > 0) {
+      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+    }
+    m_selectableTableView.selectedCell()->setHighlighted(true);
+    app()->setFirstResponder(&m_selectableTableView);
+    return true;
+  } else {
+    // TODO: add pop up to explain to the user that the name is too long.
+    return false;
+  }
+}
+
+bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+  m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  app()->setFirstResponder(&m_selectableTableView);
+  return true;
+}
+
+Toolbox * MenuController::toolboxForTextField(TextField * textFied) {
+  return nullptr;
 }
 
 int MenuController::numberOfButtons(ButtonRowController::Position position) const {

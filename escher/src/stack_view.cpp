@@ -4,7 +4,8 @@ extern "C" {
 }
 
 StackView::StackView() :
-  View()
+  View(),
+  m_controller(nullptr)
 {
 }
 

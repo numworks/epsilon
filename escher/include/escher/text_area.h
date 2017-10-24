@@ -73,7 +73,7 @@ private:
     char removeChar(size_t index);
     int removeRemainingLine(size_t index, int direction);
     char operator[](size_t index) {
-      assert(index >= 0 && index < m_bufferSize);
+      assert(index < m_bufferSize);
       return m_buffer[index];
     }
     size_t bufferSize() const {

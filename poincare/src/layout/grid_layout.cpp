@@ -79,7 +79,7 @@ KDSize GridLayout::computeSize() {
 }
 
 ExpressionLayout * GridLayout::child(uint16_t index) {
-  if (index >= 0 && index < m_numberOfColumns*m_numberOfRows) {
+  if (index < m_numberOfColumns*m_numberOfRows) {
     return m_entryLayouts[index];
   }
   return nullptr;

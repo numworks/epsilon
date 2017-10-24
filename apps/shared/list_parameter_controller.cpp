@@ -8,6 +8,7 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_functionStore(functionStore),
+  m_function(nullptr),
 #if FUNCTION_COLOR_CHOICE
   m_colorCell(functionColorMessage),
 #endif

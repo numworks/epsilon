@@ -4,6 +4,7 @@
 namespace Shared {
 
 Interval::Interval() :
+  m_numberOfElements(0),
   m_start(0),
   m_end(0),
   m_step(0),

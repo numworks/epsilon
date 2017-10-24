@@ -83,7 +83,7 @@ Complex<T> * LeastCommonMultiple::templatedApproximate(Context& context, AngleUn
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(std::round((T)(product/a))));
+  return new Complex<T>(Complex<T>::Float(product/a));
 }
 
 }

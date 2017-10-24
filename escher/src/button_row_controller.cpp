@@ -73,7 +73,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
       Button * button = buttonAtIndex(i);
       totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
     }
-    widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(nbOfButtons+1)));
+    widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(nbOfButtons+1)));
     buttonHeightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall : k_embossedStyleHeightMarginLarge;
     buttonHeight = rowHeight- 2*buttonHeightMargin;
   }
@@ -121,7 +121,7 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
     Button * button = buttonAtIndex(i);
     totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
   }
-  KDCoordinate widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(numberOfButtons()+1)));
+  KDCoordinate widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(numberOfButtons()+1)));
 
   int currentXOrigin = widthMargin-1;
   for (int i = 0; i < numberOfButtons(); i++) {

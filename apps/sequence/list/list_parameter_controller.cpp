@@ -10,7 +10,8 @@ ListParameterController::ListParameterController(ListController * listController
   Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence),
   m_typeCell(I18n::Message::SequenceType),
   m_typeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin)
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin),
+  m_sequence(nullptr)
 {
 }
 

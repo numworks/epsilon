@@ -54,7 +54,6 @@ private:
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;
   bool m_isSelected;
-  int m_selectedIcon;
   Law * m_law;
   Calculation * m_calculation;
   CalculationController * m_calculationController;

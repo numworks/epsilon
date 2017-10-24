@@ -108,7 +108,7 @@ char TextArea::Text::removeChar(size_t index) {
 
 int TextArea::Text::removeRemainingLine(size_t index, int direction) {
   assert(m_buffer != nullptr);
-  assert(index >= 0 && index < m_bufferSize);
+  assert(index < m_bufferSize);
   int jump = index;
   while (m_buffer[jump] != '\n' && m_buffer[jump] != 0 && jump >= 0) {
     jump += direction;
@@ -267,6 +267,7 @@ void TextArea::ContentView::removeStartOfLine() {
   }
   int removedLine = m_text.removeRemainingLine(m_cursorIndex-1, -1);
   if (removedLine > 0) {
+    assert(m_cursorIndex >= removedLine);
     m_cursorIndex -= removedLine;
     layoutSubviews();
     markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex, false));

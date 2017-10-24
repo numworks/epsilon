@@ -160,6 +160,9 @@ double Store::columnProductSum() {
 }
 
 double Store::meanOfColumn(int i) {
+  if (m_numberOfPairs == 0) {
+    return 0;
+  }
   return sumOfColumn(i)/m_numberOfPairs;
 }
 

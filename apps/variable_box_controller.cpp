@@ -10,6 +10,7 @@ using namespace Poincare;
 VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, GlobalContext * context) :
   ViewController(parentResponder),
   m_context(context),
+  m_textFieldCaller(nullptr),
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),

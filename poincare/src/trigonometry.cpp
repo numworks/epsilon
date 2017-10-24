@@ -34,25 +34,26 @@ Expression * Trigonometry::immediateSimplify(Context& context, AngleUnit angleUn
   }
   if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
-    // Replace argument in [0, Pi[
+    int unaryCoefficient = 1; // store 1 or -1
+    // Replace argument in [0, Pi/2[
     if (r->denominator().isLowerThan(r->numerator())) {
       IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-      // For Sine, replace argument in [0, Pi/2[
-      if (trigonometricFunctionType() == Trigonometry::Function::Sine && r->denominator().isLowerThan(Integer::Addition(div.remainder, div.remainder))) {
+      if (r->denominator().isLowerThan(Integer::Addition(div.remainder, div.remainder))) {
         div.remainder = Integer::Subtraction(r->denominator(), div.remainder);
+        if (trigonometricFunctionType() == Trigonometry::Function::Cosine) {
+          unaryCoefficient *= -1;
+        }
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
       const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
       const_cast<Expression *>(operand(0))->immediateSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne()) {
-        Expression * simplifiedCosine = immediateSimplify(context, angleUnit); // recursive
-        const Expression * multOperands[2] = {new Rational(Integer(-1)), simplifiedCosine->clone()};
-        Multiplication * m = new Multiplication(multOperands, 2, false);
-        return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
-      } else {
-
-        return immediateSimplify(context, angleUnit); // recursive
+        unaryCoefficient *= -1;
       }
+      Expression * simplifiedCosine = immediateSimplify(context, angleUnit); // recursive
+      const Expression * multOperands[2] = {new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone()};
+      Multiplication * m = new Multiplication(multOperands, 2, false);
+      return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
     assert(r->sign() > 0);
     assert(r->numerator().isLowerThan(r->denominator()));

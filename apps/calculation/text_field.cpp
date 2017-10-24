@@ -18,7 +18,8 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (textLength() == 0 &&
-      (event == Ion::Events::Multiplication ||
+      (event == Ion::Events::Minus ||
+       event == Ion::Events::Multiplication ||
        event == Ion::Events::Plus ||
        event == Ion::Events::Power ||
        event == Ion::Events::Square ||

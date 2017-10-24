@@ -43,6 +43,7 @@ Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit)
         break;
       }
       if (sin->operand(0)->compareTo(cos->operand(0)) != 0) {
+        k++;
         continue;
       }
       const Expression * tanOp[1] = {sin->operand(0)};
@@ -51,7 +52,7 @@ Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit)
       if (cos->parent()->type() == Type::Multiplication) {
         Multiplication * parent = static_cast<Multiplication *>((Expression *)cos->parent());
         parent->removeOperand(cos, true);
-        return parent->squashUnaryHierarchy();
+        parent->squashUnaryHierarchy();
       } else if (cos->parent()->type() == Type::Opposite) {
         if (operandIndex == 0) {
           const Expression * oppOperand[1] = {operand(0)};
@@ -63,7 +64,7 @@ Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit)
         }
       } else {
         if (operandIndex == 0) {
-        return replaceWith((Expression *)operand(k), true);
+          return replaceWith((Expression *)operand(0), true);
         } else {
           assert(operandIndex == 1);
           replaceOperand(cos, new Rational(Integer(1)), true);
@@ -99,7 +100,7 @@ Expression * Division::factorOfTypeInOperand(Type type, int operandIndex, int k)
         if (operand(operandIndex)->operand(0)->operand(i)->type() == type) {
           counter++;
           if (counter == k) {
-            return ((Expression *)operand(operandIndex)->operand(i));
+            return ((Expression *)operand(operandIndex)->operand(0)->operand(i));
           }
         }
       }

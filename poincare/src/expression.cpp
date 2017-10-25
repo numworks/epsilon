@@ -80,7 +80,9 @@ void Expression::simplifyAndBeautify(Expression ** expressionAddress, Context & 
 
 Expression * Expression::simplify(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
-    ((Expression *)operand(i))->simplify(context, angleUnit);
+    if (((Expression *)operand(i))->simplify(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
+      return replaceWith(new Undefined(), true);
+    }
   }
   return immediateSimplify(context, angleUnit);
 }
@@ -91,15 +93,6 @@ Expression * Expression::beautify(Context & context, AngleUnit angleUnit) {
     ((Expression *)e->operand(i))->beautify(context, angleUnit);
   }
   return e;
-}
-
-Expression * Expression::immediateSimplify(Context & context, AngleUnit angleUnit) {
-  for (int i = 0; i< numberOfOperands(); i++) {
-    if (operand(i)->type() == Type::Undefined) {
-      return replaceWith(new Undefined(), true);
-    }
-  }
-  return this;
 }
 
 bool Expression::containType(Type t) const {

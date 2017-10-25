@@ -27,9 +27,6 @@ Expression * Factorial::clone() const {
 }
 
 Expression * Factorial::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  if (operand(0)->type() == Type::Undefined) {
-    return replaceWith(new Undefined(), true);
-  }
   if (operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>((Expression *)operand(0));
     if (!r->denominator().isOne()) {

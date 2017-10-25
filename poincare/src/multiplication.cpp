@@ -113,8 +113,6 @@ Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angle
       index = 0;
     } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(new Rational(Integer(0)), true);
-    } else if (o->type() == Type::Undefined) {
-      return replaceWith(new Undefined(), true);
     }
   }
   factorize(context, angleUnit);

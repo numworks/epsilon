@@ -74,6 +74,7 @@ public:
     Complex,
     ComplexMatrix,
     ExpressionMatrix,
+    SimplificationRoot,
   };
   enum class FloatDisplayMode {
     Decimal = 0,
@@ -136,7 +137,7 @@ public:
   static void simplifyAndBeautify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   Expression * simplify(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * immediateSimplify(Context & context, AngleUnit angleUnit);
+  virtual Expression * immediateSimplify(Context & context, AngleUnit angleUnit) { return this; };
   virtual Expression * immediateBeautify(Context & context, AngleUnit angleUnit) { return this; };
   bool containType(Type type) const;
 

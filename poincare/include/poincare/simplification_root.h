@@ -16,7 +16,7 @@ public:
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }
   Expression * clone() const override { return nullptr; }
-  Type type() const override { return Expression::Type::Undefined; }
+  Type type() const override { return Expression::Type::SimplificationRoot; }
   Expression * immediateSimplify(Context & context, AngleUnit angleUnit) override { return this; }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;

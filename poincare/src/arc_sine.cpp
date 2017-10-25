@@ -1,4 +1,5 @@
 #include <poincare/arc_sine.h>
+#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -13,6 +14,10 @@ Expression::Type ArcSine::type() const {
 Expression * ArcSine::clone() const {
   ArcSine * a = new ArcSine(m_operands, true);
   return a;
+}
+
+Expression * ArcSine::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::immediateSimplifyInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>

@@ -3,6 +3,7 @@
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/complex.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
 #include <ion.h>
@@ -13,44 +14,52 @@ extern "C" {
 
 namespace Poincare {
 
-Expression * Trigonometry::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  Expression * lookup = Trigonometry::table(operand(0), trigonometricFunctionType(), false, context, angleUnit);
+Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+  assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine);
+  Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
   if (lookup != nullptr) {
-    return replaceWith(lookup, true);
+    return e->replaceWith(lookup, true);
   }
-  if (operand(0)->sign() < 0) {
-    Expression * op = const_cast<Expression *>(operand(0));
+  Expression::Type correspondingType = e->type() == Expression::Type::Cosine ? Expression::Type::ArcCosine : Expression::Type::ArcSine;
+  if (e->operand(0)->type() == correspondingType) {
+    float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
+    if (trigoOp >= -1.0f && trigoOp <= 1.0f) {
+      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
+    }
+  }
+  if (e->operand(0)->sign() < 0) {
+    Expression * op = const_cast<Expression *>(e->operand(0));
     Expression * newOp = op->turnIntoPositive(context, angleUnit);
     newOp->immediateSimplify(context, angleUnit);
-    if (trigonometricFunctionType() == Trigonometry::Function::Cosine) {
-      return immediateSimplify(context, angleUnit);
-    } else if (trigonometricFunctionType() == Trigonometry::Function::Sine) {
-      const Expression * multOperands[2] = {new Rational(Integer(-1)), clone()};
+    if (e->type() == Expression::Type::Cosine) {
+      return e->immediateSimplify(context, angleUnit);
+    } else if (e->type() == Expression::Type::Sine) {
+      const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
       ((Expression *)m->operand(1))->immediateSimplify(context, angleUnit);
-      return replaceWith(m, true)->immediateSimplify(context, angleUnit);
+      return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
     assert(false);
   }
-  if (operand(0)->type() == Type::Multiplication && operand(0)->operand(1)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0)->operand(1))->name() == Ion::Charset::SmallPi && operand(0)->operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>((Expression *)operand(0)->operand(0));
+  if (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) {
+    Rational * r = static_cast<Rational *>((Expression *)e->operand(0)->operand(0));
     int unaryCoefficient = 1; // store 1 or -1
     // Replace argument in [0, Pi/2[
     if (r->denominator().isLowerThan(r->numerator())) {
       IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
       if (r->denominator().isLowerThan(Integer::Addition(div.remainder, div.remainder))) {
         div.remainder = Integer::Subtraction(r->denominator(), div.remainder);
-        if (trigonometricFunctionType() == Trigonometry::Function::Cosine) {
+        if (e->type() == Expression::Type::Cosine) {
           unaryCoefficient *= -1;
         }
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
-      const_cast<Expression *>(operand(0))->replaceOperand(r, newR, true);
-      const_cast<Expression *>(operand(0))->immediateSimplify(context, angleUnit);
+      const_cast<Expression *>(e->operand(0))->replaceOperand(r, newR, true);
+      const_cast<Expression *>(e->operand(0))->immediateSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne()) {
         unaryCoefficient *= -1;
       }
-      Expression * simplifiedCosine = immediateSimplify(context, angleUnit); // recursive
+      Expression * simplifiedCosine = e->immediateSimplify(context, angleUnit); // recursive
       const Expression * multOperands[2] = {new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
       return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
@@ -58,7 +67,28 @@ Expression * Trigonometry::immediateSimplify(Context& context, AngleUnit angleUn
     assert(r->sign() > 0);
     assert(r->numerator().isLowerThan(r->denominator()));
   }
-  return this;
+  return e;
+}
+
+Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+  assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine);
+  float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
+  if (approxOp > 1.0f || approxOp < -1.0f) {
+    return e->replaceWith(new Undefined(), true);
+  }
+  Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : Expression::Type::Sine;
+  if (e->operand(0)->type() == correspondingType) {
+    float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
+    if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= M_PI) ||
+        (e->type() == Expression::Type::ArcSine && trigoOp >= -M_PI/2.0f && trigoOp <= M_PI/2.0f)) {
+      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
+    }
+  }
+  Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
+  if (lookup != nullptr) {
+    return e->replaceWith(lookup, true);
+  }
+  return e;
 }
 
 static_assert('\x89' == Ion::Charset::SmallPi, "Unicode error");
@@ -89,9 +119,11 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][3] =
  {"0",               "\x89*2^(-1)",    "1"}
 };
 
-Expression * Trigonometry::table(const Expression * e, Function f, bool inverse, Context & context, AngleUnit angleUnit) {
-  int inputIndex = inverse ? 2 : (int)f;
-  int outputIndex = inverse ? (int)f : 2;
+Expression * Trigonometry::table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit) {
+  assert(type == Expression::Type::Sine || type == Expression::Type::Cosine || type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine);
+  int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 0 : 1;
+  int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine ? 2 : trigonometricFunctionIndex;
+  int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine ? trigonometricFunctionIndex : 2;
   for (int i = 0; i < k_numberOfEntries; i++) {
     Expression * input = Expression::parse(cheatTable[i][inputIndex]);
     if (input == nullptr) {

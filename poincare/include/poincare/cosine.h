@@ -1,20 +1,21 @@
 #ifndef POINCARE_COSINE_H
 #define POINCARE_COSINE_H
 
+#include <poincare/layout_engine.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/evaluation_engine.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class Cosine : public Trigonometry  {
-  using Trigonometry::Trigonometry;
+class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
+  using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
 private:
-  Trigonometry::Function trigonometricFunctionType() const override {
-    return Trigonometry::Function::Cosine;
-  }
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }

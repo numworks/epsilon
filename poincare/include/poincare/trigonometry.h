@@ -2,26 +2,19 @@
 #define POINCARE_TRIGONOMETRY_H
 
 #include <poincare/expression.h>
-#include <poincare/layout_engine.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
-#include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class Trigonometry : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class Trigonometry  {
 public:
   enum class Function {
     Cosine = 0,
     Sine = 1,
   };
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
+  static Expression * immediateSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
+  static Expression * immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
   constexpr static int k_numberOfEntries = 24;
-  static Expression * table(const Expression * e, Function f, bool inverse, Context & context, AngleUnit angleUnit); // , Function f, bool inverse
-protected:
-  virtual Function trigonometricFunctionType() const = 0;
+  static Expression * table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit); // , Function f, bool inverse
 };
 
 }

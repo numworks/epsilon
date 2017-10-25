@@ -226,7 +226,16 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("acos(-1.2)", "undef");
   assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(3/2))", "3/2");
-  assert_parsed_expression_simplify_to("acos(cos(12))", "undef");
+  assert_parsed_expression_simplify_to("cos(acos(3/2))", "undef");
+  assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
+  assert_parsed_expression_simplify_to("asin(-1/2)", "P*(-6)^(-1)");
+  assert_parsed_expression_simplify_to("asin(-1.2)", "undef");
+  assert_parsed_expression_simplify_to("asin(sin(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("sin(asin(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("sin(asin(3/2))", "sin(asin(3/2))");
+  assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
+  assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

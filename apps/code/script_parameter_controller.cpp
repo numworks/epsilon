@@ -12,20 +12,28 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_deleteScript(I18n::Message::Default),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_editorController(this),
   m_scriptStore(scriptStore),
   m_menuController(menuController),
+  m_autoImport(true),
   m_currentScriptIndex(-1)
 {
 }
 
 void ScriptParameterController::setScript(int i){
-  m_editorController.setScript(m_scriptStore->scriptAtIndex(i, ScriptStore::EditableZone::Content));
+  Script script = (m_scriptStore->scriptAtIndex(i, ScriptStore::EditableZone::Content));
+  m_editorController.setScript(script);
+  m_autoImport = script.autoImport();
   m_currentScriptIndex = i;
 }
 
 void ScriptParameterController::dismissScriptParameterController() {
   m_currentScriptIndex = -1;
   stackController()->pop();
+}
+
+void ScriptParameterController::scriptContentEditionDidFinish() {
+  m_menuController->reloadConsole();
 }
 
 View * ScriptParameterController::view() {
@@ -48,11 +56,15 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         m_menuController->renameScriptAtIndex(i);
         return true;
       case 2:
-      //Auto-import TODO
+        m_scriptStore->switchAutoImportAtIndex(i);
+        m_autoImport = !m_autoImport;
+        m_selectableTableView.reloadData();
+        m_menuController->reloadConsole();
         return true;
       case 3:
         dismissScriptParameterController();
         m_menuController->deleteScriptAtIndex(i);
+        m_menuController->reloadConsole();
         return true;
       default:
         assert(false);
@@ -60,6 +72,11 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     }
   }
   return false;
+}
+
+void ScriptParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0,0);
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {
@@ -76,7 +93,6 @@ HighlightCell * ScriptParameterController::reusableCell(int index) {
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_editScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
   return cells[index];
-
 }
 
 int ScriptParameterController::reusableCellCount() {
@@ -88,7 +104,11 @@ int ScriptParameterController::numberOfRows() {
 }
 
 void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  if (cell == &m_autoImportScript) {
+    SwitchView * switchView = (SwitchView *)m_autoImportScript.accessoryView();
+    switchView->setState(m_autoImport);
+  }
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::EditScript, I18n::Message::RenameScript, I18n::Message::AutoImportScript, I18n::Message::DeleteScript};
   myCell->setMessage(labels[index]);
 }

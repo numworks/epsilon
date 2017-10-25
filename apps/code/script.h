@@ -9,7 +9,7 @@ class Script {
 public:
   Script(const char * marker = nullptr, const char * name = nullptr, size_t nameBufferSize = 0, const char * content = nullptr, size_t contentBufferSize = 0);
   bool isNull() const;
-  bool autoimport() const;
+  bool autoImport() const;
 
   const char * name() const {
     assert(!isNull());

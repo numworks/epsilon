@@ -13,6 +13,8 @@ namespace Code {
 
 class ConsoleController : public ViewController, public ListViewDataSource, public ScrollViewDataSource, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
+  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
+
   ConsoleController(Responder * parentResponder, ScriptStore * scriptStore);
   ~ConsoleController();
   ConsoleController(const ConsoleController& other) = delete;
@@ -20,7 +22,13 @@ public:
   ConsoleController operator=(const ConsoleController& other) = delete;
   ConsoleController& operator=(ConsoleController&& other) = delete;
 
-  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
+  bool loadPythonEnvironment();
+  void unloadPythonEnvironment();
+  bool pythonEnvironmentIsLoaded();
+
+  void autoImport();
+  void runAndPrintForCommand(const char * command);
+  void removeExtensionIfAny(char * name);
 
   // ViewController
   View * view() override { return &m_tableView; }
@@ -53,6 +61,7 @@ private:
   static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
   static constexpr int k_pythonHeapSize = 16384;
   static constexpr int k_outputAccumulationBufferSize = 40;
+  void autoImportScriptAtIndex(int index);
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
@@ -63,12 +72,13 @@ private:
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char * m_pythonHeap;
-  char * m_outputAccumulationBuffer;
+  char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];
   /* The Python machine might call printText several times to print a single
    * string. We thus use m_outputAccumulationBuffer to store and concatenate the
    * different strings until a new line char appears in the text. When this
    * happens, or when m_outputAccumulationBuffer is full, we create a new
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
+  ScriptStore * m_scriptStore;
 };
 }
 

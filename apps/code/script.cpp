@@ -22,7 +22,7 @@ bool Script::isNull() const {
   return false;
 }
 
-bool Script::autoimport() const {
+bool Script::autoImport() const {
   assert(!isNull());
   assert(m_marker != nullptr);
   if (m_marker[0] == AutoImportationMarker) {

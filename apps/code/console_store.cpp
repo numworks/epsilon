@@ -9,6 +9,11 @@ ConsoleStore::ConsoleStore() :
 {
 }
 
+void ConsoleStore::clear() {
+  assert(k_historySize > 0);
+  m_history[0] = 0;
+}
+
 ConsoleLine ConsoleStore::lineAtIndex(int i) const {
   assert(i >= 0 && i < numberOfLines());
   int currentLineIndex = 0;

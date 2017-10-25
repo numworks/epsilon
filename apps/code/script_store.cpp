@@ -108,6 +108,20 @@ bool ScriptStore::renameScriptAtIndex(int index, const char * newName) {
   return m_accordion.replaceBufferAtIndex(accordionIndex, newName);
 }
 
+void ScriptStore::switchAutoImportAtIndex(int index) {
+  assert(index >= 0 && index < numberOfScripts());
+  Script script = scriptAtIndex(index);
+  bool autoImportation = script.autoImport();
+  int accordionIndex = accordionIndexOfMarkersOfScriptAtIndex(index);
+  if (autoImportation) {
+    const char autoImportationString[2] = {Script::NoAutoImportationMarker, 0};
+    m_accordion.replaceBufferAtIndex(accordionIndex, autoImportationString);
+    return;
+  }
+  const char autoImportationString[2] = {Script::AutoImportationMarker, 0};
+  m_accordion.replaceBufferAtIndex(accordionIndex, autoImportationString);
+}
+
 void ScriptStore::deleteScriptAtIndex(int index) {
   assert (index >= 0 && index < numberOfScripts());
   int accordionIndex = accordionIndexOfContentOfScriptAtIndex(index);
@@ -179,7 +193,7 @@ bool ScriptStore::copyFactorialScriptOnFreeSpace() {
 }
 
 bool ScriptStore::copyEmptyScriptOnFreeSpace() {
-  const char script[] = "\0";
+  const char script[] = " ";
   return m_accordion.appendBuffer(script);
 }
 

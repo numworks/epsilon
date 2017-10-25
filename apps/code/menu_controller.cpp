@@ -12,7 +12,11 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_addNewScriptCell(I18n::Message::AddScript),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
     MenuController * menu = (MenuController *)context;
-    menu->app()->displayModalViewController(menu->consoleController(), 0.5f, 0.5f);
+    if (menu->consoleController()->loadPythonEnvironment()) {
+      menu->app()->displayModalViewController(menu->consoleController(), 0.5f, 0.5f);
+      return;
+    }
+    //TODO: Pop up warning message: not enough space to load Python
   }, this)),
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false),
   m_consoleController(parentResponder, m_scriptStore),
@@ -67,12 +71,18 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 }
 
 void MenuController::configureScript() {
-  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
+  setParameteredScript();
   stackViewController()->push(&m_scriptParameterController);
 }
 
+void MenuController::setParameteredScript() {
+  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
+}
+
 void MenuController::addScript() {
-  m_scriptStore->addNewScript();
+  if (m_scriptStore->addNewScript()) {
+    renameScriptAtIndex(m_scriptStore->numberOfScripts()-1);
+  }
   m_selectableTableView.reloadData();
 }
 
@@ -89,6 +99,10 @@ void MenuController::renameScriptAtIndex(int i) {
 void MenuController::deleteScriptAtIndex(int i) {
   m_scriptStore->deleteScriptAtIndex(i);
   m_selectableTableView.reloadData();
+}
+
+void MenuController::reloadConsole() {
+  m_consoleController.unloadPythonEnvironment();
 }
 
 int MenuController::numberOfRows() {
@@ -172,6 +186,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
     }
     m_selectableTableView.selectedCell()->setHighlighted(true);
+    reloadConsole();
     app()->setFirstResponder(&m_selectableTableView);
     return true;
   } else {

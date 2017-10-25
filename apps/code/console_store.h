@@ -9,6 +9,7 @@ namespace Code {
 class ConsoleStore {
 public:
   ConsoleStore();
+  void clear();
   ConsoleLine lineAtIndex(int i) const;
   int numberOfLines() const;
   void pushCommand(const char * text, size_t length);

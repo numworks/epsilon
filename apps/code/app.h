@@ -18,7 +18,6 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
-    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;

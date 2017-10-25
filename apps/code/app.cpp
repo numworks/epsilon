@@ -17,10 +17,6 @@ const Image * App::Descriptor::icon() {
   return ImageStore::CodeIcon;
 }
 
-App::Snapshot::Snapshot() {
-  m_scriptStore.addNewScript(ScriptStore::DefaultScript::Factorial);
-}
-
 App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }

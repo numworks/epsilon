@@ -4,11 +4,11 @@
 
 namespace Code {
 
-constexpr char ScriptStore::k_defaultScriptName[];
-
 ScriptStore::ScriptStore() :
   m_accordion(m_scriptData, k_scriptDataSize)
 {
+  addScriptFromTemplate(ScriptTemplate::Factorial());
+  addScriptFromTemplate(ScriptTemplate::Fibonacci());
 }
 
 const Script ScriptStore::scriptAtIndex(int index, EditableZone zone) {
@@ -59,47 +59,8 @@ int ScriptStore::numberOfScripts() {
   return (m_accordion.numberOfBuffers())/Script::NumberOfStringsPerScript;
 }
 
-bool ScriptStore::addNewScript(DefaultScript defaultScript) {
-  const char autoImportationString[2] = {Script::DefaultAutoImportationMarker, 0};
-  if (!m_accordion.appendBuffer(autoImportationString)) {
-    return false;
-  }
-  const char * name = nullptr;
-  switch (defaultScript) {
-    case DefaultScript::Empty:
-      name = k_defaultScriptName;
-      break;
-    case DefaultScript::Mandelbrot:
-      name = "mandelbrot.py";
-      break;
-    case DefaultScript::Factorial:
-      name = "factorial.py";
-      break;
-  }
-  if (!m_accordion.appendBuffer(name)) {
-    // Delete the Auto Importation Marker
-    m_accordion.deleteLastBuffer();
-    return false;
-  }
-  bool didCopy = false;
-  switch (defaultScript) {
-    case DefaultScript::Empty:
-      didCopy = copyEmptyScriptOnFreeSpace();
-      break;
-    case DefaultScript::Mandelbrot:
-      didCopy = copyMandelbrotScriptOnFreeSpace();
-      break;
-    case DefaultScript::Factorial:
-      didCopy = copyFactorialScriptOnFreeSpace();
-      break;
-  }
-  if (didCopy) {
-    return true;
-  }
-  // Delete the Auto Importation Marker and the Name Of the Script
-  m_accordion.deleteLastBuffer();
-  m_accordion.deleteLastBuffer();
-  return false;
+bool ScriptStore::addNewScript() {
+  return addScriptFromTemplate(ScriptTemplate::Empty());
 }
 
 bool ScriptStore::renameScriptAtIndex(int index, const char * newName) {
@@ -143,6 +104,32 @@ const char * ScriptStore::contentOfScript(const char * name) {
   return script.content();
 }
 
+
+bool ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
+  const char autoImportationString[2] = {Script::DefaultAutoImportationMarker, 0};
+  if (!m_accordion.appendBuffer(autoImportationString)) {
+    return false;
+  }
+
+  if (!m_accordion.appendBuffer(scriptTemplate->name())) {
+    // Delete the Auto Importation Marker
+    m_accordion.deleteLastBuffer();
+    return false;
+  }
+
+  if (copyStaticScriptOnFreeSpace(scriptTemplate)) {
+    return true;
+  }
+  // Delete the Auto Importation Marker and the Name Of the Script
+  m_accordion.deleteLastBuffer();
+  m_accordion.deleteLastBuffer();
+  return false;
+}
+
+bool ScriptStore::copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate) {
+  return m_accordion.appendBuffer(scriptTemplate->content());
+}
+
 int ScriptStore::accordionIndexOfMarkersOfScriptAtIndex(int index) const {
   return index * Script::NumberOfStringsPerScript;
 }
@@ -153,48 +140,6 @@ int ScriptStore::accordionIndexOfNameOfScriptAtIndex(int index) const {
 
 int ScriptStore::accordionIndexOfContentOfScriptAtIndex(int index) const {
   return index * Script::NumberOfStringsPerScript + 2;
-}
-
-bool ScriptStore::copyMandelbrotScriptOnFreeSpace() {
-  const char script[] = R"(# This script draws a Mandelbrot fractal set
-# N_iteration: degree of precision
-import kandinsky
-N_iteration = 10
-for x in range(320):
-  for y in range(240):
-# Compute the mandelbrot sequence for the point c = (c_r, c_i) with start value z = (z_r, z_i)
-    z_r = 0
-    z_i = 0
-# Rescale to fit the drawing screen 320x222
-    c_r = 2.7*x/319-2.1
-    c_i = -1.87*y/221+0.935
-    i = 0
-    while (i < N_iteration) and ((z_r * z_r) + (z_i * z_i) < 4):
-      i = i + 1
-      stock = z_r
-      z_r = z_r * z_r - z_i * z_i + c_r
-      z_i = 2 * stock * z_i + c_i
-# Choose the color of the dot from the Mandelbrot sequence
-    rgb = int(255*i/N_iteration)
-    col = kandinsky.color(int(rgb),int(rgb*0.75),int(rgb*0.25))
-# Draw a pixel colored in 'col' at position (x,y)
-    kandinsky.set_pixel(x,y,col))";
-
-  return m_accordion.appendBuffer(script);
-}
-bool ScriptStore::copyFactorialScriptOnFreeSpace() {
-  const char script[] = R"(def factorial(n):
-  if n == 0:
-    return 1
-  else:
-    return n * factorial(n-1))";
-
-  return m_accordion.appendBuffer(script);
-}
-
-bool ScriptStore::copyEmptyScriptOnFreeSpace() {
-  const char script[] = " ";
-  return m_accordion.appendBuffer(script);
 }
 
 }

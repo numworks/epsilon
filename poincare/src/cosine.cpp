@@ -21,6 +21,10 @@ Expression * Cosine::clone() const {
   return a;
 }
 
+Expression * Cosine::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
+}
+
 template<typename T>
 Complex<T> Cosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);

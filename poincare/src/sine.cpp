@@ -1,4 +1,5 @@
 #include <poincare/sine.h>
+#include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/complex.h>
 #include <poincare/multiplication.h>
@@ -18,6 +19,10 @@ Expression::Type Sine::type() const {
 Expression * Sine::clone() const {
   Sine * a = new Sine(m_operands, true);
   return a;
+}
+
+Expression * Sine::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
 }
 
 template<typename T>

@@ -20,6 +20,15 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Addition:
       std::cout << "Addition";
       break;
+    case Expression::Type::ArcCosine:
+      std::cout << "ArcCosine";
+      break;
+    case Expression::Type::ArcSine:
+      std::cout << "ArcSine";
+      break;
+    case Expression::Type::ArcTangent:
+      std::cout << "ArcTangent";
+      break;
     case Expression::Type::Multiplication:
       std::cout << "Multiplication";
       break;
@@ -90,6 +99,9 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Tangent:
       std::cout << "Tangent";
+      break;
+    case Expression::Type::Undefined:
+      std::cout << "Undefined";
       break;
   }
   std::cout << " at " << (void *)e << " with parent " << (void *)(e->parent()) << std::endl;

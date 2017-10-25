@@ -36,13 +36,8 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
-  }
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
-  }
-  static const char * name();
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
   void factorize(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);

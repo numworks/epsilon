@@ -34,7 +34,11 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 
 QUIZ_CASE(poincare_simplify_easy) {
-  assert_parsed_expression_simplify_to("X^(P)*X^(5)", "X^(P+5)");
+  assert_parsed_expression_simplify_to("5!", "120");
+  assert_parsed_expression_simplify_to("1/3!", "1/6");
+  assert_parsed_expression_simplify_to("(1/3)!", "undef");
+  assert_parsed_expression_simplify_to("P!", "undef");
+  assert_parsed_expression_simplify_to("X!", "undef");
   assert_parsed_expression_simplify_to("tan(62P/21)", "-tan(P/21)");
   assert_parsed_expression_simplify_to("cos(26P/21)/sin(25P/17)", "cos(5P/21)/sin(8P/17)");
   assert_parsed_expression_simplify_to("cos(62P/21)*P*3/sin(62P/21)", "-3P/tan(P/21)");

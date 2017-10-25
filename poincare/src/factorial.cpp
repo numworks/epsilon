@@ -1,6 +1,10 @@
 #include <poincare/factorial.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
+#include <poincare/rational.h>
+#include <poincare/undefined.h>
+#include <poincare/symbol.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -20,6 +24,27 @@ Expression::Type Factorial::type() const {
 Expression * Factorial::clone() const {
   Factorial * a = new Factorial(m_operands[0], true);
   return a;
+}
+
+Expression * Factorial::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  if (operand(0)->type() == Type::Undefined) {
+    return replaceWith(new Undefined(), true);
+  }
+  if (operand(0)->type() == Type::Rational) {
+    Rational * r = static_cast<Rational *>((Expression *)operand(0));
+    if (!r->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+    Rational * fact = new Rational(Integer::Factorial(r->numerator()));
+    return replaceWith(fact, true);
+  }
+  if (operand(0)->type() == Type::Symbol) {
+    Symbol * s = static_cast<Symbol *>((Expression *)operand(0));
+    if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  return this;
 }
 
 template<typename T>

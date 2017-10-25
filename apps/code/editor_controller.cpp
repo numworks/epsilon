@@ -1,10 +1,12 @@
 #include "editor_controller.h"
+#include "script_parameter_controller.h"
 
 namespace Code {
 
-EditorController::EditorController() :
+EditorController::EditorController(ScriptParameterController * scriptParameterController) :
   ViewController(nullptr),
-  m_view(this)
+  m_view(this),
+  m_scriptParameterController(scriptParameterController)
 {
 }
 
@@ -22,6 +24,10 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
 
 void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_view);
+}
+
+void EditorController::viewDidDisappear() {
+  m_scriptParameterController->scriptContentEditionDidFinish();
 }
 
 }

@@ -18,9 +18,11 @@ public:
   ConsoleController * consoleController();
   StackViewController * stackViewController();
   void configureScript();
+  void setParameteredScript();
   void addScript();
   void renameScriptAtIndex(int i);
   void deleteScriptAtIndex(int i);
+  void reloadConsole();
 
   /* ViewController */
   View * view() override;

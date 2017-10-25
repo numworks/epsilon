@@ -27,6 +27,7 @@ public:
   int numberOfScripts();
   bool addNewScript(DefaultScript defaultScript = DefaultScript::Empty);
   bool renameScriptAtIndex(int index, const char * newName);
+  void switchAutoImportAtIndex(int index);
   void deleteScriptAtIndex(int index);
   void deleteAllScripts();
 

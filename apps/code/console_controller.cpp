@@ -1,4 +1,5 @@
 #include "console_controller.h"
+#include "script.h"
 #include <apps/i18n.h>
 #include "app.h"
 #include <assert.h>
@@ -14,22 +15,76 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   TextFieldDelegate(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
   m_tableView(this, this, 0, 0),
-  m_editCell(this, this)
+  m_editCell(this, this),
+  m_pythonHeap(nullptr),
+  m_scriptStore(scriptStore)
 {
-  m_outputAccumulationBuffer = (char *)malloc(k_outputAccumulationBufferSize);
-  emptyOutputAccumulationBuffer();
-  m_pythonHeap = (char *)malloc(k_pythonHeapSize);
-  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
-  MicroPython::registerScriptProvider(scriptStore);
 }
 
 ConsoleController::~ConsoleController() {
-  MicroPython::deinit();
-  free(m_pythonHeap);
-  free(m_outputAccumulationBuffer);
+  unloadPythonEnvironment();
+}
+
+bool ConsoleController::loadPythonEnvironment() {
+  if(pythonEnvironmentIsLoaded()) {
+    return true;
+  }
+  emptyOutputAccumulationBuffer();
+  m_pythonHeap = (char *)malloc(k_pythonHeapSize);
+  if (m_pythonHeap == nullptr) {
+    // In DEBUG mode, the assert at the end of malloc would have already failed
+    // and the program crashed.
+    return false;
+  }
+  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  MicroPython::registerScriptProvider(m_scriptStore);
+  autoImport();
+  return true;
+}
+
+void ConsoleController::unloadPythonEnvironment() {
+  if (pythonEnvironmentIsLoaded()) {
+    m_consoleStore.clear();
+    MicroPython::deinit();
+    free(m_pythonHeap);
+    m_pythonHeap = nullptr;
+  }
+}
+
+bool ConsoleController::pythonEnvironmentIsLoaded() {
+  return (m_pythonHeap != nullptr);
+}
+
+void ConsoleController::autoImport() {
+  for (int i = 0; i < m_scriptStore->numberOfScripts(); i++) {
+    autoImportScriptAtIndex(i);
+  }
+}
+
+void ConsoleController::runAndPrintForCommand(const char * command) {
+  m_consoleStore.pushCommand(command, strlen(command));
+  assert(m_outputAccumulationBuffer[0] == '\0');
+  runCode(command);
+  flushOutputAccumulationBufferToStore();
+  m_consoleStore.deleteLastLineIfEmpty();
+  m_tableView.reloadData();
+  m_editCell.setEditing(true);
+}
+
+void ConsoleController::removeExtensionIfAny(char * name) {
+  int nameLength = strlen(name);
+  if (nameLength<4) {
+    return;
+  }
+  if (strcmp(&name[nameLength-3], ".py") == 0) {
+    name[nameLength-3] = 0;
+  }
 }
 
 void ConsoleController::viewWillAppear() {
+  assert(pythonEnvironmentIsLoaded());
+  m_tableView.reloadData();
+  m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
 }
 
@@ -100,15 +155,9 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  m_consoleStore.pushCommand(text, strlen(text));
-  assert(m_outputAccumulationBuffer[0] == '\0');
-  runCode(text);
-  flushOutputAccumulationBufferToStore();
-  m_consoleStore.deleteLastLineIfEmpty();
+  runAndPrintForCommand(text);
   textField->setText("");
-  m_tableView.reloadData();
   m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
-  m_editCell.setEditing(true);
   return true;
 }
 
@@ -143,6 +192,28 @@ void ConsoleController::printText(const char * text, size_t length) {
   if (textCutIndex == length - 1) {
     appendTextToOutputAccumulationBuffer(text, length-1);
     flushOutputAccumulationBufferToStore();
+  }
+}
+
+void ConsoleController::autoImportScriptAtIndex(int index) {
+  const char * importCommand1 = "from ";
+  const char * importCommand2 = " import *";
+  int lenImportCommand1 = strlen(importCommand1);
+  int lenImportCommand2 = strlen(importCommand2);
+  Script script = m_scriptStore->scriptAtIndex(index);
+  if (script.autoImport()) {
+    // Remove the name extension ".py" if there is one.
+    int scriptOriginalNameLength = strlen(script.name());
+    char scriptNewName[scriptOriginalNameLength];
+    memcpy(scriptNewName, script.name(), scriptOriginalNameLength + 1);
+    removeExtensionIfAny(scriptNewName);
+    int scriptNewNameLength = strlen(scriptNewName);
+    // Create the command "from scriptName import *".
+    char command[lenImportCommand1 + scriptNewNameLength + lenImportCommand2 + 1];
+    memcpy(command, importCommand1, lenImportCommand1);
+    memcpy(&command[lenImportCommand1], scriptNewName, scriptNewNameLength);
+    memcpy(&command[lenImportCommand1 + scriptNewNameLength], importCommand2, lenImportCommand2 + 1);
+    runAndPrintForCommand(command);
   }
 }
 

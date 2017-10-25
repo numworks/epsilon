@@ -29,6 +29,17 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
+static_assert('\x94' == Ion::Charset::MiddleDot, "Unicode error");
+ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "\x94");
+}
+
+static_assert('\x93' == Ion::Charset::MultiplicationSign, "Unicode error");
+int Multiplication::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "\x93");
+}
+
+
 int Multiplication::sign() const {
   int sign = 1;
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -363,11 +374,6 @@ void Multiplication::leastCommonMultiple(Expression * factor, Context & context,
   const Expression * newOp[1] = {factor->clone()};
   addOperands(newOp, 1);
   sortChildren();
-}
-
-static_assert('\x94' == Ion::Charset::MiddleDot, "Unicode error");
-const char * Multiplication::name() {
-  return "\x94";
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

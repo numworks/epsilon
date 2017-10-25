@@ -13,7 +13,7 @@ public:
   };
   static Expression * immediateSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
   static Expression * immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
-  constexpr static int k_numberOfEntries = 24;
+  constexpr static int k_numberOfEntries = 31;
   static Expression * table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit); // , Function f, bool inverse
 };
 

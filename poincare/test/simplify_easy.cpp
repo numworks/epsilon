@@ -208,13 +208,13 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tan(P*340000)", "0");
   assert_parsed_expression_simplify_to("tan(P*340001)", "0");
   assert_parsed_expression_simplify_to("tan(-P*340001)", "0");
-  assert_parsed_expression_simplify_to("tan(P/12)", "(-R(2)/4+R(6)/4)/(R(2)/4+R(6)/4)"); // Replace by 2-R(3)
-  assert_parsed_expression_simplify_to("tan(-P/12)", "(R(2)/4-R(6)/4)/(R(2)/4+R(6)/4)"); // Replace by R(3)-2
+  assert_parsed_expression_simplify_to("tan(P/12)", "2-R(3)");
+  assert_parsed_expression_simplify_to("tan(-P/12)", "R(3)-2");
   assert_parsed_expression_simplify_to("tan(-P*R(2))", "-tan(P*R(2))");
   assert_parsed_expression_simplify_to("tan(1311P/6)", "undef");
   assert_parsed_expression_simplify_to("tan(-P17/8)", "-R(2-R(2))/R(2+R(2))");
   assert_parsed_expression_simplify_to("tan(41P/6)", "-1/R(3)");
-  assert_parsed_expression_simplify_to("tan(P/4+1000P)", "R(2)/R(2)"); // TODO: replace by 1
+  assert_parsed_expression_simplify_to("tan(P/4+1000P)", "1");
   assert_parsed_expression_simplify_to("tan(-P/3)", "-R(3)");
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "1/tan(x)");
@@ -236,6 +236,12 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(asin(3/2))", "sin(asin(3/2))");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
+  assert_parsed_expression_simplify_to("atan(-1)", "P*(-4)^(-1)");
+  assert_parsed_expression_simplify_to("atan(-1.2)", "atan(-1.2)");
+  assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
+  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

@@ -4,6 +4,7 @@
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>
+#include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_tangent.h>
 extern "C" {
 #include <assert.h>
@@ -22,15 +23,7 @@ Expression * Tangent::clone() const {
 }
 
 Expression * Tangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  const Expression * op[1] = {operand(0)};
-  Sine * s = new Sine(op, true);
-  Cosine * c = new Cosine(op, true);
-  const Expression * divisionOperands[2] = {s, c};
-  Division * d = new Division(divisionOperands, false);
-  c->immediateSimplify(context, angleUnit);
-  s->immediateSimplify(context, angleUnit);
-  Expression * newExpression = replaceWith(d, true);
-  return newExpression->simplify(context, angleUnit);
+  return Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
 }
 
 template<typename T>

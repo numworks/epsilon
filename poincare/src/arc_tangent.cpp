@@ -1,4 +1,5 @@
 #include <poincare/arc_tangent.h>
+#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -13,6 +14,10 @@ Expression::Type ArcTangent::type() const {
 Expression * ArcTangent::clone() const {
   ArcTangent * a = new ArcTangent(m_operands, true);
   return a;
+}
+
+Expression * ArcTangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::immediateSimplifyInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>

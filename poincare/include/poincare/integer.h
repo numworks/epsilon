@@ -59,6 +59,7 @@ public:
   static Integer Addition(const Integer & i, const Integer & j);
   static Integer Subtraction(const Integer & i, const Integer & j);
   static Integer Multiplication(const Integer & i, const Integer & j);
+  static Integer Factorial(const Integer & i);
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
   //static Integer Division(const Integer & i, const Integer & j);

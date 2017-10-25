@@ -11,6 +11,7 @@ public:
   Factorial(const Expression * argument, bool clone = true);
   Type type() const override;
   Expression * clone() const override;
+  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

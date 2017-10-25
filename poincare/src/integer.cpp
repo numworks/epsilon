@@ -247,6 +247,16 @@ Integer Integer::Multiplication(const Integer & a, const Integer & b) {
   return Integer(digits, productSize, a.m_negative != b.m_negative);
 }
 
+Integer Integer::Factorial(const Integer & i) {
+  Integer j = Integer(2);
+  Integer result = Integer(1);
+  while (!i.isLowerThan(j)) {
+    result = Multiplication(j, result);
+    j = Addition(j, Integer(1));
+  }
+  return result;
+}
+
 IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
   if (!numerator.isNegative() && !denominator.isNegative()) {
     return udiv(numerator, denominator);

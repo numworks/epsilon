@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/code/,\
   script.o\
   script_parameter_controller.o\
   script_store.o\
+  script_template.o\
 )
 
 i18n_files += $(addprefix apps/code/,\

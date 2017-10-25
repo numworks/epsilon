@@ -134,9 +134,6 @@ int Power::compareToGreaterTypeExpression(const Expression * e) const {
 }
 
 Expression * Power::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  if (operand(0)->type() == Type::Undefined || operand(1)->type() == Type::Undefined) {
-    return replaceWith(new Undefined(), true);
-  }
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
@@ -247,9 +244,7 @@ Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression *
     p->immediateSimplify(context, angleUnit);
   }
   detachOperand(m);
-  Expression * newExpression = replaceWith(m, true); // delete r
-  m->immediateSimplify(context, angleUnit);
-  return newExpression;
+  return replaceWith(m, true)->immediateSimplify(context, angleUnit); // delete r
 }
 
 Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context& context, AngleUnit angleUnit) {
@@ -269,9 +264,8 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   }
   const Expression * multOp[2] = {n, d};
   Multiplication * m = new Multiplication(multOp, 2, false);
-  Expression * newExpression = result->replaceWith(m, true);
-  m->immediateSimplify(context, angleUnit);
-  return newExpression;
+  result->replaceWith(m, true);
+  return m->immediateSimplify(context, angleUnit);
 }
 
 Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator) {

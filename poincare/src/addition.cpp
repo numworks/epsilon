@@ -33,8 +33,6 @@ Expression * Addition::immediateSimplify(Context& context, AngleUnit angleUnit) 
     if (o->type() == Type::Addition) {
       mergeOperands(static_cast<Addition *>(o));
       index = 0;
-    } else if (o->type() == Type::Undefined) {
-      return replaceWith(new Undefined(), true);
     }
   }
   sortChildren();

@@ -13,13 +13,14 @@ ConsoleLineCell::ConsoleLineCell() :
 }
 
 void ConsoleLineCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor textBackgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(bounds(), KDColorWhite);
   if (m_line.type() == ConsoleLine::Type::Command) {
     ctx->drawString(I18n::translate(I18n::Message::ConsolePrompt), KDPointZero, ConsoleController::k_fontSize);
     KDCoordinate chevronsWidth = KDText::stringSize(I18n::translate(I18n::Message::ConsolePrompt), ConsoleController::k_fontSize).width();
-    ctx->drawString(m_line.text(), KDPoint(chevronsWidth, KDCoordinate(0)), ConsoleController::k_fontSize);
+    ctx->drawString(m_line.text(), KDPoint(chevronsWidth, KDCoordinate(0)), ConsoleController::k_fontSize, KDColorBlack, textBackgroundColor);
   } else {
-    ctx->drawString(m_line.text(), KDPointZero, ConsoleController::k_fontSize);
+    ctx->drawString(m_line.text(), KDPointZero, ConsoleController::k_fontSize, KDColorBlack, textBackgroundColor);
   }
 }
 

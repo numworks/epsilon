@@ -1,7 +1,7 @@
 #include "console_controller.h"
 #include "script.h"
-#include <apps/i18n.h>
 #include "app.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 extern "C" {
@@ -12,9 +12,10 @@ namespace Code {
 
 ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
   ViewController(parentResponder),
+  SelectableTableViewDataSource(),
   TextFieldDelegate(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
-  m_tableView(this, this, 0, 0),
+  m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 3, Metric::HistoryHorizontalMargin, this, this, true, true, KDColorWhite),
   m_editCell(this, this),
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore)
@@ -67,7 +68,7 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   runCode(command);
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
-  m_tableView.reloadData();
+  m_selectableTableView.reloadData();
   m_editCell.setEditing(true);
 }
 
@@ -83,13 +84,41 @@ void ConsoleController::removeExtensionIfAny(char * name) {
 
 void ConsoleController::viewWillAppear() {
   assert(pythonEnvironmentIsLoaded());
-  m_tableView.reloadData();
-  m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
 }
 
 void ConsoleController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editCell);
+}
+
+bool ConsoleController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Up) {
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() > 0) {
+      m_editCell.setEditing(false);
+      m_editCell.setText("");
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
+      app()->setFirstResponder(&m_selectableTableView);
+      return true;
+    }
+  } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (m_consoleStore.numberOfLines() > 0) {
+      const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
+      m_editCell.setEditing(true);
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+      app()->setFirstResponder(&m_editCell);
+      m_editCell.setText(text);
+      return true;
+    }
+  } else if (event == Ion::Events::Copy) {
+    int row = m_selectableTableView.selectedRow();
+    if (row < m_consoleStore.numberOfLines()) {
+      Clipboard::sharedClipboard()->store(m_consoleStore.lineAtIndex(row).text());
+      return true;
+    }
+  }
+  return false;
 }
 
 int ConsoleController::numberOfRows() {
@@ -146,6 +175,13 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
+void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (t->selectedRow() == m_consoleStore.numberOfLines()) {
+    m_editCell.setEditing(true);
+    app()->setFirstResponder(&m_editCell);
+  }
+}
+
 bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
@@ -157,7 +193,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   runAndPrintForCommand(text);
   textField->setText("");
-  m_tableView.scrollToCell(0, m_consoleStore.numberOfLines());
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   return true;
 }
 

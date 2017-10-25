@@ -9,6 +9,8 @@ namespace Code {
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
+  m_textBuffer{0},
+  m_draftTextBuffer{0},
   m_promptView(ConsoleController::k_fontSize, I18n::Message::ConsolePrompt, 0, 0.5),
   m_textField(this, m_textBuffer, m_draftTextBuffer, TextField::maxBufferSize(), delegate, true, ConsoleController::k_fontSize)
 {
@@ -39,6 +41,10 @@ void ConsoleEditCell::didBecomeFirstResponder() {
 
 void ConsoleEditCell::setEditing(bool isEditing) {
   m_textField.setEditing(isEditing);
+}
+
+void ConsoleEditCell::setText(const char * text) {
+  m_textField.setText(text);
 }
 
 }

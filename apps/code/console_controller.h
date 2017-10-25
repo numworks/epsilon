@@ -11,7 +11,7 @@
 
 namespace Code {
 
-class ConsoleController : public ViewController, public ListViewDataSource, public ScrollViewDataSource, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
+class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
   static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
@@ -31,9 +31,10 @@ public:
   void removeExtensionIfAny(char * name);
 
   // ViewController
-  View * view() override { return &m_tableView; }
+  View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   // ListViewDataSource
   int numberOfRows() override;
@@ -44,6 +45,9 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
@@ -68,7 +72,7 @@ private:
   int firstNewLineCharIndex(const char * text, size_t length);
   int m_rowHeight;
   ConsoleStore m_consoleStore;
-  TableView m_tableView;
+  SelectableTableView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char * m_pythonHeap;

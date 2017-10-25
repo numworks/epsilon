@@ -323,6 +323,7 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
 
 void TextArea::setText(char * textBuffer, size_t textBufferSize) {
   m_contentView.setText(textBuffer, textBufferSize);
+  m_contentView.moveCursorGeo(0, 0);
 }
 
 bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {

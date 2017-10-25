@@ -10,6 +10,8 @@ class EditorController : public ViewController {
 public:
   EditorController();
   void setScript(Script script);
+
+  /* ViewController */
   View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

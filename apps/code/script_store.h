@@ -2,74 +2,49 @@
 #define CODE_SCRIPT_STORE_H
 
 #include "script.h"
+#include <escher/accordion.h>
 #include <python/port/port.h>
 
 namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
 public:
+  enum class EditableZone {
+    None,
+    Name,
+    Content
+  };
+
+  enum class DefaultScript {
+    Empty,
+    Mandelbrot,
+    Factorial
+  };
+
   ScriptStore();
-  Script editableScript(int i);
-  /* editableScript moves the free space of m_history at the end of the
-   * ith script. It returns a Script object that points to the beginning of the
-   * wanted script and has a length taking into account both the script and the
-   * free space. */
-  Script script(int i);
-  /* script returns a Script object that points to the beginning of the
-   * ith script and has the length of the script. */
-  Script script(const char * name);
-  /* script(const char * name) looks for a script that has the right name and
-   * returns it. If there is no such script, it returns an empty Script. */
-  char * nameOfScript(int i);
-  char * editableNameOfScript(int i);
-  int sizeOfEditableNameOfScript(int i);
-  int numberOfScripts() const;
-  bool addNewScript();
-  bool addMandelbrotScript();
-  bool addFactorialScript();
-  bool renameScript(int i, const char * newName);
-  void deleteScript(int i);
-  void deleteAll();
+  const Script scriptAtIndex(int index, EditableZone zone = EditableZone::None);
+  const Script scriptNamed(const char * name);
+  int numberOfScripts();
+  bool addNewScript(DefaultScript defaultScript = DefaultScript::Empty);
+  bool renameScriptAtIndex(int index, const char * newName);
+  void deleteScriptAtIndex(int index);
+  void deleteAllScripts();
 
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
 private:
-  static constexpr char FreeSpaceMarker = 0x01;
-  static constexpr char AutoImportationMarker = 0x02;
-  static constexpr char NoAutoImportationMarker = 0x03;
-  /* We made sure that these chars are not used in ion/include/ion/charset.h */
-  static constexpr int k_historySize = 1024;
   static constexpr char k_defaultScriptName[] = ".py";
-  bool copyName(int position, const char * name = nullptr);
-  int indexOfScript(int i) const;
-  int indexOfScriptName(int i) const;
-  int indexOfScriptContent(int i) const;
-  int lastIndexOfScript(int i) const;
-  int indexOfFirstFreeSpaceMarker() const;
-  int sizeOfFreeSpace() const;
-  void cleanFreeSpace();
-  void moveFreeSpaceAfterScriptContent(int i);
-  void moveFreeSpaceAfterScriptName(int i);
-  void moveFreeSpaceAtPosition(int i);
-  void cleanAndMoveFreeSpaceAfterScriptContent(int i);
-  void cleanAndMoveFreeSpaceAfterScriptName(int i);
+  static constexpr size_t k_scriptDataSize = 1024;
+  int accordionIndexOfScriptAtIndex(int index) const;
+  int accordionIndexOfMarkersOfScriptAtIndex(int index) const;
+  int accordionIndexOfNameOfScriptAtIndex(int index) const;
+  int accordionIndexOfContentOfScriptAtIndex(int index) const;
   bool copyMandelbrotScriptOnFreeSpace();
   bool copyFactorialScriptOnFreeSpace();
   bool copyEmptyScriptOnFreeSpace();
-  int indexBeginningFilename(const char * path);
-  char m_history[k_historySize];
-  /* The m_history variable sequentially stores scripts as text buffers.
-   * Each script is stored as follow:
-   *  - First, a char that says whether the script should be automatically
-   *    imported in the console.
-   *  - Then, the name of the script.
-   *  - Finally, the content of the script.
-   * The free bytes of m_history contain the FreeSpaceMarker. By construction,
-   * there is always at least one free byte, and the free space is always
-   * continuous. */
-  int m_numberOfScripts;
-  int m_lastEditedStringPosition;
+  char m_scriptData[k_scriptDataSize];
+  Accordion m_accordion;
 };
 
 }

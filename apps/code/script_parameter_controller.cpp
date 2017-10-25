@@ -19,7 +19,7 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
 }
 
 void ScriptParameterController::setScript(int i){
-  m_editorController.setScript(m_scriptStore->editableScript(i));
+  m_editorController.setScript(m_scriptStore->scriptAtIndex(i, ScriptStore::EditableZone::Content));
   m_currentScriptIndex = i;
 }
 

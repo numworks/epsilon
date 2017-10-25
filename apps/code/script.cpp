@@ -2,21 +2,35 @@
 
 namespace Code {
 
-Script::Script(char * textBuffer, size_t sizeOfBuffer) :
-  m_bufferSize(sizeOfBuffer),
-  m_textBuffer(textBuffer)
+Script::Script(const char * marker, const char * name, size_t nameBufferSize, const char * content, size_t contentBufferSize) :
+  m_marker(marker),
+  m_name(name),
+  m_nameBufferSize(nameBufferSize),
+  m_content(content),
+  m_contentBufferSize(contentBufferSize)
 {
 }
 
-const char * Script::readOnlyContent() const {
-  return m_textBuffer;
+bool Script::isNull() const {
+  if (m_marker == nullptr) {
+    assert(m_name == nullptr);
+    assert(m_nameBufferSize == 0);
+    assert(m_content == nullptr);
+    assert(m_contentBufferSize == 0);
+    return true;
+  }
+  return false;
 }
 
-char * Script::editableContent() {
-  return m_textBuffer;
-}
-size_t Script::bufferSize() const {
-  return m_bufferSize;
+bool Script::autoimport() const {
+  assert(!isNull());
+  assert(m_marker != nullptr);
+  if (m_marker[0] == AutoImportationMarker) {
+    return true;
+  }
+  assert (m_marker[0] == NoAutoImportationMarker);
+  return false;
 }
 
 }
+

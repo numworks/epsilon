@@ -89,7 +89,7 @@ void MenuController::renameScriptAtIndex(int i) {
 }
 
 void MenuController::deleteScriptAtIndex(int i) {
-  m_scriptStore->deleteScript(i);
+  m_scriptStore->deleteScriptAtIndex(i);
   m_selectableTableView.reloadData();
 }
 
@@ -150,7 +150,7 @@ int MenuController::typeAtLocation(int i, int j) {
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index < m_scriptStore->numberOfScripts()) {
     EvenOddEditableTextCell * myCell =  static_cast<EvenOddEditableTextCell *>(cell);
-    myCell->editableTextCell()->textField()->setText(m_scriptStore->nameOfScript(index));
+    myCell->editableTextCell()->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
     myCell->setEven(index%2 == 0);
   } else {
     assert(index == m_scriptStore->numberOfScripts());
@@ -169,7 +169,7 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 }
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (m_scriptStore->renameScript(m_selectableTableView.selectedRow(), text)) {
+  if (m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), text)) {
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);

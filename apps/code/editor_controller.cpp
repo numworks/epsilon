@@ -9,7 +9,7 @@ EditorController::EditorController() :
 }
 
 void EditorController::setScript(Script script){
-  m_view.setText(script.editableContent(), script.bufferSize());
+  m_view.setText(script.editableContent(), script.contentBufferSize());
 }
 
 bool EditorController::handleEvent(Ion::Events::Event event) {

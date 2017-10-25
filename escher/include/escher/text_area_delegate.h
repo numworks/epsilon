@@ -7,7 +7,7 @@ class TextAreaDelegate {
 public:
   virtual bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) = 0;
   virtual bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) = 0;
-  virtual Toolbox * toolboxForTextArea(TextArea * textFied) = 0;
+  virtual Toolbox * toolboxForTextArea(TextArea * textArea) = 0;
 };
 
 #endif

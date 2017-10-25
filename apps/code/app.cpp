@@ -18,7 +18,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() {
-  m_scriptStore.addFactorialScript();
+  m_scriptStore.addNewScript(ScriptStore::DefaultScript::Factorial);
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -26,7 +26,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_scriptStore.deleteAll();
+  m_scriptStore.deleteAllScripts();
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

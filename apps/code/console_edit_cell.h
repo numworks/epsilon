@@ -23,6 +23,7 @@ public:
 
   // Edit cell
   void setEditing(bool isEditing);
+  void setText(const char * text);
 
 private:
   char m_textBuffer[TextField::maxBufferSize()];

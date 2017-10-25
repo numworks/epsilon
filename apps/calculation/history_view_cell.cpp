@@ -34,16 +34,16 @@ void HistoryViewCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
-  if (inputSize.width() + k_digitHorizontalMargin > width) {
-    m_inputView.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, width - k_digitHorizontalMargin, inputSize.height()));
+  if (inputSize.width() + Metric::HistoryHorizontalMargin > width) {
+    m_inputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, k_digitVerticalMargin, width - Metric::HistoryHorizontalMargin, inputSize.height()));
   } else {
-    m_inputView.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, inputSize.width(), inputSize.height()));
+    m_inputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, k_digitVerticalMargin, inputSize.width(), inputSize.height()));
   }
   KDSize outputSize = m_outputView.minimalSizeForOptimalDisplay();
-  if (outputSize.width() + k_digitHorizontalMargin > width) {
-    m_outputView.setFrame(KDRect(k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - k_digitHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
+  if (outputSize.width() + Metric::HistoryHorizontalMargin > width) {
+    m_outputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - Metric::HistoryHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
   } else {
-    m_outputView.setFrame(KDRect(width - outputSize.width() - k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
+    m_outputView.setFrame(KDRect(width - outputSize.width() - Metric::HistoryHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
   }
 }
 

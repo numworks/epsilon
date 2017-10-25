@@ -60,6 +60,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         m_autoImport = !m_autoImport;
         m_selectableTableView.reloadData();
         m_menuController->reloadConsole();
+        app()->setFirstResponder(&m_selectableTableView);
         return true;
       case 3:
         dismissScriptParameterController();

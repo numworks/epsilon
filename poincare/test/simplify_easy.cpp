@@ -172,6 +172,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2"); // Check for parenthesis
   assert_parsed_expression_simplify_to("cos(0)", "1");
   assert_parsed_expression_simplify_to("cos(P)", "-1");
+  assert_parsed_expression_simplify_to("cos(P*4/7)", "-cos(3P/7)");
   assert_parsed_expression_simplify_to("cos(P*35/29)", "-cos(P*6/29)");
   assert_parsed_expression_simplify_to("cos(-P*35/29)", "-cos(P*6/29)");
   assert_parsed_expression_simplify_to("cos(P*340000)", "1");

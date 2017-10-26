@@ -87,14 +87,13 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
     m->addOperands(newOp, 1);
     replaceOperand(currentTerm, m, true);
   }
-  this->simplify(context, angleUnit);
+  Expression * newExpression = this->simplify(context, angleUnit);
   const Expression * powOperands[2] = {commonDenom, new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
   commonDenom->simplify(context, angleUnit);
-  const Expression * multOperands[2] = {clone(),p};
+  const Expression * multOperands[2] = {newExpression->clone(),p};
   Multiplication * result = new Multiplication(multOperands, 2, false);
-  replaceWith(result, true);
-  return result;
+  return newExpression->replaceWith(result, true);
 }
 
 void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {

@@ -6,6 +6,7 @@
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
+#include <poincare/subtraction.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -90,6 +91,30 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
   if (lookup != nullptr) {
     return e->replaceWith(lookup, true);
   }
+  // arccos(-x) = Pi-arcos(x), arcsin(-x) = -arcsin(x), arctan(-x)=-arctan(x)
+  if (e->operand(0)->sign() < 0 || (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(0)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(0))->isMinusOne())) {
+    Expression * op = const_cast<Expression *>(e->operand(0));
+    if (e->operand(0)->sign() < 0) {
+      Expression * newOp = op->turnIntoPositive(context, angleUnit);
+      newOp->immediateSimplify(context, angleUnit);
+    } else {
+      ((Multiplication *)op)->removeOperand(const_cast<Expression *>(op->operand(0)), true);
+      op->immediateSimplify(context, angleUnit);
+    }
+    if (e->type() == Expression::Type::ArcCosine) {
+      Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(Integer(180)));
+      const Expression * subOperands[2] = {pi, e->clone()};
+      Subtraction * s = new Subtraction(subOperands, false);
+      ((Expression *)s->operand(1))->immediateSimplify(context, angleUnit);
+      return e->replaceWith(s, true)->immediateSimplify(context, angleUnit);
+    } else {
+      const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
+      Multiplication * m = new Multiplication(multOperands, 2, false);
+      ((Expression *)m->operand(1))->immediateSimplify(context, angleUnit);
+      return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
+    }
+  }
+
   return e;
 }
 

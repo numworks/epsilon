@@ -232,6 +232,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(acos(3/2))", "undef");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
+  assert_parsed_expression_simplify_to("acos(cos(4P/7))", "4P/7");
+  assert_parsed_expression_simplify_to("acos(-cos(2))", "P-2");
   assert_parsed_expression_simplify_to("asin(-1/2)", "P*(-6)^(-1)");
   assert_parsed_expression_simplify_to("asin(-1.2)", "undef");
   assert_parsed_expression_simplify_to("asin(sin(2/3))", "2/3");
@@ -239,6 +241,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(asin(3/2))", "sin(asin(3/2))");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
+  assert_parsed_expression_simplify_to("asin(sin(-P/7))", "-P/7");
+  assert_parsed_expression_simplify_to("asin(sin(-R(2)))", "-R(2)");
   assert_parsed_expression_simplify_to("atan(-1)", "P*(-4)^(-1)");
   assert_parsed_expression_simplify_to("atan(-1.2)", "atan(-1.2)");
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
@@ -246,7 +250,9 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
+  assert_parsed_expression_simplify_to("atan(tan(-P/7))", "-P/7");
   assert_parsed_expression_simplify_to("atan(R(3))", "P/3");
+  assert_parsed_expression_simplify_to("atan(tan(-R(2)))", "-R(2)");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

@@ -44,7 +44,7 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
     Rational * r = static_cast<Rational *>((Expression *)e->operand(0)->operand(0));
     int unaryCoefficient = 1; // store 1 or -1
     // Replace argument in [0, Pi/2[
-    if (r->denominator().isLowerThan(r->numerator())) {
+    if (r->denominator().isLowerThan(Integer::Addition(r->numerator(), r->numerator()))) {
       IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
       if (r->denominator().isLowerThan(Integer::Addition(div.remainder, div.remainder))) {
         div.remainder = Integer::Subtraction(r->denominator(), div.remainder);
@@ -64,7 +64,7 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
       return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
     assert(r->sign() > 0);
-    assert(r->numerator().isLowerThan(r->denominator()));
+    assert(!r->denominator().isLowerThan(Integer::Addition(r->numerator(), r->numerator())));
   }
   return e;
 }

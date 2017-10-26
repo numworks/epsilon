@@ -45,6 +45,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(62P/21)/(P*3sin(62P/21))", "-1/(3Ptan(P/21))");
   assert_parsed_expression_simplify_to("sin(62P/21)*P*3/cos(62P/21)", "-3Ptan(P/21)");
   assert_parsed_expression_simplify_to("sin(62P/21)/(P*3cos(62P/21))", "-tan(P/21)/(3P)");
+  assert_parsed_expression_simplify_to("-cos(P/62)ln(3)/(sin(P/62)P)", "-ln(3)/(tan(P/62)P)");
+  assert_parsed_expression_simplify_to("-2cos(P/62)ln(3)/(sin(P/62)P)", "-2ln(3)/(tan(P/62)P)");
   assert_parsed_expression_simplify_to("0000.000000", "0");
   assert_parsed_expression_simplify_to(".000000", "0");
   assert_parsed_expression_simplify_to("0000", "0");
@@ -242,6 +244,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
+  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
+  assert_parsed_expression_simplify_to("atan(R(3))", "P/3");
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

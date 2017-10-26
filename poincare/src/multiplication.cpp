@@ -123,6 +123,22 @@ Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angle
   }
   /* Now, no more node can be an addition or a multiplication */
   factorize(context, angleUnit);
+  // Resolve square root at denominator
+  index = 0;
+  while (index < numberOfOperands()) {
+    Expression * o = (Expression *)operand(index++);
+    if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
+      Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
+      Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
+      const Expression * sqrtOperands[2] = {new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2))};
+      Power * sqrt = new Power(sqrtOperands, false);
+      replaceOperand(o, sqrt, true);
+      sqrt->immediateSimplify(context, angleUnit);
+      const Expression * sq[1] = {new Rational(Integer(1), Integer(p))};
+      addOperands(sq, 1);
+    }
+  }
+  factorize(context, angleUnit);
   return squashUnaryHierarchy();
   }
 

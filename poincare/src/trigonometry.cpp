@@ -41,20 +41,25 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
       return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
   }
-  if (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) {
-    Rational * r = static_cast<Rational *>((Expression *)e->operand(0)->operand(0));
+  if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
+    Rational * r = angleUnit == Expression::AngleUnit::Radian ? static_cast<Rational *>((Expression *)e->operand(0)->operand(0)) : static_cast<Rational *>((Expression *)e->operand(0));
     int unaryCoefficient = 1; // store 1 or -1
-    // Replace argument in [0, Pi/2[
-    if (r->denominator().isLowerThan(Integer::Addition(r->numerator(), r->numerator()))) {
-      IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-      if (r->denominator().isLowerThan(Integer::Addition(div.remainder, div.remainder))) {
-        div.remainder = Integer::Subtraction(r->denominator(), div.remainder);
+    // Replace argument in [0, Pi/2[ or [0, 90[
+    Integer divisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(90));
+    Integer dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(r->numerator(), r->numerator()) : r->numerator();
+    if (divisor.isLowerThan(dividand)) {
+      Integer piDivisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(180));
+      IntegerDivision div = Integer::Division(r->numerator(), piDivisor);
+      dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(div.remainder, div.remainder) : div.remainder;
+      if (divisor.isLowerThan(dividand)) {
+        div.remainder = Integer::Subtraction(piDivisor, div.remainder);
         if (e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent) {
           unaryCoefficient *= -1;
         }
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
-      const_cast<Expression *>(e->operand(0))->replaceOperand(r, newR, true);
+      const Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->operand(0) : e;
+      const_cast<Expression *>(rationalParent)->replaceOperand(r, newR, true);
       const_cast<Expression *>(e->operand(0))->immediateSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
         unaryCoefficient *= -1;
@@ -65,7 +70,7 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
       return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
     assert(r->sign() > 0);
-    assert(!r->denominator().isLowerThan(Integer::Addition(r->numerator(), r->numerator())));
+    assert(!divisor.isLowerThan(dividand));
   }
   return e;
 }
@@ -73,17 +78,18 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
 Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   if (e->type() != Expression::Type::ArcTangent) {
-  float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
-  if (approxOp > 1.0f || approxOp < -1.0f) {
-    return e->replaceWith(new Undefined(), true);
-  }
+    float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
+    if (approxOp > 1.0f || approxOp < -1.0f) {
+      return e->replaceWith(new Undefined(), true);
+    }
   }
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
   if (e->operand(0)->type() == correspondingType) {
     float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
-    if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= M_PI) ||
-        (e->type() == Expression::Type::ArcSine && trigoOp >= -M_PI/2.0f && trigoOp <= M_PI/2.0f) ||
-        (e->type() == Expression::Type::ArcTangent && trigoOp >= -M_PI/2.0f && trigoOp <= M_PI/2.0f)) {
+    float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
+    if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
+        (e->type() == Expression::Type::ArcSine && trigoOp >= -M_PI/2.0f && trigoOp <= pi/2.0f) ||
+        (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
       return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
     }
   }
@@ -119,44 +125,45 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
 }
 
 static_assert('\x89' == Ion::Charset::SmallPi, "Unicode error");
-constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][4] =
-{{"\x89*(-2)^(-1)",    "",                                   "-1",                                 "undef"},
- {"\x89*(-5)*12^(-1)", "",                                   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "-(3^(1/2)+2)"},
- {"\x89*2*(-5)^(-1)",  "",                                   "-(5/8+5^(1/2)/8)^(1/2)",             "-(5+2*5^(1/2))^(1/2)"},
- {"\x89*(-3)*8^(-1)",  "",                                   "-(2+2^(1/2))^(1/2)*2^(-1)",          "-(2+2^(1/2))^(1/2)*(2-2^(1/2))^(-1/2)"},
- {"\x89*(-3)^(-1)",    "",                                   "-3^(1/2)*2^(-1)",                    "-3^(1/2)"},
- {"\x89*(-4)^(-1)",    "",                                   "(-1)*(2^(-1/2))",                    "-1"},
- {"\x89*(-5)^(-1)",    "",                                   "-(5/8-5^(1/2)/8)^(1/2)",             "-(5-2*5^(1/2))^(1/2)"},
- {"\x89*(-6)^(-1)",    "",                                   "-0.5",                               "-3^(-1/2)"},
- {"\x89*(-8)^(-1)",    "",                                   "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "-(2-2^(1/2))^(1/2)*(2+2^(1/2))^(-1/2)"},
- {"\x89*(-12)^(-1)",   "",                                   "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "3^(1/2)-2"},
- {"0",                 "1",                                  "0",                                  "0"},
- {"\x89*12^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "-(3^(1/2)-2)"},
- {"\x89*8^(-1)",       "(2+2^(1/2))^(1/2)*2^(-1)",           "(2-2^(1/2))^(1/2)*2^(-1)",           "(2-2^(1/2))^(1/2)*(2+2^(1/2))^(-1/2)"},
- {"\x89*6^(-1)",       "3^(1/2)*2^(-1)",                     "0.5",                                "3^(-1/2)"},
- {"\x89*5^(-1)",       "(5^(1/2)+1)*4^(-1)",                 "(5/8-5^(1/2)/8)^(1/2)",              "(5-2*5^(1/2))^(1/2)"},
- {"\x89*4^(-1)",       "2^(-1/2)",                            "2^(-1/2)",                          "1"},
- {"\x89*3^(-1)",       "0.5",                                "3^(1/2)*2^(-1)",                     "3^(1/2)"},
- {"\x89*3*8^(-1)",     "(2-2^(1/2))^(1/2)*2^(-1)",           "(2+2^(1/2))^(1/2)*2^(-1)",           "(2+2^(1/2))^(1/2)*(2-2^(1/2))^(-1/2)"},
- {"\x89*2*5^(-1)",     "(5^(1/2)-1)*4^(-1)",                 "(5/8+5^(1/2)/8)^(1/2)",              "(5+2*5^(1/2))^(1/2)"},
- {"\x89*5*12^(-1)",    "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "3^(1/2)+2"},
- {"\x89*2^(-1)",       "0",                                  "1",                                  "undef"},
- {"\x89*7*12^(-1)",    "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "",                                   ""},
- {"\x89*3*5^(-1)",     "(1-5^(1/2))*4^(-1)",                 "",                                   ""},
- {"\x89*5*8^(-1)",     "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "",                                   ""},
- {"\x89*2*3^(-1)",     "-0.5",                               "",                                   ""},
- {"\x89*3*4^(-1)",     "(-1)*(2^(-1/2))",                    "",                                   ""},
- {"\x89*4*5^(-1)",     "(-5^(1/2)-1)*4^(-1)",                "",                                   ""},
- {"\x89*5*6^(-1)",     "-3^(1/2)*2^(-1)",                    "",                                   ""},
- {"\x89*7*8^(-1)",     "-(2+2^(1/2))^(1/2)*2^(-1)",          "",                                   ""},
- {"\x89*11*12^(-1)",   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "",                                   ""},
- {"\x89",              "-1",                                 "0",                                  "0"}};
+constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
+{{"-90",    "\x89*(-2)^(-1)",    "",                                   "-1",                                 "undef"},
+ {"-75",    "\x89*(-5)*12^(-1)", "",                                   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "-(3^(1/2)+2)"},
+ {"-72",    "\x89*2*(-5)^(-1)",  "",                                   "-(5/8+5^(1/2)/8)^(1/2)",             "-(5+2*5^(1/2))^(1/2)"},
+ {"-135/2", "\x89*(-3)*8^(-1)",  "",                                   "-(2+2^(1/2))^(1/2)*2^(-1)",          "-(2+2^(1/2))^(1/2)*(2-2^(1/2))^(-1/2)"},
+ {"-60",    "\x89*(-3)^(-1)",    "",                                   "-3^(1/2)*2^(-1)",                    "-3^(1/2)"},
+ {"-45",    "\x89*(-4)^(-1)",    "",                                   "(-1)*(2^(-1/2))",                    "-1"},
+ {"-36",    "\x89*(-5)^(-1)",    "",                                   "-(5/8-5^(1/2)/8)^(1/2)",             "-(5-2*5^(1/2))^(1/2)"},
+ {"-30",    "\x89*(-6)^(-1)",    "",                                   "-0.5",                               "-3^(-1/2)"},
+ {"-45/2",  "\x89*(-8)^(-1)",    "",                                   "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "-(2-2^(1/2))^(1/2)*(2+2^(1/2))^(-1/2)"},
+ {"-15",    "\x89*(-12)^(-1)",   "",                                   "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "3^(1/2)-2"},
+ {"0",      "0",                 "1",                                  "0",                                  "0"},
+ {"15",     "\x89*12^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "-(3^(1/2)-2)"},
+ {"45/2",   "\x89*8^(-1)",       "(2+2^(1/2))^(1/2)*2^(-1)",           "(2-2^(1/2))^(1/2)*2^(-1)",           "(2-2^(1/2))^(1/2)*(2+2^(1/2))^(-1/2)"},
+ {"30",     "\x89*6^(-1)",       "3^(1/2)*2^(-1)",                     "0.5",                                "3^(-1/2)"},
+ {"36",     "\x89*5^(-1)",       "(5^(1/2)+1)*4^(-1)",                 "(5/8-5^(1/2)/8)^(1/2)",              "(5-2*5^(1/2))^(1/2)"},
+ {"45",     "\x89*4^(-1)",       "2^(-1/2)",                            "2^(-1/2)",                          "1"},
+ {"60",     "\x89*3^(-1)",       "0.5",                                "3^(1/2)*2^(-1)",                     "3^(1/2)"},
+ {"135/2",  "\x89*3*8^(-1)",     "(2-2^(1/2))^(1/2)*2^(-1)",           "(2+2^(1/2))^(1/2)*2^(-1)",           "(2+2^(1/2))^(1/2)*(2-2^(1/2))^(-1/2)"},
+ {"72",     "\x89*2*5^(-1)",     "(5^(1/2)-1)*4^(-1)",                 "(5/8+5^(1/2)/8)^(1/2)",              "(5+2*5^(1/2))^(1/2)"},
+ {"75",     "\x89*5*12^(-1)",    "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "3^(1/2)+2"},
+ {"90",     "\x89*2^(-1)",       "0",                                  "1",                                  "undef"},
+ {"105",    "\x89*7*12^(-1)",    "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "",                                   ""},
+ {"108",    "\x89*3*5^(-1)",     "(1-5^(1/2))*4^(-1)",                 "",                                   ""},
+ {"225/2",  "\x89*5*8^(-1)",     "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "",                                   ""},
+ {"120",    "\x89*2*3^(-1)",     "-0.5",                               "",                                   ""},
+ {"135",    "\x89*3*4^(-1)",     "(-1)*(2^(-1/2))",                    "",                                   ""},
+ {"144",    "\x89*4*5^(-1)",     "(-5^(1/2)-1)*4^(-1)",                "",                                   ""},
+ {"150",    "\x89*5*6^(-1)",     "-3^(1/2)*2^(-1)",                    "",                                   ""},
+ {"315/2",  "\x89*7*8^(-1)",     "-(2+2^(1/2))^(1/2)*2^(-1)",          "",                                   ""},
+ {"165",    "\x89*11*12^(-1)",   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "",                                   ""},
+ {"180",    "\x89",              "-1",                                 "0",                                  "0"}};
 
 Expression * Trigonometry::table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit) {
   assert(type == Expression::Type::Sine || type == Expression::Type::Cosine || type == Expression::Type::Tangent || type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent);
-  int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 1 : (type == Expression::Type::Sine || type == Expression::Type::ArcSine ? 2 : 3);
-  int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? trigonometricFunctionIndex : 0;
-  int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? 0 : trigonometricFunctionIndex;
+  int angleUnitIndex = angleUnit == Expression::AngleUnit::Radian ? 1 : 0;
+  int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 2 : (type == Expression::Type::Sine || type == Expression::Type::ArcSine ? 3 : 4);
+  int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? trigonometricFunctionIndex : angleUnitIndex;
+  int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? angleUnitIndex : trigonometricFunctionIndex;
   for (int i = 0; i < k_numberOfEntries; i++) {
     Expression * input = Expression::parse(cheatTable[i][inputIndex]);
     if (input == nullptr) {

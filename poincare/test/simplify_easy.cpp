@@ -11,18 +11,18 @@ using namespace std;
 
 using namespace Poincare;
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Expression::AngleUnit angleUnit = Expression::AngleUnit::Radian) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Simplify: " << expression << "----"  << endl;
 #endif
-  Expression::simplifyAndBeautify(&e, globalContext, Expression::AngleUnit::Radian);
+  Expression::simplifyAndBeautify(&e, globalContext, angleUnit);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
 #endif
   Expression * f = parse_expression(simplifiedExpression);
-  Expression::simplifyAndBeautify(&f, globalContext, Expression::AngleUnit::Radian);
+  Expression::simplifyAndBeautify(&f, globalContext, angleUnit);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- compared to: " << simplifiedExpression << "----"  << endl;
   print_expression(f, 0);
@@ -253,6 +253,84 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("atan(tan(-P/7))", "-P/7");
   assert_parsed_expression_simplify_to("atan(R(3))", "P/3");
   assert_parsed_expression_simplify_to("atan(tan(-R(2)))", "-R(2)");
+
+  assert_parsed_expression_simplify_to("cos(0)", "1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(180)", "-1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(720/7)", "-cos(540/7)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(6300/29)", "-cos(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(-6300/29)", "-cos(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(61200000)", "1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(-61200180)", "-1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(-180*R(2))", "cos(180*R(2))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(39330)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(15)", "(R(6)+R(2))/4", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(-15)", "(R(6)+R(2))/4", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(-765/2)", "R(R(2)+2)/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(7380/6)", "-R(3)/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(180045)", "1/R(2)", Expression::AngleUnit::Degree); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("cos(-60)", "1/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(7380/5)", "(5^(1/2)+1)*4^(-1)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(112.5)", "-R(2-R(2))/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(0)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(6300/29)", "-sin(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(-6300/29)", "sin(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(61200000)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(61200180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(-61200180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(15)", "(R(6)-R(2))/4", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(-15)", "(R(2)-R(6))/4", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(-180*R(2))", "-sin(180*R(2))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(39330)", "1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(-765/2)", "-R(-R(2)+2)/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(1230)", "1/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(180045)", "1/R(2)", Expression::AngleUnit::Degree); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("sin(-60)", "-R(3)/2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(612)", "-R(5/8+R(5)/8)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(36)", "R(5/8-R(5)/8)", Expression::AngleUnit::Degree);
+
+  assert_parsed_expression_simplify_to("tan(0)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(6300/29)", "tan(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-6300/29)", "-tan(1080/29)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(61200000)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(61200180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-61200180)", "0", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(15)", "2-R(3)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-15)", "R(3)-2", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-180*R(2))", "-tan(180*R(2))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(39330)", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-382.5)", "-R(2-R(2))/R(2+R(2))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(1230)", "-1/R(3)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(180045)", "1", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-60)", "-R(3)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(-1/2)", "120", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(-1.2)", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(cos(190))", "acos(cos(190))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(cos(75))", "75", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(acos(190))", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(acos(75))", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(cos(12))", "12", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(cos(720/7))", "720/7", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(-1/2)", "-30", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(-1.2)", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(sin(75))", "75", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(asin(75))", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(asin(190))", "sin(asin(190))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(sin(32))", "32", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(sin(400))", "asin(sin(400))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(sin(-180/7))", "-180/7", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(-1)", "-45", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(-1.2)", "atan(-1.2)", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(tan(-45))", "-45", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(atan(120))", "120", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(atan(2293))", "2293", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(tan(2293))", "-47", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(tan(1808))", "8", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(R(3))", "60", Expression::AngleUnit::Degree);
+
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

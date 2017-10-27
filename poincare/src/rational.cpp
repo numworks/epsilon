@@ -7,6 +7,7 @@ extern "C" {
 }
 #include <poincare/arithmetic.h>
 #include <poincare/complex.h>
+#include <poincare/opposite.h>
 #include "layout/string_layout.h"
 #include "layout/fraction_layout.h"
 
@@ -67,6 +68,16 @@ int Rational::sign() const {
     return -1;
   }
   return 1;
+}
+
+Expression * Rational::immediateBeautify(Context & context, AngleUnit angleUnit) {
+  if (m_numerator.isNegative()) {
+    m_numerator.setNegative(false);
+    const Expression * opOperand[1] = {clone()};
+    Opposite * o = new Opposite(opOperand, true);
+    return replaceWith(o, true);
+  }
+  return this;
 }
 
 // Basic operations

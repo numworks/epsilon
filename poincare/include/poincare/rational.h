@@ -26,6 +26,7 @@ public:
   Expression * clone() const override;
   int sign() const override;
   Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { m_numerator.setNegative(false); return this; }
+  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }

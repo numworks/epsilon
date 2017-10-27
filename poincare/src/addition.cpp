@@ -135,9 +135,13 @@ Expression * Addition::immediateBeautify(Context & context, AngleUnit angleUnit)
   int index = 0;
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...
-    if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
+    if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && operand(index)->operand(0)->sign() < 0) {
       Multiplication * m = static_cast<Multiplication *>((Expression *)operand(index));
-      m->removeOperand(m->operand(0), true);
+      if (static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
+        m->removeOperand(m->operand(0), true);
+      } else {
+        const_cast<Expression *>(operand(index)->operand(0))->turnIntoPositive(context, angleUnit);
+      }
       const Expression * subtractant = m->squashUnaryHierarchy();
       if (index == 0) {
         const Expression * opOperand[1] = {subtractant};

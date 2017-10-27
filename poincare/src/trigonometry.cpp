@@ -75,6 +75,14 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
   return e;
 }
 
+bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
+  assert(Expression::Type::Power < Expression::Type::Sine);
+  if (e->type() == Expression::Type::Multiplication && e->operand(1)->type() == Expression::Type::Sine && e->operand(0)->type() == Expression::Type::Power && e->operand(0)->operand(0)->type() == Expression::Type::Cosine && e->operand(0)->operand(1)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(1))->isMinusOne()) {
+    return true;
+  }
+  return false;
+}
+
 Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   if (e->type() != Expression::Type::ArcTangent) {
@@ -84,13 +92,20 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
     }
   }
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
+  float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
   if (e->operand(0)->type() == correspondingType) {
     float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
-    float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
     if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e->type() == Expression::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
       return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
+    }
+  }
+  // Special case for arctan(sin(x)/cos(x))
+  if (e->type() == Expression::Type::ArcTangent && ExpressionIsEquivalentToTangent(e->operand(0))) {
+    float trigoOp = e->operand(0)->operand(1)->operand(0)->approximate<float>(context, angleUnit);
+    if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
+      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(1)->operand(0)), true);
     }
   }
   Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);

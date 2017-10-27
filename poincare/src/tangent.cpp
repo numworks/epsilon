@@ -23,7 +23,19 @@ Expression * Tangent::clone() const {
 }
 
 Expression * Tangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  return Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
+  Expression * newExpression = Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
+  if (newExpression->type() == Type::Tangent) {
+    const Expression * op[1] = {newExpression->operand(0)};
+    Sine * s = new Sine(op, true);
+    Cosine * c = new Cosine(op, true);
+    const Expression * divisionOperands[2] = {s, c};
+    Division * d = new Division(divisionOperands, false);
+    c->immediateSimplify(context, angleUnit);
+    s->immediateSimplify(context, angleUnit);
+    newExpression = newExpression->replaceWith(d, true);
+    return newExpression->simplify(context, angleUnit);
+  }
+  return newExpression;
 }
 
 template<typename T>

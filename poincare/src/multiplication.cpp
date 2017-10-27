@@ -123,24 +123,87 @@ Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angle
   }
   /* Now, no more node can be an addition or a multiplication */
   factorize(context, angleUnit);
-  // Resolve square root at denominator
-  index = 0;
-  while (index < numberOfOperands()) {
-    Expression * o = (Expression *)operand(index++);
+  if (resolveSquareRootAtDenominator(context, angleUnit)) {
+    factorize(context, angleUnit);
+    for (int i=0; i<numberOfOperands(); i++) {
+      if (operand(i)->type() == Type::Addition) {
+        return distributeOnChildAtIndex(i, context, angleUnit);
+      }
+    }
+  }
+  return squashUnaryHierarchy();
+}
+
+bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
+  bool change = false;
+  for (int index = 0; index < numberOfOperands(); index++) {
+    Expression * o = (Expression *)operand(index);
     if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
+      change = true;
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
       Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
       const Expression * sqrtOperands[2] = {new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2))};
       Power * sqrt = new Power(sqrtOperands, false);
       replaceOperand(o, sqrt, true);
       sqrt->immediateSimplify(context, angleUnit);
-      const Expression * sq[1] = {new Rational(Integer(1), Integer(p))};
-      addOperands(sq, 1);
+      const Expression * newOp[1] = {new Rational(Integer(1), Integer(p))};
+      addOperands(newOp, 1);
+    } else if (o->type() == Type::Power && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusOne() && o->operand(0)->type() == Type::Addition && o->operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(o->operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(o->operand(0)->operand(1))) {
+      change = true;
+      const Rational * f1 = RationalFactorInExpression(o->operand(0)->operand(0));
+      const Rational * f2 = RationalFactorInExpression(o->operand(0)->operand(1));
+      const Rational * r1 = RadicandInExpression(o->operand(0)->operand(0));
+      const Rational * r2 = RadicandInExpression(o->operand(0)->operand(1));
+      Integer n1 = f1 != nullptr ? f1->numerator() : Integer(1);
+      Integer d1 = f1 != nullptr ? f1->denominator() : Integer(1);
+      Integer p1 = r1 != nullptr ? r1->numerator() : Integer(1);
+      Integer q1 = r1 != nullptr ? r1->denominator() : Integer(1);
+      Integer n2 = f2 != nullptr ? f2->numerator() : Integer(1);
+      Integer d2 = f2 != nullptr ? f2->denominator() : Integer(1);
+      Integer p2 = r2 != nullptr ? r2->numerator() : Integer(1);
+      Integer q2 = r2 != nullptr ? r2->denominator() : Integer(1);
+      // Compute n1^2*d2^2*p1*q2-n2^2*d1^2*p2*q1
+      Integer denominator = Integer::Subtraction(
+          Integer::Multiplication(
+            Integer::Multiplication(
+              Integer::Power(n1, Integer(2)),
+              Integer::Power(d2, Integer(2))),
+            Integer::Multiplication(p1, q2)),
+          Integer::Multiplication(
+            Integer::Multiplication(
+              Integer::Power(n2, Integer(2)),
+              Integer::Power(d1, Integer(2))),
+            Integer::Multiplication(p2, q1)));
+      const Expression * sqrt1Operands[2] = {new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2))};
+      Power * sqrt1 = new Power(sqrt1Operands, false);
+      const Expression * sqrt2Operands[2] = {new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2))};
+      Power * sqrt2 = new Power(sqrt2Operands, false);
+      Integer factor1 = Integer::Multiplication(
+          Integer::Multiplication(n1, d1),
+          Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
+      const Expression * mult1Operands[2] = {new Rational(factor1), sqrt1};
+      Multiplication * m1 = new Multiplication(mult1Operands, 2, false);
+      Integer factor2 = Integer::Multiplication(
+          Integer::Multiplication(n2, d2),
+          Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
+      const Expression * mult2Operands[2] = {new Rational(factor2), sqrt2};
+      Multiplication * m2 = new Multiplication(mult2Operands, 2, false);
+      const Expression * subOperands[2] = {m1, m2};
+      if (denominator.isNegative()) {
+        denominator.setNegative(false);
+        const Expression * temp = subOperands[0];
+        subOperands[0] = subOperands[1];
+        subOperands[1] = temp;
+      }
+      Subtraction * s = new Subtraction(subOperands, false);
+      replaceOperand(o, s, true);
+      s->simplify(context, angleUnit);
+      const Expression * newOp[1] = {new Rational(Integer(1), denominator)};
+      addOperands(newOp, 1);
     }
   }
-  factorize(context, angleUnit);
-  return squashUnaryHierarchy();
-  }
+  return change;
+}
 
 void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
   sortChildren();
@@ -210,6 +273,46 @@ Expression * Multiplication::distributeOnChildAtIndex(int i, Context & context, 
 const Expression * Multiplication::CreateExponent(Expression * e) {
   Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(Integer(1));
   return n;
+}
+
+bool Multiplication::TermIsARationalSquareRootOrRational(const Expression * e) {
+  if (e->type() == Type::Rational) {
+    return true;
+  }
+  if (e->type() == Type::Power && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1))->isHalf()) {
+    return true;
+  }
+  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Power && e->operand(1)->operand(0)->type() == Type::Rational && e->operand(1)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1)->operand(1))->isHalf()) {
+  return true;
+  }
+  return false;
+}
+
+const Rational * Multiplication::RadicandInExpression(const Expression * e) {
+  if (e->type() == Type::Rational) {
+    return nullptr;
+  } else if (e->type() == Type::Power) {
+    assert(e->type() == Type::Power);
+    assert(e->operand(0)->type() == Type::Rational);
+    return static_cast<const Rational *>(e->operand(0));
+  } else {
+    assert(e->type() == Type::Multiplication);
+    assert(e->operand(1)->type() == Type::Power);
+    assert(e->operand(1)->operand(0)->type() == Type::Rational);
+    return static_cast<const Rational *>(e->operand(1)->operand(0));
+  }
+}
+
+const Rational * Multiplication::RationalFactorInExpression(const Expression * e) {
+  if (e->type() == Type::Rational) {
+    return static_cast<const Rational *>(e);
+  } else if (e->type() == Type::Power) {
+    return nullptr;
+  } else {
+    assert(e->type() == Type::Multiplication);
+    assert(e->operand(0)->type() == Type::Rational);
+    return static_cast<const Rational *>(e->operand(0));
+  }
 }
 
 bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {

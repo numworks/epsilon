@@ -13,15 +13,19 @@ public:
     TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 
-  void setDelegate(TextAreaDelegate * delegate);
+  void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   void setText(char * textBuffer, size_t textBufferSize);
-
+  void insertText(const char * textBuffer) { m_contentView.insertText(textBuffer); }
+  void removeChar() { m_contentView.removeChar(); }
+  const char * text() const { return m_contentView.text(); }
+  int cursorLocation() const { return m_contentView.cursorLocation(); }
 private:
   class Text {
   public:
     Text(char * buffer, size_t bufferSize);
     void setText(char * buffer, size_t bufferSize);
+    const char * text() const { return const_cast<const char *>(m_buffer); }
 
     class Line {
     public:
@@ -87,6 +91,8 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
+    const char * text() const;
+    int cursorLocation() const { return m_cursorIndex; }
     void insertText(const char * text);
     void moveCursorIndex(int deltaX);
     void moveCursorGeo(int deltaX, int deltaY);

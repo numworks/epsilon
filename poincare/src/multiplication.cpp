@@ -445,6 +445,17 @@ Expression * Multiplication::createDenominator(Context & context, AngleUnit angl
 
 Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit angleUnit) {
   Multiplication * m = new Multiplication();
+  // Special case for rational p/q: if q != 1, q should be at denominator
+  if (operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->denominator().isOne()) {
+    Rational * r = static_cast<Rational *>((Expression *)operand(0));
+    const Expression * q[1] = {new Rational(r->denominator())};
+    m->addOperands(q, 1);
+    if (r->numerator().isOne()) {
+      removeOperand(r, true);
+    } else {
+      replaceOperand(r, new Rational(r->numerator()), true);
+    }
+  }
   int i = 0;
   while (i < numberOfOperands()) {
     if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {

@@ -88,7 +88,7 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
     float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
     float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
     if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
-        (e->type() == Expression::Type::ArcSine && trigoOp >= -M_PI/2.0f && trigoOp <= pi/2.0f) ||
+        (e->type() == Expression::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
       return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
     }

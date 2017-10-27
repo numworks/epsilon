@@ -84,6 +84,14 @@ const char * Calculation::outputText() {
   return m_exactOutputText;
 }
 
+const char * Calculation::exactOutputText() {
+  return m_exactOutputText;
+}
+
+const char * Calculation::approximateOutputText() {
+  return m_approximateOutputText;
+}
+
 Expression * Calculation::input() {
   if (m_input == nullptr) {
     m_input = Expression::parse(m_inputText);
@@ -197,6 +205,9 @@ ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
 }
 
 bool Calculation::shouldApproximateOutput() {
+  if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
+    return true;
+  }
   return input()->recursivelyMatches([](const Expression * e) {
         return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e);
       });

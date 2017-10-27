@@ -24,6 +24,8 @@ constexpr static char deviationEnglishDefinition[] = {Ion::Charset::SmallSigma, 
 constexpr static char deviationSpanishDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','a','c','i','o','n',' ','t','i','p','i','c','a',0};
 constexpr static char deviationGermanDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'S', 't', 'a', 'n', 'd', 'a', 'r', 'd', 'a', 'b', 'w', 'e', 'i', 'c', 'h', 'u', 'n', 'g', 0};
 constexpr static char deviationPortugueseDefinition[] = {Ion::Charset::SmallSigma, ' ', ':', ' ', 'D', 'e','s','v','i','o',' ','p','a','d','r','a','o', 0};
+constexpr static char approximateEqual[] = {Ion::Charset::ApproximateEqual, 0};
+
 
 const char * messages[240][5] {
   {"Warning", "Attention", "Cuidado", "Achtung", "Atencao"},
@@ -317,8 +319,9 @@ constexpr static char leftIntegralFirstLegend[] = {'P', '(', 'X', Ion::Charset::
 constexpr static char finiteIntegralLegend[] = {Ion::Charset::LessEqual, 'X', Ion::Charset::LessEqual, 0};
 
 
-const char * universalMessages[242] {
+const char * universalMessages[243] {
   "",
+  approximateEqual,
   "Python",
   "PYTHON (BETA)",
   "alpha",

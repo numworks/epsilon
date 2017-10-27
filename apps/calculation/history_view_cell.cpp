@@ -10,9 +10,23 @@ namespace Calculation {
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_inputView(this),
-  m_outputView(this),
+  m_scrollableOutputView(this),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
 {
+}
+
+OutputExpressionsView * HistoryViewCell::outputView() {
+  return m_scrollableOutputView.outputView();
+
+}
+void HistoryViewCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
+  m_scrollableOutputView.outputView()->setEven(even);
+}
+
+void HistoryViewCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
+  m_scrollableOutputView.outputView()->setHighlighted(highlight);
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
@@ -26,7 +40,7 @@ int HistoryViewCell::numberOfSubviews() const {
 }
 
 View * HistoryViewCell::subviewAtIndex(int index) {
-  View * views[2] = {&m_inputView, &m_outputView};
+  View * views[2] = {&m_inputView, &m_scrollableOutputView};
   return views[index];
 }
 
@@ -39,41 +53,44 @@ void HistoryViewCell::layoutSubviews() {
   } else {
     m_inputView.setFrame(KDRect(k_digitHorizontalMargin, k_digitVerticalMargin, inputSize.width(), inputSize.height()));
   }
-  KDSize outputSize = m_outputView.minimalSizeForOptimalDisplay();
+  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   if (outputSize.width() + k_digitHorizontalMargin > width) {
-    m_outputView.setFrame(KDRect(k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - k_digitHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
+    m_scrollableOutputView.setFrame(KDRect(k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - k_digitHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
   } else {
-    m_outputView.setFrame(KDRect(width - outputSize.width() - k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
+    m_scrollableOutputView.setFrame(KDRect(width - outputSize.width() - k_digitHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
   }
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_inputView.setExpression(calculation->inputLayout());
   App * calculationApp = (App *)app();
-  m_outputView.setExpression(calculation->outputLayout(calculationApp->localContext()));
+  m_scrollableOutputView.outputView()->setExpressionAtIndex(calculation->approximateOutputLayout(calculationApp->localContext()), 0);
+  if (calculation->shouldApproximateOutput()) {
+    m_scrollableOutputView.outputView()->setExpressionAtIndex(nullptr, 1);
+  } else {
+    m_scrollableOutputView.outputView()->setExpressionAtIndex(calculation->exactOutputLayout(calculationApp->localContext()), 1);
+  }
 }
 
 void HistoryViewCell::reloadCell() {
-  m_outputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.outputView()->reloadCell();
   m_inputView.setBackgroundColor(backgroundColor());
   if (isHighlighted()) {
-    if (m_selectedSubviewType == SubviewType::Output) {
-      m_outputView.setBackgroundColor(Palette::Select);
-    } else {
+    if (m_selectedSubviewType == SubviewType::Input) {
       m_inputView.setBackgroundColor(Palette::Select);
     }
   }
   layoutSubviews();
   EvenOddCell::reloadCell();
   m_inputView.reloadScroll();
-  m_outputView.reloadScroll();
+  m_scrollableOutputView.reloadScroll();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
   if (m_selectedSubviewType == SubviewType::Input) {
     app()->setFirstResponder(&m_inputView);
   } else {
-    app()->setFirstResponder(&m_outputView);
+    app()->setFirstResponder(&m_scrollableOutputView);
   }
 }
 
@@ -83,6 +100,7 @@ HistoryViewCell::SubviewType HistoryViewCell::selectedSubviewType() {
 
 void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subviewType) {
   m_selectedSubviewType = subviewType;
+  m_scrollableOutputView.outputView()->setHighlighted(m_selectedSubviewType == SubviewType::Output);
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {

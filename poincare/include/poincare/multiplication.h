@@ -40,6 +40,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
   void factorize(Context & context, AngleUnit angleUnit);
+  bool resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   Expression * distributeOnChildAtIndex(int index, Context & context, AngleUnit angleUnit);
@@ -47,6 +48,9 @@ private:
   static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
   static bool TermHasIntegerExponent(const Expression * e);
+  static bool TermIsARationalSquareRootOrRational(const Expression * e);
+  static const Rational * RadicandInExpression(const Expression * e);
+  static const Rational * RationalFactorInExpression(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   bool isUselessOperand(const Rational * r) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1

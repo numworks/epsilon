@@ -31,6 +31,7 @@ public:
   bool isZero() const { return m_numerator.isZero(); }
   bool isOne() const { return m_numerator.isOne() && m_denominator.isOne(); }
   bool isMinusOne() const { return m_numerator.isMinusOne() && m_denominator.isOne(); }
+  bool isHalf() const { return m_numerator.isOne() && m_denominator.isTwo(); }
   bool isMinusHalf() const { return m_numerator.isMinusOne() && m_denominator.isTwo(); }
 
   // Arithmetic

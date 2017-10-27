@@ -348,6 +348,20 @@ bool Multiplication::isUselessOperand(const Rational * r) {
 }
 
 Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angleUnit) {
+  // -1*A -> -A or (-n)*A -> -n*A
+  if (operand(0)->type() == Type::Rational && operand(0)->sign() < 0) {
+    if (static_cast<const Rational *>(operand(0))->isMinusOne()) {
+      removeOperand((Expression *)operand(0), true);
+    } else {
+      const_cast<Expression *>(operand(0))->turnIntoPositive(context, angleUnit);
+    }
+    Expression * e = squashUnaryHierarchy();
+    const Expression * oppOperand[1] = {e->clone()};
+    Opposite * o = new Opposite(oppOperand, false);
+    e->replaceWith(o, true);
+    const_cast<Expression *>(o->operand(0))->immediateBeautify(context, angleUnit);
+    return o;
+  }
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   Expression * e = mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
@@ -408,15 +422,6 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
       replaceWith(d, true);
       return d->immediateBeautify(context, angleUnit);
     }
-  }
-  // -1*A -> -A
-  if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isMinusOne()) {
-    removeOperand((Expression *)operand(0), true);
-    Expression * e = squashUnaryHierarchy();
-    const Expression * oppOperand[1] = {e->clone()};
-    Opposite * o = new Opposite(oppOperand, false);
-    e->replaceWith(o, true);
-    return o;
   }
   return this;
 }

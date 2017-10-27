@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "calculation.h"
 #include "scrollable_expression_view.h"
+#include "scrollable_output_expressions_view.h"
 
 namespace Calculation {
 
@@ -15,6 +16,8 @@ public:
   };
   HistoryViewCell(Responder * parentResponder);
   void reloadCell() override;
+  void setEven(bool even) override;
+  void setHighlighted(bool highlight) override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
@@ -26,10 +29,11 @@ public:
   constexpr static KDCoordinate k_digitVerticalMargin = 5;
   SubviewType selectedSubviewType();
   void setSelectedSubviewType(HistoryViewCell::SubviewType subviewType);
+  OutputExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   ScrollableExpressionView m_inputView;
-  ScrollableExpressionView m_outputView;
+  ScrollableOutputExpressionsView m_scrollableOutputView;
   SubviewType m_selectedSubviewType;
 };
 

@@ -24,6 +24,7 @@ enum Charset : char {
   GreaterEqual = (char)146,
   MultiplicationSign = (char)147,
   MiddleDot = (char)148,
+  ApproximateEqual = (char)149
 };
 
 }

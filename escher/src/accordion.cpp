@@ -20,7 +20,6 @@ int Accordion::numberOfBuffers() {
 const char * Accordion::bufferAtIndex(int index) {
   assert(index >= 0 && index < numberOfBuffers());
   cleanFreeSpace();
-  moveFreeSpaceAtEndOfHistory();
   int startOfBuffer = startOfBufferAtIndex(index);
   return &m_history[startOfBuffer];
 }

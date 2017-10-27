@@ -223,6 +223,10 @@ void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBuff
   m_cursorIndex = 0;
 }
 
+const char * TextArea::TextArea::ContentView::text() const {
+  return m_text.text();
+}
+
 void TextArea::TextArea::ContentView::insertText(const char * text) {
   int textSize = strlen(text);
   if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
@@ -321,13 +325,9 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   assert(textBufferSize < INT_MAX/2);
 }
 
-void TextArea::setText(char * textBuffer, size_t textBufferSize) {
-  m_contentView.setText(textBuffer, textBufferSize);
-  m_contentView.moveCursorGeo(0, 0);
-}
-
 bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left) {
+  if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
+  } else if (event == Ion::Events::Left) {
     m_contentView.moveCursorIndex(-1);
   } else if (event == Ion::Events::Right) {
     m_contentView.moveCursorIndex(1);
@@ -340,11 +340,11 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::End) {
      m_contentView.moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
-    m_contentView.removeChar();
+    removeChar();
   } else if (event.hasText()) {
-    m_contentView.insertText(event.text());
+    insertText(event.text());
   } else if (event == Ion::Events::EXE) {
-    m_contentView.insertText("\n");
+    insertText("\n");
   } else if (event == Ion::Events::Clear) {
     if (!m_contentView.removeEndOfLine()) {
       m_contentView.removeStartOfLine();
@@ -362,4 +362,9 @@ bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
    * scroll view corrects the size of the scroll view only once. */
   scrollToContentRect(m_contentView.cursorRect(), true);
   return true;
+}
+
+void TextArea::setText(char * textBuffer, size_t textBufferSize) {
+  m_contentView.setText(textBuffer, textBufferSize);
+  m_contentView.moveCursorGeo(0, 0);
 }

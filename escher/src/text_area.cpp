@@ -368,3 +368,7 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
   m_contentView.setText(textBuffer, textBufferSize);
   m_contentView.moveCursorGeo(0, 0);
 }
+
+void TextArea::moveCursor(int deltaX) {
+  m_contentView.moveCursorIndex(deltaX);
+}

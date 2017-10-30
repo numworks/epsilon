@@ -2,6 +2,7 @@
 #define CODE_APP_H
 
 #include <escher.h>
+#include <ion/events.h>
 #include "../shared/message_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"

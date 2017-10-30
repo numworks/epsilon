@@ -14,6 +14,7 @@ extern "C" {
 #include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
 #include <poincare/division.h>
+#include <poincare/simplification_root.h>
 #include <ion.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
@@ -428,16 +429,23 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
 
 Expression * Multiplication::createDenominator(Context & context, AngleUnit angleUnit) {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  Expression * e = mergeNegativePower(context, angleUnit);
+  // WARNING: we do not want to change the expression but to create a new one.
+  SimplificationRoot root(clone());
+  Expression * e = ((Multiplication *)root.operand(0))->mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
-    return static_cast<Power *>(e)->createDenominator(context, angleUnit);
+    Expression * result = static_cast<Power *>(e)->createDenominator(context, angleUnit);
+    delete e;
+    return result;
   }
-  assert(e == this);
-  for (int index = 0; index < numberOfOperands(); index++) {
+  assert(e->type() == Type::Multiplication);
+  for (int index = 0; index < e->numberOfOperands(); index++) {
     // a*b^(-1)*... -> a*.../b
-    if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
-      Power * p = static_cast<Power *>((Expression *)operand(index));
-      return p->operand(0)->clone();
+    if (e->operand(index)->type() == Type::Power && e->operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(index)->operand(1))->isMinusOne()) {
+      Power * p = static_cast<Power *>((Expression *)e->operand(index));
+      Expression * result = const_cast<Expression *>(p->operand(0));
+      p->detachOperand((result));
+      delete e;
+      return result;
     }
   }
   return nullptr;

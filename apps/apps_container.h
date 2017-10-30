@@ -21,6 +21,8 @@
 #include "picview/picview_app.h"
 #endif
 
+#include <ion/events.h>
+
 class AppsContainer : public Container {
 public:
   AppsContainer();
@@ -41,7 +43,7 @@ public:
   void refreshPreferences();
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
-  bool updateAlphaLock();
+  void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::UpdateController * updatePopUpController();
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
@@ -51,6 +53,7 @@ private:
   Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
+  bool updateAlphaLock();
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
 #if USE_PIC_VIEW_APP

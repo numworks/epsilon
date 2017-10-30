@@ -1,7 +1,9 @@
 #include "menu_controller.h"
 #include "../i18n.h"
+#include "../apps_container.h"
 #include <assert.h>
 #include <escher/metric.h>
+#include <ion/events.h>
 
 namespace Code {
 
@@ -95,6 +97,7 @@ void MenuController::renameScriptAtIndex(int i) {
   myCell->editableTextCell()->textField()->setText(previousText);
   myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
   app()->setFirstResponder(myCell);
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
 }
 
 void MenuController::deleteScriptAtIndex(int i) {
@@ -195,6 +198,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     m_selectableTableView.selectedCell()->setHighlighted(true);
     reloadConsole();
     app()->setFirstResponder(&m_selectableTableView);
+    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else {
     // TODO: add pop up to explain to the user that the name is too long.
@@ -205,6 +209,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   app()->setFirstResponder(&m_selectableTableView);
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

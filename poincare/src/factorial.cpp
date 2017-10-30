@@ -28,7 +28,7 @@ Expression * Factorial::clone() const {
 
 Expression * Factorial::immediateSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>((Expression *)operand(0));
+    Rational * r = static_cast<Rational *>(editableOperand(0));
     if (!r->denominator().isOne()) {
       return replaceWith(new Undefined(), true);
     }
@@ -36,7 +36,7 @@ Expression * Factorial::immediateSimplify(Context& context, AngleUnit angleUnit)
     return replaceWith(fact, true);
   }
   if (operand(0)->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>((Expression *)operand(0));
+    Symbol * s = static_cast<Symbol *>(editableOperand(0));
     if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
       return replaceWith(new Undefined(), true);
     }

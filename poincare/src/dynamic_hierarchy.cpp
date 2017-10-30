@@ -154,7 +154,7 @@ void DynamicHierarchy::sortChildren() {
 Expression * DynamicHierarchy::squashUnaryHierarchy() {
   if (numberOfOperands() == 1) {
     assert(parent() != nullptr);
-    Expression * o = const_cast<Expression *>(operand(0));
+    Expression * o = editableOperand(0);
     replaceWith(o, true);
     return o;
   }

@@ -29,7 +29,7 @@ Expression * Addition::immediateSimplify(Context& context, AngleUnit angleUnit) 
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
   int index = 0;
   while (index < numberOfOperands()) {
-    Expression * o = (Expression *)operand(index++);
+    Expression * o = editableOperand(index++);
     if (o->type() == Type::Addition) {
       mergeOperands(static_cast<Addition *>(o));
       index = 0;
@@ -49,7 +49,7 @@ Expression * Addition::immediateSimplify(Context& context, AngleUnit angleUnit) 
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
-      factorizeChildren(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
+      factorizeChildren(editableOperand(i), editableOperand(i+1), context, angleUnit);
     } else {
       i++;
     }
@@ -66,10 +66,10 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   for (int i = 0; i < numberOfOperands(); i++) {
     Expression * denominator = nullptr;
     if (operand(i)->type() == Type::Power) {
-      Power * p = static_cast<Power *>((Expression *)operand(i));
+      Power * p = static_cast<Power *>(editableOperand(i));
       denominator = p->createDenominator(context, angleUnit);
     } else if (operand(i)->type() == Type::Multiplication) {
-      Multiplication * m = static_cast<Multiplication *>((Expression *)operand(i));
+      Multiplication * m = static_cast<Multiplication *>(editableOperand(i));
       denominator = m->createDenominator(context, angleUnit);
     }
     if (denominator != nullptr) {
@@ -82,7 +82,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   }
   for (int i = 0; i < numberOfOperands(); i++) {
     Multiplication * m = (Multiplication *)commonDenom->clone();
-    Expression * currentTerm = (Expression *)operand(i);
+    Expression * currentTerm = editableOperand(i);
     Expression * newOp[1] = {currentTerm->clone()};
     m->addOperands(newOp, 1);
     replaceOperand(currentTerm, m, true);
@@ -136,22 +136,22 @@ Expression * Addition::immediateBeautify(Context & context, AngleUnit angleUnit)
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...
     if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && operand(index)->operand(0)->sign() < 0) {
-      Multiplication * m = static_cast<Multiplication *>((Expression *)operand(index));
+      Multiplication * m = static_cast<Multiplication *>(editableOperand(index));
       if (static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
         m->removeOperand(m->operand(0), true);
       } else {
-        const_cast<Expression *>(operand(index)->operand(0))->turnIntoPositive(context, angleUnit);
+        editableOperand(index)->editableOperand(0)->turnIntoPositive(context, angleUnit);
       }
-      const Expression * subtractant = m->squashUnaryHierarchy();
+      Expression * subtractant = m->squashUnaryHierarchy();
       if (index == 0) {
         const Expression * opOperand[1] = {subtractant};
         Opposite * o = new Opposite(opOperand, true);
-        replaceOperand(const_cast<Expression *>(subtractant), o, true);
+        replaceOperand(subtractant, o, true);
       } else {
         const Expression * subOperands[2] = {operand(index-1), subtractant->clone()};
         removeOperand(operand(index-1), false);
         Subtraction * s = new Subtraction(subOperands, false);
-        replaceOperand(const_cast<Expression *>(subtractant), s, true);
+        replaceOperand(subtractant, s, true);
       }
     }
     index++;

@@ -25,11 +25,11 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
   if (e->operand(0)->type() == correspondingType) {
     float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
     if (e->type() == Expression::Type::Tangent || (trigoOp >= -1.0f && trigoOp <= 1.0f)) {
-      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
+      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
     }
   }
   if (e->operand(0)->sign() < 0) {
-    Expression * op = const_cast<Expression *>(e->operand(0));
+    Expression * op = e->editableOperand(0);
     Expression * newOp = op->turnIntoPositive(context, angleUnit);
     newOp->immediateSimplify(context, angleUnit);
     if (e->type() == Expression::Type::Cosine) {
@@ -37,12 +37,12 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
     } else {
       const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      ((Expression *)m->operand(1))->immediateSimplify(context, angleUnit);
+      m->editableOperand(1)->immediateSimplify(context, angleUnit);
       return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
   }
   if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
-    Rational * r = angleUnit == Expression::AngleUnit::Radian ? static_cast<Rational *>((Expression *)e->operand(0)->operand(0)) : static_cast<Rational *>((Expression *)e->operand(0));
+    Rational * r = angleUnit == Expression::AngleUnit::Radian ? static_cast<Rational *>(e->editableOperand(0)->editableOperand(0)) : static_cast<Rational *>(e->editableOperand(0));
     int unaryCoefficient = 1; // store 1 or -1
     // Replace argument in [0, Pi/2[ or [0, 90[
     Integer divisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(90));
@@ -58,9 +58,9 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
         }
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
-      const Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->operand(0) : e;
-      const_cast<Expression *>(rationalParent)->replaceOperand(r, newR, true);
-      const_cast<Expression *>(e->operand(0))->immediateSimplify(context, angleUnit);
+      Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->editableOperand(0) : e;
+      rationalParent->replaceOperand(r, newR, true);
+      e->editableOperand(0)->immediateSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
         unaryCoefficient *= -1;
       }
@@ -98,14 +98,14 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
     if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e->type() == Expression::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
-      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(0)), true);
+      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
     }
   }
   // Special case for arctan(sin(x)/cos(x))
   if (e->type() == Expression::Type::ArcTangent && ExpressionIsEquivalentToTangent(e->operand(0))) {
     float trigoOp = e->operand(0)->operand(1)->operand(0)->approximate<float>(context, angleUnit);
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
-      return e->replaceWith(const_cast<Expression *>(e->operand(0)->operand(1)->operand(0)), true);
+      return e->replaceWith(e->editableOperand(0)->editableOperand(1)->editableOperand(0), true);
     }
   }
   Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
@@ -114,24 +114,24 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
   }
   // arccos(-x) = Pi-arcos(x), arcsin(-x) = -arcsin(x), arctan(-x)=-arctan(x)
   if (e->operand(0)->sign() < 0 || (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(0)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(0))->isMinusOne())) {
-    Expression * op = const_cast<Expression *>(e->operand(0));
+    Expression * op = e->editableOperand(0);
     if (e->operand(0)->sign() < 0) {
       Expression * newOp = op->turnIntoPositive(context, angleUnit);
       newOp->immediateSimplify(context, angleUnit);
     } else {
-      ((Multiplication *)op)->removeOperand(const_cast<Expression *>(op->operand(0)), true);
+      ((Multiplication *)op)->removeOperand(op->editableOperand(0), true);
       op->immediateSimplify(context, angleUnit);
     }
     if (e->type() == Expression::Type::ArcCosine) {
       Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(Integer(180)));
       const Expression * subOperands[2] = {pi, e->clone()};
       Subtraction * s = new Subtraction(subOperands, false);
-      ((Expression *)s->operand(1))->immediateSimplify(context, angleUnit);
+      s->editableOperand(1)->immediateSimplify(context, angleUnit);
       return e->replaceWith(s, true)->immediateSimplify(context, angleUnit);
     } else {
       const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      ((Expression *)m->operand(1))->immediateSimplify(context, angleUnit);
+      m->editableOperand(1)->immediateSimplify(context, angleUnit);
       return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
     }
   }
@@ -192,7 +192,7 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
         return nullptr;
       }
       SimplificationRoot outputRoot(output);
-      return (Expression *)(outputRoot.simplify(context, angleUnit))->operand(0);
+      return outputRoot.simplify(context, angleUnit)->editableOperand(0);
     }
   }
   return nullptr;

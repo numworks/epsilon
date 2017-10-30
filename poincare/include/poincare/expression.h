@@ -112,6 +112,7 @@ public:
   static bool shouldStopProcessing();
 
   /* Hierarchy */
+  Expression * editableOperand(int i) { return const_cast<Expression *>(operand(i)); }
   virtual const Expression * operand(int i) const = 0;
   virtual int numberOfOperands() const = 0;
   Expression * parent() const { return m_parent; }

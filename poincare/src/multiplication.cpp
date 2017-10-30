@@ -52,7 +52,7 @@ int Multiplication::sign() const {
 Expression * Multiplication::turnIntoPositive(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
     if (operand(i)->sign() < 0) {
-      const_cast<Expression *>(operand(i))->turnIntoPositive(context, angleUnit);
+      editableOperand(i)->turnIntoPositive(context, angleUnit);
     }
   }
   return immediateSimplify(context, angleUnit);
@@ -108,7 +108,7 @@ Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angle
   int index = 0;
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
   while (index < numberOfOperands()) {
-    Expression * o = (Expression *)operand(index++);
+    Expression * o = editableOperand(index++);
     if (o->type() == Type::Multiplication) {
       mergeOperands(static_cast<Multiplication *>(o));
       index = 0;
@@ -138,7 +138,7 @@ Expression * Multiplication::immediateSimplify(Context& context, AngleUnit angle
 bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
   bool change = false;
   for (int index = 0; index < numberOfOperands(); index++) {
-    Expression * o = (Expression *)operand(index);
+    Expression * o = editableOperand(index);
     if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
       change = true;
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
@@ -221,9 +221,9 @@ void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
       replaceOperand(operand(i), new Rational(a), true);
       removeOperand(operand(i+1), true);
     } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
-      factorizeBase(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
+      factorizeBase(editableOperand(i), editableOperand(i+1), context, angleUnit);
     } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
-      factorizeExponent(const_cast<Expression *>(operand(i)), const_cast<Expression *>(operand(i+1)), context, angleUnit);
+      factorizeExponent(editableOperand(i), editableOperand(i+1), context, angleUnit);
     } else {
       i++;
     }
@@ -259,9 +259,9 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
 }
 
 Expression * Multiplication::distributeOnChildAtIndex(int i, Context & context, AngleUnit angleUnit) {
-  Addition * a = static_cast<Addition *>((Expression *) operand(i));
+  Addition * a = static_cast<Addition *>(editableOperand(i));
   for (int j = 0; j < a->numberOfOperands(); j++) {
-    Expression * termJ = const_cast<Expression *>(a->operand(j));
+    Expression * termJ = a->editableOperand(j);
     replaceOperand(operand(i), termJ->clone(), false);
     Expression * m = clone();
     a->replaceOperand(termJ, m, true);
@@ -352,15 +352,15 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
   // -1*A -> -A or (-n)*A -> -n*A
   if (operand(0)->type() == Type::Rational && operand(0)->sign() < 0) {
     if (static_cast<const Rational *>(operand(0))->isMinusOne()) {
-      removeOperand((Expression *)operand(0), true);
+      removeOperand(editableOperand(0), true);
     } else {
-      const_cast<Expression *>(operand(0))->turnIntoPositive(context, angleUnit);
+      editableOperand(0)->turnIntoPositive(context, angleUnit);
     }
     Expression * e = squashUnaryHierarchy();
     const Expression * oppOperand[1] = {e->clone()};
     Opposite * o = new Opposite(oppOperand, false);
     e->replaceWith(o, true);
-    const_cast<Expression *>(o->operand(0))->immediateBeautify(context, angleUnit);
+    o->editableOperand(0)->immediateBeautify(context, angleUnit);
     return o;
   }
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
@@ -381,8 +381,8 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
   for (int index = 0; index < numberOfOperands(); index++) {
     // a*b^(-1)*... -> a*.../b
     if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
-      Power * p = static_cast<Power *>((Expression *)operand(index));
-      Expression * denominatorOperand = const_cast<Expression *>(p->operand(0));
+      Power * p = static_cast<Power *>(editableOperand(index));
+      Expression * denominatorOperand = p->editableOperand(0);
       p->detachOperand(denominatorOperand);
       removeOperand(p, true);
 
@@ -391,7 +391,7 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
       Division * d = new Division(divOperands, false);
       /* We want 1/3*Pi*(ln(2))^-1 -> Pi/(3ln(2)) and not ((1/3)Pi)/ln(2)*/
       if (numeratorOperand->operand(0)->type() == Type::Rational) {
-        Rational * r = static_cast<Rational *>((Expression *)numeratorOperand->operand(0));
+        Rational * r = static_cast<Rational *>(numeratorOperand->editableOperand(0));
         if (!r->denominator().isOne()) {
           if (denominatorOperand->type() == Type::Multiplication) {
             const Expression * integerDenominator[1] = {new Rational(r->denominator())};
@@ -418,7 +418,7 @@ Expression * Multiplication::immediateBeautify(Context & context, AngleUnit angl
       }
       // Delete parenthesis unnecessary on numerator
       if (numeratorOperand->type() == Type::Parenthesis) {
-        numeratorOperand->replaceWith((Expression *)numeratorOperand->operand(0), true);
+        numeratorOperand->replaceWith(numeratorOperand->editableOperand(0), true);
       }
       replaceWith(d, true);
       return d->immediateBeautify(context, angleUnit);
@@ -441,8 +441,8 @@ Expression * Multiplication::createDenominator(Context & context, AngleUnit angl
   for (int index = 0; index < e->numberOfOperands(); index++) {
     // a*b^(-1)*... -> a*.../b
     if (e->operand(index)->type() == Type::Power && e->operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(index)->operand(1))->isMinusOne()) {
-      Power * p = static_cast<Power *>((Expression *)e->operand(index));
-      Expression * result = const_cast<Expression *>(p->operand(0));
+      Power * p = static_cast<Power *>(e->editableOperand(index));
+      Expression * result = p->editableOperand(0);
       p->detachOperand((result));
       delete e;
       return result;
@@ -455,7 +455,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   Multiplication * m = new Multiplication();
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->denominator().isOne()) {
-    Rational * r = static_cast<Rational *>((Expression *)operand(0));
+    Rational * r = static_cast<Rational *>(editableOperand(0));
     const Expression * q[1] = {new Rational(r->denominator())};
     m->addOperands(q, 1);
     if (r->numerator().isOne()) {
@@ -467,11 +467,11 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   int i = 0;
   while (i < numberOfOperands()) {
     if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
-      const Expression * e = operand(i);
-      const_cast<Expression *>(e->operand(1))->turnIntoPositive(context, angleUnit);
+      Expression * e = editableOperand(i);
+      e->editableOperand(1)->turnIntoPositive(context, angleUnit);
       removeOperand(e, false);
       m->addOperands(&e, 1);
-      const_cast<Expression *>(e)->immediateSimplify(context, angleUnit);
+      e->immediateSimplify(context, angleUnit);
     } else {
       i++;
     }
@@ -492,21 +492,21 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
 void Multiplication::leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit) {
   if (factor->type() == Type::Multiplication) {
     for (int j = 0; j < factor->numberOfOperands(); j++) {
-      leastCommonMultiple((Expression *)factor->operand(j), context, angleUnit);
+      leastCommonMultiple(factor->editableOperand(j), context, angleUnit);
     }
     return;
   }
   for (int i = 0; i < numberOfOperands(); i++) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {
-      const Expression * index[2] = {CreateExponent((Expression *)operand(i)), CreateExponent(factor)};
+      const Expression * index[2] = {CreateExponent(editableOperand(i)), CreateExponent(factor)};
       Subtraction * sub = new Subtraction(index, false);
       Expression::simplifyAndBeautify((Expression **)&sub, context, angleUnit);
       if (sub->sign() < 0) { // index[0] < index[1]
-        factor->replaceOperand((Expression *)factor->operand(1), new Opposite((Expression **)&sub, true), true);
+        factor->replaceOperand(factor->editableOperand(1), new Opposite((Expression **)&sub, true), true);
         factor->simplify(context, angleUnit);
-        factorizeBase((Expression *)operand(i), factor, context, angleUnit);
+        factorizeBase(editableOperand(i), factor, context, angleUnit);
       } else if (sub->sign() == 0) {
-        factorizeBase((Expression *)operand(i), factor, context, angleUnit);
+        factorizeBase(editableOperand(i), factor, context, angleUnit);
       } else {}
       delete sub;
       return;

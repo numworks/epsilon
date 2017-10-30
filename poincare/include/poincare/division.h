@@ -32,10 +32,7 @@ private:
   }
 
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
-  }
-  static const char * name() { return "/"; }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Expression * factorOfTypeInOperand(Type type, int operandIndex, int k);
 };
 

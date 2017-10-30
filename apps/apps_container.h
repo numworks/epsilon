@@ -41,7 +41,7 @@ public:
   void refreshPreferences();
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
-  void reloadTitleBar();
+  bool updateAlphaLock();
   OnBoarding::UpdateController * updatePopUpController();
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }

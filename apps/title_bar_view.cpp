@@ -22,10 +22,6 @@ void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::YellowDark);
 }
 
-void TitleBarView::reload() {
-  markRectAsDirty(bounds());
-}
-
 void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
 }

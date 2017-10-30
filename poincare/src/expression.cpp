@@ -95,12 +95,12 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
   return e;
 }
 
-bool Expression::containType(Type t) const {
-  if (type() == t) {
+bool Expression::recursivelyMatches(ExpressionTest test) const {
+  if (test(this)) {
     return true;
   }
   for (int i = 0; i < numberOfOperands(); i++) {
-    if (operand(i)->containType(t)) {
+    if (test(operand(i))) {
       return true;
     }
   }

@@ -148,7 +148,8 @@ public:
   /* Simplification */
   static void simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
 
-  bool containType(Type type) const;
+  typedef bool (*ExpressionTest)(const Expression * e);
+  bool recursivelyMatches(ExpressionTest test) const;
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.

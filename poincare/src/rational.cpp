@@ -70,7 +70,7 @@ int Rational::sign() const {
   return 1;
 }
 
-Expression * Rational::immediateBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {
   if (m_numerator.isNegative()) {
     m_numerator.setNegative(false);
     const Expression * opOperand[1] = {clone()};

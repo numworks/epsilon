@@ -10,6 +10,9 @@ namespace Poincare {
 
 class Addition : public DynamicHierarchy {
   using DynamicHierarchy::DynamicHierarchy;
+  friend class Logarithm;
+  friend class Multiplication;
+  friend class Subtraction;
 public:
   Type type() const override;
   Expression * clone() const override;
@@ -20,9 +23,6 @@ public:
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
-  /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -33,7 +33,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
-
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }
@@ -42,7 +42,7 @@ private:
   }
   static const char * name() { return "+"; }
   /* Simplification */
-  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
   void factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   static const Rational RationalFactor(Expression * e);

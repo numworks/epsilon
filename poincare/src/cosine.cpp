@@ -21,8 +21,8 @@ Expression * Cosine::clone() const {
   return a;
 }
 
-Expression * Cosine::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  return Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
+Expression * Cosine::shallowSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::shallowSimplifyDirectFunction(this, context, angleUnit);
 }
 
 template<typename T>

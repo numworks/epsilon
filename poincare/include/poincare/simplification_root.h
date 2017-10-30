@@ -17,7 +17,6 @@ public:
   }
   Expression * clone() const override { return nullptr; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
-  Expression * immediateSimplify(Context & context, AngleUnit angleUnit) override { return this; }
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }
@@ -28,6 +27,8 @@ public:
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return nullptr;
   }
+private:
+  Expression * shallowSimplify(Context & context, AngleUnit angleUnit) override { return this; }
 };
 
 }

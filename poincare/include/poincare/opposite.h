@@ -13,9 +13,6 @@ public:
   Expression * clone() const override;
   Type type() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
-  /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit, compute<float>);
@@ -23,6 +20,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
   return EvaluationEngine::map<double>(this, context, angleUnit, compute<double>);
   }
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 };

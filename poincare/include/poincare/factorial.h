@@ -11,7 +11,6 @@ public:
   Factorial(const Expression * argument, bool clone = true);
   Type type() const override;
   Expression * clone() const override;
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
@@ -20,6 +19,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   int compareToGreaterTypeExpression(const Expression * e) const override;

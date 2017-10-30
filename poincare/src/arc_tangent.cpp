@@ -16,8 +16,8 @@ Expression * ArcTangent::clone() const {
   return a;
 }
 
-Expression * ArcTangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  return Trigonometry::immediateSimplifyInverseFunction(this, context, angleUnit);
+Expression * ArcTangent::shallowSimplify(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::shallowSimplifyInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>

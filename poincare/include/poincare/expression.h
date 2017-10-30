@@ -13,6 +13,16 @@ template<class T>
 class Evaluation;
 
 class Expression {
+  friend class Division;
+  friend class Logarithm;
+  friend class Opposite;
+  friend class NaperianLogarithm;
+  friend class Subtraction;
+  friend class Addition;
+  friend class Multiplication;
+  friend class Power;
+  friend class Trigonometry;
+  friend class Tangent;
 public:
   enum class Type : uint8_t {
     Undefined = 0,
@@ -134,12 +144,10 @@ public:
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
+
   /* Simplification */
-  static void simplifyAndBeautify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
-  Expression * simplify(Context & context, AngleUnit angleUnit);
-  // TODO: should be virtual pure
-  virtual Expression * immediateSimplify(Context & context, AngleUnit angleUnit) { return this; };
-  virtual Expression * immediateBeautify(Context & context, AngleUnit angleUnit) { return this; };
+  static void simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+
   bool containType(Type type) const;
 
   /* Evaluation Engine
@@ -160,14 +168,17 @@ protected:
    * power, etc… For nodes with a value (Integer, Complex), this must be over-
    * -riden. */
 private:
+  /* Simplification */
+  Expression * deepBeautify(Context & context, AngleUnit angleUnit);
+  Expression * deepSimplify(Context & context, AngleUnit angleUnit);
+  // TODO: should be virtual pure
+  virtual Expression * shallowSimplify(Context & context, AngleUnit angleUnit) { return this; };
+  virtual Expression * shallowBeautify(Context & context, AngleUnit angleUnit) { return this; };
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  /* Simplification */
-  // beautify cannot be dynamic as it changes the expression and THEN its new children
-  Expression * beautify(Context & context, AngleUnit angleUnit);
   /* Sorting */
   virtual int compareToGreaterTypeExpression(const Expression * e) const {
     return -1;

@@ -36,7 +36,7 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
   return Complex<T>::Float(std::log10(c.a()));
 }
 
-Expression * Logarithm::immediateSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() < 0 || (numberOfOperands() == 2 && operand(1)->sign() < 0)) {
     return replaceWith(new Undefined(), true);
   }
@@ -55,7 +55,7 @@ Expression * Logarithm::immediateSimplify(Context& context, AngleUnit angleUnit)
     const Expression * addOp[2] = {n, d};
     Addition * a = new Addition(addOp, 2, false);
     replaceWith(a, true);
-    return a->immediateSimplify(context, angleUnit);
+    return a->shallowSimplify(context, angleUnit);
   }
   return this;
 }
@@ -93,13 +93,13 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     Multiplication * m = new Multiplication(multOperands, 2, false);
     const Expression * addNewOperand[1] = {m};
     a->addOperands(addNewOperand, 1);
-    m->immediateSimplify(context, angleUnit);
+    m->shallowSimplify(context, angleUnit);
     index++;
   }
   return a;
 }
 
-Expression * Logarithm::immediateBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
   Symbol e = Symbol(Ion::Charset::Exponential);
   const Expression * logOperand[1] = {operand(0)};
   if (numberOfOperands() == 2 && operand(1)->compareTo(&e) == 0) {

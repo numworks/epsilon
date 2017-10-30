@@ -10,11 +10,11 @@ namespace Poincare {
 
 class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
   using StaticHierarchy<1>::StaticHierarchy;
+  friend class Tangent;
 public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
 private:
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
@@ -22,6 +22,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
   return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }

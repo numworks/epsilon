@@ -26,7 +26,6 @@ public:
   Expression * clone() const override;
   int sign() const override;
   Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { m_numerator.setNegative(false); return this; }
-  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
@@ -44,7 +43,8 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
 
   /* Sorting */
   int compareToSameTypeExpression(const Expression * e) const override;

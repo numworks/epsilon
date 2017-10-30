@@ -32,12 +32,12 @@ Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit)
   return Power::compute(c, Complex<T>::Float(0.5));
 }
 
-Expression * SquareRoot::immediateSimplify(Context& context, AngleUnit angleUnit) {
+Expression * SquareRoot::shallowSimplify(Context& context, AngleUnit angleUnit) {
   const Expression * powOperands[2] = {operand(0), new Rational(Integer(1), Integer(2))};
   Power * p = new Power(powOperands, false);
   detachOperands();
   replaceWith(p, true);
-  return p->immediateSimplify(context, angleUnit);
+  return p->shallowSimplify(context, angleUnit);
 }
 
 ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

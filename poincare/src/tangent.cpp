@@ -22,18 +22,18 @@ Expression * Tangent::clone() const {
   return a;
 }
 
-Expression * Tangent::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  Expression * newExpression = Trigonometry::immediateSimplifyDirectFunction(this, context, angleUnit);
+Expression * Tangent::shallowSimplify(Context& context, AngleUnit angleUnit) {
+  Expression * newExpression = Trigonometry::shallowSimplifyDirectFunction(this, context, angleUnit);
   if (newExpression->type() == Type::Tangent) {
     const Expression * op[1] = {newExpression->operand(0)};
     Sine * s = new Sine(op, true);
     Cosine * c = new Cosine(op, true);
     const Expression * divisionOperands[2] = {s, c};
     Division * d = new Division(divisionOperands, false);
-    c->immediateSimplify(context, angleUnit);
-    s->immediateSimplify(context, angleUnit);
+    c->shallowSimplify(context, angleUnit);
+    s->shallowSimplify(context, angleUnit);
     newExpression = newExpression->replaceWith(d, true);
-    return newExpression->simplify(context, angleUnit);
+    return newExpression->deepSimplify(context, angleUnit);
   }
   return newExpression;
 }

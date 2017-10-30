@@ -18,7 +18,7 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
-Expression * AbsoluteValue::immediateSimplify(Context& context, AngleUnit angleUnit) {
+Expression * AbsoluteValue::shallowSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() > 0) {
     return replaceWith(editableOperand(0), true);
   }

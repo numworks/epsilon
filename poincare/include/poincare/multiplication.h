@@ -9,6 +9,12 @@ namespace Poincare {
 
 class Multiplication : public DynamicHierarchy {
   using DynamicHierarchy::DynamicHierarchy;
+  friend class Addition;
+  friend class Division;
+  friend class Logarithm;
+  friend class Opposite;
+  friend class Power;
+  friend class Subtraction;
 public:
   Type type() const override;
   Expression * clone() const override;
@@ -21,9 +27,6 @@ public:
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
 
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
-  /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
   Expression * createDenominator(Context & context, AngleUnit angleUnit);
   void leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit);
 private:
@@ -39,6 +42,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   void factorize(Context & context, AngleUnit angleUnit);
   bool resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
@@ -54,7 +58,7 @@ private:
   static const Expression * CreateExponent(Expression * e);
   bool isUselessOperand(const Rational * r) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
-  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
 };
 

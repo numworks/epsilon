@@ -16,6 +16,8 @@ public:
     Content
   };
 
+  static constexpr char k_scriptExtension[] = ".py";
+
   ScriptStore();
   const Script scriptAtIndex(int index, EditableZone zone = EditableZone::None);
   const Script scriptNamed(const char * name);

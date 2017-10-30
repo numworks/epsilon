@@ -18,13 +18,13 @@ public:
   const char * text() const;
   int textLength() const;
   int cursorLocation() const;
+  void setCursorLocation(int location);
   void setText(const char * text);
   void setBackgroundColor(KDColor backgroundColor);
   KDColor backgroundColor() const;
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
-  void setCursorLocation(int location);
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */

@@ -259,6 +259,11 @@ int TextField::cursorLocation() const{
   return m_contentView.cursorLocation();
 }
 
+void TextField::setCursorLocation(int location) {
+  m_contentView.setCursorLocation(location);
+  scrollToCursor();
+}
+
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
@@ -289,11 +294,6 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
     reloadScroll();
     layoutSubviews();
   }
-}
-
-void TextField::setCursorLocation(int location) {
-  m_contentView.setCursorLocation(location);
-  scrollToCursor();
 }
 
 bool TextField::insertTextAtLocation(const char * text, int location) {

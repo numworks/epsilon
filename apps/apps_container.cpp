@@ -78,7 +78,7 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
-  bool alphaLockWantsRedraw = m_window.updateAlphaLock();
+  bool alphaLockWantsRedraw = updateAlphaLock();
 
   bool didProcessEvent = Container::dispatchEvent(event);
 
@@ -163,8 +163,8 @@ void AppsContainer::shutdownDueToLowBattery() {
   window()->redraw(true);
 }
 
-void AppsContainer::reloadTitleBar() {
-  m_window.reloadTitleBar();
+bool AppsContainer::updateAlphaLock() {
+  return m_window.updateAlphaLock();
 }
 
 OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
@@ -186,5 +186,5 @@ Timer * AppsContainer::containerTimerAtIndex(int i) {
 
 void AppsContainer::resetShiftAlphaStatus() {
   Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
-  m_window.updateAlphaLock();
+  updateAlphaLock();
 }

@@ -75,12 +75,12 @@ void Expression::simplifyAndBeautify(Expression ** expressionAddress, Context & 
   SimplificationRoot root(*expressionAddress);
   root.simplify(context, angleUnit);
   root.beautify(context, angleUnit);
-  *expressionAddress = (Expression *)(root.operand(0));
+  *expressionAddress = root.editableOperand(0);
 }
 
 Expression * Expression::simplify(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
-    if (((Expression *)operand(i))->simplify(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
+    if ((editableOperand(i))->simplify(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
       return replaceWith(new Undefined(), true);
     }
   }
@@ -90,7 +90,7 @@ Expression * Expression::simplify(Context & context, AngleUnit angleUnit) {
 Expression * Expression::beautify(Context & context, AngleUnit angleUnit) {
   Expression * e = immediateBeautify(context, angleUnit);
   for (int i = 0; i < e->numberOfOperands(); i++) {
-    ((Expression *)e->operand(i))->beautify(context, angleUnit);
+    e->editableOperand(i)->beautify(context, angleUnit);
   }
   return e;
 }

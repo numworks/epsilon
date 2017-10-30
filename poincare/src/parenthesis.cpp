@@ -24,7 +24,7 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
 }
 
 Expression * Parenthesis::immediateSimplify(Context& context, AngleUnit angleUnit) {
-  return replaceWith(const_cast<Expression *>(operand(0)), true);
+  return replaceWith(editableOperand(0), true);
 }
 
 template<typename T>

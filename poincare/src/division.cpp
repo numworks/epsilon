@@ -64,7 +64,7 @@ Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit)
         }
       } else {
         if (operandIndex == 0) {
-          return replaceWith((Expression *)operand(0), true);
+          return replaceWith(editableOperand(0), true);
         } else {
           assert(operandIndex == 1);
           replaceOperand(cos, new Rational(Integer(1)), true);
@@ -78,7 +78,7 @@ Expression * Division::immediateBeautify(Context & context, AngleUnit angleUnit)
 
 Expression * Division::factorOfTypeInOperand(Type type, int operandIndex, int k) {
   if (operand(operandIndex)->type() == type && k == 0) {
-    return (Expression *)operand(operandIndex);
+    return editableOperand(operandIndex);
   }
   if (operand(operandIndex)->type() == Type::Multiplication) {
     int counter = -1;
@@ -86,21 +86,21 @@ Expression * Division::factorOfTypeInOperand(Type type, int operandIndex, int k)
       if (operand(operandIndex)->operand(i)->type() == type) {
         counter++;
         if (counter == k) {
-          return ((Expression *)operand(operandIndex)->operand(i));
+          return editableOperand(operandIndex)->editableOperand(i);
         }
       }
     }
   }
   if (operand(operandIndex)->type() == Type::Opposite) {
     if (operand(operandIndex)->operand(0)->type() == type && k == 0) {
-      return ((Expression *)operand(operandIndex)->operand(0));
+      return (editableOperand(operandIndex)->editableOperand(0));
     } else if (operand(operandIndex)->operand(0)->type() == Type::Multiplication) {
       int counter = -1;
       for (int i = 0; i < operand(operandIndex)->operand(0)->numberOfOperands(); i++) {
         if (operand(operandIndex)->operand(0)->operand(i)->type() == type) {
           counter++;
           if (counter == k) {
-            return ((Expression *)operand(operandIndex)->operand(0)->operand(i));
+            return editableOperand(operandIndex)->editableOperand(0)->editableOperand(i);
           }
         }
       }

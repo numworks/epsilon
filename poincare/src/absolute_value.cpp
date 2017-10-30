@@ -20,10 +20,10 @@ Expression * AbsoluteValue::clone() const {
 
 Expression * AbsoluteValue::immediateSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() > 0) {
-    return replaceWith(const_cast<Expression *>(operand(0)), true);
+    return replaceWith(editableOperand(0), true);
   }
   if (operand(0)->sign() < 0) {
-    Expression * op = const_cast<Expression *>(operand(0));
+    Expression * op = editableOperand(0);
     Expression * newOp = op->turnIntoPositive(context, angleUnit);
     return replaceWith(newOp, true);
   }

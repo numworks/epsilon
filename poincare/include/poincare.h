@@ -38,7 +38,6 @@
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>
-#include <poincare/integer.h> //TODO: delete
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
 #include <poincare/least_common_multiple.h>

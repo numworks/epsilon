@@ -17,12 +17,12 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Simplify: " << expression << "----"  << endl;
 #endif
-  Expression::simplifyAndBeautify(&e, globalContext, angleUnit);
+  Expression::simplify(&e, globalContext, angleUnit);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
 #endif
   Expression * f = parse_expression(simplifiedExpression);
-  Expression::simplifyAndBeautify(&f, globalContext, angleUnit);
+  Expression::simplify(&f, globalContext, angleUnit);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- compared to: " << simplifiedExpression << "----"  << endl;
   print_expression(f, 0);

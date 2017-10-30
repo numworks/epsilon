@@ -15,7 +15,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent);
   Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
   if (lookup != nullptr) {
@@ -31,14 +31,14 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
   if (e->operand(0)->sign() < 0) {
     Expression * op = e->editableOperand(0);
     Expression * newOp = op->turnIntoPositive(context, angleUnit);
-    newOp->immediateSimplify(context, angleUnit);
+    newOp->shallowSimplify(context, angleUnit);
     if (e->type() == Expression::Type::Cosine) {
-      return e->immediateSimplify(context, angleUnit);
+      return e->shallowSimplify(context, angleUnit);
     } else {
       const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      m->editableOperand(1)->immediateSimplify(context, angleUnit);
-      return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
+      m->editableOperand(1)->shallowSimplify(context, angleUnit);
+      return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
   }
   if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
@@ -60,14 +60,14 @@ Expression * Trigonometry::immediateSimplifyDirectFunction(Expression * e, Conte
       Rational * newR = new Rational(div.remainder, r->denominator());
       Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->editableOperand(0) : e;
       rationalParent->replaceOperand(r, newR, true);
-      e->editableOperand(0)->immediateSimplify(context, angleUnit);
+      e->editableOperand(0)->shallowSimplify(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
         unaryCoefficient *= -1;
       }
-      Expression * simplifiedCosine = e->immediateSimplify(context, angleUnit); // recursive
+      Expression * simplifiedCosine = e->shallowSimplify(context, angleUnit); // recursive
       const Expression * multOperands[2] = {new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      return simplifiedCosine->replaceWith(m, true)->immediateSimplify(context, angleUnit);
+      return simplifiedCosine->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
     assert(r->sign() > 0);
     assert(!divisor.isLowerThan(dividand));
@@ -83,7 +83,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
   return false;
 }
 
-Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   if (e->type() != Expression::Type::ArcTangent) {
     float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
@@ -117,22 +117,22 @@ Expression * Trigonometry::immediateSimplifyInverseFunction(Expression * e, Cont
     Expression * op = e->editableOperand(0);
     if (e->operand(0)->sign() < 0) {
       Expression * newOp = op->turnIntoPositive(context, angleUnit);
-      newOp->immediateSimplify(context, angleUnit);
+      newOp->shallowSimplify(context, angleUnit);
     } else {
       ((Multiplication *)op)->removeOperand(op->editableOperand(0), true);
-      op->immediateSimplify(context, angleUnit);
+      op->shallowSimplify(context, angleUnit);
     }
     if (e->type() == Expression::Type::ArcCosine) {
       Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(Integer(180)));
       const Expression * subOperands[2] = {pi, e->clone()};
       Subtraction * s = new Subtraction(subOperands, false);
-      s->editableOperand(1)->immediateSimplify(context, angleUnit);
-      return e->replaceWith(s, true)->immediateSimplify(context, angleUnit);
+      s->editableOperand(1)->shallowSimplify(context, angleUnit);
+      return e->replaceWith(s, true)->shallowSimplify(context, angleUnit);
     } else {
       const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
       Multiplication * m = new Multiplication(multOperands, 2, false);
-      m->editableOperand(1)->immediateSimplify(context, angleUnit);
-      return e->replaceWith(m, true)->immediateSimplify(context, angleUnit);
+      m->editableOperand(1)->shallowSimplify(context, angleUnit);
+      return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
   }
 
@@ -185,14 +185,14 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
       continue;
     }
     SimplificationRoot inputRoot(input);
-    inputRoot.simplify(context, angleUnit); // input expression does not change, no root needed and we can use entry after
+    inputRoot.deepSimplify(context, angleUnit); // input expression does not change, no root needed and we can use entry after
     if (inputRoot.operand(0)->compareTo(e) == 0) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
       if (output == nullptr) {
         return nullptr;
       }
       SimplificationRoot outputRoot(output);
-      return outputRoot.simplify(context, angleUnit)->editableOperand(0);
+      return outputRoot.deepSimplify(context, angleUnit)->editableOperand(0);
     }
   }
   return nullptr;

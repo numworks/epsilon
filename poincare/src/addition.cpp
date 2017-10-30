@@ -25,7 +25,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-Expression * Addition::immediateSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
   int index = 0;
   while (index < numberOfOperands()) {
@@ -87,10 +87,10 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
     m->addOperands(newOp, 1);
     replaceOperand(currentTerm, m, true);
   }
-  Expression * newExpression = this->simplify(context, angleUnit);
+  Expression * newExpression = this->deepSimplify(context, angleUnit);
   const Expression * powOperands[2] = {commonDenom, new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
-  commonDenom->simplify(context, angleUnit);
+  commonDenom->deepSimplify(context, angleUnit);
   const Expression * multOperands[2] = {newExpression->clone(),p};
   Multiplication * result = new Multiplication(multOperands, 2, false);
   return newExpression->replaceWith(result, true);
@@ -105,12 +105,12 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & con
     } else {
       static_cast<Multiplication *>(e1)->addOperandAtIndex(r, 0);
     }
-    e1->immediateSimplify(context, angleUnit);
+    e1->shallowSimplify(context, angleUnit);
   } else {
     const Expression * operands[2] = {r, e1};
     Multiplication * m = new Multiplication(operands, 2, true);
     e1->replaceWith(m, true);
-    m->immediateSimplify(context, angleUnit);
+    m->shallowSimplify(context, angleUnit);
   }
 }
 
@@ -131,7 +131,7 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   return (f1->compareTo(f2) == 0);
 }
 
-Expression * Addition::immediateBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
   int index = 0;
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...

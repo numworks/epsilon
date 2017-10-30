@@ -26,7 +26,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "abs");
   }
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
 
 };
 

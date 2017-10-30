@@ -22,11 +22,11 @@ Expression * NaperianLogarithm::clone() const {
   return a;
 }
 
-Expression * NaperianLogarithm::immediateSimplify(Context& context, AngleUnit angleUnit) {
+Expression * NaperianLogarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
   const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
   Logarithm * l = new Logarithm(logOperands, 2, false);
   replaceWith(l, true);
-  return l->immediateSimplify(context, angleUnit);
+  return l->shallowSimplify(context, angleUnit);
 }
 
 template<typename T>

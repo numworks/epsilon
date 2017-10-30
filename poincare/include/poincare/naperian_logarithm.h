@@ -27,7 +27,7 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
   const char * name() const { return "ln"; }
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
 
 };
 

@@ -10,15 +10,15 @@ namespace Poincare {
 
 class Power : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
+  friend class Multiplication;
+  friend class NthRoot;
+  friend class SquareRoot;
 public:
   Type type() const override;
   Expression * clone() const override;
   int sign() const override;
   Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-  /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
   Expression * createDenominator(Context & context, AngleUnit angleUnit);
 private:
   constexpr static float k_maxNumberOfSteps = 10000.0f;
@@ -32,7 +32,8 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
-
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
@@ -40,8 +41,6 @@ private:
   static const char * name() { return "^"; }
   int compareToGreaterTypeExpression(const Expression * e) const override;
   int compareToSameTypeExpression(const Expression * e) const override;
-  /* Simplification */
-  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);

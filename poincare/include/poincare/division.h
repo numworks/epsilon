@@ -9,14 +9,12 @@ namespace Poincare {
 
 class Division : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
+  friend class Multiplication;
+  friend class Power;
 public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-  /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
-
-  Expression * immediateBeautify(Context & context, AngleUnit angleUnit) override;
 private:
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -30,7 +28,9 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
-
+  /* Simplification */
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Expression * factorOfTypeInOperand(Type type, int operandIndex, int k);

@@ -21,7 +21,7 @@ private:
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   /* Simplification */
-  Expression * immediateSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
 
 };
 

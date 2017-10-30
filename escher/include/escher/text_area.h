@@ -20,6 +20,7 @@ public:
   void removeChar() { m_contentView.removeChar(); }
   const char * text() const { return m_contentView.text(); }
   int cursorLocation() const { return m_contentView.cursorLocation(); }
+  void moveCursor(int deltaX);
 private:
   class Text {
   public:

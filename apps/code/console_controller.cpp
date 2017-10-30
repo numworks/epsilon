@@ -1,6 +1,6 @@
 #include "console_controller.h"
 #include "script.h"
-#include "app.h"
+#include "helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
 
@@ -187,7 +187,18 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  return false;
+  const char * pythonText = Helpers::PythonTextForEvent(event);
+  if (pythonText == nullptr) {
+    return false;
+  }
+  textField->setEditing(true, false);
+  if (textField->insertTextAtLocation(pythonText, textField->cursorLocation())) {
+    textField->setCursorLocation(textField->cursorLocation()+strlen(pythonText));
+    if (pythonText[strlen(pythonText)-1] == ')') {
+      textField->setCursorLocation(textField->cursorLocation()-1);
+    }
+  }
+  return true;
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

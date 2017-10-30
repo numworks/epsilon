@@ -1,5 +1,7 @@
 #include "editor_controller.h"
 #include "script_parameter_controller.h"
+#include "helpers.h"
+#include <apps/code/app.h>
 
 namespace Code {
 
@@ -36,6 +38,15 @@ bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Eve
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
+  const char * pythonText = Helpers::PythonTextForEvent(event);
+  if (pythonText != nullptr) {
+    textArea->insertText(pythonText);
+    if (pythonText[strlen(pythonText)-1] == ')') {
+      textArea->moveCursor(-1);
+    }
+    return true;
+  }
+
   if (event == Ion::Events::EXE) {
     // Auto-Indent
     char * text = const_cast<char *>(textArea->text());
@@ -62,7 +73,9 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
       textArea->insertText(" ");
     }
     return true;
-  } else if (event == Ion::Events::Backspace) {
+  }
+
+  if (event == Ion::Events::Backspace) {
     // If the cursor is on the left of the text of a line,
     // backspace one intentation space at a time.
     char * text = const_cast<char *>(textArea->text());
@@ -95,6 +108,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
       return true;
     }
   }
+
   return false;
 }
 

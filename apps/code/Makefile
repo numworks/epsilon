@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/code/,\
   console_line_cell.o\
   console_store.o\
   editor_controller.o\
+  helpers.o\
   menu_controller.o\
   script.o\
   script_parameter_controller.o\
@@ -21,6 +22,7 @@ i18n_files += $(addprefix apps/code/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.universal.i18n\
 )
 
 app_images += apps/code/code_icon.png

@@ -163,6 +163,11 @@ void AppsContainer::shutdownDueToLowBattery() {
   window()->redraw(true);
 }
 
+void AppsContainer::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus) {
+  Ion::Events::setShiftAlphaStatus(newStatus);
+  updateAlphaLock();
+}
+
 bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }

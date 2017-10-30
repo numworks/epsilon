@@ -77,7 +77,7 @@ void ConsoleController::removeExtensionIfAny(char * name) {
   if (nameLength<4) {
     return;
   }
-  if (strcmp(&name[nameLength-3], ".py") == 0) {
+  if (strcmp(&name[nameLength-3], ScriptStore::k_scriptExtension) == 0) {
     name[nameLength-3] = 0;
   }
 }

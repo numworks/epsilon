@@ -93,6 +93,7 @@ void MenuController::renameScriptAtIndex(int i) {
   const char * previousText = myCell->editableTextCell()->textField()->text();
   myCell->editableTextCell()->textField()->setEditing(true);
   myCell->editableTextCell()->textField()->setText(previousText);
+  myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
   app()->setFirstResponder(myCell);
 }
 
@@ -174,6 +175,12 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 }
 
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Right
+      && textField->isEditing()
+      && textField->cursorLocation() > textField->textLength() - strlen(ScriptStore::k_scriptExtension) -1)
+  {
+    return true;
+  }
   return false;
 }
 

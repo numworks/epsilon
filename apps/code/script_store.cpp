@@ -4,6 +4,9 @@
 
 namespace Code {
 
+constexpr char ScriptStore::k_scriptExtension[];
+constexpr char ScriptStore::k_defaultScriptName[];
+
 ScriptStore::ScriptStore() :
   m_accordion(m_scriptData, k_scriptDataSize)
 {

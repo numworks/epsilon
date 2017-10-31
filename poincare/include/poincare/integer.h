@@ -10,8 +10,6 @@ namespace Poincare {
 /* All algorithm should be improved with:
  * Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann */
 
-// TODO: Integer should not be an expression!
-
 struct IntegerDivision;
 
 class Integer {
@@ -70,7 +68,8 @@ public:
   bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);
-  static Integer monome16Bits(int biggestDigit, int length);
+  static Integer IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index);
+
   void releaseDynamicIvars();
   static int8_t ucmp(const Integer & a, const Integer & b); // -1, 0, or 1
   static Integer usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative);
@@ -81,14 +80,14 @@ private:
     assert(i >= 0 && i < m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
-  uint16_t numberOfDigits16() const {
-    native_uint_t bigDigit = digit(m_numberOfDigits-1);
-    native_uint_t base16 = 1<<16;
-    return (bigDigit >= base16 ? 2*m_numberOfDigits : 2*m_numberOfDigits-1);
+  uint16_t numberOfHalfDigits() const {
+    native_uint_t d = digit(m_numberOfDigits-1);
+    native_uint_t halfBase = 1 << (8*sizeof(half_native_uint_t));
+    return (d >= halfBase ? 2*m_numberOfDigits : 2*m_numberOfDigits-1);
   }
-  half_native_uint_t digit16(int i) const {
+  half_native_uint_t halfDigit(int i) const {
     assert(i >= 0);
-    if (i >= numberOfDigits16()) {
+    if (i >= numberOfHalfDigits()) {
       return 0;
     }
     return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)m_digits)[i]);

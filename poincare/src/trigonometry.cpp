@@ -186,7 +186,7 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
     }
     SimplificationRoot inputRoot(input);
     inputRoot.deepSimplify(context, angleUnit); // input expression does not change, no root needed and we can use entry after
-    if (inputRoot.operand(0)->compareTo(e) == 0) {
+    if (inputRoot.operand(0)->isIdenticalTo(e)) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
       if (output == nullptr) {
         return nullptr;

@@ -22,8 +22,8 @@ private:
   Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  int compareToGreaterTypeExpression(const Expression * e) const override;
-  int compareToSameTypeExpression(const Expression * e) const override;
+  int simplificationOrderGreaterType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e) const override;
 };
 
 }

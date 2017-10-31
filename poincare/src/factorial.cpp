@@ -69,11 +69,11 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   return new HorizontalLayout(childrenLayouts, 2);
 }
 
-int Factorial::compareToGreaterTypeExpression(const Expression * e) const {
-  if (operand(0)->compareTo(e) == 0) {
+int Factorial::simplificationOrderGreaterType(const Expression * e) const {
+  if (SimplificationOrder(operand(0),e) == 0) {
     return 1;
   }
-  return operand(0)->compareTo(e);
+  return SimplificationOrder(operand(0), e);
 }
 
 int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
@@ -90,8 +90,8 @@ int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
   return numberOfChar;
 }
 
-int Factorial::compareToSameTypeExpression(const Expression * e) const {
-  return operand(0)->compareTo(e->operand(0));
+int Factorial::simplificationOrderSameType(const Expression * e) const {
+  return SimplificationOrder(operand(0), e->operand(0));
 }
 
 }

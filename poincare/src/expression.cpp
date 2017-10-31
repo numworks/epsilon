@@ -130,13 +130,13 @@ Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterRe
   static_cast<DynamicHierarchy *>(m_parent)->removeOperand(this);
 }*/
 
-int Expression::compareTo(const Expression * e) const {
-  if (this->type() > e->type()) {
-    return -(e->compareTo(this));
-  } else if (this->type() == e->type()) {
-    return compareToSameTypeExpression(e);
+int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
+  if (e1->type() > e2->type()) {
+    return -(e2->simplificationOrderGreaterType(e1));
+  } else if (e1->type() == e2->type()) {
+    return e1->simplificationOrderSameType(e2);
   } else {
-    return compareToGreaterTypeExpression(e);
+    return e1->simplificationOrderGreaterType(e2);
   }
 }
 

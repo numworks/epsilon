@@ -29,7 +29,7 @@ private:
 
   int numberOfDigitsInMantissa() const;
   /* Sorting */
-  int compareToSameTypeExpression(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e) const override;
 
   constexpr static int k_maxLength = 10;
   Integer m_mantissa;

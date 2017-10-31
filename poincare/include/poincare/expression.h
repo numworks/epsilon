@@ -135,12 +135,16 @@ public:
   virtual void swapOperands(int i, int j) = 0;
   //void removeFromParent();
 
-  /* Sorting */
-  /* compareTo returns:
-   *   1 if this > e
-   *   -1 if this < e
-   *   0 if this == e */
-  int compareTo(const Expression * e) const;
+
+  // Comparison
+  /* isIdenticalTo is the "easy" equality, it returns true if both trees have
+   * same structures and all their nodes have same types and values (ie,
+   * sqrt(pi^2) is NOT identical to pi). */
+  bool isIdenticalTo(const Expression * e) const {
+    /* We use the simplification order only because it is a already-coded total
+     * order on expresssions. */
+    return SimplificationOrder(this, e) == 0;
+  }
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
@@ -166,10 +170,17 @@ protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   template<typename T> static T epsilon();
-  /* Compare (== < and >) the type of the root node of 2 expressions.
-   * This behavior makes sense for value-less nodes (addition, product, fraction
-   * power, etc… For nodes with a value (Integer, Complex), this must be over-
-   * -riden. */
+
+  /* Simplification order returns:
+   *   1 if e1 > e2
+   *   -1 if e1 < e2
+   *   0 if e1 == e
+   * Following the order described in Computer Algebra and Symbolic Computation,
+   * Joel S. Cohen (section 3.1). The order groups like terms together to avoid
+   * quadratic complexity when factorizing addition or multiplication. For
+   * example, it groups terms with same bases together (ie Pi, Pi^3)  and with
+   * same non-rational factors together (ie Pi, 2*Pi). */
+  static int SimplificationOrder(const Expression * e1, const Expression * e2);
 private:
   /* Simplification */
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
@@ -182,15 +193,19 @@ private:
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  /* Sorting */
-  virtual int compareToGreaterTypeExpression(const Expression * e) const {
-    return -1;
-  }
-  /* What should be the implementation of complex? */
-  virtual int compareToSameTypeExpression(const Expression * e) const {
-    return 0;
-  }
+
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
+
+  /* In the simplification order, most expressions are compared by only
+   * comparing their types. However hierarchical expressions of same type would
+   * compare their operands and thus need to reimplement
+   * simplificationOrderSameType. Besides, operations that can be simplified
+   * (ie +, *, ^, !) have specific rules to group like terms together and thus
+   * reimplement simplificationOrderGreaterType. */
+  virtual int simplificationOrderGreaterType(const Expression * e) const { return -1; }
+  virtual int simplificationOrderSameType(const Expression * e) const { return 0; }
+  /* TODO: What should be the implementation for complex? */
+
   Expression * m_parent;
 };
 

@@ -39,8 +39,8 @@ private:
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
   static const char * name() { return "^"; }
-  int compareToGreaterTypeExpression(const Expression * e) const override;
-  int compareToSameTypeExpression(const Expression * e) const override;
+  int simplificationOrderGreaterType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);

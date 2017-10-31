@@ -165,7 +165,7 @@ Expression * Decimal::shallowSimplify(Context& context, AngleUnit angleUnit) {
   return replaceWith(new Rational(numerator, denominator), true);
 }
 
-int Decimal::compareToSameTypeExpression(const Expression * e) const {
+int Decimal::simplificationOrderSameType(const Expression * e) const {
   // We should not get there are decimal are turned into Rational before simplification
   assert(false);
   return 0;

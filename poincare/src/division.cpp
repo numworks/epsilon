@@ -42,7 +42,7 @@ Expression * Division::shallowBeautify(Context & context, AngleUnit angleUnit) {
       if (sin == nullptr || cos == nullptr) {
         break;
       }
-      if (sin->operand(0)->compareTo(cos->operand(0)) != 0) {
+      if (!sin->operand(0)->isIdenticalTo(cos->operand(0))) {
         k++;
         continue;
       }

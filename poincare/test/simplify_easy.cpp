@@ -27,7 +27,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
   cout << "---- compared to: " << simplifiedExpression << "----"  << endl;
   print_expression(f, 0);
 #endif
-  assert(e->compareTo(f) == 0);
+  assert(e->isIdenticalTo(f));
   delete e;
   delete f;
 }

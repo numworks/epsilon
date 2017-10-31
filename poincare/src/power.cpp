@@ -117,21 +117,21 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
-int Power::compareToSameTypeExpression(const Expression * e) const {
-  int baseComparison = operand(0)->compareTo(static_cast<const Power *>(e)->operand(0));
+int Power::simplificationOrderSameType(const Expression * e) const {
+  int baseComparison = SimplificationOrder(operand(0), e->operand(0));
   if (baseComparison != 0) {
     return baseComparison;
   }
-  return operand(1)->compareTo(static_cast<const Power *>(e)->operand(1));
+  return SimplificationOrder(operand(1), e->operand(1));
 }
 
-int Power::compareToGreaterTypeExpression(const Expression * e) const {
-  int baseComparison = operand(0)->compareTo(e);
+int Power::simplificationOrderGreaterType(const Expression * e) const {
+  int baseComparison = SimplificationOrder(operand(0), e);
   if (baseComparison != 0) {
     return baseComparison;
   }
   Rational one(Integer(1));
-  return operand(1)->compareTo(&one);
+  return SimplificationOrder(operand(1), &one);
 }
 
 Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
@@ -320,7 +320,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     const Expression * operand[1] = {pExp};
     m->addOperands(operand, 1);
   }
-  m->sortChildren();
+  m->sortOperands(SimplificationOrder);
   return m;
 }
 

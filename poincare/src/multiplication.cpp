@@ -97,7 +97,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
   int firstNonRationalOperand1 = e1->operand(0)->type() == Type::Rational ? 1 : 0;
   int firstNonRationalOperand2 = e2->operand(0)->type() == Type::Rational ? 1 : 0;
   for (int i = 0; i < numberOfNonRationalFactors1; i++) {
-    if (e1->operand(firstNonRationalOperand1+i)->compareTo(e2->operand(firstNonRationalOperand2+i)) != 0) {
+    if (!(e1->operand(firstNonRationalOperand1+i)->isIdenticalTo(e2->operand(firstNonRationalOperand2+i)))) {
       return false;
     }
   }
@@ -208,7 +208,7 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
 }
 
 void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
-  sortChildren();
+  sortOperands(SimplificationOrder);
   int i = 0;
   while (i < numberOfOperands()) {
     if (deleteUselessOperand(i) && i > 0) {
@@ -320,11 +320,11 @@ const Rational * Multiplication::RationalFactorInExpression(const Expression * e
 bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {
   const Expression * f1 = e1->type() == Type::Power ? e1->operand(0) : e1;
   const Expression * f2 = e2->type() == Type::Power ? e2->operand(0) : e2;
-  return (f1->compareTo(f2) == 0);
+  return f1->isIdenticalTo(f2);
 }
 
 bool Multiplication::TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2) {
-  return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->compareTo(e2->operand(1)) == 0);
+  return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->isIdenticalTo(e2->operand(1)));
 }
 
 bool Multiplication::TermHasRationalBase(const Expression * e) {
@@ -397,7 +397,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
           if (denominatorOperand->type() == Type::Multiplication) {
             const Expression * integerDenominator[1] = {new Rational(r->denominator())};
             static_cast<Multiplication *>(denominatorOperand)->addOperands(integerDenominator, 1);
-            static_cast<Multiplication *>(denominatorOperand)->sortChildren();
+            static_cast<Multiplication *>(denominatorOperand)->sortOperands(SimplificationOrder);
           } else {
             const Expression * multOperands[2] = {new Rational(r->denominator()), denominatorOperand->clone()};
             Multiplication * m = new Multiplication(multOperands, 2, false);
@@ -482,11 +482,11 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   }
   const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
   Power * p = new Power(powOperands, false);
-  m->sortChildren();
+  m->sortOperands(SimplificationOrder);
   m->squashUnaryHierarchy();
   const Expression * multOperand[1] = {p};
   addOperands(multOperand, 1);
-  sortChildren();
+  sortOperands(SimplificationOrder);
   return squashUnaryHierarchy();
 }
 
@@ -515,7 +515,7 @@ void Multiplication::leastCommonMultiple(Expression * factor, Context & context,
   }
   const Expression * newOp[1] = {factor->clone()};
   addOperands(newOp, 1);
-  sortChildren();
+  sortOperands(SimplificationOrder);
 }
 
 template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);

@@ -50,7 +50,7 @@ private:
   }
 
   /* Sorting */
-  int compareToSameTypeExpression(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e) const override;
 
   Integer m_numerator;
   Integer m_denominator;

@@ -35,7 +35,7 @@ Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
       index = 0;
     }
   }
-  sortChildren();
+  sortOperands(Expression::SimplificationOrder);
   int i = 0;
   while (i < numberOfOperands()) {
     if (deleteUselessOperand(i) && i > 0) {
@@ -128,7 +128,7 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   }
   const Expression * f1 = (e1->type() == Type::Multiplication && e1->numberOfOperands() == 2 && e1->operand(0)->type() == Type::Rational) ? e1->operand(1) : e1;
   const Expression * f2 = (e2->type() == Type::Multiplication && e2->numberOfOperands() == 2 && e2->operand(0)->type() == Type::Rational) ? e2->operand(1) : e2;
-  return (f1->compareTo(f2) == 0);
+  return f1->isIdenticalTo(f2);
 }
 
 Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {

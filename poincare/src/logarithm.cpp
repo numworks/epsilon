@@ -102,12 +102,12 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
 Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
   Symbol e = Symbol(Ion::Charset::Exponential);
   const Expression * logOperand[1] = {operand(0)};
-  if (numberOfOperands() == 2 && operand(1)->compareTo(&e) == 0) {
+  if (numberOfOperands() == 2 && operand(1)->isIdenticalTo(&e)) {
     NaperianLogarithm * nl = new NaperianLogarithm(logOperand, true);
     return replaceWith(nl, true);
   }
   Rational one = Rational(Integer(1));
-  if (numberOfOperands() == 2 && operand(1)->compareTo(&one) == 0) {
+  if (numberOfOperands() == 2 && operand(1)->isIdenticalTo(&one)) {
     Logarithm * l = new Logarithm(logOperand, 1, true);
     return replaceWith(l, true);
   }

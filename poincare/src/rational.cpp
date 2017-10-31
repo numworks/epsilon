@@ -114,7 +114,7 @@ Rational Rational::Power(const Rational & i, const Integer & j) {
 
 // Comparison
 
-int Rational::compareToSameTypeExpression(const Expression * e) const {
+int Rational::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Rational);
   const Rational * other = static_cast<const Rational *>(e);
   Integer i1 = Integer::Multiplication(m_numerator, other->denominator());

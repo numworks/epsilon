@@ -34,7 +34,7 @@ bool simplifies_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  bool isIdentical = input->compareTo(expected) == 0;
+  bool isIdentical = input->isIdentical(expected);
 
   delete expected;
   delete input;
@@ -61,7 +61,7 @@ bool identical_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  bool isIdentical = input->compareTo(expected) == 0;
+  bool isIdentical = input->isIdentical(expected);
 
   delete expected;
   delete input;
@@ -99,7 +99,7 @@ bool equivalent_to(const char * input_string, const char * expected_string) {
   cout << "Simplified Expected = " << endl;
   print_expression(expected);
 #endif
-  bool isEquivalent = input->compareTo(expected) == 0;
+  bool isEquivalent = input->isIdentical(expected);
 
   delete expected;
   delete input;

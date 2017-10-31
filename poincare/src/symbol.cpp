@@ -135,7 +135,7 @@ bool Symbol::isMatrixSymbol() const {
   return false;
 }
 
-int Symbol::compareToSameTypeExpression(const Expression * e) const {
+int Symbol::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
   if (m_name == ((Symbol *)e)->m_name) {
     return 0;

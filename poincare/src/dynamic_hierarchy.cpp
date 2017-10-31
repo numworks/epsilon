@@ -102,7 +102,7 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   m_numberOfOperands--;
 }
 
-int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
+int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {
   int m = this->numberOfOperands();
   int n = e->numberOfOperands();
   for (int i = 1; i <= m; i++) {
@@ -110,8 +110,8 @@ int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
     if (n < i) {
       return 1;
     }
-    if (this->operand(m-i)->compareTo(e->operand(n-i)) != 0) {
-      return this->operand(m-i)->compareTo(e->operand(n-i));
+    if (SimplificationOrder(this->operand(m-i), e->operand(n-i)) != 0) {
+      return SimplificationOrder(this->operand(m-i), e->operand(n-i));
     }
   }
   // The NULL node is the least node type.
@@ -121,14 +121,14 @@ int DynamicHierarchy::compareToSameTypeExpression(const Expression * e) const {
   return 0;
 }
 
-int DynamicHierarchy::compareToGreaterTypeExpression(const Expression * e) const {
+int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e) const {
   int m = numberOfOperands();
   if (m == 0) {
     return -1;
   }
   /* Compare e to last term of hierarchy. */
-  if (operand(m-1)->compareTo(e) != 0) {
-    return operand(m-1)->compareTo(e);
+  if (SimplificationOrder(operand(m-1), e) != 0) {
+    return SimplificationOrder(operand(m-1), e);
   }
   if (m > 1) {
     return 1;
@@ -136,11 +136,11 @@ int DynamicHierarchy::compareToGreaterTypeExpression(const Expression * e) const
   return 0;
 }
 
-void DynamicHierarchy::sortChildren() {
+void DynamicHierarchy::sortOperands(ExpressionOrder order) {
   for (int i = numberOfOperands()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (operand(j)->compareTo(operand(j+1)) > 0) {
+      if (order(operand(j), operand(j+1)) > 0) {
         swapOperands(j, j+1);
         isSorted = false;
       }

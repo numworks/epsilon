@@ -42,7 +42,7 @@ private:
  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  int compareToSameTypeExpression(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e) const override;
   const char m_name;
 };
 

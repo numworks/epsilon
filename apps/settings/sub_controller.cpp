@@ -13,7 +13,7 @@ SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
     k_topBottomMargin, Metric::CommonLeftMargin, this),
-  m_nodeModel(nullptr)
+  m_messageTreeModel(nullptr)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -40,8 +40,8 @@ SubController::~SubController() {
 }
 
 const char * SubController::title() {
-  if (m_nodeModel) {
-    return I18n::translate(m_nodeModel->label());
+  if (m_messageTreeModel) {
+    return I18n::translate(m_messageTreeModel->label());
   }
   return "";
 }
@@ -52,12 +52,12 @@ View * SubController::view() {
 
 void SubController::didEnterResponderChain(Responder * previousResponder) {
   if (previousResponder->commonAncestorWith(this) == parentResponder()) {
-    /* We want to select the prefered setting node only when the previous page
+    /* We want to select the prefered SettingMessageTree only when the previous page
      * was the main setting page. We do not to change the selection when
      * dismissing a pop-up for instance. */
-    selectCellAtLocation(0, valueIndexForPreference(m_nodeModel->label()));
+    selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
   }
-  if (m_nodeModel->label() == I18n::Message::ExamMode) {
+  if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
     m_selectableTableView.reloadData();
   }
   app()->setFirstResponder(&m_selectableTableView);
@@ -66,13 +66,13 @@ void SubController::didEnterResponderChain(Responder * previousResponder) {
 bool SubController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_nodeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1) {
     app()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Behavious of "Exam mode" menu*/
-    if (m_nodeModel->label() == I18n::Message::ExamMode) {
+    if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;
       }
@@ -81,7 +81,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     /* Behaviour of "About" menu */
-    if (m_nodeModel->label() == I18n::Message::About) {
+    if (m_messageTreeModel->label() == I18n::Message::About) {
       if (selectedRow() == 0) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
@@ -94,7 +94,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     /* Generic behaviour of preference menu*/
-    setPreferenceWithValueIndex(m_nodeModel->label(), selectedRow());
+    setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
     StackViewController * stack = stackController();
@@ -109,8 +109,8 @@ bool SubController::handleEvent(Ion::Events::Event event) {
 }
 
 int SubController::numberOfRows() {
-  if (m_nodeModel) {
-    return m_nodeModel->numberOfChildren();
+  if (m_messageTreeModel) {
+    return m_messageTreeModel->numberOfChildren();
   }
   return 0;
 }
@@ -118,14 +118,14 @@ int SubController::numberOfRows() {
 HighlightCell * SubController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
     return &m_complexFormatCells[index];
   }
   return &m_cells[index];
 }
 
 int SubController::reusableCellCount() {
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
     return 2;
   }
   return k_totalNumberOfCell;
@@ -136,17 +136,17 @@ KDCoordinate SubController::cellHeight() {
 }
 
 void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (m_nodeModel->label() == I18n::Message::ComplexFormat) {
+  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
     return;
   }
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  myCell->setMessage(m_nodeModel->children(index)->label());
+  myCell->setMessage(m_messageTreeModel->children(index)->label());
   myCell->setMessageFontSize(KDText::FontSize::Large);
   myCell->setAccessoryText("");
-  if (m_nodeModel->label() == I18n::Message::ExamMode && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+  if (m_messageTreeModel->label() == I18n::Message::ExamMode && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
-  if (m_nodeModel->label() == I18n::Message::About) {
+  if (m_messageTreeModel->label() == I18n::Message::About) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
     const char * accessoryMessage = Ion::softwareVersion();
     switch (index) {
@@ -167,8 +167,8 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
 }
 
-void SubController::setNodeModel(const Node * nodeModel) {
-  m_nodeModel = (Node *)nodeModel;
+void SubController::setMessageTreeModel(const MessageTree * messageTreeModel) {
+  m_messageTreeModel = (MessageTree *)messageTreeModel;
 }
 
 void SubController::viewWillAppear() {

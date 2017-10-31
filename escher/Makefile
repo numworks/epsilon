@@ -37,6 +37,7 @@ objs += $(addprefix escher/src/,\
   message_table_cell_with_message.o\
   message_table_cell_with_switch.o\
   message_text_view.o\
+  message_tree.o\
   modal_view_controller.o\
   palette.o\
   responder.o\
@@ -66,8 +67,9 @@ objs += $(addprefix escher/src/,\
   text_field.o\
   text_view.o\
   tiled_view.o\
-  toolbox.o\
   timer.o\
+  toolbox.o\
+  toolbox_message_tree.o\
   view.o\
   view_controller.o\
   warning_controller.o\

@@ -40,6 +40,7 @@
 #include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/message_text_view.h>
+#include <escher/message_tree.h>
 #include <escher/metric.h>
 #include <escher/modal_view_controller.h>
 #include <escher/palette.h>
@@ -69,6 +70,7 @@
 #include <escher/tiled_view.h>
 #include <escher/timer.h>
 #include <escher/toolbox.h>
+#include <escher/toolbox_message_tree.h>
 #include <escher/view.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>

@@ -41,8 +41,6 @@ private:
   void factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
-  bool isUselessOperand(const Rational * r) override;
-
   /* Evaluation */
   template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);

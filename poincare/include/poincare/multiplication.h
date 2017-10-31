@@ -48,7 +48,6 @@ private:
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
-  bool isUselessOperand(const Rational * r) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);

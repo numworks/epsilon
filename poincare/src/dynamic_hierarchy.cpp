@@ -161,13 +161,4 @@ Expression * DynamicHierarchy::squashUnaryHierarchy() {
   return this;
 }
 
-bool DynamicHierarchy::deleteUselessOperand(int index) {
-  assert(index < numberOfOperands());
-  if (numberOfOperands() >1 && operand(index)->type() == Type::Rational && isUselessOperand(static_cast<const Rational *>(operand(index)))) {
-    removeOperand(operand(index), true);
-    return true;
-  }
-  return false;
-}
-
 }

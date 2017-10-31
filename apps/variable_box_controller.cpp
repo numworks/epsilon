@@ -278,7 +278,7 @@ void VariableBoxController::ContentViewController::viewDidDisappear() {
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :
-  StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+  StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(this, context)
 {
 }

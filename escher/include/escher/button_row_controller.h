@@ -28,6 +28,7 @@ public:
   bool setSelectedButton(int selectedButton);
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  ViewController::DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
 private:
   class ContentView : public View {
   public:

@@ -58,9 +58,6 @@ MainController::~MainController() {
     m_complexFormatLayout = nullptr;
   }
 }
-const char * MainController::title() {
-  return I18n::translate(m_messageTreeModel->label());
-}
 
 View * MainController::view() {
   return &m_selectableTableView;

@@ -325,8 +325,19 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   assert(textBufferSize < INT_MAX/2);
 }
 
-bool TextArea::TextArea::handleEvent(Ion::Events::Event event) {
+Toolbox * TextArea::toolbox() {
+  if (m_delegate != nullptr) {
+    return m_delegate->toolboxForTextArea(this);
+  }
+  return nullptr;
+}
+
+bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
+    return true;
+  } else if (Responder::handleEvent(event)) {
+    // The only event Responder handles is 'Toolbox' displaying.
+    return true;
   } else if (event == Ion::Events::Left) {
     m_contentView.moveCursorIndex(-1);
   } else if (event == Ion::Events::Right) {
@@ -370,5 +381,9 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
 }
 
 void TextArea::moveCursor(int deltaX) {
-  m_contentView.moveCursorIndex(deltaX);
+  int sign = deltaX > 0? 1 : -1;
+  int numberSteps = deltaX * sign;
+  for (int i = 0; i < numberSteps; i++) {
+    m_contentView.moveCursorIndex(sign);
+  }
 }

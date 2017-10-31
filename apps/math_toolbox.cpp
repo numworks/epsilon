@@ -1,4 +1,5 @@
 #include "math_toolbox.h"
+#include "./shared/toolbox_helpers.h"
 #include <assert.h>
 #include <string.h>
 
@@ -74,15 +75,8 @@ bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
     sender()->setEditing(true);
   }
   sender()->insertTextAtLocation(editedText, sender()->cursorLocation());
-  int cursorDelta = 0;
-  int editedTextLength = strlen(editedText);
-  for (int i = 0; i < editedTextLength; i++) {
-    if (editedText[i] == '(') {
-      cursorDelta =  i + 1;
-      break;
-    }
-  }
-  sender()->setCursorLocation(sender()->cursorLocation()+cursorDelta);
+  int newCursorLocation = sender()->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(editedText);
+  sender()->setCursorLocation(newCursorLocation);
   app()->dismissModalViewController();
   return true;
 }
@@ -92,12 +86,12 @@ const ToolboxMessageTree * MathToolbox::rootModel() {
 }
 
 MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
-  assert(index > 0 && index < k_maxNumberOfDisplayedRows);
+  assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
 MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
-  assert(index > 0 && index < k_maxNumberOfDisplayedRows);
+  assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 

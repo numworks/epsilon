@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include <string.h>
 
 namespace Code {
 namespace Helpers {

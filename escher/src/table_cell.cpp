@@ -1,5 +1,6 @@
 #include <escher/table_cell.h>
 #include <escher/palette.h>
+#include <escher/metric.h>
 
 TableCell::TableCell(Layout layout) :
   HighlightCell(),
@@ -41,7 +42,7 @@ void TableCell::layoutSubviews() {
     KDSize labelSize = label->minimalSizeForOptimalDisplay();
     switch (m_layout) {
       case Layout::Vertical:
-        label->setFrame(KDRect(k_separatorThickness+k_labelMargin, k_separatorThickness+k_labelTopMargin, width-2*k_separatorThickness-k_labelMargin, labelSize.height()));
+        label->setFrame(KDRect(k_separatorThickness+k_labelMargin, k_separatorThickness+Metric::TableCellLabelTopMargin, width-2*k_separatorThickness-k_labelMargin, labelSize.height()));
         break;
       default:
         label->setFrame(KDRect(k_separatorThickness+k_labelMargin, k_separatorThickness, labelSize.width(), height - 2*k_separatorThickness));

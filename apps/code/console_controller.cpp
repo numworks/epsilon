@@ -1,4 +1,5 @@
 #include "console_controller.h"
+#include "app.h"
 #include "script.h"
 #include "helpers.h"
 #include <apps/i18n.h>
@@ -219,8 +220,10 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
   return true;
 }
 
-Toolbox * ConsoleController::toolboxForTextField(TextField * textFied) {
-  return nullptr;
+::Toolbox * ConsoleController::toolboxForTextField(TextField * textField) {
+  Code::App * codeApp = static_cast<Code::App *>(app());
+  codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextField());
+  return codeApp->pythonToolbox();
 }
 
 /* printText is called by the Python machine.

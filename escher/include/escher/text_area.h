@@ -12,8 +12,8 @@ public:
   TextArea(Responder * parentResponder, char * textBuffer = nullptr, size_t textBufferSize = 0,
     TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
+  Toolbox * toolbox() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setText(char * textBuffer, size_t textBufferSize);
   void insertText(const char * textBuffer) { m_contentView.insertText(textBuffer); }

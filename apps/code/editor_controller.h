@@ -23,7 +23,7 @@ public:
   /* TextAreaDelegate */
   bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) override;
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextArea(TextArea * textArea) override { return nullptr; }
+  ::Toolbox * toolboxForTextArea(TextArea * textArea) override;
 
 private:
   static constexpr int k_indentationSpacesNumber = 2;

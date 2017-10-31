@@ -35,6 +35,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
   // ListViewDataSource
   int numberOfRows() override;
@@ -70,6 +71,7 @@ private:
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
   int firstNewLineCharIndex(const char * text, size_t length);
+  StackViewController * stackViewController();
   int m_rowHeight;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;

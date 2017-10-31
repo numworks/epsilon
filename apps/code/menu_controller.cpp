@@ -15,7 +15,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
     MenuController * menu = (MenuController *)context;
     if (menu->consoleController()->loadPythonEnvironment()) {
-      menu->app()->displayModalViewController(menu->consoleController(), 0.5f, 0.5f);
+      menu->stackViewController()->push(menu->consoleController());
       return;
     }
     //TODO: Pop up warning message: not enough space to load Python
@@ -34,15 +34,13 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_selectableTableView.selectCellAtLocation(0, 0);
 }
 
-ConsoleController * MenuController::consoleController() {
-  return &m_consoleController;
-}
-
-View * MenuController::view() {
-  return &m_selectableTableView;
-}
-
 void MenuController::didBecomeFirstResponder() {
+  if (m_selectableTableView.selectedRow() < 0) {
+    assert(footer()->selectedButton() == 0);
+    app()->setFirstResponder(&m_consoleButton);
+    return;
+  }
+  assert(m_selectableTableView.selectedRow() < numberOfRows());
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -113,10 +111,6 @@ int MenuController::numberOfRows() {
   return m_scriptStore->numberOfScripts() + 1;
   //TODO do not add the addScript row if there can be no more scripts stored.
 };
-
-KDCoordinate MenuController::cellHeight() {
-  return k_rowHeight;
-}
 
 KDCoordinate MenuController::rowHeight(int j) {
   return cellHeight();
@@ -211,19 +205,6 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
-}
-
-Toolbox * MenuController::toolboxForTextField(TextField * textFied) {
-  return nullptr;
-}
-
-int MenuController::numberOfButtons(ButtonRowController::Position position) const {
-  return 1;
-}
-
-Button * MenuController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  assert(index == 0);
-  return const_cast<Button *>(&m_consoleButton);
 }
 
 StackViewController * MenuController::stackViewController() {

@@ -209,7 +209,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
 }
 
 bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const char * text) {
-  app()->dismissModalViewController();
+  stackViewController()->pop();
   return true;
 }
 
@@ -296,6 +296,10 @@ int ConsoleController::firstNewLineCharIndex(const char * text, size_t length) {
     index++;
   }
   return index;
+}
+
+StackViewController * ConsoleController::stackViewController() {
+ return static_cast<StackViewController *>(parentResponder());
 }
 
 }

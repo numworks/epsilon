@@ -26,13 +26,10 @@ public:
   typedef int (*ExpressionOrder)(const Expression * e1, const Expression * e2);
   void sortOperands(ExpressionOrder order);
   Expression * squashUnaryHierarchy();
-protected:
-  bool deleteUselessOperand(int index);
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
   int simplificationOrderSameType(const Expression * e) const override;
   int simplificationOrderGreaterType(const Expression * e) const override;
-  virtual bool isUselessOperand(const Rational * r) = 0;
   const Expression ** m_operands;
   int m_numberOfOperands;
 };

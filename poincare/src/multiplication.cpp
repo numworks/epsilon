@@ -211,8 +211,11 @@ void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
   sortOperands(SimplificationOrder);
   int i = 0;
   while (i < numberOfOperands()) {
-    if (deleteUselessOperand(i) && i > 0) {
-      i--;
+    if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isOne()) {
+      removeOperand(operand(i), true);
+      if (i > 0) {
+        i--;
+      }
     }
     if (i == numberOfOperands()-1) {
       break;
@@ -343,10 +346,6 @@ bool Multiplication::TermHasIntegerExponent(const Expression * e) {
     }
   }
   return false;
-}
-
-bool Multiplication::isUselessOperand(const Rational * r) {
-  return r->isOne();
 }
 
 Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleUnit) {

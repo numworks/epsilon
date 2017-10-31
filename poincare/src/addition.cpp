@@ -23,39 +23,67 @@ Expression * Addition::clone() const {
 /* Simplication */
 
 Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  /* TODO: optimize, do we have to restart index = 0 at every merging? */
-  int index = 0;
-  while (index < numberOfOperands()) {
-    Expression * o = editableOperand(index++);
+  /* Step 1: Addition is associative, so let's start by merging children which
+   * also are additions themselves. */
+  int i = 0;
+  int initialNumberOfOperands = numberOfOperands();
+  while (i < initialNumberOfOperands) {
+    Expression * o = editableOperand(i);
     if (o->type() == Type::Addition) {
       mergeOperands(static_cast<Addition *>(o));
-      index = 0;
+      continue;
     }
+    i++;
   }
+
+  // Step 2: Sort the operands
   sortOperands(Expression::SimplificationOrder);
-  int i = 0;
+
+  /* Step 3: Factorize like terms. Thanks to the simplification order, those are
+   * next to each other at this point. */
+  i = 0;
+  while (i < numberOfOperands()-1) {
+    Expression * o1 = editableOperand(i);
+    Expression * o2 = editableOperand(i+1);
+    if (o1->type() == Type::Rational && o2->type() == Type::Rational) {
+      Rational r1 = *static_cast<Rational *>(o1);
+      Rational r2 = *static_cast<Rational *>(o2);
+      Rational a = Rational::Addition(r1, r2);
+      replaceOperand(o1, new Rational(a), true);
+      removeOperand(o2, true);
+      continue;
+    }
+    if (TermsHaveIdenticalNonRationalFactors(o1, o2)) {
+      factorizeChildren(o1, o2, context, angleUnit);
+      continue;
+    }
+    i++;
+  }
+
+  /* Step 4: Let's remove zeroes if there's any. It's important to do this after
+   * having factorized because factorization can lead to new zeroes. For example
+   * pi+(-1)*pi. We don't remove the last zero if it's the only operand left
+   * though. */
+  i = 0;
   while (i < numberOfOperands()) {
-    if (deleteUselessOperand(i) && i > 0) {
-      i--;
+    Expression * o = editableOperand(i);
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isZero() && numberOfOperands() > 1) {
+      removeOperand(o, true);
+      continue;
     }
-    if (i == numberOfOperands()-1) {
-      break;
-    }
-    if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
-      Rational a = Rational::Addition(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
-      replaceOperand(operand(i), new Rational(a), true);
-      removeOperand(operand(i+1), true);
-    } else if (TermsHaveIdenticalNonRationalFactors(operand(i), operand(i+1))) {
-      factorizeChildren(editableOperand(i), editableOperand(i+1), context, angleUnit);
-    } else {
-      i++;
-    }
+    i++;
   }
-  Expression * newExpression = squashUnaryHierarchy();
-  if (newExpression == this) {
-    return factorizeOnCommonDenominator(context, angleUnit);
+
+  // Step 5: Let's remove the addition altogether if it has a single operand
+  Expression * result = squashUnaryHierarchy();
+
+  // Step 6: Last but not least, let's put everything under a common denominator
+  if (result == this && parent()->type() != Type::Addition) {
+    // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
+    result = factorizeOnCommonDenominator(context, angleUnit);
   }
-  return newExpression;
+
+  return result;
 }
 
 Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit) {
@@ -154,10 +182,6 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
     index++;
   }
   return squashUnaryHierarchy();
-}
-
-bool Addition::isUselessOperand(const Rational * r) {
-  return r->isZero();
 }
 
 /* Evaluation */

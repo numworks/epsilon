@@ -15,7 +15,7 @@ class MenuController : public ViewController, public ListViewDataSource, public 
 public:
   MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
 
-  ConsoleController * consoleController();
+  ConsoleController * consoleController() { return &m_consoleController; }
   StackViewController * stackViewController();
   void configureScript();
   void setParameteredScript();
@@ -25,13 +25,13 @@ public:
   void reloadConsole();
 
   /* ViewController */
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
   /* ListViewDataSource */
   int numberOfRows() override;
-  KDCoordinate cellHeight();
+  KDCoordinate cellHeight() { return k_rowHeight; }
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -45,11 +45,14 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  Toolbox * toolboxForTextField(TextField * textFied) override;
+  Toolbox * toolboxForTextField(TextField * textFied) override { return nullptr; }
 
   /* ButtonRowDelegate */
-  int numberOfButtons(ButtonRowController::Position position) const override;
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
+  int numberOfButtons(ButtonRowController::Position position) const override { return 1; }
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
+    assert(index == 0);
+    return const_cast<Button *>(&m_consoleButton);
+  }
 
 private:
   static constexpr int k_maxNumberOfDisplayableScriptCells = 7; //TODO

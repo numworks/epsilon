@@ -18,8 +18,8 @@ void EditorController::setScript(Script script){
 }
 
 bool EditorController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK) {
-    app()->dismissModalViewController();
+  if (event == Ion::Events::OK || event == Ion::Events::Back) {
+    stackController()->pop();
     return true;
   }
   return false;
@@ -110,6 +110,10 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   }
 
   return false;
+}
+
+StackViewController * EditorController::stackController() {
+  return static_cast<StackViewController *>(parentResponder());
 }
 
 }

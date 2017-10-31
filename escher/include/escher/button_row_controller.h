@@ -7,6 +7,7 @@
 #include <escher/i18n.h>
 #include <escher/button.h>
 #include <escher/app.h>
+#include <assert.h>
 
 class ButtonRowDelegate;
 
@@ -21,10 +22,11 @@ public:
     EmbossedGrey
   };
   ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position = Position::Top, Style = Style::PlainWhite);
-  View * view() override;
+  View * view() override { return &m_contentView; }
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  int selectedButton();
   bool setSelectedButton(int selectedButton);
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -40,9 +42,9 @@ private:
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool setSelectedButton(int selectedButton, App * app);
-    int selectedButton();
-    ViewController * mainViewController() const;
-    ButtonRowDelegate * buttonRowDelegate() const;
+    int selectedButton() const { return m_selectedButton; }
+    ViewController * mainViewController() const { return m_mainViewController; }
+    ButtonRowDelegate * buttonRowDelegate() const { return m_delegate; }
   private:
     constexpr static KDCoordinate k_plainStyleHeight = 20;
     constexpr static KDCoordinate k_embossedStyleHeight = 36;
@@ -61,10 +63,13 @@ private:
 class ButtonRowDelegate {
 public:
   ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer);
-  virtual int numberOfButtons(ButtonRowController::Position position) const;
-  virtual Button * buttonAtIndex(int index, ButtonRowController::Position position) const;
-  ButtonRowController * header();
-  ButtonRowController * footer();
+  virtual int numberOfButtons(ButtonRowController::Position position) const { return 0; }
+  virtual Button * buttonAtIndex(int index, ButtonRowController::Position position) const {
+    assert(false);
+    return nullptr;
+  }
+  ButtonRowController * header() { return m_header; }
+  ButtonRowController * footer() { return m_footer; }
 private:
   ButtonRowController * m_header;
   ButtonRowController * m_footer;

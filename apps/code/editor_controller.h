@@ -18,6 +18,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
+  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
   /* TextAreaDelegate */
   bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) override;
@@ -26,6 +27,7 @@ public:
 
 private:
   static constexpr int k_indentationSpacesNumber = 2;
+  StackViewController * stackController();
   TextArea m_textArea;
   ScriptParameterController * m_scriptParameterController;
 };

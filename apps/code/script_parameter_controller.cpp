@@ -49,7 +49,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     int i = m_currentScriptIndex;
     switch (selectedRow()) {
       case 0:
-        app()->displayModalViewController(&m_editorController, 0.5f, 0.5f);
+        stackController()->push(&m_editorController);
         return true;
       case 1:
         dismissScriptParameterController();
@@ -101,7 +101,7 @@ int ScriptParameterController::reusableCellCount() {
 }
 
 int ScriptParameterController::numberOfRows() {
- return k_totalNumberOfCell;
+  return k_totalNumberOfCell;
 }
 
 void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -115,7 +115,7 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
 }
 
 StackViewController * ScriptParameterController::stackController() {
-    return static_cast<StackViewController *>(parentResponder());
+  return static_cast<StackViewController *>(parentResponder());
 }
 
 }

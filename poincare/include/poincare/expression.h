@@ -23,6 +23,7 @@ class Expression {
   friend class Power;
   friend class Trigonometry;
   friend class Tangent;
+  friend class AbsoluteValue;
 public:
   enum class Type : uint8_t {
     Undefined = 0,
@@ -106,12 +107,13 @@ public:
   static Expression * parse(char const * string);
   virtual ~Expression() = default;
   virtual Expression * clone() const = 0;
-  /* sign equals:
-   *  -1 means the expression is negative
-   *  1 means the expression is positive
-   *  0 means the sign is unknown */
-  virtual int sign() const { return false; }
-  virtual Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
+
+  enum class Sign {
+    Negative = -1,
+    Unknown = 0,
+    Positive = 1
+  };
+  virtual Sign sign() const { return Sign::Unknown; }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
@@ -188,6 +190,7 @@ private:
   virtual int compareToSameTypeExpression(const Expression * e) const {
     return 0;
   }
+  virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
   Expression * m_parent;
 };
 

@@ -28,9 +28,9 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
       return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
     }
   }
-  if (e->operand(0)->sign() < 0) {
+  if (e->operand(0)->sign() == Expression::Sign::Negative) {
     Expression * op = e->editableOperand(0);
-    Expression * newOp = op->turnIntoPositive(context, angleUnit);
+    Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
     newOp->shallowSimplify(context, angleUnit);
     if (e->type() == Expression::Type::Cosine) {
       return e->shallowSimplify(context, angleUnit);
@@ -69,7 +69,7 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
       Multiplication * m = new Multiplication(multOperands, 2, false);
       return simplifiedCosine->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
-    assert(r->sign() > 0);
+    assert(r->sign() == Expression::Sign::Positive);
     assert(!divisor.isLowerThan(dividand));
   }
   return e;
@@ -113,10 +113,10 @@ Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Contex
     return e->replaceWith(lookup, true);
   }
   // arccos(-x) = Pi-arcos(x), arcsin(-x) = -arcsin(x), arctan(-x)=-arctan(x)
-  if (e->operand(0)->sign() < 0 || (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(0)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(0))->isMinusOne())) {
+  if (e->operand(0)->sign() == Expression::Sign::Negative || (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(0)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(0))->isMinusOne())) {
     Expression * op = e->editableOperand(0);
-    if (e->operand(0)->sign() < 0) {
-      Expression * newOp = op->turnIntoPositive(context, angleUnit);
+    if (e->operand(0)->sign() == Expression::Sign::Negative) {
+      Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
       newOp->shallowSimplify(context, angleUnit);
     } else {
       ((Multiplication *)op)->removeOperand(op->editableOperand(0), true);

@@ -37,7 +37,7 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
 }
 
 Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  if (operand(0)->sign() < 0 || (numberOfOperands() == 2 && operand(1)->sign() < 0)) {
+  if (operand(0)->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
     return replaceWith(new Undefined(), true);
   }
   if (operand(0)->type() == Type::Rational) {

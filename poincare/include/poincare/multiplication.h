@@ -18,8 +18,7 @@ class Multiplication : public DynamicHierarchy {
 public:
   Type type() const override;
   Expression * clone() const override;
-  int sign() const override;
-  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override;
+  Sign sign() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
@@ -60,6 +59,7 @@ private:
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
 };
 
 }

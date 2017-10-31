@@ -41,18 +41,19 @@ int Multiplication::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 
-int Multiplication::sign() const {
+Expression::Sign Multiplication::sign() const {
   int sign = 1;
   for (int i = 0; i < numberOfOperands(); i++) {
-    sign *= operand(i)->sign();
+    sign *= (int)operand(i)->sign();
   }
-  return sign;
+  return (Sign)sign;
 }
 
-Expression * Multiplication::turnIntoPositive(Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
   for (int i = 0; i < numberOfOperands(); i++) {
-    if (operand(i)->sign() < 0) {
-      editableOperand(i)->turnIntoPositive(context, angleUnit);
+    if (operand(i)->sign() == Sign::Negative) {
+      editableOperand(i)->setSign(s, context, angleUnit);
     }
   }
   return shallowSimplify(context, angleUnit);
@@ -350,11 +351,11 @@ bool Multiplication::isUselessOperand(const Rational * r) {
 
 Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleUnit) {
   // -1*A -> -A or (-n)*A -> -n*A
-  if (operand(0)->type() == Type::Rational && operand(0)->sign() < 0) {
+  if (operand(0)->type() == Type::Rational && operand(0)->sign() == Sign::Negative) {
     if (static_cast<const Rational *>(operand(0))->isMinusOne()) {
       removeOperand(editableOperand(0), true);
     } else {
-      editableOperand(0)->turnIntoPositive(context, angleUnit);
+      editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
     }
     Expression * e = squashUnaryHierarchy();
     const Expression * oppOperand[1] = {e->clone()};
@@ -466,9 +467,9 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   }
   int i = 0;
   while (i < numberOfOperands()) {
-    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() < 0) {
+    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() == Sign::Negative) {
       Expression * e = editableOperand(i);
-      e->editableOperand(1)->turnIntoPositive(context, angleUnit);
+      e->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
       removeOperand(e, false);
       m->addOperands(&e, 1);
       e->shallowSimplify(context, angleUnit);
@@ -501,11 +502,11 @@ void Multiplication::leastCommonMultiple(Expression * factor, Context & context,
       const Expression * index[2] = {CreateExponent(editableOperand(i)), CreateExponent(factor)};
       Subtraction * sub = new Subtraction(index, false);
       Expression::simplify((Expression **)&sub, context, angleUnit);
-      if (sub->sign() < 0) { // index[0] < index[1]
+      if (sub->sign() == Sign::Negative) { // index[0] < index[1]
         factor->replaceOperand(factor->editableOperand(1), new Opposite((Expression **)&sub, true), true);
         factor->deepSimplify(context, angleUnit);
         factorizeBase(editableOperand(i), factor, context, angleUnit);
-      } else if (sub->sign() == 0) {
+      } else if (sub->sign() == Sign::Unknown) {
         factorizeBase(editableOperand(i), factor, context, angleUnit);
       } else {}
       delete sub;

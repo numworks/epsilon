@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class Rational : public StaticHierarchy<0> {
+  friend class Power;
 public:
   /* The constructor build a irreductible fraction whose sign is on numerator */
   Rational(const Integer numerator, const Integer denominator);
@@ -20,12 +21,10 @@ public:
   // Getter
   const Integer numerator() const;
   const Integer denominator() const;
-  void setNegative(bool negative) { m_numerator.setNegative(negative); }
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
-  int sign() const override;
-  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { m_numerator.setNegative(false); return this; }
+  Sign sign() const override;
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
@@ -45,6 +44,10 @@ private:
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * setSign(Sign s);
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override {
+    return setSign(s);
+  }
 
   /* Sorting */
   int compareToSameTypeExpression(const Expression * e) const override;

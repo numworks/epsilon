@@ -17,7 +17,6 @@ public:
   MainController& operator=(const MainController& other) = delete;
   MainController& operator=(MainController&& other) = delete;
   View * view() override;
-  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

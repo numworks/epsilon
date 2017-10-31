@@ -14,7 +14,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_expressionCells{},
   m_parameterController(this, sequenceStore),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
 {
 }

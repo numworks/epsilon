@@ -186,7 +186,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
       if (m->operand(i)->sign() > 0 || m->operand(i)->type() == Type::Rational) {
         Expression * r = editableOperand(1);
         Expression * rCopy = r->clone();
-        Expression * factor = m->editableOperand(0);
+        Expression * factor = m->editableOperand(i);
         if (factor->sign() < 0) {
           m->replaceOperand(factor, new Rational(Integer(-1)), false);
           static_cast<Rational *>(factor)->setNegative(false);

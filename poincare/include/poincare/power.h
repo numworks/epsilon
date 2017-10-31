@@ -16,8 +16,7 @@ class Power : public StaticHierarchy<2> {
 public:
   Type type() const override;
   Expression * clone() const override;
-  int sign() const override;
-  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override;
+  Sign sign() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   Expression * createDenominator(Context & context, AngleUnit angleUnit);
 private:
@@ -32,6 +31,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;

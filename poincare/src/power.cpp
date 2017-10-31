@@ -28,26 +28,27 @@ Expression * Power::clone() const {
   return new Power(m_operands, true);
 }
 
-int Power::sign() const {
-  if (operand(0)->sign() > 0 && operand(1)->sign() != 0) {
-    return 1;
+Expression::Sign Power::sign() const {
+  if (operand(0)->sign() == Sign::Positive && operand(1)->sign() != Sign::Unknown) {
+    return Sign::Positive;
   }
-  if (operand(0)->sign() < 0 && operand(1)->type() == Type::Rational) {
+  if (operand(0)->sign() == Sign::Negative && operand(1)->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(1));
     if (r->denominator().isOne()) {
       if (Integer::Division(r->numerator(), Integer(2)).remainder.isZero()) {
-        return 1;
+        return Sign::Positive;
       } else {
-        return -1;
+        return Sign::Negative;
       }
     }
   }
-  return 0;
+  return Sign::Unknown;
 }
 
-Expression * Power::turnIntoPositive(Context & context, AngleUnit angleUnit) {
-  assert(operand(0)->sign() < 0);
-  editableOperand(0)->turnIntoPositive(context, angleUnit);
+Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
+  assert(operand(0)->sign() == Sign::Negative);
+  editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
   return this;
 }
 
@@ -149,10 +150,10 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
     Rational * a = static_cast<Rational *>(editableOperand(0));
     // 0^x
     if (a->isZero()) {
-      if (operand(1)->sign() > 0) {
+      if (operand(1)->sign() == Sign::Positive) {
         return replaceWith(new Rational(Integer(0)), true);
       }
-      if (operand(1)->sign() < 0) {
+      if (operand(1)->sign() == Sign::Negative) {
         return replaceWith(new Undefined(), true);
       }
     }
@@ -169,7 +170,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->type() == Type::Power) {
     Power * p = static_cast<Power *>(editableOperand(0));
     // Check is a > 0 or c is Integer
-    if (p->operand(0)->sign() > 0 ||
+    if (p->operand(0)->sign() == Sign::Positive ||
         (operand(1)->type() == Type::Rational && static_cast<Rational *>(editableOperand(1))->denominator().isOne())) {
       return simplifyPowerPower(p, editableOperand(1), context, angleUnit);
     }
@@ -183,13 +184,13 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*)^r if a rational
     for (int i = 0; i < m->numberOfOperands(); i++) {
-      if (m->operand(i)->sign() > 0 || m->operand(i)->type() == Type::Rational) {
+      if (m->operand(i)->sign() == Sign::Positive || m->operand(i)->type() == Type::Rational) {
         Expression * r = editableOperand(1);
         Expression * rCopy = r->clone();
         Expression * factor = m->editableOperand(i);
-        if (factor->sign() < 0) {
+        if (factor->sign() == Sign::Negative) {
           m->replaceOperand(factor, new Rational(Integer(-1)), false);
-          static_cast<Rational *>(factor)->setNegative(false);
+          factor->setSign(Sign::Positive, context, angleUnit);
         } else {
           m->removeOperand(factor, false);
         }
@@ -254,8 +255,8 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   }
   Expression * n = nullptr;
   Expression * d = nullptr;
-  if (b->sign() < 0) {
-    b->setNegative(false);
+  if (b->sign() == Sign::Negative) {
+    b->setSign(Sign::Positive);
     n = CreateSimplifiedIntegerRationalPower(a->denominator(), b, false);
     d = CreateSimplifiedIntegerRationalPower(a->numerator(), b, true);
   } else {
@@ -270,12 +271,12 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
 
 Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator) {
   assert(!i.isZero());
-  assert(r->sign() > 0);
+  assert(r->sign() == Sign::Positive);
   if (i.isOne()) {
     return new Rational(Integer(1));
   }
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
-    r->setNegative(isDenominator);
+    r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
     const Expression * powOp[2] = {new Rational(i), r->clone()};
     // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
     return new Power(powOp, false);
@@ -325,7 +326,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
 
 Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
-  if (operand(1)->sign() < 0) {
+  if (operand(1)->sign() == Sign::Negative) {
     Expression * p = createDenominator(context, angleUnit);
     const Expression * divOperands[2] = {new Rational(Integer(1)), p};
     Division * d = new Division(divOperands, false);
@@ -355,9 +356,9 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
 }
 
 Expression * Power::createDenominator(Context & context, AngleUnit angleUnit) {
-  if (operand(1)->sign() < 0) {
+  if (operand(1)->sign() == Sign::Negative) {
     Expression * denominator = clone();
-    Expression * newExponent = denominator->editableOperand(1)->turnIntoPositive(context, angleUnit);
+    Expression * newExponent = denominator->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
     if (newExponent->type() == Type::Rational && static_cast<Rational *>(newExponent)->isOne()) {
       delete denominator;
       return operand(0)->clone();

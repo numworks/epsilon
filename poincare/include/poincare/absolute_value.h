@@ -12,8 +12,7 @@ class AbsoluteValue : public StaticHierarchy<1> {
 public:
   Type type() const override;
   Expression * clone() const override;
-  int sign() const override { return 1; }
-  Expression * turnIntoPositive(Context & context, AngleUnit angleUnit) override { return this; }
+  Sign sign() const override { return Sign::Positive; }
 private:
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
@@ -27,7 +26,7 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "abs");
   }
   Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
-
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
 };
 
 }

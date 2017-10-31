@@ -63,11 +63,18 @@ Expression * Rational::clone() const {
   return new Rational(m_numerator, m_denominator);
 }
 
-int Rational::sign() const {
+Expression::Sign Rational::sign() const {
   if (m_numerator.isNegative()) {
-    return -1;
+    return Sign::Negative;
   }
-  return 1;
+  return Sign::Positive;
+}
+
+Expression * Rational::setSign(Sign s) {
+  assert(s != Sign::Unknown);
+  bool negative = s == Sign::Negative ? true : false;
+  m_numerator.setNegative(negative);
+  return this;
 }
 
 Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {

@@ -135,12 +135,12 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
   int index = 0;
   while (index < numberOfOperands()) {
     // a+(-1)*b+... -> a-b+...
-    if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && operand(index)->operand(0)->sign() < 0) {
+    if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && operand(index)->operand(0)->sign() == Sign::Negative) {
       Multiplication * m = static_cast<Multiplication *>(editableOperand(index));
       if (static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
         m->removeOperand(m->operand(0), true);
       } else {
-        editableOperand(index)->editableOperand(0)->turnIntoPositive(context, angleUnit);
+        editableOperand(index)->editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
       }
       Expression * subtractant = m->squashUnaryHierarchy();
       if (index == 0) {

@@ -34,7 +34,7 @@ public:
   char name() const;
   Type type() const override;
   Expression * clone() const override;
-  int sign() const override;
+  Sign sign() const override;
   bool isMatrixSymbol() const;
 private:
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }

@@ -19,14 +19,19 @@ Expression * AbsoluteValue::clone() const {
 }
 
 Expression * AbsoluteValue::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  if (operand(0)->sign() > 0) {
+  if (operand(0)->sign() == Sign::Positive) {
     return replaceWith(editableOperand(0), true);
   }
-  if (operand(0)->sign() < 0) {
+  if (operand(0)->sign() == Sign::Negative) {
     Expression * op = editableOperand(0);
-    Expression * newOp = op->turnIntoPositive(context, angleUnit);
+    Expression * newOp = op->setSign(Sign::Positive, context, angleUnit);
     return replaceWith(newOp, true);
   }
+  return this;
+}
+
+Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
   return this;
 }
 

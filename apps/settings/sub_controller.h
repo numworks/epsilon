@@ -2,7 +2,7 @@
 #define SETTINGS_SUB_CONTROLLER_H
 
 #include <escher.h>
-#include "settings_node.h"
+#include "settings_message_tree.h"
 #include "../hardware_test/pop_up_controller.h"
 
 namespace Settings {
@@ -24,7 +24,7 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setNodeModel(const Node * nodeModel);
+  void setMessageTreeModel(const MessageTree * messageTreeModel);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -37,7 +37,7 @@ private:
   ExpressionTableCell m_complexFormatCells[2];
   Poincare::ExpressionLayout * m_complexFormatLayout[2];
   SelectableTableView m_selectableTableView;
-  Node * m_nodeModel;
+  MessageTree * m_messageTreeModel;
   HardwareTest::PopUpController m_hardwareTestPopUpController;
 };
 

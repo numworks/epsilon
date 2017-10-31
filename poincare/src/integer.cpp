@@ -389,13 +389,13 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
   }
 }
 
-Integer Integer::monome16Bits(int biggestDigit, int length) {
-  assert(biggestDigit != 0);
-  half_native_uint_t * digits = (half_native_uint_t *)new native_uint_t [(length+1)/2];
-  memset(digits, 0, (length+1)/2*sizeof(native_uint_t));
-  digits[length-1] = biggestDigit;
-  int lengthInBase32 = length%2 == 1 ? length/2+1 : length/2;
-  return Integer((native_uint_t *)digits, lengthInBase32, false);
+Integer Integer::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
+  assert(halfDigit != 0);
+  half_native_uint_t * digits = (half_native_uint_t *)new native_uint_t [(index+1)/2];
+  memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
+  digits[index-1] = halfDigit;
+  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
+  return Integer((native_uint_t *)digits, indexInBase32, false);
 }
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
@@ -410,15 +410,15 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   Integer B = denominator;
   native_uint_t base = (double_native_uint_t)1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
-  native_uint_t d = base/(native_uint_t)(B.digit16(B.numberOfDigits16()-1)+1);
+  native_uint_t d = base/(native_uint_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
   A = Multiplication(Integer(d), A);
   B = Multiplication(Integer(d), B);
 
-  int n = B.numberOfDigits16();
-  int m = A.numberOfDigits16()-n;
+  int n = B.numberOfHalfDigits();
+  int m = A.numberOfHalfDigits()-n;
   half_native_uint_t * qDigits = (half_native_uint_t *)new native_uint_t [m/2+1];
   memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
-  Integer betam = monome16Bits(1, m+1);
+  Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
   Integer betaMB = Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
   if (!A.isLowerThan(betaMB)) {
     qDigits[m] = 1;
@@ -426,12 +426,12 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   }
   for (int j = m-1; j >= 0; j--) {
     native_uint_t base = 1 << 16;
-    native_uint_t qj2 = ((native_uint_t)A.digit16(n+j)*base+(native_uint_t)A.digit16(n+j-1))/(native_uint_t)B.digit16(n-1);
+    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1);
     half_native_uint_t baseMinus1 = (1 << 16) -1;
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
-    Integer factor = qDigits[j] > 0 ? monome16Bits(qDigits[j], j+1) : Integer(0);
+    Integer factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : Integer(0);
     A = Subtraction(A, Multiplication(factor, B));
-    Integer m = Multiplication(monome16Bits(1, j+1), B);
+    Integer m = Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
     while (A.isLowerThan(Integer(0))) {
       qDigits[j] = qDigits[j]-1;
       A = Addition(A, m);

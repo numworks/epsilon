@@ -119,7 +119,7 @@ int Rational::simplificationOrderSameType(const Expression * e) const {
   const Rational * other = static_cast<const Rational *>(e);
   Integer i1 = Integer::Multiplication(m_numerator, other->denominator());
   Integer i2 = Integer::Multiplication(m_denominator, other->numerator());
-  return i1.compareTo(&i2);
+  return Integer::NaturalOrder(i1, i2);
 }
 
 template<typename T> Evaluation<T> * Rational::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {

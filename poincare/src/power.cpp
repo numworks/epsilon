@@ -336,8 +336,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   }
   if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->numerator().isOne()) {
     Integer index = static_cast<const Rational *>(operand(1))->denominator();
-    Integer two = Integer(2);
-    if (index.compareTo(&two) == 0) {
+    if (index.isEqualTo(Integer(2))) {
       const Expression * sqrtOperand[1] = {operand(0)};
       SquareRoot * sqr = new SquareRoot(sqrtOperand, true);
       return replaceWith(sqr, true);

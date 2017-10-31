@@ -22,7 +22,7 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << gcd.approximate<float>() << endl;
 #endif
-  assert(gcd.compareTo(&c) == 0);
+  assert(gcd.isEqualTo(c));
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {

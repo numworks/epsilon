@@ -42,7 +42,7 @@ public:
   void setNegative(bool negative);
 
   // Comparison
-  int compareTo(const Integer * i) const;
+  static int NaturalOrder(const Integer & i, const Integer & j);
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
 

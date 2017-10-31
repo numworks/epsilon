@@ -77,7 +77,6 @@ Integer Integer::exponent(int fractionalPartLength, const char * exponent, int e
 }
 
 Integer Integer::numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent) {
-  Integer zero = Integer(0);
   Integer base = Integer(10);
   Integer numerator = Integer(integralPart, negative);
   for (int i = 0; i < fractionalPartLength; i++) {
@@ -86,7 +85,7 @@ Integer Integer::numerator(const char * integralPart, int integralPartLength, co
     fractionalPart++;
   }
   if (exponent->isNegative()) {
-    while (exponent->compareTo(&zero) != 0) {
+    while (!exponent->isEqualTo(Integer(0))) {
       numerator = Multiplication(numerator, base);
       *exponent = Addition(*exponent, Integer(1));
     }
@@ -95,11 +94,10 @@ Integer Integer::numerator(const char * integralPart, int integralPartLength, co
 }
 
 Integer Integer::denominator(Integer * exponent) {
-  Integer zero = Integer(0);
   Integer base = Integer(10);
   Integer denominator = Integer(1);
   if (!exponent->isNegative()) {
-    while (exponent->compareTo(&zero) != 0) {
+    while (!exponent->isEqualTo(Integer(0))) {
       denominator = Multiplication(denominator, base);
       *exponent = Subtraction(*exponent, Integer(1));
     }
@@ -188,22 +186,22 @@ void Integer::setNegative(bool negative) {
 
 // Comparison
 
-int Integer::compareTo(const Integer * other) const {
-  if (m_negative && !other->m_negative) {
+int Integer::NaturalOrder(const Integer & i, const Integer & j) {
+  if (i.isNegative() && !j.isNegative()) {
     return -1;
   }
-  if (!m_negative && other->m_negative) {
+  if (!i.isNegative() && j.isNegative()) {
     return 1;
   }
-  return ::Poincare::sign(m_negative)*ucmp(*this, *other);
+  return ::Poincare::sign(i.isNegative())*ucmp(i, j);
 }
 
 bool Integer::isEqualTo(const Integer & other) const {
-  return (compareTo(&other) == 0);
+  return (NaturalOrder(*this, other) == 0);
 }
 
 bool Integer::isLowerThan(const Integer & other) const {
-  return (compareTo(&other) < 0);
+  return (NaturalOrder(*this, other) < 0);
 }
 
 // Arithmetic

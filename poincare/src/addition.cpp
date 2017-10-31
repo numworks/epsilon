@@ -20,10 +20,7 @@ Expression * Addition::clone() const {
   return new Addition(operands(), numberOfOperands(), true);
 }
 
-template<typename T>
-Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
-}
+/* Simplication */
 
 Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
   /* TODO: optimize, do we have to restart index = 0 at every merging? */
@@ -159,9 +156,15 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
   return squashUnaryHierarchy();
 }
 
-
 bool Addition::isUselessOperand(const Rational * r) {
   return r->isZero();
+}
+
+/* Evaluation */
+
+template<typename T>
+Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
+  return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
 template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);

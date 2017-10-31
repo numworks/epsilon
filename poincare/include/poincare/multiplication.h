@@ -24,20 +24,10 @@ public:
     return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
-
-  static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
-  Expression * createDenominator(Context & context, AngleUnit angleUnit);
-  void leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit);
 private:
-  template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
-    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
-  }
-  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
-  }
-  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
-  }
+  /* Property */
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
@@ -47,6 +37,9 @@ private:
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   Expression * distributeOnChildAtIndex(int index, Context & context, AngleUnit angleUnit);
+  Expression * createDenominator(Context & context, AngleUnit angleUnit);
+  void leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit);
+  static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
@@ -56,10 +49,19 @@ private:
   static const Rational * RationalFactorInExpression(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   bool isUselessOperand(const Rational * r) override;
-  // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
-  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * c) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
+  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  }
+  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  }
 };
 
 }

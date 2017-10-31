@@ -16,9 +16,9 @@ int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
 
 namespace Poincare {
 
-static Expression::CircuitBreaker sCircuitBreaker = nullptr;
-
 #include <stdio.h>
+
+/* Constructor & Destructor */
 
 Expression * Expression::parse(char const * string) {
   if (string[0] == 0) {
@@ -38,6 +38,10 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+/* Circuit breaker */
+
+static Expression::CircuitBreaker sCircuitBreaker = nullptr;
+
 void Expression::setCircuitBreaker(CircuitBreaker cb) {
   sCircuitBreaker = cb;
 }
@@ -48,6 +52,53 @@ bool Expression::shouldStopProcessing() {
   }
   return sCircuitBreaker();
 }
+
+/* Hierarchy */
+
+bool Expression::hasAncestor(const Expression * e) const {
+  assert(m_parent != this);
+  if (m_parent == e) {
+    return true;
+  }
+  if (m_parent == nullptr) {
+    return false;
+  }
+  return m_parent->hasAncestor(e);
+}
+
+Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
+  return newOperand;
+}
+
+/* Properties */
+
+bool Expression::recursivelyMatches(ExpressionTest test) const {
+  if (test(this)) {
+    return true;
+  }
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (test(operand(i))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* Comparison */
+
+int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
+  if (e1->type() > e2->type()) {
+    return -(e2->simplificationOrderGreaterType(e1));
+  } else if (e1->type() == e2->type()) {
+    return e1->simplificationOrderSameType(e2);
+  } else {
+    return e1->simplificationOrderGreaterType(e2);
+  }
+}
+
+/* Layout */
 
 ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
@@ -67,6 +118,8 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
       }
   }
 }
+
+/* Simplification */
 
 void Expression::simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
   if (angleUnit == AngleUnit::Default) {
@@ -95,50 +148,7 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
   return e;
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test) const {
-  if (test(this)) {
-    return true;
-  }
-  for (int i = 0; i < numberOfOperands(); i++) {
-    if (test(operand(i))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Expression::hasAncestor(const Expression * e) const {
-  assert(m_parent != this);
-  if (m_parent == e) {
-    return true;
-  }
-  if (m_parent == nullptr) {
-    return false;
-  }
-  return m_parent->hasAncestor(e);
-}
-
-Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
-  assert(m_parent != nullptr);
-  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
-  return newOperand;
-}
-
-/*void Expression::removeFromParent() {
-  assert(m_parent != nullptr);
-  assert(m_parent->type() == Expression::Type::Addition || m_parent->type() == Expression::Type::Multiplication); // Weak assertion. We just want to make sure this is actually a DynamicHierarchy
-  static_cast<DynamicHierarchy *>(m_parent)->removeOperand(this);
-}*/
-
-int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
-  if (e1->type() > e2->type()) {
-    return -(e2->simplificationOrderGreaterType(e1));
-  } else if (e1->type() == e2->type()) {
-    return e1->simplificationOrderSameType(e2);
-  } else {
-    return e1->simplificationOrderGreaterType(e2);
-  }
-}
+/* Evaluation */
 
 template<typename T> Evaluation<T> * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
   switch (angleUnit) {

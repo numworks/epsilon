@@ -18,6 +18,17 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
+Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
+  return this;
+}
+
+ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+}
+
 Expression * AbsoluteValue::shallowSimplify(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() == Sign::Positive) {
     return replaceWith(editableOperand(0), true);
@@ -30,20 +41,9 @@ Expression * AbsoluteValue::shallowSimplify(Context& context, AngleUnit angleUni
   return this;
 }
 
-Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
-  assert(s == Sign::Positive);
-  return this;
-}
-
 template<typename T>
 Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.r());
-}
-
-ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

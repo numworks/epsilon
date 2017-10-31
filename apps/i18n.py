@@ -28,8 +28,16 @@ def ion_char(i18n_letter):
 
 def source_definition(i18n_string):
     ion_characters = []
-    for i18n_letter in i18n_string.decode('utf8'):
-        ion_characters.append(ion_char(i18n_letter))
+    letters = i18n_string.decode('utf8')
+    i = 0
+    while i < len(letters):
+        if letters[i] == '\\':
+            i = i+1
+            newChar = "'\\"+letters[i]+"'"
+            ion_characters.append(newChar)
+        else:
+            ion_characters.append(ion_char(letters[i]))
+        i = i+1
     ion_characters.append("0")
     return "{" + ", ".join(ion_characters) + "}"
 

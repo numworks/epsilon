@@ -1,5 +1,6 @@
 #include <escher/message_table_cell_with_message.h>
 #include <escher/palette.h>
+#include <string.h>
 
 MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
   MessageTableCell(message, KDText::FontSize::Small, layout),
@@ -16,6 +17,9 @@ void MessageTableCellWithMessage::setAccessoryMessage(I18n::Message textBody) {
 }
 
 View * MessageTableCellWithMessage::accessoryView() const {
+  if (strlen(m_accessoryView.text()) == 0) {
+    return nullptr;
+  }
   return (View *)&m_accessoryView;
 }
 

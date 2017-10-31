@@ -55,8 +55,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  Toolbox * toolboxForTextField(TextField * textFied) override;
-
+  ::Toolbox * toolboxForTextField(TextField * textField) override;
   // MicroPython::ExecutionEnvironment
   void printText(const char * text, size_t length) override;
 
@@ -65,7 +64,7 @@ private:
   static constexpr int EditCellType = 1;
   static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
   static constexpr int k_pythonHeapSize = 16384;
-  static constexpr int k_outputAccumulationBufferSize = 40;
+  static constexpr int k_outputAccumulationBufferSize = 100;
   void autoImportScriptAtIndex(int index);
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);

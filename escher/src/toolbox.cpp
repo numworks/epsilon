@@ -202,7 +202,7 @@ bool Toolbox::handleEventForRow(Ion::Events::Event event, int selectedRow) {
 }
 
 bool Toolbox::selectSubMenu(ToolboxMessageTree * selectedMessageTree) {
-  m_stack.push(selectedRow(),  m_selectableTableView.contentOffset().y());
+  m_stack.push(selectedRow(), m_selectableTableView.contentOffset().y());
   m_selectableTableView.deselectTable();
   m_messageTreeModel = selectedMessageTree;
   m_listController.setFirstSelectedRow(0);
@@ -211,8 +211,7 @@ bool Toolbox::selectSubMenu(ToolboxMessageTree * selectedMessageTree) {
 }
 
 bool Toolbox::returnToPreviousMenu() {
-  m_selectableTableView.deselectTable();
-  int depth = m_stack.depth();
+  int currentDepth = m_stack.depth();
   int index = 0;
   // We want to get the current ToolboxMessageTree's parent ToolboxMessageTree,
   // but there is no ToolboxMessageTree::getParent() method. We thus have to
@@ -220,7 +219,7 @@ bool Toolbox::returnToPreviousMenu() {
   // child until it has the wanted depth.
   ToolboxMessageTree * parentMessageTree = (ToolboxMessageTree *)rootModel();
   Stack::State * previousState = m_stack.stateAtIndex(index++);;
-  while (depth-- > 1) {
+  while (currentDepth-- > 1) {
     parentMessageTree = (ToolboxMessageTree *)parentMessageTree->children(previousState->selectedRow());
     previousState = m_stack.stateAtIndex(index++);
   }

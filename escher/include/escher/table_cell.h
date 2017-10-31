@@ -22,7 +22,6 @@ protected:
 private:
   constexpr static KDCoordinate k_labelMargin = 10;
   constexpr static KDCoordinate k_accessoryMargin = 10;
-  constexpr static KDCoordinate k_labelTopMargin = 3;
   constexpr static KDCoordinate k_accessoryBottomMargin = 3;
   Layout m_layout;
 };

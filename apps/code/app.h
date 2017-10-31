@@ -6,6 +6,8 @@
 #include "../shared/message_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"
+#include "toolbox.h"
+
 
 namespace Code {
 
@@ -27,11 +29,17 @@ public:
     ScriptStore m_scriptStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
+  Toolbox * pythonToolbox() { return &m_toolbox; }
+  Toolbox::Action toolboxActionForTextArea() { return m_toolboxActionForTextArea; }
+  Toolbox::Action toolboxActionForTextField() { return m_toolboxActionForTextField; }
 private:
   App(Container * container, Snapshot * snapshot);
   ButtonRowController m_listFooter;
   MenuController m_menuController;
   StackViewController m_codeStackViewController;
+  Toolbox m_toolbox;
+  Toolbox::Action m_toolboxActionForTextArea;
+  Toolbox::Action m_toolboxActionForTextField;
 };
 
 }

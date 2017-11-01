@@ -213,9 +213,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     case 1:
       myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
       break;
-    case 4:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)GlobalPreferences::sharedGlobalPreferences()->language()-1)->label());
-      break;
     default:
       myTextCell->setSubtitle(I18n::Message::Default);
       break;

@@ -28,8 +28,7 @@ Expression * Tangent::shallowSimplify(Context& context, AngleUnit angleUnit) {
     const Expression * op[1] = {newExpression->operand(0)};
     Sine * s = new Sine(op, true);
     Cosine * c = new Cosine(op, true);
-    const Expression * divisionOperands[2] = {s, c};
-    Division * d = new Division(divisionOperands, false);
+    Division * d = new Division(s, c, false);
     c->shallowSimplify(context, angleUnit);
     s->shallowSimplify(context, angleUnit);
     newExpression = newExpression->replaceWith(d, true);

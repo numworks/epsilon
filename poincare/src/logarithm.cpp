@@ -98,15 +98,12 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
 
 Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
   Symbol e = Symbol(Ion::Charset::Exponential);
-  const Expression * logOperand[1] = {operand(0)};
-  if (numberOfOperands() == 2 && operand(1)->isIdenticalTo(&e)) {
-    NaperianLogarithm * nl = new NaperianLogarithm(logOperand, true);
-    return replaceWith(nl, true);
-  }
+  const Expression * op = operand(0);
   Rational one = Rational(Integer(1));
-  if (numberOfOperands() == 2 && operand(1)->isIdenticalTo(&one)) {
-    Logarithm * l = new Logarithm(logOperand, 1, true);
-    return replaceWith(l, true);
+  if (numberOfOperands() == 2 && (operand(1)->isIdenticalTo(&e) || operand(1)->isIdenticalTo(&one))) {
+    detachOperand(op);
+    Expression * nl = operand(1)->isIdenticalTo(&e) ? static_cast<Expression *>(new NaperianLogarithm(op, false)) : static_cast<Expression *> (new Logarithm(op, false));
+    return replaceWith(nl, true);
   }
   return this;
 }

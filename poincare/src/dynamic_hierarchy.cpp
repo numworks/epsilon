@@ -84,6 +84,36 @@ void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemov
   }
 }
 
+
+
+
+void DynamicHierarchy::sortOperands(ExpressionOrder order) {
+  for (int i = numberOfOperands()-1; i > 0; i--) {
+    bool isSorted = true;
+    for (int j = 0; j < numberOfOperands()-1; j++) {
+      if (order(operand(j), operand(j+1)) > 0) {
+        swapOperands(j, j+1);
+        isSorted = false;
+      }
+    }
+    if (isSorted) {
+      return;
+    }
+  }
+}
+
+Expression * DynamicHierarchy::squashUnaryHierarchy() {
+  if (numberOfOperands() == 1) {
+    assert(parent() != nullptr);
+    Expression * o = editableOperand(0);
+    replaceWith(o, true);
+    return o;
+  }
+  return this;
+}
+
+// Private
+
 void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   if (deleteAfterRemoval) {
     delete m_operands[i];
@@ -128,31 +158,6 @@ int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e) const
     return 1;
   }
   return 0;
-}
-
-void DynamicHierarchy::sortOperands(ExpressionOrder order) {
-  for (int i = numberOfOperands()-1; i > 0; i--) {
-    bool isSorted = true;
-    for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (order(operand(j), operand(j+1)) > 0) {
-        swapOperands(j, j+1);
-        isSorted = false;
-      }
-    }
-    if (isSorted) {
-      return;
-    }
-  }
-}
-
-Expression * DynamicHierarchy::squashUnaryHierarchy() {
-  if (numberOfOperands() == 1) {
-    assert(parent() != nullptr);
-    Expression * o = editableOperand(0);
-    replaceWith(o, true);
-    return o;
-  }
-  return this;
 }
 
 }

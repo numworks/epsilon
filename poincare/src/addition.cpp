@@ -142,7 +142,7 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & con
 }
 
 const Rational Addition::RationalFactor(Expression * e) {
-  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational) { // TODO: change integer for Rational
+  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational) {
     return *(static_cast<const Rational *>(e->operand(0)));
   }
   return Rational(Integer(1));

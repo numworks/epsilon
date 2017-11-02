@@ -306,9 +306,8 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
     const Expression * multExpOperands[3] = {iComplex, pi, r->clone()};
     Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
-    const Power * pExp = new Power(exp, mExp, false);
-    const Expression * operand[1] = {pExp};
-    m->addOperands(operand, 1);
+    Power * pExp = new Power(exp, mExp, false);
+    m->addOperand(pExp);
   }
   m->sortOperands(SimplificationOrder);
   return m;

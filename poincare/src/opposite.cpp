@@ -31,7 +31,7 @@ Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
 Expression * Opposite::shallowSimplify(Context& context, AngleUnit angleUnit) {
   const Expression * op = operand(0);
   detachOperand(op);
-  Multiplication * m = new Multiplication(new Rational(Integer(-1)), op, false);
+  Multiplication * m = new Multiplication(new Rational(-1), op, false);
   replaceWith(m, true);
   return m->shallowSimplify(context, angleUnit);
 }

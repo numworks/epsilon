@@ -139,7 +139,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
     if (b->isZero()) {
-      return replaceWith(new Rational(Integer(1)), true);
+      return replaceWith(new Rational(1), true);
     }
     // x^1
     if (b->isOne()) {
@@ -151,7 +151,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
     // 0^x
     if (a->isZero()) {
       if (operand(1)->sign() == Sign::Positive) {
-        return replaceWith(new Rational(Integer(0)), true);
+        return replaceWith(new Rational(0), true);
       }
       if (operand(1)->sign() == Sign::Negative) {
         return replaceWith(new Undefined(), true);
@@ -159,7 +159,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
     }
     // 1^x
     if (a->isOne()) {
-      return replaceWith(new Rational(Integer(1)), true);
+      return replaceWith(new Rational(1), true);
     }
     // p^q with p, q rationals
     if (operand(1)->type() == Type::Rational) {
@@ -189,7 +189,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
         Expression * rCopy = r->clone();
         Expression * factor = m->editableOperand(i);
         if (factor->sign() == Sign::Negative) {
-          m->replaceOperand(factor, new Rational(Integer(-1)), false);
+          m->replaceOperand(factor, new Rational(-1), false);
           factor->setSign(Sign::Positive, context, angleUnit);
         } else {
           m->removeOperand(factor, false);
@@ -267,7 +267,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   assert(!i.isZero());
   assert(r->sign() == Sign::Positive);
   if (i.isOne()) {
-    return new Rational(Integer(1));
+    return new Rational(1);
   }
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
     r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
@@ -318,7 +318,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);
-    Division * d = new Division(new Rational(Integer(1)), p, false);
+    Division * d = new Division(new Rational(1), p, false);
     p->shallowSimplify(context, angleUnit);
     replaceWith(d, true);
     return d->shallowBeautify(context, angleUnit);

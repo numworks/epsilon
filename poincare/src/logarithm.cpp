@@ -48,7 +48,7 @@ Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
     }
     // log(1) = 0;
     if (r->isOne()) {
-      return replaceWith(new Rational(Integer(0)), true);
+      return replaceWith(new Rational(0), true);
     }
     Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
     Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
@@ -63,7 +63,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
   assert(!i.isZero());
   assert(!i.isNegative());
   if (i.isOne()) {
-    return new Rational(Integer(0));
+    return new Rational(0);
   }
   assert(!i.isOne());
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
@@ -73,7 +73,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     if (!isDenominator) {
       return e;
     }
-    Multiplication * m = new Multiplication(new Rational(Integer(-1)), e, false);
+    Multiplication * m = new Multiplication(new Rational(-1), e, false);
     return m;
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];

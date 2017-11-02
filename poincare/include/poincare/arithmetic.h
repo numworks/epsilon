@@ -6,6 +6,7 @@ namespace Poincare {
 
 class Arithmetic {
 public:
+  static Integer LCM(const Integer * i, const Integer * j);
   static Integer GCD(const Integer * i, const Integer * j);
   static void PrimeFactorization(const Integer * i, Integer * outputFactors, Integer * outputCoefficients, int outputLength);
   constexpr static int k_numberOfPrimeFactors = 1000;

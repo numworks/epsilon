@@ -35,7 +35,7 @@ private:
   int simplificationOrderGreaterType(const Expression * e) const override;
   int simplificationOrderSameType(const Expression * e) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, AngleUnit angleUnit);
-  Expression * createDenominator(Context & context, AngleUnit angleUnit);
+  Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);

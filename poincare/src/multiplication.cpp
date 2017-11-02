@@ -14,6 +14,7 @@ extern "C" {
 #include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
 #include <poincare/division.h>
+#include <poincare/arithmetic.h>
 #include <poincare/simplification_root.h>
 #include <ion.h>
 #include "layout/string_layout.h"
@@ -427,13 +428,13 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
   return this;
 }
 
-Expression * Multiplication::createDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::cloneDenominator(Context & context, AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
   SimplificationRoot root(clone());
   Expression * e = ((Multiplication *)root.operand(0))->mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
-    Expression * result = static_cast<Power *>(e)->createDenominator(context, angleUnit);
+    Expression * result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
     delete e;
     return result;
   }
@@ -489,12 +490,21 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   return squashUnaryHierarchy();
 }
 
-void Multiplication::leastCommonMultiple(Expression * factor, Context & context, AngleUnit angleUnit) {
+void Multiplication::addMissingFactors(Expression * factor, Context & context, AngleUnit angleUnit) {
   if (factor->type() == Type::Multiplication) {
     for (int j = 0; j < factor->numberOfOperands(); j++) {
-      leastCommonMultiple(factor->editableOperand(j), context, angleUnit);
+      addMissingFactors(factor->editableOperand(j), context, angleUnit);
     }
     return;
+  }
+  if (numberOfOperands() > 0 && operand(0)->type() == Type::Rational && factor->type() == Type::Rational) {
+    Rational * f = static_cast<Rational *>(factor);
+    Rational * o = static_cast<Rational *>(editableOperand(0));
+    assert(f->denominator().isOne());
+    assert(o->denominator().isOne());
+    Integer i = f->numerator();
+    Integer j = o->numerator();
+    return replaceOperand(o, new Rational(Arithmetic::LCM(&i, &j)));
   }
   for (int i = 0; i < numberOfOperands(); i++) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {

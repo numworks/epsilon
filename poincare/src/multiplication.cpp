@@ -119,9 +119,11 @@ Expression * Multiplication::shallowSimplify(Context& context, AngleUnit angleUn
     }
   }
   factorize(context, angleUnit);
-  for (int i=0; i<numberOfOperands(); i++) {
-    if (operand(i)->type() == Type::Addition) {
-      return distributeOnChildAtIndex(i, context, angleUnit);
+  if (parent()->type() != Type::Multiplication) {
+    for (int i=0; i<numberOfOperands(); i++) {
+      if (operand(i)->type() == Type::Addition) {
+        return distributeOnChildAtIndex(i, context, angleUnit);
+      }
     }
   }
   /* Now, no more node can be an addition or a multiplication */

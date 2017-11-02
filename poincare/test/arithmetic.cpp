@@ -25,6 +25,19 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
   assert(gcd.isEqualTo(c));
 }
 
+void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "---- LCM ----"  << endl;
+  cout << "lcm(" << a.approximate<float>();
+  cout << ", " << b.approximate<float>() << ") = ";
+#endif
+  Integer lcm = Arithmetic::LCM(&a, &b);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << lcm.approximate<float>() << endl;
+#endif
+  assert(lcm.isEqualTo(c));
+}
+
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
   Integer outputFactors[1000];
   Integer outputCoefficients[1000];
@@ -55,6 +68,11 @@ QUIZ_CASE(poincare_arithmetic) {
   assert_gcd_equals_to(Integer(-8), Integer(-40), Integer(8));
   assert_gcd_equals_to(Integer("1234567899876543456", true), Integer("234567890098765445678"), Integer(2));
   assert_gcd_equals_to(Integer("45678998789"), Integer("1461727961248"), Integer("45678998789"));
+  assert_lcm_equals_to(Integer(11), Integer(121), Integer(121));
+  assert_lcm_equals_to(Integer(-31), Integer(52), Integer(1612));
+  assert_lcm_equals_to(Integer(-8), Integer(-40), Integer(40));
+  assert_lcm_equals_to(Integer("1234567899876543456", true), Integer("234567890098765445678"), Integer("144794993728852353909143567804987191584"));
+  assert_lcm_equals_to(Integer("45678998789"), Integer("1461727961248"), Integer("1461727961248"));
   int factors0[5] = {2,3,5,79,1319};
   int coefficients0[5] = {2,1,1,1,1};
   assert_prime_factorization_equals_to(Integer(6252060), factors0, coefficients0, 5);

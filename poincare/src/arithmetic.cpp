@@ -5,6 +5,12 @@ namespace Poincare {
 
 const Integer Arithmetic::k_primorial32("525896479052627740771371797072411912900610967452630");
 
+Integer Arithmetic::LCM(const Integer * a, const Integer * b) {
+  Integer signResult = Integer::Division(Integer::Multiplication(*a, *b), GCD(a,b)).quotient;
+  signResult.setNegative(false);
+  return signResult;
+}
+
 Integer Arithmetic::GCD(const Integer * a, const Integer * b) {
   Integer i = *a;
   Integer j = *b;

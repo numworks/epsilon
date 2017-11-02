@@ -150,8 +150,7 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
       replaceOperand(o, sqrt, true);
       sqrt->shallowSimplify(context, angleUnit);
-      const Expression * newOp[1] = {new Rational(Integer(1), Integer(p))};
-      addOperands(newOp, 1);
+      addOperand(new Rational(Integer(1), Integer(p)));
     } else if (o->type() == Type::Power && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusOne() && o->operand(0)->type() == Type::Addition && o->operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(o->operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(o->operand(0)->operand(1))) {
       change = true;
       const Rational * f1 = RationalFactorInExpression(o->operand(0)->operand(0));
@@ -198,8 +197,7 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       Subtraction * s = new Subtraction(subOperands, false);
       replaceOperand(o, s, true);
       s->deepSimplify(context, angleUnit);
-      const Expression * newOp[1] = {new Rational(Integer(1), denominator)};
-      addOperands(newOp, 1);
+      addOperand(new Rational(Integer(1), denominator));
     }
   }
   return change;
@@ -389,8 +387,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
         Rational * r = static_cast<Rational *>(numeratorOperand->editableOperand(0));
         if (!r->denominator().isOne()) {
           if (denominatorOperand->type() == Type::Multiplication) {
-            const Expression * integerDenominator[1] = {new Rational(r->denominator())};
-            static_cast<Multiplication *>(denominatorOperand)->addOperands(integerDenominator, 1);
+            static_cast<Multiplication *>(denominatorOperand)->addOperand(new Rational(r->denominator()));
             static_cast<Multiplication *>(denominatorOperand)->sortOperands(SimplificationOrder);
           } else {
             Multiplication * m = new Multiplication(new Rational(r->denominator()), denominatorOperand->clone(), false);
@@ -449,8 +446,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->denominator().isOne()) {
     Rational * r = static_cast<Rational *>(editableOperand(0));
-    const Expression * q[1] = {new Rational(r->denominator())};
-    m->addOperands(q, 1);
+    m->addOperand(new Rational(r->denominator()));
     if (r->numerator().isOne()) {
       removeOperand(r, true);
     } else {
@@ -463,7 +459,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
       Expression * e = editableOperand(i);
       e->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
       removeOperand(e, false);
-      m->addOperands(&e, 1);
+      m->addOperand(e);
       e->shallowSimplify(context, angleUnit);
     } else {
       i++;
@@ -475,8 +471,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   Power * p = new Power(m, new Rational(-1), false);
   m->sortOperands(SimplificationOrder);
   m->squashUnaryHierarchy();
-  const Expression * multOperand[1] = {p};
-  addOperands(multOperand, 1);
+  addOperand(p);
   sortOperands(SimplificationOrder);
   return squashUnaryHierarchy();
 }
@@ -512,8 +507,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
       return;
     }
   }
-  const Expression * newOp[1] = {factor->clone()};
-  addOperands(newOp, 1);
+  addOperand(factor->clone());
   sortOperands(SimplificationOrder);
 }
 

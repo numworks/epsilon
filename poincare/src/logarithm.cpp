@@ -88,8 +88,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     Expression * e = clone();
     e->replaceOperand(e->operand(0), new Rational(factors[index]), true);
     Multiplication * m = new Multiplication(new Rational(coefficients[index]), e, false);
-    const Expression * addNewOperand[1] = {m};
-    a->addOperands(addNewOperand, 1);
+    a->addOperand(m);
     m->shallowSimplify(context, angleUnit);
     index++;
   }

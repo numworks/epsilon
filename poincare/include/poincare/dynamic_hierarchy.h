@@ -23,7 +23,7 @@ public:
 
   void removeOperand(const Expression * e, bool deleteAfterRemoval = true);
   void addOperands(const Expression * const * operands, int numberOfOperands);
-  void addOperandAtIndex(Expression * operand, int index);
+  void addOperand(Expression * operand);
   void mergeOperands(DynamicHierarchy * d);
   typedef int (*ExpressionOrder)(const Expression * e1, const Expression * e2);
   void sortOperands(ExpressionOrder order);

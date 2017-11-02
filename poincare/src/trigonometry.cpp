@@ -35,8 +35,7 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
     if (e->type() == Expression::Type::Cosine) {
       return e->shallowSimplify(context, angleUnit);
     } else {
-      const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
-      Multiplication * m = new Multiplication(multOperands, 2, false);
+      Multiplication * m = new Multiplication(new Rational(Integer(-1)), e->clone(), false);
       m->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
@@ -65,8 +64,7 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
         unaryCoefficient *= -1;
       }
       Expression * simplifiedCosine = e->shallowSimplify(context, angleUnit); // recursive
-      const Expression * multOperands[2] = {new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone()};
-      Multiplication * m = new Multiplication(multOperands, 2, false);
+      Multiplication * m = new Multiplication(new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone(), false);
       return simplifiedCosine->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
     assert(r->sign() == Expression::Sign::Positive);
@@ -129,8 +127,7 @@ Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Contex
       s->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(s, true)->shallowSimplify(context, angleUnit);
     } else {
-      const Expression * multOperands[2] = {new Rational(Integer(-1)), e->clone()};
-      Multiplication * m = new Multiplication(multOperands, 2, false);
+      Multiplication * m = new Multiplication(new Rational(Integer(-1)), e->clone(), false);
       m->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }

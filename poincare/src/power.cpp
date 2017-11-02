@@ -197,8 +197,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
         m->shallowSimplify(context, angleUnit);
         const Expression * powOperands[2] = {factor, rCopy};
         Power * p = new Power(powOperands, false);
-        const Expression * multOperands[2] = {p, clone()};
-        Multiplication * root = new Multiplication(multOperands, 2, false);
+        Multiplication * root = new Multiplication(p, clone(), false);
         p->shallowSimplify(context, angleUnit);
         root->editableOperand(1)->shallowSimplify(context, angleUnit);
         replaceWith(root, true);
@@ -214,8 +213,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
       Power * p1 = static_cast<Power *>(clone());
       replaceOperand(a, a->editableOperand(1), true);
       Power * p2 = static_cast<Power *>(clone());
-      const Expression * multOperands[2] = {p1, p2};
-      Multiplication * m = new Multiplication(multOperands, 2, false);
+      Multiplication * m = new Multiplication(p1, p2, false);
       simplifyRationalRationalPower(p1, static_cast<Rational *>(p1->editableOperand(0)), static_cast<Rational *>(p1->editableOperand(1)->editableOperand(0)), context, angleUnit);
       replaceWith(m, true);
       return m->shallowSimplify(context, angleUnit);
@@ -228,8 +226,7 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& conte
   Expression * p0 = p->editableOperand(0);
   Expression * p1 = p->editableOperand(1);
   p->detachOperands();
-  const Expression * multOperands[2] = {p1, e};
-  Multiplication * m = new Multiplication(multOperands, 2, false);
+  Multiplication * m = new Multiplication(p1, e, false);
   replaceOperand(e, m, false);
   replaceOperand(p, p0, true);
   m->shallowSimplify(context, angleUnit);
@@ -263,8 +260,7 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
     n = CreateSimplifiedIntegerRationalPower(a->numerator(), b, false);
     d = CreateSimplifiedIntegerRationalPower(a->denominator(), b, true);
   }
-  const Expression * multOp[2] = {n, d};
-  Multiplication * m = new Multiplication(multOp, 2, false);
+  Multiplication * m = new Multiplication(n, d, false);
   result->replaceWith(m, true);
   return m->shallowSimplify(context, angleUnit);
 }
@@ -304,8 +300,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     return p;
   }
   Rational * r3 = isDenominator ? new Rational(Integer(1), r1) : new Rational(r1);
-  const Expression * multOp[2] = {r3, p};
-  Multiplication * m = new Multiplication(multOp, 2, false);
+  Multiplication * m = new Multiplication(r3, p, false);
   if (r2.isOne()) {
     m->removeOperand(p);
   }

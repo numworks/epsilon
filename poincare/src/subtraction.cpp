@@ -29,10 +29,8 @@ Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 Expression * Subtraction::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(1)};
-  Multiplication * m = new Multiplication(multOperands, 2, false);
-  const Expression * addOperands[2] = {operand(0), m};
-  Addition * a = new Addition(addOperands, 2, false);
+  Multiplication * m = new Multiplication(new Rational(Integer(-1)), operand(1), false);
+  Addition * a = new Addition(operand(0), m, false);
   m->shallowSimplify(context, angleUnit);
   detachOperands();
   replaceWith(a, true);

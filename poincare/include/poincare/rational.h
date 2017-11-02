@@ -12,6 +12,7 @@ public:
   /* The constructor build a irreductible fraction whose sign is on numerator */
   Rational(const Integer numerator, const Integer denominator);
   Rational(const Integer numerator);
+  Rational(Integer::native_int_t i) : Rational(Integer(i)) {}
 
   Rational(const Rational & other);
   /*Rational(Rational && other) = default;

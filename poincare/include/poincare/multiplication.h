@@ -36,7 +36,7 @@ private:
   bool resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
-  Expression * distributeOnChildAtIndex(int index, Context & context, AngleUnit angleUnit);
+  Expression * distributeOnOperandAtIndex(int index, Context & context, AngleUnit angleUnit);
   Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
   void addMissingFactors(Expression * factor, Context & context, AngleUnit angleUnit);
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);

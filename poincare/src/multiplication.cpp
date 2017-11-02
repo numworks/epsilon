@@ -122,7 +122,7 @@ Expression * Multiplication::shallowSimplify(Context& context, AngleUnit angleUn
   if (parent()->type() != Type::Multiplication) {
     for (int i=0; i<numberOfOperands(); i++) {
       if (operand(i)->type() == Type::Addition) {
-        return distributeOnChildAtIndex(i, context, angleUnit);
+        return distributeOnOperandAtIndex(i, context, angleUnit);
       }
     }
   }
@@ -132,7 +132,7 @@ Expression * Multiplication::shallowSimplify(Context& context, AngleUnit angleUn
     factorize(context, angleUnit);
     for (int i=0; i<numberOfOperands(); i++) {
       if (operand(i)->type() == Type::Addition) {
-        return distributeOnChildAtIndex(i, context, angleUnit);
+        return distributeOnOperandAtIndex(i, context, angleUnit);
       }
     }
   }
@@ -265,7 +265,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
   e1->shallowSimplify(context, angleUnit);
 }
 
-Expression * Multiplication::distributeOnChildAtIndex(int i, Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, AngleUnit angleUnit) {
   Addition * a = static_cast<Addition *>(editableOperand(i));
   for (int j = 0; j < a->numberOfOperands(); j++) {
     Expression * termJ = a->editableOperand(j);

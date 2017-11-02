@@ -54,7 +54,7 @@ Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
       continue;
     }
     if (TermsHaveIdenticalNonRationalFactors(o1, o2)) {
-      factorizeChildren(o1, o2, context, angleUnit);
+      factorizeOperands(o1, o2, context, angleUnit);
       continue;
     }
     i++;
@@ -123,7 +123,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   return replaceWith(result, true);
 }
 
-void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
   Rational * r = new Rational(Rational::Addition(RationalFactor(e1), RationalFactor(e2)));
   removeOperand(e2, true);
   if (e1->type() == Type::Multiplication) {

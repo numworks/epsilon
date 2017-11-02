@@ -59,6 +59,13 @@ void Hierarchy::replaceOperand(const Expression * oldOperand, Expression * newOp
   }
 }
 
+const Expression * const * Hierarchy::ExpressionArray(const Expression * e1, const Expression * e2) {
+  static const Expression * result[2] = {nullptr, nullptr};
+  result[0] = e1;
+  result[1] = e2;
+  return result;
+}
+
 void Hierarchy::detachOperandAtIndex(int i) {
   Expression ** op = const_cast<Expression **>(operands());
   // When detachOperands is called, it's very likely that said operands have been stolen

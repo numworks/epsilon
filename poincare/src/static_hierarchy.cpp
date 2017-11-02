@@ -19,6 +19,12 @@ StaticHierarchy<T>::StaticHierarchy(const Expression * const * operands, bool cl
   build(operands, T, cloneOperands);
 }
 
+template<>
+StaticHierarchy<2>::StaticHierarchy(const Expression * e1, const Expression * e2, bool cloneOperands) :
+  StaticHierarchy(ExpressionArray(e1, e2), cloneOperands)
+{
+}
+
 template<int T>
 StaticHierarchy<T>::~StaticHierarchy() {
   for (int i = 0; i < T; i++) {

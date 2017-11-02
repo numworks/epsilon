@@ -115,7 +115,7 @@ Expression * Multiplication::shallowSimplify(Context& context, AngleUnit angleUn
       mergeOperands(static_cast<Multiplication *>(o));
       index = 0;
     } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
-      return replaceWith(new Rational(Integer(0)), true);
+      return replaceWith(new Rational(0), true);
     }
   }
   factorize(context, angleUnit);
@@ -273,7 +273,7 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {
-  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(Integer(1));
+  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(1);
   return n;
 }
 
@@ -472,7 +472,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   if (m->numberOfOperands() == 0) {
     return this;
   }
-  Power * p = new Power(m, new Rational(Integer(-1)), false);
+  Power * p = new Power(m, new Rational(-1), false);
   m->sortOperands(SimplificationOrder);
   m->squashUnaryHierarchy();
   const Expression * multOperand[1] = {p};

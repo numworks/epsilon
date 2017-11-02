@@ -23,7 +23,7 @@ Expression * Division::clone() const {
 }
 
 Expression * Division::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  Power * p = new Power(operand(1), new Rational(Integer(-1)), false);
+  Power * p = new Power(operand(1), new Rational(-1), false);
   Multiplication * m = new Multiplication(operand(0), p, false);
   p->deepSimplify(context, angleUnit);
   detachOperands();
@@ -57,14 +57,14 @@ Expression * Division::shallowBeautify(Context & context, AngleUnit angleUnit) {
           return replaceWith(o, true);
         } else {
           assert(operandIndex == 1);
-          replaceOperand((Expression *)cos->parent(), new Rational(Integer(-1)), true);
+          replaceOperand((Expression *)cos->parent(), new Rational(-1), true);
         }
       } else {
         if (operandIndex == 0) {
           return replaceWith(editableOperand(0), true);
         } else {
           assert(operandIndex == 1);
-          replaceOperand(cos, new Rational(Integer(1)), true);
+          replaceOperand(cos, new Rational(1), true);
         }
       }
       k++;

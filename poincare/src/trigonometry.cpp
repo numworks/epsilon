@@ -35,7 +35,7 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
     if (e->type() == Expression::Type::Cosine) {
       return e->shallowSimplify(context, angleUnit);
     } else {
-      Multiplication * m = new Multiplication(new Rational(Integer(-1)), e->clone(), false);
+      Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
       m->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
@@ -64,7 +64,7 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
         unaryCoefficient *= -1;
       }
       Expression * simplifiedCosine = e->shallowSimplify(context, angleUnit); // recursive
-      Multiplication * m = new Multiplication(new Rational(Integer(unaryCoefficient)), simplifiedCosine->clone(), false);
+      Multiplication * m = new Multiplication(new Rational(unaryCoefficient), simplifiedCosine->clone(), false);
       return simplifiedCosine->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }
     assert(r->sign() == Expression::Sign::Positive);
@@ -121,12 +121,12 @@ Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Contex
       op->shallowSimplify(context, angleUnit);
     }
     if (e->type() == Expression::Type::ArcCosine) {
-      Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(Integer(180)));
+      Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(180));
       Subtraction * s = new Subtraction(pi, e->clone(), false);
       s->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(s, true)->shallowSimplify(context, angleUnit);
     } else {
-      Multiplication * m = new Multiplication(new Rational(Integer(-1)), e->clone(), false);
+      Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
       m->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
     }

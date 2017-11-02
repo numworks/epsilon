@@ -128,7 +128,7 @@ void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & con
     if (e1->operand(0)->type() == Type::Rational) {
       e1->replaceOperand(e1->operand(0), r, true);
     } else {
-      static_cast<Multiplication *>(e1)->addOperandAtIndex(r, 0);
+      static_cast<Multiplication *>(e1)->addOperand(r);
     }
     e1->shallowSimplify(context, angleUnit);
   } else {

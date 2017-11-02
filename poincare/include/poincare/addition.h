@@ -38,7 +38,7 @@ private:
   Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
-  void factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
+  void factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Evaluation */

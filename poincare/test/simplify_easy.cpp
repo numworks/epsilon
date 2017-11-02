@@ -35,6 +35,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 QUIZ_CASE(poincare_simplify_easy) {
   //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)");
+  assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "2-10cos(2)");
   assert_parsed_expression_simplify_to("1/(R(2)+R(3))", "-(R(2)-R(3))");
@@ -341,6 +342,10 @@ QUIZ_CASE(poincare_simplify_easy) {
 
   assert_parsed_expression_simplify_to("1/(3R(2))", "R(2)/6");
   assert_parsed_expression_simplify_to("1/(R(2)ln(3))", "R(2)/(2ln(3))");
+
+
+  assert_parsed_expression_simplify_to("A+B-A-B", "0");
+  assert_parsed_expression_simplify_to("A+B+(-1)*A+(-1)*B", "0");
 
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");

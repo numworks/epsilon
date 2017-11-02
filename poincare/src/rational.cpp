@@ -87,6 +87,13 @@ Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {
   return this;
 }
 
+Expression * Rational::cloneDenominator(Context & context, AngleUnit angleUnit) const {
+  if (m_denominator.isOne()) {
+    return nullptr;
+  }
+  return new Rational(m_denominator);
+}
+
 // Basic operations
 
 Rational Rational::Addition(const Rational & i, const Rational & j) {

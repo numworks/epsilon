@@ -200,6 +200,12 @@ private:
   // TODO: should be virtual pure
   virtual Expression * shallowSimplify(Context & context, AngleUnit angleUnit) { return this; };
   virtual Expression * shallowBeautify(Context & context, AngleUnit angleUnit) { return this; };
+
+  // Private methods used in simplification process
+  virtual Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const {
+    return nullptr;
+  }
+
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;

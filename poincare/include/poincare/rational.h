@@ -26,6 +26,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   Sign sign() const override;
+  Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }

@@ -327,7 +327,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
 Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
-    Expression * p = createDenominator(context, angleUnit);
+    Expression * p = cloneDenominator(context, angleUnit);
     const Expression * divOperands[2] = {new Rational(Integer(1)), p};
     Division * d = new Division(divOperands, false);
     p->shallowSimplify(context, angleUnit);
@@ -354,7 +354,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-Expression * Power::createDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Power::cloneDenominator(Context & context, AngleUnit angleUnit) const {
   if (operand(1)->sign() == Sign::Negative) {
     Expression * denominator = clone();
     Expression * newExponent = denominator->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);

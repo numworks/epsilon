@@ -170,13 +170,12 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
       }
       Expression * subtractant = m->squashUnaryHierarchy();
       if (index == 0) {
-        const Expression * opOperand[1] = {subtractant};
-        Opposite * o = new Opposite(opOperand, true);
+        Opposite * o = new Opposite(subtractant, true);
         replaceOperand(subtractant, o, true);
       } else {
-        const Expression * subOperands[2] = {operand(index-1), subtractant->clone()};
-        removeOperand(operand(index-1), false);
-        Subtraction * s = new Subtraction(subOperands, false);
+        const Expression * op1 = operand(index-1);
+        removeOperand(op1, false);
+        Subtraction * s = new Subtraction(op1, subtractant->clone(), false);
         replaceOperand(subtractant, s, true);
       }
     }

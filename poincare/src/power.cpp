@@ -195,8 +195,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
           m->removeOperand(factor, false);
         }
         m->shallowSimplify(context, angleUnit);
-        const Expression * powOperands[2] = {factor, rCopy};
-        Power * p = new Power(powOperands, false);
+        Power * p = new Power(factor, rCopy, false);
         Multiplication * root = new Multiplication(p, clone(), false);
         p->shallowSimplify(context, angleUnit);
         root->editableOperand(1)->shallowSimplify(context, angleUnit);
@@ -236,8 +235,7 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& conte
 Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, AngleUnit angleUnit) {
   for (int index = 0; index < m->numberOfOperands(); index++) {
     Expression * factor = m->editableOperand(index);
-    const Expression * powOperands[2] = {factor, r};
-    Power * p = new Power(powOperands, true); // We copy r and factor to avoid inheritance issues
+    Power * p = new Power(factor, r, true); // We copy r and factor to avoid inheritance issues
     m->replaceOperand(factor, p, true);
     p->shallowSimplify(context, angleUnit);
   }
@@ -273,9 +271,8 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   }
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
     r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
-    const Expression * powOp[2] = {new Rational(i), r->clone()};
     // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
-    return new Power(powOp, false);
+    return new Power(new Rational(i), r->clone(), false);
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
@@ -294,8 +291,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   Rational * p1 = new Rational(r2);
   Integer one = isDenominator ? Integer(-1) : Integer(1);
   Rational * p2 = new Rational(one, r->denominator());
-  const Expression * powerOperands[2] = {p1, p2};
-  Power * p = new Power(powerOperands, false);
+  Power * p = new Power(p1, p2, false);
   if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
     return p;
   }
@@ -310,8 +306,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
     const Expression * multExpOperands[3] = {iComplex, pi, r->clone()};
     Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
-    const Expression * powOperands[2] = {exp, mExp};
-    const Power * pExp = new Power(powOperands, false);
+    const Power * pExp = new Power(exp, mExp, false);
     const Expression * operand[1] = {pExp};
     m->addOperands(operand, 1);
   }
@@ -323,8 +318,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);
-    const Expression * divOperands[2] = {new Rational(Integer(1)), p};
-    Division * d = new Division(divOperands, false);
+    Division * d = new Division(new Rational(Integer(1)), p, false);
     p->shallowSimplify(context, angleUnit);
     replaceWith(d, true);
     return d->shallowBeautify(context, angleUnit);

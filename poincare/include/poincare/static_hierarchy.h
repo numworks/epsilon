@@ -11,6 +11,7 @@ class StaticHierarchy : public Hierarchy {
 public:
   StaticHierarchy();
   StaticHierarchy(const Expression * const * operands, bool cloneOperands = true);
+  StaticHierarchy(const Expression * expression, bool cloneOperands = true); // Specialized constructor for StaticHierarchy<1>
   StaticHierarchy(const Expression * expression1, const Expression * expression2, bool cloneOperands = true); // Specialized constructor for StaticHierarchy<2>
   ~StaticHierarchy();
   StaticHierarchy(const StaticHierarchy & other) = delete;

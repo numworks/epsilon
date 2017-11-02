@@ -80,8 +80,7 @@ Expression * Rational::setSign(Sign s) {
 Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {
   if (m_numerator.isNegative()) {
     m_numerator.setNegative(false);
-    const Expression * opOperand[1] = {clone()};
-    Opposite * o = new Opposite(opOperand, true);
+    Opposite * o = new Opposite(this, true);
     return replaceWith(o, true);
   }
   return this;

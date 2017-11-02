@@ -23,8 +23,7 @@ Expression * Division::clone() const {
 }
 
 Expression * Division::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  const Expression * powOperands[2] = {operand(1), new Rational(Integer(-1))};
-  Power * p = new Power(powOperands, false);
+  Power * p = new Power(operand(1), new Rational(Integer(-1)), false);
   Multiplication * m = new Multiplication(operand(0), p, false);
   p->deepSimplify(context, angleUnit);
   detachOperands();
@@ -54,8 +53,7 @@ Expression * Division::shallowBeautify(Context & context, AngleUnit angleUnit) {
         parent->squashUnaryHierarchy();
       } else if (cos->parent()->type() == Type::Opposite) {
         if (operandIndex == 0) {
-          const Expression * oppOperand[1] = {operand(0)};
-          Opposite * o = new Opposite(oppOperand, true);
+          Opposite * o = new Opposite(operand(0), true);
           return replaceWith(o, true);
         } else {
           assert(operandIndex == 1);

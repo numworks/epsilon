@@ -147,8 +147,7 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       change = true;
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
       Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
-      const Expression * sqrtOperands[2] = {new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2))};
-      Power * sqrt = new Power(sqrtOperands, false);
+      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
       replaceOperand(o, sqrt, true);
       sqrt->shallowSimplify(context, angleUnit);
       const Expression * newOp[1] = {new Rational(Integer(1), Integer(p))};
@@ -179,10 +178,8 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
               Integer::Power(n2, Integer(2)),
               Integer::Power(d1, Integer(2))),
             Integer::Multiplication(p2, q1)));
-      const Expression * sqrt1Operands[2] = {new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2))};
-      Power * sqrt1 = new Power(sqrt1Operands, false);
-      const Expression * sqrt2Operands[2] = {new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2))};
-      Power * sqrt2 = new Power(sqrt2Operands, false);
+      Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2)), false);
+      Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2)), false);
       Integer factor1 = Integer::Multiplication(
           Integer::Multiplication(n1, d1),
           Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
@@ -357,8 +354,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
       editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
     }
     Expression * e = squashUnaryHierarchy();
-    const Expression * oppOperand[1] = {e->clone()};
-    Opposite * o = new Opposite(oppOperand, false);
+    Opposite * o = new Opposite(e, true);
     e->replaceWith(o, true);
     o->editableOperand(0)->shallowBeautify(context, angleUnit);
     return o;
@@ -387,8 +383,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
       removeOperand(p, true);
 
       Expression * numeratorOperand = clone();
-      const Expression * divOperands[2] = {numeratorOperand, denominatorOperand};
-      Division * d = new Division(divOperands, false);
+      Division * d = new Division(numeratorOperand, denominatorOperand, false);
       /* We want 1/3*Pi*(ln(2))^-1 -> Pi/(3ln(2)) and not ((1/3)Pi)/ln(2)*/
       if (numeratorOperand->operand(0)->type() == Type::Rational) {
         Rational * r = static_cast<Rational *>(numeratorOperand->editableOperand(0));
@@ -408,8 +403,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
         } else {
           ((Multiplication *)numeratorOperand)->removeOperand(r, true);
           numeratorOperand = numeratorOperand->shallowSimplify(context, angleUnit);
-          const Expression * oppOperand[1] = {numeratorOperand->clone()};
-          Opposite * o = new Opposite(oppOperand, false);
+          Opposite * o = new Opposite(numeratorOperand, true);
           numeratorOperand = numeratorOperand->replaceWith(o, true);
         }
       } else {
@@ -478,8 +472,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   if (m->numberOfOperands() == 0) {
     return this;
   }
-  const Expression * powOperands[2] = {m, new Rational(Integer(-1))};
-  Power * p = new Power(powOperands, false);
+  Power * p = new Power(m, new Rational(Integer(-1)), false);
   m->sortOperands(SimplificationOrder);
   m->squashUnaryHierarchy();
   const Expression * multOperand[1] = {p};
@@ -506,11 +499,10 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   }
   for (int i = 0; i < numberOfOperands(); i++) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {
-      const Expression * index[2] = {CreateExponent(editableOperand(i)), CreateExponent(factor)};
-      Subtraction * sub = new Subtraction(index, false);
+      Subtraction * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
       Expression::simplify((Expression **)&sub, context, angleUnit);
       if (sub->sign() == Sign::Negative) { // index[0] < index[1]
-        factor->replaceOperand(factor->editableOperand(1), new Opposite((Expression **)&sub, true), true);
+        factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
         factor->deepSimplify(context, angleUnit);
         factorizeBase(editableOperand(i), factor, context, angleUnit);
       } else if (sub->sign() == Sign::Unknown) {

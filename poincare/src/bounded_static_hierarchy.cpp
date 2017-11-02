@@ -19,6 +19,18 @@ BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * ope
   StaticHierarchy<T>::build(operands, numberOfOperands, cloneOperands);
 }
 
+template<>
+BoundedStaticHierarchy<2>::BoundedStaticHierarchy(const Expression * e1, const Expression * e2, bool cloneOperands) :
+  BoundedStaticHierarchy(ExpressionArray(e1, e2), 2, cloneOperands)
+{
+}
+
+template<>
+BoundedStaticHierarchy<2>::BoundedStaticHierarchy(const Expression * e, bool cloneOperands) :
+  BoundedStaticHierarchy((Expression **)&e, 1, cloneOperands)
+{
+}
+
 template<int T>
 void BoundedStaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, bool clone) {
   StaticHierarchy<T>::setArgument(listData, numberOfOperands, clone);

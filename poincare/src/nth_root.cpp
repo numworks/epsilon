@@ -20,10 +20,8 @@ Expression * NthRoot::clone() const {
 }
 
 Expression * NthRoot::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  const Expression * inverseOperands[2] = {operand(1), new Rational(Integer(-1))};
-  Power * invIndex = new Power(inverseOperands, false);
-  const Expression * powOperands[2] = {operand(0), invIndex};
-  Power * p = new Power(powOperands, false);
+  Power * invIndex = new Power(operand(1), new Rational(Integer(-1)), false);
+  Power * p = new Power(operand(0), invIndex, false);
   invIndex->shallowSimplify(context, angleUnit);
   detachOperands();
   replaceWith(p, true);

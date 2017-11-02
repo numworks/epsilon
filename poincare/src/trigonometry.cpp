@@ -122,8 +122,7 @@ Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Contex
     }
     if (e->type() == Expression::Type::ArcCosine) {
       Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(Integer(180)));
-      const Expression * subOperands[2] = {pi, e->clone()};
-      Subtraction * s = new Subtraction(subOperands, false);
+      Subtraction * s = new Subtraction(pi, e->clone(), false);
       s->editableOperand(1)->shallowSimplify(context, angleUnit);
       return e->replaceWith(s, true)->shallowSimplify(context, angleUnit);
     } else {

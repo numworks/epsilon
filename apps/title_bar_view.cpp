@@ -69,16 +69,16 @@ void TitleBarView::layoutSubviews() {
    * (because their glyph never cross the baseline). To avoid this effect, we
    * translate the frame of the title downwards.*/
   m_titleView.setFrame(KDRect(0, 2, bounds().width(), bounds().height()-2));
-  m_preferenceView.setFrame(KDRect(k_preferenceMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
+  m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
-  m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - k_batteryRightMargin, (bounds().height()- batterySize.height())/2, batterySize));
+  m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
   if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {
     m_examModeIconView.setFrame(KDRectZero);
   }
   KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
-  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_batteryRightMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
+  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
 }
 
 void TitleBarView::refreshPreferences() {

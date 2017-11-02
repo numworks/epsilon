@@ -15,7 +15,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
-  m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 3, Metric::HistoryHorizontalMargin, this, this, true, true, KDColorWhite),
+  m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin, this, this, true, true, KDColorWhite),
   m_editCell(this, this),
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore)

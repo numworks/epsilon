@@ -186,13 +186,11 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       Integer factor1 = Integer::Multiplication(
           Integer::Multiplication(n1, d1),
           Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
-      const Expression * mult1Operands[2] = {new Rational(factor1), sqrt1};
-      Multiplication * m1 = new Multiplication(mult1Operands, 2, false);
+      Multiplication * m1 = new Multiplication(new Rational(factor1), sqrt1, false);
       Integer factor2 = Integer::Multiplication(
           Integer::Multiplication(n2, d2),
           Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
-      const Expression * mult2Operands[2] = {new Rational(factor2), sqrt2};
-      Multiplication * m2 = new Multiplication(mult2Operands, 2, false);
+      Multiplication * m2 = new Multiplication(new Rational(factor2), sqrt2, false);
       const Expression * subOperands[2] = {m1, m2};
       if (denominator.isNegative()) {
         denominator.setNegative(false);
@@ -238,16 +236,14 @@ void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
 }
 
 void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
-  const Expression * addOperands[2] = {CreateExponent(e1), CreateExponent(e2)};
+  Expression * s = new Addition(CreateExponent(e1), CreateExponent(e2), false);
   removeOperand(e2, true);
-  Expression * s = new Addition(addOperands, 2, false);
   if (e1->type() == Type::Power) {
     e1->replaceOperand(e1->operand(1), s, true);
     s->shallowSimplify(context, angleUnit);
     e1->shallowSimplify(context, angleUnit);
   } else {
-    const Expression * operands[2] = {e1, s};
-    Power * p = new Power(operands, false);
+    Power * p = new Power(e1, s, false);
     s->shallowSimplify(context, angleUnit);
     replaceOperand(e1, p, false);
     p->shallowSimplify(context, angleUnit);
@@ -255,11 +251,12 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
 }
 
 void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
-  const Expression * multOperands[2] = {e1->operand(0)->clone(), e2->operand(0)};
+  const Expression * base1 = e1->operand(0)->clone();
+  const Expression * base2 = e2->operand(0);
   // TODO: remove cast, everything is a hierarchy
-  static_cast<Hierarchy *>(e2)->detachOperand(e2->operand(0));
+  static_cast<Hierarchy *>(e2)->detachOperand(base2);
+  Expression * m = new Multiplication(base1, base2, false);
   removeOperand(e2, true);
-  Expression * m = new Multiplication(multOperands, 2, false);
   e1->replaceOperand(e1->operand(0), m, true);
   m->shallowSimplify(context, angleUnit);
   e1->shallowSimplify(context, angleUnit);
@@ -401,8 +398,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
             static_cast<Multiplication *>(denominatorOperand)->addOperands(integerDenominator, 1);
             static_cast<Multiplication *>(denominatorOperand)->sortOperands(SimplificationOrder);
           } else {
-            const Expression * multOperands[2] = {new Rational(r->denominator()), denominatorOperand->clone()};
-            Multiplication * m = new Multiplication(multOperands, 2, false);
+            Multiplication * m = new Multiplication(new Rational(r->denominator()), denominatorOperand->clone(), false);
             denominatorOperand->replaceWith(m, true);
           }
         }

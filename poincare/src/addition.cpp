@@ -134,8 +134,7 @@ void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & con
     }
     e1->shallowSimplify(context, angleUnit);
   } else {
-    const Expression * operands[2] = {r, e1};
-    Multiplication * m = new Multiplication(operands, 2, true);
+    Multiplication * m = new Multiplication(r, e1, true);
     e1->replaceWith(m, true);
     m->shallowSimplify(context, angleUnit);
   }

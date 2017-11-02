@@ -52,8 +52,7 @@ Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
     }
     Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
     Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-    const Expression * addOp[2] = {n, d};
-    Addition * a = new Addition(addOp, 2, false);
+    Addition * a = new Addition(n, d, false);
     replaceWith(a, true);
     return a->shallowSimplify(context, angleUnit);
   }
@@ -74,8 +73,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     if (!isDenominator) {
       return e;
     }
-    const Expression * multOperands[2] = {new Rational(Integer(-1)), e};
-    Multiplication * m = new Multiplication(multOperands, 2, false);
+    Multiplication * m = new Multiplication(new Rational(Integer(-1)), e, false);
     return m;
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
@@ -89,8 +87,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     }
     Expression * e = clone();
     e->replaceOperand(e->operand(0), new Rational(factors[index]), true);
-    const Expression * multOperands[2] = {new Rational(coefficients[index]), e};
-    Multiplication * m = new Multiplication(multOperands, 2, false);
+    Multiplication * m = new Multiplication(new Rational(coefficients[index]), e, false);
     const Expression * addNewOperand[1] = {m};
     a->addOperands(addNewOperand, 1);
     m->shallowSimplify(context, angleUnit);

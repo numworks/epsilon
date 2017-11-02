@@ -29,9 +29,9 @@ Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
 }
 
 Expression * Opposite::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  const Expression * multOperands[2] = {new Rational(Integer(-1)), operand(0)};
-  detachOperand(operand(0));
-  Multiplication * m = new Multiplication(multOperands, 2, false);
+  const Expression * op = operand(0);
+  detachOperand(op);
+  Multiplication * m = new Multiplication(new Rational(Integer(-1)), op, false);
   replaceWith(m, true);
   return m->shallowSimplify(context, angleUnit);
 }

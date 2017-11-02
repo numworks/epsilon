@@ -87,38 +87,40 @@ Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
 }
 
 Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit) {
-  Multiplication * commonDenom = new Multiplication();
+  // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
+
+  // Step 1: We want to compute the common denominator, b*d
+  Multiplication * commonDenominator = new Multiplication();
   for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * denominator = nullptr;
-    if (operand(i)->type() == Type::Power) {
-      Power * p = static_cast<Power *>(editableOperand(i));
-      denominator = p->createDenominator(context, angleUnit);
-    } else if (operand(i)->type() == Type::Multiplication) {
-      Multiplication * m = static_cast<Multiplication *>(editableOperand(i));
-      denominator = m->createDenominator(context, angleUnit);
-    }
-    if (denominator != nullptr) {
-      commonDenom->leastCommonMultiple(denominator, context, angleUnit);
+    Expression * denominator = operand(i)->cloneDenominator(context, angleUnit);
+    if (denominator) {
+      // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
+      commonDenominator->addMissingFactors(denominator, context, angleUnit);
       delete denominator;
     }
   }
-  if (commonDenom->numberOfOperands() == 0) {
+  if (commonDenominator->numberOfOperands() == 0) {
+    // If commonDenominator is empty this means that no operand was a fraction.
     return this;
   }
-  for (int i = 0; i < numberOfOperands(); i++) {
-    Multiplication * m = (Multiplication *)commonDenom->clone();
-    Expression * currentTerm = editableOperand(i);
-    Expression * newOp[1] = {currentTerm->clone()};
-    m->addOperands(newOp, 1);
-    replaceOperand(currentTerm, m, true);
+
+  // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
+  // want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d
+  Addition * numerator = new Addition();
+  for (int i=0; i < numberOfOperands(); i++) {
+    numerator->addOperand(new Multiplication(operand(i), commonDenominator, true));
   }
-  Expression * newExpression = this->deepSimplify(context, angleUnit);
-  const Expression * powOperands[2] = {commonDenom, new Rational(Integer(-1))};
-  Power * p = new Power(powOperands, false);
-  commonDenom->deepSimplify(context, angleUnit);
-  const Expression * multOperands[2] = {newExpression->clone(),p};
-  Multiplication * result = new Multiplication(multOperands, 2, false);
-  return newExpression->replaceWith(result, true);
+  // Step 4: Add the denominator
+  Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
+  commonDenominator->deepSimplify(context, angleUnit);
+
+  Multiplication * result = new Multiplication(numerator, inverseDenominator, false);
+  // Step 3: Simplify the numerator to a*d + c*b + e*d
+  numerator->deepSimplify(context, angleUnit);
+  inverseDenominator->shallowSimplify(context, angleUnit);
+
+  result->sortOperands(Expression::SimplificationOrder); // TODO: should shallowSimplify?
+  return replaceWith(result, true);
 }
 
 void Addition::factorizeChildren(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {

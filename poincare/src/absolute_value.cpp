@@ -29,7 +29,7 @@ ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisp
   return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
-Expression * AbsoluteValue::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() == Sign::Positive) {
     return replaceWith(editableOperand(0), true);
   }

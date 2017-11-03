@@ -30,7 +30,7 @@ private:
   }
   static const char * name() { return "^"; }
   /* Simplify */
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const Expression * e) const override;
   int simplificationOrderSameType(const Expression * e) const override;

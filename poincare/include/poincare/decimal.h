@@ -24,7 +24,7 @@ private:
   Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
 
   int numberOfDigitsInMantissa() const;

@@ -16,8 +16,8 @@ Expression * ArcSine::clone() const {
   return a;
 }
 
-Expression * ArcSine::shallowSimplify(Context& context, AngleUnit angleUnit) {
-  return Trigonometry::shallowSimplifyInverseFunction(this, context, angleUnit);
+Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>

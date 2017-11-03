@@ -23,7 +23,7 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
   return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
-Expression * Parenthesis::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
   return replaceWith(editableOperand(0), true);
 }
 

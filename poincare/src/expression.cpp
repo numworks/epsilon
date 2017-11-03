@@ -126,24 +126,24 @@ void Expression::Simplify(Expression ** expressionAddress, Context & context, An
     angleUnit = Preferences::sharedPreferences()->angleUnit();
   }
   SimplificationRoot root(*expressionAddress);
-  root.deepSimplify(context, angleUnit);
+  root.deepReduce(context, angleUnit);
   root.deepBeautify(context, angleUnit);
   *expressionAddress = root.editableOperand(0);
 }
 
 void Expression::Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
   SimplificationRoot root(*expressionAddress);
-  root.deepSimplify(context, angleUnit);
+  root.deepReduce(context, angleUnit);
   *expressionAddress = root.editableOperand(0);
 }
 
-Expression * Expression::deepSimplify(Context & context, AngleUnit angleUnit) {
+Expression * Expression::deepReduce(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
-    if ((editableOperand(i))->deepSimplify(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
+    if ((editableOperand(i))->deepReduce(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
       return replaceWith(new Undefined(), true);
     }
   }
-  return shallowSimplify(context, angleUnit);
+  return shallowReduce(context, angleUnit);
 }
 
 Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {

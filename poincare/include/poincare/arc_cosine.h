@@ -24,7 +24,7 @@ private:
     return "acos";
   }
   /* Simplification */
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

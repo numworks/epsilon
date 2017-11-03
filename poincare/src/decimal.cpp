@@ -153,7 +153,7 @@ ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMod
   return new StringLayout(buffer, numberOfChars);
 }
 
-Expression * Decimal::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   int numberOfDigits = numberOfDigitsInMantissa();
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);

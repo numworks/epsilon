@@ -20,7 +20,7 @@ private:
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
   return EvaluationEngine::map<double>(this, context, angleUnit, compute<double>);
   }
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 };

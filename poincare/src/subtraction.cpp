@@ -28,13 +28,13 @@ Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
 }
 
-Expression * Subtraction::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Subtraction::shallowReduce(Context& context, AngleUnit angleUnit) {
   Multiplication * m = new Multiplication(new Rational(-1), operand(1), false);
   Addition * a = new Addition(operand(0), m, false);
-  m->shallowSimplify(context, angleUnit);
+  m->shallowReduce(context, angleUnit);
   detachOperands();
   replaceWith(a, true);
-  return a->shallowSimplify(context, angleUnit);
+  return a->shallowReduce(context, angleUnit);
 }
 
 template<typename T> Evaluation<T> * Subtraction::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m) {

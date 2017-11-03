@@ -28,7 +28,7 @@ public:
     return nullptr;
   }
 private:
-  Expression * shallowSimplify(Context & context, AngleUnit angleUnit) override { return this; }
+  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override { return this; }
 };
 
 }

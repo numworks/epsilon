@@ -36,7 +36,7 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
   return Complex<T>::Float(std::log10(c.a()));
 }
 
-Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (operand(0)->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
     return replaceWith(new Undefined(), true);
   }
@@ -54,7 +54,7 @@ Expression * Logarithm::shallowSimplify(Context& context, AngleUnit angleUnit) {
     Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
     Addition * a = new Addition(n, d, false);
     replaceWith(a, true);
-    return a->shallowSimplify(context, angleUnit);
+    return a->shallowReduce(context, angleUnit);
   }
   return this;
 }
@@ -89,7 +89,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     e->replaceOperand(e->operand(0), new Rational(factors[index]), true);
     Multiplication * m = new Multiplication(new Rational(coefficients[index]), e, false);
     a->addOperand(m);
-    m->shallowSimplify(context, angleUnit);
+    m->shallowReduce(context, angleUnit);
     index++;
   }
   return a;

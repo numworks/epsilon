@@ -22,7 +22,7 @@ Expression * Addition::clone() const {
 
 /* Simplication */
 
-Expression * Addition::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
   /* Step 1: Addition is associative, so let's start by merging children which
    * also are additions themselves. */
   int i = 0;
@@ -112,14 +112,14 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   }
   // Step 4: Add the denominator
   Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
-  commonDenominator->deepSimplify(context, angleUnit);
+  commonDenominator->deepReduce(context, angleUnit);
 
   Multiplication * result = new Multiplication(numerator, inverseDenominator, false);
   // Step 3: Simplify the numerator to a*d + c*b + e*d
-  numerator->deepSimplify(context, angleUnit);
-  inverseDenominator->shallowSimplify(context, angleUnit);
+  numerator->deepReduce(context, angleUnit);
+  inverseDenominator->shallowReduce(context, angleUnit);
 
-  result->sortOperands(Expression::SimplificationOrder); // TODO: should shallowSimplify?
+  result->sortOperands(Expression::SimplificationOrder); // TODO: should shallowReduce?
   return replaceWith(result, true);
 }
 
@@ -132,11 +132,11 @@ void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & con
     } else {
       static_cast<Multiplication *>(e1)->addOperand(r);
     }
-    e1->shallowSimplify(context, angleUnit);
+    e1->shallowReduce(context, angleUnit);
   } else {
     Multiplication * m = new Multiplication(r, e1, true);
     e1->replaceWith(m, true);
-    m->shallowSimplify(context, angleUnit);
+    m->shallowReduce(context, angleUnit);
   }
 }
 

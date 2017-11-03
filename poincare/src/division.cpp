@@ -22,13 +22,13 @@ Expression * Division::clone() const {
   return new Division(m_operands, true);
 }
 
-Expression * Division::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
   Power * p = new Power(operand(1), new Rational(-1), false);
   Multiplication * m = new Multiplication(operand(0), p, false);
-  p->deepSimplify(context, angleUnit);
+  p->deepReduce(context, angleUnit);
   detachOperands();
   replaceWith(m, true);
-  return m->shallowSimplify(context, angleUnit);
+  return m->shallowReduce(context, angleUnit);
 }
 
 Expression * Division::shallowBeautify(Context & context, AngleUnit angleUnit) {

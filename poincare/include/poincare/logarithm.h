@@ -24,7 +24,7 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "log");
   }
   /* Simplification */
-  Expression * shallowSimplify(Context & context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
 };

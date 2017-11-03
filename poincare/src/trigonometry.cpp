@@ -14,7 +14,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent);
   Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
   if (lookup != nullptr) {
@@ -30,13 +30,13 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
   if (e->operand(0)->sign() == Expression::Sign::Negative) {
     Expression * op = e->editableOperand(0);
     Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
-    newOp->shallowSimplify(context, angleUnit);
+    newOp->shallowReduce(context, angleUnit);
     if (e->type() == Expression::Type::Cosine) {
-      return e->shallowSimplify(context, angleUnit);
+      return e->shallowReduce(context, angleUnit);
     } else {
       Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
-      m->editableOperand(1)->shallowSimplify(context, angleUnit);
-      return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
+      m->editableOperand(1)->shallowReduce(context, angleUnit);
+      return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
     }
   }
   if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
@@ -58,13 +58,13 @@ Expression * Trigonometry::shallowSimplifyDirectFunction(Expression * e, Context
       Rational * newR = new Rational(div.remainder, r->denominator());
       Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->editableOperand(0) : e;
       rationalParent->replaceOperand(r, newR, true);
-      e->editableOperand(0)->shallowSimplify(context, angleUnit);
+      e->editableOperand(0)->shallowReduce(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
         unaryCoefficient *= -1;
       }
-      Expression * simplifiedCosine = e->shallowSimplify(context, angleUnit); // recursive
+      Expression * simplifiedCosine = e->shallowReduce(context, angleUnit); // recursive
       Multiplication * m = new Multiplication(new Rational(unaryCoefficient), simplifiedCosine->clone(), false);
-      return simplifiedCosine->replaceWith(m, true)->shallowSimplify(context, angleUnit);
+      return simplifiedCosine->replaceWith(m, true)->shallowReduce(context, angleUnit);
     }
     assert(r->sign() == Expression::Sign::Positive);
     assert(!divisor.isLowerThan(dividand));
@@ -80,7 +80,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
   return false;
 }
 
-Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   if (e->type() != Expression::Type::ArcTangent) {
     float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
@@ -114,20 +114,20 @@ Expression * Trigonometry::shallowSimplifyInverseFunction(Expression * e, Contex
     Expression * op = e->editableOperand(0);
     if (e->operand(0)->sign() == Expression::Sign::Negative) {
       Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
-      newOp->shallowSimplify(context, angleUnit);
+      newOp->shallowReduce(context, angleUnit);
     } else {
       ((Multiplication *)op)->removeOperand(op->editableOperand(0), true);
-      op->shallowSimplify(context, angleUnit);
+      op->shallowReduce(context, angleUnit);
     }
     if (e->type() == Expression::Type::ArcCosine) {
       Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(180));
       Subtraction * s = new Subtraction(pi, e->clone(), false);
-      s->editableOperand(1)->shallowSimplify(context, angleUnit);
-      return e->replaceWith(s, true)->shallowSimplify(context, angleUnit);
+      s->editableOperand(1)->shallowReduce(context, angleUnit);
+      return e->replaceWith(s, true)->shallowReduce(context, angleUnit);
     } else {
       Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
-      m->editableOperand(1)->shallowSimplify(context, angleUnit);
-      return e->replaceWith(m, true)->shallowSimplify(context, angleUnit);
+      m->editableOperand(1)->shallowReduce(context, angleUnit);
+      return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
     }
   }
 

@@ -197,9 +197,9 @@ private:
   /* Simplification */
   static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
-  Expression * deepSimplify(Context & context, AngleUnit angleUnit);
+  Expression * deepReduce(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * shallowSimplify(Context & context, AngleUnit angleUnit) { return this; };
+  virtual Expression * shallowReduce(Context & context, AngleUnit angleUnit) { return this; };
   virtual Expression * shallowBeautify(Context & context, AngleUnit angleUnit) { return this; };
 
   // Private methods used in simplification process

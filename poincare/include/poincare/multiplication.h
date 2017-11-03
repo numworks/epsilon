@@ -31,7 +31,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   void factorize(Context & context, AngleUnit angleUnit);
   bool resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit);
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);

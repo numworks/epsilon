@@ -35,7 +35,7 @@ private:
   static const char * name() { return "+"; }
 
   /* Simplification */
-  Expression * shallowSimplify(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
   void factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);

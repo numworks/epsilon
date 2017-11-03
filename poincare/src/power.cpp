@@ -134,7 +134,7 @@ int Power::simplificationOrderGreaterType(const Expression * e) const {
   return SimplificationOrder(operand(1), &one);
 }
 
-Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
@@ -194,13 +194,13 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
         } else {
           m->removeOperand(factor, false);
         }
-        m->shallowSimplify(context, angleUnit);
+        m->shallowReduce(context, angleUnit);
         Power * p = new Power(factor, rCopy, false);
         Multiplication * root = new Multiplication(p, clone(), false);
-        p->shallowSimplify(context, angleUnit);
-        root->editableOperand(1)->shallowSimplify(context, angleUnit);
+        p->shallowReduce(context, angleUnit);
+        root->editableOperand(1)->shallowReduce(context, angleUnit);
         replaceWith(root, true);
-        return root->shallowSimplify(context, angleUnit);
+        return root->shallowReduce(context, angleUnit);
       }
     }
   }
@@ -215,7 +215,7 @@ Expression * Power::shallowSimplify(Context& context, AngleUnit angleUnit) {
       Multiplication * m = new Multiplication(p1, p2, false);
       simplifyRationalRationalPower(p1, static_cast<Rational *>(p1->editableOperand(0)), static_cast<Rational *>(p1->editableOperand(1)->editableOperand(0)), context, angleUnit);
       replaceWith(m, true);
-      return m->shallowSimplify(context, angleUnit);
+      return m->shallowReduce(context, angleUnit);
     }
   }
   return this;
@@ -228,8 +228,8 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& conte
   Multiplication * m = new Multiplication(p1, e, false);
   replaceOperand(e, m, false);
   replaceOperand(p, p0, true);
-  m->shallowSimplify(context, angleUnit);
-  return shallowSimplify(context, angleUnit);
+  m->shallowReduce(context, angleUnit);
+  return shallowReduce(context, angleUnit);
 }
 
 Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, AngleUnit angleUnit) {
@@ -237,10 +237,10 @@ Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression *
     Expression * factor = m->editableOperand(index);
     Power * p = new Power(factor, r, true); // We copy r and factor to avoid inheritance issues
     m->replaceOperand(factor, p, true);
-    p->shallowSimplify(context, angleUnit);
+    p->shallowReduce(context, angleUnit);
   }
   detachOperand(m);
-  return replaceWith(m, true)->shallowSimplify(context, angleUnit); // delete r
+  return replaceWith(m, true)->shallowReduce(context, angleUnit); // delete r
 }
 
 Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context& context, AngleUnit angleUnit) {
@@ -260,7 +260,7 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   }
   Multiplication * m = new Multiplication(n, d, false);
   result->replaceWith(m, true);
-  return m->shallowSimplify(context, angleUnit);
+  return m->shallowReduce(context, angleUnit);
 }
 
 Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator) {
@@ -318,7 +318,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);
     Division * d = new Division(new Rational(1), p, false);
-    p->shallowSimplify(context, angleUnit);
+    p->shallowReduce(context, angleUnit);
     replaceWith(d, true);
     return d->shallowBeautify(context, angleUnit);
   }

@@ -19,13 +19,13 @@ Expression * NthRoot::clone() const {
   NthRoot * a = new NthRoot(m_operands, true);  return a;
 }
 
-Expression * NthRoot::shallowSimplify(Context& context, AngleUnit angleUnit) {
+Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   Power * invIndex = new Power(operand(1), new Rational(-1), false);
   Power * p = new Power(operand(0), invIndex, false);
-  invIndex->shallowSimplify(context, angleUnit);
+  invIndex->shallowReduce(context, angleUnit);
   detachOperands();
   replaceWith(p, true);
-  return p->shallowSimplify(context, angleUnit);
+  return p->shallowReduce(context, angleUnit);
 }
 
 ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

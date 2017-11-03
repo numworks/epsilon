@@ -131,6 +131,12 @@ void Expression::simplify(Expression ** expressionAddress, Context & context, An
   *expressionAddress = root.editableOperand(0);
 }
 
+void Expression::Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
+  SimplificationRoot root(*expressionAddress);
+  root.deepSimplify(context, angleUnit);
+  *expressionAddress = root.editableOperand(0);
+}
+
 Expression * Expression::deepSimplify(Context & context, AngleUnit angleUnit) {
   for (int i = 0; i < numberOfOperands(); i++) {
     if ((editableOperand(i))->deepSimplify(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {

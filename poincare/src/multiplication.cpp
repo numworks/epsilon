@@ -495,7 +495,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   for (int i = 0; i < numberOfOperands(); i++) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {
       Subtraction * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
-      Expression::simplify((Expression **)&sub, context, angleUnit);
+      Reduce((Expression **)&sub, context, angleUnit);
       if (sub->sign() == Sign::Negative) { // index[0] < index[1]
         factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
         factor->deepSimplify(context, angleUnit);

@@ -195,6 +195,7 @@ private:
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
+  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepSimplify(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure

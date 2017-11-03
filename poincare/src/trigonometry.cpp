@@ -1,5 +1,4 @@
 #include <poincare/trigonometry.h>
-#include <poincare/simplification_root.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/complex.h>
 #include <poincare/symbol.h>
@@ -180,15 +179,14 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
     if (input == nullptr) {
       continue;
     }
-    SimplificationRoot inputRoot(input);
-    inputRoot.deepSimplify(context, angleUnit); // input expression does not change, no root needed and we can use entry after
-    if (inputRoot.operand(0)->isIdenticalTo(e)) {
+    Expression::Reduce(&input, context, angleUnit);
+    if (input->isIdenticalTo(e)) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
       if (output == nullptr) {
         return nullptr;
       }
-      SimplificationRoot outputRoot(output);
-      return outputRoot.deepSimplify(context, angleUnit)->editableOperand(0);
+      Expression::Reduce(&output, context, angleUnit);
+      return output;
     }
   }
   return nullptr;

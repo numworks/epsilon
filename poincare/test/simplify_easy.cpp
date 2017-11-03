@@ -35,6 +35,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 QUIZ_CASE(poincare_simplify_easy) {
   //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)");
+  assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "2-10cos(2)");

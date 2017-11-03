@@ -67,7 +67,6 @@ Expression * Division::shallowBeautify(Context & context, AngleUnit angleUnit) {
           replaceOperand(cos, new Rational(1), true);
         }
       }
-      k++;
     }
   }
   return this;

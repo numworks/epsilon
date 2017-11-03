@@ -72,10 +72,8 @@ void MenuController::configureScript() {
 }
 
 void MenuController::addScript() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
   m_scriptStore->addNewScript();
   m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, numberOfRows()-2);
 }
 
 void MenuController::renameScriptAtIndex(int i) {
@@ -149,14 +147,11 @@ int MenuController::typeAtLocation(int i, int j) {
 
 void MenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index < m_scriptStore->numberOfScripts()) {
-    EvenOddEditableTextCell * myCell =  static_cast<EvenOddEditableTextCell *>(cell);
-    myCell->editableTextCell()->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
-    myCell->setEven(index%2 == 0);
-  } else {
-    assert(index == m_scriptStore->numberOfScripts());
-    Shared::NewFunctionCell * myCell =  static_cast<Shared::NewFunctionCell *>(cell);
-    myCell->setEven(index%2 == 0);
+    EditableTextCell * editableTextCell = static_cast<EvenOddEditableTextCell *>(cell)->editableTextCell();
+    editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
   }
+  static_cast<EvenOddCell *>(cell)->setEven(index%2 == 0);
+  cell->setHighlighted(index == selectedRow());
 }
 
 bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

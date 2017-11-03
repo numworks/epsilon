@@ -121,7 +121,7 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
 
 /* Simplification */
 
-void Expression::simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
+void Expression::Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
   if (angleUnit == AngleUnit::Default) {
     angleUnit = Preferences::sharedPreferences()->angleUnit();
   }

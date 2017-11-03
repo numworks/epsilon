@@ -152,7 +152,7 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Simplification */
-  static void simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.

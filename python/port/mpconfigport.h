@@ -46,7 +46,7 @@
 #define MICROPY_PY_ATTRTUPLE        (0)
 #define MICROPY_PY_COLLECTIONS      (0)
 #define MICROPY_PY_MATH             (1)
-#define MICROPY_PY_CMATH            (0)
+#define MICROPY_PY_CMATH            (1)
 #define MICROPY_PY_IO               (0)
 #define MICROPY_PY_STRUCT           (0)
 #define MICROPY_PY_SYS              (0)

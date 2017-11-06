@@ -53,13 +53,16 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_expm1f.o\
   s_fabsf.o \
   s_floorf.o \
+  s_frexpf.o \
   s_log1pf.o \
+  s_modff.o \
   s_roundf.o \
   s_scalbnf.o \
   s_signgam.o \
   s_sinf.o \
   s_tanf.o \
   s_tanhf.o \
+  s_truncf.o \
   w_lgammaf.o \
 )
 

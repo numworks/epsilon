@@ -57,11 +57,14 @@ float expm1f(float x);
 float fabsf(float x);
 float floorf(float x);
 float fmodf(float x, float y);
+float frexpf(float x, int *eptr);
+float ldexpf(float x, int n);
 float lgammaf(float x);
 float lgammaf_r(float x, int *signgamp);
 float log1pf(float x);
 float log10f(float x);
 float logf(float x);
+float modff(float value, float *iptr);
 float nanf(const char *s);
 float nearbyintf(float x);
 float powf(float x, float y);
@@ -72,6 +75,7 @@ float sinhf(float x);
 float sqrtf(float x);
 float tanf(float x);
 float tanhf(float x);
+float truncf(float x);
 
 double acos(double x);
 double acosh(double x);
@@ -121,7 +125,9 @@ double tanh(double x);
 #define expm1f(x) __builtin_expm1f(x)
 #define fabsf(x) __builtin_fabsf(x)
 #define floorf(x) __builtin_floorf(x)
+#define frexpf(x, y) __builtin_frexpf(x, y)
 #define fmodf(x, y) __builtin_fmodf(x, y)
+#define ldexpf(x, n) __builtin_ldexpf(x, n)
 #define lgammaf(x) __builtin_lgammaf(x)
 #define lgammaf_r(x, signgamp) __builtin_lgammaf_r(x, signgamp)
 #define log1pf(x) __builtin_log1pf(x)
@@ -137,6 +143,7 @@ double tanh(double x);
 #define sqrtf(x) __builtin_sqrtf(x)
 #define tanf(x) __builtin_tanf(x)
 #define tanhf(x) __builtin_tanhf(x)
+#define truncf(x) __builtin_truncf(x)
 
 #define acos(x) __builtin_acos(x)
 #define acosh(x) __builtin_acosh(x)

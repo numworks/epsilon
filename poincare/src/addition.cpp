@@ -175,8 +175,8 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
       } else {
         const Expression * op1 = operand(index-1);
         removeOperand(op1, false);
-        Subtraction * s = new Subtraction(op1, subtractant->clone(), false);
-        replaceOperand(subtractant, s, true);
+        Subtraction * s = new Subtraction(op1, subtractant, false);
+        replaceOperand(subtractant, s, false);
       }
     }
     index++;

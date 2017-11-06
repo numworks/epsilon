@@ -44,7 +44,7 @@ void Hierarchy::replaceOperand(const Expression * oldOperand, Expression * newOp
   Expression ** op = const_cast<Expression **>(operands());
   for (int i=0; i<numberOfOperands(); i++) {
     if (op[i] == oldOperand) {
-      if (oldOperand != nullptr) {
+      if (oldOperand != nullptr && oldOperand->parent() == this) {
         const_cast<Expression *>(oldOperand)->setParent(nullptr);
       }
       if (deleteOldOperand) {

@@ -106,19 +106,64 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
 }
 
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
-  /* First loop: merge all multiplication, break if 0 or undef */
-  int index = 0;
-  /* TODO: optimize, do we have to restart index = 0 at every merging? */
-  while (index < numberOfOperands()) {
-    Expression * o = editableOperand(index++);
+  /* Step 1: Multiplication is associative, so let's start by merging children
+   * which also are additions themselves. */
+  int i = 0;
+  int initialNumberOfOperands = numberOfOperands();
+  while (i < initialNumberOfOperands) {
+    Expression * o = editableOperand(i);
     if (o->type() == Type::Multiplication) {
       mergeOperands(static_cast<Multiplication *>(o));
-      index = 0;
-    } else if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
+      continue;
+    }
+    i++;
+  }
+  /* Step 2: If any of the operand is zero, the multiplication result is zero */
+  for (int i = 0; i < numberOfOperands(); i++) {
+    Expression * o = editableOperand(i++);
+    if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(new Rational(0), true);
     }
   }
-  factorize(context, angleUnit);
+  // Step 3: Sort the operands
+  sortOperands(SimplificationOrder);
+
+  /* Step 4: Factorize like terms before expanding multiplication of addition.
+   * This step enables to reduce expressions like (x+y)^(-1)*(x+y)(a+b) for
+   * example. Thanks to the simplification order, those are next to each other
+   * at this point. */
+  i = 0;
+  while (i < numberOfOperands()-1) {
+    if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
+      Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
+      replaceOperand(operand(i), new Rational(a), true);
+      removeOperand(operand(i+1), true);
+      continue;
+    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
+      factorizeBase(editableOperand(i), editableOperand(i+1), context, angleUnit);
+      continue;
+    } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
+      factorizeExponent(editableOperand(i), editableOperand(i+1), context, angleUnit);
+      continue;
+    }
+    i++;
+  }
+  /* Step 5: Let's remove ones if there's any. It's important to do this after
+   * having factorized because factorization can lead to new ones. For example
+   * pi^(-1)*pi. We don't remove the last one if it's the only operand left
+   * though. */
+  i = 0;
+  while (i < numberOfOperands()) {
+    Expression * o = editableOperand(i);
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne() && numberOfOperands() > 1) {
+      removeOperand(o, true);
+      continue;
+    }
+    i++;
+  }
+  /* Step 6: we distribute multiplication on addition node. We do not want to
+   * do this step if the parent is a multiplication to avoid missing
+   * factorization like (x+y)^(-1)*((a+b)*(x+y) */
   if (parent()->type() != Type::Multiplication) {
     for (int i=0; i<numberOfOperands(); i++) {
       if (operand(i)->type() == Type::Addition) {
@@ -126,33 +171,26 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
       }
     }
   }
-  /* Now, no more node can be an addition or a multiplication */
-  factorize(context, angleUnit);
-  if (resolveSquareRootAtDenominator(context, angleUnit)) {
-    factorize(context, angleUnit);
-    for (int i=0; i<numberOfOperands(); i++) {
-      if (operand(i)->type() == Type::Addition) {
-        return distributeOnOperandAtIndex(i, context, angleUnit);
-      }
-    }
-  }
+  /* Step 7: We look for square root and sum of square root (two terms maximum
+   * so far) to move them at numerator. */
+  resolveSquareRootAtDenominator(context, angleUnit);
+  /* Step 8: Let's remove the multiplication altogether if it has a single
+   * operand. */
   return squashUnaryHierarchy();
 }
 
-bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
-  bool change = false;
+void Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
   for (int index = 0; index < numberOfOperands(); index++) {
     Expression * o = editableOperand(index);
     if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
-      change = true;
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
       Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
       Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
       replaceOperand(o, sqrt, true);
       sqrt->shallowReduce(context, angleUnit);
       addOperand(new Rational(Integer(1), Integer(p)));
+      return;
     } else if (o->type() == Type::Power && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusOne() && o->operand(0)->type() == Type::Addition && o->operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(o->operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(o->operand(0)->operand(1))) {
-      change = true;
       const Rational * f1 = RationalFactorInExpression(o->operand(0)->operand(0));
       const Rational * f2 = RationalFactorInExpression(o->operand(0)->operand(1));
       const Rational * r1 = RadicandInExpression(o->operand(0)->operand(0));
@@ -198,34 +236,8 @@ bool Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       replaceOperand(o, s, true);
       s->deepReduce(context, angleUnit);
       addOperand(new Rational(Integer(1), denominator));
-    }
-  }
-  return change;
-}
-
-void Multiplication::factorize(Context & context, AngleUnit angleUnit) {
-  sortOperands(SimplificationOrder);
-  int i = 0;
-  while (i < numberOfOperands()) {
-    if (numberOfOperands() > 1 && operand(i)->type() == Type::Rational && static_cast<const Rational *>(operand(i))->isOne()) {
-      removeOperand(operand(i), true);
-      if (i > 0) {
-        i--;
-      }
-    }
-    if (i == numberOfOperands()-1) {
-      break;
-    }
-    if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
-      Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
-      replaceOperand(operand(i), new Rational(a), true);
-      removeOperand(operand(i+1), true);
-    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
-      factorizeBase(editableOperand(i), editableOperand(i+1), context, angleUnit);
-    } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
-      factorizeExponent(editableOperand(i), editableOperand(i+1), context, angleUnit);
-    } else {
-      i++;
+      shallowReduce(context, angleUnit);
+      return;
     }
   }
 }

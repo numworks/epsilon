@@ -43,16 +43,16 @@ protected:
     void setDraftTextBuffer(char * draftTextBuffer);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reload();
-    bool isEditing() const;
+    bool isEditing() const { return m_isEditing; }
     const char * text() const;
     int textLength() const;
-    int cursorLocation() const;
-    char * textBuffer();
-    char * draftTextBuffer();
-    int bufferSize();
+    int cursorLocation() const { return m_currentCursorLocation; }
+    char * textBuffer() { return m_textBuffer; }
+    char * draftTextBuffer() { return m_draftTextBuffer; }
+    int bufferSize() { return k_maxBufferSize; }
     void setText(const char * text);
     void setBackgroundColor(KDColor backgroundColor);
-    KDColor backgroundColor() const;
+    KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing, bool reinitDraftBuffer);
@@ -65,7 +65,7 @@ protected:
     void deleteCharPrecedingCursor();
     bool deleteEndOfLine();
     KDRect cursorRect();
-    View * subviewAtIndex(int index) override;
+    View * subviewAtIndex(int index) override { return &m_cursorView; }
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
@@ -73,7 +73,7 @@ protected:
      * over 70. */
     constexpr static int k_maxBufferSize = 100;
   private:
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 1; }
     void layoutSubviews() override;
     TextCursorView m_cursorView;
     bool m_isEditing;

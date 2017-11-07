@@ -46,36 +46,16 @@ void TextField::ContentView::reload() {
   markRectAsDirty(dirtyZone);
 }
 
-bool TextField::ContentView::isEditing() const {
-  return m_isEditing;
-}
-
 const char * TextField::ContentView::text() const {
   if (m_isEditing) {
-    return (const char *)m_draftTextBuffer;
+    return const_cast<const char *>(m_draftTextBuffer);;
   }
-  return (const char *)m_textBuffer;
+  return const_cast<const char *>(m_textBuffer);
 }
 
 int TextField::ContentView::textLength() const {
   assert(strlen(text()) == m_currentTextLength);
   return m_currentTextLength;
-}
-
-int TextField::ContentView::cursorLocation() const{
-  return m_currentCursorLocation;
-}
-
-char * TextField::ContentView::textBuffer() {
-  return m_textBuffer;
-}
-
-char * TextField::ContentView::draftTextBuffer() {
-  return m_draftTextBuffer;
-}
-
-int TextField::ContentView::bufferSize() {
-  return m_textBufferSize;
 }
 
 void TextField::ContentView::setText(const char * text) {
@@ -92,10 +72,6 @@ void TextField::ContentView::setText(const char * text) {
 void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
   m_backgroundColor = backgroundColor;
   markRectAsDirty(bounds());
-}
-
-KDColor TextField::ContentView::backgroundColor() const {
-  return m_backgroundColor;
 }
 
 void TextField::ContentView::setTextColor(KDColor textColor) {
@@ -197,14 +173,6 @@ bool TextField::ContentView::deleteEndOfLine() {
 
 KDRect TextField::ContentView::cursorRect() {
   return KDRect(m_currentCursorLocation * charWidth(), 0, m_cursorView.minimalSizeForOptimalDisplay());
-}
-
-int TextField::ContentView::numberOfSubviews() const {
-  return 1;
-}
-
-View * TextField::ContentView::subviewAtIndex(int index) {
-  return &m_cursorView;
 }
 
 void TextField::ContentView::layoutSubviews() {
@@ -437,7 +405,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(nextCursorLocation);
     return true;
   }
-
 
   return false;
 }

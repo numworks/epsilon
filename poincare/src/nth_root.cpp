@@ -22,8 +22,8 @@ Expression * NthRoot::clone() const {
 Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   Power * invIndex = new Power(operand(1), new Rational(-1), false);
   Power * p = new Power(operand(0), invIndex, false);
-  invIndex->shallowReduce(context, angleUnit);
   detachOperands();
+  invIndex->shallowReduce(context, angleUnit);
   replaceWith(p, true);
   return p->shallowReduce(context, angleUnit);
 }

@@ -69,7 +69,7 @@ const Expression * const * Hierarchy::ExpressionArray(const Expression * e1, con
 void Hierarchy::detachOperandAtIndex(int i) {
   Expression ** op = const_cast<Expression **>(operands());
   // When detachOperands is called, it's very likely that said operands have been stolen
-  if (op[i]->parent() == this) {
+  if (op[i] != nullptr && op[i]->parent() == this) {
     const_cast<Expression *>(op[i])->setParent(nullptr);
   }
   op[i] = nullptr;

@@ -25,8 +25,8 @@ Expression * Division::clone() const {
 Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
   Power * p = new Power(operand(1), new Rational(-1), false);
   Multiplication * m = new Multiplication(operand(0), p, false);
-  p->deepReduce(context, angleUnit);
   detachOperands();
+  p->deepReduce(context, angleUnit);
   replaceWith(m, true);
   return m->shallowReduce(context, angleUnit);
 }

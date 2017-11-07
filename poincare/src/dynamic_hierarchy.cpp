@@ -120,10 +120,10 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   } else {
     const_cast<Expression *>(m_operands[i])->setParent(nullptr);
   }
+  m_numberOfOperands--;
   for (int j=i; j<m_numberOfOperands; j++) {
     m_operands[j] = m_operands[j+1];
   }
-  m_numberOfOperands--;
 }
 
 int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {

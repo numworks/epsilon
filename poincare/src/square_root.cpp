@@ -33,7 +33,7 @@ Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit)
 }
 
 Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Power * p = new Power(operand(0), new Rational(Integer(1), Integer(2)), false);
+  Power * p = new Power(operand(0), new Rational(1, 2), false);
   detachOperands();
   replaceWith(p, true);
   return p->shallowReduce(context, angleUnit);

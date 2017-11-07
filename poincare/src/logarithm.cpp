@@ -110,7 +110,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
 Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
   Symbol e = Symbol(Ion::Charset::Exponential);
   const Expression * op = operand(0);
-  Rational one = Rational(Integer(1));
+  Rational one(1);
   if (numberOfOperands() == 2 && (operand(1)->isIdenticalTo(&e) || operand(1)->isIdenticalTo(&one))) {
     detachOperand(op);
     Expression * nl = operand(1)->isIdenticalTo(&e) ? static_cast<Expression *>(new NaperianLogarithm(op, false)) : static_cast<Expression *> (new Logarithm(op, false));

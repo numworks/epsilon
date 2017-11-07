@@ -22,7 +22,7 @@ public:
   void didBecomeFirstResponder() override;
 
   // Edit cell
-  void setEditing(bool isEditing);
+  void setEditing(bool isEditing, bool reinitDraftBuffer = false);
   void setText(const char * text);
 
 private:

@@ -20,6 +20,9 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore)
 {
+  for (int i = 0; i < k_numberOfLineCells; i++) {
+    m_cells[i].setParentResponder(&m_selectableTableView);
+  }
 }
 
 ConsoleController::~ConsoleController() {
@@ -95,11 +98,10 @@ void ConsoleController::didBecomeFirstResponder() {
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() > 0) {
-      m_editCell.setEditing(false);
+    if (m_consoleStore.numberOfLines() > 0) {
+      m_editCell.setEditing(false, true);
       m_editCell.setText("");
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
-      app()->setFirstResponder(&m_selectableTableView);
       return true;
     }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -179,6 +181,17 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
   if (t->selectedRow() == m_consoleStore.numberOfLines()) {
     m_editCell.setEditing(true);
     app()->setFirstResponder(&m_editCell);
+    return;
+  }
+  if (t->selectedRow()>-1) {
+    if (previousSelectedCellY > -1 && previousSelectedCellY < m_consoleStore.numberOfLines()) {
+      // Reset the scroll of the previous cell
+      ConsoleLineCell * previousCell = (ConsoleLineCell *)(t->cellAtLocation(previousSelectedCellX, previousSelectedCellY));
+      previousCell->reloadCell();
+    }
+    ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
+    app()->setFirstResponder(selectedCell);
+    selectedCell->reloadCell();
   }
 }
 

@@ -131,7 +131,7 @@ int Power::simplificationOrderGreaterType(const Expression * e) const {
   if (baseComparison != 0) {
     return baseComparison;
   }
-  Rational one(Integer(1));
+  Rational one(1);
   return SimplificationOrder(operand(1), &one);
 }
 
@@ -282,8 +282,8 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
 
-  Integer r1 = Integer(1);
-  Integer r2 = Integer(1);
+  Integer r1(1);
+  Integer r2(1);
   int index = 0;
   while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
     Integer n = Integer::Multiplication(coefficients[index], r->numerator());
@@ -363,8 +363,8 @@ Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit 
   if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusHalf()) {
     Integer p = static_cast<const Rational *>(operand(0))->numerator();
     Integer q = static_cast<const Rational *>(operand(0))->denominator();
-    Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
-    Expression * newExpression = new Multiplication(new Rational(Integer(1), Integer(p)), sqrt, false);
+    Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
+    Expression * newExpression = new Multiplication(new Rational(Integer(1), p), sqrt, false);
     sqrt->shallowReduce(context, angleUnit);
     return replaceWith(newExpression, true);
   } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
@@ -392,8 +392,8 @@ Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit 
             Integer::Power(n2, Integer(2)),
             Integer::Power(d1, Integer(2))),
           Integer::Multiplication(p2, q1)));
-    Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2)), false);
-    Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2)), false);
+    Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(1, 2), false);
+    Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(1, 2), false);
     Integer factor1 = Integer::Multiplication(
         Integer::Multiplication(n1, d1),
         Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));

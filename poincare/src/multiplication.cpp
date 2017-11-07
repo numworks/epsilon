@@ -120,7 +120,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
   }
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
   for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * o = editableOperand(i++);
+    Expression * o = editableOperand(i);
     if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(new Rational(0), true);
     }
@@ -188,8 +188,8 @@ Expression * Multiplication::resolveSquareRootAtDenominator(Context & context, A
     if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
       Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
-      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
-      replaceOperand(o, new Rational(Integer(1), Integer(p)), true);
+      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
+      replaceOperand(o, new Rational(Integer(1), p), true);
       Expression * newExpression = shallowReduce(context, angleUnit);
       if (newExpression->type() == Type::Multiplication) {
         static_cast<Multiplication *>(newExpression)->addOperand(sqrt);
@@ -223,8 +223,8 @@ Expression * Multiplication::resolveSquareRootAtDenominator(Context & context, A
               Integer::Power(n2, Integer(2)),
               Integer::Power(d1, Integer(2))),
             Integer::Multiplication(p2, q1)));
-      Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2)), false);
-      Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2)), false);
+      Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(1, 2), false);
+      Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(1, 2), false);
       Integer factor1 = Integer::Multiplication(
           Integer::Multiplication(n1, d1),
           Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));

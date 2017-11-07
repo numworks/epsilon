@@ -24,10 +24,10 @@ public:
   // Edit cell
   void setEditing(bool isEditing, bool reinitDraftBuffer = false);
   void setText(const char * text);
+  bool insertText(const char * text);
 
 private:
   char m_textBuffer[TextField::maxBufferSize()];
-  char m_draftTextBuffer[TextField::maxBufferSize()];
   MessageTextView m_promptView;
   TextField m_textField;
 };

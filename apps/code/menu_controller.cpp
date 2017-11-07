@@ -50,7 +50,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   } else if (event == Ion::Events::Up) {
-    if (m_selectableTableView.selectedRow() < 0) {
+    if (footer()->selectedButton() == 0) {
       footer()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
       app()->setFirstResponder(&m_selectableTableView);

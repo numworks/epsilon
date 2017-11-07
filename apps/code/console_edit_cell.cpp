@@ -10,9 +10,8 @@ ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, TextFieldDelegate 
   HighlightCell(),
   Responder(parentResponder),
   m_textBuffer{0},
-  m_draftTextBuffer{0},
   m_promptView(ConsoleController::k_fontSize, I18n::Message::ConsolePrompt, 0, 0.5),
-  m_textField(this, m_textBuffer, m_draftTextBuffer, TextField::maxBufferSize(), delegate, true, ConsoleController::k_fontSize)
+  m_textField(this, m_textBuffer, m_textBuffer, TextField::maxBufferSize(), delegate, false, ConsoleController::k_fontSize)
 {
 }
 
@@ -47,4 +46,11 @@ void ConsoleEditCell::setText(const char * text) {
   m_textField.setText(text);
 }
 
+bool ConsoleEditCell::insertText(const char * text) {
+  bool didCopy = m_textField.insertTextAtLocation(text, m_textField.cursorLocation());
+  if (didCopy) {
+    m_textField.setCursorLocation(m_textField.cursorLocation() + strlen(text));
+  }
+  return didCopy;
+}
 }

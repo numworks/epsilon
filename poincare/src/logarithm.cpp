@@ -6,6 +6,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/symbol.h>
 #include <poincare/arithmetic.h>
+#include <poincare/power.h>
 #include <poincare/naperian_logarithm.h>
 #include <cmath>
 #include <ion.h>
@@ -55,6 +56,17 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     Addition * a = new Addition(n, d, false);
     replaceWith(a, true);
     return a->shallowReduce(context, angleUnit);
+  }
+  // log(x^y)->y*log(x)
+  if (operand(0)->type() == Type::Power) {
+    Power * p = static_cast<Power *>(editableOperand(0));
+    Expression * x = p->editableOperand(0);
+    Expression * y = p->editableOperand(1);
+    p->detachOperands();
+    replaceOperand(p, x, true);
+    Expression * newLog = shallowReduce(context, angleUnit);
+    newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
+    return newLog->shallowReduce(context, angleUnit);;
   }
   return this;
 }

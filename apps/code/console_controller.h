@@ -72,6 +72,7 @@ private:
   void emptyOutputAccumulationBuffer();
   int firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
+  bool copyCurrentLineToClipboard();
   int m_rowHeight;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;

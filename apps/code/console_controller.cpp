@@ -98,9 +98,8 @@ void ConsoleController::didBecomeFirstResponder() {
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    if (m_consoleStore.numberOfLines() > 0) {
-      m_editCell.setEditing(false, true);
-      m_editCell.setText("");
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
+      m_editCell.setEditing(false);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
       return true;
     }
@@ -110,15 +109,10 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
       m_editCell.setEditing(true);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
       app()->setFirstResponder(&m_editCell);
-      m_editCell.setText(text);
-      return true;
+      return m_editCell.insertText(text);
     }
   } else if (event == Ion::Events::Copy) {
-    int row = m_selectableTableView.selectedRow();
-    if (row < m_consoleStore.numberOfLines()) {
-      Clipboard::sharedClipboard()->store(m_consoleStore.lineAtIndex(row).text());
-      return true;
-    }
+    return copyCurrentLineToClipboard();
   }
   return false;
 }
@@ -204,7 +198,6 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
   if (pythonText == nullptr) {
     return false;
   }
-  textField->setEditing(true, false);
   if (textField->insertTextAtLocation(pythonText, textField->cursorLocation())) {
     textField->setCursorLocation(textField->cursorLocation()+strlen(pythonText));
     if (pythonText[strlen(pythonText)-1] == ')') {
@@ -314,5 +307,15 @@ int ConsoleController::firstNewLineCharIndex(const char * text, size_t length) {
 StackViewController * ConsoleController::stackViewController() {
  return static_cast<StackViewController *>(parentResponder());
 }
+
+bool ConsoleController::copyCurrentLineToClipboard() {
+  int row = m_selectableTableView.selectedRow();
+  if (row < m_consoleStore.numberOfLines()) {
+    Clipboard::sharedClipboard()->store(m_consoleStore.lineAtIndex(row).text());
+    return true;
+  }
+  return false;
+}
+
 
 }

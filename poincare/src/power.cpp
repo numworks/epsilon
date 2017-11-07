@@ -16,6 +16,7 @@ extern "C" {
 #include <poincare/division.h>
 #include <poincare/arithmetic.h>
 #include <poincare/symbol.h>
+#include <poincare/subtraction.h>
 #include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
@@ -218,6 +219,9 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return m->shallowReduce(context, angleUnit);
     }
   }
+  if (true) {
+    return resolveSquareRootAtDenominator(context, angleUnit);
+  }
   return this;
 }
 
@@ -353,6 +357,64 @@ Expression * Power::cloneDenominator(Context & context, AngleUnit angleUnit) con
     return denominator;
   }
   return nullptr;
+}
+
+Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
+  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusHalf()) {
+    Integer p = static_cast<const Rational *>(operand(0))->numerator();
+    Integer q = static_cast<const Rational *>(operand(0))->denominator();
+    Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
+    Expression * newExpression = new Multiplication(new Rational(Integer(1), Integer(p)), sqrt, false);
+    sqrt->shallowReduce(context, angleUnit);
+    return replaceWith(newExpression, true);
+  } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
+    const Rational * f1 = RationalFactorInExpression(operand(0)->operand(0));
+    const Rational * f2 = RationalFactorInExpression(operand(0)->operand(1));
+    const Rational * r1 = RadicandInExpression(operand(0)->operand(0));
+    const Rational * r2 = RadicandInExpression(operand(0)->operand(1));
+    Integer n1 = f1 != nullptr ? f1->numerator() : Integer(1);
+    Integer d1 = f1 != nullptr ? f1->denominator() : Integer(1);
+    Integer p1 = r1 != nullptr ? r1->numerator() : Integer(1);
+    Integer q1 = r1 != nullptr ? r1->denominator() : Integer(1);
+    Integer n2 = f2 != nullptr ? f2->numerator() : Integer(1);
+    Integer d2 = f2 != nullptr ? f2->denominator() : Integer(1);
+    Integer p2 = r2 != nullptr ? r2->numerator() : Integer(1);
+    Integer q2 = r2 != nullptr ? r2->denominator() : Integer(1);
+    // Compute n1^2*d2^2*p1*q2-n2^2*d1^2*p2*q1
+    Integer denominator = Integer::Subtraction(
+        Integer::Multiplication(
+          Integer::Multiplication(
+            Integer::Power(n1, Integer(2)),
+            Integer::Power(d2, Integer(2))),
+          Integer::Multiplication(p1, q2)),
+        Integer::Multiplication(
+          Integer::Multiplication(
+            Integer::Power(n2, Integer(2)),
+            Integer::Power(d1, Integer(2))),
+          Integer::Multiplication(p2, q1)));
+    Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(Integer(1), Integer(2)), false);
+    Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(Integer(1), Integer(2)), false);
+    Integer factor1 = Integer::Multiplication(
+        Integer::Multiplication(n1, d1),
+        Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
+    Multiplication * m1 = new Multiplication(new Rational(factor1), sqrt1, false);
+    Integer factor2 = Integer::Multiplication(
+        Integer::Multiplication(n2, d2),
+        Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
+    Multiplication * m2 = new Multiplication(new Rational(factor2), sqrt2, false);
+    const Expression * subOperands[2] = {m1, m2};
+    if (denominator.isNegative()) {
+      denominator.setNegative(false);
+      const Expression * temp = subOperands[0];
+      subOperands[0] = subOperands[1];
+      subOperands[1] = temp;
+    }
+    Subtraction * s = new Subtraction(subOperands, false);
+    Expression * newExpression = new Multiplication(s, new Rational(Integer(1), denominator), false);
+    s->deepReduce(context, angleUnit);
+    return replaceWith(newExpression, true)->shallowReduce(context, angleUnit);
+  }
+  return this;
 }
 
 }

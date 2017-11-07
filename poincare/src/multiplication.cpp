@@ -171,25 +171,33 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
       }
     }
   }
-  /* Step 7: We look for square root and sum of square root (two terms maximum
-   * so far) to move them at numerator. */
-  resolveSquareRootAtDenominator(context, angleUnit);
-  /* Step 8: Let's remove the multiplication altogether if it has a single
+  /* Step 7: Let's remove the multiplication altogether if it has a single
    * operand. */
-  return squashUnaryHierarchy();
+  Expression * result = squashUnaryHierarchy();
+  /* Step 8: We look for square root and sum of square root (two terms maximum
+   * so far) to move them at numerator. */
+  if (true) {
+    result = result->resolveSquareRootAtDenominator(context, angleUnit);
+  }
+  return result;
 }
 
-void Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
   for (int index = 0; index < numberOfOperands(); index++) {
     Expression * o = editableOperand(index);
     if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
       Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
       Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
       Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(Integer(1), Integer(2)), false);
-      replaceOperand(o, sqrt, true);
+      replaceOperand(o, new Rational(Integer(1), Integer(p)), true);
+      Expression * newExpression = shallowReduce(context, angleUnit);
+      if (newExpression->type() == Type::Multiplication) {
+        static_cast<Multiplication *>(newExpression)->addOperand(sqrt);
+      } else {
+        newExpression = newExpression->replaceWith(new Multiplication(newExpression->clone(), sqrt, false), true);
+      }
       sqrt->shallowReduce(context, angleUnit);
-      addOperand(new Rational(Integer(1), Integer(p)));
-      return;
+      return newExpression;
     } else if (o->type() == Type::Power && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusOne() && o->operand(0)->type() == Type::Addition && o->operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(o->operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(o->operand(0)->operand(1))) {
       const Rational * f1 = RationalFactorInExpression(o->operand(0)->operand(0));
       const Rational * f2 = RationalFactorInExpression(o->operand(0)->operand(1));
@@ -236,10 +244,10 @@ void Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit
       replaceOperand(o, s, true);
       s->deepReduce(context, angleUnit);
       addOperand(new Rational(Integer(1), denominator));
-      shallowReduce(context, angleUnit);
-      return;
+      return shallowReduce(context, angleUnit);
     }
   }
+  return this;
 }
 
 void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
@@ -285,46 +293,6 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
 const Expression * Multiplication::CreateExponent(Expression * e) {
   Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(1);
   return n;
-}
-
-bool Multiplication::TermIsARationalSquareRootOrRational(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return true;
-  }
-  if (e->type() == Type::Power && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1))->isHalf()) {
-    return true;
-  }
-  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Power && e->operand(1)->operand(0)->type() == Type::Rational && e->operand(1)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1)->operand(1))->isHalf()) {
-  return true;
-  }
-  return false;
-}
-
-const Rational * Multiplication::RadicandInExpression(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return nullptr;
-  } else if (e->type() == Type::Power) {
-    assert(e->type() == Type::Power);
-    assert(e->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(0));
-  } else {
-    assert(e->type() == Type::Multiplication);
-    assert(e->operand(1)->type() == Type::Power);
-    assert(e->operand(1)->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(1)->operand(0));
-  }
-}
-
-const Rational * Multiplication::RationalFactorInExpression(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return static_cast<const Rational *>(e);
-  } else if (e->type() == Type::Power) {
-    return nullptr;
-  } else {
-    assert(e->type() == Type::Multiplication);
-    assert(e->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(0));
-  }
 }
 
 bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {

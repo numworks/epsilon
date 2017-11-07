@@ -32,7 +32,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  void resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit);
+  Expression * resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) override;
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   Expression * distributeOnOperandAtIndex(int index, Context & context, AngleUnit angleUnit);
@@ -43,9 +43,6 @@ private:
   static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
   static bool TermHasIntegerExponent(const Expression * e);
-  static bool TermIsARationalSquareRootOrRational(const Expression * e);
-  static const Rational * RadicandInExpression(const Expression * e);
-  static const Rational * RationalFactorInExpression(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1

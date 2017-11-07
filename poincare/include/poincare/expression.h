@@ -11,6 +11,7 @@ namespace Poincare {
 class Context;
 template<class T>
 class Evaluation;
+class Rational;
 
 class Expression {
   friend class Division;
@@ -206,7 +207,12 @@ private:
   virtual Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const {
     return nullptr;
   }
-
+  virtual Expression * resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
+    return this;
+  }
+  static bool TermIsARationalSquareRootOrRational(const Expression * e);
+  static const Rational * RadicandInExpression(const Expression * e);
+  static const Rational * RationalFactorInExpression(const Expression * e);
   /* Evaluation Engine */
   virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;

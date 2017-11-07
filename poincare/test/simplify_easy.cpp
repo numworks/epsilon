@@ -225,7 +225,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tan(-P/12)", "R(3)-2");
   assert_parsed_expression_simplify_to("tan(-P*R(2))", "-tan(P*R(2))");
   assert_parsed_expression_simplify_to("tan(1311P/6)", "undef");
-  assert_parsed_expression_simplify_to("tan(-P17/8)", "-R(2-R(2))/R(2+R(2))");
+  assert_parsed_expression_simplify_to("tan(-P17/8)", "1-R(2)");
   assert_parsed_expression_simplify_to("tan(41P/6)", "-1/R(3)");
   assert_parsed_expression_simplify_to("tan(P/4+1000P)", "1");
   assert_parsed_expression_simplify_to("tan(-P/3)", "-R(3)");
@@ -310,7 +310,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tan(-15)", "R(3)-2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-180*R(2))", "-tan(180*R(2))", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(39330)", "undef", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("tan(-382.5)", "-R(2-R(2))/R(2+R(2))", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-382.5)", "1-R(2)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(1230)", "-1/R(3)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(180045)", "1", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-60)", "-R(3)", Expression::AngleUnit::Degree);

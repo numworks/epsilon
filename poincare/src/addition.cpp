@@ -177,6 +177,7 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
         removeOperand(op1, false);
         Subtraction * s = new Subtraction(op1, subtractant, false);
         replaceOperand(subtractant, s, false);
+        continue;
       }
     }
     index++;

@@ -31,8 +31,8 @@ Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
 Expression * Subtraction::shallowReduce(Context& context, AngleUnit angleUnit) {
   Multiplication * m = new Multiplication(new Rational(-1), operand(1), false);
   Addition * a = new Addition(operand(0), m, false);
-  m->shallowReduce(context, angleUnit);
   detachOperands();
+  m->shallowReduce(context, angleUnit);
   replaceWith(a, true);
   return a->shallowReduce(context, angleUnit);
 }

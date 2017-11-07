@@ -402,23 +402,23 @@ Expression * Multiplication::cloneDenominator(Context & context, AngleUnit angle
   // WARNING: we do not want to change the expression but to create a new one.
   SimplificationRoot root(clone());
   Expression * e = ((Multiplication *)root.operand(0))->mergeNegativePower(context, angleUnit);
+  Expression * result = nullptr;
   if (e->type() == Type::Power) {
-    Expression * result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
-    delete e;
-    return result;
-  }
-  assert(e->type() == Type::Multiplication);
-  for (int index = 0; index < e->numberOfOperands(); index++) {
-    // a*b^(-1)*... -> a*.../b
-    if (e->operand(index)->type() == Type::Power && e->operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(index)->operand(1))->isMinusOne()) {
-      Power * p = static_cast<Power *>(e->editableOperand(index));
-      Expression * result = p->editableOperand(0);
-      p->detachOperand((result));
-      delete e;
-      return result;
+    result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
+  } else {
+    assert(e->type() == Type::Multiplication);
+    for (int index = 0; index < e->numberOfOperands(); index++) {
+      // a*b^(-1)*... -> a*.../b
+      if (e->operand(index)->type() == Type::Power && e->operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(index)->operand(1))->isMinusOne()) {
+        Power * p = static_cast<Power *>(e->editableOperand(index));
+        result = p->editableOperand(0);
+        p->detachOperand((result));
+      }
     }
   }
-  return nullptr;
+  root.detachOperand(e);
+  delete e;
+  return result;
 }
 
 Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit angleUnit) {

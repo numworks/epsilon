@@ -11,7 +11,9 @@ public:
     e->setParent(this);
   }
   ~SimplificationRoot() {
-    detachOperand(operand(0));
+    if (m_operands[0] != nullptr) {
+      detachOperand(operand(0));
+    }
     /* We don't want to clone the expression provided at construction.
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }

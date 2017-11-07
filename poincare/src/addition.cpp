@@ -110,13 +110,15 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   for (int i=0; i < numberOfOperands(); i++) {
     numerator->addOperand(new Multiplication(operand(i), commonDenominator, true));
   }
-  // Step 4: Add the denominator
+  // Step 3: Add the denominator
   Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
-  commonDenominator->deepReduce(context, angleUnit);
-
   Multiplication * result = new Multiplication(numerator, inverseDenominator, false);
-  // Step 3: Simplify the numerator to a*d + c*b + e*d
+
+  // Step 4: Simplify the numerator to a*d + c*b + e*d
   numerator->deepReduce(context, angleUnit);
+
+  // Step 5: Simplify the denominator (in case it's a rational number)
+  commonDenominator->deepReduce(context, angleUnit);
   inverseDenominator->shallowReduce(context, angleUnit);
 
   result->sortOperands(Expression::SimplificationOrder); // TODO: should shallowReduce?
@@ -124,64 +126,123 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
 }
 
 void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+  /* This function factorizes two operands which only differ by a rational
+   * factor. For example, if this is Addition(2*pi, 3*pi), then 2*pi and 3*pi
+   * could be merged, and this turned into Addition(5*pi). */
+  assert(e1->parent() == this && e2->parent() == this);
+
+  // Step 1: Find the new rational factor
   Rational * r = new Rational(Rational::Addition(RationalFactor(e1), RationalFactor(e2)));
+
+  // Step 2: Get rid of one of the operands
   removeOperand(e2, true);
+
+  // Step 3: Use the new rational factor. Create a multiplication if needed
+  Multiplication * m = nullptr;
   if (e1->type() == Type::Multiplication) {
-    if (e1->operand(0)->type() == Type::Rational) {
-      e1->replaceOperand(e1->operand(0), r, true);
-    } else {
-      static_cast<Multiplication *>(e1)->addOperand(r);
-    }
-    e1->shallowReduce(context, angleUnit);
+    m = static_cast<Multiplication *>(e1);
   } else {
-    Multiplication * m = new Multiplication(r, e1, true);
-    e1->replaceWith(m, true);
-    m->shallowReduce(context, angleUnit);
+    m = new Multiplication();
+    e1->replaceWith(m, false);
+    m->addOperand(e1);
   }
+  if (m->operand(0)->type() == Type::Rational) {
+    m->replaceOperand(m->operand(0), r, true);
+  } else {
+    m->addOperand(r);
+  }
+
+  // Step 4: Reduce the multiplication (in case the new rational factor is zero)
+  m->shallowReduce(context, angleUnit);
 }
 
 const Rational Addition::RationalFactor(Expression * e) {
   if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational) {
     return *(static_cast<const Rational *>(e->operand(0)));
   }
-  return Rational(Integer(1));
+  return Rational(1);
 }
 
+static inline int NumberOfNonRationalFactors(const Expression * e) {
+  if (e->type() != Expression::Type::Multiplication) {
+    return 1; // Or (e->type() != Type::Rational);
+  }
+  int result = e->numberOfOperands();
+  if (e->operand(0)->type() == Expression::Type::Rational) {
+    result--;
+  }
+  return result;
+}
+
+static inline const Expression * FirstNonRationalFactor(const Expression * e) {
+  if (e->type() != Expression::Type::Multiplication) {
+    return e;
+  }
+  if (e->operand(0)->type() == Expression::Type::Rational) {
+    return e->numberOfOperands() > 1 ? e->operand(1) : nullptr;
+  }
+  return e->operand(0);
+}
 
 bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2) {
-  if (e1->type() == Type::Multiplication && e2->type() == Type::Multiplication) {
+  /* Given two expressions, say wether they only differ by a rational factor.
+   * For example, 2*pi and pi do, 2*pi and 2*ln(2) don't. */
+
+  int numberOfNonRationalFactorsInE1 = NumberOfNonRationalFactors(e1);
+  int numberOfNonRationalFactorsInE2 = NumberOfNonRationalFactors(e2);
+
+  if (numberOfNonRationalFactorsInE1 != numberOfNonRationalFactorsInE2) {
+    return false;
+  }
+
+  int numberOfNonRationalFactors = numberOfNonRationalFactorsInE1;
+  if (numberOfNonRationalFactors == 1) {
+    return FirstNonRationalFactor(e1)->isIdenticalTo(FirstNonRationalFactor(e2));
+  } else {
+    assert(numberOfNonRationalFactors > 1);
     return Multiplication::HaveSameNonRationalFactors(e1, e2);
   }
-  const Expression * f1 = (e1->type() == Type::Multiplication && e1->numberOfOperands() == 2 && e1->operand(0)->type() == Type::Rational) ? e1->operand(1) : e1;
-  const Expression * f2 = (e2->type() == Type::Multiplication && e2->numberOfOperands() == 2 && e2->operand(0)->type() == Type::Rational) ? e2->operand(1) : e2;
-  return f1->isIdenticalTo(f2);
 }
 
 Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
-  int index = 0;
-  while (index < numberOfOperands()) {
-    // a+(-1)*b+... -> a-b+...
-    if (operand(index)->type() == Type::Multiplication && operand(index)->operand(0)->type() == Type::Rational && operand(index)->operand(0)->sign() == Sign::Negative) {
-      Multiplication * m = static_cast<Multiplication *>(editableOperand(index));
-      if (static_cast<const Rational *>(operand(index)->operand(0))->isMinusOne()) {
-        m->removeOperand(m->operand(0), true);
-      } else {
-        editableOperand(index)->editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
-      }
-      Expression * subtractant = m->squashUnaryHierarchy();
-      if (index == 0) {
-        Opposite * o = new Opposite(subtractant, true);
-        replaceOperand(subtractant, o, true);
-      } else {
-        const Expression * op1 = operand(index-1);
-        removeOperand(op1, false);
-        Subtraction * s = new Subtraction(op1, subtractant, false);
-        replaceOperand(subtractant, s, false);
-        continue;
-      }
+  /* Beautifying Addition essentially consists in adding Subtractions if needed.
+   * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
+   * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
+   * Note: the process will slightly differ if the negative product occurs on
+   * the first term: we want to turn "Addition(Multiplication(-1,b))" into
+   * "Opposite(b)".
+   * Last but not least, special care must be taken when iterating over operands
+   * since we may remove some during the process. */
+
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (operand(i)->type() != Type::Multiplication || operand(i)->operand(0)->type() != Type::Rational || operand(i)->operand(0)->sign() != Sign::Negative) {
+      // Ignore terms which are not like "(-r)*a"
+      continue;
     }
-    index++;
+
+    Multiplication * m = static_cast<Multiplication *>(editableOperand(i));
+
+    if (static_cast<const Rational *>(m->operand(0))->isMinusOne()) {
+      m->removeOperand(m->operand(0), true);
+    } else {
+      m->editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
+    }
+    Expression * subtractant = m->squashUnaryHierarchy();
+
+    if (i == 0) {
+      Opposite * o = new Opposite(subtractant, true);
+      replaceOperand(subtractant, o, true);
+    } else {
+      const Expression * op1 = operand(i-1);
+      removeOperand(op1, false);
+      Subtraction * s = new Subtraction(op1, subtractant, false);
+      replaceOperand(subtractant, s, false);
+      /* CAUTION: we removed an operand. So we need to decrement i to make sure
+       * the next iteration is actually on the next operand. */
+      i--;
+    }
   }
+
   return squashUnaryHierarchy();
 }
 

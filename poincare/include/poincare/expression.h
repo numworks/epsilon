@@ -207,9 +207,6 @@ private:
   virtual Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const {
     return nullptr;
   }
-  virtual Expression * resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
-    return this;
-  }
   static bool TermIsARationalSquareRootOrRational(const Expression * e);
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);

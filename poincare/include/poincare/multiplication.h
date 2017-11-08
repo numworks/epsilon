@@ -32,7 +32,6 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  Expression * resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) override;
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   Expression * distributeOnOperandAtIndex(int index, Context & context, AngleUnit angleUnit);

@@ -40,6 +40,7 @@
  *
  */
 
+#include <sys/cdefs.h>
 #include <float.h>
 #include <math.h>
 
@@ -80,12 +81,12 @@ asin(double x)
 	} else if (ix<0x3fe00000) {	/* |x|<0.5 */
 	    if(ix<0x3e400000) {		/* if |x| < 2**-27 */
 		if(huge+x>one) return x;/* return x with inexact if x!=0*/
-	    }
-	    t = x*x;
-	    p = t*(pS0+t*(pS1+t*(pS2+t*(pS3+t*(pS4+t*pS5)))));
-	    q = one+t*(qS1+t*(qS2+t*(qS3+t*qS4)));
-	    w = p/q;
-	    return x+x*w;
+	    } else 
+		t = x*x;
+		p = t*(pS0+t*(pS1+t*(pS2+t*(pS3+t*(pS4+t*pS5)))));
+		q = one+t*(qS1+t*(qS2+t*(qS3+t*qS4)));
+		w = p/q;
+		return x+x*w;
 	}
 	/* 1> |x|>= 0.5 */
 	w = one-fabs(x);
@@ -108,6 +109,8 @@ asin(double x)
 	if(hx>0) return t; else return -t;    
 }
 
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(asinl, asin);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(asinl, asin);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

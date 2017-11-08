@@ -1,5 +1,10 @@
 #include_next <math.h>
 
+/* s_roundf.c uses isinff and isnanf. Let's correct this */
+
+#define isinff(x) __builtin_isinf(x)
+#define isnanf(x) __builtin_isnan(x)
+
 /* In accordance with the C99 standard, we've defined libm function as macros to
  * leverage compiler optimizations. When comes the time to actually implement
  * those functions, we don't want the macro to be active. OpenBSD doesn't use

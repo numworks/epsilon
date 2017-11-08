@@ -73,9 +73,7 @@
  * to produce the hexadecimal values shown.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double
@@ -155,7 +153,3 @@ exp(double x)	/* default IEEE double exp */
 	    return y*twom1000;
 	}
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(expl, exp);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

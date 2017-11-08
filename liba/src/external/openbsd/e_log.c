@@ -11,7 +11,7 @@
  */
 
 /* log(x)
- * Return the logarithm of x
+ * Return the logrithm of x
  *
  * Method :                  
  *   1. Argument Reduction: find k and f such that 
@@ -61,9 +61,7 @@
  * to produce the hexadecimal values shown.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double
@@ -130,7 +128,3 @@ log(double x)
 		     return dk*ln2_hi-((s*(f-R)-dk*ln2_lo)-f);
 	}
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(logl, log);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

@@ -93,7 +93,6 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_fabs.o \
   s_floor.o \
   s_log1p.o \
-  s_nan.o \
   s_round.o \
   s_scalbn.o \
   s_sin.o \
@@ -103,36 +102,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
 )
 
 liba/src/external/openbsd/%.o: SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
-liba/src/external/openbsd/e_lgammaf_r.o: CFLAGS += -w
-liba/src/external/openbsd/s_log1pf.o: CFLAGS += -w
-liba/src/external/openbsd/s_scalbnf.o: CFLAGS += -w
-liba/src/external/openbsd/e_acosh.o: CFLAGS += -w
-liba/src/external/openbsd/e_atanh.o: CFLAGS += -w
-liba/src/external/openbsd/e_cosh.o: CFLAGS += -w
-liba/src/external/openbsd/e_exp.o: CFLAGS += -w
-liba/src/external/openbsd/e_log.o: CFLAGS += -w
-liba/src/external/openbsd/e_lgamma_r.o: CFLAGS += -w
-liba/src/external/openbsd/e_pow.o: CFLAGS += -w
-liba/src/external/openbsd/e_rem_pio2.o: CFLAGS += -w
-liba/src/external/openbsd/e_sinh.o: CFLAGS += -w
-liba/src/external/openbsd/k_rem_pio2.o: CFLAGS += -w
-liba/src/external/openbsd/k_rem_pio2f.o: CFLAGS += -w
-liba/src/external/openbsd/s_asinh.o: CFLAGS += -w
-liba/src/external/openbsd/s_log1p.o: CFLAGS += -w
-liba/src/external/openbsd/s_scalbn.o: CFLAGS += -w
-liba/src/external/openbsd/s_tanh.o: CFLAGS += -w
-liba/src/external/openbsd/w_lgamma.o: CFLAGS += -w
-# some openbsd classes are throwing implicit declaration warnings
-ifeq ($(DEBUG),1)
-# OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision
-# code. That's annoying because Clang rightfully decides to emit double-to-float
-# aeabi conversions when building in -O0 mode, and we really don't want to code
-# such functions. A simple workaround is to always build those files -Os.
-liba/src/external/openbsd/e_expf.o: CFLAGS += -Os
-liba/src/external/openbsd/s_expm1f.o: CFLAGS += -Os
-liba/src/external/openbsd/s_log1pf.o: CFLAGS += -Os
-liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
-endif
+liba/src/external/openbsd/%.o: CFLAGS += -w
 
 tests += $(addprefix liba/test/, \
   aeabi.c \

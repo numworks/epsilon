@@ -12,11 +12,13 @@ objs += $(addprefix liba/src/, \
   fpclassify.o \
   fpclassifyf.o \
   ieee754.o \
+  ldexp.o \
   malloc.o \
   memcmp.o \
   memcpy.o \
   memmove.o \
   memset.o \
+  nearbyint.o \
   nearbyintf.o \
   strcmp.o \
   strchr.o \
@@ -30,9 +32,11 @@ objs += $(addprefix liba/src/external/openbsd/, \
   e_acoshf.o \
   e_asinf.o \
   e_atanhf.o \
+  e_atan2.o \
   e_atan2f.o \
   e_coshf.o \
   e_expf.o \
+  e_fmod.o \
   e_fmodf.o \
   e_lgammaf_r.o \
   e_log10f.o \
@@ -54,7 +58,9 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_fabsf.o \
   s_floorf.o \
   s_frexpf.o \
+  s_frexp.o \
   s_log1pf.o \
+  s_modf.o \
   s_modff.o \
   s_roundf.o \
   s_scalbnf.o \
@@ -62,6 +68,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_sinf.o \
   s_tanf.o \
   s_tanhf.o \
+  s_trunc.o \
   s_truncf.o \
   w_lgammaf.o \
 )
@@ -172,4 +179,5 @@ objs += $(addprefix liba/src/external/softfloat/src/, \
   s_shortShiftRightJam64.o \
   s_subMagsF64.o \
   softfloat_state.o \
+  ui32_to_f64.o \
 )

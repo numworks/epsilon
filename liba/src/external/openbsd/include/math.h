@@ -26,12 +26,12 @@
 #undef fabsf
 #undef floorf
 #undef fmodf
+#undef ldexpf
 #undef lgammaf
 #undef lgammaf_r
 #undef log1pf
 #undef log10f
 #undef logf
-#undef nanf
 #undef nearbyintf
 #undef powf
 #undef roundf
@@ -41,12 +41,14 @@
 #undef sqrtf
 #undef tanf
 #undef tanhf
+#undef truncf
 
 #undef acos
 #undef acosh
 #undef asin
 #undef asinh
 #undef atan
+#undef atan2
 #undef atanh
 #undef ceil
 #undef copysign
@@ -56,6 +58,8 @@
 #undef expm1
 #undef fabs
 #undef floor
+#undef fmod
+#undef ldexp
 #undef lgamma
 #undef lgamma_r
 #undef log1p
@@ -69,3 +73,4 @@
 #undef sqrt
 #undef tan
 #undef tanh
+#undef trunc

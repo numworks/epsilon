@@ -38,7 +38,7 @@ private:
   Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);
-  Expression * resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) override;
+  Expression * removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
   /* Evaluation */
   template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n);

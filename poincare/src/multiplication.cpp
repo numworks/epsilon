@@ -106,7 +106,7 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
 
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
   /* Step 1: Multiplication is associative, so let's start by merging children
-   * which also are additions themselves. */
+   * which also are multiplications themselves. */
   int i = 0;
   int initialNumberOfOperands = numberOfOperands();
   while (i < initialNumberOfOperands) {
@@ -117,36 +117,50 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     }
     i++;
   }
+
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
   for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * o = editableOperand(i);
+    const Expression * o = operand(i);
     if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(new Rational(0), true);
     }
   }
+
   // Step 3: Sort the operands
   sortOperands(SimplificationOrder);
 
-  /* Step 4: Factorize like terms before expanding multiplication of addition.
-   * This step enables to reduce expressions like (x+y)^(-1)*(x+y)(a+b) for
-   * example. Thanks to the simplification order, those are next to each other
-   * at this point. */
+  /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+   * the simplification order, such terms are guaranteed to be next to each
+   * other. */
   i = 0;
   while (i < numberOfOperands()-1) {
-    if (operand(i)->type() == Type::Rational && operand(i+1)->type() == Type::Rational) {
-      Rational a = Rational::Multiplication(*(static_cast<const Rational *>(operand(i))), *(static_cast<const Rational *>(operand(i+1))));
-      replaceOperand(operand(i), new Rational(a), true);
-      removeOperand(operand(i+1), true);
+    Expression * oi = editableOperand(i);
+    Expression * oi1 = editableOperand(i+1);
+    if (oi->type() == Type::Rational && oi1->type() == Type::Rational) {
+      Rational a = Rational::Multiplication(*(static_cast<Rational *>(oi)), *(static_cast<Rational *>(oi1)));
+      replaceOperand(oi, new Rational(a), true);
+      removeOperand(oi1, true);
       continue;
-    } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
-      factorizeBase(editableOperand(i), editableOperand(i+1), context, angleUnit);
-      continue;
-    } else if (TermsHaveIdenticalExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
-      factorizeExponent(editableOperand(i), editableOperand(i+1), context, angleUnit);
+    } else if (TermsHaveIdenticalBase(oi, oi1)) {
+      bool shouldFactorizeBase = true;
+      if (TermHasRationalBase(oi)) {
+        /* Combining powers of a given rational isn't straightforward. Indeed,
+         * there are two cases we want to deal with:
+         *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
+         *  - 2^(1/2)*2^(3/2) we want to combine. */
+        shouldFactorizeBase = !TermHasIntegerExponent(oi) && !TermHasIntegerExponent(oi1);
+      }
+      if (shouldFactorizeBase) {
+        factorizeBase(oi, oi1, context, angleUnit);
+        continue;
+      }
+    } else if (TermHasRationalBase(oi) && TermHasRationalBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
+      factorizeExponent(oi, oi1, context, angleUnit);
       continue;
     }
     i++;
   }
+
   /* Step 5: Let's remove ones if there's any. It's important to do this after
    * having factorized because factorization can lead to new ones. For example
    * pi^(-1)*pi. We don't remove the last one if it's the only operand left
@@ -160,9 +174,13 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     }
     i++;
   }
-  /* Step 6: we distribute multiplication on addition node. We do not want to
-   * do this step if the parent is a multiplication to avoid missing
-   * factorization like (x+y)^(-1)*((a+b)*(x+y) */
+
+  /* Step 6: Expand multiplication over addition operands if any. For example,
+   * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
+   * the parent is a multiplication to avoid missing factorization such as
+   * (x+y)^(-1)*((a+b)*(x+y)).
+   * Note: This step must be done after Step 4, otherwise we wouldn't be able to
+   * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
   if (parent()->type() != Type::Multiplication) {
     for (int i=0; i<numberOfOperands(); i++) {
       if (operand(i)->type() == Type::Addition) {
@@ -170,101 +188,48 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
       }
     }
   }
-  /* Step 7: Let's remove the multiplication altogether if it has a single
-   * operand. */
+
+  // Step 7: Let's remove the multiplication altogether if it has one operand
   Expression * result = squashUnaryHierarchy();
-  /* Step 8: We look for square root and sum of square root (two terms maximum
-   * so far) to move them at numerator. */
-  if (true) {
-    result = result->resolveSquareRootAtDenominator(context, angleUnit);
-  }
+
   return result;
 }
 
-Expression * Multiplication::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
-  for (int index = 0; index < numberOfOperands(); index++) {
-    Expression * o = editableOperand(index);
-    if (o->type() == Type::Power && o->operand(0)->type() == Type::Rational && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusHalf()) {
-      Integer p = static_cast<const Rational *>(o->operand(0))->numerator();
-      Integer q = static_cast<const Rational *>(o->operand(0))->denominator();
-      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
-      replaceOperand(o, new Rational(Integer(1), p), true);
-      Expression * newExpression = shallowReduce(context, angleUnit);
-      if (newExpression->type() == Type::Multiplication) {
-        static_cast<Multiplication *>(newExpression)->addOperand(sqrt);
-      } else {
-        newExpression = newExpression->replaceWith(new Multiplication(newExpression->clone(), sqrt, false), true);
-      }
-      sqrt->shallowReduce(context, angleUnit);
-      return newExpression;
-    } else if (o->type() == Type::Power && o->operand(1)->type() == Type::Rational && static_cast<const Rational *>(o->operand(1))->isMinusOne() && o->operand(0)->type() == Type::Addition && o->operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(o->operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(o->operand(0)->operand(1))) {
-      const Rational * f1 = RationalFactorInExpression(o->operand(0)->operand(0));
-      const Rational * f2 = RationalFactorInExpression(o->operand(0)->operand(1));
-      const Rational * r1 = RadicandInExpression(o->operand(0)->operand(0));
-      const Rational * r2 = RadicandInExpression(o->operand(0)->operand(1));
-      Integer n1 = f1 != nullptr ? f1->numerator() : Integer(1);
-      Integer d1 = f1 != nullptr ? f1->denominator() : Integer(1);
-      Integer p1 = r1 != nullptr ? r1->numerator() : Integer(1);
-      Integer q1 = r1 != nullptr ? r1->denominator() : Integer(1);
-      Integer n2 = f2 != nullptr ? f2->numerator() : Integer(1);
-      Integer d2 = f2 != nullptr ? f2->denominator() : Integer(1);
-      Integer p2 = r2 != nullptr ? r2->numerator() : Integer(1);
-      Integer q2 = r2 != nullptr ? r2->denominator() : Integer(1);
-      // Compute n1^2*d2^2*p1*q2-n2^2*d1^2*p2*q1
-      Integer denominator = Integer::Subtraction(
-          Integer::Multiplication(
-            Integer::Multiplication(
-              Integer::Power(n1, Integer(2)),
-              Integer::Power(d2, Integer(2))),
-            Integer::Multiplication(p1, q2)),
-          Integer::Multiplication(
-            Integer::Multiplication(
-              Integer::Power(n2, Integer(2)),
-              Integer::Power(d1, Integer(2))),
-            Integer::Multiplication(p2, q1)));
-      Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(1, 2), false);
-      Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(1, 2), false);
-      Integer factor1 = Integer::Multiplication(
-          Integer::Multiplication(n1, d1),
-          Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
-      Multiplication * m1 = new Multiplication(new Rational(factor1), sqrt1, false);
-      Integer factor2 = Integer::Multiplication(
-          Integer::Multiplication(n2, d2),
-          Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
-      Multiplication * m2 = new Multiplication(new Rational(factor2), sqrt2, false);
-      const Expression * subOperands[2] = {m1, m2};
-      if (denominator.isNegative()) {
-        denominator.setNegative(false);
-        const Expression * temp = subOperands[0];
-        subOperands[0] = subOperands[1];
-        subOperands[1] = temp;
-      }
-      Subtraction * s = new Subtraction(subOperands, false);
-      replaceOperand(o, s, true);
-      s->deepReduce(context, angleUnit);
-      addOperand(new Rational(Integer(1), denominator));
-      return shallowReduce(context, angleUnit);
-    }
-  }
-  return this;
-}
-
 void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+  /* This function factorizes two operands which have a common base. For example
+   * if this is Multiplication(pi^2, pi^3), then pi^2 and pi^3 could be merged
+   * and this turned into Multiplication(pi^5). */
+  assert(e1->parent() == this && e2->parent() == this);
+  assert(TermsHaveIdenticalBase(e1, e2));
+
+  // Step 1: Find the new exponent
   Expression * s = new Addition(CreateExponent(e1), CreateExponent(e2), false);
+
+  // Step 2: Get rid of one of the operands
   removeOperand(e2, true);
+
+  // Step 3: Use the new exponent
+  Power * p = nullptr;
   if (e1->type() == Type::Power) {
+    // If e1 is a power, replace the initial exponent with the new one
     e1->replaceOperand(e1->operand(1), s, true);
-    s->shallowReduce(context, angleUnit);
-    e1->shallowReduce(context, angleUnit);
+    p = static_cast<Power *>(e1);
   } else {
-    Power * p = new Power(e1, s, false);
-    s->shallowReduce(context, angleUnit);
+    // Otherwise, create a new Power node
+    p = new Power(e1, s, false);
     replaceOperand(e1, p, false);
-    p->shallowReduce(context, angleUnit);
   }
+
+  // Step 4: Reduce the new power
+  s->shallowReduce(context, angleUnit); // pi^2*pi^3 -> pi^(2+3) -> pi^5
+  p->shallowReduce(context, angleUnit); // pi^2*pi^-2 -> pi^0 -> 1
 }
 
 void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+  /* This function factorizes operands which share a common exponent. For
+   * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
+  assert(e1->parent() == this && e2->parent() == this);
+
   const Expression * base1 = e1->operand(0)->clone();
   const Expression * base2 = e2->operand(0);
   // TODO: remove cast, everything is a hierarchy
@@ -272,32 +237,39 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
   Expression * m = new Multiplication(base1, base2, false);
   removeOperand(e2, true);
   e1->replaceOperand(e1->operand(0), m, true);
-  m->shallowReduce(context, angleUnit);
-  e1->shallowReduce(context, angleUnit);
+
+  m->shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
+  e1->shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
 }
 
 Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, AngleUnit angleUnit) {
+  // This function turns a*(b+c) into a*b + a*c
+  // We avoid deleting and creating a new addition
   Addition * a = static_cast<Addition *>(editableOperand(i));
   for (int j = 0; j < a->numberOfOperands(); j++) {
     Expression * termJ = a->editableOperand(j);
     replaceOperand(operand(i), termJ->clone(), false);
     Expression * m = clone();
     a->replaceOperand(termJ, m, true);
-    m->shallowReduce(context, angleUnit);
+    m->shallowReduce(context, angleUnit); // pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
   }
   replaceWith(a, true);
-  return a->shallowReduce(context, angleUnit);
+  return a->shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
 }
 
 const Expression * Multiplication::CreateExponent(Expression * e) {
-  Expression * n = e->type() == Type::Power ? e->operand(1)->clone() : new Rational(1);
-  return n;
+  return e->type() == Type::Power ? e->operand(1)->clone() : new Rational(1);
+}
+
+static inline const Expression * Base(const Expression * e) {
+  if (e->type() == Expression::Type::Power) {
+    return e->operand(0);
+  }
+  return e;
 }
 
 bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {
-  const Expression * f1 = e1->type() == Type::Power ? e1->operand(0) : e1;
-  const Expression * f2 = e2->type() == Type::Power ? e2->operand(0) : e2;
-  return f1->isIdenticalTo(f2);
+  return Base(e1)->isIdenticalTo(Base(e2));
 }
 
 bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2) {
@@ -307,8 +279,7 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Exp
 }
 
 bool Multiplication::TermHasRationalBase(const Expression * e) {
-  bool hasRationalBase = e->type() == Type::Power ? e->operand(0)->type() == Type::Rational : e->type() == Type::Rational;
-  return hasRationalBase;
+  return Base(e)->type() == Type::Rational;
 }
 
 bool Multiplication::TermHasIntegerExponent(const Expression * e) {
@@ -317,15 +288,19 @@ bool Multiplication::TermHasIntegerExponent(const Expression * e) {
   }
   if (e->operand(1)->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(e->operand(1));
-    if (r->denominator().isOne()) {
-      return true;
-    }
+    return r->denominator().isOne();
   }
   return false;
 }
 
 Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleUnit) {
-  // -1*A -> -A or (-n)*A -> -n*A
+  /* Beautifying a Multiplication consists in several possible operations:
+   * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
+   * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
+   * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
+   *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
+
+  // Step 1: Turn -n*A into -(n*A)
   if (operand(0)->type() == Type::Rational && operand(0)->sign() == Sign::Negative) {
     if (static_cast<const Rational *>(operand(0))->isMinusOne()) {
       removeOperand(editableOperand(0), true);
@@ -338,63 +313,47 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
     o->editableOperand(0)->shallowBeautify(context, angleUnit);
     return o;
   }
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+
+  /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
+   * This also turns 2/3*a into 2*a*3^(-1) */
   Expression * e = mergeNegativePower(context, angleUnit);
   if (e->type() == Type::Power) {
     return e->shallowBeautify(context, angleUnit);
   }
   assert(e == this);
-  // Add parenthesis: *(+(a,b), c) -> *((+(a,b)), c
-  for (int index = 0; index < numberOfOperands(); index++) {
-    // Add parenthesis to addition - (a+b)*c
-    if (operand(index)->type() == Type::Addition ) {
-      const Expression * o[1] = {operand(index)};
-      Parenthesis * p = new Parenthesis(o, true);
-      replaceOperand(operand(index), p, true);
-    }
-  }
-  for (int index = 0; index < numberOfOperands(); index++) {
-    // a*b^(-1)*... -> a*.../b
-    if (operand(index)->type() == Type::Power && operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(index)->operand(1))->isMinusOne()) {
-      Power * p = static_cast<Power *>(editableOperand(index));
-      Expression * denominatorOperand = p->editableOperand(0);
-      p->detachOperand(denominatorOperand);
-      removeOperand(p, true);
 
-      Expression * numeratorOperand = clone();
-      Division * d = new Division(numeratorOperand, denominatorOperand, false);
-      /* We want 1/3*Pi*(ln(2))^-1 -> Pi/(3ln(2)) and not ((1/3)Pi)/ln(2)*/
-      if (numeratorOperand->operand(0)->type() == Type::Rational) {
-        Rational * r = static_cast<Rational *>(numeratorOperand->editableOperand(0));
-        if (!r->denominator().isOne()) {
-          if (denominatorOperand->type() == Type::Multiplication) {
-            static_cast<Multiplication *>(denominatorOperand)->addOperand(new Rational(r->denominator()));
-            static_cast<Multiplication *>(denominatorOperand)->sortOperands(SimplificationOrder);
-          } else {
-            Multiplication * m = new Multiplication(new Rational(r->denominator()), denominatorOperand->clone(), false);
-            denominatorOperand->replaceWith(m, true);
-          }
-        }
-        if (!r->numerator().isMinusOne() || numeratorOperand->numberOfOperands() == 1) {
-          numeratorOperand->replaceOperand(r, new Rational(r->numerator()), true);
-          numeratorOperand = numeratorOperand->shallowReduce(context, angleUnit);
-        } else {
-          ((Multiplication *)numeratorOperand)->removeOperand(r, true);
-          numeratorOperand = numeratorOperand->shallowReduce(context, angleUnit);
-          Opposite * o = new Opposite(numeratorOperand, true);
-          numeratorOperand = numeratorOperand->replaceWith(o, true);
-        }
-      } else {
-        numeratorOperand = numeratorOperand->shallowReduce(context, angleUnit);
-      }
-      // Delete parenthesis unnecessary on numerator
-      if (numeratorOperand->type() == Type::Parenthesis) {
-        numeratorOperand->replaceWith(numeratorOperand->editableOperand(0), true);
-      }
-      replaceWith(d, true);
-      return d->shallowBeautify(context, angleUnit);
+  // Step 3: Add Parenthesis if needed
+  for (int i = 0; i < numberOfOperands(); i++) {
+    const Expression * o = operand(i);
+    if (o->type() == Type::Addition ) {
+      Parenthesis * p = new Parenthesis(o, false);
+      replaceOperand(o, p, false);
     }
   }
+
+  // Step 4: Create a Division if needed
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (!(operand(i)->type() == Type::Power && operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(i)->operand(1))->isMinusOne())) {
+      continue;
+    }
+
+    // Let's remove the denominator-to-be from this
+    Power * p = static_cast<Power *>(editableOperand(i));
+    Expression * denominatorOperand = p->editableOperand(0);
+    p->detachOperand(denominatorOperand);
+    removeOperand(p, true);
+
+    Expression * numeratorOperand = shallowReduce(context, angleUnit);
+    // Delete parenthesis unnecessary on numerator
+    if (numeratorOperand->type() == Type::Parenthesis) {
+      numeratorOperand = numeratorOperand->replaceWith(numeratorOperand->editableOperand(0), true);
+    }
+    Expression * originalParent = numeratorOperand->parent();
+    Division * d = new Division(numeratorOperand, denominatorOperand, false);
+    originalParent->replaceOperand(numeratorOperand, d, false);
+    return d->shallowBeautify(context, angleUnit);
+  }
+
   return this;
 }
 
@@ -408,10 +367,10 @@ Expression * Multiplication::cloneDenominator(Context & context, AngleUnit angle
     result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
   } else {
     assert(e->type() == Type::Multiplication);
-    for (int index = 0; index < e->numberOfOperands(); index++) {
+    for (int i = 0; i < e->numberOfOperands(); i++) {
       // a*b^(-1)*... -> a*.../b
-      if (e->operand(index)->type() == Type::Power && e->operand(index)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(index)->operand(1))->isMinusOne()) {
-        Power * p = static_cast<Power *>(e->editableOperand(index));
+      if (e->operand(i)->type() == Type::Power && e->operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(i)->operand(1))->isMinusOne()) {
+        Power * p = static_cast<Power *>(e->editableOperand(i));
         result = p->editableOperand(0);
         p->detachOperand((result));
       }

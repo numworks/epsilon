@@ -136,6 +136,14 @@ int Power::simplificationOrderGreaterType(const Expression * e) const {
 }
 
 Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
+
+  /* Step 0: We look for square root and sum of square roots (two terms maximum
+   * so far) at the denominator and move them to the numerator. */
+  Expression * r = removeSquareRootsFromDenominator(context, angleUnit);
+  if (r) {
+    return r;
+  }
+
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
@@ -218,9 +226,6 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       replaceWith(m, true);
       return m->shallowReduce(context, angleUnit);
     }
-  }
-  if (true) {
-    return resolveSquareRootAtDenominator(context, angleUnit);
   }
   return this;
 }
@@ -359,28 +364,42 @@ Expression * Power::cloneDenominator(Context & context, AngleUnit angleUnit) con
   return nullptr;
 }
 
-Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit) {
+  Expression * result = nullptr;
+
   if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusHalf()) {
-    Integer p = static_cast<const Rational *>(operand(0))->numerator();
-    Integer q = static_cast<const Rational *>(operand(0))->denominator();
-    Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
-    Expression * newExpression = new Multiplication(new Rational(Integer(1), p), sqrt, false);
-    sqrt->shallowReduce(context, angleUnit);
-    return replaceWith(newExpression, true);
+      /* We're considering a term of the form 1/sqrt(p/q), with p and q integers.
+       * We'll turn those into sqrt(p*q)/p. */
+      Integer p = static_cast<const Rational *>(operand(0))->numerator();
+      Integer q = static_cast<const Rational *>(operand(0))->denominator();
+      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
+      result = new Multiplication(new Rational(Integer(1), p), sqrt, false);
+      sqrt->shallowReduce(context, angleUnit);
   } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
+    /* We're considering a term of the form
+     *
+     * 1/(n1/d1*sqrt(p1/q1) + n2/d2*sqrt(p2/q2))
+     *
+     * and we want to turn it into
+     *
+     *  n1*q2*d1*d2^2*sqrt(p1*q1) - n2*q1*d2*d1^2*sqrt(p2*q2)
+     * -------------------------------------------------------
+     *          n1^2*d2^2*p1*q2 - n2^2*d1^2*p2*q1
+     */
     const Rational * f1 = RationalFactorInExpression(operand(0)->operand(0));
     const Rational * f2 = RationalFactorInExpression(operand(0)->operand(1));
     const Rational * r1 = RadicandInExpression(operand(0)->operand(0));
     const Rational * r2 = RadicandInExpression(operand(0)->operand(1));
-    Integer n1 = f1 != nullptr ? f1->numerator() : Integer(1);
-    Integer d1 = f1 != nullptr ? f1->denominator() : Integer(1);
-    Integer p1 = r1 != nullptr ? r1->numerator() : Integer(1);
-    Integer q1 = r1 != nullptr ? r1->denominator() : Integer(1);
-    Integer n2 = f2 != nullptr ? f2->numerator() : Integer(1);
-    Integer d2 = f2 != nullptr ? f2->denominator() : Integer(1);
-    Integer p2 = r2 != nullptr ? r2->numerator() : Integer(1);
-    Integer q2 = r2 != nullptr ? r2->denominator() : Integer(1);
-    // Compute n1^2*d2^2*p1*q2-n2^2*d1^2*p2*q1
+    Integer n1 = (f1 ? f1->numerator() : Integer(1));
+    Integer d1 = (f1 ? f1->denominator() : Integer(1));
+    Integer p1 = (r1 ? r1->numerator() : Integer(1));
+    Integer q1 = (r1 ? r1->denominator() : Integer(1));
+    Integer n2 = (f2 ? f2->numerator() : Integer(1));
+    Integer d2 = (f2 ? f2->denominator() : Integer(1));
+    Integer p2 = (r2 ? r2->numerator() : Integer(1));
+    Integer q2 = (r2 ? r2->denominator() : Integer(1));
+
+    // Compute the denominator = n1^2*d2^2*p1*q2 - n2^2*d1^2*p2*q1
     Integer denominator = Integer::Subtraction(
         Integer::Multiplication(
           Integer::Multiplication(
@@ -392,6 +411,8 @@ Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit 
             Integer::Power(n2, Integer(2)),
             Integer::Power(d1, Integer(2))),
           Integer::Multiplication(p2, q1)));
+
+    // Compute the numerator
     Power * sqrt1 = new Power(new Rational(Integer::Multiplication(p1, q1)), new Rational(1, 2), false);
     Power * sqrt2 = new Power(new Rational(Integer::Multiplication(p2, q2)), new Rational(1, 2), false);
     Integer factor1 = Integer::Multiplication(
@@ -402,19 +423,23 @@ Expression * Power::resolveSquareRootAtDenominator(Context & context, AngleUnit 
         Integer::Multiplication(n2, d2),
         Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
     Multiplication * m2 = new Multiplication(new Rational(factor2), sqrt2, false);
-    const Expression * subOperands[2] = {m1, m2};
+    Subtraction * numerator = nullptr;
     if (denominator.isNegative()) {
+      numerator = new Subtraction(m2, m1, false);
       denominator.setNegative(false);
-      const Expression * temp = subOperands[0];
-      subOperands[0] = subOperands[1];
-      subOperands[1] = temp;
+    } else {
+      numerator = new Subtraction(m1, m2, false);
     }
-    Subtraction * s = new Subtraction(subOperands, false);
-    Expression * newExpression = new Multiplication(s, new Rational(Integer(1), denominator), false);
-    s->deepReduce(context, angleUnit);
-    return replaceWith(newExpression, true)->shallowReduce(context, angleUnit);
+
+    result = new Multiplication(numerator, new Rational(Integer(1), denominator), false);
+    numerator->deepReduce(context, angleUnit);
   }
-  return this;
+
+  if (result) {
+    replaceWith(result, true);
+    result = result->shallowReduce(context, angleUnit);
+  }
+  return result;
 }
 
 }

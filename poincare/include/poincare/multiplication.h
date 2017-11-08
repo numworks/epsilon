@@ -40,7 +40,7 @@ private:
   void addMissingFactors(Expression * factor, Context & context, AngleUnit angleUnit);
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
-  static bool TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2);
+  static bool TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
   static bool TermHasIntegerExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);

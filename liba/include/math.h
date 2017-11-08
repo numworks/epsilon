@@ -36,6 +36,7 @@ typedef double double_t;
 #define FP_ZERO 0x10
 
 #define fpclassify(x) __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
+#define signbit(x) __builtin_signbit(x)
 #define isfinite(x) __builtin_isfinite(x)
 #define isnormal(x) __builtin_isnormal(x)
 #define isnan(x) __builtin_isnan(x)
@@ -65,7 +66,6 @@ float log1pf(float x);
 float log10f(float x);
 float logf(float x);
 float modff(float value, float *iptr);
-float nanf(const char *s);
 float nearbyintf(float x);
 float powf(float x, float y);
 float roundf(float x);
@@ -82,6 +82,7 @@ double acosh(double x);
 double asin(double x);
 double asinh(double x);
 double atan(double x);
+double atan2(double y, double x);
 double atanh(double x);
 double ceil(double x);
 double copysign(double x, double y);
@@ -91,12 +92,17 @@ double exp(double x);
 double expm1(double x);
 double fabs(double x);
 double floor(double x);
+double fmod(double x, double y);
+double frexp(double x, int *eptr);
 double lgamma(double x);
 double lgamma_r(double x, int *signgamp);
 double log1p(double x);
 double log10(double x);
 double log(double x);
+double modf(double value, double *iptr);
+double nearbyint(double x);
 double pow(double x, double y);
+double nearbyint(double x);
 double round(double x);
 double scalbn(double x, int n);
 double sin(double x);
@@ -104,6 +110,7 @@ double sinh(double x);
 double sqrt(double x);
 double tan(double x);
 double tanh(double x);
+double trunc(double x);
 
 /* The C99 standard says that any libc function can be re-declared as a macro.
  * (See N1124 paragraph 7.1.4). This means that C files willing to actually
@@ -125,8 +132,8 @@ double tanh(double x);
 #define expm1f(x) __builtin_expm1f(x)
 #define fabsf(x) __builtin_fabsf(x)
 #define floorf(x) __builtin_floorf(x)
-#define frexpf(x, y) __builtin_frexpf(x, y)
 #define fmodf(x, y) __builtin_fmodf(x, y)
+#define frexpf(x, y) __builtin_frexpf(x, y)
 #define ldexpf(x, n) __builtin_ldexpf(x, n)
 #define lgammaf(x) __builtin_lgammaf(x)
 #define lgammaf_r(x, signgamp) __builtin_lgammaf_r(x, signgamp)
@@ -150,6 +157,7 @@ double tanh(double x);
 #define asin(x) __builtin_asin(x)
 #define asinh(x) __builtin_asinh(x)
 #define atan(x) __builtin_atan(x)
+#define atan2(y, x) __builtin_atan2(y, x)
 #define atanh(x) __builtin_atanh(x)
 #define ceil(x) __builtin_ceil(x)
 #define copysign(x, y) __builtin_copysign(x, y)
@@ -159,11 +167,14 @@ double tanh(double x);
 #define expm1(x) __builtin_expm1(x)
 #define fabs(x) __builtin_fabs(x)
 #define floor(x) __builtin_floor(x)
+#define fmod(x, y) __builtin_fmod(x, y)
+#define ldexp(x, n) __builtin_ldexp(x, n)
 #define lgamma(x) __builtin_lgamma(x)
 #define lgamma_r(x, signgamp) __builtin_lgamma_r(x, signgamp)
 #define log1p(x) __builtin_log1p(x)
 #define log10(x) __builtin_log10(x)
 #define log(x) __builtin_log(x)
+#define nan(s) __builtin_nan(s)
 #define pow(x, y) __builtin_pow(x, y)
 #define round(x) __builtin_round(x)
 #define scalbn(x, n) __builtin_scalbn(x, n)
@@ -172,6 +183,7 @@ double tanh(double x);
 #define sqrt(x) __builtin_sqrt(x)
 #define tan(x) __builtin_tan(x)
 #define tanh(x) __builtin_tanh(x)
+#define trunc(x) __builtin_trunc(x)
 
 extern int signgam;
 

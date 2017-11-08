@@ -12,6 +12,10 @@ aeabi_double_t __aeabi_i2d(int i) {
   return d(i32_to_f64(i));
 }
 
+aeabi_double_t __aeabi_ui2d(unsigned int i) {
+  return d(ui32_to_f64(i));
+}
+
 aeabi_float_t __aeabi_d2f(aeabi_double_t d) {
   return f(f64_to_f32(f64(d)));
 }

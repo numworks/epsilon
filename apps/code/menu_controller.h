@@ -59,6 +59,14 @@ private:
   static constexpr int AddScriptCellType = 0;
   static constexpr int ScriptCellType = 1;
   static constexpr KDCoordinate k_rowHeight = 50; //TODO create common parent class with Shared::ListController
+  static constexpr int k_defaultScriptNameMaxSize = 9 + 2 + 1;
+  // k_defaultScriptNameMaxSize is the length of a name between script1.py and
+  // script99.py.
+  // 9 = strlen("script.py")
+  // 2 = maxLength of integers between 1 and 99.
+  // 1 = length of null terminating char.
+  void numberedDefaultScriptName(char * buffer);
+  void intToText(int i, char * buffer);
   ScriptStore * m_scriptStore;
   EvenOddEditableTextCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   /* In the initializer list of the MenuController constructor, we initialize

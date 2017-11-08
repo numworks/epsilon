@@ -81,22 +81,24 @@ void MenuController::setParameteredScript() {
 
 void MenuController::addScript() {
   if (m_scriptStore->addNewScript()) {
+    m_selectableTableView.reloadData();
     renameScriptAtIndex(m_scriptStore->numberOfScripts()-1);
+    return;
   }
   m_selectableTableView.reloadData();
 }
 
 void MenuController::renameScriptAtIndex(int i) {
   assert(i>=0 && i<m_scriptStore->numberOfScripts());
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   EvenOddEditableTextCell * myCell = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell());
+  app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
   const char * previousText = myCell->editableTextCell()->textField()->text();
   myCell->editableTextCell()->textField()->setEditing(true);
   myCell->editableTextCell()->textField()->setText(previousText);
   myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
-  app()->setFirstResponder(myCell);
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
-}
+  }
 
 void MenuController::deleteScriptAtIndex(int i) {
   m_scriptStore->deleteScriptAtIndex(i);
@@ -172,17 +174,27 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 }
 
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Right
-      && textField->isEditing()
-      && textField->cursorLocation() > textField->textLength() - strlen(ScriptStore::k_scriptExtension) -1)
-  {
-    return true;
+  if (event == Ion::Events::Right && textField->isEditing()) {
+    int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
+    if (textField->cursorLocation() > textField->textLength() - scriptExtensionLength - 1) {
+      return true;
+    }
   }
   return false;
 }
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), text)) {
+  const char * newName;
+  char numberedDefaultName[k_defaultScriptNameMaxSize];
+  if (strlen(text) <= strlen(ScriptStore::k_scriptExtension)) {
+    // The user entered an empty name. Use a numbered default script name.
+    numberedDefaultScriptName(numberedDefaultName);
+    newName = const_cast<const char *>(numberedDefaultName);
+  } else {
+    newName = text;
+  }
+  if (m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), newName)) {
+    textField->setText(newName);
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
@@ -194,17 +206,60 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     app()->setFirstResponder(&m_selectableTableView);
     static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
-  } else {
-    // TODO: add pop up to explain to the user that the name is too long.
-    return false;
   }
+  // TODO: add pop up to explain to the user that the name is too long.
+  return false;
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+  if (strlen(text) <= strlen(ScriptStore::k_scriptExtension)) {
+    // The previous text was an empty name. Use a numbered default script name.
+    char numberedDefaultName[k_defaultScriptNameMaxSize];
+    numberedDefaultScriptName(numberedDefaultName);
+    m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), const_cast<const char *>(numberedDefaultName));
+    m_selectableTableView.reloadData();
+  }
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
+}
+
+void MenuController::numberedDefaultScriptName(char * buffer) {
+  bool foundNewScriptNumber = false;
+  int currentScriptNumber = 1;
+  char newName[k_defaultScriptNameMaxSize];
+  memcpy(newName, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
+  // We will only name scripts from script1.py to script99.py.
+  while (!foundNewScriptNumber && currentScriptNumber < 100) {
+    // Change the number in the script name.
+    intToText(currentScriptNumber, &newName[strlen(ScriptStore::k_defaultScriptName)-strlen(ScriptStore::k_scriptExtension)]);
+    memcpy(&newName[strlen(newName)], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension)+1);
+    if (m_scriptStore->scriptNamed(const_cast<const char *>(newName)).isNull()) {
+      foundNewScriptNumber = true;
+    }
+    currentScriptNumber++;
+  }
+  if (foundNewScriptNumber) {
+    memcpy(buffer, newName, strlen(newName)+1);
+    return;
+  }
+  memcpy(buffer, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
+}
+
+void MenuController::intToText(int i, char * buffer) {
+  // We only support integers from 0 to 99
+  // buffer should have the space for three chars.
+  assert(i>=0);
+  assert(i<100);
+  if (i/10 == 0) {
+    buffer[0] = i+'0';
+    buffer[1] = 0;
+    return;
+  }
+  buffer[0] = i/10+'0';
+  buffer[1] = i-10*(i/10)+'0';
+  buffer[2] = 0;
 }
 
 StackViewController * MenuController::stackViewController() {

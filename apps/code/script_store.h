@@ -17,6 +17,7 @@ public:
   };
 
   static constexpr char k_scriptExtension[] = ".py";
+  static constexpr char k_defaultScriptName[] = "script.py";
 
   ScriptStore();
   const Script scriptAtIndex(int index, EditableZone zone = EditableZone::None);
@@ -32,7 +33,6 @@ public:
   const char * contentOfScript(const char * name) override;
 
 private:
-  static constexpr char k_defaultScriptName[] = ".py";
   static constexpr size_t k_scriptDataSize = 1024;
   bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
   bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);

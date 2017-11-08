@@ -2,7 +2,8 @@
 
 namespace Code {
 
-constexpr ScriptTemplate emptyScriptTemplate(".py", R"()");
+constexpr ScriptTemplate emptyScriptTemplate(".py", R"(from math import *
+)");
 
 constexpr ScriptTemplate factorialScriptTemplate("factorial.py", R"(def factorial(n):
   if n == 0:

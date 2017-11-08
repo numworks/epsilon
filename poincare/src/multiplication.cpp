@@ -31,16 +31,15 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
-static_assert('\x94' == Ion::Charset::MiddleDot, "Unicode error");
 ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, "\x94");
+  const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
+  return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, middleDotString);
 }
 
-static_assert('\x93' == Ion::Charset::MultiplicationSign, "Unicode error");
 int Multiplication::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "\x93");
+  const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, multiplicationString);
 }
-
 
 Expression::Sign Multiplication::sign() const {
   int sign = 1;

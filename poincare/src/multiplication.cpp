@@ -141,7 +141,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     } else if (TermsHaveIdenticalBase(operand(i), operand(i+1)) && (!TermHasRationalBase(operand(i)) || (!TermHasIntegerExponent(operand(i)) && !TermHasIntegerExponent(operand(i+1))))) {
       factorizeBase(editableOperand(i), editableOperand(i+1), context, angleUnit);
       continue;
-    } else if (TermsHaveIdenticalNonUnitaryExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
+    } else if (TermsHaveIdenticalExponent(operand(i), operand(i+1)) && TermHasRationalBase(operand(i)) && TermHasRationalBase(operand(i+1))) {
       factorizeExponent(editableOperand(i), editableOperand(i+1), context, angleUnit);
       continue;
     }
@@ -300,7 +300,9 @@ bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Express
   return f1->isIdenticalTo(f2);
 }
 
-bool Multiplication::TermsHaveIdenticalNonUnitaryExponent(const Expression * e1, const Expression * e2) {
+bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2) {
+  /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
+   * that these have the same exponent whose value is 1. */
   return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->isIdenticalTo(e2->operand(1)));
 }
 

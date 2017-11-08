@@ -28,6 +28,9 @@ objs += $(addprefix liba/src/, \
 )
 
 objs += $(addprefix liba/src/external/openbsd/, \
+  b_exp__D.o \
+  b_log__D.o \
+  b_tgamma.o \
   e_acosf.o \
   e_acoshf.o \
   e_asinf.o \
@@ -40,9 +43,11 @@ objs += $(addprefix liba/src/external/openbsd/, \
   e_fmodf.o \
   e_lgammaf_r.o \
   e_log10f.o \
+  e_log2.o \
   e_logf.o \
   e_powf.o \
   e_rem_pio2f.o \
+  e_scalb.o \
   e_sinhf.o \
   e_sqrtf.o \
   k_cosf.o \
@@ -54,14 +59,17 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_ceilf.o \
   s_copysignf.o \
   s_cosf.o \
+  s_erf.o \
   s_expm1f.o\
   s_fabsf.o \
   s_floorf.o \
   s_frexpf.o \
   s_frexp.o \
   s_log1pf.o \
+  s_logb.o \
   s_modf.o \
   s_modff.o \
+  s_rint.o \
   s_roundf.o \
   s_scalbnf.o \
   s_signgam.o \

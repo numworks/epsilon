@@ -1,4 +1,4 @@
-/*	$OpenBSD: s_round.c,v 1.6 2013/07/03 04:46:36 espie Exp $	*/
+/*	$OpenBSD: s_round.c,v 1.1 2006/07/12 07:26:08 brad Exp $	*/
 
 /*-
  * Copyright (c) 2003, Steven G. Kargl
@@ -26,9 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 double
@@ -51,7 +49,3 @@ round(double x)
 		return (-t);
 	}
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(roundl, round);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

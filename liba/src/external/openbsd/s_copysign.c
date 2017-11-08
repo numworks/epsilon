@@ -16,6 +16,7 @@
  * with the sign bit of y.
  */
 
+#include <sys/cdefs.h>
 #include <float.h>
 #include <math.h>
 
@@ -31,6 +32,8 @@ copysign(double x, double y)
         return x;
 }
 
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(copysignl, copysign);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(copysignl, copysign);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

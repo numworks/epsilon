@@ -28,9 +28,7 @@
  *	only sinh(0)=0 is exact for finite x.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double one = 1.0, shuge = 1.0e307;
@@ -74,7 +72,3 @@ sinh(double x)
     /* |x| > overflowthresold, sinh(x) overflow */
 	return x*shuge;
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(sinhl, sinh);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

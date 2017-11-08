@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice
+ * software is freely granted, provided that this notice 
  * is preserved.
  * ====================================================
  */
@@ -14,7 +14,10 @@
  * fabs(x) returns the absolute value of x.
  */
 
-#include "math.h"
+#include <sys/cdefs.h>
+#include <float.h>
+#include <math.h>
+
 #include "math_private.h"
 
 double
@@ -25,3 +28,9 @@ fabs(double x)
 	SET_HIGH_WORD(x,high&0x7fffffff);
         return x;
 }
+
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(fabsl, fabs);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

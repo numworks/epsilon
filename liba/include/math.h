@@ -37,6 +37,7 @@ typedef double double_t;
 
 #define fpclassify(x) __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
 #define signbit(x) __builtin_signbit(x)
+#define finite(x) __builtin_finite(x)
 #define isfinite(x) __builtin_isfinite(x)
 #define isnormal(x) __builtin_isnormal(x)
 #define isnan(x) __builtin_isnan(x)
@@ -88,6 +89,8 @@ double ceil(double x);
 double copysign(double x, double y);
 double cos(double x);
 double cosh(double x);
+double erf(double x);
+double erfc(double x);
 double exp(double x);
 double expm1(double x);
 double fabs(double x);
@@ -96,20 +99,25 @@ double fmod(double x, double y);
 double frexp(double x, int *eptr);
 double lgamma(double x);
 double lgamma_r(double x, int *signgamp);
+double log(double x);
 double log1p(double x);
 double log10(double x);
-double log(double x);
+double log2(double x);
+double logb(double x);
 double modf(double value, double *iptr);
 double nearbyint(double x);
 double pow(double x, double y);
 double nearbyint(double x);
+double rint(double x);
 double round(double x);
+double scalb(double x, double fn);
 double scalbn(double x, int n);
 double sin(double x);
 double sinh(double x);
 double sqrt(double x);
 double tan(double x);
 double tanh(double x);
+double tgamma(double x);
 double trunc(double x);
 
 /* The C99 standard says that any libc function can be re-declared as a macro.
@@ -163,6 +171,8 @@ double trunc(double x);
 #define copysign(x, y) __builtin_copysign(x, y)
 #define cos(x) __builtin_cos(x)
 #define cosh(x) __builtin_cosh(x)
+#define erf(x) __builtin_erf(x)
+#define erfc(x) __builtin_erfc(x)
 #define exp(x) __builtin_exp(x)
 #define expm1(x) __builtin_expm1(x)
 #define fabs(x) __builtin_fabs(x)
@@ -171,11 +181,14 @@ double trunc(double x);
 #define ldexp(x, n) __builtin_ldexp(x, n)
 #define lgamma(x) __builtin_lgamma(x)
 #define lgamma_r(x, signgamp) __builtin_lgamma_r(x, signgamp)
+#define log(x) __builtin_log(x)
 #define log1p(x) __builtin_log1p(x)
 #define log10(x) __builtin_log10(x)
-#define log(x) __builtin_log(x)
+#define log2(x) __builtin_log2(x)
+#define logb(x) __builtin_logb(x)
 #define nan(s) __builtin_nan(s)
 #define pow(x, y) __builtin_pow(x, y)
+#define rint(x) __builtin_rint(x)
 #define round(x) __builtin_round(x)
 #define scalbn(x, n) __builtin_scalbn(x, n)
 #define sin(x) __builtin_sin(x)
@@ -183,6 +196,7 @@ double trunc(double x);
 #define sqrt(x) __builtin_sqrt(x)
 #define tan(x) __builtin_tan(x)
 #define tanh(x) __builtin_tanh(x)
+#define tgamma(x) __builtin_tgamma(x)
 #define trunc(x) __builtin_trunc(x)
 
 extern int signgam;

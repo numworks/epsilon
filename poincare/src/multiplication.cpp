@@ -13,6 +13,7 @@ extern "C" {
 #include <poincare/undefined.h>
 #include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
+#include <poincare/tangent.h>
 #include <poincare/division.h>
 #include <poincare/arithmetic.h>
 #include <poincare/simplification_root.h>
@@ -104,6 +105,13 @@ bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Exp
   return true;
 }
 
+static inline const Expression * Base(const Expression * e) {
+  if (e->type() == Expression::Type::Power) {
+    return e->operand(0);
+  }
+  return e;
+}
+
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
   /* Step 1: Multiplication is associative, so let's start by merging children
    * which also are multiplications themselves. */
@@ -161,7 +169,30 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     i++;
   }
 
-  /* Step 5: Let's remove ones if there's any. It's important to do this after
+  /* Step 5: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
+   *opposite signs. We replace them by either:
+   * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
+   * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
+  for (int i = 0; i < numberOfOperands(); i++) {
+    Expression * o1 = editableOperand(i);
+    if (Base(o1)->type() == Type::Sine && TermHasRationalExponent(o1)) {
+      const Expression * x = Base(o1)->operand(0);
+      /* Thanks to the SimplificationOrder, Cosine-base factors are after
+       * Sine-base factors */
+      for (int j = i+1; j < numberOfOperands(); j++) {
+        Expression * o2 = editableOperand(j);
+        if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->operand(0)->isIdenticalTo(x)) {
+          factorizeSineAndCosine(o1, o2, context, angleUnit);
+        }
+      }
+    }
+  }
+  /* Replacing sin/cos by tan factors may have mixed factors and factors are
+   * guaranteed to be sorted (according ot SimplificationOrder) at the end of
+   * shallowReduce */
+  sortOperands(SimplificationOrder);
+
+  /* Step 6: Let's remove ones if there's any. It's important to do this after
    * having factorized because factorization can lead to new ones. For example
    * pi^(-1)*pi. We don't remove the last one if it's the only operand left
    * though. */
@@ -175,7 +206,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     i++;
   }
 
-  /* Step 6: Expand multiplication over addition operands if any. For example,
+  /* Step 7: Expand multiplication over addition operands if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
    * the parent is a multiplication to avoid missing factorization such as
    * (x+y)^(-1)*((a+b)*(x+y)).
@@ -189,10 +220,65 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     }
   }
 
-  // Step 7: Let's remove the multiplication altogether if it has one operand
+  // Step 8: Let's remove the multiplication altogether if it has one operand
   Expression * result = squashUnaryHierarchy();
 
   return result;
+}
+
+void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, AngleUnit angleUnit) {
+  assert(o1->parent() == this && o2->parent() == this);
+  /* This function turn sin(x)^p * cos(x)^q into either:
+   * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
+   * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
+  const Expression * x = Base(o1)->operand(0);
+  Rational p = o1->type() == Type::Power ? *(static_cast<Rational *>(o1->editableOperand(1))) : Rational(1);
+  Rational q = o2->type() == Type::Power ? *(static_cast<Rational *>(o2->editableOperand(1))) : Rational(1);
+  /* If p and q have the same sign, we cannot replace them by a tangent */
+  if ((int)p.sign()*(int)q.sign() > 0) {
+    return;
+  }
+  Rational sumPQ = Rational::Addition(p, q);
+  Rational absP = p;
+  absP.setSign(Sign::Positive);
+  Rational absQ = q;
+  absQ.setSign(Sign::Positive);
+  Expression * tan = new Tangent(x, true);
+  if (Rational::NaturalOrder(absP, absQ) < 0) {
+    if (o1->type() == Type::Power) {
+      o1->replaceOperand(o1->operand(0), tan, true);
+    } else {
+      replaceOperand(o1, tan, true);
+      o1 = tan;
+    }
+    o1->shallowReduce(context, angleUnit);
+    if (o2->type() == Type::Power) {
+      o2->replaceOperand(o2->operand(1), new Rational(sumPQ), true);
+    } else {
+      Expression * newO2 = new Power(o2, new Rational(sumPQ), false);
+      replaceOperand(o2, newO2, false);
+      o2 = newO2;
+    }
+    o2->shallowReduce(context, angleUnit);
+  } else {
+    if (o2->type() == Type::Power) {
+      o2->replaceOperand(o2->operand(1), new Rational(Rational::Multiplication(q, Rational(-1))), true);
+      o2->replaceOperand(o2->operand(0), tan, true);
+    } else {
+      Expression * newO2 = new Power(tan, new Rational(-1), false);
+      replaceOperand(o2, newO2, true);
+      o2 = newO2;
+    }
+    o2->shallowReduce(context, angleUnit);
+    if (o1->type() == Type::Power) {
+      o1->replaceOperand(o1->operand(1), new Rational(sumPQ), true);
+    } else {
+      Expression * newO1 = new Power(o1, new Rational(sumPQ), false);
+      replaceOperand(o1, newO1, false);
+      o1 = newO1;
+    }
+    o1->shallowReduce(context, angleUnit);
+  }
 }
 
 void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
@@ -261,13 +347,6 @@ const Expression * Multiplication::CreateExponent(Expression * e) {
   return e->type() == Type::Power ? e->operand(1)->clone() : new Rational(1);
 }
 
-static inline const Expression * Base(const Expression * e) {
-  if (e->type() == Expression::Type::Power) {
-    return e->operand(0);
-  }
-  return e;
-}
-
 bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {
   return Base(e1)->isIdenticalTo(Base(e2));
 }
@@ -289,6 +368,16 @@ bool Multiplication::TermHasIntegerExponent(const Expression * e) {
   if (e->operand(1)->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(e->operand(1));
     return r->denominator().isOne();
+  }
+  return false;
+}
+
+bool Multiplication::TermHasRationalExponent(const Expression * e) {
+  if (e->type() != Type::Power) {
+    return true;
+  }
+  if (e->operand(1)->type() == Type::Rational) {
+    return true;
   }
   return false;
 }

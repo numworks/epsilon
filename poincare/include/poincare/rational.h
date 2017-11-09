@@ -8,6 +8,7 @@ namespace Poincare {
 
 class Rational : public StaticHierarchy<0> {
   friend class Power;
+  friend class Multiplication;
 public:
   /* The constructor build a irreductible fraction whose sign is on numerator */
   Rational(const Integer numerator, const Integer denominator);

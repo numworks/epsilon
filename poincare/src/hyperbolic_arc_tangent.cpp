@@ -1,4 +1,5 @@
 #include <poincare/hyperbolic_arc_tangent.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -13,6 +14,18 @@ Expression::Type HyperbolicArcTangent::type() const {
 Expression * HyperbolicArcTangent::clone() const {
   HyperbolicArcTangent * a = new HyperbolicArcTangent(m_operands, true);
   return a;
+}
+
+Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

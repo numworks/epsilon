@@ -1,6 +1,6 @@
 #include <poincare/real_part.h>
 #include <poincare/complex.h>
-
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -15,6 +15,18 @@ Expression::Type RealPart::type() const {
 Expression * RealPart::clone() const {
   RealPart * a = new RealPart(m_operands, true);
   return a;
+}
+
+Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

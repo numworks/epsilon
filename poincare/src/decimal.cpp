@@ -79,7 +79,7 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Evaluation<T> * Decimal::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Complex<T> * Decimal::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = numberOfDigitsInMantissa();
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));

@@ -16,14 +16,18 @@ Expression * MatrixDimension::clone() const {
   return a;
 }
 
-template<typename T>
-Evaluation<T> * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
-  Complex<T> operands[2];
-  operands[0] = Complex<T>::Float((T)input->numberOfRows());
-  operands[1] = Complex<T>::Float((T)input->numberOfColumns());
-  delete input;
-  return new ComplexMatrix<T>(operands, 2, 1);
+Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  if (operand(0)->type() != Type::Matrix) {
+    const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
+    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  }
+  Matrix * m = static_cast<Matrix *>(editableOperand(0));
+  const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
+  return replaceWith(new Matrix(newOperands, 1, 2, false), true);
 }
 
 }

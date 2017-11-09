@@ -16,13 +16,7 @@ public:
   Expression * clone() const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
-  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
-  }
-  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-  return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
-  }
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
@@ -30,6 +24,15 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
   const char * name() const { return "cos"; }
+  /* Simplication */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::approximate<float>(this, context, angleUnit,computeOnComplex<float>);
+  }
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::approximate<double>(this, context, angleUnit, computeOnComplex<double>);
+  }
 };
 
 }

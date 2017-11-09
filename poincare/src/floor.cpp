@@ -1,5 +1,8 @@
 #include <poincare/floor.h>
-
+#include <poincare/symbol.h>
+#include <poincare/simplification_engine.h>
+#include <poincare/rational.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -14,6 +17,32 @@ Expression::Type Floor::type() const {
 Expression * Floor::clone() const {
   Floor * c = new Floor(m_operands, true);
   return c;
+}
+
+Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  if (op->type() == Type::Symbol) {
+    Symbol * s = static_cast<Symbol *>(op);
+    if (s->name() == Ion::Charset::SmallPi) {
+      return replaceWith(new Rational(3), true);
+    }
+    if (s->name() == Ion::Charset::Exponential) {
+      return replaceWith(new Rational(2), true);
+    }
+  }
+  if (op->type() != Type::Rational) {
+    return this;
+  }
+  Rational * r = static_cast<Rational *>(op);
+  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
+  return replaceWith(new Rational(div.quotient), true);
 }
 
 template<typename T>

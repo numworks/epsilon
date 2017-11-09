@@ -9,8 +9,7 @@ extern "C" {
 namespace Poincare {
 
 class Context;
-template<class T>
-class Evaluation;
+template<class T> class Complex;
 class Rational;
 
 class Expression {
@@ -85,6 +84,8 @@ public:
     Power,
     Addition,
     Factorial,
+    Division,
+    Store,
     Sine,
     Cosine,
     Tangent,
@@ -99,7 +100,6 @@ public:
     Conjugate,
     Derivative,
     Determinant,
-    Division,
     DivisionQuotient,
     DivisionRemainder,
     Floor,
@@ -129,14 +129,12 @@ public:
     RealPart,
     Round,
     SquareRoot,
-    Store,
     Subtraction,
     Sum,
     Symbol,
 
     Complex,
-    ComplexMatrix,
-    ExpressionMatrix,
+    Matrix,
     SimplificationRoot,
   };
   enum class FloatDisplayMode {
@@ -209,7 +207,7 @@ public:
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Evaluation<T> * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
 protected:
@@ -219,6 +217,7 @@ protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   template<typename T> static T epsilon();
+  constexpr static float k_maxNumberOfSteps = 10000.0f;
 
   /* Simplification */
   /* SimplificationOrder returns:
@@ -247,7 +246,7 @@ private:
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
-  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
+  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepReduce(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
@@ -262,8 +261,8 @@ private:
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
   /* Evaluation Engine */
-  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

@@ -3,6 +3,7 @@
 
 #include <poincare/layout_engine.h>
 #include <poincare/static_hierarchy.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -12,9 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
@@ -22,6 +21,11 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
   const char * name() const { return "det"; }
+  /* Simplification */
+  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { assert(false); return nullptr; }
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { assert(false); return nullptr; }
 };
 
 }

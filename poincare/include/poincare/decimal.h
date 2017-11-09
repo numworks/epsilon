@@ -21,15 +21,17 @@ public:
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-
   int numberOfDigitsInMantissa() const;
-  /* Sorting */
+  /* Comparison */
   int simplificationOrderSameType(const Expression * e) const override;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  template<typename T> Complex<T> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
 
   constexpr static int k_maxLength = 10;
   Integer m_mantissa;

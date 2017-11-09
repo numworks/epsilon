@@ -1,5 +1,7 @@
 #include <poincare/matrix_trace.h>
 #include <poincare/matrix.h>
+#include <poincare/undefined.h>
+#include <poincare/addition.h>
 extern "C" {
 #include <assert.h>
 }
@@ -16,12 +18,25 @@ Expression * MatrixTrace::clone() const {
   return a;
 }
 
-template<typename T>
-Evaluation<T> * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * result = input->createTrace();
-  delete input;
-  return result;
+Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    Matrix * m = static_cast<Matrix *>(op);
+    if (m->numberOfRows() != m->numberOfColumns()) {
+      replaceWith(new Undefined(), true);
+    }
+    int n = m->numberOfRows();
+    Addition * a = new Addition();
+    for (int i = 0; i < n; i++) {
+      a->addOperand(m->editableOperand(i+n*i));
+    }
+    return replaceWith(a, true)->shallowReduce(context, angleUnit);
+  }
+  return replaceWith(op, true);
 }
 
 }

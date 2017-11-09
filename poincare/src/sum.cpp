@@ -31,14 +31,8 @@ ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout
 }
 
 template<typename T>
-Evaluation<T> * Sum::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
-  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex<T>(Addition::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
-  }
-  if (a->numberOfOperands() == 1) {
-    return Addition::computeOnComplexAndMatrix(a->complexOperand(0), b);
-  }
-  return Addition::computeOnMatrices(a, b);
+Complex<T> * Sum::templatedEvaluateWithNextTerm(Complex<T> * a, Complex<T> * b) const {
+  return new Complex<T>(Addition::compute(*a, *b));
 }
 
 }

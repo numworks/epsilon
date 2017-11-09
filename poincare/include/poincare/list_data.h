@@ -17,6 +17,7 @@ public:
   Expression ** operands() const;
   const Expression * operand(int i) const;
   void pushExpression(Expression * operand);
+  void detachOperands();
 private:
   int m_numberOfOperands;
   Expression ** m_operands;

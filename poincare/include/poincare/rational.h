@@ -14,11 +14,9 @@ public:
   Rational(const Integer numerator, const Integer denominator);
   Rational(const Integer numerator);
   Rational(Integer::native_int_t i) : Rational(Integer(i)) {}
+  Rational(Integer::native_int_t i, Integer::native_int_t j) : Rational(Integer(i), Integer(j)) {}
 
   Rational(const Rational & other);
-  /*Rational(Rational && other) = default;
-  Rational& operator=(const Rational & other) = default;
-  Rational& operator=(Rational && other) = default;*/
 
   // Getter
   const Integer numerator() const;
@@ -44,9 +42,9 @@ public:
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
-  template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  template<typename U> Complex<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * setSign(Sign s);
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override {

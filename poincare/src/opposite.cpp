@@ -1,7 +1,7 @@
 #include <poincare/opposite.h>
-#include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
 #include <poincare/multiplication.h>
+#include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
@@ -34,6 +34,9 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   const Expression * op = operand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
   detachOperand(op);
   Multiplication * m = new Multiplication(new Rational(-1), op, false);
   replaceWith(m, true);

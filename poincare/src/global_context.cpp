@@ -43,7 +43,7 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
   return index;
 }
 
-const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * symbol) {
+const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
@@ -65,7 +65,7 @@ const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * sym
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
-  if (symbol->isMatrixSymbol()) {
+  /*if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
     if (m_matrixExpressions[indexMatrix] != nullptr) {
@@ -100,7 +100,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   } else {
     m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
   }
-  delete evaluation;
+  delete evaluation;*/
 }
 
 }

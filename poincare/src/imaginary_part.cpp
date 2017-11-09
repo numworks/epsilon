@@ -1,5 +1,6 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/complex.h>
+#include <poincare/simplification_engine.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -14,6 +15,19 @@ Expression::Type ImaginaryPart::type() const {
 Expression * ImaginaryPart::clone() const {
   ImaginaryPart * a = new ImaginaryPart(m_operands, true);
   return a;
+}
+
+
+Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

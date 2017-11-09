@@ -3,7 +3,6 @@
 #include <poincare/complex.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
-#include <poincare/complex_matrix.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -68,10 +67,25 @@ Expression::Sign Symbol::sign() const {
   return Sign::Unknown;
 }
 
+Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  if (context.expressionForSymbol(this) != nullptr && m_name != Ion::Charset::SmallPi && m_name != Ion::Charset::Exponential) {
+    return replaceWith(context.expressionForSymbol(this)->clone(), true);
+  }
+  return this;
+}
+
 template<typename T>
-Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  /* All symbols have been replaced by their expression at simplification. If
+   * we arrive here, either the symbol is Pi or E or the symbol is undefined.
+   * We can call privateEvaluate without risking to call it on a matrix (which
+   * fails). */
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
+    return context.expressionForSymbol(this)->privateEvaluate(T(), context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }

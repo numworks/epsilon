@@ -14,15 +14,18 @@ public:
   Type type() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
 private:
-  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::map<float>(this, context, angleUnit, compute<float>);
-  }
-  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-  return EvaluationEngine::map<double>(this, context, angleUnit, compute<double>);
-  }
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::approximate<float>(this, context, angleUnit, compute<float>);
+  }
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::approximate<double>(this, context, angleUnit, compute<double>);
+  }
 };
 
 }

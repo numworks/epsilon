@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/power.h>
+#include <poincare/undefined.h>
 #include "layout/nth_root_layout.h"
 
 extern "C" {
@@ -23,6 +24,9 @@ Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
   }
   Power * invIndex = new Power(operand(1), new Rational(-1), false);
   Power * p = new Power(operand(0), invIndex, false);
@@ -48,13 +52,10 @@ Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 template<typename T>
-Evaluation<T> * NthRoot::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * base = operand(0)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * index = operand(1)->evaluate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
-  if (base->numberOfOperands() == 1 || index->numberOfOperands() == 1) {
-    result = compute(*(base->complexOperand(0)), *(index->complexOperand(0)));
-  }
+Complex<T> * NthRoot::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Complex<T> * base = operand(0)->privateEvaluate(T(), context, angleUnit);
+  Complex<T> * index = operand(1)->privateEvaluate(T(), context, angleUnit);
+  Complex<T> result = compute(*base, *index);
   delete base;
   delete index;
   return new Complex<T>(result);

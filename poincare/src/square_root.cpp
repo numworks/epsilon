@@ -1,6 +1,7 @@
 #include <poincare/square_root.h>
 #include <poincare/complex.h>
 #include <poincare/power.h>
+#include <poincare/simplification_engine.h>
 #include "layout/nth_root_layout.h"
 extern "C" {
 #include <assert.h>
@@ -36,6 +37,9 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
   Power * p = new Power(operand(0), new Rational(1, 2), false);
   detachOperands();

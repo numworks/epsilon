@@ -40,6 +40,7 @@ public:
   // Getter & Setter
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative);
+  int extractedInt() { assert(m_numberOfDigits == 1 && m_digit <= 0x7FFFFFFF); return m_negative ? -m_digit : m_digit; }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);

@@ -31,14 +31,8 @@ ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLa
 }
 
 template<typename T>
-Evaluation<T> * Product::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
-  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex<T>(Multiplication::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
-  }
-  if (a->numberOfOperands() == 1) {
-    return Multiplication::computeOnComplexAndMatrix(a->complexOperand(0), b);
-  }
-  return Multiplication::computeOnMatrices(a, b);
+Complex<T> * Product::templatedEvaluateWithNextTerm(Complex<T> * a, Complex<T> * b) const {
+  return new Complex<T>(Multiplication::compute(*a, *b));
 }
 
 }

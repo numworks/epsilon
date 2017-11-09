@@ -1,6 +1,6 @@
 #include <poincare/complex_argument.h>
 #include <poincare/complex.h>
-
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -15,6 +15,18 @@ Expression::Type ComplexArgument::type() const {
 Expression * ComplexArgument::clone() const {
   ComplexArgument * a = new ComplexArgument(m_operands, true);
   return a;
+}
+
+Expression * ComplexArgument::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

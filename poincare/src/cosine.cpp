@@ -4,6 +4,7 @@
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
+#include <poincare/simplification_engine.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -25,6 +26,10 @@ Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
   return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
 }

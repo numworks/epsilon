@@ -118,14 +118,18 @@ Rational Rational::Power(const Rational & i, const Integer & j) {
   return Rational(newNumerator, newDenominator);
 }
 
+int Rational::NaturalOrder(const Rational & i, const Rational & j) {
+  Integer i1 = Integer::Multiplication(i.numerator(), j.denominator());
+  Integer i2 = Integer::Multiplication(i.denominator(), j.numerator());
+  return Integer::NaturalOrder(i1, i2);
+}
+
 // Comparison
 
 int Rational::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Rational);
   const Rational * other = static_cast<const Rational *>(e);
-  Integer i1 = Integer::Multiplication(m_numerator, other->denominator());
-  Integer i2 = Integer::Multiplication(m_denominator, other->numerator());
-  return Integer::NaturalOrder(i1, i2);
+  return NaturalOrder(*this, *other);
 }
 
 template<typename T> Evaluation<T> * Rational::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {

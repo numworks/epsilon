@@ -39,6 +39,7 @@ public:
   static Rational Addition(const Rational & i, const Rational & j);
   static Rational Multiplication(const Rational & i, const Rational & j);
   static Rational Power(const Rational & i, const Integer & j);
+  static int NaturalOrder(const Rational & i, const Rational & j);
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;

@@ -367,14 +367,22 @@ Expression * Power::cloneDenominator(Context & context, AngleUnit angleUnit) con
 Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit) {
   Expression * result = nullptr;
 
-  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusHalf()) {
-      /* We're considering a term of the form 1/sqrt(p/q), with p and q integers.
-       * We'll turn those into sqrt(p*q)/p. */
+  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && (static_cast<const Rational *>(operand(1))->isHalf() || static_cast<const Rational *>(operand(1))->isMinusHalf())) {
+      /* We're considering a term of the form sqrt(p/q) (or 1/sqrt(p/q)), with
+       * p and q integers.
+       * We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p) . */
       Integer p = static_cast<const Rational *>(operand(0))->numerator();
       Integer q = static_cast<const Rational *>(operand(0))->denominator();
-      Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
-      result = new Multiplication(new Rational(Integer(1), p), sqrt, false);
-      sqrt->shallowReduce(context, angleUnit);
+      // We do nothing for terms of the form sqrt(p)
+      if (!q.isOne() || static_cast<const Rational *>(operand(1))->isMinusHalf()) {
+        Power * sqrt = new Power(new Rational(Integer::Multiplication(p, q)), new Rational(1, 2), false);
+        if (static_cast<const Rational *>(operand(1))->isHalf()) {
+          result = new Multiplication(new Rational(Integer(1), q), sqrt, false);
+        } else {
+          result = new Multiplication(new Rational(Integer(1), p), sqrt, false);
+        }
+        sqrt->shallowReduce(context, angleUnit);
+      }
   } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
     /* We're considering a term of the form
      *

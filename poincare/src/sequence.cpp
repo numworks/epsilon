@@ -2,6 +2,7 @@
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
 #include <poincare/variable_context.h>
+#include <poincare/undefined.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
 extern "C" {
@@ -21,10 +22,22 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
+Expression * Sequence::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true); // TODO: should we implement sum and product of a matrix?
+  }
+  // TODO: to be implemented?
+  return this;
+}
+
 template<typename T>
-Evaluation<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = operand(1)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * bInput = operand(2)->evaluate<T>(context, angleUnit);
+Complex<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Complex<T> * aInput = operand(1)->privateEvaluate(T(), context, angleUnit);
+  Complex<T> * bInput = operand(2)->privateEvaluate(T(), context, angleUnit);
   T start = aInput->toScalar();
   T end = bInput->toScalar();
   delete aInput;
@@ -34,7 +47,7 @@ Evaluation<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUni
   }
   VariableContext<T> nContext = VariableContext<T>('n', &context);
   Symbol nSymbol('n');
-  Evaluation<T> * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
+  Complex<T> * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
   for (int i = (int)start; i <= (int)end; i++) {
     if (shouldStopProcessing()) {
       delete result;
@@ -42,8 +55,8 @@ Evaluation<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUni
     }
     Complex<T> iExpression = Complex<T>::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
-    Evaluation<T> * expression = operand(0)->evaluate<T>(nContext, angleUnit);
-    Evaluation<T> * newResult = evaluateWithNextTerm(result, expression);
+    Complex<T> * expression = operand(0)->privateEvaluate(T(), nContext, angleUnit);
+    Complex<T> * newResult = evaluateWithNextTerm(result, expression);
     delete result;
     delete expression;
     result = newResult;

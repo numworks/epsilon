@@ -20,7 +20,6 @@ public:
   Sign sign() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
-  constexpr static float k_maxNumberOfSteps = 10000.0f;
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
@@ -41,14 +40,11 @@ private:
   Expression * removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
   /* Evaluation */
-  template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n);
-  template<typename T> static Evaluation<T> * computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d);
-  template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
-  virtual Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>);
   }
-  virtual Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>);
   }
 };
 

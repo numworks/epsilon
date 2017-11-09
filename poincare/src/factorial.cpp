@@ -4,6 +4,7 @@
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
+#include <poincare/simplification_engine.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -31,10 +32,16 @@ Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
   if (operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>(editableOperand(0));
     if (!r->denominator().isOne()) {
       return replaceWith(new Undefined(), true);
+    }
+    if (Integer(k_maxOperandValue).isLowerThan(r->numerator())) {
+      return this;
     }
     Rational * fact = new Rational(Integer::Factorial(r->numerator()));
     return replaceWith(fact, true);

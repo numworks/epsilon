@@ -1,7 +1,10 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/matrix.h>
-#include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
 }
@@ -18,21 +21,28 @@ Expression * ConfidenceInterval::clone() const {
   return a;
 }
 
-template<typename T>
-Evaluation<T> * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * fInput = operand(0)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * nInput = operand(1)->evaluate<T>(context, angleUnit);
-  T f = fInput->toScalar();
-  T n = nInput->toScalar();
-  delete fInput;
-  delete nInput;
-  if (isnan(f) || isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+Expression * ConfidenceInterval::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
   }
-  Complex<T> operands[2];
-  operands[0] = Complex<T>::Float(f - 1/std::sqrt(n));
-  operands[1] = Complex<T>::Float(f + 1/std::sqrt(n));
-  return new ComplexMatrix<T>(operands, 2, 1);
+  Expression * op0 = editableOperand(0);
+  Expression * op1 = editableOperand(1);
+  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
+    return replaceWith(new Undefined(), true);
+  }
+  Rational * r0 = static_cast<Rational *>(op0);
+  Rational * r1 = static_cast<Rational *>(op1);
+  if (!r1->denominator().isOne() || r1->numerator().isNegative() || r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) <= 0) {
+    return replaceWith(new Undefined(), true);
+  }
+  detachOperand(r0);
+  detachOperand(r1);
+  Expression * sqr = new Power(r1, new Rational(-1, 2), false);
+  const Expression * newOperands[2] = {new Addition(r0, sqr, true),
+                                       new Addition(r0, new Multiplication(new Rational(-1), sqr, false), false)};
+  Expression * matrix = replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  return matrix->deepReduce(context, angleUnit);
 }
 
 }

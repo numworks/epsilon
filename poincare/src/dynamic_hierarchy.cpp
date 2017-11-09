@@ -91,7 +91,9 @@ void DynamicHierarchy::sortOperands(ExpressionOrder order) {
   for (int i = numberOfOperands()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < numberOfOperands()-1; j++) {
-      if (order(operand(j), operand(j+1)) > 0) {
+      /* Warning: Matrix operations are not always commutative (ie,
+       * multiplication) so we never swap 2 matrices. */
+      if (order(operand(j), operand(j+1)) > 0 && (operand(j)->type() != Type::Matrix || operand(j+1)->type() != Type::Matrix)) {
         swapOperands(j, j+1);
         isSorted = false;
       }

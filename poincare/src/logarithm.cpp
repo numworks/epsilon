@@ -8,6 +8,8 @@
 #include <poincare/arithmetic.h>
 #include <poincare/power.h>
 #include <poincare/naperian_logarithm.h>
+#include <poincare/evaluation_engine.h>
+#include <poincare/simplification_engine.h>
 #include <cmath>
 #include <ion.h>
 extern "C" {
@@ -42,10 +44,17 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
-  if (operand(0)->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+  Expression * op = editableOperand(0);
+  if (numberOfOperands() == 1 && op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  if (numberOfOperands() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
     return replaceWith(new Undefined(), true);
   }
-  if (operand(0)->type() == Type::Rational) {
+  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+    return replaceWith(new Undefined(), true);
+  }
+  if (op->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(0));
     // log(0) = undef
     if (r->isZero()) {
@@ -62,8 +71,8 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     return a->shallowReduce(context, angleUnit);
   }
   // log(x^y)->y*log(x)
-  if (operand(0)->type() == Type::Power) {
-    Power * p = static_cast<Power *>(editableOperand(0));
+  if (op->type() == Type::Power) {
+    Power * p = static_cast<Power *>(op);
     Expression * x = p->editableOperand(0);
     Expression * y = p->editableOperand(1);
     p->detachOperands();
@@ -124,16 +133,13 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Evaluation<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
-    return EvaluationEngine::map(this, context, angleUnit, computeOnComplex<T>);
+    return EvaluationEngine::approximate(this, context, angleUnit, computeOnComplex<T>);
   }
-  Evaluation<T> * x = operand(0)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * n = operand(1)->evaluate<T>(context, angleUnit);
-  if (x->numberOfRows() != 1 || x->numberOfColumns() != 1 || n->numberOfRows() != 1 || n->numberOfColumns() != 1) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
-  Complex<T> result = Division::compute<T>(computeOnComplex(*(n->complexOperand(0)), angleUnit), computeOnComplex(*(x->complexOperand(0)), angleUnit));
+  Complex<T> * x = operand(0)->privateEvaluate(T(), context, angleUnit);
+  Complex<T> * n = operand(1)->privateEvaluate(T(), context, angleUnit);
+  Complex<T> result = Division::compute<T>(computeOnComplex(*n, angleUnit), computeOnComplex(*x, angleUnit));
   delete x;
   delete n;
   return new Complex<T>(result);

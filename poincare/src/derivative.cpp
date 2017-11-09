@@ -1,6 +1,8 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
+#include <poincare/simplification_engine.h>
+#include <poincare/undefined.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -18,18 +20,30 @@ Expression * Derivative::clone() const {
   return a;
 }
 
+Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+  // TODO: to be implemented diff(+) -> +diff() etc
+  return this;
+}
+
 template<typename T>
-Evaluation<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   VariableContext<T> xContext = VariableContext<T>('x', &context);
   Symbol xSymbol('x');
-  Evaluation<T> * xInput = operand(1)->evaluate<T>(context, angleUnit);
+  Complex<T> * xInput = operand(1)->privateEvaluate(T(), context, angleUnit);
   T x = xInput->toScalar();
   delete xInput;
   Complex<T> e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = operand(1)->evaluate<T>(xContext, angleUnit);
+  Complex<T> * fInput = operand(1)->privateEvaluate(T(), xContext, angleUnit);
   T functionValue = fInput->toScalar();
   delete fInput;
 
@@ -107,12 +121,12 @@ T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, An
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  Complex<T> * fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T expressionPlus = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T expressionMinus = fInput->toScalar();
   delete fInput;
   return (expressionPlus - expressionMinus)/(2*h);
@@ -123,17 +137,17 @@ T Derivative::approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleU
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  Complex<T> * fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T expressionPlus = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T expression = fInput->toScalar();
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T expressionMinus = fInput->toScalar();
   delete fInput;
   return expressionPlus - 2.0*expression + expressionMinus;

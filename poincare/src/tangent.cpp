@@ -6,6 +6,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_tangent.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -26,6 +27,10 @@ Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
   Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
   if (newExpression->type() == Type::Tangent) {

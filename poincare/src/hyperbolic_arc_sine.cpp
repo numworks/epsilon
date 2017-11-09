@@ -1,4 +1,5 @@
 #include <poincare/hyperbolic_arc_sine.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -13,6 +14,18 @@ Expression::Type HyperbolicArcSine::type() const {
 Expression * HyperbolicArcSine::clone() const {
   HyperbolicArcSine * a = new HyperbolicArcSine(m_operands, true);
   return a;
+}
+
+Expression * HyperbolicArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

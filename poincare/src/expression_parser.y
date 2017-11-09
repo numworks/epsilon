@@ -143,8 +143,8 @@ lstData:
   | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
 /* MATRICES_ARE_DEFINED */
  mtxData:
-  LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, true); delete $2; }
-  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3, true); delete $3; }
+  LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
+  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
 
 number:
   DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, false)); }
@@ -180,8 +180,8 @@ exp:
   | MINUS exp %prec UNARY_MINUS           { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */
-  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::ExpressionMatrix($2); }
-  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), true); delete $3; }
+  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); delete $2; }
+  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }
 
 final_exp:
   exp      { $$ = $1; }

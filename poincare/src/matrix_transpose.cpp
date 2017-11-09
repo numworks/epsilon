@@ -18,13 +18,17 @@ Expression * MatrixTranspose::clone() const {
   return a;
 }
 
-template<typename T>
-Evaluation<T> * MatrixTranspose::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->evaluate<T>(context, angleUnit);
-  Evaluation<T> * result = input->createTranspose();
-  delete input;
-  return result;
+Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    Matrix * transpose = static_cast<Matrix *>(op)->createTranspose();
+    return replaceWith(transpose, true);
+  }
+  return replaceWith(op, true);
 }
 
 }
-

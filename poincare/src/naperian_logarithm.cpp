@@ -1,6 +1,7 @@
 #include <poincare/naperian_logarithm.h>
 #include <poincare/symbol.h>
 #include <poincare/logarithm.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -26,6 +27,9 @@ Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleU
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
   const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
   Logarithm * l = new Logarithm(logOperands, 2, false);

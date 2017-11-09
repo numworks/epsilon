@@ -2,6 +2,7 @@
 #include <poincare/symbol.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
+#include <poincare/undefined.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -23,13 +24,24 @@ Expression * Integral::clone() const {
   return a;
 }
 
+Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix || operand(2)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+  return this;
+}
+
 template<typename T>
-Evaluation<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
+Complex<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Evaluation<T> * aInput = operand(1)->evaluate<T>(context, angleUnit);
+  Complex<T> * aInput = operand(1)->privateEvaluate(T(), context, angleUnit);
   T a = aInput->toScalar();
   delete aInput;
-  Evaluation<T> * bInput = operand(2)->evaluate<T>(context, angleUnit);
+  Complex<T> * bInput = operand(2)->privateEvaluate(T(), context, angleUnit);
   T b = bInput->toScalar();
   delete bInput;
   if (isnan(a) || isnan(b)) {
@@ -57,7 +69,7 @@ T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit 
   Complex<T> e = Complex<T>::Float(x);
   Symbol xSymbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * f = operand(0)->evaluate<T>(xContext, angleUnit);
+  Complex<T> * f = operand(0)->privateEvaluate(T(), xContext, angleUnit);
   T result = f->toScalar();
   delete f;
   return result;

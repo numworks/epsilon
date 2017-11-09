@@ -14,7 +14,6 @@ objs += $(addprefix poincare/src/,\
   ceiling.o\
   complex.o\
   complex_argument.o\
-  complex_matrix.o\
   confidence_interval.o\
   conjugate.o\
   cosine.o\
@@ -25,7 +24,6 @@ objs += $(addprefix poincare/src/,\
   division_quotient.o\
   division_remainder.o\
   dynamic_hierarchy.o\
-  evaluation.o\
   evaluation_engine.o\
   expression.o\
   expression_lexer.o\
@@ -33,7 +31,6 @@ objs += $(addprefix poincare/src/,\
   factorial.o\
   floor.o\
   frac_part.o\
-  expression_matrix.o\
   global_context.o\
   great_common_divisor.o\
   hierarchy.o\
@@ -70,6 +67,7 @@ objs += $(addprefix poincare/src/,\
   real_part.o\
   round.o\
   sequence.o\
+  simplification_engine.o\
   sine.o\
   square_root.o\
   static_hierarchy.o\

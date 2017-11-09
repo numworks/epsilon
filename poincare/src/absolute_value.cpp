@@ -1,5 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/complex.h>
+#include <poincare/simplification_engine.h>
 #include "layout/absolute_value_layout.h"
 
 extern "C" {
@@ -34,11 +35,14 @@ Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit)
   if (e != this) {
     return e;
   }
-  if (operand(0)->sign() == Sign::Positive) {
-    return replaceWith(editableOperand(0), true);
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
-  if (operand(0)->sign() == Sign::Negative) {
-    Expression * op = editableOperand(0);
+  if (op->sign() == Sign::Positive) {
+    return replaceWith(op, true);
+  }
+  if (op->sign() == Sign::Negative) {
     Expression * newOp = op->setSign(Sign::Positive, context, angleUnit);
     return replaceWith(newOp, true);
   }

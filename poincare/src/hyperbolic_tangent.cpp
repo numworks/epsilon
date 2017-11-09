@@ -3,6 +3,7 @@
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/complex.h>
 #include <poincare/division.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -17,6 +18,18 @@ Expression::Type HyperbolicTangent::type() const {
 Expression * HyperbolicTangent::clone() const {
   HyperbolicTangent * a = new HyperbolicTangent(m_operands, true);
   return a;
+}
+
+Expression * HyperbolicTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

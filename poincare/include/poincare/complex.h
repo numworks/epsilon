@@ -1,8 +1,8 @@
 #ifndef POINCARE_COMPLEX_H
 #define POINCARE_COMPLEX_H
 
-#include <poincare/evaluation.h>
 #include <poincare/preferences.h>
+#include <poincare/static_hierarchy.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -23,7 +23,7 @@ namespace PrintFloat {
 }
 
 template<typename T>
-class Complex : public Evaluation<T> {
+class Complex : public StaticHierarchy<0> {
 public:
   Complex() : m_a(0), m_b(0) {}
   static Complex<T> Float(T x);
@@ -32,33 +32,21 @@ public:
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);
+  Complex(const Complex & other);
+  Complex& operator=(const Complex& other);
 
   T a() const;
   T b() const;
   T r() const;
   T th() const;
   Complex<T> conjugate() const;
+  T toScalar() const;
 
   /* Expression */
   Expression::Type type() const override;
   Complex<T> * clone() const override;
-  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) override {
-    assert(false);
-  }
-  void swapOperands(int i, int j) override { assert(false); }
-
-  /* Evaluation */
-  T toScalar() const override;
-  int numberOfRows() const override;
-  int numberOfColumns() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Evaluation<T> * createDeterminant() const override {
-    return clone();
-  }
-  Evaluation<T> * createInverse() const override;
-  Evaluation<T> * createTrace() const override {
-    return clone();
-  }
+
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches
@@ -73,12 +61,11 @@ public:
   static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode mode = Expression::FloatDisplayMode::Default);
 private:
   Complex(T a, T b);
-  const Complex<T> * complexOperand(int i) const override;
   constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
-  Evaluation<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename U> Evaluation<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  Complex<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Complex<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename U> Complex<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it
    * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always

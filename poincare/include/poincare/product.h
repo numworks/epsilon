@@ -14,13 +14,13 @@ private:
   const char * name() const override;
   int emptySequenceValue() const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
-  Evaluation<float> * evaluateWithNextTerm(Evaluation<float> * a, Evaluation<float> * b) const override {
+  Complex<float> * evaluateWithNextTerm(Complex<float> * a, Complex<float> * b) const override {
     return templatedEvaluateWithNextTerm(a, b);
   }
-  Evaluation<double> * evaluateWithNextTerm(Evaluation<double> * a, Evaluation<double> * b) const override {
+  Complex<double> * evaluateWithNextTerm(Complex<double> * a, Complex<double> * b) const override {
     return templatedEvaluateWithNextTerm(a, b);
   }
-  template<typename T> Evaluation<T> * templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const;
+  template<typename T> Complex<T> * templatedEvaluateWithNextTerm(Complex<T> * a, Complex<T> * b) const;
 };
 
 }

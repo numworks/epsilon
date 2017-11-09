@@ -15,12 +15,8 @@ Expression * Undefined::clone() const {
   return new Undefined();
 }
 
-Evaluation<float> * Undefined::privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const {
-  return new Complex<float>(Complex<float>::Float(NAN));
-}
-
-Evaluation<double> * Undefined::privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const {
-  return new Complex<double>(Complex<double>::Float(NAN));
+template<typename T> Complex<T> * Undefined::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
 ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

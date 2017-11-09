@@ -1,5 +1,6 @@
 #include <poincare/arc_sine.h>
 #include <poincare/trigonometry.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -20,6 +21,9 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }

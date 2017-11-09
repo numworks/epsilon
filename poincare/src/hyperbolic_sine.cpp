@@ -4,6 +4,7 @@
 #include <poincare/power.h>
 #include <poincare/division.h>
 #include <poincare/opposite.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -18,6 +19,18 @@ Expression::Type HyperbolicSine::type() const {
 Expression * HyperbolicSine::clone() const {
   HyperbolicSine * a = new HyperbolicSine(m_operands, true);
   return a;
+}
+
+Expression * HyperbolicSine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+  return this;
 }
 
 template<typename T>

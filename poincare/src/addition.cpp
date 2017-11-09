@@ -1,10 +1,10 @@
 #include <poincare/addition.h>
-#include <poincare/complex_matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
+#include <poincare/matrix.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -42,6 +42,53 @@ Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
 
   // Step 2: Sort the operands
   sortOperands(Expression::SimplificationOrder);
+
+  /* Step 2bis: get rid of matrix */
+  int n = 1;
+  int m = 1;
+  /* All operands have been simplified so if any operand contains a matrix, it
+   * is at the root node of the operand. Moreover, thanks to the simplification
+   * order, all matrix operands (if any) are the last operands. */
+  Expression * lastOperand = editableOperand(numberOfOperands()-1);
+  if (lastOperand->type() == Type::Matrix) {
+    // Create in-place the matrix of addition M (in place of the last operand)
+    Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
+    n = resultMatrix->numberOfRows();
+    m = resultMatrix->numberOfColumns();
+    removeOperand(resultMatrix, false);
+    /* Scan (starting at the end) accross the addition operands to find any
+     * other matrix */
+    int i = numberOfOperands()-1;
+    while (i >= 0 && operand(i)->type() == Type::Matrix) {
+      Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(i));
+      int on = currentMatrix->numberOfRows();
+      int om = currentMatrix->numberOfColumns();
+      if (on != n || om != m) {
+        return replaceWith(new Undefined(), true);
+      }
+      // Dispatch the current matrix operands in the created additions matrix
+      for (int j = 0; j < n*m; j++) {
+        Addition * a = new Addition();
+        Expression * resultMatrixEntryJ = resultMatrix->editableOperand(j);
+        resultMatrix->replaceOperand(resultMatrixEntryJ, a, false);
+        a->addOperand(currentMatrix->editableOperand(j));
+        a->addOperand(resultMatrixEntryJ);
+        a->shallowReduce(context, angleUnit);
+      }
+      currentMatrix->detachOperands();
+      removeOperand(currentMatrix, true);
+      i--;
+    }
+    // Distribute the remaining addition on matrix operands
+    for (int i = 0; i < n*m; i++) {
+      Addition * a = static_cast<Addition *>(clone());
+      Expression * entryI = resultMatrix->editableOperand(i);
+      resultMatrix->replaceOperand(entryI, a, false);
+      a->addOperand(entryI);
+      a->shallowReduce(context, angleUnit);
+    }
+    return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
+  }
 
   /* Step 3: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
@@ -257,13 +304,7 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
 }
 
-template Poincare::Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
-template Poincare::Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
-
-template Poincare::Evaluation<float>* Poincare::Addition::computeOnMatrices<float>(Poincare::Evaluation<float>*, Poincare::Evaluation<float>*);
-template Poincare::Evaluation<double>* Poincare::Addition::computeOnMatrices<double>(Poincare::Evaluation<double>*, Poincare::Evaluation<double>*);
-
-template Poincare::Evaluation<float>* Poincare::Addition::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);
-template Poincare::Evaluation<double>* Poincare::Addition::computeOnComplexAndMatrix<double>(Poincare::Complex<double> const*, Poincare::Evaluation<double>*);
+template Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
+template Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
 
 }

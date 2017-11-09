@@ -5,10 +5,11 @@
 #include <poincare/static_hierarchy.h>
 #include <poincare/list_data.h>
 #include <poincare/matrix_data.h>
-#include <poincare/evaluation.h>
 #include <poincare/undefined.h>
 #include <poincare/simplification_root.h>
 #include <poincare/rational.h>
+#include <poincare/matrix.h>
+#include <poincare/complex.h>
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
@@ -132,9 +133,13 @@ void Expression::Simplify(Expression ** expressionAddress, Context & context, An
   *expressionAddress = root.editableOperand(0);
 }
 
-void Expression::Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
+void Expression::Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively) {
   SimplificationRoot root(*expressionAddress);
-  root.editableOperand(0)->deepReduce(context, angleUnit);
+  if (recursively) {
+    root.editableOperand(0)->deepReduce(context, angleUnit);
+  } else {
+    root.editableOperand(0)->shallowReduce(context,angleUnit);
+  }
   *expressionAddress = root.editableOperand(0);
 }
 
@@ -166,30 +171,51 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 
 /* Evaluation */
 
-template<typename T> Evaluation<T> * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
-  switch (angleUnit) {
-    case AngleUnit::Default:
-      return privateEvaluate(T(), context, Preferences::sharedPreferences()->angleUnit());
-    default:
-      return privateEvaluate(T(), context, angleUnit);
+template<typename T> Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    assert(operand(i)->type() != Type::Matrix);
   }
+  AngleUnit au = angleUnit == AngleUnit::Default ? Preferences::sharedPreferences()->angleUnit() : angleUnit;
+  if (type() == Type::Matrix) {
+    const Matrix * inputMatrix = static_cast<const Matrix *>(this);
+    Expression ** operands = new Expression *[numberOfOperands()];
+    for (int i = 0; i < numberOfOperands(); i++) {
+      operands[i] = operand(i)->privateEvaluate(T(), context, au);
+    }
+    Expression * matrix = new Matrix(operands, inputMatrix->numberOfRows(), inputMatrix->numberOfColumns(), false);
+    delete[] operands;
+    return matrix;
+  }
+  return privateEvaluate(T(), context, au);
 }
 
 template<typename T> T Expression::approximate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * evaluation = evaluate<T>(context, angleUnit);
-  T result = evaluation->toScalar();
+  Expression * evaluation = evaluate<T>(context, angleUnit);
+  assert(evaluation->type() == Type::Complex || evaluation->type() == Type::Matrix);
+  T result = NAN;
+  if (evaluation->type() == Type::Complex) {
+    result = static_cast<const Complex<T> *>(evaluation)->toScalar();
+  }
+  if (evaluation->type() == Type::Matrix) {
+    if (numberOfOperands() == 1) {
+      result = static_cast<const Complex<T> *>(operand(0))->toScalar();
+    }
+  }
   delete evaluation;
   return result;
 }
 
 template<typename T> T Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
+  T result = NAN;
   if (exp == nullptr) {
-    return NAN;
+    return result;
   }
-  Evaluation<T> * evaluation = exp->evaluate<T>(context, angleUnit);
+  Expression * evaluation = exp->evaluate<T>(context, angleUnit);
   delete exp;
-  T result = evaluation->toScalar();
+  if (evaluation->type() == Type::Complex) {
+    result = static_cast<Complex<T> *>(evaluation)->toScalar();
+  }
   delete evaluation;
   return result;
 }
@@ -241,8 +267,8 @@ const Rational * Expression::RationalFactorInExpression(const Expression * e) {
 
 }
 
-template Poincare::Evaluation<double> * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
-template Poincare::Evaluation<float> * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
 template double Poincare::Expression::approximate<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template float Poincare::Expression::approximate<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template double Poincare::Expression::approximate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;

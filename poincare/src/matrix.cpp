@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <poincare/undefined.h>
 #include "layout/grid_layout.h"
 #include "layout/bracket_layout.h"
 #include <cmath>
@@ -12,20 +13,38 @@ extern "C" {
 
 namespace Poincare {
 
-int Matrix::numberOfOperands() const {
-  return numberOfRows() * numberOfColumns();
+Matrix::Matrix(MatrixData * matrixData) :
+  DynamicHierarchy()
+{
+  assert(matrixData != nullptr);
+  m_numberOfOperands = matrixData->numberOfRows()*matrixData->numberOfColumns();
+  m_numberOfRows = matrixData->numberOfRows();
+  matrixData->pilferOperands(&m_operands);
+  for (int i = 0; i < m_numberOfOperands; i++) {
+    const_cast<Expression *>(m_operands[i])->setParent(this);
+  }
 }
 
-ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
-  for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
-  }
-  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
-  delete [] childrenLayouts;
-  return layout;
+Matrix::Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands) :
+  DynamicHierarchy(operands, numberOfRows*numberOfColumns, cloneOperands),
+  m_numberOfRows(numberOfRows)
+{
+}
+
+int Matrix::numberOfRows() const {
+  return m_numberOfRows;
+}
+
+int Matrix::numberOfColumns() const {
+  return numberOfOperands()/m_numberOfRows;
+}
+
+Expression::Type Matrix::type() const {
+  return Type::Matrix;
+}
+
+Expression * Matrix::clone() const {
+  return new Matrix(m_operands, numberOfRows(), numberOfColumns(), true);
 }
 
 int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
@@ -73,5 +92,195 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[currentChar] = 0;
   return currentChar;
 }
+
+ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != FloatDisplayMode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
+  for (int i = 0; i < numberOfOperands(); i++) {
+    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
+  }
+  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
+  delete [] childrenLayouts;
+  return layout;
+}
+
+template<typename T>
+// TODO: 1. implement determinant/inverse for complex matrix
+// TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
+Complex<T> * Matrix::createDeterminant() const {
+  if (numberOfRows() != numberOfColumns()) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  int dim = numberOfRows();
+  T ** tempMat = new T*[dim];
+  for (int i = 0; i < dim; i++) {
+    tempMat[i] = new T[dim];
+  }
+  T det = 1;
+  /* Copy the matrix */
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      const Expression * op = operand(i*dim+j);
+      assert(op->type() == Type::Complex);
+      tempMat[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
+    }
+  }
+
+  /* Main Loop: Gauss pivot */
+  for (int i = 0; i < dim-1; i++) {
+    /* Search for pivot */
+    int rowWithPivot = i;
+    for (int row = i+1; row < dim; row++) {
+      if (std::fabs(tempMat[rowWithPivot][i]) < std::fabs(tempMat[row][i])) {
+        rowWithPivot = row;
+      }
+    }
+    T valuePivot = tempMat[rowWithPivot][i];
+    /* if the pivot is null, det = 0. */
+    if (std::fabs(valuePivot) <= FLT_EPSILON) {
+      for (int i = 0; i < dim; i++) {
+        free(tempMat[i]);
+      }
+      free(tempMat);
+      return new Complex<T>(Complex<T>::Float(0.0f));
+    }
+    /* Switch rows to have the pivot row as first row */
+    if (rowWithPivot != i) {
+      for (int col = i; col < dim; col++) {
+        T temp = tempMat[i][col];
+        tempMat[i][col] = tempMat[rowWithPivot][col];
+        tempMat[rowWithPivot][col] = temp;
+      }
+      det *= -1;
+    }
+    det *= valuePivot;
+    /* Set to 0 all A[][i] by linear combination */
+    for (int row = i+1; row < dim; row++) {
+      T factor = tempMat[row][i]/valuePivot;
+      for (int col = i; col < dim; col++) {
+        tempMat[row][col] -= factor*tempMat[i][col];
+      }
+    }
+  }
+  det *= tempMat[dim-1][dim-1];
+  for (int i = 0; i < dim; i++) {
+    delete[] tempMat[i];
+  }
+  delete[] tempMat;
+  return new Complex<T>(Complex<T>::Float(det));
+}
+
+template<typename T>
+Expression * Matrix::createInverse() const {
+  if (numberOfRows() != numberOfColumns()) {
+    return new Undefined();
+  }
+  int dim = numberOfRows();
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
+  T ** inv = new T*[dim];
+  for (int i = 0; i < dim; i++) {
+    inv[i] = new T [2*dim];
+  }
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      const Expression * op = operand(i*dim+j);
+      assert(op->type() == Type::Complex);
+      inv[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
+    }
+    for (int j = dim; j < 2*dim; j++) {
+      inv[i][j] = (i+dim == j);
+    }
+  }
+  /* Main Loop: Gauss pivot */
+  for (int i = 0; i < dim; i++) {
+    /* Search for pivot */
+    int rowWithPivot = i;
+    for (int row = i+1; row < dim; row++) {
+      if (std::fabs(inv[rowWithPivot][i]) < std::fabs(inv[row][i])) {
+        rowWithPivot = row;
+      }
+    }
+    T valuePivot = inv[rowWithPivot][i];
+    /* if the pivot is null, the matrix in not invertible. */
+    if (std::fabs(valuePivot) <= FLT_EPSILON) {
+      for (int i = 0; i < dim; i++) {
+        free(inv[i]);
+      }
+      free(inv);
+      return new Undefined();
+    }
+    /* Switch rows to have the pivot row as first row */
+    if (rowWithPivot != i) {
+      for (int col = i; col < 2*dim; col++) {
+        T temp = inv[i][col];
+        inv[i][col] = inv[rowWithPivot][col];
+        inv[rowWithPivot][col] = temp;
+      }
+    }
+    /* A[pivot][] = A[pivot][]/valuePivot */
+    for (int col = 0; col < 2*dim; col++) {
+      inv[i][col] /= valuePivot;
+    }
+    /* Set to 0 all A[][row] by linear combination */
+    for (int row = 0; row < dim; row++) {
+      if (row == i) {
+        continue;
+      }
+      T factor = inv[row][i];
+      for (int col = 0; col < 2*dim; col++) {
+        inv[row][col] -= factor*inv[i][col];
+      }
+    }
+  }
+  const Expression ** operands = new const Expression * [numberOfOperands()];
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      operands[i*dim+j] = new Complex<T>(Complex<T>::Float(inv[i][j+dim]));
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    delete[] inv[i];
+  }
+  delete[] inv;
+  // Intentionally swapping dimensions for inverse, although it doesn't make a difference because it is square
+  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows(), false);
+  delete[] operands;
+  return matrix;
+}
+
+Matrix * Matrix::createTranspose() const {
+  const Expression ** operands = new const Expression * [numberOfOperands()];
+  for (int i = 0; i < numberOfRows(); i++) {
+    for (int j = 0; j < numberOfColumns(); j++) {
+      operands[j*numberOfRows()+i] = operand(i*numberOfColumns()+j);
+    }
+  }
+  // Intentionally swapping dimensions for transpose
+  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows());
+  delete[] operands;
+  return matrix;
+}
+
+Matrix * Matrix::createIdentity(int dim) {
+  Expression ** operands = new Expression * [dim*dim];
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      if (i == j) {
+        operands[i*dim+j] = new Rational(1);
+      } else {
+        operands[i*dim+j] = new Rational(0);
+      }
+    }
+  }
+  Matrix * matrix = new Matrix(operands, dim, dim);
+  delete [] operands;
+  return matrix;
+}
+
+template Expression * Matrix::createInverse<float>() const;
+template Expression * Matrix::createInverse<double>() const;
+template Complex<float> * Matrix::createDeterminant<float>() const;
+template Complex<double> * Matrix::createDeterminant<double>() const;
 
 }

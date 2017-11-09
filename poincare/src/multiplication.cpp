@@ -9,7 +9,6 @@ extern "C" {
 #include <poincare/addition.h>
 #include <poincare/power.h>
 #include <poincare/opposite.h>
-#include <poincare/complex_matrix.h>
 #include <poincare/undefined.h>
 #include <poincare/parenthesis.h>
 #include <poincare/subtraction.h>
@@ -17,6 +16,7 @@ extern "C" {
 #include <poincare/division.h>
 #include <poincare/arithmetic.h>
 #include <poincare/simplification_root.h>
+#include <poincare/matrix.h>
 #include <ion.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
@@ -63,30 +63,6 @@ Expression * Multiplication::setSign(Sign s, Context & context, AngleUnit angleU
 template<typename T>
 Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
-}
-
-template<typename T>
-Evaluation<T> * Multiplication::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
-  if (m->numberOfColumns() != n->numberOfRows()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
-  Complex<T> * operands = new Complex<T>[m->numberOfRows()*n->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows(); i++) {
-    for (int j = 0; j < n->numberOfColumns(); j++) {
-      T a = 0.0f;
-      T b = 0.0f;
-      for (int k = 0; k < m->numberOfColumns(); k++) {
-        Complex<T> mEntry = *(m->complexOperand(i*m->numberOfColumns()+k));
-        Complex<T> nEntry = *(n->complexOperand(k*n->numberOfColumns()+j));
-        a += mEntry.a()*nEntry.a() - mEntry.b()*nEntry.b();
-        b += mEntry.b()*nEntry.a() + mEntry.a()*nEntry.b();
-      }
-      operands[i*n->numberOfColumns()+j] = Complex<T>::Cartesian(a, b);
-    }
-  }
-  Evaluation<T> * result = new ComplexMatrix<T>(operands, m->numberOfRows(), n->numberOfColumns());
-  delete[] operands;
-  return result;
 }
 
 bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
@@ -140,6 +116,78 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
 
   // Step 3: Sort the operands
   sortOperands(SimplificationOrder);
+
+  /* Step 3bis: get rid of matrix */
+  int n = 1;
+  int m = 1;
+  /* All operands have been simplified so if any operand contains a matrix, it
+   * is at the root node of the operand. Moreover, thanks to the simplification
+   * order, all matrix operands (if any) are the last operands. */
+  Expression * lastOperand = editableOperand(numberOfOperands()-1);
+  if (lastOperand->type() == Type::Matrix) {
+    Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
+    // Use the last matrix operand as the final matrix
+    n = resultMatrix->numberOfRows();
+    m = resultMatrix->numberOfColumns();
+    /* Scan accross the multiplication operands to find any other matrix:
+     * (the last operand is the result matrix so we start at
+     * numberOfOperands()-2)*/
+    int k = numberOfOperands()-2;
+    while (k >= 0 && operand(k)->type() == Type::Matrix) {
+      Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(k));
+      int on = currentMatrix->numberOfRows();
+      int om = currentMatrix->numberOfColumns();
+      if (om != n) {
+        return replaceWith(new Undefined(), true);
+      }
+      // Create the matrix resulting of the multiplication of the current matrix and the result matrix
+     /*                        resultMatrix
+      *                          i2= 0..m
+      *                         +-+-+-+-+-+
+      *                         | | | | | |
+      *                         +-+-+-+-+-+
+      *                  j=0..n | | | | | |
+      *                         +-+-+-+-+-+
+      *                         | | | | | |
+      *                         +-+-+-+-+-+
+      *        currentMatrix
+      *           j=0..om
+      *         +---+---+---+   +-+-+-+-+-+
+      *         |   |   |   |   | | | | | |
+      *         +---+---+---+   +-+-+-+-+-+
+      *i1=0..on |   |   |   |   | |e| | | |
+      *         +---+---+---+   +-+-+-+-+-+
+      *         |   |   |   |   | | | | | |
+      *         +---+---+---+   +-+-+-+-+-+
+      * */
+      Expression ** newMatrixOperands = new Expression * [on*m];
+      for (int e = 0; e < on*m; e++) {
+        newMatrixOperands[e] = new Addition();
+        int i2 = e%m;
+        int i1 = e/m;
+        for (int j = 0; j < n; j++) {
+          Expression * mult = new Multiplication(currentMatrix->editableOperand(j+om*i1), resultMatrix->editableOperand(j*m+i2), true);
+          static_cast<Addition *>(newMatrixOperands[e])->addOperand(mult);
+          mult->shallowReduce(context, angleUnit);
+        }
+        Reduce(&newMatrixOperands[e], context, angleUnit, false);
+      }
+      n = on;
+      removeOperand(currentMatrix, true);
+      resultMatrix = static_cast<Matrix *>(resultMatrix->replaceWith(new Matrix(newMatrixOperands, n, m, false), true));
+      k--;
+    }
+    removeOperand(resultMatrix, false);
+    // Distribute the remaining multiplication on matrix operands
+    for (int i = 0; i < n*m; i++) {
+      Multiplication * m = static_cast<Multiplication *>(clone());
+      Expression * entryI = resultMatrix->editableOperand(i);
+      resultMatrix->replaceOperand(entryI, m, false);
+      m->addOperand(entryI);
+      m->shallowReduce(context, angleUnit);
+    }
+    return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
+  }
 
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
@@ -544,8 +592,6 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   sortOperands(SimplificationOrder);
 }
 
-template Poincare::Evaluation<float>* Poincare::Multiplication::computeOnComplexAndMatrix<float>(Poincare::Complex<float> const*, Poincare::Evaluation<float>*);
-template Poincare::Evaluation<double>* Poincare::Multiplication::computeOnComplexAndMatrix<double>(Poincare::Complex<double> const*, Poincare::Evaluation<double>*);
 }
 template Poincare::Complex<float> Poincare::Multiplication::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
 template Poincare::Complex<double> Poincare::Multiplication::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);

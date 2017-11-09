@@ -32,8 +32,8 @@ Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Evaluation<T> * Parenthesis::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  return operand(0)->evaluate<T>(context, angleUnit);
+Complex<T> * Parenthesis::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  return operand(0)->privateEvaluate(T(), context, angleUnit);
 }
 
 }

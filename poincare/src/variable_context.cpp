@@ -17,17 +17,17 @@ VariableContext<T>::VariableContext(char name, Context * parentContext) :
 
 template<typename T>
 void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
-  if (symbol->name() == m_name) {
+  /*if (symbol->name() == m_name) {
     if (expression == nullptr) {
       return;
     }
     Evaluation<T> * evaluation = expression->evaluate<T>(*m_parentContext);
-    /* WARNING: We assume that the evaluation of expression is a real */
+    * WARNING: We assume that the evaluation of expression is a real *
     m_value = Complex<T>::Float(evaluation->toScalar());
     delete evaluation;
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbol);
-  }
+  }*/
 }
 
 template<typename T>

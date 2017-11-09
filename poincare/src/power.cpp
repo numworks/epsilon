@@ -5,7 +5,8 @@ extern "C" {
 #include <cmath>
 #include <math.h>
 #include <ion.h>
-#include <poincare/complex_matrix.h>
+#include <poincare/matrix_inverse.h>
+#include <poincare/matrix.h>
 #include <poincare/power.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
@@ -71,42 +72,6 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Polar(radius, theta);
 }
 
-template<typename T> Evaluation<T> * Power::computeOnMatrixAndComplex(Evaluation<T> * m, const Complex<T> * d) {
- if (m->numberOfRows() != m->numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
-  T power = d->toScalar();
-  if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxNumberOfSteps) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
-  if (power < 0) {
-    Evaluation<T> * inverse = m->createInverse();
-    Complex<T> minusC = Opposite::compute(*d, AngleUnit::Default);
-    Evaluation<T> * result = Power::computeOnMatrixAndComplex(inverse, &minusC);
-    delete inverse;
-    return result;
-  }
-  Evaluation<T> * result = ComplexMatrix<T>::createIdentity(m->numberOfRows());
-  // TODO: implement a quick exponentiation
-  for (int k = 0; k < (int)power; k++) {
-    if (shouldStopProcessing()) {
-      delete result;
-      return new Complex<T>(Complex<T>::Float(NAN));
-    }
-    result = Multiplication::computeOnMatrices(result, m);
-  }
-  return result;
-}
-
-template<typename T> Evaluation<T> * Power::computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * n) {
-  return new Complex<T>(Complex<T>::Float(NAN));
-}
-
-template<typename T> Evaluation<T> * Power::computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n) {
-
-  return new Complex<T>(Complex<T>::Float(NAN));
-}
-
 ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -139,6 +104,42 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
+  }
+  /* Step 0: get rid of matrix */
+  if (operand(1)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+  if (operand(0)->type() == Type::Matrix) {
+    Matrix * mat = static_cast<Matrix *>(editableOperand(0));
+    if (operand(1)->type() != Type::Rational || !static_cast<const Rational *>(operand(1))->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+    Integer exponent = static_cast<const Rational *>(operand(1))->numerator();
+    if (mat->numberOfRows() != mat->numberOfColumns()) {
+      return replaceWith(new Undefined(), true);
+    }
+    if (exponent.isNegative()) {
+      Expression * inverse = new MatrixInverse(mat, false);
+      replaceOperand(mat, inverse, false);
+      inverse->shallowReduce(context, angleUnit);
+      editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
+      return shallowReduce(context, angleUnit);
+    }
+    if (Integer::NaturalOrder(exponent, Integer(k_maxNumberOfSteps)) > 0) {
+      return replaceWith(new Undefined(), true);
+    }
+    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxNumberOfSteps
+    Matrix * id = Matrix::createIdentity(mat->numberOfRows());
+    if (exp == 0) {
+      return replaceWith(id, true);
+    }
+    Multiplication * result = new Multiplication(id, mat->clone());
+    // TODO: implement a quick exponentiation
+    for (int k = 1; k < exp; k++) {
+      result->addOperand(mat->clone());
+    }
+    replaceWith(result, true);
+    return result->shallowReduce(context, angleUnit);
   }
 
   /* Step 0: We look for square root and sum of square roots (two terms maximum

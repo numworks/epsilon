@@ -37,11 +37,13 @@ private:
   Expression * distributeOnOperandAtIndex(int index, Context & context, AngleUnit angleUnit);
   Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
   void addMissingFactors(Expression * factor, Context & context, AngleUnit angleUnit);
+  void factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, AngleUnit angleUnit);
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
   static bool TermHasIntegerExponent(const Expression * e);
+  static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1

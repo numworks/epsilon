@@ -334,7 +334,6 @@ Toolbox * TextArea::toolbox() {
 
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
-    return true;
   } else if (Responder::handleEvent(event)) {
     // The only event Responder handles is 'Toolbox' displaying.
     return true;
@@ -386,4 +385,5 @@ void TextArea::moveCursor(int deltaX) {
   for (int i = 0; i < numberSteps; i++) {
     m_contentView.moveCursorIndex(sign);
   }
+  scrollToContentRect(m_contentView.cursorRect(), true);
 }

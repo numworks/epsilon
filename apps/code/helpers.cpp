@@ -35,7 +35,7 @@ static constexpr EventTextPair sEventTextMap[] = {
 };
 
 const char * PythonTextForEvent(Ion::Events::Event event) {
-  for (int i=0; i<sizeof(sEventTextMap)/sizeof(sEventTextMap[0]); i++) {
+  for (size_t i=0; i<sizeof(sEventTextMap)/sizeof(sEventTextMap[0]); i++) {
     if (event == sEventTextMap[i].event()) {
       return sEventTextMap[i].text();
     }

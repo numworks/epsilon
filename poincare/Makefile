@@ -102,6 +102,7 @@ objs += $(addprefix poincare/src/layout/,\
 
 tests += $(addprefix poincare/test/,\
   arithmetic.cpp\
+  convert_expression_to_text.cpp\
   helper.cpp\
   integer.cpp\
   simplify_easy.cpp\

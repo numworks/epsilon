@@ -81,7 +81,7 @@ Expression * Decimal::clone() const {
 
 template<typename T> Complex<T> * Decimal::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
-  int numberOfDigits = numberOfDigitsInMantissa();
+  int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
 }
 
@@ -97,18 +97,24 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
     buffer[currentChar] = 0;
     return currentChar;
   }
-  int nbOfDigitsInMantissa = numberOfDigitsInMantissa();
-  int numberOfRequiredDigits = nbOfDigitsInMantissa > m_exponent ? nbOfDigitsInMantissa : m_exponent;
-  numberOfRequiredDigits = m_exponent < 0 ? 1+nbOfDigitsInMantissa-m_exponent : numberOfRequiredDigits;
-  /* The number would be too long if we print it as a natural decimal */
+  int nbOfDigitsInMantissaWithoutSign = numberOfDigitsInMantissaWithoutSign();
+  int numberOfRequiredDigits = nbOfDigitsInMantissaWithoutSign > m_exponent ? nbOfDigitsInMantissaWithoutSign : m_exponent;
+  numberOfRequiredDigits = m_exponent < 0 ? 1+nbOfDigitsInMantissaWithoutSign-m_exponent : numberOfRequiredDigits;
+  /* Case 0: the number would be too long if we print it as a natural decimal */
   if (numberOfRequiredDigits > k_maxLength) {
-    if (nbOfDigitsInMantissa == 1) {
+    if (nbOfDigitsInMantissaWithoutSign == 1) {
       currentChar +=m_mantissa.writeTextInBuffer(buffer, bufferSize);
     } else {
       currentChar++;
+      if (currentChar >= bufferSize-1) { return bufferSize-1; }
       currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
-      buffer[0] = buffer[1];
-      buffer[1] = '.';
+      int decimalMarkerPosition = 1;
+      if (buffer[1] == '-') {
+        decimalMarkerPosition++;
+        buffer[0] = buffer[1];
+      }
+      buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
+      buffer[decimalMarkerPosition] = '.';
     }
     if (m_exponent == 0) {
       return currentChar;
@@ -118,7 +124,10 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
     currentChar += Integer(m_exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
     return currentChar;
   }
-  /* Print a natural decimal number */
+  /* Case 2: Print a natural decimal number */
+  if (m_mantissa.isNegative()) {
+    buffer[currentChar++] = '-';
+  }
   if (m_exponent < 0) {
     for (int i = 0; i <= -m_exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -129,21 +138,38 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
       buffer[currentChar++] = '0';
     }
   }
+  /* If mantissa is negative, m_mantissa.writeTextInBuffer is going to add an
+   * unwanted '-' in place of the temp char. We store it to replace it back
+   * after calling m_mantissa.writeTextInBuffer. */
+  char tempChar;
+  int tempCharPosition;
+  if (m_mantissa.isNegative()) {
+    currentChar--;
+    tempChar = buffer[currentChar];
+    tempCharPosition = currentChar;
+  }
   currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
-  if (m_exponent >= 0 && m_exponent < currentChar - 1) {
+  if (m_mantissa.isNegative()) { // replace the temp char back
+    buffer[tempCharPosition] = tempChar;
+  }
+  int currentExponent = m_mantissa.isNegative() ? currentChar-2 : currentChar-1;
+  if (m_exponent >= 0 && m_exponent < currentExponent) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-    for (int i = currentChar; i > m_exponent; i--) {
+    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent +1 : m_exponent;
+    for (int i = currentChar-1; i > decimalMarkerPosition; i--) {
       buffer[i+1] = buffer[i];
     }
-    buffer[m_exponent+1] = '.';
+    buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
-  if (m_exponent >= 0 && m_exponent > currentChar - 1) {
-    if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-    for (int i = currentChar-1; i < m_exponent; i++) {
+  if (m_exponent >= 0 && m_exponent > currentExponent) {
+    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent+1 : m_exponent;
+    for (int i = currentChar-1; i < decimalMarkerPosition; i++) {
+      if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
       buffer[currentChar++] = '0';
     }
   }
+  buffer[currentChar] = 0;
   return currentChar;
 }
 
@@ -158,7 +184,7 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
-  int numberOfDigits = numberOfDigitsInMantissa();
+  int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);
   if (m_exponent >= numberOfDigits-1) {
@@ -175,9 +201,10 @@ int Decimal::simplificationOrderSameType(const Expression * e) const {
   return 0;
 }
 
-int Decimal::numberOfDigitsInMantissa() const {
+int Decimal::numberOfDigitsInMantissaWithoutSign() const {
   int numberOfDigits = 1;
   Integer mantissaCopy = m_mantissa;
+  mantissaCopy.setNegative(false);
   IntegerDivision d = Integer::Division(mantissaCopy, Integer(10));
   while (!d.quotient.isZero()) {
     mantissaCopy = d.quotient;

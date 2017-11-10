@@ -21,7 +21,7 @@ public:
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 private:
-  int numberOfDigitsInMantissa() const;
+  int numberOfDigitsInMantissaWithoutSign() const;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e) const override;
   /* Layout */

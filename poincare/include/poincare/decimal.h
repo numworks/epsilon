@@ -16,6 +16,7 @@ public:
   static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);
   Decimal(Integer mantissa, int exponent);
+  Decimal(double f);
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;

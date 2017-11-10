@@ -29,6 +29,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
   Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }

@@ -1,6 +1,7 @@
 #include <poincare/decimal.h>
 #include <poincare/complex.h>
 #include <poincare/rational.h>
+#include <poincare/opposite.h>
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
@@ -215,6 +216,15 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-m_exponent));
   }
   return replaceWith(new Rational(numerator, denominator), true);
+}
+
+Expression * Decimal::shallowBeautify(Context & context, AngleUnit angleUnit) {
+  if (m_mantissa.isNegative()) {
+    m_mantissa.setNegative(false);
+    Opposite * o = new Opposite(this, true);
+    return replaceWith(o, true);
+  }
+  return this;
 }
 
 int Decimal::simplificationOrderSameType(const Expression * e) const {

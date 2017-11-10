@@ -17,6 +17,10 @@ Expression * ArcCosine::clone() const {
 }
 
 Expression * ArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 

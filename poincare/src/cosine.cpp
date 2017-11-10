@@ -22,6 +22,10 @@ Expression * Cosine::clone() const {
 }
 
 Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
 }
 

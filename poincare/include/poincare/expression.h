@@ -14,17 +14,68 @@ class Evaluation;
 class Rational;
 
 class Expression {
-  friend class Division;
-  friend class Logarithm;
-  friend class Opposite;
-  friend class NaperianLogarithm;
-  friend class Subtraction;
-  friend class Addition;
+  friend class Undefined;
+  friend class Rational;
+  friend class Decimal;
   friend class Multiplication;
   friend class Power;
-  friend class Trigonometry;
+  friend class Addition;
+  friend class Factorial;
+  friend class Division;
+  friend class Store;
+  friend class Sine;
+  friend class Cosine;
   friend class Tangent;
   friend class AbsoluteValue;
+  friend class ArcCosine;
+  friend class ArcSine;
+  friend class ArcTangent;
+  friend class BinomialCoefficient;
+  friend class Ceiling;
+  friend class ComplexArgument;
+  friend class ConfidenceInterval;
+  friend class Conjugate;
+  friend class Derivative;
+  friend class Determinant;
+  friend class DivisionQuotient;
+  friend class DivisionRemainder;
+  friend class Floor;
+  friend class FracPart;
+  friend class GreatCommonDivisor;
+  friend class HyperbolicArcCosine;
+  friend class HyperbolicArcSine;
+  friend class HyperbolicArcTangent;
+  friend class HyperbolicCosine;
+  friend class HyperbolicSine;
+  friend class HyperbolicTangent;
+  friend class ImaginaryPart;
+  friend class Integral;
+  friend class LeastCommonMultiple;
+  friend class Logarithm;
+  friend class MatrixDimension;
+  friend class MatrixInverse;
+  friend class MatrixTrace;
+  friend class MatrixTranspose;
+  friend class NaperianLogarithm;
+  friend class NthRoot;
+  friend class Opposite;
+  friend class Parenthesis;
+  friend class PermuteCoefficient;
+  friend class PredictionInterval;
+  friend class Product;
+  friend class RealPart;
+  friend class Round;
+  friend class SquareRoot;
+  friend class Subtraction;
+  friend class Sum;
+  friend class Symbol;
+  friend class Matrix;
+  friend class SimplificationRoot;
+  friend class Sequence;
+  friend class Trigonometry;
+  friend class EvaluationEngine;
+  friend class SimplificationEngine;
+
 public:
   enum class Type : uint8_t {
     Undefined = 0,
@@ -200,7 +251,7 @@ private:
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepReduce(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * shallowReduce(Context & context, AngleUnit angleUnit) { return this; };
+  virtual Expression * shallowReduce(Context & context, AngleUnit angleUnit);
   virtual Expression * shallowBeautify(Context & context, AngleUnit angleUnit) { return this; };
 
   // Private methods used in simplification process

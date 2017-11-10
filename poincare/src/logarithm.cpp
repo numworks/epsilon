@@ -38,6 +38,10 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
 }
 
 Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   if (operand(0)->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
     return replaceWith(new Undefined(), true);
   }

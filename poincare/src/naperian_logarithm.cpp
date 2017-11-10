@@ -23,6 +23,10 @@ Expression * NaperianLogarithm::clone() const {
 }
 
 Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
   Logarithm * l = new Logarithm(logOperands, 2, false);
   replaceWith(l, true);

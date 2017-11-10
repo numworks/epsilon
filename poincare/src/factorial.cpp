@@ -27,6 +27,10 @@ Expression * Factorial::clone() const {
 }
 
 Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   if (operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>(editableOperand(0));
     if (!r->denominator().isOne()) {

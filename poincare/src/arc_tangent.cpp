@@ -17,6 +17,10 @@ Expression * ArcTangent::clone() const {
 }
 
 Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 

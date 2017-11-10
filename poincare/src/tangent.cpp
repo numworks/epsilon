@@ -23,6 +23,10 @@ Expression * Tangent::clone() const {
 }
 
 Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
   if (newExpression->type() == Type::Tangent) {
     const Expression * op[1] = {newExpression->operand(0)};

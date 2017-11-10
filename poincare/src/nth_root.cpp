@@ -20,6 +20,10 @@ Expression * NthRoot::clone() const {
 }
 
 Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   Power * invIndex = new Power(operand(1), new Rational(-1), false);
   Power * p = new Power(operand(0), invIndex, false);
   detachOperands();

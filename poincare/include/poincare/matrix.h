@@ -19,8 +19,14 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   /* Operation on matrix */
-  template<typename T> Complex<T> * createDeterminant() const;
-  template<typename T> Expression * createInverse() const;
+  /* createDeterminant and createInverse can only be called on an approximate
+   * matrix. Both methods assert that all their operands are complex.
+   * createDeterminant returns a decimal expression (or an undefined expression)
+   * and createInverse returns a matrix of decimal expression (or an undefined
+   * expression). */
+  Expression * createDeterminant() const;
+  Expression * createInverse() const;
+
   Matrix * createTranspose() const;
   static Matrix * createIdentity(int dim);
 private:

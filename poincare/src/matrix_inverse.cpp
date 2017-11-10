@@ -29,8 +29,11 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
     // TODO: handle this exactly ; now, we approximate the operand and compute the inverse matrix on real only.
     Expression * approxMatrix = op->evaluate<double>(context, angleUnit);
     assert(approxMatrix->type() == Type::Matrix);
-    Expression * inverse = static_cast<Matrix *>(approxMatrix)->createInverse<double>();
+    Expression * inverse = static_cast<Matrix *>(approxMatrix)->createInverse();
     delete approxMatrix;
+    for (int i = 0; i < inverse->numberOfOperands(); i++) {
+      inverse->editableOperand(i)->shallowReduce(context, angleUnit);
+    }
     return replaceWith(inverse, true);
   }
   detachOperand(op);

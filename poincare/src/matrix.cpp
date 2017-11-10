@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <poincare/decimal.h>
 #include <poincare/undefined.h>
 #include "layout/grid_layout.h"
 #include "layout/bracket_layout.h"
@@ -105,25 +106,24 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return layout;
 }
 
-template<typename T>
 // TODO: 1. implement determinant/inverse for complex matrix
 // TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
-Complex<T> * Matrix::createDeterminant() const {
+Expression * Matrix::createDeterminant() const {
   if (numberOfRows() != numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Undefined();
   }
   int dim = numberOfRows();
-  T ** tempMat = new T*[dim];
+  double ** tempMat = new double*[dim];
   for (int i = 0; i < dim; i++) {
-    tempMat[i] = new T[dim];
+    tempMat[i] = new double[dim];
   }
-  T det = 1;
+  double det = 1;
   /* Copy the matrix */
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       const Expression * op = operand(i*dim+j);
       assert(op->type() == Type::Complex);
-      tempMat[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
+      tempMat[i][j] = static_cast<const Complex<double> *>(op)->toScalar(); // TODO: keep complex
     }
   }
 
@@ -136,19 +136,19 @@ Complex<T> * Matrix::createDeterminant() const {
         rowWithPivot = row;
       }
     }
-    T valuePivot = tempMat[rowWithPivot][i];
+    double valuePivot = tempMat[rowWithPivot][i];
     /* if the pivot is null, det = 0. */
-    if (std::fabs(valuePivot) <= FLT_EPSILON) {
+    if (std::fabs(valuePivot) <= DBL_EPSILON) {
       for (int i = 0; i < dim; i++) {
         free(tempMat[i]);
       }
       free(tempMat);
-      return new Complex<T>(Complex<T>::Float(0.0f));
+      return new Decimal(0.0);
     }
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < dim; col++) {
-        T temp = tempMat[i][col];
+        double temp = tempMat[i][col];
         tempMat[i][col] = tempMat[rowWithPivot][col];
         tempMat[rowWithPivot][col] = temp;
       }
@@ -157,7 +157,7 @@ Complex<T> * Matrix::createDeterminant() const {
     det *= valuePivot;
     /* Set to 0 all A[][i] by linear combination */
     for (int row = i+1; row < dim; row++) {
-      T factor = tempMat[row][i]/valuePivot;
+      double factor = tempMat[row][i]/valuePivot;
       for (int col = i; col < dim; col++) {
         tempMat[row][col] -= factor*tempMat[i][col];
       }
@@ -168,25 +168,24 @@ Complex<T> * Matrix::createDeterminant() const {
     delete[] tempMat[i];
   }
   delete[] tempMat;
-  return new Complex<T>(Complex<T>::Float(det));
+  return new Decimal(det);
 }
 
-template<typename T>
 Expression * Matrix::createInverse() const {
   if (numberOfRows() != numberOfColumns()) {
     return new Undefined();
   }
   int dim = numberOfRows();
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  T ** inv = new T*[dim];
+  double ** inv = new double*[dim];
   for (int i = 0; i < dim; i++) {
-    inv[i] = new T [2*dim];
+    inv[i] = new double [2*dim];
   }
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       const Expression * op = operand(i*dim+j);
       assert(op->type() == Type::Complex);
-      inv[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
+      inv[i][j] = static_cast<const Complex<double> *>(op)->toScalar(); // TODO: keep complex
     }
     for (int j = dim; j < 2*dim; j++) {
       inv[i][j] = (i+dim == j);
@@ -201,7 +200,7 @@ Expression * Matrix::createInverse() const {
         rowWithPivot = row;
       }
     }
-    T valuePivot = inv[rowWithPivot][i];
+    double valuePivot = inv[rowWithPivot][i];
     /* if the pivot is null, the matrix in not invertible. */
     if (std::fabs(valuePivot) <= FLT_EPSILON) {
       for (int i = 0; i < dim; i++) {
@@ -213,7 +212,7 @@ Expression * Matrix::createInverse() const {
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < 2*dim; col++) {
-        T temp = inv[i][col];
+        double temp = inv[i][col];
         inv[i][col] = inv[rowWithPivot][col];
         inv[rowWithPivot][col] = temp;
       }
@@ -227,7 +226,7 @@ Expression * Matrix::createInverse() const {
       if (row == i) {
         continue;
       }
-      T factor = inv[row][i];
+      double factor = inv[row][i];
       for (int col = 0; col < 2*dim; col++) {
         inv[row][col] -= factor*inv[i][col];
       }
@@ -236,7 +235,7 @@ Expression * Matrix::createInverse() const {
   const Expression ** operands = new const Expression * [numberOfOperands()];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*dim+j] = new Complex<T>(Complex<T>::Float(inv[i][j+dim]));
+      operands[i*dim+j] = new Decimal(inv[i][j+dim]);
     }
   }
   for (int i = 0; i < dim; i++) {
@@ -277,10 +276,5 @@ Matrix * Matrix::createIdentity(int dim) {
   delete [] operands;
   return matrix;
 }
-
-template Expression * Matrix::createInverse<float>() const;
-template Expression * Matrix::createInverse<double>() const;
-template Complex<float> * Matrix::createDeterminant<float>() const;
-template Complex<double> * Matrix::createDeterminant<double>() const;
 
 }

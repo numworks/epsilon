@@ -26,9 +26,9 @@ Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
     // TODO: handle this exactly ; now, we approximate the operand and compute the determinant on real only.
     Expression * approxMatrix = op->evaluate<double>(context, angleUnit);
     assert(approxMatrix->type() == Type::Matrix);
-    Complex<double> * det = static_cast<Matrix *>(approxMatrix)->createDeterminant<double>();
+    Expression * det = static_cast<Matrix *>(approxMatrix)->createDeterminant();
     delete approxMatrix;
-    return replaceWith(det, true);
+    return replaceWith(det, true)->shallowReduce(context, angleUnit);
   }
   return replaceWith(op, true);
 }

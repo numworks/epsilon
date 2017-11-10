@@ -40,7 +40,7 @@ void MenuController::didBecomeFirstResponder() {
     app()->setFirstResponder(&m_consoleButton);
     return;
   }
-  assert(m_selectableTableView.selectedRow() < numberOfRows());
+  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
   app()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -62,7 +62,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts()) {
       configureScript();
       return true;
-    } else if (selectedRow == m_scriptStore->numberOfScripts()) {
+    } else if (shouldDisplayAddScriptRow() && selectedRow == m_scriptStore->numberOfScripts()) {
       addScript();
       return true;
     }
@@ -80,6 +80,7 @@ void MenuController::setParameteredScript() {
 }
 
 void MenuController::addScript() {
+  assert(m_scriptStore->numberOfScripts() < k_maxNumberOfScripts);
   if (m_scriptStore->addNewScript()) {
     m_selectableTableView.reloadData();
     renameScriptAtIndex(m_scriptStore->numberOfScripts()-1);
@@ -109,10 +110,14 @@ void MenuController::reloadConsole() {
   m_consoleController.unloadPythonEnvironment();
 }
 
+bool MenuController::shouldDisplayAddScriptRow() {
+  return (m_scriptStore->numberOfScripts() < k_maxNumberOfScripts
+        && !m_scriptStore->isFull());
+}
+
 int MenuController::numberOfRows() {
-  return m_scriptStore->numberOfScripts() + 1;
-  //TODO do not add the addScript row if there can be no more scripts stored.
-};
+  return m_scriptStore->numberOfScripts() + shouldDisplayAddScriptRow();
+}
 
 KDCoordinate MenuController::rowHeight(int j) {
   return cellHeight();
@@ -152,7 +157,7 @@ int MenuController::reusableCellCount(int type) {
 int MenuController::typeAtLocation(int i, int j) {
   assert(i==0);
   assert(j>=0 && j<numberOfRows());
-  if (j == numberOfRows()-1) {
+  if (j == numberOfRows()-1 && shouldDisplayAddScriptRow()) {
     return AddScriptCellType;
   } else {
     return ScriptCellType;

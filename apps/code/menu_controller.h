@@ -23,6 +23,7 @@ public:
   void renameScriptAtIndex(int i);
   void deleteScriptAtIndex(int i);
   void reloadConsole();
+  bool shouldDisplayAddScriptRow();
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }
@@ -55,7 +56,8 @@ public:
   }
 
 private:
-  static constexpr int k_maxNumberOfDisplayableScriptCells = 7; //TODO
+  static constexpr int k_maxNumberOfScripts = 8;
+  static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
   static constexpr int AddScriptCellType = 0;
   static constexpr int ScriptCellType = 1;
   static constexpr KDCoordinate k_rowHeight = 50; //TODO create common parent class with Shared::ListController

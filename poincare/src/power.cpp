@@ -180,6 +180,19 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
     }
   }
+  // x^log(y,x)->y if y > 0
+  if (operand(1)->type() == Type::Logarithm) {
+    if (operand(1)->numberOfOperands() == 2 && operand(0)->isIdenticalTo(operand(1)->operand(1))) {
+      // y > 0
+      if (operand(1)->operand(0)->sign() == Sign::Positive) {
+        return replaceWith(editableOperand(1)->editableOperand(0), true);
+      }
+    }
+    // 10^log(y)
+    if (operand(1)->numberOfOperands() == 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isTen()) {
+      return replaceWith(editableOperand(1)->editableOperand(0), true);
+    }
+  }
   // (a^b)^c -> a^(b+c) if a > 0 or c is integer
   if (operand(0)->type() == Type::Power) {
     Power * p = static_cast<Power *>(editableOperand(0));

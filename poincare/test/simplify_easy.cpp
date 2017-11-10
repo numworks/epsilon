@@ -372,6 +372,10 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("ln(X^3)", "3");
   assert_parsed_expression_simplify_to("log(10)", "1");
   assert_parsed_expression_simplify_to("log(R(3),R(3))", "1");
+  assert_parsed_expression_simplify_to("X^ln(3)", "3");
+  assert_parsed_expression_simplify_to("X^ln(R(3))", "R(3)");
+  assert_parsed_expression_simplify_to("P^log(R(3),P)", "R(3)");
+  assert_parsed_expression_simplify_to("10^log(P)", "P");
 
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");

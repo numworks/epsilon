@@ -58,8 +58,10 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
     return replaceWith(new Rational(1), true);
   }
-  // log(x^y)->y*log(x)
-  if (op->type() == Type::Power) {
+  /* log(x^y)->y*log(x)
+   * We do not apply this rule if the parent node is a power in case there
+   * could be a simplication of form e^ln(3^(1/2))->3^(1/2) */
+  if (op->type() == Type::Power && parent()->type() != Type::Power) {
     Power * p = static_cast<Power *>(op);
     Expression * x = p->editableOperand(0);
     Expression * y = p->editableOperand(1);

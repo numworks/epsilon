@@ -99,6 +99,10 @@ void ScriptStore::deleteAllScripts() {
   m_accordion.deleteAll();
 }
 
+bool ScriptStore::isFull() {
+  return (m_accordion.freeSpaceSize() < k_fullFreeSpaceSizeLimit);
+}
+
 const char * ScriptStore::contentOfScript(const char * name) {
   Script script = scriptNamed(name);
   if (script.isNull()) {
@@ -106,7 +110,6 @@ const char * ScriptStore::contentOfScript(const char * name) {
   }
   return script.content();
 }
-
 
 bool ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
   const char autoImportationString[2] = {Script::DefaultAutoImportationMarker, 0};

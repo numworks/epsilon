@@ -101,6 +101,20 @@ void Accordion::deleteAll() {
   m_numberOfBuffers = 0;
 }
 
+int Accordion::freeSpaceSize() {
+  cleanFreeSpace();
+  int sizeOfFreeSpace = 0;
+  int freeSpaceStart = startOfFreeSpace();
+  for (int i = freeSpaceStart; i < m_historySize; i++) {
+    if (m_history[i] == k_freeSpaceMarker) {
+      sizeOfFreeSpace++;
+    } else {
+      return sizeOfFreeSpace;
+    }
+  }
+  return sizeOfFreeSpace;
+}
+
 int Accordion::startOfBufferAtIndex(int index) {
   assert(index >= 0 && index < numberOfBuffers());
   cleanFreeSpace();
@@ -146,20 +160,6 @@ int Accordion::startOfFreeSpace() {
   }
   assert(false);
   return 0;
-}
-
-int Accordion::freeSpaceSize() {
-  cleanFreeSpace();
-  int sizeOfFreeSpace = 0;
-  int freeSpaceStart = startOfFreeSpace();
-  for (int i = freeSpaceStart; i < m_historySize; i++) {
-    if (m_history[i] == k_freeSpaceMarker) {
-      sizeOfFreeSpace++;
-    } else {
-      return sizeOfFreeSpace;
-    }
-  }
-  return sizeOfFreeSpace;
 }
 
 void Accordion::cleanFreeSpace() {

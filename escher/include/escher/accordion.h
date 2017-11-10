@@ -20,12 +20,12 @@ public:
   void deleteBufferAtIndex(int index);
   void deleteLastBuffer();
   void deleteAll();
+  int freeSpaceSize();
 private:
   static constexpr char k_freeSpaceMarker = 0x01;
   int startOfBufferAtIndex(int index);
   int endOfBufferAtIndex(int index);
   int startOfFreeSpace();
-  int freeSpaceSize();
   void cleanFreeSpace();
   /* When a buffer is edited, there is garbage after the first null char of the
    * buffer. cleanFreeSpace() declares the space after this null char as free,

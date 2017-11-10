@@ -28,11 +28,15 @@ public:
   void switchAutoImportAtIndex(int index);
   void deleteScriptAtIndex(int index);
   void deleteAllScripts();
+  bool isFull();
 
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
 private:
+  static constexpr int k_fullFreeSpaceSizeLimit = 50;
+  // If m_accordion's free space has a size smaller than
+  // k_fullFreeSpaceSizeLimit, we consider the script store as full.
   static constexpr size_t k_scriptDataSize = 4096;
   bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
   bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);

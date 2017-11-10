@@ -81,7 +81,7 @@ bool Expression::recursivelyMatches(ExpressionTest test) const {
     return true;
   }
   for (int i = 0; i < numberOfOperands(); i++) {
-    if (test(operand(i))) {
+    if (operand(i)->recursivelyMatches(test)) {
       return true;
     }
   }

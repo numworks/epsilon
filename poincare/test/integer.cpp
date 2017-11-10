@@ -31,12 +31,18 @@ QUIZ_CASE(poincare_integer_addition) {
   assert(Integer::Addition(Integer("0"), Integer("0")).isEqualTo(Integer(0)));
   assert(Integer::Addition(Integer(123), Integer(456)).isEqualTo(Integer(579)));
   assert(Integer::Addition(Integer("123456789123456789"), Integer(1)).isEqualTo(Integer("123456789123456790")));
+  assert(Integer::Addition(Integer("-123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer("0")));
+  assert(Integer::Addition(Integer("234"), Integer(-234)).isEqualTo(Integer(0)));
 }
 
 QUIZ_CASE(poincare_integer_subtraction) {
   assert(Integer::Subtraction(Integer(123), Integer(23)).isEqualTo(Integer(100)));
   assert(Integer::Subtraction(Integer("123456789123456789"), Integer("9999999999")).isEqualTo(Integer("123456779123456790")));
   assert(Integer::Subtraction(Integer(23), Integer(100)).isEqualTo(Integer(-77)));
+  assert(Integer::Subtraction(Integer(23), Integer(23)).isEqualTo(Integer(0)));
+  assert(Integer::Subtraction(Integer(-23), Integer(-23)).isEqualTo(Integer(0)));
+  assert(Integer::Subtraction(Integer("-123456789123456789"), Integer("-123456789123456789")).isEqualTo(Integer(0)));
+  assert(Integer::Subtraction(Integer("123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer(0)));
 }
 
 QUIZ_CASE(poincare_integer_multiplication) {
@@ -46,6 +52,8 @@ QUIZ_CASE(poincare_integer_multiplication) {
   assert(Integer::Multiplication(Integer(-12), Integer(-34)).isEqualTo(Integer(408)));
   assert(Integer::Multiplication(Integer(123456), Integer(654321)).isEqualTo(Integer("80779853376")));
   assert(Integer::Multiplication(Integer("9999999999"), Integer("9999999999")).isEqualTo(Integer("99999999980000000001")));
+  assert(Integer::Multiplication(Integer("-23"), Integer("0")).isEqualTo(Integer("0")));
+  assert(Integer::Multiplication(Integer("-23456787654567765456"), Integer("0")).isEqualTo(Integer("0")));
 }
 
 QUIZ_CASE(poincare_integer_divide) {
@@ -66,6 +74,8 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).quotient.isEqualTo(Integer("123456789101112131415161718192021222")) && Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).remainder.isEqualTo(Integer("3")));
   assert(Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).quotient.isEqualTo(Integer("12345678910111213141516171819202122")) && Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).remainder.isEqualTo(Integer("2")));
   assert(Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212")) && Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).remainder.isEqualTo(Integer("2")));
+  assert(Integer::Division(Integer("0"), Integer("-10")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-10")).remainder.isEqualTo(Integer("0")));
+  assert(Integer::Division(Integer("0"), Integer("-123456789098760")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-123456789098760")).remainder.isEqualTo(Integer("0")));
 }
 
 template<typename T>

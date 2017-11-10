@@ -29,6 +29,10 @@ void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textArea);
 }
 
+void EditorController::viewWillAppear() {
+  m_textArea.moveCursor(strlen(m_textArea.text() - m_textArea.cursorLocation()));
+}
+
 void EditorController::viewDidDisappear() {
   m_scriptParameterController->scriptContentEditionDidFinish();
 }

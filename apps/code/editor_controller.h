@@ -17,6 +17,7 @@ public:
   View * view() override { return &m_textArea; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 

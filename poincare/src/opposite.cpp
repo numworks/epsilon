@@ -29,6 +29,10 @@ Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
 }
 
 Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   const Expression * op = operand(0);
   detachOperand(op);
   Multiplication * m = new Multiplication(new Rational(-1), op, false);

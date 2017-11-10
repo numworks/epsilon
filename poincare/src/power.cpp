@@ -136,6 +136,10 @@ int Power::simplificationOrderGreaterType(const Expression * e) const {
 }
 
 Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
 
   /* Step 0: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */

@@ -23,6 +23,10 @@ Expression * Addition::clone() const {
 /* Simplication */
 
 Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   /* Step 1: Addition is associative, so let's start by merging children which
    * also are additions themselves. */
   int i = 0;

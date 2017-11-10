@@ -141,11 +141,18 @@ void Expression::Reduce(Expression ** expressionAddress, Context & context, Angl
 Expression * Expression::deepReduce(Context & context, AngleUnit angleUnit) {
   assert(parent() != nullptr);
   for (int i = 0; i < numberOfOperands(); i++) {
-    if ((editableOperand(i))->deepReduce(context, angleUnit)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
+    editableOperand(i)->deepReduce(context, angleUnit);
+  }
+  return shallowReduce(context, angleUnit);
+}
+
+Expression * Expression::shallowReduce(Context & context, AngleUnit angleUnit) {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    if (editableOperand(i)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
       return replaceWith(new Undefined(), true);
     }
   }
-  return shallowReduce(context, angleUnit);
+  return this;
 }
 
 Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {

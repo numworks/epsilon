@@ -154,6 +154,10 @@ ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMod
 }
 
 Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   int numberOfDigits = numberOfDigitsInMantissa();
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);

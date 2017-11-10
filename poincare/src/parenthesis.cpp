@@ -24,6 +24,10 @@ ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDispla
 }
 
 Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   return replaceWith(editableOperand(0), true);
 }
 

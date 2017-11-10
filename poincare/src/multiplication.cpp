@@ -113,6 +113,10 @@ static inline const Expression * Base(const Expression * e) {
 }
 
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   /* Step 1: Multiplication is associative, so let's start by merging children
    * which also are multiplications themselves. */
   int i = 0;

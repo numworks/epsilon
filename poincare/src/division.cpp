@@ -23,6 +23,10 @@ Expression * Division::clone() const {
 }
 
 Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
   Power * p = new Power(operand(1), new Rational(-1), false);
   Multiplication * m = new Multiplication(operand(0), p, false);
   detachOperands();

@@ -180,7 +180,9 @@ Integer& Integer::operator=(const Integer& other) {
 }
 
 void Integer::setNegative(bool negative) {
-  assert(!(negative && isZero())); // Zero cannot be negative
+  if (isZero()) { // Zero cannot be negative
+    return;
+  }
   m_negative = negative;
 }
 

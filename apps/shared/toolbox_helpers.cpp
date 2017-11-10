@@ -23,19 +23,17 @@ void TextToInsertForCommandMessage(I18n::Message message, char * buffer) {
     if (messageText[i] == '.') {
       currentNewTextIndex = 0;
       numberOfOpenBrackets = 0;
-    } else if (messageText[i] == '(') {
-      numberOfOpenBrackets++;
     } else if (messageText[i] == ')') {
       numberOfOpenBrackets--;
     }
-    if (numberOfOpenBrackets == 0
-        || messageText[i] == ','
-        || messageText[i] == '('
-        || messageText[i] == ')')
+    if (numberOfOpenBrackets == 0 || messageText[i] == ',')
     {
       buffer[currentNewTextIndex] = messageText[i];
       buffer[currentNewTextIndex + 1] = 0;
       currentNewTextIndex++;
+    }
+    if (messageText[i] == '(') {
+      numberOfOpenBrackets++;
     }
   }
 }

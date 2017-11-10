@@ -33,7 +33,7 @@ public:
   const char * contentOfScript(const char * name) override;
 
 private:
-  static constexpr size_t k_scriptDataSize = 1024;
+  static constexpr size_t k_scriptDataSize = 4096;
   bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
   bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);
   int accordionIndexOfScriptAtIndex(int index) const;

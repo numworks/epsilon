@@ -217,7 +217,7 @@ protected:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   template<typename T> static T epsilon();
-  constexpr static float k_maxNumberOfSteps = 10000.0f;
+  constexpr static int k_maxNumberOfSteps = 10000;
 
   /* Simplification */
   /* SimplificationOrder returns:

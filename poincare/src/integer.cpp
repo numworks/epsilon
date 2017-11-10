@@ -34,6 +34,21 @@ static inline int8_t sign(bool negative) {
 
 // Constructors
 
+Integer::Integer(double_native_int_t i) {
+  double_native_uint_t j = i < 0 ? -i : i;
+  if (j <= 0xFFFFFFFF) {
+    m_digit = j;
+    m_numberOfDigits = 1;
+  } else {
+    native_uint_t * digits = new native_uint_t [2];
+    digits[0] = j & 0xFFFFFFFF;
+    digits[1] = (j >> 32) & 0xFFFFFFFF;
+    m_digits = digits;
+    m_numberOfDigits = 2;
+  }
+  m_negative = i < 0;
+}
+
 /* Caution: string is NOT guaranteed to be NULL-terminated! */
 Integer::Integer(const char * digits, bool negative) :
   Integer(0)
@@ -408,9 +423,9 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   }
   Integer A = numerator;
   Integer B = denominator;
-  native_uint_t base = (double_native_uint_t)1 << 16;
+  native_int_t base = (double_native_uint_t)1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
-  native_uint_t d = base/(native_uint_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
+  native_int_t d = base/(native_int_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
   A = Multiplication(Integer(d), A);
   B = Multiplication(Integer(d), B);
 

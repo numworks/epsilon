@@ -16,6 +16,7 @@ class Integer {
 public:
   typedef uint16_t half_native_uint_t;
   typedef int32_t native_int_t;
+  typedef int64_t double_native_int_t;
   typedef uint32_t native_uint_t;
   typedef uint64_t double_native_uint_t;
 
@@ -26,6 +27,7 @@ public:
     m_negative(i<0)
   {
   }
+  Integer(double_native_int_t i);
   Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
   static Integer exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent);

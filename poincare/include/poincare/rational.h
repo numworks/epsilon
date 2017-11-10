@@ -33,6 +33,7 @@ public:
   bool isMinusOne() const { return m_numerator.isMinusOne() && m_denominator.isOne(); }
   bool isHalf() const { return m_numerator.isOne() && m_denominator.isTwo(); }
   bool isMinusHalf() const { return m_numerator.isMinusOne() && m_denominator.isTwo(); }
+  bool isTen() const { return m_numerator.isTen() && m_denominator.isOne(); }
 
   // Arithmetic
   static Rational Addition(const Rational & i, const Rational & j);

@@ -54,21 +54,9 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
     return replaceWith(new Undefined(), true);
   }
-  if (op->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(operand(0));
-    // log(0) = undef
-    if (r->isZero()) {
-      return replaceWith(new Undefined(), true);
-    }
-    // log(1) = 0;
-    if (r->isOne()) {
-      return replaceWith(new Rational(0), true);
-    }
-    Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
-    Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-    Addition * a = new Addition(n, d, false);
-    replaceWith(a, true);
-    return a->shallowReduce(context, angleUnit);
+  // log(x,x)->1
+  if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
+    return replaceWith(new Rational(1), true);
   }
   // log(x^y)->y*log(x)
   if (op->type() == Type::Power) {
@@ -80,6 +68,26 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     Expression * newLog = shallowReduce(context, angleUnit);
     newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
     return newLog->shallowReduce(context, angleUnit);;
+  }
+  if (op->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(operand(0));
+    // log(0) = undef
+    if (r->isZero()) {
+      return replaceWith(new Undefined(), true);
+    }
+    // log(1) = 0;
+    if (r->isOne()) {
+      return replaceWith(new Rational(0), true);
+    }
+    // log(10) ->1
+    if (numberOfOperands() == 1 && r->isTen()) {
+      return replaceWith(new Rational(1), true);
+    }
+    Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
+    Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
+    Addition * a = new Addition(n, d, false);
+    replaceWith(a, true);
+    return a->shallowReduce(context, angleUnit);
   }
   return this;
 }

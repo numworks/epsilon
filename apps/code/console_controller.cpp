@@ -229,7 +229,7 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
-  int textCutIndex = firstNewLineCharIndex(text, length);
+  size_t textCutIndex = firstNewLineCharIndex(text, length);
   // If there is no new line in text, just append it to the output accumulation
   // buffer.
   if (textCutIndex >= length) {
@@ -281,7 +281,7 @@ void ConsoleController::flushOutputAccumulationBufferToStore() {
 void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, size_t length) {
   int endOfAccumulatedText = strlen(m_outputAccumulationBuffer);
   int spaceLeft = k_outputAccumulationBufferSize - endOfAccumulatedText;
-  if (spaceLeft > length) {
+  if (spaceLeft > (int)length) {
     memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, length);
     return;
   }
@@ -296,8 +296,8 @@ void ConsoleController::emptyOutputAccumulationBuffer() {
   }
 }
 
-int ConsoleController::firstNewLineCharIndex(const char * text, size_t length) {
-  int index = 0;
+size_t ConsoleController::firstNewLineCharIndex(const char * text, size_t length) {
+  size_t index = 0;
   while (index < length) {
     if (text[index] == '\n') {
       return index;

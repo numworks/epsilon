@@ -69,7 +69,7 @@ private:
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
-  int firstNewLineCharIndex(const char * text, size_t length);
+  size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
   bool copyCurrentLineToClipboard();
   int m_rowHeight;

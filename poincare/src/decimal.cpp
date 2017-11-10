@@ -45,6 +45,15 @@ int Decimal::exponent(const char * integralPart, int integralPartLength, const c
   return exp;
 }
 
+void removeZeroAtTheEnd(Integer & i) {
+  Integer base = Integer(10);
+  IntegerDivision d = Integer::Division(i, base);
+  while (d.remainder.isZero()) {
+    i = d.quotient;
+    d = Integer::Division(i, base);
+  }
+}
+
 Integer Decimal::mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative) {
   Integer zero = Integer(0);
   Integer base = Integer(10);
@@ -57,11 +66,7 @@ Integer Decimal::mantissa(const char * integralPart, int integralPartLength, con
   if (numerator.isZero()) {
     return numerator;
   }
-  IntegerDivision d = Integer::Division(numerator, base);
-  while (d.remainder.isZero()) {
-    numerator = d.quotient;
-    d = Integer::Division(numerator, base);
-  }
+  removeZeroAtTheEnd(numerator);
   return numerator;
 }
 
@@ -69,6 +74,23 @@ Decimal::Decimal(Integer mantissa, int exponent) :
   m_mantissa(mantissa),
   m_exponent(exponent)
 {
+}
+
+Decimal::Decimal(double f) {
+  double logBase10 = f != 0 ? std::log10(std::fabs(f)) : 0;
+  int exponentInBase10 = std::floor(logBase10);
+  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
+   * but is stored as 7 in hardware. We catch these cases here. */
+  if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
+    exponentInBase10--;
+  }
+  int precision = 15;
+  double mantissa = f*std::pow(10, (double)-exponentInBase10); // TODO: hangle exponentInBase10 is too big! mantissa is nan
+  mantissa = mantissa * std::pow(10, (double)(precision-1));
+  int64_t integerMantissa = std::round(mantissa);
+  m_mantissa = Integer(integerMantissa);
+  removeZeroAtTheEnd(m_mantissa);
+  m_exponent = exponentInBase10;
 }
 
 Expression::Type Decimal::type() const {

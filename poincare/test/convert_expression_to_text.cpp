@@ -61,4 +61,27 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&d9, "-0.12345");
   Decimal d10(Integer("12345"),-1);
   assert_expression_prints_to(&d10, "0.12345");
+
+  Decimal e0(-1.23456789E30);
+  assert_expression_prints_to(&e0, "-1.23456789E30");
+  Decimal e1(1.23456789E30);
+  assert_expression_prints_to(&e1, "1.23456789E30");
+  Decimal e2(-1.23456789E-30);
+  assert_expression_prints_to(&e2, "-1.23456789E-30");
+  Decimal e3(-1.2345E-3);
+  assert_expression_prints_to(&e3, "-0.0012345");
+  Decimal e4(1.2345E-3);
+  assert_expression_prints_to(&e4, "0.0012345");
+  Decimal e5(1.2345E3);
+  assert_expression_prints_to(&e5, "1234.5");
+  Decimal e6(-1.2345E3);
+  assert_expression_prints_to(&e6, "-1234.5");
+  Decimal e7(1.2345E6);
+  assert_expression_prints_to(&e7, "1234500");
+  Decimal e8(-1.2345E6);
+  assert_expression_prints_to(&e8, "-1234500");
+  Decimal e9(-1.2345E-1);
+  assert_expression_prints_to(&e9, "-0.12345");
+  Decimal e10(1.2345E-1);
+  assert_expression_prints_to(&e10, "0.12345");
 }

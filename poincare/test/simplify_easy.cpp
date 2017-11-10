@@ -32,9 +32,28 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
   delete f;
 }
 
-
 QUIZ_CASE(poincare_simplify_easy) {
   //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)");
+  // Addition Matrix
+  assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", "[[2,3,4][5,6,7]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", "[[2,3,4][5,6,7]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]+[[1,2,3][4,5,6]]", "undef");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]", "[[2,4,6][8,10,12]]");
+  assert_parsed_expression_simplify_to("2+[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]", "[[4,6,8][10,12,14]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+cos(2)+[[1,2,3][4,5,6]]", "[[2+cos(2),4+cos(2),6+cos(2)][8+cos(2),10+cos(2),12+cos(2)]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+10+[[1,2,3][4,5,6]]+R(2)", "[[12+R(2),14+R(2),16+R(2)][18+R(2),20+R(2),22+R(2)]]");
+
+  // Multiplication Matrix
+  assert_parsed_expression_simplify_to("2*[[1,2,3][4,5,6]]", "[[2,4,6][8,10,12]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]*R(2)", "[[R(2),2R(2),3R(2)][4R(2),5R(2),6R(2)]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]*[[1,2,3][4,5,6]]", "[[9, 12, 15][19, 26, 33]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]*[[1,2][2,3][5,6]]", "[[20, 26][44, 59]]");
+  assert_parsed_expression_simplify_to("[[1,2,3,4][4,5,6,5]]*[[1,2][2,3][5,6]]", "undef");
+
+  // Power Matrix
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^(-1)", "undef");
+
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");
   assert_parsed_expression_simplify_to("-1/3", "-1/3");

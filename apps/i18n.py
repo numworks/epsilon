@@ -53,7 +53,7 @@ def parse_files(files):
             data[locale] = {}
         with open(path, "r") as file:
             for line in file:
-                name,definition = split_line(line)
+                name,definition = split_line(line.strip())
                 if locale == "universal":
                     if name in messages:
                         sys.stderr.write("Error: Redefinition of message \"" + name + "\" as universal\n")

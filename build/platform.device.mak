@@ -2,6 +2,10 @@ TOOLCHAIN ?= arm-gcc
 USE_LIBA = 1
 EXE = elf
 
+ifneq (,$(findstring MSYS_NT,$(shell uname)))
+TOOLCHAIN = mingw
+endif
+
 .PHONY: %_run
 %_run: %.$(EXE)
 	$(GDB) -x gdb_script.gdb $<

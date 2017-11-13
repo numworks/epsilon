@@ -17,6 +17,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setText(char * textBuffer, size_t textBufferSize);
   void insertText(const char * textBuffer) { m_contentView.insertText(textBuffer); }
+  void insertTextWithIndentation(const char * textBuffer);
+  int indentationBeforeCursor() const;
   void removeChar() { m_contentView.removeChar(); }
   const char * text() const { return m_contentView.text(); }
   int cursorLocation() const { return m_contentView.cursorLocation(); }

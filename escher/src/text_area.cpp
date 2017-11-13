@@ -379,6 +379,36 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
   m_contentView.moveCursorGeo(0, 0);
 }
 
+void TextArea::insertTextWithIndentation(const char * textBuffer) {
+  int indentation = indentationBeforeCursor();
+  char spaceString[indentation+1];
+  for (int i = 0; i < indentation; i++) {
+    spaceString[i] = ' ';
+  }
+  spaceString[indentation] = 0;
+  for (size_t i = 0; i < strlen(textBuffer); i++) {
+    const char charString[] = {textBuffer[i], 0};
+    insertText(charString);
+    if (textBuffer[i] == '\n') {
+      insertText(spaceString);
+    }
+  }
+}
+
+int TextArea::indentationBeforeCursor() const {
+  int charIndex = cursorLocation()-1;
+  int indentationSize = 0;
+  while (charIndex >= 0 && m_contentView.text()[charIndex] != '\n') {
+    if (m_contentView.text()[charIndex] == ' ') {
+      indentationSize++;
+    } else {
+      indentationSize = 0;
+    }
+    charIndex--;
+  }
+  return indentationSize;
+}
+
 void TextArea::moveCursor(int deltaX) {
   int sign = deltaX > 0? 1 : -1;
   int numberSteps = deltaX * sign;

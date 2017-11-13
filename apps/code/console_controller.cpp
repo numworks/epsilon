@@ -191,7 +191,8 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
 }
 
 bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
+  return (strlen(textField->text()) > 0
+      && (event == Ion::Events::OK || event == Ion::Events::EXE));
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {

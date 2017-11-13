@@ -359,8 +359,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     if (!m_contentView.removeEndOfLine()) {
       m_contentView.removeStartOfLine();
     }
-  } else
-  {
+  } else if (event == Ion::Events::Paste) {
+    insertText(Clipboard::sharedClipboard()->storedText());
+  } else {
     return false;
   }
   /* Technically, we do not need to overscroll in text area. However,

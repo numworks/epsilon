@@ -1,7 +1,6 @@
 SFLAGS += -Iescher/include
 
 objs += $(addprefix escher/src/,\
-  accordion.o\
   alternate_empty_view_controller.o\
   app.o\
   buffer_text_view.o\

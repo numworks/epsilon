@@ -1,9 +1,9 @@
 #ifndef CODE_SCRIPT_STORE_H
 #define CODE_SCRIPT_STORE_H
 
+#include "accordion.h"
 #include "script.h"
 #include "script_template.h"
-#include <escher/accordion.h>
 #include <python/port/port.h>
 
 namespace Code {

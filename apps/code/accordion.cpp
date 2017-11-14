@@ -1,4 +1,4 @@
-#include <escher/accordion.h>
+#include "accordion.h"
 #include <assert.h>
 #include <string.h>
 

@@ -24,6 +24,7 @@ public:
   void renameSelectedScript();
   void deleteScriptAtIndex(int i);
   void reloadConsole();
+  void openConsoleWithScriptAtIndex(int scriptIndex);
   bool shouldDisplayAddScriptRow();
   void scriptContentEditionDidFinish();
 
@@ -94,6 +95,7 @@ private:
   ConsoleController m_consoleController;
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;
+  bool m_reloadConsoleWhenBecomingFirstResponder;
 };
 
 }

@@ -30,7 +30,7 @@ ConsoleController::~ConsoleController() {
   unloadPythonEnvironment();
 }
 
-bool ConsoleController::loadPythonEnvironment() {
+bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
   if(pythonEnvironmentIsLoaded()) {
     return true;
   }
@@ -43,7 +43,9 @@ bool ConsoleController::loadPythonEnvironment() {
   }
   MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
   MicroPython::registerScriptProvider(m_scriptStore);
-  autoImport();
+  if (autoImportScripts) {
+    autoImport();
+  }
   return true;
 }
 
@@ -72,8 +74,6 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   runCode(command);
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
-  m_selectableTableView.reloadData();
-  m_editCell.setEditing(true);
 }
 
 void ConsoleController::removeExtensionIfAny(char * name) {
@@ -211,6 +211,8 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   runAndPrintForCommand(text);
+  m_selectableTableView.reloadData();
+  m_editCell.setEditing(true);
   textField->setText("");
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   return true;

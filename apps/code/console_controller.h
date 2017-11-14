@@ -22,11 +22,12 @@ public:
   ConsoleController operator=(const ConsoleController& other) = delete;
   ConsoleController& operator=(ConsoleController&& other) = delete;
 
-  bool loadPythonEnvironment();
+  bool loadPythonEnvironment(bool autoImportScripts = true);
   void unloadPythonEnvironment();
   bool pythonEnvironmentIsLoaded();
 
   void autoImport();
+  void autoImportScriptAtIndex(int index);
   void runAndPrintForCommand(const char * command);
   void removeExtensionIfAny(char * name);
 
@@ -65,7 +66,6 @@ private:
   static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
   static constexpr int k_pythonHeapSize = 16384;
   static constexpr int k_outputAccumulationBufferSize = 100;
-  void autoImportScriptAtIndex(int index);
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();

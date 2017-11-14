@@ -1,7 +1,7 @@
 Console = "Interpretador interativo"
 AddScript = "Adicionar um script"
 ScriptOptions = "Opcoes de script"
-EditScript = "Editar o script"
+ExecuteScript = "Executar o script"
 RenameScript = "Renomear o script"
 AutoImportScript = "Importacao auto no interpretador"
 DeleteScript = "Eliminar o script"

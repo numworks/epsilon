@@ -1,7 +1,7 @@
 Console = "Python shell"
 AddScript = "Add a script"
 ScriptOptions = "Script options"
-EditScript = "Edit script"
+ExecuteScript = "Execute script"
 RenameScript = "Rename script"
 AutoImportScript = "Auto import in shell"
 DeleteScript = "Delete script"

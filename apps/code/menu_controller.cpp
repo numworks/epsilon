@@ -23,7 +23,8 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, this, false),
   m_consoleController(parentResponder, m_scriptStore),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this),
-  m_editorController(this)
+  m_editorController(this),
+  m_reloadConsoleWhenBecomingFirstResponder(false)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
@@ -35,18 +36,19 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
 }
 
 void MenuController::didBecomeFirstResponder() {
-  if (footer()->selectedButton() <= 0) {
-    assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
-    if (m_selectableTableView.selectedRow() < 0) {
-      m_selectableTableView.selectCellAtLocation(0,0);
-    }
-    app()->setFirstResponder(&m_selectableTableView);
+  if (m_reloadConsoleWhenBecomingFirstResponder) {
+    reloadConsole();
+  }
+
+  if (footer()->selectedButton() == 0) {
+    assert(m_selectableTableView.selectedRow() < 0);
+    app()->setFirstResponder(&m_consoleButton);
     return;
   }
-  assert(m_selectableTableView.selectedRow() < 0);
-  assert(footer()->selectedButton() == 0);
-  app()->setFirstResponder(&m_consoleButton);
-  return;
+  if (m_selectableTableView.selectedRow() < 0) {
+    m_selectableTableView.selectCellAtLocation(0,0);
+  }
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
@@ -129,6 +131,16 @@ void MenuController::deleteScriptAtIndex(int i) {
 
 void MenuController::reloadConsole() {
   m_consoleController.unloadPythonEnvironment();
+  m_reloadConsoleWhenBecomingFirstResponder = false;
+}
+
+void MenuController::openConsoleWithScriptAtIndex(int scriptIndex) {
+  reloadConsole();
+  if (m_consoleController.loadPythonEnvironment(false)) {
+    m_consoleController.autoImportScriptAtIndex(scriptIndex);
+    stackViewController()->push(&m_consoleController);
+  }
+  m_reloadConsoleWhenBecomingFirstResponder = true;
 }
 
 bool MenuController::shouldDisplayAddScriptRow() {

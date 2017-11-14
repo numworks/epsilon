@@ -17,10 +17,13 @@ public:
   static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);
   Decimal(Integer mantissa, int exponent);
   Decimal(double f);
+  int exponent() const { return m_exponent; }
+  Integer mantissa() const { return m_mantissa; }
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
 private:
   int numberOfDigitsInMantissaWithoutSign() const;
   /* Comparison */

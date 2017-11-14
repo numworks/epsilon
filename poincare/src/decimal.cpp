@@ -228,9 +228,25 @@ Expression * Decimal::shallowBeautify(Context & context, AngleUnit angleUnit) {
 }
 
 int Decimal::simplificationOrderSameType(const Expression * e) const {
-  // We should not get there are decimal are turned into Rational before simplification
-  assert(false);
-  return 0;
+  assert(e->type() == Type::Decimal);
+  const Decimal * other = static_cast<const Decimal *>(e);
+  if (sign() == Sign::Negative && other->sign() == Sign::Positive) {
+    return -1;
+  }
+  if (sign() == Sign::Positive && other->sign() == Sign::Negative) {
+    return 1;
+  }
+  assert(sign() == other->sign());
+  int unsignedComparison = 0;
+  if (exponent() < other->exponent()) {
+    unsignedComparison = -1;
+  } else if (exponent() > other->exponent()) {
+    unsignedComparison = 1;
+  } else {
+    assert(exponent() == other->exponent());
+    unsignedComparison = Integer::NaturalOrder(mantissa(), other->mantissa());
+  }
+  return ((int)sign())*unsignedComparison;
 }
 
 int Decimal::numberOfDigitsInMantissaWithoutSign() const {

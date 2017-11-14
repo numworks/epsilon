@@ -52,10 +52,10 @@ int ListController::numberOfRows() {
 
 KDCoordinate ListController::rowHeight(int j) {
   if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
-    return k_emptyRowHeight;
+    return Metric::StoreRowHeight;
   }
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
-  KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicite ? k_emptyRowHeight : k_emptySubRowHeight;
+  KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicite ? Metric::StoreRowHeight : k_emptySubRowHeight;
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();

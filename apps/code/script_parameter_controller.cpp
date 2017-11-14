@@ -12,7 +12,6 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_deleteScript(I18n::Message::Default),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_editorController(this),
   m_scriptStore(scriptStore),
   m_menuController(menuController),
   m_autoImport(true),
@@ -22,18 +21,13 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
 
 void ScriptParameterController::setScript(int i){
   Script script = (m_scriptStore->scriptAtIndex(i, ScriptStore::EditableZone::Content));
-  m_editorController.setScript(script);
   m_autoImport = script.autoImport();
   m_currentScriptIndex = i;
 }
 
 void ScriptParameterController::dismissScriptParameterController() {
   m_currentScriptIndex = -1;
-  stackController()->pop();
-}
-
-void ScriptParameterController::scriptContentEditionDidFinish() {
-  m_menuController->reloadConsole();
+  stackViewController()->pop();
 }
 
 View * ScriptParameterController::view() {
@@ -49,11 +43,12 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     int i = m_currentScriptIndex;
     switch (selectedRow()) {
       case 0:
-        stackController()->push(&m_editorController);
+        //TODO
+        //stackViewController()->push(&m_editorController);
         return true;
       case 1:
         dismissScriptParameterController();
-        m_menuController->renameScriptAtIndex(i);
+        m_menuController->renameSelectedScript();
         return true;
       case 2:
         m_scriptStore->switchAutoImportAtIndex(i);
@@ -114,7 +109,7 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   myCell->setMessage(labels[index]);
 }
 
-StackViewController * ScriptParameterController::stackController() {
+StackViewController * ScriptParameterController::stackViewController() {
   return static_cast<StackViewController *>(parentResponder());
 }
 

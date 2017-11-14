@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "../i18n.h"
-#include "editor_controller.h"
 #include "script_store.h"
 
 namespace Code {
@@ -15,7 +14,6 @@ public:
   ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore, MenuController * menuController);
   void setScript(int i);
   void dismissScriptParameterController();
-  void scriptContentEditionDidFinish();
 
   /* ViewController */
   View * view() override;
@@ -33,14 +31,13 @@ public:
 
 private:
   constexpr static int k_totalNumberOfCell = 4;
-  StackViewController * stackController();
+  StackViewController * stackViewController();
   I18n::Message m_pageTitle;
-  MessageTableCell m_editScript;
+  MessageTableCell m_editScript; //TODO rename execute script
   MessageTableCell m_renameScript;
   MessageTableCellWithSwitch m_autoImportScript;
   MessageTableCell m_deleteScript;
   SelectableTableView m_selectableTableView;
-  EditorController m_editorController;
   ScriptStore * m_scriptStore;
   MenuController * m_menuController;
   bool m_autoImport;

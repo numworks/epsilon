@@ -30,7 +30,6 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
-  static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   virtual void reinitExpression(Function * function);

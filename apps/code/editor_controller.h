@@ -6,11 +6,12 @@
 
 namespace Code {
 
+class MenuController;
 class ScriptParameterController;
 
 class EditorController : public ViewController, public TextAreaDelegate {
 public:
-  EditorController(ScriptParameterController * scriptParameterController);
+  EditorController(MenuController * menuController);
   void setScript(Script script);
 
   /* ViewController */
@@ -30,7 +31,7 @@ private:
   static constexpr int k_indentationSpacesNumber = 2;
   StackViewController * stackController();
   TextArea m_textArea;
-  ScriptParameterController * m_scriptParameterController;
+  MenuController * m_menuController;
 };
 
 }

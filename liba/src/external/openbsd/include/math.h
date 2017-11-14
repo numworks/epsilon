@@ -61,7 +61,6 @@
 #undef fabs
 #undef floor
 #undef fmod
-#undef ldexp
 #undef lgamma
 #undef lgamma_r
 #undef log

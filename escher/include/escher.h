@@ -12,7 +12,9 @@
 #include <escher/container.h>
 #include <escher/dynamic_view_controller.h>
 #include <escher/editable_text_cell.h>
+#include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
+#include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>

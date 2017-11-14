@@ -1,14 +1,15 @@
 #include "editor_controller.h"
+#include "menu_controller.h"
 #include "script_parameter_controller.h"
 #include "helpers.h"
 #include <apps/code/app.h>
 
 namespace Code {
 
-EditorController::EditorController(ScriptParameterController * scriptParameterController) :
+EditorController::EditorController(MenuController * menuController) :
   ViewController(nullptr),
   m_textArea(this),
-  m_scriptParameterController(scriptParameterController)
+  m_menuController(menuController)
 {
   m_textArea.setDelegate(this);
 }
@@ -34,7 +35,7 @@ void EditorController::viewWillAppear() {
 }
 
 void EditorController::viewDidDisappear() {
-  m_scriptParameterController->scriptContentEditionDidFinish();
+  m_menuController->scriptContentEditionDidFinish();
 }
 
 bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) {

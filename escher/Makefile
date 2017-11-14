@@ -11,7 +11,9 @@ objs += $(addprefix escher/src/,\
   container.o\
   dynamic_view_controller.o\
   editable_text_cell.o\
+  ellipsis_view.o\
   even_odd_cell.o\
+  even_odd_cell_with_ellipsis.o\
   even_odd_buffer_text_cell.o\
   even_odd_editable_text_cell.o\
   even_odd_expression_cell.o\

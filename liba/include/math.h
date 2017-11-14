@@ -178,7 +178,7 @@ double trunc(double x);
 #define fabs(x) __builtin_fabs(x)
 #define floor(x) __builtin_floor(x)
 #define fmod(x, y) __builtin_fmod(x, y)
-#define ldexp(x, n) __builtin_ldexp(x, n)
+#define ldexp(x, n) __builtin_scalbn(x, n)
 #define lgamma(x) __builtin_lgamma(x)
 #define lgamma_r(x, signgamp) __builtin_lgamma_r(x, signgamp)
 #define log(x) __builtin_log(x)

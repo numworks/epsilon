@@ -56,38 +56,4 @@ ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return new FractionLayout(numerator->createLayout(floatDisplayMode, complexFormat), denominator->createLayout(floatDisplayMode, complexFormat));
 }
 
-int Division::writeTextInBuffer(char * buffer, int bufferSize) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  bool numeratorRequireParenthesis = operand(0)->type() == Type::Multiplication || operand(0)->type() == Type::Addition || operand(0)->type() == Type::Subtraction || operand(0)->type() == Type::Opposite;
-  if (numeratorRequireParenthesis) {
-    buffer[numberOfChar++] = '(';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-  if (numeratorRequireParenthesis) {
-    buffer[numberOfChar++] = ')';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  buffer[numberOfChar++] = '/';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  bool denominatorRequireParenthesis = operand(1)->type() == Type::Multiplication || operand(1)->type() == Type::Addition || operand(1)->type() == Type::Subtraction || operand(1)->type() == Type::Opposite;
-  if (denominatorRequireParenthesis) {
-    buffer[numberOfChar++] = '(';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  numberOfChar += operand(1)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-  if (denominatorRequireParenthesis) {
-
-    buffer[numberOfChar++] = ')';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
-}
-
 }

@@ -34,7 +34,7 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
   }
   Rational * r0 = static_cast<Rational *>(op0);
   Rational * r1 = static_cast<Rational *>(op1);
-  if (!r1->denominator().isOne() || r1->numerator().isNegative() || r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) <= 0) {
+  if (!r1->denominator().isOne() || r1->numerator().isNegative() || r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) > 0) {
     return replaceWith(new Undefined(), true);
   }
   detachOperand(r0);
@@ -43,10 +43,9 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
   // Compute numerator = r0*(1-r0)
   Rational * numerator = new Rational(Rational::Multiplication(*r0, Rational(Integer::Subtraction(r0->denominator(), r0->numerator()), r0->denominator())));
   // Compute sqr = sqrt(r0*(1-r0)/r1)
-  Expression * sqr = new Power(new Division(numerator, r1, false), new Rational(-1, 2), false);
+  Expression * sqr = new Power(new Division(numerator, r1, false), new Rational(1, 2), false);
   Expression * m = new Multiplication(new Rational(196, 100), sqr, false);
-  const Expression * newOperands[2] = {new Addition(r0, m, true),
-                                       new Addition(r0, new Multiplication(new Rational(-1), m, false), false)};
+  const Expression * newOperands[2] = {new Addition(r0, new Multiplication(new Rational(-1), m, false), false), new Addition(r0, m, true),};
   Expression * matrix = replaceWith(new Matrix(newOperands, 1, 2, false), true);
   return matrix->deepReduce(context, angleUnit);
 }

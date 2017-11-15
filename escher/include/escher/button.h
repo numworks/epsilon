@@ -17,11 +17,13 @@ protected:
   MessageTextView m_messageTextView;
 private:
   constexpr static KDCoordinate k_verticalMargin = 5;
-  constexpr static KDCoordinate k_horizontalMargin = 10;
+  constexpr static KDCoordinate k_horizontalMarginSmall = 10;
+  constexpr static KDCoordinate k_horizontalMarginLarge = 20;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   Invocation m_invocation;
+  KDText::FontSize m_size;
 };
 
 #endif

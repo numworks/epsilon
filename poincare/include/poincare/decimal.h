@@ -25,6 +25,8 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
 private:
+  constexpr static int k_doublePrecision = 15;
+  constexpr static double k_biggestMantissaFromDouble = 999999999999999;
   int numberOfDigitsInMantissaWithoutSign() const;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e) const override;

@@ -85,10 +85,15 @@ Decimal::Decimal(double f) {
   if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
     exponentInBase10--;
   }
-  int precision = 15;
-  double mantissa = f*std::pow(10, (double)-exponentInBase10); // TODO: hangle exponentInBase10 is too big! mantissa is nan
-  mantissa = mantissa * std::pow(10, (double)(precision-1));
-  int64_t integerMantissa = std::round(mantissa);
+  double m = f*std::pow(10, (double)-exponentInBase10); // TODO: hangle exponentInBase10 is too big! mantissa is nan
+  m = m * std::pow(10, (double)(k_doublePrecision-1));
+  int64_t integerMantissa = std::round(m);
+  /* If m > 999999999999999.5, the mantissa stored will be 1 (as we keep only
+   * 15 significative numbers from double. In that case, the exponent must be
+   * increment as well. */
+  if (m >= k_biggestMantissaFromDouble+0.5) {
+    exponentInBase10++;
+  }
   m_mantissa = Integer(integerMantissa);
   removeZeroAtTheEnd(m_mantissa);
   m_exponent = exponentInBase10;

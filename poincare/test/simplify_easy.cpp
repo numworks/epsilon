@@ -66,6 +66,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil([[1/R(2),1/2][1,-1.3]])", "[[ceil(R(2)/2),1][1,-1]]");
   assert_parsed_expression_simplify_to("confidence(1/3, 25)", "[[2/15,8/15]]");
+  assert_parsed_expression_simplify_to("confidence(45, 25)", "undef");
+  assert_parsed_expression_simplify_to("confidence(1/3, -34)", "undef");
   assert_parsed_expression_simplify_to("conj([[1/R(2),1/2][1,-1]])", "[[conj(1/R(2)),1/2][1,-1]]");
   assert_parsed_expression_simplify_to("cos([[P/3,0][P/7,P/2]])", "[[1/2,1][cos(P/7),0]]");
   assert_parsed_expression_simplify_to("diff([[P/3,0][P/7,P/2]],3)", "undef");
@@ -115,6 +117,9 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("permute([[1,-2][3,4]], 2)", "undef");
   assert_parsed_expression_simplify_to("permute(102,4)", "101989800");
   assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
+  assert_parsed_expression_simplify_to("prediction95(1/3, 25)", "[[1/3-49R(2)/375,1/3+49R(2)/375]]");
+  assert_parsed_expression_simplify_to("prediction95(45, 25)", "undef");
+  assert_parsed_expression_simplify_to("prediction95(1/3, -34)", "undef");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

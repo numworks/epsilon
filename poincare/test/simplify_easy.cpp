@@ -64,6 +64,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("binomial([[1,-2][3,4]], 2)", "undef");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
+  assert_parsed_expression_simplify_to("ceil([[1/R(2),1/2][1,-1.3]])", "[[ceil(R(2)/2),1][1,-1]]");
+  assert_parsed_expression_simplify_to("confidence(1/3, 25)", "[[2/15,8/15]]");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

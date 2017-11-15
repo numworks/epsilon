@@ -33,14 +33,12 @@ Expression * ConfidenceInterval::shallowReduce(Context& context, AngleUnit angle
   }
   Rational * r0 = static_cast<Rational *>(op0);
   Rational * r1 = static_cast<Rational *>(op1);
-  if (!r1->denominator().isOne() || r1->numerator().isNegative() || r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) <= 0) {
+  if (!r1->denominator().isOne() || r1->numerator().isNegative() || r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) > 0) {
     return replaceWith(new Undefined(), true);
   }
-  detachOperand(r0);
-  detachOperand(r1);
+  detachOperands();
   Expression * sqr = new Power(r1, new Rational(-1, 2), false);
-  const Expression * newOperands[2] = {new Addition(r0, sqr, true),
-                                       new Addition(r0, new Multiplication(new Rational(-1), sqr, false), false)};
+  const Expression * newOperands[2] = {new Addition(r0, new Multiplication(new Rational(-1), sqr, false), false), new Addition(r0, sqr, true)};
   Expression * matrix = replaceWith(new Matrix(newOperands, 1, 2, false), true);
   return matrix->deepReduce(context, angleUnit);
 }

@@ -53,6 +53,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   // Power Matrix
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^(-1)", "undef");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[-2,1][3/2,-1/2]]");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

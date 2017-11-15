@@ -1,6 +1,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/rational.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -26,6 +27,9 @@ Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit)
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
+  }
+  if (op->type() == Type::Rational) {
+    return replaceWith(new Rational(0), true);
   }
   return this;
 }

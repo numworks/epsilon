@@ -17,7 +17,7 @@ public:
   Rational(Integer::native_int_t i, Integer::native_int_t j) : Rational(Integer(i), Integer(j)) {}
 
   Rational(const Rational & other);
-
+  Rational & operator=(const Rational & other);
   // Getter
   const Integer numerator() const;
   const Integer denominator() const;

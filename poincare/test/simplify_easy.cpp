@@ -61,6 +61,9 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("asin([[1/R(2),1/2][1,-1]])", "[[P/4,P/6][P/2,-P/2]]");
   assert_parsed_expression_simplify_to("atan([[R(3),1][1/R(3),-1]])", "[[P/3,P/4][P/6,-P/4]]");
   assert_parsed_expression_simplify_to("acos([[1/R(2),1/2][1,-1]])", "[[P/4,P/3][0,P]]");
+  assert_parsed_expression_simplify_to("binomial([[1,-2][3,4]], 2)", "undef");
+  assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
+  assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

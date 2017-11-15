@@ -7,8 +7,10 @@ Expression * SimplificationEngine::map(Expression * e, Context & context, Expres
   Expression * op = e->editableOperand(0);
   for (int i = 0; i < op->numberOfOperands(); i++) {
     Expression * entry = op->editableOperand(i);
-    e->replaceOperand(op, entry, false);
-    op->replaceOperand(entry, op, false);
+    Expression * eCopy = e->clone();
+    eCopy->replaceOperand(eCopy->editableOperand(0), entry, true);
+    op->replaceOperand(entry, eCopy, false);
+    eCopy->shallowReduce(context, angleUnit);
   }
   return e->replaceWith(op, true)->shallowReduce(context, angleUnit);
 }

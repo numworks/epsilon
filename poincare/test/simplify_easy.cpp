@@ -91,6 +91,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sinh([[1/R(2),1/2][1,-1]])", "[[sinh(1/R(2)),sinh(1/2)][sinh(1),sinh(-1)]]");
   assert_parsed_expression_simplify_to("tanh([[R(3),1][1/R(3),-1]])", "[[tanh(R(3)),tanh(1)][tanh(1/R(3)),tanh(-1)]]");
   assert_parsed_expression_simplify_to("cosh([[1/R(2),1/2][1,-1]])", "[[cosh(1/R(2)),cosh(1/2)][cosh(1),cosh(-1)]]");
+  assert_parsed_expression_simplify_to("im([[1/R(2),1/2][1,-1]])", "[[im(1/R(2)),0][0,0]]");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

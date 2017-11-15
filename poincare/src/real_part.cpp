@@ -26,6 +26,9 @@ Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+  if (op->type() == Type::Rational) {
+    return replaceWith(op, true);
+  }
   return this;
 }
 

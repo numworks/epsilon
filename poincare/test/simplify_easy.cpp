@@ -120,6 +120,9 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("prediction95(1/3, 25)", "[[1/3-49R(2)/375,1/3+49R(2)/375]]");
   assert_parsed_expression_simplify_to("prediction95(45, 25)", "undef");
   assert_parsed_expression_simplify_to("prediction95(1/3, -34)", "undef");
+  assert_parsed_expression_simplify_to("product([[1,2][3,4]], 1/3, -34)", "product([[1,2][3,4]], 1/3, -34)");
+  assert_parsed_expression_simplify_to("sum([[1,2][3,4]], 1/3, -34)", "sum([[1,2][3,4]], 1/3, -34)");
+  assert_parsed_expression_simplify_to("re([[1/R(2),1/2][1,-1]])", "[[re(1/R(2)),1/2][1,-1]]");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

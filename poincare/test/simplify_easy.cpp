@@ -101,6 +101,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]],3)", "undef");
   assert_parsed_expression_simplify_to("ln([[R(2),1/2][1,3]])", "[[(1/2)*ln(2),-ln(2)][0,ln(3)]]");
   assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]])", "undef");
+  assert_parsed_expression_simplify_to("dim([[1/R(2),1/2,3][2,1,-3]])", "[[2,3]]");
+  assert_parsed_expression_simplify_to("inverse([[1/R(2),1/2,3][2,1,-3]])", "undef");
+  assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
+  assert_parsed_expression_simplify_to("trace([[1/R(2),1/2,3][2,1,-3]])", "undef");
+  assert_parsed_expression_simplify_to("trace([[R(2),2][4,3+log(3)]])", "R(2)+3+log(3)");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

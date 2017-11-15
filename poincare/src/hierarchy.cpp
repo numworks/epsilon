@@ -22,8 +22,9 @@ void Hierarchy::swapOperands(int i, int j) {
 }
 
 void Hierarchy::detachOperand(const Expression * e) {
+  Expression ** op = const_cast<Expression **>(operands());
   for (int i=0; i<numberOfOperands(); i++) {
-    if (operand(i) == e) {
+    if (op[i] == e) {
       detachOperandAtIndex(i);
     }
   }

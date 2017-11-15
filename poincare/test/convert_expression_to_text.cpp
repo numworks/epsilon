@@ -84,4 +84,14 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e9, "-0.12345");
   Decimal e10(1.2345E-1);
   assert_expression_prints_to(&e10, "0.12345");
+  Decimal e11(1);
+  assert_expression_prints_to(&e11, "1");
+  Decimal e12(0.9999999999999995);
+  assert_expression_prints_to(&e12, "1");
+  Decimal e13(0.999999999999995);
+  assert_expression_prints_to(&e13, "9.99999999999995E-1");
+  Decimal e14(0.000000999999999999995);
+  assert_expression_prints_to(&e14, "9.99999999999995E-7");
+  Decimal e15(0.0000009999999999999995);
+  assert_expression_prints_to(&e15, "0.000001");
 }

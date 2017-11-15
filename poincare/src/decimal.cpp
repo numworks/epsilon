@@ -47,6 +47,9 @@ int Decimal::exponent(const char * integralPart, int integralPartLength, const c
 }
 
 void removeZeroAtTheEnd(Integer & i) {
+  if (i.isZero()) {
+    return;
+  }
   Integer base = Integer(10);
   IntegerDivision d = Integer::Division(i, base);
   while (d.remainder.isZero()) {
@@ -63,9 +66,6 @@ Integer Decimal::mantissa(const char * integralPart, int integralPartLength, con
     numerator = Integer::Multiplication(numerator, base);
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
-  }
-  if (numerator.isZero()) {
-    return numerator;
   }
   removeZeroAtTheEnd(numerator);
   return numerator;

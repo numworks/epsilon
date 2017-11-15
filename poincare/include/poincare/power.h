@@ -25,7 +25,9 @@ private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name(), [](const Expression * e) {
+      return e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite;
+    });
   }
   static const char * name() { return "^"; }
   /* Simplify */

@@ -106,6 +106,15 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
   assert_parsed_expression_simplify_to("trace([[1/R(2),1/2,3][2,1,-3]])", "undef");
   assert_parsed_expression_simplify_to("trace([[R(2),2][4,3+log(3)]])", "R(2)+3+log(3)");
+  assert_parsed_expression_simplify_to("trace(R(2)+log(3))", "R(2)+log(3)");
+  assert_parsed_expression_simplify_to("transpose([[1/R(2),1/2,3][2,1,-3]])", "[[1/R(2),2][1/2, 1][3,-3]]");
+  assert_parsed_expression_simplify_to("transpose(R(4))", "2");
+  assert_parsed_expression_simplify_to("root([[R(4)]],2)", "undef");
+  assert_parsed_expression_simplify_to("root(4,3)", "4^(1/3)");
+  assert_parsed_expression_simplify_to("-[[1/R(2),1/2,3][2,1,-3]]", "[[-1/R(2),-1/2,-3][-2,-1,3]]");
+  assert_parsed_expression_simplify_to("permute([[1,-2][3,4]], 2)", "undef");
+  assert_parsed_expression_simplify_to("permute(102,4)", "101989800");
+  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

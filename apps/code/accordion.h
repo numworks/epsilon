@@ -7,7 +7,7 @@
 class Accordion {
 public:
   Accordion(char * buffer, int bufferSize);
-  int numberOfBuffers();
+  int numberOfBuffers() { return m_numberOfBuffers; }
   const char * bufferAtIndex(int index);
   char * editableBufferAtIndex(int index);
   int sizeOfEditableBufferAtIndex(int index);

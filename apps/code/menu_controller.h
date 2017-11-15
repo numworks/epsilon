@@ -25,13 +25,13 @@ public:
   void deleteScriptAtIndex(int i);
   void reloadConsole();
   void openConsoleWithScriptAtIndex(int scriptIndex);
-  bool shouldDisplayAddScriptRow();
   void scriptContentEditionDidFinish();
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
 
   /* TableViewDataSource */
   int numberOfRows() override;
@@ -81,6 +81,7 @@ private:
   // 1 = length of null terminating char.
   void numberedDefaultScriptName(char * buffer);
   void intToText(int i, char * buffer);
+  void updateAddScriptRowDisplay();
   ScriptStore * m_scriptStore;
   EvenOddEditableTextCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   /* In the initializer list of the MenuController constructor, we initialize
@@ -96,6 +97,7 @@ private:
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;
   bool m_reloadConsoleWhenBecomingFirstResponder;
+  bool m_shouldDisplayAddScriptRow;
 };
 
 }

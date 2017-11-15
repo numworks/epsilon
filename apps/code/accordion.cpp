@@ -13,10 +13,6 @@ Accordion::Accordion(char * buffer, int bufferSize) :
   }
 }
 
-int Accordion::numberOfBuffers() {
-  return m_numberOfBuffers;
-}
-
 const char * Accordion::bufferAtIndex(int index) {
   assert(index >= 0 && index < numberOfBuffers());
   cleanFreeSpace();
@@ -42,8 +38,8 @@ int Accordion::sizeOfEditableBufferAtIndex(int index) {
       break;
     }
     length++;
-    // We do not count one Free Space Marker, in order to always have at a
-    // Free Space of sizeat least one.
+    // We do not count one Free Space Marker, in order to always have at a Free
+    // Space of size at least one.
   }
   return length;
 }
@@ -172,7 +168,7 @@ void Accordion::cleanFreeSpace() {
       && indexOfCharToChangeIntoFreeSpaceMarker < m_historySize)
   {
     m_history[indexOfCharToChangeIntoFreeSpaceMarker] = k_freeSpaceMarker;
-    indexOfCharToChangeIntoFreeSpaceMarker ++;
+    indexOfCharToChangeIntoFreeSpaceMarker++;
   }
 }
 

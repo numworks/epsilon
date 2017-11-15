@@ -236,7 +236,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "log(7, 6)+3log(11, 6)+log(17,6)-log(47,6)-2*log(5,6)");
   assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
   assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "undef");
-  assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5"); // TODO: put 5 on denominator?
+  assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5");
   assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2"); // Check for parenthesis
   assert_parsed_expression_simplify_to("cos(0)", "1");
   assert_parsed_expression_simplify_to("cos(P)", "-1");
@@ -251,7 +251,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(-P/12)", "(R(6)+R(2))/4");
   assert_parsed_expression_simplify_to("cos(-P17/8)", "R(R(2)+2)/2");
   assert_parsed_expression_simplify_to("cos(41P/6)", "-R(3)/2");
-  assert_parsed_expression_simplify_to("cos(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("cos(P/4+1000P)", "R(2)/2");
   assert_parsed_expression_simplify_to("cos(-P/3)", "1/2");
   assert_parsed_expression_simplify_to("cos(41P/5)", "(5^(1/2)+1)*4^(-1)");
   assert_parsed_expression_simplify_to("cos(7P/10)", "-R(5/8-R(5)/8)");
@@ -269,7 +269,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(-P17/8)", "-R(-R(2)+2)/2");
   assert_parsed_expression_simplify_to("sin(41P/6)", "1/2");
   assert_parsed_expression_simplify_to("sin(-3P/10)", "(-1-R(5))/4");
-  assert_parsed_expression_simplify_to("sin(P/4+1000P)", "1/R(2)"); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("sin(P/4+1000P)", "R(2)/2");
   assert_parsed_expression_simplify_to("sin(-P/3)", "-R(3)/2");
   assert_parsed_expression_simplify_to("sin(17P/5)", "-R(5/8+R(5)/8)");
   assert_parsed_expression_simplify_to("sin(P/5)", "R(5/8-R(5)/8)");
@@ -338,7 +338,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("cos(-15)", "(R(6)+R(2))/4", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(-765/2)", "R(R(2)+2)/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(7380/6)", "-R(3)/2", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("cos(180045)", "1/R(2)", Expression::AngleUnit::Degree); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("cos(180045)", "R(2)/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(-60)", "1/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(7380/5)", "(5^(1/2)+1)*4^(-1)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(112.5)", "-R(2-R(2))/2", Expression::AngleUnit::Degree);
@@ -355,7 +355,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin(39330)", "1", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(-765/2)", "-R(-R(2)+2)/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(1230)", "1/2", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("sin(180045)", "1/R(2)", Expression::AngleUnit::Degree); // TODO: change result to R(2)/2
+  assert_parsed_expression_simplify_to("sin(180045)", "R(2)/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(-60)", "-R(3)/2", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(612)", "-R(5/8+R(5)/8)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(36)", "R(5/8-R(5)/8)", Expression::AngleUnit::Degree);
@@ -418,6 +418,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("X^ln(R(3))", "R(3)");
   assert_parsed_expression_simplify_to("P^log(R(3),P)", "R(3)");
   assert_parsed_expression_simplify_to("10^log(P)", "P");
+  //assert_parsed_expression_simplify_to("log(1/R(2))", "-log(2)/2"); //TODO: implement ln(a*b) = ln(a)+ln(b) if a>0 and b>0
 
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");

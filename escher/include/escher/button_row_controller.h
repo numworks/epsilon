@@ -21,7 +21,11 @@ public:
     PlainWhite,
     EmbossedGrey
   };
-  ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position = Position::Top, Style = Style::PlainWhite);
+  enum class Size {
+    Small,
+    Large
+  };
+  ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position = Position::Top, Style = Style::PlainWhite, Size size = Size::Small);
   View * view() override { return &m_contentView; }
   const char * title() override;
   void didBecomeFirstResponder() override;
@@ -34,7 +38,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style);
+    ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size);
     int numberOfButtons() const;
     Button * buttonAtIndex(int index) const;
     int numberOfSubviews() const override;
@@ -47,8 +51,10 @@ private:
     ButtonRowDelegate * buttonRowDelegate() const { return m_delegate; }
   private:
     constexpr static KDCoordinate k_plainStyleHeight = 20;
-    constexpr static KDCoordinate k_embossedStyleHeight = 36;
-    constexpr static KDCoordinate k_embossedStyleHeightMargin = 6;
+    constexpr static KDCoordinate k_embossedStyleHeightSmall = 36;
+    constexpr static KDCoordinate k_embossedStyleHeightLarge = 52;
+    constexpr static KDCoordinate k_embossedStyleHeightMarginSmall = 6;
+    constexpr static KDCoordinate k_embossedStyleHeightMarginLarge = 8;
     constexpr static KDColor k_separatorHeaderColor = KDColor::RGB24(0xDEE0E2);
     constexpr static KDColor k_selectedBackgroundColor = KDColor::RGB24(0x426DA7);
     ViewController * m_mainViewController;
@@ -56,6 +62,7 @@ private:
     ButtonRowDelegate * m_delegate;
     Position m_position;
     Style m_style;
+    Size m_size;
   };
   ContentView m_contentView;
 };

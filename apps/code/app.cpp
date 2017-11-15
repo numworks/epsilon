@@ -37,7 +37,7 @@ ScriptStore * App::Snapshot::scriptStore() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
-  m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
+  m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
   m_toolboxActionForTextArea([](void * sender, const char * text) {

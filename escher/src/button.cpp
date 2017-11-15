@@ -6,7 +6,8 @@ Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation i
   HighlightCell(),
   Responder(parentResponder),
   m_messageTextView(size, textBody, 0.5f, 0.5f, textColor),
-  m_invocation(invocation)
+  m_invocation(invocation),
+  m_size(size)
 {
 }
 
@@ -40,5 +41,5 @@ void Button::setHighlighted(bool highlight) {
 
 KDSize Button::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
-  return KDSize(textSize.width() + k_horizontalMargin, textSize.height() + k_verticalMargin);
+  return KDSize(textSize.width() + (m_size == KDText::FontSize::Small ? k_horizontalMarginSmall : k_horizontalMarginLarge), textSize.height() + k_verticalMargin);
 }

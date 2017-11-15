@@ -87,6 +87,26 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
       return newLog->shallowReduce(context, angleUnit);
     }
   }
+  // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
+  if (op->type() == Type::Multiplication) {
+    Addition * a = new Addition();
+    for (int i = 0; i<op->numberOfOperands()-1; i++) {
+      Expression * factor = op->editableOperand(i);
+      if (factor->sign() == Sign::Positive) {
+        Expression * newLog = clone();
+        static_cast<Multiplication *>(op)->removeOperand(factor, false);
+        newLog->replaceOperand(newLog->editableOperand(0), factor, true);
+        a->addOperand(newLog);
+        newLog->shallowReduce(context, angleUnit);
+      }
+    }
+    op->shallowReduce(context, angleUnit);
+    Expression * reducedLastLog = shallowReduce(context, angleUnit);
+    reducedLastLog->replaceWith(a, false);
+    a->addOperand(reducedLastLog);
+    return a->shallowReduce(context, angleUnit);
+  }
+
   if (op->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(0));
     // log(0) = undef

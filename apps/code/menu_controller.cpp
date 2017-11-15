@@ -24,7 +24,8 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_consoleController(parentResponder, m_scriptStore),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this),
   m_editorController(this),
-  m_reloadConsoleWhenBecomingFirstResponder(false)
+  m_reloadConsoleWhenBecomingFirstResponder(false),
+  m_shouldDisplayAddScriptRow(true)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
@@ -35,11 +36,14 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   }
 }
 
+StackViewController * MenuController::stackViewController() {
+  return static_cast<StackViewController *>(parentResponder()->parentResponder());
+}
+
 void MenuController::didBecomeFirstResponder() {
   if (m_reloadConsoleWhenBecomingFirstResponder) {
     reloadConsole();
   }
-
   if (footer()->selectedButton() == 0) {
     assert(m_selectableTableView.selectedRow() < 0);
     app()->setFirstResponder(&m_consoleButton);
@@ -48,7 +52,12 @@ void MenuController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() < 0) {
     m_selectableTableView.selectCellAtLocation(0,0);
   }
+  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
   app()->setFirstResponder(&m_selectableTableView);
+}
+
+void MenuController::viewWillAppear() {
+  updateAddScriptRowDisplay();
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
@@ -76,7 +85,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
       assert(selectedColumn == 0);
       editScript(selectedRow);
       return true;
-    } else if (shouldDisplayAddScriptRow()
+    } else if (m_shouldDisplayAddScriptRow
         && selectedColumn == 0
         && selectedRow == m_scriptStore->numberOfScripts())
     {
@@ -105,6 +114,7 @@ void MenuController::setParameteredScript() {
 void MenuController::addScript() {
   assert(m_scriptStore->numberOfScripts() < k_maxNumberOfScripts);
   if (m_scriptStore->addNewScript()) {
+    updateAddScriptRowDisplay();
     m_selectableTableView.reloadData();
     renameSelectedScript();
     return;
@@ -126,6 +136,7 @@ void MenuController::renameSelectedScript() {
 
 void MenuController::deleteScriptAtIndex(int i) {
   m_scriptStore->deleteScriptAtIndex(i);
+  updateAddScriptRowDisplay();
   m_selectableTableView.reloadData();
 }
 
@@ -143,17 +154,12 @@ void MenuController::openConsoleWithScriptAtIndex(int scriptIndex) {
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }
 
-bool MenuController::shouldDisplayAddScriptRow() {
-  return (m_scriptStore->numberOfScripts() < k_maxNumberOfScripts
-        && !m_scriptStore->isFull());
-}
-
 void MenuController::scriptContentEditionDidFinish(){
   reloadConsole();
 }
 
 int MenuController::numberOfRows() {
-  return m_scriptStore->numberOfScripts() + shouldDisplayAddScriptRow();
+  return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 
 void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -251,16 +257,16 @@ int MenuController::reusableCellCount(int type) {
 }
 
 int MenuController::typeAtLocation(int i, int j) {
-  assert(i>=0 && i<numberOfColumns());
-  assert(j>=0 && j<numberOfRows());
-  if (i==0) {
-    if (j==numberOfRows()-1 && shouldDisplayAddScriptRow()) {
+  assert(i >= 0 && i < numberOfColumns());
+  assert(j >= 0 && j < numberOfRows());
+  if (i == 0) {
+    if (j == numberOfRows()-1 && m_shouldDisplayAddScriptRow) {
       return AddScriptCellType;
     }
     return ScriptCellType;
   }
-  assert(i==1);
-  if (j==numberOfRows()-1 && shouldDisplayAddScriptRow()) {
+  assert(i == 1);
+  if (j == numberOfRows()-1 && m_shouldDisplayAddScriptRow) {
     return EmptyCellType;
   }
   return ScriptParameterCellType;
@@ -273,7 +279,7 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, in
 }
 
 void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (shouldDisplayAddScriptRow() && selectedRow() == numberOfRows() - 1 && selectedColumn() == 1) {
+  if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows()-1);
   }
 }
@@ -307,6 +313,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     newName = text;
   }
   if (m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), newName)) {
+    updateAddScriptRowDisplay();
     textField->setText(newName);
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
@@ -330,6 +337,7 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
     m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), const_cast<const char *>(numberedDefaultName));
+    updateAddScriptRowDisplay();
     m_selectableTableView.reloadData();
   }
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -375,8 +383,8 @@ void MenuController::intToText(int i, char * buffer) {
   buffer[2] = 0;
 }
 
-StackViewController * MenuController::stackViewController() {
- return static_cast<StackViewController *>(parentResponder()->parentResponder());
+void MenuController::updateAddScriptRowDisplay() {
+  m_shouldDisplayAddScriptRow = (m_scriptStore->numberOfScripts() < k_maxNumberOfScripts && !m_scriptStore->isFull());
 }
 
 }

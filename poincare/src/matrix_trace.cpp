@@ -27,12 +27,14 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (op->type() == Type::Matrix) {
     Matrix * m = static_cast<Matrix *>(op);
     if (m->numberOfRows() != m->numberOfColumns()) {
-      replaceWith(new Undefined(), true);
+      return replaceWith(new Undefined(), true);
     }
     int n = m->numberOfRows();
     Addition * a = new Addition();
     for (int i = 0; i < n; i++) {
-      a->addOperand(m->editableOperand(i+n*i));
+      Expression * diagEntry = m->editableOperand(i+n*i);
+      m->detachOperand(diagEntry);
+      a->addOperand(diagEntry);
     }
     return replaceWith(a, true)->shallowReduce(context, angleUnit);
   }

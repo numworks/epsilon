@@ -55,7 +55,7 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   if (n.isLowerThan(k)) {
     return replaceWith(new Undefined(), true);
   }
-  Integer result(1);
+  Rational result(1);
   Integer kBis = Integer::Subtraction(n, k);
   k = kBis.isLowerThan(k) ? kBis : k;
   // Out of bounds
@@ -64,8 +64,8 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   }
   int clippedK = k.extractedInt(); // Authorized because k < k_maxNumberOfSteps
   for (int i = 0; i < clippedK; i++) {
-    Integer factor = Integer::Division(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i))).quotient;
-    result = Integer::Multiplication(result, factor);
+    Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
+    result = Rational::Multiplication(result, factor);
   }
   return replaceWith(new Rational(result), true);
 }

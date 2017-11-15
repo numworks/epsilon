@@ -45,6 +45,13 @@ Rational::Rational(const Rational & other) {
   m_denominator = other.m_denominator;
 }
 
+Rational & Rational::operator=(const Rational & other) {
+  m_numerator = other.m_numerator;
+  m_numerator = other.m_numerator;
+  m_denominator = other.m_denominator;
+  return *this;
+}
+
 // Getter
 const Integer Rational::numerator() const {
   return m_numerator;

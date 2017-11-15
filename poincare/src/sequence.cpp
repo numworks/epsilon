@@ -22,18 +22,6 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
-Expression * Sequence::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
-    return replaceWith(new Undefined(), true); // TODO: should we implement sum and product of a matrix?
-  }
-  // TODO: to be implemented?
-  return this;
-}
-
 template<typename T>
 Complex<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   Complex<T> * aInput = operand(1)->privateEvaluate(T(), context, angleUnit);

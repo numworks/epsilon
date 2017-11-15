@@ -92,6 +92,15 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("tanh([[R(3),1][1/R(3),-1]])", "[[tanh(R(3)),tanh(1)][tanh(1/R(3)),tanh(-1)]]");
   assert_parsed_expression_simplify_to("cosh([[1/R(2),1/2][1,-1]])", "[[cosh(1/R(2)),cosh(1/2)][cosh(1),cosh(-1)]]");
   assert_parsed_expression_simplify_to("im([[1/R(2),1/2][1,-1]])", "[[im(1/R(2)),0][0,0]]");
+  assert_parsed_expression_simplify_to("int([[P/3,0][P/7,P/2]],3,2)", "undef");
+  assert_parsed_expression_simplify_to("lcm(2, [[1]])", "undef");
+  assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
+  assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+  assert_parsed_expression_simplify_to("log([[R(2),1/2][1,3]])", "[[(1/2)*log(2),-log(2)][0,log(3)]]");
+  assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]])", "undef");
+  assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]],3)", "undef");
+  assert_parsed_expression_simplify_to("ln([[R(2),1/2][1,3]])", "[[(1/2)*ln(2),-ln(2)][0,ln(3)]]");
+  assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]])", "undef");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

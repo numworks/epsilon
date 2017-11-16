@@ -169,7 +169,6 @@ exp:
   UNDEFINED        { $$ = $1; }
   | exp BANG       { $$ = new Poincare::Factorial($1, false); }
   | number             { $$ = $1; }
-  | ICOMPLEX         { $$ = new Poincare::Complex<double>(Poincare::Complex<double>::Cartesian(0.0f, 1.0f)); }
   | symb           { $$ = $1; }
   | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
   | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }

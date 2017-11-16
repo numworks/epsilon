@@ -11,6 +11,22 @@ void IonEventsEmscriptenPushEvent(int eventNumber) {
   sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
 }
 
+Ion::Keyboard::State Ion::Keyboard::scan() {
+  // FIXME
+  // On the Emscripten platform, scan() is used in :
+  //   - shouldInterrupt(), from interruptHelper.h
+  //   - apps_container.cpp
+  //   - apps/hardware_test/keyboard_test_controller.cpp
+  //  We would like to check if there is a Back event that would interrupt the
+  //  Python or Poincare computation, but it is quite difficult to get because
+  //  the runLoop is blocking in JavaScript and Events do not get pushed in
+  //  sEvent.
+  //  We still need to override the dummy/events_keyboard.cpp function, which
+  //  returns that all keys are always pressed and thus interrupts Python
+  //  computations after 20000 calls.
+  return 0;
+}
+
 namespace Ion {
 namespace Events {
 
@@ -50,7 +66,7 @@ Event getEvent(int * timeout) {
         case SDLK_RIGHT:
           return Ion::Events::Right;
         case SDLK_RETURN:
-          return Ion::Events::OK;
+          return Ion::Events::EXE;
         case SDLK_ESCAPE:
           return Ion::Events::Back;
         case SDLK_BACKSPACE:

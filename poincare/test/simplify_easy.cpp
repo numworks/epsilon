@@ -128,6 +128,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("R([[4,2][P/7,1]])", "[[2,R(2)][R(P/7),1]]");
   assert_parsed_expression_simplify_to("tan([[P/3,0][P/7,P/6]])", "[[R(3),0][tan(P/7),R(3)/3]]");
 
+  /* Complex */
+  assert_parsed_expression_simplify_to("I", "I");
+  assert_parsed_expression_simplify_to("R(-33)", "R(33)*X^(IP/2)");
+  assert_parsed_expression_simplify_to("I^(3/5)", "X^(IP3/10)");
+
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");
   assert_parsed_expression_simplify_to("-1/3", "-1/3");

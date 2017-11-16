@@ -1,5 +1,4 @@
 #include <poincare/undefined.h>
-#include <poincare/complex.h>
 extern "C" {
 #include <math.h>
 }

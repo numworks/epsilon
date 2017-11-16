@@ -2,6 +2,7 @@
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
 #include <poincare/division.h>
+#include <poincare/undefined.h>
 #include <poincare/power.h>
 extern "C" {
 #include <assert.h>
@@ -25,19 +26,36 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
     return e;
   }
   Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    // TODO: handle this exactly ; now, we approximate the operand and compute the inverse matrix on real only.
-    Expression * approxMatrix = op->evaluate<double>(context, angleUnit);
-    assert(approxMatrix->type() == Type::Matrix);
-    Expression * inverse = static_cast<Matrix *>(approxMatrix)->createInverse();
-    delete approxMatrix;
-    for (int i = 0; i < inverse->numberOfOperands(); i++) {
-      inverse->editableOperand(i)->shallowReduce(context, angleUnit);
-    }
-    return replaceWith(inverse, true);
+  if (!op->recursivelyMatches(Expression::isMatrix)) {
+    detachOperand(op);
+    return replaceWith(new Power(op, new Rational(-1), false), true)->shallowReduce(context, angleUnit);
   }
-  detachOperand(op);
-  return replaceWith(new Power(op, new Rational(-1), false), true)->shallowReduce(context, angleUnit);
+  if (op->type() == Type::Matrix) {
+    Matrix * mat = static_cast<Matrix *>(op);
+    if (mat->numberOfRows() != mat->numberOfColumns()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  return this;
+}
+
+// TODO: handle this exactly in shallowReduce for small dimensions.
+template<typename T>
+Expression * MatrixInverse::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(input);
+    result = new Complex<T>(Complex<T>::Cartesian(1/c->a(), -1/c->b()));
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createInverse<T>();
+  }
+  if (result == nullptr) {
+    result = new Complex<T>(Complex<T>::Float(NAN));
+  }
+  delete input;
+  return result;
 }
 
 }

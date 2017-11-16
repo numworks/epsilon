@@ -21,14 +21,34 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
   if (e != this) {
     return e;
   }
-  if (operand(0)->type() != Type::Matrix) {
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    Matrix * m = static_cast<Matrix *>(op);
+    const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
+    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  }
+  if (!op->recursivelyMatches(Expression::isMatrix)) {
     const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
     return replaceWith(new Matrix(newOperands, 1, 2, false), true);
   }
-  Matrix * m = static_cast<Matrix *>(editableOperand(0));
-  const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
-  return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  return this;
 }
+
+template<typename T>
+Expression * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * operands[2];
+  if (input->type() == Type::Matrix) {
+    operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));
+    operands[1] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfColumns()));
+  } else {
+    operands[0] = new Complex<T>(Complex<T>::Float(1.0));
+    operands[1] = new Complex<T>(Complex<T>::Float(1.0));
+  }
+  delete input;
+  return new Matrix(operands, 2, 1, false);
+}
+
 
 }
 

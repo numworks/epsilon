@@ -83,7 +83,7 @@ Complex<T> & Complex<T>::operator=(const Complex& other) {
 }
 
 template<typename T>
-static inline T setSignOnScalar(T f, bool negative) {
+static inline T privateFloatSetSign(T f, bool negative) {
   if (negative) {
     return -f;
   }
@@ -111,9 +111,9 @@ Complex<T>::Complex(const char * integralPart, int integralPartLength, bool inte
     const char * exponent, int exponentLength, bool exponentNegative) {
   T i = digitsToFloat<T>(integralPart, integralPartLength);
   T j = digitsToFloat<T>(fractionalPart, fractionalPartLength);
-  T l = setSignOnScalar<T>(digitsToFloat<T>(exponent, exponentLength), exponentNegative);
+  T l = privateFloatSetSign<T>(digitsToFloat<T>(exponent, exponentLength), exponentNegative);
 
-  m_a = setSignOnScalar((i + j*std::pow(10, -std::ceil((T)fractionalPartLength)))* std::pow(10, l), integralNegative);
+  m_a = privateFloatSetSign((i + j*std::pow(10, -std::ceil((T)fractionalPartLength)))* std::pow(10, l), integralNegative);
   m_b = 0;
 }
 

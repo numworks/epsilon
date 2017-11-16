@@ -52,8 +52,8 @@ QUIZ_CASE(poincare_simplify_easy) {
 
   // Power Matrix
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
-  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^(-1)", "undef");
-  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[-2,1][3/2,-1/2]]");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)", "undef");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[1,2][3,4]]^(-1)"); // TODO: Implement matrix inverse for dim < 3
 
   // Function on matrix
   assert_parsed_expression_simplify_to("abs([[1,-2][3,4]])", "[[1,2][3,4]]");
@@ -71,9 +71,9 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("conj([[1/R(2),1/2][1,-1]])", "[[conj(1/R(2)),1/2][1,-1]]");
   assert_parsed_expression_simplify_to("cos([[P/3,0][P/7,P/2]])", "[[1/2,1][cos(P/7),0]]");
   assert_parsed_expression_simplify_to("diff([[P/3,0][P/7,P/2]],3)", "undef");
-  assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "-2");
-  assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "2");
-  assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "0");
+  assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "det([[1,2][3,4]])"); // TODO: implement determinant if dim < 3
+  assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "det([[2,2][3,4]])");
+  assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "det([[2,2][3,3]])");
   assert_parsed_expression_simplify_to("quo([[2,2][3,3]],2)", "undef");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
@@ -105,7 +105,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]])", "undef");
   assert_parsed_expression_simplify_to("dim([[1/R(2),1/2,3][2,1,-3]])", "[[2,3]]");
   assert_parsed_expression_simplify_to("inverse([[1/R(2),1/2,3][2,1,-3]])", "undef");
-  assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
+  assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "inverse([[1,2][3,4]])"); // TODO: implement matrix inverse if dim < 3
   assert_parsed_expression_simplify_to("trace([[1/R(2),1/2,3][2,1,-3]])", "undef");
   assert_parsed_expression_simplify_to("trace([[R(2),2][4,3+log(3)]])", "R(2)+3+log(3)");
   assert_parsed_expression_simplify_to("trace(R(2)+log(3))", "R(2)+log(3)");

@@ -186,6 +186,7 @@ public:
   virtual Sign sign() const { return Sign::Unknown; }
   typedef bool (*ExpressionTest)(const Expression * e);
   bool recursivelyMatches(ExpressionTest test) const;
+  static bool isMatrix(const Expression * e);
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -261,8 +262,8 @@ private:
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
   /* Evaluation Engine */
-  virtual Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

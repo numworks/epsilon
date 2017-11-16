@@ -65,6 +65,30 @@ Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
 }
 
+template<typename T>
+Matrix * Multiplication::computeOnMatrices(const Matrix * m, const Matrix * n) {
+  if (m->numberOfColumns() != n->numberOfRows()) {
+    return nullptr;
+  }
+  Expression ** operands = new Expression * [m->numberOfRows()*n->numberOfColumns()];
+  for (int i = 0; i < m->numberOfRows(); i++) {
+    for (int j = 0; j < n->numberOfColumns(); j++) {
+      T a = 0.0f;
+      T b = 0.0f;
+      for (int k = 0; k < m->numberOfColumns(); k++) {
+        const Complex<T> * mEntry = static_cast<const Complex<T> *>(m->operand(i*m->numberOfColumns()+k));
+        const Complex<T> * nEntry = static_cast<const Complex<T> *>(n->operand(k*n->numberOfColumns()+j));
+        a += mEntry->a()*nEntry->a() - mEntry->b()*nEntry->b();
+        b += mEntry->b()*nEntry->a() + mEntry->a()*nEntry->b();
+      }
+      operands[i*n->numberOfColumns()+j] = new Complex<T>(Complex<T>::Cartesian(a, b));
+    }
+  }
+  Matrix * result = new Matrix(operands, m->numberOfRows(), n->numberOfColumns(), false);
+  delete[] operands;
+  return result;
+}
+
 bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
   int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfOperands()-1 : e1->numberOfOperands();
   int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfOperands()-1 : e2->numberOfOperands();
@@ -592,6 +616,9 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   sortOperands(SimplificationOrder);
 }
 
+template Matrix * Multiplication::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);
+template Matrix * Multiplication::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
+template Complex<float> Multiplication::compute<float>(Complex<float>, Complex<float>);
+template Complex<double> Multiplication::compute<double>(Complex<double>, Complex<double>);
+
 }
-template Poincare::Complex<float> Poincare::Multiplication::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
-template Poincare::Complex<double> Poincare::Multiplication::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);

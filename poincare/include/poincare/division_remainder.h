@@ -3,6 +3,7 @@
 
 #include <poincare/layout_engine.h>
 #include <poincare/static_hierarchy.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -23,8 +24,8 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename T> Complex<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
 
 };

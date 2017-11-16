@@ -307,4 +307,10 @@ Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
 template Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
 template Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
 
+template Matrix* Addition::computeOnMatrices<float>(const Matrix*,const Matrix*);
+template Matrix* Addition::computeOnMatrices<double>(const Matrix*,const Matrix*);
+
+template Matrix* Addition::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);
+template Matrix* Addition::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
+
 }

@@ -28,7 +28,24 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
     Matrix * transpose = static_cast<Matrix *>(op)->createTranspose();
     return replaceWith(transpose, true);
   }
-  return replaceWith(op, true);
+  if (!op->recursivelyMatches(Expression::isMatrix)) {
+    return replaceWith(op, true);
+  }
+  return this;
+}
+
+template<typename T>
+Expression * MatrixTranspose::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    result = input->clone();
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createTranspose();
+  }
+  delete input;
+  return result;
 }
 
 }

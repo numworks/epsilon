@@ -36,13 +36,13 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   return new HorizontalLayout(childrenLayouts, 3);
 }
 
-Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
+template<typename T>
+Expression * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol());
-  return replaceWith(editableOperand(0), true);
+  if (context.expressionForSymbol(symbol()) != nullptr) {
+    return context.expressionForSymbol(symbol())->evaluate<T>(context, angleUnit);
+  }
+  return new Complex<T>(Complex<T>::Float(NAN));
 }
 
 }

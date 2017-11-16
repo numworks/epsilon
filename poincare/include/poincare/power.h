@@ -42,11 +42,16 @@ private:
   Expression * removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit);
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>);
+  constexpr static int k_maxApproximatePowerMatrix = 1000;
+  constexpr static int k_maxExactPowerMatrix = 100;
+  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) { return nullptr; }
+  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * d);
+  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) { return nullptr; }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>);
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

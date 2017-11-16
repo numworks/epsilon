@@ -1,6 +1,6 @@
 #include <poincare/binomial_coefficient.h>
-#include <poincare/complex.h>
 #include <poincare/undefined.h>
+#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include "layout/parenthesis_layout.h"
 #include "layout/grid_layout.h"
@@ -63,6 +63,9 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
     return replaceWith(new Undefined(), true);
   }
   int clippedK = k.extractedInt(); // Authorized because k < k_maxNumberOfSteps
+  /* TODO: cap n and k -> if k or n too big, do not reduce to avoid too long
+   * computation. The binomial coefficient will be evaluate approximatively
+   * later */
   for (int i = 0; i < clippedK; i++) {
     Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
     result = Rational::Multiplication(result, factor);
@@ -80,11 +83,14 @@ ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode flo
 }
 
 template<typename T>
-Complex<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Complex<T> * nInput = operand(0)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> * kInput = operand(1)->privateEvaluate(T(), context, angleUnit);
-  T n = nInput->toScalar();
-  T k = kInput->toScalar();
+Expression * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * nInput = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * kInput = operand(1)->evaluate<T>(context, angleUnit);
+  if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  T n = static_cast<Complex<T> *>(nInput)->toScalar();
+  T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
   k = k > (n-k) ? n-k : k;
@@ -99,4 +105,3 @@ Complex<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit 
 }
 
 }
-

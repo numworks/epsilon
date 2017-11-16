@@ -2,6 +2,7 @@
 #define POINCARE_UNDEFINED_H
 
 #include <poincare/static_hierarchy.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -14,8 +15,8 @@ private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename T> Complex<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
 };
 

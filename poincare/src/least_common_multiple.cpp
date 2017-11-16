@@ -56,10 +56,10 @@ Expression * LeastCommonMultiple::shallowReduce(Context& context, AngleUnit angl
 
 template<typename T>
 Complex<T> * LeastCommonMultiple::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Complex<T> * f1Input = operand(0)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> * f2Input = operand(1)->privateEvaluate(T(), context, angleUnit);
-  T f1 = f1Input->toScalar();
-  T f2 = f2Input->toScalar();
+  Expression * f1Input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * f2Input = operand(1)->evaluate<T>(context, angleUnit);
+  T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
+  T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
   delete f1Input;
   delete f2Input;
   if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {

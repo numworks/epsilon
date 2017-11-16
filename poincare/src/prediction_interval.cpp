@@ -29,8 +29,23 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
   }
   Expression * op0 = editableOperand(0);
   Expression * op1 = editableOperand(1);
-  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
+  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
+  }
+  if (op0->type() == Type::Rational) {
+    Rational * r0 = static_cast<Rational *>(op0);
+    if (r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) > 0) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op1->type() == Type::Rational) {
+    Rational * r1 = static_cast<Rational *>(op1);
+    if (!r1->denominator().isOne() || r1->numerator().isNegative()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
+    return this;
   }
   Rational * r0 = static_cast<Rational *>(op0);
   Rational * r1 = static_cast<Rational *>(op1);
@@ -48,6 +63,26 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
   const Expression * newOperands[2] = {new Addition(r0, new Multiplication(new Rational(-1), m, false), false), new Addition(r0, m, true),};
   Expression * matrix = replaceWith(new Matrix(newOperands, 1, 2, false), true);
   return matrix->deepReduce(context, angleUnit);
+}
+
+template<typename T>
+Expression * PredictionInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * pInput = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * nInput = operand(1)->evaluate<T>(context, angleUnit);
+  if (pInput->type() != Type::Complex || nInput->type() != Type::Complex) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  T p = static_cast<Complex<T> *>(pInput)->toScalar();
+  T n = static_cast<Complex<T> *>(nInput)->toScalar();
+  delete pInput;
+  delete nInput;
+  if (isnan(p) || isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  Expression * operands[2];
+  operands[0] = new Complex<T>(Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
+  operands[1] = new Complex<T>(Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
+  return new Matrix(operands, 2, 1, false);
 }
 
 }

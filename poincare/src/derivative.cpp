@@ -33,23 +33,23 @@ Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   VariableContext<T> xContext = VariableContext<T>('x', &context);
   Symbol xSymbol('x');
-  Complex<T> * xInput = operand(1)->privateEvaluate(T(), context, angleUnit);
-  T x = xInput->toScalar();
+  Expression * xInput = operand(1)->evaluate<T>(context, angleUnit);
+  T x = xInput->type() == Type::Complex ? static_cast<Complex<T> *>(xInput)->toScalar() : NAN;
   delete xInput;
   Complex<T> e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Complex<T> * fInput = operand(1)->privateEvaluate(T(), xContext, angleUnit);
-  T functionValue = fInput->toScalar();
+  Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T functionValue = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
 
   // No complex/matrix version of Derivative
   if (isnan(x) || isnan(functionValue)) {
-  return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
 
   /* Ridders' Algorithm
@@ -121,13 +121,13 @@ T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, An
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Complex<T> * fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T expressionPlus = fInput->toScalar();
+  Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T expressionMinus = fInput->toScalar();
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   return (expressionPlus - expressionMinus)/(2*h);
 }
@@ -137,18 +137,18 @@ T Derivative::approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleU
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Complex<T> * fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T expressionPlus = fInput->toScalar();
+  Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T expression = fInput->toScalar();
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T expression = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  fInput = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T expressionMinus = fInput->toScalar();
+  fInput = operand(0)->evaluate<T>(xContext, angleUnit);
+  T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   return expressionPlus - 2.0*expression + expressionMinus;
 }

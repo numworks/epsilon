@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <poincare/addition.h>
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
 #include "layout/grid_layout.h"
@@ -106,24 +107,39 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return layout;
 }
 
-// TODO: 1. implement determinant/inverse for complex matrix
-// TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
-Expression * Matrix::createDeterminant() const {
+template<typename T>
+Complex<T> * Matrix::createTrace() const {
   if (numberOfRows() != numberOfColumns()) {
-    return new Undefined();
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
   int dim = numberOfRows();
-  double ** tempMat = new double*[dim];
+  Complex<T> c = Complex<T>::Float(0);
   for (int i = 0; i < dim; i++) {
-    tempMat[i] = new double[dim];
+    assert(operand(i*dim+i)->type() == Type::Complex);
+    c = Addition::compute(c, *(static_cast<const Complex<T> *>(operand(i*dim+i))));
   }
-  double det = 1;
+  return new Complex<T>(c);
+}
+
+// TODO: 1. implement determinant/inverse for complex matrix
+// TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
+template<typename T>
+Complex<T> * Matrix::createDeterminant() const {
+  if (numberOfRows() != numberOfColumns()) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  int dim = numberOfRows();
+  T ** tempMat = new T*[dim];
+  for (int i = 0; i < dim; i++) {
+    tempMat[i] = new T[dim];
+  }
+  T det = 1;
   /* Copy the matrix */
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       const Expression * op = operand(i*dim+j);
       assert(op->type() == Type::Complex);
-      tempMat[i][j] = static_cast<const Complex<double> *>(op)->toScalar(); // TODO: keep complex
+      tempMat[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
     }
   }
 
@@ -136,19 +152,19 @@ Expression * Matrix::createDeterminant() const {
         rowWithPivot = row;
       }
     }
-    double valuePivot = tempMat[rowWithPivot][i];
+    T valuePivot = tempMat[rowWithPivot][i];
     /* if the pivot is null, det = 0. */
-    if (std::fabs(valuePivot) <= DBL_EPSILON) {
+    if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       for (int i = 0; i < dim; i++) {
         free(tempMat[i]);
       }
       free(tempMat);
-      return new Decimal(0.0);
+      return new Complex<T>(Complex<T>::Float(0.0));
     }
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < dim; col++) {
-        double temp = tempMat[i][col];
+        T temp = tempMat[i][col];
         tempMat[i][col] = tempMat[rowWithPivot][col];
         tempMat[rowWithPivot][col] = temp;
       }
@@ -157,7 +173,7 @@ Expression * Matrix::createDeterminant() const {
     det *= valuePivot;
     /* Set to 0 all A[][i] by linear combination */
     for (int row = i+1; row < dim; row++) {
-      double factor = tempMat[row][i]/valuePivot;
+      T factor = tempMat[row][i]/valuePivot;
       for (int col = i; col < dim; col++) {
         tempMat[row][col] -= factor*tempMat[i][col];
       }
@@ -168,24 +184,25 @@ Expression * Matrix::createDeterminant() const {
     delete[] tempMat[i];
   }
   delete[] tempMat;
-  return new Decimal(det);
+  return new Complex<T>(Complex<T>::Float(det));
 }
 
-Expression * Matrix::createInverse() const {
+template<typename T>
+Matrix * Matrix::createInverse() const {
   if (numberOfRows() != numberOfColumns()) {
-    return new Undefined();
+    return nullptr;
   }
   int dim = numberOfRows();
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  double ** inv = new double*[dim];
+  T ** inv = new T*[dim];
   for (int i = 0; i < dim; i++) {
-    inv[i] = new double [2*dim];
+    inv[i] = new T [2*dim];
   }
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       const Expression * op = operand(i*dim+j);
       assert(op->type() == Type::Complex);
-      inv[i][j] = static_cast<const Complex<double> *>(op)->toScalar(); // TODO: keep complex
+      inv[i][j] = static_cast<const Complex<T> *>(op)->toScalar(); // TODO: keep complex
     }
     for (int j = dim; j < 2*dim; j++) {
       inv[i][j] = (i+dim == j);
@@ -200,19 +217,19 @@ Expression * Matrix::createInverse() const {
         rowWithPivot = row;
       }
     }
-    double valuePivot = inv[rowWithPivot][i];
+    T valuePivot = inv[rowWithPivot][i];
     /* if the pivot is null, the matrix in not invertible. */
-    if (std::fabs(valuePivot) <= FLT_EPSILON) {
+    if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       for (int i = 0; i < dim; i++) {
         free(inv[i]);
       }
       free(inv);
-      return new Undefined();
+      return nullptr;
     }
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < 2*dim; col++) {
-        double temp = inv[i][col];
+        T temp = inv[i][col];
         inv[i][col] = inv[rowWithPivot][col];
         inv[rowWithPivot][col] = temp;
       }
@@ -226,7 +243,7 @@ Expression * Matrix::createInverse() const {
       if (row == i) {
         continue;
       }
-      double factor = inv[row][i];
+      T factor = inv[row][i];
       for (int col = 0; col < 2*dim; col++) {
         inv[row][col] -= factor*inv[i][col];
       }
@@ -235,7 +252,7 @@ Expression * Matrix::createInverse() const {
   const Expression ** operands = new const Expression * [numberOfOperands()];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*dim+j] = new Decimal(inv[i][j+dim]);
+      operands[i*dim+j] = new Complex<T>(Complex<T>::Float(inv[i][j+dim]));
     }
   }
   for (int i = 0; i < dim; i++) {
@@ -256,7 +273,7 @@ Matrix * Matrix::createTranspose() const {
     }
   }
   // Intentionally swapping dimensions for transpose
-  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows());
+  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows(), true);
   delete[] operands;
   return matrix;
 }
@@ -272,9 +289,51 @@ Matrix * Matrix::createIdentity(int dim) {
       }
     }
   }
-  Matrix * matrix = new Matrix(operands, dim, dim);
+  Matrix * matrix = new Matrix(operands, dim, dim, false);
   delete [] operands;
   return matrix;
 }
 
+template<typename T>
+Matrix * Matrix::createApproximateIdentity(int dim) {
+  Expression ** operands = new Expression * [dim*dim];
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      if (i == j) {
+        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(1));
+      } else {
+        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(0));
+      }
+    }
+  }
+  Matrix * matrix = new Matrix(operands, dim, dim, false);
+  delete [] operands;
+  return matrix;
+}
+
+template<typename T>
+Expression * Matrix::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression ** operands = new Expression * [numberOfOperands()];
+  for (int i = 0; i < numberOfOperands(); i++) {
+    Expression * operandEvaluation = operand(i)->evaluate<T>(context, angleUnit);
+    if (operandEvaluation->type() != Type::Complex) {
+      operands[i] = new Complex<T>(Complex<T>::Float(NAN));
+      delete operandEvaluation;
+    } else {
+      operands[i] = operandEvaluation;
+    }
+  }
+  Expression * matrix = new Matrix(operands, numberOfRows(), numberOfColumns(), false);
+  delete[] operands;
+  return matrix;
+}
+
+template Matrix* Matrix::createApproximateIdentity<float>(int);
+template Matrix* Matrix::createApproximateIdentity<double>(int);
+template Complex<float>* Matrix::createTrace<float>() const;
+template Complex<double>* Matrix::createTrace<double>() const;
+template Matrix* Matrix::createInverse<float>() const;
+template Matrix* Matrix::createInverse<double>() const;
+template Complex<float>* Matrix::createDeterminant<float>() const;
+template Complex<double>* Matrix::createDeterminant<double>() const;
 }

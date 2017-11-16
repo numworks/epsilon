@@ -88,6 +88,10 @@ bool Expression::recursivelyMatches(ExpressionTest test) const {
   return false;
 }
 
+bool Expression::isMatrix(const Expression * e) {
+  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval;
+}
+
 /* Comparison */
 
 int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
@@ -172,21 +176,12 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 /* Evaluation */
 
 template<typename T> Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
-  for (int i = 0; i < numberOfOperands(); i++) {
-    assert(operand(i)->type() != Type::Matrix);
+  switch (angleUnit) {
+    case AngleUnit::Default:
+      return privateEvaluate(T(), context, Preferences::sharedPreferences()->angleUnit());
+    default:
+      return privateEvaluate(T(), context, angleUnit);
   }
-  AngleUnit au = angleUnit == AngleUnit::Default ? Preferences::sharedPreferences()->angleUnit() : angleUnit;
-  if (type() == Type::Matrix) {
-    const Matrix * inputMatrix = static_cast<const Matrix *>(this);
-    Expression ** operands = new Expression *[numberOfOperands()];
-    for (int i = 0; i < numberOfOperands(); i++) {
-      operands[i] = operand(i)->privateEvaluate(T(), context, au);
-    }
-    Expression * matrix = new Matrix(operands, inputMatrix->numberOfRows(), inputMatrix->numberOfColumns(), false);
-    delete[] operands;
-    return matrix;
-  }
-  return privateEvaluate(T(), context, au);
 }
 
 template<typename T> T Expression::approximate(Context& context, AngleUnit angleUnit) const {
@@ -196,27 +191,19 @@ template<typename T> T Expression::approximate(Context& context, AngleUnit angle
   if (evaluation->type() == Type::Complex) {
     result = static_cast<const Complex<T> *>(evaluation)->toScalar();
   }
-  if (evaluation->type() == Type::Matrix) {
+  /*if (evaluation->type() == Type::Matrix) {
     if (numberOfOperands() == 1) {
       result = static_cast<const Complex<T> *>(operand(0))->toScalar();
     }
-  }
+  }*/
   delete evaluation;
   return result;
 }
 
 template<typename T> T Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
-  T result = NAN;
-  if (exp == nullptr) {
-    return result;
-  }
-  Expression * evaluation = exp->evaluate<T>(context, angleUnit);
+  T result = exp->approximate<T>(context, angleUnit);
   delete exp;
-  if (evaluation->type() == Type::Complex) {
-    result = static_cast<Complex<T> *>(evaluation)->toScalar();
-  }
-  delete evaluation;
   return result;
 }
 

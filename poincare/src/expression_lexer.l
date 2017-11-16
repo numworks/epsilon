@@ -140,7 +140,7 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8c { return EE; }
 \x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
-\x8b { return ICOMPLEX; }
+\x8b { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { return STO; }
 \+ { return PLUS; }

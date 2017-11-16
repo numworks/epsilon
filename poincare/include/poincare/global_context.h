@@ -33,6 +33,7 @@ private:
   Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   Complex<double> m_pi;
   Complex<double> m_e;
+  Complex<double> m_i;
 };
 
 }

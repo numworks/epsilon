@@ -8,7 +8,8 @@ namespace Poincare {
 
 GlobalContext::GlobalContext() :
   m_pi(Complex<double>::Float(M_PI)),
-  m_e(Complex<double>::Float(M_E))
+  m_e(Complex<double>::Float(M_E)),
+  m_i(Complex<double>::Cartesian(0.0, 1.0))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -49,6 +50,9 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   }
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
+  }
+  if (symbol->name() == Ion::Charset::IComplex) {
+    return &m_i;
   }
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;

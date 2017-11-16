@@ -130,7 +130,7 @@ QUIZ_CASE(poincare_simplify_easy) {
 
   /* Complex */
   assert_parsed_expression_simplify_to("I", "I");
-  assert_parsed_expression_simplify_to("R(-33)", "R(33)*X^(IP/2)");
+  assert_parsed_expression_simplify_to("R(-33)", "R(33)*I");
   assert_parsed_expression_simplify_to("I^(3/5)", "X^(IP3/10)");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");

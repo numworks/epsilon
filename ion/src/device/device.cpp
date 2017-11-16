@@ -164,6 +164,10 @@ void initClocks() {
    * The spec tells us that at 2.8V and over 90MHz the flash expects 3 WS. */
   FLASH.ACR()->setLATENCY(3);
 
+  /* Set flash instruction and data cache */
+  FLASH.ACR()->setDCEN(true);
+  FLASH.ACR()->setICEN(true);
+
   /* We're using the high-speed internal oscillator as a clock source. It runs
    * at a fixed 16 MHz frequency, but by piping it through the PLL we can derive
    * faster oscillations. Combining default values and a PLLQ of 4 can provide
@@ -229,4 +233,3 @@ void shutdownClocks() {
 
 }
 }
-

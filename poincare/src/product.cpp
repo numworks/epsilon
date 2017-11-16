@@ -31,8 +31,23 @@ ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLa
 }
 
 template<typename T>
-Complex<T> * Product::templatedEvaluateWithNextTerm(Complex<T> * a, Complex<T> * b) const {
-  return new Complex<T>(Multiplication::compute(*a, *b));
+Expression * Product::templatedEvaluateWithNextTerm(Expression * a, Expression * b) const {
+  if (a->type() == Type::Complex && b->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    Complex<T> * d = static_cast<Complex<T> *>(b);
+    return new Complex<T>(Multiplication::compute(*c, *d));
+  }
+  if (a->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    assert(b->type() == Type::Matrix);
+    Matrix * m = static_cast<Matrix *>(b);
+    return Multiplication::computeOnComplexAndMatrix(c, m);
+  }
+  assert(a->type() == Type::Matrix);
+  assert(b->type() == Type::Matrix);
+  Matrix * m = static_cast<Matrix *>(a);
+  Matrix * n = static_cast<Matrix *>(b);
+  return Multiplication::computeOnMatrices<T>(m, n);
 }
 
 }

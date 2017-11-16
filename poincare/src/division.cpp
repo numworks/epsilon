@@ -56,4 +56,27 @@ ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMo
   return new FractionLayout(numerator->createLayout(floatDisplayMode, complexFormat), denominator->createLayout(floatDisplayMode, complexFormat));
 }
 
+template<typename T> Matrix * Division::computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) {
+  Matrix * inverse = n->createInverse<T>();
+  if (inverse == nullptr) {
+    return nullptr;
+  }
+  Matrix * result = Multiplication::computeOnComplexAndMatrix<T>(c, inverse);
+  delete inverse;
+  return result;
+}
+
+template<typename T> Matrix * Division::computeOnMatrices(const Matrix * m, const Matrix * n) {
+  if (m->numberOfColumns() != n->numberOfColumns()) {
+    return nullptr;
+  }
+  Matrix * inverse = n->createInverse<T>();
+  if (inverse == nullptr) {
+    return nullptr;
+  }
+  Matrix * result = Multiplication::computeOnMatrices<T>(m, inverse);
+  delete inverse;
+  return result;
+}
+
 }

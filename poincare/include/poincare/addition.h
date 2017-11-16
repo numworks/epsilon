@@ -18,6 +18,12 @@ public:
   Expression * clone() const override;
   /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) {
+    return EvaluationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
+  }
+  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
@@ -36,12 +42,15 @@ private:
   static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>);
+  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>);
-  }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+   }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+   }
 };
 
 }

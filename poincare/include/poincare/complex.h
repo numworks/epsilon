@@ -63,8 +63,8 @@ private:
   Complex(T a, T b);
   constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
-  Complex<float> * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Complex<double> * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  Expression * privateEvaluate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
  template<typename U> Complex<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 7 significant digits so, in the worst case it

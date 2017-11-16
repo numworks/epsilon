@@ -67,25 +67,10 @@ Expression::Sign Symbol::sign() const {
   return Sign::Unknown;
 }
 
-Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  if (context.expressionForSymbol(this) != nullptr && m_name != Ion::Charset::SmallPi && m_name != Ion::Charset::Exponential) {
-    return replaceWith(context.expressionForSymbol(this)->clone(), true);
-  }
-  return this;
-}
-
 template<typename T>
-Complex<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  /* All symbols have been replaced by their expression at simplification. If
-   * we arrive here, either the symbol is Pi or E or the symbol is undefined.
-   * We can call privateEvaluate without risking to call it on a matrix (which
-   * fails). */
+Expression * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->privateEvaluate(T(), context, angleUnit);
+    return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }

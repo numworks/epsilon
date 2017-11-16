@@ -27,11 +27,11 @@ private:
   /* Simplication */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::approximate<float>(this, context, angleUnit,computeOnComplex<float>);
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::approximate<double>(this, context, angleUnit, computeOnComplex<double>);
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 };
 

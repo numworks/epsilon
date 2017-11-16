@@ -17,12 +17,12 @@ private:
   virtual ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const = 0;
   virtual const char * name() const = 0;
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Complex<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   virtual int emptySequenceValue() const = 0;
-  virtual Complex<float> * evaluateWithNextTerm(Complex<float> * a, Complex<float> * b) const = 0;
-  virtual Complex<double> * evaluateWithNextTerm(Complex<double> * a, Complex<double> * b) const = 0;
+  virtual Expression * evaluateWithNextTerm(SinglePrecision p, Expression * a, Expression * b) const = 0;
+  virtual Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const = 0;
 };
 
 }

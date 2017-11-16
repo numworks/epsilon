@@ -38,7 +38,24 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     return replaceWith(a, true)->shallowReduce(context, angleUnit);
   }
-  return replaceWith(op, true);
+  if (!op->recursivelyMatches(Expression::isMatrix)) {
+    return replaceWith(op, true);
+  }
+  return this;
+}
+
+template<typename T>
+Expression * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    result = input->clone();
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createTrace<T>();
+  }
+  delete input;
+  return result;
 }
 
 }

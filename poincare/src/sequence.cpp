@@ -23,11 +23,11 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
 }
 
 template<typename T>
-Complex<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Complex<T> * aInput = operand(1)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> * bInput = operand(2)->privateEvaluate(T(), context, angleUnit);
-  T start = aInput->toScalar();
-  T end = bInput->toScalar();
+Expression * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * aInput = operand(1)->evaluate<T>(context, angleUnit);
+  Expression * bInput = operand(2)->evaluate<T>(context, angleUnit);
+  T start = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
+  T end = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete aInput;
   delete bInput;
   if (isnan(start) || isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
@@ -35,7 +35,7 @@ Complex<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) 
   }
   VariableContext<T> nContext = VariableContext<T>('n', &context);
   Symbol nSymbol('n');
-  Complex<T> * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
+  Expression * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
   for (int i = (int)start; i <= (int)end; i++) {
     if (shouldStopProcessing()) {
       delete result;
@@ -43,8 +43,8 @@ Complex<T> * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) 
     }
     Complex<T> iExpression = Complex<T>::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
-    Complex<T> * expression = operand(0)->privateEvaluate(T(), nContext, angleUnit);
-    Complex<T> * newResult = evaluateWithNextTerm(result, expression);
+    Expression * expression = operand(0)->evaluate<T>(nContext, angleUnit);
+    Expression * newResult = evaluateWithNextTerm(T(), result, expression);
     delete result;
     delete expression;
     result = newResult;

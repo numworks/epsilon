@@ -180,13 +180,18 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Complex<T> * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
-    return EvaluationEngine::approximate(this, context, angleUnit, computeOnComplex<T>);
+    return EvaluationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
-  Complex<T> * x = operand(0)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> * n = operand(1)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> result = Division::compute<T>(computeOnComplex(*n, angleUnit), computeOnComplex(*x, angleUnit));
+  Expression * x = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * n = operand(1)->evaluate<T>(context, angleUnit);
+  Complex<T> result = Complex<T>::Float(NAN);
+  if (x->type() == Type::Complex && n->type() == Type::Complex) {
+    Complex<T> * xc = static_cast<Complex<T> *>(x);
+    Complex<T> * nc = static_cast<Complex<T> *>(n);
+    result = Division::compute<T>(computeOnComplex(*nc, angleUnit), computeOnComplex(*xc, angleUnit));
+  }
   delete x;
   delete n;
   return new Complex<T>(result);

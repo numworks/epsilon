@@ -23,11 +23,11 @@ public:
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }

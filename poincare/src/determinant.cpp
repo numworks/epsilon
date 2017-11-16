@@ -22,15 +22,25 @@ Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    // TODO: handle this exactly ; now, we approximate the operand and compute the determinant on real only.
-    Expression * approxMatrix = op->evaluate<double>(context, angleUnit);
-    assert(approxMatrix->type() == Type::Matrix);
-    Expression * det = static_cast<Matrix *>(approxMatrix)->createDeterminant();
-    delete approxMatrix;
-    return replaceWith(det, true)->shallowReduce(context, angleUnit);
+  if (!op->recursivelyMatches(Expression::isMatrix)) {
+    return replaceWith(op, true);
   }
-  return replaceWith(op, true);
+  return this;
+}
+
+// TODO: handle this exactly in shallowReduce for small dimensions.
+template<typename T>
+Expression * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    result = input->clone();
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createDeterminant<T>();
+  }
+  delete input;
+  return result;
 }
 
 }

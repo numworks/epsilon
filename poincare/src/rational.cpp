@@ -6,7 +6,6 @@ extern "C" {
 #include <math.h>
 }
 #include <poincare/arithmetic.h>
-#include <poincare/complex.h>
 #include <poincare/opposite.h>
 #include "layout/string_layout.h"
 #include "layout/fraction_layout.h"

@@ -1,6 +1,5 @@
 #include <poincare/permute_coefficient.h>
 #include <poincare/undefined.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 
 extern "C" {
@@ -57,6 +56,9 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angle
   }
   Integer result(1);
   int clippedK = k.extractedInt(); // Authorized because k < k_maxNumberOfSteps
+  /* TODO: cap n and k -> if k or n too big, do not reduce to avoid too long
+   * computation. The permute coefficient will be evaluate approximatively
+   * later */
   for (int i = 0; i < clippedK; i++) {
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);
@@ -66,10 +68,13 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angle
 
 template<typename T>
 Complex<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Complex<T> * nInput = operand(0)->privateEvaluate(T(), context, angleUnit);
-  Complex<T> * kInput = operand(1)->privateEvaluate(T(), context, angleUnit);
-  T n = nInput->toScalar();
-  T k = kInput->toScalar();
+  Expression * nInput = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * kInput = operand(1)->evaluate<T>(context, angleUnit);
+  if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  T n = static_cast<Complex<T> *>(nInput)->toScalar();
+  T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
   if (isnan(n) || isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f || k > k_maxNumberOfSteps) {

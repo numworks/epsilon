@@ -72,6 +72,36 @@ Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Polar(radius, theta);
 }
 
+template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * d) {
+ if (m->numberOfRows() != m->numberOfColumns()) {
+    return nullptr;
+  }
+  T power = d->toScalar();
+  if (isnan(power) || isinf(power) || power != (int)power || std::fabs(power) > k_maxApproximatePowerMatrix) {
+    return nullptr;
+  }
+  if (power < 0) {
+    Matrix * inverse = m->createInverse<T>();
+    if (inverse == nullptr) {
+      return nullptr;
+    }
+    Complex<T> minusC = Opposite::compute(*d, AngleUnit::Default);
+    Matrix * result = Power::computeOnMatrixAndComplex(inverse, &minusC);
+    delete inverse;
+    return result;
+  }
+  Matrix * result = Matrix::createApproximateIdentity<T>(m->numberOfRows());
+  // TODO: implement a quick exponentiation
+  for (int k = 0; k < (int)power; k++) {
+    if (shouldStopProcessing()) {
+      delete result;
+      return nullptr;
+    }
+    result = Multiplication::computeOnMatrices<T>(result, m);
+  }
+  return result;
+}
+
 ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -119,16 +149,17 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(new Undefined(), true);
     }
     if (exponent.isNegative()) {
-      Expression * inverse = new MatrixInverse(mat, false);
-      replaceOperand(mat, inverse, false);
-      inverse->shallowReduce(context, angleUnit);
       editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
-      return shallowReduce(context, angleUnit);
+      Expression * newMatrix = shallowReduce(context, angleUnit);
+      Expression * parent = newMatrix->parent();
+      Power * p = new Power(newMatrix, new Rational(-1), false);
+      parent->replaceOperand(newMatrix, p, false);
+      return p;
     }
-    if (Integer::NaturalOrder(exponent, Integer(k_maxNumberOfSteps)) > 0) {
-      return replaceWith(new Undefined(), true);
+    if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
+      return this;
     }
-    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxNumberOfSteps
+    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
     Matrix * id = Matrix::createIdentity(mat->numberOfRows());
     if (exp == 0) {
       return replaceWith(id, true);

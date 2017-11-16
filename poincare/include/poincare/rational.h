@@ -3,6 +3,7 @@
 
 #include <poincare/integer.h>
 #include <poincare/static_hierarchy.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -43,8 +44,8 @@ public:
 private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename U> Complex<U> * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   Expression * setSign(Sign s);

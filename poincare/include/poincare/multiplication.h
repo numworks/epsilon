@@ -21,6 +21,10 @@ public:
   Sign sign() const override;
   /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
+  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
 private:
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
@@ -46,11 +50,15 @@ private:
   // Warning: mergeNegativePower not always returns  a multiplication: *(b^-1,c^-1) -> (bc)^-1
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
   /* Evaluation */
-  Complex<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>);
+
+  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
-  Complex<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>);
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

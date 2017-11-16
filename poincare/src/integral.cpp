@@ -1,6 +1,5 @@
 #include <poincare/integral.h>
 #include <poincare/symbol.h>
-#include <poincare/complex.h>
 #include <poincare/context.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -38,11 +37,11 @@ Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
 template<typename T>
 Complex<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Complex<T> * aInput = operand(1)->privateEvaluate(T(), context, angleUnit);
-  T a = aInput->toScalar();
+  Expression * aInput = operand(1)->evaluate<T>(context, angleUnit);
+  T a = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
   delete aInput;
-  Complex<T> * bInput = operand(2)->privateEvaluate(T(), context, angleUnit);
-  T b = bInput->toScalar();
+  Expression * bInput = operand(2)->evaluate<T>(context, angleUnit);
+  T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete bInput;
   if (isnan(a) || isnan(b)) {
     return new Complex<T>(Complex<T>::Float(NAN));
@@ -69,8 +68,8 @@ T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit 
   Complex<T> e = Complex<T>::Float(x);
   Symbol xSymbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Complex<T> * f = operand(0)->privateEvaluate(T(), xContext, angleUnit);
-  T result = f->toScalar();
+  Expression * f = operand(0)->evaluate<T>(xContext, angleUnit);
+  T result = f->type() == Type::Complex ? static_cast<Complex<T> *>(f)->toScalar() : NAN;
   delete f;
   return result;
 }

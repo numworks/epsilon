@@ -105,7 +105,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (m_consoleStore.numberOfLines() > 0) {
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());

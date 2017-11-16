@@ -190,6 +190,11 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (b->isOne()) {
       return replaceWith(editableOperand(0), true);
     }
+    // i^(p/q)
+    if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::IComplex) {
+      Rational r = Rational::Multiplication(*b, Rational(1, 2));
+      return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
+    }
   }
   if (operand(0)->type() == Type::Rational) {
     Rational * a = static_cast<Rational *>(editableOperand(0));
@@ -310,18 +315,18 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   Expression * d = nullptr;
   if (b->sign() == Sign::Negative) {
     b->setSign(Sign::Positive);
-    n = CreateSimplifiedIntegerRationalPower(a->denominator(), b, false);
-    d = CreateSimplifiedIntegerRationalPower(a->numerator(), b, true);
+    n = CreateSimplifiedIntegerRationalPower(a->denominator(), b, false, context, angleUnit);
+    d = CreateSimplifiedIntegerRationalPower(a->numerator(), b, true, context, angleUnit);
   } else {
-    n = CreateSimplifiedIntegerRationalPower(a->numerator(), b, false);
-    d = CreateSimplifiedIntegerRationalPower(a->denominator(), b, true);
+    n = CreateSimplifiedIntegerRationalPower(a->numerator(), b, false, context, angleUnit);
+    d = CreateSimplifiedIntegerRationalPower(a->denominator(), b, true, context, angleUnit);
   }
   Multiplication * m = new Multiplication(n, d, false);
   result->replaceWith(m, true);
   return m->shallowReduce(context, angleUnit);
 }
 
-Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator) {
+Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(r->sign() == Sign::Positive);
   if (i.isOne()) {
@@ -359,16 +364,36 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     m->removeOperand(p);
   }
   if (i.isNegative()) {
-    const Symbol * exp = new Symbol(Ion::Charset::Exponential);
-    const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);
-    const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
-    const Expression * multExpOperands[3] = {iComplex, pi, r->clone()};
-    Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
-    Power * pExp = new Power(exp, mExp, false);
-    m->addOperand(pExp);
+    Expression * nthRootOfUnity = CreateNthRootOfUnity(*r);
+    m->addOperand(nthRootOfUnity);
+    nthRootOfUnity->shallowReduce(context, angleUnit);
+
   }
   m->sortOperands(SimplificationOrder);
   return m;
+}
+
+Expression * Power::CreateNthRootOfUnity(const Rational r) {
+  const Symbol * exp = new Symbol(Ion::Charset::Exponential);
+  const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);
+  const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
+  const Expression * multExpOperands[3] = {iComplex, pi, new Rational(r)};
+  Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
+  mExp->sortOperands(SimplificationOrder);
+  return new Power(exp, mExp, false);
+#if 0
+  const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);
+  const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
+  Expression * op = new Multiplication(pi, r->clone(), false);
+  Cosine * cos = new Cosine(op, false);
+  op = op->shallowReduce(context, angleUnit);
+  Sine * sin = new Sine(op, true);
+  Expression * m = new Multiplication(iComplex, sin, false);
+  sin->shallowReduce(context, angleUnit);
+  Expression * a = new Addition(cos, m, false);
+  cos->shallowReduce(context, angleUnit);
+  const Expression * multExpOperands[3] = {pi, r->clone()};
+#endif
 }
 
 Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {

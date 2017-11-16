@@ -40,7 +40,8 @@ private:
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);
   Expression * removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit);
-  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator);
+  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, AngleUnit angleUnit);
+  static Expression * CreateNthRootOfUnity(const Rational r);
   /* Evaluation */
   constexpr static int k_maxApproximatePowerMatrix = 1000;
   constexpr static int k_maxExactPowerMatrix = 100;

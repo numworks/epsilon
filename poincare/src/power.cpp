@@ -18,6 +18,8 @@ extern "C" {
 #include <poincare/arithmetic.h>
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
+#include <poincare/cosine.h>
+#include <poincare/sine.h>
 #include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
@@ -215,6 +217,26 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (operand(1)->type() == Type::Rational) {
       return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
     }
+  }
+  // e^(i*Pi*r) with r rational
+  if (isNthRootOfUnity()) {
+    Expression * m = editableOperand(1);
+    detachOperand(m);
+    Expression * i = m->editableOperand(m->numberOfOperands()-1);
+    static_cast<Multiplication *>(m)->removeOperand(i, false);
+    if (angleUnit == AngleUnit::Degree) {
+      const Expression * pi = m->operand(m->numberOfOperands()-1);
+      m->replaceOperand(pi, new Rational(180), true);
+    }
+    Expression * cos = new Cosine(m, false);
+    m = m->shallowReduce(context, angleUnit);
+    Expression * sin = new Sine(m, true);
+    Expression * complexPart = new Multiplication(sin, i, false);
+    sin->shallowReduce(context, angleUnit);
+    Expression * a = new Addition(cos, complexPart, false);
+    cos->shallowReduce(context, angleUnit);
+    complexPart->shallowReduce(context, angleUnit);
+    return replaceWith(a, true)->shallowReduce(context, angleUnit);
   }
   // x^log(y,x)->y if y > 0
   if (operand(1)->type() == Type::Logarithm) {
@@ -522,6 +544,33 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUni
     result = result->shallowReduce(context, angleUnit);
   }
   return result;
+}
+
+bool Power::isNthRootOfUnity() const {
+  if (operand(0)->type() != Type::Symbol || static_cast<const Symbol *>(operand(0))->name() != Ion::Charset::Exponential) {
+    return false;
+  }
+  if (operand(1)->type() != Type::Multiplication) {
+    return false;
+  }
+  if (operand(1)->numberOfOperands() < 2 || operand(1)->numberOfOperands() > 3) {
+    return false;
+  }
+  const Expression * i = operand(1)->operand(operand(1)->numberOfOperands()-1);
+  if (i->type() != Type::Symbol || static_cast<const Symbol *>(i)->name() != Ion::Charset::IComplex) {
+    return false;
+  }
+  const Expression * pi = operand(1)->operand(operand(1)->numberOfOperands()-2);
+  if (pi->type() != Type::Symbol || static_cast<const Symbol *>(pi)->name() != Ion::Charset::SmallPi) {
+    return false;
+  }
+  if (numberOfOperands() == 2) {
+    return true;
+  }
+  if (operand(1)->operand(0)->type() == Type::Rational) {
+    return true;
+  }
+  return false;
 }
 
 }

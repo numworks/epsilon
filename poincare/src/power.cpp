@@ -15,6 +15,7 @@ extern "C" {
 #include <poincare/square_root.h>
 #include <poincare/nth_root.h>
 #include <poincare/division.h>
+#include <poincare/matrix_inverse.h>
 #include <poincare/arithmetic.h>
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
@@ -154,9 +155,9 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
       Expression * newMatrix = shallowReduce(context, angleUnit);
       Expression * parent = newMatrix->parent();
-      Power * p = new Power(newMatrix, new Rational(-1), false);
-      parent->replaceOperand(newMatrix, p, false);
-      return p;
+      MatrixInverse * inv = new MatrixInverse(newMatrix, false);
+      parent->replaceOperand(newMatrix, inv, false);
+      return inv;
     }
     if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
       return this;

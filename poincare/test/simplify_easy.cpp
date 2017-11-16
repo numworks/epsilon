@@ -54,6 +54,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)", "undef");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[1,2][3,4]]^(-1)"); // TODO: Implement matrix inverse for dim < 3
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)+3", "inverse([[1,2][3,4]])+3");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)+3", "inverse([[37,54][81,118]])+3");
 
   // Function on matrix
   assert_parsed_expression_simplify_to("abs([[1,-2][3,4]])", "[[1,2][3,4]]");

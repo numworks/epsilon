@@ -22,6 +22,7 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  bool parentIsAPowerOfSameBase() const;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);

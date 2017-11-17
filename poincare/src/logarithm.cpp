@@ -60,37 +60,22 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
     return replaceWith(new Rational(1), true);
   }
-  /* log(x^y, b)->y*log(x, b) if x>0
-   * We do not apply this rule if the parent node is a power of b. In this case
-   * there could be a simplication of form e^ln(3^(1/2))->3^(1/2) */
-  if (op->type() == Type::Power && op->operand(0)->sign() == Sign::Positive) {
-    bool shouldApplyRule = true;
-    if (parent()->type() == Type::Power && parent()->operand(1) == this) {
-      const Expression * powerOperand0 = parent()->operand(0);
-     if (numberOfOperands() == 1) {
-       if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
-         shouldApplyRule = false;
-       }
-     }
-     if (numberOfOperands() == 2) {
-       if (powerOperand0->isIdenticalTo(operand(1))){
-         shouldApplyRule = false;
-       }
-     }
-    }
-    if (shouldApplyRule) {
-      Power * p = static_cast<Power *>(op);
-      Expression * x = p->editableOperand(0);
-      Expression * y = p->editableOperand(1);
-      p->detachOperands();
-      replaceOperand(p, x, true);
-      Expression * newLog = shallowReduce(context, angleUnit);
-      newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
-      return newLog->shallowReduce(context, angleUnit);
-    }
+  /* We do not apply some rules if the parent node is a power of b. In this
+   * case there is a simplication of form e^ln(3^(1/2))->3^(1/2) */
+  bool letLogAtRoot = parentIsAPowerOfSameBase();
+  // log(x^y, b)->y*log(x, b) if x>0
+  if (!letLogAtRoot && op->type() == Type::Power && op->operand(0)->sign() == Sign::Positive) {
+    Power * p = static_cast<Power *>(op);
+    Expression * x = p->editableOperand(0);
+    Expression * y = p->editableOperand(1);
+    p->detachOperands();
+    replaceOperand(p, x, true);
+    Expression * newLog = shallowReduce(context, angleUnit);
+    newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
+    return newLog->shallowReduce(context, angleUnit);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (op->type() == Type::Multiplication) {
+  if (!letLogAtRoot && op->type() == Type::Multiplication) {
     Addition * a = new Addition();
     for (int i = 0; i<op->numberOfOperands()-1; i++) {
       Expression * factor = op->editableOperand(i);
@@ -128,13 +113,32 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(new Rational(1), true);
     }
     // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
-    Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
-    Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-    Addition * a = new Addition(n, d, false);
-    replaceWith(a, true);
-    return a->shallowReduce(context, angleUnit);
+    if (!letLogAtRoot) {
+      Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
+      Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
+      Addition * a = new Addition(n, d, false);
+      replaceWith(a, true);
+      return a->shallowReduce(context, angleUnit);
+    }
   }
   return this;
+}
+
+bool Logarithm::parentIsAPowerOfSameBase() const {
+  if (parent()->type() == Type::Power && parent()->operand(1) == this) {
+    const Expression * powerOperand0 = parent()->operand(0);
+    if (numberOfOperands() == 1) {
+      if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
+        return true;
+      }
+    }
+    if (numberOfOperands() == 2) {
+      if (powerOperand0->isIdenticalTo(operand(1))){
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit) {

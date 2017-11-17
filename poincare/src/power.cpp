@@ -201,6 +201,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
     }
   }
+  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
   if (operand(0)->type() == Type::Rational) {
     Rational * a = static_cast<Rational *>(editableOperand(0));
     // 0^x
@@ -217,12 +218,12 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(new Rational(1), true);
     }
     // p^q with p, q rationals
-    if (operand(1)->type() == Type::Rational) {
+    if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
       return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
     }
   }
   // e^(i*Pi*r) with r rational
-  if (isNthRootOfUnity()) {
+  if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression * m = editableOperand(1);
     detachOperand(m);
     Expression * i = m->editableOperand(m->numberOfOperands()-1);
@@ -264,7 +265,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
   }
   // (a*b*c*...)^r ?
-  if (operand(0)->type() == Type::Multiplication) {
+  if (!letPowerAtRoot && operand(0)->type() == Type::Multiplication) {
     Multiplication * m = static_cast<Multiplication *>(editableOperand(0));
     // (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
     if (operand(1)->type() == Type::Rational && static_cast<Rational *>(editableOperand(1))->denominator().isOne()) {
@@ -295,7 +296,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
   }
   // a^(b+c) -> Rational(a^b)*a^c with a and b rational
-  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Addition) {
+  if (!letPowerAtRoot && operand(0)->type() == Type::Rational && operand(1)->type() == Type::Addition) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
     if (a->operand(0)->type() == Type::Rational) {
@@ -309,6 +310,27 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
   }
   return this;
+}
+
+bool Power::parentIsALogarithmOfSameBase() const {
+  if (parent()->type() == Type::Logarithm && parent()->operand(0) == this) {
+    // parent = log(10^x)
+    if (parent()->numberOfOperands() == 1) {
+      if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isTen()) {
+        return true;
+      }
+      return false;
+    }
+    // parent = log(x^y,x)
+    if (operand(0)->isIdenticalTo(parent()->operand(1))) {
+      return true;
+    }
+  }
+  // parent = ln(e^x)
+  if (parent()->type() == Type::NaperianLogarithm && parent()->operand(0) == this && operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::Exponential) {
+    return true;
+  }
+  return false;
 }
 
 Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& context, AngleUnit angleUnit) {

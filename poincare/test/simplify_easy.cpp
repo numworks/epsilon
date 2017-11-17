@@ -483,6 +483,10 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("X^ln(PX)", "PX");
   assert_parsed_expression_simplify_to("X^log(PX)", "X^(log(P)+log(X))");
   assert_parsed_expression_simplify_to("R(X^2)", "X");
+  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "IP/7");
+  assert_parsed_expression_simplify_to("log(10^24)", "24");
+  assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
+  assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");
 
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");

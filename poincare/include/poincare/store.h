@@ -22,8 +22,8 @@ private:
   Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
   template<typename T> Expression * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
 
-  const Symbol * symbol() const { return static_cast<const Symbol *>(operand(0)); }
-  const Expression * value() const { return operand(1); }
+  const Symbol * symbol() const { return static_cast<const Symbol *>(operand(1)); }
+  const Expression * value() const { return operand(0); }
 };
 
 }

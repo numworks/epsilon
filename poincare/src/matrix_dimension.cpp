@@ -27,7 +27,7 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
     const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
     return replaceWith(new Matrix(newOperands, 1, 2, false), true);
   }
-  if (!op->recursivelyMatches(Expression::isMatrix)) {
+  if (!op->recursivelyMatches(Expression::IsMatrix)) {
     const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
     return replaceWith(new Matrix(newOperands, 1, 2, false), true);
   }

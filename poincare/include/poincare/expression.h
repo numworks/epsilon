@@ -186,7 +186,7 @@ public:
   virtual Sign sign() const { return Sign::Unknown; }
   typedef bool (*ExpressionTest)(const Expression * e);
   bool recursivelyMatches(ExpressionTest test) const;
-  static bool isMatrix(const Expression * e);
+  static bool IsMatrix(const Expression * e);
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

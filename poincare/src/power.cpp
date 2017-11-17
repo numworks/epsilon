@@ -270,9 +270,11 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (operand(1)->type() == Type::Rational && static_cast<Rational *>(editableOperand(1))->denominator().isOne()) {
       return simplifyPowerMultiplication(m, editableOperand(1), context, angleUnit);
     }
-    // (a*b*...)^r -> |a|^r*(sign(a)*b*)^r if a rational
+    // (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a rational
     for (int i = 0; i < m->numberOfOperands(); i++) {
-      if (m->operand(i)->sign() == Sign::Positive || m->operand(i)->type() == Type::Rational) {
+      // a is signed and a != -1
+      if (m->operand(i)->sign() != Sign::Unknown && (m->operand(i)->type() != Type::Rational || !static_cast<const Rational *>(m->operand(i))->isMinusOne())) {
+      //if (m->operand(i)->sign() == Sign::Positive || m->operand(i)->type() == Type::Rational) {
         Expression * r = editableOperand(1);
         Expression * rCopy = r->clone();
         Expression * factor = m->editableOperand(i);

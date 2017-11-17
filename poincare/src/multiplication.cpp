@@ -29,6 +29,9 @@ Expression::Type Multiplication::type() const {
 }
 
 Expression * Multiplication::clone() const {
+  if (numberOfOperands() == 0) {
+    return new Multiplication();
+  }
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 

@@ -17,6 +17,9 @@ Expression::Type Addition::type() const {
 }
 
 Expression * Addition::clone() const {
+  if (numberOfOperands() == 0) {
+    return new Addition();
+  }
   return new Addition(operands(), numberOfOperands(), true);
 }
 

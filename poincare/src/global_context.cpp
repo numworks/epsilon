@@ -1,5 +1,6 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -34,6 +35,10 @@ GlobalContext::~GlobalContext() {
   }
 }
 
+/* TODO: so far, symbols are not replaced in expression at simplification. So,
+ * right now, it is not an issue that multiple symbols are replaced by the same
+ * objet at evaluation (defaultExpression). However, when we will replace
+ * symbols in simplification, we will have to have an expression per symbol!! */
 Complex<double> * GlobalContext::defaultExpression() {
   static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
   return defaultExpression;
@@ -69,7 +74,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
-  /*if (symbol->isMatrixSymbol()) {
+  if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
     if (m_matrixExpressions[indexMatrix] != nullptr) {
@@ -77,12 +82,11 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
       m_matrixExpressions[indexMatrix] = nullptr;
     }
     if (expression != nullptr) {
-      Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-      if (evaluation->numberOfOperands() == 1) {
-        m_matrixExpressions[indexMatrix] = new ComplexMatrix<double>(evaluation->complexOperand(0), 1, 1);
-        delete evaluation;
+      Expression * evaluation = expression->evaluate<double>(*this);
+      if (evaluation->type() == Expression::Type::Complex) {
+        m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
-        m_matrixExpressions[indexMatrix] = (ComplexMatrix<double> *)evaluation;
+        m_matrixExpressions[indexMatrix] = static_cast<Matrix *>(evaluation);
       }
     }
     return;
@@ -98,13 +102,13 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (expression == nullptr) {
     return;
   }
-  Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-  if (evaluation->numberOfOperands() == 1) {
-    m_expressions[index] = new Complex<double>(*(evaluation->complexOperand(0)));
+  Expression * evaluation = expression->evaluate<double>(*this);
+  if (evaluation->type() == Expression::Type::Complex) {
+    m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {
     m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+    delete evaluation;
   }
-  delete evaluation;*/
 }
 
 }

@@ -42,7 +42,7 @@ Expression * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) 
       return new Complex<T>(Complex<T>::Float(NAN));
     }
     Complex<T> iExpression = Complex<T>::Float(i);
-    nContext.setExpressionForSymbolName(&iExpression, &nSymbol);
+    nContext.setExpressionForSymbolName(&iExpression, &nSymbol, nContext);
     Expression * expression = operand(0)->evaluate<T>(nContext, angleUnit);
     Expression * newResult = evaluateWithNextTerm(T(), result, expression);
     delete result;

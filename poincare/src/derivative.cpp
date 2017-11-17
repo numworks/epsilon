@@ -44,7 +44,7 @@ Expression * Derivative::templatedEvaluate(Context& context, AngleUnit angleUnit
   T x = xInput->type() == Type::Complex ? static_cast<Complex<T> *>(xInput)->toScalar() : NAN;
   delete xInput;
   Complex<T> e = Complex<T>::Float(x);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T functionValue = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
@@ -122,12 +122,12 @@ template<typename T>
 T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x-h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
@@ -138,17 +138,17 @@ template<typename T>
 T Derivative::approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   Expression * fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expression = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;
   e = Complex<T>::Float(x-h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   fInput = operand(0)->evaluate<T>(xContext, angleUnit);
   T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
   delete fInput;

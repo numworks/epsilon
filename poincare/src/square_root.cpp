@@ -38,9 +38,11 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   Power * p = new Power(operand(0), new Rational(1, 2), false);
   detachOperands();
   replaceWith(p, true);

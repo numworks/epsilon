@@ -1,5 +1,7 @@
 #include <poincare/simplification_engine.h>
 
+#if MATRIX_EXACT_REDUCING
+
 namespace Poincare {
 
 Expression * SimplificationEngine::map(Expression * e, Context & context, Expression::AngleUnit angleUnit) {
@@ -16,3 +18,5 @@ Expression * SimplificationEngine::map(Expression * e, Context & context, Expres
 }
 
 }
+
+#endif

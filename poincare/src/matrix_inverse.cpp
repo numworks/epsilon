@@ -26,6 +26,7 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
     return e;
   }
   Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
   if (!op->recursivelyMatches(Expression::IsMatrix)) {
     detachOperand(op);
     return replaceWith(new Power(op, new Rational(-1), false), true)->shallowReduce(context, angleUnit);
@@ -37,6 +38,10 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
     }
   }
   return this;
+#else
+  detachOperand(op);
+  return replaceWith(new Power(op, new Rational(-1), false), true)->shallowReduce(context, angleUnit);
+#endif
 }
 
 // TODO: handle this exactly in shallowReduce for small dimensions.

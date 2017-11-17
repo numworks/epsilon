@@ -28,9 +28,11 @@ Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleU
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
   Logarithm * l = new Logarithm(logOperands, 2, false);
   replaceWith(l, true);

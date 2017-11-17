@@ -22,10 +22,12 @@ Expression * ComplexArgument::shallowReduce(Context& context, AngleUnit angleUni
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   return this;
 }
 

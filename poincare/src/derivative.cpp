@@ -25,9 +25,11 @@ Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
+#endif
   // TODO: to be implemented diff(+) -> +diff() etc
   return this;
 }

@@ -131,6 +131,12 @@ void Expression::Simplify(Expression ** expressionAddress, Context & context, An
   if (angleUnit == AngleUnit::Default) {
     angleUnit = Preferences::sharedPreferences()->angleUnit();
   }
+#if MATRIX_EXACT_REDUCING
+#else
+  if ((*expressionAddress)->recursivelyMatches(IsMatrix)) {
+    return;
+  }
+#endif
   SimplificationRoot root(*expressionAddress);
   root.editableOperand(0)->deepReduce(context, angleUnit);
   root.editableOperand(0)->deepBeautify(context, angleUnit);

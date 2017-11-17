@@ -21,6 +21,7 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
     Matrix * m = static_cast<Matrix *>(op);
@@ -32,6 +33,10 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
     return replaceWith(new Matrix(newOperands, 1, 2, false), true);
   }
   return this;
+#else
+  const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
+  return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+#endif
 }
 
 template<typename T>

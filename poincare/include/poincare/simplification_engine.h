@@ -1,6 +1,8 @@
 #ifndef POINCARE_SIMPLIFICATION_ENGINE_H
 #define POINCARE_SIMPLIFICATION_ENGINE_H
 
+#if MATRIX_EXACT_REDUCING
+
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -12,5 +14,7 @@ public:
 };
 
 }
+
+#endif
 
 #endif

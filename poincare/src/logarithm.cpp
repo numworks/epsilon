@@ -45,12 +45,14 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
   if (numberOfOperands() == 1 && op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
   if (numberOfOperands() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
     return replaceWith(new Undefined(), true);
   }
+#endif
   if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
     return replaceWith(new Undefined(), true);
   }

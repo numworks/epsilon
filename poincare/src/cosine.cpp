@@ -27,10 +27,12 @@ Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
 }
 

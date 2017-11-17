@@ -35,6 +35,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 QUIZ_CASE(poincare_simplify_easy) {
   //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)");
   // Addition Matrix
+#if MATRIX_EXACT_REDUCING
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", "[[2,3,4][5,6,7]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", "[[2,3,4][5,6,7]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]+[[1,2,3][4,5,6]]", "undef");
@@ -42,6 +43,10 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("2+[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]", "[[4,6,8][10,12,14]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+cos(2)+[[1,2,3][4,5,6]]", "[[2+cos(2),4+cos(2),6+cos(2)][8+cos(2),10+cos(2),12+cos(2)]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+10+[[1,2,3][4,5,6]]+R(2)", "[[12+R(2),14+R(2),16+R(2)][18+R(2),20+R(2),22+R(2)]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)+3", "inverse([[1,2][3,4]])+3");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)+3", "inverse([[37,54][81,118]])+3");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)+[[1,2][3,4]]", "inverse([[37,54][81,118]])+[[1,2][3,4]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)+[[1,2][3,4]]+4+R(2)", "inverse([[37,54][81,118]])+[[5+R(2),6+R(2)][7+R(2),8+R(2)]]");
 
   // Multiplication Matrix
   assert_parsed_expression_simplify_to("2*[[1,2,3][4,5,6]]", "[[2,4,6][8,10,12]]");
@@ -49,13 +54,14 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]*[[1,2,3][4,5,6]]", "[[9, 12, 15][19, 26, 33]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]*[[1,2][2,3][5,6]]", "[[20, 26][44, 59]]");
   assert_parsed_expression_simplify_to("[[1,2,3,4][4,5,6,5]]*[[1,2][2,3][5,6]]", "undef");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)*[[1,2][3,4]]", "[[1,2][3,4]]^(-3)*[[1,2][3,4]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)*[[1,2,3][3,4,5]]*[[1,2][3,2][4,5]]*4", "[[37,54][81,118]]^(-1)*[[76,84][140,156]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)*[[1,2][3,4]]", "[[1,2][3,4]]^(-3)*[[1,2][3,4]]");
 
   // Power Matrix
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)", "undef");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[1,2][3,4]]^(-1)"); // TODO: Implement matrix inverse for dim < 3
-  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)+3", "inverse([[1,2][3,4]])+3");
-  assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)+3", "inverse([[37,54][81,118]])+3");
 
   // Function on matrix
   assert_parsed_expression_simplify_to("abs([[1,-2][3,4]])", "[[1,2][3,4]]");
@@ -64,8 +70,6 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("atan([[R(3),1][1/R(3),-1]])", "[[P/3,P/4][P/6,-P/4]]");
   assert_parsed_expression_simplify_to("acos([[1/R(2),1/2][1,-1]])", "[[P/4,P/3][0,P]]");
   assert_parsed_expression_simplify_to("binomial([[1,-2][3,4]], 2)", "undef");
-  assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
-  assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil([[1/R(2),1/2][1,-1.3]])", "[[ceil(R(2)/2),1][1,-1]]");
   assert_parsed_expression_simplify_to("confidence(1/3, 25)", "[[2/15,8/15]]");
   assert_parsed_expression_simplify_to("confidence(45, 25)", "undef");
@@ -77,18 +81,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "det([[2,2][3,4]])");
   assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "det([[2,2][3,3]])");
   assert_parsed_expression_simplify_to("quo([[2,2][3,3]],2)", "undef");
-  assert_parsed_expression_simplify_to("quo(19,3)", "6");
-  assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
   assert_parsed_expression_simplify_to("rem([[2,2][3,3]],2)", "undef");
-  assert_parsed_expression_simplify_to("rem(19,3)", "1");
-  assert_parsed_expression_simplify_to("rem(-19,3)", "2");
-  assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]!", "[[1,2][6,24]]");
   assert_parsed_expression_simplify_to("floor([[1/R(2),1/2][1,-1.3]])", "[[floor(R(2)/2),0][1,-2]]");
   assert_parsed_expression_simplify_to("frac([[1/R(2),1/2][1,-1.3]])", "[[frac(R(2)/2),1/2][0,0.7]]");
   assert_parsed_expression_simplify_to("gcd([[1/R(2),1/2][1,-1.3]], [[1]])", "undef");
-  assert_parsed_expression_simplify_to("gcd(123,278)", "1");
-  assert_parsed_expression_simplify_to("gcd(11,121)", "11");
   assert_parsed_expression_simplify_to("asinh([[1/R(2),1/2][1,-1]])", "[[asinh(1/R(2)),asinh(1/2)][asinh(1),asinh(-1)]]");
   assert_parsed_expression_simplify_to("atanh([[R(3),1][1/R(3),-1]])", "[[atanh(R(3)),atanh(1)][atanh(1/R(3)),atanh(-1)]]");
   assert_parsed_expression_simplify_to("acosh([[1/R(2),1/2][1,-1]])", "[[acosh(1/R(2)),acosh(1/2)][acosh(1),acosh(-1)]]");
@@ -98,8 +95,6 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("im([[1/R(2),1/2][1,-1]])", "[[im(1/R(2)),0][0,0]]");
   assert_parsed_expression_simplify_to("int([[P/3,0][P/7,P/2]],3,2)", "undef");
   assert_parsed_expression_simplify_to("lcm(2, [[1]])", "undef");
-  assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
-  assert_parsed_expression_simplify_to("lcm(11,121)", "121");
   assert_parsed_expression_simplify_to("log([[R(2),1/2][1,3]])", "[[(1/2)*log(2),-log(2)][0,log(3)]]");
   assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]])", "undef");
   assert_parsed_expression_simplify_to("log([[1/R(2),1/2][1,-3]],3)", "undef");
@@ -117,8 +112,6 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("root(4,3)", "4^(1/3)");
   assert_parsed_expression_simplify_to("-[[1/R(2),1/2,3][2,1,-3]]", "[[-1/R(2),-1/2,-3][-2,-1,3]]");
   assert_parsed_expression_simplify_to("permute([[1,-2][3,4]], 2)", "undef");
-  assert_parsed_expression_simplify_to("permute(102,4)", "101989800");
-  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
   assert_parsed_expression_simplify_to("prediction95(1/3, 25)", "[[1/3-49R(2)/375,1/3+49R(2)/375]]");
   assert_parsed_expression_simplify_to("prediction95(45, 25)", "undef");
   assert_parsed_expression_simplify_to("prediction95(1/3, -34)", "undef");
@@ -129,11 +122,34 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("sin([[P/3,0][P/7,P/2]])", "[[R(3)/2,0][sin(P/7),1]]");
   assert_parsed_expression_simplify_to("R([[4,2][P/7,1]])", "[[2,R(2)][R(P/7),1]]");
   assert_parsed_expression_simplify_to("tan([[P/3,0][P/7,P/6]])", "[[R(3),0][tan(P/7),R(3)/3]]");
-
+#else
+  assert_parsed_expression_simplify_to("R([[4,2][P/7,1]])", "R([[4,2][P/7,1]])");
+#endif
   /* Complex */
   assert_parsed_expression_simplify_to("I", "I");
   assert_parsed_expression_simplify_to("R(-33)", "R(33)*I");
   assert_parsed_expression_simplify_to("I^(3/5)", "X^(IP3/10)");
+
+  //Functions
+  assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
+  assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
+  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
+  assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
+  assert_parsed_expression_simplify_to("quo(19,3)", "6");
+  assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
+  assert_parsed_expression_simplify_to("rem(19,3)", "1");
+  assert_parsed_expression_simplify_to("rem(-19,3)", "2");
+  assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
+  assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
+  assert_parsed_expression_simplify_to("frac(-1.3)", "0.7");
+  assert_parsed_expression_simplify_to("gcd(123,278)", "1");
+  assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
+  assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+  assert_parsed_expression_simplify_to("root(4,3)", "4^(1/3)");
+  assert_parsed_expression_simplify_to("permute(102,4)", "101989800");
+  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
+  assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 
   assert_parsed_expression_simplify_to("1*tan(2)*tan(5)", "tan(2)*tan(5)");
   assert_parsed_expression_simplify_to("P+(3R(2)-2R(3))/25", "(3R(2)-2R(3)+25P)/25");

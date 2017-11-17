@@ -40,6 +40,7 @@ private:
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, AngleUnit angleUnit);
   Expression * removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit);
+  bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
   static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, AngleUnit angleUnit);
   static Expression * CreateNthRootOfUnity(const Rational r);

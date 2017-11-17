@@ -102,11 +102,15 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
         newLog->shallowReduce(context, angleUnit);
       }
     }
-    op->shallowReduce(context, angleUnit);
-    Expression * reducedLastLog = shallowReduce(context, angleUnit);
-    reducedLastLog->replaceWith(a, false);
-    a->addOperand(reducedLastLog);
-    return a->shallowReduce(context, angleUnit);
+    if (a->numberOfOperands() > 0) {
+      op->shallowReduce(context, angleUnit);
+      Expression * reducedLastLog = shallowReduce(context, angleUnit);
+      reducedLastLog->replaceWith(a, false);
+      a->addOperand(reducedLastLog);
+      return a->shallowReduce(context, angleUnit);
+    } else {
+      delete a;
+    }
   }
 
   if (op->type() == Type::Rational) {

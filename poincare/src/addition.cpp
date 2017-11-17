@@ -46,6 +46,7 @@ Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
   // Step 2: Sort the operands
   sortOperands(Expression::SimplificationOrder);
 
+#if MATRIX_EXACT_REDUCING
   /* Step 2bis: get rid of matrix */
   int n = 1;
   int m = 1;
@@ -92,6 +93,7 @@ Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
   }
+#endif
 
   /* Step 3: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */

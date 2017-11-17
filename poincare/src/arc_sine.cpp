@@ -22,9 +22,11 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 

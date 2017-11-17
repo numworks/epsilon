@@ -24,6 +24,7 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     Matrix * m = static_cast<Matrix *>(op);
     if (m->numberOfRows() != m->numberOfColumns()) {
@@ -42,6 +43,9 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(op, true);
   }
   return this;
+#else
+  return replaceWith(op, true);
+#endif
 }
 
 template<typename T>

@@ -138,6 +138,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   /* Step 0: get rid of matrix */
   if (operand(1)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
@@ -175,6 +176,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     replaceWith(result, true);
     return result->shallowReduce(context, angleUnit);
   }
+#endif
 
   /* Step 0: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */

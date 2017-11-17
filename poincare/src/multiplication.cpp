@@ -127,7 +127,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
   while (i < initialNumberOfOperands) {
     Expression * o = editableOperand(i);
     if (o->type() == Type::Multiplication) {
-      mergeOperands(static_cast<Multiplication *>(o));
+      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
       continue;
     }
     i++;
@@ -144,6 +144,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
   // Step 3: Sort the operands
   sortOperands(SimplificationOrder);
 
+#if MATRIX_EXACT_REDUCING
   /* Step 3bis: get rid of matrix */
   int n = 1;
   int m = 1;
@@ -215,6 +216,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
     }
     return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
   }
+#endif
 
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each

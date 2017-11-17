@@ -31,9 +31,11 @@ Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   if (op->type() == Type::Rational) {
     return replaceWith(op, true);
   }

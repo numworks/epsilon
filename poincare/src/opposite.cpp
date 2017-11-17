@@ -34,9 +34,11 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
     return e;
   }
   const Expression * op = operand(0);
+#if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
+#endif
   detachOperand(op);
   Multiplication * m = new Multiplication(new Rational(-1), op, false);
   replaceWith(m, true);

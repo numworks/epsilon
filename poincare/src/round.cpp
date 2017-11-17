@@ -22,9 +22,11 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
+#endif
   return this; // TODO: implement for rationals!
 }
 

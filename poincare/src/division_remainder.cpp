@@ -25,9 +25,11 @@ Expression * DivisionRemainder::shallowReduce(Context& context, AngleUnit angleU
   }
   Expression * op0 = editableOperand(0);
   Expression * op1 = editableOperand(1);
+#if MATRIX_EXACT_REDUCING
   if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
+#endif
   if (op0->type() == Type::Rational) {
     Rational * r0 = static_cast<Rational *>(op0);
     if (!r0->denominator().isOne()) {

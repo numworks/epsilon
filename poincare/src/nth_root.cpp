@@ -25,9 +25,11 @@ Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+#if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
+#endif
   Power * invIndex = new Power(operand(1), new Rational(-1), false);
   Power * p = new Power(operand(0), invIndex, false);
   detachOperands();

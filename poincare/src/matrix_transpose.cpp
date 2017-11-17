@@ -24,6 +24,7 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
     return e;
   }
   Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     Matrix * transpose = static_cast<Matrix *>(op)->createTranspose();
     return replaceWith(transpose, true);
@@ -32,6 +33,9 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
     return replaceWith(op, true);
   }
   return this;
+#else
+  return replaceWith(op, true);
+#endif
 }
 
 template<typename T>

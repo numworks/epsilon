@@ -73,7 +73,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
+void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
@@ -82,7 +82,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
       m_matrixExpressions[indexMatrix] = nullptr;
     }
     if (expression != nullptr) {
-      Expression * evaluation = expression->evaluate<double>(*this);
+      Expression * evaluation = expression->evaluate<double>(context);
       if (evaluation->type() == Expression::Type::Complex) {
         m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
@@ -102,7 +102,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (expression == nullptr) {
     return;
   }
-  Expression * evaluation = expression->evaluate<double>(*this);
+  Expression * evaluation = expression->evaluate<double>(context);
   if (evaluation->type() == Expression::Type::Complex) {
     m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {

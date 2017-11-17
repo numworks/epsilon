@@ -69,7 +69,7 @@ template<typename T>
 T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Complex<T> e = Complex<T>::Float(x);
   Symbol xSymbol('x');
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
   Expression * f = operand(0)->evaluate<T>(xContext, angleUnit);
   T result = f->type() == Type::Complex ? static_cast<Complex<T> *>(f)->toScalar() : NAN;
   delete f;

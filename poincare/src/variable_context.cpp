@@ -16,7 +16,7 @@ VariableContext<T>::VariableContext(char name, Context * parentContext) :
 }
 
 template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol) {
+void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   if (symbol->name() == m_name) {
     if (expression == nullptr) {
       return;
@@ -25,7 +25,7 @@ void VariableContext<T>::setExpressionForSymbolName(const Expression * expressio
     assert(expression->type() == Expression::Type::Complex);
     m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbol);
+    m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }
 }
 

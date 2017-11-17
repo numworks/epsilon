@@ -37,6 +37,7 @@ public:
   Sign sign() const override;
   bool isMatrixSymbol() const;
 private:
+  const char * textForSpecialSymbols(char name) const;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e) const override;
   /* Layout */

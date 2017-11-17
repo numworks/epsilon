@@ -88,8 +88,8 @@ bool Expression::recursivelyMatches(ExpressionTest test) const {
   return false;
 }
 
-bool Expression::isMatrix(const Expression * e) {
-  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval;
+bool Expression::IsMatrix(const Expression * e) {
+  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose;
 }
 
 /* Comparison */

@@ -28,7 +28,7 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
     Matrix * transpose = static_cast<Matrix *>(op)->createTranspose();
     return replaceWith(transpose, true);
   }
-  if (!op->recursivelyMatches(Expression::isMatrix)) {
+  if (!op->recursivelyMatches(Expression::IsMatrix)) {
     return replaceWith(op, true);
   }
   return this;

@@ -38,7 +38,7 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     return replaceWith(a, true)->shallowReduce(context, angleUnit);
   }
-  if (!op->recursivelyMatches(Expression::isMatrix)) {
+  if (!op->recursivelyMatches(Expression::IsMatrix)) {
     return replaceWith(op, true);
   }
   return this;

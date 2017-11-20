@@ -40,10 +40,8 @@ Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
     Sine * s = new Sine(op, true);
     Cosine * c = new Cosine(op, true);
     Division * d = new Division(s, c, false);
-    c->shallowReduce(context, angleUnit);
-    s->shallowReduce(context, angleUnit);
     newExpression = newExpression->replaceWith(d, true);
-    return newExpression->deepReduce(context, angleUnit);
+    return newExpression->shallowReduce(context, angleUnit);
   }
   return newExpression;
 }

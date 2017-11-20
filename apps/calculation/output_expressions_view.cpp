@@ -8,7 +8,7 @@ namespace Calculation {
 OutputExpressionsView::OutputExpressionsView(Responder * parentResponder) :
   Responder(parentResponder),
   m_approximateExpressionView(),
-  m_approximateSign(KDText::FontSize::Large, I18n::Message::ApproximateEqual, 0.5f, 0.5f),
+  m_approximateSign(KDText::FontSize::Large, I18n::Message::ApproximateEqual, 0.5f, 0.5f, Palette::GreyDark),
   m_exactExpressionView(),
   m_selectedSubviewType(OutputExpressionsView::SubviewType::ExactOutput)
 {
@@ -35,6 +35,11 @@ void OutputExpressionsView::reloadCell() {
     } else {
       m_approximateExpressionView.setBackgroundColor(Palette::Select);
     }
+  }
+  if (numberOfSubviews() == 1) {
+    m_approximateExpressionView.setTextColor(KDColorBlack);
+  } else {
+    m_approximateExpressionView.setTextColor(Palette::GreyDark);
   }
   layoutSubviews();
   EvenOddCell::reloadCell();

@@ -12,7 +12,7 @@ public:
     ApproximativeOutput
   };
   OutputExpressionsView(Responder * parentResponder);
-  void setExpressionAtIndex(Poincare::ExpressionLayout * expressionLayout, int index);
+  void setExpressions(Poincare::ExpressionLayout ** expressionsLayout);
   KDColor backgroundColor() const override;
   void reloadCell() override;
   KDSize minimalSizeForOptimalDisplay() const override;

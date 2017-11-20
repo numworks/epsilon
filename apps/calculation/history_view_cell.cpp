@@ -64,12 +64,11 @@ void HistoryViewCell::layoutSubviews() {
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_inputView.setExpression(calculation->inputLayout());
   App * calculationApp = (App *)app();
-  m_scrollableOutputView.outputView()->setExpressionAtIndex(calculation->approximateOutputLayout(calculationApp->localContext()), 0);
-  if (calculation->shouldApproximateOutput()) {
-    m_scrollableOutputView.outputView()->setExpressionAtIndex(nullptr, 1);
-  } else {
-    m_scrollableOutputView.outputView()->setExpressionAtIndex(calculation->exactOutputLayout(calculationApp->localContext()), 1);
-  }
+  /* Both output expressions have to be updated at the same time. The
+   * outputView points to deleted layouts and a call to
+   * outputView()->layoutSubviews() is going to fail. */
+  Poincare::ExpressionLayout * outputExpressions[2] = {calculation->approximateOutputLayout(calculationApp->localContext()), calculation->shouldApproximateOutput() ? nullptr : calculation->exactOutputLayout(calculationApp->localContext())};
+  m_scrollableOutputView.outputView()->setExpressions(outputExpressions);
 }
 
 void HistoryViewCell::reloadCell() {

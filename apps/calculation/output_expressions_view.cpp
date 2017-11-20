@@ -14,13 +14,9 @@ OutputExpressionsView::OutputExpressionsView(Responder * parentResponder) :
 {
 }
 
-void OutputExpressionsView::setExpressionAtIndex(ExpressionLayout * expressionLayout, int index) {
-  if (index == 0) {
-    m_approximateExpressionView.setExpression(expressionLayout);
-  } else {
-    assert(index == 1);
-    m_exactExpressionView.setExpression(expressionLayout);
-  }
+void OutputExpressionsView::setExpressions(ExpressionLayout ** expressionsLayout) {
+  m_approximateExpressionView.setExpression(expressionsLayout[0]);
+  m_exactExpressionView.setExpression(expressionsLayout[1]);
   layoutSubviews();
 }
 

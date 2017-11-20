@@ -1,8 +1,9 @@
 #ifndef CODE_TOOLBOX_H
 #define CODE_TOOLBOX_H
 
-#include <escher.h>
 #include <apps/i18n.h>
+#include <escher.h>
+#include <ion/events.h>
 #include <kandinsky/text.h>
 
 namespace Code {
@@ -12,6 +13,9 @@ public:
   typedef void (*Action)(void * sender, const char * text);
   Toolbox();
   void setAction(Action action);
+
+  // StackViewController
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
   KDCoordinate rowHeight(int j) override;
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
@@ -26,6 +30,8 @@ private:
   constexpr static KDCoordinate k_nodeRowHeight = 40;
   constexpr static KDCoordinate k_leafRowHeight = 40;
   constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
+  void scrollToLetter(char letter);
+  void scrollToAndSelectChild(int i);
   Action m_action;
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];

@@ -178,8 +178,9 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   commonDenominator->deepReduce(context, angleUnit);
   inverseDenominator->shallowReduce(context, angleUnit);
 
-  result->sortOperands(Expression::SimplificationOrder); // TODO: should shallowReduce?
-  return replaceWith(result, true);
+  /* Step 6: We simplify the resulting multiplication forbidding any
+   * distribution of multiplication on additions (to avoid an infinite loop). */
+  return static_cast<Multiplication *>(replaceWith(result, true))->privateShallowReduce(context, angleUnit, false);
 }
 
 void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {

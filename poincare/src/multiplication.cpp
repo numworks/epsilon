@@ -116,6 +116,10 @@ static inline const Expression * Base(const Expression * e) {
 }
 
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
+  return privateShallowReduce(context, angleUnit, true);
+}
+
+Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit angleUnit, bool shouldExpand) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -304,7 +308,7 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
    * (x+y)^(-1)*((a+b)*(x+y)).
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
-  if (parent()->type() != Type::Multiplication) {
+  if (shouldExpand && parent()->type() != Type::Multiplication) {
     for (int i=0; i<numberOfOperands(); i++) {
       if (operand(i)->type() == Type::Addition) {
         return distributeOnOperandAtIndex(i, context, angleUnit);

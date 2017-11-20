@@ -75,7 +75,7 @@ Expression * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit a
   Expression * operands[2];
   operands[0] = new Complex<T>(Complex<T>::Float(f - 1/std::sqrt(n)));
   operands[1] = new Complex<T>(Complex<T>::Float(f + 1/std::sqrt(n)));
-  return new Matrix(operands, 2, 1, false);
+  return new Matrix(operands, 1, 2, false);
 }
 
 }

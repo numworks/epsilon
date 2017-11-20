@@ -161,7 +161,9 @@ KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   KDCoordinate inputHeight = calculation->inputLayout()->size().height();
   App * calculationApp = (App *)app();
-  KDCoordinate outputHeight = calculation->outputLayout(calculationApp->localContext())->size().height();
+  KDCoordinate exactOutputHeight = calculation->exactOutputLayout(calculationApp->localContext())->size().height();
+  KDCoordinate approximateOutputHeight = calculation->approximateOutputLayout(calculationApp->localContext())->size().height();
+  KDCoordinate outputHeight = calculation->shouldApproximateOutput() || approximateOutputHeight > exactOutputHeight ? approximateOutputHeight : exactOutputHeight;
   return inputHeight + outputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 

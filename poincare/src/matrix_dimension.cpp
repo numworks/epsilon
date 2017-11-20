@@ -51,7 +51,7 @@ Expression * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angl
     operands[1] = new Complex<T>(Complex<T>::Float(1.0));
   }
   delete input;
-  return new Matrix(operands, 2, 1, false);
+  return new Matrix(operands, 1, 2, false);
 }
 
 

@@ -84,7 +84,7 @@ Expression * PredictionInterval::templatedEvaluate(Context& context, AngleUnit a
   Expression * operands[2];
   operands[0] = new Complex<T>(Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
   operands[1] = new Complex<T>(Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
-  return new Matrix(operands, 2, 1, false);
+  return new Matrix(operands, 1, 2, false);
 }
 
 }

@@ -64,12 +64,21 @@ void DynamicHierarchy::mergeOperands(DynamicHierarchy * d) {
 }
 
 void DynamicHierarchy::addOperand(Expression * operand) {
+  addOperandAtIndex(operand, m_numberOfOperands);
+}
+
+void DynamicHierarchy::addOperandAtIndex(Expression * operand, int index) {
+  assert(index >= 0 && index <= m_numberOfOperands);
   const Expression ** newOperands = new const Expression * [m_numberOfOperands+1];
-  for (int i=0; i<m_numberOfOperands; i++) {
-    newOperands[i] = m_operands[i];
+  int j = 0;
+  for (int i=0; i<=m_numberOfOperands; i++) {
+    if (i == index) {
+      operand->setParent(this);
+      newOperands[i] = operand;
+    } else {
+      newOperands[i] = m_operands[j++];
+    }
   }
-  newOperands[m_numberOfOperands] = operand;
-  operand->setParent(this);
   delete[] m_operands;
   m_operands = newOperands;
   m_numberOfOperands += 1;

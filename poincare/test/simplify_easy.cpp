@@ -488,6 +488,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
   assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");
 
+  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
+  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)*log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)
+  assert_parsed_expression_simplify_to("IIII", "1");
+  assert_parsed_expression_simplify_to("Acos(9)IIln(2)", "-Acos(9)ln(2)");
+
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
 

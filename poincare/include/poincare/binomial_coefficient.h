@@ -12,6 +12,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
 private:
+  constexpr static int k_maxNValue = 300;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {

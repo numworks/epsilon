@@ -147,7 +147,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
   assert_parsed_expression_simplify_to("root(4,3)", "4^(1/3)");
-  assert_parsed_expression_simplify_to("permute(102,4)", "101989800");
+  assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 

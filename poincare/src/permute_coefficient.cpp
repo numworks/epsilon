@@ -53,14 +53,13 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angle
   if (n.isLowerThan(k)) {
     return replaceWith(new Rational(0), true);
   }
-  if (Integer(k_maxNumberOfSteps).isLowerThan(k)) {
-    return replaceWith(new Undefined(), true);
+  /* if n is too big, we do not reduce to avoid too long computation.
+   * The permute coefficient will be evaluate approximatively later */
+  if (Integer(k_maxNValue).isLowerThan(n)) {
+    return this;
   }
   Integer result(1);
-  int clippedK = k.extractedInt(); // Authorized because k < k_maxNumberOfSteps
-  /* TODO: cap n and k -> if k or n too big, do not reduce to avoid too long
-   * computation. The permute coefficient will be evaluate approximatively
-   * later */
+  int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);
@@ -79,7 +78,7 @@ Complex<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit a
   T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
-  if (isnan(n) || isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f || k > k_maxNumberOfSteps) {
+  if (isnan(n) || isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   if (k > n) {
@@ -88,6 +87,9 @@ Complex<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit a
   T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
+    if (isinf(result)) {
+      return new Complex<T>(Complex<T>::Float(result));
+    }
   }
   return new Complex<T>(Complex<T>::Float(std::round(result)));
 }

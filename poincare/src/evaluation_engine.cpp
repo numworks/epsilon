@@ -77,7 +77,7 @@ template<typename T> Matrix * EvaluationEngine::elementWiseOnComplexAndComplexMa
 }
 
 template<typename T> Matrix * EvaluationEngine::elementWiseOnComplexMatrices(const Matrix * m, const Matrix * n, ComplexAndComplexReduction<T> computeOnComplexes) {
-  if (m->numberOfRows() != n->numberOfRows() && m->numberOfColumns() != n->numberOfColumns()) {
+  if (m->numberOfRows() != n->numberOfRows() || m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }
   Expression ** operands = new Expression * [m->numberOfRows()*m->numberOfColumns()];

@@ -186,7 +186,9 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
       continue;
     }
     Expression::Reduce(&input, context, angleUnit);
-    if (input->isIdenticalTo(e)) {
+    bool rightInput = input->isIdenticalTo(e);
+    delete input;
+    if (rightInput) {
       Expression * output = Expression::parse(cheatTable[i][outputIndex]);
       if (output == nullptr) {
         return nullptr;

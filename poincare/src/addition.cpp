@@ -156,6 +156,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
     }
   }
   if (commonDenominator->numberOfOperands() == 0) {
+    delete commonDenominator;
     // If commonDenominator is empty this means that no operand was a fraction.
     return this;
   }

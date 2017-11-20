@@ -587,6 +587,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
     }
   }
   if (m->numberOfOperands() == 0) {
+    delete m;
     return this;
   }
   Power * p = new Power(m, new Rational(-1), false);

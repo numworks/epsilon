@@ -136,9 +136,11 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
+  assert_parsed_expression_simplify_to("quo(19,0)", "undef");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
   assert_parsed_expression_simplify_to("rem(19,3)", "1");
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
+  assert_parsed_expression_simplify_to("rem(19,0)", "undef");
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("frac(-1.3)", "0.7");

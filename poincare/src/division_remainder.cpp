@@ -50,6 +50,9 @@ Expression * DivisionRemainder::shallowReduce(Context& context, AngleUnit angleU
 
   Integer a = r0->numerator();
   Integer b = r1->numerator();
+  if (b.isZero()) {
+    return replaceWith(new Undefined(), true); // TODO: new Infinite(a.isNegative())
+  }
   Integer result = Integer::Division(a, b).remainder;
   return replaceWith(new Rational(result), true);
 }

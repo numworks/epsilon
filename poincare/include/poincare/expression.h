@@ -258,9 +258,6 @@ private:
   virtual Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const {
     return nullptr;
   }
-  static bool TermIsARationalSquareRootOrRational(const Expression * e);
-  static const Rational * RadicandInExpression(const Expression * e);
-  static const Rational * RationalFactorInExpression(const Expression * e);
   /* Evaluation Engine */
   virtual Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;

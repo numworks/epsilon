@@ -218,46 +218,6 @@ template<typename T> T Expression::epsilon() {
   return epsilon;
 }
 
-bool Expression::TermIsARationalSquareRootOrRational(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return true;
-  }
-  if (e->type() == Type::Power && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1))->isHalf()) {
-    return true;
-  }
-  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Power && e->operand(1)->operand(0)->type() == Type::Rational && e->operand(1)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1)->operand(1))->isHalf()) {
-  return true;
-  }
-  return false;
-}
-
-const Rational * Expression::RadicandInExpression(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return nullptr;
-  } else if (e->type() == Type::Power) {
-    assert(e->type() == Type::Power);
-    assert(e->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(0));
-  } else {
-    assert(e->type() == Type::Multiplication);
-    assert(e->operand(1)->type() == Type::Power);
-    assert(e->operand(1)->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(1)->operand(0));
-  }
-}
-
-const Rational * Expression::RationalFactorInExpression(const Expression * e) {
-  if (e->type() == Type::Rational) {
-    return static_cast<const Rational *>(e);
-  } else if (e->type() == Type::Power) {
-    return nullptr;
-  } else {
-    assert(e->type() == Type::Multiplication);
-    assert(e->operand(0)->type() == Type::Rational);
-    return static_cast<const Rational *>(e->operand(0));
-  }
-}
-
 }
 
 template Poincare::Expression * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;

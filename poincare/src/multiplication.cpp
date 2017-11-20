@@ -381,7 +381,6 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
   /* This function factorizes two operands which have a common base. For example
    * if this is Multiplication(pi^2, pi^3), then pi^2 and pi^3 could be merged
    * and this turned into Multiplication(pi^5). */
-  assert(e1->parent() == this && e2->parent() == this);
   assert(TermsHaveIdenticalBase(e1, e2));
 
   // Step 1: Find the new exponent
@@ -620,12 +619,12 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   }
   for (int i = 0; i < numberOfOperands(); i++) {
     if (TermsHaveIdenticalBase(operand(i), factor)) {
-      Subtraction * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
+      Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
       Reduce((Expression **)&sub, context, angleUnit);
       if (sub->sign() == Sign::Negative) { // index[0] < index[1]
         factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
-        factor->deepReduce(context, angleUnit);
         factorizeBase(editableOperand(i), factor, context, angleUnit);
+        editableOperand(i)->shallowReduce(context, angleUnit);
       } else if (sub->sign() == Sign::Unknown) {
         factorizeBase(editableOperand(i), factor, context, angleUnit);
       } else {}

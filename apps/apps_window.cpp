@@ -1,4 +1,5 @@
 #include "apps_window.h"
+#include <escher/metric.h>
 extern "C" {
 #include <assert.h>
 }
@@ -54,7 +55,7 @@ View * AppsWindow::subviewAtIndex(int index) {
 }
 
 void AppsWindow::layoutSubviews() {
-  KDCoordinate titleHeight = m_hideTitleBarView ? 0 : k_titleBarHeight;
+  KDCoordinate titleHeight = m_hideTitleBarView ? 0 : Metric::TitleBarHeight;
   m_titleBarView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   if (m_contentView != nullptr) {
     m_contentView->setFrame(KDRect(0, titleHeight, bounds().width(), bounds().height()-titleHeight));

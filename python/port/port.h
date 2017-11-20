@@ -10,9 +10,16 @@ public:
 
 class ExecutionEnvironment {
 public:
+  ExecutionEnvironment();
+  static ExecutionEnvironment * currentExecutionEnvironment();
+  void didModifyFramebuffer();
   void runCode(const char * );
   virtual void printText(const char * text, size_t length) {
   }
+  virtual void redraw() {
+  }
+private:
+  bool m_framebufferHasBeenModified;
 };
 
 void init(void * heapStart, void * heapEnd);

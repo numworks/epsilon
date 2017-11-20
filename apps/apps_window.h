@@ -15,7 +15,6 @@ public:
   bool updateAlphaLock();
   void hideTitleBarView(bool hide);
 private:
-  constexpr static KDCoordinate k_titleBarHeight = 18;
   int numberOfSubviews() const override;
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;

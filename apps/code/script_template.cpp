@@ -31,9 +31,9 @@ constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", R"(# This scr
 # N_iteration: degree of precision
 import kandinsky
 N_iteration = 10
-def drawMandelbrot():
+def drawMandlebrot():
   for x in range(320):
-    for y in range(240):
+    for y in range(222):
 # Compute the mandelbrot sequence for the point c = (c_r, c_i) with start value z = (z_r, z_i)
       z_r = 0
       z_i = 0

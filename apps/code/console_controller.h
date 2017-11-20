@@ -32,7 +32,7 @@ public:
   void removeExtensionIfAny(char * name);
 
   // ViewController
-  View * view() override { return &m_selectableTableView; }
+  View * view() override { return &m_view; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -57,8 +57,25 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
   ::Toolbox * toolboxForTextField(TextField * textField) override;
+
   // MicroPython::ExecutionEnvironment
   void printText(const char * text, size_t length) override;
+  void redraw() override;
+
+  // ConsoleController::ContentView
+  class ContentView : public View {
+  public:
+    ContentView(SelectableTableView * selectabletableView);
+    void markAsDirty();
+  private:
+    int numberOfSubviews() const override { return 1; }
+    View * subviewAtIndex(int index) override {
+      assert(index == 0);
+      return m_selectableTableView;
+    }
+    void layoutSubviews() override;
+    SelectableTableView * m_selectableTableView;
+  };
 
 private:
   static constexpr int LineCellType = 0;
@@ -85,6 +102,7 @@ private:
    * happens, or when m_outputAccumulationBuffer is full, we create a new
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
   ScriptStore * m_scriptStore;
+  ContentView m_view;
 };
 }
 

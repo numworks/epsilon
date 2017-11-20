@@ -11,15 +11,31 @@ extern "C" {
 
 namespace Code {
 
+
+ConsoleController::ContentView::ContentView(SelectableTableView * selectabletableView) :
+  m_selectableTableView(selectabletableView)
+{
+}
+
+void ConsoleController::ContentView::layoutSubviews() {
+  m_selectableTableView->setFrame(bounds());
+}
+
+void ConsoleController::ContentView::markAsDirty() {
+  markRectAsDirty(bounds());
+}
+
 ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
+  MicroPython::ExecutionEnvironment(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
   m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin, this, this, true, true, KDColorWhite),
   m_editCell(this, this),
   m_pythonHeap(nullptr),
-  m_scriptStore(scriptStore)
+  m_scriptStore(scriptStore),
+  m_view(&m_selectableTableView)
 {
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
@@ -252,6 +268,10 @@ void ConsoleController::printText(const char * text, size_t length) {
     appendTextToOutputAccumulationBuffer(text, length-1);
     flushOutputAccumulationBufferToStore();
   }
+}
+
+void ConsoleController::redraw() {
+  m_view.markAsDirty();
 }
 
 void ConsoleController::autoImportScriptAtIndex(int index) {

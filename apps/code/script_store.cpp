@@ -12,6 +12,7 @@ ScriptStore::ScriptStore() :
 {
   addScriptFromTemplate(ScriptTemplate::Factorial());
   addScriptFromTemplate(ScriptTemplate::Fibonacci());
+  addScriptFromTemplate(ScriptTemplate::Mandelbrot());
 }
 
 const Script ScriptStore::scriptAtIndex(int index, EditableZone zone) {

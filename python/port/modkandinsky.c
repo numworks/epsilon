@@ -21,4 +21,3 @@ const mp_obj_module_t kandinsky_module = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&kandinsky_module_globals,
 };
-

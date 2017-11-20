@@ -43,11 +43,11 @@ void OutputExpressionsView::reloadCell() {
 KDSize OutputExpressionsView::minimalSizeForOptimalDisplay() const {
   KDSize approximateExpressionSize = m_approximateExpressionView.minimalSizeForOptimalDisplay();
   if (numberOfSubviews() == 1) {
-    return KDSize(approximateExpressionSize.width() + 2*k_digitHorizontalMargin, approximateExpressionSize.height());
+    return approximateExpressionSize;
   }
   KDSize exactExpressionSize = m_exactExpressionView.minimalSizeForOptimalDisplay();
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-  return KDSize(exactExpressionSize.width()+approximateSignSize.width()+approximateExpressionSize.width()+4*k_digitHorizontalMargin, exactExpressionSize.height() > approximateExpressionSize.height() ? exactExpressionSize.height() : approximateExpressionSize.height());
+  return KDSize(exactExpressionSize.width()+approximateSignSize.width()+approximateExpressionSize.width()+2*k_digitHorizontalMargin, exactExpressionSize.height() > approximateExpressionSize.height() ? exactExpressionSize.height() : approximateExpressionSize.height());
 }
 
 void OutputExpressionsView::didBecomeFirstResponder() {
@@ -62,8 +62,8 @@ bool OutputExpressionsView::handleEvent(Ion::Events::Event event) {
   if (numberOfSubviews() == 1) {
     return false;
   }
-  if ((event == Ion::Events::Left && m_selectedSubviewType == SubviewType::ExactOutput) ||
-    (event == Ion::Events::Right && m_selectedSubviewType == SubviewType::ApproximativeOutput)) {
+  if ((event == Ion::Events::Right && m_selectedSubviewType == SubviewType::ExactOutput) ||
+    (event == Ion::Events::Left && m_selectedSubviewType == SubviewType::ApproximativeOutput)) {
     SubviewType otherSubviewType = m_selectedSubviewType == SubviewType::ExactOutput ? SubviewType::ApproximativeOutput : SubviewType::ExactOutput;
     setSelectedSubviewType(otherSubviewType);
     reloadCell();
@@ -96,14 +96,15 @@ View * OutputExpressionsView::subviewAtIndex(int index) {
 void OutputExpressionsView::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDSize approximateExpressionSize = m_approximateExpressionView.minimalSizeForOptimalDisplay();
-  m_approximateExpressionView.setFrame(KDRect(k_digitHorizontalMargin, 0, approximateExpressionSize.width(), height));
   if (numberOfSubviews() == 1) {
+    m_approximateExpressionView.setFrame(KDRect(0, 0, approximateExpressionSize.width(), height));
     return;
   }
-  KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
   KDSize exactExpressionSize = m_exactExpressionView.minimalSizeForOptimalDisplay();
-  m_approximateSign.setFrame(KDRect(2*k_digitHorizontalMargin+approximateExpressionSize.width(), 0, approximateSignSize.width(), height));
-  m_exactExpressionView.setFrame(KDRect(3*k_digitHorizontalMargin+approximateExpressionSize.width()+approximateSignSize.width(), 0, exactExpressionSize.width(), height));
+  m_exactExpressionView.setFrame(KDRect(0, 0, exactExpressionSize.width(), height));
+  KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
+  m_approximateSign.setFrame(KDRect(k_digitHorizontalMargin+exactExpressionSize.width(), 0, approximateSignSize.width(), height));
+  m_approximateExpressionView.setFrame(KDRect(2*k_digitHorizontalMargin+exactExpressionSize.width()+approximateSignSize.width(), 0, approximateExpressionSize.width(), height));
 }
 
 }

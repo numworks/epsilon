@@ -1,7 +1,10 @@
 #include "toolbox.h"
 #include "../shared/toolbox_helpers.h"
 #include <assert.h>
+extern "C" {
 #include <string.h>
+#include <ctype.h>
+}
 
 namespace Code {
 
@@ -211,6 +214,17 @@ void Toolbox::setAction(Action action) {
   m_action = action;
 }
 
+bool Toolbox::handleEvent(Ion::Events::Event event) {
+  if (::Toolbox::handleEvent(event)) {
+    return true;
+  }
+  if (event.hasText() && strlen(event.text()) == 1) {
+    scrollToLetter(event.text()[0]);
+    return true;
+  }
+  return false;
+}
+
 KDCoordinate Toolbox::rowHeight(int j) {
   if (typeAtLocation(0, j) == ::Toolbox::LeafCellType) {
     if (m_messageTreeModel->label() != I18n::Message::IfStatementMenu) {
@@ -258,6 +272,35 @@ MessageTableCellWithChevron* Toolbox::nodeCellAtIndex(int index) {
 
 int Toolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
+}
+
+void Toolbox::scrollToLetter(char letter) {
+  char lowerLetter = tolower(letter);
+  // We look for a child MessageTree that starts with the wanted letter.
+  for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
+    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    if (currentFirstLetterLowered == lowerLetter) {
+      scrollToAndSelectChild(i);
+      return;
+    }
+  }
+  // We did not find a child MessageTree that starts with the wanted letter.
+  // We scroll to the first child MessageTree that starts with a letter higher
+  // than the wanted letter.
+  for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
+    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    if (currentFirstLetterLowered >= lowerLetter && currentFirstLetterLowered <= 'z') {
+      scrollToAndSelectChild(i);
+      return;
+    }
+  }
+}
+
+void Toolbox::scrollToAndSelectChild(int i) {
+  assert(i >=0 && i<m_messageTreeModel->numberOfChildren());
+  m_selectableTableView.deselectTable();
+  m_selectableTableView.scrollToCell(0, i);
+  m_selectableTableView.selectCellAtLocation(0, i);
 }
 
 }

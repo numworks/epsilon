@@ -276,12 +276,23 @@ Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit
   /* Step 6: Let's remove ones if there's any. It's important to do this after
    * having factorized because factorization can lead to new ones. For example
    * pi^(-1)*pi. We don't remove the last one if it's the only operand left
-   * though. */
+   * though.
+   * Same comment for -1 that can appear when reducing i*i. */
   i = 0;
   while (i < numberOfOperands()) {
     Expression * o = editableOperand(i);
     if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne() && numberOfOperands() > 1) {
       removeOperand(o, true);
+      continue;
+    }
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isMinusOne() && numberOfOperands() > 1 && i > 0) {
+      removeOperand(o, operand(0)->type() == Type::Rational);
+      if (operand(0)->type() == Type::Rational) {
+        Rational * r = static_cast<Rational *>(editableOperand(0));
+        r->setSign(r->sign() == Sign::Positive ? Sign::Negative : Sign::Positive);
+      } else {
+        addOperandAtIndex(o, 0);
+      }
       continue;
     }
     i++;

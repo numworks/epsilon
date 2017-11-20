@@ -13,6 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
 private:
+  constexpr static int k_maxNValue = 100;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());

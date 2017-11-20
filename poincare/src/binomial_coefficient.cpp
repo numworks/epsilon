@@ -57,17 +57,15 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   if (n.isLowerThan(k)) {
     return replaceWith(new Undefined(), true);
   }
+  /* if n is too big, we do not reduce to avoid too long computation.
+   * The binomial coefficient will be evaluate approximatively later */
+  if (Integer(k_maxNValue).isLowerThan(n)) {
+    return this;
+  }
   Rational result(1);
   Integer kBis = Integer::Subtraction(n, k);
   k = kBis.isLowerThan(k) ? kBis : k;
-  // Out of bounds
-  if (Integer(k_maxNumberOfSteps).isLowerThan(k)) {
-    return replaceWith(new Undefined(), true);
-  }
-  int clippedK = k.extractedInt(); // Authorized because k < k_maxNumberOfSteps
-  /* TODO: cap n and k -> if k or n too big, do not reduce to avoid too long
-   * computation. The binomial coefficient will be evaluate approximatively
-   * later */
+  int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
     Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
     result = Rational::Multiplication(result, factor);
@@ -96,12 +94,15 @@ Expression * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit 
   delete nInput;
   delete kInput;
   k = k > (n-k) ? n-k : k;
-  if (isnan(n) || isnan(k) || n != std::round(n) || k != std::round(k) || k > n || k < 0 || n < 0 || k > k_maxNumberOfSteps) {
+  if (isnan(n) || isnan(k) || n != std::round(n) || k != std::round(k) || k > n || k < 0 || n < 0) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }
   T result = 1;
   for (int i = 0; i < k; i++) {
     result *= (n-(T)i)/(k-(T)i);
+    if (isinf(result)) {
+      return new Complex<T>(Complex<T>::Float(result));
+    }
   }
   return new Complex<T>(Complex<T>::Float(std::round(result)));
 }

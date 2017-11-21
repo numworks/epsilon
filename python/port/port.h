@@ -13,6 +13,8 @@ public:
   ExecutionEnvironment();
   static ExecutionEnvironment * currentExecutionEnvironment();
   void didModifyFramebuffer();
+  bool isFramebufferModified() const { return m_framebufferHasBeenModified; }
+  void didCleanFramebuffer();
   void runCode(const char * );
   virtual void printText(const char * text, size_t length) {
   }

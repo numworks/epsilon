@@ -65,7 +65,8 @@ void Calculation::reset() {
 
 void Calculation::setContent(const char * c, Context * context) {
   reset();
-  strlcpy(m_inputText, c, sizeof(m_inputText));
+  m_input = Expression::parse(c);
+  m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
   m_exactOutput = input()->clone();
   Expression::Simplify(&m_exactOutput, *context);
   m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
@@ -206,6 +207,9 @@ ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
 
 bool Calculation::shouldApproximateOutput() {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
+    return true;
+  }
+  if (strcmp(m_exactOutputText, m_inputText) == 0) {
     return true;
   }
   return input()->recursivelyMatches([](const Expression * e) {

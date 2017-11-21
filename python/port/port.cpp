@@ -41,6 +41,10 @@ void MicroPython::ExecutionEnvironment::didModifyFramebuffer() {
   m_framebufferHasBeenModified = true;
 }
 
+void MicroPython::ExecutionEnvironment::didCleanFramebuffer() {
+  m_framebufferHasBeenModified = false;
+}
+
 void MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
@@ -93,6 +97,8 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     /* End of mp_obj_print_exception. */
   }
 
+#ifdef __EMSCRIPTEN__
+#else
   while (m_framebufferHasBeenModified) {
     int timeout = 3000;
     Ion::Events::Event event = Ion::Events::getEvent(&timeout);
@@ -101,6 +107,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
       redraw();
     }
   }
+#endif
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;

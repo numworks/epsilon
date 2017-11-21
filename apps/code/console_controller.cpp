@@ -88,6 +88,12 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.pushCommand(command, strlen(command));
   assert(m_outputAccumulationBuffer[0] == '\0');
   runCode(command);
+#ifdef __EMSCRIPTEN__
+  if (isFramebufferModified()) {
+    app()->setFirstResponder(this);
+    return;
+  }
+#endif
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
@@ -104,16 +110,41 @@ void ConsoleController::removeExtensionIfAny(char * name) {
 
 void ConsoleController::viewWillAppear() {
   assert(pythonEnvironmentIsLoaded());
+#ifdef __EMSCRIPTEN__
+  if (isFramebufferModified()) {
+    return;
+  }
+#endif
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
 }
 
 void ConsoleController::didBecomeFirstResponder() {
+#ifdef __EMSCRIPTEN__
+  if (isFramebufferModified()) {
+    return;
+  }
+#endif
   app()->setFirstResponder(&m_editCell);
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
+#ifdef __EMSCRIPTEN__
+  if (isFramebufferModified()) {
+    if (event == Ion::Events::OK || event == Ion::Events::Back) {
+      didCleanFramebuffer(),
+      m_view.markAsDirty();
+      flushOutputAccumulationBufferToStore();
+      m_consoleStore.deleteLastLineIfEmpty();
+      m_selectableTableView.reloadData();
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+      m_editCell.setEditing(true);
+      m_editCell.setText("");
+    }
+    return true;
+  }
+#endif
   if (event == Ion::Events::Up) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
       m_editCell.setEditing(false);
@@ -227,6 +258,11 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   runAndPrintForCommand(text);
+#ifdef __EMSCRIPTEN__
+  if (isFramebufferModified()) {
+    return true;
+  }
+#endif
   m_selectableTableView.reloadData();
   m_editCell.setEditing(true);
   textField->setText("");

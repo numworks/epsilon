@@ -28,7 +28,7 @@ def fibo2(n):
   return fibo2(n-1)+fibo2(n-2))");
 
 constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
-# N_iteration: degree of precision
+#N_iteration: degree of precision
 import kandinsky
 def mandelbrot(N_iteration):
   for x in range(320):

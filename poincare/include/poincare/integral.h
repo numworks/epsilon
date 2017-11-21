@@ -1,22 +1,30 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/function.h>
+#include <poincare/static_hierarchy.h>
 #include <poincare/variable_context.h>
+#include <poincare/layout_engine.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
-class Integral : public Function {
+class Integral : public StaticHierarchy<3> {
+  using StaticHierarchy<3>::StaticHierarchy;
 public:
-  Integral();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "int");
+  }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Complex<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   template<typename T>
   struct DetailedResult
   {

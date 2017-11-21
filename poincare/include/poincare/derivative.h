@@ -1,21 +1,32 @@
 #ifndef POINCARE_DERIVATIVE_H
 #define POINCARE_DERIVATIVE_H
 
-#include <poincare/function.h>
+#include <poincare/layout_engine.h>
+#include <poincare/static_hierarchy.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
 
-class Derivative : public Function {
+class Derivative : public StaticHierarchy<2> {
+  using StaticHierarchy<2>::StaticHierarchy;
 public:
-  Derivative();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
+  }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  }
+  const char * name() const { return "diff"; }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+  template<typename T> Expression * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext<T> variableContext, AngleUnit angleUnit) const;
   template<typename T> T approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const;
   // TODO: Change coefficients?

@@ -6,21 +6,21 @@
 namespace Poincare {
 
 class Sum : public Sequence {
+  using Sequence::Sequence;
 public:
-  Sum();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
+  const char * name() const override;
   int emptySequenceValue() const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
-  Evaluation<float> * evaluateWithNextTerm(Evaluation<float> * a, Evaluation<float> * b) const override {
-    return templatedEvaluateWithNextTerm(a, b);
+  Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const override {
+    return templatedEvaluateWithNextTerm<double>(a, b);
   }
-  Evaluation<double> * evaluateWithNextTerm(Evaluation<double> * a, Evaluation<double> * b) const override {
-    return templatedEvaluateWithNextTerm(a, b);
+  Expression * evaluateWithNextTerm(SinglePrecision p, Expression * a, Expression * b) const override {
+    return templatedEvaluateWithNextTerm<float>(a, b);
   }
-  template<typename T> Evaluation<T> * templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const;
+  template<typename T> Expression * templatedEvaluateWithNextTerm(Expression * a, Expression * b) const;
 };
 
 }

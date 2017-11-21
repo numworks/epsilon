@@ -6,7 +6,6 @@ extern "C" {
 #include <float.h>
 }
 #include <cmath>
-#include <poincare/complex_matrix.h>
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
 #include <ion.h>
@@ -70,7 +69,20 @@ Complex<T> Complex<T>::Polar(T r, T th)  {
 }
 
 template<typename T>
-static inline T setSign(T f, bool negative) {
+Complex<T>::Complex(const Complex<T> & other) {
+  m_a = other.m_a;
+  m_b = other.m_b;
+}
+
+template<typename T>
+Complex<T> & Complex<T>::operator=(const Complex& other) {
+  m_a = other.m_a;
+  m_b = other.m_b;
+  return *this;
+}
+
+template<typename T>
+static inline T privateFloatSetSign(T f, bool negative) {
   if (negative) {
     return -f;
   }
@@ -98,54 +110,10 @@ Complex<T>::Complex(const char * integralPart, int integralPartLength, bool inte
     const char * exponent, int exponentLength, bool exponentNegative) {
   T i = digitsToFloat<T>(integralPart, integralPartLength);
   T j = digitsToFloat<T>(fractionalPart, fractionalPartLength);
-  T l = setSign<T>(digitsToFloat<T>(exponent, exponentLength), exponentNegative);
+  T l = privateFloatSetSign<T>(digitsToFloat<T>(exponent, exponentLength), exponentNegative);
 
-  m_a = setSign((i + j*std::pow(10, -std::ceil((T)fractionalPartLength)))* std::pow(10, l), integralNegative);
+  m_a = privateFloatSetSign((i + j*std::pow(10, -std::ceil((T)fractionalPartLength)))* std::pow(10, l), integralNegative);
   m_b = 0;
-}
-
-template<typename T>
-T Complex<T>::toScalar() const {
-  if (m_b != 0) {
-    return NAN;
-  }
-  return m_a;
-}
-
-template<typename T>
-int Complex<T>::numberOfRows() const {
-  return 1;
-}
-
-template<typename T>
-int Complex<T>::numberOfColumns() const {
-  return 1;
-}
-
-template<typename T>
-Expression::Type Complex<T>::type() const {
-  return Expression::Type::Complex;
-}
-
-template <class T>
-Complex<T> * Complex<T>::clone() const {
-  return new Complex<T>(*this);
-}
-
-template <class T>
-Evaluation<T> * Complex<T>::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  return this->clone();
-}
-
-template <class T>
-int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
-}
-
-template <class T>
-Evaluation<T> * Complex<T>::createInverse() const {
-  return new Complex<T>(Cartesian(1/m_a, -1/m_b));
 }
 
 template <class T>
@@ -212,6 +180,29 @@ Complex<T> Complex<T>::conjugate() const {
   return Cartesian(m_a, -m_b);
 }
 
+template<typename T>
+Expression::Type Complex<T>::type() const {
+  return Expression::Type::Complex;
+}
+
+template <class T>
+Complex<T> * Complex<T>::clone() const {
+  return new Complex<T>(*this);
+}
+
+template<typename T>
+T Complex<T>::toScalar() const {
+  if (m_b != 0) {
+    return NAN;
+  }
+  return m_a;
+}
+
+template <class T>
+int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
+}
+
 template <class T>
 int Complex<T>::convertFloatToText(T f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, Expression::FloatDisplayMode mode) {
@@ -247,11 +238,6 @@ Complex<T>::Complex(T a, T b) :
 }
 
 template <class T>
-const Complex<T> * Complex<T>::complexOperand(int i) const {
-  return this;
-}
-
-template <class T>
 ExpressionLayout * Complex<T>::privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
   assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
   if (complexFormat == Expression::ComplexFormat::Polar) {
@@ -262,7 +248,7 @@ ExpressionLayout * Complex<T>::privateCreateLayout(Expression::FloatDisplayMode 
 
 template<typename T>
 template<typename U>
-Evaluation<U> * Complex<T>::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+Complex<U> * Complex<T>::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
   return new Complex<U>(Complex<U>::Cartesian((U)m_a, (U)m_b));
 }
 
@@ -490,12 +476,12 @@ ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMod
   return new StringLayout(buffer, numberOfChars);
 }
 
-template class Poincare::Complex<float>;
-template class Poincare::Complex<double>;
-template Poincare::Evaluation<double>* Poincare::Complex<double>::templatedEvaluate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
-template Poincare::Evaluation<float>* Poincare::Complex<double>::templatedEvaluate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
-template Poincare::Evaluation<double>* Poincare::Complex<float>::templatedEvaluate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
-template Poincare::Evaluation<float>* Poincare::Complex<float>::templatedEvaluate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template class Complex<float>;
+template class Complex<double>;
+template Complex<double>* Complex<double>::templatedEvaluate<double>(Context&, Expression::AngleUnit) const;
+template Complex<float>* Complex<double>::templatedEvaluate<float>(Context&, Expression::AngleUnit) const;
+template Complex<double>* Complex<float>::templatedEvaluate<double>(Context&, Expression::AngleUnit) const;
+template Complex<float>* Complex<float>::templatedEvaluate<float>(Context&, Expression::AngleUnit) const;
 
 }
 

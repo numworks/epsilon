@@ -1,0 +1,73 @@
+DemoRuleset
+
+// 0*a -> 0
+Multiplication.a(Integer.b[0]) -> ReplaceWithTransform(a,b);
+
+// 1*a -> a
+Multiplication.a(Integer.b[1]) -> RemoveChildTransform(a,b);
+
+// a+0 -> a
+Addition.a(Integer.b[0]) -> RemoveChildTransform(a,b);
+
+// a^1 -> a
+Power.a(Any.b,Integer.c[1]) -> ReplaceWithTransform(a,b);
+
+// 1^a -> 1
+Power.a(Integer.b[1], Any) -> ReplaceWithTransform(a,b);
+
+//a^0 -> 1
+
+// Remove parenthesis
+Parenthesis.a -> RemoveParenthesisTransform(a);
+
+// a-b -> a+(-1)*b
+Subtraction.a -> SubtractionTransform(a);
+
+// -a -> (-1)*a
+Opposite.a -> OppositeTransform(a);
+
+// a/b -> a*b^-1
+Division.a -> DivisionTransform(a);
+
+// sqrt(a) -> a^(1/2)
+SquareRoot.a -> SquareRootTransform(a);
+
+// root(a, b) -> a^(1/b)
+NthRoot.a -> NthRootTransform(a);
+
+
+// (a+b)+c -> a+b+c
+Addition.a(Addition.b) -> MergeDynamicHierarchyTransform(a,b);
+
+// (a*b)*c -> a*b*c
+Multiplication.a(Multiplication.b) -> MergeDynamicHierarchyTransform(a,b);
+
+// Int+Int -> Int
+Addition.a(Integer.b,Integer.c) -> IntegerAdditionTransform(a,b,c);
+
+// Int*Int -> Int
+Multiplication.a(Integer.b,Integer.c) -> IntegerMultiplicationTransform(a,b,c);
+
+// Int^Int -> Int || Int^(-1)
+Power.a(Integer.b,Integer.c) -> IntegerPowerTransform(a, b, c);
+
+// (b^c)^d -> b^(c*d)
+//Power.a(Power(b,c),d) -> PowerPowerTransform(a,b,c,d)
+
+// Int*Int^-1 -> Int.a*Int.b^-1 with gcd(a,b) = 1
+Multiplication.a(Power.c(Integer.d, Integer[-1]), Integer.b) -> RationalReductionTransform(a,b,c,d);
+
+// Int*Int^-1+Int*Int^-1 -> Int*Int^-1
+Addition(Multiplication!(Integer.a,Power(Integer.b,Integer[-1])), Multiplication!(Integer.c,Power(Integer.d,Integer[-1]))) -> RationalAdditionTransform(a,b,c,d);
+
+// Int*Int^-1 + Int -> Int*Int^-1
+Addition(Multiplication!(Integer.a,Power(Integer.b,Integer[-1])), Integer.c) -> IntegerRationalAdditionTransform(a,b,c);
+
+// Int*Int^-1 + Int^(-1) -> Int*Int^-1
+Addition(Multiplication!(Integer.a,Power(Integer.b,Integer[-1])), Power(Integer.c,Integer[-1])) -> InverseIntegerRationalAdditionTransform(a,b,c);
+
+// Int^-1 + Int^-1 -> Int^-1
+Addition(Power(Integer.a,Integer[-1]),Power(Integer.b,Integer[-1])) -> InverseIntegerAdditionTransform(a,b);
+
+// Int^(Int*Int^(-1)) -> Int*Int^(Int*Int^(-1))*exp(i*Pi*Int/Int)
+Power.a(Integer.b, Multiplication.c(Integer.d, Power.e(Integer.f, Integer[-1]))) -> RationalPowerTransform(a,b,c,d,e,f);

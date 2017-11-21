@@ -11,19 +11,27 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 {
 }
 
+ExpressionLayout * ExpressionView::expressionLayout() const {
+  return m_expressionLayout;
+}
+
 void ExpressionView::setExpression(ExpressionLayout * expressionLayout) {
   m_expressionLayout = expressionLayout;
   markRectAsDirty(bounds());
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
+  if (m_backgroundColor != backgroundColor) {
+    m_backgroundColor = backgroundColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void ExpressionView::setTextColor(KDColor textColor) {
-  m_textColor = textColor;
-  markRectAsDirty(bounds());
+  if (textColor != m_textColor) {
+    m_textColor = textColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlignment) {

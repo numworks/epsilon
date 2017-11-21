@@ -3,13 +3,56 @@
 #include <poincare/complex.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
-#include <poincare/complex_matrix.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
 #include <cmath>
 
 namespace Poincare {
+
+const char * Symbol::textForSpecialSymbols(char name) const {
+  switch (name) {
+    case SpecialSymbols::Ans:
+      return "ans";
+    case SpecialSymbols::un:
+      return "u(n)";
+    case SpecialSymbols::un1:
+      return "u(n+1)";
+    case SpecialSymbols::vn:
+      return "v(n)";
+    case SpecialSymbols::vn1:
+      return "v(n+1)";
+    case SpecialSymbols::wn:
+      return "w(n)";
+    case SpecialSymbols::wn1:
+      return "w(n+1)";
+    case SpecialSymbols::M0:
+      return "M0";
+    case SpecialSymbols::M1:
+      return "M1";
+    case SpecialSymbols::M2:
+      return "M2";
+    case SpecialSymbols::M3:
+      return "M3";
+    case SpecialSymbols::M4:
+      return "M4";
+    case SpecialSymbols::M5:
+      return "M5";
+    case SpecialSymbols::M6:
+      return "M6";
+    case SpecialSymbols::M7:
+      return "M7";
+    case SpecialSymbols::M8:
+      return "M8";
+    case SpecialSymbols::M9:
+      return "M9";
+    default:
+      assert(false);
+      return nullptr;
+  }
+}
+
 
 Symbol::SpecialSymbols Symbol::matrixSymbol(char index) {
   switch (index - '0') {
@@ -44,8 +87,31 @@ Symbol::Symbol(char name) :
 {
 }
 
+Symbol::Symbol(Symbol&& other) :
+  m_name(other.m_name)
+{
+}
+
+Expression * Symbol::clone() const {
+  return new Symbol(m_name);
+}
+
+Expression::Sign Symbol::sign() const {
+  /* TODO: Maybe, we will want to know that from a context given in parameter:
+  if (context.expressionForSymbol(this) != nullptr) {
+    return context.expressionForSymbol(this)->sign(context);
+  }*/
+  if (m_name == Ion::Charset::SmallPi) {
+    return Sign::Positive;
+  }
+  if (m_name == Ion::Charset::Exponential) {
+    return Sign::Positive;
+  }
+  return Sign::Unknown;
+}
+
 template<typename T>
-Evaluation<T> * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
     return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
   }
@@ -91,13 +157,21 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return new StringLayout(&m_name, 1);
 }
 
-Expression * Symbol::clone() const {
-  return new Symbol(m_name);
-}
-
-bool Symbol::valueEquals(const Expression * e) const {
-  assert(e->type() == Expression::Type::Symbol);
-  return (m_name == ((Symbol *)e)->m_name);
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  if (bufferSize == 1) {
+    buffer[bufferSize-1] = 0;
+    return 0;
+  }
+  /* Special cases for all special symbols */
+  if (m_name >0 && m_name < 32) {
+    return strlcpy(buffer, textForSpecialSymbols(m_name), bufferSize);
+  }
+  buffer[0] = m_name;
+  buffer[1] = 0;
+  return 1;
 }
 
 bool Symbol::isMatrixSymbol() const {
@@ -105,6 +179,17 @@ bool Symbol::isMatrixSymbol() const {
     return true;
   }
   return false;
+}
+
+int Symbol::simplificationOrderSameType(const Expression * e) const {
+  assert(e->type() == Expression::Type::Symbol);
+  if (m_name == ((Symbol *)e)->m_name) {
+    return 0;
+  }
+  if ((m_name > ((Symbol *)e)->m_name)) {
+    return 1;
+  }
+  return -1;
 }
 
 }

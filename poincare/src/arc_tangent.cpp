@@ -1,4 +1,6 @@
 #include <poincare/arc_tangent.h>
+#include <poincare/trigonometry.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -6,25 +8,30 @@ extern "C" {
 
 namespace Poincare {
 
-ArcTangent::ArcTangent() :
-  Function("atan")
-{
-}
-
 Expression::Type ArcTangent::type() const {
   return Type::ArcTangent;
 }
 
-Expression * ArcTangent::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ArcTangent * t = new ArcTangent();
-  t->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return t;
+Expression * ArcTangent::clone() const {
+  ArcTangent * a = new ArcTangent(m_operands, true);
+  return a;
+}
+
+Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>
-Complex<T> ArcTangent::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
+Complex<T> ArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

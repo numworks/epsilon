@@ -1,6 +1,11 @@
 #include <poincare/factorial.h>
 #include "layout/string_layout.h"
 #include "layout/horizontal_layout.h"
+#include <poincare/rational.h>
+#include <poincare/undefined.h>
+#include <poincare/symbol.h>
+#include <poincare/simplification_engine.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,25 +13,52 @@ extern "C" {
 
 namespace Poincare {
 
-Factorial::Factorial(Expression * argument, bool clone) :
-  Function("fact")
+Factorial::Factorial(const Expression * argument, bool clone) :
+  StaticHierarchy<1>(&argument, clone)
 {
-  setArgument(&argument, 1, clone);
 }
 
 Expression::Type Factorial::type() const {
   return Type::Factorial;
 }
 
-Expression * Factorial::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Factorial * f = new Factorial(newOperands[0], cloneOperands);
-  return f;
+Expression * Factorial::clone() const {
+  Factorial * a = new Factorial(m_operands[0], true);
+  return a;
+}
+
+Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  if (operand(0)->type() == Type::Rational) {
+    Rational * r = static_cast<Rational *>(editableOperand(0));
+    if (!r->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+    if (Integer(k_maxOperandValue).isLowerThan(r->numerator())) {
+      return this;
+    }
+    Rational * fact = new Rational(Integer::Factorial(r->numerator()));
+    return replaceWith(fact, true);
+  }
+  if (operand(0)->type() == Type::Symbol) {
+    Symbol * s = static_cast<Symbol *>(editableOperand(0));
+    if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  return this;
 }
 
 template<typename T>
-Complex<T> Factorial::templatedComputeComplex(const Complex<T> c) const {
+Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   T n = c.a();
   if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Float(NAN);
@@ -45,9 +77,34 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new StringLayout("!", 1);
   return new HorizontalLayout(childrenLayouts, 2);
+}
+
+int Factorial::simplificationOrderGreaterType(const Expression * e) const {
+  if (SimplificationOrder(operand(0),e) == 0) {
+    return 1;
+  }
+  return SimplificationOrder(operand(0), e);
+}
+
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize);
+  if (numberOfChar >= bufferSize-1) {
+    return numberOfChar;
+  }
+  buffer[numberOfChar++] = '!';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
+int Factorial::simplificationOrderSameType(const Expression * e) const {
+  return SimplificationOrder(operand(0), e->operand(0));
 }
 
 }

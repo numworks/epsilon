@@ -135,16 +135,17 @@ tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
 trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTION; }
 transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
-undef { poincare_expression_yylval.expression = new Complex<double>(Complex<double>::Float(NAN)); return UNDEFINED; }
-inf { poincare_expression_yylval.expression = new Complex<double>(Complex<double>::Float(INFINITY)); return UNDEFINED; }
+undef { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
+inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
 \x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8c { return EE; }
 \x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
-\x8b { return ICOMPLEX; }
+\x8b { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { return STO; }
 \+ { return PLUS; }
 \- { return MINUS; }
+\x93 { return MULTIPLY; }
 \* { return MULTIPLY; }
 \/ { return DIVIDE; }
 \^ { return POW; }

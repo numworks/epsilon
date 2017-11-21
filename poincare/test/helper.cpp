@@ -8,7 +8,7 @@
 
 using namespace Poincare;
 
-static Expression * parse_expression(const char * expression) {
+Expression * parse_expression(const char * expression) {
   quiz_print(expression);
   char buffer[200];
   strlcpy(buffer, expression, sizeof(buffer));
@@ -32,29 +32,23 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
   delete e;
 }
 
-#if POINCARE_SIMPLIFY
-void assert_parsed_simplified_expression_type(const char * expression, Poincare::Expression::Type type) {
-  Expression * e = parse_expression(expression);
-  Expression * e2 = e->simplify();
-  assert(e2);
-  assert(e2->type() == type);
-  delete e;
-  delete e2;
-}
-#endif
-
 template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
   GlobalContext globalContext;
   Expression * a = parse_expression(expression);
-  Evaluation<T> * m = a->evaluate<T>(globalContext, angleUnit);
+  Expression * m = a->evaluate<T>(globalContext, angleUnit);
   assert(m);
-  assert(m->numberOfRows() == numberOfRows);
-  assert(m->numberOfColumns() == numberOfColumns);
+  assert(m->numberOfOperands() == numberOfRows*numberOfColumns);
+  if (m->type() == Expression::Type::Matrix) {
+    assert(static_cast<Matrix *>(m)->numberOfRows() == numberOfRows);
+    assert(static_cast<Matrix *>(m)->numberOfColumns() == numberOfColumns);
   for (int i = 0; i < m->numberOfOperands(); i++) {
-    assert(std::fabs(m->complexOperand(i)->a() - results[i].a()) < 0.0001f);
-    assert(std::fabs(m->complexOperand(i)->b() - results[i].b()) < 0.0001f);
+    assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->a() - results[i].a()) < 0.0001f);
+    assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->b() - results[i].b()) < 0.0001f);
   }
+  }
+  assert(std::fabs(static_cast<const Complex<T> *>(m)->a() - results[0].a()) < 0.0001f);
+  assert(std::fabs(static_cast<const Complex<T> *>(m)->b() - results[0].b()) < 0.0001f);
   delete a;
   delete m;
 }

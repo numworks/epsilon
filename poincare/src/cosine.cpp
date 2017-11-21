@@ -1,6 +1,11 @@
 #include <poincare/cosine.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/complex.h>
+#include <poincare/symbol.h>
+#include <poincare/rational.h>
+#include <poincare/multiplication.h>
+#include <poincare/simplification_engine.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,25 +13,31 @@ extern "C" {
 
 namespace Poincare {
 
-Cosine::Cosine() :
-  Function("cos")
-{
-}
-
 Expression::Type Cosine::type() const {
   return Type::Cosine;
 }
 
-Expression * Cosine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Cosine * c = new Cosine();
-  c->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return c;
+Expression * Cosine::clone() const {
+  Cosine * a = new Cosine(m_operands, true);
+  return a;
+}
+
+Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
 }
 
 template<typename T>
-Complex<T> Cosine::compute(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Cosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() == 0) {
     T input = c.a();
@@ -47,7 +58,7 @@ Complex<T> Cosine::compute(const Complex<T> c, AngleUnit angleUnit) {
     return Complex<T>::Float(result);
   }
   Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
-  return HyperbolicCosine::compute(arg);
+  return HyperbolicCosine::computeOnComplex(arg, angleUnit);
 }
 
 }

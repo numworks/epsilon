@@ -2,9 +2,11 @@
 #include <poincare/complex.h>
 #include <poincare/sine.h>
 #include <poincare/cosine.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/multiplication.h>
+#include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_tangent.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -12,30 +14,45 @@ extern "C" {
 
 namespace Poincare {
 
-Tangent::Tangent() :
-  Function("tan")
-{
-}
-
-Expression * Tangent::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Tangent * t = new Tangent();
-  t->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return t;
-}
-
 Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
+Expression * Tangent::clone() const {
+  Tangent * a = new Tangent(m_operands, true);
+  return a;
+}
+
+Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
+  if (newExpression->type() == Type::Tangent) {
+    const Expression * op[1] = {newExpression->operand(0)};
+    Sine * s = new Sine(op, true);
+    Cosine * c = new Cosine(op, true);
+    Division * d = new Division(s, c, false);
+    newExpression = newExpression->replaceWith(d, true);
+    return newExpression->shallowReduce(context, angleUnit);
+  }
+  return newExpression;
+}
+
 template<typename T>
-Complex<T> Tangent::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
-  Complex<T> result = Fraction::compute(Sine::compute(c, angleUnit), Cosine::compute(c, angleUnit));
+Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  Complex<T> result = Division::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
   if (!std::isnan(result.a()) && !std::isnan(result.b())) {
     return result;
   }
-  Complex<T> tanh = HyperbolicTangent::compute(Multiplication::compute(Complex<T>::Cartesian(0, -1), c));
+  Complex<T> tanh = HyperbolicTangent::computeOnComplex(Multiplication::compute(Complex<T>::Cartesian(0, -1), c), angleUnit);
   return Multiplication::compute(Complex<T>::Cartesian(0, 1), tanh);
 }
 

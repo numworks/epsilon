@@ -219,6 +219,12 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
+      double p = a->approximate<double>(context, angleUnit);
+      double q = operand(1)->approximate<double>(context, angleUnit);
+      double approx = std::pow(std::fabs(p), q);
+      if (isinf(approx) || isnan(approx) || std::fabs(approx)> 1E100) {
+        return this;
+      }
       return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
     }
   }

@@ -1,6 +1,5 @@
 MathModule = "math"
 CmathModule = "cmath"
-RandomModule = "RandomModule"
 ForLoopMenu = "For"
 IfStatementMenu = "If"
 WhileLoopMenu = "While"

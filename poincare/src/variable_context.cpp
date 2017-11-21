@@ -21,9 +21,11 @@ void VariableContext<T>::setExpressionForSymbolName(const Expression * expressio
     if (expression == nullptr) {
       return;
     }
-    /* WARNING: We assume that the evaluation of expression is a real */
-    assert(expression->type() == Expression::Type::Complex);
-    m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
+    if (expression->type() == Expression::Type::Complex) {
+      m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
+    } else {
+      m_value = Complex<T>::Float(NAN);
+    }
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }

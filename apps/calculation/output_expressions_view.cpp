@@ -1,4 +1,5 @@
 #include "output_expressions_view.h"
+#include "scrollable_output_expressions_view.h"
 #include "../i18n.h"
 #include <assert.h>
 using namespace Poincare;
@@ -67,12 +68,16 @@ bool OutputExpressionsView::handleEvent(Ion::Events::Event event) {
   if (numberOfSubviews() == 1) {
     return false;
   }
-  if ((event == Ion::Events::Right && m_selectedSubviewType == SubviewType::ExactOutput) ||
-    (event == Ion::Events::Left && m_selectedSubviewType == SubviewType::ApproximativeOutput)) {
+  ScrollableOutputExpressionsView * scrollResponder = static_cast<ScrollableOutputExpressionsView *>(parentResponder());
+  KDCoordinate offset = scrollResponder->manualScrollingOffset().x();
+  bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - m_approximateExpressionView.minimalSizeForOptimalDisplay().width() - offset < scrollResponder->bounds().width()
+;
+  bool leftExpressionIsVisible = m_exactExpressionView.minimalSizeForOptimalDisplay().width() - offset < scrollResponder->bounds().width();
+  if ((event == Ion::Events::Right && m_selectedSubviewType == SubviewType::ExactOutput && rightExpressionIsVisible) ||
+    (event == Ion::Events::Left && m_selectedSubviewType == SubviewType::ApproximativeOutput && leftExpressionIsVisible)) {
     SubviewType otherSubviewType = m_selectedSubviewType == SubviewType::ExactOutput ? SubviewType::ApproximativeOutput : SubviewType::ExactOutput;
     setSelectedSubviewType(otherSubviewType);
     reloadCell();
-    // TODO: something with scrolling parent() == Scrolling !
     return true;
   }
   return false;

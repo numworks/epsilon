@@ -12,6 +12,7 @@ public:
   OutputExpressionsView * outputView();
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  KDPoint manualScrollingOffset() const;
 private:
   OutputExpressionsView m_outputView;
 };

@@ -21,4 +21,9 @@ void ScrollableOutputExpressionsView::didBecomeFirstResponder() {
 KDSize ScrollableOutputExpressionsView::minimalSizeForOptimalDisplay() const {
   return m_outputView.minimalSizeForOptimalDisplay();
 }
+
+KDPoint ScrollableOutputExpressionsView::manualScrollingOffset() const {
+  return m_manualScrollingOffset;
+}
+
 }

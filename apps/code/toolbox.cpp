@@ -125,8 +125,6 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandAmpersand, I18n::Message::PythonAmpersand, I18n::Message::PythonCommandAmpersand),
   ToolboxMessageTree(I18n::Message::PythonCommandSymbolExp, I18n::Message::PythonSymbolExp, I18n::Message::PythonCommandSymbolExp),
   ToolboxMessageTree(I18n::Message::PythonCommandVerticalBar, I18n::Message::PythonVerticalBar, I18n::Message::PythonCommandVerticalBar),
-  ToolboxMessageTree(I18n::Message::PythonCommandImag, I18n::Message::PythonImag, I18n::Message::PythonCommandImag),
-  ToolboxMessageTree(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, I18n::Message::PythonCommandReal),
   ToolboxMessageTree(I18n::Message::PythonCommandAbs, I18n::Message::PythonAbs, I18n::Message::PythonCommandAbs),
   ToolboxMessageTree(I18n::Message::PythonCommandAcos, I18n::Message::PythonAcos, I18n::Message::PythonCommandAcos),
   ToolboxMessageTree(I18n::Message::PythonCommandAcosh, I18n::Message::PythonAcosh, I18n::Message::PythonCommandAcosh),
@@ -190,7 +188,9 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandSum, I18n::Message::PythonSum, I18n::Message::PythonCommandSum),
   ToolboxMessageTree(I18n::Message::PythonCommandTan, I18n::Message::PythonTan, I18n::Message::PythonCommandTan),
   ToolboxMessageTree(I18n::Message::PythonCommandTanh, I18n::Message::PythonTanh, I18n::Message::PythonCommandTanh),
-  ToolboxMessageTree(I18n::Message::PythonCommandTrunc, I18n::Message::PythonTrunc, I18n::Message::PythonCommandTrunc)};
+  ToolboxMessageTree(I18n::Message::PythonCommandTrunc, I18n::Message::PythonTrunc, I18n::Message::PythonCommandTrunc),
+  ToolboxMessageTree(I18n::Message::PythonCommandImag, I18n::Message::PythonImag, I18n::Message::PythonCommandImagWithoutArg),
+  ToolboxMessageTree(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, I18n::Message::PythonCommandRealWithoutArg)};
 
 const ToolboxMessageTree functionsChildren[functionsChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandDefWithArg, I18n::Message::Default, I18n::Message::PythonCommandDef),

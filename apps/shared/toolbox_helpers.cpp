@@ -8,8 +8,6 @@ int CursorIndexInCommand(const char * text) {
   for (size_t i = 0; i < strlen(text); i++) {
     if (text[i] == '(') {
       return i + 1;
-    } else if (text[i] == '.') {
-      return i;
     }
   }
   return strlen(text);
@@ -20,10 +18,7 @@ void TextToInsertForCommandMessage(I18n::Message message, char * buffer) {
   int currentNewTextIndex = 0;
   int numberOfOpenBrackets = 0;
   for (size_t i = 0; i < strlen(messageText); i++) {
-    if (messageText[i] == '.') {
-      currentNewTextIndex = 0;
-      numberOfOpenBrackets = 0;
-    } else if (messageText[i] == ')') {
+    if (messageText[i] == ')') {
       numberOfOpenBrackets--;
     }
     if (numberOfOpenBrackets == 0 || messageText[i] == ',')

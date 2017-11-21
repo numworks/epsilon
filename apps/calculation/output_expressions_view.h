@@ -14,6 +14,7 @@ public:
   OutputExpressionsView(Responder * parentResponder);
   void setExpressions(Poincare::ExpressionLayout ** expressionsLayout);
   KDColor backgroundColor() const override;
+  void setHighlighted(bool highlight) override;
   void reloadCell() override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void didBecomeFirstResponder() override;

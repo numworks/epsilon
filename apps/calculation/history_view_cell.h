@@ -16,6 +16,7 @@ public:
   };
   HistoryViewCell(Responder * parentResponder);
   void reloadCell() override;
+  void reloadScroll();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   KDColor backgroundColor() const override;

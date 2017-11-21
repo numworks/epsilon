@@ -212,6 +212,10 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (e != this) {
     return e;
   }
+  // Do not reduce decimal to rational if the exponent is too big or too small.
+  if (m_exponent > k_maxDoubleExponent || m_exponent < -k_maxDoubleExponent) {
+    return this; // TODO: return new Infinite() ? new Rational(0) ?
+  }
   int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);

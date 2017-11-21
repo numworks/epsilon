@@ -496,6 +496,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("Acos(9)IIln(2)", "-Acos(9)ln(2)");
   assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)+R(2)*I)/(2(2R(2)+2R(2)*I)^2)");
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
+  assert_parsed_expression_simplify_to("999^999", "999^999");
+  assert_parsed_expression_simplify_to("999^(10000/3)", "999^(10000/3)");
 
   /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
   //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");

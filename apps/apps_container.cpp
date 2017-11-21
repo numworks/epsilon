@@ -29,7 +29,7 @@ AppsContainer::AppsContainer() :
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
 
-bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
+bool AppsContainer::poincareCircuitBreaker() {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
   return state.keyDown(Ion::Keyboard::Key::A6);
 }

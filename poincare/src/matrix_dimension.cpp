@@ -7,32 +7,53 @@ extern "C" {
 
 namespace Poincare {
 
-MatrixDimension::MatrixDimension() :
-  Function("dimension")
-{
-}
-
 Expression::Type MatrixDimension::type() const {
   return Type::MatrixDimension;
 }
 
-Expression * MatrixDimension::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  MatrixDimension * md = new MatrixDimension();
-  md->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return md;
+Expression * MatrixDimension::clone() const {
+  MatrixDimension * a = new MatrixDimension(m_operands, true);
+  return a;
+}
+
+Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    Matrix * m = static_cast<Matrix *>(op);
+    const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
+    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  }
+  if (!op->recursivelyMatches(Expression::IsMatrix)) {
+    const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
+    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+  }
+  return this;
+#else
+  const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
+  return replaceWith(new Matrix(newOperands, 1, 2, false), true);
+#endif
 }
 
 template<typename T>
-Evaluation<T> * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
-  Complex<T> operands[2];
-  operands[0] = Complex<T>::Float((T)input->numberOfRows());
-  operands[1] = Complex<T>::Float((T)input->numberOfColumns());
+Expression * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * operands[2];
+  if (input->type() == Type::Matrix) {
+    operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));
+    operands[1] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfColumns()));
+  } else {
+    operands[0] = new Complex<T>(Complex<T>::Float(1.0));
+    operands[1] = new Complex<T>(Complex<T>::Float(1.0));
+  }
   delete input;
-  return new ComplexMatrix<T>(operands, 1, 2);
+  return new Matrix(operands, 1, 2, false);
 }
+
 
 }
 

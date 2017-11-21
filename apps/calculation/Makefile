@@ -9,7 +9,9 @@ app_objs += $(addprefix apps/calculation/,\
   history_view_cell.o\
   history_controller.o\
   local_context.o\
+  output_expressions_view.o\
   scrollable_expression_view.o\
+  scrollable_output_expressions_view.o\
   selectable_table_view.o\
   text_field.o\
 )

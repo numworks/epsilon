@@ -9,10 +9,10 @@ namespace Calculation {
 class LocalContext : public Poincare::Context {
 public:
   LocalContext(Poincare::GlobalContext * parentContext, CalculationStore * calculationStore);
-  void setExpressionForSymbolName(Poincare::Expression * expression, const Poincare::Symbol * symbol) override;
+  void setExpressionForSymbolName(const Poincare::Expression * expression, const Poincare::Symbol * symbol, Context & context) override;
   const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
 private:
-  Poincare::Evaluation<double> * ansValue();
+  Poincare::Expression * ansValue();
   CalculationStore * m_calculationStore;
   Poincare::GlobalContext * m_parentContext;
 };

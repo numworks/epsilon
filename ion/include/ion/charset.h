@@ -22,6 +22,9 @@ enum Charset : char {
   Root = (char)144,
   LessEqual = (char)145,
   GreaterEqual = (char)146,
+  MultiplicationSign = (char)147,
+  MiddleDot = (char)148,
+  AlmostEqual = (char)149
 };
 
 }

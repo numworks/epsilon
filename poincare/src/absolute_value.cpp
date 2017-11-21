@@ -1,5 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/complex.h>
+#include <poincare/simplification_engine.h>
 #include "layout/absolute_value_layout.h"
 
 extern "C" {
@@ -9,32 +10,50 @@ extern "C" {
 
 namespace Poincare {
 
-AbsoluteValue::AbsoluteValue() :
-  Function("abs")
-{
-}
-
 Expression::Type AbsoluteValue::type() const {
   return Type::AbsoluteValue;
 }
 
-Expression * AbsoluteValue::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  AbsoluteValue * a = new AbsoluteValue();
-  a->setArgument(newOperands, numberOfOperands, cloneOperands);
+Expression * AbsoluteValue::clone() const {
+  AbsoluteValue * a = new AbsoluteValue(m_operands, true);
   return a;
 }
 
-template<typename T>
-Complex<T> AbsoluteValue::templatedComputeComplex(const Complex<T> c) const {
-  return Complex<T>::Float(c.r());
+Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
+  return this;
 }
 
 ExpressionLayout * AbsoluteValue::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new AbsoluteValueLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat));
+  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+}
+
+Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  if (op->sign() == Sign::Positive) {
+    return replaceWith(op, true);
+  }
+  if (op->sign() == Sign::Negative) {
+    Expression * newOp = op->setSign(Sign::Positive, context, angleUnit);
+    return replaceWith(newOp, true);
+  }
+  return this;
+}
+
+template<typename T>
+Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  return Complex<T>::Float(c.r());
 }
 
 }

@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 

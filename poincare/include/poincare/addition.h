@@ -1,28 +1,56 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/binary_operation.h>
+#include <poincare/dynamic_hierarchy.h>
+#include <poincare/rational.h>
+#include <poincare/layout_engine.h>
+#include <poincare/evaluation_engine.h>
 
 namespace Poincare {
 
-class Addition : public BinaryOperation {
-  using BinaryOperation::BinaryOperation;
+class Addition : public DynamicHierarchy {
+  using DynamicHierarchy::DynamicHierarchy;
+  friend class Logarithm;
+  friend class Multiplication;
+  friend class Subtraction;
 public:
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression** newOperands,
-      int numnerOfOperands, bool cloneOperands = true) const override;
-  bool isCommutative() const override;
+  Expression * clone() const override;
+  /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-  template<typename T> static Evaluation<T> * computeOnMatrices(Evaluation<T> * m, Evaluation<T> * n);
-  template<typename T> static Evaluation<T> * computeOnComplexAndMatrix(const Complex<T> * c, Evaluation<T> * m);
+  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) {
+    return EvaluationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
+  }
+  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
 private:
-  Complex<float> privateCompute(const Complex<float> c, const Complex<float> d) const override {
-    return compute(c, d);
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }
-  Complex<double> privateCompute(const Complex<double> c, const Complex<double> d) const override {
-    return compute(c, d);
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  static const char * name() { return "+"; }
+
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
+  void factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
+  static const Rational RationalFactor(Expression * e);
+  static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
+  /* Evaluation */
+  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
+    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  }
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+   }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+   }
 };
 
 }

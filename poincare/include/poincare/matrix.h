@@ -1,22 +1,42 @@
 #ifndef POINCARE_MATRIX_H
 #define POINCARE_MATRIX_H
 
-#include <poincare/expression.h>
+#include <poincare/dynamic_hierarchy.h>
 #include <poincare/matrix_data.h>
 
 namespace Poincare {
 
-class Matrix : public Expression {
+class Matrix : public DynamicHierarchy {
 public:
-  virtual const Expression * operand(int i) const override = 0;
-  int numberOfOperands() const override;
-  virtual int numberOfRows() const = 0;
-  virtual int numberOfColumns() const = 0;
-  /* If the buffer is too small, the function fills the buffer until reaching
-   * buffer size */
+  Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
+  Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
+  int numberOfRows() const;
+  int numberOfColumns() const;
+
+  /* Expression */
+  Type type() const override;
+  Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
+
+  /* Operation on matrix */
+  /* createDeterminant, createTrace and createInverse can only be called on an
+   * matrix of complex expressions. createDeterminant and createTrace return
+   * a complex expression and createInverse returns a matrix of complex
+   * expressions or nullptr if the inverse could not be computed. */
+  template<typename T> Complex<T> * createTrace() const;
+  template<typename T> Complex<T> * createDeterminant() const;
+  template<typename T> Matrix * createInverse() const;
+  Matrix * createTranspose() const;
+  static Matrix * createIdentity(int dim);
+  template<typename T> static Matrix * createApproximateIdentity(int dim);
 private:
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  /* Evaluation */
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  int m_numberOfRows;
 };
 
 }

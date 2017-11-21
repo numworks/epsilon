@@ -1,25 +1,35 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_H
 #define POINCARE_ABSOLUTE_VALUE_H
 
-#include <poincare/function.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/evaluation_engine.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class AbsoluteValue : public Function {
+class AbsoluteValue : public StaticHierarchy<1> {
+  using StaticHierarchy<1>::StaticHierarchy;
 public:
-  AbsoluteValue();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  Sign sign() const override { return Sign::Positive; }
 private:
-  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
-  }
-  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
-  }
-  template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
+  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
+  /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "abs");
+  }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return EvaluationEngine::map<float>(this, context, angleUnit, computeOnComplex<float>);
+  }
+  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
+  }
 };
 
 }

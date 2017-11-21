@@ -1,44 +1,49 @@
 #include <poincare/integral.h>
 #include <poincare/symbol.h>
-#include <poincare/complex.h>
 #include <poincare/context.h>
+#include <poincare/undefined.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
 #include <float.h>
 #include <stdlib.h>
 }
-#include "layout/horizontal_layout.h"
 #include "layout/string_layout.h"
 #include "layout/integral_layout.h"
+#include "layout/horizontal_layout.h"
 
 namespace Poincare {
-
-Integral::Integral() :
-  Function("int", 3)
-{
-}
 
 Expression::Type Integral::type() const {
   return Type::Integral;
 }
 
-Expression * Integral::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Integral * i = new Integral();
-  i->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return i;
+Expression * Integral::clone() const {
+  Integral * a = new Integral(m_operands, true);
+  return a;
+}
+
+Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix || operand(2)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+#endif
+  return this;
 }
 
 template<typename T>
-Evaluation<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
+Complex<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Evaluation<T> * aInput = m_args[1]->evaluate<T>(context, angleUnit);
-  T a = aInput->toScalar();
+  Expression * aInput = operand(1)->evaluate<T>(context, angleUnit);
+  T a = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
   delete aInput;
-  Evaluation<T> * bInput = m_args[2]->evaluate<T>(context, angleUnit);
-  T b = bInput->toScalar();
+  Expression * bInput = operand(2)->evaluate<T>(context, angleUnit);
+  T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
     return new Complex<T>(Complex<T>::Float(NAN));
@@ -55,18 +60,18 @@ ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMo
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(m_args[1]->createLayout(floatDisplayMode, complexFormat), m_args[2]->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2));
+  return new IntegralLayout(operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2));
 }
 
 template<typename T>
 T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Complex<T> e = Complex<T>::Float(x);
-  Symbol xSymbol = Symbol('x');
-  xContext.setExpressionForSymbolName(&e, &xSymbol);
-  Evaluation<T> * f = m_args[0]->evaluate<T>(xContext, angleUnit);
-  T result = f->toScalar();
+  Symbol xSymbol('x');
+  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
+  Expression * f = operand(0)->evaluate<T>(xContext, angleUnit);
+  T result = f->type() == Type::Complex ? static_cast<Complex<T> *>(f)->toScalar() : NAN;
   delete f;
   return result;
 }

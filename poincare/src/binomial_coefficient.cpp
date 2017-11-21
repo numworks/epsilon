@@ -1,6 +1,7 @@
 #include <poincare/binomial_coefficient.h>
-#include <poincare/evaluation.h>
+#include <poincare/undefined.h>
 #include <poincare/complex.h>
+#include <poincare/rational.h>
 #include "layout/parenthesis_layout.h"
 #include "layout/grid_layout.h"
 
@@ -12,49 +13,98 @@ extern "C" {
 
 namespace Poincare {
 
-BinomialCoefficient::BinomialCoefficient() :
-  Function("binomial", 2)
-{
-}
-
 Expression::Type BinomialCoefficient::type() const {
   return Type::BinomialCoefficient;
 }
 
-Expression * BinomialCoefficient::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  BinomialCoefficient * bc = new BinomialCoefficient();
-  bc->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return bc;
+Expression * BinomialCoefficient::clone() const {
+  BinomialCoefficient * b = new BinomialCoefficient(m_operands, true);
+  return b;
 }
 
-template<typename T>
-Evaluation<T> * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * nInput = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * kInput = m_args[1]->evaluate<T>(context, angleUnit);
-  T n = nInput->toScalar();
-  T k = kInput->toScalar();
-  delete nInput;
-  delete kInput;
-  if (std::isnan(n) || std::isnan(k) || n != (int)n || k != (int)k || k > n || k < 0 || n < 0) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
   }
-  T result = 1;
-  for (int i = 0; i < (int)k; i++) {
-    result *= (n-(T)i)/(k-(T)i);
+  Expression * op0 = editableOperand(0);
+  Expression * op1 = editableOperand(1);
+#if MATRIX_EXACT_REDUCING
+  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
   }
-  return new Complex<T>(Complex<T>::Float(std::round(result)));
+#endif
+  if (op0->type() == Type::Rational) {
+    Rational * r0 = static_cast<Rational *>(op0);
+    if (!r0->denominator().isOne() || r0->numerator().isNegative()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op1->type() == Type::Rational) {
+    Rational * r1 = static_cast<Rational *>(op1);
+    if (!r1->denominator().isOne() || r1->numerator().isNegative()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
+    return this;
+  }
+  Rational * r0 = static_cast<Rational *>(op0);
+  Rational * r1 = static_cast<Rational *>(op1);
+
+  Integer n = r0->numerator();
+  Integer k = r1->numerator();
+  if (n.isLowerThan(k)) {
+    return replaceWith(new Undefined(), true);
+  }
+  /* if n is too big, we do not reduce to avoid too long computation.
+   * The binomial coefficient will be evaluate approximatively later */
+  if (Integer(k_maxNValue).isLowerThan(n)) {
+    return this;
+  }
+  Rational result(1);
+  Integer kBis = Integer::Subtraction(n, k);
+  k = kBis.isLowerThan(k) ? kBis : k;
+  int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
+  for (int i = 0; i < clippedK; i++) {
+    Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
+    result = Rational::Multiplication(result, factor);
+  }
+  return replaceWith(new Rational(result), true);
 }
 
 ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = m_args[0]->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = m_args[1]->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
+  childrenLayouts[1] = operand(1)->createLayout(floatDisplayMode, complexFormat);
   return new ParenthesisLayout(new GridLayout(childrenLayouts, 2, 1));
 }
 
+template<typename T>
+Expression * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+  Expression * nInput = operand(0)->evaluate<T>(context, angleUnit);
+  Expression * kInput = operand(1)->evaluate<T>(context, angleUnit);
+  if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  T n = static_cast<Complex<T> *>(nInput)->toScalar();
+  T k = static_cast<Complex<T> *>(kInput)->toScalar();
+  delete nInput;
+  delete kInput;
+  k = k > (n-k) ? n-k : k;
+  if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || k > n || k < 0 || n < 0) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  T result = 1;
+  for (int i = 0; i < k; i++) {
+    result *= (n-(T)i)/(k-(T)i);
+    if (std::isinf(result)) {
+      return new Complex<T>(Complex<T>::Float(result));
+    }
+  }
+  return new Complex<T>(Complex<T>::Float(std::round(result)));
 }
 
+}

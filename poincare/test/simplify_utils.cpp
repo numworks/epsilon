@@ -21,11 +21,10 @@ bool simplifies_to(const char * input_string, const char * expected_string) {
   print_expression(input);
 #endif
 
-  Expression * simplified = input->simplify();
-  assert(simplified != nullptr);
+  Expression::simplify(&input);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Simplified = " << endl;
-  print_expression(simplified);
+  print_expression(input);
 #endif
 
   Expression * expected = Expression::parse(expected_string);
@@ -35,10 +34,9 @@ bool simplifies_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  bool isIdentical = simplified->isIdenticalTo(expected);
+  bool isIdentical = input->isIdentical(expected);
 
   delete expected;
-  delete simplified;
   delete input;
 
   return isIdentical;
@@ -63,7 +61,7 @@ bool identical_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  bool isIdentical = input->isIdenticalTo(expected);
+  bool isIdentical = input->isIdentical(expected);
 
   delete expected;
   delete input;
@@ -90,25 +88,21 @@ bool equivalent_to(const char * input_string, const char * expected_string) {
   print_expression(expected);
 #endif
 
-  Expression * simplified_input = input->simplify();
-  assert(simplified_input != nullptr);
+  Expression::simplify(&input);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Simplified Input = " << endl;
-  print_expression(simplified_input);
+  print_expression(input);
 #endif
 
-  Expression * simplified_expected = Expression::parse(expected_string);
-  assert(simplified_expected != nullptr);
+  Expression::simplify(&expected);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "Simplified Expected = " << endl;
-  print_expression(simplified_expected);
+  print_expression(expected);
 #endif
-  bool isEquivalent = simplified_input->isIdenticalTo(simplified_expected);
+  bool isEquivalent = input->isIdentical(expected);
 
   delete expected;
   delete input;
-  delete simplified_expected;
-  delete simplified_input;
 
   return isEquivalent;
 }

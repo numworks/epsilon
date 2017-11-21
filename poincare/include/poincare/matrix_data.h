@@ -12,7 +12,6 @@ class Complex;
 class MatrixData {
 public:
   MatrixData(ListData * listData, bool clone);
-  MatrixData(Expression ** newOperands, int numberOfOperands, int m_numberOfRows, int m_numberOfColumns, bool cloneOperands);
   ~MatrixData();
   MatrixData(const MatrixData& other) = delete;
   MatrixData(MatrixData&& other) = delete;
@@ -21,11 +20,11 @@ public:
   void pushListData(ListData * listData, bool clone);
   int numberOfRows();
   int numberOfColumns();
-  Expression ** operands() const;
+  void pilferOperands(const Expression *** newStorageAddress);
 private:
   int m_numberOfRows;
   int m_numberOfColumns;
-  Expression ** m_operands;
+  const Expression ** m_operands;
   static Complex<double> * defaultExpression();
 };
 

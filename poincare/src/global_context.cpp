@@ -1,5 +1,6 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -8,7 +9,8 @@ namespace Poincare {
 
 GlobalContext::GlobalContext() :
   m_pi(Complex<double>::Float(M_PI)),
-  m_e(Complex<double>::Float(M_E))
+  m_e(Complex<double>::Float(M_E)),
+  m_i(Complex<double>::Cartesian(0.0, 1.0))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -33,6 +35,10 @@ GlobalContext::~GlobalContext() {
   }
 }
 
+/* TODO: so far, symbols are not replaced in expression at simplification. So,
+ * right now, it is not an issue that multiple symbols are replaced by the same
+ * objet at evaluation (defaultExpression). However, when we will replace
+ * symbols in simplification, we will have to have an expression per symbol!! */
 Complex<double> * GlobalContext::defaultExpression() {
   static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
   return defaultExpression;
@@ -43,12 +49,15 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
   return index;
 }
 
-const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * symbol) {
+const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
+  }
+  if (symbol->name() == Ion::Charset::IComplex) {
+    return &m_i;
   }
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
@@ -64,7 +73,7 @@ const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * sym
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
@@ -73,12 +82,11 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
       m_matrixExpressions[indexMatrix] = nullptr;
     }
     if (expression != nullptr) {
-      Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-      if (evaluation->numberOfOperands() == 1) {
-        m_matrixExpressions[indexMatrix] = new ComplexMatrix<double>(evaluation->complexOperand(0), 1, 1);
-        delete evaluation;
+      Expression * evaluation = expression->evaluate<double>(context);
+      if (evaluation->type() == Expression::Type::Complex) {
+        m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
-        m_matrixExpressions[indexMatrix] = (ComplexMatrix<double> *)evaluation;
+        m_matrixExpressions[indexMatrix] = static_cast<Matrix *>(evaluation);
       }
     }
     return;
@@ -94,13 +102,13 @@ void GlobalContext::setExpressionForSymbolName(Expression * expression, const Sy
   if (expression == nullptr) {
     return;
   }
-  Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-  if (evaluation->numberOfOperands() == 1) {
-    m_expressions[index] = new Complex<double>(*(evaluation->complexOperand(0)));
+  Expression * evaluation = expression->evaluate<double>(context);
+  if (evaluation->type() == Expression::Type::Complex) {
+    m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {
     m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+    delete evaluation;
   }
-  delete evaluation;
 }
 
 }

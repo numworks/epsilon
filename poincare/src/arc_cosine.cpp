@@ -1,4 +1,6 @@
 #include <poincare/arc_cosine.h>
+#include <poincare/trigonometry.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 }
@@ -6,25 +8,30 @@ extern "C" {
 
 namespace Poincare {
 
-ArcCosine::ArcCosine() :
-  Function("acos")
-{
-}
-
 Expression::Type ArcCosine::type() const {
   return Type::ArcCosine;
 }
 
-Expression * ArcCosine::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  ArcCosine * c = new ArcCosine();
-  c->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return c;
+Expression * ArcCosine::clone() const {
+  ArcCosine * a = new ArcCosine(m_operands, true);
+  return a;
+}
+
+Expression * ArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (operand(0)->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 
 template<typename T>
-Complex<T> ArcCosine::templatedComputeComplex(const Complex<T> c, AngleUnit angleUnit) const {
+Complex<T> ArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

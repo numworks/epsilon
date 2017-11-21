@@ -1,6 +1,8 @@
 #include <poincare/opposite.h>
-#include <poincare/complex_matrix.h>
 #include <poincare/complex.h>
+#include <poincare/multiplication.h>
+#include <poincare/simplification_engine.h>
+#include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -12,64 +14,35 @@ extern "C" {
 
 namespace Poincare {
 
-Opposite::Opposite(Expression * operand, bool cloneOperands) {
-  assert(operand != nullptr);
-  if (cloneOperands) {
-    m_operand = operand->clone();
-  } else {
-    m_operand = operand;
-  }
-}
-
-Opposite::~Opposite() {
-  delete m_operand;
-}
-
-bool Opposite::hasValidNumberOfArguments() const {
-  return m_operand->hasValidNumberOfArguments();
-}
-
-const Expression * Opposite::operand(int i) const {
-  assert(i == 0);
-  return m_operand;
-}
-
-int Opposite::numberOfOperands() const {
-  return 1;
+Expression::Type Opposite::type() const {
+  return Type::Opposite;
 }
 
 Expression * Opposite::clone() const {
-  return this->cloneWithDifferentOperands((Expression**)&m_operand, 1, true);
+  Opposite * o = new Opposite(m_operands, true);
+  return o;
 }
 
 template<typename T>
-Complex<T> Opposite::compute(const Complex<T> c) {
+Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());
 }
 
-template<typename T>
-Evaluation<T> * Opposite::computeOnMatrix(Evaluation<T> * m) {
-  Complex<T> * operands = new Complex<T>[m->numberOfRows() * m->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows() * m->numberOfColumns(); i++) {
-    Complex<T> entry = *(m->complexOperand(i));
-    operands[i] = Complex<T>::Cartesian(-entry.a(), -entry.b());
+Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
   }
-  Evaluation<T> * matrix = new ComplexMatrix<T>(operands, m->numberOfRows(), m->numberOfColumns());
-  delete[] operands;
-  return matrix;
-}
-
-template<typename T>
-Evaluation<T> * Opposite::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * operandEvalutation = m_operand->evaluate<T>(context, angleUnit);
-  Evaluation<T> * result = nullptr;
-  if (operandEvalutation->numberOfRows() == 1 && operandEvalutation->numberOfColumns() == 1) {
-    result = new Complex<T>(compute(*(operandEvalutation->complexOperand(0))));
-  } else {
-    result = computeOnMatrix(operandEvalutation);
+  const Expression * op = operand(0);
+#if MATRIX_EXACT_REDUCING
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
   }
-  delete operandEvalutation;
-  return result;
+#endif
+  detachOperand(op);
+  Multiplication * m = new Multiplication(new Rational(-1), op, false);
+  replaceWith(m, true);
+  return m->shallowReduce(context, angleUnit);
 }
 
 ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
@@ -78,22 +51,24 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   ExpressionLayout * children_layouts[2];
   char string[2] = {'-', '\0'};
   children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = m_operand->type() == Type::Opposite ? new ParenthesisLayout(m_operand->createLayout(floatDisplayMode, complexFormat)) : m_operand->createLayout(floatDisplayMode, complexFormat);
+  children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat)) : operand(0)->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(children_layouts, 2);
 }
 
-Expression::Type Opposite::type() const {
-  return Expression::Type::Opposite;
+int Opposite::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = 0;
+  if (bufferSize == 1) { return 0; }
+  buffer[numberOfChar++] = '-';
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
 }
 
-Expression * Opposite::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  assert(numberOfOperands == 1);
-  return new Opposite(newOperands[0], cloneOperands);
 }
 
-}
-
-template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>);
-template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>);
+template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);
+template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>, AngleUnit angleUnit);

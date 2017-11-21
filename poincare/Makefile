@@ -1,6 +1,7 @@
 SFLAGS += -Ipoincare/include
 
 #include poincare/src/simplify/Makefile
+#include poincare/src/simplification/Makefile
 
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
@@ -8,31 +9,32 @@ objs += $(addprefix poincare/src/,\
   arc_cosine.o\
   arc_sine.o\
   arc_tangent.o\
-  binary_operation.o\
+  arithmetic.o\
   binomial_coefficient.o\
+  bounded_static_hierarchy.o\
   ceiling.o\
   complex.o\
   complex_argument.o\
-  complex_matrix.o\
   confidence_interval.o\
   conjugate.o\
   cosine.o\
+  decimal.o\
   derivative.o\
   determinant.o\
+  division.o\
   division_quotient.o\
   division_remainder.o\
-  evaluation.o\
+  dynamic_hierarchy.o\
+  evaluation_engine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
   factorial.o\
   floor.o\
   frac_part.o\
-  fraction.o\
-  function.o\
-  expression_matrix.o\
   global_context.o\
   great_common_divisor.o\
+  hierarchy.o\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
   hyperbolic_arc_tangent.o\
@@ -42,8 +44,8 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   integer.o\
   integral.o\
+  layout_engine.o\
   list_data.o\
-  leaf_expression.o\
   least_common_multiple.o\
   logarithm.o\
   matrix.o\
@@ -62,18 +64,24 @@ objs += $(addprefix poincare/src/,\
   prediction_interval.o\
   preferences.o\
   product.o\
+  rational.o\
   real_part.o\
   round.o\
   sequence.o\
+  simplification_engine.o\
   sine.o\
   square_root.o\
+  static_hierarchy.o\
   store.o\
   subtraction.o\
   sum.o\
   symbol.o\
   tangent.o\
+  trigonometry.o\
+  undefined.o\
   variable_context.o\
 )
+
 objs += $(addprefix poincare/src/layout/,\
   baseline_relative_layout.o\
   bracket_layout.o\
@@ -93,9 +101,18 @@ objs += $(addprefix poincare/src/layout/,\
 )
 
 tests += $(addprefix poincare/test/,\
+  arithmetic.cpp\
+  convert_expression_to_text.cpp\
+  helper.cpp\
+  integer.cpp\
+  simplify_easy.cpp\
+)
+
+testsi += $(addprefix poincare/test/,\
   addition.cpp\
+  arithmetic.cpp\
   complex.cpp\
-  fraction.cpp\
+  division.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\
@@ -104,23 +121,8 @@ tests += $(addprefix poincare/test/,\
   product.cpp\
   power.cpp\
   subtraction.cpp\
-  symbol.cpp\
-  trigo.cpp\
-)
-
-# tests += $(addprefix poincare/test/,\
-  addition.cpp\
-  float.cpp\
-  fraction.cpp\
-  identity.cpp\
-  integer.cpp\
-  matrix.cpp\
-  product.cpp\
-  power.cpp\
   simplify_utils.cpp\
-  simplify_addition.cpp\
-  simplify_product.cpp\
-  subtraction.cpp\
+  symbol.cpp\
   trigo.cpp\
 )
 

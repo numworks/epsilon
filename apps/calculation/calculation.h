@@ -16,22 +16,32 @@ public:
   Calculation& operator=(Calculation&& other) = delete;
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
+  void setContent(const char * c, Poincare::Context * context);
   const char * inputText();
   const char * outputText();
+  const char * exactOutputText();
+  const char * approximateOutputText();
   Poincare::Expression * input();
   Poincare::ExpressionLayout * inputLayout();
-  Poincare::Evaluation<double> * output(Poincare::Context * context);
+  Poincare::Expression * output(Poincare::Context * context);
+  Poincare::Expression * approximateOutput(Poincare::Context * context);
   Poincare::ExpressionLayout * outputLayout(Poincare::Context * context);
-  void setContent(const char * c, Poincare::Context * context);
+  Poincare::ExpressionLayout * exactOutputLayout(Poincare::Context * context);
+  Poincare::ExpressionLayout * approximateOutputLayout(Poincare::Context * context);
   bool isEmpty();
   void tidy();
+  bool shouldApproximateOutput();
 private:
+  Poincare::Expression * exactOutput(Poincare::Context * context);
   char m_inputText[::TextField::maxBufferSize()];
-  char m_outputText[2*::TextField::maxBufferSize()];
+  char m_exactOutputText[2*::TextField::maxBufferSize()];
+  char m_approximateOutputText[2*::TextField::maxBufferSize()];
   Poincare::Expression * m_input;
   Poincare::ExpressionLayout * m_inputLayout;
-  Poincare::Evaluation<double> * m_output;
-  Poincare::ExpressionLayout * m_outputLayout;
+  Poincare::Expression * m_exactOutput;
+  Poincare::ExpressionLayout * m_exactOutputLayout;
+  Poincare::Expression * m_approximateOutput;
+  Poincare::ExpressionLayout * m_approximateOutputLayout;
 };
 
 }

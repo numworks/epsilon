@@ -126,6 +126,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
+  myCell->reloadCell();
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {

@@ -8,7 +8,8 @@ namespace Shared {
 class NewFunctionCell : public EvenOddCell {
 public:
   NewFunctionCell(I18n::Message text);
-  void reloadCell() override;
+  void setEven(bool even) override;
+  void setHighlighted(bool highlight) override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

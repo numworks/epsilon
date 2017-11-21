@@ -1,5 +1,6 @@
 MathModule = "math"
 CmathModule = "cmath"
+KandinskyModule = "kandinsky"
 ForLoopMenu = "For"
 IfStatementMenu = "If"
 WhileLoopMenu = "While"

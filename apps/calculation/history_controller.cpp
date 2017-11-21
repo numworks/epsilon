@@ -119,14 +119,12 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   if (selectedCell == nullptr) {
     return;
   }
-  if (selectedRow() < previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
-  }
-  if (selectedRow() >= previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Input);
-  }
   if (previousSelectedCellY == -1) {
     selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
+  } else if (selectedRow() < previousSelectedCellY) {
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
+  } else if (selectedRow() > previousSelectedCellY) {
+    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Input);
   }
   app()->setFirstResponder(selectedCell);
   selectedCell->reloadCell();
@@ -152,6 +150,7 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
   myCell->setEven(index%2 == 0);
+  myCell->reloadCell();
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {

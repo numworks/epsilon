@@ -21,29 +21,34 @@ void OutputExpressionsView::setExpressions(ExpressionLayout ** expressionsLayout
   layoutSubviews();
 }
 
-KDColor OutputExpressionsView::backgroundColor() const {
-  KDColor background = m_even ? Palette::WallScreen : KDColorWhite;
-  return background;
-}
-
-void OutputExpressionsView::reloadCell() {
+void OutputExpressionsView::setHighlighted(bool highlight) {
+  // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
+  m_highlighted = highlight;
   m_exactExpressionView.setBackgroundColor(backgroundColor());
-  m_approximateSign.setBackgroundColor(backgroundColor());
   m_approximateExpressionView.setBackgroundColor(backgroundColor());
-  if (isHighlighted()) {
+  if (highlight) {
     if (m_selectedSubviewType == SubviewType::ExactOutput) {
       m_exactExpressionView.setBackgroundColor(Palette::Select);
     } else {
       m_approximateExpressionView.setBackgroundColor(Palette::Select);
     }
   }
+}
+
+KDColor OutputExpressionsView::backgroundColor() const {
+  KDColor background = m_even ? Palette::WallScreen : KDColorWhite;
+  return background;
+}
+
+void OutputExpressionsView::reloadCell() {
+  setHighlighted(isHighlighted());
+  m_approximateSign.setBackgroundColor(backgroundColor());
   if (numberOfSubviews() == 1) {
     m_approximateExpressionView.setTextColor(KDColorBlack);
   } else {
     m_approximateExpressionView.setTextColor(Palette::GreyDark);
   }
   layoutSubviews();
-  EvenOddCell::reloadCell();
 }
 
 KDSize OutputExpressionsView::minimalSizeForOptimalDisplay() const {
@@ -77,7 +82,6 @@ bool OutputExpressionsView::handleEvent(Ion::Events::Event event) {
     (event == Ion::Events::Left && m_selectedSubviewType == SubviewType::ApproximativeOutput && leftExpressionIsVisible)) {
     SubviewType otherSubviewType = m_selectedSubviewType == SubviewType::ExactOutput ? SubviewType::ApproximativeOutput : SubviewType::ExactOutput;
     setSelectedSubviewType(otherSubviewType);
-    reloadCell();
     return true;
   }
   return false;
@@ -89,6 +93,7 @@ OutputExpressionsView::SubviewType OutputExpressionsView::selectedSubviewType() 
 
 void OutputExpressionsView::setSelectedSubviewType(OutputExpressionsView::SubviewType subviewType) {
   m_selectedSubviewType = subviewType;
+  setHighlighted(isHighlighted());
 }
 
 int OutputExpressionsView::numberOfSubviews() const {

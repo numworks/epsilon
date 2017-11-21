@@ -21,12 +21,33 @@ OutputExpressionsView * HistoryViewCell::outputView() {
 }
 void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
+  m_inputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.outputView()->setEven(even);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_scrollableOutputView.outputView()->setHighlighted(highlight);
+  m_highlighted = highlight;
+  m_inputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.outputView()->setHighlighted(false);
+  if (isHighlighted()) {
+    if (m_selectedSubviewType == SubviewType::Input) {
+      m_inputView.setBackgroundColor(Palette::Select);
+    } else {
+      m_scrollableOutputView.outputView()->setHighlighted(true);
+    }
+  }
+  reloadScroll();
+}
+
+void HistoryViewCell::reloadCell() {
+  m_scrollableOutputView.outputView()->reloadCell();
+  layoutSubviews();
+  reloadScroll();
+}
+
+void HistoryViewCell::reloadScroll() {
+  m_inputView.reloadScroll();
+  m_scrollableOutputView.reloadScroll();
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
@@ -71,20 +92,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_scrollableOutputView.outputView()->setExpressions(outputExpressions);
 }
 
-void HistoryViewCell::reloadCell() {
-  m_scrollableOutputView.outputView()->reloadCell();
-  m_inputView.setBackgroundColor(backgroundColor());
-  if (isHighlighted()) {
-    if (m_selectedSubviewType == SubviewType::Input) {
-      m_inputView.setBackgroundColor(Palette::Select);
-    }
-  }
-  layoutSubviews();
-  EvenOddCell::reloadCell();
-  m_inputView.reloadScroll();
-  m_scrollableOutputView.reloadScroll();
-}
-
 void HistoryViewCell::didBecomeFirstResponder() {
   if (m_selectedSubviewType == SubviewType::Input) {
     app()->setFirstResponder(&m_inputView);
@@ -99,7 +106,7 @@ HistoryViewCell::SubviewType HistoryViewCell::selectedSubviewType() {
 
 void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subviewType) {
   m_selectedSubviewType = subviewType;
-  m_scrollableOutputView.outputView()->setHighlighted(m_selectedSubviewType == SubviewType::Output);
+  setHighlighted(isHighlighted());
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
@@ -111,7 +118,6 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
     selectedCell->setSelectedSubviewType(otherSubviewType);
     app()->setFirstResponder(selectedCell);
-    selectedCell->reloadCell();
     return true;
   }
   return false;

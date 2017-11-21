@@ -118,7 +118,7 @@ void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) 
     numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(i)));
     xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
 
-    ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, textFieldWidth+2*ImageTableView::k_outline, ImageCell::k_height+2*ImageTableView::k_outline), Palette::GreyMiddle);
+    ctx->strokeRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, textFieldWidth+2*ImageTableView::k_outline, ImageCell::k_height+2*ImageTableView::k_outline), Palette::GreyMiddle);
     xCoordinate += textFieldWidth + k_textWidthMargin;
   }
 }

@@ -133,7 +133,17 @@ void gc_collect(void) {
   setjmp(regs);
 
   void **regs_ptr = (void**)(void*)&regs;
-  gc_collect_root(regs_ptr, ((uintptr_t)python_stack_top - (uintptr_t)&regs) / sizeof(uintptr_t));
+
+  /* On the device, the stack is stored in reverse order, but it might not be
+   * the case on a computer. We thus have to take the absolute value of the
+   * addresses difference. */
+  size_t stackLength;
+  if ((uintptr_t)python_stack_top > (uintptr_t)(&regs)) {
+    stackLength = (((uintptr_t)python_stack_top - (uintptr_t)(&regs)) / sizeof(uintptr_t));
+  } else {
+    stackLength = (((uintptr_t)(&regs) - (uintptr_t)python_stack_top) / sizeof(uintptr_t));
+  }
+  gc_collect_root(regs_ptr, stackLength);
 
   gc_collect_end();
 }

@@ -608,6 +608,9 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
     }
     return;
   }
+  /* Special case when factor is a Rational: if 'this' has already a rational
+   * operand, we replace it by its LCM with factor ; otherwise, we simply add
+   * factor as an operand. */
   if (numberOfOperands() > 0 && operand(0)->type() == Type::Rational && factor->type() == Type::Rational) {
     Rational * f = static_cast<Rational *>(factor);
     Rational * o = static_cast<Rational *>(editableOperand(0));
@@ -617,19 +620,23 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
     Integer j = o->numerator();
     return replaceOperand(o, new Rational(Arithmetic::LCM(&i, &j)));
   }
-  for (int i = 0; i < numberOfOperands(); i++) {
-    if (TermsHaveIdenticalBase(operand(i), factor)) {
-      Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
-      Reduce((Expression **)&sub, context, angleUnit);
-      if (sub->sign() == Sign::Negative) { // index[0] < index[1]
-        factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
-        factorizeBase(editableOperand(i), factor, context, angleUnit);
-        editableOperand(i)->shallowReduce(context, angleUnit);
-      } else if (sub->sign() == Sign::Unknown) {
-        factorizeBase(editableOperand(i), factor, context, angleUnit);
-      } else {}
-      delete sub;
-      return;
+  if (factor->type() != Type::Rational) {
+    /* If factor is not a rational, we merge it with the operand of identical
+     * base if any. Otherwise, we add it as an new operand. */
+    for (int i = 0; i < numberOfOperands(); i++) {
+      if (TermsHaveIdenticalBase(operand(i), factor)) {
+        Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
+        Reduce((Expression **)&sub, context, angleUnit);
+        if (sub->sign() == Sign::Negative) { // index[0] < index[1]
+          factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          factorizeBase(editableOperand(i), factor, context, angleUnit);
+          editableOperand(i)->shallowReduce(context, angleUnit);
+        } else if (sub->sign() == Sign::Unknown) {
+          factorizeBase(editableOperand(i), factor, context, angleUnit);
+        } else {}
+        delete sub;
+        return;
+      }
     }
   }
   addOperand(factor->clone());

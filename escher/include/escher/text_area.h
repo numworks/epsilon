@@ -16,8 +16,8 @@ public:
   Toolbox * toolbox() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setText(char * textBuffer, size_t textBufferSize);
-  void insertText(const char * textBuffer) { m_contentView.insertText(textBuffer); }
-  void insertTextWithIndentation(const char * textBuffer);
+  bool insertText(const char * textBuffer) { return m_contentView.insertText(textBuffer); }
+  bool insertTextWithIndentation(const char * textBuffer);
   int indentationBeforeCursor() const;
   void removeChar() { m_contentView.removeChar(); }
   const char * text() const { return m_contentView.text(); }
@@ -76,10 +76,10 @@ private:
       assert(index >= 0 && index < m_bufferSize);
       return m_buffer[index];
     }
-    size_t bufferSize() {
+    size_t bufferSize() const {
       return m_bufferSize;
     }
-    size_t textLength() {
+    size_t textLength() const {
       return strlen(m_buffer);
     }
   private:
@@ -95,8 +95,9 @@ private:
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
     const char * text() const;
+    const Text * getText() const { return &m_text; }
     int cursorLocation() const { return m_cursorIndex; }
-    void insertText(const char * text);
+    bool insertText(const char * text);
     void moveCursorIndex(int deltaX);
     void moveCursorGeo(int deltaX, int deltaY);
     void removeChar();

@@ -227,10 +227,10 @@ const char * TextArea::TextArea::ContentView::text() const {
   return m_text.text();
 }
 
-void TextArea::TextArea::ContentView::insertText(const char * text) {
+bool TextArea::TextArea::ContentView::insertText(const char * text) {
   int textSize = strlen(text);
   if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
-    return;
+    return false;
   }
   bool lineBreak = false;
   while (*text != 0) {
@@ -239,6 +239,7 @@ void TextArea::TextArea::ContentView::insertText(const char * text) {
   }
   layoutSubviews(); // Reposition the cursor
   markRectAsDirty(dirtyRectFromCursorPosition(m_cursorIndex-1, lineBreak));
+  return true;
 }
 
 void TextArea::TextArea::ContentView::removeChar() {
@@ -380,13 +381,24 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
   m_contentView.moveCursorGeo(0, 0);
 }
 
-void TextArea::insertTextWithIndentation(const char * textBuffer) {
+bool TextArea::insertTextWithIndentation(const char * textBuffer) {
   int indentation = indentationBeforeCursor();
   char spaceString[indentation+1];
   for (int i = 0; i < indentation; i++) {
     spaceString[i] = ' ';
   }
   spaceString[indentation] = 0;
+  int spaceStringSize = strlen(spaceString);
+  int textSize = strlen(textBuffer);
+  int totalIndentationSize = 0;
+  for (size_t i = 0; i < strlen(textBuffer); i++) {
+    if (textBuffer[i] == '\n') {
+      totalIndentationSize+=spaceStringSize;
+    }
+  }
+  if (m_contentView.getText()->textLength() + textSize + totalIndentationSize >= m_contentView.getText()->bufferSize() || textSize == 0) {
+    return false;
+  }
   for (size_t i = 0; i < strlen(textBuffer); i++) {
     const char charString[] = {textBuffer[i], 0};
     insertText(charString);
@@ -394,6 +406,7 @@ void TextArea::insertTextWithIndentation(const char * textBuffer) {
       insertText(spaceString);
     }
   }
+  return true;
 }
 
 int TextArea::indentationBeforeCursor() const {

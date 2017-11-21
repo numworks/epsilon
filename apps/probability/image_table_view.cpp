@@ -59,7 +59,7 @@ ImageTableView::ImageTableView(Responder * parentResponder, Law * law, Calculati
 }
 
 void ImageTableView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->drawRect(KDRect(k_margin, k_margin, ImageCell::k_width+2*k_outline, ImageCell::k_height+2*k_outline), Palette::GreyMiddle);
+  ctx->strokeRect(KDRect(k_margin, k_margin, ImageCell::k_width+2*k_outline, ImageCell::k_height+2*k_outline), Palette::GreyMiddle);
 }
 
 KDSize ImageTableView::minimalSizeForOptimalDisplay() const {

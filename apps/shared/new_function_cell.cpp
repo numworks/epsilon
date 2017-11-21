@@ -9,8 +9,13 @@ NewFunctionCell::NewFunctionCell(I18n::Message text) :
 {
 }
 
-void NewFunctionCell::reloadCell() {
-  EvenOddCell::reloadCell();
+void NewFunctionCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
+  m_messageTextView.setBackgroundColor(backgroundColor());
+}
+
+void NewFunctionCell::setHighlighted(bool highlight) {
+  EvenOddCell::setHighlighted(highlight);
   m_messageTextView.setBackgroundColor(backgroundColor());
 }
 

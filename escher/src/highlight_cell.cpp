@@ -7,8 +7,10 @@ HighlightCell::HighlightCell() :
 }
 
 void HighlightCell::setHighlighted(bool highlight) {
-  m_highlighted = highlight;
-  reloadCell();
+  if (m_highlighted != highlight) {
+    m_highlighted = highlight;
+    reloadCell();
+  }
 }
 
 bool HighlightCell::isHighlighted() const {

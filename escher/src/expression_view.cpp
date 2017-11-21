@@ -21,13 +21,17 @@ void ExpressionView::setExpression(ExpressionLayout * expressionLayout) {
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
+  if (m_backgroundColor != backgroundColor) {
+    m_backgroundColor = backgroundColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void ExpressionView::setTextColor(KDColor textColor) {
-  m_textColor = textColor;
-  markRectAsDirty(bounds());
+  if (textColor != m_textColor) {
+    m_textColor = textColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlignment) {

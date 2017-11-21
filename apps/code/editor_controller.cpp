@@ -45,7 +45,9 @@ bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Eve
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
-    textArea->insertText(pythonText);
+    if (!textArea->insertText(pythonText)) {
+      return false;
+    }
     if (pythonText[strlen(pythonText)-1] == ')') {
       textArea->moveCursor(-1);
     }

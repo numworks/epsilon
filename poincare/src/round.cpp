@@ -1,5 +1,6 @@
 #include <poincare/round.h>
 #include <poincare/undefined.h>
+#include <poincare/rational.h>
 
 extern "C" {
 #include <assert.h>
@@ -27,6 +28,22 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(new Undefined(), true);
   }
 #endif
+  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational) {
+    Rational * r1 = static_cast<Rational *>(editableOperand(0));
+    Rational * r2 = static_cast<Rational *>(editableOperand(1));
+    if (!r2->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+    Rational err = Rational::Power(Rational(10), r2->numerator());
+    Rational mult = Rational::Multiplication(*r1, Rational(err));
+    IntegerDivision d = Integer::Division(mult.numerator(), mult.denominator());
+    Integer rounding = d.quotient;
+    if (Rational::NaturalOrder(Rational(d.remainder, mult.denominator()), Rational(1,2)) >= 0) {
+      rounding = Integer::Addition(rounding, Integer(1));
+    }
+    Rational result = Rational::Multiplication(rounding, Rational::Power(Rational(1,10), r2->numerator()));
+    return replaceWith(new Rational(result), true);
+  }
   return this; // TODO: implement for rationals!
 }
 

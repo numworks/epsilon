@@ -101,19 +101,18 @@ objs += $(addprefix poincare/src/layout/,\
 )
 
 tests += $(addprefix poincare/test/,\
+  addition.cpp\
   arithmetic.cpp\
+  complex.cpp\
   convert_expression_to_text.cpp\
+  division.cpp\
+  function.cpp\
   helper.cpp\
   integer.cpp\
   simplify_easy.cpp\
 )
 
 testsi += $(addprefix poincare/test/,\
-  addition.cpp\
-  arithmetic.cpp\
-  complex.cpp\
-  division.cpp\
-  function.cpp\
   helper.cpp\
   integer.cpp\
   matrix.cpp\

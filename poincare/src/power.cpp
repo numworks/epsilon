@@ -192,6 +192,13 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
     if (b->isZero()) {
+      // 0^0 = undef
+      if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
+        return replaceWith(new Undefined(), true);
+      }
+      /* Warning: in all other case but 0^0, we replace x^0 by one. This is
+       * almost always true except when x = 0. However, not substituting x^0 by
+       * one would prevent from simplifying many expressions like x/x->1. */
       return replaceWith(new Rational(1), true);
     }
     // x^1

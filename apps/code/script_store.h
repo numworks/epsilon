@@ -34,6 +34,7 @@ public:
   const char * contentOfScript(const char * name) override;
 
 private:
+  static constexpr int k_maxNumberOfScripts = 8;
   static constexpr int k_fullFreeSpaceSizeLimit = 50;
   // If m_accordion's free space has a size smaller than
   // k_fullFreeSpaceSizeLimit, we consider the script store as full.

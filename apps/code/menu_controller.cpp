@@ -325,7 +325,6 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
 }
 
 void MenuController::addScript() {
-  assert(m_scriptStore->numberOfScripts() < k_maxNumberOfScripts);
   if (m_scriptStore->addNewScript()) {
     updateAddScriptRowDisplay();
     m_selectableTableView.reloadData();
@@ -387,7 +386,7 @@ void MenuController::intToText(int i, char * buffer) {
 }
 
 void MenuController::updateAddScriptRowDisplay() {
-  m_shouldDisplayAddScriptRow = (m_scriptStore->numberOfScripts() < k_maxNumberOfScripts && !m_scriptStore->isFull());
+  m_shouldDisplayAddScriptRow = !m_scriptStore->isFull();
 }
 
 }

@@ -27,7 +27,7 @@ void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCo
   KDSize lowerBoundSize = m_lowerBoundLayout->size();
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
   KDRect symbolFrame(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2),
-    p.y() + max(upperBoundSize.height()+k_boundHeightMargin, m_argumentLayout->baseline()-k_symbolHeight),
+    p.y() + max(upperBoundSize.height()+k_boundHeightMargin, m_argumentLayout->baseline()-(k_symbolHeight+1)/2),
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
 }

@@ -26,7 +26,7 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name(), [](const Expression * e) {
-      return e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite;
+      return e->type() == Type::Power || e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite || (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne());
     });
   }
   static const char * name() { return "^"; }

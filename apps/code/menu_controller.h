@@ -62,7 +62,6 @@ public:
   }
 
 private:
-  static constexpr int k_maxNumberOfScripts = 8;
   static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
   static constexpr int k_parametersColumnWidth = 37;
   static constexpr int AddScriptCellType = 0;

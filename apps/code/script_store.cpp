@@ -101,7 +101,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (m_accordion.freeSpaceSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || m_accordion.freeSpaceSize() < k_fullFreeSpaceSizeLimit);
 }
 
 const char * ScriptStore::contentOfScript(const char * name) {

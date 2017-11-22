@@ -261,7 +261,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("R(32)", "4*R(2)");
   assert_parsed_expression_simplify_to("R(3^2)", "3");
   assert_parsed_expression_simplify_to("2^(2+P)", "4*2^P");
-  assert_parsed_expression_simplify_to("R(15241578780673678515622620750190521)", "123456789123456789");
+  assert_parsed_expression_simplify_to("R(15241578780673678515622620750190521)", "R(15241578780673678515622620750190521)");
+  assert_parsed_expression_simplify_to("R(154355776)", "12424");
   assert_parsed_expression_simplify_to("R(P)^2", "P");
   assert_parsed_expression_simplify_to("R(P^2)", "P");
   assert_parsed_expression_simplify_to("R((-P)^2)", "P");
@@ -509,8 +510,8 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("A^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
 
-  /* This does not work but should not as it is above k_primorial32 = 1*3*5*7*11*... (product of first 32 primes. */
-  //assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "123456789123456789");
+  assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
 
-  //assert_parsed_expression_simplify_to("1/sqrt(2)", "sqrt(2)/2");
+  // This does not work but should not as it is above k_biggestPrimeFactorizedInteger
+  assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "1881676377434183981909562699940347954480361860897069^(1/3)");
 }

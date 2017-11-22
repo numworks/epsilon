@@ -77,12 +77,12 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
+    Expression * evaluation = expression ? expression->evaluate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
     if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
     }
-    if (expression != nullptr) {
-      Expression * evaluation = expression->evaluate<double>(context);
+    if (evaluation != nullptr) {
       if (evaluation->type() == Expression::Type::Complex) {
         m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
@@ -95,14 +95,14 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }
+  Expression * evaluation = expression ? expression->evaluate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;
   }
-  if (expression == nullptr) {
+  if (evaluation == nullptr) {
     return;
   }
-  Expression * evaluation = expression->evaluate<double>(context);
   if (evaluation->type() == Expression::Type::Complex) {
     m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {

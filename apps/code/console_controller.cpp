@@ -1,9 +1,11 @@
 #include "console_controller.h"
 #include "app.h"
 #include "script.h"
+#include "variable_box_controller.h"
 #include "helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <escher/metric.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -243,6 +245,15 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    if (!textField->isEditing()) {
+      textField->setEditing(true);
+    }
+    VariableBoxController * varBoxController = (static_cast<App *>(textField->app()))->scriptsVariableBoxController();
+    varBoxController->setTextFieldCaller(textField);
+    textField->app()->displayModalViewController(varBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    return true;
+  }
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText == nullptr) {
     return false;

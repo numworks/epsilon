@@ -5,6 +5,9 @@
 #include "script.h"
 #include "script_template.h"
 #include <python/port/port.h>
+extern "C" {
+#include "py/parse.h"
+}
 
 namespace Code {
 
@@ -18,6 +21,7 @@ public:
 
   static constexpr char k_scriptExtension[] = ".py";
   static constexpr char k_defaultScriptName[] = "script.py";
+  static constexpr int k_maxNumberOfScripts = 8;
 
   ScriptStore();
   const Script scriptAtIndex(int index, EditableZone zone = EditableZone::None);
@@ -30,21 +34,35 @@ public:
   void deleteAllScripts();
   bool isFull();
 
+  /* Provide scripts content information */
+  typedef void (* FunctionCallTwoIntArgs)(void * context, int n1, int n2);
+  typedef void (* FunctionCallOneIntOneConstCharPointerArg)(void * context, int n, const char * p1);
+  void scanScriptsForFunctionsAndVariables(
+      void * context,
+      FunctionCallTwoIntArgs storeFunctionsCountForScriptAtIndex,
+      FunctionCallOneIntOneConstCharPointerArg storeFunctionNameStartAtIndex,
+      FunctionCallTwoIntArgs storeGlobalVariablesCountForScriptAtIndex,
+      FunctionCallOneIntOneConstCharPointerArg storeGlobalVariableNameStartAtIndex
+  );
+
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
 private:
-  static constexpr int k_maxNumberOfScripts = 8;
   static constexpr int k_fullFreeSpaceSizeLimit = 50;
   // If m_accordion's free space has a size smaller than
   // k_fullFreeSpaceSizeLimit, we consider the script store as full.
   static constexpr size_t k_scriptDataSize = 4096;
+  static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
+  static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
+  static constexpr size_t k_expressionStatementParseNodeStructKind = 5;
   bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
   bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);
   int accordionIndexOfScriptAtIndex(int index) const;
   int accordionIndexOfMarkersOfScriptAtIndex(int index) const;
   int accordionIndexOfNameOfScriptAtIndex(int index) const;
   int accordionIndexOfContentOfScriptAtIndex(int index) const;
+  const char * structID(mp_parse_node_struct_t *structNode);
   char m_scriptData[k_scriptDataSize];
   Accordion m_accordion;
 };

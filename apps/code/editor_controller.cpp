@@ -1,8 +1,10 @@
 #include "editor_controller.h"
 #include "menu_controller.h"
 #include "script_parameter_controller.h"
+#include "variable_box_controller.h"
 #include "helpers.h"
 #include <apps/code/app.h>
+#include <escher/metric.h>
 
 namespace Code {
 
@@ -51,6 +53,13 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     if (pythonText[strlen(pythonText)-1] == ')') {
       textArea->moveCursor(-1);
     }
+    return true;
+  }
+
+  if (event == Ion::Events::Var) {
+    VariableBoxController * varBoxController = (static_cast<App *>(textArea->app()))->scriptsVariableBoxController();
+    varBoxController->setTextAreaCaller(textArea);
+    textArea->app()->displayModalViewController(varBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
 

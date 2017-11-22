@@ -62,7 +62,8 @@ App::App(Container * container, Snapshot * snapshot) :
       int newCursorLocation = textField->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(text);
       if (textField->insertTextAtLocation(text, textField->cursorLocation())) {
         textField->setCursorLocation(newCursorLocation);
-      }})
+      }}),
+  m_variableBoxController(&m_menuController, snapshot->scriptStore())
 {
 }
 

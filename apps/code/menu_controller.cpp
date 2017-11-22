@@ -123,6 +123,10 @@ void MenuController::reloadConsole() {
   m_reloadConsoleWhenBecomingFirstResponder = false;
 }
 
+void MenuController::loadPythonIfNeeded() {
+  m_consoleController.loadPythonEnvironment(false);
+}
+
 void MenuController::openConsoleWithScriptAtIndex(int scriptIndex) {
   reloadConsole();
   if (m_consoleController.loadPythonEnvironment(false)) {

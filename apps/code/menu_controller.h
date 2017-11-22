@@ -20,6 +20,7 @@ public:
   void renameSelectedScript();
   void deleteScriptAtIndex(int i);
   void reloadConsole();
+  void loadPythonIfNeeded();
   void openConsoleWithScriptAtIndex(int scriptIndex);
   void scriptContentEditionDidFinish();
 

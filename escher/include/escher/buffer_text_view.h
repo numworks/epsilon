@@ -9,6 +9,7 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setText(const char * text) override;
   const char * text() const override;
+  static int maxNumberOfCharsInBuffer() { return k_maxNumberOfChar; }
 private:
   static constexpr int k_maxNumberOfChar = 256;
   char m_buffer[k_maxNumberOfChar];

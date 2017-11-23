@@ -6,7 +6,6 @@
 #include "port.h"
 
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
 
@@ -22,8 +21,6 @@ extern "C" {
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 }
-
-static char * python_stack_top = NULL;
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
@@ -113,10 +110,20 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
   sCurrentExecutionEnvironment = nullptr;
 }
 
+extern "C" {
+  extern const void * _stack_start;
+  extern const void * _stack_end;
+}
+
 void MicroPython::init(void * heapStart, void * heapEnd) {
-  mp_stack_set_limit(40000);
-  char dummy;
-  python_stack_top = &dummy;
+#if MP_PORT_USE_STACK_SYMBOLS
+  mp_stack_set_top(&_stack_start);
+  mp_stack_set_limit(&_stack_start - &_stack_end);
+#else
+  volatile int stackTop;
+  mp_stack_set_top((void *)(&stackTop));
+  mp_stack_set_limit(4000);
+#endif
   gc_init(heapStart, heapEnd);
   mp_init();
 }
@@ -130,7 +137,7 @@ void MicroPython::registerScriptProvider(ScriptProvider * s) {
 }
 
 void gc_collect(void) {
-  assert(python_stack_top != NULL);
+  assert(MP_STATE_THREAD(stack_top) != NULL);
   gc_collect_start();
 
   /* get the registers.
@@ -145,10 +152,10 @@ void gc_collect(void) {
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLength;
-  if ((uintptr_t)python_stack_top > (uintptr_t)(&regs)) {
-    stackLength = (((uintptr_t)python_stack_top - (uintptr_t)(&regs)) / sizeof(uintptr_t));
+  if ((uintptr_t)MP_STATE_THREAD(stack_top) > (uintptr_t)(&regs)) {
+    stackLength = (((uintptr_t)(MP_STATE_THREAD(stack_top)) - (uintptr_t)(&regs)) / sizeof(uintptr_t));
   } else {
-    stackLength = (((uintptr_t)(&regs) - (uintptr_t)python_stack_top) / sizeof(uintptr_t));
+    stackLength = (((uintptr_t)(&regs) - (uintptr_t)(MP_STATE_THREAD(stack_top))) / sizeof(uintptr_t));
   }
   gc_collect_root(regs_ptr, stackLength);
 

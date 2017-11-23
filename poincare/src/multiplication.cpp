@@ -229,12 +229,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   while (i < numberOfOperands()-1) {
     Expression * oi = editableOperand(i);
     Expression * oi1 = editableOperand(i+1);
-    if (oi->type() == Type::Rational && oi1->type() == Type::Rational) {
-      Rational a = Rational::Multiplication(*(static_cast<Rational *>(oi)), *(static_cast<Rational *>(oi1)));
-      replaceOperand(oi, new Rational(a), true);
-      removeOperand(oi1, true);
-      continue;
-    } else if (TermsHaveIdenticalBase(oi, oi1)) {
+    if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasRationalBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
@@ -277,30 +272,39 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
    * shallowReduce */
   sortOperands(SimplificationOrder);
 
-  /* Step 6: Let's remove ones if there's any. It's important to do this after
-   * having factorized because factorization can lead to new ones. For example
-   * pi^(-1)*pi. We don't remove the last one if it's the only operand left
-   * though.
-   * Same comment for -1 that can appear when reducing i*i. */
-  i = 0;
+  /* Step 6: We remove rational operands that appeared in the middle of sorted
+   * operands. It's important to do this after having factorized because
+   * factorization can lead to new ones. Indeed:
+   * pi^(-1)*pi-> 1
+   * i*i -> -1
+   * 2^(1/2)*2^(1/2) -> 2
+   * Last, we remove the only rational operand if it is one and not the only
+   * operand. */
+  i = 1;
   while (i < numberOfOperands()) {
     Expression * o = editableOperand(i);
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne() && numberOfOperands() > 1) {
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne()) {
       removeOperand(o, true);
       continue;
     }
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isMinusOne() && numberOfOperands() > 1 && i > 0) {
-      removeOperand(o, operand(0)->type() == Type::Rational);
+    if (o->type() == Type::Rational) {
       if (operand(0)->type() == Type::Rational) {
-        Rational * r = static_cast<Rational *>(editableOperand(0));
-        r->setSign(r->sign() == Sign::Positive ? Sign::Negative : Sign::Positive);
+        Rational * o0 = static_cast<Rational *>(editableOperand(0));
+        Rational m = Rational::Multiplication(*o0, *(static_cast<Rational *>(o)));
+        replaceOperand(o0, new Rational(m), true);
+        removeOperand(o, true);
       } else {
+        removeOperand(o, false);
         addOperandAtIndex(o, 0);
       }
       continue;
     }
     i++;
   }
+  if (operand(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfOperands() > 1) {
+    removeOperand(editableOperand(0), true);
+  }
+
 
   /* Step 7: Expand multiplication over addition operands if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if

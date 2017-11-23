@@ -509,6 +509,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("P^0", "1");
   assert_parsed_expression_simplify_to("A^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
+  assert_parsed_expression_simplify_to("(R(2)*P + R(2)*X)/R(2)", "P+X");
 
   assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
 

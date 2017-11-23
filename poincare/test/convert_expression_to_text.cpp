@@ -8,7 +8,7 @@
 
 using namespace Poincare;
 
-void assert_expression_prints_to(Expression * e, const char * result, int bufferSize = 100) {
+void assert_expression_prints_to(Expression * e, const char * result, int bufferSize = 250) {
   quiz_print(result);
 
   char * buffer = new char[bufferSize];
@@ -34,8 +34,12 @@ void assert_expression_prints_to(Expression * e, const char * result, int buffer
 }
 
 QUIZ_CASE(poincare_rational_to_text) {
-  Rational r(2,3);
-  assert_expression_prints_to(&r, "2/3");
+  Rational r0(2,3);
+  assert_expression_prints_to(&r0, "2/3");
+  Rational r1("12345678910111213","123456789101112131");
+  assert_expression_prints_to(&r1, "12345678910111213/123456789101112131");
+  Rational r2("123456789112345678921234567893123456789412345678951234567896123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567896123456789712345678981234567899123456789","1");
+  assert_expression_prints_to(&r2, "123456789112345678921234567893123456789412345678951234567896123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567896123456789712345678981234567899123456789");
 }
 
 QUIZ_CASE(poincare_decimal_to_text) {

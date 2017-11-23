@@ -34,6 +34,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 QUIZ_CASE(poincare_simplify_easy) {
   //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)");
+  //assert_parsed_expression_simplify_to("1/R(I) * (R(2)-I*R(2))", "-2I"); // TODO: get rid of complex at denominator?
   // Addition Matrix
 #if MATRIX_EXACT_REDUCING
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", "[[2,3,4][5,6,7]]");

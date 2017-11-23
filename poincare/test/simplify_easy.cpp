@@ -504,6 +504,7 @@ QUIZ_CASE(poincare_simplify_easy) {
   assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)+R(2)*I)/(2(2R(2)+2R(2)*I)^2)");
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
   assert_parsed_expression_simplify_to("999^999", "999^999");
+  assert_parsed_expression_simplify_to("999^-999", "1/999^999");
   assert_parsed_expression_simplify_to("999^(10000/3)", "999^(10000/3)");
   assert_parsed_expression_simplify_to("0^0", "undef");
   assert_parsed_expression_simplify_to("x^0", "1");

@@ -550,13 +550,12 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  /* If the integer is too long, this method may overflow the stack.
+  /* If the integer is too long, this method may be too slow.
    * Experimentally, we can display at most integer whose number of digits is
-   * around 7. However, to avoid crashing when the stack is already half full,
-   * we decide not to display integers whose number of digits > 5. */
-  /*if (m_numberOfDigits > 12) {
+   * around 25. */
+  if (m_numberOfDigits > 25) {
     return strlcpy(buffer, "inf", 4);
-  }*/
+  }
 
   Integer base = Integer(10);
   Integer abs = *this;

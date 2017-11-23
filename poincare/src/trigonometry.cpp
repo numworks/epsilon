@@ -180,6 +180,17 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
   int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 2 : (type == Expression::Type::Sine || type == Expression::Type::ArcSine ? 3 : 4);
   int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? trigonometricFunctionIndex : angleUnitIndex;
   int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? angleUnitIndex : trigonometricFunctionIndex;
+
+  /* Avoid looping if we can exclude quickly that the e is in the table */
+  if (inputIndex == 0 && e->type() != Expression::Type::Rational) {
+    return nullptr;
+  }
+  if (inputIndex == 1 && e->type() != Expression::Type::Rational && e->type() != Expression::Type::Multiplication && e->type() != Expression::Type::Symbol) {
+    return nullptr;
+  }
+  if (inputIndex >1 && e->type() != Expression::Type::Rational && e->type() != Expression::Type::Multiplication && e->type() != Expression::Type::Power && e->type() != Expression::Type::Addition) {
+    return nullptr;
+  }
   for (int i = 0; i < k_numberOfEntries; i++) {
     Expression * input = Expression::parse(cheatTable[i][inputIndex]);
     if (input == nullptr) {

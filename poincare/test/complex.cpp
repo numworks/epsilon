@@ -47,6 +47,9 @@ void assert_cartesian_complex_prints_to(T a, T b, const char * result, Expressio
     if (buffer[i] ==  Ion::Charset::IComplex) {
       buffer[i] = 'i';
     }
+    if (buffer[i] ==  Ion::Charset::MiddleDot) {
+      buffer[i] = '*';
+    }
   }
 
   assert(strcmp(buffer, result) == 0);

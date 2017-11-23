@@ -263,7 +263,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
     if (r() != 1 || th() == 0) {
       numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
       if (r() != 0 && th() != 0 && bufferSize > numberOfChars+1) {
-        buffer[numberOfChars++] = '*';
+        buffer[numberOfChars++] = Ion::Charset::MiddleDot;
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
@@ -278,7 +278,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
       }
       numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
       if (bufferSize > numberOfChars+3) {
-        buffer[numberOfChars++] = '*';
+        buffer[numberOfChars++] = Ion::Charset::MiddleDot;
         buffer[numberOfChars++] = Ion::Charset::IComplex;
         buffer[numberOfChars++] = ')';
         buffer[numberOfChars] = 0;
@@ -297,7 +297,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
   }
   if (m_b != 1 && m_b != -1 && m_b != 0) {
     numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
-    buffer[numberOfChars++] = '*';
+    buffer[numberOfChars++] = Ion::Charset::MiddleDot;
   }
   if (m_b == -1 && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = '-';
@@ -449,7 +449,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   if (r() != 1 || th() == 0) {
     numberOfCharInBase = convertFloatToText(r(), bufferBase, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
     if (r() != 0 && th() != 0) {
-      bufferBase[numberOfCharInBase++] = '*';
+      bufferBase[numberOfCharInBase++] = Ion::Charset::MiddleDot;
     }
   }
   if (r() != 0 && th() != 0) {
@@ -459,7 +459,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 
   if (r() != 0 && th() != 0) {
     numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, k_maxFloatBufferLength, k_numberOfSignificantDigits, floatDisplayMode);
-    bufferSuperscript[numberOfCharInSuperscript++] = '*';
+    bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::MiddleDot;
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
     bufferSuperscript[numberOfCharInSuperscript] = 0;
   }

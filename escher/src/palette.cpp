@@ -8,6 +8,7 @@ constexpr KDColor Palette::GreyWhite;
 constexpr KDColor Palette::GreyBright;
 constexpr KDColor Palette::GreyMiddle;
 constexpr KDColor Palette::GreyDark;
+constexpr KDColor Palette::GreyVeryDark;
 constexpr KDColor Palette::Select;
 constexpr KDColor Palette::SelectDark;
 constexpr KDColor Palette::WallScreen;

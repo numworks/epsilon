@@ -137,7 +137,9 @@ void MicroPython::registerScriptProvider(ScriptProvider * s) {
 }
 
 void gc_collect(void) {
-  assert(MP_STATE_THREAD(stack_top) != NULL);
+  void * python_stack_top = MP_STATE_THREAD(stack_top);
+  assert(python_stack_top != NULL);
+
   gc_collect_start();
 
   /* get the registers.
@@ -146,18 +148,19 @@ void gc_collect(void) {
   jmp_buf regs;
   setjmp(regs);
 
-  void **regs_ptr = (void**)(void*)&regs;
+  void **regs_ptr = (void**)&regs;
 
   /* On the device, the stack is stored in reverse order, but it might not be
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLength;
-  if ((uintptr_t)MP_STATE_THREAD(stack_top) > (uintptr_t)(&regs)) {
-    stackLength = (((uintptr_t)(MP_STATE_THREAD(stack_top)) - (uintptr_t)(&regs)) / sizeof(uintptr_t));
+  if ((uintptr_t)python_stack_top > (uintptr_t)&regs) {
+    stackLength = ((uintptr_t)python_stack_top - (uintptr_t)&regs) / sizeof(uintptr_t);
+    gc_collect_root(regs_ptr, stackLength);
   } else {
-    stackLength = (((uintptr_t)(&regs) - (uintptr_t)(MP_STATE_THREAD(stack_top))) / sizeof(uintptr_t));
+    stackLength = ((uintptr_t)(&regs) - (uintptr_t)python_stack_top) / sizeof(uintptr_t);
+    gc_collect_root((void **)python_stack_top, stackLength);
   }
-  gc_collect_root(regs_ptr, stackLength);
 
   gc_collect_end();
 }

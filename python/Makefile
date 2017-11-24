@@ -67,7 +67,6 @@ py_objs = $(addprefix python/src/py/,\
   runtime_utils.o \
   scheduler.o \
   nativeglue.o \
-  stackctrl.o \
   argcheck.o \
   warning.o \
   map.o \
@@ -179,7 +178,20 @@ port_objs += $(addprefix python/port/,\
   modkandinsky.o \
   modkandinsky_impl.o \
   mphalport.o \
+  stackctrl.o \
 )
+
+# Reduce optimization for the emscripten platform.
+# With optimization, register and stack variables might be held in a JavaScript
+# local variable, which breaks garbage collection. Indeed, these JavaScript
+# variables cannot be marked as root during garbage collection, which means that
+# the heap objects they depend on will likely be destroyed. When the Python
+# computing resumes, if necessary heap objects have been destroyed, the Python
+# program crashes.
+
+ifeq ($(PLATFORM),emscripten)
+$(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
+endif
 
 # QSTR generation
 

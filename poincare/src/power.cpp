@@ -413,7 +413,9 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   if (i.isOne()) {
     return new Rational(1);
   }
-  if (Arithmetic::k_primorial32.isLowerThan(i) || Arithmetic::k_biggestPrimeFactorizedInteger.isLowerThan(i)) {
+  Integer absI = i;
+  absI.setNegative(false);
+  if (Arithmetic::k_primorial32.isLowerThan(absI) || Arithmetic::k_biggestPrimeFactorizedInteger.isLowerThan(absI)) {
     r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
     /* We do not want to break i in prime factor because it might be take too
      * many factors... More than k_maxNumberOfPrimeFactors; or too much time!*/

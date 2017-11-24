@@ -95,7 +95,7 @@ QUIZ_CASE(poincare_complex_cartesian_to_text) {
   assert_cartesian_complex_prints_to(64078208.0, 119229408.0, "6.407821E7+1.192294E8*i", DecimalDisplay, Cartesian);
   assert_cartesian_complex_prints_to(64078208.0f, 119229408.0f, "1.353576E8*e^(1.07765*i)", DecimalDisplay, Polar);
   assert_cartesian_complex_prints_to(64078208.0f, 119229408.0f, "1.353576E8*e^(1.07765*i)", DecimalDisplay, Polar);
-  assert_cartesian_complex_prints_to(INFINITY, 119229408.0f, "inf", DecimalDisplay, Polar);
+  assert_cartesian_complex_prints_to(INFINITY, 119229408.0f, "undef", DecimalDisplay, Polar);
   assert_cartesian_complex_prints_to(0.0f, 0.0f, "0", DecimalDisplay, Polar);
   assert_cartesian_complex_prints_to(NAN, 0.0f, "undef", DecimalDisplay, Polar);
   assert_cartesian_complex_prints_to(0.0f, NAN, "undef", DecimalDisplay, Polar);

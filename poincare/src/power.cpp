@@ -240,8 +240,8 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
-      double p = a->approximate<double>(context, angleUnit);
-      double q = operand(1)->approximate<double>(context, angleUnit);
+      double p = a->approximateToScalar<double>(context, angleUnit);
+      double q = operand(1)->approximateToScalar<double>(context, angleUnit);
       double approx = std::pow(std::fabs(p), std::fabs(q));
       if (std::isinf(approx) || std::isnan(approx) || std::fabs(approx)> 1E100) {
         return this;

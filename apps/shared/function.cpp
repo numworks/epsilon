@@ -105,7 +105,7 @@ T Function::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const 
   Poincare::Symbol xSymbol(symbol());
   Poincare::Complex<T> e = Poincare::Complex<T>::Float(x);
   variableContext.setExpressionForSymbolName(&e, &xSymbol, variableContext);
-  return expression()->approximate<T>(variableContext);
+  return expression()->approximateToScalar<T>(variableContext);
 }
 
 void Function::tidy() {

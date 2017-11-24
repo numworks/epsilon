@@ -160,9 +160,14 @@ KDCoordinate HistoryController::rowHeight(int j) {
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   KDCoordinate inputHeight = calculation->inputLayout()->size().height();
   App * calculationApp = (App *)app();
-  KDCoordinate exactOutputHeight = calculation->exactOutputLayout(calculationApp->localContext())->size().height();
-  KDCoordinate approximateOutputHeight = calculation->approximateOutputLayout(calculationApp->localContext())->size().height();
-  KDCoordinate outputHeight = calculation->shouldApproximateOutput() || approximateOutputHeight > exactOutputHeight ? approximateOutputHeight : exactOutputHeight;
+  Poincare::ExpressionLayout * approximateLayout = calculation->approximateOutputLayout(calculationApp->localContext());
+  KDCoordinate approximateOutputHeight = approximateLayout->size().height();
+  if (calculation->shouldApproximateOutput()) {
+    return inputHeight + approximateOutputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
+  }
+  Poincare::ExpressionLayout * exactLayout = calculation->exactOutputLayout(calculationApp->localContext());
+  KDCoordinate exactOutputHeight = exactLayout->size().height();
+  KDCoordinate outputHeight = max(exactLayout->baseline(), approximateLayout->baseline()) + max(exactOutputHeight-exactLayout->baseline(), approximateOutputHeight-approximateLayout->baseline());
   return inputHeight + outputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 

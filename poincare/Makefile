@@ -109,21 +109,16 @@ tests += $(addprefix poincare/test/,\
   function.cpp\
   helper.cpp\
   integer.cpp\
-  simplify_easy.cpp\
-)
-
-testsi += $(addprefix poincare/test/,\
-  helper.cpp\
-  integer.cpp\
   matrix.cpp\
   parser.cpp\
-  product.cpp\
   power.cpp\
+  product.cpp\
+  simplify_easy.cpp\
   subtraction.cpp\
-  simplify_utils.cpp\
   symbol.cpp\
   trigo.cpp\
 )
+#  simplify_utils.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o

@@ -15,12 +15,12 @@ private:
   int emptySequenceValue() const override;
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
   Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const override {
-    return templatedEvaluateWithNextTerm<double>(a, b);
+    return templatedApproximateWithNextTerm<double>(a, b);
   }
   Expression * evaluateWithNextTerm(SinglePrecision p, Expression * a, Expression * b) const override {
-    return templatedEvaluateWithNextTerm<float>(a, b);
+    return templatedApproximateWithNextTerm<float>(a, b);
   }
-  template<typename T> Expression * templatedEvaluateWithNextTerm(Expression * a, Expression * b) const;
+  template<typename T> Expression * templatedApproximateWithNextTerm(Expression * a, Expression * b) const;
 };
 
 }

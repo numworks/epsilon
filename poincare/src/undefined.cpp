@@ -14,7 +14,7 @@ Expression * Undefined::clone() const {
   return new Undefined();
 }
 
-template<typename T> Complex<T> * Undefined::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Float(NAN));
 }
 

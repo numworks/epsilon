@@ -267,7 +267,7 @@ bool Sequence::isEmpty() {
 }
 
 template<typename T>
-T Sequence::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const {
+T Sequence::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   T n = std::round(x);
   switch (m_type) {
     case Type::Explicite:

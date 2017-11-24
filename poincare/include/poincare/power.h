@@ -2,7 +2,7 @@
 #define POINCARE_POWER_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
 
@@ -55,11 +55,11 @@ private:
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) { return nullptr; }
   template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * d);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) { return nullptr; }
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

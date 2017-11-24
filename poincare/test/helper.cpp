@@ -36,7 +36,7 @@ template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
   GlobalContext globalContext;
   Expression * a = parse_expression(expression);
-  Expression * m = a->evaluate<T>(globalContext, angleUnit);
+  Expression * m = a->approximate<T>(globalContext, angleUnit);
   assert(m);
   assert(m->numberOfOperands() == 0 || m->numberOfOperands() == numberOfRows*numberOfColumns);
   if (m->type() == Expression::Type::Matrix) {

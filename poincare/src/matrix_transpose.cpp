@@ -39,8 +39,8 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Expression * MatrixTranspose::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+Expression * MatrixTranspose::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
   Expression * result = nullptr;
   if (input->type() == Type::Complex) {
     result = input->clone();

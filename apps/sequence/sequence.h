@@ -39,10 +39,10 @@ public:
   bool isDefined() override;
   bool isEmpty() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
-    return templatedEvaluateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context);
   }
   double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
-    return templatedEvaluateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context);
   }
   double sumOfTermsBetweenAbscissa(double start, double end, Poincare::Context * context);
   void tidy() override;
@@ -52,7 +52,7 @@ private:
   constexpr static size_t k_dataLengthInBytes = (3*TextField::maxBufferSize()+3)*sizeof(char)+1;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The sequence data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   char symbol() const override;
-  template<typename T> T templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   Type m_type;
   char m_firstInitialConditionText[TextField::maxBufferSize()];
   char m_secondInitialConditionText[TextField::maxBufferSize()];

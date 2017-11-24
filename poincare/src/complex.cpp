@@ -248,7 +248,7 @@ ExpressionLayout * Complex<T>::privateCreateLayout(Expression::FloatDisplayMode 
 
 template<typename T>
 template<typename U>
-Complex<U> * Complex<T>::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+Complex<U> * Complex<T>::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   return new Complex<U>(Complex<U>::Cartesian((U)m_a, (U)m_b));
 }
 
@@ -478,10 +478,10 @@ ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMod
 
 template class Complex<float>;
 template class Complex<double>;
-template Complex<double>* Complex<double>::templatedEvaluate<double>(Context&, Expression::AngleUnit) const;
-template Complex<float>* Complex<double>::templatedEvaluate<float>(Context&, Expression::AngleUnit) const;
-template Complex<double>* Complex<float>::templatedEvaluate<double>(Context&, Expression::AngleUnit) const;
-template Complex<float>* Complex<float>::templatedEvaluate<float>(Context&, Expression::AngleUnit) const;
+template Complex<double>* Complex<double>::templatedApproximate<double>(Context&, Expression::AngleUnit) const;
+template Complex<float>* Complex<double>::templatedApproximate<float>(Context&, Expression::AngleUnit) const;
+template Complex<double>* Complex<float>::templatedApproximate<double>(Context&, Expression::AngleUnit) const;
+template Complex<float>* Complex<float>::templatedApproximate<float>(Context&, Expression::AngleUnit) const;
 
 }
 

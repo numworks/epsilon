@@ -68,9 +68,9 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Expression * PredictionInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * pInput = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * nInput = operand(1)->evaluate<T>(context, angleUnit);
+Expression * PredictionInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * pInput = operand(0)->approximate<T>(context, angleUnit);
+  Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
   if (pInput->type() != Type::Complex || nInput->type() != Type::Complex) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }

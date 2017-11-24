@@ -23,9 +23,9 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
 }
 
 template<typename T>
-Expression * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * aInput = operand(1)->evaluate<T>(context, angleUnit);
-  Expression * bInput = operand(2)->evaluate<T>(context, angleUnit);
+Expression * Sequence::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * aInput = operand(1)->approximate<T>(context, angleUnit);
+  Expression * bInput = operand(2)->approximate<T>(context, angleUnit);
   T start = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
   T end = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete aInput;
@@ -43,7 +43,7 @@ Expression * Sequence::templatedEvaluate(Context& context, AngleUnit angleUnit) 
     }
     Complex<T> iExpression = Complex<T>::Float(i);
     nContext.setExpressionForSymbolName(&iExpression, &nSymbol, nContext);
-    Expression * expression = operand(0)->evaluate<T>(nContext, angleUnit);
+    Expression * expression = operand(0)->approximate<T>(nContext, angleUnit);
     Expression * newResult = evaluateWithNextTerm(T(), result, expression);
     delete result;
     delete expression;

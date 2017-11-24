@@ -72,7 +72,7 @@ class Expression {
   friend class SimplificationRoot;
   friend class Sequence;
   friend class Trigonometry;
-  friend class EvaluationEngine;
+  friend class ApproximationEngine;
   friend class SimplificationEngine;
 
 public:
@@ -213,7 +213,7 @@ public:
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
 protected:
@@ -267,8 +267,8 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

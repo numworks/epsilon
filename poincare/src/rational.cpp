@@ -138,7 +138,7 @@ int Rational::simplificationOrderSameType(const Expression * e) const {
   return NaturalOrder(*this, *other);
 }
 
-template<typename T> Complex<T> * Rational::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Complex<T> * Rational::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T n = m_numerator.approximate<T>();
   T d = m_denominator.approximate<T>();
   return new Complex<T>(Complex<T>::Float(n/d));

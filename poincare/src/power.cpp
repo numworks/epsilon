@@ -183,8 +183,8 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
 
   /* Step 0: if both operands are true complexes, the result is undefined.
    * We can assert that evaluations is a complex as matrix are not simplified */
-  Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->evaluate<float>(context, angleUnit));
-  Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->evaluate<float>(context, angleUnit));
+  Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->approximate<float>(context, angleUnit));
+  Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->approximate<float>(context, angleUnit));
   bool bothOperandsComplexes = op0->b() != 0 && op1->b() != 0;
   delete op0;
   delete op1;

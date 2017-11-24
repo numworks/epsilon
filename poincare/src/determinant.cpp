@@ -34,8 +34,8 @@ Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Expression * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+Expression * Determinant::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
   Expression * result = nullptr;
   if (input->type() == Type::Complex) {
     result = input->clone();

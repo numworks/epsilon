@@ -54,9 +54,9 @@ Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) {
 }
 
 template<typename T>
-Expression * NthRoot::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * base = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * index = operand(1)->evaluate<T>(context, angleUnit);
+Expression * NthRoot::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * base = operand(0)->approximate<T>(context, angleUnit);
+  Expression * index = operand(1)->approximate<T>(context, angleUnit);
   Complex<T> result = Complex<T>::Float(NAN);
   if (base->type() == Type::Complex && index->type() == Type::Complex) {
     Complex<T> * basec = static_cast<Complex<T> *>(base);

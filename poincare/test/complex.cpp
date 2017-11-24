@@ -105,14 +105,14 @@ QUIZ_CASE(poincare_complex_cartesian_to_text) {
 QUIZ_CASE(poincare_complex_evaluate) {
   GlobalContext globalContext;
   Expression * a = new Complex<float>(Complex<float>::Float(123.456f));
-  Expression * m = a->evaluate<double>(globalContext);
+  Expression * m = a->approximate<double>(globalContext);
   assert(m->type() == Expression::Type::Complex);
   Complex<double> * mc = static_cast<Complex<double> *>(m);
   assert(std::fabs(mc->a() - 123.456) < 0.00001);
   assert(mc->b() == 0.0);
   delete m;
 
-  Expression * n = a->evaluate<float>(globalContext);
+  Expression * n = a->approximate<float>(globalContext);
   assert(n->type() == Expression::Type::Complex);
   Complex<float> * nc = static_cast<Complex<float> *>(n);
   assert(nc->a() == 123.456f);

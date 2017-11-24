@@ -253,17 +253,17 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 
 /* Evaluation */
 
-template<typename T> Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T> Expression * Expression::approximate(Context& context, AngleUnit angleUnit) const {
   switch (angleUnit) {
     case AngleUnit::Default:
-      return privateEvaluate(T(), context, Preferences::sharedPreferences()->angleUnit());
+      return privateApproximate(T(), context, Preferences::sharedPreferences()->angleUnit());
     default:
-      return privateEvaluate(T(), context, angleUnit);
+      return privateApproximate(T(), context, angleUnit);
   }
 }
 
 template<typename T> T Expression::approximateToScalar(Context& context, AngleUnit angleUnit) const {
-  Expression * evaluation = evaluate<T>(context, angleUnit);
+  Expression * evaluation = approximate<T>(context, angleUnit);
   assert(evaluation->type() == Type::Complex || evaluation->type() == Type::Matrix);
   T result = NAN;
   if (evaluation->type() == Type::Complex) {
@@ -292,8 +292,8 @@ template<typename T> T Expression::epsilon() {
 
 }
 
-template Poincare::Expression * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
-template Poincare::Expression * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::approximate<float>(Context& context, AngleUnit angleUnit) const;
 template double Poincare::Expression::approximateToScalar<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template float Poincare::Expression::approximateToScalar<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template double Poincare::Expression::approximateToScalar<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;

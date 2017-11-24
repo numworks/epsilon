@@ -60,13 +60,6 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
 }
 
-KDCoordinate SequenceToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == 2) {
-    return k_addedRowHeight;
-  }
-  return MathToolbox::rowHeight(mathToolboxIndex(j));
-}
-
 int SequenceToolbox::typeAtLocation(int i, int j) {
   if (stackDepth() == 0 && j < m_numberOfAddedCells) {
     return 2;

@@ -247,8 +247,7 @@ bool Toolbox::handleEvent(Ion::Events::Event event) {
 }
 
 KDCoordinate Toolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == ::Toolbox::LeafCellType) {
-    if (m_messageTreeModel->label() != I18n::Message::IfStatementMenu) {
+  if (typeAtLocation(0, j) == ::Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
       /* To get the exact height needed for each cell, we have to compute its
        * text size, which means scan the text char by char to look for '\n'
        * chars. This is very costly and ruins the speed performance when
@@ -258,12 +257,10 @@ KDCoordinate Toolbox::rowHeight(int j) {
        * We thus decided to compute the real height only for the ifStatement
        * children of the toolbox, which is the only menu that has special height
        * rows. */
-      return k_leafRowHeight;
-    }
     const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->children(j));
-    return KDText::stringSize(I18n::translate(messageTree->label()), k_fontSize).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : k_leafRowHeight);
+    return KDText::stringSize(I18n::translate(messageTree->label()), k_fontSize).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : ::Toolbox::rowHeight(j));
   }
-  return k_nodeRowHeight;
+  return ::Toolbox::rowHeight(j);
 }
 
 bool Toolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {

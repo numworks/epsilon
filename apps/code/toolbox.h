@@ -27,8 +27,6 @@ protected:
   // 13 = minimal string height size
   // 3 = vertical margins
 private:
-  constexpr static KDCoordinate k_nodeRowHeight = 40;
-  constexpr static KDCoordinate k_leafRowHeight = 40;
   constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);

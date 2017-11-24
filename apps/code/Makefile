@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/code/,\
   console_edit_cell.o\
   console_line_cell.o\
   console_store.o\
+  double_buffer_text_cell.o\
   editor_controller.o\
   helpers.o\
   menu_controller.o\

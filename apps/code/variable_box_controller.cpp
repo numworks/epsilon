@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/buffer_text_view.h>
+#include <escher/metric.h>
 #include <escher/palette.h>
 #include <string.h>
 
@@ -228,7 +229,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
 }
 
 KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
-  return k_rowHeight;
+  return Metric::ToolboxRowHeight;
 }
 
 KDCoordinate VariableBoxController::ContentViewController::cumulatedHeightFromIndex(int j) {

@@ -68,7 +68,6 @@ protected:
 
   static constexpr int LeafCellType = 0;
   static constexpr int NodeCellType = 1;
-  static constexpr KDCoordinate sToolboxRowHeight = 40;
   int stackDepth();
   bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   bool selectSubMenu(ToolboxMessageTree * selectedMessageTree);

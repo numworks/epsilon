@@ -1,5 +1,6 @@
 #include "variable_box_controller.h"
 #include "constant.h"
+#include <escher/metric.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -163,11 +164,8 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
 }
 
 KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
-  if (m_currentPage == Page::RootMenu) {
-    return k_nodeRowHeight;
-  }
-  if (m_currentPage == Page::Scalar) {
-    return k_leafRowHeight;
+  if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
+    return Metric::ToolboxRowHeight;
   }
   const Expression * expression = expressionForIndex(index);
   if (expression) {
@@ -176,7 +174,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
     delete layout;
     return expressionHeight+k_leafMargin;
   }
-  return k_leafRowHeight;
+  return Metric::ToolboxRowHeight;
 }
 
 KDCoordinate VariableBoxController::ContentViewController::cumulatedHeightFromIndex(int j) {

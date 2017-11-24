@@ -31,7 +31,7 @@ private:
     T integral;
     T absoluteError;
   };
-  constexpr static int k_maxNumberOfIterations = 100;
+  constexpr static int k_maxNumberOfIterations = 10;
 #ifdef LAGRANGE_METHOD
   template<typename T> T lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #else

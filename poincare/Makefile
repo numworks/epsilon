@@ -25,7 +25,7 @@ objs += $(addprefix poincare/src/,\
   division_quotient.o\
   division_remainder.o\
   dynamic_hierarchy.o\
-  evaluation_engine.o\
+  approximation_engine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\

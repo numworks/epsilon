@@ -49,8 +49,8 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * MatrixTrace::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+Expression * MatrixTrace::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
   Expression * result = nullptr;
   if (input->type() == Type::Complex) {
     result = input->clone();

@@ -111,9 +111,9 @@ Expression::Sign Symbol::sign() const {
 }
 
 template<typename T>
-Expression * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
+    return context.expressionForSymbol(this)->approximate<T>(context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }

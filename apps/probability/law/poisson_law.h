@@ -18,14 +18,14 @@ public:
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override {
-    return templatedEvaluateAtAbscissa(x);
+    return templatedApproximateAtAbscissa(x);
   }
   bool authorizedValueAtIndex(float x, int index) const override;
 private:
   double evaluateAtDiscreteAbscissa(int k) const override {
-    return templatedEvaluateAtAbscissa((double)k);
+    return templatedApproximateAtAbscissa((double)k);
   }
-  template<typename T> T templatedEvaluateAtAbscissa(T x) const;
+  template<typename T> T templatedApproximateAtAbscissa(T x) const;
 };
 
 }

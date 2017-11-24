@@ -37,10 +37,10 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
 }
 
 template<typename T>
-Expression * Store::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Store::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   if (context.expressionForSymbol(symbol()) != nullptr) {
-    return context.expressionForSymbol(symbol())->evaluate<T>(context, angleUnit);
+    return context.expressionForSymbol(symbol())->approximate<T>(context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }

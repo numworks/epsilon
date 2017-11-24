@@ -48,9 +48,9 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Round::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * f1Input = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * f2Input = operand(1)->evaluate<T>(context, angleUnit);
+Complex<T> * Round::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * f1Input = operand(0)->approximate<T>(context, angleUnit);
+  Expression * f2Input = operand(1)->approximate<T>(context, angleUnit);
   T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
   T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
   delete f1Input;

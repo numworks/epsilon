@@ -37,12 +37,12 @@ Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Integral::templatedEvaluate(Context & context, AngleUnit angleUnit) const {
+Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUnit) const {
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Expression * aInput = operand(1)->evaluate<T>(context, angleUnit);
+  Expression * aInput = operand(1)->approximate<T>(context, angleUnit);
   T a = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
   delete aInput;
-  Expression * bInput = operand(2)->evaluate<T>(context, angleUnit);
+  Expression * bInput = operand(2)->approximate<T>(context, angleUnit);
   T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
@@ -70,7 +70,7 @@ T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit 
   Complex<T> e = Complex<T>::Float(x);
   Symbol xSymbol('x');
   xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * f = operand(0)->evaluate<T>(xContext, angleUnit);
+  Expression * f = operand(0)->approximate<T>(xContext, angleUnit);
   T result = f->type() == Type::Complex ? static_cast<Complex<T> *>(f)->toScalar() : NAN;
   delete f;
   return result;

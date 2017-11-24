@@ -47,6 +47,10 @@ public:
   Complex<T> * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
+  /* Simplification: complex does not implement simplificationOrderSameType
+   * because Complex expressions do not appear before evaluation. The sorting
+   * step is part of simplificaiton process which thus handles no complex. */
+
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
    * the auto mode tries to return 'natural' float like (0.021) and switches

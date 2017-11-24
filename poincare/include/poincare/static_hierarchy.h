@@ -1,13 +1,13 @@
 #ifndef POINCARE_STATIC_HIERARCHY_H
 #define POINCARE_STATIC_HIERARCHY_H
 
-#include <poincare/hierarchy.h>
+#include <poincare/expression.h>
 #include <poincare/list_data.h>
 
 namespace Poincare {
 
 template<int T>
-class StaticHierarchy : public Hierarchy {
+class StaticHierarchy : public Expression {
 public:
   StaticHierarchy();
   StaticHierarchy(const Expression * const * operands, bool cloneOperands = true);

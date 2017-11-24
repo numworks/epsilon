@@ -34,7 +34,6 @@ objs += $(addprefix poincare/src/,\
   frac_part.o\
   global_context.o\
   great_common_divisor.o\
-  hierarchy.o\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
   hyperbolic_arc_tangent.o\

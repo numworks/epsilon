@@ -417,8 +417,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
 
   const Expression * base1 = e1->operand(0)->clone();
   const Expression * base2 = e2->operand(0);
-  // TODO: remove cast, everything is a hierarchy
-  static_cast<Hierarchy *>(e2)->detachOperand(base2);
+  e2->detachOperand(base2);
   Expression * m = new Multiplication(base1, base2, false);
   removeOperand(e2, true);
   e1->replaceOperand(e1->operand(0), m, true);

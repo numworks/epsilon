@@ -40,6 +40,13 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+const Expression * const * Expression::ExpressionArray(const Expression * e1, const Expression * e2) {
+  static const Expression * result[2] = {nullptr, nullptr};
+  result[0] = e1;
+  result[1] = e2;
+  return result;
+}
+
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
@@ -57,6 +64,76 @@ bool Expression::shouldStopProcessing() {
 
 /* Hierarchy */
 
+const Expression * Expression::operand(int i) const {
+  assert(i >= 0);
+  assert(i < numberOfOperands());
+  assert(operands()[i]->parent() == nullptr || operands()[i]->parent() == this);
+  return operands()[i];
+}
+
+Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
+  return newOperand;
+}
+
+void Expression::replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) {
+  assert(newOperand != nullptr);
+  // Caution: handle the case where we replace an operand with a descendant of ours.
+  if (newOperand->hasAncestor(this)) {
+    newOperand->parent()->detachOperand(newOperand);
+  }
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (op[i] == oldOperand) {
+      if (oldOperand != nullptr && oldOperand->parent() == this) {
+        const_cast<Expression *>(oldOperand)->setParent(nullptr);
+      }
+      if (deleteOldOperand) {
+        delete oldOperand;
+      }
+      if (newOperand != nullptr) {
+        const_cast<Expression *>(newOperand)->setParent(this);
+      }
+      op[i] = newOperand;
+      break;
+    }
+  }
+}
+
+void Expression::detachOperand(const Expression * e) {
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (op[i] == e) {
+      detachOperandAtIndex(i);
+    }
+  }
+}
+
+void Expression::detachOperands() {
+  for (int i=0; i<numberOfOperands(); i++) {
+    detachOperandAtIndex(i);
+  }
+}
+
+void Expression::detachOperandAtIndex(int i) {
+  Expression ** op = const_cast<Expression **>(operands());
+  // When detachOperands is called, it's very likely that said operands have been stolen
+  if (op[i] != nullptr && op[i]->parent() == this) {
+    const_cast<Expression *>(op[i])->setParent(nullptr);
+  }
+  op[i] = nullptr;
+}
+
+void Expression::swapOperands(int i, int j) {
+  assert(i >= 0 && i < numberOfOperands());
+  assert(j >= 0 && j < numberOfOperands());
+  Expression ** op = const_cast<Expression **>(operands());
+  Expression * temp = op[i];
+  op[i] = op[j];
+  op[j] = temp;
+}
+
 bool Expression::hasAncestor(const Expression * e) const {
   assert(m_parent != this);
   if (m_parent == e) {
@@ -66,12 +143,6 @@ bool Expression::hasAncestor(const Expression * e) const {
     return false;
   }
   return m_parent->hasAncestor(e);
-}
-
-Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
-  assert(m_parent != nullptr);
-  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
-  return newOperand;
 }
 
 /* Properties */

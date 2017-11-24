@@ -7,14 +7,14 @@ extern "C" {
 namespace Poincare {
 
 DynamicHierarchy::DynamicHierarchy() :
-  Hierarchy(),
+  Expression(),
   m_operands(nullptr),
   m_numberOfOperands(0)
 {
 }
 
 DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
-  Hierarchy(),
+  Expression(),
   m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);

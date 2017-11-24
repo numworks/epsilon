@@ -236,7 +236,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
          * there are two cases we want to deal with:
          *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
          *  - 2^(1/2)*2^(3/2) we want to combine. */
-        shouldFactorizeBase = !TermHasIntegerExponent(oi) && !TermHasIntegerExponent(oi1);
+        shouldFactorizeBase = oi->type() == Type::Power && oi1->type() == Type::Power;
       }
       if (shouldFactorizeBase) {
         factorizeBase(oi, oi1, context, angleUnit);
@@ -458,17 +458,6 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Exp
 
 bool Multiplication::TermHasRationalBase(const Expression * e) {
   return Base(e)->type() == Type::Rational;
-}
-
-bool Multiplication::TermHasIntegerExponent(const Expression * e) {
-  if (e->type() != Type::Power) {
-    return true;
-  }
-  if (e->operand(1)->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(e->operand(1));
-    return r->denominator().isOne();
-  }
-  return false;
 }
 
 bool Multiplication::TermHasRationalExponent(const Expression * e) {

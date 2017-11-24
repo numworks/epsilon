@@ -44,7 +44,6 @@ private:
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
-  static bool TermHasIntegerExponent(const Expression * e);
   static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;

@@ -118,6 +118,10 @@ void Toolbox::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 
+KDCoordinate Toolbox::rowHeight(int j) {
+  return sToolboxRowHeight;
+}
+
 int Toolbox::numberOfRows() {
   if (m_messageTreeModel == nullptr) {
     m_messageTreeModel = (ToolboxMessageTree *)rootModel();

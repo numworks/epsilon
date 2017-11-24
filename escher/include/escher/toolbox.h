@@ -21,6 +21,7 @@ public:
   void viewDidDisappear() override;
 
   //ListViewDataSource
+  virtual KDCoordinate rowHeight(int j) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -67,6 +68,7 @@ protected:
 
   static constexpr int LeafCellType = 0;
   static constexpr int NodeCellType = 1;
+  static constexpr KDCoordinate sToolboxRowHeight = 40;
   int stackDepth();
   bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   bool selectSubMenu(ToolboxMessageTree * selectedMessageTree);

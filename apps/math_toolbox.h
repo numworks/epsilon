@@ -9,7 +9,6 @@ class MathToolbox : public Toolbox {
 public:
   MathToolbox();
 protected:
-  KDCoordinate rowHeight(int j) override;
   TextField * sender() override;
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;
@@ -18,8 +17,6 @@ protected:
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
 private:
-  constexpr static KDCoordinate k_nodeRowHeight = 40;
-  constexpr static KDCoordinate k_leafRowHeight = 40;
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

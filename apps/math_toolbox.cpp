@@ -102,13 +102,6 @@ MathToolbox::MathToolbox() : Toolbox(nullptr, I18n::translate(rootModel()->label
 {
 }
 
-KDCoordinate MathToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == Toolbox::LeafCellType) {
-    return k_leafRowHeight;
-  }
-  return k_nodeRowHeight;
-}
-
 TextField * MathToolbox::sender() {
   return (TextField *)Toolbox::sender();
 }

@@ -1,4 +1,5 @@
 #include <escher/toolbox.h>
+#include <escher/metric.h>
 #include <assert.h>
 #include <string.h>
 
@@ -119,7 +120,7 @@ void Toolbox::viewDidDisappear() {
 }
 
 KDCoordinate Toolbox::rowHeight(int j) {
-  return sToolboxRowHeight;
+  return Metric::ToolboxRowHeight;
 }
 
 int Toolbox::numberOfRows() {

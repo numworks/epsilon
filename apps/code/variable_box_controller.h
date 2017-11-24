@@ -52,7 +52,6 @@ private:
   private:
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
     constexpr static int k_numberOfMenuRows = 2;
-    constexpr static KDCoordinate k_rowHeight = 40; //TODO fix
     constexpr static int k_nodeType = 0;
     constexpr static int k_leafType = 1;
     constexpr static int k_functionsAndVarsNamePointersArrayLength = 32;

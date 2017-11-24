@@ -24,6 +24,7 @@ public:
   constexpr static KDCoordinate ExamPopUpTopMargin = 27;
   constexpr static KDCoordinate ExamPopUpBottomMargin = 55;
   constexpr static KDCoordinate StoreRowHeight = 50;
+  constexpr static KDCoordinate ToolboxRowHeight = 40;
 };
 
 #endif

@@ -262,7 +262,7 @@ template<typename T> Expression * Expression::evaluate(Context& context, AngleUn
   }
 }
 
-template<typename T> T Expression::approximate(Context& context, AngleUnit angleUnit) const {
+template<typename T> T Expression::approximateToScalar(Context& context, AngleUnit angleUnit) const {
   Expression * evaluation = evaluate<T>(context, angleUnit);
   assert(evaluation->type() == Type::Complex || evaluation->type() == Type::Matrix);
   T result = NAN;
@@ -278,9 +278,9 @@ template<typename T> T Expression::approximate(Context& context, AngleUnit angle
   return result;
 }
 
-template<typename T> T Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
+template<typename T> T Expression::approximateToScalar(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
-  T result = exp->approximate<T>(context, angleUnit);
+  T result = exp->approximateToScalar<T>(context, angleUnit);
   delete exp;
   return result;
 }
@@ -294,9 +294,9 @@ template<typename T> T Expression::epsilon() {
 
 template Poincare::Expression * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
 template Poincare::Expression * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
-template double Poincare::Expression::approximate<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
-template float Poincare::Expression::approximate<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
-template double Poincare::Expression::approximate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
-template float Poincare::Expression::approximate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template double Poincare::Expression::approximateToScalar<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template float Poincare::Expression::approximateToScalar<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template double Poincare::Expression::approximateToScalar<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template float Poincare::Expression::approximateToScalar<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
 template double Poincare::Expression::epsilon<double>();
 template float Poincare::Expression::epsilon<float>();

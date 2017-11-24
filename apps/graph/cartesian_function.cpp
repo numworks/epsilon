@@ -20,7 +20,7 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   Poincare::Complex<double> abscissa = Poincare::Complex<double>::Float(x);
   Poincare::Expression * args[2] = {expression(), &abscissa};
   Poincare::Derivative derivative(args, true);
-  return derivative.approximate<double>(*context);
+  return derivative.approximateToScalar<double>(*context);
 }
 
 char CartesianFunction::symbol() const {

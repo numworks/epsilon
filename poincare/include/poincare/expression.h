@@ -214,8 +214,8 @@ public:
    * The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
   template<typename T> Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}

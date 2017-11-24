@@ -22,7 +22,7 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
   }
   Expression::Type correspondingType = e->type() == Expression::Type::Cosine ? Expression::Type::ArcCosine : (e->type() == Expression::Type::Sine ? Expression::Type::ArcSine : Expression::Type::ArcTangent);
   if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
+    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
     if (e->type() == Expression::Type::Tangent || (trigoOp >= -1.0f && trigoOp <= 1.0f)) {
       return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
     }
@@ -83,7 +83,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
 Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   if (e->type() != Expression::Type::ArcTangent) {
-    float approxOp = e->operand(0)->approximate<float>(context, angleUnit);
+    float approxOp = e->operand(0)->approximateToScalar<float>(context, angleUnit);
     if (approxOp > 1.0f || approxOp < -1.0f) {
       return e->replaceWith(new Undefined(), true);
     }
@@ -91,7 +91,7 @@ Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context&
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
   if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximate<float>(context, angleUnit);
+    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
     if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e->type() == Expression::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
@@ -100,7 +100,7 @@ Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context&
   }
   // Special case for arctan(sin(x)/cos(x))
   if (e->type() == Expression::Type::ArcTangent && ExpressionIsEquivalentToTangent(e->operand(0))) {
-    float trigoOp = e->operand(0)->operand(1)->operand(0)->approximate<float>(context, angleUnit);
+    float trigoOp = e->operand(0)->operand(1)->operand(0)->approximateToScalar<float>(context, angleUnit);
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
       return e->replaceWith(e->editableOperand(0)->editableOperand(1)->editableOperand(0), true);
     }

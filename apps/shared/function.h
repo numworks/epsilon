@@ -19,7 +19,7 @@ public:
   const char * text() const;
   const char * name() const;
   KDColor color() const { return m_color; }
-  Poincare::Expression * expression() const;
+  Poincare::Expression * expression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * layout();
   virtual bool isDefined();
   bool isActive();

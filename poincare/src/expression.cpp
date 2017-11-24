@@ -280,6 +280,7 @@ template<typename T> T Expression::approximateToScalar(Context& context, AngleUn
 
 template<typename T> T Expression::approximateToScalar(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
+  Simplify(&exp, context, angleUnit);
   T result = exp->approximateToScalar<T>(context, angleUnit);
   delete exp;
   return result;

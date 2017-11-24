@@ -24,8 +24,8 @@ public:
   void setType(Type type);
   const char * firstInitialConditionText();
   const char * secondInitialConditionText();
-  Poincare::Expression * firstInitialConditionExpression() const;
-  Poincare::Expression * secondInitialConditionExpression() const;
+  Poincare::Expression * firstInitialConditionExpression(Poincare::Context * context) const;
+  Poincare::Expression * secondInitialConditionExpression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * firstInitialConditionLayout();
   Poincare::ExpressionLayout * secondInitialConditionLayout();
   void setContent(const char * c) override;

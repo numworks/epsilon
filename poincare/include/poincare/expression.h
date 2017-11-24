@@ -167,15 +167,20 @@ public:
   static bool shouldStopProcessing();
 
   /* Hierarchy */
-  virtual const Expression * operand(int i) const = 0;
+  virtual const Expression * const * operands() const = 0;
+  const Expression * operand(int i) const;
   Expression * editableOperand(int i) { return const_cast<Expression *>(operand(i)); }
   virtual int numberOfOperands() const = 0;
+
+  Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true);
+  void detachOperand(const Expression * e); // Removes an operand WITHOUT deleting it
+  void detachOperands(); // Removes all operands WITHOUT deleting them
+  void swapOperands(int i, int j);
+
   Expression * parent() const { return m_parent; }
   void setParent(Expression * parent) { m_parent = parent; }
   bool hasAncestor(const Expression * e) const;
-  virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
-  Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
-  virtual void swapOperands(int i, int j) = 0;
 
   /* Properties */
   enum class Sign {
@@ -214,6 +219,9 @@ public:
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
+  static const Expression * const * ExpressionArray(const Expression * e1, const Expression * e2);
+  /* Hierarchy */
+  void detachOperandAtIndex(int i);
   /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;

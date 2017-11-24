@@ -7,14 +7,14 @@ namespace Poincare {
 
 template<int T>
 StaticHierarchy<T>::StaticHierarchy() :
-  Hierarchy(),
+  Expression(),
   m_operands{}
 {
 }
 
 template<int T>
 StaticHierarchy<T>::StaticHierarchy(const Expression * const * operands, bool cloneOperands) :
-  Hierarchy()
+  Expression()
 {
   build(operands, T, cloneOperands);
 }

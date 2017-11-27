@@ -176,6 +176,10 @@ OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
   return &m_updateController;
 }
 
+void AppsContainer::redrawWindow() {
+  m_window.redraw();
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }

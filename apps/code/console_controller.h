@@ -7,6 +7,7 @@
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
 #include "console_store.h"
+#include "sandbox_controller.h"
 #include "script_store.h"
 
 namespace Code {
@@ -32,7 +33,7 @@ public:
   void removeExtensionIfAny(char * name);
 
   // ViewController
-  View * view() override { return &m_view; }
+  View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -59,23 +60,8 @@ public:
   ::Toolbox * toolboxForTextField(TextField * textField) override;
 
   // MicroPython::ExecutionEnvironment
+  void displaySandbox() override;
   void printText(const char * text, size_t length) override;
-  void redraw() override;
-
-  // ConsoleController::ContentView
-  class ContentView : public View {
-  public:
-    ContentView(SelectableTableView * selectabletableView);
-    void markAsDirty();
-  private:
-    int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override {
-      assert(index == 0);
-      return m_selectableTableView;
-    }
-    void layoutSubviews() override;
-    SelectableTableView * m_selectableTableView;
-  };
 
 private:
   static constexpr int LineCellType = 0;
@@ -102,7 +88,7 @@ private:
    * happens, or when m_outputAccumulationBuffer is full, we create a new
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
   ScriptStore * m_scriptStore;
-  ContentView m_view;
+  SandboxController m_sandboxController;
 };
 }
 

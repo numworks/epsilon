@@ -83,7 +83,7 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (textField->textFieldShouldFinishEditing(event) && textField->isEditing() && strlen(textField->text()) == 0 && m_calculationStore->numberOfCalculations() > 0) {
+  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_calculationStore->numberOfCalculations() > 0) {
     App * calculationApp = (App *)app();
     const char * lastTextBody = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1)->inputText();
     m_calculationStore->push(lastTextBody, calculationApp->localContext());

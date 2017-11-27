@@ -198,7 +198,8 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
 }
 
 bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (strlen(textField->text()) > 0
+  assert(textField->isEditing());
+  return (textField->draftTextLength() > 0
       && (event == Ion::Events::OK || event == Ion::Events::EXE));
 }
 

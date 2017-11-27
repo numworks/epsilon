@@ -77,7 +77,7 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 }
 
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (textField->textFieldShouldFinishEditing(event) && textField->isEditing()) {
+  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
     Expression * exp = Expression::parse(textField->text());
     if (exp != nullptr) {
       delete exp;

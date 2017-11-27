@@ -16,7 +16,7 @@ public:
   Toolbox * toolbox() override;
   bool isEditing() const;
   const char * text() const;
-  int textLength() const;
+  int draftTextLength() const;
   int cursorLocation() const;
   void setCursorLocation(int location);
   void setText(const char * text);
@@ -45,7 +45,7 @@ protected:
     void reload();
     bool isEditing() const { return m_isEditing; }
     const char * text() const;
-    int textLength() const;
+    int draftTextLength() const;
     int cursorLocation() const { return m_currentCursorLocation; }
     char * textBuffer() { return m_textBuffer; }
     char * draftTextBuffer() { return m_draftTextBuffer; }
@@ -79,7 +79,7 @@ protected:
     bool m_isEditing;
     char * m_textBuffer;
     char * m_draftTextBuffer;
-    size_t m_currentTextLength;
+    size_t m_currentDraftTextLength;
     size_t m_currentCursorLocation;
     size_t m_textBufferSize;
     float m_horizontalAlignment;

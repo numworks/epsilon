@@ -17,17 +17,13 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLocation() + strlen("ans"));
     return true;
   }
-  if (textLength() == 0 &&
+  if (isEditing() && draftTextLength() == 0 &&
       (event == Ion::Events::Multiplication ||
        event == Ion::Events::Plus ||
        event == Ion::Events::Power ||
        event == Ion::Events::Square ||
        event == Ion::Events::Division ||
        event == Ion::Events::Sto)) {
-    if (!isEditing()) {
-      setEditing(true);
-      setText("");
-    }
     insertTextAtLocation("ans", cursorLocation());
     setCursorLocation(cursorLocation() + strlen("ans"));
   }

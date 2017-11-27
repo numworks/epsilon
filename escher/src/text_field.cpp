@@ -9,7 +9,7 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
   m_isEditing(false),
   m_textBuffer(textBuffer),
   m_draftTextBuffer(draftTextBuffer),
-  m_currentTextLength(0),
+  m_currentDraftTextLength(0),
   m_currentCursorLocation(0),
   m_textBufferSize(textBufferSize),
   m_horizontalAlignment(horizontalAlignment),
@@ -48,21 +48,22 @@ void TextField::ContentView::reload() {
 
 const char * TextField::ContentView::text() const {
   if (m_isEditing) {
-    return const_cast<const char *>(m_draftTextBuffer);;
+    return const_cast<const char *>(m_draftTextBuffer);
   }
   return const_cast<const char *>(m_textBuffer);
 }
 
-int TextField::ContentView::textLength() const {
-  assert(strlen(text()) == m_currentTextLength);
-  return m_currentTextLength;
+int TextField::ContentView::draftTextLength() const {
+  assert(isEditing());
+  assert(strlen(text()) == m_currentDraftTextLength);
+  return m_currentDraftTextLength;
 }
 
 void TextField::ContentView::setText(const char * text) {
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
     int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
-    m_currentTextLength = textLength;
+    m_currentDraftTextLength = textLength;
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
   }
@@ -100,29 +101,29 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
 void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(0);
   m_draftTextBuffer[0] = 0;
-  m_currentTextLength = 0;
+  m_currentDraftTextLength = 0;
 }
 
 void TextField::ContentView::setCursorLocation(int location) {
   int adjustedLocation = location < 0 ? 0 : location;
-  adjustedLocation = adjustedLocation > (signed int)m_currentTextLength ? (signed int)m_currentTextLength : adjustedLocation;
+  adjustedLocation = adjustedLocation > (signed int)m_currentDraftTextLength ? (signed int)m_currentDraftTextLength : adjustedLocation;
   m_currentCursorLocation = adjustedLocation;
   layoutSubviews();
 }
 
 bool TextField::ContentView::insertTextAtLocation(const char * text, int location) {
   int textSize = strlen(text);
-  if (m_currentTextLength + textSize >= m_textBufferSize || textSize == 0) {
+  if (m_currentDraftTextLength + textSize >= m_textBufferSize || textSize == 0) {
     return false;
   }
-  for (int k = m_currentTextLength; k >= location && k >= 0; k--) {
+  for (int k = m_currentDraftTextLength; k >= location && k >= 0; k--) {
     m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
   }
   strlcpy(&m_draftTextBuffer[location], text, textSize);
   if (location+textSize > 0) {
     m_draftTextBuffer[location+textSize-1] = text[textSize-1];
   }
-  m_currentTextLength += textSize;
+  m_currentDraftTextLength += textSize;
   reload();
   return true;
 }
@@ -151,21 +152,21 @@ void TextField::ContentView::deleteCharPrecedingCursor() {
     return;
   }
   reload();
-  m_currentTextLength--;
+  m_currentDraftTextLength--;
   setCursorLocation(m_currentCursorLocation-1);
-  for (int k = m_currentCursorLocation; k < (signed char)m_currentTextLength; k ++) {
+  for (int k = m_currentCursorLocation; k < (signed char)m_currentDraftTextLength; k ++) {
     m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
   }
-  m_draftTextBuffer[m_currentTextLength] = 0;
+  m_draftTextBuffer[m_currentDraftTextLength] = 0;
   layoutSubviews();
 }
 
 bool TextField::ContentView::deleteEndOfLine() {
-  if (m_currentTextLength == m_currentCursorLocation) {
+  if (m_currentDraftTextLength == m_currentCursorLocation) {
     return false;
   }
   reload();
-  m_currentTextLength = m_currentCursorLocation;
+  m_currentDraftTextLength = m_currentCursorLocation;
   m_draftTextBuffer[m_currentCursorLocation] = 0;
   layoutSubviews();
   return true;
@@ -219,8 +220,9 @@ const char * TextField::text() const {
   return m_contentView.text();
 }
 
-int TextField::textLength() const {
-  return m_contentView.textLength();
+int TextField::draftTextLength() const {
+  assert(isEditing());
+  return m_contentView.draftTextLength();
 }
 
 int TextField::cursorLocation() const{
@@ -236,7 +238,7 @@ void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
   if (isEditing()) {
-    setCursorLocation(textLength());
+    setCursorLocation(draftTextLength());
   }
 }
 
@@ -316,15 +318,15 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setCursorLocation(0);
     return true;
   }
-  if (event == Ion::Events::Right && isEditing() && cursorLocation() < textLength()) {
+  if (event == Ion::Events::Right && isEditing() && cursorLocation() < draftTextLength()) {
     setCursorLocation(cursorLocation()+1);
     return true;
   }
   if (event == Ion::Events::End && isEditing()) {
-    setCursorLocation(textLength());
+    setCursorLocation(draftTextLength());
     return true;
   }
-  if (textFieldShouldFinishEditing(event) && isEditing()) {
+  if (isEditing() && textFieldShouldFinishEditing(event)) {
     char bufferText[ContentView::k_maxBufferSize];
     strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
     strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
@@ -348,7 +350,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setEditing(true);
     /* If the text could not be inserted (buffer is full), we set the cursor
      * at the end of the text. */
-    int nextCursorLocation = textLength();
+    int nextCursorLocation = draftTextLength();
     if (insertTextAtLocation(m_contentView.textBuffer(), cursorLocation())) {
       nextCursorLocation = strlen(m_contentView.draftTextBuffer());
     }
@@ -363,7 +365,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       setEditing(true);
     }
-    int nextCursorLocation = textLength();
+    int nextCursorLocation = draftTextLength();
     if (insertTextAtLocation(event.text(), cursorLocation())) {
       /* All events whose text is longer than 2 have parenthesis. In these cases,
        * we want to position the cursor before the last parenthesis */
@@ -398,7 +400,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       setEditing(true);
     }
-    int nextCursorLocation = textLength();
+    int nextCursorLocation = draftTextLength();
     if (insertTextAtLocation(Clipboard::sharedClipboard()->storedText(), cursorLocation())) {
       nextCursorLocation = cursorLocation() + strlen(Clipboard::sharedClipboard()->storedText());
     }

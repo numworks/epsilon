@@ -33,7 +33,10 @@ public:
   bool shouldApproximateOutput();
 private:
   Poincare::Expression * exactOutput(Poincare::Context * context);
-  char m_inputText[::TextField::maxBufferSize()];
+  /* Buffers holding text expressions have to be longer than the text written
+   * by user (of maximum length TextField::maxBufferSize()) because when we
+   * print an expression we add omitted signs (multiplications, parenthesis...) */
+  char m_inputText[2*::TextField::maxBufferSize()];
   char m_exactOutputText[2*::TextField::maxBufferSize()];
   char m_approximateOutputText[2*::TextField::maxBufferSize()];
   Poincare::Expression * m_input;

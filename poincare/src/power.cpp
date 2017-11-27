@@ -246,12 +246,13 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       if (std::isinf(approx) || std::isnan(approx) || std::fabs(approx)> 1E100) {
         return this;
       }
-      Integer n = static_cast<const Rational *>(operand(1))->numerator();
-      n.setNegative(false);
-      if (Integer::NaturalOrder(n, Integer(k_maxIntegerPower)) > 0) {
+      Rational * exp = static_cast<Rational *>(editableOperand(1));
+      /* First, we check that the simplification does not involve too complex power
+       * of integers (ie 3^999) that would take too much time to compute. */
+      if (RationalExponentInvolvesShouldNotBeReduced(exp)) {
         return this;
       }
-      return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
+      return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
     }
   }
   // e^(i*Pi*r) with r rational
@@ -332,6 +333,11 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
     if (a->operand(0)->type() == Type::Rational) {
+      /* First, we check that the simplification does not involve too complex power
+       * of integers (ie 3^999) that would take too much time to compute. */
+      if (RationalExponentInvolvesShouldNotBeReduced(static_cast<const Rational *>(a->operand(0)))) {
+        return this;
+      }
       Power * p1 = static_cast<Power *>(clone());
       replaceOperand(a, a->editableOperand(1), true);
       Power * p2 = static_cast<Power *>(clone());
@@ -670,6 +676,15 @@ bool Power::isNthRootOfUnity() const {
     return true;
   }
   if (operand(1)->operand(0)->type() == Type::Rational) {
+    return true;
+  }
+  return false;
+}
+
+bool Power::RationalExponentInvolvesShouldNotBeReduced(const Rational * r) {
+  Integer maxIntegerExponent = r->numerator();
+  maxIntegerExponent.setNegative(false);
+  if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxIntegerPower)) > 0) {
     return true;
   }
   return false;

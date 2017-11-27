@@ -49,6 +49,7 @@ private:
   static bool TermIsARationalSquareRootOrRational(const Expression * e);
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
+  static bool RationalExponentInvolvesShouldNotBeReduced(const Rational * r);
   /* Evaluation */
   constexpr static int k_maxApproximatePowerMatrix = 1000;
   constexpr static int k_maxExactPowerMatrix = 100;

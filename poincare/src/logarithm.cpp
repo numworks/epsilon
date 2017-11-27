@@ -153,7 +153,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
      * - either it might be take too many factors... More than k_maxNumberOfPrimeFactors.
      * - Or, it might takes too much time */
     Expression * e = clone();
-    e->replaceOperand(operand(0), new Rational(i), true);
+    e->replaceOperand(e->operand(0), new Rational(i), true);
     if (!isDenominator) {
       return e;
     }

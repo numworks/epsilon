@@ -274,7 +274,7 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (event == Ion::Events::Right && textField->isEditing()) {
     int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
-    if (textField->cursorLocation() > textField->textLength() - scriptExtensionLength - 1) {
+    if (textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength - 1) {
       return true;
     }
   }

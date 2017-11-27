@@ -13,20 +13,6 @@ extern "C" {
 
 namespace Code {
 
-
-ConsoleController::ContentView::ContentView(SelectableTableView * selectabletableView) :
-  m_selectableTableView(selectabletableView)
-{
-}
-
-void ConsoleController::ContentView::layoutSubviews() {
-  m_selectableTableView->setFrame(bounds());
-}
-
-void ConsoleController::ContentView::markAsDirty() {
-  markRectAsDirty(bounds());
-}
-
 ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
@@ -37,7 +23,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   m_editCell(this, this),
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore),
-  m_view(&m_selectableTableView)
+  m_sandboxController(this)
 {
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
@@ -90,14 +76,9 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.pushCommand(command, strlen(command));
   assert(m_outputAccumulationBuffer[0] == '\0');
   runCode(command);
-#ifdef __EMSCRIPTEN__
-  if (isFramebufferModified()) {
-    app()->setFirstResponder(this);
-    return;
-  }
-#endif
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
+
 }
 
 void ConsoleController::removeExtensionIfAny(char * name) {
@@ -112,41 +93,18 @@ void ConsoleController::removeExtensionIfAny(char * name) {
 
 void ConsoleController::viewWillAppear() {
   assert(pythonEnvironmentIsLoaded());
-#ifdef __EMSCRIPTEN__
-  if (isFramebufferModified()) {
-    return;
-  }
-#endif
+  m_sandboxIsDisplayed = false;
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
+  m_editCell.setText("");
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-#ifdef __EMSCRIPTEN__
-  if (isFramebufferModified()) {
-    return;
-  }
-#endif
   app()->setFirstResponder(&m_editCell);
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-#ifdef __EMSCRIPTEN__
-  if (isFramebufferModified()) {
-    if (event == Ion::Events::OK || event == Ion::Events::Back) {
-      didCleanFramebuffer(),
-      m_view.markAsDirty();
-      flushOutputAccumulationBufferToStore();
-      m_consoleStore.deleteLastLineIfEmpty();
-      m_selectableTableView.reloadData();
-      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-      m_editCell.setEditing(true);
-      m_editCell.setText("");
-    }
-    return true;
-  }
-#endif
   if (event == Ion::Events::Up) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
       m_editCell.setEditing(false);
@@ -269,11 +227,9 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   runAndPrintForCommand(text);
-#ifdef __EMSCRIPTEN__
-  if (isFramebufferModified()) {
+  if (m_sandboxIsDisplayed) {
     return true;
   }
-#endif
   m_selectableTableView.reloadData();
   m_editCell.setEditing(true);
   textField->setText("");
@@ -290,6 +246,14 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
   Code::App * codeApp = static_cast<Code::App *>(app());
   codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextField());
   return codeApp->pythonToolbox();
+}
+
+void ConsoleController::displaySandbox() {
+  if (m_sandboxIsDisplayed) {
+    return;
+  }
+  m_sandboxIsDisplayed = true;
+  stackViewController()->push(&m_sandboxController);
 }
 
 /* printText is called by the Python machine.
@@ -315,10 +279,6 @@ void ConsoleController::printText(const char * text, size_t length) {
     appendTextToOutputAccumulationBuffer(text, length-1);
     flushOutputAccumulationBufferToStore();
   }
-}
-
-void ConsoleController::redraw() {
-  m_view.markAsDirty();
 }
 
 void ConsoleController::autoImportScriptAtIndex(int index) {
@@ -389,6 +349,5 @@ bool ConsoleController::copyCurrentLineToClipboard() {
   }
   return false;
 }
-
 
 }

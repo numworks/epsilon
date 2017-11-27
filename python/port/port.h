@@ -12,16 +12,13 @@ class ExecutionEnvironment {
 public:
   ExecutionEnvironment();
   static ExecutionEnvironment * currentExecutionEnvironment();
-  void didModifyFramebuffer();
-  bool isFramebufferModified() const { return m_framebufferHasBeenModified; }
-  void didCleanFramebuffer();
   void runCode(const char * );
+  virtual void displaySandbox() {
+  }
   virtual void printText(const char * text, size_t length) {
   }
-  virtual void redraw() {
-  }
-private:
-  bool m_framebufferHasBeenModified;
+protected:
+  bool m_sandboxIsDisplayed;
 };
 
 void init(void * heapStart, void * heapEnd);

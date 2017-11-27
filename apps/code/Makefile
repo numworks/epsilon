@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/code/,\
   editor_controller.o\
   helpers.o\
   menu_controller.o\
+  sandbox_controller.o\
   script.o\
   script_parameter_controller.o\
   script_store.o\

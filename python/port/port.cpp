@@ -26,7 +26,7 @@ static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
 
 MicroPython::ExecutionEnvironment::ExecutionEnvironment() :
-  m_framebufferHasBeenModified(false)
+  m_sandboxIsDisplayed(false)
 {
 }
 
@@ -34,20 +34,9 @@ MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentEx
   return sCurrentExecutionEnvironment;
 }
 
-void MicroPython::ExecutionEnvironment::didModifyFramebuffer() {
-  m_framebufferHasBeenModified = true;
-}
-
-void MicroPython::ExecutionEnvironment::didCleanFramebuffer() {
-  m_framebufferHasBeenModified = false;
-}
-
 void MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
-
-  KDIonContext::sharedContext()->setOrigin(KDPointZero);
-  KDIonContext::sharedContext()->setClippingRect(KDRect(0, Metric::TitleBarHeight, Ion::Display::Width, Ion::Display::Height - Metric::TitleBarHeight));
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
@@ -93,18 +82,6 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_print_str(&mp_plat_print, "\n");
     /* End of mp_obj_print_exception. */
   }
-
-#ifdef __EMSCRIPTEN__
-#else
-  while (m_framebufferHasBeenModified) {
-    int timeout = 3000;
-    Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-    if (event == Ion::Events::OK || event == Ion::Events::Back) {
-      m_framebufferHasBeenModified = false;
-      redraw();
-    }
-  }
-#endif
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;

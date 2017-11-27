@@ -240,12 +240,6 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
-      double p = a->approximateToScalar<double>(context, angleUnit);
-      double q = operand(1)->approximateToScalar<double>(context, angleUnit);
-      double approx = std::pow(std::fabs(p), std::fabs(q));
-      if (std::isinf(approx) || std::isnan(approx) || std::fabs(approx)> 1E100) {
-        return this;
-      }
       Rational * exp = static_cast<Rational *>(editableOperand(1));
       /* First, we check that the simplification does not involve too complex power
        * of integers (ie 3^999) that would take too much time to compute. */

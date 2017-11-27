@@ -263,6 +263,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
         Expression * o2 = editableOperand(j);
         if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->operand(0)->isIdenticalTo(x)) {
           factorizeSineAndCosine(o1, o2, context, angleUnit);
+          break;
         }
       }
     }
@@ -278,6 +279,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
    * pi^(-1)*pi-> 1
    * i*i -> -1
    * 2^(1/2)*2^(1/2) -> 2
+   * sin(x)*cos(x) -> 1*tan(x)
    * Last, we remove the only rational operand if it is one and not the only
    * operand. */
   i = 1;

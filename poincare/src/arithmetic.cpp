@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-const Integer Arithmetic::k_biggestPrimeFactorizedInteger("10000000000000"); // 1E13
+const Integer Arithmetic::k_biggestPrimeFactorizedInteger("1000000000000"); // 1E12
 const Integer Arithmetic::k_primorial32("525896479052627740771371797072411912900610967452630");
 
 Integer Arithmetic::LCM(const Integer * a, const Integer * b) {
@@ -74,7 +74,7 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
     k++;
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer(primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(1));
     outputFactors[t] = testedPrimeFactor;
-  } while (stopCondition);
+  } while (stopCondition && testedPrimeFactor.isLowerThan(Integer(k_biggestPrimeFactor)));
   outputFactors[t] = std::move(m);
   outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));
 }

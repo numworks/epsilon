@@ -192,13 +192,10 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(new Undefined(), true);
   }
 
-  /* Step 1: We look for square root and sum of square roots (two terms maximum
-   * so far) at the denominator and move them to the numerator. */
-  Expression * r = removeSquareRootsFromDenominator(context, angleUnit);
-  if (r) {
-    return r;
-  }
-
+  /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
+   * - we can assert this step that there is no division by 0:
+   *   for instance, 0^(-2)->undefined
+   * - we save computational time by early escaping for these cases. */
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
@@ -216,13 +213,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (b->isOne()) {
       return replaceWith(editableOperand(0), true);
     }
-    // i^(p/q)
-    if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::IComplex) {
-      Rational r = Rational::Multiplication(*b, Rational(1, 2));
-      return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
-    }
   }
-  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
   if (operand(0)->type() == Type::Rational) {
     Rational * a = static_cast<Rational *>(editableOperand(0));
     // 0^x
@@ -238,6 +229,26 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (a->isOne()) {
       return replaceWith(new Rational(1), true);
     }
+  }
+
+  /* Step 2: We look for square root and sum of square roots (two terms maximum
+   * so far) at the denominator and move them to the numerator. */
+  Expression * r = removeSquareRootsFromDenominator(context, angleUnit);
+  if (r) {
+    return r;
+  }
+
+  if (operand(1)->type() == Type::Rational) {
+    const Rational * b = static_cast<const Rational *>(operand(1));
+    // i^(p/q)
+    if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::IComplex) {
+      Rational r = Rational::Multiplication(*b, Rational(1, 2));
+      return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
+    }
+  }
+  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
+  if (operand(0)->type() == Type::Rational) {
+    Rational * a = static_cast<Rational *>(editableOperand(0));
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
       Rational * exp = static_cast<Rational *>(editableOperand(1));
@@ -570,6 +581,7 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUni
        * p and q integers.
        * We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p) . */
       Integer p = static_cast<const Rational *>(operand(0))->numerator();
+      assert(!p.isZero()); // We eliminated case of form 0^(-1/2) at first step of shallowReduce
       Integer q = static_cast<const Rational *>(operand(0))->denominator();
       // We do nothing for terms of the form sqrt(p)
       if (!q.isOne() || static_cast<const Rational *>(operand(1))->isMinusHalf()) {
@@ -577,7 +589,7 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUni
         if (static_cast<const Rational *>(operand(1))->isHalf()) {
           result = new Multiplication(new Rational(Integer(1), q), sqrt, false);
         } else {
-          result = new Multiplication(new Rational(Integer(1), p), sqrt, false);
+          result = new Multiplication(new Rational(Integer(1), p), sqrt, false); // We use here the assertion that p != 0
         }
         sqrt->shallowReduce(context, angleUnit);
       }

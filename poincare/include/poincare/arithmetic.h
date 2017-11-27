@@ -13,6 +13,10 @@ public:
   constexpr static int k_maxNumberOfPrimeFactors = 32;
   static const Integer k_biggestPrimeFactorizedInteger;
   static const Integer k_primorial32;
+private:
+  /* When decomposing an integer into primes factors, we look for its prime
+   * factors among integer from 2 to 100000000. */
+  constexpr static int k_biggestPrimeFactor = 1E8;
 };
 
 }

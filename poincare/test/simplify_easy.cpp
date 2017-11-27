@@ -519,4 +519,7 @@ QUIZ_CASE(poincare_simplify_easy) {
 
   // This does not work but should not as it is above k_biggestPrimeFactorizedInteger
   assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "1881676377434183981909562699940347954480361860897069^(1/3)");
+
+  assert_parsed_expression_simplify_to("log(26061622162116)", "log(26061622162116)");
+  assert_parsed_expression_simplify_to("log(26061622162116/5)", "log(26061622162116)-log(5)");
 }

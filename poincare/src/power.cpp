@@ -254,7 +254,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       Rational * exp = static_cast<Rational *>(editableOperand(1));
       /* First, we check that the simplification does not involve too complex power
        * of integers (ie 3^999) that would take too much time to compute. */
-      if (RationalExponentInvolvesShouldNotBeReduced(exp)) {
+      if (RationalExponentShouldNotBeReduced(exp)) {
         return this;
       }
       return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
@@ -340,7 +340,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (a->operand(0)->type() == Type::Rational) {
       /* First, we check that the simplification does not involve too complex power
        * of integers (ie 3^999) that would take too much time to compute. */
-      if (RationalExponentInvolvesShouldNotBeReduced(static_cast<const Rational *>(a->operand(0)))) {
+      if (RationalExponentShouldNotBeReduced(static_cast<const Rational *>(a->operand(0)))) {
         return this;
       }
       Power * p1 = static_cast<Power *>(clone());
@@ -687,7 +687,7 @@ bool Power::isNthRootOfUnity() const {
   return false;
 }
 
-bool Power::RationalExponentInvolvesShouldNotBeReduced(const Rational * r) {
+bool Power::RationalExponentShouldNotBeReduced(const Rational * r) {
   Integer maxIntegerExponent = r->numerator();
   maxIntegerExponent.setNegative(false);
   if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxIntegerPower)) > 0) {

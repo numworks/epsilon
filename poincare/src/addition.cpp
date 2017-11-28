@@ -165,14 +165,16 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   // want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d
   Addition * numerator = new Addition();
   for (int i=0; i < numberOfOperands(); i++) {
-    numerator->addOperand(new Multiplication(operand(i), commonDenominator, true));
+    Expression * m = new Multiplication(operand(i), commonDenominator, true);
+    numerator->addOperand(m);
+    m->shallowReduce(context, angleUnit);
   }
   // Step 3: Add the denominator
   Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
   Multiplication * result = new Multiplication(numerator, inverseDenominator, false);
 
   // Step 4: Simplify the numerator to a*d + c*b + e*d
-  numerator->deepReduce(context, angleUnit);
+  numerator->shallowReduce(context, angleUnit);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
   commonDenominator->deepReduce(context, angleUnit);

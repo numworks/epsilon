@@ -30,6 +30,7 @@ public:
   };
   Poincare::Context * localContext() override;
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
+  const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   LocalContext m_localContext;

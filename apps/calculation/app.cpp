@@ -77,4 +77,8 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
   return false;
 }
 
+const char * App::XNT() {
+  return "x";
+}
+
 }

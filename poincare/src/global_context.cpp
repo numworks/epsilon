@@ -45,8 +45,13 @@ Complex<double> * GlobalContext::defaultExpression() {
 }
 
 int GlobalContext::symbolIndex(const Symbol * symbol) const {
-  int index = symbol->name() - 'A';
-  return index;
+  if (symbol->isMatrixSymbol()) {
+    return symbol->name() - (char)Symbol::SpecialSymbols::M0;
+  }
+  if (symbol->isScalarSymbol()) {
+    return symbol->name() - 'A';
+  }
+  return -1;
 }
 
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
@@ -59,11 +64,10 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::IComplex) {
     return &m_i;
   }
-  if (symbol->isMatrixSymbol()) {
-    int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
-    return m_matrixExpressions[indexMatrix];
-  }
   int index = symbolIndex(symbol);
+  if (symbol->isMatrixSymbol()) {
+    return m_matrixExpressions[index];
+  }
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return nullptr;
   }
@@ -74,7 +78,8 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
-  if (symbol->isMatrixSymbol()) {
+  int index = symbolIndex(symbol);
+ if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
     Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
@@ -91,7 +96,6 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
     }
     return;
   }
-  int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }

@@ -176,13 +176,16 @@ void Accordion::moveFreeSpaceAtPosition(int i) {
   assert(i >= 0 && i <= m_historySize);
   cleanFreeSpace();
   int freeSpaceStart = startOfFreeSpace();
+  int newFreeSpaceStart = freeSpaceStart;
   if (freeSpaceStart != i){
 
     // First, move the chars that would be overriden by the free space.
     // The indexes depend on the relative positions of the free space and the
     // new destination.
     int sizeFreeSpace = freeSpaceSize();
-    int len, src, dst, newFreeSpaceStart;
+    int len = 0;
+    int src = 0;
+    int dst = 0;
     if (freeSpaceStart > i) {
       len = freeSpaceStart - i;
       src = i;
@@ -202,7 +205,7 @@ void Accordion::moveFreeSpaceAtPosition(int i) {
     }
   }
 
-  m_startOfLastEditedBuffer = i-1;
+  m_startOfLastEditedBuffer = newFreeSpaceStart-1;
   while (m_startOfLastEditedBuffer > 0 && m_history[m_startOfLastEditedBuffer-1] != 0 ) {
     m_startOfLastEditedBuffer--;
   }

@@ -83,7 +83,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       assert(selectedColumn == 0);
-      editScript(selectedRow);
+      editScriptAtIndex(selectedRow);
       return true;
     } else if (m_shouldDisplayAddScriptRow
         && selectedColumn == 0
@@ -96,33 +96,9 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void MenuController::configureScript() {
-  setParameteredScript();
-  stackViewController()->push(&m_scriptParameterController);
-}
-
-void MenuController::editScript(int scriptIndex) {
-  Script script = m_scriptStore->scriptAtIndex(scriptIndex, ScriptStore::EditableZone::Content);
-  m_editorController.setScript(script);
-  stackViewController()->push(&m_editorController);
-}
-
-void MenuController::setParameteredScript() {
-  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
-}
-
-void MenuController::addScript() {
-  assert(m_scriptStore->numberOfScripts() < k_maxNumberOfScripts);
-  if (m_scriptStore->addNewScript()) {
-    updateAddScriptRowDisplay();
-    m_selectableTableView.reloadData();
-    renameSelectedScript();
-    return;
-  }
-  m_selectableTableView.reloadData();
-}
-
 void MenuController::renameSelectedScript() {
+  assert(m_selectableTableView.selectedRow() >= 0);
+  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
   EvenOddEditableTextCell * myCell = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell());
@@ -135,6 +111,8 @@ void MenuController::renameSelectedScript() {
   }
 
 void MenuController::deleteScriptAtIndex(int i) {
+  assert(i >= 0);
+  assert(i < m_scriptStore->numberOfScripts());
   m_scriptStore->deleteScriptAtIndex(i);
   updateAddScriptRowDisplay();
   m_selectableTableView.reloadData();
@@ -273,7 +251,7 @@ int MenuController::typeAtLocation(int i, int j) {
 }
 
 void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index) {
-  assert(index < m_scriptStore->numberOfScripts());
+  assert(index >= 0 && index < m_scriptStore->numberOfScripts());
   EditableTextCell * editableTextCell = static_cast<EvenOddEditableTextCell *>(cell)->editableTextCell();
   editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
 }
@@ -344,6 +322,31 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
+}
+
+void MenuController::addScript() {
+  assert(m_scriptStore->numberOfScripts() < k_maxNumberOfScripts);
+  if (m_scriptStore->addNewScript()) {
+    updateAddScriptRowDisplay();
+    m_selectableTableView.reloadData();
+    renameSelectedScript();
+    return;
+  }
+  m_selectableTableView.reloadData();
+}
+
+void MenuController::configureScript() {
+  assert(m_selectableTableView.selectedRow() >= 0);
+  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
+  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
+  stackViewController()->push(&m_scriptParameterController);
+}
+
+void MenuController::editScriptAtIndex(int scriptIndex) {
+  assert(scriptIndex >=0 && scriptIndex < m_scriptStore->numberOfScripts());
+  Script script = m_scriptStore->scriptAtIndex(scriptIndex, ScriptStore::EditableZone::Content);
+  m_editorController.setScript(script);
+  stackViewController()->push(&m_editorController);
 }
 
 void MenuController::numberedDefaultScriptName(char * buffer) {

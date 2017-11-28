@@ -181,6 +181,13 @@ bool Symbol::isMatrixSymbol() const {
   return false;
 }
 
+bool Symbol::isScalarSymbol() const {
+  if (m_name >= 'A' && m_name <= 'Z') {
+    return true;
+  }
+  return false;
+}
+
 int Symbol::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
   if (m_name == ((Symbol *)e)->m_name) {

@@ -235,7 +235,7 @@ void print_prime_factorization(Integer * outputFactors, Integer * outputCoeffici
     std::cout << outputFactors[index].approximate<double>();
     std::cout << "^";
     std::cout << outputCoefficients[index].approximate<double>();
-    std::cout << "+";
+    std::cout << "*";
   }
   std::cout <<"  "<< std::endl;
 }

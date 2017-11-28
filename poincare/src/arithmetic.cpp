@@ -3,7 +3,6 @@
 
 namespace Poincare {
 
-const Integer Arithmetic::k_biggestPrimeFactorizedInteger("1000000000000"); // 1E12
 const Integer Arithmetic::k_primorial32("525896479052627740771371797072411912900610967452630");
 
 Integer Arithmetic::LCM(const Integer * a, const Integer * b) {

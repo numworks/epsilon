@@ -148,10 +148,9 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     return new Rational(0);
   }
   assert(!i.isOne());
-  if (Arithmetic::k_primorial32.isLowerThan(i) || Arithmetic::k_biggestPrimeFactorizedInteger.isLowerThan(i)) {
-    /* We do not want to break i in prime factor because
-     * - either it might be take too many factors... More than k_maxNumberOfPrimeFactors.
-     * - Or, it might takes too much time */
+  if (Arithmetic::k_primorial32.isLowerThan(i)) {
+    /* We do not want to break i in prime factor because it might be take too
+     * many factors... More than k_maxNumberOfPrimeFactors. */
     Expression * e = clone();
     e->replaceOperand(e->operand(0), new Rational(i), true);
     if (!isDenominator) {

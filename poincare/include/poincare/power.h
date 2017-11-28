@@ -15,6 +15,7 @@ class Power : public StaticHierarchy<2> {
   friend class SquareRoot;
   friend class Addition;
   friend class Division;
+  friend class Round;
 public:
   Type type() const override;
   Expression * clone() const override;

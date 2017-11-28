@@ -1,6 +1,7 @@
 #include <poincare/round.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
+#include <poincare/power.h>
 
 extern "C" {
 #include <assert.h>
@@ -33,6 +34,9 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
     Rational * r2 = static_cast<Rational *>(editableOperand(1));
     if (!r2->denominator().isOne()) {
       return replaceWith(new Undefined(), true);
+    }
+    if (Power::RationalExponentShouldNotBeReduced(r2)) {
+      return this;
     }
     Rational err = Rational::Power(Rational(10), r2->numerator());
     Rational mult = Rational::Multiplication(*r1, Rational(err));

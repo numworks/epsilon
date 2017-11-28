@@ -17,10 +17,6 @@ public:
   MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
   ConsoleController * consoleController() { return &m_consoleController; }
   StackViewController * stackViewController();
-  void configureScript();
-  void editScript(int scriptIndex);
-  void setParameteredScript();
-  void addScript();
   void renameSelectedScript();
   void deleteScriptAtIndex(int i);
   void reloadConsole();
@@ -79,6 +75,9 @@ private:
   // 9 = strlen("script.py")
   // 2 = maxLength of integers between 1 and 99.
   // 1 = length of null terminating char.
+  void addScript();
+  void configureScript();
+  void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
   void intToText(int i, char * buffer);
   void updateAddScriptRowDisplay();

@@ -169,8 +169,8 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
   /* If mantissa is negative, m_mantissa.writeTextInBuffer is going to add an
    * unwanted '-' in place of the temp char. We store it to replace it back
    * after calling m_mantissa.writeTextInBuffer. */
-  char tempChar;
-  int tempCharPosition;
+  char tempChar = 0;
+  int tempCharPosition = 0;
   if (m_mantissa.isNegative()) {
     currentChar--;
     tempChar = buffer[currentChar];

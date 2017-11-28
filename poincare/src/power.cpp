@@ -293,7 +293,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(editableOperand(1)->editableOperand(0), true);
     }
   }
-  // (a^b)^c -> a^(b+c) if a > 0 or c is integer
+  // (a^b)^c -> a^(b*c) if a > 0 or c is integer
   if (operand(0)->type() == Type::Power) {
     Power * p = static_cast<Power *>(editableOperand(0));
     // Check is a > 0 or c is Integer

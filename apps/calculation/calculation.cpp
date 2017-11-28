@@ -213,7 +213,7 @@ bool Calculation::shouldApproximateOutput() {
     return true;
   }
   return input()->recursivelyMatches([](const Expression * e) {
-        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e);
+        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isScalarSymbol());
       });
 }
 

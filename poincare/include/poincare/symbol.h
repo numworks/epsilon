@@ -36,6 +36,7 @@ public:
   Expression * clone() const override;
   Sign sign() const override;
   bool isMatrixSymbol() const;
+  bool isScalarSymbol() const;
 private:
   const char * textForSpecialSymbols(char name) const;
   /* Comparison */

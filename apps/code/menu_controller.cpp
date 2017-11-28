@@ -52,7 +52,7 @@ void MenuController::didBecomeFirstResponder() {
   if (m_selectableTableView.selectedRow() < 0) {
     m_selectableTableView.selectCellAtLocation(0,0);
   }
-  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
+  assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
   app()->setFirstResponder(&m_selectableTableView);
 }
 

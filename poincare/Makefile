@@ -121,6 +121,7 @@ tests += $(addprefix poincare/test/,\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o
+objs += poincare/src/expression_debug.o
 SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
 endif
 

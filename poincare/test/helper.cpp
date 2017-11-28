@@ -8,19 +8,37 @@
 
 using namespace Poincare;
 
-Expression * parse_expression(const char * expression) {
-  quiz_print(expression);
-  char buffer[200];
-  strlcpy(buffer, expression, sizeof(buffer));
-  for (char *c = buffer; *c; c++) {
+void translate_in_special_chars(char * expression) {
+  for (char *c = expression; *c; c++) {
     switch (*c) {
       case 'E': *c = Ion::Charset::Exponent; break;
       case 'X': *c = Ion::Charset::Exponential; break;
       case 'I': *c = Ion::Charset::IComplex; break;
       case 'R': *c = Ion::Charset::Root; break;
       case 'P': *c = Ion::Charset::SmallPi; break;
+      case '*': *c = Ion::Charset::MultiplicationSign; break;
     }
   }
+}
+
+void translate_in_ASCII_chars(char * expression) {
+  for (char *c = expression; *c; c++) {
+    switch (*c) {
+      case Ion::Charset::Exponent: *c = 'E'; break;
+      case Ion::Charset::Exponential: *c = 'X'; break;
+      case Ion::Charset::IComplex: *c = 'I'; break;
+      case Ion::Charset::Root: *c = 'R'; break;
+      case Ion::Charset::SmallPi: *c = 'P'; break;
+      case Ion::Charset::MultiplicationSign: *c = '*'; break;
+    }
+  }
+}
+
+Expression * parse_expression(const char * expression) {
+  quiz_print(expression);
+  char buffer[200];
+  strlcpy(buffer, expression, sizeof(buffer));
+  translate_in_special_chars(buffer);
   Expression * result = Expression::parse(buffer);
   assert(result);
   return result;

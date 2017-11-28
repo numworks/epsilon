@@ -66,6 +66,8 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context) {
   reset();
   m_input = Expression::parse(c);
+  /* We do not store directly the text enter by the user but its serialization
+   * to be able to compare it to the exact ouput text. */
   m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
   m_exactOutput = input()->clone();
   Expression::Simplify(&m_exactOutput, *context);

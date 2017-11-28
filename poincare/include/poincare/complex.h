@@ -81,7 +81,7 @@ private:
   constexpr static int k_maxComplexBufferLength = 14+14+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const;
+  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, char multiplicationSign) const;
   static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode);
   ExpressionLayout * createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const;
   ExpressionLayout * createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const;

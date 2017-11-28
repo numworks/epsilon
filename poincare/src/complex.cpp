@@ -200,7 +200,7 @@ T Complex<T>::toScalar() const {
 
 template <class T>
 int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
+  return convertComplexToText(buffer, bufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat(), Ion::Charset::MultiplicationSign);
 }
 
 template <class T>
@@ -253,7 +253,7 @@ Complex<U> * Complex<T>::templatedApproximate(Context& context, Expression::Angl
 }
 
 template <class T>
-int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat) const {
+int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat, char multiplicationSpecialChar) const {
   assert(displayMode != Expression::FloatDisplayMode::Default);
   int numberOfChars = 0;
   if (std::isnan(m_a) || std::isnan(m_b)) {
@@ -263,7 +263,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
     if (r() != 1 || th() == 0) {
       numberOfChars = convertFloatToText(r(), buffer, bufferSize, k_numberOfSignificantDigits, displayMode);
       if (r() != 0 && th() != 0 && bufferSize > numberOfChars+1) {
-        buffer[numberOfChars++] = Ion::Charset::MiddleDot;
+        buffer[numberOfChars++] = multiplicationSpecialChar;
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
@@ -278,7 +278,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
       }
       numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
       if (bufferSize > numberOfChars+3) {
-        buffer[numberOfChars++] = Ion::Charset::MiddleDot;
+        buffer[numberOfChars++] = multiplicationSpecialChar;
         buffer[numberOfChars++] = Ion::Charset::IComplex;
         buffer[numberOfChars++] = ')';
         buffer[numberOfChars] = 0;
@@ -297,7 +297,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, Expression::
   }
   if (m_b != 1 && m_b != -1 && m_b != 0) {
     numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, k_numberOfSignificantDigits, displayMode);
-    buffer[numberOfChars++] = Ion::Charset::MiddleDot;
+    buffer[numberOfChars++] = multiplicationSpecialChar;
   }
   if (m_b == -1 && bufferSize > numberOfChars+1) {
     buffer[numberOfChars++] = '-';
@@ -472,7 +472,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 template <class T>
 ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const {
   char buffer[k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, Expression::ComplexFormat::Cartesian);
+  int numberOfChars = convertComplexToText(buffer, k_maxComplexBufferLength, floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
   return new StringLayout(buffer, numberOfChars);
 }
 

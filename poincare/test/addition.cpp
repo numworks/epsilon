@@ -48,9 +48,9 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("A-A+2cos(2)+B-B-cos(2)", "cos(2)");
   assert_parsed_expression_simplify_to("1+A+2+B+3", "6+A+B");
   assert_parsed_expression_simplify_to("-A", "-A");
-  assert_parsed_expression_simplify_to("1/(x+1)+1/(P+2)", "(3+P+x)/(2+P+2*x+P*x)");
-  assert_parsed_expression_simplify_to("1/x^2+1/(x^2*P)", "(1+P)/(P*x^2)");
-  assert_parsed_expression_simplify_to("1/x^2+1/(x^3*P)", "(1+P*x)/(P*x^3)");
+  assert_parsed_expression_simplify_to("1/(x+1)+1/(P+2)", "(3+x+P)/(2+2*x+P+x*P)");
+  assert_parsed_expression_simplify_to("1/x^2+1/(x^2*P)", "(1+P)/(x^2*P)");
+  assert_parsed_expression_simplify_to("1/x^2+1/(x^3*P)", "(1+x*P)/(x^3*P)");
   assert_parsed_expression_simplify_to("4x/x^2+3P/(x^3*P)", "(3+4*x^2)/x^3");
   assert_parsed_expression_simplify_to("A+B-A-B", "0");
   assert_parsed_expression_simplify_to("A+B+(-1)*A+(-1)*B", "0");

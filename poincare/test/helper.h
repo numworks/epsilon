@@ -13,3 +13,4 @@ template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, Poincare::Complex<T> * results, Poincare::Expression::AngleUnit angleUnit = Degree) {
   assert_parsed_expression_evaluates_to(expression, results, 0, 0, angleUnit);
 }
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::Expression::AngleUnit angleUnit = Poincare::Expression::AngleUnit::Radian);

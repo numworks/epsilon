@@ -5,32 +5,92 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <cmath>
+#include "helper.h"
 
 using namespace Poincare;
+constexpr Expression::FloatDisplayMode DecimalDisplay = Expression::FloatDisplayMode::Decimal;
+constexpr Expression::FloatDisplayMode ScientificDisplay = Expression::FloatDisplayMode::Scientific;
+constexpr Expression::ComplexFormat Cartesian = Expression::ComplexFormat::Cartesian;
+constexpr Expression::ComplexFormat Polar = Expression::ComplexFormat::Polar;
 
-void assert_expression_prints_to(Expression * e, const char * result, int bufferSize = 250) {
+template<typename T>
+void assert_float_prints_to(T a, const char * result, Expression::FloatDisplayMode mode = ScientificDisplay, int significantDigits = 7, int bufferSize = 250) {
   quiz_print(result);
 
-  char * buffer = new char[bufferSize];
-  e->writeTextInBuffer(buffer, bufferSize);
+  int tagSize = 8;
+  unsigned char tag = 'O';
+  char * taggedBuffer = new char[bufferSize+2*tagSize];
+  memset(taggedBuffer, tag, bufferSize+2*tagSize);
+  char * buffer = taggedBuffer + tagSize;
 
-  char * currentChar = buffer;
-  while (*currentChar != 0) {
-    if (*currentChar == Ion::Charset::Exponent) {
-      *currentChar = 'E';
-    }
-    if (*currentChar == Ion::Charset::Exponential) {
-      *currentChar = 'e';
-    }
-    if (*currentChar ==  Ion::Charset::IComplex) {
-      *currentChar = 'i';
-    }
-    currentChar++;
+  Complex<T>::convertFloatToText(a, buffer, bufferSize, significantDigits, mode);
+
+  for (int i=0; i<tagSize; i++) {
+    assert(taggedBuffer[i] == tag);
+  }
+  for (int i=tagSize+strlen(buffer)+1; i<bufferSize+2*tagSize; i++) {
+    assert(taggedBuffer[i] == tag);
+  }
+  translate_in_ASCII_chars(buffer);
+
+  assert(strcmp(buffer, result) == 0);
+
+  delete[] taggedBuffer;
+}
+
+void assert_expression_prints_to(Expression * e, const char * result, Expression::FloatDisplayMode mode = ScientificDisplay, Expression::ComplexFormat format = Cartesian, int bufferSize = 250) {
+  quiz_print(result);
+
+  int tagSize = 8;
+  unsigned char tag = 'O';
+  char * taggedBuffer = new char[bufferSize+2*tagSize];
+  memset(taggedBuffer, tag, bufferSize+2*tagSize);
+  char * buffer = taggedBuffer + tagSize;
+
+  Preferences::sharedPreferences()->setComplexFormat(format);
+  Preferences::sharedPreferences()->setDisplayMode(mode);
+  e->writeTextInBuffer(buffer, bufferSize);
+  translate_in_ASCII_chars(buffer);
+
+  for (int i=0; i<tagSize; i++) {
+    assert(taggedBuffer[i] == tag || taggedBuffer[i] == 0);
+  }
+  for (int i=tagSize+strlen(buffer)+1; i<bufferSize+2*tagSize; i++) {
+    assert(taggedBuffer[i] == tag || taggedBuffer[i] == 0);
   }
 
   assert(strcmp(buffer, result) == 0);
 
-  delete[] buffer;
+  delete[] taggedBuffer;
+}
+
+QUIZ_CASE(assert_float_prints_to) {
+  /* We expect 7 significative numbers but do not display 0 */
+  assert_float_prints_to(123.456f, "1.23456E2");
+  assert_float_prints_to(1.234567891011, "1.234568");
+  assert_float_prints_to(2.0f, "2");
+  assert_float_prints_to(123456789.0, "1.234568E8");
+  assert_float_prints_to(0.00000123456789f, "1.234568E-6");
+  assert_float_prints_to(0.99, "9.9E-1");
+  assert_float_prints_to(-123.456789f, "-1.234568E2");
+  assert_float_prints_to(-0.000123456789, "-1.234568E-4");
+  assert_float_prints_to(0.0f, "0");
+  assert_float_prints_to(10000000000000000000000000000.0, "1E28");
+  /* Converting 10000000000000000000000000000.0f into a decimal display would
+   * overflow the number of significant digits set to 7. When this is the case, the
+   * display mode is automatically set to scientific. */
+  assert_float_prints_to(10000000000000000000000000000.0, "1E28", DecimalDisplay);
+  assert_float_prints_to(1000000.0, "1000000", DecimalDisplay);
+  assert_float_prints_to(10000000.0f, "1E7", DecimalDisplay);
+  assert_float_prints_to(0.000001, "0.000001", DecimalDisplay);
+  /* Converting 0.00000001f into a decimal display would also overflow the
+   * number of significant digits set to 7. */
+  assert_float_prints_to(0.0000001f, "1E-7", DecimalDisplay);
+  assert_float_prints_to(-0.000000000000000000000000000000009090018, "-9.090018E-33");
+  assert_float_prints_to(123.421f, "123.4", DecimalDisplay, 4, 6);
+  assert_float_prints_to(123.421, "1.2E2", DecimalDisplay, 5, 6);
+  assert_float_prints_to(9.999999f, "10", DecimalDisplay, 6);
+  assert_float_prints_to(-9.99999904, "-10", DecimalDisplay, 6);
 }
 
 QUIZ_CASE(poincare_rational_to_text) {
@@ -98,4 +158,34 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e14, "9.99999999999995E-7");
   Decimal e15(0.0000009999999999999995);
   assert_expression_prints_to(&e15, "0.000001");
+}
+
+QUIZ_CASE(poincare_complex_to_text) {
+  Complex<double> c0 = Complex<double>::Cartesian(1.0, 2.0);
+  assert_expression_prints_to(&c0, "1+2*I", DecimalDisplay, Cartesian);
+  Complex<float> c1 = Complex<float>::Cartesian(1.0f, 2.0f);
+  assert_expression_prints_to(&c1, "2.236068*X^(1.107149*I)", DecimalDisplay, Polar);
+  Complex<float> c2 = Complex<float>::Cartesian(-1.3f, 2.444f);
+  assert_expression_prints_to(&c2, "-1.3+2.444*I", DecimalDisplay, Cartesian);
+  Complex<double> c3 = Complex<double>::Cartesian(-1.3, 2.444);
+  assert_expression_prints_to(&c3, "2.768237*X^(2.059649*I)", DecimalDisplay, Polar);
+  Complex<float> c4 = Complex<float>::Cartesian(-1.3f, -2.444f);
+  assert_expression_prints_to(&c4, "-1.3-2.444*I", DecimalDisplay, Cartesian);
+  Complex<double> c5 = Complex<double>::Cartesian(64078208.0, 119229408.0);
+  assert_expression_prints_to(&c5, "6.407821E7+1.192294E8*I", DecimalDisplay, Cartesian);
+  Complex<float> c6 = Complex<float>::Cartesian(64078208.0f, 119229408.0f);
+  assert_expression_prints_to(&c6, "1.353576E8*X^(1.07765*I)", DecimalDisplay, Polar);
+  Complex<float> c7 = Complex<float>::Cartesian(64078208.0f, 119229408.0f);
+  assert_expression_prints_to(&c7, "1.353576E8*X^(1.07765*I)", DecimalDisplay, Polar);
+  Complex<float> c8 = Complex<float>::Cartesian(INFINITY, 119229408.0f);
+  assert_expression_prints_to(&c8, "undef", DecimalDisplay, Polar);
+  Complex<float> c9 = Complex<float>::Cartesian(0.0f, 0.0f);
+  assert_expression_prints_to(&c9, "0", DecimalDisplay, Polar);
+  Complex<float> c10 = Complex<float>::Cartesian(NAN, 0.0f);
+  assert_expression_prints_to(&c10, "undef", DecimalDisplay, Polar);
+  Complex<float> c11 = Complex<float>::Cartesian(0.0f, NAN);
+  assert_expression_prints_to(&c11, "undef", DecimalDisplay, Polar);
+  Complex<double> c12 = Complex<double>::Cartesian(NAN, NAN);
+  assert_expression_prints_to(&c12, "undef", DecimalDisplay, Polar);
+
 }

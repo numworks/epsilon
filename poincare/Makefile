@@ -105,14 +105,17 @@ tests += $(addprefix poincare/test/,\
   complex.cpp\
   convert_expression_to_text.cpp\
   division.cpp\
+  factorial.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\
+  logarithm.cpp\
   matrix.cpp\
+  multiplication.cpp\
   parser.cpp\
   power.cpp\
-  product.cpp\
-  simplify_easy.cpp\
+  rational.cpp\
+  simplify_mix.cpp\
   subtraction.cpp\
   symbol.cpp\
   trigo.cpp\

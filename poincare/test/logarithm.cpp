@@ -1,0 +1,28 @@
+#include <quiz.h>
+#include <poincare.h>
+#include <ion.h>
+#include <assert.h>
+#include "helper.h"
+
+using namespace Poincare;
+
+QUIZ_CASE(poincare_logarithm_simplify) {
+  assert_parsed_expression_simplify_to("log(12925)", "2*log(5)+log(11)+log(47)");
+  assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
+  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "(-2*log(5,6))+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
+  assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
+  assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "undef");
+  assert_parsed_expression_simplify_to("ln(R(2))", "ln(2)/2");
+  assert_parsed_expression_simplify_to("ln(X^3)", "3");
+  assert_parsed_expression_simplify_to("log(10)", "1");
+  assert_parsed_expression_simplify_to("log(R(3),R(3))", "1");
+  assert_parsed_expression_simplify_to("log(1/R(2))", "-log(2)/2");
+  assert_parsed_expression_simplify_to("log(-I)", "log(-I)");
+  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "(P*I)/7");
+  assert_parsed_expression_simplify_to("log(10^24)", "24");
+  assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
+  assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");
+  assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
+  assert_parsed_expression_simplify_to("log(26061622162116)", "2*log(2)+log(3)+log(2171801846843)");
+  assert_parsed_expression_simplify_to("log(26061622162116/5)", "2*log(2)+log(3)-log(5)+log(2171801846843)");
+}

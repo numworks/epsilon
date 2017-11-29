@@ -281,13 +281,13 @@ void ConsoleController::printText(const char * text, size_t length) {
   }
 }
 
-void ConsoleController::autoImportScriptAtIndex(int index) {
+void ConsoleController::autoImportScriptAtIndex(int index, bool force) {
   const char * importCommand1 = "from ";
   const char * importCommand2 = " import *";
   int lenImportCommand1 = strlen(importCommand1);
   int lenImportCommand2 = strlen(importCommand2);
   Script script = m_scriptStore->scriptAtIndex(index);
-  if (script.autoImport()) {
+  if (script.autoImport() || force) {
     // Remove the name extension ".py" if there is one.
     int scriptOriginalNameLength = strlen(script.name());
     char scriptNewName[scriptOriginalNameLength];

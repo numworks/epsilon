@@ -28,7 +28,7 @@ public:
   bool pythonEnvironmentIsLoaded();
 
   void autoImport();
-  void autoImportScriptAtIndex(int index);
+  void autoImportScriptAtIndex(int index, bool force = false);
   void runAndPrintForCommand(const char * command);
   void removeExtensionIfAny(char * name);
 

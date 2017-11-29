@@ -180,6 +180,9 @@
         </div>
       </div>
     </div>
+    <div>
+      <a id="screenshot" href="#">Save screenshot</a>
+    </div>
     <script>
 var Module = {
   arguments: ["fr"],
@@ -211,6 +214,12 @@ for (var i=0; i< buttons.length; i++) {
         e.preventDefault();
     }
   }, false);
+
+document.getElementById("screenshot").addEventListener("click", function(e) {
+  var canvas = document.getElementById("screen");
+  window.open(canvas.toDataURL("image/png"));
+  e.preventDefault();
+});
     </script>
   </body>
 </html>

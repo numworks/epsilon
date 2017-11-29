@@ -623,6 +623,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
         Reduce((Expression **)&sub, context, angleUnit);
         if (sub->sign() == Sign::Negative) { // index[0] < index[1]
           factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          factor->editableOperand(1)->shallowReduce(context, angleUnit);
           factorizeBase(editableOperand(i), factor, context, angleUnit);
           editableOperand(i)->shallowReduce(context, angleUnit);
         } else if (sub->sign() == Sign::Unknown) {

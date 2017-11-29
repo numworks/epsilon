@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <cmath>
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+#include "../src/expression_debug.h"
+#include <iostream>
+using namespace std;
+#endif
 
 using namespace Poincare;
 
@@ -70,6 +75,25 @@ void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> *
   }
   delete a;
   delete m;
+}
+
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Expression::AngleUnit angleUnit) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "---- Simplify: " << expression << "----"  << endl;
+#endif
+  Expression::Simplify(&e, globalContext, angleUnit);
+  char buffer[200];
+  e->writeTextInBuffer(buffer, sizeof(buffer));
+  translate_in_ASCII_chars(buffer);
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  print_expression(e, 0);
+  cout << "---- serialize to: " << buffer << " ----"  << endl;
+  cout << "----- compared to: " << simplifiedExpression << " ----\n"  << endl;
+#endif
+  assert(strcmp(buffer, simplifiedExpression) == 0);
+  delete e;
 }
 
 template void assert_parsed_expression_evaluates_to<float>(char const*, Poincare::Complex<float>*, int, int, Poincare::Expression::AngleUnit);

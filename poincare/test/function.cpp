@@ -263,3 +263,37 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex<double> akd[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
   assert_parsed_expression_evaluates_to("root(-1,3)", akd);
 }
+
+QUIZ_CASE(poincare_function_simplify) {
+  assert_parsed_expression_simplify_to("abs(P)", "P");
+  assert_parsed_expression_simplify_to("abs(-P)", "P");
+  assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
+  assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
+  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
+  assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
+  assert_parsed_expression_simplify_to("quo(19,3)", "6");
+  assert_parsed_expression_simplify_to("quo(19,0)", "undef");
+  assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
+  assert_parsed_expression_simplify_to("rem(19,3)", "1");
+  assert_parsed_expression_simplify_to("rem(-19,3)", "2");
+  assert_parsed_expression_simplify_to("rem(19,0)", "undef");
+  assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
+  assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
+  assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
+  assert_parsed_expression_simplify_to("gcd(123,278)", "1");
+  assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
+  assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+  assert_parsed_expression_simplify_to("R(4)", "2");
+  assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
+  assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");
+  assert_parsed_expression_simplify_to("root(27,3)", "3");
+  assert_parsed_expression_simplify_to("round(4.235,2)", "106/25");
+  assert_parsed_expression_simplify_to("round(4.23,0)", "4");
+  assert_parsed_expression_simplify_to("round(4.9,0)", "5");
+  assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
+  assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
+  assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
+  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
+  assert_parsed_expression_simplify_to("re(1/2)", "1/2");
+}

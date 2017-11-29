@@ -190,10 +190,10 @@ bool Symbol::isScalarSymbol() const {
 
 int Symbol::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
-  if (m_name == ((Symbol *)e)->m_name) {
+  if ((uint8_t)m_name == ((uint8_t)static_cast<const Symbol *>(e)->name())) {
     return 0;
   }
-  if ((m_name > ((Symbol *)e)->m_name)) {
+  if ((uint8_t)m_name > ((uint8_t)static_cast<const Symbol *>(e)->name())) {
     return 1;
   }
   return -1;

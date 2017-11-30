@@ -507,12 +507,22 @@ T Integer::approximate() const {
   exponent += numberOfBitsInLastDigit;
 
   uint64_t mantissa = 0;
+  /* Shift the most significant int to the left of the mantissa. The most
+   * significant 1 will be ignore at the end when inserting the mantissa in
+   * the resulting uint64_t (as required by IEEE754). */
   mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
-  int numberOfBits = log2(lastDigit);
+  int numberOfBits = numberOfBitsInLastDigit;
+  /* Complete the mantissa by inserting, from left to right, every digit of the
+   * Integer from the most significant one to the last from. We break when
+   * the mantissa is complete to avoid undefined right shifting (when the shift
+   * width is wider than the length of the digit in bits). */
   while (m_numberOfDigits >= digitIndex) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
+    if (numberOfBits-totalNumberOfBits >= 64) {
+      break;
+    }
     if (totalNumberOfBits > numberOfBits) {
       mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
     } else {
@@ -520,6 +530,11 @@ T Integer::approximate() const {
     }
     digitIndex++;
   }
+  // TODO: Here, we just cast the Integer in float(double). We should round it
+  // to the closest float(double). To do so, we should keep a additional bit
+  // at the end of the mantissa and add it to the mantissa; do not forget to
+  // shift the mantissa if the rounding increase the length in bits of the
+  // mantissa.
 
   if (isZero()) {
     /* This special case for 0 is needed, because the current algorithm assumes

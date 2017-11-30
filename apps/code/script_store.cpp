@@ -109,27 +109,20 @@ bool ScriptStore::isFull() {
   return (numberOfScripts() >= k_maxNumberOfScripts || m_accordion.freeSpaceSize() < k_fullFreeSpaceSizeLimit);
 }
 
-void ScriptStore::scanScriptsForFunctionsAndVariables(
-      void * context,
-      FunctionCallTwoIntArgs storeFunctionsCountForScriptAtIndex,
-      FunctionCallOneIntOneConstCharPointerArg storeFunctionNameStartAtIndex,
-      FunctionCallTwoIntArgs storeGlobalVariablesCountForScriptAtIndex,
-      FunctionCallOneIntOneConstCharPointerArg storeGlobalVariableNameStartAtIndex
-  ) {
-  int totalFunctionsCount = 0;
-  int totalGlobalVariablesCount = 0;
+void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
   for (int scriptIndex = 0; scriptIndex < numberOfScripts(); scriptIndex++) {
     // Handle lexer or parser errors with nlr.
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
       const char * scriptContent = scriptAtIndex(scriptIndex).content();
+      if (scriptContent == nullptr) {
+        continue;
+      }
       mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
       mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
       mp_parse_node_t pn = parseTree.root;
 
       if (!MP_PARSE_NODE_IS_STRUCT(pn)) {
-        storeFunctionsCountForScriptAtIndex(context, scriptIndex, 0);
-        storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, 0);
         mp_parse_tree_clear(&parseTree);
         nlr_pop();
         continue;
@@ -143,10 +136,7 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(
         if (id == nullptr) {
           continue;
         }
-        storeFunctionsCountForScriptAtIndex(context, scriptIndex, 1);
-        storeFunctionNameStartAtIndex(context, totalFunctionsCount, id);
-        totalFunctionsCount++;
-        storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, 0);
+        storeFunction(context, id, scriptIndex);
         mp_parse_tree_clear(&parseTree);
         nlr_pop();
         continue;
@@ -158,10 +148,7 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(
         if (id == nullptr) {
           continue;
         }
-        storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, 1);
-        storeGlobalVariableNameStartAtIndex(context, totalGlobalVariablesCount, id);
-        totalGlobalVariablesCount++;
-        storeFunctionsCountForScriptAtIndex(context, scriptIndex, 0);
+        storeVariable(context, id, scriptIndex);
         mp_parse_tree_clear(&parseTree);
         nlr_pop();
         continue;
@@ -170,16 +157,12 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(
       if (((uint)(MP_PARSE_NODE_STRUCT_KIND(pns))) != k_fileInput2ParseNodeStructKind) {
         // The script node is not of type "file_input_2", thus it will not have main
         // structures of the wanted type.
-        storeFunctionsCountForScriptAtIndex(context, scriptIndex, 0);
-        storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, 0);
         mp_parse_tree_clear(&parseTree);
         nlr_pop();
         continue;
       }
 
       // Count the number of structs in child nodes.
-      int numberOfFunctionsInCurrentScript = 0;
-      int numberOfGlobalVariablesInCurrentScript = 0;
 
       size_t n = MP_PARSE_NODE_STRUCT_NUM_NODES(pns);
       for (size_t i = 0; i < n; i++) {
@@ -191,30 +174,19 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(
             if (id == nullptr) {
               continue;
             }
-            storeFunctionNameStartAtIndex(context, totalFunctionsCount, id);
-            numberOfFunctionsInCurrentScript++;
-            totalFunctionsCount++;
+            storeFunction(context, id, scriptIndex);
           } else if (((uint)(MP_PARSE_NODE_STRUCT_KIND(child_pns))) == k_expressionStatementParseNodeStructKind) {
             const char * id = structID(child_pns);
             if (id == nullptr) {
               continue;
             }
-            storeGlobalVariableNameStartAtIndex(context, totalGlobalVariablesCount, id);
-            numberOfGlobalVariablesInCurrentScript++;
-            totalGlobalVariablesCount++;
+            storeVariable(context, id, scriptIndex);
           }
         }
       }
 
-      storeFunctionsCountForScriptAtIndex(context, scriptIndex, numberOfFunctionsInCurrentScript);
-      storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, numberOfGlobalVariablesInCurrentScript);
-
       mp_parse_tree_clear(&parseTree);
       nlr_pop();
-    } else {
-      // The lexer or the parser failed.
-      storeFunctionsCountForScriptAtIndex(context, scriptIndex, 0);
-      storeGlobalVariablesCountForScriptAtIndex(context, scriptIndex, 0);
     }
   }
 }

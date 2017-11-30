@@ -35,15 +35,8 @@ public:
   bool isFull();
 
   /* Provide scripts content information */
-  typedef void (* FunctionCallTwoIntArgs)(void * context, int n1, int n2);
-  typedef void (* FunctionCallOneIntOneConstCharPointerArg)(void * context, int n, const char * p1);
-  void scanScriptsForFunctionsAndVariables(
-      void * context,
-      FunctionCallTwoIntArgs storeFunctionsCountForScriptAtIndex,
-      FunctionCallOneIntOneConstCharPointerArg storeFunctionNameStartAtIndex,
-      FunctionCallTwoIntArgs storeGlobalVariablesCountForScriptAtIndex,
-      FunctionCallOneIntOneConstCharPointerArg storeGlobalVariableNameStartAtIndex
-  );
+  typedef void (* ScanCallback)(void * context, const char * p, int n);
+  void scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction,ScanCallback storeVariable);
 
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;

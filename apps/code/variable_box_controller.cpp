@@ -14,23 +14,11 @@ namespace Code {
 
 VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore) :
   ViewController(parentResponder),
-  m_currentDepth(0),
-  m_firstSelectedRow(0),
-  m_previousSelectedRow(0),
-  m_scriptFunctionsCount(-1),
-  m_scriptVariablesCount(-1),
+  m_scriptNodesCount(0),
   m_menuController(menuController),
   m_scriptStore(scriptStore),
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
 {
-  for (int i = 0; i < ScriptStore::k_maxNumberOfScripts; i++) {
-    m_functionDefinitionsCount[i] = 0;
-    m_globalVariablesCount[i] = 0;
-  }
-  for (int i = 0; i < k_functionsAndVarsNamePointersArrayLength; i++) {
-    m_functionNamesPointers[i] = nullptr;
-    m_globalVariablesNamesPointers[i] = nullptr;
-  }
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setFirstTextColor(KDColorBlack);
     m_leafCells[i].setSecondTextColor(Palette::GreyDark);
@@ -51,30 +39,14 @@ void VariableBoxController::ContentViewController::reloadData() {
   m_selectableTableView.reloadData();
 }
 
-void VariableBoxController::ContentViewController::resetDepth() {
-  m_currentDepth = 0;
+void VariableBoxController::ContentViewController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
+  m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
+  m_scriptNodesCount++;
 }
 
-void VariableBoxController::ContentViewController::setFunctionsCountInScriptAtIndex(int functionsCount, int scriptIndex) {
-  assert(functionsCount >= 0);
-  assert(scriptIndex >= 0 && scriptIndex < ScriptStore::k_maxNumberOfScripts);
-  m_functionDefinitionsCount[scriptIndex] = functionsCount;
-}
-
-void VariableBoxController::ContentViewController::setFunctionNameAtIndex(const char * functionName, int functionIndex) {
-  assert(functionIndex >= 0 && functionIndex < k_functionsAndVarsNamePointersArrayLength);
-  m_functionNamesPointers[functionIndex] = functionName;
-}
-
-void VariableBoxController::ContentViewController::setGlobalVariablesCountInScriptAtIndex(int globalVariablesCount, int scriptIndex) {
-  assert(globalVariablesCount >= 0);
-  assert(scriptIndex >= 0 && scriptIndex < ScriptStore::k_maxNumberOfScripts);
-  m_globalVariablesCount[scriptIndex] = globalVariablesCount;
-}
-
-void VariableBoxController::ContentViewController::setGlobalVariableNameAtIndex(const char * globalVariableName, int globalVariableIndex) {
-  assert(globalVariableIndex >= 0 && globalVariableIndex < k_functionsAndVarsNamePointersArrayLength);
-  m_globalVariablesNamesPointers[globalVariableIndex] = globalVariableName;
+void VariableBoxController::ContentViewController::addVariableAtIndex(const char * variableName, int scriptIndex) {
+  m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
+  m_scriptNodesCount++;
 }
 
 const char * VariableBoxController::ContentViewController::title() {
@@ -83,35 +55,15 @@ const char * VariableBoxController::ContentViewController::title() {
 
 void VariableBoxController::ContentViewController::viewWillAppear() {
   m_menuController->loadPythonIfNeeded();
-  for (int i = 0; i < ScriptStore::k_maxNumberOfScripts; i++) {
-    m_functionDefinitionsCount[i] = 0;
-    m_globalVariablesCount[i] = 0;
-  }
+  m_scriptNodesCount = 0;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
-      this,
-      [](void * context, int scriptIndex, int functionsCount) {
+    this,
+    [](void * context, const char * functionName, int scriptIndex) {
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
-      cvc->setFunctionsCountInScriptAtIndex(functionsCount, scriptIndex);
-      },
-      [](void * context, int functionIndex, const char * functionName) {
+      cvc->addFunctionAtIndex(functionName, scriptIndex);},
+    [](void * context, const char * variableName, int scriptIndex) {
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
-      cvc->setFunctionNameAtIndex(functionName, functionIndex);
-      },
-      [](void * context, int scriptIndex, int globalVariablesCount) {
-      VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
-      cvc->setGlobalVariablesCountInScriptAtIndex(globalVariablesCount, scriptIndex);
-      },
-      [](void * context, int globalVariableIndex, const char * globalVariableName) {
-      VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
-      cvc->setGlobalVariableNameAtIndex(globalVariableName, globalVariableIndex);
-      });
-
-  m_scriptFunctionsCount = 0;
-  m_scriptVariablesCount = 0;
-  for (int i = 0; i < ScriptStore::k_maxNumberOfScripts; i++) {
-    m_scriptFunctionsCount+= m_functionDefinitionsCount[i];
-    m_scriptVariablesCount+= m_globalVariablesCount[i];
-  }
+      cvc->addVariableAtIndex(variableName, scriptIndex);});
 }
 
 void VariableBoxController::ContentViewController::viewDidDisappear() {
@@ -122,43 +74,22 @@ void VariableBoxController::ContentViewController::viewDidDisappear() {
 void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_selectableTableView.scrollToCell(0,0);
-  selectCellAtLocation(0, m_firstSelectedRow);
+  selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back && m_currentDepth == 0) {
-    m_firstSelectedRow = 0;
+  if (event == Ion::Events::Back) {
     app()->dismissModalViewController();
     return true;
   }
-  if (event == Ion::Events::Left && m_currentDepth == 0) {
+  if (event == Ion::Events::Left) {
     return true;
   }
-  if (event == Ion::Events::Back || event == Ion::Events::Left) {
-    assert(m_currentDepth == 1);
-    m_firstSelectedRow = m_previousSelectedRow;
-    m_selectableTableView.deselectTable();
-    m_currentDepth = 0;
-    app()->setFirstResponder(this);
-    return true;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && m_currentDepth == 0)) {
-    if (m_currentDepth == 0) {
-      // Select a submenu from the Root Menu
-      m_previousSelectedRow = selectedRow();
-      m_firstSelectedRow = 0;
-      m_selectableTableView.deselectTable();
-      m_currentDepth = 1;
-      app()->setFirstResponder(this);
-      return true;
-    }
-    // Select a leaf in a submenu
-    m_firstSelectedRow = 0;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     DoubleBufferTextCell * selectedTextCell = static_cast<DoubleBufferTextCell *>(m_selectableTableView.selectedCell());
     insertTextInCaller(selectedTextCell->firstText());
     m_selectableTableView.deselectTable();
-    m_currentDepth = 0;
     app()->dismissModalViewController();
     return true;
   }
@@ -166,66 +97,24 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
 }
 
 int VariableBoxController::ContentViewController::numberOfRows() {
-  if (m_currentDepth == 0) {
-    return k_numberOfMenuRows;
-  }
-  assert(m_currentDepth == 1);
-  if (m_previousSelectedRow == 0) {
-    return m_scriptFunctionsCount;
-  }
-  assert(m_previousSelectedRow == 1);
-  return m_scriptVariablesCount;
+  return m_scriptNodesCount < k_maxScriptNodesCount ? m_scriptNodesCount : k_maxScriptNodesCount;
 }
 
 HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index, int type) {
-  assert(type < 2);
-  assert(index >= 0);
-  if (type == k_leafType) {
-    assert(index < k_maxNumberOfDisplayedRows);
-    return &m_leafCells[index];
-  }
-  assert(type == k_nodeType);
-  assert(index < k_numberOfMenuRows);
-  return &m_nodeCells[index];
+  assert(type == k_leafType);
+  assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
+  return &m_leafCells[index];
 }
 
 int VariableBoxController::ContentViewController::reusableCellCount(int type) {
-  assert(type < 2);
-  if (type == k_leafType) {
-    return k_maxNumberOfDisplayedRows;
-  }
-  assert (type == k_nodeType);
-  return k_numberOfMenuRows;
+  assert(type == k_leafType);
+  return k_maxNumberOfDisplayedRows;
 }
 
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (m_currentDepth == 0) {
-    MessageTableCellWithChevron * myCell = static_cast<MessageTableCellWithChevron *>(cell);
-    I18n::Message nodeMessages[2] = {I18n::Message::Functions, I18n::Message::Variables};
-    myCell->setMessage(nodeMessages[index]);
-    return;
-  }
-  assert(m_currentDepth == 1);
   DoubleBufferTextCell * myCell = static_cast<DoubleBufferTextCell *>(cell);
-  if (m_previousSelectedRow == 0) {
-    myCell->setFirstText(m_functionNamesPointers[index]);
-    int scriptIndex = -1;
-    int functionsCount = 0;
-    while (functionsCount < index + 1 && scriptIndex < ScriptStore::k_maxNumberOfScripts) {
-      scriptIndex++;
-      functionsCount+= m_functionDefinitionsCount[scriptIndex];
-    }
-    myCell->setSecondText(m_scriptStore->scriptAtIndex(scriptIndex).name());
-  } else {
-    myCell->setFirstText(m_globalVariablesNamesPointers[index]);
-    int scriptIndex = -1;
-    int globalVariablesCount = 0;
-    while (globalVariablesCount < index + 1 && scriptIndex < ScriptStore::k_maxNumberOfScripts) {
-      scriptIndex++;
-      globalVariablesCount+= m_globalVariablesCount[scriptIndex];
-    }
-    myCell->setSecondText(m_scriptStore->scriptAtIndex(scriptIndex).name());
-  }
+  myCell->setFirstText(m_scriptNodes[index].name());
+  myCell->setSecondText(m_scriptStore->scriptAtIndex(m_scriptNodes[index].scriptIndex()).name());
 }
 
 KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
@@ -250,9 +139,6 @@ int VariableBoxController::ContentViewController::indexFromCumulatedHeight(KDCoo
 }
 
 int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
-  if (m_currentDepth == 0) {
-    return k_nodeType;
-  }
   return k_leafType;
 }
 
@@ -296,7 +182,6 @@ void VariableBoxController::setTextAreaCaller(TextArea * textArea) {
 
 void VariableBoxController::viewWillAppear() {
   StackViewController::viewWillAppear();
-  m_contentViewController.resetDepth();
   m_contentViewController.reloadData();
 }
 

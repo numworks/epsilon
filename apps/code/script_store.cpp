@@ -16,8 +16,8 @@ ScriptStore::ScriptStore() :
   m_accordion(m_scriptData, k_scriptDataSize)
 {
   addScriptFromTemplate(ScriptTemplate::Factorial());
-  addScriptFromTemplate(ScriptTemplate::Fibonacci());
   addScriptFromTemplate(ScriptTemplate::Mandelbrot());
+  addScriptFromTemplate(ScriptTemplate::Polynomial());
 }
 
 const Script ScriptStore::scriptAtIndex(int index, EditableZone zone) {

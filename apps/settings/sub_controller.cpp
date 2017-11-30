@@ -4,6 +4,7 @@
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 
@@ -11,8 +12,9 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
+  m_editableCell(&m_selectableTableView, this, m_draftTextBuffer),
   m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
-    k_topBottomMargin, Metric::CommonLeftMargin, this),
+    k_topBottomMargin, Metric::CommonLeftMargin, this, this),
   m_messageTreeModel(nullptr)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
@@ -28,6 +30,8 @@ SubController::SubController(Responder * parentResponder) :
   for (int i = 0; i < 2; i++) {
     m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);
   }
+  m_editableCell.setMessage(I18n::Message::SignificantFigures);
+  m_editableCell.setMessageFontSize(KDText::FontSize::Large);
 }
 
 SubController::~SubController() {
@@ -50,13 +54,8 @@ View * SubController::view() {
   return &m_selectableTableView;
 }
 
-void SubController::didEnterResponderChain(Responder * previousResponder) {
-  if (previousResponder->commonAncestorWith(this) == parentResponder()) {
-    /* We want to select the prefered SettingMessageTree only when the previous page
-     * was the main setting page. We do not to change the selection when
-     * dismissing a pop-up for instance. */
-    selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
-  }
+void SubController::didBecomeFirstResponder() {
+  selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
   if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
     m_selectableTableView.reloadData();
   }
@@ -94,6 +93,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     /* Generic behaviour of preference menu*/
+    assert(m_messageTreeModel->label() != I18n::Message::DisplayMode || selectedRow() != numberOfRows()-1); // In that case, events OK and EXE are handled by the cell
     setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
     AppsContainer * myContainer = (AppsContainer * )app()->container();
     myContainer->refreshPreferences();
@@ -115,28 +115,68 @@ int SubController::numberOfRows() {
   return 0;
 }
 
-HighlightCell * SubController::reusableCell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
-  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
+HighlightCell * SubController::reusableCell(int index, int type) {
+  if (type == 2) {
+    assert(index == 0);
+    return &m_editableCell;
+  } else if (type == 1) {
+    assert(index >= 0 && index < 2);
     return &m_complexFormatCells[index];
   }
+  assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_cells[index];
 }
 
-int SubController::reusableCellCount() {
-  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
-    return 2;
+int SubController::reusableCellCount(int type) {
+  switch (type) {
+    case 0:
+      return k_totalNumberOfCell;
+    case 1:
+      return 2;
+    case 2:
+      return 1;
+    default:
+      assert(false);
+      return 0;
   }
-  return k_totalNumberOfCell;
 }
 
-KDCoordinate SubController::cellHeight() {
+int SubController::typeAtLocation(int i, int j) {
+  if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
+    return 1;
+  }
+  if (m_messageTreeModel->label() == I18n::Message::DisplayMode && j == numberOfRows()-1) {
+    return 2;
+  }
+  return 0;
+}
+
+KDCoordinate SubController::rowHeight(int j) {
   return Metric::ParameterCellHeight;
+}
+
+KDCoordinate SubController::cumulatedHeightFromIndex(int j) {
+  return rowHeight(0) * j;
+}
+
+int SubController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  KDCoordinate height = rowHeight(0);
+  if (height == 0) {
+    return 0;
+  }
+  return (offsetY - 1) / height;
 }
 
 void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_messageTreeModel->label() == I18n::Message::ComplexFormat) {
+    return;
+  }
+  /* Number of significants figure row */
+  if (m_messageTreeModel->label() == I18n::Message::DisplayMode && index == numberOfRows()-1) {
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
+    char buffer[3];
+    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).writeTextInBuffer(buffer, 3);
+    myCell->setAccessoryText(buffer);
     return;
   }
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
@@ -179,6 +219,56 @@ void SubController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 
+bool SubController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return (event == Ion::Events::Up && selectedRow() > 0)
+     || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+}
+
+bool SubController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  Context * globalContext = textFieldDelegateApp()->localContext();
+  float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
+  if (std::isnan(floatBody) || std::isinf(floatBody)) {
+    floatBody = PrintFloat::k_numberOfPrintedSignificantDigits;
+  }
+  if (floatBody < 1) {
+   floatBody = 1;
+  }
+  if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
+    floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
+  }
+  Preferences::sharedPreferences()->setNumberOfSignificantDigits((char)std::round(floatBody));
+  m_selectableTableView.reloadCellAtLocation(0, selectedRow());
+  if (event == Ion::Events::Up || event == Ion::Events::OK) {
+    m_selectableTableView.handleEvent(event);
+  }
+  return true;
+}
+
+bool SubController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Backspace && !textField->isEditing()) {
+    textField->setEditing(true);
+    return true;
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
+void SubController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (m_messageTreeModel->label() != I18n::Message::DisplayMode) {
+    return;
+  }
+  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
+    return;
+  }
+  if (previousSelectedCellY == numberOfRows()-1) {
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    myCell->setEditing(false);
+  }
+  if (t->selectedRow() == numberOfRows() -1) {
+    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
+    app()->setFirstResponder(myNewCell);
+  }
+}
+
 StackViewController * SubController::stackController() const {
   return (StackViewController *)parentResponder();
 }
@@ -208,5 +298,8 @@ int SubController::valueIndexForPreference(I18n::Message message) {
   return 0;
 }
 
+Shared::TextFieldDelegateApp * SubController::textFieldDelegateApp() {
+  return (Shared::TextFieldDelegateApp *)app();
+}
 
 }

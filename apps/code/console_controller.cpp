@@ -55,6 +55,7 @@ bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
 
 void ConsoleController::unloadPythonEnvironment() {
   if (pythonEnvironmentIsLoaded()) {
+    m_consoleStore.startNewSession();
     MicroPython::deinit();
     free(m_pythonHeap);
     m_pythonHeap = nullptr;

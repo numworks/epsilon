@@ -1,4 +1,5 @@
 #include <poincare/preferences.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -7,7 +8,8 @@ static Preferences s_preferences;
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::FloatDisplayMode::Decimal),
-  m_complexFormat(Expression::ComplexFormat::Cartesian)
+  m_complexFormat(Expression::ComplexFormat::Cartesian),
+  m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
 }
 
@@ -20,9 +22,7 @@ Expression::AngleUnit Preferences::angleUnit() const {
 }
 
 void Preferences::setAngleUnit(Expression::AngleUnit angleUnit) {
-  if (angleUnit != m_angleUnit) {
-    m_angleUnit = angleUnit;
-  }
+  m_angleUnit = angleUnit;
 }
 
 Expression::FloatDisplayMode Preferences::displayMode() const {
@@ -30,9 +30,7 @@ Expression::FloatDisplayMode Preferences::displayMode() const {
 }
 
 void Preferences::setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode) {
-  if (FloatDisplayMode != m_displayMode) {
-    m_displayMode = FloatDisplayMode;
-  }
+  m_displayMode = FloatDisplayMode;
 }
 
 Expression::ComplexFormat Preferences::complexFormat() const {
@@ -40,9 +38,15 @@ Expression::ComplexFormat Preferences::complexFormat() const {
 }
 
 void Preferences::setComplexFormat(Expression::ComplexFormat complexFormat) {
-  if (complexFormat != m_complexFormat) {
-    m_complexFormat = complexFormat;
-  }
+  m_complexFormat = complexFormat;
+}
+
+char Preferences::numberOfSignificantDigits() const {
+  return m_numberOfSignificantDigits;
+}
+
+void Preferences::setNumberOfSignificantDigits(char numberOfSignificantDigits) {
+  m_numberOfSignificantDigits = numberOfSignificantDigits;
 }
 
 }

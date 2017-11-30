@@ -15,10 +15,13 @@ public:
   void setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode);
   Expression::ComplexFormat complexFormat() const;
   void setComplexFormat(Expression::ComplexFormat complexFormat);
+  char numberOfSignificantDigits() const;
+  void setNumberOfSignificantDigits(char numberOfSignificantDigits);
 private:
   Expression::AngleUnit m_angleUnit;
   Expression::FloatDisplayMode m_displayMode;
   Expression::ComplexFormat m_complexFormat;
+  char m_numberOfSignificantDigits;
 };
 
 }

@@ -437,11 +437,11 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   int numberOfCharInSuperscript = 0;
 
   if (std::isnan(r()) || (std::isnan(th()) && r() != 0)) {
-    numberOfCharInBase = convertFloatToText(NAN, bufferBase, PrintFloat::k_maxComplexBufferLength, PrintFloat::k_numberOfPrintedSignificantDigits, floatDisplayMode);
+    numberOfCharInBase = convertFloatToText(NAN, bufferBase, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     return new StringLayout(bufferBase, numberOfCharInBase);
   }
   if (r() != 1 || th() == 0) {
-    numberOfCharInBase = convertFloatToText(r(), bufferBase, PrintFloat::k_maxFloatBufferLength, PrintFloat::k_numberOfPrintedSignificantDigits, floatDisplayMode);
+    numberOfCharInBase = convertFloatToText(r(), bufferBase, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     if (r() != 0 && th() != 0) {
       bufferBase[numberOfCharInBase++] = Ion::Charset::MiddleDot;
     }
@@ -452,7 +452,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   }
 
   if (r() != 0 && th() != 0) {
-    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, PrintFloat::k_maxFloatBufferLength, PrintFloat::k_numberOfPrintedSignificantDigits, floatDisplayMode);
+    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::MiddleDot;
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
     bufferSuperscript[numberOfCharInSuperscript] = 0;
@@ -466,7 +466,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 template <class T>
 ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const {
   char buffer[PrintFloat::k_maxComplexBufferLength];
-  int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, PrintFloat::k_numberOfPrintedSignificantDigits, floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
+  int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
   return new StringLayout(buffer, numberOfChars);
 }
 

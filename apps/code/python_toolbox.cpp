@@ -267,7 +267,7 @@ bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = selectedMessageTree;
   const char * editedText = I18n::translate(node->insertedText());
-  char strippedEditedText[strlen(editedText)];
+  char strippedEditedText[strlen(editedText)+1];
   Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText);
   m_action(sender(), const_cast<const char *>(strippedEditedText));
   app()->dismissModalViewController();

@@ -371,18 +371,11 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance) */
-  T truncatedMantissa = (int)(f * std::pow(10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-  if (std::isinf(truncatedMantissa) || std::isnan(truncatedMantissa)) {
-    truncatedMantissa = (int)(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-    truncatedMantissa = std::copysign(truncatedMantissa, f);
+  T newLogBase10 = mantissa != 0 ? std::log10(std::fabs(mantissa/std::pow((T)10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)))) : 0;
+  if (std::isnan(newLogBase10) || std::isinf(newLogBase10)) {
+    newLogBase10 = std::log10(std::fabs((T)mantissa)) - (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
   }
-  if (mantissa != truncatedMantissa) {
-    T newLogBase10 = mantissa != 0 ? std::log10(std::fabs(mantissa/std::pow((T)10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)))) : 0;
-    if (std::isnan(newLogBase10) || std::isinf(newLogBase10)) {
-      newLogBase10 = std::log10(std::fabs((T)mantissa)) - (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
-    }
-    exponentInBase10 = std::floor(newLogBase10);
-  }
+  exponentInBase10 = std::floor(newLogBase10);
   int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
     1 : exponentInBase10+1;
 

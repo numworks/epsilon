@@ -34,17 +34,22 @@ static inline int8_t sign(bool negative) {
 
 // Constructors
 
+static_assert(sizeof(Integer::double_native_int_t) == 2*sizeof(Integer::native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
+static_assert(sizeof(Integer::native_int_t) == sizeof(Integer::native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
+
 Integer::Integer(double_native_int_t i) {
   double_native_uint_t j = i < 0 ? -i : i;
-  if (j <= 0xFFFFFFFF) {
-    m_digit = j;
-    m_numberOfDigits = 1;
+  native_uint_t * digits = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *digits;
+  native_uint_t mostSignificantDigit = *(digits+1);
+  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  if (m_numberOfDigits == 1) {
+    m_digit = leastSignificantDigit;
   } else {
     native_uint_t * digits = new native_uint_t [2];
-    digits[0] = j & 0xFFFFFFFF;
-    digits[1] = (j >> 32) & 0xFFFFFFFF;
+    digits[0] = leastSignificantDigit;
+    digits[1] = mostSignificantDigit;
     m_digits = digits;
-    m_numberOfDigits = 2;
   }
   m_negative = i < 0;
 }
@@ -597,8 +602,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[size] = 0;
 
   // Flip the string
-  int startChar = isNegative() ? 1 : 0;
-  for (int i=startChar, j=size-1 ; i < j ; i++, j--) {
+  for (int i=m_negative, j=size-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;

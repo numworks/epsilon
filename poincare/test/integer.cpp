@@ -9,7 +9,7 @@ QUIZ_CASE(poincare_integer) {
   assert(Integer("123").isEqualTo(Integer(123)));
   assert(!Integer("-123").isEqualTo(Integer(123)));
   assert(Integer("-123").isEqualTo(Integer(-123)));
-  //assert(Integer("0123") == Integer(123));
+  assert(Integer((int64_t)1234567891011121314).isEqualTo(Integer((int64_t)1234567891011121314)));
   //FIXME: assert(Integer("0x2BABE") == Integer(178878));
   //FIXME: assert(Integer("0b1011") == Integer(11));
 }

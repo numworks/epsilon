@@ -101,18 +101,18 @@ int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
 }
 
 void ConsoleStore::push(const char marker, const char * text, size_t length) {
-  // TODO: Verify that the text field does not accept texts that are bigger than
-  // k_historySize, or put an alert message if the command is too big.
-  assert(ConsoleLine::sizeOfConsoleLine(length) < k_historySize);
-
+  size_t textLength = length;
+  if (ConsoleLine::sizeOfConsoleLine(length) > k_historySize - 1) {
+    textLength = k_historySize - 1 - 1 - 1; // Marker, null termination and null marker.
+  }
   int i = indexOfNullMarker();
   // If needed, make room for the text we want to push.
-  while (i + ConsoleLine::sizeOfConsoleLine(length) > k_historySize - 1) {
+  while (i + ConsoleLine::sizeOfConsoleLine(textLength) > k_historySize - 1) {
     deleteFirstLine();
     i = indexOfNullMarker();
   }
   m_history[i] = marker;
-  strlcpy(&m_history[i+1], text, length+1);
+  strlcpy(&m_history[i+1], text, textLength+1);
   m_history[i+1+length+1] = 0;
 }
 

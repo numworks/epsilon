@@ -6,7 +6,7 @@
 #include "../shared/message_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"
-#include "toolbox.h"
+#include "python_toolbox.h"
 #include "variable_box_controller.h"
 
 namespace Code {
@@ -30,17 +30,17 @@ public:
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   VariableBoxController * scriptsVariableBoxController() { return &m_variableBoxController; }
-  Toolbox * pythonToolbox() { return &m_toolbox; }
-  Toolbox::Action toolboxActionForTextArea() { return m_toolboxActionForTextArea; }
-  Toolbox::Action toolboxActionForTextField() { return m_toolboxActionForTextField; }
+  PythonToolbox * pythonToolbox() { return &m_toolbox; }
+  PythonToolbox::Action toolboxActionForTextArea() { return m_toolboxActionForTextArea; }
+  PythonToolbox::Action toolboxActionForTextField() { return m_toolboxActionForTextField; }
 private:
   App(Container * container, Snapshot * snapshot);
   ButtonRowController m_listFooter;
   MenuController m_menuController;
   StackViewController m_codeStackViewController;
-  Toolbox m_toolbox;
-  Toolbox::Action m_toolboxActionForTextArea;
-  Toolbox::Action m_toolboxActionForTextField;
+  PythonToolbox m_toolbox;
+  PythonToolbox::Action m_toolboxActionForTextArea;
+  PythonToolbox::Action m_toolboxActionForTextField;
   VariableBoxController m_variableBoxController;
 };
 

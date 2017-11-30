@@ -1,5 +1,5 @@
-#ifndef CODE_TOOLBOX_H
-#define CODE_TOOLBOX_H
+#ifndef CODE_PYTHON_TOOLBOX_H
+#define CODE_PYTHON_TOOLBOX_H
 
 #include <apps/i18n.h>
 #include <escher.h>
@@ -8,10 +8,10 @@
 
 namespace Code {
 
-class Toolbox : public ::Toolbox {
+class PythonToolbox : public Toolbox {
 public:
   typedef void (*Action)(void * sender, const char * text);
-  Toolbox();
+  PythonToolbox();
   void setAction(Action action);
 
   // StackViewController

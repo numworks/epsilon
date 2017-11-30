@@ -23,12 +23,9 @@ private:
     void setTextFieldCaller(TextField * textField);
     void setTextAreaCaller(TextArea * textArea);
     void reloadData();
-    void resetDepth();
 
-    void setFunctionsCountInScriptAtIndex(int functionsCount, int scriptIndex);
-    void setFunctionNameAtIndex(const char * functionName, int functionIndex);
-    void setGlobalVariablesCountInScriptAtIndex(int scriptIndex, int globalVariablesCount);
-    void setGlobalVariableNameAtIndex(const char * globalVariableName, int globalVariableIndex);
+    void addFunctionAtIndex(const char * functionName, int scriptIndex);
+    void addVariableAtIndex(const char * variableName, int scriptIndex);
 
     /* ViewController */
     const char * title() override;
@@ -50,29 +47,42 @@ private:
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
   private:
+    class ScriptNode {
+      public:
+        enum class Type {
+          Function = 0,
+          Variable = 1
+        };
+        ScriptNode() :
+          m_type(Type::Function), m_name(nullptr), m_scriptIndex(0) {}
+        static ScriptNode FunctionNode(const char * name, uint16_t scriptIndex) {
+          return ScriptNode(Type::Function, name, scriptIndex);
+        }
+        static ScriptNode VariableNode(const char * name, uint16_t scriptIndex) {
+          return ScriptNode(Type::Variable, name, scriptIndex);
+        }
+        Type type() const { return m_type; }
+        const char * name() const { return m_name; }
+        uint16_t scriptIndex() const { return m_scriptIndex; }
+      private:
+        ScriptNode(Type type, const char * name, uint16_t scriptIndex) :
+          m_type(type), m_name(name), m_scriptIndex(scriptIndex) {}
+        Type m_type;
+        const char * m_name;
+        uint16_t m_scriptIndex;
+    };
+
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
-    constexpr static int k_numberOfMenuRows = 2;
-    constexpr static int k_nodeType = 0;
-    constexpr static int k_leafType = 1;
-    constexpr static int k_functionsAndVarsNamePointersArrayLength = 32;
+    constexpr static int k_leafType = 0;
+    constexpr static int k_maxScriptNodesCount = 32;
     void insertTextInCaller(const char * text);
-    int m_currentDepth;
-    int m_firstSelectedRow;
-    int m_previousSelectedRow;
-    int m_scriptFunctionsCount;
-    int m_scriptVariablesCount;
-
-    int m_functionDefinitionsCount[ScriptStore::k_maxNumberOfScripts];
-    int m_globalVariablesCount[ScriptStore::k_maxNumberOfScripts];
-    const char * m_functionNamesPointers[k_functionsAndVarsNamePointersArrayLength];
-    const char * m_globalVariablesNamesPointers[k_functionsAndVarsNamePointersArrayLength];
-
+    int m_scriptNodesCount;
+    ScriptNode m_scriptNodes[k_maxScriptNodesCount];
     MenuController * m_menuController;
     ScriptStore * m_scriptStore;
     TextField * m_textFieldCaller;
     TextArea * m_textAreaCaller;
     DoubleBufferTextCell m_leafCells[k_maxNumberOfDisplayedRows];
-    MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;
